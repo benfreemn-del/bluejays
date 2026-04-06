@@ -161,6 +161,21 @@ export default function ProspectTable({
                         IG DM
                       </button>
                     )}
+                    {prospect.phone && (
+                      <button
+                        onClick={async () => {
+                          await fetch("/api/call-lists", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ prospectId: prospect.id, action: "add" }),
+                          });
+                          alert(`${prospect.businessName} added to priority call list!`);
+                        }}
+                        className="text-xs px-3 py-1.5 rounded-lg bg-orange-500/10 text-orange-400 hover:bg-orange-500/20 transition-colors"
+                      >
+                        Call
+                      </button>
+                    )}
                   </div>
                 </td>
               </tr>

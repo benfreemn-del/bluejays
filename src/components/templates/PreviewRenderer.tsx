@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import type { GeneratedSiteData } from "@/lib/generator";
 import TemplateLayout from "./TemplateLayout";
-import SectionBackground from "./SectionBackground";
 
 export default function PreviewRenderer({ data }: { data: GeneratedSiteData }) {
   const {
@@ -40,6 +39,9 @@ export default function PreviewRenderer({ data }: { data: GeneratedSiteData }) {
   const heroImage = heroImageMap[category] || "";
   const aboutImage = aboutImageMap[category] || "";
 
+  // Lighter version of accent color for glows
+  const glowColor = accentColor;
+
   return (
     <TemplateLayout
       businessName={businessName}
@@ -54,16 +56,16 @@ export default function PreviewRenderer({ data }: { data: GeneratedSiteData }) {
       {/* Stats Bar */}
       {stats.length > 0 && (
         <section
-          className="py-12 border-y border-border"
-          style={{ backgroundColor: `${accentColor}10` }}
+          className="py-12 border-y border-border relative overflow-hidden"
+          style={{ background: `linear-gradient(135deg, ${accentColor}15 0%, ${accentColor}08 50%, transparent 100%)` }}
         >
-          <div className="max-w-5xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute top-0 right-[20%] w-[300px] h-[300px] rounded-full blur-[100px]" style={{ background: `${glowColor}10` }} />
+          </div>
+          <div className="max-w-5xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 relative z-10">
             {stats.map((stat) => (
               <div key={stat.label} className="text-center">
-                <p
-                  className="text-2xl md:text-3xl font-bold"
-                  style={{ color: accentColor }}
-                >
+                <p className="text-2xl md:text-3xl font-bold" style={{ color: accentColor }}>
                   {stat.value}
                 </p>
                 <p className="text-muted text-sm mt-1">{stat.label}</p>
@@ -74,24 +76,22 @@ export default function PreviewRenderer({ data }: { data: GeneratedSiteData }) {
       )}
 
       {/* Services */}
-      <section id="services" className="py-24 bg-background relative overflow-hidden">
-        <SectionBackground category={category} variant="services" />
-        <div className="max-w-6xl mx-auto px-6 relative">
+      <section id="services" className="py-24 relative overflow-hidden" style={{ background: `linear-gradient(180deg, #0a0a0a 0%, ${accentColor}06 50%, #0a0a0a 100%)` }}>
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-[15%] right-[5%] w-[450px] h-[450px] rounded-full blur-[140px]" style={{ background: `${glowColor}0c` }} />
+          <div className="absolute bottom-[10%] left-[10%] w-[350px] h-[350px] rounded-full blur-[120px]" style={{ background: `${glowColor}08` }} />
+          <svg className="absolute inset-0 w-full h-full opacity-[0.03]" viewBox="0 0 1000 600">
+            <path d="M0 300 Q250 200 500 300 Q750 400 1000 300" stroke={accentColor} strokeWidth="1" fill="none" />
+            <path d="M0 350 Q250 250 500 350 Q750 450 1000 350" stroke={accentColor} strokeWidth="0.5" fill="none" />
+          </svg>
+        </div>
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="text-center mb-16">
-            <p
-              className="text-sm font-semibold uppercase tracking-wider mb-4"
-              style={{ color: accentColor }}
-            >
+            <p className="text-sm font-semibold uppercase tracking-wider mb-4" style={{ color: accentColor }}>
               {category === "salon" ? "Our Menu" : category === "law-firm" ? "Practice Areas" : "Our Services"}
             </p>
             <h2 className="text-3xl md:text-4xl font-bold">
-              {category === "salon"
-                ? "Services & Pricing"
-                : category === "law-firm"
-                  ? "Legal Expertise You Can Trust"
-                  : category === "dental"
-                    ? "Complete Care Under One Roof"
-                    : "What We Offer"}
+              {category === "salon" ? "Services & Pricing" : category === "law-firm" ? "Legal Expertise You Can Trust" : category === "dental" ? "Complete Care Under One Roof" : "What We Offer"}
             </h2>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -101,32 +101,20 @@ export default function PreviewRenderer({ data }: { data: GeneratedSiteData }) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1 }}
-                className="p-6 rounded-xl bg-surface border border-border hover:border-opacity-40 transition-colors"
-                style={
-                  {
-                    "--hover-border": accentColor,
-                  } as React.CSSProperties
-                }
+                className="p-6 rounded-xl border border-border/50 hover:border-opacity-60 transition-all duration-300 relative overflow-hidden group"
+                style={{ background: `${accentColor}08` }}
               >
-                {service.icon && (
-                  <div className="text-3xl mb-4">{service.icon}</div>
-                )}
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="text-lg font-semibold">{service.name}</h3>
-                  {service.price && (
-                    <span
-                      className="text-sm font-semibold shrink-0 ml-4"
-                      style={{ color: accentColor }}
-                    >
-                      {service.price}
-                    </span>
-                  )}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${accentColor}15, transparent 70%)` }} />
+                <div className="relative z-10">
+                  {service.icon && <div className="text-3xl mb-4">{service.icon}</div>}
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="text-lg font-semibold">{service.name}</h3>
+                    {service.price && (
+                      <span className="text-sm font-semibold shrink-0 ml-4" style={{ color: accentColor }}>{service.price}</span>
+                    )}
+                  </div>
+                  {service.description && <p className="text-muted text-sm leading-relaxed">{service.description}</p>}
                 </div>
-                {service.description && (
-                  <p className="text-muted text-sm leading-relaxed">
-                    {service.description}
-                  </p>
-                )}
               </motion.div>
             ))}
           </div>
@@ -134,56 +122,38 @@ export default function PreviewRenderer({ data }: { data: GeneratedSiteData }) {
       </section>
 
       {/* About */}
-      <section id="about" className="py-24 bg-surface relative overflow-hidden">
-        <SectionBackground category={category} variant="about" />
-        <div className="max-w-5xl mx-auto px-6 relative">
+      <section id="about" className="py-24 relative overflow-hidden" style={{ background: `linear-gradient(180deg, ${accentColor}06 0%, ${accentColor}0a 50%, ${accentColor}06 100%)` }}>
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-[30%] left-[5%] w-[400px] h-[400px] rounded-full blur-[130px]" style={{ background: `${glowColor}0a` }} />
+          <svg className="absolute bottom-0 left-0 w-full opacity-[0.04]" viewBox="0 0 1440 200" fill="none">
+            <path d="M0 100 C360 0 720 200 1080 100 C1260 50 1440 100 1440 100 V200 H0Z" fill={accentColor} />
+          </svg>
+        </div>
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
           <div className="grid md:grid-cols-2 gap-16 items-center">
             <div>
-              <p
-                className="text-sm font-semibold uppercase tracking-wider mb-4"
-                style={{ color: accentColor }}
-              >
+              <p className="text-sm font-semibold uppercase tracking-wider mb-4" style={{ color: accentColor }}>
                 About {businessName}
               </p>
               <h2 className="text-3xl font-bold mb-6">
-                {category === "law-firm"
-                  ? "Relentless Advocacy. Personal Attention."
-                  : category === "dental"
-                    ? "A Dental Experience You'll Actually Enjoy"
-                    : `Why Choose ${businessName}`}
+                {category === "law-firm" ? "Relentless Advocacy. Personal Attention."
+                  : category === "dental" ? "A Dental Experience You'll Actually Enjoy"
+                  : `Why Choose ${businessName}`}
               </h2>
               <p className="text-muted leading-relaxed mb-6">{about}</p>
               {hours && (
                 <p className="text-muted text-sm">
-                  <span className="font-semibold text-foreground">Hours:</span>{" "}
-                  {hours}
+                  <span className="font-semibold text-foreground">Hours:</span> {hours}
                 </p>
               )}
             </div>
-            <div
-              className="aspect-square rounded-2xl overflow-hidden"
-              style={{
-                background: heroGradient,
-              }}
-            >
+            <div className="aspect-square rounded-2xl overflow-hidden relative" style={{ background: heroGradient }}>
               {aboutImage ? (
-                <img
-                  src={aboutImage}
-                  alt={`About ${businessName}`}
-                  className="w-full h-full object-cover"
-                />
+                <img src={aboutImage} alt={`About ${businessName}`} className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
                   <div className="text-6xl opacity-30">
-                    {category === "real-estate"
-                      ? "🏠"
-                      : category === "dental"
-                        ? "🦷"
-                        : category === "law-firm"
-                          ? "⚖️"
-                          : category === "landscaping"
-                            ? "🌳"
-                            : "✂️"}
+                    {category === "real-estate" ? "🏠" : category === "dental" ? "🦷" : category === "law-firm" ? "⚖️" : category === "landscaping" ? "🌳" : "✂️"}
                   </div>
                 </div>
               )}
@@ -194,20 +164,22 @@ export default function PreviewRenderer({ data }: { data: GeneratedSiteData }) {
 
       {/* Testimonials */}
       {testimonials.length > 0 && (
-        <section id="testimonials" className="py-24 bg-background relative overflow-hidden">
-          <SectionBackground category={category} variant="testimonials" />
-          <div className="max-w-5xl mx-auto px-6 relative">
+        <section id="testimonials" className="py-24 relative overflow-hidden" style={{ background: `linear-gradient(180deg, #0a0a0a 0%, ${accentColor}05 50%, #0a0a0a 100%)` }}>
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute top-[20%] left-[40%] w-[500px] h-[500px] rounded-full blur-[160px]" style={{ background: `${glowColor}08` }} />
+            <svg className="absolute inset-0 w-full h-full opacity-[0.025]" viewBox="0 0 800 400">
+              <circle cx="400" cy="200" r="100" stroke={accentColor} strokeWidth="0.5" fill="none" />
+              <circle cx="400" cy="200" r="180" stroke={accentColor} strokeWidth="0.3" fill="none" />
+              <circle cx="400" cy="200" r="260" stroke={accentColor} strokeWidth="0.2" fill="none" />
+            </svg>
+          </div>
+          <div className="max-w-5xl mx-auto px-6 relative z-10">
             <div className="text-center mb-16">
-              <p
-                className="text-sm font-semibold uppercase tracking-wider mb-4"
-                style={{ color: accentColor }}
-              >
+              <p className="text-sm font-semibold uppercase tracking-wider mb-4" style={{ color: accentColor }}>
                 {category === "dental" ? "Patient Reviews" : "What People Say"}
               </p>
               <h2 className="text-3xl md:text-4xl font-bold">
-                {category === "dental"
-                  ? "Smiles Speak Louder Than Words"
-                  : "Trusted by Our Community"}
+                {category === "dental" ? "Smiles Speak Louder Than Words" : "Trusted by Our Community"}
               </h2>
             </div>
             <div className="grid md:grid-cols-3 gap-6">
@@ -217,20 +189,17 @@ export default function PreviewRenderer({ data }: { data: GeneratedSiteData }) {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.1 }}
-                  className="p-6 rounded-xl bg-surface border border-border"
+                  className="p-6 rounded-xl border border-border/50 relative overflow-hidden"
+                  style={{ background: `${accentColor}08` }}
                 >
-                  <div
-                    className="flex items-center gap-1 mb-4"
-                    style={{ color: accentColor }}
-                  >
-                    {"★★★★★".split("").map((s, j) => (
-                      <span key={j}>{s}</span>
-                    ))}
+                  <div className="absolute top-0 left-0 w-full h-1 rounded-t-xl" style={{ background: `linear-gradient(90deg, ${accentColor}40, transparent)` }} />
+                  <div className="relative z-10">
+                    <div className="flex items-center gap-1 mb-4" style={{ color: accentColor }}>
+                      {"★★★★★".split("").map((s, j) => <span key={j}>{s}</span>)}
+                    </div>
+                    <p className="text-muted leading-relaxed mb-4">&ldquo;{t.text}&rdquo;</p>
+                    <p className="font-semibold text-sm">{t.name}</p>
                   </div>
-                  <p className="text-muted leading-relaxed mb-4">
-                    &ldquo;{t.text}&rdquo;
-                  </p>
-                  <p className="font-semibold text-sm">{t.name}</p>
                 </motion.div>
               ))}
             </div>

@@ -87,10 +87,16 @@ export default function DashboardPage() {
               Scripts
             </a>
             <a
-              href="/api/export/phones?format=csv"
+              href="/api/call-lists?type=all&format=csv"
               className="h-9 px-4 rounded-lg bg-surface border border-border text-muted text-sm font-medium flex items-center hover:text-foreground hover:border-blue-electric/40 transition-colors"
             >
-              Export Phones
+              All Phones
+            </a>
+            <a
+              href="/api/call-lists?type=priority&format=csv"
+              className="h-9 px-4 rounded-lg bg-surface border border-orange-500/30 text-orange-400 text-sm font-medium flex items-center hover:border-orange-500/60 transition-colors"
+            >
+              Priority List
             </a>
             <button
               onClick={() => setScoutOpen(true)}

@@ -27,7 +27,9 @@ interface GeoJSON {
 }
 
 const US_STATES_GEOJSON_URL = "https://raw.githubusercontent.com/PublicaMundi/MappingAPI/master/data/geojson/us-states.json";
-const WA_COUNTIES_GEOJSON_URL = "https://raw.githubusercontent.com/deldersveld/topojson/master/countries/us-states/WA-53-washington-counties.json";
+const ALL_COUNTIES_GEOJSON_URL = "https://raw.githubusercontent.com/plotly/datasets/master/geojson-counties-fips.json";
+// WA state FIPS code is 53
+const WA_FIPS = "53";
 
 export default function MapView({ prospects }: MapViewProps) {
   const [view, setView] = useState<ViewLevel>("us");
@@ -106,23 +108,18 @@ export default function MapView({ prospects }: MapViewProps) {
     setScoutCounty("");
     setScoutResult("");
 
-    if (abbr === "WA" && !countiesGeo) {
-      // Fetch WA county TopoJSON → convert
-      fetch(WA_COUNTIES_GEOJSON_URL)
+    if (!countiesGeo) {
+      const fips = STATE_FIPS[abbr] || WA_FIPS;
+      fetch(ALL_COUNTIES_GEOJSON_URL)
         .then((r) => r.json())
-        .then((topo) => {
-          // Convert TopoJSON to GeoJSON
-          const objectKey = Object.keys(topo.objects)[0];
-          const obj = topo.objects[objectKey];
-          const features = obj.geometries.map((geom: Record<string, unknown>) => {
-            const coords = topoToGeoCoords(geom, topo);
-            return {
-              type: "Feature",
-              properties: (geom.properties || {}) as Record<string, string>,
-              geometry: { type: geom.type as string, coordinates: coords },
-            };
-          });
-          setCountiesGeo({ type: "FeatureCollection", features });
+        .then((geo: GeoJSON) => {
+          const filtered = {
+            ...geo,
+            features: geo.features.filter(
+              (f) => f.properties.STATE === fips
+            ),
+          };
+          setCountiesGeo(filtered);
         })
         .catch(() => {});
     }
@@ -190,7 +187,7 @@ export default function MapView({ prospects }: MapViewProps) {
 
       {/* US Map with real GeoJSON */}
       {view === "us" && statesGeo && (
-        <svg viewBox="-130 24 65 30" className="w-full h-auto" style={{ maxHeight: "500px" }}>
+        <svg viewBox="-130 -50 65 26" className="w-full h-auto" style={{ maxHeight: "500px" }}>
           {statesGeo.features.map((feature, i) => {
             const name = feature.properties.name;
             const fillColor = getColor(name, true);
@@ -224,9 +221,9 @@ export default function MapView({ prospects }: MapViewProps) {
       )}
 
       {/* County View */}
-      {view === "county" && selectedState === "WA" && countiesGeo && (
+      {view === "county" && countiesGeo && countiesGeo.features.length > 0 && (
         <div>
-          <svg viewBox="-124.8 45.5 8.5 3.5" className="w-full h-auto mb-4" style={{ maxHeight: "400px" }}>
+          <svg viewBox={getCountyViewBox(countiesGeo)} className="w-full h-auto mb-4" style={{ maxHeight: "400px" }}>
             {countiesGeo.features.map((feature, i) => {
               const name = feature.properties.NAME || feature.properties.name || `County ${i}`;
               const fillColor = getColor(name, false);
@@ -293,16 +290,8 @@ export default function MapView({ prospects }: MapViewProps) {
       )}
 
       {/* County loading */}
-      {view === "county" && selectedState === "WA" && !countiesGeo && (
+      {view === "county" && (!countiesGeo || countiesGeo.features.length === 0) && (
         <div className="py-20 text-center text-muted">Loading county boundaries...</div>
-      )}
-
-      {/* Non-WA state */}
-      {view === "county" && selectedState !== "WA" && (
-        <div className="py-16 text-center text-muted">
-          <p className="text-lg mb-2">County view for {STATE_NAMES_FULL[selectedState] || selectedState}</p>
-          <p className="text-sm">Washington state has full county mapping. More states coming soon.</p>
-        </div>
       )}
 
       <canvas ref={canvasRef} className="hidden" />
@@ -335,6 +324,25 @@ function renderGeoPath(feature: GeoFeature): string[] {
   return paths;
 }
 
+function getCountyViewBox(geo: GeoJSON): string {
+  let minX = 999, maxX = -999, minY = 999, maxY = -999;
+  for (const f of geo.features) {
+    const coords = f.geometry.type === "Polygon"
+      ? (f.geometry.coordinates as number[][][])
+      : (f.geometry.coordinates as number[][][][]).flat();
+    for (const ring of coords) {
+      for (const pt of ring) {
+        if (pt[0] < minX) minX = pt[0];
+        if (pt[0] > maxX) maxX = pt[0];
+        if (-pt[1] < minY) minY = -pt[1];
+        if (-pt[1] > maxY) maxY = -pt[1];
+      }
+    }
+  }
+  const pad = 0.5;
+  return `${minX - pad} ${minY - pad} ${maxX - minX + pad * 2} ${maxY - minY + pad * 2}`;
+}
+
 function lighten(hex: string): string {
   const r = parseInt(hex.slice(1, 3), 16);
   const g = parseInt(hex.slice(3, 5), 16);
@@ -342,50 +350,15 @@ function lighten(hex: string): string {
   return `rgb(${Math.min(255, r + 40)}, ${Math.min(255, g + 40)}, ${Math.min(255, b + 40)})`;
 }
 
-// TopoJSON arc decoding
-function topoToGeoCoords(geom: Record<string, unknown>, topo: Record<string, unknown>): number[][][] | number[][][][] {
-  const arcs = topo.arcs as number[][][];
-  const transform = topo.transform as { scale: number[]; translate: number[] } | undefined;
-
-  function decodeArc(arcIdx: number): number[][] {
-    const isReversed = arcIdx < 0;
-    const idx = isReversed ? ~arcIdx : arcIdx;
-    const arc = arcs[idx];
-    const coords: number[][] = [];
-    let x = 0, y = 0;
-    for (const pt of arc) {
-      x += pt[0];
-      y += pt[1];
-      if (transform) {
-        coords.push([
-          x * transform.scale[0] + transform.translate[0],
-          y * transform.scale[1] + transform.translate[1],
-        ]);
-      } else {
-        coords.push([x, y]);
-      }
-    }
-    return isReversed ? coords.reverse() : coords;
-  }
-
-  function decodeRing(arcIndices: number[]): number[][] {
-    const ring: number[][] = [];
-    for (const idx of arcIndices) {
-      const decoded = decodeArc(idx);
-      ring.push(...(ring.length > 0 ? decoded.slice(1) : decoded));
-    }
-    return ring;
-  }
-
-  if (geom.type === "Polygon") {
-    const arcRings = geom.arcs as number[][];
-    return arcRings.map(decodeRing);
-  } else if (geom.type === "MultiPolygon") {
-    const multiArcs = geom.arcs as number[][][];
-    return multiArcs.map((poly) => poly.map(decodeRing));
-  }
-  return [];
-}
+const STATE_FIPS: Record<string, string> = {
+  AL: "01", AK: "02", AZ: "04", AR: "05", CA: "06", CO: "08", CT: "09",
+  DE: "10", FL: "12", GA: "13", HI: "15", ID: "16", IL: "17", IN: "18",
+  IA: "19", KS: "20", KY: "21", LA: "22", ME: "23", MD: "24", MA: "25",
+  MI: "26", MN: "27", MS: "28", MO: "29", MT: "30", NE: "31", NV: "32",
+  NH: "33", NJ: "34", NM: "35", NY: "36", NC: "37", ND: "38", OH: "39",
+  OK: "40", OR: "41", PA: "42", RI: "44", SC: "45", SD: "46", TN: "47",
+  TX: "48", UT: "49", VT: "50", VA: "51", WA: "53", WV: "54", WI: "55", WY: "56",
+};
 
 const STATE_ABBR: Record<string, string> = {
   "Alabama": "AL", "Alaska": "AK", "Arizona": "AZ", "Arkansas": "AR", "California": "CA",
