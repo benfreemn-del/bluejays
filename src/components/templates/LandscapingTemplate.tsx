@@ -1,0 +1,157 @@
+"use client";
+
+import { motion } from "framer-motion";
+import TemplateLayout from "./TemplateLayout";
+
+const services = [
+  { name: "Lawn Maintenance", desc: "Weekly mowing, edging, fertilization, and weed control to keep your lawn pristine.", icon: "🌿" },
+  { name: "Landscape Design", desc: "Custom garden design, plant selection, and installation by certified landscapers.", icon: "🎨" },
+  { name: "Hardscaping", desc: "Patios, walkways, retaining walls, and outdoor kitchens built to last.", icon: "🧱" },
+  { name: "Tree Services", desc: "Trimming, removal, stump grinding, and health assessments for all tree types.", icon: "🌳" },
+  { name: "Irrigation Systems", desc: "Sprinkler installation, repair, and smart water management systems.", icon: "💧" },
+  { name: "Seasonal Cleanup", desc: "Spring prep, fall leaf removal, snow clearing, and holiday light installation.", icon: "🍂" },
+];
+
+const projects = [
+  { name: "Backyard Oasis", type: "Full Redesign" },
+  { name: "Modern Patio Build", type: "Hardscaping" },
+  { name: "Cottage Garden", type: "Planting Design" },
+  { name: "Commercial Property", type: "Maintenance" },
+  { name: "Poolside Landscape", type: "Full Redesign" },
+  { name: "Front Yard Makeover", type: "Curb Appeal" },
+];
+
+export default function LandscapingTemplate() {
+  return (
+    <TemplateLayout
+      businessName="GreenScape Pro"
+      tagline="Transform your outdoor space into something extraordinary. Professional landscaping for homes and businesses."
+      accentColor="#22c55e"
+      accentColorLight="#4ade80"
+      heroGradient="linear-gradient(135deg, #1a2e1a 0%, #0f1f0f 100%)"
+      phone="(555) 456-7890"
+      address="789 Garden Way, Your City"
+    >
+      {/* Quick CTA Bar */}
+      <section className="py-4 bg-[#22c55e] text-white text-center">
+        <p className="text-sm font-semibold">Free Estimates on All Projects — Call Today!</p>
+      </section>
+
+      {/* Services */}
+      <section id="services" className="py-24 bg-background">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <p className="text-[#22c55e] text-sm font-semibold uppercase tracking-wider mb-4">Our Services</p>
+            <h2 className="text-3xl md:text-4xl font-bold">Everything Your Yard Needs</h2>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {services.map((service, i) => (
+              <motion.div
+                key={service.name}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="p-6 rounded-xl bg-surface border border-border hover:border-[#22c55e]/40 transition-colors"
+              >
+                <div className="text-3xl mb-4">{service.icon}</div>
+                <h3 className="text-lg font-semibold mb-2">{service.name}</h3>
+                <p className="text-muted text-sm leading-relaxed">{service.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Project Gallery */}
+      <section id="about" className="py-24 bg-surface">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <p className="text-[#22c55e] text-sm font-semibold uppercase tracking-wider mb-4">Our Work</p>
+            <h2 className="text-3xl md:text-4xl font-bold">Recent Projects</h2>
+          </div>
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+            {projects.map((project, i) => (
+              <motion.div
+                key={project.name}
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="group relative aspect-[4/3] rounded-xl overflow-hidden bg-gradient-to-br from-[#1a2e1a] to-[#2a3e2a] cursor-pointer"
+              >
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors duration-300 flex items-center justify-center">
+                  <div className="opacity-0 group-hover:opacity-100 transition-opacity text-center">
+                    <p className="text-white font-semibold">{project.name}</p>
+                    <p className="text-white/60 text-sm">{project.type}</p>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Why Choose Us */}
+      <section className="py-24 bg-background">
+        <div className="max-w-5xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
+          <div>
+            <p className="text-[#22c55e] text-sm font-semibold uppercase tracking-wider mb-4">Why GreenScape Pro</p>
+            <h2 className="text-3xl font-bold mb-6">Your Yard Deserves the Best</h2>
+            <p className="text-muted leading-relaxed mb-6">
+              We&apos;re not just lawn mowers — we&apos;re outdoor living experts. From design to installation to year-round maintenance, we handle every detail so you can enjoy your space without lifting a finger.
+            </p>
+            <div className="grid grid-cols-2 gap-4">
+              {[
+                { value: "500+", label: "Projects Completed" },
+                { value: "12+", label: "Years in Business" },
+                { value: "100%", label: "Licensed & Insured" },
+                { value: "4.9★", label: "Average Rating" },
+              ].map((stat) => (
+                <div key={stat.label} className="p-4 rounded-xl bg-surface border border-border text-center">
+                  <p className="text-xl font-bold text-[#22c55e]">{stat.value}</p>
+                  <p className="text-muted text-xs mt-1">{stat.label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="aspect-square rounded-2xl bg-gradient-to-br from-[#1a2e1a] to-[#2a3e2a] flex items-center justify-center">
+            <div className="text-6xl opacity-30">🌳</div>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section id="testimonials" className="py-24 bg-surface">
+        <div className="max-w-5xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <p className="text-[#22c55e] text-sm font-semibold uppercase tracking-wider mb-4">Reviews</p>
+            <h2 className="text-3xl md:text-4xl font-bold">What Our Customers Say</h2>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              { name: "Karen P.", text: "Our backyard went from embarrassing to the envy of the neighborhood. Absolutely incredible work." },
+              { name: "Steve & Maria D.", text: "They've maintained our property for 3 years now. Always reliable, always professional." },
+              { name: "Chris L.", text: "The patio they built exceeded every expectation. We practically live outside now." },
+            ].map((t, i) => (
+              <motion.div
+                key={t.name}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="p-6 rounded-xl bg-surface-light border border-border"
+              >
+                <div className="flex items-center gap-1 text-[#22c55e] mb-4">
+                  {"★★★★★".split("").map((s, j) => <span key={j}>{s}</span>)}
+                </div>
+                <p className="text-muted leading-relaxed mb-4">&ldquo;{t.text}&rdquo;</p>
+                <p className="font-semibold text-sm">{t.name}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </TemplateLayout>
+  );
+}
