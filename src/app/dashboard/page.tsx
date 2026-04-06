@@ -150,6 +150,7 @@ export default function DashboardPage() {
                 onStatusChange={setStatusFilter}
                 onSelectProspect={setSelectedProspect}
                 onSendEmail={handleSendEmail}
+                onRefresh={fetchProspects}
               />
             ) : (
               <MapView

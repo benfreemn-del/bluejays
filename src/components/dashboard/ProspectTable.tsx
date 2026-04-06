@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { Prospect, Category, ProspectStatus } from "@/lib/types";
 import { CATEGORY_CONFIG } from "@/lib/types";
 import StatusBadge from "./StatusBadge";
@@ -10,18 +11,12 @@ interface ProspectTableProps {
   onStatusChange: (v: string) => void;
   onSelectProspect: (p: Prospect) => void;
   onSendEmail: (p: Prospect) => void;
+  onRefresh?: () => void;
 }
 
 const allStatuses: ProspectStatus[] = [
-  "scouted",
-  "scraped",
-  "generated",
-  "pending-review",
-  "approved",
-  "deployed",
-  "contacted",
-  "responded",
-  "paid",
+  "scouted", "scraped", "generated", "pending-review", "approved",
+  "deployed", "contacted", "responded", "paid",
 ];
 
 export default function ProspectTable({
@@ -32,17 +27,59 @@ export default function ProspectTable({
   onStatusChange,
   onSelectProspect,
   onSendEmail,
+  onRefresh,
 }: ProspectTableProps) {
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [bulkSending, setBulkSending] = useState(false);
+  const [bulkResult, setBulkResult] = useState("");
+
   const filtered = prospects.filter((p) => {
     if (categoryFilter && p.category !== categoryFilter) return false;
     if (statusFilter && p.status !== statusFilter) return false;
     return true;
   });
 
+  const toggleSelect = (id: string) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleAll = () => {
+    if (selected.size === filtered.length) {
+      setSelected(new Set());
+    } else {
+      setSelected(new Set(filtered.map((p) => p.id)));
+    }
+  };
+
+  const sendBulk = async (channels: ("email" | "sms")[]) => {
+    if (selected.size === 0) return;
+    setBulkSending(true);
+    setBulkResult("");
+    try {
+      const res = await fetch("/api/outreach/bulk", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prospectIds: Array.from(selected), channels }),
+      });
+      const data = await res.json();
+      setBulkResult(`${data.message}`);
+      setSelected(new Set());
+      onRefresh?.();
+    } catch {
+      setBulkResult("Error sending outreach");
+    } finally {
+      setBulkSending(false);
+    }
+  };
+
   return (
     <div>
       {/* Filters */}
-      <div className="flex flex-wrap gap-3 mb-6">
+      <div className="flex flex-wrap gap-3 mb-4">
         <select
           value={categoryFilter}
           onChange={(e) => onCategoryChange(e.target.value)}
@@ -50,9 +87,7 @@ export default function ProspectTable({
         >
           <option value="">All Categories</option>
           {(Object.keys(CATEGORY_CONFIG) as Category[]).map((cat) => (
-            <option key={cat} value={cat}>
-              {CATEGORY_CONFIG[cat].label}
-            </option>
+            <option key={cat} value={cat}>{CATEGORY_CONFIG[cat].label}</option>
           ))}
         </select>
         <select
@@ -62,58 +97,108 @@ export default function ProspectTable({
         >
           <option value="">All Statuses</option>
           {allStatuses.map((s) => (
-            <option key={s} value={s}>
-              {s.charAt(0).toUpperCase() + s.slice(1)}
-            </option>
+            <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1).replace("-", " ")}</option>
           ))}
         </select>
         <span className="h-10 flex items-center text-muted text-sm">
           {filtered.length} prospect{filtered.length !== 1 ? "s" : ""}
+          {selected.size > 0 && (
+            <span className="text-blue-electric ml-2">({selected.size} selected)</span>
+          )}
         </span>
       </div>
+
+      {/* Bulk Action Bar */}
+      {selected.size > 0 && (
+        <div className="mb-4 p-4 rounded-xl bg-blue-electric/10 border border-blue-electric/20 flex items-center justify-between">
+          <span className="text-sm font-medium text-blue-electric">
+            {selected.size} prospect{selected.size !== 1 ? "s" : ""} selected
+          </span>
+          <div className="flex gap-2">
+            <button
+              onClick={() => sendBulk(["email"])}
+              disabled={bulkSending}
+              className="h-9 px-4 rounded-lg bg-green-500/20 text-green-400 text-sm font-medium hover:bg-green-500/30 transition-colors disabled:opacity-50"
+            >
+              {bulkSending ? "Sending..." : "Send Emails"}
+            </button>
+            <button
+              onClick={() => sendBulk(["sms"])}
+              disabled={bulkSending}
+              className="h-9 px-4 rounded-lg bg-blue-500/20 text-blue-400 text-sm font-medium hover:bg-blue-500/30 transition-colors disabled:opacity-50"
+            >
+              {bulkSending ? "Sending..." : "Send Texts"}
+            </button>
+            <button
+              onClick={() => sendBulk(["email", "sms"])}
+              disabled={bulkSending}
+              className="h-9 px-4 rounded-lg bg-orange-500/20 text-orange-400 text-sm font-medium hover:bg-orange-500/30 transition-colors disabled:opacity-50"
+            >
+              {bulkSending ? "Sending..." : "Send Both"}
+            </button>
+            <button
+              onClick={() => setSelected(new Set())}
+              className="h-9 px-4 rounded-lg bg-surface border border-border text-muted text-sm hover:text-foreground transition-colors"
+            >
+              Clear
+            </button>
+          </div>
+        </div>
+      )}
+
+      {bulkResult && (
+        <div className="mb-4 p-3 rounded-lg bg-blue-electric/10 text-blue-electric text-sm">
+          {bulkResult}
+        </div>
+      )}
 
       {/* Table */}
       <div className="overflow-x-auto rounded-xl border border-border">
         <table className="w-full text-sm">
           <thead>
             <tr className="bg-surface-light border-b border-border">
-              <th className="text-left p-3 font-medium text-muted">
-                Business
+              <th className="p-3 w-10">
+                <input
+                  type="checkbox"
+                  checked={selected.size === filtered.length && filtered.length > 0}
+                  onChange={toggleAll}
+                  className="rounded"
+                />
               </th>
-              <th className="text-left p-3 font-medium text-muted">
-                Category
-              </th>
+              <th className="text-left p-3 font-medium text-muted">Business</th>
+              <th className="text-left p-3 font-medium text-muted">Category</th>
               <th className="text-left p-3 font-medium text-muted">City</th>
               <th className="text-left p-3 font-medium text-muted">Rating</th>
               <th className="text-left p-3 font-medium text-muted">Status</th>
-              <th className="text-left p-3 font-medium text-muted">
-                Actions
-              </th>
+              <th className="text-left p-3 font-medium text-muted">Actions</th>
             </tr>
           </thead>
           <tbody>
             {filtered.map((prospect) => (
               <tr
                 key={prospect.id}
-                className="border-b border-border hover:bg-surface-light/50 cursor-pointer transition-colors"
-                onClick={() => onSelectProspect(prospect)}
+                className={`border-b border-border hover:bg-surface-light/50 transition-colors ${
+                  selected.has(prospect.id) ? "bg-blue-electric/5" : ""
+                }`}
               >
-                <td className="p-3">
-                  <div>
-                    <p className="font-medium">{prospect.businessName}</p>
-                    {prospect.phone && (
-                      <p className="text-muted text-xs">{prospect.phone}</p>
-                    )}
-                  </div>
+                <td className="p-3" onClick={(e) => e.stopPropagation()}>
+                  <input
+                    type="checkbox"
+                    checked={selected.has(prospect.id)}
+                    onChange={() => toggleSelect(prospect.id)}
+                    className="rounded"
+                  />
+                </td>
+                <td className="p-3 cursor-pointer" onClick={() => onSelectProspect(prospect)}>
+                  <p className="font-medium">{prospect.businessName}</p>
+                  {prospect.phone && <p className="text-muted text-xs">{prospect.phone}</p>}
                 </td>
                 <td className="p-3">
                   <span
                     className="text-xs font-medium px-2 py-1 rounded"
                     style={{
-                      backgroundColor:
-                        CATEGORY_CONFIG[prospect.category]?.accentColor + "20",
-                      color:
-                        CATEGORY_CONFIG[prospect.category]?.accentColor,
+                      backgroundColor: CATEGORY_CONFIG[prospect.category]?.accentColor + "20",
+                      color: CATEGORY_CONFIG[prospect.category]?.accentColor,
                     }}
                   >
                     {CATEGORY_CONFIG[prospect.category]?.label}
@@ -127,20 +212,16 @@ export default function ProspectTable({
                     </span>
                   )}
                 </td>
+                <td className="p-3"><StatusBadge status={prospect.status} /></td>
                 <td className="p-3">
-                  <StatusBadge status={prospect.status} />
-                </td>
-                <td className="p-3">
-                  <div
-                    className="flex gap-2"
-                    onClick={(e) => e.stopPropagation()}
-                  >
+                  <div className="flex gap-1.5" onClick={(e) => e.stopPropagation()}>
                     {prospect.generatedSiteUrl && (
                       <a
                         href={prospect.generatedSiteUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-xs px-3 py-1.5 rounded-lg bg-blue-electric/10 text-blue-electric hover:bg-blue-electric/20 transition-colors"
+                        className="text-xs px-2.5 py-1.5 rounded-lg bg-blue-electric/10 text-blue-electric hover:bg-blue-electric/20 transition-colors"
+                        title="View preview site"
                       >
                         Preview
                       </a>
@@ -148,32 +229,48 @@ export default function ProspectTable({
                     {prospect.email && prospect.generatedSiteUrl && (
                       <button
                         onClick={() => onSendEmail(prospect)}
-                        className="text-xs px-3 py-1.5 rounded-lg bg-green-500/10 text-green-400 hover:bg-green-500/20 transition-colors"
+                        className="text-xs px-2.5 py-1.5 rounded-lg bg-green-500/10 text-green-400 hover:bg-green-500/20 transition-colors"
+                        title="Send email"
                       >
-                        Email
+                        ✉
                       </button>
+                    )}
+                    {prospect.phone && (
+                      <>
+                        <button
+                          onClick={async () => {
+                            await fetch(`/api/sms/send/${prospect.id}`, { method: "POST" });
+                            alert(`Text sent to ${prospect.phone}!`);
+                            onRefresh?.();
+                          }}
+                          className="text-xs px-2.5 py-1.5 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 transition-colors"
+                          title="Send text"
+                        >
+                          💬
+                        </button>
+                        <button
+                          onClick={async () => {
+                            await fetch("/api/call-lists", {
+                              method: "POST",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({ prospectId: prospect.id, action: "add" }),
+                            });
+                            alert(`Added to call list!`);
+                          }}
+                          className="text-xs px-2.5 py-1.5 rounded-lg bg-orange-500/10 text-orange-400 hover:bg-orange-500/20 transition-colors"
+                          title="Add to call list"
+                        >
+                          📞
+                        </button>
+                      </>
                     )}
                     {prospect.generatedSiteUrl && (
                       <button
                         onClick={() => onSelectProspect(prospect)}
-                        className="text-xs px-3 py-1.5 rounded-lg bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 transition-colors"
+                        className="text-xs px-2.5 py-1.5 rounded-lg bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 transition-colors"
+                        title="Instagram DM"
                       >
-                        IG DM
-                      </button>
-                    )}
-                    {prospect.phone && (
-                      <button
-                        onClick={async () => {
-                          await fetch("/api/call-lists", {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ prospectId: prospect.id, action: "add" }),
-                          });
-                          alert(`${prospect.businessName} added to priority call list!`);
-                        }}
-                        className="text-xs px-3 py-1.5 rounded-lg bg-orange-500/10 text-orange-400 hover:bg-orange-500/20 transition-colors"
-                      >
-                        Call
+                        IG
                       </button>
                     )}
                   </div>
@@ -182,7 +279,7 @@ export default function ProspectTable({
             ))}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={6} className="p-8 text-center text-muted">
+                <td colSpan={7} className="p-8 text-center text-muted">
                   No prospects found. Run a scout to find businesses!
                 </td>
               </tr>

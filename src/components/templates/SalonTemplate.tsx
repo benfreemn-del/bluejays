@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import TemplateLayout from "./TemplateLayout";
-import SectionBackground from "./SectionBackground";
 
 const menuItems = [
   { category: "Hair", items: [
@@ -50,9 +49,22 @@ export default function SalonTemplate() {
       </section>
 
       {/* Service Menu */}
-      <section id="services" className="py-24 bg-background relative overflow-hidden">
-        <SectionBackground category="salon" variant="services" />
-        <div className="max-w-5xl mx-auto px-6 relative">
+      <section
+        id="services"
+        className="py-24 relative overflow-hidden"
+        style={{ background: `linear-gradient(180deg, #0a0a0a 0%, #ec489906 50%, #0a0a0a 100%)` }}
+      >
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-[15%] right-[5%] w-[450px] h-[450px] rounded-full blur-[140px]" style={{ background: `#ec48990c` }} />
+          <div className="absolute bottom-[10%] left-[10%] w-[350px] h-[350px] rounded-full blur-[120px]" style={{ background: `#ec489908` }} />
+          <svg className="absolute inset-0 w-full h-full opacity-[0.03]" viewBox="0 0 1000 600">
+            <path d="M0 300 Q250 200 500 300 Q750 400 1000 300" stroke="#ec4899" strokeWidth="1" fill="none" />
+            <path d="M0 350 Q250 250 500 350 Q750 450 1000 350" stroke="#ec4899" strokeWidth="0.5" fill="none" />
+            <circle cx="200" cy="200" r="20" stroke="#ec4899" strokeWidth="0.5" fill="none" />
+            <circle cx="800" cy="250" r="15" stroke="#ec4899" strokeWidth="0.5" fill="none" />
+          </svg>
+        </div>
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
           <div className="text-center mb-16">
             <p className="text-[#ec4899] text-sm font-semibold uppercase tracking-wider mb-4">Our Menu</p>
             <h2 className="text-3xl md:text-4xl font-bold">Services & Pricing</h2>
@@ -65,16 +77,20 @@ export default function SalonTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.15 }}
-                className="p-6 rounded-xl bg-surface border border-border"
+                className="p-6 rounded-xl border border-border/50 relative overflow-hidden group"
+                style={{ background: `#ec489908` }}
               >
-                <h3 className="text-xl font-bold text-[#ec4899] mb-6 text-center">{section.category}</h3>
-                <div className="space-y-4">
-                  {section.items.map((item) => (
-                    <div key={item.name} className="flex justify-between items-center">
-                      <span className="text-sm">{item.name}</span>
-                      <span className="text-sm text-[#ec4899] font-semibold">{item.price}</span>
-                    </div>
-                  ))}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, #ec489915, transparent 70%)` }} />
+                <div className="relative z-10">
+                  <h3 className="text-xl font-bold text-[#ec4899] mb-6 text-center">{section.category}</h3>
+                  <div className="space-y-4">
+                    {section.items.map((item) => (
+                      <div key={item.name} className="flex justify-between items-center">
+                        <span className="text-sm">{item.name}</span>
+                        <span className="text-sm text-[#ec4899] font-semibold">{item.price}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </motion.div>
             ))}
@@ -83,9 +99,19 @@ export default function SalonTemplate() {
       </section>
 
       {/* Stylists */}
-      <section id="about" className="py-24 bg-surface relative overflow-hidden">
-        <SectionBackground category="salon" variant="about" />
-        <div className="max-w-5xl mx-auto px-6 relative">
+      <section
+        id="about"
+        className="py-24 relative overflow-hidden"
+        style={{ background: `linear-gradient(180deg, #ec489906 0%, #ec48990a 50%, #ec489906 100%)` }}
+      >
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-[30%] left-[5%] w-[400px] h-[400px] rounded-full blur-[130px]" style={{ background: `#ec48990a` }} />
+          <div className="absolute bottom-[20%] right-[8%] w-[350px] h-[350px] rounded-full blur-[120px]" style={{ background: `#ec489908` }} />
+          <svg className="absolute bottom-0 left-0 w-full opacity-[0.04]" viewBox="0 0 1440 200" fill="none">
+            <path d="M0 100 C360 0 720 200 1080 100 C1260 50 1440 100 1440 100 V200 H0Z" fill="#ec4899" />
+          </svg>
+        </div>
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
           <div className="text-center mb-16">
             <p className="text-[#ec4899] text-sm font-semibold uppercase tracking-wider mb-4">Our Team</p>
             <h2 className="text-3xl md:text-4xl font-bold">Meet Your Stylists</h2>
@@ -117,8 +143,19 @@ export default function SalonTemplate() {
       </section>
 
       {/* Gallery */}
-      <section className="py-24 bg-background">
-        <div className="max-w-5xl mx-auto px-6">
+      <section
+        className="py-24 relative overflow-hidden"
+        style={{ background: `linear-gradient(180deg, #0a0a0a 0%, #ec489906 50%, #0a0a0a 100%)` }}
+      >
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-[40%] left-[50%] -translate-x-1/2 w-[500px] h-[500px] rounded-full blur-[150px]" style={{ background: `#ec489908` }} />
+          <svg className="absolute inset-0 w-full h-full opacity-[0.025]" viewBox="0 0 1000 600">
+            <path d="M0 300 Q250 200 500 300 Q750 400 1000 300" stroke="#ec4899" strokeWidth="0.5" fill="none" />
+            <circle cx="150" cy="150" r="25" stroke="#ec4899" strokeWidth="0.3" fill="none" />
+            <circle cx="850" cy="450" r="20" stroke="#ec4899" strokeWidth="0.3" fill="none" />
+          </svg>
+        </div>
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
           <div className="text-center mb-16">
             <p className="text-[#ec4899] text-sm font-semibold uppercase tracking-wider mb-4">Gallery</p>
             <h2 className="text-3xl md:text-4xl font-bold">Our Work</h2>
@@ -145,9 +182,20 @@ export default function SalonTemplate() {
       </section>
 
       {/* Testimonials */}
-      <section id="testimonials" className="py-24 bg-surface relative overflow-hidden">
-        <SectionBackground category="salon" variant="testimonials" />
-        <div className="max-w-5xl mx-auto px-6 relative">
+      <section
+        id="testimonials"
+        className="py-24 relative overflow-hidden"
+        style={{ background: `linear-gradient(180deg, #0a0a0a 0%, #ec489905 50%, #0a0a0a 100%)` }}
+      >
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-[20%] left-[40%] w-[500px] h-[500px] rounded-full blur-[160px]" style={{ background: `#ec489908` }} />
+          <svg className="absolute inset-0 w-full h-full opacity-[0.025]" viewBox="0 0 800 400">
+            <circle cx="400" cy="200" r="100" stroke="#ec4899" strokeWidth="0.5" fill="none" />
+            <circle cx="400" cy="200" r="180" stroke="#ec4899" strokeWidth="0.3" fill="none" />
+            <circle cx="400" cy="200" r="260" stroke="#ec4899" strokeWidth="0.2" fill="none" />
+          </svg>
+        </div>
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
           <div className="text-center mb-16">
             <p className="text-[#ec4899] text-sm font-semibold uppercase tracking-wider mb-4">Reviews</p>
             <h2 className="text-3xl md:text-4xl font-bold">What Our Clients Say</h2>
@@ -164,13 +212,17 @@ export default function SalonTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="p-6 rounded-xl bg-surface-light border border-border"
+                className="p-6 rounded-xl border border-border/50 relative overflow-hidden"
+                style={{ background: `#ec489908` }}
               >
-                <div className="flex items-center gap-1 text-[#ec4899] mb-4">
-                  {"★★★★★".split("").map((s, j) => <span key={j}>{s}</span>)}
+                <div className="absolute top-0 left-0 w-full h-1 rounded-t-xl" style={{ background: `linear-gradient(90deg, #ec489940, transparent)` }} />
+                <div className="relative z-10">
+                  <div className="flex items-center gap-1 text-[#ec4899] mb-4">
+                    {"★★★★★".split("").map((s, j) => <span key={j}>{s}</span>)}
+                  </div>
+                  <p className="text-muted leading-relaxed mb-4">&ldquo;{t.text}&rdquo;</p>
+                  <p className="font-semibold text-sm">{t.name}</p>
                 </div>
-                <p className="text-muted leading-relaxed mb-4">&ldquo;{t.text}&rdquo;</p>
-                <p className="font-semibold text-sm">{t.name}</p>
               </motion.div>
             ))}
           </div>
