@@ -13,12 +13,12 @@ const services = [
 ];
 
 const projects = [
-  { name: "Backyard Oasis", type: "Full Redesign" },
-  { name: "Modern Patio Build", type: "Hardscaping" },
-  { name: "Cottage Garden", type: "Planting Design" },
-  { name: "Commercial Property", type: "Maintenance" },
-  { name: "Poolside Landscape", type: "Full Redesign" },
-  { name: "Front Yard Makeover", type: "Curb Appeal" },
+  { name: "Backyard Oasis", type: "Full Redesign", detail: "Complete backyard transformation with custom water feature, native plantings, and outdoor living space." },
+  { name: "Modern Patio Build", type: "Hardscaping", detail: "600 sq ft travertine patio with built-in fire pit and integrated LED lighting." },
+  { name: "Cottage Garden", type: "Planting Design", detail: "English cottage-style garden with perennial beds, winding stone paths, and a charming arbor." },
+  { name: "Commercial Property", type: "Maintenance", detail: "Year-round maintenance for a 5-acre commercial campus including irrigation management." },
+  { name: "Poolside Landscape", type: "Full Redesign", detail: "Tropical poolside paradise with palm trees, ornamental grasses, and natural stone edging." },
+  { name: "Front Yard Makeover", type: "Curb Appeal", detail: "Drought-tolerant front yard redesign with decorative rock, succulents, and pathway lighting." },
 ];
 
 export default function LandscapingTemplate() {
@@ -36,6 +36,34 @@ export default function LandscapingTemplate() {
       {/* Quick CTA Bar */}
       <section className="py-4 bg-[#22c55e] text-white text-center">
         <p className="text-sm font-semibold">Free Estimates on All Projects — Call Today!</p>
+      </section>
+
+      {/* Trust Badges */}
+      <section
+        className="py-8 border-b border-border/30 relative overflow-hidden"
+        style={{ background: `linear-gradient(135deg, #22c55e10 0%, #22c55e06 50%, transparent 100%)` }}
+      >
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-0 left-[30%] w-[300px] h-[200px] rounded-full blur-[100px]" style={{ background: `#22c55e0a` }} />
+        </div>
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <div className="flex flex-wrap justify-center gap-4 md:gap-8">
+            {[
+              { icon: "🛡️", label: "Licensed & Insured", sub: "Full Liability Coverage" },
+              { icon: "✅", label: "Satisfaction Guaranteed", sub: "100% or Money Back" },
+              { icon: "🏆", label: "Award Winning", sub: "Best of 2024 Landscaping" },
+              { icon: "🌱", label: "Eco-Friendly", sub: "Sustainable Practices" },
+            ].map((badge) => (
+              <div key={badge.label} className="flex items-center gap-3 px-5 py-3 rounded-xl border border-[#22c55e]/20" style={{ background: `#22c55e08` }}>
+                <span className="text-2xl">{badge.icon}</span>
+                <div>
+                  <p className="text-sm font-semibold text-white">{badge.label}</p>
+                  <p className="text-xs text-muted">{badge.sub}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </section>
 
       {/* Services */}
@@ -115,10 +143,12 @@ export default function LandscapingTemplate() {
                   alt={project.name}
                   className="absolute inset-0 w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors duration-300 flex items-center justify-center">
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/60 transition-colors duration-300 flex items-center justify-center p-4">
                   <div className="opacity-0 group-hover:opacity-100 transition-opacity text-center">
-                    <p className="text-white font-semibold">{project.name}</p>
-                    <p className="text-white/60 text-sm">{project.type}</p>
+                    <p className="text-white font-bold text-lg mb-1">{project.name}</p>
+                    <span className="inline-block bg-[#22c55e]/80 text-white text-xs font-semibold px-3 py-1 rounded-full mb-2">{project.type}</span>
+                    <p className="text-white/70 text-xs leading-relaxed">{project.detail}</p>
+                    <span className="inline-block mt-3 text-[#22c55e] text-xs font-semibold border border-[#22c55e]/40 px-3 py-1 rounded-full">View Full Project</span>
                   </div>
                 </div>
               </motion.div>
@@ -171,6 +201,97 @@ export default function LandscapingTemplate() {
           <div className="aspect-square rounded-2xl bg-gradient-to-br from-[#1a2e1a] to-[#2a3e2a] flex items-center justify-center">
             <div className="text-6xl opacity-30">🌳</div>
           </div>
+        </div>
+      </section>
+
+      {/* Seasonal Services */}
+      <section
+        className="py-24 relative overflow-hidden"
+        style={{ background: `linear-gradient(180deg, #22c55e06 0%, #22c55e0c 50%, #22c55e06 100%)` }}
+      >
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-[30%] left-[15%] w-[400px] h-[400px] rounded-full blur-[130px]" style={{ background: `#22c55e0c` }} />
+          <div className="absolute bottom-[20%] right-[10%] w-[350px] h-[350px] rounded-full blur-[120px]" style={{ background: `#22c55e08` }} />
+          <svg className="absolute inset-0 w-full h-full opacity-[0.025]" viewBox="0 0 1000 400">
+            <path d="M0 200 Q250 100 500 200 Q750 300 1000 200" stroke="#22c55e" strokeWidth="0.5" fill="none" />
+            <path d="M100 150 Q120 100 140 150" stroke="#22c55e" strokeWidth="0.5" fill="none" />
+            <path d="M860 250 Q880 200 900 250" stroke="#22c55e" strokeWidth="0.5" fill="none" />
+          </svg>
+        </div>
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-16">
+            <p className="text-[#22c55e] text-sm font-semibold uppercase tracking-wider mb-4">Year-Round Care</p>
+            <h2 className="text-3xl md:text-4xl font-bold">Seasonal Services</h2>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { season: "Spring", icon: "🌸", services: ["Spring cleanup & debris removal", "Mulching & bed prep", "Fertilization programs", "New plantings & sod"] },
+              { season: "Summer", icon: "☀️", services: ["Weekly mowing & edging", "Irrigation monitoring", "Pest & weed control", "Hedge & shrub trimming"] },
+              { season: "Fall", icon: "🍂", services: ["Leaf removal & cleanup", "Aeration & overseeding", "Fall fertilization", "Garden winterization"] },
+              { season: "Winter", icon: "❄️", services: ["Snow removal & de-icing", "Holiday light installation", "Dormant pruning", "Winter landscape planning"] },
+            ].map((s, i) => (
+              <motion.div
+                key={s.season}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="p-6 rounded-xl border border-border/50 relative overflow-hidden group"
+                style={{ background: `#22c55e08` }}
+              >
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, #22c55e15, transparent 70%)` }} />
+                <div className="relative z-10">
+                  <div className="text-3xl mb-3">{s.icon}</div>
+                  <h3 className="text-lg font-bold text-[#22c55e] mb-4">{s.season}</h3>
+                  <ul className="space-y-2">
+                    {s.services.map((svc) => (
+                      <li key={svc} className="flex items-start gap-2 text-sm text-muted">
+                        <span className="text-[#22c55e] mt-0.5 text-xs">&#9679;</span>
+                        <span>{svc}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Service Area */}
+      <section
+        className="py-24 relative overflow-hidden"
+        style={{ background: `linear-gradient(180deg, #0a0a0a 0%, #22c55e08 50%, #0a0a0a 100%)` }}
+      >
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-[40%] right-[15%] w-[400px] h-[400px] rounded-full blur-[130px]" style={{ background: `#22c55e0a` }} />
+          <svg className="absolute inset-0 w-full h-full opacity-[0.03]" viewBox="0 0 1000 400">
+            <circle cx="500" cy="200" r="100" stroke="#22c55e" strokeWidth="0.5" fill="none" />
+            <circle cx="500" cy="200" r="160" stroke="#22c55e" strokeWidth="0.3" fill="none" />
+            <circle cx="500" cy="200" r="220" stroke="#22c55e" strokeWidth="0.2" fill="none" />
+            <circle cx="500" cy="200" r="5" fill="#22c55e" fillOpacity="0.3" />
+          </svg>
+        </div>
+        <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
+          <p className="text-[#22c55e] text-sm font-semibold uppercase tracking-wider mb-4">Where We Work</p>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Service Area</h2>
+          <p className="text-muted mb-10 max-w-xl mx-auto">We proudly serve the following communities and surrounding areas. Don&apos;t see your neighborhood? Give us a call — we may still be able to help.</p>
+          <div className="flex flex-wrap justify-center gap-3">
+            {[
+              "Downtown", "Westlake Hills", "Lakewood", "Maplewood", "Sunset Ridge",
+              "Crestview", "Oak Park", "Riverside", "Cedar Heights", "Greenfield",
+              "Willow Creek", "Summit Glen", "Brookside", "Heritage Hills", "Pine Valley",
+            ].map((area) => (
+              <span
+                key={area}
+                className="px-5 py-2.5 rounded-full border border-[#22c55e]/20 text-sm font-medium text-muted hover:text-[#22c55e] hover:border-[#22c55e]/40 transition-colors cursor-default"
+                style={{ background: `#22c55e08` }}
+              >
+                {area}
+              </span>
+            ))}
+          </div>
+          <p className="text-muted/60 text-xs mt-6">Serving a 30-mile radius from downtown. Commercial contracts available region-wide.</p>
         </div>
       </section>
 

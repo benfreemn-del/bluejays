@@ -115,7 +115,11 @@ export default function DashboardPage() {
           </div>
         ) : (
           <>
-            <DashboardStats prospects={prospects} />
+            <DashboardStats
+              prospects={prospects}
+              onFilterStatus={setStatusFilter}
+              activeFilter={statusFilter}
+            />
 
             {/* View toggle */}
             <div className="flex gap-2">

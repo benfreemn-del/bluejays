@@ -18,7 +18,7 @@ const mockBusinesses: MockBusiness[] = [
   {
     businessName: "Horizon Realty Group",
     ownerName: "Mark Henderson",
-    phone: "(512) 555-0142",
+    phone: "(206) 555-0142",
     email: "mark@horizonrealty.example.com",
     address: "4201 S Congress Ave",
     category: "real-estate",
@@ -28,20 +28,20 @@ const mockBusinesses: MockBusiness[] = [
     scrapedData: {
       businessName: "Horizon Realty Group",
       tagline: "Your trusted partner in Austin real estate since 2008.",
-      phone: "(512) 555-0142",
-      address: "4201 S Congress Ave, Austin, TX",
-      about: "With over 15 years serving the Austin metro area, Horizon Realty Group has helped more than 600 families find their dream homes. We specialize in residential sales, luxury properties, and first-time buyer programs.",
+      phone: "(206) 555-0142",
+      address: "4201 S Congress Ave, Seattle, WA",
+      about: "With over 15 years serving the greater Seattle area, Horizon Realty Group has helped more than 600 families find their dream homes. We specialize in residential sales, luxury properties, and first-time buyer programs.",
       services: [
         { name: "Residential Sales", description: "Full-service buying and selling for single-family homes and condos." },
         { name: "Luxury Properties", description: "Exclusive listings in Austin's premier neighborhoods." },
         { name: "First-Time Buyers", description: "Guidance and financing assistance for first-time homebuyers." },
         { name: "Investment Properties", description: "Help finding and managing rental and investment properties." },
         { name: "Market Analysis", description: "Comprehensive market reports and property valuations." },
-        { name: "Relocation Services", description: "Helping families relocating to the Austin area find their perfect home." },
+        { name: "Relocation Services", description: "Helping families relocating to the Seattle area find their perfect home." },
       ],
       testimonials: [
         { name: "Jennifer & Tom K.", text: "Mark and his team found us our dream home in Westlake Hills. The process was seamless from start to finish.", rating: 5 },
-        { name: "David R.", text: "Sold my condo in just 10 days, above asking price. Horizon really knows the Austin market.", rating: 5 },
+        { name: "David R.", text: "Sold my condo in just 10 days, above asking price. Horizon really knows the Seattle market.", rating: 5 },
         { name: "Samantha L.", text: "As a first-time buyer, I was nervous about everything. They walked me through every step. Couldn't be happier!", rating: 5 },
       ],
       photos: [],
@@ -52,7 +52,7 @@ const mockBusinesses: MockBusiness[] = [
   {
     businessName: "Lakeway Premier Properties",
     ownerName: "Susan Chen",
-    phone: "(512) 555-0198",
+    phone: "(206) 555-0198",
     email: "susan@lakewaypremier.example.com",
     address: "1200 Lakeway Dr",
     category: "real-estate",
@@ -61,7 +61,7 @@ const mockBusinesses: MockBusiness[] = [
     scrapedData: {
       businessName: "Lakeway Premier Properties",
       tagline: "Luxury lakefront living, expertly delivered.",
-      phone: "(512) 555-0198",
+      phone: "(206) 555-0198",
       address: "1200 Lakeway Dr, Lakeway, TX",
       about: "Specializing in luxury waterfront properties around Lake Travis. Susan Chen has been the top-producing agent in the Lakeway area for 8 consecutive years.",
       services: [
@@ -84,7 +84,7 @@ const mockBusinesses: MockBusiness[] = [
   {
     businessName: "Austin Family Dentistry",
     ownerName: "Dr. Rachel Kim",
-    phone: "(512) 555-0234",
+    phone: "(206) 555-0234",
     email: "info@austinfamilydentistry.example.com",
     address: "8500 Burnet Rd, Suite 200",
     category: "dental",
@@ -94,8 +94,8 @@ const mockBusinesses: MockBusiness[] = [
     scrapedData: {
       businessName: "Austin Family Dentistry",
       tagline: "Gentle, modern dental care for the whole family.",
-      phone: "(512) 555-0234",
-      address: "8500 Burnet Rd, Suite 200, Austin, TX",
+      phone: "(206) 555-0234",
+      address: "8500 Burnet Rd, Suite 200, Seattle, WA",
       about: "Dr. Rachel Kim and her team provide comprehensive dental care in a comfortable, state-of-the-art facility. We treat patients of all ages and accept most major insurance plans.",
       services: [
         { name: "General Dentistry", description: "Cleanings, exams, fillings, and preventive care." },
@@ -117,7 +117,7 @@ const mockBusinesses: MockBusiness[] = [
   {
     businessName: "Smile Solutions TX",
     ownerName: "Dr. Brian Torres",
-    phone: "(512) 555-0267",
+    phone: "(206) 555-0267",
     email: "hello@smilesolutionstx.example.com",
     address: "3000 Bee Caves Rd",
     category: "dental",
@@ -126,8 +126,8 @@ const mockBusinesses: MockBusiness[] = [
     scrapedData: {
       businessName: "Smile Solutions TX",
       tagline: "Advanced dentistry with a personal touch.",
-      phone: "(512) 555-0267",
-      address: "3000 Bee Caves Rd, Austin, TX",
+      phone: "(206) 555-0267",
+      address: "3000 Bee Caves Rd, Seattle, WA",
       about: "Offering cutting-edge dental technology including 3D imaging, laser dentistry, and sedation options for anxious patients.",
       services: [
         { name: "Laser Dentistry", description: "Minimally invasive procedures using advanced laser technology." },
@@ -150,7 +150,7 @@ const mockBusinesses: MockBusiness[] = [
   {
     businessName: "Reynolds & Associates Law",
     ownerName: "Amanda Reynolds, Esq.",
-    phone: "(512) 555-0345",
+    phone: "(206) 555-0345",
     email: "amanda@reynoldslaw.example.com",
     address: "100 Congress Ave, Suite 1500",
     category: "law-firm",
@@ -160,8 +160,8 @@ const mockBusinesses: MockBusiness[] = [
     scrapedData: {
       businessName: "Reynolds & Associates Law",
       tagline: "Aggressive representation. Compassionate counsel.",
-      phone: "(512) 555-0345",
-      address: "100 Congress Ave, Suite 1500, Austin, TX",
+      phone: "(206) 555-0345",
+      address: "100 Congress Ave, Suite 1500, Seattle, WA",
       about: "Amanda Reynolds has recovered over $50 million for her clients in personal injury and wrongful death cases. With a 98% success rate, we fight relentlessly for the compensation you deserve.",
       services: [
         { name: "Personal Injury", description: "Car accidents, truck accidents, motorcycle crashes, and pedestrian injuries." },
@@ -183,7 +183,7 @@ const mockBusinesses: MockBusiness[] = [
   {
     businessName: "Perez Family Law",
     ownerName: "Gabriel Perez, Esq.",
-    phone: "(512) 555-0378",
+    phone: "(206) 555-0378",
     email: "gabe@perezfamilylaw.example.com",
     address: "2525 Wallingwood Dr",
     category: "law-firm",
@@ -192,8 +192,8 @@ const mockBusinesses: MockBusiness[] = [
     scrapedData: {
       businessName: "Perez Family Law",
       tagline: "Protecting what matters most — your family.",
-      phone: "(512) 555-0378",
-      address: "2525 Wallingwood Dr, Austin, TX",
+      phone: "(206) 555-0378",
+      address: "2525 Wallingwood Dr, Seattle, WA",
       about: "Gabriel Perez has spent 18 years exclusively practicing family law. We handle divorce, custody, adoption, and prenuptial agreements with discretion and skill.",
       services: [
         { name: "Divorce", description: "Contested and uncontested divorce representation." },
@@ -217,7 +217,7 @@ const mockBusinesses: MockBusiness[] = [
   {
     businessName: "Lone Star Landscapes",
     ownerName: "Travis McCoy",
-    phone: "(512) 555-0456",
+    phone: "(206) 555-0456",
     email: "travis@lonestarlscapes.example.com",
     address: "7800 Shoal Creek Blvd",
     category: "landscaping",
@@ -227,9 +227,9 @@ const mockBusinesses: MockBusiness[] = [
     scrapedData: {
       businessName: "Lone Star Landscapes",
       tagline: "Transforming Texas backyards since 2011.",
-      phone: "(512) 555-0456",
-      address: "7800 Shoal Creek Blvd, Austin, TX",
-      about: "From custom patio builds to full property makeovers, Lone Star Landscapes has completed over 800 projects across the Austin area. We're licensed, insured, and obsessed with quality.",
+      phone: "(206) 555-0456",
+      address: "7800 Shoal Creek Blvd, Seattle, WA",
+      about: "From custom patio builds to full property makeovers, Lone Star Landscapes has completed over 800 projects across the Seattle area. We're licensed, insured, and obsessed with quality.",
       services: [
         { name: "Landscape Design", description: "Custom designs from our certified landscape architects." },
         { name: "Patio & Hardscaping", description: "Patios, walkways, retaining walls, and outdoor kitchens." },
@@ -250,7 +250,7 @@ const mockBusinesses: MockBusiness[] = [
   {
     businessName: "Hill Country Lawns",
     ownerName: "Jake Morrison",
-    phone: "(512) 555-0489",
+    phone: "(206) 555-0489",
     email: "jake@hillcountrylawns.example.com",
     address: "12400 Parmer Ln",
     category: "landscaping",
@@ -259,8 +259,8 @@ const mockBusinesses: MockBusiness[] = [
     scrapedData: {
       businessName: "Hill Country Lawns",
       tagline: "Premium lawn care for Austin homes and businesses.",
-      phone: "(512) 555-0489",
-      address: "12400 Parmer Ln, Austin, TX",
+      phone: "(206) 555-0489",
+      address: "12400 Parmer Ln, Seattle, WA",
       about: "Specializing in drought-resistant landscaping and native Texas plants. We create beautiful, sustainable outdoor spaces that thrive in the Texas heat.",
       services: [
         { name: "Xeriscaping", description: "Water-wise landscaping with native and adapted plants." },
@@ -283,7 +283,7 @@ const mockBusinesses: MockBusiness[] = [
   {
     businessName: "Velvet Hair Studio",
     ownerName: "Maya Johnson",
-    phone: "(512) 555-0567",
+    phone: "(206) 555-0567",
     email: "maya@velvethair.example.com",
     address: "2000 E 6th St",
     category: "salon",
@@ -293,8 +293,8 @@ const mockBusinesses: MockBusiness[] = [
     scrapedData: {
       businessName: "Velvet Hair Studio",
       tagline: "Where color meets artistry. East Austin's favorite salon.",
-      phone: "(512) 555-0567",
-      address: "2000 E 6th St, Austin, TX",
+      phone: "(206) 555-0567",
+      address: "2000 E 6th St, Seattle, WA",
       about: "Velvet Hair Studio is a boutique salon specializing in balayage, vivid colors, and precision cuts. Founded by Maya Johnson, a 12-year industry veteran trained at Sassoon Academy.",
       services: [
         { name: "Women's Cut & Style", description: "Precision cut with blowout styling.", price: "$75+" },
@@ -319,7 +319,7 @@ const mockBusinesses: MockBusiness[] = [
   {
     businessName: "The Grooming Lounge",
     ownerName: "Derek Washington",
-    phone: "(512) 555-0589",
+    phone: "(206) 555-0589",
     email: "derek@groominglounge.example.com",
     address: "405 W 2nd St",
     category: "salon",
@@ -328,8 +328,8 @@ const mockBusinesses: MockBusiness[] = [
     scrapedData: {
       businessName: "The Grooming Lounge",
       tagline: "Premium barbering and grooming for the modern gentleman.",
-      phone: "(512) 555-0589",
-      address: "405 W 2nd St, Austin, TX",
+      phone: "(206) 555-0589",
+      address: "405 W 2nd St, Seattle, WA",
       about: "Part barbershop, part lounge. We offer classic cuts, straight razor shaves, and beard sculpting in a relaxed, upscale environment. Complimentary whiskey with every service.",
       services: [
         { name: "Classic Cut", description: "Traditional barbershop cut with hot towel.", price: "$45" },
@@ -363,7 +363,7 @@ export function getMockProspects(city: string, state: string, category?: Categor
     email: b.email,
     address: b.address,
     city,
-    state: state || "TX",
+    state: state || "WA",
     category: b.category,
     currentWebsite: b.currentWebsite,
     googleRating: b.googleRating,

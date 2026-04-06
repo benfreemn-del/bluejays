@@ -239,12 +239,12 @@ function getCategoryTagline(category: string): string {
 }
 
 const defaultSiteCards: SiteCard[] = [
-  { name: "Prestige Realty", category: "Real Estate", color: "#1a2744", href: "/templates/real-estate", icon: "🏠", tagline: "Luxury listings & expert agents" },
-  { name: "Bright Smile Dental", category: "Dental", color: "#0f2a2a", href: "/templates/dental", icon: "🦷", tagline: "Modern care for the whole family" },
-  { name: "Carter & Associates", category: "Law Firm", color: "#1f1a2e", href: "/templates/law-firm", icon: "⚖️", tagline: "Experienced attorneys, proven results" },
-  { name: "GreenScape Pro", category: "Landscaping", color: "#1a2e1a", href: "/templates/landscaping", icon: "🌳", tagline: "Transform your outdoor space" },
-  { name: "Luxe Studio", category: "Salon", color: "#2e1a2a", href: "/templates/salon", icon: "✂️", tagline: "Where artistry meets luxury" },
-  { name: "Summit Roofing", category: "Roofing", color: "#2a1f14", href: "#", icon: "🏗️", tagline: "Quality roofing you can trust" },
-  { name: "FlowState Yoga", category: "Fitness", color: "#142a2a", href: "#", icon: "💪", tagline: "Train harder, live better" },
-  { name: "PurePaws Grooming", category: "Pet Services", color: "#1e2a14", href: "#", icon: "🐾", tagline: "Premium care for your pets" },
+  { name: "Puget Sound Realty", category: "Real Estate", color: "#1a2744", href: "/templates/real-estate", icon: "🏠", tagline: "Seattle luxury homes & expert agents" },
+  { name: "Emerald City Dental", category: "Dental", color: "#0f2a2a", href: "/templates/dental", icon: "🦷", tagline: "Modern care for Seattle families" },
+  { name: "Pacific Law Group", category: "Law Firm", color: "#1f1a2e", href: "/templates/law-firm", icon: "⚖️", tagline: "Trusted attorneys, proven results" },
+  { name: "Cascade Landscapes", category: "Landscaping", color: "#1a2e1a", href: "/templates/landscaping", icon: "🌳", tagline: "Transform your PNW outdoor space" },
+  { name: "Velvet Hair Studio", category: "Salon", color: "#2e1a2a", href: "/templates/salon", icon: "✂️", tagline: "Where artistry meets luxury" },
+  { name: "Summit Roofing NW", category: "Roofing", color: "#2a1f14", href: "#", icon: "🏗️", tagline: "Built for Pacific Northwest weather" },
+  { name: "Iron & Oak Fitness", category: "Fitness", color: "#142a2a", href: "#", icon: "💪", tagline: "Seattle's boutique strength gym" },
+  { name: "Northshore Vet Clinic", category: "Veterinary", color: "#1e2a14", href: "#", icon: "🐾", tagline: "Compassionate care for your pets" },
 ];
