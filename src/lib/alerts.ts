@@ -1,0 +1,119 @@
+import type { Prospect } from "./types";
+
+const OWNER_PHONE = process.env.OWNER_PHONE_NUMBER;
+const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID;
+const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN;
+const TWILIO_PHONE_NUMBER = process.env.TWILIO_PHONE_NUMBER;
+
+export type AlertType =
+  | "high-value-lead"
+  | "prospect-responded"
+  | "prospect-paid"
+  | "angry-response"
+  | "custom-request"
+  | "scrape-failed"
+  | "county-complete";
+
+interface Alert {
+  type: AlertType;
+  message: string;
+  prospect?: Prospect;
+  timestamp: string;
+}
+
+async function sendOwnerSms(message: string): Promise<boolean> {
+  if (!OWNER_PHONE || !TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN || !TWILIO_PHONE_NUMBER) {
+    console.log(`  🔔 [ALERT - would text owner]: ${message}`);
+    return false;
+  }
+
+  const url = `https://api.twilio.com/2010-04-01/Accounts/${TWILIO_ACCOUNT_SID}/Messages.json`;
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      Authorization: "Basic " + Buffer.from(`${TWILIO_ACCOUNT_SID}:${TWILIO_AUTH_TOKEN}`).toString("base64"),
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: new URLSearchParams({
+      To: OWNER_PHONE,
+      From: TWILIO_PHONE_NUMBER,
+      Body: message,
+    }),
+  });
+  return response.ok;
+}
+
+export async function alertOwner(alert: Alert): Promise<void> {
+  const prefix = getAlertEmoji(alert.type);
+  const fullMessage = `${prefix} BlueJays Alert:\n${alert.message}`;
+
+  console.log(`\n${"=".repeat(50)}`);
+  console.log(fullMessage);
+  console.log(`${"=".repeat(50)}\n`);
+
+  await sendOwnerSms(fullMessage);
+}
+
+function getAlertEmoji(type: AlertType): string {
+  const emojis: Record<AlertType, string> = {
+    "high-value-lead": "🔥",
+    "prospect-responded": "💬",
+    "prospect-paid": "💰",
+    "angry-response": "⚠️",
+    "custom-request": "📋",
+    "scrape-failed": "❌",
+    "county-complete": "✅",
+  };
+  return emojis[type];
+}
+
+// Trigger functions for common alert scenarios
+
+export async function alertHighValueLead(prospect: Prospect) {
+  await alertOwner({
+    type: "high-value-lead",
+    message: `High-value lead detected!\n${prospect.businessName} (${prospect.category})\nRating: ${prospect.googleRating} (${prospect.reviewCount} reviews)\nPhone: ${prospect.phone || "N/A"}`,
+    prospect,
+    timestamp: new Date().toISOString(),
+  });
+}
+
+export async function alertProspectResponded(prospect: Prospect, response: string) {
+  await alertOwner({
+    type: "prospect-responded",
+    message: `${prospect.businessName} replied!\nPreview: "${response.substring(0, 100)}..."`,
+    prospect,
+    timestamp: new Date().toISOString(),
+  });
+}
+
+export async function alertProspectPaid(prospect: Prospect) {
+  await alertOwner({
+    type: "prospect-paid",
+    message: `${prospect.businessName} just PAID! 🎉\n$997 received. Check the dashboard for onboarding details.`,
+    prospect,
+    timestamp: new Date().toISOString(),
+  });
+}
+
+export async function alertAngryResponse(prospect: Prospect, response: string) {
+  await alertOwner({
+    type: "angry-response",
+    message: `Negative response from ${prospect.businessName}.\n"${response.substring(0, 100)}..."\nAI has paused. Manual intervention needed.`,
+    prospect,
+    timestamp: new Date().toISOString(),
+  });
+}
+
+export async function alertCustomRequest(prospect: Prospect, request: string) {
+  await alertOwner({
+    type: "custom-request",
+    message: `${prospect.businessName} asked about custom features:\n"${request.substring(0, 100)}..."\nReady to close — reach out personally.`,
+    prospect,
+    timestamp: new Date().toISOString(),
+  });
+}
+
+export function isAlertsConfigured(): boolean {
+  return !!(OWNER_PHONE && TWILIO_ACCOUNT_SID);
+}

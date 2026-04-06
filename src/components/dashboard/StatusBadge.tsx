@@ -11,6 +11,16 @@ const statusConfig: Record<
     bg: "bg-yellow-900/50",
     text: "text-yellow-300",
   },
+  "pending-review": {
+    label: "Needs Review",
+    bg: "bg-red-900/50",
+    text: "text-red-300",
+  },
+  approved: {
+    label: "Approved",
+    bg: "bg-emerald-900/50",
+    text: "text-emerald-300",
+  },
   deployed: {
     label: "Deployed",
     bg: "bg-orange-900/50",

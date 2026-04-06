@@ -80,11 +80,17 @@ export default function DashboardPage() {
             <h1 className="text-xl font-bold">BlueJays Dashboard</h1>
           </div>
           <div className="flex items-center gap-3">
-            <a
-              href="/"
-              className="text-sm text-muted hover:text-foreground transition-colors"
-            >
+            <a href="/" className="text-sm text-muted hover:text-foreground transition-colors">
               Portfolio
+            </a>
+            <a href="/scripts" className="text-sm text-muted hover:text-foreground transition-colors">
+              Scripts
+            </a>
+            <a
+              href="/api/export/phones?format=csv"
+              className="h-9 px-4 rounded-lg bg-surface border border-border text-muted text-sm font-medium flex items-center hover:text-foreground hover:border-blue-electric/40 transition-colors"
+            >
+              Export Phones
             </a>
             <button
               onClick={() => setScoutOpen(true)}

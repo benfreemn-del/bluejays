@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import TemplateLayout from "./TemplateLayout";
+import SectionBackground from "./SectionBackground";
 
 const services = [
   { name: "Lawn Maintenance", desc: "Weekly mowing, edging, fertilization, and weed control to keep your lawn pristine.", icon: "🌿" },
@@ -29,6 +30,7 @@ export default function LandscapingTemplate() {
       accentColor="#22c55e"
       accentColorLight="#4ade80"
       heroGradient="linear-gradient(135deg, #1a2e1a 0%, #0f1f0f 100%)"
+      heroImage="https://images.unsplash.com/photo-1558904541-efa843a96f01?w=1400&q=80"
       phone="(555) 456-7890"
       address="789 Garden Way, Your City"
     >
@@ -38,8 +40,9 @@ export default function LandscapingTemplate() {
       </section>
 
       {/* Services */}
-      <section id="services" className="py-24 bg-background">
-        <div className="max-w-6xl mx-auto px-6">
+      <section id="services" className="py-24 bg-background relative overflow-hidden">
+        <SectionBackground category="landscaping" variant="services" />
+        <div className="max-w-6xl mx-auto px-6 relative">
           <div className="text-center mb-16">
             <p className="text-[#22c55e] text-sm font-semibold uppercase tracking-wider mb-4">Our Services</p>
             <h2 className="text-3xl md:text-4xl font-bold">Everything Your Yard Needs</h2>
@@ -64,8 +67,9 @@ export default function LandscapingTemplate() {
       </section>
 
       {/* Project Gallery */}
-      <section id="about" className="py-24 bg-surface">
-        <div className="max-w-6xl mx-auto px-6">
+      <section id="about" className="py-24 bg-surface relative overflow-hidden">
+        <SectionBackground category="landscaping" variant="about" />
+        <div className="max-w-6xl mx-auto px-6 relative">
           <div className="text-center mb-16">
             <p className="text-[#22c55e] text-sm font-semibold uppercase tracking-wider mb-4">Our Work</p>
             <h2 className="text-3xl md:text-4xl font-bold">Recent Projects</h2>
@@ -80,6 +84,11 @@ export default function LandscapingTemplate() {
                 transition={{ delay: i * 0.1 }}
                 className="group relative aspect-[4/3] rounded-xl overflow-hidden bg-gradient-to-br from-[#1a2e1a] to-[#2a3e2a] cursor-pointer"
               >
+                <img
+                  src="https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=600&q=80"
+                  alt={project.name}
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors duration-300 flex items-center justify-center">
                   <div className="opacity-0 group-hover:opacity-100 transition-opacity text-center">
                     <p className="text-white font-semibold">{project.name}</p>
@@ -122,8 +131,9 @@ export default function LandscapingTemplate() {
       </section>
 
       {/* Testimonials */}
-      <section id="testimonials" className="py-24 bg-surface">
-        <div className="max-w-5xl mx-auto px-6">
+      <section id="testimonials" className="py-24 bg-surface relative overflow-hidden">
+        <SectionBackground category="landscaping" variant="testimonials" />
+        <div className="max-w-5xl mx-auto px-6 relative">
           <div className="text-center mb-16">
             <p className="text-[#22c55e] text-sm font-semibold uppercase tracking-wider mb-4">Reviews</p>
             <h2 className="text-3xl md:text-4xl font-bold">What Our Customers Say</h2>

@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import TemplateLayout from "./TemplateLayout";
+import SectionBackground from "./SectionBackground";
 
 const listings = [
   { address: "142 Oak Ridge Drive", price: "$425,000", beds: 4, baths: 3, sqft: "2,400", tag: "New Listing" },
@@ -27,6 +28,7 @@ export default function RealEstateTemplate() {
       accentColor="#c8a45e"
       accentColorLight="#d4b76a"
       heroGradient="linear-gradient(135deg, #1a2744 0%, #0d1b33 100%)"
+      heroImage="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1400&q=80"
       phone="(555) 123-4567"
       address="Downtown, Your City"
     >
@@ -43,8 +45,9 @@ export default function RealEstateTemplate() {
       </section>
 
       {/* Featured Listings */}
-      <section id="services" className="py-24 bg-background">
-        <div className="max-w-6xl mx-auto px-6">
+      <section id="services" className="py-24 bg-background relative overflow-hidden">
+        <SectionBackground category="real-estate" variant="services" />
+        <div className="max-w-6xl mx-auto px-6 relative">
           <div className="text-center mb-16">
             <p className="text-[#c8a45e] text-sm font-semibold uppercase tracking-wider mb-4">Featured Properties</p>
             <h2 className="text-3xl md:text-4xl font-bold">Find Your Perfect Home</h2>
@@ -60,7 +63,12 @@ export default function RealEstateTemplate() {
                 className="rounded-xl overflow-hidden bg-surface border border-border group hover:border-[#c8a45e]/40 transition-colors"
               >
                 <div className="aspect-[16/10] bg-gradient-to-br from-[#1a2744] to-[#2a3754] relative">
-                  <span className="absolute top-3 left-3 bg-[#c8a45e] text-black text-xs font-bold px-3 py-1 rounded-full">
+                  <img
+                    src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=600&q=80"
+                    alt={listing.address}
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                  <span className="absolute top-3 left-3 bg-[#c8a45e] text-black text-xs font-bold px-3 py-1 rounded-full z-10">
                     {listing.tag}
                   </span>
                 </div>
@@ -80,11 +88,16 @@ export default function RealEstateTemplate() {
       </section>
 
       {/* About Agent */}
-      <section id="about" className="py-24 bg-surface">
-        <div className="max-w-5xl mx-auto px-6">
+      <section id="about" className="py-24 bg-surface relative overflow-hidden">
+        <SectionBackground category="real-estate" variant="about" />
+        <div className="max-w-5xl mx-auto px-6 relative">
           <div className="grid md:grid-cols-2 gap-16 items-center">
-            <div className="aspect-square rounded-2xl bg-gradient-to-br from-[#1a2744] to-[#2a3754] flex items-center justify-center">
-              <div className="text-6xl opacity-30">🏠</div>
+            <div className="aspect-square rounded-2xl bg-gradient-to-br from-[#1a2744] to-[#2a3754] overflow-hidden">
+              <img
+                src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&q=80"
+                alt="Real estate agent"
+                className="w-full h-full object-cover"
+              />
             </div>
             <div>
               <p className="text-[#c8a45e] text-sm font-semibold uppercase tracking-wider mb-4">Meet Your Agent</p>
@@ -108,8 +121,9 @@ export default function RealEstateTemplate() {
       </section>
 
       {/* Testimonials */}
-      <section id="testimonials" className="py-24 bg-background">
-        <div className="max-w-5xl mx-auto px-6">
+      <section id="testimonials" className="py-24 bg-background relative overflow-hidden">
+        <SectionBackground category="real-estate" variant="testimonials" />
+        <div className="max-w-5xl mx-auto px-6 relative">
           <div className="text-center mb-16">
             <p className="text-[#c8a45e] text-sm font-semibold uppercase tracking-wider mb-4">Client Stories</p>
             <h2 className="text-3xl md:text-4xl font-bold">What Our Clients Say</h2>

@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import TemplateLayout from "./TemplateLayout";
+import SectionBackground from "./SectionBackground";
 
 const menuItems = [
   { category: "Hair", items: [
@@ -39,6 +40,7 @@ export default function SalonTemplate() {
       accentColor="#ec4899"
       accentColorLight="#f472b6"
       heroGradient="linear-gradient(135deg, #2e1a2a 0%, #1f101a 100%)"
+      heroImage="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=1400&q=80"
       phone="(555) 567-8901"
       address="321 Beauty Lane, Your City"
     >
@@ -48,8 +50,9 @@ export default function SalonTemplate() {
       </section>
 
       {/* Service Menu */}
-      <section id="services" className="py-24 bg-background">
-        <div className="max-w-5xl mx-auto px-6">
+      <section id="services" className="py-24 bg-background relative overflow-hidden">
+        <SectionBackground category="salon" variant="services" />
+        <div className="max-w-5xl mx-auto px-6 relative">
           <div className="text-center mb-16">
             <p className="text-[#ec4899] text-sm font-semibold uppercase tracking-wider mb-4">Our Menu</p>
             <h2 className="text-3xl md:text-4xl font-bold">Services & Pricing</h2>
@@ -80,8 +83,9 @@ export default function SalonTemplate() {
       </section>
 
       {/* Stylists */}
-      <section id="about" className="py-24 bg-surface">
-        <div className="max-w-5xl mx-auto px-6">
+      <section id="about" className="py-24 bg-surface relative overflow-hidden">
+        <SectionBackground category="salon" variant="about" />
+        <div className="max-w-5xl mx-auto px-6 relative">
           <div className="text-center mb-16">
             <p className="text-[#ec4899] text-sm font-semibold uppercase tracking-wider mb-4">Our Team</p>
             <h2 className="text-3xl md:text-4xl font-bold">Meet Your Stylists</h2>
@@ -96,8 +100,12 @@ export default function SalonTemplate() {
                 transition={{ delay: i * 0.1 }}
                 className="text-center"
               >
-                <div className="aspect-[3/4] rounded-xl bg-gradient-to-br from-[#2e1a2a] to-[#3e2a3a] mb-4 flex items-center justify-center">
-                  <div className="text-4xl opacity-30">✂️</div>
+                <div className="aspect-[3/4] rounded-xl bg-gradient-to-br from-[#2e1a2a] to-[#3e2a3a] mb-4 overflow-hidden">
+                  <img
+                    src="https://images.unsplash.com/photo-1580618672591-eb180b1a973f?w=400&q=80"
+                    alt={stylist.name}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 <p className="font-semibold">{stylist.name}</p>
                 <p className="text-[#ec4899] text-sm">{stylist.role}</p>
@@ -123,16 +131,23 @@ export default function SalonTemplate() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.05 }}
-                className="aspect-square rounded-lg bg-gradient-to-br from-[#2e1a2a] to-[#3e2a3a]"
-              />
+                className="aspect-square rounded-lg bg-gradient-to-br from-[#2e1a2a] to-[#3e2a3a] overflow-hidden"
+              >
+                <img
+                  src={`https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400&q=80`}
+                  alt={`Gallery image ${i + 1}`}
+                  className="w-full h-full object-cover"
+                />
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
       {/* Testimonials */}
-      <section id="testimonials" className="py-24 bg-surface">
-        <div className="max-w-5xl mx-auto px-6">
+      <section id="testimonials" className="py-24 bg-surface relative overflow-hidden">
+        <SectionBackground category="salon" variant="testimonials" />
+        <div className="max-w-5xl mx-auto px-6 relative">
           <div className="text-center mb-16">
             <p className="text-[#ec4899] text-sm font-semibold uppercase tracking-wider mb-4">Reviews</p>
             <h2 className="text-3xl md:text-4xl font-bold">What Our Clients Say</h2>

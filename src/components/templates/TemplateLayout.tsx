@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { ReactNode } from "react";
+import BluejayLogo from "../BluejayLogo";
 
 interface TemplateLayoutProps {
   businessName: string;
@@ -9,6 +10,7 @@ interface TemplateLayoutProps {
   accentColor: string;
   accentColorLight: string;
   heroGradient: string;
+  heroImage?: string;
   phone: string;
   address: string;
   children: ReactNode;
@@ -19,6 +21,7 @@ export default function TemplateLayout({
   tagline,
   accentColor,
   heroGradient,
+  heroImage,
   phone,
   address,
   children,
@@ -50,6 +53,13 @@ export default function TemplateLayout({
         className="relative min-h-[85vh] flex items-center justify-center pt-16"
         style={{ background: heroGradient }}
       >
+        {heroImage && (
+          <img
+            src={heroImage}
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        )}
         <div className="absolute inset-0 bg-black/40" />
         <div className="relative z-10 text-center px-6 max-w-3xl">
           <motion.h1
@@ -94,8 +104,20 @@ export default function TemplateLayout({
       {children}
 
       {/* Contact Section */}
-      <section id="contact" className="py-24 bg-surface">
-        <div className="max-w-5xl mx-auto px-6">
+      <section id="contact" className="py-24 relative overflow-hidden" style={{ background: `linear-gradient(180deg, ${accentColor}08 0%, ${accentColor}04 50%, transparent 100%)` }}>
+        {/* Background art */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div
+            className="absolute top-[20%] left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full blur-[150px]"
+            style={{ background: `${accentColor}0a` }}
+          />
+          <svg className="absolute inset-0 w-full h-full opacity-[0.03]" viewBox="0 0 800 400">
+            <circle cx="400" cy="200" r="80" stroke={accentColor} strokeWidth="0.5" fill="none" />
+            <circle cx="400" cy="200" r="150" stroke={accentColor} strokeWidth="0.3" fill="none" />
+            <circle cx="400" cy="200" r="220" stroke={accentColor} strokeWidth="0.2" fill="none" />
+          </svg>
+        </div>
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
               Get in Touch
@@ -105,32 +127,50 @@ export default function TemplateLayout({
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-8 text-center">
-            <div className="p-6 rounded-xl bg-surface-light border border-border">
-              <div className="text-2xl mb-3">📞</div>
-              <p className="font-semibold mb-1">Phone</p>
-              <p className="text-muted">{phone}</p>
+            <div className="p-6 rounded-xl border border-border relative overflow-hidden" style={{ background: `${accentColor}08` }}>
+              <div className="absolute inset-0 opacity-[0.03]" style={{ background: `radial-gradient(circle at 50% 30%, ${accentColor}, transparent 70%)` }} />
+              <div className="relative z-10">
+                <div className="text-2xl mb-3">📞</div>
+                <p className="font-semibold mb-1">Phone</p>
+                <p className="text-muted">{phone}</p>
+              </div>
             </div>
-            <div className="p-6 rounded-xl bg-surface-light border border-border">
-              <div className="text-2xl mb-3">📍</div>
-              <p className="font-semibold mb-1">Location</p>
-              <p className="text-muted">{address}</p>
+            <div className="p-6 rounded-xl border border-border relative overflow-hidden" style={{ background: `${accentColor}08` }}>
+              <div className="absolute inset-0 opacity-[0.03]" style={{ background: `radial-gradient(circle at 50% 30%, ${accentColor}, transparent 70%)` }} />
+              <div className="relative z-10">
+                <div className="text-2xl mb-3">📍</div>
+                <p className="font-semibold mb-1">Location</p>
+                <p className="text-muted">{address}</p>
+              </div>
             </div>
-            <div className="p-6 rounded-xl bg-surface-light border border-border">
-              <div className="text-2xl mb-3">🕐</div>
-              <p className="font-semibold mb-1">Hours</p>
-              <p className="text-muted">Mon-Fri 8am-6pm</p>
+            <div className="p-6 rounded-xl border border-border relative overflow-hidden" style={{ background: `${accentColor}08` }}>
+              <div className="absolute inset-0 opacity-[0.03]" style={{ background: `radial-gradient(circle at 50% 30%, ${accentColor}, transparent 70%)` }} />
+              <div className="relative z-10">
+                <div className="text-2xl mb-3">🕐</div>
+                <p className="font-semibold mb-1">Hours</p>
+                <p className="text-muted">Mon-Fri 8am-6pm</p>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-8 border-t border-border bg-background">
-        <div className="max-w-5xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <footer className="border-t border-border bg-background">
+        <div className="max-w-5xl mx-auto px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <span className="font-bold">{businessName}</span>
           <p className="text-muted text-sm">
             &copy; {new Date().getFullYear()} {businessName}. All rights reserved.
           </p>
+        </div>
+        {/* Bluejay Branding */}
+        <div className="border-t border-border/50 py-4">
+          <div className="max-w-5xl mx-auto px-6 flex items-center justify-center gap-2">
+            <BluejayLogo size={16} className="text-blue-electric/60" />
+            <p className="text-muted/40 text-xs">
+              Website created by Bluejay Business Solutions
+            </p>
+          </div>
         </div>
       </footer>
     </div>

@@ -16,6 +16,8 @@ const allStatuses: ProspectStatus[] = [
   "scouted",
   "scraped",
   "generated",
+  "pending-review",
+  "approved",
   "deployed",
   "contacted",
   "responded",

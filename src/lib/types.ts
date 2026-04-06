@@ -34,6 +34,8 @@ export type ProspectStatus =
   | "scouted"
   | "scraped"
   | "generated"
+  | "pending-review"
+  | "approved"
   | "deployed"
   | "contacted"
   | "responded"
@@ -97,6 +99,12 @@ export interface PipelineResult {
   prospect: Prospect;
   previewUrl: string;
 }
+
+export const PRICING = {
+  basePrice: 997,
+  remarketingPrice: 497,
+  yearlyManagement: 100,
+};
 
 export const CATEGORY_CONFIG: Record<
   Category,

@@ -215,9 +215,9 @@ function getNextResponse(step: number, userMessage: string, businessName: string
   // Price questions
   if (lower.includes("cost") || lower.includes("price") || lower.includes("how much") || lower.includes("pricing")) {
     return [
-      `Great question! The website is a one-time investment of $1,000 — that includes everything: design, development, content, SEO, hosting setup, and your first year of site management.`,
+      `Great question! The website is a one-time investment of $997 — that includes everything: design, development, content, SEO, hosting setup, and your first year of site management.`,
       `After the first year, it's just $100/year to keep everything running, updated, and secure. No hidden fees, no contracts.`,
-      `For comparison, most agencies charge $3,000-$10,000 for a site like this. We're able to offer it at this price because of our streamlined process. Would you like to move forward?`,
+      `For comparison, most agencies charge $3,000-$10,000 for a site like this. $997 is firm — it's already the lowest we can go for this level of quality for a site like this. We're able to offer it at this price because of our streamlined process. Would you like to move forward?`,
     ];
   }
 

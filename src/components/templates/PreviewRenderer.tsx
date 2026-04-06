@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import type { GeneratedSiteData } from "@/lib/generator";
 import TemplateLayout from "./TemplateLayout";
+import SectionBackground from "./SectionBackground";
 
 export default function PreviewRenderer({ data }: { data: GeneratedSiteData }) {
   const {
@@ -20,6 +21,25 @@ export default function PreviewRenderer({ data }: { data: GeneratedSiteData }) {
     hours,
   } = data;
 
+  const heroImageMap: Record<string, string> = {
+    "real-estate": "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1400&q=80",
+    "dental": "https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=1400&q=80",
+    "law-firm": "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=1400&q=80",
+    "landscaping": "https://images.unsplash.com/photo-1558904541-efa843a96f01?w=1400&q=80",
+    "salon": "https://images.unsplash.com/photo-1560066984-138dadb4c035?w=1400&q=80",
+  };
+
+  const aboutImageMap: Record<string, string> = {
+    "real-estate": "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&q=80",
+    "dental": "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=600&q=80",
+    "law-firm": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80",
+    "landscaping": "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=600&q=80",
+    "salon": "https://images.unsplash.com/photo-1580618672591-eb180b1a973f?w=400&q=80",
+  };
+
+  const heroImage = heroImageMap[category] || "";
+  const aboutImage = aboutImageMap[category] || "";
+
   return (
     <TemplateLayout
       businessName={businessName}
@@ -27,6 +47,7 @@ export default function PreviewRenderer({ data }: { data: GeneratedSiteData }) {
       accentColor={accentColor}
       accentColorLight={accentColor}
       heroGradient={heroGradient}
+      heroImage={heroImage}
       phone={phone}
       address={address}
     >
@@ -53,8 +74,9 @@ export default function PreviewRenderer({ data }: { data: GeneratedSiteData }) {
       )}
 
       {/* Services */}
-      <section id="services" className="py-24 bg-background">
-        <div className="max-w-6xl mx-auto px-6">
+      <section id="services" className="py-24 bg-background relative overflow-hidden">
+        <SectionBackground category={category} variant="services" />
+        <div className="max-w-6xl mx-auto px-6 relative">
           <div className="text-center mb-16">
             <p
               className="text-sm font-semibold uppercase tracking-wider mb-4"
@@ -112,8 +134,9 @@ export default function PreviewRenderer({ data }: { data: GeneratedSiteData }) {
       </section>
 
       {/* About */}
-      <section id="about" className="py-24 bg-surface">
-        <div className="max-w-5xl mx-auto px-6">
+      <section id="about" className="py-24 bg-surface relative overflow-hidden">
+        <SectionBackground category={category} variant="about" />
+        <div className="max-w-5xl mx-auto px-6 relative">
           <div className="grid md:grid-cols-2 gap-16 items-center">
             <div>
               <p
@@ -138,22 +161,32 @@ export default function PreviewRenderer({ data }: { data: GeneratedSiteData }) {
               )}
             </div>
             <div
-              className="aspect-square rounded-2xl flex items-center justify-center"
+              className="aspect-square rounded-2xl overflow-hidden"
               style={{
                 background: heroGradient,
               }}
             >
-              <div className="text-6xl opacity-30">
-                {category === "real-estate"
-                  ? "🏠"
-                  : category === "dental"
-                    ? "🦷"
-                    : category === "law-firm"
-                      ? "⚖️"
-                      : category === "landscaping"
-                        ? "🌳"
-                        : "✂️"}
-              </div>
+              {aboutImage ? (
+                <img
+                  src={aboutImage}
+                  alt={`About ${businessName}`}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <div className="text-6xl opacity-30">
+                    {category === "real-estate"
+                      ? "🏠"
+                      : category === "dental"
+                        ? "🦷"
+                        : category === "law-firm"
+                          ? "⚖️"
+                          : category === "landscaping"
+                            ? "🌳"
+                            : "✂️"}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -161,8 +194,9 @@ export default function PreviewRenderer({ data }: { data: GeneratedSiteData }) {
 
       {/* Testimonials */}
       {testimonials.length > 0 && (
-        <section id="testimonials" className="py-24 bg-background">
-          <div className="max-w-5xl mx-auto px-6">
+        <section id="testimonials" className="py-24 bg-background relative overflow-hidden">
+          <SectionBackground category={category} variant="testimonials" />
+          <div className="max-w-5xl mx-auto px-6 relative">
             <div className="text-center mb-16">
               <p
                 className="text-sm font-semibold uppercase tracking-wider mb-4"

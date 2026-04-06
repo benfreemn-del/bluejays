@@ -176,6 +176,34 @@ export default function ProspectDetail({
               </section>
             )}
 
+          {/* Review Banner */}
+          {prospect.status === "pending-review" && (
+            <section className="p-4 rounded-xl bg-red-500/10 border border-red-500/30">
+              <h3 className="text-sm font-bold text-red-400 mb-2">
+                Needs Your Review
+              </h3>
+              <p className="text-muted text-xs mb-3">
+                This site was auto-generated and needs your approval before being sent to the customer.
+              </p>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => onStatusChange(prospect.id, "approved")}
+                  className="flex-1 h-10 rounded-lg bg-emerald-500/20 text-emerald-400 text-sm font-medium hover:bg-emerald-500/30 transition-colors"
+                >
+                  Approve
+                </button>
+                <a
+                  href={prospect.generatedSiteUrl || "#"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 h-10 rounded-lg bg-blue-electric/20 text-blue-electric text-sm font-medium flex items-center justify-center hover:bg-blue-electric/30 transition-colors"
+                >
+                  Review Site
+                </a>
+              </div>
+            </section>
+          )}
+
           {/* Actions */}
           <section>
             <h3 className="text-sm font-semibold text-muted uppercase tracking-wider mb-3">
@@ -192,13 +220,29 @@ export default function ProspectDetail({
                   View Preview Site
                 </a>
               )}
-              {prospect.email && prospect.generatedSiteUrl && (
+              {prospect.email && prospect.generatedSiteUrl && (prospect.status === "approved" || prospect.status === "deployed" || prospect.status === "generated") && (
                 <button
                   onClick={() => onSendEmail(prospect)}
                   className="w-full h-10 rounded-lg bg-green-500/10 text-green-400 text-sm font-medium hover:bg-green-500/20 transition-colors"
                 >
                   Send Pitch Email
                 </button>
+              )}
+              {prospect.phone && prospect.generatedSiteUrl && (prospect.status === "approved" || prospect.status === "deployed" || prospect.status === "generated") && (
+                <button
+                  onClick={async () => {
+                    const res = await fetch(`/api/sms/send/${prospect.id}`, { method: "POST" });
+                    const data = await res.json();
+                    if (res.ok) alert(`SMS sent to ${prospect.phone}!`);
+                    else alert(`Error: ${data.error}`);
+                  }}
+                  className="w-full h-10 rounded-lg bg-blue-500/10 text-blue-400 text-sm font-medium hover:bg-blue-500/20 transition-colors"
+                >
+                  Send SMS
+                </button>
+              )}
+              {prospect.status === "pending-review" && prospect.email && (
+                <p className="text-xs text-muted text-center">Approve this site before sending outreach</p>
               )}
               <select
                 value={prospect.status}
@@ -210,6 +254,8 @@ export default function ProspectDetail({
                 <option value="scouted">Scouted</option>
                 <option value="scraped">Scraped</option>
                 <option value="generated">Generated</option>
+                <option value="pending-review">Needs Review</option>
+                <option value="approved">Approved</option>
                 <option value="deployed">Deployed</option>
                 <option value="contacted">Contacted</option>
                 <option value="responded">Responded</option>

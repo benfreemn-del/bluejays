@@ -2,15 +2,10 @@ import { scout } from "../src/lib/scout";
 import { scrapeWebsite } from "../src/lib/scraper";
 import { generatePreview } from "../src/lib/generator";
 import { updateProspect } from "../src/lib/store";
+import { CATEGORY_CONFIG } from "../src/lib/types";
 import type { Category } from "../src/lib/types";
 
-const VALID_CATEGORIES: Category[] = [
-  "real-estate",
-  "dental",
-  "law-firm",
-  "landscaping",
-  "salon",
-];
+const VALID_CATEGORIES = Object.keys(CATEGORY_CONFIG) as Category[];
 
 async function main() {
   const args = process.argv.slice(2);

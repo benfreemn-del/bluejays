@@ -1,11 +1,23 @@
 "use client";
 
 import { motion } from "framer-motion";
+import BluejayLogo from "./BluejayLogo";
 
 export default function About() {
   return (
-    <section className="py-24 bg-background">
-      <div className="max-w-5xl mx-auto px-6">
+    <section className="py-24 relative overflow-hidden bg-[#050a14]">
+      {/* Background art */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-[20%] right-[10%] w-[450px] h-[450px] rounded-full bg-accent/6 blur-[140px]" />
+        <div className="absolute bottom-[20%] left-[20%] w-[400px] h-[400px] rounded-full bg-blue-deep/8 blur-[130px]" />
+        <BluejayLogo size={200} className="absolute bottom-[10%] right-[3%] opacity-[0.03] text-accent -rotate-12" />
+        {/* Subtle wave */}
+        <svg className="absolute bottom-0 left-0 w-full opacity-[0.04]" viewBox="0 0 1440 200" fill="none">
+          <path d="M0 100 C360 0 720 200 1080 100 C1260 50 1440 100 1440 100 V200 H0Z" fill="#0ea5e9" />
+        </svg>
+      </div>
+
+      <div className="max-w-5xl mx-auto px-6 relative z-10">
         <div className="grid md:grid-cols-2 gap-16 items-center">
           <div>
             <p className="text-blue-electric text-sm font-semibold uppercase tracking-wider mb-4">
@@ -34,7 +46,7 @@ export default function About() {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3 + i * 0.15, duration: 0.5 }}
-                className="flex gap-4"
+                className="flex gap-4 p-4 rounded-xl bg-[#0a1628]/60 border border-blue-electric/5 hover:border-blue-electric/20 transition-colors"
               >
                 <div className="shrink-0 w-12 h-12 rounded-lg bg-blue-electric/10 flex items-center justify-center text-blue-electric text-xl">
                   {feature.icon}

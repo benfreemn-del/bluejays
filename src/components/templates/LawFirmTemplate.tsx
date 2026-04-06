@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import TemplateLayout from "./TemplateLayout";
+import SectionBackground from "./SectionBackground";
 
 const practiceAreas = [
   { name: "Personal Injury", desc: "Car accidents, slip & fall, medical malpractice. We fight for maximum compensation.", icon: "⚖️" },
@@ -27,6 +28,7 @@ export default function LawFirmTemplate() {
       accentColor="#8b5cf6"
       accentColorLight="#a78bfa"
       heroGradient="linear-gradient(135deg, #1f1a2e 0%, #13101f 100%)"
+      heroImage="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=1400&q=80"
       phone="(555) 345-6789"
       address="456 Justice Blvd, Your City"
     >
@@ -36,8 +38,9 @@ export default function LawFirmTemplate() {
       </section>
 
       {/* Practice Areas */}
-      <section id="services" className="py-24 bg-background">
-        <div className="max-w-6xl mx-auto px-6">
+      <section id="services" className="py-24 bg-background relative overflow-hidden">
+        <SectionBackground category="law-firm" variant="services" />
+        <div className="max-w-6xl mx-auto px-6 relative">
           <div className="text-center mb-16">
             <p className="text-[#8b5cf6] text-sm font-semibold uppercase tracking-wider mb-4">Practice Areas</p>
             <h2 className="text-3xl md:text-4xl font-bold">Legal Expertise You Can Trust</h2>
@@ -87,10 +90,15 @@ export default function LawFirmTemplate() {
       </section>
 
       {/* About */}
-      <section id="about" className="py-24 bg-background">
-        <div className="max-w-5xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
-          <div className="aspect-[4/5] rounded-2xl bg-gradient-to-br from-[#1f1a2e] to-[#2f2a3e] flex items-center justify-center">
-            <div className="text-6xl opacity-30">⚖️</div>
+      <section id="about" className="py-24 bg-background relative overflow-hidden">
+        <SectionBackground category="law-firm" variant="about" />
+        <div className="max-w-5xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center relative">
+          <div className="aspect-[4/5] rounded-2xl bg-gradient-to-br from-[#1f1a2e] to-[#2f2a3e] overflow-hidden">
+            <img
+              src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80"
+              alt="Attorney portrait"
+              className="w-full h-full object-cover"
+            />
           </div>
           <div>
             <p className="text-[#8b5cf6] text-sm font-semibold uppercase tracking-wider mb-4">Why Choose Us</p>
@@ -111,8 +119,9 @@ export default function LawFirmTemplate() {
       </section>
 
       {/* Testimonials */}
-      <section id="testimonials" className="py-24 bg-surface">
-        <div className="max-w-5xl mx-auto px-6">
+      <section id="testimonials" className="py-24 bg-surface relative overflow-hidden">
+        <SectionBackground category="law-firm" variant="testimonials" />
+        <div className="max-w-5xl mx-auto px-6 relative">
           <div className="text-center mb-16">
             <p className="text-[#8b5cf6] text-sm font-semibold uppercase tracking-wider mb-4">Client Testimonials</p>
             <h2 className="text-3xl md:text-4xl font-bold">Trusted by Hundreds of Clients</h2>

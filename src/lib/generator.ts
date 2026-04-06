@@ -121,7 +121,7 @@ export async function generatePreview(prospect: Prospect): Promise<string> {
   // Update prospect status
   const previewUrl = `/preview/${prospect.id}`;
   await updateProspect(prospect.id, {
-    status: "generated",
+    status: "pending-review",
     generatedSiteUrl: previewUrl,
   });
 

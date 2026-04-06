@@ -32,7 +32,7 @@ export async function createCheckoutSession(
         `Custom Website — ${businessName}`,
       "line_items[0][price_data][product_data][description]":
         "Premium custom website design, hosting setup, and deployment",
-      "line_items[0][price_data][unit_amount]": "100000", // $1,000.00
+      "line_items[0][price_data][unit_amount]": "99700", // $997.00
       "line_items[0][quantity]": "1",
       mode: "payment",
       customer_email: email,
