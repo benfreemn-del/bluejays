@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 import type { Prospect, ScoutOptions } from "./types";
 import { getMockProspects } from "./mock-prospects";
-import { addProspect } from "./store";
+import { addProspect, getAllProspects } from "./store";
 
 const GOOGLE_API_KEY = process.env.GOOGLE_PLACES_API_KEY;
 
@@ -83,11 +83,20 @@ export async function scout(options: ScoutOptions): Promise<Prospect[]> {
     prospects = scoutWithMockData(options);
   }
 
-  // Save each prospect to the store
-  for (const prospect of prospects) {
+  // Dedup: skip businesses already in the system (especially dismissed ones)
+  const existing = await getAllProspects();
+  const existingNames = new Set(existing.map((p) => p.businessName.toLowerCase()));
+  const newProspects = prospects.filter((p) => !existingNames.has(p.businessName.toLowerCase()));
+
+  if (newProspects.length < prospects.length) {
+    console.log(`  Skipped ${prospects.length - newProspects.length} duplicates (already in system)`);
+  }
+
+  // Save new prospects to the store
+  for (const prospect of newProspects) {
     await addProspect(prospect);
   }
 
-  console.log(`  Found ${prospects.length} businesses\n`);
-  return prospects;
+  console.log(`  Found ${newProspects.length} new businesses\n`);
+  return newProspects;
 }

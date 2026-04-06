@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import type { Prospect, Category, ProspectStatus } from "@/lib/types";
 import { CATEGORY_CONFIG } from "@/lib/types";
 import StatusBadge from "./StatusBadge";
@@ -29,6 +30,7 @@ export default function ProspectTable({
   onSendEmail,
   onRefresh,
 }: ProspectTableProps) {
+  const router = useRouter();
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [bulkSending, setBulkSending] = useState(false);
   const [bulkResult, setBulkResult] = useState("");
@@ -36,6 +38,8 @@ export default function ProspectTable({
   const filtered = prospects.filter((p) => {
     if (categoryFilter && p.category !== categoryFilter) return false;
     if (statusFilter && p.status !== statusFilter) return false;
+    // Hide dismissed unless specifically filtering for them
+    if (!statusFilter && p.status === "dismissed") return false;
     return true;
   });
 
@@ -189,8 +193,8 @@ export default function ProspectTable({
                     className="rounded"
                   />
                 </td>
-                <td className="p-3 cursor-pointer" onClick={() => onSelectProspect(prospect)}>
-                  <p className="font-medium">{prospect.businessName}</p>
+                <td className="p-3 cursor-pointer" onClick={() => router.push(`/lead/${prospect.id}`)}>
+                  <p className="font-medium text-blue-electric hover:underline">{prospect.businessName}</p>
                   {prospect.phone && <p className="text-muted text-xs">{prospect.phone}</p>}
                 </td>
                 <td className="p-3">

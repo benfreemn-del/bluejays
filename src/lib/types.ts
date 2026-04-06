@@ -39,7 +39,8 @@ export type ProspectStatus =
   | "deployed"
   | "contacted"
   | "responded"
-  | "paid";
+  | "paid"
+  | "dismissed";
 
 export interface Prospect {
   id: string;

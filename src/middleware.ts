@@ -6,6 +6,7 @@ const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "bluejay2026";
 const PROTECTED_PATHS = [
   "/dashboard",
   "/scripts",
+  "/lead",
   "/api/scout",
   "/api/prospects",
   "/api/email",
@@ -65,5 +66,7 @@ export const config = {
     "/api/export/:path*",
     "/api/edit/:path*",
     "/api/quality-review/:path*",
+    "/api/notes/:path*",
+    "/lead/:path*",
   ],
 };
