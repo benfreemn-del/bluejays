@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { useEffect } from "react";
 import type { GeneratedSiteData } from "@/lib/generator";
 import TemplateLayout from "./TemplateLayout";
@@ -113,13 +112,9 @@ export default function PreviewRenderer({ data }: { data: GeneratedSiteData }) {
             </h2>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {services.map((service, i) => (
-              <motion.div
+            {services.map((service) => (
+              <div
                 key={service.name}
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ delay: i * 0.08, duration: 0.4 }}
                 className="p-6 rounded-xl border border-border/50 hover:border-opacity-60 transition-all duration-300 relative overflow-hidden group"
                 style={{ background: `${accentColor}08` }}
               >
@@ -134,7 +129,7 @@ export default function PreviewRenderer({ data }: { data: GeneratedSiteData }) {
                   </div>
                   {service.description && <p className="text-muted text-sm leading-relaxed">{service.description}</p>}
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
@@ -213,11 +208,8 @@ export default function PreviewRenderer({ data }: { data: GeneratedSiteData }) {
             </div>
             <div className="grid md:grid-cols-3 gap-6">
               {testimonials.slice(0, 3).map((t, i) => (
-                <motion.div
+                <div
                   key={i}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.1 }}
                   className="p-6 rounded-xl border border-border/50 relative overflow-hidden"
                   style={{ background: `${accentColor}08` }}
                 >
@@ -229,7 +221,7 @@ export default function PreviewRenderer({ data }: { data: GeneratedSiteData }) {
                     <p className="text-muted leading-relaxed mb-4">&ldquo;{t.text}&rdquo;</p>
                     <p className="font-semibold text-sm">{t.name}</p>
                   </div>
-                </motion.div>
+                </div>
               ))}
             </div>
           </div>
