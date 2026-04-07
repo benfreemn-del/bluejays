@@ -70,7 +70,7 @@ After Failsafe 1 passes, a quality review agent MUST:
 - **Verdict: PASS or FAIL** — if FAIL, the site stays in "generated" and the agent logs what needs to be fixed
 - **Only a PASS from the visual review agent allows promotion to "pending-review"**
 - This agent has PERMANENT PERMISSION to use Chrome extensions and screenshots
-- **Current highest templates by category**: electrician=V1, plumber=V1, hvac=V1, roofing=V1, auto-repair=V1, dental=V2, law-firm=V2, salon=V2, fitness=V2, real-estate=V2, church=V2
+- **Current highest templates by category**: electrician=V2, plumber=V2, hvac=V2, roofing=V2, auto-repair=V2, dental=V2, law-firm=V2, salon=V2, fitness=V2, real-estate=V2, church=V2. All other categories=V1.
 
 ### Failsafe 3: Image Quality & Visual Premium Agent
 This agent reviews scraped/Google photos BEFORE they go into the generated site:
