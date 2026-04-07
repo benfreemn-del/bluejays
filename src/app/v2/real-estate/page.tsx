@@ -111,7 +111,7 @@ function GoldParticles() {
   );
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden hidden md:block">
       {particles.map((p) => (
         <motion.div
           key={p.id}
@@ -212,7 +212,7 @@ export default function V2RealEstatePage() {
         transition={spring}
         className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-[#09090b]/70 border-b border-white/5"
       >
-        <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
+        <div className="max-w-7xl mx-auto flex items-center justify-between px-4 md:px-6 py-4">
           <div className="flex items-center gap-3">
             <Buildings size={28} weight="bold" color={GOLD} />
             <span className="text-xl font-bold tracking-tight">PINNACLE</span>
@@ -278,7 +278,7 @@ export default function V2RealEstatePage() {
 
         <motion.div
           style={{ opacity: heroOpacity }}
-          className="relative z-20 max-w-7xl mx-auto w-full px-6 pt-24"
+          className="relative z-20 max-w-7xl mx-auto w-full px-4 md:px-6 pt-24"
         >
           <div className="max-w-2xl">
             <motion.p
@@ -297,7 +297,8 @@ export default function V2RealEstatePage() {
                 initial={{ x: "-100%" }}
                 animate={{ x: 0 }}
                 transition={{ duration: 1.2, delay: 1.5, ease: [0.22, 1, 0.36, 1] }}
-                className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tighter leading-none"
+                className="text-3xl md:text-6xl lg:text-7xl font-black tracking-tighter leading-none"
+                style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}
               >
                 <span className="text-white">Your Dream</span>
                 <br />
@@ -354,8 +355,8 @@ export default function V2RealEstatePage() {
       </motion.section>
 
       {/* ═══ PROPERTY SHOWCASE — horizontal scroll with parallax ═══ */}
-      <section id="properties" className="relative z-10 py-24">
-        <div className="max-w-7xl mx-auto px-6">
+      <section id="properties" className="relative z-10 py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-4 md:px-6">
           <motion.div
             initial={{ y: 30, opacity: 0 }}
             whileInView={{ y: 0, opacity: 1 }}
@@ -379,7 +380,7 @@ export default function V2RealEstatePage() {
 
         <motion.div
           ref={showcaseRef}
-          className="flex gap-6 px-6 cursor-grab active:cursor-grabbing overflow-hidden pb-4"
+          className="flex gap-4 md:gap-6 px-4 md:px-6 cursor-grab active:cursor-grabbing overflow-hidden pb-4"
           drag="x"
           dragConstraints={showcaseRef}
           dragElastic={0.1}
@@ -390,9 +391,9 @@ export default function V2RealEstatePage() {
               initial={{ x: 80, opacity: 0 }}
               whileInView={{ x: 0, opacity: 1 }}
               viewport={{ once: true }}
-              transition={{ ...spring, delay: i * 0.1 }}
+              transition={{ ...spring, delay: i * 0.05 }}
               whileHover={{ y: -6, transition: spring }}
-              className="flex-shrink-0 w-[400px] rounded-2xl overflow-hidden backdrop-blur-md bg-white/[0.03] border border-white/[0.06] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)] group"
+              className="flex-shrink-0 w-[300px] md:w-[400px] rounded-2xl overflow-hidden backdrop-blur-md bg-white/[0.03] border border-white/[0.06] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)] group"
             >
               <div className="relative h-56 overflow-hidden">
                 <motion.img
@@ -438,8 +439,8 @@ export default function V2RealEstatePage() {
       </section>
 
       {/* ═══ AGENT SECTION — asymmetric layout ═══ */}
-      <section id="agent" className="relative z-10 py-24">
-        <div className="max-w-7xl mx-auto px-6">
+      <section id="agent" className="relative z-10 py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-4 md:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 items-center">
             {/* Left — large photo (3 cols) */}
             <motion.div
@@ -531,8 +532,8 @@ export default function V2RealEstatePage() {
       </section>
 
       {/* ═══ MARKET STATS — animated bars ═══ */}
-      <section id="market" className="relative z-10 py-24">
-        <div className="max-w-5xl mx-auto px-6">
+      <section id="market" className="relative z-10 py-16 md:py-24">
+        <div className="max-w-5xl mx-auto px-4 md:px-6">
           <motion.div
             initial={{ y: 30, opacity: 0 }}
             whileInView={{ y: 0, opacity: 1 }}
@@ -584,7 +585,7 @@ export default function V2RealEstatePage() {
       </section>
 
       {/* ═══ CONTACT — map-style background with liquid glass ═══ */}
-      <section id="contact" className="relative z-10 py-32">
+      <section id="contact" className="relative z-10 py-16 md:py-32">
         {/* map-style background */}
         <div className="absolute inset-0 overflow-hidden opacity-10">
           <svg viewBox="0 0 800 400" className="w-full h-full" preserveAspectRatio="xMidYMid slice">
@@ -625,13 +626,13 @@ export default function V2RealEstatePage() {
           </svg>
         </div>
 
-        <div className="relative max-w-3xl mx-auto px-6">
+        <div className="relative max-w-3xl mx-auto px-4 md:px-6">
           <motion.div
             initial={{ y: 40, opacity: 0 }}
             whileInView={{ y: 0, opacity: 1 }}
             viewport={{ once: true }}
             transition={spring}
-            className="p-10 md:p-14 rounded-3xl backdrop-blur-xl bg-white/[0.04] border border-white/[0.08] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)]"
+            className="p-6 md:p-14 rounded-3xl backdrop-blur-xl bg-white/[0.04] border border-white/[0.08] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)]"
           >
             <p
               className="text-sm font-semibold tracking-[0.3em] uppercase mb-4"
@@ -697,7 +698,7 @@ export default function V2RealEstatePage() {
 
       {/* ═══ FOOTER ═══ */}
       <footer className="relative z-10 border-t border-white/5 py-10">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <Buildings size={20} weight="bold" color={GOLD} />
             <span className="font-bold tracking-tight">PINNACLE ESTATES</span>

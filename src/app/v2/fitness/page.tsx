@@ -476,8 +476,8 @@ export default function V2FitnessPage() {
       </section>
 
       {/* ═══ TRAINERS ═══ */}
-      <section id="trainers" className="relative z-10 py-24">
-        <div className="max-w-7xl mx-auto px-6">
+      <section id="trainers" className="relative z-10 py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-4 md:px-6">
           <motion.div
             initial={{ y: 30, opacity: 0 }}
             whileInView={{ y: 0, opacity: 1 }}
@@ -533,8 +533,8 @@ export default function V2FitnessPage() {
       </section>
 
       {/* ═══ SCHEDULE TIMELINE ═══ */}
-      <section id="schedule" className="relative z-10 py-24">
-        <div className="max-w-4xl mx-auto px-6">
+      <section id="schedule" className="relative z-10 py-16 md:py-24">
+        <div className="max-w-4xl mx-auto px-4 md:px-6">
           <motion.div
             initial={{ y: 30, opacity: 0 }}
             whileInView={{ y: 0, opacity: 1 }}
@@ -607,15 +607,15 @@ export default function V2FitnessPage() {
       </section>
 
       {/* ═══ CTA ═══ */}
-      <section id="contact" className="relative z-10 py-32">
-        <div className="max-w-4xl mx-auto px-6 text-center">
+      <section id="contact" className="relative z-10 py-16 md:py-32">
+        <div className="max-w-4xl mx-auto px-4 md:px-6 text-center">
           <motion.div
             initial={{ y: 40, opacity: 0 }}
             whileInView={{ y: 0, opacity: 1 }}
             viewport={{ once: true }}
             transition={spring}
           >
-            <h2 className="text-4xl md:text-6xl font-black tracking-tighter leading-none mb-6">
+            <h2 className="text-3xl md:text-6xl font-black tracking-tighter leading-none mb-6">
               Ready to
               <br />
               <span style={{ color: RED }}>Transform?</span>
@@ -646,7 +646,7 @@ export default function V2FitnessPage() {
 
       {/* ═══ FOOTER ═══ */}
       <footer className="relative z-10 border-t border-white/5 py-10">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <Barbell size={20} weight="bold" color={RED} />
             <span className="font-bold tracking-tight">FORGE ATHLETICS</span>
