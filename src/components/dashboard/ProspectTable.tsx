@@ -36,6 +36,7 @@ export default function ProspectTable({
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [bulkSending, setBulkSending] = useState(false);
   const [bulkResult, setBulkResult] = useState("");
+  const [buildingIds, setBuildingIds] = useState<string[]>([]);
 
   const filtered = prospects.filter((p) => {
     if (categoryFilter && p.category !== categoryFilter) return false;
@@ -289,14 +290,23 @@ export default function ProspectTable({
                       </a>
                     ) : (
                       <button
+                        disabled={buildingIds.includes(prospect.id)}
                         onClick={async () => {
-                          await fetch(`/api/generate/${prospect.id}`, { method: "POST" });
+                          setBuildingIds((prev) => [...prev, prospect.id]);
+                          try {
+                            await fetch(`/api/generate/${prospect.id}`, { method: "POST" });
+                          } catch {}
+                          setBuildingIds((prev) => prev.filter((x) => x !== prospect.id));
                           onRefresh?.();
                         }}
-                        className="text-xs px-2.5 py-1.5 rounded-lg bg-yellow-500/10 text-yellow-400 hover:bg-yellow-500/20 transition-colors"
-                        title="Generate preview site"
+                        className={`text-xs px-2.5 py-1.5 rounded-lg transition-colors ${
+                          buildingIds.includes(prospect.id)
+                            ? "bg-yellow-500/30 text-yellow-300 animate-pulse"
+                            : "bg-yellow-500/10 text-yellow-400 hover:bg-yellow-500/20"
+                        }`}
+                        title="Scrape & generate preview site"
                       >
-                        Build Site
+                        {buildingIds.includes(prospect.id) ? "Building..." : "Build Site"}
                       </button>
                     )}
                     {prospect.status === "pending-review" && (
