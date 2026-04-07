@@ -268,21 +268,24 @@ export default function Hero() {
       {/* ── Portfolio Grid ── */}
       <motion.div
         initial={{ opacity: 0 }}
-        animate={{ opacity: bubbleVisible ? 0.1 : 1 }}
-        transition={{ duration: 1, delay: bubbleVisible ? 0 : 0.3 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8 }}
         className="relative z-10 w-full max-w-6xl px-6 pt-24"
       >
         {/* Section header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: bubbleVisible ? 0 : 1, y: bubbleVisible ? 20 : 0 }}
-          transition={{ delay: 5.2, duration: 0.6 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
           <motion.span
             initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: bubbleVisible ? 0 : 1, y: bubbleVisible ? -10 : 0 }}
-            transition={{ delay: 5.2 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
             className="inline-block text-sky-400 text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border border-sky-500/20 bg-sky-500/5"
           >
             Our Portfolio
@@ -293,8 +296,9 @@ export default function Hero() {
           </h2>
           <motion.div
             initial={{ scaleX: 0 }}
-            animate={{ scaleX: bubbleVisible ? 0 : 1 }}
-            transition={{ delay: 5.4, duration: 0.6 }}
+            whileInView={{ scaleX: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3, duration: 0.6 }}
             className="h-0.5 w-16 bg-gradient-to-r from-sky-500 to-transparent mt-4 mx-auto"
           />
           <p className="text-white/50 mt-4 text-lg max-w-xl mx-auto">
@@ -309,8 +313,9 @@ export default function Hero() {
               key={site.name}
               href={site.href}
               initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 5.4 + i * 0.06, duration: 0.4 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.06, duration: 0.4 }}
               whileHover={{ scale: 1.04, y: -8 }}
               className="group relative rounded-2xl overflow-hidden bg-white/[0.03] border border-white/[0.06] cursor-pointer hover:border-sky-500/40 transition-all duration-500 hover:shadow-[0_12px_50px_rgba(14,165,233,0.3)]"
             >
