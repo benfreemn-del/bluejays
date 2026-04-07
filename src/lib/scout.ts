@@ -72,6 +72,8 @@ function scoutWithMockData(options: ScoutOptions): Prospect[] {
 const ACTIVE_CATEGORIES: Category[] = [
   "real-estate", "dental", "law-firm", "landscaping", "salon",
   "electrician", "plumber", "hvac", "roofing", "auto-repair",
+  "chiropractic", "fitness", "veterinary", "photography",
+  "cleaning", "pest-control", "accounting", "moving", "florist", "daycare",
 ];
 
 export async function scout(options: ScoutOptions): Promise<Prospect[]> {
