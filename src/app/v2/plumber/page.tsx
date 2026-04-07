@@ -483,7 +483,7 @@ const galleryImages = [
   { src: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=600&q=80", alt: "Luxury bathroom renovation" },
   { src: "https://images.unsplash.com/photo-1564540586988-aa4e53ab3394?w=600&q=80", alt: "Kitchen sink plumbing installation" },
   { src: "https://images.unsplash.com/photo-1613685703305-38ca3a68f878?w=600&q=80", alt: "New tankless water heater installed" },
-  { src: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&q=80", alt: "Complete residential plumbing project" },
+  { src: "https://images.unsplash.com/photo-1504973960431-1c1c6e3c3e6f?w=600&q=80", alt: "Complete residential plumbing project" },
 ];
 
 /* ═══════════════════════════════════════════════════════════════════

@@ -101,7 +101,7 @@ const trainers = [
     name: "Aisha Patel",
     specialty: "HIIT & Functional",
     exp: "9 years",
-    image: "https://images.unsplash.com/photo-1609899537878-48e3a14b tried?w=400&h=500&fit=crop",
+    image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=500&fit=crop",
   },
   {
     name: "Jake Morrison",

@@ -391,7 +391,7 @@ function BeforeAfterSlider() {
       {/* "After" side — beautiful new roof */}
       <div className="absolute inset-0">
         <img
-          src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80"
+          src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&q=80"
           alt="After — pristine new roof installation"
           className="w-full h-full object-cover object-center"
         />
@@ -495,14 +495,14 @@ const materials = [
     description:
       "Premium dimensional shingles with enhanced wind resistance and a rich, layered look. 30-50 year lifespan.",
     image:
-      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&q=80",
+      "https://images.unsplash.com/photo-1575517111478-7f6afd0973db?w=400&q=80",
   },
   {
     name: "Standing Seam Metal",
     description:
       "Sleek, modern metal roofing with interlocking panels. Energy efficient, fire resistant, and built to last 50+ years.",
     image:
-      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400&q=80",
+      "https://images.unsplash.com/photo-1558036117-15d82a90b9b1?w=400&q=80",
   },
   {
     name: "Cedar Shake",

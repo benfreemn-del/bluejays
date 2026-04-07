@@ -898,7 +898,7 @@ export default function V2HvacPage() {
             >
               <div className="relative rounded-2xl overflow-hidden aspect-[4/3]">
                 <img
-                  src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=800&q=80"
+                  src="https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=800&q=80"
                   alt="HVAC technician performing maintenance"
                   className="w-full h-full object-cover"
                 />
@@ -1343,7 +1343,7 @@ export default function V2HvacPage() {
             >
               <div className="relative rounded-2xl overflow-hidden aspect-[4/3]">
                 <img
-                  src="https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=800&q=80"
+                  src="https://images.unsplash.com/photo-1631545806609-05235a8de706?w=800&q=80"
                   alt="Modern energy-efficient HVAC system"
                   className="w-full h-full object-cover"
                 />

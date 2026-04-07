@@ -576,7 +576,7 @@ const galleryImages = [
     alt: "Sports car in service bay",
   },
   {
-    src: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=600&q=80",
+    src: "https://images.unsplash.com/photo-1487754180451-c456f719a1fc?w=600&q=80",
     alt: "Technician inspecting brakes",
   },
   {
