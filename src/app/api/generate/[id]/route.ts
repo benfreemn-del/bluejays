@@ -18,32 +18,24 @@ export async function POST(
   }
 
   try {
-    // STEP 1: Quick scrape (5s timeout) if they have a website
-    if (prospect.currentWebsite && (!prospect.scrapedData || !prospect.scrapedData.businessName)) {
+    // STEP 1: Always scrape if they have a website — customization is non-negotiable
+    if (prospect.currentWebsite) {
       try {
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 5000);
-        const response = await fetch(prospect.currentWebsite, {
-          headers: { "User-Agent": "Mozilla/5.0" },
-          signal: controller.signal,
-        });
-        clearTimeout(timeout);
-
-        if (response.ok) {
-          const scraped = await scrapeWebsite(prospect.currentWebsite);
-          if (scraped.businessName || scraped.services.length > 0) {
-            prospect.scrapedData = {
-              ...scraped,
-              businessName: scraped.businessName || prospect.businessName,
-              services: scraped.services.length > 0 ? scraped.services : [],
-              testimonials: scraped.testimonials.length > 0 ? scraped.testimonials : [],
-              photos: scraped.photos.length > 0 ? scraped.photos : [],
-            };
-            await updateProspect(id, { scrapedData: prospect.scrapedData, status: "scraped" });
-          }
+        console.log(`  🔄 Scraping ${prospect.currentWebsite} for customization data...`);
+        const scraped = await scrapeWebsite(prospect.currentWebsite);
+        const hasData = scraped.businessName || scraped.services.length > 0 || scraped.phone || scraped.photos.length > 0;
+        if (hasData) {
+          prospect.scrapedData = {
+            ...scraped,
+            businessName: scraped.businessName || prospect.businessName,
+          };
+          await updateProspect(id, { scrapedData: prospect.scrapedData, status: "scraped" });
+          console.log(`  ✅ Scrape successful — customization data loaded`);
+        } else {
+          console.log(`  ⚠️ Scrape returned no useful data — using scout data + defaults`);
         }
-      } catch {
-        // Scrape failed or timed out — continue with defaults
+      } catch (scrapeErr) {
+        console.log(`  ⚠️ Scrape failed: ${(scrapeErr as Error).message} — using scout data + defaults`);
       }
     }
 

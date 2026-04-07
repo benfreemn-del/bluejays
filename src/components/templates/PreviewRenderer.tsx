@@ -33,7 +33,8 @@ export default function PreviewRenderer({ data }: { data: GeneratedSiteData }) {
     hours,
   } = data;
 
-  const heroImageMap: Record<string, string> = {
+  // Stock fallbacks by category — only used when no real photos exist
+  const heroStockMap: Record<string, string> = {
     "real-estate": "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1400&q=80",
     "dental": "https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=1400&q=80",
     "law-firm": "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=1400&q=80",
@@ -41,7 +42,7 @@ export default function PreviewRenderer({ data }: { data: GeneratedSiteData }) {
     "salon": "https://images.unsplash.com/photo-1560066984-138dadb4c035?w=1400&q=80",
   };
 
-  const aboutImageMap: Record<string, string> = {
+  const aboutStockMap: Record<string, string> = {
     "real-estate": "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&q=80",
     "dental": "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=600&q=80",
     "law-firm": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80",
@@ -49,8 +50,10 @@ export default function PreviewRenderer({ data }: { data: GeneratedSiteData }) {
     "salon": "https://images.unsplash.com/photo-1580618672591-eb180b1a973f?w=400&q=80",
   };
 
-  const heroImage = heroImageMap[category] || "";
-  const aboutImage = aboutImageMap[category] || "";
+  // CUSTOMIZATION: Use scraped photos first, stock only as last resort
+  const photos = data.photos || [];
+  const heroImage = photos[0] || heroStockMap[category] || "";
+  const aboutImage = photos[1] || aboutStockMap[category] || "";
 
   // Lighter version of accent color for glows
   const glowColor = accentColor;

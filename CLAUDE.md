@@ -19,6 +19,7 @@ This system is designed to function like a money printer. Every feature should d
 - **Every team/staff photo must be unique per template** — no sharing headshots between electrician, plumber, dental, etc.
 - **Verify all image URLs actually load** — broken images are unacceptable. Test before deploying.
 - **For generated preview sites**: use the business's real photos when scraped. Only fall back to stock as last resort, and never reuse stock across different prospects.
+- **Stock images are LAST RESORT only** — always attempt to use scraped photos from the business's website first. Only use hardcoded stock images if nothing of reasonable quality can be scraped. A real photo of their actual business (even if lower quality) is better than a generic stock photo.
 
 ## Customization Rules (NON-NEGOTIABLE)
 Every generated website MUST be heavily customized to the specific business. Generic is unacceptable. The site generation agent must:
@@ -28,6 +29,21 @@ Every generated website MUST be heavily customized to the specific business. Gen
 - **Match their copywriting style** — if their current site is formal, be formal. If casual and friendly, match that tone. Scrape their "about" text and mirror the voice.
 - **Include their real services, real prices, real testimonials** — never use placeholder data when real data is available from scraping.
 - **Each generated site must feel like THEIR site** — not a template with their name swapped in. If you showed it to the business owner, they should think "this was made specifically for me."
+
+## Verification Rules (NON-NEGOTIABLE)
+- **ALWAYS verify your work using Chrome browser tools after deploying** — never assume a deploy worked. Navigate to the page, take a screenshot, confirm it looks right.
+- **After generating a preview site**: open it in Chrome, verify the business name is correct, phone number is real (not 555-000-0000), services match the business, and images load.
+- **After any UI change**: screenshot the page in both desktop AND mobile to verify layout.
+- **After fixing a bug**: verify the fix on the LIVE site, not just that the build passes.
+- **Check generated preview sites for**: real phone number, real address, real services, scraped content actually used, hero image relevant to industry, social links present if available.
+- **A preview with placeholder data (555-000-0000, generic tagline, no real services) is UNACCEPTABLE** — the scraper MUST run and populate real data before the preview is shown.
+
+## Status Accuracy Rules (NON-NEGOTIABLE)
+- **NEVER label a site as "pending-review" (Sites Ready) unless it passes quality checks** — real phone number, real services, real about text. Sites with placeholder data must stay in "generated" (processing) status.
+- **A site in "pending-review" means it's READY for the owner to see** — if you wouldn't send it to the business owner right now, it's NOT ready.
+- **The quality gate is automated** — the generator checks for real data before promoting status. If customization score is too low, it stays in processing.
+- **Dashboard status must reflect reality** — no prospect should show a status that doesn't match its actual state. If the preview is broken, half-baked, or uses placeholder data, the status must reflect that.
+- **Before any outreach (email, text, DM), verify the preview is actually good** — never send a pitch with a broken or generic preview.
 
 ## Scouting Rules
 - **Only scout categories that have a built template** — don't scout categories we can't generate premium sites for yet.

@@ -97,7 +97,8 @@ export function generateSiteData(prospect: Prospect): GeneratedSiteData {
   // 3. Use real services/testimonials/about text when available
   // 4. Match their copywriting tone (formal vs casual)
 
-  const accentColor = config.accentColor; // TODO: detect brand color from scraped site CSS
+  // Use scraped brand color if available, otherwise category default
+  const accentColor = sd.brandColor || config.accentColor;
   const heroGradient = config.heroGradient;
 
   // Log customization level for quality review
@@ -122,7 +123,7 @@ export function generateSiteData(prospect: Prospect): GeneratedSiteData {
     tagline: sd.tagline || generateDefaultTagline(prospect.businessName, category),
     accentColor,
     heroGradient,
-    phone: sd.phone || prospect.phone || "(555) 000-0000",
+    phone: sd.phone || prospect.phone || "Call Us Today",
     address: sd.address || `${prospect.address}, ${prospect.city}, ${prospect.state}`,
     about: sd.about || generateDefaultAbout(prospect.businessName, category),
     services: sd.services?.length > 0 ? sd.services : getDefaultServices(category),
@@ -142,15 +143,39 @@ export async function generatePreview(prospect: Prospect): Promise<string> {
   // Save the generated data
   await saveScrapedData(prospect.id, siteData);
 
-  // Update prospect status
+  // QUALITY GATE: Only mark "pending-review" if the site has real customization
+  // Sites with placeholder data stay in "generated" (processing) — NOT ready for outreach
+  const hasRealPhone = siteData.phone !== "Call Us Today";
+  const hasRealServices = siteData.services.some(s => !isDefaultService(s.name));
+  const hasRealAbout = !siteData.about.includes("trusted name in local") && !siteData.about.includes("committed to delivering exceptional");
+  const qualityChecks = [hasRealPhone, hasRealServices, hasRealAbout].filter(Boolean).length;
+
   const previewUrl = `/preview/${prospect.id}`;
+  const status = qualityChecks >= 2 ? "pending-review" : "generated";
+
+  if (status === "generated") {
+    console.log(`  ⚠️ LOW QUALITY — only ${qualityChecks}/3 checks passed. Marked as "generated" (needs more data)`);
+  } else {
+    console.log(`  ✅ QUALITY PASSED — ${qualityChecks}/3 checks. Ready for review.`);
+  }
+
   await updateProspect(prospect.id, {
-    status: "pending-review",
+    status,
     generatedSiteUrl: previewUrl,
   });
 
-  console.log(`  ✅ Preview ready: ${previewUrl}`);
+  console.log(`  📍 Preview at: ${previewUrl}`);
   return previewUrl;
+}
+
+function isDefaultService(name: string): boolean {
+  const defaults = ["Buyer Representation", "Seller Services", "Market Analysis", "Investment Properties",
+    "General Dentistry", "Cosmetic Dentistry", "Dental Implants", "Emergency Care",
+    "Personal Injury", "Family Law", "Criminal Defense", "Estate Planning",
+    "Landscape Design", "Lawn Maintenance", "Hardscaping", "Tree Services",
+    "Haircuts & Styling", "Color Services", "Treatments", "Special Occasions",
+    "Consultation", "Full Service", "Emergency Service", "Maintenance"];
+  return defaults.includes(name);
 }
 
 function getDefaultServices(category: Category) {

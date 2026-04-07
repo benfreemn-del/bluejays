@@ -76,6 +76,8 @@ export interface ScrapedData {
   hours?: string;
   socialLinks?: Record<string, string>;
   about?: string;
+  brandColor?: string;
+  logoUrl?: string;
 }
 
 export interface ServiceItem {

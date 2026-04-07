@@ -34,6 +34,8 @@ export async function scrapeWebsite(url: string): Promise<ScrapedData> {
       about: extractAbout($),
       hours: extractHours($, html),
       socialLinks: extractSocialLinks($),
+      brandColor: extractBrandColor($, html),
+      logoUrl: extractLogo($, url),
     };
 
     console.log(
@@ -134,17 +136,31 @@ function extractServices($: cheerio.CheerioAPI): ServiceItem[] {
   const services: ServiceItem[] = [];
   const seen = new Set<string>();
 
-  // Look for service sections
+  // Look for service sections — broad selectors to catch most site structures
   const serviceSelectors = [
     '[class*="service"] li',
     '[class*="service"] .card',
     '[class*="service"] article',
+    '[class*="service"] h3',
+    '[class*="service"] h4',
     '[id*="service"] li',
     '[id*="service"] h3',
+    '[id*="service"] h4',
     ".services li",
     ".services h3",
     '[class*="menu"] .item',
     '[class*="pricing"] .plan',
+    '[class*="offering"] li',
+    '[class*="offering"] h3',
+    '[class*="what-we"] li',
+    '[class*="what-we"] h3',
+    '[class*="solution"] h3',
+    '[class*="feature"] h3',
+    '[class*="feature"] h4',
+    '[class*="specialt"] li',
+    '[class*="specialt"] h3',
+    '[class*="practice"] li',
+    '[class*="practice"] h3',
   ];
 
   for (const selector of serviceSelectors) {
@@ -240,6 +256,13 @@ function extractAbout($: cheerio.CheerioAPI): string | undefined {
     ".about p",
     '[class*="story"] p',
     '[class*="bio"] p',
+    '[class*="who-we"] p',
+    '[class*="mission"] p',
+    '[class*="overview"] p',
+    '[class*="intro"] p',
+    '[class*="welcome"] p',
+    '[class*="description"] p',
+    'section p', // fallback: first substantial paragraph on the page
   ];
 
   for (const selector of aboutSelectors) {
@@ -265,6 +288,68 @@ function extractHours(
     /(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun)[a-z]*[\s-]+(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun)?[a-z]*\s*:?\s*\d{1,2}(?::\d{2})?\s*(?:am|pm)\s*[-–]\s*\d{1,2}(?::\d{2})?\s*(?:am|pm)/i;
   const match = html.match(hourRegex);
   return match ? match[0] : undefined;
+}
+
+function extractBrandColor($: cheerio.CheerioAPI, html: string): string | undefined {
+  // Try theme-color meta tag (most reliable)
+  const themeColor = $('meta[name="theme-color"]').attr("content");
+  if (themeColor && isValidColor(themeColor)) return themeColor;
+
+  // Try msapplication-TileColor
+  const tileColor = $('meta[name="msapplication-TileColor"]').attr("content");
+  if (tileColor && isValidColor(tileColor)) return tileColor;
+
+  // Extract prominent colors from inline styles (look for primary/accent patterns)
+  const colorRegex = /(?:--primary|--accent|--brand|--main)[^:]*:\s*(#[0-9a-fA-F]{3,8})/g;
+  let match;
+  while ((match = colorRegex.exec(html)) !== null) {
+    if (isValidColor(match[1])) return match[1];
+  }
+
+  // Look for commonly used hex colors in CSS custom properties
+  const cssVarRegex = /--(?:color-primary|primary-color|brand-color|accent-color|theme-color)[^:]*:\s*(#[0-9a-fA-F]{3,8})/g;
+  while ((match = cssVarRegex.exec(html)) !== null) {
+    if (isValidColor(match[1])) return match[1];
+  }
+
+  return undefined;
+}
+
+function isValidColor(color: string): boolean {
+  // Must be a hex color, not white/black/gray
+  if (!color.startsWith("#")) return false;
+  const hex = color.replace("#", "").toLowerCase();
+  // Skip near-white, near-black, and gray colors
+  if (/^([0-9a-f])\1{2,5}$/.test(hex)) return false; // uniform like #fff, #000, #333
+  if (hex === "ffffff" || hex === "000000") return false;
+  return true;
+}
+
+function extractLogo($: cheerio.CheerioAPI, baseUrl: string): string | undefined {
+  // Try common logo patterns
+  const logoSelectors = [
+    'img[class*="logo"]',
+    'img[id*="logo"]',
+    'img[alt*="logo" i]',
+    '.logo img',
+    '#logo img',
+    'header img:first-of-type',
+    '.navbar img:first-of-type',
+    'nav img:first-of-type',
+  ];
+
+  for (const selector of logoSelectors) {
+    const src = $(selector).first().attr("src") || $(selector).first().attr("data-src");
+    if (src) {
+      return src.startsWith("http") ? src : new URL(src, baseUrl).href;
+    }
+  }
+
+  // Try link icon/apple-touch-icon as fallback
+  const appleIcon = $('link[rel="apple-touch-icon"]').attr("href");
+  if (appleIcon) return appleIcon.startsWith("http") ? appleIcon : new URL(appleIcon, baseUrl).href;
+
+  return undefined;
 }
 
 function extractSocialLinks(
