@@ -141,6 +141,28 @@ export default function ProspectTable({
               {bulkSending ? "Sending..." : "Send Both"}
             </button>
             <button
+              onClick={async () => {
+                setBulkSending(true);
+                setBulkResult("");
+                try {
+                  const res = await fetch("/api/funnel/enroll", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ prospectIds: Array.from(selected) }),
+                  });
+                  const data = await res.json();
+                  setBulkResult(data.message);
+                  setSelected(new Set());
+                  onRefresh?.();
+                } catch { setBulkResult("Error starting funnel"); }
+                finally { setBulkSending(false); }
+              }}
+              disabled={bulkSending}
+              className="h-9 px-4 rounded-lg bg-gradient-to-r from-sky-500/20 to-blue-600/20 text-sky-400 text-sm font-bold hover:from-sky-500/30 hover:to-blue-600/30 transition-colors disabled:opacity-50 border border-sky-500/30"
+            >
+              {bulkSending ? "Starting..." : "🚀 Start Funnel"}
+            </button>
+            <button
               onClick={() => setSelected(new Set())}
               className="h-9 px-4 rounded-lg bg-surface border border-border text-muted text-sm hover:text-foreground transition-colors"
             >
