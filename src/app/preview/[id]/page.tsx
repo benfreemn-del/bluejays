@@ -2,6 +2,11 @@ import { notFound } from "next/navigation";
 import type { GeneratedSiteData } from "@/lib/generator";
 import PreviewRenderer from "@/components/templates/PreviewRenderer";
 import V2ElectricianPreview from "@/components/templates/V2ElectricianPreview";
+import V2DentalPreview from "@/components/templates/V2DentalPreview";
+import V2LawFirmPreview from "@/components/templates/V2LawFirmPreview";
+import V2SalonPreview from "@/components/templates/V2SalonPreview";
+import V2FitnessPreview from "@/components/templates/V2FitnessPreview";
+import V2RealEstatePreview from "@/components/templates/V2RealEstatePreview";
 import { getScrapedData } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
@@ -9,6 +14,11 @@ export const dynamic = "force-dynamic";
 // V2 preview renderers by category — use premium templates when available
 const V2_RENDERERS: Partial<Record<string, React.ComponentType<{ data: GeneratedSiteData }>>> = {
   electrician: V2ElectricianPreview,
+  dental: V2DentalPreview,
+  "law-firm": V2LawFirmPreview,
+  salon: V2SalonPreview,
+  fitness: V2FitnessPreview,
+  "real-estate": V2RealEstatePreview,
   // Add more as V2 dynamic renderers are built:
   // plumber: V2PlumberPreview,
   // hvac: V2HvacPreview,
