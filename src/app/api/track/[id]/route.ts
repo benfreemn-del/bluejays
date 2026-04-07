@@ -42,6 +42,23 @@ export async function POST(
 
   console.log(`  👁️ Preview viewed: ${id} (${visits.length} total views)`);
 
+  // Hot Lead Alert: text Ben when prospect views 3+, 5+, 10+ times
+  if (visits.length === 3 || visits.length === 5 || visits.length === 10) {
+    try {
+      const { getProspect } = await import("@/lib/store");
+      const { alertOwner } = await import("@/lib/alerts");
+      const prospect = await getProspect(id);
+      if (prospect) {
+        await alertOwner({
+          type: "high-value-lead",
+          message: `🔥 HOT LEAD: ${prospect.businessName} viewed their site ${visits.length} times! CALL NOW.\nPhone: ${prospect.phone || "N/A"}`,
+          prospect,
+          timestamp: new Date().toISOString(),
+        });
+      }
+    } catch { /* don't break tracking */ }
+  }
+
   return NextResponse.json({ views: visits.length });
 }
 
