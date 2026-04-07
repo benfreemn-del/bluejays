@@ -34,7 +34,7 @@ const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
 /* ─── stagger ─── */
 const stagger = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.04 } },
+  show: { transition: { staggerChildren: 0.03 } },
 };
 const letterReveal = {
   hidden: { opacity: 0, y: 30 },
@@ -90,7 +90,7 @@ function MorphingBlob() {
 /* ─── flowing gradient background ─── */
 function FlowingGradient() {
   return (
-    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden hidden md:block">
       <motion.div
         className="absolute -top-1/2 -left-1/2 w-[200%] h-[200%]"
         animate={{
@@ -121,15 +121,17 @@ function SpringButton({
   const sx = useSpring(x, springFast);
   const sy = useSpring(y, springFast);
 
+  const isTouchDevice = typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches;
+
   const handleMouse = useCallback(
     (e: React.MouseEvent) => {
       const el = ref.current;
-      if (!el) return;
+      if (!el || isTouchDevice) return;
       const rect = el.getBoundingClientRect();
       x.set((e.clientX - rect.left - rect.width / 2) * 0.25);
       y.set((e.clientY - rect.top - rect.height / 2) * 0.25);
     },
-    [x, y]
+    [x, y, isTouchDevice]
   );
 
   return (
@@ -279,7 +281,7 @@ export default function V2SalonPage() {
       <section ref={heroRef} className="relative min-h-[100dvh] z-10">
         <motion.div
           style={{ y: heroY }}
-          className="relative z-10 grid grid-cols-1 lg:grid-cols-2 min-h-[100dvh] max-w-7xl mx-auto px-6"
+          className="relative z-10 grid grid-cols-1 lg:grid-cols-2 min-h-[100dvh] max-w-7xl mx-auto px-4 md:px-6"
         >
           {/* left — letter-by-letter reveal */}
           <div className="flex flex-col justify-center py-24 lg:py-0">
@@ -293,13 +295,14 @@ export default function V2SalonPage() {
                 <motion.span
                   key={i}
                   variants={letterReveal}
-                  className={`text-5xl md:text-7xl lg:text-8xl tracking-tighter leading-none font-bold ${
+                  className={`text-3xl md:text-7xl lg:text-8xl tracking-tighter leading-none font-bold ${
                     letter === " " ? "mr-3 md:mr-5" : ""
                   } ${
                     i >= heroText.indexOf("Beauty")
                       ? "text-rose-500"
                       : "text-white"
                   }`}
+                  style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}
                 >
                   {letter === " " ? "\u00A0" : letter}
                 </motion.span>
@@ -335,8 +338,8 @@ export default function V2SalonPage() {
             </motion.div>
           </div>
 
-          {/* right — morphing blob */}
-          <div className="flex items-center justify-center">
+          {/* right — morphing blob — hidden on mobile */}
+          <div className="hidden md:flex items-center justify-center">
             <motion.div
               initial={{ opacity: 0, scale: 0.7 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -352,8 +355,8 @@ export default function V2SalonPage() {
       </section>
 
       {/* ══════ SERVICE MENU — Editorial Layout ══════ */}
-      <section className="relative z-10 py-24">
-        <div className="max-w-7xl mx-auto px-6">
+      <section className="relative z-10 py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-4 md:px-6">
           <motion.div
             variants={sectionStagger}
             initial="hidden"
@@ -381,7 +384,7 @@ export default function V2SalonPage() {
                   initial={{ opacity: 0, y: 60 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ ...spring, delay: ci * 0.15 }}
+                  transition={{ ...spring, delay: ci * 0.05 }}
                 >
                   <div className="p-8 rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)] h-full">
                     <div className="flex items-center gap-3 mb-8">
@@ -430,8 +433,8 @@ export default function V2SalonPage() {
       </section>
 
       {/* ══════ TEAM ══════ */}
-      <section className="relative z-10 py-24 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6">
+      <section className="relative z-10 py-16 md:py-24 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 md:px-6">
           <motion.div
             variants={sectionStagger}
             initial="hidden"
@@ -456,8 +459,8 @@ export default function V2SalonPage() {
       </section>
 
       {/* ══════ GALLERY ══════ */}
-      <section className="relative z-10 py-24">
-        <div className="max-w-7xl mx-auto px-6">
+      <section className="relative z-10 py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-4 md:px-6">
           <motion.div
             variants={sectionStagger}
             initial="hidden"
@@ -489,8 +492,8 @@ export default function V2SalonPage() {
       </section>
 
       {/* ══════ TESTIMONIALS ══════ */}
-      <section className="relative z-10 py-24">
-        <div className="max-w-7xl mx-auto px-6">
+      <section className="relative z-10 py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-4 md:px-6">
           <motion.div
             variants={sectionStagger}
             initial="hidden"
@@ -556,9 +559,9 @@ export default function V2SalonPage() {
       </section>
 
       {/* ══════ BOOKING CTA ══════ */}
-      <section className="relative z-10 py-24">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+      <section className="relative z-10 py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-4 md:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16 items-center">
             {/* left */}
             <motion.div
               initial={{ opacity: 0, x: -40 }}
@@ -654,7 +657,7 @@ export default function V2SalonPage() {
 
       {/* ══════ FOOTER ══════ */}
       <footer className="relative z-10 py-12 border-t border-white/5">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <Scissors size={24} weight="duotone" className="text-rose-400" />
             <span className="font-bold text-lg tracking-tight">Luxe Studio</span>
@@ -701,7 +704,7 @@ function TeamCard({
       initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ ...spring, delay: index * 0.12 }}
+      transition={{ ...spring, delay: index * 0.05 }}
     >
       <motion.div
         whileHover={{ y: -6 }}

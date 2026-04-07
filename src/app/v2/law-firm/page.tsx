@@ -37,7 +37,7 @@ const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
 /* ─── stagger container ─── */
 const stagger = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.12 } },
+  show: { transition: { staggerChildren: 0.05 } },
 };
 const fadeUp = {
   hidden: { opacity: 0, y: 40 },
@@ -216,15 +216,17 @@ function MagneticButton({
   const sx = useSpring(x, springFast);
   const sy = useSpring(y, springFast);
 
+  const isTouchDevice = typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches;
+
   const handleMouse = useCallback(
     (e: React.MouseEvent) => {
       const el = ref.current;
-      if (!el) return;
+      if (!el || isTouchDevice) return;
       const rect = el.getBoundingClientRect();
       x.set((e.clientX - rect.left - rect.width / 2) * 0.3);
       y.set((e.clientY - rect.top - rect.height / 2) * 0.3);
     },
-    [x, y]
+    [x, y, isTouchDevice]
   );
 
   return (
@@ -310,8 +312,8 @@ export default function V2LawFirmPage() {
 
   return (
     <div className="min-h-[100dvh] bg-[#0f172a] text-slate-100 overflow-x-hidden">
-      {/* ── floating documents ── */}
-      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+      {/* ── floating documents — hidden on mobile for performance ── */}
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden hidden md:block">
         {docs.map((d, i) => (
           <FloatingDoc key={i} {...d} />
         ))}
@@ -322,7 +324,7 @@ export default function V2LawFirmPage() {
         <div className="absolute inset-0 bg-gradient-to-br from-[#0f172a] via-[#0f172a] to-emerald-950/30" />
         <motion.div
           style={{ y: heroParallax }}
-          className="relative z-10 grid grid-cols-1 lg:grid-cols-2 min-h-[100dvh] max-w-7xl mx-auto px-6"
+          className="relative z-10 grid grid-cols-1 lg:grid-cols-2 min-h-[100dvh] max-w-7xl mx-auto px-4 md:px-6"
         >
           {/* left — typography */}
           <div className="flex flex-col justify-center py-24 lg:py-0">
@@ -335,9 +337,10 @@ export default function V2LawFirmPage() {
               {["Justice.", "Delivered."].map((word, i) => (
                 <motion.div key={word} variants={fadeUp}>
                   <span
-                    className={`block text-5xl md:text-7xl lg:text-8xl tracking-tighter leading-none font-bold ${
+                    className={`block text-4xl md:text-7xl lg:text-8xl tracking-tighter leading-none font-bold ${
                       i === 1 ? "text-emerald-400" : "text-white"
                     }`}
+                    style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}
                   >
                     {word}
                   </span>
@@ -372,8 +375,8 @@ export default function V2LawFirmPage() {
             </motion.div>
           </div>
 
-          {/* right — scale of justice */}
-          <div className="flex items-center justify-center">
+          {/* right — scale of justice — hidden on mobile */}
+          <div className="hidden md:flex items-center justify-center">
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -390,9 +393,9 @@ export default function V2LawFirmPage() {
       </section>
 
       {/* ══════ CASE RESULTS COUNTERS ══════ */}
-      <section className="relative z-10 py-24">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
+      <section className="relative z-10 py-16 md:py-24">
+        <div className="max-w-6xl mx-auto px-4 md:px-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-12">
             <Counter end={2500} label="Cases Won" suffix="+" />
             <Counter end={98} label="Success Rate" suffix="%" />
             <Counter end={150} label="Million Recovered" suffix="M" />
@@ -400,14 +403,14 @@ export default function V2LawFirmPage() {
           </div>
         </div>
         {/* decorative line */}
-        <div className="mt-16 max-w-6xl mx-auto px-6">
+        <div className="mt-16 max-w-6xl mx-auto px-4 md:px-6">
           <div className="h-px bg-gradient-to-r from-transparent via-emerald-500/30 to-transparent" />
         </div>
       </section>
 
       {/* ══════ SERVICES CAROUSEL ══════ */}
-      <section className="relative z-10 py-24">
-        <div className="max-w-7xl mx-auto px-6">
+      <section className="relative z-10 py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-4 md:px-6">
           <motion.div
             variants={stagger}
             initial="hidden"
@@ -453,8 +456,8 @@ export default function V2LawFirmPage() {
                 initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ ...spring, delay: i * 0.08 }}
-                className="flex-shrink-0 w-80 snap-start"
+                transition={{ ...spring, delay: i * 0.04 }}
+                className="flex-shrink-0 w-72 md:w-80 snap-start"
               >
                 <motion.div
                   whileHover={{ y: -6, scale: 1.02 }}
@@ -481,8 +484,8 @@ export default function V2LawFirmPage() {
       </section>
 
       {/* ══════ WHY CHOOSE US ══════ */}
-      <section className="relative z-10 py-24">
-        <div className="max-w-7xl mx-auto px-6">
+      <section className="relative z-10 py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-4 md:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             {/* left — glass card */}
             <motion.div
@@ -551,8 +554,8 @@ export default function V2LawFirmPage() {
       </section>
 
       {/* ══════ TESTIMONIALS ══════ */}
-      <section className="relative z-10 py-24 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6">
+      <section className="relative z-10 py-16 md:py-24 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 md:px-6">
           <motion.div
             variants={stagger}
             initial="hidden"
@@ -575,7 +578,7 @@ export default function V2LawFirmPage() {
                 initial={{ opacity: 0, y: 60 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ ...spring, delay: i * 0.15 }}
+                transition={{ ...spring, delay: i * 0.05 }}
               >
                 <motion.div
                   whileHover={{ y: -4 }}
@@ -600,9 +603,9 @@ export default function V2LawFirmPage() {
       </section>
 
       {/* ══════ CONTACT ══════ */}
-      <section className="relative z-10 py-24">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+      <section className="relative z-10 py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-4 md:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16">
             {/* left */}
             <motion.div
               initial={{ opacity: 0, x: -40 }}
@@ -685,7 +688,7 @@ export default function V2LawFirmPage() {
 
       {/* ══════ FOOTER ══════ */}
       <footer className="relative z-10 py-12 border-t border-white/5">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <Scales size={24} weight="duotone" className="text-emerald-400" />
             <span className="font-bold text-lg tracking-tight">Carter & Associates</span>

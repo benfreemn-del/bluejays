@@ -126,7 +126,7 @@ const schedule = [
 /* ─── Particles ─── */
 function Particles() {
   const [particles] = useState(() =>
-    Array.from({ length: 40 }, (_, i) => ({
+    Array.from({ length: 20 }, (_, i) => ({
       id: i,
       x: Math.random() * 100,
       delay: Math.random() * 8,
@@ -137,7 +137,7 @@ function Particles() {
   );
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden hidden md:block">
       {particles.map((p) => (
         <motion.div
           key={p.id}
@@ -215,8 +215,10 @@ function TiltCard({ children, className = "" }: { children: React.ReactNode; cla
   const y = useMotionValue(0);
   const rotateX = useTransform(y, [-0.5, 0.5], [8, -8]);
   const rotateY = useTransform(x, [-0.5, 0.5], [-8, 8]);
+  const isTouchDevice = typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches;
 
   function handleMouse(e: React.MouseEvent<HTMLDivElement>) {
+    if (isTouchDevice) return;
     const rect = e.currentTarget.getBoundingClientRect();
     x.set((e.clientX - rect.left) / rect.width - 0.5);
     y.set((e.clientY - rect.top) / rect.height - 0.5);
@@ -231,7 +233,7 @@ function TiltCard({ children, className = "" }: { children: React.ReactNode; cla
     <motion.div
       onMouseMove={handleMouse}
       onMouseLeave={handleLeave}
-      style={{ rotateX, rotateY, transformStyle: "preserve-3d", perspective: 800 }}
+      style={{ rotateX: isTouchDevice ? 0 : rotateX, rotateY: isTouchDevice ? 0 : rotateY, transformStyle: "preserve-3d", perspective: 800 }}
       className={className}
     >
       {children}
@@ -261,7 +263,7 @@ export default function V2FitnessPage() {
         transition={spring}
         className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-[#0a0a0a]/70 border-b border-white/5"
       >
-        <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
+        <div className="max-w-7xl mx-auto flex items-center justify-between px-4 md:px-6 py-4">
           <div className="flex items-center gap-3">
             <Barbell size={28} weight="bold" color={RED} />
             <span className="text-xl font-bold tracking-tight">FORGE</span>
@@ -290,7 +292,7 @@ export default function V2FitnessPage() {
         className="relative min-h-[100dvh] flex items-center"
       >
         <HeartbeatLine />
-        <div className="relative z-10 max-w-7xl mx-auto w-full px-6 grid grid-cols-1 lg:grid-cols-5 gap-8 items-center pt-24">
+        <div className="relative z-10 max-w-7xl mx-auto w-full px-4 md:px-6 grid grid-cols-1 lg:grid-cols-5 gap-8 items-center pt-24">
           {/* Left — oversized text (60%) */}
           <div className="lg:col-span-3">
             <motion.p
@@ -306,7 +308,7 @@ export default function V2FitnessPage() {
               initial={{ x: -60, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ ...spring, delay: 0.2 }}
-              className="text-[8rem] md:text-[12rem] lg:text-[14rem] font-black tracking-tighter leading-none select-none"
+              className="text-[4rem] md:text-[12rem] lg:text-[14rem] font-black tracking-tighter leading-none select-none"
               style={{ WebkitTextStroke: `2px ${RED}`, color: "transparent" }}
             >
               TRAIN
@@ -383,8 +385,8 @@ export default function V2FitnessPage() {
       </motion.section>
 
       {/* ═══ STATS ═══ */}
-      <section className="relative z-10 py-20">
-        <div className="max-w-6xl mx-auto px-6">
+      <section className="relative z-10 py-16 md:py-20">
+        <div className="max-w-6xl mx-auto px-4 md:px-6">
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -412,8 +414,8 @@ export default function V2FitnessPage() {
       </section>
 
       {/* ═══ PROGRAMS CAROUSEL ═══ */}
-      <section id="programs" className="relative z-10 py-24">
-        <div className="max-w-7xl mx-auto px-6">
+      <section id="programs" className="relative z-10 py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-4 md:px-6">
           <motion.div
             initial={{ y: 30, opacity: 0 }}
             whileInView={{ y: 0, opacity: 1 }}
@@ -434,7 +436,7 @@ export default function V2FitnessPage() {
 
         <motion.div
           ref={carouselRef}
-          className="flex gap-6 px-6 cursor-grab active:cursor-grabbing overflow-hidden"
+          className="flex gap-4 md:gap-6 px-4 md:px-6 cursor-grab active:cursor-grabbing overflow-hidden"
           drag="x"
           dragConstraints={carouselRef}
           dragElastic={0.1}
@@ -447,9 +449,9 @@ export default function V2FitnessPage() {
                 initial={{ x: 60, opacity: 0 }}
                 whileInView={{ x: 0, opacity: 1 }}
                 viewport={{ once: true }}
-                transition={{ ...spring, delay: i * 0.08 }}
+                transition={{ ...spring, delay: i * 0.04 }}
                 whileHover={{ y: -8, transition: { ...spring } }}
-                className="flex-shrink-0 w-[320px] p-6 rounded-2xl backdrop-blur-md bg-white/[0.03] border border-white/[0.06] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)] group"
+                className="flex-shrink-0 w-[280px] md:w-[320px] p-6 rounded-2xl backdrop-blur-md bg-white/[0.03] border border-white/[0.06] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)] group"
               >
                 <div
                   className="w-12 h-12 rounded-xl flex items-center justify-center mb-5"

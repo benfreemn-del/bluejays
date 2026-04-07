@@ -110,26 +110,38 @@ export default function Hero() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
-        className="absolute top-0 left-0 right-0 z-30 flex items-center justify-between px-8 py-5"
+        className="absolute top-0 left-0 right-0 z-30 flex items-center justify-between px-4 md:px-8 py-4 md:py-5"
       >
-        <div className="flex items-center gap-3">
-          <BluejayLogoCircle size={42} />
-          <span className="text-xl font-bold text-white tracking-tight">BlueJays</span>
+        <div className="flex items-center gap-2 md:gap-3">
+          <BluejayLogoCircle size={36} className="md:w-[42px] md:h-[42px]" />
+          <span className="text-lg md:text-xl font-bold text-white tracking-tight">BlueJays</span>
         </div>
-        <div className="flex items-center gap-5">
-          <a
-            href="/dashboard"
-            className="text-sm text-white/60 hover:text-white transition-colors duration-300 font-medium"
-          >
-            Dashboard
+        {/* Desktop nav */}
+        <div className="hidden md:flex items-center gap-5">
+          <a href="/dashboard" className="text-sm text-white/60 hover:text-white transition-colors duration-300 font-medium">Dashboard</a>
+          <a href="/get-started" className="group relative h-10 px-6 rounded-full bg-gradient-to-r from-sky-500 to-blue-600 text-white text-sm font-semibold flex items-center gap-2 hover:shadow-[0_0_30px_rgba(14,165,233,0.5)] transition-all duration-300">
+            Get Started <ArrowUpRightIcon />
           </a>
-          <a
-            href="/get-started"
-            className="group relative h-10 px-6 rounded-full bg-gradient-to-r from-sky-500 to-blue-600 text-white text-sm font-semibold flex items-center gap-2 hover:shadow-[0_0_30px_rgba(14,165,233,0.5)] transition-all duration-300"
-          >
+        </div>
+        {/* Mobile nav — hamburger */}
+        <div className="md:hidden flex items-center gap-3">
+          <a href="/get-started" className="h-9 px-4 rounded-full bg-gradient-to-r from-sky-500 to-blue-600 text-white text-xs font-semibold flex items-center">
             Get Started
-            <ArrowUpRightIcon />
           </a>
+          <details className="relative">
+            <summary className="list-none cursor-pointer p-2">
+              <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" className="w-6 h-6">
+                <path d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </summary>
+            <div className="absolute right-0 top-12 w-48 py-2 rounded-xl bg-[#0a1628]/95 backdrop-blur-xl border border-white/10 shadow-2xl z-50">
+              <a href="/dashboard" className="block px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5">Dashboard</a>
+              <a href="/login" className="block px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5">Login</a>
+              <a href="/get-started" className="block px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5">Get Started</a>
+              <a href="/spending" className="block px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5">Spending</a>
+              <a href="/scripts" className="block px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5">AI Convos</a>
+            </div>
+          </details>
         </div>
       </motion.nav>
 
@@ -171,7 +183,7 @@ export default function Hero() {
 
               {/* Bird on branch — flaps wings and flies away FAST at phase 1 */}
               <motion.div
-                className="absolute -right-6 top-[6%] z-10"
+                className="absolute -right-4 top-[11%] z-10"
                 initial={{ x: 0, y: 0, rotate: 0 }}
                 animate={phase >= 1 ? {
                   x: [0, -5, 15, 60, 150, 350, 700],

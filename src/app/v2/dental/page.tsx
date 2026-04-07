@@ -68,7 +68,7 @@ function FloatingSparkles() {
   }));
 
   return (
-    <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+    <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden hidden md:block">
       {particles.map((p) => (
         <motion.div
           key={p.id}
@@ -259,16 +259,18 @@ function MagneticButton({
   const springX = useSpring(x, springFast);
   const springY = useSpring(y, springFast);
 
+  const isTouchDevice = typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches;
+
   const handleMouseMove = useCallback(
     (e: React.MouseEvent) => {
-      if (!ref.current) return;
+      if (!ref.current || isTouchDevice) return;
       const rect = ref.current.getBoundingClientRect();
       const cx = rect.left + rect.width / 2;
       const cy = rect.top + rect.height / 2;
       x.set((e.clientX - cx) * 0.25);
       y.set((e.clientY - cy) * 0.25);
     },
-    [x, y]
+    [x, y, isTouchDevice]
   );
 
   const handleMouseLeave = useCallback(() => {
@@ -570,10 +572,10 @@ const services = [
 
 /* ───────────────────────── TEAM DATA ───────────────────────── */
 const team = [
-  { name: "Dr. Sarah Mitchell", role: "Lead Dentist, DDS", initials: "SM", photo: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&q=80" },
-  { name: "Dr. James Park", role: "Cosmetic Specialist", initials: "JP", photo: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400&q=80" },
-  { name: "Dr. Emily Chen", role: "Pediatric Dentist", initials: "EC", photo: "https://images.unsplash.com/photo-1594824476967-48c8b964ac31?w=400&q=80" },
-  { name: "Lisa Rodriguez", role: "Dental Hygienist", initials: "LR", photo: "https://images.unsplash.com/photo-1614608682850-e0d6ed316d47?w=400&q=80" },
+  { name: "Dr. Sarah Mitchell", role: "Lead Dentist, DDS", initials: "SM", photo: "https://images.unsplash.com/photo-1551836022-deb4988cc6c0?w=400&q=80" },
+  { name: "Dr. James Park", role: "Cosmetic Specialist", initials: "JP", photo: "https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=400&q=80" },
+  { name: "Dr. Emily Chen", role: "Pediatric Dentist", initials: "EC", photo: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&q=80" },
+  { name: "Lisa Rodriguez", role: "Dental Hygienist", initials: "LR", photo: "https://images.unsplash.com/photo-1573497019236-17f8177b81e8?w=400&q=80" },
 ];
 
 /* ───────────────────────── TESTIMONIALS ───────────────────────── */
@@ -616,8 +618,8 @@ export default function V2DentalPage() {
         transition={spring}
         className="fixed top-0 left-0 right-0 z-50"
       >
-        <div className="mx-auto max-w-7xl px-6 py-4">
-          <GlassCard className="flex items-center justify-between px-6 py-3">
+        <div className="mx-auto max-w-7xl px-4 md:px-6 py-4">
+          <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
             <div className="flex items-center gap-2">
               <Tooth size={24} weight="duotone" style={{ color: TEAL }} />
               <span className="text-lg font-bold tracking-tight text-white">
@@ -639,7 +641,7 @@ export default function V2DentalPage() {
               </a>
             </div>
             <MagneticButton
-              className="px-5 py-2 rounded-full text-sm font-semibold text-white transition-colors"
+              className="px-4 md:px-5 py-2 rounded-full text-sm font-semibold text-white transition-colors"
               style={{ background: TEAL } as React.CSSProperties}
             >
               Book Now
@@ -653,7 +655,7 @@ export default function V2DentalPage() {
         ref={heroRef}
         className="relative min-h-[100dvh] flex items-center pt-24 z-10"
       >
-        <div className="mx-auto max-w-7xl px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-4 items-center">
+        <div className="mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-4 items-center">
           {/* Left: text */}
           <div className="space-y-8">
             <div>
@@ -666,7 +668,7 @@ export default function V2DentalPage() {
               >
                 Precision Dental Care
               </motion.p>
-              <h1 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold">
+              <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}>
                 <WordReveal text="Your Smile, Perfected" />
               </h1>
             </div>
@@ -719,12 +721,12 @@ export default function V2DentalPage() {
             </motion.div>
           </div>
 
-          {/* Right: rotating tooth */}
+          {/* Right: rotating tooth — hidden on small mobile, visible from md up */}
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ ...spring, delay: 0.3 }}
-            className="flex items-center justify-center lg:justify-end"
+            className="hidden md:flex items-center justify-center lg:justify-end"
           >
             <RotatingTooth />
           </motion.div>
@@ -733,7 +735,7 @@ export default function V2DentalPage() {
 
       {/* ─── TRUST INDICATORS ─── */}
       <SectionReveal className="relative z-10 pb-8">
-        <div className="mx-auto max-w-7xl px-6">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
           <GlassCard className="p-6 md:p-8">
             <motion.div
               className="grid grid-cols-1 sm:grid-cols-3 gap-6 md:gap-8"
@@ -790,8 +792,8 @@ export default function V2DentalPage() {
       </SectionReveal>
 
       {/* ─── SERVICES ACCORDION ─── */}
-      <SectionReveal id="services" className="relative z-10 py-24">
-        <div className="mx-auto max-w-7xl px-6">
+      <SectionReveal id="services" className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
             <div className="lg:sticky lg:top-32">
               <p
@@ -800,7 +802,7 @@ export default function V2DentalPage() {
               >
                 What We Offer
               </p>
-              <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white mb-6">
+              <h2 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white mb-6">
                 <WordReveal text="Comprehensive Dental Services" />
               </h2>
               <p className="text-slate-400 leading-relaxed max-w-md">
@@ -836,8 +838,8 @@ export default function V2DentalPage() {
       </SectionReveal>
 
       {/* ─── TEAM ─── */}
-      <SectionReveal id="team" className="relative z-10 py-24">
-        <div className="mx-auto max-w-7xl px-6">
+      <SectionReveal id="team" className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="text-center mb-16">
             <p
               className="text-sm uppercase tracking-widest mb-3"
@@ -867,8 +869,8 @@ export default function V2DentalPage() {
       </SectionReveal>
 
       {/* ─── BEFORE / AFTER GALLERY ─── */}
-      <SectionReveal id="gallery" className="relative z-10 py-24">
-        <div className="mx-auto max-w-7xl px-6">
+      <SectionReveal id="gallery" className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div>
               <p
@@ -896,9 +898,9 @@ export default function V2DentalPage() {
       </SectionReveal>
 
       {/* ─── PATIENT COMFORT (WAVE BG) ─── */}
-      <SectionReveal className="relative z-10 py-24 overflow-hidden">
+      <SectionReveal className="relative z-10 py-16 md:py-24 overflow-hidden">
         <WaveBackground />
-        <div className="relative z-10 mx-auto max-w-7xl px-6">
+        <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <motion.div
               className="grid grid-cols-2 gap-4"
@@ -950,8 +952,8 @@ export default function V2DentalPage() {
       </SectionReveal>
 
       {/* ─── TESTIMONIALS ─── */}
-      <SectionReveal id="testimonials" className="relative z-10 py-24">
-        <div className="mx-auto max-w-7xl px-6">
+      <SectionReveal id="testimonials" className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="text-center mb-16">
             <p
               className="text-sm uppercase tracking-widest mb-3"
@@ -996,8 +998,8 @@ export default function V2DentalPage() {
       </SectionReveal>
 
       {/* ─── NEW PATIENT OFFER ─── */}
-      <SectionReveal className="relative z-10 py-24">
-        <div className="mx-auto max-w-4xl px-6">
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-4xl px-4 md:px-6">
           <ShimmerBorder>
             <div className="p-8 md:p-12 text-center">
               <motion.div
@@ -1039,8 +1041,8 @@ export default function V2DentalPage() {
       </SectionReveal>
 
       {/* ─── BOOKING CTA ─── */}
-      <SectionReveal className="relative z-10 py-24">
-        <div className="mx-auto max-w-7xl px-6">
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white mb-6">
@@ -1123,7 +1125,7 @@ export default function V2DentalPage() {
 
       {/* ─── FOOTER ─── */}
       <footer className="relative z-10 border-t border-white/5 py-8">
-        <div className="mx-auto max-w-7xl px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="mx-auto max-w-7xl px-4 md:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2 text-sm text-slate-500">
             <Tooth size={16} weight="duotone" style={{ color: TEAL }} />
             <span>Pristine Dental &copy; {new Date().getFullYear()}</span>
