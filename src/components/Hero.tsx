@@ -149,8 +149,14 @@ export default function Hero() {
               <div className="absolute inset-[-14px] rounded-full border border-sky-300/15" />
               <div className="absolute inset-[-24px] rounded-full border border-sky-300/8" />
 
-              {/* Branch extending from bubble with leaf */}
-              <svg className="absolute -right-16 top-[15%] w-32 h-24" viewBox="0 0 130 100" fill="none">
+              {/* Branch extending from bubble with leaf — shakes when bird leaves */}
+              <motion.svg
+                className="absolute -right-16 top-[15%] w-32 h-24"
+                viewBox="0 0 130 100"
+                fill="none"
+                animate={phase >= 1 ? { rotate: [0, 2, -1.5, 1, -0.5, 0], y: [0, 1, -1, 0.5, 0] } : {}}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+              >
                 {/* Branch */}
                 <path d="M0 55 Q30 50 60 45 Q90 40 115 30" stroke="#8B6914" strokeWidth="3" strokeLinecap="round" />
                 <path d="M0 58 Q30 53 60 48 Q90 43 115 33" stroke="#6B4F10" strokeWidth="2" strokeLinecap="round" opacity="0.5" />
@@ -161,50 +167,84 @@ export default function Hero() {
                 <path d="M85 22 Q95 20 105 18" stroke="#16a34a" strokeWidth="0.5" opacity="0.5" />
                 {/* Second leaf */}
                 <path d="M55 38 Q60 28 70 33 Q60 42 55 38Z" fill="#22c55e" opacity="0.5" />
-              </svg>
+              </motion.svg>
 
-              {/* Bird sitting on branch — flies away at phase 1 */}
+              {/* Bird on branch — flaps wings and flies away FAST at phase 1 */}
               <motion.div
-                className="absolute -right-8 top-[8%] z-10"
+                className="absolute -right-6 top-[6%] z-10"
                 initial={{ x: 0, y: 0, rotate: 0 }}
                 animate={phase >= 1 ? {
-                  x: [0, 20, 80, 200, 400],
-                  y: [0, -10, -40, -80, -150],
-                  rotate: [0, -5, -10, -15, -10],
-                  opacity: [1, 1, 1, 0.8, 0],
-                } : { x: 0, y: 0 }}
-                transition={{ duration: 1.8, ease: "easeInOut" }}
+                  x: [0, -5, 15, 60, 150, 350, 700],
+                  y: [0, -8, -25, -60, -120, -200, -300],
+                  rotate: [0, -8, -15, -20, -15, -10, -5],
+                  opacity: [1, 1, 1, 1, 0.9, 0.6, 0],
+                  scale: [1, 1.05, 1, 0.95, 0.85, 0.7, 0.5],
+                } : {
+                  y: [0, -2, 0, -1, 0],
+                }}
+                transition={phase >= 1 ? {
+                  duration: 1.2,
+                  ease: [0.2, 0.8, 0.4, 1],
+                } : {
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
               >
-                {/* Detailed Blue Jay bird */}
-                <svg width="50" height="50" viewBox="0 0 100 100" className="drop-shadow-lg">
+                <svg width="60" height="60" viewBox="0 0 120 120" className="drop-shadow-[0_2px_8px_rgba(0,0,0,0.3)]">
                   {/* Body */}
-                  <ellipse cx="50" cy="52" rx="20" ry="18" fill="#3b82f6" />
-                  {/* Belly */}
-                  <ellipse cx="50" cy="58" rx="14" ry="12" fill="#93c5fd" opacity="0.6" />
+                  <ellipse cx="60" cy="62" rx="22" ry="18" fill="#3b82f6" />
+                  <ellipse cx="60" cy="68" rx="15" ry="11" fill="#93c5fd" opacity="0.5" />
                   {/* Head */}
-                  <circle cx="50" cy="30" r="14" fill="#3b82f6" />
-                  {/* Crest */}
-                  <path d="M52 18 L58 6 L54 16 L60 10 L55 18 L62 14 L56 20" fill="#2563eb" />
-                  {/* Eye ring */}
-                  <circle cx="55" cy="28" r="5" fill="white" />
-                  <circle cx="56" cy="27" r="2.5" fill="#1e1e1e" />
-                  <circle cx="57" cy="26" r="1" fill="white" />
+                  <circle cx="62" cy="38" r="16" fill="#3b82f6" />
+                  <circle cx="62" cy="38" r="14" fill="#60a5fa" opacity="0.3" />
+                  {/* Crest — spiky and detailed */}
+                  <path d="M58 24 L52 8 L56 20 L48 4 L55 18 L44 10 L54 22" fill="#2563eb" />
+                  <path d="M60 22 L56 6 L58 18" fill="#1d4ed8" opacity="0.7" />
+                  {/* Eye — big and expressive */}
+                  <circle cx="70" cy="35" r="7" fill="white" />
+                  <circle cx="71" cy="34" r="4" fill="#0f172a" />
+                  <circle cx="72.5" cy="32.5" r="1.5" fill="white" />
+                  <circle cx="69" cy="36" r="0.8" fill="white" opacity="0.5" />
                   {/* Beak */}
-                  <path d="M62 32 L74 30 L62 35Z" fill="#1e1e1e" />
-                  {/* Wing */}
-                  <path d="M35 45 Q28 55 32 68 L40 64 Q36 54 40 47Z" fill="#1d4ed8" />
-                  {/* Wing bars */}
-                  <path d="M34 52 L30 54" stroke="white" strokeWidth="1.5" opacity="0.6" />
-                  <path d="M33 56 L29 58" stroke="white" strokeWidth="1.5" opacity="0.6" />
-                  {/* Tail */}
-                  <path d="M38 66 L22 82 L28 80 L24 88 L32 82 L30 88 L36 78 L40 70Z" fill="#1d4ed8" />
-                  {/* Black necklace */}
-                  <path d="M38 38 Q50 44 62 38" stroke="#1e1e1e" strokeWidth="2.5" fill="none" />
-                  {/* Feet */}
-                  <path d="M44 68 L42 76 L38 78 M42 76 L46 78" stroke="#6b7280" strokeWidth="1.5" fill="none" />
-                  <path d="M56 68 L58 76 L54 78 M58 76 L62 78" stroke="#6b7280" strokeWidth="1.5" fill="none" />
+                  <path d="M76 40 L92 37 L76 44Z" fill="#1e293b" />
+                  <path d="M76 41 L88 39" stroke="#334155" strokeWidth="0.5" />
+                  {/* Black mask/necklace */}
+                  <path d="M46 48 Q62 56 78 48" stroke="#0f172a" strokeWidth="3" fill="none" />
+                  <path d="M48 50 Q62 56 76 50" fill="#0f172a" opacity="0.3" />
+                  {/* Wing — with CSS animation for flapping */}
+                  <g className={phase >= 1 ? "animate-[flapWing_0.15s_ease-in-out_infinite]" : ""}>
+                    <path d="M38 52 Q24 42 18 28 Q22 38 28 44 L38 55Z" fill="#1d4ed8" />
+                    <path d="M36 56 Q20 50 12 38 Q18 48 26 54 L36 58Z" fill="#2563eb" />
+                    <path d="M34 58 Q18 56 8 48 Q16 56 24 60 L34 60Z" fill="#3b82f6" opacity="0.8" />
+                    {/* Wing bars — white stripes */}
+                    <path d="M30 46 L22 40" stroke="white" strokeWidth="2" opacity="0.7" />
+                    <path d="M28 50 L20 46" stroke="white" strokeWidth="2" opacity="0.5" />
+                    <path d="M26 54 L18 50" stroke="white" strokeWidth="1.5" opacity="0.4" />
+                  </g>
+                  {/* Tail — long and fanned */}
+                  <path d="M42 76 L24 96 L30 92 L22 104 L34 94 L28 106 L38 94 L34 102 L42 90 L44 80Z" fill="#1d4ed8" />
+                  <path d="M44 78 L32 94" stroke="#2563eb" strokeWidth="1" opacity="0.5" />
+                  {/* Tail bars */}
+                  <path d="M36 88 L28 94" stroke="#0f172a" strokeWidth="1.5" opacity="0.3" />
+                  {/* Feet — only show when perched */}
+                  {phase < 1 && (
+                    <>
+                      <path d="M52 78 L50 88 L46 90 M50 88 L54 90 M50 88 L52 92" stroke="#78716c" strokeWidth="2" fill="none" strokeLinecap="round" />
+                      <path d="M66 78 L68 88 L64 90 M68 88 L72 90 M68 88 L70 92" stroke="#78716c" strokeWidth="2" fill="none" strokeLinecap="round" />
+                    </>
+                  )}
                 </svg>
               </motion.div>
+
+              {/* Wing flap CSS animation */}
+              <style>{`
+                @keyframes flapWing {
+                  0% { transform: scaleY(1) rotate(0deg); }
+                  50% { transform: scaleY(-0.8) rotate(-5deg); }
+                  100% { transform: scaleY(1) rotate(0deg); }
+                }
+              `}</style>
 
               {/* Text with better font styling */}
               <AnimatePresence mode="wait">
@@ -403,6 +443,6 @@ const defaultSiteCards: SiteCard[] = [
   { name: "Pacific Auto Works", category: "Auto Repair", color: "#2e1414", href: "/templates/auto-repair", icon: "🚗", tagline: "ASE certified, honest pricing always" },
   { name: "Cascade Landscapes", category: "Landscaping", color: "#1a2e1a", href: "/templates/landscaping", icon: "🌳", tagline: "800+ yards transformed in Seattle" },
   { name: "Velvet Hair Studio", category: "Salon", color: "#2e1a2a", href: "/templates/salon", icon: "✂️", tagline: "East Austin's top-rated color specialists" },
-  { name: "Iron & Oak Fitness", category: "Fitness", color: "#2e0a14", href: "#", icon: "💪", tagline: "Boutique strength & HIIT training" },
-  { name: "Northshore Vet Clinic", category: "Veterinary", color: "#0a2e1a", href: "#", icon: "🐾", tagline: "Compassionate care for dogs & cats" },
+  { name: "Iron & Oak Fitness", category: "Fitness", color: "#2e0a14", href: "/templates/fitness", icon: "💪", tagline: "Boutique strength & HIIT training" },
+  { name: "Northshore Vet Clinic", category: "Veterinary", color: "#0a2e1a", href: "/templates/veterinary", icon: "🐾", tagline: "Compassionate care for dogs & cats" },
 ];
