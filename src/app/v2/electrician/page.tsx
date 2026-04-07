@@ -774,7 +774,7 @@ export default function V2ElectricianPage() {
             >
               <div className="rounded-2xl overflow-hidden border border-white/10">
                 <img
-                  src="https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=600&q=80"
+                  src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=600&q=80"
                   alt="Electrician team at work"
                   className="w-full h-[400px] object-cover"
                 />
@@ -956,12 +956,12 @@ export default function V2ElectricianPage() {
                 desc: "Complete smart home wiring and automation for a modern Bellevue residence.",
               },
               {
-                src: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=800&q=80",
+                src: "https://images.unsplash.com/photo-1555664424-778a1e5e1b48?w=800&q=80",
                 title: "Emergency Panel Repair",
                 desc: "24-hour emergency response for a damaged electrical panel after a storm.",
               },
               {
-                src: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=800&q=80",
+                src: "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?w=800&q=80",
                 title: "EV Charger Network",
                 desc: "Multi-unit EV charging station installation for a commercial parking facility.",
               },
