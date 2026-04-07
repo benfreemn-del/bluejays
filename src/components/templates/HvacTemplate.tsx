@@ -345,6 +345,56 @@ function SectionHeader({
 
 /* ───────────────────────── Main Component ───────────────────────── */
 
+/* ───────────────────────── Cool Air Animation ───────────────────────── */
+
+function CoolAirFlow() {
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+      {/* Flowing air wisps — background only, behind all content */}
+      <style>{`
+        @keyframes airFlow1 { 0% { transform: translateX(-100%) translateY(0); opacity: 0; } 10% { opacity: 0.15; } 80% { opacity: 0.1; } 100% { transform: translateX(120vw) translateY(-30px); opacity: 0; } }
+        @keyframes airFlow2 { 0% { transform: translateX(-100%) translateY(0); opacity: 0; } 15% { opacity: 0.12; } 75% { opacity: 0.08; } 100% { transform: translateX(120vw) translateY(-50px); opacity: 0; } }
+        @keyframes airFlow3 { 0% { transform: translateX(-100%) translateY(0); opacity: 0; } 12% { opacity: 0.1; } 85% { opacity: 0.06; } 100% { transform: translateX(120vw) translateY(-20px); opacity: 0; } }
+        @keyframes airFlow4 { 0% { transform: translateX(120vw) translateY(0); opacity: 0; } 10% { opacity: 0.12; } 80% { opacity: 0.08; } 100% { transform: translateX(-100%) translateY(-40px); opacity: 0; } }
+        @keyframes mistPulse { 0% { opacity: 0.03; transform: scale(1); } 50% { opacity: 0.08; transform: scale(1.1); } 100% { opacity: 0.03; transform: scale(1); } }
+      `}</style>
+
+      {/* Air wisp 1 — slow, high */}
+      <svg className="absolute top-[15%] w-[600px] h-[80px]" viewBox="0 0 600 80" fill="none"
+        style={{ animation: "airFlow1 12s ease-in-out infinite" }}>
+        <path d="M0 40 Q100 20 200 40 Q300 60 400 35 Q500 15 600 40" stroke="#06b6d4" strokeWidth="2" opacity="0.5" />
+        <path d="M0 45 Q100 25 200 45 Q300 65 400 40 Q500 20 600 45" stroke="#22d3ee" strokeWidth="1.5" opacity="0.3" />
+        <path d="M0 50 Q100 30 200 50 Q300 70 400 45 Q500 25 600 50" stroke="#67e8f9" strokeWidth="1" opacity="0.2" />
+      </svg>
+
+      {/* Air wisp 2 — medium speed, middle */}
+      <svg className="absolute top-[40%] w-[500px] h-[60px]" viewBox="0 0 500 60" fill="none"
+        style={{ animation: "airFlow2 9s ease-in-out infinite 3s" }}>
+        <path d="M0 30 Q80 10 160 30 Q240 50 320 25 Q400 5 500 30" stroke="#06b6d4" strokeWidth="2" opacity="0.4" />
+        <path d="M0 35 Q80 15 160 35 Q240 55 320 30 Q400 10 500 35" stroke="#22d3ee" strokeWidth="1" opacity="0.25" />
+      </svg>
+
+      {/* Air wisp 3 — fast, low */}
+      <svg className="absolute top-[65%] w-[700px] h-[70px]" viewBox="0 0 700 70" fill="none"
+        style={{ animation: "airFlow3 8s ease-in-out infinite 1.5s" }}>
+        <path d="M0 35 Q120 15 240 35 Q360 55 480 30 Q600 10 700 35" stroke="#67e8f9" strokeWidth="1.5" opacity="0.35" />
+        <path d="M0 40 Q120 20 240 40 Q360 60 480 35 Q600 15 700 40" stroke="#a5f3fc" strokeWidth="1" opacity="0.2" />
+      </svg>
+
+      {/* Air wisp 4 — reverse direction, subtle */}
+      <svg className="absolute top-[85%] w-[550px] h-[50px]" viewBox="0 0 550 50" fill="none"
+        style={{ animation: "airFlow4 14s ease-in-out infinite 5s" }}>
+        <path d="M0 25 Q100 10 200 25 Q300 40 400 20 Q500 5 550 25" stroke="#06b6d4" strokeWidth="1.5" opacity="0.3" />
+      </svg>
+
+      {/* Mist/fog patches */}
+      <div className="absolute top-[20%] left-[10%] w-[300px] h-[150px] rounded-full bg-cyan-400/[0.04] blur-[80px]" style={{ animation: "mistPulse 6s ease-in-out infinite" }} />
+      <div className="absolute top-[50%] right-[15%] w-[250px] h-[120px] rounded-full bg-cyan-300/[0.03] blur-[70px]" style={{ animation: "mistPulse 8s ease-in-out infinite 2s" }} />
+      <div className="absolute top-[75%] left-[30%] w-[350px] h-[130px] rounded-full bg-sky-400/[0.03] blur-[90px]" style={{ animation: "mistPulse 7s ease-in-out infinite 4s" }} />
+    </div>
+  );
+}
+
 export default function HvacTemplate() {
   return (
     <TemplateLayout
@@ -436,6 +486,7 @@ export default function HvacTemplate() {
         style={{ background: "linear-gradient(180deg, #0a1020 0%, #0d1528 50%, #0a1020 100%)" }}
       >
         <SnowflakePattern />
+        <CoolAirFlow />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-[10%] right-[5%] w-[500px] h-[500px] rounded-full blur-[160px] bg-[#06b6d4]/6" />
           <div className="absolute bottom-[10%] left-[5%] w-[400px] h-[400px] rounded-full blur-[140px] bg-[#06b6d4]/4" />
@@ -719,6 +770,7 @@ export default function HvacTemplate() {
         style={{ background: "linear-gradient(180deg, #0d1528 0%, #0f1a30 50%, #0d1528 100%)" }}
       >
         <SnowflakePattern />
+        <CoolAirFlow />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-[30%] left-[40%] w-[600px] h-[400px] rounded-full blur-[180px] bg-[#06b6d4]/5" />
           <svg className="absolute inset-0 w-full h-full opacity-[0.025]" viewBox="0 0 800 400">
