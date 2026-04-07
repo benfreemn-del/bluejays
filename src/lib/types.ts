@@ -28,7 +28,8 @@ export type Category =
   | "martial-arts"
   | "physical-therapy"
   | "tutoring"
-  | "pool-spa";
+  | "pool-spa"
+  | "church";
 
 export type ProspectStatus =
   | "scouted"
@@ -40,7 +41,8 @@ export type ProspectStatus =
   | "contacted"
   | "responded"
   | "paid"
-  | "dismissed";
+  | "dismissed"
+  | "pro-bono";
 
 export interface Prospect {
   id: string;
@@ -141,4 +143,5 @@ export const CATEGORY_CONFIG: Record<
   "physical-therapy": { label: "Physical Therapy", accentColor: "#2dd4bf", heroGradient: "linear-gradient(135deg, #0a2e28 0%, #071f1c 100%)" },
   tutoring: { label: "Tutoring", accentColor: "#818cf8", heroGradient: "linear-gradient(135deg, #14142e 0%, #0e0e1f 100%)" },
   "pool-spa": { label: "Pool & Spa", accentColor: "#22d3ee", heroGradient: "linear-gradient(135deg, #0a2630 0%, #071c24 100%)" },
+  "church": { label: "Church / Ministry", accentColor: "#e2b857", heroGradient: "linear-gradient(135deg, #1a1510 0%, #2a2018 50%, #1a1510 100%)" },
 };

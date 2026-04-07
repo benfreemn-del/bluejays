@@ -171,7 +171,7 @@ const projects = [
   {
     name: "Modern Patio Build",
     type: "Hardscaping",
-    image: "https://images.unsplash.com/photo-1598257006458-087169a1f08d?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=600&q=80",
     detail: "600 sq ft travertine patio with built-in fire pit and integrated LED path lighting.",
     area: "600 sq ft",
   },
@@ -185,7 +185,7 @@ const projects = [
   {
     name: "Commercial Campus",
     type: "Maintenance",
-    image: "https://images.unsplash.com/photo-1416339306562-f3d12fefd36f?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1592150621744-aca64f48394a?w=600&q=80",
     detail: "Year-round maintenance for a 5-acre commercial campus including full irrigation management.",
     area: "5 acres",
   },
@@ -318,7 +318,7 @@ export default function LandscapingTemplate() {
       accentColor="#22c55e"
       accentColorLight="#4ade80"
       heroGradient="linear-gradient(135deg, #1a2e1a 0%, #0f1f0f 100%)"
-      heroImage="https://images.unsplash.com/photo-1558904541-efa843a96f01?w=1400&q=80"
+      heroImage="https://images.unsplash.com/photo-1584738766473-61c083514bf4?w=1400&q=80"
       phone="(555) 456-7890"
       address="789 Garden Way, Your City"
     >
@@ -568,7 +568,7 @@ export default function LandscapingTemplate() {
                 {/* Main image */}
                 <div className="absolute top-0 left-0 w-[75%] h-[70%] rounded-2xl overflow-hidden border-2 border-white/[0.06] shadow-2xl z-10">
                   <img
-                    src="https://images.unsplash.com/photo-1558904541-efa843a96f01?w=600&q=80"
+                    src="https://images.unsplash.com/photo-1560448204-603b3fc33ddc?w=600&q=80"
                     alt="Beautiful landscaped garden"
                     className="w-full h-full object-cover"
                   />
@@ -576,7 +576,7 @@ export default function LandscapingTemplate() {
                 {/* Secondary image */}
                 <div className="absolute bottom-0 right-0 w-[65%] h-[55%] rounded-2xl overflow-hidden border-2 border-white/[0.06] shadow-2xl z-20">
                   <img
-                    src="https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=400&q=80"
+                    src="https://images.unsplash.com/photo-1567521464027-f127ff144326?w=400&q=80"
                     alt="Completed patio project"
                     className="w-full h-full object-cover"
                   />

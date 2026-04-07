@@ -448,7 +448,7 @@ export default function PhysicalTherapyTemplate() {
                 {/* Main image */}
                 <div className="absolute top-0 left-0 w-[75%] h-[70%] rounded-2xl overflow-hidden border-2 border-white/[0.06] shadow-2xl z-10">
                   <img
-                    src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=600&q=80"
+                    src="https://images.unsplash.com/photo-1519125323398-675f0ddb6308?w=600&q=80"
                     alt="Physical therapy session"
                     className="w-full h-full object-cover"
                   />

@@ -520,7 +520,7 @@ export default function InsuranceTemplate() {
                 {/* Main image */}
                 <div className="absolute top-0 left-0 w-[75%] h-[70%] rounded-2xl overflow-hidden border-2 border-white/[0.06] shadow-2xl z-10">
                   <img
-                    src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=600&q=80"
+                    src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=600&q=80"
                     alt="Family home"
                     className="w-full h-full object-cover"
                   />
@@ -528,7 +528,7 @@ export default function InsuranceTemplate() {
                 {/* Secondary image */}
                 <div className="absolute bottom-0 right-0 w-[65%] h-[55%] rounded-2xl overflow-hidden border-2 border-white/[0.06] shadow-2xl z-20">
                   <img
-                    src="https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?w=400&q=80"
+                    src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&q=80"
                     alt="Insurance agent"
                     className="w-full h-full object-cover"
                   />

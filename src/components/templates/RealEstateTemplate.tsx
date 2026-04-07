@@ -301,7 +301,7 @@ export default function RealEstateTemplate() {
       accentColor="#c8a45e"
       accentColorLight="#d4b76a"
       heroGradient="linear-gradient(135deg, #1a1a0e 0%, #0d0d08 100%)"
-      heroImage="https://images.unsplash.com/photo-1625602812206-5ec545ca1231?w=1400&q=80"
+      heroImage="https://images.unsplash.com/photo-1592595896551-12b371d546d5?w=1400&q=80"
       phone="(555) 123-4567"
       address="Downtown, Your City"
     >
@@ -562,7 +562,7 @@ export default function RealEstateTemplate() {
                 {/* Secondary image */}
                 <div className="absolute bottom-0 right-0 w-[65%] h-[55%] rounded-2xl overflow-hidden border-2 border-white/[0.06] shadow-2xl z-20">
                   <img
-                    src="https://images.unsplash.com/photo-1625602812206-5ec545ca1231?w=400&q=80"
+                    src="https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=400&q=80"
                     alt="Luxury home"
                     className="w-full h-full object-cover"
                   />

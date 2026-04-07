@@ -207,20 +207,20 @@ const materialComparison = [
 
 const projects = [
   {
-    before: "https://images.unsplash.com/photo-1632778149955-e80f8ceca2e8?w=500&q=80",
-    after: "https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?w=500&q=80",
+    before: "https://images.unsplash.com/photo-1558036117-15d82a90b9b1?w=500&q=80",
+    after: "https://images.unsplash.com/photo-1449844908441-8829872d2607?w=500&q=80",
     title: "Full Replacement - Tacoma Hills",
     type: "Architectural Shingles",
   },
   {
-    before: "https://images.unsplash.com/photo-1552058544-f2b08422138a?w=500&q=80",
-    after: "https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?w=500&q=80",
+    before: "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=500&q=80",
+    after: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=500&q=80",
     title: "Metal Roof Upgrade - Puyallup",
     type: "Standing Seam Metal",
   },
   {
-    before: "https://images.unsplash.com/photo-1596178060671-7a80dc8059ea?w=500&q=80",
-    after: "https://images.unsplash.com/photo-1628624747186-a941c476b7ef?w=500&q=80",
+    before: "https://images.unsplash.com/photo-1523217582562-09d0def993a6?w=500&q=80",
+    after: "https://images.unsplash.com/photo-1480074568708-e7b720bb3f09?w=500&q=80",
     title: "Storm Restoration - Lakewood",
     type: "Emergency + Full Replacement",
   },
@@ -492,7 +492,7 @@ export default function RoofingTemplate() {
                 {/* Secondary image */}
                 <div className="absolute bottom-0 right-0 w-[65%] h-[55%] rounded-2xl overflow-hidden border-2 border-white/[0.06] shadow-2xl z-20">
                   <img
-                    src="https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?w=400&q=80"
+                    src="https://images.unsplash.com/photo-1513694203232-719a280e022f?w=400&q=80"
                     alt="Completed roof"
                     className="w-full h-full object-cover"
                   />

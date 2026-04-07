@@ -38,6 +38,7 @@ const statusConfig: Record<
   },
   paid: { label: "Paid", bg: "bg-amber-900/50", text: "text-amber-300" },
   dismissed: { label: "Dismissed", bg: "bg-zinc-800/50", text: "text-zinc-500" },
+  "pro-bono": { label: "Pro Bono ✝", bg: "bg-amber-900/50", text: "text-amber-300" },
 };
 
 export default function StatusBadge({ status }: { status: ProspectStatus }) {

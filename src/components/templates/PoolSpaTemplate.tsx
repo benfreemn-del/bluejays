@@ -312,7 +312,7 @@ export default function PoolSpaTemplate() {
       accentColor="#22d3ee"
       accentColorLight="#67e8f9"
       heroGradient="linear-gradient(135deg, #0a1a2e 0%, #0c1220 100%)"
-      heroImage="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=1400&q=80"
+      heroImage="https://images.unsplash.com/photo-1562778612-e1e0cda9915c?w=1400&q=80"
       phone="(425) 555-0136"
       address="412 Lake St, Kirkland, WA 98033"
     >

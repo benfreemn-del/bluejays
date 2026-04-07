@@ -461,7 +461,7 @@ export default function LawFirmTemplate() {
                 {/* Main image */}
                 <div className="absolute top-0 left-0 w-[75%] h-[70%] rounded-2xl overflow-hidden border-2 border-white/[0.06] shadow-2xl z-10">
                   <img
-                    src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=600&q=80"
+                    src="https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?w=600&q=80"
                     alt="Courthouse"
                     className="w-full h-full object-cover"
                   />
@@ -469,7 +469,7 @@ export default function LawFirmTemplate() {
                 {/* Secondary image */}
                 <div className="absolute bottom-0 right-0 w-[65%] h-[55%] rounded-2xl overflow-hidden border-2 border-white/[0.06] shadow-2xl z-20">
                   <img
-                    src="https://images.unsplash.com/photo-1556474835-b0f3ac40d4d1?w=400&q=80"
+                    src="https://images.unsplash.com/photo-1593115057322-e94b77572f20?w=400&q=80"
                     alt="Attorney portrait"
                     className="w-full h-full object-cover"
                   />

@@ -353,7 +353,7 @@ export default function PetServicesTemplate() {
       accentColor="#4ade80"
       accentColorLight="#86efac"
       heroGradient="linear-gradient(135deg, #0a1a10 0%, #0d130f 100%)"
-      heroImage="https://images.unsplash.com/photo-1588943211346-0908a1fb0b01?w=1400&q=80"
+      heroImage="https://images.unsplash.com/photo-1537151625747-768eb6cf92b2?w=1400&q=80"
       phone="(425) 555-0139"
       address="1024 Bellevue Way NE, Bellevue, WA"
     >
