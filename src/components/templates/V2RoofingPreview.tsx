@@ -70,10 +70,10 @@ function getServiceIcon(serviceName: string) {
 }
 
 /* ───────────────────────── STOCK FALLBACK IMAGES ───────────────────────── */
-const STOCK_HERO = "https://images.unsplash.com/photo-1632152508522-82bdcab2038e?w=1400&q=80";
+const STOCK_HERO = "https://images.unsplash.com/photo-1558036117-15d82a90b9b1?w=1400&q=80";
 const STOCK_ABOUT = "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&q=80";
 const STOCK_PROJECTS = [
-  "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=600&q=80",
+  "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=600&q=80",
   "https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=600&q=80",
   "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80",
   "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=800&q=80",

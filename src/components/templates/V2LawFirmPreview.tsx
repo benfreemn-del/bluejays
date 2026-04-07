@@ -82,7 +82,7 @@ const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1453945619913-79ec89a82c51?w=600&q=80",
   "https://images.unsplash.com/photo-1521791055366-0d553872125f?w=600&q=80",
   "https://images.unsplash.com/photo-1479142506502-19b3a3b7ff33?w=800&q=80",
-  "https://images.unsplash.com/photo-1450101499163-c8848e968ab7?w=800&q=80",
+  "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80",
 ];
 
 /* ───────────────────────── FLOATING DOCUMENT PARTICLES ───────────────────────── */

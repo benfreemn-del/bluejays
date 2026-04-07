@@ -480,10 +480,10 @@ const pricingItems = [
 const galleryImages = [
   { src: "https://images.unsplash.com/photo-1585704032915-c3400ca199e7?w=600&q=80", alt: "Modern bathroom remodel with walk-in shower" },
   { src: "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=600&q=80", alt: "Copper pipe installation work" },
-  { src: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=600&q=80", alt: "Luxury bathroom renovation" },
-  { src: "https://images.unsplash.com/photo-1564540586988-aa4e53ab3394?w=600&q=80", alt: "Kitchen sink plumbing installation" },
-  { src: "https://images.unsplash.com/photo-1613685703305-38ca3a68f878?w=600&q=80", alt: "New tankless water heater installed" },
-  { src: "https://images.unsplash.com/photo-1504973960431-1c1c6e3c3e6f?w=600&q=80", alt: "Complete residential plumbing project" },
+  { src: "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=600&q=80", alt: "Luxury bathroom renovation" },
+  { src: "https://images.unsplash.com/photo-1585704032915-c3400ca199e7?w=600&q=80", alt: "Kitchen sink plumbing installation" },
+  { src: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80", alt: "New tankless water heater installed" },
+  { src: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80", alt: "Complete residential plumbing project" },
 ];
 
 /* ═══════════════════════════════════════════════════════════════════
