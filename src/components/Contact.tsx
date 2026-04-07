@@ -47,6 +47,7 @@ const GridPattern = ({ opacity = 0.03 }: { opacity?: number }) => (
 export default function Contact() {
   return (
     <section
+      id="contact"
       className="py-32 relative overflow-hidden"
       style={{
         background: "linear-gradient(180deg, #050a14 0%, #0a1830 50%, #050a14 100%)",
