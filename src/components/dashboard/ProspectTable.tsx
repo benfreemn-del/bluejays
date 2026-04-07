@@ -255,7 +255,12 @@ export default function ProspectTable({
                   />
                 </td>
                 <td className="p-3 cursor-pointer" onClick={() => router.push(`/lead/${prospect.id}`)}>
-                  <p className="font-medium text-blue-electric hover:underline">{prospect.businessName}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="font-medium text-blue-electric hover:underline">{prospect.businessName}</p>
+                    {prospect.createdAt !== prospect.updatedAt && prospect.status === "scouted" && (
+                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-400 font-medium">Re-scouted</span>
+                    )}
+                  </div>
                   {prospect.phone && <p className="text-muted text-xs">{prospect.phone}</p>}
                 </td>
                 <td className="p-3">

@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 import type { Prospect, ScoutOptions, Category } from "./types";
 import { getMockProspects } from "./mock-prospects";
-import { addProspect, getAllProspects } from "./store";
+import { addProspect, getAllProspects, updateProspect } from "./store";
 
 const GOOGLE_API_KEY = process.env.GOOGLE_PLACES_API_KEY;
 
@@ -113,20 +113,52 @@ export async function scout(options: ScoutOptions): Promise<Prospect[]> {
     prospects = scoutWithMockData(options);
   }
 
-  // Dedup: skip businesses already in the system (especially dismissed ones)
+  // Dedup: only skip businesses that are ACTIVE in the pipeline (not dismissed)
+  // Previously dismissed businesses can be re-added and will be tagged as "rescouted"
   const existing = await getAllProspects();
-  const existingNames = new Set(existing.map((p) => p.businessName.toLowerCase()));
-  const newProspects = prospects.filter((p) => !existingNames.has(p.businessName.toLowerCase()));
+  const existingByName = new Map(existing.map((p) => [p.businessName.toLowerCase(), p]));
 
-  if (newProspects.length < prospects.length) {
-    console.log(`  Skipped ${prospects.length - newProspects.length} duplicates (already in system)`);
+  const newProspects: Prospect[] = [];
+  const rescoutedProspects: Prospect[] = [];
+  let skippedActive = 0;
+
+  for (const prospect of prospects) {
+    const existingMatch = existingByName.get(prospect.businessName.toLowerCase());
+    if (!existingMatch) {
+      // Brand new — never seen before
+      newProspects.push(prospect);
+    } else if (existingMatch.status === "dismissed") {
+      // Previously dismissed — allow re-scout with "rescouted" tag
+      prospect.id = existingMatch.id; // Keep same ID
+      prospect.status = "scouted" as const;
+      rescoutedProspects.push(prospect);
+    } else {
+      // Active in pipeline — skip
+      skippedActive++;
+    }
   }
 
-  // Save new prospects to the store
+  if (skippedActive > 0) {
+    console.log(`  Skipped ${skippedActive} active prospects (already in pipeline)`);
+  }
+  if (rescoutedProspects.length > 0) {
+    console.log(`  ♻️ Re-scouted ${rescoutedProspects.length} previously dismissed businesses`);
+  }
+
+  // Save new prospects
   for (const prospect of newProspects) {
     await addProspect(prospect);
   }
 
-  console.log(`  Found ${newProspects.length} new businesses\n`);
-  return newProspects;
+  // Update re-scouted prospects (change status back from dismissed to scouted)
+  for (const prospect of rescoutedProspects) {
+    await updateProspect(prospect.id, {
+      status: "scouted",
+      phone: prospect.phone || undefined,
+    });
+  }
+
+  const totalFound = newProspects.length + rescoutedProspects.length;
+  console.log(`  Found ${totalFound} businesses (${newProspects.length} new, ${rescoutedProspects.length} re-scouted)\n`);
+  return [...newProspects, ...rescoutedProspects];
 }
