@@ -165,10 +165,46 @@ export default function ProspectTable({
               {bulkSending ? "Starting..." : "🚀 Start Funnel"}
             </button>
             <button
+              onClick={async () => {
+                setBulkSending(true);
+                for (const pid of selectedIds) {
+                  await fetch(`/api/prospects/${pid}`, {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ status: "dismissed" }),
+                  });
+                }
+                setBulkResult(`${selectedIds.length} leads dismissed`);
+                setSelectedIds([]);
+                onRefresh?.();
+                setBulkSending(false);
+              }}
+              disabled={bulkSending}
+              className="h-9 px-4 rounded-lg bg-red-500/20 text-red-400 text-sm font-medium hover:bg-red-500/30 transition-colors disabled:opacity-50"
+            >
+              Dismiss
+            </button>
+            <button
+              onClick={async () => {
+                setBulkSending(true);
+                for (const pid of selectedIds) {
+                  await fetch(`/api/generate/${pid}`, { method: "POST" });
+                }
+                setBulkResult(`Building ${selectedIds.length} sites...`);
+                setSelectedIds([]);
+                onRefresh?.();
+                setBulkSending(false);
+              }}
+              disabled={bulkSending}
+              className="h-9 px-4 rounded-lg bg-yellow-500/20 text-yellow-400 text-sm font-medium hover:bg-yellow-500/30 transition-colors disabled:opacity-50"
+            >
+              Build Sites
+            </button>
+            <button
               onClick={() => setSelectedIds([])}
               className="h-9 px-4 rounded-lg bg-surface border border-border text-muted text-sm hover:text-foreground transition-colors"
             >
-              Clear
+              Clear Selection
             </button>
           </div>
         </div>
