@@ -151,7 +151,13 @@ The sales agent is a LIVING SYSTEM that must improve over time, not stay static.
 - **The test funnel button triggers a full knowledge refresh** — when Ben clicks "Test Funnel", it reads the latest agent-personality.ts, email-templates.ts, sms.ts, and funnel-manager.ts LIVE (not from any cache). The test output always reflects the most current strategy.
 - **New leads trigger the latest pipeline** — when a new prospect enters the funnel (via scout, manual add, or get-started form), all outreach uses the current version of templates and strategy. No stale copy.
 - **Aggregate and learn** — track which email subjects get opened, which preview links get clicked, which objections come up most. Use this data to periodically update: email-templates.ts (better subject lines), agent-personality.ts (better objection responses), sms.ts (better text hooks).
-- **Skills and frameworks** — the sales agent should leverage marketing frameworks from: coreyhaines31/marketingskills (GitHub), anthropics/skills/frontend-design, anthropics/skills/web-artifacts-builder. When updating copy, apply modern copywriting principles: benefit-first headlines, social proof, urgency without sleaze, objection preemption.
+- **Skills and frameworks** — the sales agent and all building agents should leverage these skill libraries:
+  - **coreyhaines31/marketingskills**: CRO, cold outreach sequences, conversion optimization, pricing strategy, churn prevention
+  - **OpenClaudia/openclaudia-skills**: write-landing (high-converting copy), page-cro (conversion rate optimization), copywriting, copy-editing, competitor-analysis, pricing-strategy, growth-strategy, demand-gen
+  - **onewave-ai/claude-skills**: landing-page-copywriter, sales prospecting, email generation, content optimization (100 skills)
+  - **anthropics/skills/frontend-design**: production-grade landing page code (React + Tailwind + shadcn/ui)
+  - **anthropics/skills/web-artifacts-builder**: beautiful modern web components with animations
+  - When updating sales copy, apply: benefit-first headlines, social proof, urgency without sleaze, objection preemption, CRO principles, psychological triggers, A/B testing mindset. Think like a growth marketer.
 - **Version the improvements** — when the sales strategy is updated, log what changed and why (e.g., "Changed email 1 subject line because open rate was 12%, new version targets 25%"). This creates an audit trail of what's working.
 
 ## Outreach Safety Rules (NON-NEGOTIABLE)
