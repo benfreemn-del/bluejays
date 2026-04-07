@@ -122,7 +122,7 @@ When Ben asks to build a V2 (or higher) template for a category, ALL of these st
 - **Only scout categories that have a built template** — don't scout categories we can't generate premium sites for yet.
 - **Current active categories** (have premium templates — all 30 categories have V1, 11 have V2): real-estate, dental, law-firm, landscaping, salon, electrician, plumber, hvac, roofing, auto-repair, chiropractic, fitness, veterinary, photography, cleaning, pest-control, accounting, moving, florist, daycare, insurance, interior-design, tattoo, martial-arts, physical-therapy, tutoring, pool-spa, general-contractor, catering, pet-services, church
 - **Add new categories only after building their premium template first** — template first, then scout.
-- **Categories with V2 showcase + dynamic preview renderer**: electrician (full pipeline). Categories with V2 showcase only (need dynamic renderer built): dental, law-firm, salon, fitness, real-estate, church, plumber, hvac, roofing, auto-repair
+- **Categories with FULL V2 pipeline (showcase + dynamic renderer + preview routing)**: electrician, dental, law-firm, salon, fitness, real-estate, church, plumber, hvac, roofing, auto-repair (ALL 11 V2 categories complete)
 
 ## Preview = Product Rules (NON-NEGOTIABLE)
 - **The preview URL IS the product** — `/preview/[id]` is the exact link sent to business owners in pitch emails, texts, and DMs. It must look like a $997 website, not a prototype.
