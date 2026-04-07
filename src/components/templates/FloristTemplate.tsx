@@ -158,7 +158,7 @@ const galleryItems = [
   { src: "https://images.unsplash.com/photo-1487530811176-3780de880c2d?w=600&q=80", title: "Garden Romance Bouquet" },
   { src: "https://images.unsplash.com/photo-1561181286-d3fee7d55364?w=600&q=80", title: "Ceremony Arch in Bloom" },
   { src: "https://images.unsplash.com/photo-1563241527-3004b7be0ffd?w=600&q=80", title: "Peony & Rose Cascade" },
-  { src: "https://images.unsplash.com/photo-1490750967868-88aa4f44baee?w=600&q=80", title: "Wildflower Meadow" },
+  { src: "https://images.unsplash.com/photo-1487700160041-babef9c3cb55?w=600&q=80", title: "Wildflower Meadow" },
   { src: "https://images.unsplash.com/photo-1508610048659-a06b669e3321?w=600&q=80", title: "Luxury Centerpiece" },
   { src: "https://images.unsplash.com/photo-1455659817273-f96807779a8a?w=600&q=80", title: "Blush Bridal Collection" },
 ];

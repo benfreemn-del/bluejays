@@ -120,7 +120,7 @@ const artists = [
   {
     name: "Jake &ldquo;Viper&rdquo; Morrison",
     title: "Owner / Lead Artist",
-    image: "https://images.unsplash.com/photo-1611457194403-d3f156e6fad8?w=400&q=80",
+    image: "https://images.unsplash.com/photo-1531891437562-4301cf35b7e4?w=400&q=80",
     specialties: ["Japanese", "Realism", "Cover-ups"],
     yearsExp: 16,
   },

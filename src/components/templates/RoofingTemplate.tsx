@@ -219,7 +219,7 @@ const projects = [
     type: "Standing Seam Metal",
   },
   {
-    before: "https://images.unsplash.com/photo-1635424710928-0544e8603ade?w=500&q=80",
+    before: "https://images.unsplash.com/photo-1596178060671-7a80dc8059ea?w=500&q=80",
     after: "https://images.unsplash.com/photo-1628624747186-a941c476b7ef?w=500&q=80",
     title: "Storm Restoration - Lakewood",
     type: "Emergency + Full Replacement",
@@ -316,7 +316,7 @@ export default function RoofingTemplate() {
       accentColor="#d97706"
       accentColorLight="#f59e0b"
       heroGradient="linear-gradient(135deg, #1a1206 0%, #0f0c08 100%)"
-      heroImage="https://images.unsplash.com/photo-1632823471565-1ecdf5c6da24?w=1400&q=80"
+      heroImage="https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1400&q=80"
       phone="(253) 555-0105"
       address="Tacoma, WA"
     >
@@ -484,7 +484,7 @@ export default function RoofingTemplate() {
                 {/* Main image */}
                 <div className="absolute top-0 left-0 w-[75%] h-[70%] rounded-2xl overflow-hidden border-2 border-white/[0.06] shadow-2xl z-10">
                   <img
-                    src="https://images.unsplash.com/photo-1625766763788-95ed614e1d01?w=600&q=80"
+                    src="https://images.unsplash.com/photo-1558036117-15d82a90b9b1?w=600&q=80"
                     alt="Roof inspection"
                     className="w-full h-full object-cover"
                   />

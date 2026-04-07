@@ -171,7 +171,7 @@ const maintenancePlans = [
 
 const galleryItems = [
   {
-    image: "https://images.unsplash.com/photo-1572331165267-854da2b021b1?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=600&q=80",
     title: "Infinity Edge Paradise",
     desc: "Custom gunite with vanishing edge",
   },
@@ -312,7 +312,7 @@ export default function PoolSpaTemplate() {
       accentColor="#22d3ee"
       accentColorLight="#67e8f9"
       heroGradient="linear-gradient(135deg, #0a1a2e 0%, #0c1220 100%)"
-      heroImage="https://images.unsplash.com/photo-1572331165267-854da2b021b1?w=1400&q=80"
+      heroImage="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=1400&q=80"
       phone="(425) 555-0136"
       address="412 Lake St, Kirkland, WA 98033"
     >

@@ -213,7 +213,7 @@ const trainers = [
   {
     name: "Aisha Johnson",
     title: "HIIT Specialist",
-    image: "https://images.unsplash.com/photo-1609895046533-c68c6dba03fa?w=400&q=80",
+    image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&q=80",
     specialties: ["HIIT", "Fat Loss", "Nutrition"],
     yearsExp: 8,
   },

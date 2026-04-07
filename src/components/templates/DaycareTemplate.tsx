@@ -317,7 +317,7 @@ export default function DaycareTemplate() {
       accentColor="#60a5fa"
       accentColorLight="#93c5fd"
       heroGradient="linear-gradient(135deg, #0f1a2e 0%, #080d1a 100%)"
-      heroImage="https://images.unsplash.com/photo-1587654780291-39c9404d7dd0?w=1400&q=80"
+      heroImage="https://images.unsplash.com/photo-1540479859555-17af45c78602?w=1400&q=80"
       phone="(425) 555-0114"
       address="123 Discovery Lane, Redmond, WA"
     >

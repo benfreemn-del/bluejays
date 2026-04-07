@@ -155,7 +155,7 @@ const stylists = [
   {
     name: "Alex Reyes",
     title: "Senior Colorist",
-    image: "https://images.unsplash.com/photo-1595959183082-7b570b7e1e2b?w=400&q=80",
+    image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&q=80",
     specialties: ["Vivid Color", "Corrections"],
     yearsExp: 10,
     quote: "Color is my art and your hair is my canvas.",
@@ -202,7 +202,7 @@ const testimonials = [
 const galleryImages = [
   "https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400&q=80",
   "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=400&q=80",
-  "https://images.unsplash.com/photo-1595959183082-7b570b7e1e2b?w=400&q=80",
+  "https://images.unsplash.com/photo-1574180566232-aaad1b5b8450?w=400&q=80",
   "https://images.unsplash.com/photo-1580618672591-eb180b1a973f?w=400&q=80",
   "https://images.unsplash.com/photo-1492106087820-71f1a00d2b11?w=400&q=80",
   "https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=400&q=80",

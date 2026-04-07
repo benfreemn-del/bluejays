@@ -140,7 +140,7 @@ const services = [
 
 const portfolioItems = [
   {
-    image: "https://images.unsplash.com/photo-1621905252507-b35cbf2aaa1e?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1613545325278-f24b0cae1224?w=600&q=80",
     title: "Modern Kitchen Transformation",
     desc: "Complete gut renovation with custom walnut cabinetry",
     category: "Kitchen Remodel",

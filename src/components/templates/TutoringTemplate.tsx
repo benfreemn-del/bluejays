@@ -337,7 +337,7 @@ export default function TutoringTemplate() {
       accentColor="#818cf8"
       accentColorLight="#a5b4fc"
       heroGradient="linear-gradient(135deg, #141726 0%, #0e1019 100%)"
-      heroImage="https://images.unsplash.com/photo-1523050854058-8df90110c476?w=1400&q=80"
+      heroImage="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=1400&q=80"
       phone="(425) 555-0135"
       address="320 Education Way, Redmond, WA 98052"
     >

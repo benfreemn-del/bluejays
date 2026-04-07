@@ -206,7 +206,7 @@ const galleryImages = [
   { src: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=600&q=80", alt: "Wedding reception table" },
   { src: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=80", alt: "Gourmet appetizer spread" },
   { src: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80", alt: "Fine dining presentation" },
-  { src: "https://images.unsplash.com/photo-1529543544282-ea57407bc2e3?w=600&q=80", alt: "Outdoor BBQ event" },
+  { src: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&q=80", alt: "Outdoor BBQ event" },
   { src: "https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=600&q=80", alt: "Dessert display" },
 ];
 

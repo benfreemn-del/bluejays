@@ -453,7 +453,7 @@ export default function ElectricianTemplate() {
                 {/* Secondary image */}
                 <div className="absolute bottom-0 right-0 w-[65%] h-[55%] rounded-2xl overflow-hidden border-2 border-white/[0.06] shadow-2xl z-20">
                   <img
-                    src="https://images.unsplash.com/photo-1621905252507-b35cbf2aaa1f?w=400&q=80"
+                    src="https://images.unsplash.com/photo-1621905251918-48416bd8575a?w=400&q=80"
                     alt="Electrical panel"
                     className="w-full h-full object-cover"
                   />

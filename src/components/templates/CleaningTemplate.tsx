@@ -185,7 +185,7 @@ const teamMembers = [
   {
     name: "Maria Santos",
     title: "Lead Technician",
-    image: "https://images.unsplash.com/photo-1601455763557-4b9a1a7faf22?w=400&q=80",
+    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80",
     yearsExp: 8,
   },
   {

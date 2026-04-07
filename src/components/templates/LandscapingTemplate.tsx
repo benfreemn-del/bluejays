@@ -185,7 +185,7 @@ const projects = [
   {
     name: "Commercial Campus",
     type: "Maintenance",
-    image: "https://images.unsplash.com/photo-1501004318855-dc52a1a4c59f?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1416339306562-f3d12fefd36f?w=600&q=80",
     detail: "Year-round maintenance for a 5-acre commercial campus including full irrigation management.",
     area: "5 acres",
   },
@@ -199,7 +199,7 @@ const projects = [
   {
     name: "Drought-Smart Front Yard",
     type: "Curb Appeal",
-    image: "https://images.unsplash.com/photo-1589984662228-2e44f6840e32?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1518495973542-4542c06a5843?w=600&q=80",
     detail: "Zero-waste front yard redesign with decorative rock, succulents, and solar pathway lighting.",
     area: "900 sq ft",
   },

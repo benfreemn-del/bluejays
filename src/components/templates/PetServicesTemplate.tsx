@@ -218,7 +218,7 @@ const team = [
   {
     name: "Marcus Chen",
     title: "Lead Trainer",
-    image: "https://images.unsplash.com/photo-1580894732930-7e7a10b89dde?w=400&q=80",
+    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80",
     specialties: ["Behavior Mod", "Puppy Training"],
     yearsExp: 8,
   },
@@ -232,7 +232,7 @@ const team = [
 ];
 
 const galleryImages = [
-  { src: "https://images.unsplash.com/photo-1601758124510-52d02ddf7cbd?w=600&q=80", alt: "Happy golden retriever after grooming" },
+  { src: "https://images.unsplash.com/photo-1588943211346-0908a1fb0b01?w=600&q=80", alt: "Happy golden retriever after grooming" },
   { src: "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&q=80", alt: "Dogs playing at daycare" },
   { src: "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=600&q=80", alt: "Puppy getting a bath" },
   { src: "https://images.unsplash.com/photo-1583511655826-05700d52f4d9?w=600&q=80", alt: "Dog walking in the park" },
@@ -353,7 +353,7 @@ export default function PetServicesTemplate() {
       accentColor="#4ade80"
       accentColorLight="#86efac"
       heroGradient="linear-gradient(135deg, #0a1a10 0%, #0d130f 100%)"
-      heroImage="https://images.unsplash.com/photo-1601758124510-52d02ddf7cbd?w=1400&q=80"
+      heroImage="https://images.unsplash.com/photo-1588943211346-0908a1fb0b01?w=1400&q=80"
       phone="(425) 555-0139"
       address="1024 Bellevue Way NE, Bellevue, WA"
     >
