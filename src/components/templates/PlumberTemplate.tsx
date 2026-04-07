@@ -453,7 +453,7 @@ export default function PlumberTemplate() {
                 {/* Main image */}
                 <div className="absolute top-0 left-0 w-[75%] h-[70%] rounded-2xl overflow-hidden border-2 border-white/[0.06] shadow-2xl z-10">
                   <img
-                    src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=600&q=80"
+                    src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=600&q=80"
                     alt="Professional plumber at work"
                     className="w-full h-full object-cover"
                   />
@@ -461,7 +461,7 @@ export default function PlumberTemplate() {
                 {/* Secondary image */}
                 <div className="absolute bottom-0 right-0 w-[65%] h-[55%] rounded-2xl overflow-hidden border-2 border-white/[0.06] shadow-2xl z-20">
                   <img
-                    src="https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=400&q=80"
+                    src="https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=400&q=80"
                     alt="Plumbing tools and equipment"
                     className="w-full h-full object-cover"
                   />

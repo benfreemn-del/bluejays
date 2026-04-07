@@ -167,21 +167,21 @@ const teamMembers = [
   {
     name: "Ryan Mitchell",
     title: "Owner / Master Electrician",
-    image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&q=80",
+    image: "https://images.unsplash.com/photo-1504257432389-52343af06ae3?w=400&q=80",
     specialties: ["Residential", "Panel Upgrades"],
     yearsExp: 18,
   },
   {
     name: "David Park",
     title: "Lead Journeyman",
-    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80",
+    image: "https://images.unsplash.com/photo-1463453091185-61582044d556?w=400&q=80",
     specialties: ["Commercial", "EV Chargers"],
     yearsExp: 12,
   },
   {
     name: "Carlos Mendez",
     title: "Senior Electrician",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80",
+    image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&q=80",
     specialties: ["Emergency Service", "Lighting"],
     yearsExp: 9,
   },
@@ -453,7 +453,7 @@ export default function ElectricianTemplate() {
                 {/* Secondary image */}
                 <div className="absolute bottom-0 right-0 w-[65%] h-[55%] rounded-2xl overflow-hidden border-2 border-white/[0.06] shadow-2xl z-20">
                   <img
-                    src="https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=400&q=80"
+                    src="https://images.unsplash.com/photo-1621905252507-b35cbf2aaa1f?w=400&q=80"
                     alt="Electrical panel"
                     className="w-full h-full object-cover"
                   />

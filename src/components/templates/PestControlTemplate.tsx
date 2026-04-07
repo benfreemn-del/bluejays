@@ -291,7 +291,7 @@ export default function PestControlTemplate() {
       accentColor="#84cc16"
       accentColorLight="#a3e635"
       heroGradient="linear-gradient(135deg, #111a0a 0%, #0d1408 100%)"
-      heroImage="https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=1400&q=80"
+      heroImage="https://images.unsplash.com/photo-1530124566582-a45a7e3e29f0?w=1400&q=80"
       phone="(360) 555-0108"
       address="Olympia, WA"
     >
@@ -488,7 +488,7 @@ export default function PestControlTemplate() {
                 </div>
                 <div className="absolute bottom-0 right-0 w-[65%] h-[55%] rounded-2xl overflow-hidden border-2 border-white/[0.06] shadow-2xl z-20">
                   <img
-                    src="https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=400&q=80"
+                    src="https://images.unsplash.com/photo-1530124566582-a45a7e3e29f0?w=400&q=80"
                     alt="Pest control technician"
                     className="w-full h-full object-cover"
                   />

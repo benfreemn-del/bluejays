@@ -140,13 +140,13 @@ const services = [
 
 const portfolioItems = [
   {
-    image: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1621905252507-b35cbf2aaa1e?w=600&q=80",
     title: "Modern Kitchen Transformation",
     desc: "Complete gut renovation with custom walnut cabinetry",
     category: "Kitchen Remodel",
   },
   {
-    image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1590725121839-892b458a74fe?w=600&q=80",
     title: "Craftsman Home Addition",
     desc: "700 sq ft second-story addition matching original style",
     category: "Addition",
@@ -158,7 +158,7 @@ const portfolioItems = [
     category: "Bathroom Remodel",
   },
   {
-    image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1600573472550-8090b5e0745e?w=600&q=80",
     title: "Backyard ADU",
     desc: "600 sq ft permitted ADU with full kitchen and bath",
     category: "ADU",

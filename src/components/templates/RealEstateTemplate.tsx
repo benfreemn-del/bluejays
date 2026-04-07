@@ -133,8 +133,8 @@ const HousePattern = ({ opacity = 0.025 }: { opacity?: number }) => (
 /* ───────────────────────── Data ───────────────────────── */
 
 const listings = [
-  { address: "142 Oak Ridge Drive", price: "$425,000", beds: 4, baths: 3, sqft: "2,400", tag: "New Listing", neighborhood: "Westlake Hills", image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80" },
-  { address: "89 Lakewood Blvd", price: "$675,000", beds: 5, baths: 4, sqft: "3,200", tag: "Featured", neighborhood: "Lakefront", image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80" },
+  { address: "142 Oak Ridge Drive", price: "$425,000", beds: 4, baths: 3, sqft: "2,400", tag: "New Listing", neighborhood: "Westlake Hills", image: "https://images.unsplash.com/photo-1625602812206-5ec545ca1231?w=600&q=80" },
+  { address: "89 Lakewood Blvd", price: "$675,000", beds: 5, baths: 4, sqft: "3,200", tag: "Featured", neighborhood: "Lakefront", image: "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=600&q=80" },
   { address: "301 Maple Court", price: "$299,000", beds: 3, baths: 2, sqft: "1,800", tag: "Open House", neighborhood: "Downtown", image: "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=600&q=80" },
   { address: "55 Sunset Terrace", price: "$525,000", beds: 4, baths: 3, sqft: "2,800", tag: "Reduced", neighborhood: "Sunset Ridge", image: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600&q=80" },
   { address: "712 Birch Lane", price: "$389,000", beds: 3, baths: 2, sqft: "2,100", tag: "New Listing", neighborhood: "Maplewood", image: "https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?w=600&q=80" },
@@ -301,7 +301,7 @@ export default function RealEstateTemplate() {
       accentColor="#c8a45e"
       accentColorLight="#d4b76a"
       heroGradient="linear-gradient(135deg, #1a1a0e 0%, #0d0d08 100%)"
-      heroImage="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1400&q=80"
+      heroImage="https://images.unsplash.com/photo-1625602812206-5ec545ca1231?w=1400&q=80"
       phone="(555) 123-4567"
       address="Downtown, Your City"
     >
@@ -554,7 +554,7 @@ export default function RealEstateTemplate() {
                 {/* Main image */}
                 <div className="absolute top-0 left-0 w-[75%] h-[70%] rounded-2xl overflow-hidden border-2 border-white/[0.06] shadow-2xl z-10">
                   <img
-                    src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=600&q=80"
+                    src="https://images.unsplash.com/photo-1556157382-97eda2d62296?w=600&q=80"
                     alt="Real estate agent"
                     className="w-full h-full object-cover"
                   />
@@ -562,7 +562,7 @@ export default function RealEstateTemplate() {
                 {/* Secondary image */}
                 <div className="absolute bottom-0 right-0 w-[65%] h-[55%] rounded-2xl overflow-hidden border-2 border-white/[0.06] shadow-2xl z-20">
                   <img
-                    src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400&q=80"
+                    src="https://images.unsplash.com/photo-1625602812206-5ec545ca1231?w=400&q=80"
                     alt="Luxury home"
                     className="w-full h-full object-cover"
                   />

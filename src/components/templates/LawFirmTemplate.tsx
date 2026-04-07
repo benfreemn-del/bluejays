@@ -145,21 +145,21 @@ const attorneys = [
   {
     name: "Marcus D. Carter",
     title: "Founding Partner",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80",
+    image: "https://images.unsplash.com/photo-1556474835-b0f3ac40d4d1?w=400&q=80",
     specialties: ["Personal Injury", "Trial Law"],
     yearsExp: 24,
   },
   {
     name: "Victoria L. Chen",
     title: "Senior Partner",
-    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80",
+    image: "https://images.unsplash.com/photo-1573497019236-17f8177b81e8?w=400&q=80",
     specialties: ["Family Law", "Estate Planning"],
     yearsExp: 18,
   },
   {
     name: "James R. Holloway",
     title: "Partner",
-    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80",
+    image: "https://images.unsplash.com/photo-1580894732444-8ecded7900cd?w=400&q=80",
     specialties: ["Criminal Defense", "DUI"],
     yearsExp: 15,
   },
@@ -469,7 +469,7 @@ export default function LawFirmTemplate() {
                 {/* Secondary image */}
                 <div className="absolute bottom-0 right-0 w-[65%] h-[55%] rounded-2xl overflow-hidden border-2 border-white/[0.06] shadow-2xl z-20">
                   <img
-                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80"
+                    src="https://images.unsplash.com/photo-1556474835-b0f3ac40d4d1?w=400&q=80"
                     alt="Attorney portrait"
                     className="w-full h-full object-cover"
                   />

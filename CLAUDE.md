@@ -14,6 +14,12 @@ This system is designed to function like a money printer. Every feature should d
 - **Review approval required** — sites go to "pending-review" before outreach, not straight to "contacted".
 - **Color review agent must pass** — every generated site's color scheme is reviewed for vibrancy and category fit before approval.
 
+## Image Rules (NON-NEGOTIABLE)
+- **NEVER reuse the same stock photo across multiple templates** — every template must have completely unique images. If two templates use the same person photo, it's immediately obvious and kills trust.
+- **Every team/staff photo must be unique per template** — no sharing headshots between electrician, plumber, dental, etc.
+- **Verify all image URLs actually load** — broken images are unacceptable. Test before deploying.
+- **For generated preview sites**: use the business's real photos when scraped. Only fall back to stock as last resort, and never reuse stock across different prospects.
+
 ## Customization Rules (NON-NEGOTIABLE)
 Every generated website MUST be heavily customized to the specific business. Generic is unacceptable. The site generation agent must:
 - **Use the business's actual logo** if available (scraped from their current site or Google Business Profile). If no logo, generate a text-based logo with their name in a style matching the industry.

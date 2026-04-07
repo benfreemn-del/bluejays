@@ -111,7 +111,7 @@ export const CATEGORY_CONFIG: Record<
   Category,
   { label: string; accentColor: string; heroGradient: string }
 > = {
-  "real-estate": { label: "Real Estate", accentColor: "#c8a45e", heroGradient: "linear-gradient(135deg, #1a2744 0%, #0d1b33 100%)" },
+  "real-estate": { label: "Real Estate", accentColor: "#d4a843", heroGradient: "linear-gradient(135deg, #1e3050 0%, #162640 100%)" },
   dental: { label: "Dental", accentColor: "#10b981", heroGradient: "linear-gradient(135deg, #0f2a2a 0%, #0a1f1f 100%)" },
   "law-firm": { label: "Law Firm", accentColor: "#8b5cf6", heroGradient: "linear-gradient(135deg, #1f1a2e 0%, #13101f 100%)" },
   landscaping: { label: "Landscaping", accentColor: "#22c55e", heroGradient: "linear-gradient(135deg, #1a2e1a 0%, #0f1f0f 100%)" },

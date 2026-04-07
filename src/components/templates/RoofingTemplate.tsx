@@ -208,19 +208,19 @@ const materialComparison = [
 const projects = [
   {
     before: "https://images.unsplash.com/photo-1632778149955-e80f8ceca2e8?w=500&q=80",
-    after: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=500&q=80",
+    after: "https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?w=500&q=80",
     title: "Full Replacement - Tacoma Hills",
     type: "Architectural Shingles",
   },
   {
-    before: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=500&q=80",
-    after: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=500&q=80",
+    before: "https://images.unsplash.com/photo-1552058544-f2b08422138a?w=500&q=80",
+    after: "https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?w=500&q=80",
     title: "Metal Roof Upgrade - Puyallup",
     type: "Standing Seam Metal",
   },
   {
-    before: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=500&q=80",
-    after: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=500&q=80",
+    before: "https://images.unsplash.com/photo-1635424710928-0544e8603ade?w=500&q=80",
+    after: "https://images.unsplash.com/photo-1628624747186-a941c476b7ef?w=500&q=80",
     title: "Storm Restoration - Lakewood",
     type: "Emergency + Full Replacement",
   },
@@ -484,7 +484,7 @@ export default function RoofingTemplate() {
                 {/* Main image */}
                 <div className="absolute top-0 left-0 w-[75%] h-[70%] rounded-2xl overflow-hidden border-2 border-white/[0.06] shadow-2xl z-10">
                   <img
-                    src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&q=80"
+                    src="https://images.unsplash.com/photo-1625766763788-95ed614e1d01?w=600&q=80"
                     alt="Roof inspection"
                     className="w-full h-full object-cover"
                   />
@@ -492,7 +492,7 @@ export default function RoofingTemplate() {
                 {/* Secondary image */}
                 <div className="absolute bottom-0 right-0 w-[65%] h-[55%] rounded-2xl overflow-hidden border-2 border-white/[0.06] shadow-2xl z-20">
                   <img
-                    src="https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=400&q=80"
+                    src="https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?w=400&q=80"
                     alt="Completed roof"
                     className="w-full h-full object-cover"
                   />

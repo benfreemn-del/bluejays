@@ -143,7 +143,7 @@ const portfolioItems = [
   {
     title: "Chef&apos;s Kitchen Redesign",
     category: "Kitchen",
-    image: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=600&q=80",
     desc: "Custom cabinetry, marble countertops, and intelligent layouts that make cooking a joy.",
   },
   {

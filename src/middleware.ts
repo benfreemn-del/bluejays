@@ -7,6 +7,7 @@ const PROTECTED_PATHS = [
   "/dashboard",
   "/scripts",
   "/lead",
+  "/spending",
   "/api/scout",
   "/api/prospects",
   "/api/email",
@@ -68,5 +69,6 @@ export const config = {
     "/api/quality-review/:path*",
     "/api/notes/:path*",
     "/lead/:path*",
+    "/spending",
   ],
 };

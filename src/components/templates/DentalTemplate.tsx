@@ -282,14 +282,14 @@ const teamMembers = [
     name: "Dr. James Park",
     title: "Orthodontist, DMD",
     specialty: "Invisalign Certified",
-    image: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400&q=80",
+    image: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=400&q=80",
     yearsExp: 10,
   },
   {
     name: "Dr. Maria Lopez",
     title: "Pediatric Specialist, DDS",
     specialty: "Children & Sedation",
-    image: "https://images.unsplash.com/photo-1594824476967-48c8b964ac31?w=400&q=80",
+    image: "https://images.unsplash.com/photo-1614608682850-e0d6ed316d47?w=400&q=80",
     yearsExp: 8,
   },
 ];

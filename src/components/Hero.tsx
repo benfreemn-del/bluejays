@@ -133,7 +133,7 @@ export default function Hero() {
         </div>
       </motion.nav>
 
-      {/* ── Animated bubble ── */}
+      {/* ── Animated bubble with bird on branch ── */}
       <AnimatePresence>
         {bubbleVisible && (
           <motion.div
@@ -143,23 +143,91 @@ export default function Hero() {
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="absolute z-20 flex items-center justify-center"
           >
-            <div className="relative w-64 h-64 md:w-80 md:h-80 rounded-full bg-gradient-to-br from-sky-500 to-blue-700 flex items-center justify-center shadow-[0_0_100px_rgba(14,165,233,0.5),0_0_200px_rgba(14,165,233,0.2)]">
-              {/* Decorative ring */}
-              <div className="absolute inset-[-6px] rounded-full border border-sky-400/20" />
-              <div className="absolute inset-[-14px] rounded-full border border-sky-400/10" />
-              {/* Bird silhouette */}
-              <BluejayLogo size={90} className="absolute text-white/[0.08] -top-3 -right-3" />
+            <div className="relative w-72 h-72 md:w-[340px] md:h-[340px] rounded-full bg-gradient-to-br from-sky-400 via-sky-500 to-blue-700 flex items-center justify-center shadow-[0_0_120px_rgba(14,165,233,0.6),0_0_250px_rgba(14,165,233,0.2)]">
+              {/* Decorative rings */}
+              <div className="absolute inset-[-6px] rounded-full border border-sky-300/25" />
+              <div className="absolute inset-[-14px] rounded-full border border-sky-300/15" />
+              <div className="absolute inset-[-24px] rounded-full border border-sky-300/8" />
+
+              {/* Branch extending from bubble with leaf */}
+              <svg className="absolute -right-16 top-[15%] w-32 h-24" viewBox="0 0 130 100" fill="none">
+                {/* Branch */}
+                <path d="M0 55 Q30 50 60 45 Q90 40 115 30" stroke="#8B6914" strokeWidth="3" strokeLinecap="round" />
+                <path d="M0 58 Q30 53 60 48 Q90 43 115 33" stroke="#6B4F10" strokeWidth="2" strokeLinecap="round" opacity="0.5" />
+                {/* Small twig */}
+                <path d="M70 44 Q80 30 90 25" stroke="#8B6914" strokeWidth="2" strokeLinecap="round" />
+                {/* Leaf on branch */}
+                <path d="M85 22 Q95 12 105 18 Q95 28 85 22Z" fill="#22c55e" opacity="0.7" />
+                <path d="M85 22 Q95 20 105 18" stroke="#16a34a" strokeWidth="0.5" opacity="0.5" />
+                {/* Second leaf */}
+                <path d="M55 38 Q60 28 70 33 Q60 42 55 38Z" fill="#22c55e" opacity="0.5" />
+              </svg>
+
+              {/* Bird sitting on branch — flies away at phase 1 */}
+              <motion.div
+                className="absolute -right-8 top-[8%] z-10"
+                initial={{ x: 0, y: 0, rotate: 0 }}
+                animate={phase >= 1 ? {
+                  x: [0, 20, 80, 200, 400],
+                  y: [0, -10, -40, -80, -150],
+                  rotate: [0, -5, -10, -15, -10],
+                  opacity: [1, 1, 1, 0.8, 0],
+                } : { x: 0, y: 0 }}
+                transition={{ duration: 1.8, ease: "easeInOut" }}
+              >
+                {/* Detailed Blue Jay bird */}
+                <svg width="50" height="50" viewBox="0 0 100 100" className="drop-shadow-lg">
+                  {/* Body */}
+                  <ellipse cx="50" cy="52" rx="20" ry="18" fill="#3b82f6" />
+                  {/* Belly */}
+                  <ellipse cx="50" cy="58" rx="14" ry="12" fill="#93c5fd" opacity="0.6" />
+                  {/* Head */}
+                  <circle cx="50" cy="30" r="14" fill="#3b82f6" />
+                  {/* Crest */}
+                  <path d="M52 18 L58 6 L54 16 L60 10 L55 18 L62 14 L56 20" fill="#2563eb" />
+                  {/* Eye ring */}
+                  <circle cx="55" cy="28" r="5" fill="white" />
+                  <circle cx="56" cy="27" r="2.5" fill="#1e1e1e" />
+                  <circle cx="57" cy="26" r="1" fill="white" />
+                  {/* Beak */}
+                  <path d="M62 32 L74 30 L62 35Z" fill="#1e1e1e" />
+                  {/* Wing */}
+                  <path d="M35 45 Q28 55 32 68 L40 64 Q36 54 40 47Z" fill="#1d4ed8" />
+                  {/* Wing bars */}
+                  <path d="M34 52 L30 54" stroke="white" strokeWidth="1.5" opacity="0.6" />
+                  <path d="M33 56 L29 58" stroke="white" strokeWidth="1.5" opacity="0.6" />
+                  {/* Tail */}
+                  <path d="M38 66 L22 82 L28 80 L24 88 L32 82 L30 88 L36 78 L40 70Z" fill="#1d4ed8" />
+                  {/* Black necklace */}
+                  <path d="M38 38 Q50 44 62 38" stroke="#1e1e1e" strokeWidth="2.5" fill="none" />
+                  {/* Feet */}
+                  <path d="M44 68 L42 76 L38 78 M42 76 L46 78" stroke="#6b7280" strokeWidth="1.5" fill="none" />
+                  <path d="M56 68 L58 76 L54 78 M58 76 L62 78" stroke="#6b7280" strokeWidth="1.5" fill="none" />
+                </svg>
+              </motion.div>
+
+              {/* Text with better font styling */}
               <AnimatePresence mode="wait">
-                <motion.p
+                <motion.div
                   key={phase}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.5 }}
-                  className="text-white text-2xl md:text-3xl font-extrabold text-center px-8 tracking-tight"
+                  initial={{ opacity: 0, y: 15, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -15, scale: 0.95 }}
+                  transition={{ duration: 0.6, ease: "easeOut" }}
+                  className="text-center px-10"
                 >
-                  {phrases[phase]}
-                </motion.p>
+                  <p className="text-white text-3xl md:text-4xl font-extrabold tracking-tight leading-tight" style={{ textShadow: "0 2px 20px rgba(0,0,0,0.3)" }}>
+                    {phrases[phase]}
+                  </p>
+                  {phase === 0 && (
+                    <motion.div
+                      initial={{ scaleX: 0 }}
+                      animate={{ scaleX: 1 }}
+                      transition={{ delay: 0.5, duration: 0.6 }}
+                      className="h-0.5 w-12 bg-white/30 mx-auto mt-3"
+                    />
+                  )}
+                </motion.div>
               </AnimatePresence>
             </div>
           </motion.div>
@@ -224,7 +292,7 @@ export default function Hero() {
               >
                 {/* Icon */}
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-5xl opacity-30 group-hover:opacity-50 group-hover:scale-125 transition-all duration-500">
+                  <span className="text-7xl opacity-40 group-hover:opacity-60 group-hover:scale-125 transition-all duration-500">
                     {site.icon}
                   </span>
                 </div>

@@ -171,7 +171,7 @@ const stylists = [
   {
     name: "Morgan Lee",
     title: "Extension & Bridal Artist",
-    image: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&q=80",
+    image: "https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?w=400&q=80",
     specialties: ["Extensions", "Updos"],
     yearsExp: 6,
     quote: "Your wedding day hair should be as unforgettable as the moment.",

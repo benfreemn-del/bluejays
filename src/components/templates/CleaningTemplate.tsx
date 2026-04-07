@@ -185,19 +185,19 @@ const teamMembers = [
   {
     name: "Maria Santos",
     title: "Lead Technician",
-    image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&q=80",
+    image: "https://images.unsplash.com/photo-1601455763557-4b9a1a7faf22?w=400&q=80",
     yearsExp: 8,
   },
   {
     name: "David Park",
     title: "Operations Manager",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80",
+    image: "https://images.unsplash.com/photo-1580894894513-541e068a3e2b?w=400&q=80",
     yearsExp: 12,
   },
   {
     name: "Sarah Thompson",
     title: "Quality Inspector",
-    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80",
+    image: "https://images.unsplash.com/photo-1587614382346-4ec70e388b28?w=400&q=80",
     yearsExp: 6,
   },
 ];

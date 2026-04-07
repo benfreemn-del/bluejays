@@ -120,7 +120,7 @@ const artists = [
   {
     name: "Jake &ldquo;Viper&rdquo; Morrison",
     title: "Owner / Lead Artist",
-    image: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&q=80",
+    image: "https://images.unsplash.com/photo-1611457194403-d3f156e6fad8?w=400&q=80",
     specialties: ["Japanese", "Realism", "Cover-ups"],
     yearsExp: 16,
   },
@@ -134,7 +134,7 @@ const artists = [
   {
     name: "Marcus &ldquo;Ink&rdquo; Chen",
     title: "Artist",
-    image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&q=80",
+    image: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=400&q=80",
     specialties: ["Blackwork", "Geometric", "Dotwork"],
     yearsExp: 8,
   },

@@ -211,28 +211,28 @@ const team = [
   {
     name: "Jessica Rivera",
     title: "Head Groomer",
-    image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&q=80",
+    image: "https://images.unsplash.com/photo-1573497019418-b400bb3ab074?w=400&q=80",
     specialties: ["Breed Styling", "Show Cuts"],
     yearsExp: 12,
   },
   {
     name: "Marcus Chen",
     title: "Lead Trainer",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80",
+    image: "https://images.unsplash.com/photo-1580894732930-7e7a10b89dde?w=400&q=80",
     specialties: ["Behavior Mod", "Puppy Training"],
     yearsExp: 8,
   },
   {
     name: "Amy Larson",
     title: "Daycare Manager",
-    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80",
+    image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&q=80",
     specialties: ["Socialization", "Special Needs"],
     yearsExp: 10,
   },
 ];
 
 const galleryImages = [
-  { src: "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600&q=80", alt: "Happy golden retriever after grooming" },
+  { src: "https://images.unsplash.com/photo-1601758124510-52d02ddf7cbd?w=600&q=80", alt: "Happy golden retriever after grooming" },
   { src: "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&q=80", alt: "Dogs playing at daycare" },
   { src: "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=600&q=80", alt: "Puppy getting a bath" },
   { src: "https://images.unsplash.com/photo-1583511655826-05700d52f4d9?w=600&q=80", alt: "Dog walking in the park" },
@@ -353,7 +353,7 @@ export default function PetServicesTemplate() {
       accentColor="#4ade80"
       accentColorLight="#86efac"
       heroGradient="linear-gradient(135deg, #0a1a10 0%, #0d130f 100%)"
-      heroImage="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=1400&q=80"
+      heroImage="https://images.unsplash.com/photo-1601758124510-52d02ddf7cbd?w=1400&q=80"
       phone="(425) 555-0139"
       address="1024 Bellevue Way NE, Bellevue, WA"
     >

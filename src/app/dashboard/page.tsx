@@ -84,7 +84,10 @@ export default function DashboardPage() {
               Portfolio
             </a>
             <a href="/scripts" className="text-sm text-muted hover:text-foreground transition-colors">
-              Scripts
+              AI Convos
+            </a>
+            <a href="/spending" className="text-sm text-muted hover:text-foreground transition-colors">
+              Spending
             </a>
             <a
               href="/api/call-lists?type=all&format=csv"

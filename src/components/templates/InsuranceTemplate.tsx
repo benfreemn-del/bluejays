@@ -161,21 +161,21 @@ const agents = [
   {
     name: "David Nakamura",
     title: "Principal Agent",
-    image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&q=80",
+    image: "https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?w=400&q=80",
     specialties: ["Home", "Life", "Business"],
     yearsExp: 22,
   },
   {
     name: "Sarah Mitchell",
     title: "Senior Agent",
-    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80",
+    image: "https://images.unsplash.com/photo-1560439514-4e9645039924?w=400&q=80",
     specialties: ["Auto", "Health", "Umbrella"],
     yearsExp: 16,
   },
   {
     name: "Michael Torres",
     title: "Commercial Specialist",
-    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80",
+    image: "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=400&q=80",
     specialties: ["Business", "Workers Comp"],
     yearsExp: 12,
   },
@@ -528,7 +528,7 @@ export default function InsuranceTemplate() {
                 {/* Secondary image */}
                 <div className="absolute bottom-0 right-0 w-[65%] h-[55%] rounded-2xl overflow-hidden border-2 border-white/[0.06] shadow-2xl z-20">
                   <img
-                    src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&q=80"
+                    src="https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?w=400&q=80"
                     alt="Insurance agent"
                     className="w-full h-full object-cover"
                   />

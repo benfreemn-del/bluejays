@@ -114,7 +114,7 @@ const portfolioCategories = [
   {
     name: "Portraits",
     desc: "Authentic, expressive portrait sessions for families, couples, seniors, and professionals. Natural light and expert posing bring out the real you.",
-    image: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=600&q=80",
     count: "500+ sessions",
   },
   {

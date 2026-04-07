@@ -171,7 +171,7 @@ const projects = [
   {
     name: "Modern Patio Build",
     type: "Hardscaping",
-    image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1598257006458-087169a1f08d?w=600&q=80",
     detail: "600 sq ft travertine patio with built-in fire pit and integrated LED path lighting.",
     area: "600 sq ft",
   },
@@ -192,14 +192,14 @@ const projects = [
   {
     name: "Poolside Retreat",
     type: "Full Transformation",
-    image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1600880292089-90a7e086ee0c?w=600&q=80",
     detail: "Tropical poolside paradise with palm trees, ornamental grasses, and natural stone edging.",
     area: "3,200 sq ft",
   },
   {
     name: "Drought-Smart Front Yard",
     type: "Curb Appeal",
-    image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1589984662228-2e44f6840e32?w=600&q=80",
     detail: "Zero-waste front yard redesign with decorative rock, succulents, and solar pathway lighting.",
     area: "900 sq ft",
   },
