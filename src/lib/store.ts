@@ -130,6 +130,10 @@ export async function updateProspect(
     if (updates.scrapedData) dbUpdates.scraped_data = updates.scrapedData;
     if (updates.generatedSiteUrl) dbUpdates.generated_site_url = updates.generatedSiteUrl;
     if (updates.businessName) dbUpdates.business_name = updates.businessName;
+    if (updates.currentWebsite) dbUpdates.current_website = updates.currentWebsite;
+    if (updates.phone) dbUpdates.phone = updates.phone;
+    if (updates.email) dbUpdates.email = updates.email;
+    if (updates.ownerName) dbUpdates.owner_name = updates.ownerName;
 
     const { data, error } = await supabase
       .from("prospects")
