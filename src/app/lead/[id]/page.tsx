@@ -89,7 +89,7 @@ export default function LeadPage() {
         type: "system",
         title: "Lead Scouted",
         body: `${pData.businessName} was found and added to the system.`,
-        timestamp: pData.createdAt,
+        timestamp: pData.createdAt || pData.created_at || new Date().toISOString(),
       });
 
       if (pData.generatedSiteUrl) {
