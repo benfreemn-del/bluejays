@@ -19,6 +19,7 @@ export const AGENT_VOICE = {
   tone: "genuine-casual",
   personality: "Authentically helpful — like someone who genuinely cares about their business, not just closing a sale",
   corePrinciple: "Cut through the noise by being REAL. Everyone else sends templates. We send a finished product.",
+  keyDistinction: "The preview is just VERSION ONE — not the final product. After they pay, we customize further based on their feedback. Colors, photos, layout, content — whatever they want changed. This removes the 'what if I don't like it' objection entirely.",
   neverSay: [
     "Act now!", "Limited time!", "You'll regret this!", "Don't miss out!",
     "Buy now!", "Special offer!", "Discount if you sign today!",
@@ -29,6 +30,8 @@ export const AGENT_VOICE = {
     "Be conversational, not corporate",
     "Respect their time — keep messages short",
     "Always give them an easy out — 'no worries at all'",
+    "Emphasize this is just the FIRST VERSION — we customize further after purchase",
+    "Frame it as a collaboration — 'your feedback shapes the final product'",
   ],
 };
 
@@ -69,15 +72,15 @@ export const OBJECTION_RESPONSES: Record<string, { response: string; followUp: s
     followUp: "",
   },
   "need to think about it": {
-    response: "Absolutely, take your time! The preview isn't going anywhere. When you're ready, just reach out and we can have it live on your domain within 48 hours.",
-    followUp: "Hey {name}, just checking in — have you had a chance to think about the site? Happy to answer any questions you might have.",
+    response: "Absolutely, take your time! And just so you know — what you're seeing is just the first version. Once you're on board, we customize everything to your exact preferences. Colors, photos, layout, content — whatever you want changed, we make it happen. The preview is just the starting point.",
+    followUp: "Hey {name}, just checking in — have you had a chance to think about the site? Remember, everything you see is fully customizable. Happy to answer any questions.",
   },
   "can you do it cheaper": {
     response: "I hear you — unfortunately $997 is our standard rate and we keep it firm because we don't cut corners on quality. For comparison, most agencies charge $3K-$10K for this level of work. We just found a way to do it efficiently without sacrificing quality.",
     followUp: "",
   },
   "what's included": {
-    response: "Everything! Custom design, mobile optimization, SEO, professional copywriting, hosting setup, domain connection, and a full year of site management. No hidden fees, no monthly subscriptions. The $997 covers it all.",
+    response: "Everything! What you're seeing is actually just the first version — after you sign on, we customize it to your exact preferences. Colors, photos, layout, content, any features you want added. Plus mobile optimization, SEO, professional copywriting, hosting setup, domain connection, and a full year of site management. No hidden fees, no monthly subscriptions. The $997 covers it all, including the customization rounds.",
     followUp: "",
   },
 };
