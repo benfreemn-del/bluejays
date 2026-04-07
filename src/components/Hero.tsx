@@ -308,9 +308,9 @@ export default function Hero() {
             <motion.a
               key={site.name}
               href={site.href}
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 5.4 + i * 0.08, duration: 0.5 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 5.4 + i * 0.06, duration: 0.4 }}
               whileHover={{ scale: 1.04, y: -8 }}
               className="group relative rounded-2xl overflow-hidden bg-white/[0.03] border border-white/[0.06] cursor-pointer hover:border-sky-500/40 transition-all duration-500 hover:shadow-[0_12px_50px_rgba(14,165,233,0.3)]"
             >
