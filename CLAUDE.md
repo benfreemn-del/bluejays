@@ -75,7 +75,14 @@ After Failsafe 1 passes, a quality review agent MUST:
 - This agent has PERMANENT PERMISSION to use Chrome extensions and screenshots
 - **Current highest templates by category**: electrician=V2, plumber=V2, hvac=V2, roofing=V2, auto-repair=V2, dental=V2, law-firm=V2, salon=V2, fitness=V2, real-estate=V2, church=V2, chiropractic=V2, veterinary=V2, photography=V2, interior-design=V2, landscaping=V2. All other categories=V1.
 
-### Failsafe 2.5: Brand Asset Verification (MANDATORY before Failsafe 3)
+### Failsafe 2.5: Brand Asset Preservation & Verification (MANDATORY)
+**Preservation rule:** When re-scraping or re-generating a prospect, NEVER overwrite existing brand assets with empty/default values. The generate route MUST merge new extraction data with existing scrapedData, preserving:
+- `brandColor` — if already set, keep it. Only overwrite if the new extraction found a BETTER color.
+- `logoUrl` — if already set, keep it. Only overwrite if a higher-quality logo is found.
+- `photos` — merge arrays, don't replace. Add new photos, keep existing ones.
+This prevents manual curation work from being wiped by automated re-scraping.
+
+**Verification rule:**
 Before any site can proceed past the quality gate, verify it has attempted to scrape and use:
 - **Brand color** — `data.accentColor` must NOT be the category default unless no brand color exists on their website. If they have a website, re-scrape specifically for brand colors (theme-color meta, CSS custom properties, prominent button/header colors).
 - **Logo** — `data.logoUrl` or a logo image in `data.photos`. If their website has a logo, it must be in the generated site nav. Only use text-based logo as fallback if no logo can be found anywhere.
@@ -89,6 +96,16 @@ This agent reviews scraped/Google photos BEFORE they go into the generated site:
 - **Check premium feel** — does this site look like a $997 product? Would a business owner be impressed? If it looks cheap, generic, or amateur, it FAILS.
 - **Image replacement authority** — this agent has the authority to swap low-quality scraped photos for premium stock alternatives. Customization matters, but visual quality matters MORE. A stunning stock photo beats a blurry phone photo every time.
 - **This agent's review is part of the pipeline** — no site can be marked "pending-review" without passing the image quality check.
+
+### Failsafe 4: Image Quality Review Agent (MANDATORY before showing to Ben)
+Before ANY preview is shown to Ben (marked "pending-review"), an image review agent MUST:
+- **Check every image loads** — visit each URL in data.photos, verify HTTP 200. Replace broken ones with stock.
+- **Check image centering** — hero images must be properly centered/cropped. If an image shows mostly blank space, a wall, or an off-center subject, flag it for replacement.
+- **Check for duplicates** — no two prospects in the same category should share any of the same photos (Google Place photos have unique URLs, but stock fallbacks can collide).
+- **Check image quality** — reject blurry, tiny (<200px), dark, or poorly composed photos. A bad real photo is worse than a good stock photo.
+- **Check logo rendering** — if logoUrl exists, verify it loads and would display correctly in the nav (not broken, not too large, not a full-page image being used as a logo).
+- **This agent runs AFTER generation, BEFORE status promotion** — it's the last check before Ben sees the preview.
+- **Log findings** — for each prospect, log: X images checked, Y passed, Z replaced, logo status, overall verdict PASS/FAIL.
 
 ### Boss/Orchestrator Agent Rules
 A pipeline orchestrator agent manages the flow and enforces rules:
