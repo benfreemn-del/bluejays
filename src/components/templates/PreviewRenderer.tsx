@@ -66,6 +66,7 @@ export default function PreviewRenderer({ data }: { data: GeneratedSiteData }) {
       phone={phone}
       address={address}
       prospectId={data.id}
+      socialLinks={data.socialLinks}
     >
       {/* Stats Bar */}
       {stats.length > 0 && (

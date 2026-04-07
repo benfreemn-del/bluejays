@@ -1,8 +1,18 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ReactNode, useState, useEffect } from "react";
+import React, { ReactNode, useState, useEffect } from "react";
 import BluejayLogo from "../BluejayLogo";
+
+interface SocialLinks {
+  facebook?: string;
+  instagram?: string;
+  twitter?: string;
+  linkedin?: string;
+  yelp?: string;
+  youtube?: string;
+  tiktok?: string;
+}
 
 interface TemplateLayoutProps {
   businessName: string;
@@ -14,6 +24,7 @@ interface TemplateLayoutProps {
   phone: string;
   address: string;
   prospectId?: string;
+  socialLinks?: SocialLinks;
   children: ReactNode;
 }
 
@@ -26,6 +37,7 @@ export default function TemplateLayout({
   phone,
   address,
   prospectId,
+  socialLinks,
   children,
 }: TemplateLayoutProps) {
   return (
@@ -159,11 +171,53 @@ export default function TemplateLayout({
 
       {/* Footer */}
       <footer className="border-t border-border bg-background">
-        <div className="max-w-5xl mx-auto px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <span className="font-bold">{businessName}</span>
-          <p className="text-muted text-sm">
-            &copy; {new Date().getFullYear()} {businessName}. All rights reserved.
-          </p>
+        <div className="max-w-5xl mx-auto px-6 py-10">
+          <div className="grid md:grid-cols-3 gap-8 mb-8">
+            {/* Business info */}
+            <div>
+              <span className="font-bold text-lg">{businessName}</span>
+              <p className="text-muted text-sm mt-2">{address}</p>
+              <p className="text-muted text-sm">{phone}</p>
+            </div>
+            {/* Quick links */}
+            <div>
+              <h4 className="font-semibold text-sm uppercase tracking-wider mb-3" style={{ color: accentColor }}>Quick Links</h4>
+              <div className="space-y-2 text-sm text-muted">
+                <a href="#services" className="block hover:text-foreground transition-colors">Services</a>
+                <a href="#about" className="block hover:text-foreground transition-colors">About</a>
+                <a href="#testimonials" className="block hover:text-foreground transition-colors">Testimonials</a>
+                <a href="#contact" className="block hover:text-foreground transition-colors">Contact</a>
+              </div>
+            </div>
+            {/* Social media */}
+            <div>
+              <h4 className="font-semibold text-sm uppercase tracking-wider mb-3" style={{ color: accentColor }}>Follow Us</h4>
+              <div className="flex items-center gap-3">
+                {(!socialLinks || Object.keys(socialLinks).length === 0) ? (
+                  <>
+                    <SocialIcon platform="facebook" href="#" color={accentColor} />
+                    <SocialIcon platform="instagram" href="#" color={accentColor} />
+                    <SocialIcon platform="yelp" href="#" color={accentColor} />
+                  </>
+                ) : (
+                  <>
+                    {socialLinks.facebook && <SocialIcon platform="facebook" href={socialLinks.facebook} color={accentColor} />}
+                    {socialLinks.instagram && <SocialIcon platform="instagram" href={socialLinks.instagram} color={accentColor} />}
+                    {socialLinks.twitter && <SocialIcon platform="twitter" href={socialLinks.twitter} color={accentColor} />}
+                    {socialLinks.linkedin && <SocialIcon platform="linkedin" href={socialLinks.linkedin} color={accentColor} />}
+                    {socialLinks.yelp && <SocialIcon platform="yelp" href={socialLinks.yelp} color={accentColor} />}
+                    {socialLinks.youtube && <SocialIcon platform="youtube" href={socialLinks.youtube} color={accentColor} />}
+                    {socialLinks.tiktok && <SocialIcon platform="tiktok" href={socialLinks.tiktok} color={accentColor} />}
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+          <div className="border-t border-border pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p className="text-muted text-sm">
+              &copy; {new Date().getFullYear()} {businessName}. All rights reserved.
+            </p>
+          </div>
         </div>
         {/* Bluejay Branding */}
         <div className="border-t border-border/50 py-4">
@@ -240,5 +294,61 @@ function ClaimBanner({ businessName, accentColor, prospectId }: { businessName: 
         </a>
       </div>
     </div>
+  );
+}
+
+function SocialIcon({ platform, href, color }: { platform: string; href: string; color: string }) {
+  const icons: Record<string, React.ReactNode> = {
+    facebook: (
+      <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+      </svg>
+    ),
+    instagram: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
+        <rect x="2" y="2" width="20" height="20" rx="5" />
+        <circle cx="12" cy="12" r="5" />
+        <circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none" />
+      </svg>
+    ),
+    twitter: (
+      <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+      </svg>
+    ),
+    linkedin: (
+      <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452z" />
+      </svg>
+    ),
+    yelp: (
+      <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
+      </svg>
+    ),
+    youtube: (
+      <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+      </svg>
+    ),
+    tiktok: (
+      <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+        <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.88-2.88 2.89 2.89 0 0 1 2.88-2.88c.28 0 .56.04.82.12V9.02a6.32 6.32 0 0 0-.82-.05c-3.49 0-6.32 2.83-6.32 6.32 0 3.49 2.83 6.32 6.32 6.32 3.49 0 6.32-2.83 6.32-6.32V8.87a8.28 8.28 0 0 0 4.84 1.55V6.97a4.84 4.84 0 0 1-1.06-.28z" />
+      </svg>
+    ),
+  };
+
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-300 hover:scale-110"
+      style={{ borderColor: `${color}30`, color: `${color}90` }}
+      onMouseEnter={(e) => { e.currentTarget.style.borderColor = color; e.currentTarget.style.color = color; e.currentTarget.style.backgroundColor = `${color}15`; }}
+      onMouseLeave={(e) => { e.currentTarget.style.borderColor = `${color}30`; e.currentTarget.style.color = `${color}90`; e.currentTarget.style.backgroundColor = "transparent"; }}
+    >
+      {icons[platform] || <span className="text-xs">{platform[0].toUpperCase()}</span>}
+    </a>
   );
 }
