@@ -29,6 +29,7 @@ import {
 } from "@phosphor-icons/react";
 import type { GeneratedSiteData } from "@/lib/generator";
 import BluejayLogo from "../BluejayLogo";
+import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 
 /* ───────────────────────── SPRING CONFIGS ───────────────────────── */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
@@ -404,11 +405,11 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
                 Free Consultation <ArrowRight size={18} weight="bold" />
               </MagneticButton>
               <MagneticButton href={`tel:${phoneDigits}`} className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
-                <Phone size={18} weight="duotone" /> {data.phone}
+                <Phone size={18} weight="duotone" /> <PhoneLink phone={data.phone} />
               </MagneticButton>
             </div>
             <div className="flex flex-wrap gap-6 text-sm text-slate-400">
-              <span className="flex items-center gap-2"><MapPin size={16} weight="duotone" style={{ color: EMERALD }} />{data.address}</span>
+              <span className="flex items-center gap-2"><MapPin size={16} weight="duotone" style={{ color: EMERALD }} /><MapLink address={data.address} /></span>
               <span className="flex items-center gap-2"><Clock size={16} weight="duotone" style={{ color: EMERALD }} />24/7 Case Support</span>
             </div>
           </div>
@@ -604,9 +605,9 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
           <p className="text-lg text-white/80 mb-8 max-w-xl mx-auto">
             Do not face your legal challenges alone. {data.businessName} offers free consultations to help you understand your rights and options.
           </p>
-          <a href={`tel:${phoneDigits}`} className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-white font-bold text-lg hover:bg-white/90 transition-colors" style={{ color: EMERALD }}>
+          <PhoneLink phone={data.phone} className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-white font-bold text-lg hover:bg-white/90 transition-colors" style={{ color: EMERALD }}>
             <Phone size={20} weight="bold" /> {data.phone}
-          </a>
+          </PhoneLink>
         </div>
       </section>
 
@@ -620,7 +621,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
           <SectionHeader badge="Service Area" title="Areas We Serve" accent={EMERALD} />
           <div className="text-center">
             <GlassCard className="p-8 inline-block">
-              <div className="flex items-center gap-3 text-lg"><MapPin size={24} weight="duotone" style={{ color: EMERALD }} /><span className="text-white font-semibold">{data.address}</span></div>
+              <div className="flex items-center gap-3 text-lg"><MapPin size={24} weight="duotone" style={{ color: EMERALD }} /><MapLink address={data.address} className="text-white font-semibold" /></div>
               <p className="text-slate-400 text-sm mt-2">&amp; Surrounding Communities</p>
             </GlassCard>
           </div>
@@ -668,8 +669,8 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
               <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-6 text-white">Your Fight Starts Here</h2>
               <p className="text-slate-400 leading-relaxed mb-8">Ready to take action? Contact {data.businessName} today for a free, confidential consultation. We will review your case and explain your options.</p>
               <div className="space-y-5">
-                <div className="flex items-start gap-4"><div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: EMERALD_GLOW }}><MapPin size={20} weight="duotone" style={{ color: EMERALD }} /></div><div><p className="text-sm font-semibold text-white">Address</p><p className="text-sm text-slate-400">{data.address}</p></div></div>
-                <div className="flex items-start gap-4"><div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: EMERALD_GLOW }}><Phone size={20} weight="duotone" style={{ color: EMERALD }} /></div><div><p className="text-sm font-semibold text-white">Phone</p><p className="text-sm text-slate-400">{data.phone}</p></div></div>
+                <div className="flex items-start gap-4"><div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: EMERALD_GLOW }}><MapPin size={20} weight="duotone" style={{ color: EMERALD }} /></div><div><p className="text-sm font-semibold text-white">Address</p><MapLink address={data.address} className="text-sm text-slate-400" /></div></div>
+                <div className="flex items-start gap-4"><div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: EMERALD_GLOW }}><Phone size={20} weight="duotone" style={{ color: EMERALD }} /></div><div><p className="text-sm font-semibold text-white">Phone</p><PhoneLink phone={data.phone} className="text-sm text-slate-400" /></div></div>
                 {data.hours && <div className="flex items-start gap-4"><div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: EMERALD_GLOW }}><Clock size={20} weight="duotone" style={{ color: EMERALD }} /></div><div><p className="text-sm font-semibold text-white">Hours</p><p className="text-sm text-slate-400 whitespace-pre-line">{data.hours}</p></div></div>}
               </div>
             </div>
@@ -740,7 +741,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
             <div>
               <h4 className="text-sm font-semibold text-white mb-3">Contact</h4>
               <div className="space-y-2 text-sm text-slate-500">
-                <p>{data.phone}</p><p>{data.address}</p>
+                <p><PhoneLink phone={data.phone} /></p><p><MapLink address={data.address} /></p>
                 {data.socialLinks && Object.entries(data.socialLinks).map(([platform, url]) => <a key={platform} href={url} target="_blank" rel="noopener noreferrer" className="block hover:text-white transition-colors capitalize">{platform}</a>)}
               </div>
             </div>

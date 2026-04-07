@@ -29,6 +29,7 @@ import {
 } from "@phosphor-icons/react";
 import type { GeneratedSiteData } from "@/lib/generator";
 import BluejayLogo from "../BluejayLogo";
+import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 
 /* ───────────────────────── SPRING CONFIGS ───────────────────────── */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
@@ -340,11 +341,11 @@ export default function V2FitnessPreview({ data }: { data: GeneratedSiteData }) 
                 <span className="relative flex items-center gap-2">Get Started <ArrowRight size={18} weight="bold" /></span>
               </MagneticButton>
               <MagneticButton href={`tel:${phoneDigits}`} className="px-8 py-4 rounded-xl text-base font-bold text-zinc-300 border border-white/10 flex items-center gap-2 cursor-pointer hover:border-white/30 transition-colors">
-                <Phone size={18} weight="bold" /> {data.phone}
+                <Phone size={18} weight="bold" /> <PhoneLink phone={data.phone} />
               </MagneticButton>
             </div>
             <div className="flex flex-wrap gap-6 text-sm text-zinc-500">
-              <span className="flex items-center gap-2"><MapPin size={16} /> {data.address}</span>
+              <span className="flex items-center gap-2"><MapPin size={16} /> <MapLink address={data.address} /></span>
               <span className="flex items-center gap-2"><Clock size={16} /> Open Early to Late</span>
             </div>
           </div>
@@ -521,9 +522,9 @@ export default function V2FitnessPreview({ data }: { data: GeneratedSiteData }) 
           <Fire size={48} weight="fill" className="mx-auto mb-6 text-white/80" />
           <h2 className="text-3xl md:text-5xl font-black tracking-tighter text-white mb-4">Ready to Transform?</h2>
           <p className="text-lg text-white/80 mb-8 max-w-xl mx-auto">Your first week is on us. No contracts, no pressure. Just results.</p>
-          <a href={`tel:${phoneDigits}`} className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-white font-bold text-lg hover:bg-white/90 transition-colors" style={{ color: RED }}>
+          <PhoneLink phone={data.phone} className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-white font-bold text-lg hover:bg-white/90 transition-colors" style={{ color: RED }}>
             <Phone size={20} weight="bold" /> Claim Free Trial
-          </a>
+          </PhoneLink>
         </div>
       </section>
 
@@ -533,7 +534,7 @@ export default function V2FitnessPreview({ data }: { data: GeneratedSiteData }) 
         <FitnessPattern opacity={0.02} accent={RED} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <SectionHeader badge="Location" title="Find Us" accent={RED} />
-          <div className="text-center"><GlassCard className="p-8 inline-block"><div className="flex items-center gap-3 text-lg"><MapPin size={24} weight="duotone" style={{ color: RED }} /><span className="text-white font-semibold">{data.address}</span></div><p className="text-zinc-400 text-sm mt-2">Free parking available</p></GlassCard></div>
+          <div className="text-center"><GlassCard className="p-8 inline-block"><div className="flex items-center gap-3 text-lg"><MapPin size={24} weight="duotone" style={{ color: RED }} /><MapLink address={data.address} className="text-white font-semibold" /></div><p className="text-zinc-400 text-sm mt-2">Free parking available</p></GlassCard></div>
         </div>
       </section>
 
@@ -568,8 +569,8 @@ export default function V2FitnessPreview({ data }: { data: GeneratedSiteData }) 
               <h2 className="text-3xl md:text-5xl font-black tracking-tighter mb-6 text-white">Join the Movement</h2>
               <p className="text-zinc-400 leading-relaxed mb-8">Ready to start your fitness journey? Contact {data.businessName} today and take the first step.</p>
               <div className="space-y-5">
-                <div className="flex items-start gap-4"><div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: RED_GLOW }}><MapPin size={20} weight="duotone" style={{ color: RED }} /></div><div><p className="text-sm font-semibold text-white">Location</p><p className="text-sm text-zinc-400">{data.address}</p></div></div>
-                <div className="flex items-start gap-4"><div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: RED_GLOW }}><Phone size={20} weight="bold" style={{ color: RED }} /></div><div><p className="text-sm font-semibold text-white">Phone</p><p className="text-sm text-zinc-400">{data.phone}</p></div></div>
+                <div className="flex items-start gap-4"><div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: RED_GLOW }}><MapPin size={20} weight="duotone" style={{ color: RED }} /></div><div><p className="text-sm font-semibold text-white">Location</p><MapLink address={data.address} className="text-sm text-zinc-400" /></div></div>
+                <div className="flex items-start gap-4"><div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: RED_GLOW }}><Phone size={20} weight="bold" style={{ color: RED }} /></div><div><p className="text-sm font-semibold text-white">Phone</p><PhoneLink phone={data.phone} className="text-sm text-zinc-400" /></div></div>
                 {data.hours && <div className="flex items-start gap-4"><div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: RED_GLOW }}><Clock size={20} weight="duotone" style={{ color: RED }} /></div><div><p className="text-sm font-semibold text-white">Hours</p><p className="text-sm text-zinc-400 whitespace-pre-line">{data.hours}</p></div></div>}
               </div>
             </div>
@@ -622,7 +623,7 @@ export default function V2FitnessPreview({ data }: { data: GeneratedSiteData }) 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
             <div><div className="flex items-center gap-2 mb-3"><Barbell size={22} weight="bold" style={{ color: RED }} /><span className="text-lg font-bold text-white">{data.businessName}</span></div><p className="text-sm text-zinc-500 leading-relaxed">{data.about.length > 120 ? data.about.slice(0, 120).trim() + "..." : data.about}</p></div>
             <div><h4 className="text-sm font-semibold text-white mb-3">Quick Links</h4><div className="space-y-2">{["Programs", "About", "Gallery", "Contact"].map((link) => <a key={link} href={`#${link.toLowerCase()}`} className="block text-sm text-zinc-500 hover:text-white transition-colors">{link}</a>)}</div></div>
-            <div><h4 className="text-sm font-semibold text-white mb-3">Contact</h4><div className="space-y-2 text-sm text-zinc-500"><p>{data.phone}</p><p>{data.address}</p>{data.socialLinks && Object.entries(data.socialLinks).map(([platform, url]) => <a key={platform} href={url} target="_blank" rel="noopener noreferrer" className="block hover:text-white transition-colors capitalize">{platform}</a>)}</div></div>
+            <div><h4 className="text-sm font-semibold text-white mb-3">Contact</h4><div className="space-y-2 text-sm text-zinc-500"><p><PhoneLink phone={data.phone} /></p><p><MapLink address={data.address} /></p>{data.socialLinks && Object.entries(data.socialLinks).map(([platform, url]) => <a key={platform} href={url} target="_blank" rel="noopener noreferrer" className="block hover:text-white transition-colors capitalize">{platform}</a>)}</div></div>
           </div>
           <div className="border-t border-white/5 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-sm text-zinc-500"><Barbell size={14} weight="bold" style={{ color: RED }} /><span>{data.businessName} &copy; {new Date().getFullYear()}</span></div>

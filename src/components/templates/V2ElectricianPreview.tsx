@@ -29,6 +29,7 @@ import {
 } from "@phosphor-icons/react";
 import type { GeneratedSiteData } from "@/lib/generator";
 import BluejayLogo from "../BluejayLogo";
+import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 
 /* ───────────────────────── SPRING CONFIGS ───────────────────────── */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
@@ -526,7 +527,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
                 className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer"
               >
                 <Phone size={18} weight="duotone" />
-                {data.phone}
+                <PhoneLink phone={data.phone} />
               </MagneticButton>
             </div>
 
@@ -534,7 +535,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
             <div className="flex flex-wrap gap-6 text-sm text-slate-400">
               <span className="flex items-center gap-2">
                 <MapPin size={16} weight="duotone" style={{ color: AMBER }} />
-                {data.address}
+                <MapLink address={data.address} />
               </span>
               <span className="flex items-center gap-2">
                 <Clock size={16} weight="duotone" style={{ color: AMBER }} />
@@ -828,8 +829,8 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
           <p className="text-lg text-black/70 mb-8 max-w-xl mx-auto">
             Power outages, sparking outlets, burning smells — do not wait. Our emergency electricians respond fast to keep your home and family safe.
           </p>
-          <a
-            href={`tel:${phoneDigits}`}
+          <PhoneLink
+            phone={data.phone}
             className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-black text-white font-bold text-lg hover:bg-black/80 transition-colors"
           >
             <span className="relative flex h-3 w-3">
@@ -837,7 +838,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
               <span className="relative inline-flex rounded-full h-3 w-3 bg-red-600" />
             </span>
             {data.phone}
-          </a>
+          </PhoneLink>
         </div>
       </section>
 
@@ -856,7 +857,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
             <GlassCard className="p-8 inline-block">
               <div className="flex items-center gap-3 text-lg">
                 <MapPin size={24} weight="duotone" style={{ color: AMBER }} />
-                <span className="text-white font-semibold">{data.address}</span>
+                <MapLink address={data.address} className="text-white font-semibold" />
               </div>
               <p className="text-slate-400 text-sm mt-2">&amp; Surrounding Areas</p>
             </GlassCard>
@@ -945,7 +946,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-white">Address</p>
-                    <p className="text-sm text-slate-400">{data.address}</p>
+                    <MapLink address={data.address} className="text-sm text-slate-400" />
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
@@ -954,7 +955,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-white">Phone</p>
-                    <p className="text-sm text-slate-400">{data.phone}</p>
+                    <PhoneLink phone={data.phone} className="text-sm text-slate-400" />
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
@@ -1111,8 +1112,8 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
             <div>
               <h4 className="text-sm font-semibold text-white mb-3">Contact</h4>
               <div className="space-y-2 text-sm text-slate-500">
-                <p>{data.phone}</p>
-                <p>{data.address}</p>
+                <p><PhoneLink phone={data.phone} /></p>
+                <p><MapLink address={data.address} /></p>
                 {data.socialLinks && Object.entries(data.socialLinks).map(([platform, url]) => (
                   <a key={platform} href={url} target="_blank" rel="noopener noreferrer" className="block hover:text-white transition-colors capitalize">
                     {platform}

@@ -28,6 +28,7 @@ import {
 } from "@phosphor-icons/react";
 import type { GeneratedSiteData } from "@/lib/generator";
 import BluejayLogo from "../BluejayLogo";
+import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 
 /* ───────────────────────── SPRING CONFIGS ───────────────────────── */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
@@ -348,11 +349,11 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
                 Book Appointment <ArrowRight size={18} weight="bold" />
               </MagneticButton>
               <MagneticButton href={`tel:${phoneDigits}`} className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
-                <Phone size={18} weight="duotone" /> {data.phone}
+                <Phone size={18} weight="duotone" /> <PhoneLink phone={data.phone} />
               </MagneticButton>
             </div>
             <div className="flex flex-wrap gap-6 text-sm text-slate-400">
-              <span className="flex items-center gap-2"><MapPin size={16} weight="duotone" style={{ color: ROSE }} />{data.address}</span>
+              <span className="flex items-center gap-2"><MapPin size={16} weight="duotone" style={{ color: ROSE }} /><MapLink address={data.address} /></span>
               <span className="flex items-center gap-2"><CalendarBlank size={16} weight="duotone" style={{ color: ROSE }} />Online Booking Available</span>
             </div>
           </div>
@@ -524,9 +525,9 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
           <Flower size={48} weight="fill" className="mx-auto mb-6 text-white/80" />
           <h2 className="text-3xl md:text-5xl font-black tracking-tight text-white mb-4">Ready for a New Look?</h2>
           <p className="text-lg text-white/80 mb-8 max-w-xl mx-auto">Book your appointment today and let our expert stylists create the look you have been dreaming of.</p>
-          <a href={`tel:${phoneDigits}`} className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-white font-bold text-lg hover:bg-white/90 transition-colors" style={{ color: ROSE }}>
+          <PhoneLink phone={data.phone} className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-white font-bold text-lg hover:bg-white/90 transition-colors" style={{ color: ROSE }}>
             <Phone size={20} weight="bold" /> {data.phone}
-          </a>
+          </PhoneLink>
         </div>
       </section>
 
@@ -587,8 +588,8 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
               <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-6 text-white">Book Your Visit</h2>
               <p className="text-slate-400 leading-relaxed mb-8">Ready to look and feel your best? Contact {data.businessName} today to schedule your appointment.</p>
               <div className="space-y-5">
-                <div className="flex items-start gap-4"><div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: ROSE_GLOW }}><MapPin size={20} weight="duotone" style={{ color: ROSE }} /></div><div><p className="text-sm font-semibold text-white">Address</p><p className="text-sm text-slate-400">{data.address}</p></div></div>
-                <div className="flex items-start gap-4"><div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: ROSE_GLOW }}><Phone size={20} weight="duotone" style={{ color: ROSE }} /></div><div><p className="text-sm font-semibold text-white">Phone</p><p className="text-sm text-slate-400">{data.phone}</p></div></div>
+                <div className="flex items-start gap-4"><div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: ROSE_GLOW }}><MapPin size={20} weight="duotone" style={{ color: ROSE }} /></div><div><p className="text-sm font-semibold text-white">Address</p><MapLink address={data.address} className="text-sm text-slate-400" /></div></div>
+                <div className="flex items-start gap-4"><div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: ROSE_GLOW }}><Phone size={20} weight="duotone" style={{ color: ROSE }} /></div><div><p className="text-sm font-semibold text-white">Phone</p><PhoneLink phone={data.phone} className="text-sm text-slate-400" /></div></div>
                 {data.hours && <div className="flex items-start gap-4"><div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: ROSE_GLOW }}><Clock size={20} weight="duotone" style={{ color: ROSE }} /></div><div><p className="text-sm font-semibold text-white">Hours</p><p className="text-sm text-slate-400 whitespace-pre-line">{data.hours}</p></div></div>}
               </div>
             </div>
@@ -653,7 +654,7 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
             <div>
               <h4 className="text-sm font-semibold text-white mb-3">Contact</h4>
               <div className="space-y-2 text-sm text-slate-500">
-                <p>{data.phone}</p><p>{data.address}</p>
+                <p><PhoneLink phone={data.phone} /></p><p><MapLink address={data.address} /></p>
                 {data.socialLinks && Object.entries(data.socialLinks).map(([platform, url]) => <a key={platform} href={url} target="_blank" rel="noopener noreferrer" className="block hover:text-white transition-colors capitalize">{platform}</a>)}
               </div>
             </div>

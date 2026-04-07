@@ -31,6 +31,7 @@ import {
 } from "@phosphor-icons/react";
 import type { GeneratedSiteData } from "@/lib/generator";
 import BluejayLogo from "../BluejayLogo";
+import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 
 /* ───────────────────────── SPRING CONFIGS ───────────────────────── */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
@@ -318,7 +319,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
                 Explore Properties <ArrowRight size={18} weight="bold" />
               </MagneticButton>
               <MagneticButton href={`tel:${phoneDigits}`} className="px-8 py-4 rounded-xl text-base font-bold text-zinc-300 border border-white/10 flex items-center gap-2 cursor-pointer hover:border-white/20 transition-colors">
-                <Phone size={18} weight="bold" /> {data.phone}
+                <Phone size={18} weight="bold" /> <PhoneLink phone={data.phone} />
               </MagneticButton>
             </div>
           </div>
@@ -491,9 +492,9 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
           <House size={48} weight="fill" className="mx-auto mb-6 text-black/60" />
           <h2 className="text-3xl md:text-5xl font-black tracking-tighter text-black mb-4">Begin Your Journey</h2>
           <p className="text-lg text-black/70 mb-8 max-w-xl mx-auto">Whether buying or selling, {data.businessName} delivers an unparalleled real estate experience.</p>
-          <a href={`tel:${phoneDigits}`} className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-black text-white font-bold text-lg hover:bg-black/80 transition-colors">
+          <PhoneLink phone={data.phone} className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-black text-white font-bold text-lg hover:bg-black/80 transition-colors">
             <Phone size={20} weight="bold" /> {data.phone}
-          </a>
+          </PhoneLink>
         </div>
       </section>
 
@@ -503,7 +504,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
         <LuxuryPattern opacity={0.02} accent={GOLD} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <SectionHeader badge="Office" title="Visit Us" accent={GOLD} />
-          <div className="text-center"><GlassCard className="p-8 inline-block"><div className="flex items-center gap-3 text-lg"><MapPin size={24} weight="duotone" style={{ color: GOLD }} /><span className="text-white font-semibold">{data.address}</span></div><p className="text-zinc-400 text-sm mt-2">Serving buyers and sellers across the region</p></GlassCard></div>
+          <div className="text-center"><GlassCard className="p-8 inline-block"><div className="flex items-center gap-3 text-lg"><MapPin size={24} weight="duotone" style={{ color: GOLD }} /><MapLink address={data.address} className="text-white font-semibold" /></div><p className="text-zinc-400 text-sm mt-2">Serving buyers and sellers across the region</p></GlassCard></div>
         </div>
       </section>
 
@@ -539,8 +540,8 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
               <div className="h-px w-16 mb-6" style={{ backgroundColor: GOLD }} />
               <p className="text-zinc-400 leading-relaxed mb-8">Whether buying or selling, our team is ready to deliver an exceptional experience tailored to your vision.</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="flex items-center gap-3 p-4 rounded-xl bg-white/[0.03] border border-white/5"><Phone size={20} style={{ color: GOLD }} /><div><p className="text-xs text-zinc-600">Call</p><p className="text-sm font-medium">{data.phone}</p></div></div>
-                <div className="flex items-center gap-3 p-4 rounded-xl bg-white/[0.03] border border-white/5"><MapPin size={20} style={{ color: GOLD }} /><div><p className="text-xs text-zinc-600">Office</p><p className="text-sm font-medium">{data.address}</p></div></div>
+                <div className="flex items-center gap-3 p-4 rounded-xl bg-white/[0.03] border border-white/5"><Phone size={20} style={{ color: GOLD }} /><div><p className="text-xs text-zinc-600">Call</p><PhoneLink phone={data.phone} className="text-sm font-medium" /></div></div>
+                <div className="flex items-center gap-3 p-4 rounded-xl bg-white/[0.03] border border-white/5"><MapPin size={20} style={{ color: GOLD }} /><div><p className="text-xs text-zinc-600">Office</p><MapLink address={data.address} className="text-sm font-medium" /></div></div>
               </div>
             </div>
             <GlassCard className="p-8">
@@ -592,7 +593,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
             <div><div className="flex items-center gap-2 mb-3"><Buildings size={22} weight="bold" style={{ color: GOLD }} /><span className="text-lg font-bold text-white">{data.businessName}</span></div><p className="text-sm text-zinc-500 leading-relaxed">{data.about.length > 120 ? data.about.slice(0, 120).trim() + "..." : data.about}</p></div>
             <div><h4 className="text-sm font-semibold text-white mb-3">Quick Links</h4><div className="space-y-2">{["Services", "About", "Properties", "Contact"].map((link) => <a key={link} href={`#${link.toLowerCase()}`} className="block text-sm text-zinc-500 hover:text-white transition-colors">{link}</a>)}</div></div>
-            <div><h4 className="text-sm font-semibold text-white mb-3">Contact</h4><div className="space-y-2 text-sm text-zinc-500"><p>{data.phone}</p><p>{data.address}</p>{data.socialLinks && Object.entries(data.socialLinks).map(([platform, url]) => <a key={platform} href={url} target="_blank" rel="noopener noreferrer" className="block hover:text-white transition-colors capitalize">{platform}</a>)}</div></div>
+            <div><h4 className="text-sm font-semibold text-white mb-3">Contact</h4><div className="space-y-2 text-sm text-zinc-500"><p><PhoneLink phone={data.phone} /></p><p><MapLink address={data.address} /></p>{data.socialLinks && Object.entries(data.socialLinks).map(([platform, url]) => <a key={platform} href={url} target="_blank" rel="noopener noreferrer" className="block hover:text-white transition-colors capitalize">{platform}</a>)}</div></div>
           </div>
           <div className="border-t border-white/5 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-sm text-zinc-500"><Buildings size={14} weight="bold" style={{ color: GOLD }} /><span>{data.businessName} &copy; {new Date().getFullYear()}</span></div>

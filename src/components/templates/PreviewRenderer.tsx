@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import type { GeneratedSiteData } from "@/lib/generator";
 import TemplateLayout from "./TemplateLayout";
+import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 
 export default function PreviewRenderer({ data }: { data: GeneratedSiteData }) {
   // Track visit

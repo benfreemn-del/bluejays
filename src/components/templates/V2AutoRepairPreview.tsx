@@ -36,6 +36,7 @@ import {
 } from "@phosphor-icons/react";
 import type { GeneratedSiteData } from "@/lib/generator";
 import BluejayLogo from "../BluejayLogo";
+import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 
 /* ───────────────────────── SPRING CONFIGS ───────────────────────── */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
@@ -322,11 +323,11 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
                 Book an Appointment <ArrowRight size={18} weight="bold" />
               </MagneticButton>
               <MagneticButton href={`tel:${phoneDigits}`} className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
-                <Phone size={18} weight="duotone" /> {data.phone}
+                <Phone size={18} weight="duotone" /> <PhoneLink phone={data.phone} />
               </MagneticButton>
             </div>
             <div className="flex flex-wrap gap-6 text-sm text-slate-400">
-              <span className="flex items-center gap-2"><MapPin size={16} weight="duotone" style={{ color: ACCENT }} /> {data.address}</span>
+              <span className="flex items-center gap-2"><MapPin size={16} weight="duotone" style={{ color: ACCENT }} /> <MapLink address={data.address} /></span>
               <span className="flex items-center gap-2"><Clock size={16} weight="duotone" style={{ color: ACCENT }} /> Walk-Ins Welcome</span>
             </div>
           </div>
@@ -519,9 +520,9 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
           <CarSimple size={48} weight="fill" className="mx-auto mb-6 text-white/70" />
           <h2 className="text-3xl md:text-5xl font-black tracking-tight text-white mb-4">Your Car Deserves the Best</h2>
           <p className="text-lg text-white/80 mb-8 max-w-xl mx-auto">Do not trust your vehicle to just anyone. {data.businessName} brings expertise, honesty, and fair pricing to every repair.</p>
-          <a href={`tel:${phoneDigits}`} className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-black text-white font-bold text-lg hover:bg-black/80 transition-colors">
+          <PhoneLink phone={data.phone} className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-black text-white font-bold text-lg hover:bg-black/80 transition-colors">
             <Phone size={22} weight="fill" /> {data.phone}
-          </a>
+          </PhoneLink>
         </div>
       </section>
 
@@ -534,7 +535,7 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
           <SectionHeader badge="Find Us" title="Our Location" accent={ACCENT} />
           <div className="text-center">
             <GlassCard className="p-8 inline-block">
-              <div className="flex items-center gap-3 text-lg"><MapPin size={24} weight="duotone" style={{ color: ACCENT }} /><span className="text-white font-semibold">{data.address}</span></div>
+              <div className="flex items-center gap-3 text-lg"><MapPin size={24} weight="duotone" style={{ color: ACCENT }} /><MapLink address={data.address} className="text-white font-semibold" /></div>
               <p className="text-slate-400 text-sm mt-2">Serving customers across the area</p>
             </GlassCard>
           </div>
@@ -588,9 +589,15 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
               <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-6 text-white">Book Your Appointment</h2>
               <p className="text-slate-400 leading-relaxed mb-8">Need reliable auto repair? Contact {data.businessName} today. Walk-ins welcome or book ahead for faster service.</p>
               <div className="space-y-5">
+                <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: ACCENT_GLOW }}><MapPin size={20} weight="duotone" style={{ color: ACCENT }} /></div>
+                    <div><p className="text-sm font-semibold text-white">Address</p><MapLink address={data.address} className="text-sm text-slate-400" /></div>
+                </div>
+                <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: ACCENT_GLOW }}><Phone size={20} weight="duotone" style={{ color: ACCENT }} /></div>
+                    <div><p className="text-sm font-semibold text-white">Phone</p><PhoneLink phone={data.phone} className="text-sm text-slate-400" /></div>
+                </div>
                 {[
-                  { icon: MapPin, label: "Address", value: data.address },
-                  { icon: Phone, label: "Phone", value: data.phone },
                   { icon: CalendarCheck, label: "Walk-Ins", value: "Walk-ins welcome during business hours" },
                 ].map((item) => (
                   <div key={item.label} className="flex items-start gap-4">
@@ -671,7 +678,7 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
             <div>
               <h4 className="text-sm font-semibold text-white mb-3">Contact</h4>
               <div className="space-y-2 text-sm text-slate-500">
-                <p>{data.phone}</p><p>{data.address}</p>
+                <p><PhoneLink phone={data.phone} /></p><p><MapLink address={data.address} /></p>
                 {data.socialLinks && Object.entries(data.socialLinks).map(([platform, url]) => <a key={platform} href={url} target="_blank" rel="noopener noreferrer" className="block hover:text-white transition-colors capitalize">{platform}</a>)}
               </div>
             </div>

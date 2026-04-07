@@ -32,6 +32,7 @@ import {
 } from "@phosphor-icons/react";
 import type { GeneratedSiteData } from "@/lib/generator";
 import BluejayLogo from "../BluejayLogo";
+import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 
 /* ───────────────────────── SPRING CONFIGS ───────────────────────── */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
@@ -434,11 +435,11 @@ export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
                 Plan Your Visit <ArrowRight size={18} weight="bold" />
               </MagneticButton>
               <MagneticButton href={`tel:${phoneDigits}`} className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
-                <Phone size={18} weight="duotone" /> {data.phone}
+                <Phone size={18} weight="duotone" /> <PhoneLink phone={data.phone} />
               </MagneticButton>
             </div>
             <div className="flex flex-wrap gap-6 text-sm text-slate-400">
-              <span className="flex items-center gap-2"><MapPin size={16} weight="duotone" style={{ color: GOLD }} /> {data.address}</span>
+              <span className="flex items-center gap-2"><MapPin size={16} weight="duotone" style={{ color: GOLD }} /> <MapLink address={data.address} /></span>
               <span className="flex items-center gap-2"><Clock size={16} weight="duotone" style={{ color: GOLD }} /> {data.hours || "Sundays 9AM & 11AM"}</span>
             </div>
           </div>
@@ -700,9 +701,9 @@ export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
           <p className="text-lg text-black/70 mb-8 max-w-xl mx-auto">
             No matter where you are in your faith journey, there is a place for you at {data.businessName}. Come as you are and discover a community that welcomes you with open arms.
           </p>
-          <a href={`tel:${phoneDigits}`} className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-black text-white font-bold text-lg hover:bg-black/80 transition-colors">
+          <PhoneLink phone={data.phone} className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-black text-white font-bold text-lg hover:bg-black/80 transition-colors">
             <Church size={22} weight="fill" /> Plan Your Visit
-          </a>
+          </PhoneLink>
         </div>
       </section>
 
@@ -720,7 +721,7 @@ export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
             <GlassCard className="p-8 inline-block">
               <div className="flex items-center gap-3 text-lg">
                 <MapPin size={24} weight="duotone" style={{ color: GOLD }} />
-                <span className="text-white font-semibold">{data.address}</span>
+                <MapLink address={data.address} className="text-white font-semibold" />
               </div>
               <p className="text-slate-400 text-sm mt-2">Welcoming neighbors from across the community</p>
             </GlassCard>
@@ -790,13 +791,13 @@ export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
                   <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: GOLD_GLOW }}>
                     <MapPin size={20} weight="duotone" style={{ color: GOLD }} />
                   </div>
-                  <div><p className="text-sm font-semibold text-white">Address</p><p className="text-sm text-slate-400">{data.address}</p></div>
+                  <div><p className="text-sm font-semibold text-white">Address</p><MapLink address={data.address} className="text-sm text-slate-400" /></div>
                 </div>
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: GOLD_GLOW }}>
                     <Phone size={20} weight="duotone" style={{ color: GOLD }} />
                   </div>
-                  <div><p className="text-sm font-semibold text-white">Phone</p><p className="text-sm text-slate-400">{data.phone}</p></div>
+                  <div><p className="text-sm font-semibold text-white">Phone</p><PhoneLink phone={data.phone} className="text-sm text-slate-400" /></div>
                 </div>
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: GOLD_GLOW }}>
@@ -871,8 +872,8 @@ export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
             <div>
               <h4 className="text-sm font-semibold text-white mb-3">Contact</h4>
               <div className="space-y-2 text-sm text-slate-500">
-                <p>{data.phone}</p>
-                <p>{data.address}</p>
+                <p><PhoneLink phone={data.phone} /></p>
+                <p><MapLink address={data.address} /></p>
                 {data.socialLinks && Object.entries(data.socialLinks).map(([platform, url]) => (
                   <a key={platform} href={url} target="_blank" rel="noopener noreferrer" className="block hover:text-white transition-colors capitalize">{platform}</a>
                 ))}

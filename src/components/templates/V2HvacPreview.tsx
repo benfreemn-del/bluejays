@@ -33,6 +33,7 @@ import {
 } from "@phosphor-icons/react";
 import type { GeneratedSiteData } from "@/lib/generator";
 import BluejayLogo from "../BluejayLogo";
+import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 
 /* ───────────────────────── SPRING CONFIGS ───────────────────────── */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
@@ -318,11 +319,11 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
                 Get Free Estimate <ArrowRight size={18} weight="bold" />
               </MagneticButton>
               <MagneticButton href={`tel:${phoneDigits}`} className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
-                <Phone size={18} weight="duotone" /> {data.phone}
+                <Phone size={18} weight="duotone" /> <PhoneLink phone={data.phone} />
               </MagneticButton>
             </div>
             <div className="flex flex-wrap gap-6 text-sm text-slate-400">
-              <span className="flex items-center gap-2"><MapPin size={16} weight="duotone" style={{ color: BLUE }} /> {data.address}</span>
+              <span className="flex items-center gap-2"><MapPin size={16} weight="duotone" style={{ color: BLUE }} /> <MapLink address={data.address} /></span>
               <span className="flex items-center gap-2"><Clock size={16} weight="duotone" style={{ color: BLUE }} /> 24/7 Emergency Available</span>
             </div>
           </div>
@@ -516,10 +517,10 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
           <Thermometer size={48} weight="fill" className="mx-auto mb-6 text-black/70" />
           <h2 className="text-3xl md:text-5xl font-black tracking-tight text-black mb-4">No Heat or AC? We&apos;re Here 24/7</h2>
           <p className="text-lg text-black/70 mb-8 max-w-xl mx-auto">Broken furnace in winter or AC failure in summer — do not suffer. Our emergency HVAC technicians respond fast.</p>
-          <a href={`tel:${phoneDigits}`} className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-black text-white font-bold text-lg hover:bg-black/80 transition-colors">
+          <PhoneLink phone={data.phone} className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-black text-white font-bold text-lg hover:bg-black/80 transition-colors">
             <span className="relative flex h-3 w-3"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75" /><span className="relative inline-flex rounded-full h-3 w-3 bg-red-600" /></span>
             {data.phone}
-          </a>
+          </PhoneLink>
         </div>
       </section>
 
@@ -532,7 +533,7 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
           <SectionHeader badge="Coverage Area" title="Areas We Serve" accent={BLUE} />
           <div className="text-center">
             <GlassCard className="p-8 inline-block">
-              <div className="flex items-center gap-3 text-lg"><MapPin size={24} weight="duotone" style={{ color: BLUE }} /><span className="text-white font-semibold">{data.address}</span></div>
+              <div className="flex items-center gap-3 text-lg"><MapPin size={24} weight="duotone" style={{ color: BLUE }} /><MapLink address={data.address} className="text-white font-semibold" /></div>
               <p className="text-slate-400 text-sm mt-2">&amp; Surrounding Areas</p>
             </GlassCard>
           </div>
@@ -586,9 +587,15 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
               <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-6 text-white">Get Your Free Estimate</h2>
               <p className="text-slate-400 leading-relaxed mb-8">Ready for perfect comfort? Contact {data.businessName} today for a free, no-obligation estimate.</p>
               <div className="space-y-5">
+                <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: BLUE_GLOW }}><MapPin size={20} weight="duotone" style={{ color: BLUE }} /></div>
+                    <div><p className="text-sm font-semibold text-white">Address</p><MapLink address={data.address} className="text-sm text-slate-400" /></div>
+                </div>
+                <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: BLUE_GLOW }}><Phone size={20} weight="duotone" style={{ color: BLUE }} /></div>
+                    <div><p className="text-sm font-semibold text-white">Phone</p><PhoneLink phone={data.phone} className="text-sm text-slate-400" /></div>
+                </div>
                 {[
-                  { icon: MapPin, label: "Address", value: data.address },
-                  { icon: Phone, label: "Phone", value: data.phone },
                   { icon: Fan, label: "Emergency", value: "24/7/365 Emergency HVAC Service" },
                 ].map((item) => (
                   <div key={item.label} className="flex items-start gap-4">
@@ -669,7 +676,7 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
             <div>
               <h4 className="text-sm font-semibold text-white mb-3">Contact</h4>
               <div className="space-y-2 text-sm text-slate-500">
-                <p>{data.phone}</p><p>{data.address}</p>
+                <p><PhoneLink phone={data.phone} /></p><p><MapLink address={data.address} /></p>
                 {data.socialLinks && Object.entries(data.socialLinks).map(([platform, url]) => <a key={platform} href={url} target="_blank" rel="noopener noreferrer" className="block hover:text-white transition-colors capitalize">{platform}</a>)}
               </div>
             </div>

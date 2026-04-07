@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import React, { ReactNode, useState, useEffect } from "react";
 import BluejayLogo from "../BluejayLogo";
+import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 
 interface SocialLinks {
   facebook?: string;
@@ -104,12 +105,12 @@ export default function TemplateLayout({
             >
               Get a Free Quote
             </a>
-            <a
-              href={`tel:${phone}`}
+            <PhoneLink
+              phone={phone}
               className="h-14 px-8 rounded-full border-2 border-white/30 text-white font-semibold text-lg flex items-center justify-center hover:bg-white/10 transition-colors"
             >
               Call {phone}
-            </a>
+            </PhoneLink>
           </motion.div>
         </div>
       </section>
@@ -146,7 +147,7 @@ export default function TemplateLayout({
               <div className="relative z-10">
                 <div className="text-2xl mb-3">📞</div>
                 <p className="font-semibold mb-1">Phone</p>
-                <p className="text-muted">{phone}</p>
+                <PhoneLink phone={phone} className="text-muted" />
               </div>
             </div>
             <div className="p-6 rounded-xl border border-border relative overflow-hidden" style={{ background: `${accentColor}08` }}>
@@ -154,7 +155,7 @@ export default function TemplateLayout({
               <div className="relative z-10">
                 <div className="text-2xl mb-3">📍</div>
                 <p className="font-semibold mb-1">Location</p>
-                <p className="text-muted">{address}</p>
+                <MapLink address={address} className="text-muted" />
               </div>
             </div>
             <div className="p-6 rounded-xl border border-border relative overflow-hidden" style={{ background: `${accentColor}08` }}>
@@ -176,8 +177,8 @@ export default function TemplateLayout({
             {/* Business info */}
             <div>
               <span className="font-bold text-lg">{businessName}</span>
-              <p className="text-muted text-sm mt-2">{address}</p>
-              <p className="text-muted text-sm">{phone}</p>
+              <MapLink address={address} className="text-muted text-sm mt-2 block" />
+              <PhoneLink phone={phone} className="text-muted text-sm" />
             </div>
             {/* Quick links */}
             <div>

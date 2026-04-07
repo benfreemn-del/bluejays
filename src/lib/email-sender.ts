@@ -40,25 +40,34 @@ async function sendViaSendGrid(
       personalizations: [{ to: [{ email: to }] }],
       from: { email: FROM_EMAIL, name: "BlueJays" },
       subject,
-      content: [{ type: "text/plain", value: body }],
+      content: [{ type: "text/html", value: body.replace(/\n/g, "<br>") }],
     }),
   });
+  if (!response.ok) {
+    const errorText = await response.text().catch(() => "Unknown error");
+    console.error(`SendGrid error (${response.status}): ${errorText}`);
+  }
   return response.ok;
 }
 
 async function logEmailToFile(email: SentEmail) {
-  if (isSupabaseConfigured()) {
-    await supabase.from("emails").insert({
-      id: email.id,
-      prospect_id: email.prospectId,
-      to: email.to,
-      from: email.from,
-      subject: email.subject,
-      body: email.body,
-      sequence: email.sequence,
-      sent_at: email.sentAt,
-      method: email.method,
-    });
+  // Skip Supabase logging for test emails (non-UUID prospect IDs)
+  if (isSupabaseConfigured() && email.prospectId.includes("-") && email.prospectId.length > 30) {
+    try {
+      await supabase.from("emails").insert({
+        id: email.id,
+        prospect_id: email.prospectId,
+        to: email.to,
+        from: email.from,
+        subject: email.subject,
+        body: email.body,
+        sequence: email.sequence,
+        sent_at: email.sentAt,
+        method: email.method,
+      });
+    } catch (err) {
+      console.error("Email log to Supabase failed:", err);
+    }
     return;
   }
 
