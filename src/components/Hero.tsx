@@ -414,7 +414,7 @@ const defaultSiteCards: SiteCard[] = [
   { name: "Summit Roofing NW", category: "Roofing V2", color: "#111827", href: "/v2/roofing", icon: "🏗️", tagline: "Storm protection — premium roofing" },
   { name: "Pacific Auto Works", category: "Auto Repair V2", color: "#111111", href: "/v2/auto-repair", icon: "🚗", tagline: "Garage vibes — premium auto repair" },
   { name: "Velvet Hair Studio", category: "Salon V2", color: "#1c1917", href: "/v2/salon", icon: "✂️", tagline: "Morphing beauty — editorial design" },
-  { name: "Cascade Landscapes", category: "Landscaping", color: "#1a2e1a", href: "/templates/landscaping", icon: "🌳", tagline: "800+ yards transformed in Seattle" },
+  { name: "Cascade Landscapes", category: "Landscaping V2", color: "#0a1a0a", href: "/v2/landscaping", icon: "🌳", tagline: "Nature transforms — premium landscaping" },
   { name: "Grace Community Church", category: "Church V2", color: "#1a1a2e", href: "/v2/church", icon: "✝️", tagline: "A place to belong — premium ministry site" },
-  { name: "Northshore Vet Clinic", category: "Veterinary", color: "#0a2e1a", href: "/templates/veterinary", icon: "🐾", tagline: "Compassionate care for dogs & cats" },
+  { name: "Northshore Vet Clinic", category: "Veterinary V2", color: "#0a1a0f", href: "/v2/veterinary", icon: "🐾", tagline: "Paw prints — premium pet care" },
 ];

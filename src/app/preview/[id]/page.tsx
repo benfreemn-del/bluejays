@@ -12,11 +12,16 @@ import V2PlumberPreview from "@/components/templates/V2PlumberPreview";
 import V2HvacPreview from "@/components/templates/V2HvacPreview";
 import V2RoofingPreview from "@/components/templates/V2RoofingPreview";
 import V2AutoRepairPreview from "@/components/templates/V2AutoRepairPreview";
+import V2ChiropracticPreview from "@/components/templates/V2ChiropracticPreview";
+import V2VeterinaryPreview from "@/components/templates/V2VeterinaryPreview";
+import V2PhotographyPreview from "@/components/templates/V2PhotographyPreview";
+import V2InteriorDesignPreview from "@/components/templates/V2InteriorDesignPreview";
+import V2LandscapingPreview from "@/components/templates/V2LandscapingPreview";
 import { getScrapedData } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
 
-// V2 preview renderers by category — ALL 11 V2 categories have dynamic renderers
+// V2 preview renderers by category — ALL 16 V2 categories have dynamic renderers
 const V2_RENDERERS: Partial<Record<string, React.ComponentType<{ data: GeneratedSiteData }>>> = {
   electrician: V2ElectricianPreview,
   dental: V2DentalPreview,
@@ -29,6 +34,11 @@ const V2_RENDERERS: Partial<Record<string, React.ComponentType<{ data: Generated
   hvac: V2HvacPreview,
   roofing: V2RoofingPreview,
   "auto-repair": V2AutoRepairPreview,
+  chiropractic: V2ChiropracticPreview,
+  veterinary: V2VeterinaryPreview,
+  photography: V2PhotographyPreview,
+  "interior-design": V2InteriorDesignPreview,
+  landscaping: V2LandscapingPreview,
 };
 
 export default async function PreviewPage({
