@@ -1,10 +1,23 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useEffect } from "react";
 import type { GeneratedSiteData } from "@/lib/generator";
 import TemplateLayout from "./TemplateLayout";
 
 export default function PreviewRenderer({ data }: { data: GeneratedSiteData }) {
+  // Track visit
+  useEffect(() => {
+    if (data.id) {
+      const start = Date.now();
+      fetch(`/api/track/${data.id}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" }).catch(() => {});
+      // Log duration on leave
+      return () => {
+        const duration = Math.round((Date.now() - start) / 1000);
+        navigator.sendBeacon?.(`/api/track/${data.id}`, JSON.stringify({ duration }));
+      };
+    }
+  }, [data.id]);
   const {
     category,
     businessName,
@@ -52,6 +65,7 @@ export default function PreviewRenderer({ data }: { data: GeneratedSiteData }) {
       heroImage={heroImage}
       phone={phone}
       address={address}
+      prospectId={data.id}
     >
       {/* Stats Bar */}
       {stats.length > 0 && (

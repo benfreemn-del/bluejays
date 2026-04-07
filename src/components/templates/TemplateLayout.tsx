@@ -13,6 +13,7 @@ interface TemplateLayoutProps {
   heroImage?: string;
   phone: string;
   address: string;
+  prospectId?: string;
   children: ReactNode;
 }
 
@@ -24,6 +25,7 @@ export default function TemplateLayout({
   heroImage,
   phone,
   address,
+  prospectId,
   children,
 }: TemplateLayoutProps) {
   return (
@@ -173,6 +175,41 @@ export default function TemplateLayout({
           </div>
         </div>
       </footer>
+
+      {/* Floating Claim Banner — only on preview sites */}
+      {prospectId && (
+        <div className="fixed bottom-0 left-0 right-0 z-50">
+          {/* Social proof ticker */}
+          <div className="bg-background/90 backdrop-blur-sm border-t border-border px-4 py-2 text-center">
+            <p className="text-xs text-muted">
+              <span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1.5 animate-pulse" />
+              47 businesses in your area upgraded their website this month
+            </p>
+          </div>
+          {/* Claim CTA */}
+          <div
+            className="px-6 py-4 flex items-center justify-between gap-4"
+            style={{ background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}10)`, borderTop: `1px solid ${accentColor}30` }}
+          >
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-foreground truncate">
+                This website was built for {businessName}
+              </p>
+              <p className="text-xs text-muted">Claim it before we offer it to a competitor</p>
+            </div>
+            <a
+              href={`/claim/${prospectId}`}
+              className="shrink-0 h-11 px-6 rounded-full text-white text-sm font-bold flex items-center gap-2 hover:shadow-lg transition-all duration-300"
+              style={{ background: accentColor }}
+            >
+              Claim Your Website
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
+                <path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+              </svg>
+            </a>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
