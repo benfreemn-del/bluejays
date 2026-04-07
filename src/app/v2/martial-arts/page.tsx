@@ -1,0 +1,553 @@
+"use client";
+
+import { useState, useRef, useCallback } from "react";
+import {
+  motion,
+  useMotionValue,
+  useSpring,
+  useInView,
+  AnimatePresence,
+} from "framer-motion";
+import {
+  HandFist,
+  Belt,
+  Star,
+  ShieldCheck,
+  Users,
+  Phone,
+  MapPin,
+  Clock,
+  ArrowRight,
+  CaretDown,
+  Quotes,
+  CalendarCheck,
+  Lightning,
+  Trophy,
+  Fire,
+  Person,
+  PersonSimpleRun,
+  Heart,
+  Target,
+  Barbell,
+  CheckCircle,
+  X,
+  List,
+} from "@phosphor-icons/react";
+
+/* ───────────────────────── SPRING CONFIG ───────────────────────── */
+const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
+const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
+
+const stagger = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.08 } },
+};
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  show: { opacity: 1, y: 0, transition: spring },
+};
+
+/* ───────────────────────── COLORS ───────────────────────── */
+const BG = "#0a0505";
+const RED = "#991b1b";
+const RED_LIGHT = "#dc2626";
+const GOLD = "#b8860b";
+const GOLD_LIGHT = "#d4a843";
+const RED_GLOW = "rgba(153, 27, 27, 0.18)";
+const GOLD_GLOW = "rgba(184, 134, 11, 0.15)";
+
+/* ───────────────────────── FLOATING ENERGY PARTICLES ───────────────────────── */
+function FloatingEnergy() {
+  const particles = Array.from({ length: 24 }, (_, i) => ({
+    id: i,
+    x: Math.random() * 100,
+    delay: Math.random() * 8,
+    duration: 5 + Math.random() * 5,
+    size: 2 + Math.random() * 3,
+    opacity: 0.15 + Math.random() * 0.3,
+    color: i % 3 === 0 ? GOLD_LIGHT : RED_LIGHT,
+  }));
+  return (
+    <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden hidden md:block">
+      {particles.map((p) => (
+        <motion.div
+          key={p.id}
+          className="absolute rounded-full"
+          style={{ left: `${p.x}%`, width: p.size, height: p.size, background: p.color, willChange: "transform, opacity" }}
+          animate={{ y: ["110vh", "-10vh"], opacity: [0, p.opacity, p.opacity, 0] }}
+          transition={{
+            y: { duration: p.duration, repeat: Infinity, delay: p.delay, ease: "linear" },
+            opacity: { duration: p.duration, repeat: Infinity, delay: p.delay, times: [0, 0.1, 0.9, 1] },
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+/* ───────────────────────── SHARED COMPONENTS ───────────────────────── */
+function SectionReveal({ children, className = "", id }: { children: React.ReactNode; className?: string; id?: string }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-80px" });
+  return (
+    <motion.section ref={ref} id={id} className={className} initial={{ opacity: 0, y: 50 }} animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }} transition={spring}>
+      {children}
+    </motion.section>
+  );
+}
+
+function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return <div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>;
+}
+
+function MagneticButton({ children, className = "", onClick, style }: { children: React.ReactNode; className?: string; onClick?: () => void; style?: React.CSSProperties }) {
+  const ref = useRef<HTMLButtonElement>(null);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const springX = useSpring(x, springFast);
+  const springY = useSpring(y, springFast);
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    if (!ref.current) return;
+    const rect = ref.current.getBoundingClientRect();
+    x.set((e.clientX - rect.left - rect.width / 2) * 0.25);
+    y.set((e.clientY - rect.top - rect.height / 2) * 0.25);
+  }, [x, y]);
+  const handleMouseLeave = useCallback(() => { x.set(0); y.set(0); }, [x, y]);
+  return (
+    <motion.button ref={ref} style={{ x: springX, y: springY, willChange: "transform", ...style }} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave} onClick={onClick} className={className} whileTap={{ scale: 0.97 }}>
+      {children}
+    </motion.button>
+  );
+}
+
+function WordReveal({ text, className = "" }: { text: string; className?: string }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-50px" });
+  const words = text.split(" ");
+  return (
+    <motion.span ref={ref} className={`inline-flex flex-wrap gap-x-3 ${className}`} variants={stagger} initial="hidden" animate={isInView ? "show" : "hidden"}>
+      {words.map((word, i) => (<motion.span key={i} variants={fadeUp} className="inline-block">{word}</motion.span>))}
+    </motion.span>
+  );
+}
+
+function ShimmerBorder({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return (
+    <div className={`relative rounded-2xl p-[1px] overflow-hidden ${className}`}>
+      <motion.div className="absolute inset-0 rounded-2xl" style={{ background: `conic-gradient(from 0deg, transparent, ${RED}, transparent, ${GOLD}, transparent)`, willChange: "transform" }} animate={{ rotate: [0, 360] }} transition={{ duration: 4, repeat: Infinity, ease: "linear" }} />
+      <div className="relative rounded-2xl z-10" style={{ background: "#120808" }}>{children}</div>
+    </div>
+  );
+}
+
+/* ───────────────────────── DATA ───────────────────────── */
+const programs = [
+  { title: "Karate", description: "Traditional Shotokan karate for all ages. Build discipline, focus, and powerful striking technique through kata, kumite, and kihon training with certified black belt instructors.", icon: HandFist },
+  { title: "Brazilian Jiu-Jitsu", description: "Ground fighting and submission grappling in a safe, supportive environment. Learn the art that levels the playing field regardless of size or strength.", icon: PersonSimpleRun },
+  { title: "Kickboxing", description: "High-energy striking classes combining boxing, Muay Thai kicks, knees, and elbows. Burn 800+ calories while learning devastating standup techniques.", icon: Lightning },
+  { title: "Kids Martial Arts", description: "Age-appropriate classes for children ages 4-12. Build confidence, discipline, coordination, and anti-bullying skills in a fun, encouraging environment.", icon: Person },
+  { title: "Self-Defense", description: "Practical, real-world self-defense techniques drawn from multiple disciplines. Learn situational awareness, de-escalation, and effective physical responses.", icon: ShieldCheck },
+  { title: "Fitness & Conditioning", description: "Martial arts-inspired functional fitness. Bag work, bodyweight exercises, agility drills, and core training for peak athletic performance.", icon: Barbell },
+];
+
+const stats = [
+  { value: "3,000+", label: "Students Trained" },
+  { value: "4.9", label: "Star Rating" },
+  { value: "20+", label: "Years Teaching" },
+  { value: "50+", label: "Competition Titles" },
+];
+
+const beltSystem = [
+  { belt: "White Belt", desc: "Beginning your journey. Learn fundamentals, stances, and basic strikes.", color: "#ffffff" },
+  { belt: "Yellow Belt", desc: "Building foundations. Basic combinations, first kata, and partner drills.", color: "#eab308" },
+  { belt: "Orange Belt", desc: "Growing confidence. Intermediate techniques, self-defense applications.", color: "#f97316" },
+  { belt: "Green Belt", desc: "Developing skill. Advanced combinations, sparring introduction, leadership.", color: "#22c55e" },
+  { belt: "Blue Belt", desc: "Refining technique. Complex kata, competition preparation, teaching basics.", color: "#3b82f6" },
+  { belt: "Brown Belt", desc: "Near mastery. Advanced sparring, weapons introduction, mentoring juniors.", color: "#92400e" },
+  { belt: "Black Belt", desc: "The true beginning. Mastery of fundamentals, leadership, lifelong learning.", color: "#1a1a1a" },
+];
+
+const testimonials = [
+  { name: "Marcus J.", text: "I started at 35 with zero experience. Three years later, I have my brown belt, lost 40 pounds, and have more confidence than ever. This school changed my life.", rating: 5 },
+  { name: "Jennifer P.", text: "My son was bullied at school. After six months of kids karate, his confidence skyrocketed. He carries himself differently now. The instructors are incredible with children.", rating: 5 },
+  { name: "David & Sarah K.", text: "Our whole family trains here. Date night is Tuesday sparring class. The community is welcoming, the instruction is world-class, and we have never been healthier.", rating: 5 },
+];
+
+const scheduleData = [
+  { time: "6:00 AM", classes: "Adult Fitness & Conditioning" },
+  { time: "9:00 AM", classes: "Adult Karate (All Levels)" },
+  { time: "3:30 PM", classes: "Kids Karate (Ages 4-7)" },
+  { time: "4:30 PM", classes: "Kids Karate (Ages 8-12)" },
+  { time: "5:30 PM", classes: "Adult Brazilian Jiu-Jitsu" },
+  { time: "6:30 PM", classes: "Kickboxing" },
+  { time: "7:30 PM", classes: "Advanced Sparring / Competition" },
+  { time: "Saturday 9 AM", classes: "Open Mat & Self-Defense Workshop" },
+];
+
+const faqs = [
+  { q: "Do I need experience to start?", a: "Absolutely not. Most of our students start with zero martial arts experience. Our beginner-friendly classes are designed to build skills gradually in a supportive environment." },
+  { q: "What age can children start?", a: "Our Little Warriors program accepts children from age 4. We have age-appropriate classes for 4-7, 8-12, and teen groups, each designed for their developmental stage." },
+  { q: "Will I get hurt?", a: "Safety is our number one priority. All sparring is controlled and supervised. You train at your own pace, and full protective gear is required for any contact work." },
+  { q: "How long does it take to get a black belt?", a: "Typically 3-5 years of consistent training. But the journey is the reward. Every belt represents real growth in skill, discipline, and character." },
+  { q: "What should I wear to my first class?", a: "Comfortable athletic clothing is fine for your first class. If you decide to continue, we will help you get a proper gi (uniform) that is included in your enrollment." },
+];
+
+/* ═══════════════════════════════════════════════════════════════════
+   MAIN PAGE
+   ═══════════════════════════════════════════════════════════════════ */
+export default function V2MartialArtsPage() {
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  return (
+    <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: BG, color: "#f1f5f9" }}>
+      <FloatingEnergy />
+
+      {/* ─── NAV ─── */}
+      <motion.nav initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={spring} className="fixed top-0 left-0 right-0 z-50">
+        <div className="mx-auto max-w-7xl px-4 md:px-6 py-4">
+          <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
+            <div className="flex items-center gap-2">
+              <HandFist size={24} weight="duotone" style={{ color: RED_LIGHT }} />
+              <span className="text-lg font-bold tracking-tight text-white">Iron Dragon Dojo</span>
+            </div>
+            <div className="hidden md:flex items-center gap-8 text-sm text-slate-400">
+              <a href="#programs" className="hover:text-white transition-colors">Programs</a>
+              <a href="#belts" className="hover:text-white transition-colors">Belt System</a>
+              <a href="#schedule" className="hover:text-white transition-colors">Schedule</a>
+              <a href="#trial" className="hover:text-white transition-colors">Free Trial</a>
+            </div>
+            <div className="flex items-center gap-3">
+              <MagneticButton className="px-4 md:px-5 py-2 rounded-full text-sm font-semibold text-white transition-colors" style={{ background: RED }}>Free Trial</MagneticButton>
+              <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden p-2 rounded-lg text-white hover:bg-white/10 transition-colors">
+                {mobileMenuOpen ? <X size={24} /> : <List size={24} />}
+              </button>
+            </div>
+          </GlassCard>
+          <AnimatePresence>
+            {mobileMenuOpen && (
+              <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.3, ease: "easeInOut" }} className="md:hidden mt-2 overflow-hidden">
+                <GlassCard className="flex flex-col gap-1 px-4 py-4">
+                  {[{ label: "Programs", href: "#programs" }, { label: "Belt System", href: "#belts" }, { label: "Schedule", href: "#schedule" }, { label: "Free Trial", href: "#trial" }].map((link) => (
+                    <a key={link.label} href={link.href} onClick={() => setMobileMenuOpen(false)} className="block px-4 py-3 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-white/5 transition-colors">{link.label}</a>
+                  ))}
+                </GlassCard>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </motion.nav>
+
+      {/* ─── HERO ─── */}
+      <section className="relative min-h-[100dvh] flex items-center pt-24 z-10">
+        <div className="absolute inset-0 z-0">
+          <img src="https://images.unsplash.com/photo-1555597673-b21d5c935865?w=1600&q=80" alt="" className="w-full h-full object-cover opacity-15" />
+          <div className="absolute inset-0" style={{ background: `linear-gradient(to bottom, ${BG}, transparent 30%, ${BG})` }} />
+        </div>
+        <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-4 items-center">
+          <div className="space-y-8">
+            <div>
+              <motion.p initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ ...spring, delay: 0.1 }} className="text-sm uppercase tracking-[0.25em] mb-4" style={{ color: GOLD }}>Discipline &bull; Strength &bull; Honor</motion.p>
+              <h1 className="text-4xl md:text-7xl tracking-tighter leading-none font-black text-white" style={{ textShadow: "0 2px 20px rgba(153,27,27,0.4)" }}>
+                <WordReveal text="Forge Your Inner Warrior" />
+              </h1>
+            </div>
+            <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.6 }} className="text-lg text-slate-400 max-w-md leading-relaxed">
+              World-class martial arts instruction for all ages and skill levels. Build unshakable confidence, elite fitness, and the discipline that transforms every area of your life.
+            </motion.p>
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.8 }} className="flex flex-wrap gap-4">
+              <MagneticButton className="px-8 py-4 rounded-full text-base font-bold text-white flex items-center gap-2 cursor-pointer" style={{ background: RED }}>
+                Claim Free Trial <ArrowRight size={18} weight="bold" />
+              </MagneticButton>
+              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
+                <Phone size={18} weight="duotone" /> (555) 741-8520
+              </MagneticButton>
+            </motion.div>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ ...spring, delay: 1 }} className="flex flex-wrap gap-6 text-sm text-slate-400">
+              <span className="flex items-center gap-2"><MapPin size={16} weight="duotone" style={{ color: RED_LIGHT }} />1200 Dragon Way</span>
+              <span className="flex items-center gap-2"><Clock size={16} weight="duotone" style={{ color: RED_LIGHT }} />Mon-Sat 6am-9pm</span>
+            </motion.div>
+          </div>
+          <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ ...spring, delay: 0.3 }} className="hidden md:flex items-center justify-center lg:justify-end">
+            <div className="relative">
+              <motion.div className="absolute inset-0 rounded-full" style={{ background: `radial-gradient(circle, ${RED_GLOW} 0%, transparent 70%)`, filter: "blur(50px)" }} animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }} />
+              <svg viewBox="0 0 180 200" className="relative z-10 w-52 h-60 md:w-68 md:h-80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <motion.path d="M90 15 L165 55 C165 55 170 115 145 155 C125 185 90 195 90 195 C90 195 55 185 35 155 C10 115 15 55 15 55 Z" stroke={RED} strokeWidth="2" fill="none" initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }} transition={{ duration: 2, ease: "easeInOut" }} />
+                <motion.text x="90" y="115" textAnchor="middle" fill={GOLD} fontSize="50" fontWeight="900" fontFamily="serif" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5, duration: 1 }}>
+                  武
+                </motion.text>
+                <motion.circle cx="90" cy="30" r="3" fill={GOLD_LIGHT} animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.3, 0.8] }} transition={{ duration: 2, repeat: Infinity }} />
+              </svg>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ─── STATS ─── */}
+      <SectionReveal className="relative z-10 pb-8">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <GlassCard className="p-6 md:p-8">
+            <motion.div className="grid grid-cols-2 sm:grid-cols-4 gap-6 md:gap-8" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
+              {stats.map((s, i) => (
+                <motion.div key={i} variants={fadeUp} className="text-center">
+                  <p className="text-3xl md:text-4xl font-black tracking-tight" style={{ color: RED_LIGHT }}>{s.value}</p>
+                  <p className="text-sm text-slate-400 mt-1">{s.label}</p>
+                </motion.div>
+              ))}
+            </motion.div>
+          </GlassCard>
+        </div>
+      </SectionReveal>
+
+      {/* ─── PROGRAMS ─── */}
+      <SectionReveal id="programs" className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <div className="text-center mb-16">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: GOLD }}>Our Disciplines</p>
+            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-black text-white">
+              <WordReveal text="Train Like a Champion" />
+            </h2>
+          </div>
+          <motion.div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
+            {programs.map((prog, i) => (
+              <motion.div key={i} variants={fadeUp}>
+                <GlassCard className="p-6 h-full">
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: i % 2 === 0 ? RED_GLOW : GOLD_GLOW }}>
+                    <prog.icon size={24} weight="duotone" style={{ color: i % 2 === 0 ? RED_LIGHT : GOLD }} />
+                  </div>
+                  <h3 className="text-lg font-bold text-white mb-2">{prog.title}</h3>
+                  <p className="text-sm text-slate-400 leading-relaxed">{prog.description}</p>
+                </GlassCard>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── ABOUT / MASTER INSTRUCTOR ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24 overflow-hidden">
+        <div className="absolute inset-0 opacity-8">
+          <img src="https://images.unsplash.com/photo-1564415315949-7a0c4c73aab4?w=1600&q=80" alt="" className="w-full h-full object-cover" />
+        </div>
+        <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div>
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: GOLD }}>Our Founder</p>
+            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-black text-white mb-6">
+              <WordReveal text="Master Instructor" />
+            </h2>
+            <p className="text-slate-400 leading-relaxed mb-4">
+              Sensei David Tanaka holds a 6th degree black belt in Shotokan Karate, a 3rd degree black belt in Brazilian Jiu-Jitsu, and has over 20 years of competitive and teaching experience. A former national champion, he founded Iron Dragon Dojo with a mission to make world-class martial arts accessible to everyone.
+            </p>
+            <p className="text-slate-400 leading-relaxed">
+              Under his guidance, our instructors do not just teach techniques; they build character, resilience, and a warrior mindset that translates to every challenge in life.
+            </p>
+          </div>
+          <motion.div className="grid grid-cols-2 gap-4" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true }}>
+            {[
+              { icon: Trophy, label: "National Champion", desc: "3x gold medalist" },
+              { icon: Belt, label: "6th Degree", desc: "Shotokan Karate" },
+              { icon: Users, label: "3,000+ Students", desc: "Trained & mentored" },
+              { icon: Heart, label: "Community First", desc: "Youth scholarships" },
+            ].map((item, i) => (
+              <motion.div key={i} variants={fadeUp}>
+                <GlassCard className="p-5 text-center">
+                  <item.icon size={28} weight="duotone" style={{ color: i % 2 === 0 ? RED_LIGHT : GOLD }} className="mx-auto mb-2" />
+                  <p className="text-sm font-bold text-white">{item.label}</p>
+                  <p className="text-xs text-slate-400 mt-1">{item.desc}</p>
+                </GlassCard>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── BELT SYSTEM ─── */}
+      <SectionReveal id="belts" className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <div className="text-center mb-16">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: GOLD }}>Your Journey</p>
+            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-black text-white">
+              <WordReveal text="Belt Progression System" />
+            </h2>
+          </div>
+          <motion.div className="space-y-3 max-w-3xl mx-auto" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
+            {beltSystem.map((b, i) => (
+              <motion.div key={i} variants={fadeUp}>
+                <GlassCard className="p-5 flex items-center gap-4">
+                  <div className="w-12 h-3 rounded-full shrink-0 border border-white/20" style={{ background: b.color }} />
+                  <div>
+                    <p className="text-sm font-bold text-white">{b.belt}</p>
+                    <p className="text-xs text-slate-400 mt-0.5">{b.desc}</p>
+                  </div>
+                </GlassCard>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── TESTIMONIALS ─── */}
+      <SectionReveal id="testimonials" className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <div className="text-center mb-16">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: GOLD }}>Student Stories</p>
+            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-black text-white">
+              <WordReveal text="Transformed Lives" />
+            </h2>
+          </div>
+          <motion.div className="grid grid-cols-1 md:grid-cols-3 gap-6" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
+            {testimonials.map((t, i) => (
+              <motion.div key={i} variants={fadeUp}>
+                <GlassCard className="p-6 h-full flex flex-col">
+                  <Quotes size={28} weight="fill" style={{ color: RED_LIGHT }} className="mb-3 opacity-50" />
+                  <p className="text-slate-300 leading-relaxed flex-1 text-sm">{t.text}</p>
+                  <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
+                    <span className="text-sm font-bold text-white">{t.name}</span>
+                    <div className="flex gap-0.5">{Array.from({ length: t.rating }).map((_, j) => (<Star key={j} size={12} weight="fill" style={{ color: GOLD }} />))}</div>
+                  </div>
+                </GlassCard>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── SCHEDULE ─── */}
+      <SectionReveal id="schedule" className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+            <div className="lg:sticky lg:top-32">
+              <p className="text-sm uppercase tracking-widest mb-3" style={{ color: GOLD }}>Train With Us</p>
+              <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-black text-white mb-6">
+                <WordReveal text="Class Schedule" />
+              </h2>
+              <p className="text-slate-400 leading-relaxed max-w-md">We offer classes from early morning to evening so you can train on your schedule. Drop-ins welcome for all experience levels.</p>
+            </div>
+            <motion.div className="space-y-3" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
+              {scheduleData.map((item, i) => (
+                <motion.div key={i} variants={fadeUp}>
+                  <GlassCard className="p-4 flex items-center gap-4">
+                    <div className="w-24 shrink-0">
+                      <p className="text-xs font-bold" style={{ color: GOLD }}>{item.time}</p>
+                    </div>
+                    <p className="text-sm font-semibold text-white">{item.classes}</p>
+                  </GlassCard>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── FAQ ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-3xl px-4 md:px-6">
+          <div className="text-center mb-16">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: GOLD }}>Common Questions</p>
+            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-black text-white">
+              <WordReveal text="Frequently Asked Questions" />
+            </h2>
+          </div>
+          <motion.div className="space-y-3" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
+            {faqs.map((faq, i) => (
+              <motion.div key={i} variants={fadeUp}>
+                <GlassCard className="overflow-hidden">
+                  <button onClick={() => setOpenFaq(openFaq === i ? null : i)} className="w-full flex items-center justify-between p-5 md:p-6 text-left cursor-pointer">
+                    <span className="text-lg font-bold text-white pr-4">{faq.q}</span>
+                    <motion.div animate={{ rotate: openFaq === i ? 180 : 0 }} transition={spring}><CaretDown size={20} className="text-slate-400" /></motion.div>
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {openFaq === i && (
+                      <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={spring} className="overflow-hidden">
+                        <p className="px-5 pb-5 md:px-6 md:pb-6 text-slate-400 leading-relaxed">{faq.a}</p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </GlassCard>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── FREE TRIAL CTA ─── */}
+      <SectionReveal id="trial" className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-4xl px-4 md:px-6">
+          <ShimmerBorder>
+            <div className="p-8 md:p-12 text-center">
+              <motion.div initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={spring}>
+                <p className="text-sm uppercase tracking-widest mb-3" style={{ color: GOLD }}>Your Journey Starts Here</p>
+                <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-black text-white mb-4">Free Trial Class</h2>
+                <p className="text-slate-400 text-lg mb-8 max-w-lg mx-auto">No experience needed. No commitment required. Come see what martial arts can do for you or your child. Your first class is completely free.</p>
+                <div className="flex flex-wrap justify-center gap-4">
+                  <MagneticButton className="px-10 py-4 rounded-full text-base font-bold text-white inline-flex items-center gap-2 cursor-pointer" style={{ background: RED }}>
+                    <Fire size={20} weight="duotone" /> Claim Free Class
+                  </MagneticButton>
+                  <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 inline-flex items-center gap-2 cursor-pointer">
+                    <Phone size={18} weight="duotone" /> Call Us
+                  </MagneticButton>
+                </div>
+              </motion.div>
+            </div>
+          </ShimmerBorder>
+        </div>
+      </SectionReveal>
+
+      {/* ─── CONTACT ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-black text-white mb-6">
+                <WordReveal text="Begin Your Training" />
+              </h2>
+              <p className="text-slate-400 leading-relaxed max-w-md mb-8">
+                Visit our dojo, meet our instructors, and experience a class firsthand. The hardest part is walking through the door. We will handle the rest.
+              </p>
+              <MagneticButton className="px-10 py-4 rounded-full text-base font-bold text-white inline-flex items-center gap-2 cursor-pointer" style={{ background: RED }}>
+                <CalendarCheck size={20} weight="duotone" /> Book Visit
+              </MagneticButton>
+            </div>
+            <GlassCard className="p-8">
+              <h3 className="text-xl font-bold text-white mb-6">Visit the Dojo</h3>
+              <div className="space-y-4">
+                <div className="flex items-start gap-4">
+                  <MapPin size={20} weight="duotone" style={{ color: RED_LIGHT }} className="mt-0.5 shrink-0" />
+                  <div>
+                    <p className="text-sm font-semibold text-white">Location</p>
+                    <p className="text-sm text-slate-400">1200 Dragon Way<br />Portland, OR 97205</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-4">
+                  <Phone size={20} weight="duotone" style={{ color: RED_LIGHT }} className="mt-0.5 shrink-0" />
+                  <div>
+                    <p className="text-sm font-semibold text-white">Phone</p>
+                    <p className="text-sm text-slate-400">(555) 741-8520</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-4">
+                  <Clock size={20} weight="duotone" style={{ color: RED_LIGHT }} className="mt-0.5 shrink-0" />
+                  <div>
+                    <p className="text-sm font-semibold text-white">Hours</p>
+                    <p className="text-sm text-slate-400">Monday - Friday: 6:00 AM - 9:00 PM<br />Saturday: 8:00 AM - 2:00 PM<br />Sunday: Closed</p>
+                  </div>
+                </div>
+              </div>
+            </GlassCard>
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── FOOTER ─── */}
+      <footer className="relative z-10 border-t border-white/5 py-8">
+        <div className="mx-auto max-w-7xl px-4 md:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2 text-sm text-slate-500">
+            <HandFist size={16} weight="duotone" style={{ color: RED_LIGHT }} />
+            <span>Iron Dragon Dojo &copy; {new Date().getFullYear()}</span>
+          </div>
+          <p className="text-xs text-slate-600">Website created by Bluejay Business Solutions</p>
+        </div>
+      </footer>
+    </main>
+  );
+}
