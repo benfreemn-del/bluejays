@@ -184,9 +184,12 @@ The sales agent is a LIVING SYSTEM that must improve over time, not stay static.
 ## Tech Stack
 - Next.js 16 + React 19 + TypeScript + Tailwind v4 + Framer Motion
 - Supabase for production database (with JSON file fallback for local dev)
-- SendGrid for emails (LIVE)
+- SendGrid for emails (requires domain authentication — DNS records in Vercel)
 - Twilio for SMS (LIVE — trial account)
 - File-based store at `data/` for local development
+- **Domain**: bluejayportfolio.com — DNS managed by **Vercel** (ns1.vercel-dns.com, ns2.vercel-dns.com)
+- **Hosting**: Vercel Pro (benfreemn-dels-projects/bluejays)
+- **Domain registrar**: Vercel (DNS records added through Vercel dashboard → project → Domains)
 
 ## Key Files
 - `scripts/pipeline.ts` — CLI to run scout/scrape/generate pipeline
