@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import FloatingAuditCTA from "@/components/FloatingAuditCTA";
 import ScrollProgressBar from "@/components/ScrollProgressBar";
@@ -140,6 +141,8 @@ export default function RootLayout({
         <ScrollProgressBar />
         <FloatingAuditCTA />
         {children}
+        {/* Vercel Web Analytics — page views + web vitals. No-op outside Vercel. */}
+        <Analytics />
       </body>
     </html>
   );
