@@ -231,49 +231,95 @@ export default function LeadPage() {
       <div className="max-w-5xl mx-auto w-full flex-1 flex gap-6 p-6">
         {/* Left: Timeline */}
         <div className="flex-1 flex flex-col">
-          {/* Pipeline Flowchart */}
-          <div className="mb-6 p-4 rounded-xl bg-white/[0.02] border border-white/[0.06]">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-white/40 mb-4">Pipeline Stage</h3>
-            <div className="flex items-center gap-1 overflow-x-auto pb-2">
+          {/* Pipeline Flowchart — BIG */}
+          <div className="mb-6 p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06]">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-base font-bold uppercase tracking-wider text-white/50">Pipeline Stage</h3>
+              {/* Next action button */}
+              {prospect.status === "scouted" && (
+                <button
+                  onClick={async () => {
+                    await fetch(`/api/generate/${id}`, { method: "POST" });
+                    loadData();
+                  }}
+                  className="h-9 px-5 rounded-lg bg-gradient-to-r from-sky-500 to-blue-600 text-white text-sm font-bold hover:shadow-[0_0_20px_rgba(14,165,233,0.4)] transition-all"
+                >
+                  Build Site →
+                </button>
+              )}
+              {prospect.status === "pending-review" && prospect.generatedSiteUrl && (
+                <div className="flex gap-2">
+                  <a href={prospect.generatedSiteUrl} target="_blank" rel="noopener noreferrer"
+                    className="h-9 px-4 rounded-lg bg-blue-electric/20 text-blue-electric text-sm font-bold flex items-center">
+                    Review Site
+                  </a>
+                  <button
+                    onClick={async () => {
+                      await fetch(`/api/prospects/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ status: "approved" }) });
+                      loadData();
+                    }}
+                    className="h-9 px-4 rounded-lg bg-emerald-500/20 text-emerald-400 text-sm font-bold"
+                  >
+                    ✓ Approve
+                  </button>
+                </div>
+              )}
+              {prospect.status === "approved" && (
+                <button
+                  onClick={async () => {
+                    await fetch("/api/funnel/enroll", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prospectIds: [id] }) });
+                    loadData();
+                  }}
+                  className="h-9 px-5 rounded-lg bg-gradient-to-r from-sky-500 to-blue-600 text-white text-sm font-bold hover:shadow-[0_0_20px_rgba(14,165,233,0.4)] transition-all"
+                >
+                  🚀 Start Funnel →
+                </button>
+              )}
+            </div>
+            <div className="flex items-center gap-2">
               {[
-                { key: "scouted", label: "Scouted", icon: "🔍" },
-                { key: "scraped", label: "Scraped", icon: "🌐" },
-                { key: "generated", label: "Site Built", icon: "🏗️" },
-                { key: "pending-review", label: "Review", icon: "👁️" },
-                { key: "approved", label: "Approved", icon: "✅" },
-                { key: "contacted", label: "Contacted", icon: "📧" },
-                { key: "responded", label: "Responded", icon: "💬" },
-                { key: "paid", label: "Paid", icon: "💰" },
+                { key: "scouted", label: "Scouted", icon: "🔍", desc: "Found via Google" },
+                { key: "scraped", label: "Scraped", icon: "🌐", desc: "Data collected" },
+                { key: "generated", label: "Site Built", icon: "🏗️", desc: "Preview ready" },
+                { key: "pending-review", label: "Review", icon: "👁️", desc: "Needs your OK" },
+                { key: "approved", label: "Approved", icon: "✅", desc: "Ready to send" },
+                { key: "contacted", label: "Contacted", icon: "📧", desc: "Outreach sent" },
+                { key: "responded", label: "Responded", icon: "💬", desc: "They replied!" },
+                { key: "paid", label: "Paid", icon: "💰", desc: "$997 received" },
               ].map((stage, i, arr) => {
                 const statusOrder = ["scouted", "scraped", "generated", "pending-review", "approved", "contacted", "responded", "paid"];
                 const currentIdx = statusOrder.indexOf(prospect.status);
                 const stageIdx = statusOrder.indexOf(stage.key);
                 const isComplete = stageIdx < currentIdx;
                 const isCurrent = stage.key === prospect.status;
-                const isFuture = stageIdx > currentIdx;
 
                 return (
-                  <div key={stage.key} className="flex items-center">
+                  <div key={stage.key} className="flex items-center flex-1">
                     <div
-                      className={`flex flex-col items-center px-3 py-2 rounded-lg text-center min-w-[70px] transition-all ${
+                      className={`flex flex-col items-center p-3 rounded-xl text-center w-full transition-all ${
                         isCurrent
-                          ? "bg-sky-500/20 border border-sky-500/40 ring-2 ring-sky-500/30"
+                          ? "bg-sky-500/20 border-2 border-sky-500/50 ring-2 ring-sky-500/20 shadow-[0_0_15px_rgba(14,165,233,0.2)]"
                           : isComplete
-                            ? "bg-green-500/10 border border-green-500/20"
-                            : "bg-white/[0.02] border border-white/[0.06] opacity-40"
+                            ? "bg-green-500/10 border border-green-500/30"
+                            : "bg-white/[0.02] border border-white/[0.06] opacity-30"
                       }`}
                     >
-                      <span className="text-lg">{stage.icon}</span>
-                      <span className={`text-[10px] font-bold mt-1 ${
+                      <span className="text-2xl mb-1">{stage.icon}</span>
+                      <span className={`text-xs font-bold ${
                         isCurrent ? "text-sky-400" : isComplete ? "text-green-400" : "text-white/40"
                       }`}>
                         {stage.label}
                       </span>
-                      {isCurrent && <span className="text-[8px] text-sky-400 mt-0.5">CURRENT</span>}
-                      {isComplete && <span className="text-[8px] text-green-400 mt-0.5">DONE</span>}
+                      <span className={`text-[9px] mt-0.5 ${
+                        isCurrent ? "text-sky-400/70" : isComplete ? "text-green-400/50" : "text-white/20"
+                      }`}>
+                        {stage.desc}
+                      </span>
+                      {isCurrent && <span className="text-[9px] text-sky-300 font-bold mt-1 bg-sky-500/20 px-2 py-0.5 rounded-full">CURRENT</span>}
+                      {isComplete && <span className="text-[9px] text-green-400 mt-1">✓</span>}
                     </div>
                     {i < arr.length - 1 && (
-                      <div className={`w-6 h-0.5 ${isComplete ? "bg-green-500/40" : "bg-white/[0.08]"}`} />
+                      <div className={`w-4 h-0.5 shrink-0 ${isComplete ? "bg-green-500/50" : "bg-white/[0.08]"}`} />
                     )}
                   </div>
                 );
