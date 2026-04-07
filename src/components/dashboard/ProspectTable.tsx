@@ -31,7 +31,7 @@ export default function ProspectTable({
   onRefresh,
 }: ProspectTableProps) {
   const router = useRouter();
-  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [bulkSending, setBulkSending] = useState(false);
   const [bulkResult, setBulkResult] = useState("");
 
@@ -43,35 +43,35 @@ export default function ProspectTable({
     return true;
   });
 
+  const isSelected = (id: string) => selectedIds.includes(id);
+
   const toggleSelect = (id: string) => {
-    setSelected((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id); else next.add(id);
-      return next;
-    });
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
   };
 
   const toggleAll = () => {
-    if (selected.size === filtered.length) {
-      setSelected(new Set());
+    if (selectedIds.length === filtered.length) {
+      setSelectedIds([]);
     } else {
-      setSelected(new Set(filtered.map((p) => p.id)));
+      setSelectedIds(filtered.map((p) => p.id));
     }
   };
 
   const sendBulk = async (channels: ("email" | "sms")[]) => {
-    if (selected.size === 0) return;
+    if (selectedIds.length === 0) return;
     setBulkSending(true);
     setBulkResult("");
     try {
       const res = await fetch("/api/outreach/bulk", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prospectIds: Array.from(selected), channels }),
+        body: JSON.stringify({ prospectIds: selectedIds, channels }),
       });
       const data = await res.json();
       setBulkResult(`${data.message}`);
-      setSelected(new Set());
+      setSelectedIds([]);
       onRefresh?.();
     } catch {
       setBulkResult("Error sending outreach");
@@ -106,17 +106,17 @@ export default function ProspectTable({
         </select>
         <span className="h-10 flex items-center text-muted text-sm">
           {filtered.length} prospect{filtered.length !== 1 ? "s" : ""}
-          {selected.size > 0 && (
-            <span className="text-blue-electric ml-2">({selected.size} selected)</span>
+          {selectedIds.length > 0 && (
+            <span className="text-blue-electric ml-2">({selectedIds.length} selected)</span>
           )}
         </span>
       </div>
 
       {/* Bulk Action Bar */}
-      {selected.size > 0 && (
+      {selectedIds.length > 0 && (
         <div className="mb-4 p-4 rounded-xl bg-blue-electric/10 border border-blue-electric/20 flex items-center justify-between">
           <span className="text-sm font-medium text-blue-electric">
-            {selected.size} prospect{selected.size !== 1 ? "s" : ""} selected
+            {selectedIds.length} prospect{selectedIds.length !== 1 ? "s" : ""} selected
           </span>
           <div className="flex gap-2">
             <button
@@ -148,11 +148,11 @@ export default function ProspectTable({
                   const res = await fetch("/api/funnel/enroll", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ prospectIds: Array.from(selected) }),
+                    body: JSON.stringify({ prospectIds: selectedIds }),
                   });
                   const data = await res.json();
                   setBulkResult(data.message);
-                  setSelected(new Set());
+                  setSelectedIds([]);
                   onRefresh?.();
                 } catch { setBulkResult("Error starting funnel"); }
                 finally { setBulkSending(false); }
@@ -163,7 +163,7 @@ export default function ProspectTable({
               {bulkSending ? "Starting..." : "🚀 Start Funnel"}
             </button>
             <button
-              onClick={() => setSelected(new Set())}
+              onClick={() => setSelectedIds([])}
               className="h-9 px-4 rounded-lg bg-surface border border-border text-muted text-sm hover:text-foreground transition-colors"
             >
               Clear
@@ -186,7 +186,7 @@ export default function ProspectTable({
               <th className="p-3 w-10">
                 <input
                   type="checkbox"
-                  checked={selected.size === filtered.length && filtered.length > 0}
+                  checked={selectedIds.length === filtered.length && filtered.length > 0}
                   onChange={toggleAll}
                   className="rounded"
                 />
@@ -204,13 +204,13 @@ export default function ProspectTable({
               <tr
                 key={prospect.id}
                 className={`border-b border-border hover:bg-surface-light/50 transition-colors ${
-                  selected.has(prospect.id) ? "bg-blue-electric/5" : ""
+                  isSelected(prospect.id) ? "bg-blue-electric/5" : ""
                 }`}
               >
                 <td className="p-3" onClick={(e) => e.stopPropagation()}>
                   <input
                     type="checkbox"
-                    checked={selected.has(prospect.id)}
+                    checked={isSelected(prospect.id)}
                     onChange={() => toggleSelect(prospect.id)}
                     className="rounded"
                   />
@@ -241,7 +241,7 @@ export default function ProspectTable({
                 <td className="p-3"><StatusBadge status={prospect.status} /></td>
                 <td className="p-3">
                   <div className="flex gap-1.5" onClick={(e) => e.stopPropagation()}>
-                    {prospect.generatedSiteUrl && (
+                    {prospect.generatedSiteUrl ? (
                       <a
                         href={prospect.generatedSiteUrl}
                         target="_blank"
@@ -251,6 +251,33 @@ export default function ProspectTable({
                       >
                         Preview
                       </a>
+                    ) : (
+                      <button
+                        onClick={async () => {
+                          await fetch(`/api/generate/${prospect.id}`, { method: "POST" });
+                          onRefresh?.();
+                        }}
+                        className="text-xs px-2.5 py-1.5 rounded-lg bg-yellow-500/10 text-yellow-400 hover:bg-yellow-500/20 transition-colors"
+                        title="Generate preview site"
+                      >
+                        Build Site
+                      </button>
+                    )}
+                    {prospect.status === "pending-review" && (
+                      <button
+                        onClick={async () => {
+                          await fetch(`/api/prospects/${prospect.id}`, {
+                            method: "PATCH",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ status: "approved" }),
+                          });
+                          onRefresh?.();
+                        }}
+                        className="text-xs px-2.5 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 transition-colors"
+                        title="Approve for outreach"
+                      >
+                        ✓ Approve
+                      </button>
                     )}
                     {prospect.email && prospect.generatedSiteUrl && (
                       <button

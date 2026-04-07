@@ -231,6 +231,56 @@ export default function LeadPage() {
       <div className="max-w-5xl mx-auto w-full flex-1 flex gap-6 p-6">
         {/* Left: Timeline */}
         <div className="flex-1 flex flex-col">
+          {/* Pipeline Flowchart */}
+          <div className="mb-6 p-4 rounded-xl bg-white/[0.02] border border-white/[0.06]">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-white/40 mb-4">Pipeline Stage</h3>
+            <div className="flex items-center gap-1 overflow-x-auto pb-2">
+              {[
+                { key: "scouted", label: "Scouted", icon: "🔍" },
+                { key: "scraped", label: "Scraped", icon: "🌐" },
+                { key: "generated", label: "Site Built", icon: "🏗️" },
+                { key: "pending-review", label: "Review", icon: "👁️" },
+                { key: "approved", label: "Approved", icon: "✅" },
+                { key: "contacted", label: "Contacted", icon: "📧" },
+                { key: "responded", label: "Responded", icon: "💬" },
+                { key: "paid", label: "Paid", icon: "💰" },
+              ].map((stage, i, arr) => {
+                const statusOrder = ["scouted", "scraped", "generated", "pending-review", "approved", "contacted", "responded", "paid"];
+                const currentIdx = statusOrder.indexOf(prospect.status);
+                const stageIdx = statusOrder.indexOf(stage.key);
+                const isComplete = stageIdx < currentIdx;
+                const isCurrent = stage.key === prospect.status;
+                const isFuture = stageIdx > currentIdx;
+
+                return (
+                  <div key={stage.key} className="flex items-center">
+                    <div
+                      className={`flex flex-col items-center px-3 py-2 rounded-lg text-center min-w-[70px] transition-all ${
+                        isCurrent
+                          ? "bg-sky-500/20 border border-sky-500/40 ring-2 ring-sky-500/30"
+                          : isComplete
+                            ? "bg-green-500/10 border border-green-500/20"
+                            : "bg-white/[0.02] border border-white/[0.06] opacity-40"
+                      }`}
+                    >
+                      <span className="text-lg">{stage.icon}</span>
+                      <span className={`text-[10px] font-bold mt-1 ${
+                        isCurrent ? "text-sky-400" : isComplete ? "text-green-400" : "text-white/40"
+                      }`}>
+                        {stage.label}
+                      </span>
+                      {isCurrent && <span className="text-[8px] text-sky-400 mt-0.5">CURRENT</span>}
+                      {isComplete && <span className="text-[8px] text-green-400 mt-0.5">DONE</span>}
+                    </div>
+                    {i < arr.length - 1 && (
+                      <div className={`w-6 h-0.5 ${isComplete ? "bg-green-500/40" : "bg-white/[0.08]"}`} />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
           <h2 className="font-semibold text-lg mb-4">Relationship Timeline</h2>
 
           <div className="flex-1 overflow-y-auto space-y-3 mb-4">
