@@ -26,12 +26,16 @@ export async function POST(
       prospect.currentWebsite,
     );
 
-    // Save scraped data if we got anything useful
+    // Save scraped data if we got anything useful — MERGE with existing to preserve manual updates
     const hasData = data.phone || data.services.length > 0 || data.about || data.photos.length > 0;
     if (hasData) {
+      const existingSD = prospect.scrapedData || {};
       prospect.scrapedData = {
-        ...data,
-        businessName: data.businessName || prospect.businessName,
+        ...existingSD,  // Keep existing fields (brandColor, logoUrl set manually)
+        ...data,        // Override with fresh extraction
+        businessName: data.businessName || existingSD.businessName || prospect.businessName,
+        brandColor: existingSD.brandColor || data.brandColor, // Prefer existing brand color
+        logoUrl: existingSD.logoUrl || data.logoUrl,          // Prefer existing logo
       };
       // Also update phone on the prospect level if we found one
       const updates: Record<string, unknown> = {
