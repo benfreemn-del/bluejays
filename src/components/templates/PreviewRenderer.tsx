@@ -170,9 +170,19 @@ export default function PreviewRenderer({ data }: { data: GeneratedSiteData }) {
                 <img src={aboutImage} alt={`About ${businessName}`} className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
-                  <div className="text-6xl opacity-30">
-                    {category === "real-estate" ? "🏠" : category === "dental" ? "🦷" : category === "law-firm" ? "⚖️" : category === "landscaping" ? "🌳" : "✂️"}
-                  </div>
+                  <svg viewBox="0 0 100 100" className="w-24 h-24 opacity-20" fill="none" stroke={accentColor} strokeWidth="1.5">
+                    {category === "electrician" && <><path d="M50 10 L60 40 H52 L58 90 L40 50 H48 Z" fill={accentColor} stroke="none" opacity="0.3" /><circle cx="50" cy="50" r="40" /></>}
+                    {category === "plumber" && <><path d="M30 30 H50 V50 H70 V70 H50 V50 H30 Z" /><circle cx="50" cy="50" r="40" /></>}
+                    {category === "hvac" && <><path d="M50 20 Q70 35 50 50 Q30 65 50 80" /><circle cx="50" cy="50" r="35" /></>}
+                    {category === "roofing" && <><path d="M15 60 L50 25 L85 60" strokeWidth="2" /><path d="M25 58 V80 H75 V58" /></>}
+                    {category === "auto-repair" && <><circle cx="50" cy="50" r="30" /><circle cx="50" cy="50" r="15" /><path d="M20 50 H80 M50 20 V80" /></>}
+                    {(category === "real-estate") && <><rect x="25" y="35" width="50" height="45" rx="2" /><path d="M15 40 L50 15 L85 40" strokeWidth="2" /><rect x="42" y="55" width="16" height="25" /></>}
+                    {category === "dental" && <><path d="M35 30 Q50 20 65 30 Q70 45 65 60 Q58 80 50 70 Q42 80 35 60 Q30 45 35 30Z" /></>}
+                    {category === "law-firm" && <><rect x="30" y="25" width="40" height="55" rx="2" /><line x1="38" y1="38" x2="62" y2="38" /><line x1="38" y1="48" x2="62" y2="48" /><line x1="38" y1="58" x2="55" y2="58" /></>}
+                    {category === "landscaping" && <><path d="M50 15 Q65 25 60 40 Q70 35 65 50 Q75 50 65 60 Q55 70 50 70 Q45 70 35 60 Q25 50 35 50 Q30 35 40 40 Q35 25 50 15Z" /></>}
+                    {category === "salon" && <><circle cx="50" cy="35" r="18" /><path d="M32 50 Q50 75 68 50" /></>}
+                    {!["electrician","plumber","hvac","roofing","auto-repair","real-estate","dental","law-firm","landscaping","salon"].includes(category) && <><circle cx="50" cy="50" r="35" /><path d="M35 50 L45 60 L65 40" strokeWidth="2.5" /></>}
+                  </svg>
                 </div>
               )}
             </div>
