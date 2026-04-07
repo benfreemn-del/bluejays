@@ -324,12 +324,17 @@ function getCategoryTagline(category: string): string {
 /* ───────────────────────── Default Cards ───────────────────────── */
 
 const defaultSiteCards: SiteCard[] = [
-  { name: "Puget Sound Realty", category: "Real Estate", color: "#1a2744", href: "/templates/real-estate", icon: "\u{1F3E0}", tagline: "Seattle luxury homes & expert agents" },
-  { name: "Emerald City Dental", category: "Dental", color: "#0f2a2a", href: "/templates/dental", icon: "\u{1F9B7}", tagline: "Modern care for Seattle families" },
-  { name: "Pacific Law Group", category: "Law Firm", color: "#1f1a2e", href: "/templates/law-firm", icon: "\u2696\uFE0F", tagline: "Trusted attorneys, proven results" },
-  { name: "Cascade Landscapes", category: "Landscaping", color: "#1a2e1a", href: "/templates/landscaping", icon: "\u{1F333}", tagline: "Transform your PNW outdoor space" },
-  { name: "Velvet Hair Studio", category: "Salon", color: "#2e1a2a", href: "/templates/salon", icon: "\u2702\uFE0F", tagline: "Where artistry meets luxury" },
-  { name: "Summit Roofing NW", category: "Roofing", color: "#2a1f14", href: "#", icon: "\u{1F3D7}\uFE0F", tagline: "Built for Pacific Northwest weather" },
-  { name: "Iron & Oak Fitness", category: "Fitness", color: "#142a2a", href: "#", icon: "\u{1F4AA}", tagline: "Seattle's boutique strength gym" },
-  { name: "Northshore Vet Clinic", category: "Veterinary", color: "#1e2a14", href: "#", icon: "\u{1F43E}", tagline: "Compassionate care for your pets" },
+  // Each card has a unique business name, specific tagline, and distinct color shade
+  { name: "Puget Sound Realty", category: "Real Estate", color: "#1a2744", href: "/templates/real-estate", icon: "🏠", tagline: "Seattle luxury homes & expert agents" },
+  { name: "Emerald City Dental", category: "Dental", color: "#0f2a2a", href: "/templates/dental", icon: "🦷", tagline: "Gentle family dentistry since 2008" },
+  { name: "Pacific Law Group", category: "Law Firm", color: "#1f1a2e", href: "/templates/law-firm", icon: "⚖️", tagline: "$50M+ recovered for injury victims" },
+  { name: "Cascade Electric Co.", category: "Electrician", color: "#2a2210", href: "/templates/electrician", icon: "⚡", tagline: "Master electricians, EV charger experts" },
+  { name: "Emerald City Plumbing", category: "Plumber", color: "#0f1a2e", href: "/templates/plumber", icon: "🔧", tagline: "60-minute emergency response" },
+  { name: "Alpine HVAC Solutions", category: "HVAC", color: "#0a2630", href: "/templates/hvac", icon: "❄️", tagline: "Carrier certified, energy efficient" },
+  { name: "Summit Roofing NW", category: "Roofing", color: "#2e1f0a", href: "/templates/roofing", icon: "🏗️", tagline: "20+ years weatherproofing the PNW" },
+  { name: "Pacific Auto Works", category: "Auto Repair", color: "#2e1414", href: "/templates/auto-repair", icon: "🚗", tagline: "ASE certified, honest pricing always" },
+  { name: "Cascade Landscapes", category: "Landscaping", color: "#1a2e1a", href: "/templates/landscaping", icon: "🌳", tagline: "800+ yards transformed in Seattle" },
+  { name: "Velvet Hair Studio", category: "Salon", color: "#2e1a2a", href: "/templates/salon", icon: "✂️", tagline: "East Austin's top-rated color specialists" },
+  { name: "Iron & Oak Fitness", category: "Fitness", color: "#2e0a14", href: "#", icon: "💪", tagline: "Boutique strength & HIIT training" },
+  { name: "Northshore Vet Clinic", category: "Veterinary", color: "#0a2e1a", href: "#", icon: "🐾", tagline: "Compassionate care for dogs & cats" },
 ];
