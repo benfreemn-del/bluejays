@@ -8,6 +8,7 @@ import {
   useInView,
   useSpring,
   useMotionValue,
+  AnimatePresence,
 } from "framer-motion";
 import {
   House,
@@ -24,6 +25,8 @@ import {
   Star,
   Calendar,
   User,
+  X,
+  List,
 } from "@phosphor-icons/react";
 import BluejayLogo from "@/components/BluejayLogo";
 
@@ -200,6 +203,7 @@ export default function V2RealEstatePage() {
   const heroScale = useTransform(heroScroll, [0, 1], [1.15, 1]);
   const heroOpacity = useTransform(heroScroll, [0, 0.7], [1, 0]);
   const showcaseRef = useRef<HTMLDivElement>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <div className="min-h-[100dvh] bg-[#09090b] text-white overflow-x-hidden">
@@ -231,15 +235,54 @@ export default function V2RealEstatePage() {
               Contact
             </a>
           </div>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="px-5 py-2.5 text-sm font-semibold rounded-lg text-black"
-            style={{ backgroundColor: GOLD }}
-          >
-            Book Viewing
-          </motion.button>
+          <div className="flex items-center gap-3">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="px-5 py-2.5 text-sm font-semibold rounded-lg text-black"
+              style={{ backgroundColor: GOLD }}
+            >
+              Book Viewing
+            </motion.button>
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-2 rounded-lg text-white hover:bg-white/10 transition-colors"
+            >
+              {mobileMenuOpen ? <X size={24} /> : <List size={24} />}
+            </button>
+          </div>
         </div>
+
+        {/* Mobile Menu */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="md:hidden overflow-hidden border-t border-white/5"
+            >
+              <div className="flex flex-col gap-1 px-4 py-4 bg-[#09090b]/95 backdrop-blur-xl">
+                {[
+                  { label: "Properties", href: "#properties" },
+                  { label: "Our Agent", href: "#agent" },
+                  { label: "Market", href: "#market" },
+                  { label: "Contact", href: "#contact" },
+                ].map((link) => (
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block px-4 py-3 rounded-lg text-sm text-zinc-300 hover:text-white hover:bg-white/5 transition-colors"
+                  >
+                    {link.label}
+                  </a>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.nav>
 
       {/* ═══ HERO — cinematic reveal ═══ */}

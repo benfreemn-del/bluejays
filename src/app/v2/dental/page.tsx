@@ -31,6 +31,7 @@ import {
   CheckCircle,
   Quotes,
   X,
+  List,
 } from "@phosphor-icons/react";
 
 /* ───────────────────────── SPRING CONFIG ───────────────────────── */
@@ -602,6 +603,7 @@ const testimonials = [
    ═══════════════════════════════════════════════════════════════════ */
 export default function V2DentalPage() {
   const [openService, setOpenService] = useState<number | null>(0);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const heroRef = useRef(null);
 
   return (
@@ -640,13 +642,52 @@ export default function V2DentalPage() {
                 Reviews
               </a>
             </div>
-            <MagneticButton
-              className="px-4 md:px-5 py-2 rounded-full text-sm font-semibold text-white transition-colors"
-              style={{ background: TEAL } as React.CSSProperties}
-            >
-              Book Now
-            </MagneticButton>
+            <div className="flex items-center gap-3">
+              <MagneticButton
+                className="px-4 md:px-5 py-2 rounded-full text-sm font-semibold text-white transition-colors"
+                style={{ background: TEAL } as React.CSSProperties}
+              >
+                Book Now
+              </MagneticButton>
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="md:hidden p-2 rounded-lg text-white hover:bg-white/10 transition-colors"
+              >
+                {mobileMenuOpen ? <X size={24} /> : <List size={24} />}
+              </button>
+            </div>
           </GlassCard>
+
+          {/* Mobile Menu */}
+          <AnimatePresence>
+            {mobileMenuOpen && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="md:hidden mt-2 overflow-hidden"
+              >
+                <GlassCard className="flex flex-col gap-1 px-4 py-4">
+                  {[
+                    { label: "Services", href: "#services" },
+                    { label: "Team", href: "#team" },
+                    { label: "Gallery", href: "#gallery" },
+                    { label: "Reviews", href: "#testimonials" },
+                  ].map((link) => (
+                    <a
+                      key={link.label}
+                      href={link.href}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="block px-4 py-3 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-white/5 transition-colors"
+                    >
+                      {link.label}
+                    </a>
+                  ))}
+                </GlassCard>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </motion.nav>
 

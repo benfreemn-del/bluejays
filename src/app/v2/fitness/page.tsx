@@ -9,6 +9,7 @@ import {
   useSpring,
   useMotionValue,
   useMotionTemplate,
+  AnimatePresence,
 } from "framer-motion";
 import {
   Barbell,
@@ -23,6 +24,8 @@ import {
   Fire,
   PersonSimpleRun,
   Medal,
+  X,
+  List,
 } from "@phosphor-icons/react";
 import BluejayLogo from "@/components/BluejayLogo";
 
@@ -251,6 +254,7 @@ export default function V2FitnessPage() {
   const heroY = useTransform(scrollYProgress, [0, 1], [0, 150]);
   const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
   const carouselRef = useRef<HTMLDivElement>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <div className="min-h-[100dvh] bg-[#0a0a0a] text-white overflow-x-hidden">
@@ -274,15 +278,54 @@ export default function V2FitnessPage() {
             <a href="#schedule" className="hover:text-white transition-colors">Schedule</a>
             <a href="#contact" className="hover:text-white transition-colors">Contact</a>
           </div>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="px-5 py-2.5 text-sm font-semibold rounded-lg"
-            style={{ backgroundColor: RED }}
-          >
-            Start Free Trial
-          </motion.button>
+          <div className="flex items-center gap-3">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="px-5 py-2.5 text-sm font-semibold rounded-lg"
+              style={{ backgroundColor: RED }}
+            >
+              Start Free Trial
+            </motion.button>
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-2 rounded-lg text-white hover:bg-white/10 transition-colors"
+            >
+              {mobileMenuOpen ? <X size={24} /> : <List size={24} />}
+            </button>
+          </div>
         </div>
+
+        {/* Mobile Menu */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="md:hidden overflow-hidden border-t border-white/5"
+            >
+              <div className="flex flex-col gap-1 px-4 py-4 bg-[#0a0a0a]/95 backdrop-blur-xl">
+                {[
+                  { label: "Programs", href: "#programs" },
+                  { label: "Trainers", href: "#trainers" },
+                  { label: "Schedule", href: "#schedule" },
+                  { label: "Contact", href: "#contact" },
+                ].map((link) => (
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block px-4 py-3 rounded-lg text-sm text-zinc-300 hover:text-white hover:bg-white/5 transition-colors"
+                  >
+                    {link.label}
+                  </a>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.nav>
 
       {/* ═══ HERO ═══ */}

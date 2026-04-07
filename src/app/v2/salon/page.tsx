@@ -8,6 +8,7 @@ import {
   useInView,
   useMotionValue,
   useSpring,
+  AnimatePresence,
 } from "framer-motion";
 import {
   Scissors,
@@ -25,6 +26,8 @@ import {
   Clock,
   CalendarBlank,
   User,
+  X,
+  List,
 } from "@phosphor-icons/react";
 
 /* ─── spring config ─── */
@@ -270,12 +273,76 @@ export default function V2SalonPage() {
   });
   const heroY = useTransform(scrollYProgress, [0, 1], [0, -100]);
 
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const heroText = "Where Art Meets Beauty";
   const letters = heroText.split("");
 
   return (
     <div className="min-h-[100dvh] bg-[#1c1917] text-stone-100 overflow-x-hidden">
       <FlowingGradient />
+
+      {/* ══════ NAV ══════ */}
+      <motion.nav
+        initial={{ y: -40, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={spring}
+        className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-[#1c1917]/70 border-b border-white/5"
+      >
+        <div className="max-w-7xl mx-auto flex items-center justify-between px-4 md:px-6 py-4">
+          <div className="flex items-center gap-3">
+            <Scissors size={28} weight="duotone" className="text-rose-400" />
+            <span className="text-xl font-bold tracking-tight">Luxe Studio</span>
+          </div>
+          <div className="hidden md:flex items-center gap-8 text-sm text-stone-400">
+            <a href="#services" className="hover:text-white transition-colors">Services</a>
+            <a href="#team" className="hover:text-white transition-colors">Team</a>
+            <a href="#gallery" className="hover:text-white transition-colors">Gallery</a>
+            <a href="#reviews" className="hover:text-white transition-colors">Reviews</a>
+          </div>
+          <div className="flex items-center gap-3">
+            <SpringButton className="px-5 py-2.5 bg-rose-600 text-white text-sm font-semibold rounded-lg">
+              <span className="relative z-10">Book Appointment</span>
+            </SpringButton>
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-2 rounded-lg text-white hover:bg-white/10 transition-colors"
+            >
+              {mobileMenuOpen ? <X size={24} /> : <List size={24} />}
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Menu */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="md:hidden overflow-hidden border-t border-white/5"
+            >
+              <div className="flex flex-col gap-1 px-4 py-4 bg-[#1c1917]/95 backdrop-blur-xl">
+                {[
+                  { label: "Services", href: "#services" },
+                  { label: "Team", href: "#team" },
+                  { label: "Gallery", href: "#gallery" },
+                  { label: "Reviews", href: "#reviews" },
+                ].map((link) => (
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block px-4 py-3 rounded-lg text-sm text-stone-300 hover:text-white hover:bg-white/5 transition-colors"
+                  >
+                    {link.label}
+                  </a>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.nav>
 
       {/* ══════ HERO ══════ */}
       <section ref={heroRef} className="relative min-h-[100dvh] z-10">
