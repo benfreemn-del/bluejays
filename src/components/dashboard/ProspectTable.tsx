@@ -281,11 +281,9 @@ export default function ProspectTable({
                   <div className="flex gap-1.5" onClick={(e) => e.stopPropagation()}>
                     {prospect.generatedSiteUrl ? (
                       <a
-                        href={prospect.generatedSiteUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                        href={`/preview-device/${prospect.id}`}
                         className="text-xs px-2.5 py-1.5 rounded-lg bg-blue-electric/10 text-blue-electric hover:bg-blue-electric/20 transition-colors"
-                        title="View preview site"
+                        title="Preview desktop & mobile"
                       >
                         Preview
                       </a>

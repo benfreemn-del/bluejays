@@ -7,6 +7,7 @@ const PROTECTED_PATHS = [
   "/dashboard",
   "/scripts",
   "/lead",
+  "/preview-device",
   "/spending",
   "/api/scout",
   "/api/prospects",
