@@ -124,11 +124,23 @@ When spawning sub-agents to build templates or components:
 - **Commit and push to GitHub periodically** — don't wait until the end of a session. Push after completing major features.
 - **Always run `npm run build` before declaring something done** — catch TypeScript errors early.
 
+## Outreach Safety Rules (NON-NEGOTIABLE)
+- **Rate limit outreach** — no more than 20 emails, 10 texts, or 10 DMs per day. Sending too many triggers spam filters and gets accounts flagged.
+- **Never outreach without a working preview** — before sending any email/text/DM, verify the preview URL loads and looks premium. A broken link in a pitch email is worse than no email.
+- **Mobile-first verification** — most business owners will open the preview on their phone. ALWAYS verify mobile layout before marking ready for outreach.
+- **Competitor check before pitching** — if a business already has a modern, professional website, don't pitch them. Focus on businesses with bad/outdated/no websites. The scraper should flag this.
+
+## Cost & Efficiency Rules
+- **Track API costs per prospect** — every Google Places API call, every scrape, every generation has a cost. Log it. The cost-tracker at src/lib/cost-tracker.ts must be maintained.
+- **Don't re-scrape unnecessarily** — if a prospect already has good scraped data, don't re-scrape on every generate. Only re-scrape if data is missing or stale (>7 days).
+- **Batch operations when possible** — bulk generate, bulk scrape, bulk outreach. Don't make individual API calls when a batch would do.
+
 ## Workflow Rules
 - **Ben's phone**: +12538863753 — for owner alerts
 - **Ben's email**: bluejaycontactme@gmail.com
 - **Save learnings to memory** — when a mistake is caught and fixed, save it to the memory system so future sessions don't repeat it.
 - **Design as systems, not one-offs** — every fix should be a reusable solution that works for all categories, not a category-specific patch.
+- **Test on mobile AND desktop** — every page, every template, every preview. Mobile is where the money is.
 
 ## Tech Stack
 - Next.js 16 + React 19 + TypeScript + Tailwind v4 + Framer Motion
