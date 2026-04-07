@@ -443,6 +443,6 @@ const defaultSiteCards: SiteCard[] = [
   { name: "Pacific Auto Works", category: "Auto Repair", color: "#2e1414", href: "/templates/auto-repair", icon: "🚗", tagline: "ASE certified, honest pricing always" },
   { name: "Cascade Landscapes", category: "Landscaping", color: "#1a2e1a", href: "/templates/landscaping", icon: "🌳", tagline: "800+ yards transformed in Seattle" },
   { name: "Velvet Hair Studio", category: "Salon", color: "#2e1a2a", href: "/templates/salon", icon: "✂️", tagline: "East Austin's top-rated color specialists" },
-  { name: "Iron & Oak Fitness", category: "Fitness", color: "#2e0a14", href: "/templates/fitness", icon: "💪", tagline: "Boutique strength & HIIT training" },
+  { name: "Grace Community Church", category: "Church", color: "#1a1510", href: "/templates/church", icon: "✝️", tagline: "Welcome home — all are welcome here" },
   { name: "Northshore Vet Clinic", category: "Veterinary", color: "#0a2e1a", href: "/templates/veterinary", icon: "🐾", tagline: "Compassionate care for dogs & cats" },
 ];
