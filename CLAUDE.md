@@ -60,5 +60,9 @@ Every generated website MUST be heavily customized to the specific business. Gen
 - Dashboard, lead pages, API routes = PROTECTED (login required)
 - Password: set via ADMIN_PASSWORD env var (default: bluejay2026)
 
-## Active Template Categories (20 total)
-real-estate, dental, law-firm, landscaping, salon, electrician, plumber, hvac, roofing, auto-repair, chiropractic, fitness, veterinary, photography, cleaning, pest-control, accounting, moving, florist, daycare
+## Active Template Categories (30 total)
+real-estate, dental, law-firm, landscaping, salon, electrician, plumber, hvac, roofing, auto-repair, chiropractic, fitness, veterinary, photography, cleaning, pest-control, accounting, moving, florist, daycare, insurance, interior-design, tattoo, martial-arts, physical-therapy, tutoring, pool-spa, general-contractor, catering, pet-services
+
+## Gallery-Heavy Categories
+These categories MUST have prominent visual galleries/portfolios as a primary feature:
+tattoo, photography, interior-design, florist, landscaping, salon, catering, pet-services

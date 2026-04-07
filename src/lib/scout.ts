@@ -74,6 +74,9 @@ const ACTIVE_CATEGORIES: Category[] = [
   "electrician", "plumber", "hvac", "roofing", "auto-repair",
   "chiropractic", "fitness", "veterinary", "photography",
   "cleaning", "pest-control", "accounting", "moving", "florist", "daycare",
+  "insurance", "interior-design", "tattoo", "martial-arts",
+  "physical-therapy", "tutoring", "pool-spa", "general-contractor",
+  "catering", "pet-services",
 ];
 
 export async function scout(options: ScoutOptions): Promise<Prospect[]> {
