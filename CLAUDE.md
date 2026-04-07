@@ -70,6 +70,14 @@ After Failsafe 1 passes, a quality review agent MUST:
 - **Only a PASS from the visual review agent allows promotion to "pending-review"**
 - This agent has PERMANENT PERMISSION to use Chrome extensions and screenshots
 
+### Failsafe 3: Image Quality & Visual Premium Agent
+This agent reviews scraped/Google photos BEFORE they go into the generated site:
+- **Check image quality** — blurry, tiny, dark, or poorly composed photos must be REJECTED. In these cases, use high-quality stock photos instead. This is the ONE exception to the "real photos first" rule: a bad photo is worse than a good stock photo.
+- **Check color scheme** — does the accent color work? Is the palette vibrant and professional? Does it match the industry's premium feel? A site with a muddy or clashing color scheme fails.
+- **Check premium feel** — does this site look like a $997 product? Would a business owner be impressed? If it looks cheap, generic, or amateur, it FAILS.
+- **Image replacement authority** — this agent has the authority to swap low-quality scraped photos for premium stock alternatives. Customization matters, but visual quality matters MORE. A stunning stock photo beats a blurry phone photo every time.
+- **This agent's review is part of the pipeline** — no site can be marked "pending-review" without passing the image quality check.
+
 ### Boss/Orchestrator Agent Rules
 A pipeline orchestrator agent manages the flow and enforces rules:
 - **Monitors all prospect statuses** — if something is in "pending-review" that shouldn't be, it demotes it back to "generated"

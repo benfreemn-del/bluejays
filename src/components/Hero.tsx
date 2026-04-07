@@ -434,6 +434,6 @@ const defaultSiteCards: SiteCard[] = [
   { name: "Pacific Auto Works", category: "Auto Repair", color: "#2e1414", href: "/templates/auto-repair", icon: "🚗", tagline: "ASE certified, honest pricing always" },
   { name: "Velvet Hair Studio", category: "Salon V2", color: "#1c1917", href: "/v2/salon", icon: "✂️", tagline: "Morphing beauty — editorial design" },
   { name: "Cascade Landscapes", category: "Landscaping", color: "#1a2e1a", href: "/templates/landscaping", icon: "🌳", tagline: "800+ yards transformed in Seattle" },
-  { name: "Grace Community Church", category: "Church", color: "#1a1510", href: "/templates/church", icon: "✝️", tagline: "Welcome home — all are welcome here" },
+  { name: "Grace Community Church", category: "Church V2", color: "#1a1a2e", href: "/v2/church", icon: "✝️", tagline: "A place to belong — premium ministry site" },
   { name: "Northshore Vet Clinic", category: "Veterinary", color: "#0a2e1a", href: "/templates/veterinary", icon: "🐾", tagline: "Compassionate care for dogs & cats" },
 ];
