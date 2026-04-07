@@ -91,13 +91,37 @@ export function generateSiteData(prospect: Prospect): GeneratedSiteData {
   const config = CATEGORY_CONFIG[category];
   const sd = scrapedData || {} as ScrapedData;
 
+  // CUSTOMIZATION PRIORITY: Always prefer real business data over defaults
+  // 1. Use scraped brand color if found, otherwise category default
+  // 2. Use real photos from scraping, stock only as last resort
+  // 3. Use real services/testimonials/about text when available
+  // 4. Match their copywriting tone (formal vs casual)
+
+  const accentColor = config.accentColor; // TODO: detect brand color from scraped site CSS
+  const heroGradient = config.heroGradient;
+
+  // Log customization level for quality review
+  const customizationScore = [
+    sd.businessName ? 1 : 0,
+    sd.phone ? 1 : 0,
+    sd.address ? 1 : 0,
+    sd.about ? 1 : 0,
+    (sd.services?.length || 0) > 0 ? 1 : 0,
+    (sd.testimonials?.length || 0) > 0 ? 1 : 0,
+    (sd.photos?.length || 0) > 0 ? 1 : 0,
+    sd.hours ? 1 : 0,
+    sd.socialLinks ? 1 : 0,
+  ].reduce((a, b) => a + b, 0);
+
+  console.log(`  📊 Customization score: ${customizationScore}/9 (${customizationScore >= 6 ? "HIGH" : customizationScore >= 3 ? "MEDIUM" : "LOW — needs more data"})`);
+
   return {
     id: prospect.id,
     category,
     businessName: sd.businessName || prospect.businessName,
     tagline: sd.tagline || generateDefaultTagline(prospect.businessName, category),
-    accentColor: config.accentColor,
-    heroGradient: config.heroGradient,
+    accentColor,
+    heroGradient,
     phone: sd.phone || prospect.phone || "(555) 000-0000",
     address: sd.address || `${prospect.address}, ${prospect.city}, ${prospect.state}`,
     about: sd.about || generateDefaultAbout(prospect.businessName, category),

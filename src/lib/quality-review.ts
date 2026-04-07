@@ -91,6 +91,27 @@ export function reviewSiteQuality(
     issues.push({ severity: "suggestion", section: "Stats", message: "Less than 3 stats. 4 stats fills out the bar nicely." });
   }
 
+  // --- Customization Checks ---
+
+  // Photos — real photos are critical for premium feel
+  if (siteData.photos.length === 0) {
+    issues.push({ severity: "warning", section: "Customization", message: "No real photos from the business. Site will use stock images. Try to scrape their Google/website photos." });
+  }
+
+  // Check if using default/placeholder data (signs of low customization)
+  if (siteData.phone === "(555) 000-0000") {
+    issues.push({ severity: "critical", section: "Customization", message: "Using placeholder phone number. Must have real contact info." });
+  }
+
+  if (siteData.about && siteData.about.includes("is a trusted") && siteData.about.includes("committed to delivering")) {
+    issues.push({ severity: "warning", section: "Customization", message: "About section appears to be a generic default. Scrape their real about text if possible." });
+  }
+
+  // Social links enhance credibility
+  if (!siteData.socialLinks || Object.keys(siteData.socialLinks).length === 0) {
+    issues.push({ severity: "suggestion", section: "Customization", message: "No social media links found. Check their Google profile for Instagram/Facebook." });
+  }
+
   // --- Category-Specific Checks ---
   checkCategorySpecific(siteData.category, siteData, issues);
 

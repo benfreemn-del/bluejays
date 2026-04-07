@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import type { Prospect, ScoutOptions } from "./types";
+import type { Prospect, ScoutOptions, Category } from "./types";
 import { getMockProspects } from "./mock-prospects";
 import { addProspect, getAllProspects } from "./store";
 
@@ -68,7 +68,20 @@ function scoutWithMockData(options: ScoutOptions): Prospect[] {
   }));
 }
 
+// Categories that have premium templates built — only scout these
+const ACTIVE_CATEGORIES: Category[] = [
+  "real-estate", "dental", "law-firm", "landscaping", "salon",
+  "electrician", "plumber", "hvac", "roofing", "auto-repair",
+];
+
 export async function scout(options: ScoutOptions): Promise<Prospect[]> {
+  // Only scout categories with built templates
+  if (!ACTIVE_CATEGORIES.includes(options.category)) {
+    console.log(`\n⚠️ Category "${options.category}" doesn't have a premium template yet. Skipping.`);
+    console.log(`  Active categories: ${ACTIVE_CATEGORIES.join(", ")}`);
+    return [];
+  }
+
   console.log(
     `\n🔍 Scouting for ${options.category} businesses in ${options.city}...`
   );
