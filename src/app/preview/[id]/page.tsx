@@ -7,11 +7,16 @@ import V2LawFirmPreview from "@/components/templates/V2LawFirmPreview";
 import V2SalonPreview from "@/components/templates/V2SalonPreview";
 import V2FitnessPreview from "@/components/templates/V2FitnessPreview";
 import V2RealEstatePreview from "@/components/templates/V2RealEstatePreview";
+import V2ChurchPreview from "@/components/templates/V2ChurchPreview";
+import V2PlumberPreview from "@/components/templates/V2PlumberPreview";
+import V2HvacPreview from "@/components/templates/V2HvacPreview";
+import V2RoofingPreview from "@/components/templates/V2RoofingPreview";
+import V2AutoRepairPreview from "@/components/templates/V2AutoRepairPreview";
 import { getScrapedData } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
 
-// V2 preview renderers by category — use premium templates when available
+// V2 preview renderers by category — ALL 11 V2 categories have dynamic renderers
 const V2_RENDERERS: Partial<Record<string, React.ComponentType<{ data: GeneratedSiteData }>>> = {
   electrician: V2ElectricianPreview,
   dental: V2DentalPreview,
@@ -19,11 +24,11 @@ const V2_RENDERERS: Partial<Record<string, React.ComponentType<{ data: Generated
   salon: V2SalonPreview,
   fitness: V2FitnessPreview,
   "real-estate": V2RealEstatePreview,
-  // Add more as V2 dynamic renderers are built:
-  // plumber: V2PlumberPreview,
-  // hvac: V2HvacPreview,
-  // roofing: V2RoofingPreview,
-  // "auto-repair": V2AutoRepairPreview,
+  church: V2ChurchPreview,
+  plumber: V2PlumberPreview,
+  hvac: V2HvacPreview,
+  roofing: V2RoofingPreview,
+  "auto-repair": V2AutoRepairPreview,
 };
 
 export default async function PreviewPage({
