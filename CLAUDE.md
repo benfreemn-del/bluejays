@@ -31,19 +31,60 @@ Every generated website MUST be heavily customized to the specific business. Gen
 - **Each generated site must feel like THEIR site** — not a template with their name swapped in. If you showed it to the business owner, they should think "this was made specifically for me."
 
 ## Verification Rules (NON-NEGOTIABLE)
-- **ALWAYS verify your work using Chrome browser tools after deploying** — never assume a deploy worked. Navigate to the page, take a screenshot, confirm it looks right.
-- **After generating a preview site**: open it in Chrome, verify the business name is correct, phone number is real (not 555-000-0000), services match the business, and images load.
+- **ALWAYS use Chrome browser tools (screenshots, Chrome extension) to verify work** — you have PERMANENT PERMISSION to use Chrome tools for verification. Never assume anything works without visually confirming it.
+- **After generating a preview site**: open it in Chrome, take a screenshot, verify: business name correct, real phone number, real services, images load, hero has a background (not plain dark), sections have backgrounds/patterns/glows.
 - **After any UI change**: screenshot the page in both desktop AND mobile to verify layout.
 - **After fixing a bug**: verify the fix on the LIVE site, not just that the build passes.
-- **Check generated preview sites for**: real phone number, real address, real services, scraped content actually used, hero image relevant to industry, social links present if available.
-- **A preview with placeholder data (555-000-0000, generic tagline, no real services) is UNACCEPTABLE** — the scraper MUST run and populate real data before the preview is shown.
+- **Check generated preview sites for**: real phone number, real address, real services, scraped content actually used, hero image relevant to industry, social links present if available, NO plain/flat sections.
+- **A preview with placeholder data (generic tagline, no real services, no background images) is UNACCEPTABLE** — the site must be fully populated before being shown.
+- **Chrome verification is MANDATORY, not optional** — every generated site, every deploy, every UI change must be visually confirmed via Chrome screenshot. This is a system rule, not a suggestion.
+
+## Data Extraction Failsafe Rules (NON-NEGOTIABLE)
+When extracting business data, NEVER rely on a single method. Use a cascading failsafe chain:
+- **Level 1 — Cheerio HTML scraper**: Try the traditional HTML scraper first. If it returns data, use it.
+- **Level 2 — Google Places Details API**: If the scraper returns no phone/website, fetch Place Details (phone, website, hours, photos) using the Google Places API place_id.
+- **Level 3 — WebFetch with AI extraction**: If the business website uses JavaScript rendering (React/Next.js/WordPress with lazy load) that Cheerio can't parse, use WebFetch to render the page and extract data with AI.
+- **Level 4 — Web Search**: If all else fails, search the web for "[business name] [city] phone services" and extract data from results (Yelp, BBB, Google, Facebook).
+- **Every prospect MUST have a phone number before generation** — if none of the above methods find one, the prospect stays in "scouted" status and is flagged for manual review.
+- **Design these as systems, not one-offs** — every extraction method should be a reusable function that works for any business in any category. The pipeline must get more efficient over time, not require manual intervention.
+
+## Quality Gate — TWO Failsafes (NON-NEGOTIABLE)
+
+### Failsafe 1: Automated Data Quality Gate
+Before a site can move from "generated" (processing) to "pending-review" (ready):
+- **Must have real phone number** (not "Call Us Today" or placeholder)
+- **Must have real services** (not default category services)
+- **Must have real about text** (not generic template text)
+- **Must have a hero background** (image or rich gradient, not plain dark)
+- **Must have section backgrounds** (glows, patterns, images — no flat sections)
+- If ANY of these fail, the site stays in "generated" status. Period.
+
+### Failsafe 2: Visual Quality Review Agent (Chrome)
+After Failsafe 1 passes, a quality review agent MUST:
+- **Open the generated site in Chrome** and take screenshots (desktop + mobile)
+- **Compare against the best V2 template for that category** — the generated site must match the quality level of the V2 template (backgrounds, effects, visual richness)
+- **Check for**: broken images, missing backgrounds, placeholder text, generic content, missing phone numbers, flat/plain sections, wrong brand colors
+- **Check customization**: does it feel like THIS business's site? Or just a template with their name swapped in?
+- **Verdict: PASS or FAIL** — if FAIL, the site stays in "generated" and the agent logs what needs to be fixed
+- **Only a PASS from the visual review agent allows promotion to "pending-review"**
+- This agent has PERMANENT PERMISSION to use Chrome extensions and screenshots
+
+### Boss/Orchestrator Agent Rules
+A pipeline orchestrator agent manages the flow and enforces rules:
+- **Monitors all prospect statuses** — if something is in "pending-review" that shouldn't be, it demotes it back to "generated"
+- **Validates status transitions** — a prospect can ONLY move forward if it meets the requirements for the next stage
+- **Valid transitions**: scouted → scraped (must have scraped data) → generated (must have generated site) → pending-review (must pass BOTH failsafes) → approved (Ben approves) → contacted
+- **CANNOT skip stages** — no jumping from "scouted" to "pending-review"
+- **Has permission to use Chrome, screenshots, and all verification tools**
+- **Logs everything** — every status change, every quality check result, every flag
+- **Alerts Ben** if a site that should be ready has quality issues
 
 ## Status Accuracy Rules (NON-NEGOTIABLE)
-- **NEVER label a site as "pending-review" (Sites Ready) unless it passes quality checks** — real phone number, real services, real about text. Sites with placeholder data must stay in "generated" (processing) status.
-- **A site in "pending-review" means it's READY for the owner to see** — if you wouldn't send it to the business owner right now, it's NOT ready.
-- **The quality gate is automated** — the generator checks for real data before promoting status. If customization score is too low, it stays in processing.
+- **NEVER label a site as "pending-review" (Sites Ready) unless it passes BOTH quality failsafes** — automated data check AND visual Chrome review.
+- **A site in "pending-review" means it's READY for the owner to see RIGHT NOW** — if you wouldn't send it to the business owner this second, it's NOT ready.
 - **Dashboard status must reflect reality** — no prospect should show a status that doesn't match its actual state. If the preview is broken, half-baked, or uses placeholder data, the status must reflect that.
 - **Before any outreach (email, text, DM), verify the preview is actually good** — never send a pitch with a broken or generic preview.
+- **"Processing" means processing** — if data extraction is incomplete or the site needs work, it stays in processing. No exceptions.
 
 ## Scouting Rules
 - **Only scout categories that have a built template** — don't scout categories we can't generate premium sites for yet.

@@ -33,9 +33,9 @@ export function reviewSiteQuality(
     issues.push({ severity: "warning", section: "Tagline", message: "Tagline is missing or too short. Should be a compelling one-liner." });
   }
 
-  // Phone
-  if (!siteData.phone || siteData.phone === "(555) 000-0000") {
-    issues.push({ severity: "warning", section: "Phone", message: "No real phone number. Using placeholder." });
+  // Phone — CRITICAL, must have a real number
+  if (!siteData.phone || siteData.phone === "(555) 000-0000" || siteData.phone === "Call Us Today") {
+    issues.push({ severity: "critical", section: "Phone", message: "No real phone number. Every site MUST have a real phone number before it can be marked ready." });
   }
 
   // Address
@@ -95,12 +95,14 @@ export function reviewSiteQuality(
 
   // Photos — real photos are critical for premium feel
   if (siteData.photos.length === 0) {
-    issues.push({ severity: "warning", section: "Customization", message: "No real photos from the business. Site will use stock images. Try to scrape their Google/website photos." });
+    issues.push({ severity: "critical", section: "Customization", message: "No photos at all — hero and about sections will have no images. Site will look empty and unprofessional." });
+  } else if (siteData.photos.length < 3) {
+    issues.push({ severity: "warning", section: "Customization", message: `Only ${siteData.photos.length} photos. Need at least 3 for hero, about, and gallery sections.` });
   }
 
-  // Check if using default/placeholder data (signs of low customization)
-  if (siteData.phone === "(555) 000-0000") {
-    issues.push({ severity: "critical", section: "Customization", message: "Using placeholder phone number. Must have real contact info." });
+  // Logo
+  if (!siteData.photos.some(p => p.includes("logo"))) {
+    issues.push({ severity: "suggestion", section: "Customization", message: "No logo found. Text-based logo will be used as fallback." });
   }
 
   if (siteData.about && siteData.about.includes("is a trusted") && siteData.about.includes("committed to delivering")) {

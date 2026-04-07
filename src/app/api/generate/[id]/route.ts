@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 import { getProspect, updateProspect } from "@/lib/store";
 import { generatePreview } from "@/lib/generator";
-import { scrapeWebsite } from "@/lib/scraper";
+import { extractBusinessData } from "@/lib/data-extractor";
 
-// Increase timeout for this route (Vercel Pro: up to 300s, Hobby: 60s)
-export const maxDuration = 60;
+// Vercel Pro: up to 300s
+export const maxDuration = 120;
 
 export async function POST(
   _request: Request,
@@ -18,33 +18,48 @@ export async function POST(
   }
 
   try {
-    // STEP 1: Always scrape if they have a website — customization is non-negotiable
-    if (prospect.currentWebsite) {
-      try {
-        console.log(`  🔄 Scraping ${prospect.currentWebsite} for customization data...`);
-        const scraped = await scrapeWebsite(prospect.currentWebsite);
-        const hasData = scraped.businessName || scraped.services.length > 0 || scraped.phone || scraped.photos.length > 0;
-        if (hasData) {
-          prospect.scrapedData = {
-            ...scraped,
-            businessName: scraped.businessName || prospect.businessName,
-          };
-          await updateProspect(id, { scrapedData: prospect.scrapedData, status: "scraped" });
-          console.log(`  ✅ Scrape successful — customization data loaded`);
-        } else {
-          console.log(`  ⚠️ Scrape returned no useful data — using scout data + defaults`);
-        }
-      } catch (scrapeErr) {
-        console.log(`  ⚠️ Scrape failed: ${(scrapeErr as Error).message} — using scout data + defaults`);
+    // STEP 1: Cascading data extraction — try every method until we have good data
+    console.log(`\n🔄 Starting data extraction for "${prospect.businessName}"...`);
+    const { data, methods, quality } = await extractBusinessData(
+      prospect.businessName,
+      prospect.city,
+      prospect.currentWebsite,
+    );
+
+    // Save scraped data if we got anything useful
+    const hasData = data.phone || data.services.length > 0 || data.about || data.photos.length > 0;
+    if (hasData) {
+      prospect.scrapedData = {
+        ...data,
+        businessName: data.businessName || prospect.businessName,
+      };
+      // Also update phone on the prospect level if we found one
+      const updates: Record<string, unknown> = {
+        scrapedData: prospect.scrapedData,
+        status: "scraped" as const,
+      };
+      if (data.phone && !prospect.phone) {
+        prospect.phone = data.phone;
+        updates.phone = data.phone;
       }
+      if (data.brandColor) {
+        // Store for future reference
+      }
+      await updateProspect(id, updates);
+      console.log(`  ✅ Data loaded (quality: ${quality}, methods: ${methods.join(", ")})`);
+    } else {
+      console.log(`  ⚠️ No data extracted from any source — using defaults`);
     }
 
-    // STEP 2: Generate preview
+    // STEP 2: Generate preview (quality gate built into generator)
     const previewUrl = await generatePreview(prospect);
 
     return NextResponse.json({
       message: `Preview generated for ${prospect.businessName}`,
       previewUrl,
+      quality,
+      methods,
+      hasPhone: !!prospect.phone || !!data.phone,
     });
   } catch (error) {
     return NextResponse.json({ error: (error as Error).message }, { status: 500 });

@@ -1,6 +1,7 @@
 import type { Prospect, Category, ScrapedData } from "./types";
 import { CATEGORY_CONFIG } from "./types";
 import { updateProspect, saveScrapedData } from "./store";
+import { reviewSiteQuality } from "./quality-review";
 
 export interface GeneratedSiteData {
   id: string;
@@ -143,20 +144,32 @@ export async function generatePreview(prospect: Prospect): Promise<string> {
   // Save the generated data
   await saveScrapedData(prospect.id, siteData);
 
-  // QUALITY GATE: Only mark "pending-review" if the site has real customization
-  // Sites with placeholder data stay in "generated" (processing) — NOT ready for outreach
-  const hasRealPhone = siteData.phone !== "Call Us Today";
+  // ═══ FAILSAFE 1: Automated data quality checks ═══
+  const hasRealPhone = siteData.phone !== "Call Us Today" && !!siteData.phone;
   const hasRealServices = siteData.services.some(s => !isDefaultService(s.name));
   const hasRealAbout = !siteData.about.includes("trusted name in local") && !siteData.about.includes("committed to delivering exceptional");
-  const qualityChecks = [hasRealPhone, hasRealServices, hasRealAbout].filter(Boolean).length;
+  const hasPhotos = siteData.photos.length > 0;
+  const dataChecks = [hasRealPhone, hasRealServices, hasRealAbout, hasPhotos].filter(Boolean).length;
+
+  // ═══ FAILSAFE 2: Quality review agent ═══
+  const qualityReport = reviewSiteQuality(prospect, siteData);
+  const criticalIssues = qualityReport.issues.filter(i => i.severity === "critical").length;
 
   const previewUrl = `/preview/${prospect.id}`;
-  const status = qualityChecks >= 2 ? "pending-review" : "generated";
+  // Must pass BOTH failsafes: data checks (3/4) AND quality review (no critical issues, score >= 70)
+  const passesFailsafe1 = dataChecks >= 3;
+  const passesFailsafe2 = qualityReport.passed;
+  const status = (passesFailsafe1 && passesFailsafe2) ? "pending-review" : "generated";
+
+  console.log(`  ── Failsafe 1 (Data): ${dataChecks}/4 checks (phone=${hasRealPhone}, services=${hasRealServices}, about=${hasRealAbout}, photos=${hasPhotos}) → ${passesFailsafe1 ? "PASS" : "FAIL"}`);
+  console.log(`  ── Failsafe 2 (Quality): score=${qualityReport.score}/100, critical=${criticalIssues} → ${passesFailsafe2 ? "PASS" : "FAIL"}`);
+  console.log(`  ── Final status: ${status.toUpperCase()}`);
 
   if (status === "generated") {
-    console.log(`  ⚠️ LOW QUALITY — only ${qualityChecks}/3 checks passed. Marked as "generated" (needs more data)`);
-  } else {
-    console.log(`  ✅ QUALITY PASSED — ${qualityChecks}/3 checks. Ready for review.`);
+    const reasons = [];
+    if (!passesFailsafe1) reasons.push(`data checks ${dataChecks}/4`);
+    if (!passesFailsafe2) reasons.push(`quality score ${qualityReport.score}/100`);
+    console.log(`  ⚠️ NOT READY — ${reasons.join(", ")}. Stays in processing.`);
   }
 
   await updateProspect(prospect.id, {
