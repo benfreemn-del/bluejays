@@ -106,6 +106,19 @@ export default function DashboardPage() {
               Priority List
             </a>
             <button
+              onClick={async () => {
+                if (!confirm("Send test funnel to benfreemn@gmail.com? This will send 2 real emails.")) return;
+                try {
+                  const res = await fetch("/api/test-funnel", { method: "POST" });
+                  const data = await res.json();
+                  alert(data.message || data.error);
+                } catch { alert("Error sending test funnel"); }
+              }}
+              className="h-9 px-4 rounded-lg bg-surface border border-purple-500/30 text-purple-400 text-sm font-medium hover:border-purple-500/60 transition-colors"
+            >
+              Test Funnel
+            </button>
+            <button
               onClick={() => setAddLeadOpen(true)}
               className="h-9 px-4 rounded-lg bg-surface border border-green-500/30 text-green-400 text-sm font-medium hover:border-green-500/60 transition-colors"
             >

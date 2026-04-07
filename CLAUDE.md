@@ -136,6 +136,14 @@ When Ben asks to build a V2 (or higher) template for a category, ALL of these st
 - **Commit and push to GitHub periodically** — don't wait until the end of a session. Push after completing major features.
 - **Always run `npm run build` before declaring something done** — catch TypeScript errors early.
 
+## Funnel Testing Rules (NON-NEGOTIABLE)
+- **Test before live outreach** — before sending any real outreach campaign, ALWAYS run the Test Funnel button first. This sends the complete funnel (all emails + all texts) to Ben's personal email (benfreemn@gmail.com) for review.
+- **Test funnel must use the highest version template** — the test preview link must point to the best V2 template we have for the category being tested. Currently defaults to /v2/electrician.
+- **Two test emails are sent**: (1) Full strategy document with agent voice, funnel timeline, pricing framework, objection handling, and all 3 email sequences. (2) All 3 SMS text sequences in order.
+- **Verify links work** — Ben will click the preview links in the test emails to confirm they load correctly. If they don't, fix before going live.
+- **The funnel and strategy should evolve** — as we aggregate data (open rates, response rates, what objections come up), the agent's strategy should be updated. The test funnel is how Ben reviews these changes.
+- **API endpoint**: POST /api/test-funnel (protected, dashboard only)
+
 ## Outreach Safety Rules (NON-NEGOTIABLE)
 - **Rate limit outreach** — no more than 20 emails, 10 texts, or 10 DMs per day. Sending too many triggers spam filters and gets accounts flagged.
 - **Never outreach without a working preview** — before sending any email/text/DM, verify the preview URL loads and looks premium. A broken link in a pitch email is worse than no email.

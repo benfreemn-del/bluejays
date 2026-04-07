@@ -24,6 +24,7 @@ const PROTECTED_PATHS = [
   "/api/edit",
   "/api/quality-review",
   "/api/leads/manual",
+  "/api/test-funnel",
 ];
 
 export function middleware(request: NextRequest) {
