@@ -274,8 +274,7 @@ export default function V2SalonPage() {
   const heroY = useTransform(scrollYProgress, [0, 1], [0, -100]);
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const heroText = "Where Art Meets Beauty";
-  const letters = heroText.split("");
+  const heroWords = ["Where", "Art", "Meets", "Beauty"];
 
   return (
     <div className="min-h-[100dvh] bg-[#1c1917] text-stone-100 overflow-x-hidden">
@@ -352,29 +351,27 @@ export default function V2SalonPage() {
         >
           {/* left — letter-by-letter reveal */}
           <div className="flex flex-col justify-center py-24 lg:py-0">
-            <motion.div
-              variants={stagger}
+            <motion.h1
               initial="hidden"
               animate="show"
-              className="flex flex-wrap"
+              variants={{ hidden: {}, show: { transition: { staggerChildren: 0.12 } } }}
+              className="flex flex-wrap gap-x-3 md:gap-x-5"
             >
-              {letters.map((letter, i) => (
+              {heroWords.map((word, i) => (
                 <motion.span
-                  key={i}
+                  key={word}
                   variants={letterReveal}
-                  className={`text-3xl md:text-7xl lg:text-8xl tracking-tighter leading-none font-bold ${
-                    letter === " " ? "mr-3 md:mr-5" : ""
-                  } ${
-                    i >= heroText.indexOf("Beauty")
+                  className={`text-4xl md:text-7xl lg:text-8xl tracking-tighter leading-tight font-bold ${
+                    word === "Beauty"
                       ? "text-rose-500"
                       : "text-white"
                   }`}
                   style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}
                 >
-                  {letter === " " ? "\u00A0" : letter}
+                  {word}
                 </motion.span>
               ))}
-            </motion.div>
+            </motion.h1>
 
             <motion.p
               initial={{ opacity: 0, y: 20 }}
