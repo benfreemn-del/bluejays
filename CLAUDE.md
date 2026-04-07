@@ -98,17 +98,37 @@ A pipeline orchestrator agent manages the flow and enforces rules:
 - **Before any outreach (email, text, DM), verify the preview is actually good** — never send a pitch with a broken or generic preview.
 - **"Processing" means processing** — if data extraction is incomplete or the site needs work, it stays in processing. No exceptions.
 
+## Agent Build Rules (NON-NEGOTIABLE)
+When spawning sub-agents to build templates or components:
+- **Explicitly instruct agents about image uniqueness** — agents WILL reuse URLs if not told otherwise. Every agent prompt must include: "Use UNIQUE photos not shared with any other template."
+- **Agents must run `npm run build` to verify** — no declaring done without a clean build.
+- **Agents must not use `initial={{ opacity: 0 }}` on generated/preview components** — content for business owners must be ALWAYS VISIBLE. Framer Motion opacity animations are only allowed on V2 showcase templates, never on PreviewRenderer or dynamic preview components.
+- **Agents must verify image URLs load** — after building, grep all unsplash URLs and test at least 2-3 to confirm they return 200.
+- **Every agent-built template needs a post-build image audit** — grep all image URLs, check for duplicates within the file AND across all other templates before pushing.
+
 ## Scouting Rules
 - **Only scout categories that have a built template** — don't scout categories we can't generate premium sites for yet.
 - **Current active categories** (have premium templates): real-estate, dental, law-firm, landscaping, salon, electrician, plumber, hvac, roofing, auto-repair
 - **Add new categories only after building their premium template first** — template first, then scout.
+- **Scouting active categories with V2 templates**: real-estate, dental, law-firm, salon, fitness, church, electrician, plumber, hvac, roofing, auto-repair (11 categories)
 
-## Workflow Rules
+## Preview = Product Rules (NON-NEGOTIABLE)
+- **The preview URL IS the product** — `/preview/[id]` is the exact link sent to business owners in pitch emails, texts, and DMs. It must look like a $997 website, not a prototype.
+- **Preview must match the V2 template quality for its category** — if electrician has a V2 template, the electrician preview must render with V2-level quality (14 sections, glass morphism, particles, trust badges, etc.)
+- **Never send outreach with a generic-looking preview** — if the preview doesn't match V2 quality, it stays in processing until it does.
+- **The preview is the pitch** — a business owner's first impression of our work. One chance. Make it count.
+
+## Deployment Rules (NON-NEGOTIABLE)
+- **Vercel deploys take 60-90 seconds after git push** — always wait for deploy before Chrome-verifying on the live site.
+- **Hard refresh (Ctrl+Shift+R) when verifying** — browser cache can show old code.
 - **Commit and push to GitHub periodically** — don't wait until the end of a session. Push after completing major features.
 - **Always run `npm run build` before declaring something done** — catch TypeScript errors early.
-- **Start dev server after code changes** so the user can see results immediately.
+
+## Workflow Rules
 - **Ben's phone**: +12538863753 — for owner alerts
 - **Ben's email**: bluejaycontactme@gmail.com
+- **Save learnings to memory** — when a mistake is caught and fixed, save it to the memory system so future sessions don't repeat it.
+- **Design as systems, not one-offs** — every fix should be a reusable solution that works for all categories, not a category-specific patch.
 
 ## Tech Stack
 - Next.js 16 + React 19 + TypeScript + Tailwind v4 + Framer Motion
