@@ -75,6 +75,13 @@ After Failsafe 1 passes, a quality review agent MUST:
 - This agent has PERMANENT PERMISSION to use Chrome extensions and screenshots
 - **Current highest templates by category**: electrician=V2, plumber=V2, hvac=V2, roofing=V2, auto-repair=V2, dental=V2, law-firm=V2, salon=V2, fitness=V2, real-estate=V2, church=V2, chiropractic=V2, veterinary=V2, photography=V2, interior-design=V2, landscaping=V2. All other categories=V1.
 
+### Failsafe 2.5: Brand Asset Verification (MANDATORY before Failsafe 3)
+Before any site can proceed past the quality gate, verify it has attempted to scrape and use:
+- **Brand color** — `data.accentColor` must NOT be the category default unless no brand color exists on their website. If they have a website, re-scrape specifically for brand colors (theme-color meta, CSS custom properties, prominent button/header colors).
+- **Logo** — `data.logoUrl` or a logo image in `data.photos`. If their website has a logo, it must be in the generated site nav. Only use text-based logo as fallback if no logo can be found anywhere.
+- **Real photos** — `data.photos` must contain Google Place photos or scraped website images. Zero photos = FAIL. The cascading extractor (Level 1-4) must have been run.
+- **If a prospect has a website and we didn't get their brand color or logo, that's a pipeline failure** — re-run the extractor before proceeding. The business owner will immediately notice if their site doesn't use their colors.
+
 ### Failsafe 3: Image Quality & Visual Premium Agent
 This agent reviews scraped/Google photos BEFORE they go into the generated site:
 - **Check image quality** — blurry, tiny, dark, or poorly composed photos must be REJECTED. In these cases, use high-quality stock photos instead. This is the ONE exception to the "real photos first" rule: a bad photo is worse than a good stock photo.
