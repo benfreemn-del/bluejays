@@ -55,29 +55,8 @@ export default function Hero() {
     return () => timers.forEach(clearTimeout);
   }, []);
 
-  useEffect(() => {
-    fetch("/api/portfolio")
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.sites && data.sites.length > 0) {
-          const dynamicCards: SiteCard[] = data.sites.map(
-            (s: { name: string; category: string; color: string; href: string }) => ({
-              name: s.name,
-              category: s.category,
-              color: s.color,
-              href: s.href,
-              icon: getCategoryIcon(s.category),
-              tagline: getCategoryTagline(s.category),
-            })
-          );
-          const merged = [...dynamicCards, ...defaultSiteCards]
-            .filter((card, i, arr) => arr.findIndex((c) => c.name === card.name) === i)
-            .slice(0, 12);
-          setCards(merged);
-        }
-      })
-      .catch(() => {});
-  }, []);
+  // Portfolio shows only curated showcase cards — not every generated prospect
+  // Dynamic prospects are managed in the dashboard, not the public portfolio
 
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-[#050a14]">
