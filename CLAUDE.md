@@ -157,6 +157,8 @@ The sales agent is a LIVING SYSTEM that must improve over time, not stay static.
   - **onewave-ai/claude-skills**: landing-page-copywriter, sales prospecting, email generation, content optimization (100 skills)
   - **anthropics/skills/frontend-design**: production-grade landing page code (React + Tailwind + shadcn/ui)
   - **anthropics/skills/web-artifacts-builder**: beautiful modern web components with animations
+  - **alirezarezvani/claude-skills**: 220+ skills — Landing Page Generator, Sales Engineer, Revenue Ops, CMO Advisor, VP Sales Advisor, CRO pod, SEO Audit, Customer Success, SaaS Scaffolder
+  - **VoltAgent/awesome-agent-skills**: 1,234+ agentic skills across all categories, universal SKILL.md format
   - When updating sales copy, apply: benefit-first headlines, social proof, urgency without sleaze, objection preemption, CRO principles, psychological triggers, A/B testing mindset. Think like a growth marketer.
 - **Version the improvements** — when the sales strategy is updated, log what changed and why (e.g., "Changed email 1 subject line because open rate was 12%, new version targets 25%"). This creates an audit trail of what's working.
 
