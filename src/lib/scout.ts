@@ -9,35 +9,47 @@ async function scoutWithGoogle(options: ScoutOptions): Promise<Prospect[]> {
   const { city, state, category, limit = 10 } = options;
   const query = `${category.replace("-", " ")} in ${city}${state ? `, ${state}` : ""}`;
 
-  const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(query)}&key=${GOOGLE_API_KEY}`;
+  // Step 1: Text Search to find businesses
+  const searchUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(query)}&key=${GOOGLE_API_KEY}`;
+  const searchResponse = await fetch(searchUrl);
+  const searchData = await searchResponse.json();
 
-  const response = await fetch(url);
-  const data = await response.json();
-
-  if (data.status !== "OK") {
-    throw new Error(`Google Places API error: ${data.status} - ${data.error_message || "Unknown error"}`);
+  if (searchData.status !== "OK") {
+    throw new Error(`Google Places API error: ${searchData.status} - ${searchData.error_message || "Unknown error"}`);
   }
 
-  const results = data.results.slice(0, limit);
+  const results = searchData.results.slice(0, limit);
   const now = new Date().toISOString();
+  const prospects: Prospect[] = [];
 
-  const prospects: Prospect[] = results.map(
-    (place: {
-      name: string;
-      formatted_address: string;
-      formatted_phone_number?: string;
-      website?: string;
-      rating?: number;
-      user_ratings_total?: number;
-    }) => ({
+  // Step 2: Get Place Details for each result (phone, website, hours)
+  for (const place of results) {
+    let phone: string | undefined;
+    let website: string | undefined;
+
+    if (place.place_id) {
+      try {
+        const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${place.place_id}&fields=formatted_phone_number,website,opening_hours&key=${GOOGLE_API_KEY}`;
+        const detailsResponse = await fetch(detailsUrl);
+        const detailsData = await detailsResponse.json();
+        if (detailsData.result) {
+          phone = detailsData.result.formatted_phone_number;
+          website = detailsData.result.website;
+        }
+      } catch {
+        // Details fetch failed, continue without
+      }
+    }
+
+    prospects.push({
       id: uuidv4(),
       businessName: place.name,
-      phone: place.formatted_phone_number,
+      phone,
       address: place.formatted_address,
       city,
       state: state || "",
       category,
-      currentWebsite: place.website,
+      currentWebsite: website,
       googleRating: place.rating,
       reviewCount: place.user_ratings_total,
       estimatedRevenueTier:
@@ -49,8 +61,8 @@ async function scoutWithGoogle(options: ScoutOptions): Promise<Prospect[]> {
       status: "scouted" as const,
       createdAt: now,
       updatedAt: now,
-    })
-  );
+    });
+  }
 
   return prospects;
 }

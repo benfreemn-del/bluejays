@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "bluejays-dev",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeExecutable": "C:/Program Files/nodejs/npx.cmd",
+      "runtimeArgs": ["next", "dev", "--turbopack"],
       "port": 3000
     }
   ]

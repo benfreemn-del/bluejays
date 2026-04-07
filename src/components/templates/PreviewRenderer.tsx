@@ -116,9 +116,10 @@ export default function PreviewRenderer({ data }: { data: GeneratedSiteData }) {
             {services.map((service, i) => (
               <motion.div
                 key={service.name}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ delay: i * 0.08, duration: 0.4 }}
                 className="p-6 rounded-xl border border-border/50 hover:border-opacity-60 transition-all duration-300 relative overflow-hidden group"
                 style={{ background: `${accentColor}08` }}
               >
