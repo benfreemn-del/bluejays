@@ -18,6 +18,7 @@ import V2PhotographyPreview from "@/components/templates/V2PhotographyPreview";
 import V2InteriorDesignPreview from "@/components/templates/V2InteriorDesignPreview";
 import V2LandscapingPreview from "@/components/templates/V2LandscapingPreview";
 import { getScrapedData } from "@/lib/store";
+import { proxyImage, proxyPhotos } from "@/lib/image-proxy";
 
 export const dynamic = "force-dynamic";
 
@@ -54,11 +55,17 @@ export default async function PreviewPage({
     notFound();
   }
 
+  // Proxy all external images through our server to fix broken Google Places & CDN URLs
+  const proxiedData: GeneratedSiteData = {
+    ...siteData,
+    photos: proxyPhotos(siteData.photos),
+  };
+
   // Use V2 renderer if available for this category, otherwise fall back to generic
-  const V2Renderer = V2_RENDERERS[siteData.category];
+  const V2Renderer = V2_RENDERERS[proxiedData.category];
   if (V2Renderer) {
-    return <V2Renderer data={siteData} />;
+    return <V2Renderer data={proxiedData} />;
   }
 
-  return <PreviewRenderer data={siteData} />;
+  return <PreviewRenderer data={proxiedData} />;
 }
