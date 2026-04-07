@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import BluejayLogo, { BluejayLogoCircle } from "./BluejayLogo";
 
+/* ───────────────────────── Types ───────────────────────── */
+
 interface SiteCard {
   name: string;
   category: string;
@@ -13,7 +15,32 @@ interface SiteCard {
   tagline: string;
 }
 
+/* ───────────────────────── Grid Pattern ───────────────────────── */
+
+const GridPattern = ({ opacity = 0.04 }: { opacity?: number }) => (
+  <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity }}>
+    <defs>
+      <pattern id="heroGrid" width="60" height="60" patternUnits="userSpaceOnUse">
+        <path d="M 60 0 L 0 0 0 60" fill="none" stroke="#0ea5e9" strokeWidth="0.5" />
+      </pattern>
+    </defs>
+    <rect width="100%" height="100%" fill="url(#heroGrid)" />
+  </svg>
+);
+
+/* ───────────────────────── Arrow Icon ───────────────────────── */
+
+const ArrowUpRightIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
+    <path d="M7 17L17 7M17 7H7M17 7v10" />
+  </svg>
+);
+
+/* ───────────────────────── Phrases ───────────────────────── */
+
 const phrases = ["BlueJays stand out", "See for yourself"];
+
+/* ───────────────────────── Main Component ───────────────────────── */
 
 export default function Hero() {
   const [phase, setPhase] = useState(0);
@@ -54,37 +81,31 @@ export default function Hero() {
 
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-[#050a14]">
-      {/* Layered background — rich blue glow */}
+      {/* ── Layered background ── */}
       <div className="absolute inset-0">
-        {/* Base gradient — deep blue instead of pure black */}
+        {/* Base gradient */}
         <div
           className="absolute inset-0"
           style={{
-            background: "radial-gradient(ellipse at 50% 30%, #0c2d4a 0%, #081828 40%, #050a14 70%)",
+            background:
+              "radial-gradient(ellipse at 50% 20%, #0c2d4a 0%, #081828 40%, #050a14 70%)",
           }}
         />
-        {/* Grid pattern */}
-        <div
-          className="absolute inset-0 opacity-[0.05]"
-          style={{
-            backgroundImage:
-              "linear-gradient(rgba(14,165,233,.2) 1px, transparent 1px), linear-gradient(90deg, rgba(14,165,233,.2) 1px, transparent 1px)",
-            backgroundSize: "60px 60px",
-          }}
-        />
-        {/* Large bluejay silhouettes */}
-        <BluejayLogo size={300} className="absolute top-[5%] left-[2%] opacity-[0.06] text-blue-electric" />
-        <BluejayLogo size={220} className="absolute top-[10%] right-[5%] opacity-[0.04] text-blue-glow rotate-12" />
-        <BluejayLogo size={180} className="absolute bottom-[15%] left-[8%] opacity-[0.035] text-accent -rotate-12" />
-        <BluejayLogo size={140} className="absolute bottom-[25%] right-[15%] opacity-[0.025] text-blue-electric rotate-6" />
+        {/* Grid */}
+        <GridPattern opacity={0.035} />
+        {/* BluejayLogo silhouettes -- slightly more visible */}
+        <BluejayLogo size={340} className="absolute top-[3%] left-[1%] opacity-[0.07] text-sky-500" />
+        <BluejayLogo size={260} className="absolute top-[8%] right-[3%] opacity-[0.05] text-sky-400 rotate-12" />
+        <BluejayLogo size={200} className="absolute bottom-[12%] left-[6%] opacity-[0.045] text-sky-500 -rotate-12" />
+        <BluejayLogo size={160} className="absolute bottom-[22%] right-[12%] opacity-[0.035] text-sky-400 rotate-6" />
         {/* Big blue glows */}
-        <div className="absolute top-[10%] left-[20%] w-[600px] h-[600px] rounded-full bg-blue-electric/15 blur-[150px]" />
-        <div className="absolute top-[40%] right-[10%] w-[500px] h-[500px] rounded-full bg-blue-deep/20 blur-[130px]" />
-        <div className="absolute bottom-[10%] left-[30%] w-[500px] h-[500px] rounded-full bg-blue-glow/10 blur-[160px]" />
-        <div className="absolute top-[20%] left-[50%] w-[400px] h-[400px] rounded-full bg-accent/8 blur-[140px]" />
+        <div className="absolute top-[8%] left-[15%] w-[700px] h-[700px] rounded-full bg-sky-500/[0.12] blur-[180px]" />
+        <div className="absolute top-[35%] right-[8%] w-[550px] h-[550px] rounded-full bg-blue-700/[0.15] blur-[150px]" />
+        <div className="absolute bottom-[5%] left-[25%] w-[550px] h-[550px] rounded-full bg-sky-600/[0.08] blur-[170px]" />
+        <div className="absolute top-[18%] left-[45%] w-[450px] h-[450px] rounded-full bg-cyan-500/[0.06] blur-[160px]" />
       </div>
 
-      {/* BlueJays Logo + Nav */}
+      {/* ── Nav ── */}
       <motion.nav
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -92,18 +113,27 @@ export default function Hero() {
         className="absolute top-0 left-0 right-0 z-30 flex items-center justify-between px-8 py-5"
       >
         <div className="flex items-center gap-3">
-          <BluejayLogoCircle size={40} />
-          <span className="text-xl font-bold text-foreground">BlueJays</span>
+          <BluejayLogoCircle size={42} />
+          <span className="text-xl font-bold text-white tracking-tight">BlueJays</span>
         </div>
-        <div className="flex items-center gap-4">
-          <a href="/dashboard" className="text-sm text-muted hover:text-foreground transition-colors">Dashboard</a>
-          <a href="mailto:bluejaycontactme@gmail.com" className="h-9 px-5 rounded-full bg-blue-electric text-white text-sm font-medium flex items-center hover:bg-blue-deep transition-colors">
+        <div className="flex items-center gap-5">
+          <a
+            href="/dashboard"
+            className="text-sm text-white/60 hover:text-white transition-colors duration-300 font-medium"
+          >
+            Dashboard
+          </a>
+          <a
+            href="mailto:bluejaycontactme@gmail.com"
+            className="group relative h-10 px-6 rounded-full bg-gradient-to-r from-sky-500 to-blue-600 text-white text-sm font-semibold flex items-center gap-2 hover:shadow-[0_0_30px_rgba(14,165,233,0.5)] transition-all duration-300"
+          >
             Get Started
+            <ArrowUpRightIcon />
           </a>
         </div>
       </motion.nav>
 
-      {/* Animated bubble */}
+      {/* ── Animated bubble ── */}
       <AnimatePresence>
         {bubbleVisible && (
           <motion.div
@@ -113,9 +143,12 @@ export default function Hero() {
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="absolute z-20 flex items-center justify-center"
           >
-            <div className="relative w-64 h-64 md:w-80 md:h-80 rounded-full bg-gradient-to-br from-blue-electric to-blue-deep flex items-center justify-center shadow-[0_0_80px_rgba(14,165,233,0.4)]">
-              {/* Bird silhouette in bubble */}
-              <BluejayLogo size={80} className="absolute text-white/10 -top-2 -right-2" />
+            <div className="relative w-64 h-64 md:w-80 md:h-80 rounded-full bg-gradient-to-br from-sky-500 to-blue-700 flex items-center justify-center shadow-[0_0_100px_rgba(14,165,233,0.5),0_0_200px_rgba(14,165,233,0.2)]">
+              {/* Decorative ring */}
+              <div className="absolute inset-[-6px] rounded-full border border-sky-400/20" />
+              <div className="absolute inset-[-14px] rounded-full border border-sky-400/10" />
+              {/* Bird silhouette */}
+              <BluejayLogo size={90} className="absolute text-white/[0.08] -top-3 -right-3" />
               <AnimatePresence mode="wait">
                 <motion.p
                   key={phase}
@@ -123,7 +156,7 @@ export default function Hero() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.5 }}
-                  className="text-white text-2xl md:text-3xl font-bold text-center px-8"
+                  className="text-white text-2xl md:text-3xl font-extrabold text-center px-8 tracking-tight"
                 >
                   {phrases[phase]}
                 </motion.p>
@@ -133,7 +166,7 @@ export default function Hero() {
         )}
       </AnimatePresence>
 
-      {/* Site grid */}
+      {/* ── Portfolio Grid ── */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: bubbleVisible ? 0.1 : 1 }}
@@ -145,56 +178,94 @@ export default function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: bubbleVisible ? 0 : 1, y: bubbleVisible ? 20 : 0 }}
           transition={{ delay: 5.2, duration: 0.6 }}
-          className="text-center mb-10"
+          className="text-center mb-12"
         >
-          <p className="text-blue-electric text-sm font-semibold uppercase tracking-wider mb-3">Our Portfolio</p>
-          <h2 className="text-3xl md:text-4xl font-bold">Websites that win customers</h2>
+          <motion.span
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: bubbleVisible ? 0 : 1, y: bubbleVisible ? -10 : 0 }}
+            transition={{ delay: 5.2 }}
+            className="inline-block text-sky-400 text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border border-sky-500/20 bg-sky-500/5"
+          >
+            Our Portfolio
+          </motion.span>
+          <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight">
+            Websites that{" "}
+            <span className="text-sky-400">win customers</span>
+          </h2>
+          <motion.div
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: bubbleVisible ? 0 : 1 }}
+            transition={{ delay: 5.4, duration: 0.6 }}
+            className="h-0.5 w-16 bg-gradient-to-r from-sky-500 to-transparent mt-4 mx-auto"
+          />
+          <p className="text-white/50 mt-4 text-lg max-w-xl mx-auto">
+            Real websites we built for real businesses. Click any card to explore.
+          </p>
         </motion.div>
 
+        {/* Cards */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
           {cards.map((site, i) => (
             <motion.a
               key={site.name}
               href={site.href}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 5.4 + i * 0.08, duration: 0.5 }}
-              whileHover={{ scale: 1.03, y: -6 }}
-              className="group relative rounded-2xl overflow-hidden bg-[#0a1628] border border-blue-electric/10 cursor-pointer hover:border-blue-electric/40 transition-all duration-300 hover:shadow-[0_8px_40px_rgba(14,165,233,0.25)]"
+              whileHover={{ scale: 1.04, y: -8 }}
+              className="group relative rounded-2xl overflow-hidden bg-white/[0.03] border border-white/[0.06] cursor-pointer hover:border-sky-500/40 transition-all duration-500 hover:shadow-[0_12px_50px_rgba(14,165,233,0.3)]"
             >
               {/* Thumbnail area */}
               <div
                 className="aspect-[4/3] relative overflow-hidden"
-                style={{ background: `linear-gradient(135deg, ${site.color} 0%, ${site.color}dd 100%)` }}
+                style={{
+                  background: `linear-gradient(135deg, ${site.color} 0%, ${site.color}dd 100%)`,
+                }}
               >
                 {/* Icon */}
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-5xl opacity-30 group-hover:opacity-50 group-hover:scale-110 transition-all duration-300">
+                  <span className="text-5xl opacity-30 group-hover:opacity-50 group-hover:scale-125 transition-all duration-500">
                     {site.icon}
                   </span>
                 </div>
-                {/* Decorative elements */}
-                <div className="absolute top-3 left-3 right-3 h-2 rounded-full bg-white/10" />
-                <div className="absolute top-7 left-3 w-1/3 h-1.5 rounded-full bg-white/5" />
-                <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/60 to-transparent" />
+                {/* Mock browser chrome */}
+                <div className="absolute top-3 left-3 right-3 flex items-center gap-1.5">
+                  <div className="w-2 h-2 rounded-full bg-white/20" />
+                  <div className="w-2 h-2 rounded-full bg-white/15" />
+                  <div className="w-2 h-2 rounded-full bg-white/10" />
+                  <div className="flex-1 h-3 rounded-full bg-white/[0.06] ml-2" />
+                </div>
+                {/* Gradient overlay */}
+                <div className="absolute bottom-0 left-0 right-0 h-2/3 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
                 {/* Category pill */}
-                <div className="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-black/30 backdrop-blur-sm text-[10px] text-white/80 font-medium">
+                <div className="absolute top-3 right-3 px-2.5 py-0.5 rounded-full bg-black/40 backdrop-blur-sm text-[10px] text-white/80 font-semibold tracking-wide border border-white/10">
                   {site.category}
+                </div>
+                {/* Hover overlay with "View Site" */}
+                <div className="absolute inset-0 bg-sky-500/0 group-hover:bg-sky-500/20 transition-all duration-500 flex items-center justify-center">
+                  <span className="flex items-center gap-2 px-5 py-2 rounded-full bg-white/0 group-hover:bg-white text-transparent group-hover:text-gray-900 font-bold text-sm transition-all duration-500 scale-75 group-hover:scale-100 opacity-0 group-hover:opacity-100">
+                    View Site
+                    <ArrowUpRightIcon />
+                  </span>
                 </div>
               </div>
               {/* Info */}
               <div className="p-4">
-                <p className="text-foreground font-semibold text-sm">{site.name}</p>
-                <p className="text-muted text-xs mt-1 line-clamp-1">{site.tagline}</p>
+                <p className="text-white font-semibold text-sm group-hover:text-sky-300 transition-colors duration-300">
+                  {site.name}
+                </p>
+                <p className="text-white/40 text-xs mt-1 line-clamp-1">{site.tagline}</p>
               </div>
-              {/* Hover glow */}
-              <div className="absolute inset-0 rounded-2xl border-2 border-blue-electric/0 group-hover:border-blue-electric/30 transition-colors duration-300 pointer-events-none" />
+              {/* Hover glow top line */}
+              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-sky-400/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              {/* Hover glow bg */}
+              <div className="absolute inset-0 rounded-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-[radial-gradient(circle_at_50%_0%,rgba(14,165,233,0.08),transparent_70%)]" />
             </motion.a>
           ))}
         </div>
       </motion.div>
 
-      {/* Scroll indicator */}
+      {/* ── Scroll indicator ── */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -204,47 +275,61 @@ export default function Hero() {
         <motion.div
           animate={{ y: [0, 8, 0] }}
           transition={{ repeat: Infinity, duration: 2 }}
-          className="w-6 h-10 rounded-full border-2 border-muted/40 flex items-start justify-center pt-2"
+          className="w-6 h-10 rounded-full border-2 border-white/20 flex items-start justify-center pt-2"
         >
-          <div className="w-1.5 h-1.5 rounded-full bg-blue-electric" />
+          <div className="w-1.5 h-1.5 rounded-full bg-sky-400" />
         </motion.div>
       </motion.div>
     </section>
   );
 }
 
+/* ───────────────────────── Helpers ───────────────────────── */
+
 function getCategoryIcon(category: string): string {
   const icons: Record<string, string> = {
-    "Real Estate": "🏠", "Dental": "🦷", "Law Firm": "⚖️",
-    "Landscaping": "🌳", "Salon": "✂️", "Roofing": "🏗️",
-    "Fitness": "💪", "Pet Services": "🐾", "Electrician": "⚡",
-    "Plumber": "🔧", "HVAC": "❄️", "Auto Repair": "🚗",
-    "Veterinary": "🐕", "Photography": "📸", "Catering": "🍽️",
+    "Real Estate": "\u{1F3E0}",
+    Dental: "\u{1F9B7}",
+    "Law Firm": "\u2696\uFE0F",
+    Landscaping: "\u{1F333}",
+    Salon: "\u2702\uFE0F",
+    Roofing: "\u{1F3D7}\uFE0F",
+    Fitness: "\u{1F4AA}",
+    "Pet Services": "\u{1F43E}",
+    Electrician: "\u26A1",
+    Plumber: "\u{1F527}",
+    HVAC: "\u2744\uFE0F",
+    "Auto Repair": "\u{1F697}",
+    Veterinary: "\u{1F415}",
+    Photography: "\u{1F4F8}",
+    Catering: "\u{1F37D}\uFE0F",
   };
-  return icons[category] || "🌐";
+  return icons[category] || "\u{1F310}";
 }
 
 function getCategoryTagline(category: string): string {
   const taglines: Record<string, string> = {
     "Real Estate": "Luxury listings & expert agents",
-    "Dental": "Modern care for the whole family",
+    Dental: "Modern care for the whole family",
     "Law Firm": "Experienced attorneys, proven results",
-    "Landscaping": "Transform your outdoor space",
-    "Salon": "Where artistry meets luxury",
-    "Roofing": "Quality roofing you can trust",
-    "Fitness": "Train harder, live better",
+    Landscaping: "Transform your outdoor space",
+    Salon: "Where artistry meets luxury",
+    Roofing: "Quality roofing you can trust",
+    Fitness: "Train harder, live better",
     "Pet Services": "Premium care for your pets",
   };
   return taglines[category] || "Professional services, stunning design";
 }
 
+/* ───────────────────────── Default Cards ───────────────────────── */
+
 const defaultSiteCards: SiteCard[] = [
-  { name: "Puget Sound Realty", category: "Real Estate", color: "#1a2744", href: "/templates/real-estate", icon: "🏠", tagline: "Seattle luxury homes & expert agents" },
-  { name: "Emerald City Dental", category: "Dental", color: "#0f2a2a", href: "/templates/dental", icon: "🦷", tagline: "Modern care for Seattle families" },
-  { name: "Pacific Law Group", category: "Law Firm", color: "#1f1a2e", href: "/templates/law-firm", icon: "⚖️", tagline: "Trusted attorneys, proven results" },
-  { name: "Cascade Landscapes", category: "Landscaping", color: "#1a2e1a", href: "/templates/landscaping", icon: "🌳", tagline: "Transform your PNW outdoor space" },
-  { name: "Velvet Hair Studio", category: "Salon", color: "#2e1a2a", href: "/templates/salon", icon: "✂️", tagline: "Where artistry meets luxury" },
-  { name: "Summit Roofing NW", category: "Roofing", color: "#2a1f14", href: "#", icon: "🏗️", tagline: "Built for Pacific Northwest weather" },
-  { name: "Iron & Oak Fitness", category: "Fitness", color: "#142a2a", href: "#", icon: "💪", tagline: "Seattle's boutique strength gym" },
-  { name: "Northshore Vet Clinic", category: "Veterinary", color: "#1e2a14", href: "#", icon: "🐾", tagline: "Compassionate care for your pets" },
+  { name: "Puget Sound Realty", category: "Real Estate", color: "#1a2744", href: "/templates/real-estate", icon: "\u{1F3E0}", tagline: "Seattle luxury homes & expert agents" },
+  { name: "Emerald City Dental", category: "Dental", color: "#0f2a2a", href: "/templates/dental", icon: "\u{1F9B7}", tagline: "Modern care for Seattle families" },
+  { name: "Pacific Law Group", category: "Law Firm", color: "#1f1a2e", href: "/templates/law-firm", icon: "\u2696\uFE0F", tagline: "Trusted attorneys, proven results" },
+  { name: "Cascade Landscapes", category: "Landscaping", color: "#1a2e1a", href: "/templates/landscaping", icon: "\u{1F333}", tagline: "Transform your PNW outdoor space" },
+  { name: "Velvet Hair Studio", category: "Salon", color: "#2e1a2a", href: "/templates/salon", icon: "\u2702\uFE0F", tagline: "Where artistry meets luxury" },
+  { name: "Summit Roofing NW", category: "Roofing", color: "#2a1f14", href: "#", icon: "\u{1F3D7}\uFE0F", tagline: "Built for Pacific Northwest weather" },
+  { name: "Iron & Oak Fitness", category: "Fitness", color: "#142a2a", href: "#", icon: "\u{1F4AA}", tagline: "Seattle's boutique strength gym" },
+  { name: "Northshore Vet Clinic", category: "Veterinary", color: "#1e2a14", href: "#", icon: "\u{1F43E}", tagline: "Compassionate care for your pets" },
 ];

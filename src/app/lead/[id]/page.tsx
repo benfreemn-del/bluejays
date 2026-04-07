@@ -27,6 +27,8 @@ export default function LeadPage() {
   const [savingNote, setSavingNote] = useState(false);
   const [dismissReason, setDismissReason] = useState("");
   const [showDismiss, setShowDismiss] = useState(false);
+  const [showCosts, setShowCosts] = useState(false);
+  const [costs, setCosts] = useState<{ emailCost: number; smsCost: number; aiCost: number; totalCost: number; emailCount: number; smsCount: number } | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -99,6 +101,12 @@ export default function LeadPage() {
           timestamp: pData.updatedAt,
         });
       }
+
+      // Load costs
+      fetch(`/api/costs/${id}`)
+        .then((r) => r.json())
+        .then(setCosts)
+        .catch(() => {});
 
       // Sort by timestamp
       events.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
@@ -356,6 +364,41 @@ export default function LeadPage() {
               </div>
             </div>
           )}
+
+          {/* Cost Tracking */}
+          <div className="p-4 rounded-xl bg-surface border border-border">
+            <button
+              onClick={() => setShowCosts(!showCosts)}
+              className="w-full flex items-center justify-between"
+            >
+              <h3 className="font-semibold text-sm">Cost Tracking</h3>
+              <span className="text-xs text-muted">{showCosts ? "Hide" : "Show"}</span>
+            </button>
+            {showCosts && costs && (
+              <div className="mt-3 space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-muted">Emails ({costs.emailCount})</span>
+                  <span className="text-green-400">${costs.emailCost.toFixed(3)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted">Texts ({costs.smsCount})</span>
+                  <span className="text-blue-400">${costs.smsCost.toFixed(3)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted">AI Processing</span>
+                  <span className="text-purple-400">${costs.aiCost.toFixed(3)}</span>
+                </div>
+                <div className="border-t border-border pt-2 flex justify-between font-semibold">
+                  <span>Total Spent</span>
+                  <span className="text-amber-400">${costs.totalCost.toFixed(3)}</span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted">Revenue if sold</span>
+                  <span className="text-green-400">$997.00</span>
+                </div>
+              </div>
+            )}
+          </div>
 
           {/* Quick Status */}
           <div className="p-4 rounded-xl bg-surface border border-border">
