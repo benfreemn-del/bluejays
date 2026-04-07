@@ -433,16 +433,16 @@ function getCategoryTagline(category: string): string {
 
 const defaultSiteCards: SiteCard[] = [
   // Each card has a unique business name, specific tagline, and distinct color shade
-  { name: "Puget Sound Realty", category: "Real Estate", color: "#1a2744", href: "/templates/real-estate", icon: "🏠", tagline: "Seattle luxury homes & expert agents" },
-  { name: "Emerald City Dental", category: "Dental", color: "#0f2a2a", href: "/templates/dental", icon: "🦷", tagline: "Gentle family dentistry since 2008" },
-  { name: "Pacific Law Group", category: "Law Firm", color: "#1f1a2e", href: "/templates/law-firm", icon: "⚖️", tagline: "$50M+ recovered for injury victims" },
+  { name: "Puget Sound Realty", category: "Real Estate V2", color: "#09090b", href: "/v2/real-estate", icon: "🏠", tagline: "Cinematic luxury reveal — animated" },
+  { name: "Emerald City Dental", category: "Dental V2", color: "#0f172a", href: "/v2/dental", icon: "🦷", tagline: "Sparkle particles — calming motion" },
+  { name: "Pacific Law Group", category: "Law Firm V2", color: "#0f172a", href: "/v2/law-firm", icon: "⚖️", tagline: "Animated scales of justice" },
   { name: "Cascade Electric Co.", category: "Electrician", color: "#2a2210", href: "/templates/electrician", icon: "⚡", tagline: "Master electricians, EV charger experts" },
   { name: "Emerald City Plumbing", category: "Plumber", color: "#0f1a2e", href: "/templates/plumber", icon: "🔧", tagline: "60-minute emergency response" },
-  { name: "Alpine HVAC Solutions", category: "HVAC", color: "#0a2630", href: "/templates/hvac", icon: "❄️", tagline: "Carrier certified, energy efficient" },
+  { name: "Iron & Oak Fitness", category: "Fitness V2", color: "#0a0a0a", href: "/v2/fitness", icon: "💪", tagline: "Pulsing heartbeat — raw energy" },
   { name: "Summit Roofing NW", category: "Roofing", color: "#2e1f0a", href: "/templates/roofing", icon: "🏗️", tagline: "20+ years weatherproofing the PNW" },
   { name: "Pacific Auto Works", category: "Auto Repair", color: "#2e1414", href: "/templates/auto-repair", icon: "🚗", tagline: "ASE certified, honest pricing always" },
+  { name: "Velvet Hair Studio", category: "Salon V2", color: "#1c1917", href: "/v2/salon", icon: "✂️", tagline: "Morphing beauty — editorial design" },
   { name: "Cascade Landscapes", category: "Landscaping", color: "#1a2e1a", href: "/templates/landscaping", icon: "🌳", tagline: "800+ yards transformed in Seattle" },
-  { name: "Velvet Hair Studio", category: "Salon", color: "#2e1a2a", href: "/templates/salon", icon: "✂️", tagline: "East Austin's top-rated color specialists" },
   { name: "Grace Community Church", category: "Church", color: "#1a1510", href: "/templates/church", icon: "✝️", tagline: "Welcome home — all are welcome here" },
   { name: "Northshore Vet Clinic", category: "Veterinary", color: "#0a2e1a", href: "/templates/veterinary", icon: "🐾", tagline: "Compassionate care for dogs & cats" },
 ];

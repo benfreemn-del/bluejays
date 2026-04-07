@@ -9,6 +9,7 @@ const PROTECTED_PATHS = [
   "/lead",
   "/preview-device",
   "/spending",
+  "/v2",
   "/api/scout",
   "/api/prospects",
   "/api/email",
