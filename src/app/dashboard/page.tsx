@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import type { Prospect } from "@/lib/types";
+import type { Prospect, Category } from "@/lib/types";
+import { CATEGORY_CONFIG } from "@/lib/types";
 import DashboardStats from "@/components/dashboard/DashboardStats";
 import ProspectTable from "@/components/dashboard/ProspectTable";
 import ScoutModal from "@/components/dashboard/ScoutModal";
@@ -18,6 +19,9 @@ export default function DashboardPage() {
   const [categoryFilter, setCategoryFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [view, setView] = useState<"table" | "map">("table");
+  const [addLeadOpen, setAddLeadOpen] = useState(false);
+  const [newLead, setNewLead] = useState({ businessName: "", phone: "", email: "", website: "", category: "dental", city: "Seattle, WA" });
+  const [addingLead, setAddingLead] = useState(false);
 
   const fetchProspects = useCallback(async () => {
     try {
@@ -101,6 +105,12 @@ export default function DashboardPage() {
             >
               Priority List
             </a>
+            <button
+              onClick={() => setAddLeadOpen(true)}
+              className="h-9 px-4 rounded-lg bg-surface border border-green-500/30 text-green-400 text-sm font-medium hover:border-green-500/60 transition-colors"
+            >
+              + Add Lead
+            </button>
             <button
               onClick={() => setScoutOpen(true)}
               className="h-9 px-4 rounded-lg bg-blue-electric text-white text-sm font-medium hover:bg-blue-deep transition-colors"
@@ -192,6 +202,86 @@ export default function DashboardPage() {
         onSendEmail={handleSendEmail}
         onStatusChange={handleStatusChange}
       />
+
+      {/* Add Lead Modal */}
+      {addLeadOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setAddLeadOpen(false)} />
+          <div className="relative bg-surface border border-border rounded-2xl p-8 w-full max-w-md shadow-2xl">
+            <h2 className="text-xl font-bold mb-6">Manually Add Lead</h2>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm text-muted mb-1">Business Name *</label>
+                <input type="text" value={newLead.businessName} onChange={(e) => setNewLead({ ...newLead, businessName: e.target.value })}
+                  className="w-full h-10 px-3 rounded-lg bg-surface-light border border-border text-foreground text-sm" placeholder="e.g., Bright Smile Dental" />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-sm text-muted mb-1">Phone</label>
+                  <input type="tel" value={newLead.phone} onChange={(e) => setNewLead({ ...newLead, phone: e.target.value })}
+                    className="w-full h-10 px-3 rounded-lg bg-surface-light border border-border text-foreground text-sm" placeholder="(206) 555-1234" />
+                </div>
+                <div>
+                  <label className="block text-sm text-muted mb-1">Email</label>
+                  <input type="email" value={newLead.email} onChange={(e) => setNewLead({ ...newLead, email: e.target.value })}
+                    className="w-full h-10 px-3 rounded-lg bg-surface-light border border-border text-foreground text-sm" placeholder="owner@business.com" />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm text-muted mb-1">Current Website</label>
+                <input type="url" value={newLead.website} onChange={(e) => setNewLead({ ...newLead, website: e.target.value })}
+                  className="w-full h-10 px-3 rounded-lg bg-surface-light border border-border text-foreground text-sm" placeholder="https://theirsite.com" />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-sm text-muted mb-1">Category</label>
+                  <select value={newLead.category} onChange={(e) => setNewLead({ ...newLead, category: e.target.value })}
+                    className="w-full h-10 px-3 rounded-lg bg-surface-light border border-border text-foreground text-sm">
+                    {(Object.keys(CATEGORY_CONFIG) as Category[]).map((cat) => (
+                      <option key={cat} value={cat}>{CATEGORY_CONFIG[cat].label}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm text-muted mb-1">City</label>
+                  <input type="text" value={newLead.city} onChange={(e) => setNewLead({ ...newLead, city: e.target.value })}
+                    className="w-full h-10 px-3 rounded-lg bg-surface-light border border-border text-foreground text-sm" placeholder="Seattle, WA" />
+                </div>
+              </div>
+            </div>
+            <div className="flex gap-3 mt-6">
+              <button onClick={() => setAddLeadOpen(false)}
+                className="flex-1 h-10 rounded-lg border border-border text-muted text-sm hover:bg-surface-light transition-colors">
+                Cancel
+              </button>
+              <button
+                disabled={addingLead || !newLead.businessName}
+                onClick={async () => {
+                  setAddingLead(true);
+                  try {
+                    const res = await fetch("/api/leads/manual", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify(newLead),
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                      setAddLeadOpen(false);
+                      setNewLead({ businessName: "", phone: "", email: "", website: "", category: "dental", city: "Seattle, WA" });
+                      fetchProspects();
+                    } else {
+                      alert(data.error || "Failed to add lead");
+                    }
+                  } catch { alert("Error adding lead"); }
+                  finally { setAddingLead(false); }
+                }}
+                className="flex-1 h-10 rounded-lg bg-green-500 text-white text-sm font-medium disabled:opacity-50 hover:bg-green-600 transition-colors">
+                {addingLead ? "Adding..." : "Add & Build Site"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

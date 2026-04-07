@@ -11,7 +11,7 @@ export default function DashboardStats({
   onFilterStatus,
   activeFilter,
 }: DashboardStatsProps) {
-  const total = prospects.length;
+  const total = prospects.filter((p) => p.status !== "dismissed").length;
   const contacted = prospects.filter(
     (p) => p.status === "contacted" || p.status === "responded" || p.status === "paid"
   ).length;
