@@ -106,11 +106,23 @@ When spawning sub-agents to build templates or components:
 - **Agents must verify image URLs load** — after building, grep all unsplash URLs and test at least 2-3 to confirm they return 200.
 - **Every agent-built template needs a post-build image audit** — grep all image URLs, check for duplicates within the file AND across all other templates before pushing.
 
+## V2 Upgrade Checklist (MANDATORY when building a new V2 for any category)
+When Ben asks to build a V2 (or higher) template for a category, ALL of these steps must be completed:
+1. **Build the V2 showcase template** at `src/app/v2/[category]/page.tsx` + `layout.tsx` — 14+ sections, glass morphism, particles, Phosphor icons, mobile hamburger menu, unique photos, industry-specific personality
+2. **Build the dynamic V2 preview renderer** at `src/components/templates/V2[Category]Preview.tsx` — same visual quality as showcase but accepts `GeneratedSiteData` props for dynamic business data injection. NO opacity:0 animations.
+3. **Register in V2_RENDERERS map** at `src/app/preview/[id]/page.tsx` — add the new renderer so generated previews auto-route to V2
+4. **Update homepage portfolio card** in `src/components/Hero.tsx` — change the card's `href` from `/templates/[category]` to `/v2/[category]`, update category label to "[Category] V2"
+5. **Update CLAUDE.md version tracking** — update "Current highest templates by category" line to reflect new V2
+6. **Run post-build image audit** — grep all image URLs, check for duplicates within file AND across all other templates
+7. **Chrome verify on desktop AND mobile** — screenshot the showcase template AND a generated preview using the new V2 renderer
+8. **Re-generate existing prospects** in that category — so they use the new V2 renderer instead of the old generic one
+9. **Save the V2 process to memory** if any new patterns were learned
+
 ## Scouting Rules
 - **Only scout categories that have a built template** — don't scout categories we can't generate premium sites for yet.
-- **Current active categories** (have premium templates): real-estate, dental, law-firm, landscaping, salon, electrician, plumber, hvac, roofing, auto-repair
+- **Current active categories** (have premium templates — all 30 categories have V1, 11 have V2): real-estate, dental, law-firm, landscaping, salon, electrician, plumber, hvac, roofing, auto-repair, chiropractic, fitness, veterinary, photography, cleaning, pest-control, accounting, moving, florist, daycare, insurance, interior-design, tattoo, martial-arts, physical-therapy, tutoring, pool-spa, general-contractor, catering, pet-services, church
 - **Add new categories only after building their premium template first** — template first, then scout.
-- **Scouting active categories with V2 templates**: real-estate, dental, law-firm, salon, fitness, church, electrician, plumber, hvac, roofing, auto-repair (11 categories)
+- **Categories with V2 showcase + dynamic preview renderer**: electrician (full pipeline). Categories with V2 showcase only (need dynamic renderer built): dental, law-firm, salon, fitness, real-estate, church, plumber, hvac, roofing, auto-repair
 
 ## Preview = Product Rules (NON-NEGOTIABLE)
 - **The preview URL IS the product** — `/preview/[id]` is the exact link sent to business owners in pitch emails, texts, and DMs. It must look like a $997 website, not a prototype.
@@ -152,12 +164,17 @@ When spawning sub-agents to build templates or components:
 ## Key Files
 - `scripts/pipeline.ts` — CLI to run scout/scrape/generate pipeline
 - `src/lib/types.ts` — All types, categories, pricing, and category config
-- `src/components/templates/TemplateLayout.tsx` — Shared layout for all generated sites
-- `src/components/BluejayLogo.tsx` — BluejayLogo SVG component used everywhere
+- `src/lib/data-extractor.ts` — Cascading data extraction (Cheerio → Google Places → Web Search)
+- `src/lib/generator.ts` — Site data generator with dual quality failsafes
 - `src/lib/quality-review.ts` — AI quality review agent
 - `src/lib/color-review.ts` — Color scheme review agent
-- `src/lib/website-quality-agent.ts` — Industry best practices per category
-- `src/lib/smart-followup.ts` — Personalized follow-ups from Google reviews
+- `src/app/preview/[id]/page.tsx` — **Preview routing** — V2_RENDERERS map routes to V2 components per category
+- `src/components/templates/PreviewRenderer.tsx` — Generic preview (fallback for categories without V2 dynamic renderer)
+- `src/components/templates/V2ElectricianPreview.tsx` — Dynamic V2 electrician preview (accepts GeneratedSiteData)
+- `src/components/templates/TemplateLayout.tsx` — Shared layout with claim banner, footer branding
+- `src/components/Hero.tsx` — Homepage with portfolio cards (update href when adding V2s)
+- `src/app/v2/[category]/page.tsx` — V2 showcase templates (11 categories)
+- `src/components/BluejayLogo.tsx` — BluejayLogo SVG component used everywhere
 - `src/lib/auto-funnel.ts` — 6-step automated retargeting funnel
 - `src/lib/cost-tracker.ts` — Per-lead and system-wide cost tracking
 - `src/middleware.ts` — Auth protection (portfolio public, dashboard behind login)
