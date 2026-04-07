@@ -445,7 +445,7 @@ export default function ElectricianTemplate() {
                 {/* Main image */}
                 <div className="absolute top-0 left-0 w-[75%] h-[70%] rounded-2xl overflow-hidden border-2 border-white/[0.06] shadow-2xl z-10">
                   <img
-                    src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=600&q=80"
+                    src="https://images.unsplash.com/photo-1551218808-94e220e084d2?w=600&q=80"
                     alt="Electrician at work"
                     className="w-full h-full object-cover"
                   />

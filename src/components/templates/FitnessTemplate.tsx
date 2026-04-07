@@ -220,7 +220,7 @@ const trainers = [
   {
     name: "Ryan Nakamura",
     title: "Personal Trainer",
-    image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&q=80",
+    image: "https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=400&q=80",
     specialties: ["Bodybuilding", "Sports Performance"],
     yearsExp: 10,
   },

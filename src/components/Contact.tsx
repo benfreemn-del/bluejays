@@ -120,7 +120,7 @@ export default function Contact() {
           transition={{ delay: 0.4 }}
         >
           <a
-            href="mailto:bluejaycontactme@gmail.com"
+            href="/get-started"
             className="group relative inline-flex items-center justify-center h-16 px-10 rounded-full bg-gradient-to-r from-sky-500 to-blue-600 text-white font-bold text-lg hover:shadow-[0_0_60px_rgba(14,165,233,0.5)] transition-all duration-500"
           >
             {/* Glow ring behind button */}

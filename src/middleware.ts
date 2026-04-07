@@ -21,6 +21,7 @@ const PROTECTED_PATHS = [
   "/api/export",
   "/api/edit",
   "/api/quality-review",
+  "/api/leads/manual",
 ];
 
 export function middleware(request: NextRequest) {

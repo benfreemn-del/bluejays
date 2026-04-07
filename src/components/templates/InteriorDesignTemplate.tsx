@@ -604,7 +604,7 @@ export default function InteriorDesignTemplate() {
                 {/* Main image */}
                 <div className="absolute top-0 left-0 w-[75%] h-[70%] rounded-2xl overflow-hidden border-2 border-white/[0.06] shadow-2xl z-10">
                   <img
-                    src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=600&q=80"
+                    src="https://images.unsplash.com/photo-1599351431613-18ef1fdd27e1?w=600&q=80"
                     alt="Design studio"
                     className="w-full h-full object-cover"
                   />

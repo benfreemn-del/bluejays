@@ -488,7 +488,7 @@ export default function PestControlTemplate() {
                 </div>
                 <div className="absolute bottom-0 right-0 w-[65%] h-[55%] rounded-2xl overflow-hidden border-2 border-white/[0.06] shadow-2xl z-20">
                   <img
-                    src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&q=80"
+                    src="https://images.unsplash.com/photo-1609710228159-0fa9bd7c0827?w=400&q=80"
                     alt="Pest control technician"
                     className="w-full h-full object-cover"
                   />

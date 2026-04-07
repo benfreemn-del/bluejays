@@ -323,7 +323,7 @@ export default function CateringTemplate() {
       accentColor="#fb923c"
       accentColorLight="#fdba74"
       heroGradient="linear-gradient(135deg, #1a1208 0%, #13100a 100%)"
-      heroImage="https://images.unsplash.com/photo-1555244162-803834f70033?w=1400&q=80"
+      heroImage="https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?w=1400&q=80"
       phone="(206) 555-0138"
       address="312 Pike Place, Seattle, WA"
     >
