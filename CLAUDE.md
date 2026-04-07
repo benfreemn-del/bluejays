@@ -60,15 +60,17 @@ Before a site can move from "generated" (processing) to "pending-review" (ready)
 - **Must have section backgrounds** (glows, patterns, images — no flat sections)
 - If ANY of these fail, the site stays in "generated" status. Period.
 
-### Failsafe 2: Visual Quality Review Agent (Chrome)
+### Failsafe 2: Visual Quality Review Agent (Chrome) — MANDATORY
 After Failsafe 1 passes, a quality review agent MUST:
 - **Open the generated site in Chrome** and take screenshots (desktop + mobile)
-- **Compare against the best V2 template for that category** — the generated site must match the quality level of the V2 template (backgrounds, effects, visual richness)
+- **COMPARE AGAINST THE HIGHEST VERSION OF THAT CATEGORY'S TEMPLATE** — if a V2 exists for that category, the generated site must match V2 quality. If only V1 exists, match V1. The agent must explicitly state: "This site is comparable to [V1/V2] [category] template quality" or "This site does NOT match [V1/V2] quality because [reasons]"
+- **The comparison is non-negotiable** — the agent must open both the generated preview AND the best template for that category side-by-side (or in sequence) and confirm they're at the same level
 - **Check for**: broken images, missing backgrounds, placeholder text, generic content, missing phone numbers, flat/plain sections, wrong brand colors
 - **Check customization**: does it feel like THIS business's site? Or just a template with their name swapped in?
 - **Verdict: PASS or FAIL** — if FAIL, the site stays in "generated" and the agent logs what needs to be fixed
 - **Only a PASS from the visual review agent allows promotion to "pending-review"**
 - This agent has PERMANENT PERMISSION to use Chrome extensions and screenshots
+- **Current highest templates by category**: electrician=V1, plumber=V1, hvac=V1, roofing=V1, auto-repair=V1, dental=V2, law-firm=V2, salon=V2, fitness=V2, real-estate=V2, church=V2
 
 ### Failsafe 3: Image Quality & Visual Premium Agent
 This agent reviews scraped/Google photos BEFORE they go into the generated site:
