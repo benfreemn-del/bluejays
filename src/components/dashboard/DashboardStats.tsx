@@ -11,28 +11,33 @@ export default function DashboardStats({
   onFilterStatus,
   activeFilter,
 }: DashboardStatsProps) {
-  const total = prospects.filter((p) => p.status !== "dismissed").length;
-  const contacted = prospects.filter(
+  const active = prospects.filter((p) => p.status !== "dismissed");
+  const total = active.length;
+  const processing = active.filter(
+    (p) => p.status === "scouted" || p.status === "scraped"
+  ).length;
+  const generated = active.filter(
+    (p) => p.generatedSiteUrl && p.status !== "scouted" && p.status !== "scraped"
+  ).length;
+  const contacted = active.filter(
     (p) => p.status === "contacted" || p.status === "responded" || p.status === "paid"
   ).length;
-  const responded = prospects.filter(
+  const responded = active.filter(
     (p) => p.status === "responded" || p.status === "paid"
   ).length;
-  const paid = prospects.filter((p) => p.status === "paid").length;
-  const generated = prospects.filter(
-    (p) => p.status !== "scouted" && p.status !== "scraped" && p.status !== "dismissed"
-  ).length;
+  const paid = active.filter((p) => p.status === "paid").length;
 
   const stats = [
     { label: "Total Prospects", value: total, color: "text-blue-electric", filter: "" },
-    { label: "Sites Generated", value: generated, color: "text-yellow-400", filter: "generated" },
+    { label: "Processing", value: processing, color: "text-cyan-400", filter: "scouted" },
+    { label: "Sites Ready", value: generated, color: "text-yellow-400", filter: "pending-review" },
     { label: "Contacted", value: contacted, color: "text-orange-400", filter: "contacted" },
     { label: "Responded", value: responded, color: "text-green-400", filter: "responded" },
     { label: "Paid", value: paid, color: "text-amber-400", filter: "paid" },
   ];
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+    <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
       {stats.map((stat) => (
         <button
           key={stat.label}

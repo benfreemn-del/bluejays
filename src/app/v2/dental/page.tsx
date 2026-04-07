@@ -369,10 +369,12 @@ function TeamCard({
   name,
   role,
   initials,
+  photo,
 }: {
   name: string;
   role: string;
   initials: string;
+  photo?: string;
 }) {
   return (
     <motion.div
@@ -382,12 +384,18 @@ function TeamCard({
       style={{ willChange: "transform" }}
     >
       <GlassCard className="p-6 text-center">
-        <div
-          className="w-20 h-20 rounded-full mx-auto mb-4 flex items-center justify-center text-2xl font-bold"
-          style={{ background: TEAL_GLOW, color: TEAL }}
-        >
-          {initials}
-        </div>
+        {photo ? (
+          <div className="w-20 h-20 rounded-full mx-auto mb-4 overflow-hidden">
+            <img src={photo} alt={name} className="w-full h-full object-cover object-center" />
+          </div>
+        ) : (
+          <div
+            className="w-20 h-20 rounded-full mx-auto mb-4 flex items-center justify-center text-2xl font-bold"
+            style={{ background: TEAL_GLOW, color: TEAL }}
+          >
+            {initials}
+          </div>
+        )}
         <h3 className="text-lg font-semibold text-white">{name}</h3>
         <p className="text-sm text-slate-400 mt-1">{role}</p>
       </GlassCard>
@@ -439,24 +447,26 @@ function BeforeAfterSlider() {
       onMouseDown={handleMouseDown}
       onTouchStart={handleMouseDown}
     >
-      {/* "After" side */}
-      <div className="absolute inset-0 bg-gradient-to-br from-teal-900/40 to-slate-800 flex items-center justify-center">
-        <div className="text-center">
-          <SmileyWink size={64} weight="duotone" style={{ color: TEAL }} className="mx-auto mb-2" />
-          <span className="text-xl font-semibold text-white">After</span>
-          <p className="text-slate-400 text-sm mt-1">Bright, confident smile</p>
-        </div>
+      {/* "After" side — bright white smile */}
+      <div className="absolute inset-0">
+        <img
+          src="https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=800&q=80"
+          alt="After — beautiful bright smile"
+          className="w-full h-full object-cover object-center"
+        />
+        <div className="absolute bottom-4 right-4 px-3 py-1.5 rounded-full bg-teal-500/80 backdrop-blur-sm text-white text-sm font-bold">After</div>
       </div>
-      {/* "Before" side */}
+      {/* "Before" side — teeth needing work */}
       <div
-        className="absolute inset-0 bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center"
+        className="absolute inset-0"
         style={{ clipPath: `inset(0 ${100 - sliderPos}% 0 0)` }}
       >
-        <div className="text-center">
-          <Tooth size={64} weight="duotone" className="mx-auto mb-2 text-slate-400" />
-          <span className="text-xl font-semibold text-slate-300">Before</span>
-          <p className="text-slate-500 text-sm mt-1">Ready for transformation</p>
-        </div>
+        <img
+          src="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=800&q=80"
+          alt="Before — dental transformation"
+          className="w-full h-full object-cover object-center"
+        />
+        <div className="absolute bottom-4 left-4 px-3 py-1.5 rounded-full bg-slate-700/80 backdrop-blur-sm text-white text-sm font-bold">Before</div>
       </div>
       {/* Slider line */}
       <div
@@ -560,10 +570,10 @@ const services = [
 
 /* ───────────────────────── TEAM DATA ───────────────────────── */
 const team = [
-  { name: "Dr. Sarah Mitchell", role: "Lead Dentist, DDS", initials: "SM" },
-  { name: "Dr. James Park", role: "Cosmetic Specialist", initials: "JP" },
-  { name: "Dr. Emily Chen", role: "Pediatric Dentist", initials: "EC" },
-  { name: "Lisa Rodriguez", role: "Dental Hygienist", initials: "LR" },
+  { name: "Dr. Sarah Mitchell", role: "Lead Dentist, DDS", initials: "SM", photo: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&q=80" },
+  { name: "Dr. James Park", role: "Cosmetic Specialist", initials: "JP", photo: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400&q=80" },
+  { name: "Dr. Emily Chen", role: "Pediatric Dentist", initials: "EC", photo: "https://images.unsplash.com/photo-1594824476967-48c8b964ac31?w=400&q=80" },
+  { name: "Lisa Rodriguez", role: "Dental Hygienist", initials: "LR", photo: "https://images.unsplash.com/photo-1614608682850-e0d6ed316d47?w=400&q=80" },
 ];
 
 /* ───────────────────────── TESTIMONIALS ───────────────────────── */
