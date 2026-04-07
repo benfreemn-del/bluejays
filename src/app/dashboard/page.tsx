@@ -127,7 +127,7 @@ export default function DashboardPage() {
             {/* View toggle */}
             <div className="flex gap-2">
               <button
-                onClick={() => setView("table")}
+                onClick={() => { setView("table"); fetchProspects(); }}
                 className={`h-9 px-4 rounded-lg text-sm font-medium transition-colors ${
                   view === "table"
                     ? "bg-blue-electric text-white"

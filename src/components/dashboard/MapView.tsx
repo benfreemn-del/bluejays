@@ -139,7 +139,8 @@ export default function MapView({ prospects }: MapViewProps) {
       for (const p of data.prospects) {
         await fetch(`/api/generate/${p.id}`, { method: "POST" });
       }
-      setScoutResult(`Found ${data.prospects.length} businesses in ${scoutCounty}!`);
+      setScoutResult(`Found ${data.prospects.length} businesses in ${scoutCounty}! Switch to Table View to manage them.`);
+      onStateClick(selectedState); // trigger parent refresh
     } catch {
       setScoutResult("Error running scout.");
     } finally {
