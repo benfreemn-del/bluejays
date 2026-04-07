@@ -21,11 +21,12 @@ export const COST_RATES = {
   claudePerRequest: 0.003, // ~$0.003 per response (Haiku) or $0.015 (Sonnet)
   perplexityPerSearch: 0.005, // ~$5 per 1000 searches
 
-  // Infrastructure
-  vercelMonthly: 0, // Free tier
+  // Infrastructure (updated for paid plans)
+  vercelMonthly: 20, // Vercel Pro plan
   supabaseMonthly: 0, // Free tier
-  sendgridMonthly: 0, // Free tier (100 emails/day)
+  sendgridMonthly: 20, // SendGrid Essentials/Pro plan
   twilioMonthly: 1.15, // $1.15/month for phone number + per-use
+  domainYearly: 11.25, // bluejayportfolio.com via Vercel
 
   // Google Places API (when connected)
   googlePlacesPerSearch: 0.017, // $17 per 1000 searches

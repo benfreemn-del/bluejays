@@ -168,23 +168,115 @@ export default function SpendingPage() {
           </div>
         )}
 
-        {/* Service Costs Reference */}
+        {/* Monthly Subscriptions */}
         <div className="p-6 rounded-2xl border border-white/[0.06] bg-white/[0.02]">
-          <h2 className="text-lg font-bold mb-4">Service Cost Reference</h2>
+          <h2 className="text-lg font-bold mb-4">Monthly Subscriptions</h2>
+          <div className="space-y-3">
+            <SubRow name="Vercel Pro" cost={20} status="active" description="Hosting, serverless functions, domains" />
+            <SubRow name="SendGrid Essentials" cost={20} status="active" description="Email sending, domain auth, analytics" />
+            <SubRow name="Twilio" cost={1.15} status="active" description="Phone number + per-use SMS/calls" />
+            <SubRow name="Supabase" cost={0} status="free" description="PostgreSQL database, auth, storage" />
+            <SubRow name="Domain (bluejayportfolio.com)" cost={0.94} status="active" description="$11.25/year via Vercel" />
+            <div className="border-t border-white/[0.06] pt-3 flex justify-between items-center">
+              <span className="font-bold">Total Monthly Fixed Cost</span>
+              <span className="font-bold text-lg text-orange-400">$42.09/mo</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Cost Per Lead at Scale */}
+        <div className="p-6 rounded-2xl border border-white/[0.06] bg-white/[0.02]">
+          <h2 className="text-lg font-bold mb-2">Cost Per Lead at Scale</h2>
+          <p className="text-white/40 text-sm mb-6">How costs change as volume increases. 1 sale = $997.</p>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-white/40 border-b border-white/[0.06]">
+                  <th className="text-left py-2 pr-4">Scenario</th>
+                  <th className="text-right py-2 px-3">Leads/mo</th>
+                  <th className="text-right py-2 px-3">Emails</th>
+                  <th className="text-right py-2 px-3">Texts</th>
+                  <th className="text-right py-2 px-3">Variable</th>
+                  <th className="text-right py-2 px-3">Fixed</th>
+                  <th className="text-right py-2 px-3">Total</th>
+                  <th className="text-right py-2 px-3">Per Lead</th>
+                  <th className="text-right py-2 pl-3">Sales @ 3%</th>
+                  <th className="text-right py-2 pl-3">Profit</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  { name: "Starting", leads: 20, emails: 60, sms: 20 },
+                  { name: "Growing", leads: 50, emails: 150, sms: 50 },
+                  { name: "Cruising", leads: 100, emails: 300, sms: 100 },
+                  { name: "Scaling", leads: 250, emails: 750, sms: 250 },
+                  { name: "Full Speed", leads: 500, emails: 1500, sms: 500 },
+                ].map((s) => {
+                  const variable = (s.emails * 0.001) + (s.sms * 0.0079) + (s.leads * 0.017) + (s.leads * 0.006);
+                  const fixed = 42.09;
+                  const total = variable + fixed;
+                  const perLead = total / s.leads;
+                  const sales = Math.round(s.leads * 0.03);
+                  const revenue = sales * 997;
+                  const profit = revenue - total;
+                  return (
+                    <tr key={s.name} className="border-b border-white/[0.04] hover:bg-white/[0.02]">
+                      <td className="py-3 pr-4 font-medium">{s.name}</td>
+                      <td className="text-right px-3 text-white/60">{s.leads}</td>
+                      <td className="text-right px-3 text-white/60">{s.emails}</td>
+                      <td className="text-right px-3 text-white/60">{s.sms}</td>
+                      <td className="text-right px-3">${variable.toFixed(2)}</td>
+                      <td className="text-right px-3">${fixed.toFixed(2)}</td>
+                      <td className="text-right px-3 font-medium">${total.toFixed(2)}</td>
+                      <td className="text-right px-3 text-sky-400 font-bold">${perLead.toFixed(2)}</td>
+                      <td className="text-right pl-3 text-white/60">{sales} (${revenue.toLocaleString()})</td>
+                      <td className={`text-right pl-3 font-bold ${profit >= 0 ? "text-green-400" : "text-red-400"}`}>${profit.toLocaleString()}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+          <p className="text-white/30 text-xs mt-4">* Assumes 3% close rate (3 sales per 100 leads), 3 emails per lead, 1 text per lead. Variable costs: Google Places ($0.017/search), SendGrid ($0.001/email), Twilio ($0.0079/SMS), AI ($0.006/lead).</p>
+        </div>
+
+        {/* Per-Use Cost Reference */}
+        <div className="p-6 rounded-2xl border border-white/[0.06] bg-white/[0.02]">
+          <h2 className="text-lg font-bold mb-4">Per-Use Cost Reference</h2>
           <div className="grid md:grid-cols-2 gap-4 text-sm">
             <div className="space-y-2">
               <div className="flex justify-between"><span className="text-white/50">SendGrid email</span><span>$0.001/email</span></div>
               <div className="flex justify-between"><span className="text-white/50">Twilio SMS</span><span>$0.0079/text</span></div>
-              <div className="flex justify-between"><span className="text-white/50">Twilio phone number</span><span>$1.15/month</span></div>
               <div className="flex justify-between"><span className="text-white/50">Google Places search</span><span>$0.017/search</span></div>
+              <div className="flex justify-between"><span className="text-white/50">Google Place Details</span><span>$0.017/lookup</span></div>
             </div>
             <div className="space-y-2">
-              <div className="flex justify-between"><span className="text-white/50">Vercel hosting</span><span>Free tier</span></div>
-              <div className="flex justify-between"><span className="text-white/50">Supabase database</span><span>Free tier</span></div>
+              <div className="flex justify-between"><span className="text-white/50">Google Place Photos</span><span>$0.007/photo</span></div>
               <div className="flex justify-between"><span className="text-white/50">Claude AI response</span><span>~$0.003/response</span></div>
               <div className="flex justify-between"><span className="text-white/50">Perplexity search</span><span>~$0.005/search</span></div>
+              <div className="flex justify-between"><span className="text-white/50">Twilio phone number</span><span>$1.15/month</span></div>
             </div>
           </div>
+        </div>
+
+        {/* ROI Calculator */}
+        <div className="p-6 rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.03]">
+          <h2 className="text-lg font-bold mb-2 text-emerald-400">The Math That Matters</h2>
+          <div className="grid md:grid-cols-3 gap-6 mt-4">
+            <div className="text-center">
+              <p className="text-4xl font-black text-white">$997</p>
+              <p className="text-white/40 text-sm mt-1">Revenue per sale</p>
+            </div>
+            <div className="text-center">
+              <p className="text-4xl font-black text-sky-400">~$2.50</p>
+              <p className="text-white/40 text-sm mt-1">Cost per lead at scale</p>
+            </div>
+            <div className="text-center">
+              <p className="text-4xl font-black text-emerald-400">399x</p>
+              <p className="text-white/40 text-sm mt-1">ROI per sale</p>
+            </div>
+          </div>
+          <p className="text-white/30 text-xs mt-6 text-center">At 100 leads/month with 3% close rate = 3 sales = $2,991 revenue on ~$292 spend = <span className="text-emerald-400 font-bold">$2,699 profit/month</span></p>
         </div>
       </main>
     </div>
@@ -209,6 +301,24 @@ function CostRow({ label, count, cost, color }: { label: string; count: string; 
         <p className="text-xs text-white/40">{count}</p>
       </div>
       <p className="font-semibold">${cost.toFixed(2)}</p>
+    </div>
+  );
+}
+
+function SubRow({ name, cost, status, description }: { name: string; cost: number; status: "active" | "free"; description: string }) {
+  return (
+    <div className="flex items-center gap-4">
+      <div className={`w-2 h-2 rounded-full ${status === "active" ? "bg-green-500" : "bg-white/20"}`} />
+      <div className="flex-1">
+        <div className="flex items-center gap-2">
+          <p className="text-sm font-medium">{name}</p>
+          <span className={`text-[10px] px-1.5 py-0.5 rounded ${status === "active" ? "bg-green-500/20 text-green-400" : "bg-white/10 text-white/40"}`}>
+            {status === "free" ? "FREE" : "ACTIVE"}
+          </span>
+        </div>
+        <p className="text-xs text-white/40">{description}</p>
+      </div>
+      <p className="font-semibold">{cost > 0 ? `$${cost.toFixed(2)}` : "Free"}</p>
     </div>
   );
 }
