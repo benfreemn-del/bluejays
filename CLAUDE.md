@@ -144,6 +144,16 @@ When Ben asks to build a V2 (or higher) template for a category, ALL of these st
 - **The funnel and strategy should evolve** — as we aggregate data (open rates, response rates, what objections come up), the agent's strategy should be updated. The test funnel is how Ben reviews these changes.
 - **API endpoint**: POST /api/test-funnel (protected, dashboard only)
 
+## Sales Agent Evolution Rules (NON-NEGOTIABLE)
+The sales agent is a LIVING SYSTEM that must improve over time, not stay static.
+- **Always use the latest version of everything** — when generating outreach (emails, texts, DMs), the system must pull from the most current version of: agent-personality.ts, email-templates.ts, sms.ts, conservative funnel timing, objection handling, and pricing framework. Never cache old versions.
+- **Refresh before every output** — before the test funnel sends emails OR before live outreach fires, the system must read the current state of all sales configuration files. This ensures any improvements made to the agent's strategy are immediately reflected in all output.
+- **The test funnel button triggers a full knowledge refresh** — when Ben clicks "Test Funnel", it reads the latest agent-personality.ts, email-templates.ts, sms.ts, and funnel-manager.ts LIVE (not from any cache). The test output always reflects the most current strategy.
+- **New leads trigger the latest pipeline** — when a new prospect enters the funnel (via scout, manual add, or get-started form), all outreach uses the current version of templates and strategy. No stale copy.
+- **Aggregate and learn** — track which email subjects get opened, which preview links get clicked, which objections come up most. Use this data to periodically update: email-templates.ts (better subject lines), agent-personality.ts (better objection responses), sms.ts (better text hooks).
+- **Skills and frameworks** — the sales agent should leverage marketing frameworks from: coreyhaines31/marketingskills (GitHub), anthropics/skills/frontend-design, anthropics/skills/web-artifacts-builder. When updating copy, apply modern copywriting principles: benefit-first headlines, social proof, urgency without sleaze, objection preemption.
+- **Version the improvements** — when the sales strategy is updated, log what changed and why (e.g., "Changed email 1 subject line because open rate was 12%, new version targets 25%"). This creates an audit trail of what's working.
+
 ## Outreach Safety Rules (NON-NEGOTIABLE)
 - **Rate limit outreach** — no more than 20 emails, 10 texts, or 10 DMs per day. Sending too many triggers spam filters and gets accounts flagged.
 - **Never outreach without a working preview** — before sending any email/text/DM, verify the preview URL loads and looks premium. A broken link in a pitch email is worse than no email.
