@@ -20,6 +20,7 @@ This system is designed to function like a money printer. Every feature should d
 - **Every team/staff photo must be unique per template** — no sharing headshots between electrician, plumber, dental, etc.
 - **Verify all image URLs actually load** — broken images are unacceptable. Test before deploying.
 - **For generated preview sites**: use the business's real photos when scraped. Only fall back to stock as last resort, and never reuse stock across different prospects.
+- **All external images must go through the image proxy** — Google Places photo URLs need the API key server-side, and Wix/Squarespace CDN URLs expire. Use `proxyImage()` from `@/lib/image-proxy` or serve through `/api/image-proxy?url=ENCODED_URL`. The preview page already proxies all photos before passing to renderers. Unsplash URLs bypass the proxy (they work directly).
 - **Stock images are LAST RESORT only** — always attempt to use scraped photos from the business's website first. Only use hardcoded stock images if nothing of reasonable quality can be scraped. A real photo of their actual business (even if lower quality) is better than a generic stock photo.
 
 ## Customization Rules (NON-NEGOTIABLE)
