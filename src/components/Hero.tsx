@@ -38,7 +38,7 @@ const ArrowUpRightIcon = () => (
 
 /* ───────────────────────── Phrases ───────────────────────── */
 
-const phrases = ["BlueJays stand out", "See for yourself"];
+const phrases = ["BlueJays Stand Out", "See For Yourself"];
 
 /* ───────────────────────── Main Component ───────────────────────── */
 
