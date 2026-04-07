@@ -171,10 +171,12 @@ export async function filterProspects(filters: {
 
 export async function saveScrapedData(id: string, data: object): Promise<void> {
   if (isSupabaseConfigured()) {
-    await supabase.from("generated_sites").upsert({
+    // Delete existing then insert (no unique constraint needed)
+    await supabase.from("generated_sites").delete().eq("prospect_id", id);
+    await supabase.from("generated_sites").insert({
       prospect_id: id,
       site_data: data,
-    }, { onConflict: "prospect_id" });
+    });
     return;
   }
   const scrapedDir = path.join(DATA_DIR, "scraped");
