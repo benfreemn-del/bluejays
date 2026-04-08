@@ -231,7 +231,7 @@ export default function V2GarageDoorPage() {
       {/* ─── 1. HERO ─── */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10">
         <div className="absolute inset-0 z-0">
-          <img src="https://images.unsplash.com/photo-1558036117-15d82a90b9b1?w=1600&q=80" alt="" className="w-full h-full object-cover object-center" />
+          <img src="https://images.unsplash.com/photo-1486325212027-8081e485255e?w=1600&q=80" alt="" className="w-full h-full object-cover object-center" />
           <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${BG}ee 0%, ${BG}dd 50%, ${BG}aa 100%)` }} />
         </div>
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -347,10 +347,10 @@ export default function V2GarageDoorPage() {
           </div>
           <motion.div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
             {[
-              "https://images.unsplash.com/photo-1558036117-15d82a90b9b1?w=600&q=80",
+              "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=600&q=80",
               "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=600&q=80",
-              "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80",
-              "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&q=80",
+              "https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?w=600&q=80",
+              "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=600&q=80",
               "https://images.unsplash.com/photo-1600573472591-ee6c563aaec3?w=600&q=80",
               "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=600&q=80",
             ].map((img, i) => (

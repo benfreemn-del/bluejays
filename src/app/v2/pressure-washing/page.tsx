@@ -420,13 +420,13 @@ const packages = [
 /* ───────────────────────── BEFORE/AFTER DATA ───────────────────────── */
 const galleryItems = [
   {
-    before: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=800&q=80",
+    before: "https://images.unsplash.com/photo-1603796846097-bee99e4a601f?w=800&q=80",
     after: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&q=80",
     label: "House Exterior",
   },
   {
     before: "https://images.unsplash.com/photo-1600585152220-90363fe7e115?w=800&q=80",
-    after: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80",
+    after: "https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=800&q=80",
     label: "Driveway Clean",
   },
 ];
@@ -488,7 +488,7 @@ export default function V2PressureWashingPage() {
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10">
         {/* Background image overlay */}
         <div className="absolute inset-0 z-0">
-          <img src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=1600&q=80" alt="" className="w-full h-full object-cover object-center" />
+          <img src="https://images.unsplash.com/photo-1528740561666-dc2479dc08ab?w=1600&q=80" alt="" className="w-full h-full object-cover object-center" />
           <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${BG}ee 0%, ${BG}cc 50%, ${BG}99 100%)` }} />
         </div>
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">

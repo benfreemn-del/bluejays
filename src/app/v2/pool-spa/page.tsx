@@ -211,7 +211,7 @@ const testimonials = [
 ];
 
 const galleryImages = [
-  { src: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80", alt: "Luxury infinity pool" },
+  { src: "https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?w=600&q=80", alt: "Luxury infinity pool" },
   { src: "https://images.unsplash.com/photo-1575429198097-0414ec08e8cd?w=600&q=80", alt: "Pool with water feature" },
   { src: "https://images.unsplash.com/photo-1562778612-e1e0cda9915c?w=600&q=80", alt: "Evening pool lighting" },
   { src: "https://images.unsplash.com/photo-1540539234-c14a20fb7c7b?w=600&q=80", alt: "Resort-style backyard pool" },
@@ -277,7 +277,7 @@ export default function V2PoolSpaPage() {
       {/* ─── HERO ─── */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10">
         <div className="absolute inset-0 z-0">
-          <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1600&q=80" alt="" className="w-full h-full object-cover opacity-15" />
+          <img src="https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?w=1600&q=80" alt="" className="w-full h-full object-cover opacity-15" />
           <div className="absolute inset-0" style={{ background: `linear-gradient(to bottom, ${BG}, transparent 30%, ${BG})` }} />
         </div>
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-4 items-center">

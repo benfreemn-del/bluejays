@@ -249,12 +249,12 @@ const stats = [
 ];
 
 const galleryPhotos = [
-  { src: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=600&q=80", alt: "Cedar privacy fence installation" },
+  { src: "https://images.unsplash.com/photo-1595356700395-6f14b5c1f33f?w=600&q=80", alt: "Cedar privacy fence installation" },
   { src: "https://images.unsplash.com/photo-1622372738946-62e02505feb3?w=600&q=80", alt: "White vinyl fence with gate" },
   { src: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&q=80", alt: "Ornamental iron fencing" },
   { src: "https://images.unsplash.com/photo-1505843490538-5133c6c7d0e1?w=600&q=80", alt: "Wood fence in backyard" },
   { src: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600&q=80", alt: "Beautiful home with fence" },
-  { src: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80", alt: "Property with iron gate" },
+  { src: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&q=80", alt: "Property with iron gate" },
 ];
 
 const processSteps = [
@@ -466,7 +466,7 @@ export default function V2FencingPage() {
               </div>
             </div>
             <div className="rounded-2xl overflow-hidden aspect-[4/5]">
-              <img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=700&q=80" alt="Fence installation crew" className="w-full h-full object-cover object-center" />
+              <img src="https://images.unsplash.com/photo-1621274147744-cfb5694bb233?w=700&q=80" alt="Fence installation crew" className="w-full h-full object-cover object-center" />
             </div>
           </div>
         </div>

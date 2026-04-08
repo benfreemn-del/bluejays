@@ -312,7 +312,7 @@ export default function V2LocksmithPage() {
       {/* ─── 1. HERO ─── */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10">
         <div className="absolute inset-0 z-0">
-          <img src="https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=1600&q=80" alt="" className="w-full h-full object-cover object-center" />
+          <img src="https://images.unsplash.com/photo-1582139329536-e7284fece509?w=1600&q=80" alt="" className="w-full h-full object-cover object-center" />
           <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${BG}f0 0%, ${BG}dd 50%, ${BG}bb 100%)` }} />
         </div>
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">

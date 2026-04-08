@@ -256,7 +256,7 @@ const services = [
 ];
 
 const petGallery = [
-  { src: "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600&q=80", alt: "Happy golden retriever" },
+  { src: "https://images.unsplash.com/photo-1628009368231-7bb7cfcb0def?w=600&q=80", alt: "Happy golden retriever" },
   { src: "https://images.unsplash.com/photo-1574158622682-e40e69881006?w=600&q=80", alt: "Cute tabby cat" },
   { src: "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&q=80", alt: "Two dogs playing" },
   { src: "https://images.unsplash.com/photo-1495360010541-f48722b34f7d?w=600&q=80", alt: "Orange cat close up" },

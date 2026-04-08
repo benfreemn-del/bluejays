@@ -202,12 +202,12 @@ const faqs = [
 ];
 
 const galleryImages = [
-  "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=600&q=80",
-  "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&q=80",
+  "https://images.unsplash.com/photo-1509644851169-2acc08aa25b5?w=600&q=80",
+  "https://images.unsplash.com/photo-1541123603104-512919d6a96c?w=600&q=80",
   "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=600&q=80",
-  "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80",
+  "https://images.unsplash.com/photo-1509644851169-2acc08aa25b5?w=600&q=80",
   "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=600&q=80",
-  "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&q=80",
+  "https://images.unsplash.com/photo-1531834685032-c34bf0d84c77?w=600&q=80",
 ];
 
 /* ═══════════════════════════════════════════════════

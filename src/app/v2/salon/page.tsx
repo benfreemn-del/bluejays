@@ -59,7 +59,7 @@ function ScissorsHairSVG() {
       {/* Pulsing glow */}
       <motion.div
         className="absolute inset-0 rounded-full"
-        style={{ background: "radial-gradient(circle, rgba(225,29,72,0.25) 0%, transparent 70%)", filter: "blur(60px)" }}
+        style={{ background: "radial-gradient(circle, rgba(225,29,72,0.15) 0%, transparent 70%)", filter: "blur(60px)" }}
         animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
         transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
       />
@@ -67,10 +67,10 @@ function ScissorsHairSVG() {
         <defs>
           {/* Metallic gradient for blades */}
           <linearGradient id="bladeGrad" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#d4d4d8" stopOpacity="0.6" />
-            <stop offset="40%" stopColor="#fafafa" stopOpacity="0.4" />
-            <stop offset="60%" stopColor="#a1a1aa" stopOpacity="0.5" />
-            <stop offset="100%" stopColor="#71717a" stopOpacity="0.3" />
+            <stop offset="0%" stopColor="#a1a1aa" stopOpacity="0.7" />
+            <stop offset="40%" stopColor="#d4d4d8" stopOpacity="0.6" />
+            <stop offset="60%" stopColor="#78716c" stopOpacity="0.6" />
+            <stop offset="100%" stopColor="#57534e" stopOpacity="0.5" />
           </linearGradient>
           <linearGradient id="bladeEdge" x1="0" y1="0" x2="1" y2="0">
             <stop offset="0%" stopColor="#e11d48" stopOpacity="0.8" />
@@ -120,7 +120,7 @@ function ScissorsHairSVG() {
           {/* Inner blade shine */}
           <motion.path
             d="M118 148 C128 135, 145 115, 170 92 C178 84, 192 73, 210 66"
-            stroke="#ffffff" strokeWidth="0.8" fill="none" opacity={0.15}
+            stroke="#ffffff" strokeWidth="0.8" fill="none" opacity={0.3}
             initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 1, duration: 0.8 }}
           />
           {/* Top finger ring */}
@@ -163,7 +163,7 @@ function ScissorsHairSVG() {
           {/* Inner blade shine */}
           <motion.path
             d="M118 172 C128 185, 145 205, 170 228 C178 236, 192 247, 210 254"
-            stroke="#ffffff" strokeWidth="0.8" fill="none" opacity={0.15}
+            stroke="#ffffff" strokeWidth="0.8" fill="none" opacity={0.3}
             initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 1.2, duration: 0.8 }}
           />
           {/* Bottom finger ring */}
@@ -228,10 +228,10 @@ function FlowingGradient() {
         className="absolute -top-1/2 -left-1/2 w-[200%] h-[200%]"
         animate={{
           background: [
-            "radial-gradient(ellipse at 30% 40%, rgba(225,29,72,0.06) 0%, transparent 60%)",
-            "radial-gradient(ellipse at 60% 50%, rgba(251,113,133,0.06) 0%, transparent 60%)",
-            "radial-gradient(ellipse at 40% 60%, rgba(253,164,175,0.05) 0%, transparent 60%)",
-            "radial-gradient(ellipse at 30% 40%, rgba(225,29,72,0.06) 0%, transparent 60%)",
+            "radial-gradient(ellipse at 30% 40%, rgba(225,29,72,0.08) 0%, transparent 60%)",
+            "radial-gradient(ellipse at 60% 50%, rgba(251,113,133,0.08) 0%, transparent 60%)",
+            "radial-gradient(ellipse at 40% 60%, rgba(253,164,175,0.07) 0%, transparent 60%)",
+            "radial-gradient(ellipse at 30% 40%, rgba(225,29,72,0.08) 0%, transparent 60%)",
           ],
         }}
         transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
@@ -281,7 +281,7 @@ function SpringButton({
       className={`relative overflow-hidden group ${className}`}
     >
       {children}
-      <motion.div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+      <motion.div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity" />
     </motion.button>
   );
 }
@@ -311,7 +311,7 @@ function GalleryItem({
       {image ? (
         <img src={image} alt={title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
       ) : (
-        <div className="absolute inset-0 bg-gradient-to-br from-rose-900/80 to-stone-900/80" />
+        <div className="absolute inset-0 bg-gradient-to-br from-rose-100 to-gray-100" />
       )}
       {/* hover overlay */}
       <motion.div
@@ -396,7 +396,7 @@ export default function V2SalonPage() {
   const heroWords = ["Where", "Art", "Meets", "Beauty"];
 
   return (
-    <div className="min-h-[100dvh] bg-[#1c1917] text-stone-100 overflow-x-hidden">
+    <div className="min-h-[100dvh] bg-[#faf9f7] text-[#1c1917] overflow-x-hidden">
       <FlowingGradient />
 
       {/* ══════ NAV ══════ */}
@@ -404,18 +404,18 @@ export default function V2SalonPage() {
         initial={{ y: -40, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={spring}
-        className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-[#1c1917]/70 border-b border-white/5"
+        className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-white/80 border-b border-gray-200 shadow-sm"
       >
         <div className="max-w-7xl mx-auto flex items-center justify-between px-4 md:px-6 py-4">
           <div className="flex items-center gap-3">
             <Scissors size={28} weight="duotone" className="text-rose-400" />
             <span className="text-xl font-bold tracking-tight">Luxe Studio</span>
           </div>
-          <div className="hidden md:flex items-center gap-8 text-sm text-stone-400">
-            <a href="#services" className="hover:text-white transition-colors">Services</a>
-            <a href="#team" className="hover:text-white transition-colors">Team</a>
-            <a href="#gallery" className="hover:text-white transition-colors">Gallery</a>
-            <a href="#reviews" className="hover:text-white transition-colors">Reviews</a>
+          <div className="hidden md:flex items-center gap-8 text-sm text-[#6b7280]">
+            <a href="#services" className="hover:text-[#1c1917] transition-colors">Services</a>
+            <a href="#team" className="hover:text-[#1c1917] transition-colors">Team</a>
+            <a href="#gallery" className="hover:text-[#1c1917] transition-colors">Gallery</a>
+            <a href="#reviews" className="hover:text-[#1c1917] transition-colors">Reviews</a>
           </div>
           <div className="flex items-center gap-3">
             <SpringButton className="px-5 py-2.5 bg-rose-600 text-white text-sm font-semibold rounded-lg">
@@ -423,7 +423,7 @@ export default function V2SalonPage() {
             </SpringButton>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 rounded-lg text-white hover:bg-white/10 transition-colors"
+              className="md:hidden p-2 rounded-lg text-[#1c1917] hover:bg-rose-50 transition-colors"
             >
               {mobileMenuOpen ? <X size={24} /> : <List size={24} />}
             </button>
@@ -438,9 +438,9 @@ export default function V2SalonPage() {
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
-              className="md:hidden overflow-hidden border-t border-white/5"
+              className="md:hidden overflow-hidden border-t border-gray-100"
             >
-              <div className="flex flex-col gap-1 px-4 py-4 bg-[#1c1917]/95 backdrop-blur-xl">
+              <div className="flex flex-col gap-1 px-4 py-4 bg-white/95 backdrop-blur-xl">
                 {[
                   { label: "Services", href: "#services" },
                   { label: "Team", href: "#team" },
@@ -451,7 +451,7 @@ export default function V2SalonPage() {
                     key={link.label}
                     href={link.href}
                     onClick={() => setMobileMenuOpen(false)}
-                    className="block px-4 py-3 rounded-lg text-sm text-stone-300 hover:text-white hover:bg-white/5 transition-colors"
+                    className="block px-4 py-3 rounded-lg text-sm text-[#6b7280] hover:text-[#1c1917] hover:bg-rose-50 transition-colors"
                   >
                     {link.label}
                   </a>
@@ -483,9 +483,8 @@ export default function V2SalonPage() {
                   className={`text-4xl md:text-7xl lg:text-8xl tracking-tighter leading-tight font-bold ${
                     word === "Beauty"
                       ? "text-rose-500"
-                      : "text-white"
+                      : "text-[#1c1917]"
                   }`}
-                  style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}
                 >
                   {word}
                 </motion.span>
@@ -496,7 +495,7 @@ export default function V2SalonPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ ...spring, delay: 1.2 }}
-              className="mt-8 text-lg text-stone-400 max-w-md leading-relaxed"
+              className="mt-8 text-lg text-[#6b7280] max-w-md leading-relaxed"
             >
               An elevated salon experience where every detail is curated for
               your transformation. Artistry, precision, and care in every touch.
@@ -513,7 +512,7 @@ export default function V2SalonPage() {
                   Book Appointment <CalendarBlank weight="bold" size={18} />
                 </span>
               </SpringButton>
-              <SpringButton className="px-8 py-4 border border-stone-700 text-stone-300 rounded-xl hover:border-rose-500/50 transition-colors">
+              <SpringButton className="px-8 py-4 border border-gray-300 text-[#1c1917] rounded-xl hover:border-rose-500/50 transition-colors">
                 <span className="relative z-10 flex items-center gap-2">
                   <Phone weight="bold" size={18} /> (555) 891-2345
                 </span>
@@ -528,13 +527,13 @@ export default function V2SalonPage() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ ...spring, delay: 0.5 }}
             >
-              <div className="relative rounded-2xl overflow-hidden border border-white/10">
+              <div className="relative rounded-2xl overflow-hidden border border-gray-200 shadow-xl">
                 <img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=800&q=80" alt="Luxury salon interior" className="w-full h-[500px] object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#1c1917] via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-white/60 via-transparent to-transparent" />
                 <div className="absolute bottom-6 left-6">
-                  <div className="px-4 py-2 rounded-full backdrop-blur-md bg-black/50 border border-rose-500/30 flex items-center gap-2">
+                  <div className="px-4 py-2 rounded-full backdrop-blur-md bg-white/80 border border-rose-500/30 shadow-lg flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
-                    <span className="text-sm font-semibold text-white">Now Booking</span>
+                    <span className="text-sm font-semibold text-[#1c1917]">Now Booking</span>
                   </div>
                 </div>
               </div>
@@ -542,11 +541,11 @@ export default function V2SalonPage() {
           </div>
         </motion.div>
 
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#1c1917] to-transparent z-20" />
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#faf9f7] to-transparent z-20" />
       </section>
 
       {/* ══════ SERVICE MENU — Editorial Layout ══════ */}
-      <section className="relative z-10 py-16 md:py-24">
+      <section className="relative z-10 py-16 md:py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 md:px-6">
           <motion.div
             variants={sectionStagger}
@@ -577,7 +576,7 @@ export default function V2SalonPage() {
                   viewport={{ once: true }}
                   transition={{ ...spring, delay: ci * 0.05 }}
                 >
-                  <div className="p-8 rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)] h-full">
+                  <div className="p-8 rounded-2xl border border-gray-100 bg-white shadow-lg h-full">
                     <div className="flex items-center gap-3 mb-8">
                       {ci === 0 ? (
                         <Scissors size={28} weight="duotone" className="text-rose-400" />
@@ -596,14 +595,14 @@ export default function V2SalonPage() {
                           whileInView={{ opacity: 1, x: 0 }}
                           viewport={{ once: true }}
                           transition={{ ...spring, delay: ci * 0.1 + ii * 0.06 }}
-                          className="py-4 border-b border-white/5 last:border-0 group"
+                          className="py-4 border-b border-gray-100 last:border-0 group"
                         >
                           <div className="flex items-start justify-between gap-4">
                             <div className="flex-1">
-                              <p className="font-medium text-stone-200 group-hover:text-rose-300 transition-colors">
+                              <p className="font-medium text-[#1c1917] group-hover:text-rose-500 transition-colors">
                                 {item.name}
                               </p>
-                              <div className="flex items-center gap-2 mt-1 text-xs text-stone-500">
+                              <div className="flex items-center gap-2 mt-1 text-xs text-[#6b7280]">
                                 <Clock size={12} weight="bold" />
                                 <span>{item.time}</span>
                               </div>
@@ -624,7 +623,7 @@ export default function V2SalonPage() {
       </section>
 
       {/* ══════ TEAM ══════ */}
-      <section className="relative z-10 py-16 md:py-24 overflow-hidden">
+      <section className="relative z-10 py-16 md:py-24 overflow-hidden bg-[#fdf2f4]">
         <div className="max-w-7xl mx-auto px-4 md:px-6">
           <motion.div
             variants={sectionStagger}
@@ -650,7 +649,7 @@ export default function V2SalonPage() {
       </section>
 
       {/* ══════ GALLERY ══════ */}
-      <section className="relative z-10 py-16 md:py-24">
+      <section className="relative z-10 py-16 md:py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 md:px-6">
           <motion.div
             variants={sectionStagger}
@@ -684,7 +683,7 @@ export default function V2SalonPage() {
       </section>
 
       {/* ══════ TESTIMONIALS ══════ */}
-      <section className="relative z-10 py-16 md:py-24">
+      <section className="relative z-10 py-16 md:py-24 bg-[#faf9f7]">
         <div className="max-w-7xl mx-auto px-4 md:px-6">
           <motion.div
             variants={sectionStagger}
@@ -734,15 +733,15 @@ export default function V2SalonPage() {
                 <motion.div
                   whileHover={{ y: -4 }}
                   transition={spring}
-                  className="h-full p-8 rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)]"
+                  className="h-full p-8 rounded-2xl border border-gray-100 bg-white shadow-lg"
                 >
                   <div className="flex gap-1 mb-4">
                     {Array.from({ length: t.rating }).map((_, s) => (
                       <Star key={s} size={16} weight="fill" className="text-rose-400" />
                     ))}
                   </div>
-                  <p className="text-stone-300 leading-relaxed mb-6">&ldquo;{t.text}&rdquo;</p>
-                  <p className="font-semibold text-white">{t.name}</p>
+                  <p className="text-[#6b7280] leading-relaxed mb-6">&ldquo;{t.text}&rdquo;</p>
+                  <p className="font-semibold text-[#1c1917]">{t.name}</p>
                 </motion.div>
               </motion.div>
             ))}
@@ -751,7 +750,7 @@ export default function V2SalonPage() {
       </section>
 
       {/* ══════ BOOKING CTA ══════ */}
-      <section className="relative z-10 py-16 md:py-24">
+      <section className="relative z-10 py-16 md:py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 md:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16 items-center">
             {/* left */}
@@ -767,7 +766,7 @@ export default function V2SalonPage() {
               <h2 className="mt-3 text-4xl md:text-6xl tracking-tighter leading-none font-bold">
                 Your <span className="text-rose-500">Transformation</span> Awaits
               </h2>
-              <p className="mt-6 text-stone-400 max-w-md leading-relaxed">
+              <p className="mt-6 text-[#6b7280] max-w-md leading-relaxed">
                 Reserve your appointment and step into a world of elevated
                 beauty. New clients receive a complimentary consultation.
               </p>
@@ -778,8 +777,8 @@ export default function V2SalonPage() {
                   { icon: MapPin, text: "48 Rose Avenue, Suite 12" },
                   { icon: Clock, text: "Tue - Sat: 9AM - 7PM" },
                 ].map((item) => (
-                  <div key={item.text} className="flex items-center gap-4 text-stone-300">
-                    <div className="w-12 h-12 rounded-xl bg-rose-500/10 flex items-center justify-center flex-shrink-0">
+                  <div key={item.text} className="flex items-center gap-4 text-[#1c1917]">
+                    <div className="w-12 h-12 rounded-xl bg-rose-50 flex items-center justify-center flex-shrink-0">
                       <item.icon size={22} weight="duotone" className="text-rose-400" />
                     </div>
                     <span>{item.text}</span>
@@ -795,7 +794,7 @@ export default function V2SalonPage() {
               viewport={{ once: true }}
               transition={spring}
             >
-              <div className="p-8 md:p-10 rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-md shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)]">
+              <div className="p-8 md:p-10 rounded-3xl border border-gray-100 bg-white shadow-xl">
                 <div className="space-y-5">
                   {[
                     { label: "Full Name", type: "text", placeholder: "Your name" },
@@ -803,21 +802,21 @@ export default function V2SalonPage() {
                     { label: "Phone", type: "tel", placeholder: "(555) 000-0000" },
                   ].map((field) => (
                     <div key={field.label}>
-                      <label className="block text-sm font-medium text-stone-300 mb-2">
+                      <label className="block text-sm font-medium text-[#1c1917] mb-2">
                         {field.label}
                       </label>
                       <input
                         type={field.type}
                         placeholder={field.placeholder}
-                        className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-stone-600 focus:border-rose-500/50 focus:ring-1 focus:ring-rose-500/30 outline-none transition-all"
+                        className="w-full px-4 py-3 rounded-xl bg-[#faf9f7] border border-gray-200 text-[#1c1917] placeholder:text-gray-400 focus:border-rose-500/50 focus:ring-1 focus:ring-rose-500/30 outline-none transition-all"
                       />
                     </div>
                   ))}
                   <div>
-                    <label className="block text-sm font-medium text-stone-300 mb-2">
+                    <label className="block text-sm font-medium text-[#1c1917] mb-2">
                       Service
                     </label>
-                    <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-stone-400 focus:border-rose-500/50 focus:ring-1 focus:ring-rose-500/30 outline-none transition-all appearance-none">
+                    <select className="w-full px-4 py-3 rounded-xl bg-[#faf9f7] border border-gray-200 text-[#6b7280] focus:border-rose-500/50 focus:ring-1 focus:ring-rose-500/30 outline-none transition-all appearance-none">
                       <option value="">Select a service</option>
                       <option value="cut">Precision Cut & Style</option>
                       <option value="color">Color & Highlights</option>
@@ -827,12 +826,12 @@ export default function V2SalonPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-stone-300 mb-2">
+                    <label className="block text-sm font-medium text-[#1c1917] mb-2">
                       Preferred Date
                     </label>
                     <input
                       type="date"
-                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-stone-400 focus:border-rose-500/50 focus:ring-1 focus:ring-rose-500/30 outline-none transition-all"
+                      className="w-full px-4 py-3 rounded-xl bg-[#faf9f7] border border-gray-200 text-[#6b7280] focus:border-rose-500/50 focus:ring-1 focus:ring-rose-500/30 outline-none transition-all"
                     />
                   </div>
                   <SpringButton className="w-full px-8 py-4 bg-rose-600 text-white font-semibold rounded-xl mt-2">
@@ -848,23 +847,23 @@ export default function V2SalonPage() {
       </section>
 
       {/* ══════ FOOTER ══════ */}
-      <footer className="relative z-10 py-12 border-t border-white/5">
+      <footer className="relative z-10 py-12 border-t border-gray-200 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 md:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <Scissors size={24} weight="duotone" className="text-rose-400" />
-            <span className="font-bold text-lg tracking-tight">Luxe Studio</span>
+            <span className="font-bold text-lg tracking-tight text-[#1c1917]">Luxe Studio</span>
           </div>
           <div className="flex items-center gap-4">
-            <a href="#" className="text-stone-500 hover:text-rose-400 transition-colors">
+            <a href="#" className="text-[#6b7280] hover:text-rose-500 transition-colors">
               <InstagramLogo size={22} weight="bold" />
             </a>
           </div>
-          <p className="text-sm text-stone-500">
+          <p className="text-sm text-[#6b7280]">
             &copy; {new Date().getFullYear()} Luxe Studio. All rights reserved.
           </p>
         </div>
-        <div className="border-t border-white/5 mt-8 pt-4 text-center">
-          <p className="text-xs text-stone-600">Website created by Bluejay Business Solutions</p>
+        <div className="border-t border-gray-200 mt-8 pt-4 text-center">
+          <p className="text-xs text-[#6b7280]">Website created by Bluejay Business Solutions</p>
         </div>
       </footer>
     </div>
@@ -886,13 +885,6 @@ function TeamCard({
   });
   const y = useTransform(scrollYProgress, [0, 1], [20, -20]);
 
-  const bgColors = [
-    "from-rose-900/40 to-stone-900",
-    "from-pink-900/40 to-stone-900",
-    "from-red-900/30 to-stone-900",
-    "from-rose-800/30 to-neutral-900",
-  ];
-
   return (
     <motion.div
       ref={ref}
@@ -904,7 +896,7 @@ function TeamCard({
       <motion.div
         whileHover={{ y: -6 }}
         transition={spring}
-        className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)] overflow-hidden"
+        className="rounded-2xl border border-gray-100 bg-white shadow-lg overflow-hidden"
       >
         {/* Team member photo with parallax */}
         <motion.div
@@ -914,9 +906,9 @@ function TeamCard({
           <img src={member.photo} alt={member.name} className="w-full h-full object-cover object-top" />
         </motion.div>
         <div className="p-6">
-          <h3 className="font-bold text-lg">{member.name}</h3>
-          <p className="text-rose-400 text-sm font-medium">{member.role}</p>
-          <p className="text-stone-500 text-xs mt-1">{member.specialty}</p>
+          <h3 className="font-bold text-lg text-[#1c1917]">{member.name}</h3>
+          <p className="text-rose-500 text-sm font-medium">{member.role}</p>
+          <p className="text-[#6b7280] text-xs mt-1">{member.specialty}</p>
         </div>
       </motion.div>
     </motion.div>
