@@ -12,7 +12,7 @@ const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
 
 const DEFAULT_BURGUNDY = "#881337";
 const GOLD = "#d4a574";
-const BG = "#0f0a0a";
+const BG = "#faf8f6";
 
 function getAccent(accentColor?: string) {
   const c = accentColor || DEFAULT_BURGUNDY;
@@ -47,7 +47,7 @@ function FloatingSparks({ accent }: { accent: string }) {
   return (
     <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden hidden md:block">
       {particles.map((p) => (
-        <motion.div key={p.id} className="absolute rounded-full" style={{ left: `${p.x}%`, width: p.size, height: p.size, background: p.isGold ? GOLD : accent, willChange: "transform, opacity" }}
+        <motion.div key={p.id} className="absolute rounded-full" style={{ left: `${p.x}%`, width: p.size, height: p.size, background: p.isGold ? `${GOLD}88` : `${accent}66`, willChange: "transform, opacity" }}
           animate={{ y: ["-10vh", "110vh"], opacity: [0, p.opacity, p.opacity, 0] }}
           transition={{ y: { duration: p.duration, repeat: Infinity, delay: p.delay, ease: "linear" }, opacity: { duration: p.duration, repeat: Infinity, delay: p.delay, times: [0, 0.1, 0.9, 1] } }}
         />
@@ -81,7 +81,7 @@ function VineDecor({ opacity = 0.04, accent }: { opacity?: number; accent: strin
 }
 
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>;
+  return <div className={`rounded-2xl border border-gray-200 bg-white/70 backdrop-blur-xl shadow-sm ${className}`}>{children}</div>;
 }
 
 function MagneticButton({ children, className = "", onClick, style, href }: { children: React.ReactNode; className?: string; onClick?: () => void; style?: React.CSSProperties; href?: string }) {
@@ -99,7 +99,7 @@ function ShimmerBorder({ children, className = "", accent }: { children: React.R
   return (
     <div className={`relative rounded-2xl p-[1px] overflow-hidden ${className}`}>
       <motion.div className="absolute inset-0 rounded-2xl" style={{ background: `conic-gradient(from 0deg, transparent, ${accent}, transparent, ${GOLD}, transparent)`, willChange: "transform" }} animate={{ rotate: [0, 360] }} transition={{ duration: 4, repeat: Infinity, ease: "linear" }} />
-      <div className="relative rounded-2xl bg-[#0f0a0a] z-10">{children}</div>
+      <div className="relative rounded-2xl bg-white z-10">{children}</div>
     </div>
   );
 }
@@ -108,9 +108,9 @@ function SectionHeader({ badge, title, subtitle, accent }: { badge: string; titl
   return (
     <div className="text-center mb-16">
       <span className="inline-block text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border" style={{ color: accent, borderColor: `${accent}33`, background: `${accent}0d` }}>{badge}</span>
-      <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white">{title}</h2>
+      <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-[#1c1917]">{title}</h2>
       <div className="h-0.5 w-16 mx-auto mt-4" style={{ background: `linear-gradient(to right, ${accent}, transparent)` }} />
-      {subtitle && <p className="text-slate-400 mt-4 max-w-2xl text-lg leading-relaxed mx-auto">{subtitle}</p>}
+      {subtitle && <p className="text-[#6b7280] mt-4 max-w-2xl text-lg leading-relaxed mx-auto">{subtitle}</p>}
     </div>
   );
 }
@@ -119,13 +119,13 @@ function AccordionItem({ question, answer, isOpen, onToggle }: { question: strin
   return (
     <GlassCard className="overflow-hidden">
       <button onClick={onToggle} className="w-full flex items-center justify-between p-5 md:p-6 text-left group cursor-pointer">
-        <span className="text-lg font-semibold text-white pr-4">{question}</span>
-        <motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={spring}><CaretDown size={20} className="text-slate-400 shrink-0" /></motion.div>
+        <span className="text-lg font-semibold text-[#1c1917] pr-4">{question}</span>
+        <motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={spring}><CaretDown size={20} className="text-[#6b7280] shrink-0" /></motion.div>
       </button>
       <AnimatePresence initial={false}>
         {isOpen && (
           <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={spring} className="overflow-hidden">
-            <p className="px-5 pb-5 md:px-6 md:pb-6 text-slate-400 leading-relaxed">{answer}</p>
+            <p className="px-5 pb-5 md:px-6 md:pb-6 text-[#6b7280] leading-relaxed">{answer}</p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -142,13 +142,13 @@ function ClaimBanner({ businessName, accentColor, prospectId }: { businessName: 
   }, []);
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50">
-      <div className="bg-[#1a1a1a]/90 backdrop-blur-sm border-t border-white/10 px-4 py-2 flex items-center justify-center gap-4">
-        <p className="text-xs text-slate-400"><span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1.5 animate-pulse" />47 businesses in your area upgraded their website this month</p>
+      <div className="bg-white/90 backdrop-blur-sm border-t border-gray-200 px-4 py-2 flex items-center justify-center gap-4">
+        <p className="text-xs text-[#6b7280]"><span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1.5 animate-pulse" />47 businesses in your area upgraded their website this month</p>
         {timeLeft && timeLeft !== "EXPIRED" && <p className="text-xs font-bold" style={{ color: accentColor }}>Preview expires in {timeLeft}</p>}
       </div>
       <div className="px-6 py-4 flex items-center justify-between gap-4" style={{ background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}10)`, borderTop: `1px solid ${accentColor}30` }}>
-        <div className="flex-1 min-w-0"><p className="text-sm font-semibold text-white truncate">This website was built for {businessName}</p><p className="text-xs text-slate-400">Claim it before we offer it to a competitor</p></div>
-        <a href={`/claim/${prospectId}`} className="shrink-0 h-11 px-6 rounded-full text-white text-sm font-bold flex items-center gap-2 hover:shadow-lg transition-all duration-300" style={{ background: accentColor }}>Claim Your Website <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4"><path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg></a>
+        <div className="flex-1 min-w-0"><p className="text-sm font-semibold text-[#1c1917] truncate">This website was built for {businessName}</p><p className="text-xs text-[#6b7280]">Claim it before we offer it to a competitor</p></div>
+        <a href={`/claim/${prospectId}`} className="shrink-0 h-11 px-6 rounded-full text-[#1c1917] text-sm font-bold flex items-center gap-2 hover:shadow-lg transition-all duration-300" style={{ background: accentColor }}>Claim Your Website <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4"><path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg></a>
       </div>
     </div>
   );
@@ -179,29 +179,29 @@ export default function V2CateringPreview({ data }: { data: GeneratedSiteData })
   ];
 
   return (
-    <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: BG, color: "#f1f5f9" }}>
+    <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: BG, color: "#1c1917" }}>
       <FloatingSparks accent={ACCENT} />
 
       {/* 1. NAV */}
       <nav className="fixed top-0 left-0 right-0 z-50">
         <div className="mx-auto max-w-7xl px-4 md:px-6 py-4">
           <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
-            <div className="flex items-center gap-2"><ForkKnife size={24} weight="fill" style={{ color: ACCENT }} /><span className="text-lg font-bold tracking-tight text-white">{data.businessName}</span></div>
-            <div className="hidden md:flex items-center gap-8 text-sm text-slate-400">
-              <a href="#services" className="hover:text-white transition-colors">Services</a>
-              <a href="#gallery" className="hover:text-white transition-colors">Gallery</a>
-              <a href="#about" className="hover:text-white transition-colors">About</a>
-              <a href="#contact" className="hover:text-white transition-colors">Contact</a>
+            <div className="flex items-center gap-2"><ForkKnife size={24} weight="fill" style={{ color: ACCENT }} /><span className="text-lg font-bold tracking-tight text-[#1c1917]">{data.businessName}</span></div>
+            <div className="hidden md:flex items-center gap-8 text-sm text-[#6b7280]">
+              <a href="#services" className="hover:text-[#1c1917] transition-colors">Services</a>
+              <a href="#gallery" className="hover:text-[#1c1917] transition-colors">Gallery</a>
+              <a href="#about" className="hover:text-[#1c1917] transition-colors">About</a>
+              <a href="#contact" className="hover:text-[#1c1917] transition-colors">Contact</a>
             </div>
             <div className="flex items-center gap-3">
-              <MagneticButton className="px-4 md:px-5 py-2 rounded-full text-sm font-semibold text-white transition-colors cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>Book Event</MagneticButton>
-              <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden p-2 rounded-lg text-white hover:bg-white/10 transition-colors">{mobileMenuOpen ? <X size={24} /> : <List size={24} />}</button>
+              <MagneticButton className="px-4 md:px-5 py-2 rounded-full text-sm font-semibold text-[#1c1917] transition-colors cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>Book Event</MagneticButton>
+              <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden p-2 rounded-lg text-[#1c1917] hover:bg-gray-100 transition-colors">{mobileMenuOpen ? <X size={24} /> : <List size={24} />}</button>
             </div>
           </GlassCard>
           <AnimatePresence>{mobileMenuOpen && (
             <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="md:hidden mt-2 overflow-hidden">
               <GlassCard className="flex flex-col gap-1 px-4 py-4">
-                {["Services", "Gallery", "About", "Contact"].map((l) => <a key={l} href={`#${l.toLowerCase()}`} onClick={() => setMobileMenuOpen(false)} className="block px-4 py-3 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-white/5 transition-colors">{l}</a>)}
+                {["Services", "Gallery", "About", "Contact"].map((l) => <a key={l} href={`#${l.toLowerCase()}`} onClick={() => setMobileMenuOpen(false)} className="block px-4 py-3 rounded-lg text-sm text-[#4b5563] hover:text-[#1c1917] hover:bg-gray-50 transition-colors">{l}</a>)}
               </GlassCard>
             </motion.div>
           )}</AnimatePresence>
@@ -210,7 +210,7 @@ export default function V2CateringPreview({ data }: { data: GeneratedSiteData })
 
       {/* 2. HERO */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, #1a0a0a 0%, ${BG} 50%, #150d0d 100%)` }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, #fdf8f5 0%, ${BG} 50%, #f5efe8 100%)` }} />
         <ElegantPattern opacity={0.04} accent={ACCENT} />
         <VineDecor accent={ACCENT} />
         <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full blur-[200px] pointer-events-none" style={{ background: `${ACCENT}10` }} />
@@ -218,22 +218,22 @@ export default function V2CateringPreview({ data }: { data: GeneratedSiteData })
           <div className="space-y-8">
             <div>
               <p className="text-sm uppercase tracking-widest mb-4" style={{ color: GOLD }}>Premium Catering</p>
-              <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}>{data.tagline}</h1>
+              <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-[#1c1917]" style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}>{data.tagline}</h1>
             </div>
-            <p className="text-lg text-slate-400 max-w-md leading-relaxed">{data.about.length > 160 ? data.about.slice(0, 160).trim() + "..." : data.about}</p>
+            <p className="text-lg text-[#6b7280] max-w-md leading-relaxed">{data.about.length > 160 ? data.about.slice(0, 160).trim() + "..." : data.about}</p>
             <div className="flex flex-wrap gap-4">
-              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>Plan Your Event <ArrowRight size={18} weight="bold" /></MagneticButton>
-              <MagneticButton href={`tel:${data.phone.replace(/\D/g, "")}`} className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer"><Phone size={18} weight="duotone" /> <PhoneLink phone={data.phone} /></MagneticButton>
+              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-[#1c1917] flex items-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>Plan Your Event <ArrowRight size={18} weight="bold" /></MagneticButton>
+              <MagneticButton href={`tel:${data.phone.replace(/\D/g, "")}`} className="px-8 py-4 rounded-full text-base font-semibold text-[#1c1917] border border-gray-200 flex items-center gap-2 cursor-pointer"><Phone size={18} weight="duotone" /> <PhoneLink phone={data.phone} /></MagneticButton>
             </div>
-            <div className="flex flex-wrap gap-6 text-sm text-slate-400">
+            <div className="flex flex-wrap gap-6 text-sm text-[#6b7280]">
               <span className="flex items-center gap-2"><MapPin size={16} weight="duotone" style={{ color: ACCENT }} /> <MapLink address={data.address} /></span>
             </div>
           </div>
           <div className="hidden md:block relative">
-            <div className="relative rounded-2xl overflow-hidden border border-white/10">
+            <div className="relative rounded-2xl overflow-hidden border border-gray-200">
               <img src={heroImage} alt={`${data.businessName} catering`} className="w-full h-[500px] object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0f0a0a] via-transparent to-transparent" />
-              <div className="absolute bottom-6 left-6"><div className="px-4 py-2 rounded-full backdrop-blur-md bg-black/50 border flex items-center gap-2" style={{ borderColor: `${ACCENT}4d` }}><Star size={18} weight="fill" style={{ color: GOLD }} /><span className="text-sm font-semibold text-white">Award-Winning Cuisine</span></div></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+              <div className="absolute bottom-6 left-6"><div className="px-4 py-2 rounded-full backdrop-blur-md bg-black/50 border flex items-center gap-2" style={{ borderColor: `${ACCENT}4d` }}><Star size={18} weight="fill" style={{ color: GOLD }} /><span className="text-sm font-semibold text-[#1c1917]">Award-Winning Cuisine</span></div></div>
             </div>
           </div>
         </div>
@@ -241,14 +241,14 @@ export default function V2CateringPreview({ data }: { data: GeneratedSiteData })
 
       {/* 3. STATS */}
       <section className="relative z-10 py-16 overflow-hidden border-y" style={{ borderColor: `${ACCENT}1a` }}>
-        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #120a0a 0%, ${BG} 100%)` }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #f5efe8 0%, ${BG} 100%)` }} />
         <ElegantPattern opacity={0.02} accent={ACCENT} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {data.stats.map((stat, i) => {
               const icons = [ForkKnife, Clock, Users, Star];
               const Icon = icons[i % icons.length];
-              return (<div key={stat.label} className="text-center"><div className="flex items-center justify-center gap-2 mb-2"><Icon size={22} weight="fill" style={{ color: ACCENT }} /><span className="text-3xl md:text-4xl font-extrabold text-white">{stat.value}</span></div><span className="text-slate-500 text-sm font-medium tracking-wide uppercase">{stat.label}</span></div>);
+              return (<div key={stat.label} className="text-center"><div className="flex items-center justify-center gap-2 mb-2"><Icon size={22} weight="fill" style={{ color: ACCENT }} /><span className="text-3xl md:text-4xl font-extrabold text-[#1c1917]">{stat.value}</span></div><span className="text-[#9ca3af] text-sm font-medium tracking-wide uppercase">{stat.label}</span></div>);
             })}
           </div>
         </div>
@@ -256,7 +256,7 @@ export default function V2CateringPreview({ data }: { data: GeneratedSiteData })
 
       {/* 4. SERVICES */}
       <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #120a0a 50%, ${BG} 100%)` }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #f5efe8 50%, ${BG} 100%)` }} />
         <ElegantPattern accent={ACCENT} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <SectionHeader badge="Our Services" title="Catering for Every Occasion" subtitle={`${data.businessName} creates unforgettable culinary experiences for any event.`} accent={ACCENT} />
@@ -264,15 +264,15 @@ export default function V2CateringPreview({ data }: { data: GeneratedSiteData })
             {data.services.map((service, i) => {
               const Icon = getServiceIcon(service.name);
               return (
-                <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.02]">
+                <div key={service.name} className="group relative p-7 rounded-2xl border border-gray-200/60 hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/60">
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${ACCENT}15, transparent 70%)` }} />
                   <div className="relative z-10">
                     <div className="flex items-start justify-between mb-5">
                       <div className="w-12 h-12 rounded-xl flex items-center justify-center border" style={{ background: ACCENT_GLOW, borderColor: `${ACCENT}33` }}><Icon size={24} weight="duotone" style={{ color: ACCENT }} /></div>
-                      <span className="text-xs font-mono text-slate-600">{String(i + 1).padStart(2, "0")}</span>
+                      <span className="text-xs font-mono text-[#6b7280]">{String(i + 1).padStart(2, "0")}</span>
                     </div>
-                    <h3 className="text-lg font-bold text-white mb-2">{service.name}</h3>
-                    <p className="text-sm text-slate-400 leading-relaxed">{service.description || ""}</p>
+                    <h3 className="text-lg font-bold text-[#1c1917] mb-2">{service.name}</h3>
+                    <p className="text-sm text-[#6b7280] leading-relaxed">{service.description || ""}</p>
                     {service.price && <p className="text-sm font-semibold mt-3" style={{ color: ACCENT }}>{service.price}</p>}
                   </div>
                 </div>
@@ -284,13 +284,13 @@ export default function V2CateringPreview({ data }: { data: GeneratedSiteData })
 
       {/* 5. GALLERY */}
       <section id="gallery" className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #10080a 50%, ${BG} 100%)` }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #f5efe8 50%, ${BG} 100%)` }} />
         <VineDecor opacity={0.02} accent={ACCENT} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <SectionHeader badge="Gallery" title="A Feast for the Eyes" accent={ACCENT} />
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {galleryImages.map((src, i) => (
-              <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.06]">
+              <div key={i} className="group relative rounded-2xl overflow-hidden border border-gray-200/60">
                 <img src={src} alt={`Culinary creation ${i + 1}`} className="w-full h-48 md:h-56 object-cover transition-transform duration-700 group-hover:scale-105" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               </div>
@@ -301,23 +301,23 @@ export default function V2CateringPreview({ data }: { data: GeneratedSiteData })
 
       {/* 6. ABOUT */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #120a0a 50%, ${BG} 100%)` }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #f5efe8 50%, ${BG} 100%)` }} />
         <ElegantPattern opacity={0.02} accent={ACCENT} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="relative">
-              <div className="rounded-2xl overflow-hidden border border-white/10"><img src={aboutImage} alt={`${data.businessName} team`} className="w-full h-[400px] object-cover" /></div>
-              <div className="absolute -bottom-4 -right-4 md:bottom-6 md:-right-6"><div className="px-5 py-3 rounded-xl backdrop-blur-md border text-white font-bold text-sm shadow-lg" style={{ background: `${ACCENT}e6`, borderColor: `${ACCENT}80` }}>{data.stats[0] ? `${data.stats[0].value} ${data.stats[0].label}` : "Premium Catering"}</div></div>
+              <div className="rounded-2xl overflow-hidden border border-gray-200"><img src={aboutImage} alt={`${data.businessName} team`} className="w-full h-[400px] object-cover" /></div>
+              <div className="absolute -bottom-4 -right-4 md:bottom-6 md:-right-6"><div className="px-5 py-3 rounded-xl backdrop-blur-md border text-[#1c1917] font-bold text-sm shadow-lg" style={{ background: `${ACCENT}e6`, borderColor: `${ACCENT}80` }}>{data.stats[0] ? `${data.stats[0].value} ${data.stats[0].label}` : "Premium Catering"}</div></div>
             </div>
             <div>
               <span className="inline-block text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border" style={{ color: ACCENT, borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}>About Us</span>
-              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-6 text-white">Crafted with Passion</h2>
-              <p className="text-slate-400 leading-relaxed mb-8">{data.about}</p>
+              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-6 text-[#1c1917]">Crafted with Passion</h2>
+              <p className="text-[#6b7280] leading-relaxed mb-8">{data.about}</p>
               <div className="grid grid-cols-2 gap-4">
                 {[{ icon: Star, label: "Award-Winning" }, { icon: CheckCircle, label: "Farm-to-Table" }, { icon: Users, label: "Expert Team" }, { icon: ShieldCheck, label: "Fully Licensed" }].map((badge) => (
                   <GlassCard key={badge.label} className="p-4 flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: ACCENT_GLOW }}><badge.icon size={20} weight="duotone" style={{ color: ACCENT }} /></div>
-                    <span className="text-sm font-semibold text-white">{badge.label}</span>
+                    <span className="text-sm font-semibold text-[#1c1917]">{badge.label}</span>
                   </GlassCard>
                 ))}
               </div>
@@ -328,7 +328,7 @@ export default function V2CateringPreview({ data }: { data: GeneratedSiteData })
 
       {/* 7. TESTIMONIALS */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #10080a 50%, ${BG} 100%)` }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #f5efe8 50%, ${BG} 100%)` }} />
         <ElegantPattern opacity={0.02} accent={ACCENT} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <SectionHeader badge="Testimonials" title="What Our Clients Say" accent={ACCENT} />
@@ -336,8 +336,8 @@ export default function V2CateringPreview({ data }: { data: GeneratedSiteData })
             {data.testimonials.map((t, i) => (
               <GlassCard key={i} className="p-6 h-full flex flex-col">
                 <div className="flex gap-0.5 mb-4">{Array.from({ length: t.rating || 5 }).map((_, j) => <Star key={j} size={16} weight="fill" style={{ color: GOLD }} />)}</div>
-                <p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p>
-                <div className="pt-4 border-t border-white/5"><span className="text-sm font-semibold text-white">{t.name}</span></div>
+                <p className="text-[#4b5563] leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p>
+                <div className="pt-4 border-t border-gray-100"><span className="text-sm font-semibold text-[#1c1917]">{t.name}</span></div>
               </GlassCard>
             ))}
           </div>
@@ -346,7 +346,7 @@ export default function V2CateringPreview({ data }: { data: GeneratedSiteData })
 
       {/* 8. PROCESS */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #120a0a 50%, ${BG} 100%)` }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #f5efe8 50%, ${BG} 100%)` }} />
         <VineDecor opacity={0.02} accent={ACCENT} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <SectionHeader badge="Our Process" title="From Vision to Table" accent={ACCENT} />
@@ -356,8 +356,8 @@ export default function V2CateringPreview({ data }: { data: GeneratedSiteData })
                 {i < processSteps.length - 1 && <div className="hidden lg:block absolute top-10 left-[calc(50%+40px)] w-[calc(100%-80px)] h-px" style={{ background: `linear-gradient(to right, ${ACCENT}33, ${ACCENT}11)` }} />}
                 <GlassCard className="p-6 text-center relative">
                   <div className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center text-2xl font-black" style={{ background: `linear-gradient(135deg, ${ACCENT}22, ${ACCENT}0a)`, color: ACCENT, border: `1px solid ${ACCENT}33` }}>{step.step}</div>
-                  <h3 className="text-lg font-bold text-white mb-2">{step.title}</h3>
-                  <p className="text-sm text-slate-400 leading-relaxed">{step.desc}</p>
+                  <h3 className="text-lg font-bold text-[#1c1917] mb-2">{step.title}</h3>
+                  <p className="text-sm text-[#6b7280] leading-relaxed">{step.desc}</p>
                 </GlassCard>
               </div>
             ))}
@@ -367,7 +367,7 @@ export default function V2CateringPreview({ data }: { data: GeneratedSiteData })
 
       {/* 9. FAQ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #120a0a 50%, ${BG} 100%)` }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #f5efe8 50%, ${BG} 100%)` }} />
         <ElegantPattern opacity={0.02} accent={ACCENT} />
         <div className="max-w-3xl mx-auto px-6 relative z-10">
           <SectionHeader badge="FAQ" title="Questions & Answers" accent={ACCENT} />
@@ -377,30 +377,30 @@ export default function V2CateringPreview({ data }: { data: GeneratedSiteData })
 
       {/* 10. CONTACT */}
       <section id="contact" className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #10080a 50%, ${BG} 100%)` }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #f5efe8 50%, ${BG} 100%)` }} />
         <ElegantPattern opacity={0.02} accent={ACCENT} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
             <div>
               <span className="inline-block text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border" style={{ color: ACCENT, borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}>Contact Us</span>
-              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-6 text-white">Plan Your Event</h2>
-              <p className="text-slate-400 leading-relaxed mb-8">Contact {data.businessName} to schedule your complimentary consultation.</p>
+              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-6 text-[#1c1917]">Plan Your Event</h2>
+              <p className="text-[#6b7280] leading-relaxed mb-8">Contact {data.businessName} to schedule your complimentary consultation.</p>
               <div className="space-y-5">
-                <div className="flex items-start gap-4"><div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: ACCENT_GLOW }}><MapPin size={20} weight="duotone" style={{ color: ACCENT }} /></div><div><p className="text-sm font-semibold text-white">Address</p><MapLink address={data.address} className="text-sm text-slate-400" /></div></div>
-                <div className="flex items-start gap-4"><div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: ACCENT_GLOW }}><Phone size={20} weight="duotone" style={{ color: ACCENT }} /></div><div><p className="text-sm font-semibold text-white">Phone</p><PhoneLink phone={data.phone} className="text-sm text-slate-400" /></div></div>
-                {data.hours && <div className="flex items-start gap-4"><div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: ACCENT_GLOW }}><Clock size={20} weight="duotone" style={{ color: ACCENT }} /></div><div><p className="text-sm font-semibold text-white">Hours</p><p className="text-sm text-slate-400 whitespace-pre-line">{data.hours}</p></div></div>}
+                <div className="flex items-start gap-4"><div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: ACCENT_GLOW }}><MapPin size={20} weight="duotone" style={{ color: ACCENT }} /></div><div><p className="text-sm font-semibold text-[#1c1917]">Address</p><MapLink address={data.address} className="text-sm text-[#6b7280]" /></div></div>
+                <div className="flex items-start gap-4"><div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: ACCENT_GLOW }}><Phone size={20} weight="duotone" style={{ color: ACCENT }} /></div><div><p className="text-sm font-semibold text-[#1c1917]">Phone</p><PhoneLink phone={data.phone} className="text-sm text-[#6b7280]" /></div></div>
+                {data.hours && <div className="flex items-start gap-4"><div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: ACCENT_GLOW }}><Clock size={20} weight="duotone" style={{ color: ACCENT }} /></div><div><p className="text-sm font-semibold text-[#1c1917]">Hours</p><p className="text-sm text-[#6b7280] whitespace-pre-line">{data.hours}</p></div></div>}
               </div>
             </div>
             <GlassCard className="p-8">
-              <h3 className="text-xl font-semibold text-white mb-6">Request a Consultation</h3>
+              <h3 className="text-xl font-semibold text-[#1c1917] mb-6">Request a Consultation</h3>
               <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div><label className="block text-sm text-slate-400 mb-1.5">Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="Your name" /></div>
-                  <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
+                  <div><label className="block text-sm text-[#6b7280] mb-1.5">Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[#1c1917] placeholder-gray-400 focus:outline-none text-sm" placeholder="Your name" /></div>
+                  <div><label className="block text-sm text-[#6b7280] mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[#1c1917] placeholder-gray-400 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
                 </div>
-                <div><label className="block text-sm text-slate-400 mb-1.5">Event Type</label><select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none text-sm"><option value="" className="bg-neutral-900">Select event type</option>{data.services.map((s) => <option key={s.name} value={s.name.toLowerCase()} className="bg-neutral-900">{s.name}</option>)}</select></div>
-                <div><label className="block text-sm text-slate-400 mb-1.5">Event Details</label><textarea rows={4} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm resize-none" placeholder="Date, guest count, dietary needs..." /></div>
-                <MagneticButton className="w-full py-4 rounded-xl text-base font-semibold text-white flex items-center justify-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>Schedule Consultation <ArrowRight size={18} weight="bold" /></MagneticButton>
+                <div><label className="block text-sm text-[#6b7280] mb-1.5">Event Type</label><select className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[#1c1917] focus:outline-none text-sm"><option value="" className="bg-white">Select event type</option>{data.services.map((s) => <option key={s.name} value={s.name.toLowerCase()} className="bg-white">{s.name}</option>)}</select></div>
+                <div><label className="block text-sm text-[#6b7280] mb-1.5">Event Details</label><textarea rows={4} className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[#1c1917] placeholder-gray-400 focus:outline-none text-sm resize-none" placeholder="Date, guest count, dietary needs..." /></div>
+                <MagneticButton className="w-full py-4 rounded-xl text-base font-semibold text-[#1c1917] flex items-center justify-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>Schedule Consultation <ArrowRight size={18} weight="bold" /></MagneticButton>
               </form>
             </GlassCard>
           </div>
@@ -409,12 +409,12 @@ export default function V2CateringPreview({ data }: { data: GeneratedSiteData })
 
       {/* 11. GUARANTEE */}
       <section className="relative z-10 py-16 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #120a0a 100%)` }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #f5efe8 100%)` }} />
         <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
           <ShimmerBorder accent={ACCENT}><div className="p-8 md:p-12">
             <ShieldCheck size={48} weight="fill" style={{ color: ACCENT }} className="mx-auto mb-4" />
-            <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-4">Our Promise</h2>
-            <p className="text-slate-400 leading-relaxed max-w-2xl mx-auto text-lg">{data.businessName} guarantees exceptional cuisine and flawless service for every event.</p>
+            <h2 className="text-2xl md:text-4xl font-extrabold text-[#1c1917] mb-4">Our Promise</h2>
+            <p className="text-[#6b7280] leading-relaxed max-w-2xl mx-auto text-lg">{data.businessName} guarantees exceptional cuisine and flawless service for every event.</p>
             <div className="flex flex-wrap justify-center gap-4 mt-8">
               {["Award-Winning Cuisine", "Farm-to-Table Fresh", "Custom Menus", "Full Service"].map((item) => (
                 <span key={item} className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border" style={{ color: ACCENT, borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}><CheckCircle size={16} weight="fill" /> {item}</span>
@@ -425,18 +425,18 @@ export default function V2CateringPreview({ data }: { data: GeneratedSiteData })
       </section>
 
       {/* 12. FOOTER */}
-      <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #080505 100%)` }} />
+      <footer className="relative z-10 border-t border-gray-100 py-10 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #f0e8df 100%)` }} />
         <ElegantPattern opacity={0.015} accent={ACCENT} />
         <div className="mx-auto max-w-6xl px-6 relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-            <div><div className="flex items-center gap-2 mb-3"><ForkKnife size={22} weight="fill" style={{ color: ACCENT }} /><span className="text-lg font-bold text-white">{data.businessName}</span></div><p className="text-sm text-slate-500 leading-relaxed">{data.about.length > 120 ? data.about.slice(0, 120).trim() + "..." : data.about}</p></div>
-            <div><h4 className="text-sm font-semibold text-white mb-3">Quick Links</h4><div className="space-y-2">{["Services", "Gallery", "About", "Contact"].map((link) => <a key={link} href={`#${link.toLowerCase()}`} className="block text-sm text-slate-500 hover:text-white transition-colors">{link}</a>)}</div></div>
-            <div><h4 className="text-sm font-semibold text-white mb-3">Contact</h4><div className="space-y-2 text-sm text-slate-500"><p><PhoneLink phone={data.phone} /></p><p><MapLink address={data.address} /></p>{data.socialLinks && Object.entries(data.socialLinks).map(([platform, url]) => <a key={platform} href={url} target="_blank" rel="noopener noreferrer" className="block hover:text-white transition-colors capitalize">{platform}</a>)}</div></div>
+            <div><div className="flex items-center gap-2 mb-3"><ForkKnife size={22} weight="fill" style={{ color: ACCENT }} /><span className="text-lg font-bold text-[#1c1917]">{data.businessName}</span></div><p className="text-sm text-[#9ca3af] leading-relaxed">{data.about.length > 120 ? data.about.slice(0, 120).trim() + "..." : data.about}</p></div>
+            <div><h4 className="text-sm font-semibold text-[#1c1917] mb-3">Quick Links</h4><div className="space-y-2">{["Services", "Gallery", "About", "Contact"].map((link) => <a key={link} href={`#${link.toLowerCase()}`} className="block text-sm text-[#9ca3af] hover:text-[#1c1917] transition-colors">{link}</a>)}</div></div>
+            <div><h4 className="text-sm font-semibold text-[#1c1917] mb-3">Contact</h4><div className="space-y-2 text-sm text-[#9ca3af]"><p><PhoneLink phone={data.phone} /></p><p><MapLink address={data.address} /></p>{data.socialLinks && Object.entries(data.socialLinks).map(([platform, url]) => <a key={platform} href={url} target="_blank" rel="noopener noreferrer" className="block hover:text-[#1c1917] transition-colors capitalize">{platform}</a>)}</div></div>
           </div>
-          <div className="border-t border-white/5 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-2 text-sm text-slate-500"><ForkKnife size={14} weight="fill" style={{ color: ACCENT }} /><span>{data.businessName} &copy; {new Date().getFullYear()}</span></div>
-            <div className="flex items-center gap-2 text-xs text-slate-600"><BluejayLogo className="w-4 h-4" /><span>Website created by Bluejay Business Solutions</span></div>
+          <div className="border-t border-gray-100 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-2 text-sm text-[#9ca3af]"><ForkKnife size={14} weight="fill" style={{ color: ACCENT }} /><span>{data.businessName} &copy; {new Date().getFullYear()}</span></div>
+            <div className="flex items-center gap-2 text-xs text-[#6b7280]"><BluejayLogo className="w-4 h-4" /><span>Website created by Bluejay Business Solutions</span></div>
           </div>
         </div>
       </footer>

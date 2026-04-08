@@ -36,7 +36,7 @@ const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
 
 /* ───────────────────────── COLORS ───────────────────────── */
-const CHARCOAL = "#1a1a1a";
+const CHARCOAL = "#faf9f7";
 const DEFAULT_GOLD = "#ca8a04";
 const COOL_SLATE = "#64748b";
 
@@ -187,7 +187,7 @@ function HeroCameraSVG({ accent }: { accent: string }) {
 /* ───────────────────────── GLASS CARD ───────────────────────── */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
+    <div className={`rounded-2xl border border-gray-200 bg-white/70 backdrop-blur-xl shadow-sm ${className}`}>
       {children}
     </div>
   );
@@ -243,7 +243,7 @@ function ShimmerBorder({ children, className = "", accent }: { children: React.R
   return (
     <div className={`relative rounded-2xl p-[1px] overflow-hidden ${className}`}>
       <motion.div className="absolute inset-0 rounded-2xl" style={{ background: `conic-gradient(from 0deg, transparent, ${accent}, transparent, ${COOL_SLATE}, transparent)`, willChange: "transform" }} animate={{ rotate: [0, 360] }} transition={{ duration: 4, repeat: Infinity, ease: "linear" }} />
-      <div className="relative rounded-2xl bg-[#141414] z-10">{children}</div>
+      <div className="relative rounded-2xl bg-white z-10">{children}</div>
     </div>
   );
 }
@@ -253,13 +253,13 @@ function AccordionItem({ question, answer, isOpen, onToggle }: { question: strin
   return (
     <GlassCard className="overflow-hidden">
       <button onClick={onToggle} className="w-full flex items-center justify-between p-5 md:p-6 text-left group cursor-pointer">
-        <span className="text-lg font-semibold text-white pr-4">{question}</span>
-        <motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={spring}><CaretDown size={20} className="text-slate-400 shrink-0" /></motion.div>
+        <span className="text-lg font-semibold text-[#1c1917] pr-4">{question}</span>
+        <motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={spring}><CaretDown size={20} className="text-[#6b7280] shrink-0" /></motion.div>
       </button>
       <AnimatePresence initial={false}>
         {isOpen && (
           <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={spring} className="overflow-hidden">
-            <p className="px-5 pb-5 md:px-6 md:pb-6 text-slate-400 leading-relaxed">{answer}</p>
+            <p className="px-5 pb-5 md:px-6 md:pb-6 text-[#6b7280] leading-relaxed">{answer}</p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -272,9 +272,9 @@ function SectionHeader({ badge, title, subtitle, accent }: { badge: string; titl
   return (
     <div className="text-center mb-16">
       <span className="inline-block text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border" style={{ color: accent, borderColor: `${accent}33`, background: `${accent}0d` }}>{badge}</span>
-      <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white">{title}</h2>
+      <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-[#1c1917]">{title}</h2>
       <div className="h-0.5 w-16 mx-auto mt-4" style={{ background: `linear-gradient(to right, ${accent}, transparent)` }} />
-      {subtitle && <p className="text-slate-400 mt-4 max-w-2xl text-lg leading-relaxed mx-auto">{subtitle}</p>}
+      {subtitle && <p className="text-[#6b7280] mt-4 max-w-2xl text-lg leading-relaxed mx-auto">{subtitle}</p>}
     </div>
   );
 }
@@ -295,14 +295,14 @@ function ClaimBanner({ businessName, accentColor, prospectId }: { businessName: 
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50">
-      <div className="bg-[#1a1a1a]/90 backdrop-blur-sm border-t border-white/10 px-4 py-2 flex items-center justify-center gap-4">
-        <p className="text-xs text-slate-400"><span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1.5 animate-pulse" />47 businesses in your area upgraded their website this month</p>
+      <div className="bg-white/90 backdrop-blur-sm border-t border-gray-200 px-4 py-2 flex items-center justify-center gap-4">
+        <p className="text-xs text-[#6b7280]"><span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1.5 animate-pulse" />47 businesses in your area upgraded their website this month</p>
         {timeLeft && timeLeft !== "EXPIRED" && <p className="text-xs font-bold" style={{ color: accentColor }}>Preview expires in {timeLeft}</p>}
       </div>
       <div className="px-6 py-4 flex items-center justify-between gap-4" style={{ background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}10)`, borderTop: `1px solid ${accentColor}30` }}>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-white truncate">This website was built for {businessName}</p>
-          <p className="text-xs text-slate-400">Claim it before we offer it to a competitor</p>
+          <p className="text-sm font-semibold text-[#1c1917] truncate">This website was built for {businessName}</p>
+          <p className="text-xs text-[#6b7280]">Claim it before we offer it to a competitor</p>
         </div>
         <a href={`/claim/${prospectId}`} className="shrink-0 h-11 px-6 rounded-full text-black text-sm font-bold flex items-center gap-2 hover:shadow-lg transition-all duration-300" style={{ background: accentColor }}>
           Claim Your Website
@@ -334,7 +334,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
   ];
 
   return (
-    <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: CHARCOAL, color: "#f1f5f9" }}>
+    <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: CHARCOAL, color: "#1c1917" }}>
       <FloatingBokeh accent={PRIMARY} />
 
       {/* ══════════════════ 1. NAV ══════════════════ */}
@@ -343,19 +343,19 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
           <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
             <div className="flex items-center gap-2">
               <Aperture size={24} weight="fill" style={{ color: PRIMARY }} />
-              <span className="text-lg font-bold tracking-tight text-white">{data.businessName}</span>
+              <span className="text-lg font-bold tracking-tight text-[#1c1917]">{data.businessName}</span>
             </div>
-            <div className="hidden md:flex items-center gap-8 text-sm text-slate-400">
-              <a href="#portfolio" className="hover:text-white transition-colors">Portfolio</a>
-              <a href="#services" className="hover:text-white transition-colors">Services</a>
-              <a href="#about" className="hover:text-white transition-colors">About</a>
-              <a href="#contact" className="hover:text-white transition-colors">Contact</a>
+            <div className="hidden md:flex items-center gap-8 text-sm text-[#6b7280]">
+              <a href="#portfolio" className="hover:text-[#1c1917] transition-colors">Portfolio</a>
+              <a href="#services" className="hover:text-[#1c1917] transition-colors">Services</a>
+              <a href="#about" className="hover:text-[#1c1917] transition-colors">About</a>
+              <a href="#contact" className="hover:text-[#1c1917] transition-colors">Contact</a>
             </div>
             <div className="flex items-center gap-3">
               <MagneticButton className="px-4 md:px-5 py-2 rounded-full text-sm font-semibold text-black transition-colors cursor-pointer" style={{ background: PRIMARY } as React.CSSProperties}>
                 Book a Session
               </MagneticButton>
-              <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden p-2 rounded-lg text-white hover:bg-white/10 transition-colors">
+              <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden p-2 rounded-lg text-[#1c1917] hover:bg-gray-100 transition-colors">
                 {mobileMenuOpen ? <X size={24} /> : <List size={24} />}
               </button>
             </div>
@@ -365,7 +365,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
               <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.3, ease: "easeInOut" }} className="md:hidden mt-2 overflow-hidden">
                 <GlassCard className="flex flex-col gap-1 px-4 py-4">
                   {[{ label: "Portfolio", href: "#portfolio" }, { label: "Services", href: "#services" }, { label: "About", href: "#about" }, { label: "Contact", href: "#contact" }].map((link) => (
-                    <a key={link.label} href={link.href} onClick={() => setMobileMenuOpen(false)} className="block px-4 py-3 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-white/5 transition-colors">{link.label}</a>
+                    <a key={link.label} href={link.href} onClick={() => setMobileMenuOpen(false)} className="block px-4 py-3 rounded-lg text-sm text-[#4b5563] hover:text-[#1c1917] hover:bg-gray-50 transition-colors">{link.label}</a>
                   ))}
                 </GlassCard>
               </motion.div>
@@ -379,7 +379,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
         <div className="absolute inset-0">
           <img src={heroImage} alt={`${data.businessName} photography`} className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/30" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a1a] via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#faf9f7] via-transparent to-transparent" />
         </div>
         <HeroCameraSVG accent={PRIMARY} />
 
@@ -387,11 +387,11 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
           <div className="max-w-2xl space-y-8">
             <div>
               <p className="text-sm uppercase tracking-widest mb-4" style={{ color: PRIMARY }}>Professional Photography</p>
-              <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 20px rgba(0,0,0,0.7)" }}>
+              <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-[#1c1917]" style={{ textShadow: "0 2px 20px rgba(0,0,0,0.7)" }}>
                 {data.tagline}
               </h1>
             </div>
-            <p className="text-lg text-slate-300 max-w-md leading-relaxed">
+            <p className="text-lg text-[#4b5563] max-w-md leading-relaxed">
               {data.about.length > 160 ? data.about.slice(0, 160).trim() + "..." : data.about}
             </p>
             <div className="flex flex-wrap gap-4">
@@ -399,12 +399,12 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
                 View Portfolio
                 <ArrowRight size={18} weight="bold" />
               </MagneticButton>
-              <MagneticButton href={`tel:${data.phone.replace(/\D/g, "")}`} className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/20 flex items-center gap-2 cursor-pointer backdrop-blur-sm">
+              <MagneticButton href={`tel:${data.phone.replace(/\D/g, "")}`} className="px-8 py-4 rounded-full text-base font-semibold text-[#1c1917] border border-white/20 flex items-center gap-2 cursor-pointer backdrop-blur-sm">
                 <Phone size={18} weight="duotone" />
                 <PhoneLink phone={data.phone} />
               </MagneticButton>
             </div>
-            <div className="flex flex-wrap gap-6 text-sm text-slate-300">
+            <div className="flex flex-wrap gap-6 text-sm text-[#4b5563]">
               <span className="flex items-center gap-2">
                 <MapPin size={16} weight="duotone" style={{ color: PRIMARY }} />
                 <MapLink address={data.address} />
@@ -420,7 +420,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
 
       {/* ══════════════════ 3. STATS ══════════════════ */}
       <section className="relative z-10 py-16 overflow-hidden border-y" style={{ borderColor: `${PRIMARY}1a` }}>
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #151310 0%, #1a1a1a 100%)" }} />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #151310 0%, #faf9f7 100%)" }} />
         <AperturePattern opacity={0.02} accent={PRIMARY} />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] rounded-full blur-[180px]" style={{ background: `${PRIMARY}08` }} />
@@ -434,9 +434,9 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
                 <div key={stat.label} className="text-center">
                   <div className="flex items-center justify-center gap-2 mb-2">
                     <Icon size={22} weight="fill" style={{ color: PRIMARY }} />
-                    <span className="text-3xl md:text-4xl font-extrabold text-white">{stat.value}</span>
+                    <span className="text-3xl md:text-4xl font-extrabold text-[#1c1917]">{stat.value}</span>
                   </div>
-                  <span className="text-slate-500 text-sm font-medium tracking-wide uppercase">{stat.label}</span>
+                  <span className="text-[#9ca3af] text-sm font-medium tracking-wide uppercase">{stat.label}</span>
                 </div>
               );
             })}
@@ -446,7 +446,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
 
       {/* ══════════════════ 4. PORTFOLIO GALLERY — PRIMARY SECTION ══════════════════ */}
       <section id="portfolio" className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #12100e 50%, #1a1a1a 100%)" }} />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #12100e 50%, #faf9f7 100%)" }} />
         <AperturePattern opacity={0.02} accent={PRIMARY} />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-[20%] right-[10%] w-[500px] h-[500px] rounded-full blur-[200px]" style={{ background: `${PRIMARY}06` }} />
@@ -458,7 +458,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
           {/* Masonry-style gallery */}
           <div className="columns-1 md:columns-2 lg:columns-3 gap-4 space-y-4">
             {galleryImages.map((src, i) => (
-              <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.06] hover:border-opacity-30 transition-all duration-500 break-inside-avoid">
+              <div key={i} className="group relative rounded-2xl overflow-hidden border border-gray-200/60 hover:border-opacity-30 transition-all duration-500 break-inside-avoid">
                 <img
                   src={src}
                   alt={`Portfolio piece ${i + 1}`}
@@ -479,7 +479,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
 
       {/* ══════════════════ 5. SERVICES ══════════════════ */}
       <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #141210 50%, #1a1a1a 100%)" }} />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #141210 50%, #faf9f7 100%)" }} />
         <FilmStripBG opacity={0.025} accent={PRIMARY} />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-[10%] right-[5%] w-[500px] h-[500px] rounded-full blur-[160px]" style={{ background: `${PRIMARY}08` }} />
@@ -492,7 +492,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
             {data.services.map((service, i) => {
               const Icon = getServiceIcon(service.name);
               return (
-                <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.02]">
+                <div key={service.name} className="group relative p-7 rounded-2xl border border-gray-200/60 hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/60">
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${PRIMARY}15, transparent 70%)` }} />
                   <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${PRIMARY}4d, transparent)` }} />
                   <div className="relative z-10">
@@ -500,10 +500,10 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
                       <div className="w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 border" style={{ background: PRIMARY_GLOW, borderColor: `${PRIMARY}33` }}>
                         <Icon size={24} weight="duotone" style={{ color: PRIMARY }} />
                       </div>
-                      <span className="text-xs font-mono text-slate-600">{String(i + 1).padStart(2, "0")}</span>
+                      <span className="text-xs font-mono text-[#6b7280]">{String(i + 1).padStart(2, "0")}</span>
                     </div>
-                    <h3 className="text-lg font-bold text-white mb-2">{service.name}</h3>
-                    <p className="text-sm text-slate-400 leading-relaxed">{service.description || ""}</p>
+                    <h3 className="text-lg font-bold text-[#1c1917] mb-2">{service.name}</h3>
+                    <p className="text-sm text-[#6b7280] leading-relaxed">{service.description || ""}</p>
                     {service.price && <p className="text-sm font-semibold mt-3" style={{ color: PRIMARY }}>{service.price}</p>}
                   </div>
                 </div>
@@ -515,7 +515,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
 
       {/* ══════════════════ 6. ABOUT ══════════════════ */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f0e0c 50%, #1a1a1a 100%)" }} />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #0f0e0c 50%, #faf9f7 100%)" }} />
         <FilmStripBG opacity={0.02} accent={PRIMARY} />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-[20%] left-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${PRIMARY}06` }} />
@@ -524,7 +524,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="relative">
-              <div className="rounded-2xl overflow-hidden border border-white/10">
+              <div className="rounded-2xl overflow-hidden border border-gray-200">
                 <img src={aboutImage} alt={`${data.businessName} photographer`} className="w-full h-[400px] object-cover" />
               </div>
               <div className="absolute -bottom-4 -right-4 md:bottom-6 md:-right-6">
@@ -535,8 +535,8 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
             </div>
             <div>
               <span className="inline-block text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border" style={{ color: PRIMARY, borderColor: `${PRIMARY}33`, background: `${PRIMARY}0d` }}>About the Artist</span>
-              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-6 text-white">Every Frame Has a Story</h2>
-              <p className="text-slate-400 leading-relaxed mb-8">{data.about}</p>
+              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-6 text-[#1c1917]">Every Frame Has a Story</h2>
+              <p className="text-[#6b7280] leading-relaxed mb-8">{data.about}</p>
               <div className="grid grid-cols-2 gap-4">
                 {[
                   { icon: Camera, label: "Professional Gear" },
@@ -548,7 +548,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
                     <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: PRIMARY_GLOW }}>
                       <badge.icon size={20} weight="duotone" style={{ color: PRIMARY }} />
                     </div>
-                    <span className="text-sm font-semibold text-white">{badge.label}</span>
+                    <span className="text-sm font-semibold text-[#1c1917]">{badge.label}</span>
                   </GlassCard>
                 ))}
               </div>
@@ -559,7 +559,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
 
       {/* ══════════════════ 7. FEATURED GALLERY ROW ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #12100e 50%, #1a1a1a 100%)" }} />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #12100e 50%, #faf9f7 100%)" }} />
         <AperturePattern opacity={0.02} accent={PRIMARY} />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${COOL_SLATE}06` }} />
@@ -569,7 +569,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
           <SectionHeader badge="Featured" title="Recent Sessions" accent={PRIMARY} />
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {galleryImages.slice(0, 4).map((src, i) => (
-              <div key={i} className="group relative aspect-square rounded-2xl overflow-hidden border border-white/[0.06] hover:border-opacity-30 transition-all duration-500">
+              <div key={i} className="group relative aspect-square rounded-2xl overflow-hidden border border-gray-200/60 hover:border-opacity-30 transition-all duration-500">
                 <img src={src} alt={`Featured ${i + 1}`} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
                   <Aperture size={32} weight="duotone" style={{ color: PRIMARY }} />
@@ -582,7 +582,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
 
       {/* ══════════════════ 8. TESTIMONIALS ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #141210 50%, #1a1a1a 100%)" }} />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #141210 50%, #faf9f7 100%)" }} />
         <AperturePattern opacity={0.02} accent={PRIMARY} />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-[20%] right-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${PRIMARY}06` }} />
@@ -598,9 +598,9 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
                     <Star key={j} size={16} weight="fill" style={{ color: PRIMARY }} />
                   ))}
                 </div>
-                <p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p>
-                <div className="pt-4 border-t border-white/5 flex items-center justify-between">
-                  <span className="text-sm font-semibold text-white">{t.name}</span>
+                <p className="text-[#4b5563] leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p>
+                <div className="pt-4 border-t border-gray-100 flex items-center justify-between">
+                  <span className="text-sm font-semibold text-[#1c1917]">{t.name}</span>
                 </div>
               </GlassCard>
             ))}
@@ -619,7 +619,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
           <p className="text-lg text-black/70 mb-8 max-w-xl mx-auto">
             Let&apos;s create something beautiful together. {data.businessName} is booking for the upcoming season.
           </p>
-          <PhoneLink phone={data.phone} className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-black text-white font-bold text-lg hover:bg-black/80 transition-colors">
+          <PhoneLink phone={data.phone} className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-black text-[#1c1917] font-bold text-lg hover:bg-black/80 transition-colors">
             <Phone size={22} weight="fill" />
             {data.phone}
           </PhoneLink>
@@ -628,7 +628,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
 
       {/* ══════════════════ 10. SERVICE AREAS ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f0e0c 50%, #1a1a1a 100%)" }} />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #0f0e0c 50%, #faf9f7 100%)" }} />
         <AperturePattern opacity={0.02} accent={PRIMARY} />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-[40%] right-[20%] w-[400px] h-[400px] rounded-full blur-[180px]" style={{ background: `${COOL_SLATE}06` }} />
@@ -640,9 +640,9 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
             <GlassCard className="p-8 inline-block">
               <div className="flex items-center gap-3 text-lg">
                 <MapPin size={24} weight="duotone" style={{ color: PRIMARY }} />
-                <MapLink address={data.address} className="text-white font-semibold" />
+                <MapLink address={data.address} className="text-[#1c1917] font-semibold" />
               </div>
-              <p className="text-slate-400 text-sm mt-2">Available for travel &amp; destination shoots</p>
+              <p className="text-[#6b7280] text-sm mt-2">Available for travel &amp; destination shoots</p>
             </GlassCard>
           </div>
         </div>
@@ -651,7 +651,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
       {/* ══════════════════ 11. HOURS ══════════════════ */}
       {data.hours && (
         <section className="relative z-10 py-24 md:py-32 overflow-hidden">
-          <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #141210 50%, #1a1a1a 100%)" }} />
+          <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #141210 50%, #faf9f7 100%)" }} />
           <FilmStripBG opacity={0.02} accent={PRIMARY} />
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute top-[20%] left-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${PRIMARY}06` }} />
@@ -662,7 +662,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
               <ShimmerBorder accent={PRIMARY}>
                 <div className="p-8">
                   <Clock size={32} weight="duotone" style={{ color: PRIMARY }} className="mx-auto mb-4" />
-                  <p className="text-slate-300 leading-relaxed whitespace-pre-line text-lg">{data.hours}</p>
+                  <p className="text-[#4b5563] leading-relaxed whitespace-pre-line text-lg">{data.hours}</p>
                   <p className="text-sm mt-4 font-semibold" style={{ color: PRIMARY }}>Weekend &amp; evening sessions by appointment</p>
                 </div>
               </ShimmerBorder>
@@ -673,7 +673,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
 
       {/* ══════════════════ 12. FAQ ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #141210 50%, #1a1a1a 100%)" }} />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #141210 50%, #faf9f7 100%)" }} />
         <FilmStripBG opacity={0.02} accent={PRIMARY} />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-[20%] left-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${PRIMARY}06` }} />
@@ -690,7 +690,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
 
       {/* ══════════════════ 13. CONTACT ══════════════════ */}
       <section id="contact" className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f0e0c 50%, #1a1a1a 100%)" }} />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #0f0e0c 50%, #faf9f7 100%)" }} />
         <AperturePattern opacity={0.02} accent={PRIMARY} />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${PRIMARY}06` }} />
@@ -700,48 +700,48 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
             <div>
               <span className="inline-block text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border" style={{ color: PRIMARY, borderColor: `${PRIMARY}33`, background: `${PRIMARY}0d` }}>Contact</span>
-              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-6 text-white">Let&apos;s Create Together</h2>
-              <p className="text-slate-400 leading-relaxed mb-8">
+              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-6 text-[#1c1917]">Let&apos;s Create Together</h2>
+              <p className="text-[#6b7280] leading-relaxed mb-8">
                 Ready to capture your special moments? Reach out to {data.businessName} to discuss your vision and book your session.
               </p>
               <div className="space-y-5">
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: PRIMARY_GLOW }}><MapPin size={20} weight="duotone" style={{ color: PRIMARY }} /></div>
-                  <div><p className="text-sm font-semibold text-white">Studio</p><MapLink address={data.address} className="text-sm text-slate-400" /></div>
+                  <div><p className="text-sm font-semibold text-[#1c1917]">Studio</p><MapLink address={data.address} className="text-sm text-[#6b7280]" /></div>
                 </div>
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: PRIMARY_GLOW }}><Phone size={20} weight="duotone" style={{ color: PRIMARY }} /></div>
-                  <div><p className="text-sm font-semibold text-white">Phone</p><PhoneLink phone={data.phone} className="text-sm text-slate-400" /></div>
+                  <div><p className="text-sm font-semibold text-[#1c1917]">Phone</p><PhoneLink phone={data.phone} className="text-sm text-[#6b7280]" /></div>
                 </div>
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: PRIMARY_GLOW }}><Camera size={20} weight="duotone" style={{ color: PRIMARY }} /></div>
-                  <div><p className="text-sm font-semibold text-white">Booking</p><p className="text-sm text-slate-400">Now accepting bookings for all seasons</p></div>
+                  <div><p className="text-sm font-semibold text-[#1c1917]">Booking</p><p className="text-sm text-[#6b7280]">Now accepting bookings for all seasons</p></div>
                 </div>
                 {data.hours && (
                   <div className="flex items-start gap-4">
                     <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: PRIMARY_GLOW }}><Clock size={20} weight="duotone" style={{ color: PRIMARY }} /></div>
-                    <div><p className="text-sm font-semibold text-white">Hours</p><p className="text-sm text-slate-400 whitespace-pre-line">{data.hours}</p></div>
+                    <div><p className="text-sm font-semibold text-[#1c1917]">Hours</p><p className="text-sm text-[#6b7280] whitespace-pre-line">{data.hours}</p></div>
                   </div>
                 )}
               </div>
             </div>
 
             <GlassCard className="p-8">
-              <h3 className="text-xl font-semibold text-white mb-6">Book Your Session</h3>
+              <h3 className="text-xl font-semibold text-[#1c1917] mb-6">Book Your Session</h3>
               <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div><label className="block text-sm text-slate-400 mb-1.5">First Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="Jane" /></div>
-                  <div><label className="block text-sm text-slate-400 mb-1.5">Last Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="Smith" /></div>
+                  <div><label className="block text-sm text-[#6b7280] mb-1.5">First Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[#1c1917] placeholder-gray-400 focus:outline-none text-sm" placeholder="Jane" /></div>
+                  <div><label className="block text-sm text-[#6b7280] mb-1.5">Last Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[#1c1917] placeholder-gray-400 focus:outline-none text-sm" placeholder="Smith" /></div>
                 </div>
-                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
+                <div><label className="block text-sm text-[#6b7280] mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[#1c1917] placeholder-gray-400 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
                 <div>
-                  <label className="block text-sm text-slate-400 mb-1.5">Service</label>
-                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none text-sm">
-                    <option value="" className="bg-neutral-900">Select a service</option>
-                    {data.services.map((s) => (<option key={s.name} value={s.name.toLowerCase().replace(/\s+/g, "-")} className="bg-neutral-900">{s.name}</option>))}
+                  <label className="block text-sm text-[#6b7280] mb-1.5">Service</label>
+                  <select className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[#1c1917] focus:outline-none text-sm">
+                    <option value="" className="bg-white">Select a service</option>
+                    {data.services.map((s) => (<option key={s.name} value={s.name.toLowerCase().replace(/\s+/g, "-")} className="bg-white">{s.name}</option>))}
                   </select>
                 </div>
-                <div><label className="block text-sm text-slate-400 mb-1.5">Tell Us About Your Vision</label><textarea rows={4} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm resize-none" placeholder="Describe the shoot you're envisioning..." /></div>
+                <div><label className="block text-sm text-[#6b7280] mb-1.5">Tell Us About Your Vision</label><textarea rows={4} className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[#1c1917] placeholder-gray-400 focus:outline-none text-sm resize-none" placeholder="Describe the shoot you're envisioning..." /></div>
                 <MagneticButton className="w-full py-4 rounded-xl text-base font-semibold text-black flex items-center justify-center gap-2 cursor-pointer" style={{ background: PRIMARY } as React.CSSProperties}>
                   Send Inquiry
                   <ArrowRight size={18} weight="bold" />
@@ -754,7 +754,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
 
       {/* ══════════════════ 14. GUARANTEE ══════════════════ */}
       <section className="relative z-10 py-16 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #141210 100%)" }} />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #141210 100%)" }} />
         <AperturePattern opacity={0.015} accent={PRIMARY} />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full blur-[180px]" style={{ background: `${PRIMARY}06` }} />
@@ -764,8 +764,8 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
           <ShimmerBorder accent={PRIMARY}>
             <div className="p-8 md:p-12">
               <ShieldCheck size={48} weight="fill" style={{ color: PRIMARY }} className="mx-auto mb-4" />
-              <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-4">Our Guarantee</h2>
-              <p className="text-slate-400 leading-relaxed max-w-2xl mx-auto text-lg">
+              <h2 className="text-2xl md:text-4xl font-extrabold text-[#1c1917] mb-4">Our Guarantee</h2>
+              <p className="text-[#6b7280] leading-relaxed max-w-2xl mx-auto text-lg">
                 {data.businessName} is committed to delivering images you&apos;ll treasure forever. If you&apos;re not thrilled with your gallery, we&apos;ll make it right with a complimentary re-shoot.
               </p>
               <div className="flex flex-wrap justify-center gap-4 mt-8">
@@ -781,44 +781,44 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
       </section>
 
       {/* ══════════════════ 15. FOOTER ══════════════════ */}
-      <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111 100%)" }} />
+      <footer className="relative z-10 border-t border-gray-100 py-10 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #f5f3ef 100%)" }} />
         <AperturePattern opacity={0.015} accent={PRIMARY} />
         <div className="mx-auto max-w-6xl px-6 relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
             <div>
               <div className="flex items-center gap-2 mb-3">
                 <Aperture size={22} weight="fill" style={{ color: PRIMARY }} />
-                <span className="text-lg font-bold text-white">{data.businessName}</span>
+                <span className="text-lg font-bold text-[#1c1917]">{data.businessName}</span>
               </div>
-              <p className="text-sm text-slate-500 leading-relaxed">{data.about.length > 120 ? data.about.slice(0, 120).trim() + "..." : data.about}</p>
+              <p className="text-sm text-[#9ca3af] leading-relaxed">{data.about.length > 120 ? data.about.slice(0, 120).trim() + "..." : data.about}</p>
             </div>
             <div>
-              <h4 className="text-sm font-semibold text-white mb-3">Quick Links</h4>
+              <h4 className="text-sm font-semibold text-[#1c1917] mb-3">Quick Links</h4>
               <div className="space-y-2">
                 {["Portfolio", "Services", "About", "Contact"].map((link) => (
-                  <a key={link} href={`#${link.toLowerCase()}`} className="block text-sm text-slate-500 hover:text-white transition-colors">{link}</a>
+                  <a key={link} href={`#${link.toLowerCase()}`} className="block text-sm text-[#9ca3af] hover:text-[#1c1917] transition-colors">{link}</a>
                 ))}
               </div>
             </div>
             <div>
-              <h4 className="text-sm font-semibold text-white mb-3">Contact</h4>
-              <div className="space-y-2 text-sm text-slate-500">
+              <h4 className="text-sm font-semibold text-[#1c1917] mb-3">Contact</h4>
+              <div className="space-y-2 text-sm text-[#9ca3af]">
                 <p><PhoneLink phone={data.phone} /></p>
                 <p><MapLink address={data.address} /></p>
                 {data.socialLinks && Object.entries(data.socialLinks).map(([platform, url]) => (
-                  <a key={platform} href={url} target="_blank" rel="noopener noreferrer" className="block hover:text-white transition-colors capitalize">{platform}</a>
+                  <a key={platform} href={url} target="_blank" rel="noopener noreferrer" className="block hover:text-[#1c1917] transition-colors capitalize">{platform}</a>
                 ))}
               </div>
             </div>
           </div>
 
-          <div className="border-t border-white/5 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-2 text-sm text-slate-500">
+          <div className="border-t border-gray-100 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-2 text-sm text-[#9ca3af]">
               <Aperture size={14} weight="fill" style={{ color: PRIMARY }} />
               <span>{data.businessName} &copy; {new Date().getFullYear()}</span>
             </div>
-            <div className="flex items-center gap-2 text-xs text-slate-600">
+            <div className="flex items-center gap-2 text-xs text-[#6b7280]">
               <BluejayLogo className="w-4 h-4" />
               <span>Website created by Bluejay Business Solutions</span>
             </div>

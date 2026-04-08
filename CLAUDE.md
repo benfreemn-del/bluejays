@@ -303,3 +303,11 @@ real-estate, dental, law-firm, landscaping, salon, electrician, plumber, hvac, r
 ## Gallery-Heavy Categories
 These categories MUST have prominent visual galleries/portfolios as a primary feature:
 tattoo, photography, interior-design, florist, landscaping, salon, catering, pet-services
+
+## Brand Color Rules
+- Business brand colors MUST be scraped from the prospect's existing website during data extraction
+- Scraped brand colors MUST be applied to ALL versions of the preview (V1 and V2)
+- Colors may be slightly altered to better fit the template theme (e.g., adjusting saturation or brightness)
+- If scraped colors are truly bad (clashing, unreadable, or unprofessional), they may be ignored in favor of the template's default palette
+- The quality review system MUST verify that brand colors have been applied or intentionally overridden
+- Brand color application should be checked as part of the quality gate before a site is marked 'pending-review'
