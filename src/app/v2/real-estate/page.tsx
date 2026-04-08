@@ -497,7 +497,7 @@ export default function V2RealEstatePage() {
                 <img
                   src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=800&h=600&fit=crop"
                   alt="Lead agent"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover object-top"
                 />
                 <div className="absolute inset-0 bg-gradient-to-r from-[#09090b]/40 to-transparent" />
               </div>

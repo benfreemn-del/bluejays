@@ -59,100 +59,162 @@ function ScissorsHairSVG() {
       {/* Pulsing glow */}
       <motion.div
         className="absolute inset-0 rounded-full"
-        style={{ background: "radial-gradient(circle, rgba(225,29,72,0.2) 0%, transparent 70%)", filter: "blur(50px)" }}
+        style={{ background: "radial-gradient(circle, rgba(225,29,72,0.25) 0%, transparent 70%)", filter: "blur(60px)" }}
         animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
         transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
       />
-      <svg viewBox="0 0 260 300" className="relative z-10 w-64 h-72 md:w-80 md:h-96" fill="none">
-        {/* Glow rings */}
-        <motion.circle cx="130" cy="140" r="120" stroke="#e11d48" strokeWidth="0.5" opacity={0.1}
-          animate={{ r: [118, 122, 118] }} transition={{ duration: 4, repeat: Infinity }} />
+      <svg viewBox="0 0 300 340" className="relative z-10 w-72 h-80 md:w-96 md:h-[28rem]" fill="none">
+        <defs>
+          {/* Metallic gradient for blades */}
+          <linearGradient id="bladeGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="#d4d4d8" stopOpacity="0.6" />
+            <stop offset="40%" stopColor="#fafafa" stopOpacity="0.4" />
+            <stop offset="60%" stopColor="#a1a1aa" stopOpacity="0.5" />
+            <stop offset="100%" stopColor="#71717a" stopOpacity="0.3" />
+          </linearGradient>
+          <linearGradient id="bladeEdge" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor="#e11d48" stopOpacity="0.8" />
+            <stop offset="100%" stopColor="#fb7185" stopOpacity="0.4" />
+          </linearGradient>
+          {/* Rose glow filter */}
+          <filter id="roseGlow">
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
 
-        {/* ── TOP BLADE (right-handed, curving up-right) ── */}
-        <motion.path
-          d="M90 130 L170 70 C178 64 188 62 195 66 C205 72 208 85 200 94 L170 70"
-          stroke="#e11d48" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" fill="none"
-          initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }}
-          transition={{ duration: 1.2, delay: 0.3, ease: "easeInOut" }}
-        />
-        {/* Top blade fill */}
-        <motion.path
-          d="M95 128 L175 68 C180 64 186 63 190 66 C195 70 192 78 185 80 L95 132Z"
-          fill="#e11d4818" stroke="none"
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }}
-        />
-        {/* Top blade edge highlight */}
-        <motion.path
-          d="M100 129 L168 72" stroke="#fb7185" strokeWidth="1" opacity={0.4}
-          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 0.8, duration: 0.8 }}
-        />
-        {/* Top finger hole */}
-        <motion.ellipse cx="195" cy="78" rx="18" ry="14"
-          stroke="#e11d48" strokeWidth="3" fill="#e11d4815"
-          transform="rotate(-35 195 78)"
-          initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-          transition={{ delay: 1.2, ease: "backOut" }}
-        />
-        <ellipse cx="195" cy="78" rx="10" ry="7" fill="#e11d480a" transform="rotate(-35 195 78)" />
+        {/* Outer glow rings */}
+        <motion.circle cx="150" cy="160" r="145" stroke="#e11d48" strokeWidth="0.5" opacity={0.08}
+          animate={{ r: [143, 147, 143] }} transition={{ duration: 5, repeat: Infinity }} />
+        <motion.circle cx="150" cy="160" r="125" stroke="#fb7185" strokeWidth="0.3" opacity={0.06}
+          animate={{ r: [123, 127, 123] }} transition={{ duration: 4, repeat: Infinity, delay: 1 }} />
 
-        {/* ── BOTTOM BLADE (curving down-right) ── */}
-        <motion.path
-          d="M90 150 L170 210 C178 216 188 218 195 214 C205 208 208 195 200 186 L170 210"
-          stroke="#e11d48" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" fill="none"
-          initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }}
-          transition={{ duration: 1.2, delay: 0.5, ease: "easeInOut" }}
-        />
-        {/* Bottom blade fill */}
-        <motion.path
-          d="M95 152 L175 212 C180 216 186 217 190 214 C195 210 192 202 185 200 L95 148Z"
-          fill="#e11d4818" stroke="none"
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2 }}
-        />
-        {/* Bottom blade edge highlight */}
-        <motion.path
-          d="M100 151 L168 208" stroke="#fb7185" strokeWidth="1" opacity={0.4}
-          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 1, duration: 0.8 }}
-        />
-        {/* Bottom finger hole */}
-        <motion.ellipse cx="195" cy="202" rx="18" ry="14"
-          stroke="#e11d48" strokeWidth="3" fill="#e11d4815"
-          transform="rotate(35 195 202)"
-          initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-          transition={{ delay: 1.4, ease: "backOut" }}
-        />
-        <ellipse cx="195" cy="202" rx="10" ry="7" fill="#e11d480a" transform="rotate(35 195 202)" />
-
-        {/* ── PIVOT SCREW ── */}
-        <motion.circle cx="90" cy="140" r="10" fill="#e11d4833" stroke="#e11d48" strokeWidth="3"
-          initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 1.5, ease: "backOut" }} />
-        <circle cx="90" cy="140" r="5" fill="#e11d4844" />
-        <circle cx="90" cy="140" r="2" fill="#e11d48" opacity={0.6} />
-
-        {/* ── SUBTLE SNIP ANIMATION ── */}
+        {/* ── TOP BLADE — animated open/close ── */}
         <motion.g
-          animate={{ rotate: [0, -3, 0, 3, 0] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          style={{ transformOrigin: "90px 140px" }}
+          animate={{ rotate: [0, -4, 0] }}
+          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+          style={{ transformOrigin: "105px 160px" }}
         >
-          {/* Just a hint of movement on the blades */}
+          {/* Blade body fill */}
+          <motion.path
+            d="M110 155 C120 140, 140 115, 165 90 C175 80, 195 65, 215 58 C225 55, 235 58, 238 65 C241 72, 236 82, 225 85 C210 88, 185 95, 165 110 C145 125, 125 145, 115 155 Z"
+            fill="url(#bladeGrad)"
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5, duration: 0.8 }}
+          />
+          {/* Blade outline */}
+          <motion.path
+            d="M110 155 C120 140, 140 115, 165 90 C175 80, 195 65, 215 58 C225 55, 235 58, 238 65 C241 72, 236 82, 225 85 C210 88, 185 95, 165 110 C145 125, 125 145, 115 155"
+            stroke="#e11d48" strokeWidth="2.5" strokeLinecap="round" fill="none"
+            initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }}
+            transition={{ duration: 1.2, delay: 0.3, ease: "easeInOut" }}
+          />
+          {/* Cutting edge highlight */}
+          <motion.path
+            d="M112 153 C122 138, 142 113, 167 88 C177 78, 197 63, 217 56"
+            stroke="url(#bladeEdge)" strokeWidth="1.5" fill="none" opacity={0.6}
+            initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 0.8, duration: 1 }}
+          />
+          {/* Inner blade shine */}
+          <motion.path
+            d="M118 148 C128 135, 145 115, 170 92 C178 84, 192 73, 210 66"
+            stroke="#ffffff" strokeWidth="0.8" fill="none" opacity={0.15}
+            initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 1, duration: 0.8 }}
+          />
+          {/* Top finger ring */}
+          <motion.ellipse cx="240" cy="62" rx="24" ry="20"
+            stroke="#e11d48" strokeWidth="3" fill="#e11d4812"
+            transform="rotate(-30 240 62)"
+            initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 1.2, ease: "backOut" }}
+          />
+          <ellipse cx="240" cy="62" rx="15" ry="12" fill="#e11d480a" transform="rotate(-30 240 62)" />
+          {/* Ring inner highlight */}
+          <ellipse cx="238" cy="59" rx="12" ry="9" stroke="#fb7185" strokeWidth="0.5" fill="none" opacity={0.2} transform="rotate(-30 238 59)" />
         </motion.g>
 
+        {/* ── BOTTOM BLADE — animated open/close ── */}
+        <motion.g
+          animate={{ rotate: [0, 4, 0] }}
+          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+          style={{ transformOrigin: "105px 160px" }}
+        >
+          {/* Blade body fill */}
+          <motion.path
+            d="M110 165 C120 180, 140 205, 165 230 C175 240, 195 255, 215 262 C225 265, 235 262, 238 255 C241 248, 236 238, 225 235 C210 232, 185 225, 165 210 C145 195, 125 175, 115 165 Z"
+            fill="url(#bladeGrad)"
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7, duration: 0.8 }}
+          />
+          {/* Blade outline */}
+          <motion.path
+            d="M110 165 C120 180, 140 205, 165 230 C175 240, 195 255, 215 262 C225 265, 235 262, 238 255 C241 248, 236 238, 225 235 C210 232, 185 225, 165 210 C145 195, 125 175, 115 165"
+            stroke="#e11d48" strokeWidth="2.5" strokeLinecap="round" fill="none"
+            initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }}
+            transition={{ duration: 1.2, delay: 0.5, ease: "easeInOut" }}
+          />
+          {/* Cutting edge highlight */}
+          <motion.path
+            d="M112 167 C122 182, 142 207, 167 232 C177 242, 197 257, 217 264"
+            stroke="url(#bladeEdge)" strokeWidth="1.5" fill="none" opacity={0.6}
+            initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 1, duration: 1 }}
+          />
+          {/* Inner blade shine */}
+          <motion.path
+            d="M118 172 C128 185, 145 205, 170 228 C178 236, 192 247, 210 254"
+            stroke="#ffffff" strokeWidth="0.8" fill="none" opacity={0.15}
+            initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 1.2, duration: 0.8 }}
+          />
+          {/* Bottom finger ring */}
+          <motion.ellipse cx="240" cy="258" rx="24" ry="20"
+            stroke="#e11d48" strokeWidth="3" fill="#e11d4812"
+            transform="rotate(30 240 258)"
+            initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 1.4, ease: "backOut" }}
+          />
+          <ellipse cx="240" cy="258" rx="15" ry="12" fill="#e11d480a" transform="rotate(30 240 258)" />
+          {/* Ring inner highlight */}
+          <ellipse cx="238" cy="261" rx="12" ry="9" stroke="#fb7185" strokeWidth="0.5" fill="none" opacity={0.2} transform="rotate(30 238 261)" />
+        </motion.g>
+
+        {/* ── PIVOT BOLT ── */}
+        <motion.circle cx="105" cy="160" r="14" fill="#e11d4830" stroke="#e11d48" strokeWidth="3.5"
+          filter="url(#roseGlow)"
+          initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 1.5, ease: "backOut" }} />
+        <circle cx="105" cy="160" r="8" fill="#e11d4850" />
+        <circle cx="105" cy="160" r="4" fill="#e11d48" opacity={0.7} />
+        {/* Bolt cross detail */}
+        <line x1="101" y1="160" x2="109" y2="160" stroke="#e11d48" strokeWidth="1.5" opacity={0.4} />
+        <line x1="105" y1="156" x2="105" y2="164" stroke="#e11d48" strokeWidth="1.5" opacity={0.4} />
+        {/* Rose glow ring around pivot */}
+        <motion.circle cx="105" cy="160" r="20" stroke="#e11d48" strokeWidth="1" fill="none" opacity={0.15}
+          animate={{ r: [19, 22, 19], opacity: [0.15, 0.25, 0.15] }}
+          transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+        />
+
         {/* ── SPARKLE ACCENTS ── */}
-        <motion.circle cx="220" cy="55" r="3.5" fill="#fb7185"
+        <motion.circle cx="265" cy="40" r="4" fill="#fb7185"
           animate={{ opacity: [0.2, 1, 0.2], scale: [0.7, 1.3, 0.7] }}
           transition={{ duration: 2.5, repeat: Infinity }} />
-        <motion.circle cx="40" cy="80" r="2.5" fill="#fda4af"
+        <motion.circle cx="30" cy="70" r="3" fill="#fda4af"
           animate={{ opacity: [0.1, 0.8, 0.1], scale: [0.5, 1.2, 0.5] }}
           transition={{ duration: 3, repeat: Infinity, delay: 0.8 }} />
-        <motion.circle cx="230" cy="230" r="3" fill="#fb7185"
+        <motion.circle cx="275" cy="280" r="3.5" fill="#fb7185"
           animate={{ opacity: [0.15, 0.7, 0.15] }}
           transition={{ duration: 2, repeat: Infinity, delay: 1.2 }} />
-        <motion.circle cx="35" cy="200" r="2" fill="#fda4af"
+        <motion.circle cx="25" cy="250" r="2.5" fill="#fda4af"
           animate={{ opacity: [0.1, 0.6, 0.1] }}
           transition={{ duration: 2.5, repeat: Infinity, delay: 0.4 }} />
-        <motion.circle cx="140" cy="30" r="2" fill="#e11d48"
+        <motion.circle cx="160" cy="20" r="2.5" fill="#e11d48"
           animate={{ opacity: [0.1, 0.5, 0.1] }}
           transition={{ duration: 3, repeat: Infinity, delay: 1.5 }} />
+        <motion.circle cx="50" cy="160" r="2" fill="#fb7185"
+          animate={{ opacity: [0.1, 0.6, 0.1], scale: [0.8, 1.2, 0.8] }}
+          transition={{ duration: 2, repeat: Infinity, delay: 2 }} />
+        <motion.circle cx="280" cy="160" r="2" fill="#fda4af"
+          animate={{ opacity: [0.1, 0.5, 0.1] }}
+          transition={{ duration: 3.5, repeat: Infinity, delay: 0.5 }} />
       </svg>
     </div>
   );

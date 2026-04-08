@@ -201,9 +201,9 @@ const services = [
 ];
 
 const beforeAfterGallery = [
-  { before: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&q=80", after: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=600&q=80", label: "Front Yard Transformation" },
-  { before: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&q=80", after: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=600&q=80", label: "Backyard Patio Project" },
-  { before: "https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?w=600&q=80", after: "https://images.unsplash.com/photo-1558904541-efa843a96f01?w=600&q=80", label: "Garden Redesign" },
+  { before: "https://images.unsplash.com/photo-1560749003-f4b1e17e2dff?w=600&q=80", after: "https://images.unsplash.com/photo-1592150621744-aca64f48394a?w=600&q=80", label: "Front Yard Transformation" },
+  { before: "https://images.unsplash.com/photo-1609347744403-2306e8a9ae27?w=600&q=80", after: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=600&q=80", label: "Backyard Patio Project" },
+  { before: "https://images.unsplash.com/photo-1501685532562-aa6846b14a0e?w=600&q=80", after: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=600&q=80", label: "Garden Redesign" },
 ];
 
 const processSteps = [
@@ -455,7 +455,7 @@ export default function V2LandscapingPage() {
               </div>
             </div>
             <div className="relative rounded-2xl overflow-hidden aspect-[4/3]">
-              <img src="https://images.unsplash.com/photo-1600240644455-3edc55c375fe?w=800&q=80" alt="Landscaping crew working" className="w-full h-full object-cover" />
+              <img src="https://images.unsplash.com/photo-1584738766473-61c083514bf4?w=800&q=80" alt="Beautiful residential landscaping" className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
               <div className="absolute bottom-6 left-6 right-6">
                 <GlassCard className="px-4 py-3 inline-flex items-center gap-3">

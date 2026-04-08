@@ -145,7 +145,15 @@ When spawning sub-agents to build templates or components:
 - **Every agent-built template needs a post-build image audit** — grep all image URLs, check for duplicates within the file AND across all other templates before pushing.
 - **ZERO TOLERANCE for broken images on live portfolio sites** — before ANY V2 showcase or preview goes live, EVERY Unsplash URL must be tested with `curl -s -o /dev/null -w "%{http_code}"` and confirmed HTTP 200. This is the #1 recurring issue and it's unacceptable. If an agent builds a template, the agent MUST test every image URL before declaring done. Broken images showing alt text on a portfolio site destroys credibility instantly.
 - **V2 hero SVG animations must be HIGH QUALITY and detailed** — every V2 template has an animated SVG in the hero section (piston for auto, tooth for dental, paw for vet, etc.). These MUST be detailed, recognizable, and premium-looking. No simple outline circles and lines — add fills with low-opacity gradients, inner highlights, glow effects, path-drawing animations, pulsing elements, sparkle accents. The animation is the first thing people see. If it looks like a rough sketch, rebuild it. Review the shape visually before pushing.
-- **Before/after and gallery images must make sense for the industry** — a roofing before/after should show ROOFS, not luxury houses with pools. A pet gallery should show PETS, not stock photos of random objects. Industry relevance is non-negotiable.
+- **People photos must show full faces** — always use `object-top` on headshot/portrait images so the face isn't cut off. Default `object-cover` centers on the middle of the image which cuts off heads. For team photos, agent photos, and testimonial photos, always add `object-top` or `object-[center_20%]` to keep faces visible.
+- **Before/after images are CRITICAL — get them right or don't include them** — This has been messed up REPEATEDLY. Rules:
+  1. BOTH images must show the SAME TYPE OF THING (e.g., both show roofs, both show bathrooms, both show lawns)
+  2. The "before" must look WORSE than the "after" — that's the whole point
+  3. Images must be RELEVANT TO THE INDUSTRY — a roofing before/after shows ROOFS not cabins and cars
+  4. Before using ANY before/after images, describe what BOTH images show and confirm they make sense together
+  5. If you can't find two matching industry-relevant images, DO NOT include a before/after section. Use a regular gallery instead.
+  6. This applies to: roofing, painting, pressure-washing, landscaping, cleaning, and any other transformation-based service
+- **Gallery images must make sense for the industry** — a roofing before/after should show ROOFS, not luxury houses with pools. A pet gallery should show PETS, not stock photos of random objects. Industry relevance is non-negotiable.
 
 ## V2 Upgrade Checklist (MANDATORY when building a new V2 for any category)
 When Ben asks to build a V2 (or higher) template for a category, ALL of these steps must be completed:

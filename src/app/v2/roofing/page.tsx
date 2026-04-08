@@ -391,7 +391,7 @@ function BeforeAfterSlider() {
       {/* "After" side — beautiful new roof */}
       <div className="absolute inset-0">
         <img
-          src="https://images.unsplash.com/photo-1632823469850-2f77dd9c7f93?w=800&q=80"
+          src="https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=800&q=80"
           alt="After — pristine new roof installation"
           className="w-full h-full object-cover object-center"
         />
@@ -405,7 +405,7 @@ function BeforeAfterSlider() {
         style={{ clipPath: `inset(0 ${100 - sliderPos}% 0 0)` }}
       >
         <img
-          src="https://images.unsplash.com/photo-1558036117-15d82a90b9b1?w=800&q=80"
+          src="https://images.unsplash.com/photo-1632149877166-f75d49000351?w=800&q=80"
           alt="Before — roof needing replacement"
           className="w-full h-full object-cover object-center"
         />
