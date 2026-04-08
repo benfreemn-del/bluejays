@@ -74,6 +74,12 @@ async function logEmailToFile(email: SentEmail) {
     return;
   }
 
+  // Skip file logging on Vercel (read-only filesystem)
+  if (process.env.VERCEL) {
+    console.log(`  Email logged (skipped file write on Vercel): ${email.subject}`);
+    return;
+  }
+
   ensureEmailDir();
   const filePath = path.join(EMAILS_DIR, `${email.prospectId}.json`);
 
