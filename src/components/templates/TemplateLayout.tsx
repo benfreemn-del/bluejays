@@ -248,6 +248,7 @@ export default function TemplateLayout({
 function ClaimBanner({ businessName, accentColor, prospectId }: { businessName: string; accentColor: string; prospectId: string }) {
   // Countdown: 7 days from now (resets each visit, creates urgency)
   const [timeLeft, setTimeLeft] = useState("");
+  const [showDisclosure, setShowDisclosure] = useState(true);
 
   useEffect(() => {
     const expiry = new Date();
@@ -268,6 +269,21 @@ function ClaimBanner({ businessName, accentColor, prospectId }: { businessName: 
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50">
+      {/* Placeholder content disclosure — per proposal refinement 1.1 */}
+      {showDisclosure && (
+        <div className="bg-amber-500/10 border-t border-amber-500/30 px-4 py-2.5 flex items-center justify-between">
+          <p className="text-xs text-amber-200/80 flex-1">
+            <span className="font-semibold text-amber-300">Preview Note:</span>{" "}
+            This is your preview — after you claim it, we replace all placeholder text with content specific to your business. Colors, photos, layout, and copy are all fully customizable.
+          </p>
+          <button
+            onClick={() => setShowDisclosure(false)}
+            className="ml-3 text-amber-400/60 hover:text-amber-300 transition-colors text-xs"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
       {/* Social proof ticker */}
       <div className="bg-background/90 backdrop-blur-sm border-t border-border px-4 py-2 flex items-center justify-center gap-4">
         <p className="text-xs text-muted">
