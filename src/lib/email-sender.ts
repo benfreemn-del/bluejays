@@ -46,8 +46,10 @@ async function sendViaSendGrid(
   if (!response.ok) {
     const errorText = await response.text().catch(() => "Unknown error");
     console.error(`SendGrid error (${response.status}): ${errorText}`);
+    // Throw with actual error details so API routes can return them
+    throw new Error(`SendGrid ${response.status}: ${errorText.substring(0, 200)}`);
   }
-  return response.ok;
+  return true;
 }
 
 async function logEmailToFile(email: SentEmail) {
