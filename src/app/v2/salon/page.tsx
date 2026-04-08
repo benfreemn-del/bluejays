@@ -162,20 +162,14 @@ function GalleryItem({
   category,
   height,
   delay,
+  image,
 }: {
   title: string;
   category: string;
   height: string;
   delay: number;
+  image?: string;
 }) {
-  const gradients = [
-    "from-rose-900/80 to-stone-900/80",
-    "from-pink-900/80 to-stone-800/80",
-    "from-red-900/60 to-stone-900/80",
-    "from-rose-800/60 to-neutral-900/80",
-  ];
-  const grad = gradients[delay % gradients.length];
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 40 }}
@@ -184,16 +178,11 @@ function GalleryItem({
       transition={{ ...spring, delay: delay * 0.1 }}
       className={`relative ${height} rounded-2xl overflow-hidden cursor-pointer group`}
     >
-      <div className={`absolute inset-0 bg-gradient-to-br ${grad}`} />
-      {/* shimmer pattern */}
-      <div className="absolute inset-0 opacity-20">
-        <svg width="100%" height="100%">
-          <pattern id={`pat-${delay}`} width="20" height="20" patternUnits="userSpaceOnUse">
-            <circle cx="1" cy="1" r="1" fill="rgba(225,29,72,0.3)" />
-          </pattern>
-          <rect width="100%" height="100%" fill={`url(#pat-${delay})`} />
-        </svg>
-      </div>
+      {image ? (
+        <img src={image} alt={title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+      ) : (
+        <div className="absolute inset-0 bg-gradient-to-br from-rose-900/80 to-stone-900/80" />
+      )}
       {/* hover overlay */}
       <motion.div
         className="absolute inset-0 bg-black/0 group-hover:bg-black/40 backdrop-blur-0 group-hover:backdrop-blur-sm transition-all duration-500 flex items-center justify-center"
@@ -248,20 +237,20 @@ const serviceCategories = [
 
 /* ─── team data ─── */
 const team = [
-  { name: "Aria Laurent", role: "Creative Director", specialty: "Color Specialist" },
-  { name: "Maya Chen", role: "Senior Stylist", specialty: "Balayage Expert" },
-  { name: "Sofia Reyes", role: "Esthetician", specialty: "Advanced Skincare" },
-  { name: "Lena Park", role: "Nail Artist", specialty: "3D Nail Art" },
+  { name: "Aria Laurent", role: "Creative Director", specialty: "Color Specialist", photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&q=80" },
+  { name: "Maya Chen", role: "Senior Stylist", specialty: "Balayage Expert", photo: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&q=80" },
+  { name: "Sofia Reyes", role: "Esthetician", specialty: "Advanced Skincare", photo: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&q=80" },
+  { name: "Lena Park", role: "Nail Artist", specialty: "3D Nail Art", photo: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&q=80" },
 ];
 
 /* ─── gallery data ─── */
 const gallery = [
-  { title: "Platinum Waves", category: "Hair", height: "h-72" },
-  { title: "Bridal Updo", category: "Special Event", height: "h-96" },
-  { title: "Rose Balayage", category: "Color", height: "h-80" },
-  { title: "Gel Art Collection", category: "Nails", height: "h-64" },
-  { title: "Radiance Facial", category: "Skin", height: "h-88" },
-  { title: "Copper Highlights", category: "Color", height: "h-72" },
+  { title: "Platinum Waves", category: "Hair", height: "h-72", image: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600&q=80" },
+  { title: "Bridal Updo", category: "Special Event", height: "h-96", image: "https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?w=600&q=80" },
+  { title: "Rose Balayage", category: "Color", height: "h-80", image: "https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=600&q=80" },
+  { title: "Gel Art Collection", category: "Nails", height: "h-64", image: "https://images.unsplash.com/photo-1604654894610-df63bc536371?w=600&q=80" },
+  { title: "Radiance Facial", category: "Skin", height: "h-88", image: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=600&q=80" },
+  { title: "Copper Highlights", category: "Color", height: "h-72", image: "https://images.unsplash.com/photo-1560066984-138dadb4c035?w=600&q=80" },
 ];
 
 /* ═══════ MAIN PAGE ═══════ */
@@ -549,6 +538,7 @@ export default function V2SalonPage() {
                 category={item.category}
                 height={item.height}
                 delay={i}
+                image={item.image}
               />
             ))}
           </div>
@@ -748,7 +738,7 @@ function TeamCard({
   member,
   index,
 }: {
-  member: { name: string; role: string; specialty: string };
+  member: { name: string; role: string; specialty: string; photo: string };
   index: number;
 }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -778,12 +768,12 @@ function TeamCard({
         transition={spring}
         className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)] overflow-hidden"
       >
-        {/* photo placeholder with parallax */}
+        {/* Team member photo with parallax */}
         <motion.div
           style={{ y }}
-          className={`h-64 bg-gradient-to-br ${bgColors[index]} flex items-center justify-center`}
+          className="h-64 overflow-hidden"
         >
-          <User size={64} weight="thin" className="text-rose-300/30" />
+          <img src={member.photo} alt={member.name} className="w-full h-full object-cover object-top" />
         </motion.div>
         <div className="p-6">
           <h3 className="font-bold text-lg">{member.name}</h3>
