@@ -3,6 +3,17 @@ import { CATEGORY_CONFIG } from "./types";
 import { updateProspect, saveScrapedData } from "./store";
 import { reviewSiteQuality } from "./quality-review";
 
+/** Pick the best business name — reject truncated, "website", "My Site", empty */
+function getCleanBusinessName(scraped: string | undefined, prospect: string): string {
+  const bad = ["website", "my site", "home", "untitled", "index"];
+  if (!scraped || scraped.length < 3 || bad.includes(scraped.toLowerCase())) return prospect;
+  // If scraped name is shorter than prospect name and looks truncated (doesn't end with a word boundary)
+  if (scraped.length < prospect.length && /[a-z]$/i.test(scraped) && !scraped.endsWith(".") && !scraped.endsWith(")")) {
+    return prospect;
+  }
+  return scraped;
+}
+
 export interface GeneratedSiteData {
   id: string;
   category: Category;
@@ -151,7 +162,7 @@ export function generateSiteData(prospect: Prospect): GeneratedSiteData {
   return {
     id: prospect.id,
     category,
-    businessName: (sd.businessName && sd.businessName.toLowerCase() !== "website" && sd.businessName.length > 2) ? sd.businessName : prospect.businessName,
+    businessName: getCleanBusinessName(sd.businessName, prospect.businessName),
     tagline: sd.tagline || generateDefaultTagline(prospect.businessName, category),
     accentColor,
     heroGradient,

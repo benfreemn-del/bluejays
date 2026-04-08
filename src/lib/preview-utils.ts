@@ -62,15 +62,46 @@ export function getHeroImage(data: GeneratedSiteData): string {
   const photos = data.photos || [];
   if (photos.length === 0) return "";
 
-  // Check if first photo looks like a logo (small, has 'logo' in URL, is an icon)
-  const first = photos[0];
-  const isLogo = first.includes("logo") || first.includes("favicon") || first.includes("icon") || first.includes("parastorage");
-
-  if (isLogo && photos.length > 1) {
-    return photos[1]; // Use second photo as hero
+  // Find the first photo that's suitable for hero (not a logo, not tiny)
+  for (const photo of photos) {
+    if (isLowQualityImage(photo)) continue;
+    return photo;
   }
 
-  return first;
+  // All photos are low quality — return first Google Places photo if any
+  const googlePhoto = photos.find(p => p.includes("maps.googleapis.com"));
+  if (googlePhoto) return googlePhoto;
+
+  return photos[0]; // Last resort
+}
+
+/**
+ * Check if an image URL looks low-quality or is a logo/icon.
+ * Used to skip bad images for hero/about sections.
+ */
+export function isLowQualityImage(url: string): boolean {
+  if (!url) return true;
+
+  // Logo/icon detection
+  if (url.includes("logo") || url.includes("favicon") || url.includes("icon") || url.includes("parastorage")) return true;
+
+  // Tiny Wix images (dimensions in URL)
+  const widthMatch = url.match(/w_(\d+)/);
+  const heightMatch = url.match(/h_(\d+)/);
+  if (widthMatch && parseInt(widthMatch[1]) < 200) return true;
+  if (heightMatch && parseInt(heightMatch[1]) < 150) return true;
+
+  // Very small fill dimensions
+  const fillMatch = url.match(/fill\/w_(\d+),h_(\d+)/);
+  if (fillMatch && parseInt(fillMatch[1]) < 200 && parseInt(fillMatch[2]) < 150) return true;
+
+  // Blur indicators (Wix uses blur_ for thumbnails)
+  if (url.includes("blur_2") || url.includes("blur_3")) return true;
+
+  // Screenshot/small images from Wix
+  if (url.includes("Screen%20Shot") || url.includes("screenshot")) return true;
+
+  return false;
 }
 
 /**
