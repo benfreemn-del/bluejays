@@ -106,6 +106,10 @@ const ACTIVE_CATEGORIES: Category[] = [
   "insurance", "interior-design", "tattoo", "martial-arts",
   "physical-therapy", "tutoring", "pool-spa", "general-contractor",
   "catering", "pet-services", "church",
+  // Wave 3 categories (all 46 now have premium V2 templates)
+  "restaurant", "medical", "painting", "fencing", "tree-service",
+  "pressure-washing", "garage-door", "locksmith", "towing", "construction",
+  "med-spa", "appliance-repair", "junk-removal", "carpet-cleaning", "event-planning",
 ];
 
 export async function scout(options: ScoutOptions): Promise<Prospect[]> {

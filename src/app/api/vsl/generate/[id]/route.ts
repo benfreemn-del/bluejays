@@ -64,7 +64,7 @@ export async function GET(
   }
 
   // Check if a VSL script has been generated
-  const vslScript = (prospect.scrapedData as Record<string, unknown>)?.vslScript || null;
+  const vslScript = (prospect.scrapedData as unknown as Record<string, unknown>)?.vslScript || null;
 
   return NextResponse.json({
     prospectId: id,

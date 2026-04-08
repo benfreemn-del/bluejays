@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, useMotionValue, useSpring, AnimatePresence } from "framer-motion";
-import { Drop, Broom, Clock, Phone, MapPin, CaretDown, List, X, Star, ArrowRight, CheckCircle, ShieldCheck, SprayBottle, House, Sparkle, Wind } from "@phosphor-icons/react";
+import { Drop, Broom, Clock, Phone, MapPin, CaretDown, List, X, Star, ArrowRight, CheckCircle, ShieldCheck, SprayBottle, House, Sparkle, Wind , Truck } from "@phosphor-icons/react";
 import type { GeneratedSiteData } from "@/lib/generator";
 import BluejayLogo from "../BluejayLogo";
 import { MapLink, PhoneLink } from "@/components/templates/MapLink";

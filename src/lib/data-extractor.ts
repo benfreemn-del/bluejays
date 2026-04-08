@@ -100,7 +100,7 @@ export async function extractBusinessData(
   if (data.socialLinks?.instagram) {
     const handle = extractInstagramHandle(data.socialLinks.instagram);
     if (handle) {
-      (data as Record<string, unknown>).__instagramHandle = handle;
+      (data as unknown as Record<string, unknown>).__instagramHandle = handle;
     }
   }
 

@@ -26,7 +26,7 @@ function WavePattern({ opacity = 0.03 }: { opacity?: number }) {
   </svg>;
 }
 
-function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) { return <div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>; }
+function GlassCard({ children, className = "", style }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) { return <div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`} style={style}>{children}</div>; }
 function SectionReveal({ children, className = "", id }: { children: React.ReactNode; className?: string; id?: string }) { const ref = useRef(null); const isInView = useInView(ref, { once: true, margin: "-80px" }); return <motion.section ref={ref} id={id} className={className} initial={{ opacity: 0, y: 50 }} animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }} transition={spring}>{children}</motion.section>; }
 function WordReveal({ text, className = "" }: { text: string; className?: string }) { const ref = useRef(null); const isInView = useInView(ref, { once: true, margin: "-50px" }); return <motion.span ref={ref} className={`inline-flex flex-wrap gap-x-3 ${className}`} variants={stagger} initial="hidden" animate={isInView ? "show" : "hidden"}>{text.split(" ").map((w, i) => <motion.span key={i} variants={fadeUp} className="inline-block">{w}</motion.span>)}</motion.span>; }
 

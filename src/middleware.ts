@@ -26,6 +26,7 @@ const PROTECTED_PATHS = [
   "/api/leads/manual",
   "/api/test-funnel",
   // Sensitive API routes that must require auth
+  "/api/funnel",
   "/api/funnel/run",
   "/api/funnel/enroll",
   "/api/outreach/bulk",
@@ -41,6 +42,8 @@ const PROTECTED_PATHS = [
   "/api/email-stats",
   "/api/referral",
   "/api/onboarding",
+  "/api/vsl/generate",
+  "/api/voicemail",
 ];
 
 // Public API routes that must bypass auth (webhooks, inbound handlers)
@@ -53,6 +56,14 @@ const PUBLIC_API_PATHS = [
   "/api/calendar/available-slots",
   "/api/call-lists", // CSV downloads are linked directly from the dashboard
   "/api/unsubscribe", // Prospects click unsubscribe link from email — no auth needed
+  "/api/auth/login",
+  "/api/leads/submit",
+  "/api/portfolio",
+  "/api/social-proof",
+  "/api/track/",
+  "/api/image-proxy",
+  "/api/voicemail/status", // Twilio status callback
+  "/api/voicemail/twiml",  // Twilio TwiML endpoint
 ];
 
 export function middleware(request: NextRequest) {
@@ -125,5 +136,15 @@ export const config = {
     "/api/email-stats/:path*",
     "/api/referral/:path*",
     "/api/onboarding/:path*",
+    "/api/funnel/:path*",
+    "/api/vsl/:path*",
+    "/api/voicemail/:path*",
+    "/api/leads/submit/:path*",
+    "/api/portfolio/:path*",
+    "/api/social-proof/:path*",
+    "/api/track/:path*",
+    "/api/image-proxy/:path*",
+    "/api/auth/:path*",
+    "/api/unsubscribe/:path*",
   ],
 };

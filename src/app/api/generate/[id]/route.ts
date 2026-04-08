@@ -53,7 +53,7 @@ export async function POST(
         updates.email = data.email;
       }
       // Extract Instagram handle from scraped social links
-      const igHandle = (data as Record<string, unknown>).__instagramHandle as string | undefined;
+      const igHandle = (data as unknown as Record<string, unknown>).__instagramHandle as string | undefined;
       if (igHandle && !prospect.instagramHandle) {
         prospect.instagramHandle = igHandle;
         updates.instagramHandle = igHandle;

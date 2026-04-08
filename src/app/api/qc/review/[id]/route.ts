@@ -62,7 +62,7 @@ async function runExtendedQcChecks(
     !PLACEHOLDER_PATTERNS.some((p) => siteData.businessName.toLowerCase().includes(p.toLowerCase()));
   checks.push({
     check: "Business Name",
-    passed: hasRealName,
+    passed: !!hasRealName,
     detail: hasRealName
       ? `Business name "${siteData.businessName}" is populated`
       : `Business name is missing or contains a placeholder`,
@@ -74,7 +74,7 @@ async function runExtendedQcChecks(
     siteData.about?.toLowerCase().includes(prospect.city.toLowerCase());
   checks.push({
     check: "City Personalization",
-    passed: cityInSite,
+    passed: !!cityInSite,
     detail: cityInSite
       ? `City "${prospect.city}" found in site content`
       : `City "${prospect.city}" not found in address or about section — site may be generic`,
@@ -115,7 +115,7 @@ async function runExtendedQcChecks(
   });
 
   // 5. Brand color applied (if scraped from website)
-  const scrapedBrandColor = (prospect.scrapedData as Record<string, unknown> | undefined)?.brandColor as string | undefined;
+  const scrapedBrandColor = ((prospect.scrapedData as unknown) as Record<string, unknown> | undefined)?.brandColor as string | undefined;
   if (scrapedBrandColor) {
     const colorApplied = siteData.accentColor === scrapedBrandColor;
     checks.push({

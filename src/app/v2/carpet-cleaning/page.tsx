@@ -1,4 +1,4 @@
-'''"use client";
+"use client";
 
 import { useState, useRef, useCallback } from "react";
 import {
@@ -23,7 +23,7 @@ import {
   Wind,
   Drop,
   Dog,
-  Carpet,
+  Rug,
   BuildingOffice,
   CheckCircle,
 } from "@phosphor-icons/react";
@@ -129,11 +129,11 @@ function SectionReveal({ children, className = "", id }: { children: React.React
   );
 }
 
-function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return (<div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>);
+function GlassCard({ children, className = "", style, onClick }: { children: React.ReactNode; className?: string; style?: React.CSSProperties; onClick?: () => void }) {
+  return (<div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`} style={style} onClick={onClick}>{children}</div>);
 }
 
-function MagneticButton({ children, className = "", onClick, style }: { children: React.ReactNode; className?: string; onClick?: () => void; style?: React.CSSProperties }) {
+function MagneticButton({ children, className = "", onClick, style, type }: { children: React.ReactNode; className?: string; onClick?: () => void; style?: React.CSSProperties; type?: "button" | "submit" | "reset" }) {
   const ref = useRef<HTMLButtonElement>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -148,7 +148,7 @@ function MagneticButton({ children, className = "", onClick, style }: { children
   }, [x, y, isTouchDevice]);
   const handleMouseLeave = useCallback(() => { x.set(0); y.set(0); }, [x, y]);
   return (
-    <motion.button ref={ref} style={{ x: springX, y: springY, willChange: "transform", ...style }} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave} onClick={onClick} className={className} whileTap={{ scale: 0.97 }}>
+    <motion.button ref={ref} type={type} style={{ x: springX, y: springY, willChange: "transform", ...style }} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave} onClick={onClick} className={className} whileTap={{ scale: 0.97 }}>
       {children}
     </motion.button>
   );
@@ -168,7 +168,7 @@ const services = [
   { title: "Deep Steam Cleaning", description: "Our hot water extraction method penetrates deep into carpet fibers, removing embedded dirt, allergens, and bacteria for a truly deep clean.", icon: Wind },
   { title: "Advanced Stain Removal", description: "We tackle tough stains like wine, coffee, ink, and pet accidents using specialized, non-toxic solutions that are safe for your family and pets.", icon: Sparkle },
   { title: "Pet Odor & Dander Treatment", description: "Our enzymatic treatment breaks down and eliminates pet odors at the source, rather than just masking them, leaving your carpets fresh.", icon: Dog },
-  { title: "Upholstery & Fabric Cleaning", description: "We safely clean sofas, chairs, and other upholstered furniture, removing dirt and allergens to restore their beauty and freshness.", icon: Carpet },
+  { title: "Upholstery & Fabric Cleaning", description: "We safely clean sofas, chairs, and other upholstered furniture, removing dirt and allergens to restore their beauty and freshness.", icon: Rug },
   { title: "Tile & Grout Cleaning", description: "Our high-pressure cleaning system removes years of built-up grime from tile and grout lines, making your floors look new again.", icon: Drop },
   { title: "Commercial Carpet Care", description: "Customized cleaning plans for offices, retail spaces, and high-traffic commercial areas to maintain a professional and healthy environment.", icon: BuildingOffice },
 ];

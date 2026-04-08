@@ -20,7 +20,7 @@ import {
   Quotes,
   X,
   List,
-  PartyPopper,
+  Confetti,
   Cake,
   Briefcase,
   PaintBrush,
@@ -175,7 +175,7 @@ const services = [
   { title: "Birthday & Celebrations", description: "Milestone birthdays, anniversaries, and private parties. We design personalized celebrations that reflect your style and create lasting memories.", icon: Cake },
   { title: "Venue Decoration", description: "Transforming any space with stunning decor, lighting, and floral arrangements. Our design team works with you to create the perfect atmosphere.", icon: PaintBrush },
   { title: "Catering Coordination", description: "We partner with top chefs and caterers to provide exceptional food and beverage experiences, tailored to your event's theme and dietary needs.", icon: CookingPot },
-  { title: "Event Design", description: "Comprehensive event design services, including theme development, color palettes, and layout planning for a cohesive and beautiful event.", icon: PartyPopper },
+  { title: "Event Design", description: "Comprehensive event design services, including theme development, color palettes, and layout planning for a cohesive and beautiful event.", icon: Confetti },
 ];
 
 const testimonials = [
@@ -288,7 +288,7 @@ export default function V2EventPlanningPage() {
           <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ ...spring, delay: 0.3 }} className="hidden lg:flex items-center justify-center">
             <div className="relative">
               <motion.div className="absolute inset-0 rounded-full" style={{ background: `radial-gradient(circle, ${ACCENT_GLOW} 0%, transparent 70%)`, filter: "blur(40px)" }} animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} />
-              <PartyPopper size={200} weight="duotone" style={{ color: ACCENT }} className="relative z-10" />
+              <Confetti size={200} weight="duotone" style={{ color: ACCENT }} className="relative z-10" />
             </div>
           </motion.div>
         </div>
