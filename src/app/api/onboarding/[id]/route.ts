@@ -41,8 +41,15 @@ export async function POST(
     )
   );
 
-  // Update prospect status to paid
-  await updateProspect(id, { status: "paid" });
+  // Only update status if the prospect has already paid via Stripe.
+  // The Stripe webhook handles the paid transition; onboarding form
+  // submission alone should not grant paid status.
+  if (prospect.status === "paid" || prospect.paidAt) {
+    // Already paid — no status change needed
+  } else {
+    // If they somehow reach onboarding without paying, mark as claimed
+    await updateProspect(id, { status: "claimed" });
+  }
 
   console.log(`  ✅ Onboarding form submitted for ${prospect.businessName}`);
 

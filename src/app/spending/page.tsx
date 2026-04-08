@@ -17,6 +17,14 @@ interface SystemCosts {
   paidCustomers: number;
   revenue: number;
   profit: number;
+  actualSpend?: {
+    today: { total: number; byService: Record<string, number> };
+    thisWeek: { total: number; byService: Record<string, number> };
+    thisMonth: { total: number; byService: Record<string, number> };
+    perLeadAverage: number;
+    topCostLeads: Array<{ prospectId: string; businessName: string; totalCost: number }>;
+    projectedMonthly: number;
+  } | null;
 }
 
 interface PipelineVelocity {
@@ -84,10 +92,70 @@ export default function SpendingPage() {
           </div>
         )}
 
-        {/* Cost Breakdown */}
+        {/* Real-Time Spend (from system_costs) */}
+        {costs?.actualSpend && (
+          <div className="p-6 rounded-2xl border border-sky-500/20 bg-sky-500/[0.03]">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-bold">Real-Time Spend</h2>
+              <span className="text-xs px-2 py-1 rounded-full bg-sky-500/20 text-sky-400">LIVE DATA</span>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+              <div className="text-center p-3 rounded-xl bg-white/[0.03]">
+                <p className="text-xl font-extrabold text-sky-400">${costs.actualSpend.today.total.toFixed(2)}</p>
+                <p className="text-white/40 text-xs mt-1">Today</p>
+              </div>
+              <div className="text-center p-3 rounded-xl bg-white/[0.03]">
+                <p className="text-xl font-extrabold text-sky-400">${costs.actualSpend.thisWeek.total.toFixed(2)}</p>
+                <p className="text-white/40 text-xs mt-1">This Week</p>
+              </div>
+              <div className="text-center p-3 rounded-xl bg-white/[0.03]">
+                <p className="text-xl font-extrabold text-sky-400">${costs.actualSpend.thisMonth.total.toFixed(2)}</p>
+                <p className="text-white/40 text-xs mt-1">This Month</p>
+              </div>
+              <div className="text-center p-3 rounded-xl bg-white/[0.03]">
+                <p className="text-xl font-extrabold text-amber-400">${costs.actualSpend.projectedMonthly.toFixed(2)}</p>
+                <p className="text-white/40 text-xs mt-1">Projected Monthly</p>
+              </div>
+            </div>
+            {/* Service breakdown for this month */}
+            {Object.keys(costs.actualSpend.thisMonth.byService).length > 0 && (
+              <div className="space-y-2 mb-4">
+                <p className="text-sm font-medium text-white/50">This Month by Service</p>
+                {Object.entries(costs.actualSpend.thisMonth.byService)
+                  .sort(([, a], [, b]) => b - a)
+                  .map(([service, cost]) => (
+                    <div key={service} className="flex justify-between items-center text-sm">
+                      <span className="text-white/60 capitalize">{service.replace(/_/g, " ")}</span>
+                      <span className="font-medium">${cost.toFixed(4)}</span>
+                    </div>
+                  ))}
+              </div>
+            )}
+            {/* Top cost leads */}
+            {costs.actualSpend.topCostLeads.length > 0 && (
+              <div className="mt-4">
+                <p className="text-sm font-medium text-white/50 mb-2">Top Cost Leads</p>
+                <div className="space-y-1">
+                  {costs.actualSpend.topCostLeads.slice(0, 5).map((lead) => (
+                    <div key={lead.prospectId} className="flex justify-between items-center text-sm">
+                      <span className="text-white/60">{lead.businessName}</span>
+                      <span className="font-medium">${lead.totalCost.toFixed(3)}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            <p className="text-white/20 text-xs mt-4">Per-lead average: ${costs.actualSpend.perLeadAverage.toFixed(3)}</p>
+          </div>
+        )}
+
+        {/* Cost Breakdown (Estimated) */}
         {costs && (
           <div className="p-6 rounded-2xl border border-white/[0.06] bg-white/[0.02]">
-            <h2 className="text-lg font-bold mb-6">Cost Breakdown</h2>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-bold">Cost Breakdown</h2>
+              {!costs.actualSpend && <span className="text-xs px-2 py-1 rounded-full bg-white/10 text-white/40">ESTIMATED</span>}
+            </div>
             <div className="space-y-4">
               <CostRow label="Email Sending (SendGrid)" count={`${costs.totalEmailsSent} emails`} cost={costs.estimatedEmailCost} color="bg-green-500" />
               <CostRow label="SMS Sending (Twilio)" count={`${costs.totalSmsSent} texts`} cost={costs.estimatedSmsCost} color="bg-blue-500" />

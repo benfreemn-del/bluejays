@@ -36,6 +36,19 @@ export const FUNNEL_STEPS: FunnelStep[] = [
   { day: 30, channels: ["email"], label: "Final Attempt" },
 ];
 
+/**
+ * Statuses that should stop the funnel immediately.
+ * When a prospect reaches any of these states, all automated outreach stops.
+ */
+const FUNNEL_STOP_STATUSES = [
+  "responded",
+  "interested",
+  "claimed",
+  "paid",
+  "dismissed",
+  "unsubscribed",
+];
+
 function ensureDir() {
   const dir = path.dirname(FUNNEL_FILE);
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
@@ -68,6 +81,16 @@ export async function enrollInFunnel(prospectId: string): Promise<{ success: boo
   const prospect = await getProspect(prospectId);
   if (!prospect) return { success: false, message: "Prospect not found" };
   if (!prospect.generatedSiteUrl) return { success: false, message: "No preview site — generate one first" };
+
+  // Don't enroll if prospect is in a stop state
+  if (FUNNEL_STOP_STATUSES.includes(prospect.status)) {
+    return { success: false, message: `Prospect status is '${prospect.status}' — cannot enroll in funnel` };
+  }
+
+  // Don't enroll if funnel is paused on the prospect record
+  if (prospect.funnelPaused) {
+    return { success: false, message: "Prospect funnel is paused (they replied or unsubscribed)" };
+  }
 
   // Check if already enrolled
   const enrollments = loadEnrollments();
@@ -105,6 +128,9 @@ export async function enrollInFunnel(prospectId: string): Promise<{ success: boo
 /**
  * Run the daily funnel check — sends next step to all prospects who are due.
  * Call this from a cron job (POST /api/funnel/run).
+ *
+ * Respects both the enrollment-level paused flag AND the prospect-level
+ * funnelPaused flag (set when a prospect replies via inbound email/SMS).
  */
 export async function runDailyFunnel(): Promise<{
   processed: number;
@@ -121,26 +147,36 @@ export async function runDailyFunnel(): Promise<{
     const prospect = await getProspect(enrollment.prospectId);
     if (!prospect) continue;
 
-    // Check if prospect responded or paid — stop funnel
-    if (["responded", "paid"].includes(prospect.status)) {
+    // Check if prospect-level funnel is paused (set by inbound reply handler)
+    if (prospect.funnelPaused) {
       enrollment.paused = true;
-      enrollment.pauseReason = `Prospect ${prospect.status}`;
-      paused.push({ name: prospect.businessName, reason: prospect.status });
-
-      // Alert owner
-      await alertOwner({
-        type: "prospect-responded",
-        message: `${prospect.businessName} ${prospect.status}! Funnel auto-paused.`,
-        prospect,
-        timestamp: new Date().toISOString(),
-      });
+      enrollment.pauseReason = "Prospect replied — funnel paused by AI responder";
+      paused.push({ name: prospect.businessName, reason: "replied" });
       continue;
     }
 
-    // Check if dismissed
-    if (prospect.status === "dismissed") {
+    // Check if prospect has reached a stop status
+    if (FUNNEL_STOP_STATUSES.includes(prospect.status)) {
       enrollment.paused = true;
-      enrollment.pauseReason = "Dismissed";
+      enrollment.pauseReason = `Prospect status: ${prospect.status}`;
+      paused.push({ name: prospect.businessName, reason: prospect.status });
+
+      // Alert owner for notable status changes
+      if (["responded", "interested", "claimed", "paid"].includes(prospect.status)) {
+        await alertOwner({
+          type: "prospect-responded",
+          message: `${prospect.businessName} is now '${prospect.status}'! Funnel auto-paused.`,
+          prospect,
+          timestamp: new Date().toISOString(),
+        });
+      }
+      continue;
+    }
+
+    // Check if dismissed or unsubscribed
+    if (prospect.status === "unsubscribed") {
+      enrollment.paused = true;
+      enrollment.pauseReason = "Unsubscribed — all outreach stopped";
       continue;
     }
 
@@ -206,9 +242,9 @@ async function sendFunnelStep(
 
       await sendEmail(prospect.id, prospect.email, template.subject, template.body, template.sequence);
       emailSent = true;
-      console.log(`  📧 Funnel step ${stepIndex} email sent to ${prospect.businessName}`);
+      console.log(`  Funnel step ${stepIndex} email sent to ${prospect.businessName}`);
     } catch (err) {
-      console.log(`  ⚠️ Funnel email failed for ${prospect.businessName}: ${(err as Error).message}`);
+      console.log(`  Funnel email failed for ${prospect.businessName}: ${(err as Error).message}`);
     }
   }
 
@@ -226,10 +262,10 @@ async function sendFunnelStep(
 
         await sendSms(prospect.id, prospect.phone, body, lastSeq + 1);
         smsSent = true;
-        console.log(`  📱 Funnel step ${stepIndex} text sent to ${prospect.businessName}`);
+        console.log(`  Funnel step ${stepIndex} text sent to ${prospect.businessName}`);
       }
     } catch (err) {
-      console.log(`  ⚠️ Funnel text failed for ${prospect.businessName}: ${(err as Error).message}`);
+      console.log(`  Funnel text failed for ${prospect.businessName}: ${(err as Error).message}`);
     }
   }
 
@@ -251,13 +287,17 @@ export function pauseFunnel(prospectId: string, reason: string): boolean {
 
 /**
  * Resume a paused funnel.
+ * Also clears the prospect-level funnelPaused flag.
  */
-export function resumeFunnel(prospectId: string): boolean {
+export async function resumeFunnel(prospectId: string): Promise<boolean> {
   const enrollments = loadEnrollments();
   const enrollment = enrollments.find((e) => e.prospectId === prospectId);
   if (!enrollment) return false;
   enrollment.paused = false;
   enrollment.pauseReason = undefined;
   saveEnrollments(enrollments);
+
+  // Also clear the prospect-level pause flag
+  await updateProspect(prospectId, { funnelPaused: false });
   return true;
 }
