@@ -27,8 +27,21 @@ const PROTECTED_PATHS = [
   "/api/test-funnel",
 ];
 
+// Public API routes that must bypass auth (webhooks, inbound handlers)
+const PUBLIC_API_PATHS = [
+  "/api/webhooks/stripe",
+  "/api/inbound/email",
+  "/api/inbound/sms",
+  "/api/checkout/create", // Prospects need to create checkout sessions
+];
+
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // Always allow public API paths (webhooks, inbound handlers)
+  if (PUBLIC_API_PATHS.some((p) => pathname.startsWith(p))) {
+    return NextResponse.next();
+  }
 
   // Check if this is a protected route
   const isProtected = PROTECTED_PATHS.some((p) => pathname.startsWith(p));
@@ -72,6 +85,8 @@ export const config = {
     "/api/edit/:path*",
     "/api/quality-review/:path*",
     "/api/notes/:path*",
+    "/api/webhooks/:path*",
+    "/api/inbound/:path*",
     "/lead/:path*",
     "/spending",
   ],

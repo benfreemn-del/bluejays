@@ -1,7 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import { useParams } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useParams, useSearchParams } from "next/navigation";
+
+interface ProspectInfo {
+  businessName: string;
+  status: string;
+}
 
 interface OnboardingData {
   businessNameLegal: string;
@@ -49,10 +54,37 @@ const initialData: OnboardingData = {
 
 export default function OnboardingPage() {
   const params = useParams();
+  const searchParams = useSearchParams();
   const prospectId = params.id as string;
+  const sessionId = searchParams.get("session_id");
+  const [prospect, setProspect] = useState<ProspectInfo | null>(null);
   const [data, setData] = useState<OnboardingData>(initialData);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(!!sessionId);
+
+  // Fetch prospect info
+  useEffect(() => {
+    fetch(`/api/prospects/${prospectId}`)
+      .then((r) => r.json())
+      .then((info) => {
+        if (!info.error) {
+          setProspect({ businessName: info.businessName, status: info.status });
+          // Pre-fill known fields
+          if (info.ownerName) setData((prev) => ({ ...prev, ownerName: info.ownerName }));
+          if (info.phone) setData((prev) => ({ ...prev, phone: info.phone }));
+          if (info.email) setData((prev) => ({ ...prev, email: info.email }));
+          if (info.businessName) {
+            setData((prev) => ({
+              ...prev,
+              businessNameLegal: info.businessName,
+              businessNameDba: info.businessName,
+            }));
+          }
+        }
+      })
+      .catch(() => {});
+  }, [prospectId]);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -79,12 +111,72 @@ export default function OnboardingPage() {
     }
   };
 
+  // Payment confirmation screen (shown right after Stripe redirect)
+  if (showConfirmation && !submitted) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-6">
+        <div className="max-w-lg text-center">
+          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-green-500 to-green-600 mx-auto mb-6 flex items-center justify-center text-4xl text-white">
+            &#10003;
+          </div>
+          <h1 className="text-3xl font-bold mb-4">
+            Payment Successful!
+          </h1>
+          <p className="text-muted text-lg mb-2">
+            {prospect
+              ? `Thank you for choosing BlueJays for ${prospect.businessName}!`
+              : "Thank you for choosing BlueJays!"}
+          </p>
+          <p className="text-muted mb-8">
+            Your payment has been processed. Now let&apos;s get your website customized and live.
+          </p>
+
+          <div className="p-6 rounded-xl bg-surface border border-border text-left mb-8">
+            <h3 className="font-semibold mb-3">What&apos;s included:</h3>
+            <ul className="space-y-2 text-sm text-muted">
+              <li className="flex items-start gap-2">
+                <span className="text-green-500 mt-0.5">&#10003;</span>
+                Custom website design and development
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-green-500 mt-0.5">&#10003;</span>
+                Mobile optimization and SEO setup
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-green-500 mt-0.5">&#10003;</span>
+                Domain connection and hosting setup
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-green-500 mt-0.5">&#10003;</span>
+                1 year of site management and security updates
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-green-500 mt-0.5">&#10003;</span>
+                48-hour turnaround to go live
+              </li>
+            </ul>
+          </div>
+
+          <button
+            onClick={() => setShowConfirmation(false)}
+            className="w-full h-14 rounded-xl bg-gradient-to-r from-blue-electric to-blue-deep text-white font-semibold text-lg hover:shadow-[0_0_30px_rgba(14,165,233,0.4)] transition-shadow"
+          >
+            Continue to Onboarding Form
+          </button>
+          <p className="text-muted text-xs mt-4">
+            Fill out a quick form so we can customize everything for you
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   if (submitted) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-6">
         <div className="max-w-lg text-center">
           <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-electric to-blue-deep mx-auto mb-6 flex items-center justify-center text-3xl">
-            ✓
+            &#10003;
           </div>
           <h1 className="text-3xl font-bold mb-4">
             Welcome to BlueJays!
@@ -118,8 +210,9 @@ export default function OnboardingPage() {
           <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-electric to-blue-deep mx-auto mb-4" />
           <h1 className="text-3xl font-bold mb-2">Welcome Aboard!</h1>
           <p className="text-muted text-lg">
-            Fill out this form so we can customize your website and get it
-            live on your domain.
+            {prospect
+              ? `Let's customize the website for ${prospect.businessName}. Fill out this form so we can get it live on your domain.`
+              : "Fill out this form so we can customize your website and get it live on your domain."}
           </p>
         </div>
       </div>
