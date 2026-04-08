@@ -417,4 +417,9 @@ const defaultSiteCards: SiteCard[] = [
   { name: "Cascade Landscapes", category: "Landscaping", color: "#0a1a0a", href: "/v2/landscaping", icon: "🌳", tagline: "Nature transforms — premium landscaping" },
   { name: "Grace Community Church", category: "Church", color: "#1a1a2e", href: "/v2/church", icon: "✝️", tagline: "A place to belong — premium ministry site" },
   { name: "Northshore Vet Clinic", category: "Veterinary", color: "#0a1a0f", href: "/v2/veterinary", icon: "🐾", tagline: "Paw prints — premium pet care" },
+  { name: "Summit Builders NW", category: "General Contractor", color: "#0f1215", href: "/v2/general-contractor", icon: "🔨", tagline: "Blueprint grid — construction premium" },
+  { name: "Ember & Oak Catering", category: "Catering", color: "#0f0a0a", href: "/v2/catering", icon: "🍷", tagline: "Burgundy elegance — culinary excellence" },
+  { name: "Happy Tails Pet Care", category: "Pet Services", color: "#0a1015", href: "/v2/pet-services", icon: "🐕", tagline: "Playful energy — happy pets" },
+  { name: "Summit PT & Rehab", category: "Physical Therapy", color: "#0a0f1a", href: "/v2/physical-therapy", icon: "💪", tagline: "Healing waves — recovery focus" },
+  { name: "Bright Minds Tutoring", category: "Tutoring", color: "#0a0f1a", href: "/v2/tutoring", icon: "📚", tagline: "Academic excellence — grade boost" },
 ];

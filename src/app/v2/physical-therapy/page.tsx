@@ -104,7 +104,7 @@ export default function V2PhysicalTherapyShowcase() {
       </section>
 
       {/* STATS */}
-      <SectionReveal className="relative z-10 py-16 overflow-hidden border-y" style={{ borderColor: `${BLUE}1a` } as React.CSSProperties}>
+      <SectionReveal className="relative z-10 py-16 overflow-hidden border-y" >
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #0c1220 0%, ${BG} 100%)` }} />
         <WavePattern opacity={0.02} />
         <div className="max-w-6xl mx-auto px-6 relative z-10"><div className="grid grid-cols-2 md:grid-cols-4 gap-8">

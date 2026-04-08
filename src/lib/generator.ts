@@ -120,7 +120,7 @@ export function generateSiteData(prospect: Prospect): GeneratedSiteData {
   return {
     id: prospect.id,
     category,
-    businessName: sd.businessName || prospect.businessName,
+    businessName: (sd.businessName && sd.businessName.toLowerCase() !== "website" && sd.businessName.length > 2) ? sd.businessName : prospect.businessName,
     tagline: sd.tagline || generateDefaultTagline(prospect.businessName, category),
     accentColor,
     heroGradient,

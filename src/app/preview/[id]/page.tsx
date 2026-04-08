@@ -30,13 +30,15 @@ import V2PoolSpaPreview from "@/components/templates/V2PoolSpaPreview";
 import V2GeneralContractorPreview from "@/components/templates/V2GeneralContractorPreview";
 import V2CateringPreview from "@/components/templates/V2CateringPreview";
 import V2PetServicesPreview from "@/components/templates/V2PetServicesPreview";
+import V2PhysicalTherapyPreview from "@/components/templates/V2PhysicalTherapyPreview";
+import V2TutoringPreview from "@/components/templates/V2TutoringPreview";
 import { getScrapedData } from "@/lib/store";
 import { proxyPhotos } from "@/lib/image-proxy";
 import { getHeroHeading, getHeroSubtitle, getHeroImage, getAboutImage, getNavName } from "@/lib/preview-utils";
 
 export const dynamic = "force-dynamic";
 
-// V2 preview renderers by category — ALL 26 V2 categories have dynamic renderers
+// V2 preview renderers by category — ALL 31 categories have V2 dynamic renderers
 const V2_RENDERERS: Partial<Record<string, React.ComponentType<{ data: GeneratedSiteData }>>> = {
   electrician: V2ElectricianPreview,
   dental: V2DentalPreview,
@@ -67,6 +69,8 @@ const V2_RENDERERS: Partial<Record<string, React.ComponentType<{ data: Generated
   "general-contractor": V2GeneralContractorPreview,
   catering: V2CateringPreview,
   "pet-services": V2PetServicesPreview,
+  "physical-therapy": V2PhysicalTherapyPreview,
+  tutoring: V2TutoringPreview,
 };
 
 export default async function PreviewPage({
