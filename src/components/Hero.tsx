@@ -132,7 +132,7 @@ export default function Hero() {
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 1.5, opacity: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="absolute z-20 flex items-center justify-center"
+            className="absolute z-20 flex items-center justify-center top-[15%] left-1/2 -translate-x-1/2"
           >
             <div className="relative w-72 h-72 md:w-[340px] md:h-[340px] rounded-full bg-gradient-to-br from-sky-400 via-sky-500 to-blue-700 flex items-center justify-center shadow-[0_0_120px_rgba(14,165,233,0.6),0_0_250px_rgba(14,165,233,0.2)]">
               {/* Decorative rings */}

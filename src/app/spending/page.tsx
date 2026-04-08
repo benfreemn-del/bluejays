@@ -28,17 +28,31 @@ interface PipelineVelocity {
   projectedRevenue: number;
 }
 
+interface EmailStats {
+  totalSent: number;
+  delivered: number;
+  opened: number;
+  clicked: number;
+  bounced: number;
+  openRate: number;
+  clickRate: number;
+  bounceRate: number;
+  recentEvents: { type: string; email: string; url?: string; timestamp: string }[];
+}
+
 export default function SpendingPage() {
   const [costs, setCosts] = useState<SystemCosts | null>(null);
   const [pipeline, setPipeline] = useState<PipelineVelocity | null>(null);
+  const [emailStats, setEmailStats] = useState<EmailStats | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     Promise.all([
       fetch("/api/costs").then((r) => r.json()),
       fetch("/api/pipeline-velocity").then((r) => r.json()),
+      fetch("/api/email-stats").then((r) => r.json()).catch(() => null),
     ])
-      .then(([c, p]) => { setCosts(c); setPipeline(p); })
+      .then(([c, p, e]) => { setCosts(c); setPipeline(p); setEmailStats(e); })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
@@ -258,6 +272,54 @@ export default function SpendingPage() {
             </div>
           </div>
         </div>
+
+        {/* Email Tracking */}
+        {emailStats && (
+          <div className="p-6 rounded-2xl border border-white/[0.06] bg-white/[0.02]">
+            <h2 className="text-lg font-bold mb-6">Email Performance</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+              <div className="text-center p-4 rounded-xl bg-white/[0.03]">
+                <p className="text-2xl font-extrabold text-sky-400">{emailStats.delivered}</p>
+                <p className="text-white/40 text-sm mt-1">Delivered</p>
+              </div>
+              <div className="text-center p-4 rounded-xl bg-white/[0.03]">
+                <p className="text-2xl font-extrabold text-green-400">{emailStats.openRate}%</p>
+                <p className="text-white/40 text-sm mt-1">Open Rate</p>
+              </div>
+              <div className="text-center p-4 rounded-xl bg-white/[0.03]">
+                <p className="text-2xl font-extrabold text-amber-400">{emailStats.clickRate}%</p>
+                <p className="text-white/40 text-sm mt-1">Click Rate</p>
+              </div>
+              <div className="text-center p-4 rounded-xl bg-white/[0.03]">
+                <p className="text-2xl font-extrabold text-red-400">{emailStats.bounceRate}%</p>
+                <p className="text-white/40 text-sm mt-1">Bounce Rate</p>
+              </div>
+            </div>
+            {emailStats.opened > 0 && (
+              <div className="space-y-2 text-sm">
+                <p className="text-white/50 font-medium">Unique opens: {emailStats.opened} | Unique clicks: {emailStats.clicked}</p>
+              </div>
+            )}
+            {emailStats.recentEvents.length > 0 && (
+              <div className="mt-4">
+                <p className="text-sm font-medium text-white/50 mb-2">Recent Activity</p>
+                <div className="space-y-1 max-h-40 overflow-y-auto">
+                  {emailStats.recentEvents.map((e, i) => (
+                    <div key={i} className="flex items-center gap-2 text-xs text-white/40">
+                      <span className={`w-2 h-2 rounded-full ${e.type === "open" ? "bg-green-500" : e.type === "click" ? "bg-amber-500" : e.type === "bounce" ? "bg-red-500" : "bg-sky-500"}`} />
+                      <span className="font-medium">{e.type.toUpperCase()}</span>
+                      <span>{e.email}</span>
+                      {e.url && <span className="text-sky-400 truncate max-w-[200px]">{e.url}</span>}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            {emailStats.delivered === 0 && (
+              <p className="text-white/30 text-sm">No email events yet. Data will appear after your first outreach campaign. Set up the SendGrid Event Webhook at: Settings → Mail Settings → Event Webhook → URL: https://bluejayportfolio.com/api/email-tracking</p>
+            )}
+          </div>
+        )}
 
         {/* ROI Calculator */}
         <div className="p-6 rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.03]">
