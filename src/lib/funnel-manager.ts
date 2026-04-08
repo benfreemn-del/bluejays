@@ -9,6 +9,7 @@ import { generateSmartFollowUp } from "./smart-followup";
 import { alertOwner } from "./alerts";
 import { dropVoicemail } from "./voicemail";
 import { supabase, isSupabaseConfigured } from "./supabase";
+import { generatePersonalizedProposal } from "./proposal-generator";
 
 const FUNNEL_FILE = path.join(process.cwd(), "data", "funnel-enrollments.json");
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
@@ -162,6 +163,9 @@ export async function enrollInFunnel(prospectId: string): Promise<{ success: boo
   if (existing && !existing.completedAt && !existing.paused) {
     return { success: false, message: "Already in funnel" };
   }
+
+  // Personalized proposals must exist before a prospect enters the funnel.
+  await generatePersonalizedProposal(prospectId);
 
   // Send Day 0 immediately
   const results = await sendFunnelStep(prospect, 0);
