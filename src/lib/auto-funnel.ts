@@ -3,17 +3,17 @@ import { getEmailHistory } from "./email-sender";
 import { getSmsHistory } from "./sms";
 
 /**
- * Auto-Retargeting Funnel
+ * Auto-Retargeting Funnel — Status Tracking
  *
- * Once a prospect is approved for outreach, they enter the funnel.
- * The system automatically sends follow-ups based on industry best practices:
+ * 7-step conservative funnel matching CLAUDE.md and agent-personality.ts:
  *
- * Day 0: Initial email + text
- * Day 3: Follow-up #1 email + text (if no response)
- * Day 7: Follow-up #2 email + text (if no response)
- * Day 14: Re-engagement email (different angle)
- * Day 21: Final attempt email
- * Day 30: Move to "cold" list — can be retargeted in 90 days
+ * Day 0:  Initial email + text (pitch with preview link)
+ * Day 2:  Voicemail drop (Ben's pre-recorded VM, genuine and personal)
+ * Day 5:  Gentle follow-up email ("Did you get a chance to look?")
+ * Day 12: Value reframe email + text (industry stats, competitor mention)
+ * Day 18: Follow-up voicemail ("just checking if you saw the text")
+ * Day 21: Social proof email ("X businesses in your area upgraded")
+ * Day 30: Final check-in email — easy out, move to cold list (retarget in 90 days)
  *
  * Instagram: Only auto-follow-up if the prospect has ALREADY responded
  * (since Ben does IG manually to avoid bans)
@@ -21,18 +21,19 @@ import { getSmsHistory } from "./sms";
 
 export interface FunnelStep {
   day: number;
-  channels: ("email" | "sms")[];
+  channels: ("email" | "sms" | "voicemail")[];
   label: string;
   description: string;
 }
 
 export const FUNNEL_STEPS: FunnelStep[] = [
-  { day: 0, channels: ["email", "sms"], label: "Initial Outreach", description: "First pitch email + text with preview link" },
-  { day: 3, channels: ["email", "sms"], label: "Follow-Up #1", description: "\"Did you see your site?\" — friendly nudge" },
-  { day: 7, channels: ["email", "sms"], label: "Follow-Up #2", description: "Last direct follow-up — urgency angle" },
-  { day: 14, channels: ["email"], label: "Re-Engagement", description: "Different angle — industry stats, competitor mention" },
-  { day: 21, channels: ["email"], label: "Value Add", description: "Share a tip or insight relevant to their industry" },
-  { day: 30, channels: ["email"], label: "Final Attempt", description: "\"We're moving on\" — last chance scarcity" },
+  { day: 0, channels: ["email", "sms"], label: "Initial Pitch", description: "Friendly intro with preview link" },
+  { day: 2, channels: ["voicemail"], label: "Voicemail Drop", description: "Ben's pre-recorded VM — personal, genuine, mentions their business name" },
+  { day: 5, channels: ["email"], label: "Gentle Follow-Up", description: "\"Did you get a chance to look?\" — no pressure" },
+  { day: 12, channels: ["email", "sms"], label: "Value Reframe", description: "Share a stat or insight about their industry" },
+  { day: 18, channels: ["voicemail"], label: "Follow-Up VM", description: "Second voicemail — \"just checking if you saw the text with your website link\"" },
+  { day: 21, channels: ["email"], label: "Social Proof", description: "\"X businesses in your area upgraded this month\"" },
+  { day: 30, channels: ["email"], label: "Final Check-In", description: "\"Just wanted to make sure you saw this\" — easy out" },
 ];
 
 export interface FunnelStatus {
@@ -64,9 +65,11 @@ export async function getFunnelStatus(prospect: Prospect): Promise<FunnelStatus>
     : 0;
 
   // Determine current step based on what's been sent
+  // With 7 steps, thresholds are adjusted for the new cadence
   const totalSent = emails.length + sms.length;
   let currentStep = 0;
-  if (totalSent >= 10) currentStep = 5; // past final
+  if (totalSent >= 12) currentStep = 6; // past final
+  else if (totalSent >= 10) currentStep = 5;
   else if (totalSent >= 8) currentStep = 4;
   else if (totalSent >= 6) currentStep = 3;
   else if (totalSent >= 4) currentStep = 2;
