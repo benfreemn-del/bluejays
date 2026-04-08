@@ -32,6 +32,12 @@ import V2CateringPreview from "@/components/templates/V2CateringPreview";
 import V2PetServicesPreview from "@/components/templates/V2PetServicesPreview";
 import V2PhysicalTherapyPreview from "@/components/templates/V2PhysicalTherapyPreview";
 import V2TutoringPreview from "@/components/templates/V2TutoringPreview";
+import V2RestaurantPreview from "@/components/templates/V2RestaurantPreview";
+import V2MedicalPreview from "@/components/templates/V2MedicalPreview";
+import V2PaintingPreview from "@/components/templates/V2PaintingPreview";
+import V2FencingPreview from "@/components/templates/V2FencingPreview";
+import V2TreeServicePreview from "@/components/templates/V2TreeServicePreview";
+import V2PressureWashingPreview from "@/components/templates/V2PressureWashingPreview";
 import { getScrapedData } from "@/lib/store";
 import { proxyPhotos } from "@/lib/image-proxy";
 import { getHeroHeading, getHeroSubtitle, getHeroImage, getAboutImage, getNavName } from "@/lib/preview-utils";
@@ -71,6 +77,12 @@ const V2_RENDERERS: Partial<Record<string, React.ComponentType<{ data: Generated
   "pet-services": V2PetServicesPreview,
   "physical-therapy": V2PhysicalTherapyPreview,
   tutoring: V2TutoringPreview,
+  restaurant: V2RestaurantPreview,
+  medical: V2MedicalPreview,
+  painting: V2PaintingPreview,
+  fencing: V2FencingPreview,
+  "tree-service": V2TreeServicePreview,
+  "pressure-washing": V2PressureWashingPreview,
 };
 
 export default async function PreviewPage({
