@@ -29,7 +29,17 @@ export type Category =
   | "physical-therapy"
   | "tutoring"
   | "pool-spa"
-  | "church";
+  | "church"
+  | "restaurant"
+  | "medical"
+  | "painting"
+  | "fencing"
+  | "tree-service"
+  | "pressure-washing"
+  | "garage-door"
+  | "locksmith"
+  | "towing"
+  | "construction";
 
 export type ProspectStatus =
   | "scouted"
@@ -146,4 +156,14 @@ export const CATEGORY_CONFIG: Record<
   tutoring: { label: "Tutoring", accentColor: "#818cf8", heroGradient: "linear-gradient(135deg, #14142e 0%, #0e0e1f 100%)" },
   "pool-spa": { label: "Pool & Spa", accentColor: "#22d3ee", heroGradient: "linear-gradient(135deg, #0a2630 0%, #071c24 100%)" },
   "church": { label: "Church / Ministry", accentColor: "#e2b857", heroGradient: "linear-gradient(135deg, #1a1510 0%, #2a2018 50%, #1a1510 100%)" },
+  restaurant: { label: "Restaurant", accentColor: "#dc2626", heroGradient: "linear-gradient(135deg, #1a0a0a 0%, #2a1010 100%)" },
+  medical: { label: "Medical / Doctor", accentColor: "#0891b2", heroGradient: "linear-gradient(135deg, #0a1a20 0%, #071520 100%)" },
+  painting: { label: "House Painting", accentColor: "#8b5cf6", heroGradient: "linear-gradient(135deg, #0f0a1e 0%, #1a1030 100%)" },
+  fencing: { label: "Fencing", accentColor: "#78716c", heroGradient: "linear-gradient(135deg, #1a1816 0%, #121010 100%)" },
+  "tree-service": { label: "Tree Service", accentColor: "#15803d", heroGradient: "linear-gradient(135deg, #0a1a0f 0%, #071510 100%)" },
+  "pressure-washing": { label: "Pressure Washing", accentColor: "#0284c7", heroGradient: "linear-gradient(135deg, #0a1520 0%, #071018 100%)" },
+  "garage-door": { label: "Garage Door", accentColor: "#d97706", heroGradient: "linear-gradient(135deg, #1a1508 0%, #121008 100%)" },
+  locksmith: { label: "Locksmith", accentColor: "#eab308", heroGradient: "linear-gradient(135deg, #1a1a0a 0%, #121208 100%)" },
+  towing: { label: "Towing", accentColor: "#ef4444", heroGradient: "linear-gradient(135deg, #1a0f0f 0%, #120a0a 100%)" },
+  construction: { label: "Construction", accentColor: "#ea580c", heroGradient: "linear-gradient(135deg, #1a1208 0%, #120e06 100%)" },
 };
