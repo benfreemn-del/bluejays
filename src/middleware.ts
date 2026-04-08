@@ -51,6 +51,7 @@ const PUBLIC_API_PATHS = [
   "/api/proposals/",
   "/api/calendar/available-slots",
   "/api/call-lists", // CSV downloads are linked directly from the dashboard
+  "/api/unsubscribe", // Prospects click unsubscribe link from email — no auth needed
 ];
 
 export function middleware(request: NextRequest) {
