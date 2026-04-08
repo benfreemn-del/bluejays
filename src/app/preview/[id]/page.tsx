@@ -48,7 +48,7 @@ import { getHeroHeading, getHeroSubtitle, getHeroImage, getAboutImage, getNavNam
 
 export const dynamic = "force-dynamic";
 
-// V2 preview renderers by category — ALL 31 categories have V2 dynamic renderers
+// V2 preview renderers by category — ALL 41 categories have V2 dynamic renderers
 const V2_RENDERERS: Partial<Record<string, React.ComponentType<{ data: GeneratedSiteData }>>> = {
   electrician: V2ElectricianPreview,
   dental: V2DentalPreview,
