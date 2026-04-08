@@ -473,7 +473,7 @@ export default function V2InteriorDesignPage() {
               </div>
             </div>
             <div className="relative rounded-2xl overflow-hidden aspect-[3/4]">
-              <img src="https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=800&q=80" alt="Luxury living room interior" className="w-full h-full object-cover" />
+              <img src="https://images.unsplash.com/photo-1504615755583-2916b52192a3?w=800&q=80" alt="Luxury living room interior" className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
             </div>
           </div>

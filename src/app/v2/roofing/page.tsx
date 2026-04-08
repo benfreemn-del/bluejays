@@ -391,7 +391,7 @@ function BeforeAfterSlider() {
       {/* "After" side — beautiful new roof */}
       <div className="absolute inset-0">
         <img
-          src="https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=800&q=80"
+          src="https://images.unsplash.com/photo-1523217553018-9a907c57e7fe?w=800&q=80"
           alt="After — pristine new roof installation"
           className="w-full h-full object-cover object-center"
         />

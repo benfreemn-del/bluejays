@@ -370,7 +370,7 @@ const stats = [
 const galleryPhotos = [
   { src: "https://images.unsplash.com/photo-1572981779307-38b8cabb2407?w=600&q=80", alt: "Freshly painted living room" },
   { src: "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=600&q=80", alt: "Exterior house painting" },
-  { src: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80", alt: "Modern kitchen cabinets painted white" },
+  { src: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=600&q=80", alt: "Modern kitchen cabinets painted white" },
   { src: "https://images.unsplash.com/photo-1534430480872-3498386e7856?w=600&q=80", alt: "Paint color samples on wall" },
   { src: "https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=600&q=80", alt: "Professional painter at work" },
   { src: "https://images.unsplash.com/photo-1525909002-1b05e0c869d8?w=600&q=80", alt: "Beautiful bedroom accent wall" },
@@ -536,8 +536,8 @@ export default function V2PaintingPage() {
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
             <BeforeAfterSlider
-              beforeSrc="https://images.unsplash.com/photo-1513694203232-719a280e022f?w=800&q=80"
-              afterSrc="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=800&q=80"
+              beforeSrc="https://images.unsplash.com/photo-1560184897-ae75f418493e?w=800&q=80"
+              afterSrc="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80"
               beforeAlt="Room before painting"
               afterAlt="Room after professional painting"
             />

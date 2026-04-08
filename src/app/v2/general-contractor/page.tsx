@@ -202,12 +202,12 @@ const faqs = [
 ];
 
 const galleryImages = [
-  "https://images.unsplash.com/photo-1509644851169-2acc08aa25b5?w=600&q=80",
-  "https://images.unsplash.com/photo-1541123603104-512919d6a96c?w=600&q=80",
-  "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=600&q=80",
-  "https://images.unsplash.com/photo-1509644851169-2acc08aa25b5?w=600&q=80",
-  "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=600&q=80",
-  "https://images.unsplash.com/photo-1531834685032-c34bf0d84c77?w=600&q=80",
+  "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80", // kitchen remodel
+  "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80", // custom home exterior
+  "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=600&q=80", // living room
+  "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80", // luxury home exterior
+  "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=600&q=80", // bathroom
+  "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&q=80", // open concept interior
 ];
 
 /* ═══════════════════════════════════════════════════
@@ -292,7 +292,7 @@ export default function V2GeneralContractorShowcase() {
           </div>
           <div className="hidden md:block relative">
             <div className="relative rounded-2xl overflow-hidden border border-white/10">
-              <img src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=1400&q=80" alt="Construction project" className="w-full h-[500px] object-cover" />
+              <img src="https://images.unsplash.com/photo-1590856029826-c7a73142bbf1?w=1400&q=80" alt="Construction project" className="w-full h-[500px] object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0f1215] via-transparent to-transparent" />
               <div className="absolute inset-0 bg-gradient-to-r from-[#0f1215]/40 to-transparent" />
               <div className="absolute bottom-6 left-6 flex items-center gap-3">

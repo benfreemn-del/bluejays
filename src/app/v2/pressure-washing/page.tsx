@@ -421,7 +421,7 @@ const packages = [
 const galleryItems = [
   {
     before: "https://images.unsplash.com/photo-1603796846097-bee99e4a601f?w=800&q=80",
-    after: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&q=80",
+    after: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=800&q=80",
     label: "House Exterior",
   },
   {

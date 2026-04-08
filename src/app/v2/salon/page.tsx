@@ -367,7 +367,7 @@ const serviceCategories = [
 
 /* ─── team data ─── */
 const team = [
-  { name: "Aria Laurent", role: "Creative Director", specialty: "Color Specialist", photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&q=80" },
+  { name: "Aria Laurent", role: "Creative Director", specialty: "Color Specialist", photo: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&q=80" },
   { name: "Maya Chen", role: "Senior Stylist", specialty: "Balayage Expert", photo: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&q=80" },
   { name: "Sofia Reyes", role: "Esthetician", specialty: "Advanced Skincare", photo: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&q=80" },
   { name: "Lena Park", role: "Nail Artist", specialty: "3D Nail Art", photo: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&q=80" },

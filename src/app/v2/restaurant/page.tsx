@@ -387,7 +387,7 @@ const menuHighlights = [
 
 const galleryPhotos = [
   { src: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&q=80", alt: "Restaurant interior dining room" },
-  { src: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80", alt: "Plated fine dining dish" },
+  { src: "https://images.unsplash.com/photo-1551218808-94e220e084d2?w=600&q=80", alt: "Plated fine dining dish" },
   { src: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&q=80", alt: "Bar area and cocktails" },
   { src: "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=600&q=80", alt: "Chef plating a dish" },
   { src: "https://images.unsplash.com/photo-1424847651672-bf20a4b0982b?w=600&q=80", alt: "Dessert presentation" },
@@ -603,7 +603,7 @@ export default function V2RestaurantPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="relative rounded-2xl overflow-hidden aspect-[4/5]">
               <img
-                src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=700&q=80"
+                src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=700&q=80"
                 alt="Head Chef in kitchen"
                 className="w-full h-full object-cover object-center"
               />
