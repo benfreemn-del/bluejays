@@ -42,6 +42,9 @@ export default function ProspectDetail({
   const [emails, setEmails] = useState<EmailRecord[]>([]);
   const [igData, setIgData] = useState<InstagramData | null>(null);
   const [copiedIdx, setCopiedIdx] = useState<number | null>(null);
+  const [vslScript, setVslScript] = useState<Record<string, string> | null>(null);
+  const [vslLoading, setVslLoading] = useState(false);
+  const [vslExpanded, setVslExpanded] = useState(false);
 
   useEffect(() => {
     if (!prospect) return;
@@ -53,7 +56,12 @@ export default function ProspectDetail({
       .then((r) => r.json())
       .then((data) => setIgData(data))
       .catch(() => setIgData(null));
+    fetch(`/api/vsl/generate/${prospect.id}`)
+      .then((r) => r.json())
+      .then((data) => setVslScript(data.vslScript || null))
+      .catch(() => setVslScript(null));
     setCopiedIdx(null);
+    setVslExpanded(false);
   }, [prospect]);
 
   const copyToClipboard = (text: string, idx: number) => {
@@ -213,6 +221,76 @@ export default function ProspectDetail({
               </div>
             </section>
           )}
+
+          {/* VSL Script */}
+          <section>
+            <h3 className="text-sm font-semibold text-muted uppercase tracking-wider mb-3">
+              Video Sales Letter
+            </h3>
+            {vslScript ? (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs px-2 py-1 rounded-full bg-emerald-500/10 text-emerald-400">Script Ready</span>
+                    {(vslScript as Record<string, string>).wordCount && (
+                      <span className="text-xs text-muted">{(vslScript as Record<string, string>).wordCount} words &middot; ~{(vslScript as Record<string, string>).estimatedDuration}</span>
+                    )}
+                  </div>
+                  <button
+                    onClick={() => setVslExpanded(!vslExpanded)}
+                    className="text-xs px-3 py-1 rounded-lg bg-surface-light border border-border text-muted hover:text-foreground"
+                  >
+                    {vslExpanded ? "Collapse" : "Preview"}
+                  </button>
+                </div>
+                {vslExpanded && (
+                  <div className="space-y-3">
+                    {["hook", "agitate", "solution", "proof", "cta"].map((section) => (
+                      <div key={section} className="p-3 rounded-lg bg-surface-light border border-border">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400 block mb-2">
+                          {section === "hook" ? "Hook (Pain Point)" : section === "agitate" ? "Agitate (What They're Losing)" : section === "solution" ? "Solution (BlueJays Offer)" : section === "proof" ? "Proof (Their Data)" : "CTA (Claim Site)"}
+                        </span>
+                        <p className="text-xs text-muted leading-relaxed whitespace-pre-wrap">
+                          {(vslScript as Record<string, string>)[section]}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <button
+                  onClick={async () => {
+                    setVslLoading(true);
+                    try {
+                      const res = await fetch(`/api/vsl/generate/${prospect.id}`, { method: "POST" });
+                      const data = await res.json();
+                      if (data.vslScript) { setVslScript(data.vslScript); setVslExpanded(true); }
+                    } catch { /* ignore */ }
+                    setVslLoading(false);
+                  }}
+                  disabled={vslLoading}
+                  className="w-full h-9 rounded-lg bg-amber-500/10 text-amber-400 text-sm font-medium hover:bg-amber-500/20 transition-colors disabled:opacity-50"
+                >
+                  {vslLoading ? "Regenerating..." : "Regenerate VSL Script"}
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={async () => {
+                  setVslLoading(true);
+                  try {
+                    const res = await fetch(`/api/vsl/generate/${prospect.id}`, { method: "POST" });
+                    const data = await res.json();
+                    if (data.vslScript) { setVslScript(data.vslScript); setVslExpanded(true); }
+                  } catch { /* ignore */ }
+                  setVslLoading(false);
+                }}
+                disabled={vslLoading}
+                className="w-full h-10 rounded-lg bg-amber-500/10 text-amber-400 text-sm font-medium hover:bg-amber-500/20 transition-colors disabled:opacity-50"
+              >
+                {vslLoading ? "Generating VSL Script..." : "Generate VSL Script"}
+              </button>
+            )}
+          </section>
 
           {/* Actions */}
           <section>

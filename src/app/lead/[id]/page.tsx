@@ -30,6 +30,9 @@ export default function LeadPage() {
   const [showCosts, setShowCosts] = useState(false);
   const [costs, setCosts] = useState<{ emailCost: number; smsCost: number; aiCost: number; totalCost: number; emailCount: number; smsCount: number } | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const [vslScript, setVslScript] = useState<Record<string, string> | null>(null);
+  const [vslLoading, setVslLoading] = useState(false);
+  const [vslExpanded, setVslExpanded] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -107,6 +110,12 @@ export default function LeadPage() {
         .then((r) => r.json())
         .then(setCosts)
         .catch(() => {});
+
+      // Load VSL script
+      fetch(`/api/vsl/generate/${id}`)
+        .then((r) => r.json())
+        .then((data) => setVslScript(data.vslScript || null))
+        .catch(() => setVslScript(null));
 
       // Sort by timestamp
       events.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
@@ -194,6 +203,21 @@ export default function LeadPage() {
                 Preview Site
               </a>
             )}
+            <button
+              onClick={async () => {
+                setVslLoading(true);
+                try {
+                  const res = await fetch(`/api/vsl/generate/${id}`, { method: "POST" });
+                  const data = await res.json();
+                  if (data.vslScript) { setVslScript(data.vslScript); setVslExpanded(true); }
+                } catch { /* ignore */ }
+                setVslLoading(false);
+              }}
+              disabled={vslLoading}
+              className="text-xs px-3 py-1.5 rounded-lg bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 disabled:opacity-50"
+            >
+              {vslLoading ? "Generating..." : vslScript ? "Regen VSL" : "Generate VSL"}
+            </button>
             <button
               onClick={() => setShowDismiss(!showDismiss)}
               className="text-xs px-3 py-1.5 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20"
@@ -458,6 +482,36 @@ export default function LeadPage() {
                   </div>
                 ))}
               </div>
+            </div>
+          )}
+
+          {/* VSL Script Preview */}
+          {vslScript && (
+            <div className="p-4 rounded-xl bg-surface border border-border">
+              <button
+                onClick={() => setVslExpanded(!vslExpanded)}
+                className="w-full flex items-center justify-between"
+              >
+                <h3 className="font-semibold text-sm">VSL Script</h3>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-amber-400">{(vslScript as Record<string, string>).wordCount} words</span>
+                  <span className="text-xs text-muted">{vslExpanded ? "Hide" : "Show"}</span>
+                </div>
+              </button>
+              {vslExpanded && (
+                <div className="mt-3 space-y-3">
+                  {["hook", "agitate", "solution", "proof", "cta"].map((section) => (
+                    <div key={section} className="p-3 rounded-lg bg-surface-light border border-border">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400 block mb-1">
+                        {section === "hook" ? "Hook" : section === "agitate" ? "Agitate" : section === "solution" ? "Solution" : section === "proof" ? "Proof" : "CTA"}
+                      </span>
+                      <p className="text-xs text-muted leading-relaxed whitespace-pre-wrap">
+                        {(vslScript as Record<string, string>)[section]?.slice(0, 200)}{((vslScript as Record<string, string>)[section]?.length || 0) > 200 ? "..." : ""}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 
