@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+import { checkSessionCookie } from "@/lib/auth";
 
-const ADMIN_PASSWORD = "123";
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "bluejay2026";
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
