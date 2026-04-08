@@ -18,6 +18,6 @@ export async function GET() {
     totalGenerated: generated,
     totalPaid: paid,
     cityCounts,
-    message: `${generated} businesses upgraded their website this month`,
+    message: "Custom-built preview sites generated from real prospect records",
   });
 }

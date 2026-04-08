@@ -143,7 +143,7 @@ function ClaimBanner({ businessName, accentColor, prospectId }: { businessName: 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50">
       <div className="bg-white/90 backdrop-blur-sm border-t border-gray-200 px-4 py-2 flex items-center justify-center gap-4">
-        <p className="text-xs text-[#6b7280]"><span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1.5 animate-pulse" />47 businesses in your area upgraded their website this month</p>
+        <p className="text-xs text-[#6b7280]"><span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1.5 animate-pulse" />Custom-built preview for this business</p>
         {timeLeft && timeLeft !== "EXPIRED" && <p className="text-xs font-bold" style={{ color: accentColor }}>Preview expires in {timeLeft}</p>}
       </div>
       <div className="px-6 py-4 flex items-center justify-between gap-4" style={{ background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}10)`, borderTop: `1px solid ${accentColor}30` }}>

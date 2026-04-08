@@ -264,7 +264,7 @@ function ClaimBanner({ businessName, accentColor, prospectId }: { businessName: 
       <div className="bg-background/90 backdrop-blur-sm border-t border-border px-4 py-2 flex items-center justify-center gap-4">
         <p className="text-xs text-muted">
           <span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1.5 animate-pulse" />
-          47 businesses in your area upgraded their website this month
+          Custom-built preview for this business
         </p>
         {timeLeft && timeLeft !== "EXPIRED" && (
           <p className="text-xs font-bold" style={{ color: accentColor }}>
