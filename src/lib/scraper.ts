@@ -420,3 +420,18 @@ function extractSocialLinks(
 
   return Object.keys(links).length > 0 ? links : undefined;
 }
+
+/**
+ * Extract an Instagram handle from a URL.
+ * Handles formats like:
+ *   https://www.instagram.com/username/
+ *   https://instagram.com/username
+ *   instagram.com/username?hl=en
+ */
+export function extractInstagramHandle(url: string): string | null {
+  const match = url.match(/instagram\.com\/([a-zA-Z0-9._]+)/);
+  if (match && match[1] && !['explore', 'accounts', 'p', 'reel', 'stories', 'direct'].includes(match[1])) {
+    return `@${match[1]}`;
+  }
+  return null;
+}

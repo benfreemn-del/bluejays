@@ -81,6 +81,7 @@ export interface Prospect {
   selectedTheme?: "light" | "dark";
   aiThemeRecommendation?: "light" | "dark";
   subscriptionStatus?: "none" | "active" | "past_due" | "cancelled";
+  instagramHandle?: string;
   funnelPaused?: boolean;
   createdAt: string;
   updatedAt: string;

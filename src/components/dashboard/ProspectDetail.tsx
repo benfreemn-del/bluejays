@@ -22,6 +22,22 @@ interface InstagramData {
   instagramSearchUrl: string;
   instagramProfileUrl: string | null;
   dms: DmMessage[];
+  outreach?: {
+    templates: {
+      stepType: string;
+      funnelDay: number;
+      label: string;
+      message: string;
+      characterCount: number;
+    }[];
+    dmHistory: {
+      id: string;
+      stepType: string;
+      message: string;
+      sentAt: string;
+      status: string;
+    }[];
+  };
 }
 
 interface ProspectDetailProps {
@@ -45,6 +61,9 @@ export default function ProspectDetail({
   const [vslScript, setVslScript] = useState<Record<string, string> | null>(null);
   const [vslLoading, setVslLoading] = useState(false);
   const [vslExpanded, setVslExpanded] = useState(false);
+  const [igTab, setIgTab] = useState<"templates" | "history">("templates");
+  const [igHandleEdit, setIgHandleEdit] = useState("");
+  const [igHandleSaving, setIgHandleSaving] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [simReport, setSimReport] = useState<any>(null);
   const [simLoading, setSimLoading] = useState(false);
@@ -372,12 +391,54 @@ export default function ProspectDetail({
             </div>
           </section>
 
-          {/* Instagram DMs */}
+          {/* Instagram Outreach */}
           {igData && (
             <section>
               <h3 className="text-sm font-semibold text-muted uppercase tracking-wider mb-3">
                 Instagram Outreach
               </h3>
+
+              {/* Instagram Handle */}
+              <div className="mb-3 p-3 rounded-lg bg-surface-light border border-border">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-medium text-muted">Instagram Handle</span>
+                  {igData.instagramHandle && (
+                    <span className="text-xs text-purple-400">{igData.instagramHandle}</span>
+                  )}
+                </div>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    placeholder="@handle"
+                    value={igHandleEdit}
+                    onChange={(e) => setIgHandleEdit(e.target.value)}
+                    className="flex-1 h-8 px-3 rounded-lg bg-surface border border-border text-foreground text-xs"
+                  />
+                  <button
+                    onClick={async () => {
+                      if (!igHandleEdit.trim() || !prospect) return;
+                      setIgHandleSaving(true);
+                      try {
+                        await fetch(`/api/instagram/${prospect.id}`, {
+                          method: "PATCH",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ instagramHandle: igHandleEdit.trim() }),
+                        });
+                        // Refresh IG data
+                        const res = await fetch(`/api/instagram/${prospect.id}`);
+                        const data = await res.json();
+                        setIgData(data);
+                        setIgHandleEdit("");
+                      } catch { /* ignore */ }
+                      setIgHandleSaving(false);
+                    }}
+                    disabled={igHandleSaving || !igHandleEdit.trim()}
+                    className="h-8 px-3 rounded-lg bg-purple-500/10 text-purple-400 text-xs font-medium hover:bg-purple-500/20 disabled:opacity-50"
+                  >
+                    {igHandleSaving ? "Saving..." : "Save"}
+                  </button>
+                </div>
+              </div>
 
               {/* Find on Instagram */}
               <div className="mb-4 flex gap-2">
@@ -402,38 +463,125 @@ export default function ProspectDetail({
                 )}
               </div>
 
-              {/* DM Messages to copy */}
-              <div className="space-y-3">
-                {igData.dms.map((dm, idx) => (
-                  <div
-                    key={dm.type}
-                    className="p-3 rounded-lg bg-surface-light border border-border"
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-medium text-purple-400 uppercase">
-                        {dm.type === "initial"
-                          ? "DM #1 — Initial"
-                          : dm.type === "follow-up-1"
-                            ? "DM #2 — Follow-up (3 days)"
-                            : "DM #3 — Final (7 days)"}
-                      </span>
-                      <button
-                        onClick={() => copyToClipboard(dm.message, idx)}
-                        className={`text-xs px-3 py-1 rounded-lg transition-colors ${
-                          copiedIdx === idx
-                            ? "bg-green-500/20 text-green-400"
-                            : "bg-purple-500/10 text-purple-400 hover:bg-purple-500/20"
-                        }`}
-                      >
-                        {copiedIdx === idx ? "Copied!" : "Copy DM"}
-                      </button>
-                    </div>
-                    <p className="text-sm text-muted leading-relaxed">
-                      {dm.message}
-                    </p>
-                  </div>
-                ))}
+              {/* Tab Navigation */}
+              <div className="flex gap-1 mb-3">
+                <button
+                  onClick={() => setIgTab("templates")}
+                  className={`flex-1 h-8 rounded-lg text-xs font-medium transition-colors ${
+                    igTab === "templates" ? "bg-purple-500/20 text-purple-400" : "bg-surface-light text-muted hover:text-foreground"
+                  }`}
+                >
+                  DM Templates ({igData.outreach?.templates?.length || igData.dms.length})
+                </button>
+                <button
+                  onClick={() => setIgTab("history")}
+                  className={`flex-1 h-8 rounded-lg text-xs font-medium transition-colors ${
+                    igTab === "history" ? "bg-purple-500/20 text-purple-400" : "bg-surface-light text-muted hover:text-foreground"
+                  }`}
+                >
+                  DM History
+                </button>
               </div>
+
+              {/* Templates Tab */}
+              {igTab === "templates" && (
+                <div className="space-y-3">
+                  {(igData.outreach?.templates || []).length > 0 ? (
+                    igData.outreach!.templates.map((tmpl, idx) => (
+                      <div
+                        key={tmpl.stepType}
+                        className="p-3 rounded-lg bg-surface-light border border-border"
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs font-medium text-purple-400">
+                              {tmpl.label}
+                            </span>
+                            <span className="text-[10px] text-muted">Day {tmpl.funnelDay}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-[10px] text-muted">{tmpl.characterCount} chars</span>
+                            <button
+                              onClick={() => copyToClipboard(tmpl.message, idx + 100)}
+                              className={`text-xs px-3 py-1 rounded-lg transition-colors ${
+                                copiedIdx === idx + 100
+                                  ? "bg-green-500/20 text-green-400"
+                                  : "bg-purple-500/10 text-purple-400 hover:bg-purple-500/20"
+                              }`}
+                            >
+                              {copiedIdx === idx + 100 ? "Copied!" : "Copy"}
+                            </button>
+                          </div>
+                        </div>
+                        <p className="text-xs text-muted leading-relaxed">
+                          {tmpl.message}
+                        </p>
+                      </div>
+                    ))
+                  ) : (
+                    /* Fallback to legacy DMs */
+                    igData.dms.map((dm, idx) => (
+                      <div
+                        key={dm.type}
+                        className="p-3 rounded-lg bg-surface-light border border-border"
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-xs font-medium text-purple-400 uppercase">
+                            {dm.type === "initial"
+                              ? "DM #1 \u2014 Initial"
+                              : dm.type === "follow-up-1"
+                                ? "DM #2 \u2014 Follow-up"
+                                : "DM #3 \u2014 Final"}
+                          </span>
+                          <button
+                            onClick={() => copyToClipboard(dm.message, idx)}
+                            className={`text-xs px-3 py-1 rounded-lg transition-colors ${
+                              copiedIdx === idx
+                                ? "bg-green-500/20 text-green-400"
+                                : "bg-purple-500/10 text-purple-400 hover:bg-purple-500/20"
+                            }`}
+                          >
+                            {copiedIdx === idx ? "Copied!" : "Copy DM"}
+                          </button>
+                        </div>
+                        <p className="text-sm text-muted leading-relaxed">
+                          {dm.message}
+                        </p>
+                      </div>
+                    ))
+                  )}
+                </div>
+              )}
+
+              {/* History Tab */}
+              {igTab === "history" && (
+                <div>
+                  {(igData.outreach?.dmHistory || []).length > 0 ? (
+                    <div className="space-y-2">
+                      {igData.outreach!.dmHistory.map((entry) => (
+                        <div key={entry.id} className="p-3 rounded-lg bg-surface-light border border-border">
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-xs font-medium text-purple-400">{entry.stepType}</span>
+                            <span className={`text-[10px] px-2 py-0.5 rounded-full ${
+                              entry.status === "read" || entry.status === "replied" ? "bg-emerald-500/10 text-emerald-400" :
+                              entry.status === "sent" || entry.status === "delivered" ? "bg-blue-500/10 text-blue-400" :
+                              entry.status === "failed" ? "bg-red-500/10 text-red-400" :
+                              "bg-yellow-500/10 text-yellow-400"
+                            }`}>{entry.status}</span>
+                          </div>
+                          <p className="text-xs text-muted">{entry.message.slice(0, 100)}...</p>
+                          <p className="text-[10px] text-muted mt-1">{new Date(entry.sentAt).toLocaleString()}</p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="p-4 text-center text-xs text-muted">
+                      <p>No DMs sent yet.</p>
+                      <p className="mt-1">Copy a template from the Templates tab and send it manually via Instagram.</p>
+                    </div>
+                  )}
+                </div>
+              )}
             </section>
           )}
 

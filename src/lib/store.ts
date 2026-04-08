@@ -46,6 +46,7 @@ function dbToProspect(row: Record<string, unknown>): Prospect {
     stripeCustomerId: row.stripe_customer_id as string | undefined,
     paidAt: row.paid_at as string | undefined,
     subscriptionStatus: row.subscription_status as Prospect["subscriptionStatus"],
+    instagramHandle: row.instagram_handle as string | undefined,
     funnelPaused: row.funnel_paused as boolean | undefined,
     selectedTheme: (row.selected_theme as "light" | "dark" | undefined) || undefined,
     aiThemeRecommendation: (row.ai_theme_recommendation as "light" | "dark" | undefined) || undefined,
@@ -75,6 +76,7 @@ function prospectToDb(p: Prospect) {
     stripe_customer_id: p.stripeCustomerId || null,
     paid_at: p.paidAt || null,
     subscription_status: p.subscriptionStatus || "none",
+    instagram_handle: p.instagramHandle || null,
     funnel_paused: p.funnelPaused || false,
     selected_theme: p.selectedTheme || null,
     ai_theme_recommendation: p.aiThemeRecommendation || null,
@@ -189,6 +191,7 @@ export async function updateProspect(
     if (updates.stripeCustomerId) dbUpdates.stripe_customer_id = updates.stripeCustomerId;
     if (updates.paidAt) dbUpdates.paid_at = updates.paidAt;
     if (updates.subscriptionStatus) dbUpdates.subscription_status = updates.subscriptionStatus;
+    if (updates.instagramHandle !== undefined) dbUpdates.instagram_handle = updates.instagramHandle;
     if (updates.funnelPaused !== undefined) dbUpdates.funnel_paused = updates.funnelPaused;
     if (updates.selectedTheme) dbUpdates.selected_theme = updates.selectedTheme;
     if (updates.aiThemeRecommendation) dbUpdates.ai_theme_recommendation = updates.aiThemeRecommendation;

@@ -483,6 +483,12 @@ export default function LeadPage() {
                   <a href={prospect.currentWebsite} target="_blank" rel="noopener noreferrer" className="text-blue-electric text-xs">View</a>
                 </div>
               )}
+              {prospect.instagramHandle && (
+                <div className="flex justify-between">
+                  <span className="text-muted">Instagram</span>
+                  <a href={`https://instagram.com/${prospect.instagramHandle.replace("@", "")}`} target="_blank" rel="noopener noreferrer" className="text-purple-400 text-xs">{prospect.instagramHandle}</a>
+                </div>
+              )}
               <div className="flex justify-between">
                 <span className="text-muted">Revenue Tier</span>
                 <span className="capitalize">{prospect.estimatedRevenueTier}</span>

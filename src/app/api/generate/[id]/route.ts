@@ -51,6 +51,12 @@ export async function POST(
         prospect.email = data.email;
         updates.email = data.email;
       }
+      // Extract Instagram handle from scraped social links
+      const igHandle = (data as Record<string, unknown>).__instagramHandle as string | undefined;
+      if (igHandle && !prospect.instagramHandle) {
+        prospect.instagramHandle = igHandle;
+        updates.instagramHandle = igHandle;
+      }
       if (data.brandColor) {
         // Store for future reference
       }

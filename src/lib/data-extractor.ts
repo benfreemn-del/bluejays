@@ -8,7 +8,7 @@
  * Every prospect MUST have a phone number before generation.
  */
 
-import { scrapeWebsite } from "./scraper";
+import { scrapeWebsite, extractInstagramHandle } from "./scraper";
 import type { ScrapedData } from "./types";
 import { logCost, COST_RATES } from "./cost-logger";
 
@@ -93,6 +93,14 @@ export async function extractBusinessData(
       }
     } catch (err) {
       console.log(`  Level 3 failed: ${(err as Error).message}`);
+    }
+  }
+
+  // Extract Instagram handle from social links if available
+  if (data.socialLinks?.instagram) {
+    const handle = extractInstagramHandle(data.socialLinks.instagram);
+    if (handle) {
+      (data as Record<string, unknown>).__instagramHandle = handle;
     }
   }
 
