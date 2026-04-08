@@ -3,6 +3,7 @@ import { getProspectByEmail, getAllProspects } from "@/lib/store";
 import { processIncomingMessage } from "@/lib/ai-responder";
 import { sendEmail } from "@/lib/email-sender";
 import { alertProspectResponded, alertAngryResponse, alertCustomRequest, alertObjectionResponse, alertEscalation } from "@/lib/alerts";
+import { trackAiResponse, markProspectReplied } from "@/lib/followup-scheduler";
 
 /**
  * POST /api/inbound/email
@@ -80,6 +81,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ received: true, unsubscribed: true });
     }
 
+    // Track that the prospect replied (for follow-up scheduler)
+    markProspectReplied(prospect.id);
+
     // Process through AI responder
     const aiResponse = await processIncomingMessage(prospect, {
       from: fromEmail,
@@ -100,6 +104,10 @@ export async function POST(request: NextRequest) {
           99 // sequence 99 = AI reply
         );
         console.log(`[Inbound Email] AI reply sent to ${fromEmail}`);
+
+        // Track AI response for follow-up scheduler
+        // If prospect doesn't reply within the configured window, funnel auto-resumes
+        trackAiResponse(prospect.id, prospect.businessName, "email");
       } catch (err) {
         console.error(`[Inbound Email] Failed to send reply: ${(err as Error).message}`);
       }
