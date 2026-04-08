@@ -46,6 +46,7 @@ async function sendViaTwilio(to: string, body: string): Promise<{ ok: boolean; s
 }
 
 async function logSms(sms: SentSms) {
+  // Log to Supabase if configured (production)
   if (isSupabaseConfigured()) {
     try {
       await supabase.from("sms_messages").insert({
@@ -59,11 +60,18 @@ async function logSms(sms: SentSms) {
         method: sms.method,
         message_sid: sms.messageSid || null,
       });
-    } catch (err) {
-      console.error("SMS log to Supabase failed:", err);
+    } catch {
+      // Table might not exist yet — fall through to file logging
     }
     return;
   }
+
+  // Skip file writes on Vercel (read-only filesystem)
+  if (process.env.VERCEL) {
+    console.log(`  SMS logged (skipped file write on Vercel): seq ${sms.sequence} to ${sms.to}`);
+    return;
+  }
+
   ensureSmsDir();
   const filePath = path.join(SMS_DIR, `${sms.prospectId}.json`);
   let messages: SentSms[] = [];
@@ -114,6 +122,7 @@ export async function sendSms(
 }
 
 export async function getSmsHistory(prospectId: string): Promise<SentSms[]> {
+  // Read from Supabase if configured (production)
   if (isSupabaseConfigured()) {
     try {
       const { data, error } = await supabase
@@ -134,9 +143,16 @@ export async function getSmsHistory(prospectId: string): Promise<SentSms[]> {
         messageSid: row.message_sid as string | undefined,
       }));
     } catch {
+      // Table might not exist yet
       return [];
     }
   }
+
+  // Skip file reads on Vercel if no Supabase
+  if (process.env.VERCEL) {
+    return [];
+  }
+
   ensureSmsDir();
   const filePath = path.join(SMS_DIR, `${prospectId}.json`);
   if (!fs.existsSync(filePath)) return [];

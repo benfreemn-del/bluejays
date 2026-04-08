@@ -204,8 +204,8 @@ const faqs = [
 const galleryImages = [
   "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80", // kitchen remodel
   "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80", // custom home exterior
-  "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=600&q=80", // living room
-  "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80", // luxury home exterior
+  "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=600&q=80", // living room
+  "https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=600&q=80", // luxury home exterior
   "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=600&q=80", // bathroom
   "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&q=80", // open concept interior
 ];

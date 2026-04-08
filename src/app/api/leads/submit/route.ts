@@ -81,7 +81,7 @@ async function notifyOwnerSms(lead: { businessName: string; phone: string; categ
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
-  const { businessName, ownerName, phone, email, website, category, city } = body;
+  const { businessName, ownerName, phone, email, website, category, city, state } = body;
 
   if (!businessName || !phone) {
     return NextResponse.json({ error: "Business name and phone required" }, { status: 400 });
@@ -99,7 +99,7 @@ export async function POST(request: NextRequest) {
     email: email || undefined,
     address: "",
     city: city || "Unknown",
-    state: "WA",
+    state: state || "",
     category: (category as Category) || "general-contractor",
     currentWebsite: website || undefined,
     estimatedRevenueTier: "medium",
@@ -114,6 +114,14 @@ export async function POST(request: NextRequest) {
       const scraped = await scrapeWebsite(website);
       prospect.scrapedData = scraped;
       prospect.status = "scraped";
+
+      // Try to detect state from scraped address data if not provided by form
+      if (!prospect.state && scraped?.address) {
+        const stateMatch = scraped.address.match(/\b([A-Z]{2})\s*\d{5}/);
+        if (stateMatch) {
+          prospect.state = stateMatch[1];
+        }
+      }
     } catch {
       // Scrape failed, continue without
     }

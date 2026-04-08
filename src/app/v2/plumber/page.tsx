@@ -479,10 +479,10 @@ const pricingItems = [
 
 const galleryImages = [
   { src: "https://images.unsplash.com/photo-1585704032915-c3400ca199e7?w=600&q=80", alt: "Modern bathroom remodel with walk-in shower" },
-  { src: "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=600&q=80", alt: "Copper pipe installation work" },
-  { src: "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=600&q=80", alt: "Luxury bathroom renovation" },
+  { src: "https://images.unsplash.com/photo-1581858726788-75bc0f6a952d?w=600&q=80", alt: "Copper pipe installation work" },
+  { src: "https://images.unsplash.com/photo-1581858726788-75bc0f6a952d?w=600&q=80", alt: "Luxury bathroom renovation" },
   { src: "https://images.unsplash.com/photo-1585704032915-c3400ca199e7?w=600&q=80", alt: "Kitchen sink plumbing installation" },
-  { src: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80", alt: "New tankless water heater installed" },
+  { src: "https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=600&q=80", alt: "New tankless water heater installed" },
   { src: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=600&q=80", alt: "Complete residential plumbing project" },
 ];
 

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const ADMIN_PASSWORD = "123";
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "bluejay2026";
 
 // Protected routes that require login
 const PROTECTED_PATHS = [
@@ -25,6 +25,19 @@ const PROTECTED_PATHS = [
   "/api/quality-review",
   "/api/leads/manual",
   "/api/test-funnel",
+  // Sensitive API routes that must require auth
+  "/api/funnel/run",
+  "/api/funnel/enroll",
+  "/api/outreach/bulk",
+  "/api/costs",
+  "/api/notes",
+  "/api/voicemail/drop",
+  "/api/winback",
+  "/api/pipeline-velocity",
+  "/api/leaderboard",
+  "/api/email-stats",
+  "/api/referral",
+  "/api/onboarding",
 ];
 
 // Public API routes that must bypass auth (webhooks, inbound handlers)
@@ -87,7 +100,21 @@ export const config = {
     "/api/notes/:path*",
     "/api/webhooks/:path*",
     "/api/inbound/:path*",
+    "/api/leads/manual/:path*",
+    "/api/test-funnel/:path*",
     "/lead/:path*",
     "/spending",
+    // Newly protected sensitive routes
+    "/api/funnel/run/:path*",
+    "/api/funnel/enroll/:path*",
+    "/api/outreach/bulk/:path*",
+    "/api/costs/:path*",
+    "/api/voicemail/drop/:path*",
+    "/api/winback/:path*",
+    "/api/pipeline-velocity/:path*",
+    "/api/leaderboard/:path*",
+    "/api/email-stats/:path*",
+    "/api/referral/:path*",
+    "/api/onboarding/:path*",
   ],
 };

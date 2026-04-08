@@ -426,7 +426,7 @@ const galleryItems = [
   },
   {
     before: "https://images.unsplash.com/photo-1600585152220-90363fe7e115?w=800&q=80",
-    after: "https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=800&q=80",
+    after: "https://images.unsplash.com/photo-1574362848149-11496d93a7c7?w=800&q=80",
     label: "Driveway Clean",
   },
 ];

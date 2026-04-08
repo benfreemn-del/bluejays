@@ -199,7 +199,7 @@ const faqData = [
 ];
 
 const portfolioImages = [
-  "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&q=80",
+  "https://images.unsplash.com/photo-1621905251918-48416bd8575a?w=600&q=80",
   "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=600&q=80",
   "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=600&q=80",
   "https://images.unsplash.com/photo-1429497419816-9ca5cfb4571a?w=600&q=80",
@@ -260,7 +260,7 @@ export default function V2ConstructionPage() {
       {/* ─── 1. HERO ─── */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10">
         <div className="absolute inset-0 z-0">
-          <img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1600&q=80" alt="" className="w-full h-full object-cover object-center" />
+          <img src="https://images.unsplash.com/photo-1621905251918-48416bd8575a?w=1600&q=80" alt="" className="w-full h-full object-cover object-center" />
           <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${BG}f0 0%, ${BG}dd 50%, ${BG}aa 100%)` }} />
         </div>
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">

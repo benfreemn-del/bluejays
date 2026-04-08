@@ -9,12 +9,32 @@ import {
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
+/**
+ * Statuses that indicate a prospect has passed quality review and is
+ * eligible to receive outreach emails. Prospects still in "scouted" or
+ * "scraped" status have NOT been reviewed and should not be contacted.
+ */
+const OUTREACH_ELIGIBLE_STATUSES = [
+  "pending-review",
+  "reviewed",
+  "contacted",
+  "responded",
+  "paid",
+];
+
 export async function sendPitchEmail(prospect: Prospect) {
   if (!prospect.email) {
     throw new Error(`No email address for ${prospect.businessName}`);
   }
   if (!prospect.generatedSiteUrl) {
     throw new Error(`No preview site generated for ${prospect.businessName}`);
+  }
+
+  // Quality gate: verify the prospect has passed quality review before sending
+  if (!OUTREACH_ELIGIBLE_STATUSES.includes(prospect.status)) {
+    throw new Error(
+      `Cannot send pitch to ${prospect.businessName}: status is "${prospect.status}" — must pass quality review first (status should be "pending-review" or better)`
+    );
   }
 
   const previewUrl = `${BASE_URL}${prospect.generatedSiteUrl}`;

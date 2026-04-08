@@ -7,6 +7,8 @@ import { sendSms, getSmsHistory, getInitialSms, getFollowUpSms1, getFollowUpSms2
 import { getPitchEmail, getFollowUp1, getFollowUp2 } from "./email-templates";
 import { generateSmartFollowUp } from "./smart-followup";
 import { alertOwner } from "./alerts";
+import { dropVoicemail } from "./voicemail";
+import { supabase, isSupabaseConfigured } from "./supabase";
 
 const FUNNEL_FILE = path.join(process.cwd(), "data", "funnel-enrollments.json");
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
@@ -23,17 +25,22 @@ export interface FunnelEnrollment {
 
 export interface FunnelStep {
   day: number;
-  channels: ("email" | "sms")[];
+  channels: ("email" | "sms" | "voicemail")[];
   label: string;
 }
 
+/**
+ * 7-step funnel matching CLAUDE.md and agent-personality.ts:
+ * Days 0, 2, 5, 12, 18, 21, 30 — with voicemail drops on Days 2 and 18.
+ */
 export const FUNNEL_STEPS: FunnelStep[] = [
   { day: 0, channels: ["email", "sms"], label: "Initial Pitch" },
-  { day: 3, channels: ["email", "sms"], label: "Follow-Up #1" },
-  { day: 7, channels: ["email", "sms"], label: "Follow-Up #2" },
-  { day: 14, channels: ["email"], label: "Smart Re-engagement" },
-  { day: 21, channels: ["email"], label: "Value Add" },
-  { day: 30, channels: ["email"], label: "Final Attempt" },
+  { day: 2, channels: ["voicemail"], label: "Voicemail Drop" },
+  { day: 5, channels: ["email"], label: "Gentle Follow-Up" },
+  { day: 12, channels: ["email", "sms"], label: "Value Reframe" },
+  { day: 18, channels: ["voicemail"], label: "Follow-Up VM" },
+  { day: 21, channels: ["email"], label: "Social Proof" },
+  { day: 30, channels: ["email"], label: "Final Check-In" },
 ];
 
 /**
@@ -55,14 +62,71 @@ function ensureDir() {
 }
 
 function loadEnrollments(): FunnelEnrollment[] {
+  // On Vercel, use Supabase for enrollment persistence
+  // Local file is only for dev; loadEnrollmentsAsync handles Supabase
+  if (process.env.VERCEL) {
+    // Synchronous fallback — return empty; callers should use async version
+    console.log("[Funnel] Skipping local file read on Vercel — use async loader");
+    return [];
+  }
   ensureDir();
   if (!fs.existsSync(FUNNEL_FILE)) return [];
   return JSON.parse(fs.readFileSync(FUNNEL_FILE, "utf-8"));
 }
 
+async function loadEnrollmentsAsync(): Promise<FunnelEnrollment[]> {
+  if (isSupabaseConfigured()) {
+    try {
+      const { data, error } = await supabase
+        .from("funnel_enrollments")
+        .select("*");
+      if (!error && data) {
+        return data.map((row: Record<string, unknown>) => ({
+          prospectId: row.prospect_id as string,
+          enrolledAt: row.enrolled_at as string,
+          currentStep: row.current_step as number,
+          lastSentAt: row.last_sent_at as string | null,
+          paused: row.paused as boolean,
+          pauseReason: row.pause_reason as string | undefined,
+          completedAt: row.completed_at as string | undefined,
+        }));
+      }
+    } catch {
+      // Table might not exist yet — fall through to local
+    }
+  }
+  return loadEnrollments();
+}
+
 function saveEnrollments(enrollments: FunnelEnrollment[]) {
+  // Skip file writes on Vercel (read-only filesystem)
+  if (process.env.VERCEL) {
+    console.log("[Funnel] Skipping local file write on Vercel — using Supabase");
+    return;
+  }
   ensureDir();
   fs.writeFileSync(FUNNEL_FILE, JSON.stringify(enrollments, null, 2));
+}
+
+async function saveEnrollmentsAsync(enrollments: FunnelEnrollment[]) {
+  if (isSupabaseConfigured()) {
+    try {
+      for (const e of enrollments) {
+        await supabase.from("funnel_enrollments").upsert({
+          prospect_id: e.prospectId,
+          enrolled_at: e.enrolledAt,
+          current_step: e.currentStep,
+          last_sent_at: e.lastSentAt,
+          paused: e.paused,
+          pause_reason: e.pauseReason || null,
+          completed_at: e.completedAt || null,
+        }, { onConflict: "prospect_id" });
+      }
+    } catch {
+      // Table might not exist yet
+    }
+  }
+  saveEnrollments(enrollments);
 }
 
 export function getEnrollment(prospectId: string): FunnelEnrollment | undefined {
@@ -93,7 +157,7 @@ export async function enrollInFunnel(prospectId: string): Promise<{ success: boo
   }
 
   // Check if already enrolled
-  const enrollments = loadEnrollments();
+  const enrollments = await loadEnrollmentsAsync();
   const existing = enrollments.find((e) => e.prospectId === prospectId);
   if (existing && !existing.completedAt && !existing.paused) {
     return { success: false, message: "Already in funnel" };
@@ -114,7 +178,7 @@ export async function enrollInFunnel(prospectId: string): Promise<{ success: boo
   // Remove old enrollment if re-enrolling
   const filtered = enrollments.filter((e) => e.prospectId !== prospectId);
   filtered.push(enrollment);
-  saveEnrollments(filtered);
+  await saveEnrollmentsAsync(filtered);
 
   // Update prospect status
   await updateProspect(prospectId, { status: "contacted" });
@@ -134,11 +198,11 @@ export async function enrollInFunnel(prospectId: string): Promise<{ success: boo
  */
 export async function runDailyFunnel(): Promise<{
   processed: number;
-  sent: { name: string; step: string; email: boolean; sms: boolean }[];
+  sent: { name: string; step: string; email: boolean; sms: boolean; voicemail: boolean }[];
   paused: { name: string; reason: string }[];
 }> {
-  const enrollments = loadEnrollments();
-  const sent: { name: string; step: string; email: boolean; sms: boolean }[] = [];
+  const enrollments = await loadEnrollmentsAsync();
+  const sent: { name: string; step: string; email: boolean; sms: boolean; voicemail: boolean }[] = [];
   const paused: { name: string; reason: string }[] = [];
 
   for (const enrollment of enrollments) {
@@ -204,25 +268,28 @@ export async function runDailyFunnel(): Promise<{
         step: stepConfig.label,
         email: results.emailSent,
         sms: results.smsSent,
+        voicemail: results.voicemailSent,
       });
     }
   }
 
-  saveEnrollments(enrollments);
+  await saveEnrollmentsAsync(enrollments);
   return { processed: enrollments.length, sent, paused };
 }
 
 /**
  * Send a specific funnel step to a prospect.
+ * Handles email, SMS, and voicemail channels per the step config.
  */
 async function sendFunnelStep(
   prospect: Prospect,
   stepIndex: number
-): Promise<{ emailSent: boolean; smsSent: boolean }> {
+): Promise<{ emailSent: boolean; smsSent: boolean; voicemailSent: boolean }> {
   const step = FUNNEL_STEPS[stepIndex];
   const previewUrl = `${BASE_URL}${prospect.generatedSiteUrl}`;
   let emailSent = false;
   let smsSent = false;
+  let voicemailSent = false;
 
   // Send email
   if (step.channels.includes("email") && prospect.email) {
@@ -230,19 +297,21 @@ async function sendFunnelStep(
       let template;
       if (stepIndex === 0) {
         template = getPitchEmail(prospect, previewUrl);
-      } else if (stepIndex === 1) {
-        template = getFollowUp1(prospect, previewUrl);
       } else if (stepIndex === 2) {
+        // Step 2 = Day 5 Gentle Follow-Up
+        template = getFollowUp1(prospect, previewUrl);
+      } else if (stepIndex === 3) {
+        // Step 3 = Day 12 Value Reframe
         template = getFollowUp2(prospect, previewUrl);
       } else {
-        // Steps 3-5: use smart follow-up
+        // Steps 5-6 (Day 21, Day 30): use smart follow-up
         const smart = generateSmartFollowUp(prospect);
         template = { subject: smart.email.subject, body: smart.email.body, sequence: stepIndex + 1 };
       }
 
       await sendEmail(prospect.id, prospect.email, template.subject, template.body, template.sequence);
       emailSent = true;
-      console.log(`  Funnel step ${stepIndex} email sent to ${prospect.businessName}`);
+      console.log(`  Funnel step ${stepIndex} (Day ${step.day}) email sent to ${prospect.businessName}`);
     } catch (err) {
       console.log(`  Funnel email failed for ${prospect.businessName}: ${(err as Error).message}`);
     }
@@ -262,14 +331,42 @@ async function sendFunnelStep(
 
         await sendSms(prospect.id, prospect.phone, body, lastSeq + 1);
         smsSent = true;
-        console.log(`  Funnel step ${stepIndex} text sent to ${prospect.businessName}`);
+        console.log(`  Funnel step ${stepIndex} (Day ${step.day}) text sent to ${prospect.businessName}`);
       }
     } catch (err) {
       console.log(`  Funnel text failed for ${prospect.businessName}: ${(err as Error).message}`);
     }
   }
 
-  return { emailSent, smsSent };
+  // Drop voicemail (Days 2 and 18 per CLAUDE.md)
+  if (step.channels.includes("voicemail") && prospect.phone) {
+    try {
+      const drop = await dropVoicemail(prospect.id, prospect.phone, prospect.businessName);
+      voicemailSent = drop.status === "sent";
+      console.log(`  📞 Funnel step ${stepIndex} (Day ${step.day}) voicemail ${drop.status} for ${prospect.businessName}`);
+
+      // Per CLAUDE.md: "Always follow up a voicemail with a text"
+      // Send a follow-up SMS shortly after the voicemail drop
+      if (voicemailSent) {
+        try {
+          const vmFollowUpText = `Hey! This is BlueJays — I just left you a quick voicemail about the website I built for ${prospect.businessName}. Here's the link: ${previewUrl}`;
+          const smsHistory = await getSmsHistory(prospect.id);
+          const nextSeq = smsHistory.length > 0 ? Math.max(...smsHistory.map((s) => s.sequence)) + 1 : 1;
+          if (nextSeq <= 3) {
+            await sendSms(prospect.id, prospect.phone, vmFollowUpText, nextSeq);
+            smsSent = true;
+            console.log(`  📱 Post-voicemail follow-up text sent to ${prospect.businessName}`);
+          }
+        } catch (err) {
+          console.log(`  ⚠️ Post-voicemail text failed for ${prospect.businessName}: ${(err as Error).message}`);
+        }
+      }
+    } catch (err) {
+      console.log(`  ⚠️ Voicemail drop failed for ${prospect.businessName}: ${(err as Error).message}`);
+    }
+  }
+
+  return { emailSent, smsSent, voicemailSent };
 }
 
 /**

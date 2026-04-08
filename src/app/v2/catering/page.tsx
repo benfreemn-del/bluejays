@@ -255,7 +255,7 @@ const galleryImages = [
   "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=600&q=80",
   "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=80",
   "https://images.unsplash.com/photo-1530062845289-9109b2c9c868?w=600&q=80",
-  "https://images.unsplash.com/photo-1551218808-94e220e084d2?w=600&q=80",
+  "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&q=80",
   "https://images.unsplash.com/photo-1547573854-74d2a71d0826?w=600&q=80",
   "https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=600&q=80",
 ];
