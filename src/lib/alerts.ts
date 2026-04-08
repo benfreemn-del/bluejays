@@ -117,3 +117,28 @@ export async function alertCustomRequest(prospect: Prospect, request: string) {
 export function isAlertsConfigured(): boolean {
   return !!(OWNER_PHONE && TWILIO_ACCOUNT_SID);
 }
+
+/**
+ * Alert for objection responses — notify Ben when a prospect raises an objection
+ * so he can follow up personally if needed.
+ */
+export async function alertObjectionResponse(prospect: Prospect, objectionType: string, response: string) {
+  await alertOwner({
+    type: "prospect-responded",
+    message: `${prospect.businessName} raised an objection: "${objectionType}"\n"${response.substring(0, 100)}..."\nAI handled with playbook script. May need follow-up.`,
+    prospect,
+    timestamp: new Date().toISOString(),
+  });
+}
+
+/**
+ * Alert for escalation to Ben — immediate human handoff needed.
+ */
+export async function alertEscalation(prospect: Prospect, reason: string, urgency: "immediate" | "next-day") {
+  await alertOwner({
+    type: urgency === "immediate" ? "angry-response" : "prospect-responded",
+    message: `ESCALATION (${urgency}): ${prospect.businessName}\nReason: ${reason}\nPhone: ${prospect.phone || "N/A"}\nEmail: ${prospect.email || "N/A"}`,
+    prospect,
+    timestamp: new Date().toISOString(),
+  });
+}

@@ -8,14 +8,48 @@ import { EMAIL_FOOTER } from "./email-templates";
  * Creates hyper-personalized follow-up messages by referencing
  * specific details from the prospect's business (reviews, services,
  * location, rating). Way more effective than generic templates.
+ *
+ * Angle selection follows the Sales Strategy Playbook Part 7:
+ *
+ * 1. Review Spotlight — Use when the prospect has a specific standout review
+ *    that can be quoted. Highly personal, shows we actually looked at their business.
+ *
+ * 2. High Rating Congratulation — Use when 4.5+ stars with 50+ reviews.
+ *    Acknowledges reputation, frames website as matching that quality.
+ *
+ * 3. Service-Specific Highlight — Use when a distinctive/high-value service
+ *    was scraped. Highlights that specific service on the preview site.
+ *
+ * 4. Growth Opportunity — Use when moderate review count (10–50) suggesting
+ *    they're growing but not yet established. Website accelerates growth.
+ *
+ * 5. Generic Personal Angle — Fallback when no specific data is available.
+ *    Frames outreach as a question about their online presence.
  */
+
+export type FollowUpAngle =
+  | "Review Spotlight"
+  | "High Rating"
+  | "Service-Specific"
+  | "Growth Opportunity"
+  | "Generic Personal";
 
 export interface SmartFollowUp {
   email: { subject: string; body: string };
   sms: string;
-  angle: string;
+  angle: FollowUpAngle;
 }
 
+/**
+ * Select the best follow-up angle and generate personalized content.
+ *
+ * Selection priority (per playbook):
+ * 1. Review Spotlight — if a standout testimonial exists
+ * 2. High Rating — if 4.5+ stars with 50+ reviews
+ * 3. Service-Specific — if a distinctive service was scraped
+ * 4. Growth Opportunity — if 10–50 reviews (growing but not established)
+ * 5. Generic Personal — fallback
+ */
 export function generateSmartFollowUp(prospect: Prospect): SmartFollowUp {
   const name = prospect.ownerName?.split(" ")[0] || "there";
   const biz = prospect.businessName;
@@ -25,30 +59,67 @@ export function generateSmartFollowUp(prospect: Prospect): SmartFollowUp {
   const services = prospect.scrapedData?.services || [];
   const testimonials = prospect.scrapedData?.testimonials || [];
 
-  // Pick the best angle based on what data we have
+  // 1. Review Spotlight — standout review that can be quoted
   if (testimonials.length > 0) {
-    return reviewAngle(name, biz, testimonials[0], prospect);
+    return reviewSpotlightAngle(name, biz, testimonials[0], prospect);
   }
+
+  // 2. High Rating Congratulation — 4.5+ stars with 50+ reviews
   if (rating && rating >= 4.5 && reviews && reviews > 50) {
     return highRatingAngle(name, biz, rating, reviews, prospect);
   }
+
+  // 3. Service-Specific Highlight — distinctive scraped service
   if (services.length > 0) {
-    return serviceAngle(name, biz, services[0], category, prospect);
+    return serviceSpecificAngle(name, biz, services[0], category, prospect);
   }
-  if (reviews && reviews > 20) {
-    return growthAngle(name, biz, reviews, category, prospect);
+
+  // 4. Growth Opportunity — moderate review count (10–50)
+  if (reviews && reviews >= 10 && reviews <= 50) {
+    return growthOpportunityAngle(name, biz, reviews, category, prospect);
   }
+
+  // 5. Generic Personal Angle — fallback
   return genericPersonalAngle(name, biz, category, prospect);
 }
 
-function reviewAngle(name: string, biz: string, review: { name: string; text: string }, prospect: Prospect): SmartFollowUp {
+/**
+ * Determine which angle was selected for a prospect (useful for analytics).
+ */
+export function getSelectedAngle(prospect: Prospect): FollowUpAngle {
+  const reviews = prospect.reviewCount;
+  const rating = prospect.googleRating;
+  const services = prospect.scrapedData?.services || [];
+  const testimonials = prospect.scrapedData?.testimonials || [];
+
+  if (testimonials.length > 0) return "Review Spotlight";
+  if (rating && rating >= 4.5 && reviews && reviews > 50) return "High Rating";
+  if (services.length > 0) return "Service-Specific";
+  if (reviews && reviews >= 10 && reviews <= 50) return "Growth Opportunity";
+  return "Generic Personal";
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ANGLE IMPLEMENTATIONS
+// ═══════════════════════════════════════════════════════════════
+
+/**
+ * Review Spotlight — "I saw what [Reviewer Name] said about [Business Name]"
+ * Highly personal, shows we actually looked at their business.
+ */
+function reviewSpotlightAngle(
+  name: string,
+  biz: string,
+  review: { name: string; text: string },
+  prospect: Prospect
+): SmartFollowUp {
   const previewUrl = `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}${prospect.generatedSiteUrl}`;
   const snippet = review.text.length > 60 ? review.text.slice(0, 60) + "..." : review.text;
 
   return {
-    angle: "Customer review reference",
+    angle: "Review Spotlight",
     email: {
-      subject: `${name}, I saw what ${review.name} said about ${biz}`,
+      subject: `I saw what ${review.name} said about ${biz}`,
       body: `Hey ${name},
 
 I was looking at ${biz}'s reviews and saw ${review.name} wrote: "${snippet}"
@@ -67,11 +138,21 @@ ${EMAIL_FOOTER.replace("{{baseUrl}}", process.env.NEXT_PUBLIC_BASE_URL || "http:
   };
 }
 
-function highRatingAngle(name: string, biz: string, rating: number, reviews: number, prospect: Prospect): SmartFollowUp {
+/**
+ * High Rating Congratulation — "[Rating] stars with [count] reviews — [Business] deserves a website that matches"
+ * Acknowledges their reputation, frames website as matching that quality.
+ */
+function highRatingAngle(
+  name: string,
+  biz: string,
+  rating: number,
+  reviews: number,
+  prospect: Prospect
+): SmartFollowUp {
   const previewUrl = `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}${prospect.generatedSiteUrl}`;
 
   return {
-    angle: "High rating congratulation",
+    angle: "High Rating",
     email: {
       subject: `${rating} stars with ${reviews} reviews — ${biz} deserves a website that matches`,
       body: `Hey ${name},
@@ -90,11 +171,21 @@ ${EMAIL_FOOTER.replace("{{baseUrl}}", process.env.NEXT_PUBLIC_BASE_URL || "http:
   };
 }
 
-function serviceAngle(name: string, biz: string, topService: { name: string; description?: string }, category: string, prospect: Prospect): SmartFollowUp {
+/**
+ * Service-Specific Highlight — "I highlighted [Service] on your new [Business] website"
+ * Works well for specialists (emergency plumber, Invisalign dentist, etc.)
+ */
+function serviceSpecificAngle(
+  name: string,
+  biz: string,
+  topService: { name: string; description?: string },
+  category: string,
+  prospect: Prospect
+): SmartFollowUp {
   const previewUrl = `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}${prospect.generatedSiteUrl}`;
 
   return {
-    angle: "Service-specific highlight",
+    angle: "Service-Specific",
     email: {
       subject: `${name}, I highlighted ${topService.name} on your new ${biz} website`,
       body: `Hey ${name},
@@ -115,11 +206,21 @@ ${EMAIL_FOOTER.replace("{{baseUrl}}", process.env.NEXT_PUBLIC_BASE_URL || "http:
   };
 }
 
-function growthAngle(name: string, biz: string, reviews: number, category: string, prospect: Prospect): SmartFollowUp {
+/**
+ * Growth Opportunity — "[Business] has [count] reviews but is your website converting them?"
+ * For businesses with 10–50 reviews: growing but not yet established.
+ */
+function growthOpportunityAngle(
+  name: string,
+  biz: string,
+  reviews: number,
+  category: string,
+  prospect: Prospect
+): SmartFollowUp {
   const previewUrl = `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}${prospect.generatedSiteUrl}`;
 
   return {
-    angle: "Growth opportunity",
+    angle: "Growth Opportunity",
     email: {
       subject: `${biz} has ${reviews} reviews but is your website converting them?`,
       body: `Hey ${name},
@@ -140,11 +241,21 @@ ${EMAIL_FOOTER.replace("{{baseUrl}}", process.env.NEXT_PUBLIC_BASE_URL || "http:
   };
 }
 
-function genericPersonalAngle(name: string, biz: string, category: string, prospect: Prospect): SmartFollowUp {
+/**
+ * Generic Personal Angle — "Quick question about [Business]'s online presence"
+ * Fallback when no specific data is available.
+ * Frames outreach as a question rather than a pitch.
+ */
+function genericPersonalAngle(
+  name: string,
+  biz: string,
+  category: string,
+  prospect: Prospect
+): SmartFollowUp {
   const previewUrl = `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}${prospect.generatedSiteUrl}`;
 
   return {
-    angle: "Industry-specific value",
+    angle: "Generic Personal",
     email: {
       subject: `${name}, quick question about ${biz}'s online presence`,
       body: `Hey ${name},

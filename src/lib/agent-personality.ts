@@ -75,6 +75,10 @@ export const OBJECTION_RESPONSES: Record<string, { response: string; followUp: s
     response: "Absolutely, take your time! And just so you know — what you're seeing is just the first version. Once you're on board, we customize everything to your exact preferences. Colors, photos, layout, content — whatever you want changed, we make it happen. The preview is just the starting point.",
     followUp: "Hey {name}, just checking in — have you had a chance to think about the site? Remember, everything you see is fully customizable. Happy to answer any questions.",
   },
+  "bad timing": {
+    response: "Absolutely, take your time! And just so you know — what you're seeing is just the first version. Once you're on board, we customize everything to your exact preferences. Colors, photos, layout, content — whatever you want changed, we make it happen. The preview is just the starting point.",
+    followUp: "Hey {name}, just checking in — have you had a chance to think about the site? Remember, everything you see is fully customizable. Happy to answer any questions.",
+  },
   "can you do it cheaper": {
     response: "I hear you — unfortunately $997 is our standard rate and we keep it firm because we don't cut corners on quality. For comparison, most agencies charge $3K-$10K for this level of work. We just found a way to do it efficiently without sacrificing quality.",
     followUp: "",
@@ -127,4 +131,75 @@ export const CHANNEL_RULES = {
   textFirst: false, // email first, text as follow-up
   instagramOnlyIfTheyRespondFirst: true, // Ben does IG manually
   voicemailAsOptionalChannel: true, // user chooses per lead
+};
+
+/**
+ * Decision Framework: When to push checkout link vs calendar booking.
+ * Based on the sales strategy playbook Part 4.
+ */
+export const CLOSE_DECISION_FRAMEWORK = {
+  /** Conditions where we send the direct checkout link ($997) */
+  directClose: [
+    "Prospect says they love the site and asks how to get started",
+    "Prospect asks about pricing and agent has already answered what's included",
+    "Prospect has viewed the preview multiple times and is asking follow-up questions",
+    "Prospect is a lower-revenue-tier business (cleaning, locksmith, etc.)",
+  ],
+  /** Conditions where we push for a calendar booking with Ben */
+  calendarBooking: [
+    "Prospect asks about custom features, integrations, or anything outside standard template",
+    "Prospect is a higher-revenue business (dental, law firm, medical) where trust matters more",
+    "Prospect has expressed interest but has lingering hesitation text isn't resolving",
+    "Prospect has asked the same question twice and agent's answer hasn't moved them forward",
+    "Prospect's intent is classified as unknown by the AI responder",
+  ],
+  /** High-value categories that should lean toward calendar booking */
+  highValueCategories: [
+    "dental", "law-firm", "medical", "chiropractic", "real-estate",
+    "accounting", "insurance", "veterinary", "physical-therapy",
+  ] as string[],
+  /** Lower-value categories that can go direct close */
+  directCloseCategories: [
+    "cleaning", "locksmith", "pressure-washing", "pest-control",
+    "moving", "fencing", "tree-service", "garage-door",
+  ] as string[],
+};
+
+/**
+ * Escalation Rules: When to hand off to Ben.
+ * Based on the sales strategy playbook Part 5.
+ */
+export const ESCALATION_RULES = {
+  /** Immediate escalation (same day) — Ben needs to act NOW */
+  immediate: [
+    "Prospect expresses purchase intent but has questions agent cannot answer",
+    "Prospect is angry or situation is escalating",
+    "Prospect requests to speak with a human directly",
+    "AI responder returns a low-confidence classification",
+  ],
+  /** Next-day escalation — flag for Ben's review */
+  nextDay: [
+    "Prospect has responded positively multiple times but hasn't converted after 3+ exchanges",
+    "Prospect is asking about custom work or enterprise-level features",
+    "Prospect is a high-value category and has shown interest",
+  ],
+  /** The handoff message template */
+  handoffScript: "I'm going to have Ben reach out to you directly — he's the founder and can answer everything in detail. You'll hear from him within {timeframe}. In the meantime, your preview is still live at {previewUrl}.",
+};
+
+/**
+ * Intent-to-CRM-Status Mapping
+ * Maps the 6 prospect intent categories to their proper CRM status transitions.
+ * Based on the sales strategy playbook Part 2.
+ */
+export const INTENT_STATUS_MAP: Record<string, string> = {
+  interested: "interested",
+  question: "responded",
+  objection: "responded",
+  not_interested: "dismissed",
+  angry: "unsubscribed",
+  unsubscribe: "unsubscribed",
+  neutral: "responded",
+  custom_request: "interested",
+  unknown: "responded", // escalate to Ben for review
 };

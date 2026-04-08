@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getProspectByEmail, getAllProspects } from "@/lib/store";
 import { processIncomingMessage } from "@/lib/ai-responder";
 import { sendEmail } from "@/lib/email-sender";
-import { alertProspectResponded, alertAngryResponse, alertCustomRequest } from "@/lib/alerts";
+import { alertProspectResponded, alertAngryResponse, alertCustomRequest, alertObjectionResponse, alertEscalation } from "@/lib/alerts";
 
 /**
  * POST /api/inbound/email
@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Trigger alerts based on intent
+    // Trigger alerts based on intent and escalation rules
     if (aiResponse.intent === "interested" || aiResponse.escalate) {
       await alertProspectResponded(prospect, body);
     }
@@ -114,6 +114,13 @@ export async function POST(request: NextRequest) {
     }
     if (aiResponse.intent === "custom_request") {
       await alertCustomRequest(prospect, body);
+    }
+    if (aiResponse.intent === "objection" && aiResponse.objectionType) {
+      await alertObjectionResponse(prospect, aiResponse.objectionType, body);
+    }
+    // Escalation alerts with urgency levels
+    if (aiResponse.escalate && aiResponse.escalateUrgency) {
+      await alertEscalation(prospect, aiResponse.escalateReason || "Escalation triggered", aiResponse.escalateUrgency);
     }
 
     return NextResponse.json({
