@@ -175,7 +175,7 @@ When Ben asks to build a V2 (or higher) template for a category, ALL of these st
 - **Only scout categories that have a built template** — don't scout categories we can't generate premium sites for yet.
 - **Current active categories** (have premium templates — all 30 categories have V1, 11 have V2): real-estate, dental, law-firm, landscaping, salon, electrician, plumber, hvac, roofing, auto-repair, chiropractic, fitness, veterinary, photography, cleaning, pest-control, accounting, moving, florist, daycare, insurance, interior-design, tattoo, martial-arts, physical-therapy, tutoring, pool-spa, general-contractor, catering, pet-services, church
 - **Add new categories only after building their premium template first** — template first, then scout.
-- **Categories with FULL V2 pipeline (showcase + dynamic renderer + preview routing)**: electrician, dental, law-firm, salon, fitness, real-estate, church, plumber, hvac, roofing, auto-repair, chiropractic, veterinary, photography, interior-design, landscaping, cleaning, pest-control, accounting, tattoo, florist, moving, daycare, insurance, martial-arts, pool-spa (ALL 26 V2 categories complete)
+- **Categories with FULL V2 pipeline (showcase + dynamic renderer + preview routing)**: ALL 41 categories have V2 — electrician, dental, law-firm, salon, fitness, real-estate, church, plumber, hvac, roofing, auto-repair, chiropractic, veterinary, photography, interior-design, landscaping, cleaning, pest-control, accounting, tattoo, florist, moving, daycare, insurance, martial-arts, pool-spa, general-contractor, catering, pet-services, physical-therapy, tutoring, restaurant, medical, painting, fencing, tree-service, pressure-washing, garage-door, locksmith, towing, construction
 
 ## Version Toggle Rules (NON-NEGOTIABLE)
 - **Every preview must have a V1/V2 toggle** — the preview-device page must allow Ben to flip between V1 (generic PreviewRenderer) and V2 (dynamic V2 renderer) for any prospect. This lets Ben compare quality levels.
@@ -248,15 +248,28 @@ The sales agent is a LIVING SYSTEM that must improve over time, not stay static.
 - **Design as systems, not one-offs** — every fix should be a reusable solution that works for all categories, not a category-specific patch.
 - **Test on mobile AND desktop** — every page, every template, every preview. Mobile is where the money is.
 
+## Lessons Learned (HARD-WON — DO NOT REPEAT THESE MISTAKES)
+- **SVG animations that look bad are worse than no animation** — if a hero SVG looks like a rough sketch (salon scissors, PT stick figure, fitness runner), replace it with a beautiful photo instead. A stunning photo > a mediocre animation every time.
+- **Photos > animations for feminine/elegant categories** — salon, florist, photography, interior-design look better with real photos than SVG animations. Save animations for industrial/trade categories where they can be bold and simple (barbell, piston, lightning bolt).
+- **Gallery images MUST match their labels** — "Modern Kitchen Remodel" must show a kitchen, not curtains. If an agent assigns labels to a gallery, the agent must verify each image matches its label. This was caught on general-contractor.
+- **Wix sites return "My Site" or "website" as business name** — the generator must reject these and use the prospect's name from the database instead. This is handled in generator.ts but ALWAYS check.
+- **Google Places photo URLs expire and need the API key** — all external images go through /api/image-proxy which handles this. Never render Google Places photos directly.
+- **Most small businesses don't have email addresses on their websites** — phone/SMS/voicemail will be the primary outreach channel for most prospects. Don't rely on email scraping alone.
+- **Suggestion deductions in quality gate add up fast** — cap them at 15pts total so anonymous Google reviews ("Happy Customer") don't tank the score for otherwise good sites.
+- **SendGrid domain auth requires the domain WITHOUT https://** — just "bluejayportfolio.com", not "https://bluejayportfolio.com/". This caused days of 401 errors.
+- **Vercel env vars are sensitive to trailing characters** — always verify no extra space or newline after pasting API keys.
+
 ## Tech Stack
 - Next.js 16 + React 19 + TypeScript + Tailwind v4 + Framer Motion
 - Supabase for production database (with JSON file fallback for local dev)
-- SendGrid for emails (requires domain authentication — DNS records in Vercel)
-- Twilio for SMS (LIVE — trial account)
+- SendGrid for emails (LIVE — domain authenticated, sender verified)
+- Twilio for SMS + Voicemail (LIVE — upgraded from trial)
 - File-based store at `data/` for local development
 - **Domain**: bluejayportfolio.com — DNS managed by **Vercel** (ns1.vercel-dns.com, ns2.vercel-dns.com)
 - **Hosting**: Vercel Pro (benfreemn-dels-projects/bluejays)
 - **Domain registrar**: Vercel (DNS records added through Vercel dashboard → project → Domains)
+- **Image proxy**: /api/image-proxy — proxies Google Places + Wix/Squarespace CDN images server-side
+- **Preview utils**: src/lib/preview-utils.ts — smart hero text truncation, logo detection, nav name cleanup
 
 ## Key Files
 - `scripts/pipeline.ts` — CLI to run scout/scrape/generate pipeline
@@ -281,8 +294,8 @@ The sales agent is a LIVING SYSTEM that must improve over time, not stay static.
 - Dashboard, lead pages, API routes = PROTECTED (login required)
 - Password: set via ADMIN_PASSWORD env var (default: bluejay2026)
 
-## Active Template Categories (30 total)
-real-estate, dental, law-firm, landscaping, salon, electrician, plumber, hvac, roofing, auto-repair, chiropractic, fitness, veterinary, photography, cleaning, pest-control, accounting, moving, florist, daycare, insurance, interior-design, tattoo, martial-arts, physical-therapy, tutoring, pool-spa, general-contractor, catering, pet-services
+## Active Template Categories (41 total)
+real-estate, dental, law-firm, landscaping, salon, electrician, plumber, hvac, roofing, auto-repair, chiropractic, fitness, veterinary, photography, cleaning, pest-control, accounting, moving, florist, daycare, insurance, interior-design, tattoo, martial-arts, physical-therapy, tutoring, pool-spa, general-contractor, catering, pet-services, church, restaurant, medical, painting, fencing, tree-service, pressure-washing, garage-door, locksmith, towing, construction
 
 ## Gallery-Heavy Categories
 These categories MUST have prominent visual galleries/portfolios as a primary feature:
