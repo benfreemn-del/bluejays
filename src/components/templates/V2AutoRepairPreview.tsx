@@ -43,12 +43,12 @@ const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
 
 /* ───────────────────────── COLORS ───────────────────────── */
-const DARK = "#111111";
+const DARK = "#1e1e1e";
 const RED = "#dc2626";
 const RED_LIGHT = "#ef4444";
 const RED_GLOW = "rgba(220, 38, 38, 0.15)";
 const SILVER = "#94a3b8";
-const DARK_CARD = "#1a1a1a";
+const DARK_CARD = "#2a2a2a";
 
 function getAccent(accentColor?: string) {
   const c = accentColor || RED;
@@ -219,7 +219,7 @@ function ClaimBanner({ businessName, accentColor, prospectId }: { businessName: 
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50">
-      <div className="bg-[#111111]/90 backdrop-blur-sm border-t border-white/10 px-4 py-2 flex items-center justify-center gap-4">
+      <div className="bg-[#1e1e1e]/90 backdrop-blur-sm border-t border-white/10 px-4 py-2 flex items-center justify-center gap-4">
         <p className="text-xs text-slate-400"><span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1.5 animate-pulse" />47 auto repair shops in your area upgraded their website this month</p>
         {timeLeft && timeLeft !== "EXPIRED" && <p className="text-xs font-bold" style={{ color: accentColor }}>Preview expires in {timeLeft}</p>}
       </div>
@@ -305,7 +305,7 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
 
       {/* ══════════════════ 2. HERO ══════════════════ */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, #111111 0%, #1a1a1a 50%, #111111 100%)" }} />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, #1e1e1e 0%, #1a1a1a 50%, #1e1e1e 100%)" }} />
         <GearPattern opacity={0.04} accent={ACCENT} />
         <RacingStripes opacity={0.05} accent={ACCENT} />
         <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full blur-[200px] pointer-events-none" style={{ background: `${ACCENT}08` }} />
@@ -334,8 +334,8 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
           <div className="hidden md:block relative">
             <div className="relative rounded-2xl overflow-hidden border border-white/10">
               <img src={heroImage} alt={`${data.businessName} auto repair`} className="w-full h-[500px] object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#111111] via-transparent to-transparent" />
-              <div className="absolute inset-0 bg-gradient-to-r from-[#111111]/40 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#1e1e1e] via-transparent to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-r from-[#1e1e1e]/40 to-transparent" />
               <div className="absolute bottom-6 left-6">
                 <div className="px-4 py-2 rounded-full backdrop-blur-md bg-black/50 border flex items-center gap-2" style={{ borderColor: `${ACCENT}4d` }}>
                   <ShieldCheck size={18} weight="fill" style={{ color: ACCENT }} />
@@ -349,7 +349,7 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
 
       {/* ══════════════════ 3. STATS ══════════════════ */}
       <section className="relative z-10 py-16 overflow-hidden border-y" style={{ borderColor: `${ACCENT}1a` }}>
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0e0e0e 0%, #111111 100%)" }} />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #1e1e1e 100%)" }} />
         <GearPattern opacity={0.02} accent={ACCENT} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] rounded-full blur-[180px]" style={{ background: `${ACCENT}08` }} /></div>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -370,7 +370,7 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
 
       {/* ══════════════════ 4. SERVICES ══════════════════ */}
       <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #0e0e0e 50%, ${DARK} 100%)` }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #1a1a1a 50%, ${DARK} 100%)` }} />
         <GearPattern accent={ACCENT} />
         <RacingStripes opacity={0.025} accent={ACCENT} />
         <div className="absolute inset-0 pointer-events-none">
@@ -446,7 +446,7 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
 
       {/* ══════════════════ 6. PROCESS ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #0e0e0e 50%, ${DARK} 100%)` }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #1a1a1a 50%, ${DARK} 100%)` }} />
         <GearPattern opacity={0.025} accent={ACCENT} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${SILVER}06` }} /></div>
 
@@ -493,7 +493,7 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
 
       {/* ══════════════════ 8. TESTIMONIALS ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #0e0e0e 50%, ${DARK} 100%)` }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #1a1a1a 50%, ${DARK} 100%)` }} />
         <GearPattern opacity={0.02} accent={ACCENT} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] right-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${ACCENT}06` }} /></div>
 
@@ -545,7 +545,7 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
       {/* ══════════════════ 11. HOURS ══════════════════ */}
       {data.hours && (
         <section className="relative z-10 py-24 md:py-32 overflow-hidden">
-          <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #0e0e0e 50%, ${DARK} 100%)` }} />
+          <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #1a1a1a 50%, ${DARK} 100%)` }} />
           <RacingStripes opacity={0.02} accent={ACCENT} />
           <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${ACCENT}06` }} /></div>
           <div className="max-w-3xl mx-auto px-6 relative z-10">
@@ -565,7 +565,7 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
 
       {/* ══════════════════ 12. FAQ ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #0e0e0e 50%, ${DARK} 100%)` }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #1a1a1a 50%, ${DARK} 100%)` }} />
         <GearPattern opacity={0.02} accent={ACCENT} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${ACCENT}06` }} /></div>
         <div className="max-w-3xl mx-auto px-6 relative z-10">
@@ -640,7 +640,7 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
 
       {/* ══════════════════ 14. GUARANTEE ══════════════════ */}
       <section className="relative z-10 py-16 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #0e0e0e 100%)` }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #1a1a1a 100%)` }} />
         <GearPattern opacity={0.015} accent={ACCENT} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full blur-[180px]" style={{ background: `${ACCENT}06` }} /></div>
         <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
@@ -663,7 +663,7 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
 
       {/* ══════════════════ 15. FOOTER ══════════════════ */}
       <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #0a0a0a 100%)` }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #161616 100%)` }} />
         <GearPattern opacity={0.015} accent={ACCENT} />
         <div className="mx-auto max-w-6xl px-6 relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">

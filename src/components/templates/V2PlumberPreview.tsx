@@ -68,7 +68,7 @@ function getServiceIcon(serviceName: string) {
 
 /* ───────────────────────── STOCK FALLBACK IMAGES ───────────────────────── */
 const STOCK_HERO = "https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=1400&q=80";
-const STOCK_ABOUT = "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80";
+const STOCK_ABOUT = "https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=600&q=80";
 const STOCK_PROJECTS = [
   "https://images.unsplash.com/photo-1585704032915-c3400ca199e7?w=600&q=80",
   "https://images.unsplash.com/photo-1607472586893-edb57bdc0e39?w=600&q=80",

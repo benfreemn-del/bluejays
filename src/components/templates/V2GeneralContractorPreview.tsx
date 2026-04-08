@@ -37,7 +37,7 @@ const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
 
 /* ───────────────── COLORS ───────────────── */
-const BG = "#0f1215";
+const BG = "#1a2030";
 const DEFAULT_ORANGE = "#ea580c";
 const STEEL = "#475569";
 
@@ -70,9 +70,9 @@ const STOCK_HERO = "https://images.unsplash.com/photo-1541888946425-d81bb19240f5
 const STOCK_ABOUT = "https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=600&q=80";
 const STOCK_PROJECTS = [
   "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=600&q=80",
-  "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&q=80",
   "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=600&q=80",
-  "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80",
+  "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=600&q=80",
+  "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=600&q=80",
 ];
 
 /* ───────────────── PARTICLES ───────────────── */
@@ -163,7 +163,7 @@ function ShimmerBorder({ children, className = "", accent }: { children: React.R
   return (
     <div className={`relative rounded-2xl p-[1px] overflow-hidden ${className}`}>
       <motion.div className="absolute inset-0 rounded-2xl" style={{ background: `conic-gradient(from 0deg, transparent, ${accent}, transparent, ${STEEL}, transparent)`, willChange: "transform" }} animate={{ rotate: [0, 360] }} transition={{ duration: 4, repeat: Infinity, ease: "linear" }} />
-      <div className="relative rounded-2xl bg-[#0f1215] z-10">{children}</div>
+      <div className="relative rounded-2xl bg-[#1a2030] z-10">{children}</div>
     </div>
   );
 }
@@ -217,7 +217,7 @@ function ClaimBanner({ businessName, accentColor, prospectId }: { businessName: 
   }, []);
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50">
-      <div className="bg-[#1a1a1a]/90 backdrop-blur-sm border-t border-white/10 px-4 py-2 flex items-center justify-center gap-4">
+      <div className="bg-[#1e2838]/90 backdrop-blur-sm border-t border-white/10 px-4 py-2 flex items-center justify-center gap-4">
         <p className="text-xs text-slate-400">
           <span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1.5 animate-pulse" />
           47 businesses in your area upgraded their website this month
@@ -334,7 +334,7 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
           <div className="hidden md:block relative">
             <div className="relative rounded-2xl overflow-hidden border border-white/10">
               <img src={heroImage} alt={`${data.businessName} construction`} className="w-full h-[500px] object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0f1215] via-transparent to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#1a2030] via-transparent to-transparent" />
               <div className="absolute bottom-6 left-6">
                 <div className="px-4 py-2 rounded-full backdrop-blur-md bg-black/50 border flex items-center gap-2" style={{ borderColor: `${ACCENT}4d` }}>
                   <ShieldCheck size={18} weight="fill" style={{ color: ACCENT }} />
@@ -591,7 +591,7 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
 
       {/* ══════ 12. FOOTER ══════ */}
       <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0a0c10 100%)` }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #141c28 100%)` }} />
         <BlueprintGrid opacity={0.015} accent={ACCENT} />
         <div className="mx-auto max-w-6xl px-6 relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">

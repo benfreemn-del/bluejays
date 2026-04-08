@@ -167,7 +167,7 @@ export function isTwilioConfigured(): boolean {
 
 export function getInitialSms(prospect: Prospect, previewUrl: string): string {
   const name = prospect.ownerName?.split(" ")[0] || "there";
-  return `Hey ${name}! This is BlueJays. We built a free custom website for ${prospect.businessName} — check it out: ${previewUrl} Let us know what you think!`;
+  return `Hey ${name}! This is BlueJays. We built a free custom website for ${prospect.businessName} — check it out: ${previewUrl} Let us know what you think! Reply STOP to opt out.`;
 }
 
 export function getFollowUpSms1(prospect: Prospect, previewUrl: string): string {

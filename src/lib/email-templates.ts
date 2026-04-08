@@ -7,6 +7,17 @@ export interface EmailTemplate {
   sequence: number;
 }
 
+/**
+ * CAN-SPAM compliant email footer.
+ * Appended to every outbound email in the funnel.
+ */
+export const EMAIL_FOOTER = `
+—
+BlueJays Business Solutions, WA
+You're receiving this because we built a free website for your business.
+Unsubscribe: {{baseUrl}}/unsubscribe/{{prospectId}}
+`;
+
 export function getPitchEmail(
   prospect: Prospect,
   previewUrl: string
@@ -36,7 +47,8 @@ Either way, I'd love to hear what you think.
 
 Best,
 The BlueJays Team
-bluejaycontactme@gmail.com`;
+bluejaycontactme@gmail.com
+${EMAIL_FOOTER.replace("{{baseUrl}}", process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000").replace("{{prospectId}}", prospect.id)}`;
 
   return { subject, body, sequence: 1 };
 }
@@ -61,7 +73,8 @@ I put a lot of thought into making it perfect for your business. It's fully resp
 Would love to hear your thoughts — even a quick "looks good" or "not interested" helps me out!
 
 Best,
-The BlueJays Team`,
+The BlueJays Team
+${EMAIL_FOOTER.replace("{{baseUrl}}", process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000").replace("{{prospectId}}", prospect.id)}`,
     sequence: 2,
   };
 }
@@ -86,7 +99,8 @@ I'm going to be moving on to other businesses in your area soon, so I wanted to 
 If you're interested, just reply to this email and we'll get it set up on your domain. If not, no worries — I wish you all the best!
 
 Best,
-The BlueJays Team`,
+The BlueJays Team
+${EMAIL_FOOTER.replace("{{baseUrl}}", process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000").replace("{{prospectId}}", prospect.id)}`,
     sequence: 3,
   };
 }
