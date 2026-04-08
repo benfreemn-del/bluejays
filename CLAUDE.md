@@ -98,6 +98,16 @@ This agent reviews scraped/Google photos BEFORE they go into the generated site:
 - **Image replacement authority** — this agent has the authority to swap low-quality scraped photos for premium stock alternatives. Customization matters, but visual quality matters MORE. A stunning stock photo beats a blurry phone photo every time.
 - **This agent's review is part of the pipeline** — no site can be marked "pending-review" without passing the image quality check.
 
+### Failsafe 3.5: Content & Layout Quality Review (MANDATORY before showing to Ben)
+Before ANY preview is shown to Ben, a quality agent MUST check:
+- **Hero text size and length** — the hero heading must be SHORT (business name or a compelling tagline, NOT a full description or URL). If the scraped tagline is too long (>60 chars), truncate it or use just the business name. Long text in the hero looks terrible and unprofessional.
+- **Business name in nav** — the nav must show the actual business name, NOT "website" or a generic placeholder. If scraped businessName is empty, use the prospect's businessName from the database.
+- **Hero image quality** — the first photo should be a REAL photo of the business, not a cropped logo. If data.photos[0] is a logo (detected by URL containing 'logo'), use data.photos[1] for hero and display the logo in the nav instead.
+- **Text overflow** — no text should overflow its container, get cut off mid-word, or wrap in ugly ways. Check hero, service cards, testimonials, about section.
+- **Image centering and cropping** — hero images must use `object-cover` and be properly centered. Logos used as hero images look terrible (zoomed in, cropped).
+- **Claim banner text** — must show the actual business name, not "website" or placeholder.
+- **These checks run on EVERY generated preview before status promotion.**
+
 ### Failsafe 4: Image Quality Review Agent (MANDATORY before showing to Ben)
 Before ANY preview is shown to Ben (marked "pending-review"), an image review agent MUST:
 - **Check every image loads** — visit each URL in data.photos, verify HTTP 200. Replace broken ones with stock.

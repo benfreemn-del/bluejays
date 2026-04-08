@@ -29,6 +29,7 @@ import V2MartialArtsPreview from "@/components/templates/V2MartialArtsPreview";
 import V2PoolSpaPreview from "@/components/templates/V2PoolSpaPreview";
 import { getScrapedData } from "@/lib/store";
 import { proxyPhotos } from "@/lib/image-proxy";
+import { getHeroHeading, getHeroSubtitle, getHeroImage, getAboutImage, getNavName } from "@/lib/preview-utils";
 
 export const dynamic = "force-dynamic";
 
@@ -75,10 +76,24 @@ export default async function PreviewPage({
     notFound();
   }
 
-  // Proxy all external images through our server to fix broken Google Places & CDN URLs
+  // Clean data: proxy images, fix long taglines, detect logos, clean business names
+  const heroImg = getHeroImage(siteData);
+  const aboutImg = getAboutImage(siteData);
+  const cleanPhotos = proxyPhotos(siteData.photos);
+
+  // Reorder photos: hero image first, about image second, rest after
+  const orderedPhotos = [
+    heroImg ? cleanPhotos.find(p => p.includes(encodeURIComponent(heroImg.split("?")[0]))) || cleanPhotos[0] : cleanPhotos[0],
+    aboutImg ? cleanPhotos.find(p => p.includes(encodeURIComponent(aboutImg.split("?")[0]))) || cleanPhotos[1] : cleanPhotos[1],
+    ...cleanPhotos.slice(2),
+  ].filter(Boolean) as string[];
+
   const proxiedData: GeneratedSiteData = {
     ...siteData,
-    photos: proxyPhotos(siteData.photos),
+    businessName: getNavName(siteData),
+    tagline: getHeroHeading(siteData),
+    about: getHeroSubtitle(siteData) !== siteData.about ? (siteData.about || getHeroSubtitle(siteData)) : siteData.about,
+    photos: orderedPhotos.length > 0 ? orderedPhotos : cleanPhotos,
   };
 
   // Use V2 renderer if available for this category, otherwise fall back to generic

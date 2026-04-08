@@ -307,7 +307,7 @@ export default function V2GeneralContractorShowcase() {
       </section>
 
       {/* ══════ 3. STATS ══════ */}
-      <SectionReveal className="relative z-10 py-16 overflow-hidden border-y" id="stats" style={{ borderColor: `${ORANGE}1a` } as React.CSSProperties}>
+      <SectionReveal className="relative z-10 py-16 overflow-hidden border-y border-white/10" id="stats">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #12141a 0%, ${BG} 100%)` }} />
         <BlueprintGrid opacity={0.02} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
