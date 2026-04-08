@@ -50,10 +50,14 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ url: session.url, sessionId: session.id });
   } catch (err) {
-    console.error("[Checkout] Error creating session:", err);
+    const error = err as Error & { type?: string; code?: string; statusCode?: number };
+    console.error("[Checkout] Error creating session:", error.message, error.type, error.code);
     return NextResponse.json(
-      { error: "Failed to create checkout session" },
-      { status: 500 }
+      {
+        error: "Failed to create checkout session",
+        detail: error.message || "Unknown error",
+      },
+      { status: error.statusCode || 500 }
     );
   }
 }
