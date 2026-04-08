@@ -33,6 +33,10 @@ export default function LeadPage() {
   const [vslScript, setVslScript] = useState<Record<string, string> | null>(null);
   const [vslLoading, setVslLoading] = useState(false);
   const [vslExpanded, setVslExpanded] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [simReport, setSimReport] = useState<any>(null);
+  const [simLoading, setSimLoading] = useState(false);
+  const [simOpen, setSimOpen] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -217,6 +221,22 @@ export default function LeadPage() {
               className="text-xs px-3 py-1.5 rounded-lg bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 disabled:opacity-50"
             >
               {vslLoading ? "Generating..." : vslScript ? "Regen VSL" : "Generate VSL"}
+            </button>
+            <button
+              onClick={async () => {
+                setSimLoading(true);
+                try {
+                  const res = await fetch(`/api/funnel/simulate/${id}`);
+                  const data = await res.json();
+                  setSimReport(data);
+                  setSimOpen(true);
+                } catch { /* ignore */ }
+                setSimLoading(false);
+              }}
+              disabled={simLoading}
+              className="text-xs px-3 py-1.5 rounded-lg bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20 disabled:opacity-50"
+            >
+              {simLoading ? "Simulating..." : "Simulate Funnel"}
             </button>
             <button
               onClick={() => setShowDismiss(!showDismiss)}
@@ -578,6 +598,99 @@ export default function LeadPage() {
           </div>
         </div>
       </div>
+
+      {/* Funnel Simulation Modal */}
+      {simOpen && simReport && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/60" onClick={() => setSimOpen(false)} />
+          <div className="relative w-full max-w-2xl max-h-[85vh] bg-surface border border-border rounded-2xl overflow-hidden flex flex-col">
+            <div className="p-5 border-b border-border flex items-center justify-between shrink-0">
+              <div>
+                <h3 className="text-lg font-bold">Funnel Dry Run</h3>
+                <p className="text-sm text-muted mt-1">{simReport.businessName} &middot; {simReport.passedSteps}/{simReport.totalSteps} steps passed</p>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className={`text-sm font-bold px-3 py-1 rounded-full ${
+                  simReport.overallPassed ? "bg-emerald-500/20 text-emerald-400" : "bg-red-500/20 text-red-400"
+                }`}>
+                  {simReport.overallPassed ? "ALL PASSED" : `${simReport.failedSteps} FAILED`}
+                </span>
+                <button onClick={() => setSimOpen(false)} className="text-muted hover:text-foreground text-xl">x</button>
+              </div>
+            </div>
+            <div className="overflow-y-auto p-5 space-y-4">
+              {/* Global Checks */}
+              <div className="p-4 rounded-xl bg-surface-light border border-border">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-muted mb-3">Pre-Flight Checks</h4>
+                <div className="space-y-1.5">
+                  {simReport.globalChecks.map((check: { name: string; passed: boolean; message: string; severity: string }, i: number) => (
+                    <div key={i} className="flex items-start gap-2 text-xs">
+                      <span className={`shrink-0 mt-0.5 ${check.passed ? "text-emerald-400" : check.severity === "critical" ? "text-red-400" : "text-yellow-400"}`}>
+                        {check.passed ? "\u2713" : check.severity === "critical" ? "\u2717" : "\u26A0"}
+                      </span>
+                      <span className="text-muted">{check.message}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              {/* Step Results */}
+              {simReport.steps.map((step: { stepIndex: number; day: number; label: string; channels: string[]; passed: boolean; email?: { subject: string; bodyPreview: string }; sms?: { content: string; charCount: number }; voicemail?: { script: string; trigger: string }; statusChange?: string; checks: { name: string; passed: boolean; message: string; severity: string }[] }) => (
+                <div key={step.stepIndex} className={`p-4 rounded-xl border ${
+                  step.passed ? "border-emerald-500/20 bg-emerald-500/5" : "border-red-500/20 bg-red-500/5"
+                }`}>
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+                        step.passed ? "bg-emerald-500/20 text-emerald-400" : "bg-red-500/20 text-red-400"
+                      }`}>{step.passed ? "PASS" : "FAIL"}</span>
+                      <span className="text-sm font-semibold">Day {step.day}: {step.label}</span>
+                    </div>
+                    <div className="flex gap-1">
+                      {step.channels.map((ch: string) => (
+                        <span key={ch} className={`text-[10px] px-2 py-0.5 rounded-full ${
+                          ch === "email" ? "bg-green-500/10 text-green-400" : ch === "sms" ? "bg-blue-500/10 text-blue-400" : "bg-orange-500/10 text-orange-400"
+                        }`}>{ch}</span>
+                      ))}
+                    </div>
+                  </div>
+                  {step.email && (
+                    <div className="mb-2 p-3 rounded-lg bg-surface border border-border">
+                      <p className="text-xs font-medium text-green-400 mb-1">Email</p>
+                      <p className="text-xs font-semibold">{step.email.subject}</p>
+                      <p className="text-[11px] text-muted mt-1 line-clamp-2">{step.email.bodyPreview}</p>
+                    </div>
+                  )}
+                  {step.sms && (
+                    <div className="mb-2 p-3 rounded-lg bg-surface border border-border">
+                      <p className="text-xs font-medium text-blue-400 mb-1">SMS ({step.sms.charCount} chars)</p>
+                      <p className="text-[11px] text-muted">{step.sms.content}</p>
+                    </div>
+                  )}
+                  {step.voicemail && (
+                    <div className="mb-2 p-3 rounded-lg bg-surface border border-border">
+                      <p className="text-xs font-medium text-orange-400 mb-1">Voicemail &middot; {step.voicemail.trigger}</p>
+                      <p className="text-[11px] text-muted">{step.voicemail.script}</p>
+                    </div>
+                  )}
+                  {step.statusChange && (
+                    <p className="text-[11px] text-cyan-400 mb-2">Status changes to: {step.statusChange}</p>
+                  )}
+                  <div className="space-y-1">
+                    {step.checks.filter((c: { severity: string }) => c.severity !== "info").map((check: { name: string; passed: boolean; message: string; severity: string }, i: number) => (
+                      <div key={i} className="flex items-start gap-2 text-[11px]">
+                        <span className={`shrink-0 ${check.passed ? "text-emerald-400" : check.severity === "critical" ? "text-red-400" : "text-yellow-400"}`}>
+                          {check.passed ? "\u2713" : "\u2717"}
+                        </span>
+                        <span className="text-muted">{check.message}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
