@@ -104,63 +104,97 @@ function FloatingHealingOrbs() {
 /* ───────────────────────── SPINE SVG ───────────────────────── */
 function SpineSVG() {
   return (
-    <motion.div
-      className="relative flex items-center justify-center"
-      animate={{ rotateY: [0, 360] }}
-      transition={{ duration: 14, repeat: Infinity, ease: "linear" }}
-      style={{ perspective: 800, willChange: "transform" }}
-    >
+    <div className="relative flex items-center justify-center">
+      {/* Pulsing glow behind */}
       <motion.div
         className="absolute inset-0 rounded-full"
-        style={{
-          background: `radial-gradient(circle, ${TEAL_GLOW} 0%, transparent 70%)`,
-          filter: "blur(30px)",
-          willChange: "transform",
-        }}
-        animate={{ scale: [1, 1.15, 1] }}
+        style={{ background: `radial-gradient(circle, ${TEAL_GLOW} 0%, transparent 70%)`, filter: "blur(40px)" }}
+        animate={{ scale: [1, 1.2, 1], opacity: [0.6, 1, 0.6] }}
         transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
       />
-      <svg viewBox="0 0 100 200" className="relative z-10 w-40 h-72 md:w-52 md:h-96" fill="none">
-        {/* Spine vertebrae */}
-        {[20, 42, 64, 86, 108, 130, 152].map((cy, i) => (
+      <svg viewBox="0 0 140 240" className="relative z-10 w-44 h-72 md:w-56 md:h-96" fill="none">
+        {/* Outer glow rings */}
+        <motion.ellipse cx="70" cy="120" rx="62" ry="105" stroke={TEAL} strokeWidth="0.5" opacity={0.12}
+          animate={{ rx: [60, 64, 60], ry: [103, 107, 103] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} />
+        <motion.ellipse cx="70" cy="120" rx="55" ry="95" stroke={TEAL} strokeWidth="0.3" opacity={0.08}
+          animate={{ rx: [53, 57, 53], ry: [93, 97, 93] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }} />
+
+        {/* Spine vertebrae with fills */}
+        {[22, 46, 70, 94, 118, 142, 166].map((cy, i) => (
           <motion.g key={i}>
+            {/* Vertebra body — filled */}
             <motion.ellipse
-              cx="50"
-              cy={cy}
-              rx={14 - i * 0.5}
-              ry="8"
-              stroke={TEAL_LIGHT}
-              strokeWidth="1.5"
-              fill="none"
-              initial={{ pathLength: 0, opacity: 0 }}
-              animate={{ pathLength: 1, opacity: 0.7 }}
-              transition={{ duration: 1.5, delay: i * 0.15, ease: "easeInOut" }}
+              cx="70" cy={cy} rx={16 - i * 0.6} ry="9"
+              fill={`${TEAL}22`} stroke={TEAL_LIGHT} strokeWidth="1.8"
+              initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.6, delay: i * 0.15, ease: "backOut" }}
             />
-            <motion.line
-              x1="50"
-              y1={cy + 8}
-              x2="50"
-              y2={cy + 14}
-              stroke={TEAL}
-              strokeWidth="1.5"
-              opacity={0.5}
-              initial={{ pathLength: 0 }}
-              animate={{ pathLength: 1 }}
-              transition={{ duration: 1, delay: i * 0.15 + 0.5 }}
-            />
+            {/* Inner vertebra highlight */}
+            <ellipse cx="70" cy={cy - 1} rx={8 - i * 0.3} ry="4" fill={`${TEAL_LIGHT}15`} />
+            {/* Spinous process — small wing shapes */}
+            <motion.line x1={70 - (16 - i * 0.6)} y1={cy} x2={70 - (22 - i * 0.6)} y2={cy - 3}
+              stroke={TEAL} strokeWidth="1.2" strokeLinecap="round" opacity={0.5}
+              initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
+              transition={{ duration: 0.8, delay: i * 0.15 + 0.3 }} />
+            <motion.line x1={70 + (16 - i * 0.6)} y1={cy} x2={70 + (22 - i * 0.6)} y2={cy - 3}
+              stroke={TEAL} strokeWidth="1.2" strokeLinecap="round" opacity={0.5}
+              initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
+              transition={{ duration: 0.8, delay: i * 0.15 + 0.3 }} />
+            {/* Disc connector */}
+            {i < 6 && (
+              <motion.rect x="67" y={cy + 9} width="6" height={14} rx="3"
+                fill={`${TEAL}18`} stroke={TEAL} strokeWidth="0.8" opacity={0.4}
+                initial={{ scaleY: 0 }} animate={{ scaleY: 1 }}
+                transition={{ duration: 0.5, delay: i * 0.15 + 0.5 }}
+                style={{ transformOrigin: `70px ${cy + 9}px` }} />
+            )}
           </motion.g>
         ))}
-        {/* Glow dot */}
-        <motion.circle
-          cx="50"
-          cy="86"
-          r="4"
-          fill={AMBER_LIGHT}
-          animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.3, 0.8] }}
-          transition={{ duration: 2, repeat: Infinity }}
-        />
+
+        {/* Nerve lines branching out */}
+        <motion.path d="M56 46 C40 50, 25 58, 18 70" stroke={AMBER_LIGHT} strokeWidth="1" strokeLinecap="round" fill="none" opacity={0.3}
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.5, delay: 1.5 }} />
+        <motion.path d="M84 46 C100 50, 115 58, 122 70" stroke={AMBER_LIGHT} strokeWidth="1" strokeLinecap="round" fill="none" opacity={0.3}
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.5, delay: 1.7 }} />
+        <motion.path d="M54 94 C38 100, 22 112, 15 128" stroke={AMBER_LIGHT} strokeWidth="1" strokeLinecap="round" fill="none" opacity={0.3}
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.5, delay: 1.9 }} />
+        <motion.path d="M86 94 C102 100, 118 112, 125 128" stroke={AMBER_LIGHT} strokeWidth="1" strokeLinecap="round" fill="none" opacity={0.3}
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.5, delay: 2.1 }} />
+
+        {/* Healing energy pulse traveling down spine */}
+        <motion.circle cx="70" cy="22" r="5" fill={AMBER_LIGHT} opacity={0.6}
+          animate={{ cy: [22, 166, 22], opacity: [0.7, 0.3, 0.7], scale: [1.2, 0.8, 1.2] }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} />
+
+        {/* Central glow dot */}
+        <motion.circle cx="70" cy="94" r="6" fill={`${AMBER}44`}
+          animate={{ r: [5, 8, 5], opacity: [0.3, 0.7, 0.3] }}
+          transition={{ duration: 2.5, repeat: Infinity }} />
+        <motion.circle cx="70" cy="94" r="3" fill={AMBER_LIGHT}
+          animate={{ opacity: [0.5, 1, 0.5], scale: [0.8, 1.3, 0.8] }}
+          transition={{ duration: 2, repeat: Infinity }} />
+
+        {/* Sparkle accents */}
+        <motion.circle cx="125" cy="35" r="3" fill={TEAL_LIGHT}
+          animate={{ opacity: [0.2, 1, 0.2], scale: [0.7, 1.3, 0.7] }}
+          transition={{ duration: 2.5, repeat: Infinity }} />
+        <motion.circle cx="15" cy="55" r="2" fill={AMBER_LIGHT}
+          animate={{ opacity: [0.1, 0.8, 0.1], scale: [0.5, 1.2, 0.5] }}
+          transition={{ duration: 3, repeat: Infinity, delay: 0.8 }} />
+        <motion.circle cx="130" cy="140" r="2.5" fill={TEAL_LIGHT}
+          animate={{ opacity: [0.15, 0.7, 0.15] }}
+          transition={{ duration: 2, repeat: Infinity, delay: 1.2 }} />
+        <motion.circle cx="12" cy="175" r="2" fill={AMBER_LIGHT}
+          animate={{ opacity: [0.1, 0.6, 0.1] }}
+          transition={{ duration: 2.5, repeat: Infinity, delay: 0.4 }} />
+
+        {/* Small plus/cross medical symbol */}
+        <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.5 }}>
+          <rect x="112" y="190" width="14" height="3.5" rx="1.75" fill={TEAL_LIGHT} opacity={0.4} />
+          <rect x="117.25" y="184.75" width="3.5" height="14" rx="1.75" fill={TEAL_LIGHT} opacity={0.4} />
+        </motion.g>
       </svg>
-    </motion.div>
+    </div>
   );
 }
 

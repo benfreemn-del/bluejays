@@ -165,15 +165,87 @@ function AccordionItem({ title, description, icon: Icon, isOpen, onToggle }: { t
 /* ───────────────────────── SPARKLE SVG HERO ───────────────────────── */
 function SparkleHeroIcon() {
   return (
-    <motion.div className="relative flex items-center justify-center" animate={{ rotateY: [0, 360] }} transition={{ duration: 14, repeat: Infinity, ease: "linear" }} style={{ perspective: 800, willChange: "transform" }}>
-      <motion.div className="absolute inset-0 rounded-full" style={{ background: `radial-gradient(circle, ${BLUE_GLOW} 0%, transparent 70%)`, filter: "blur(30px)", willChange: "transform" }} animate={{ scale: [1, 1.15, 1] }} transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }} />
-      <svg viewBox="0 0 120 120" className="relative z-10 w-48 h-48 md:w-64 md:h-64" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <motion.path d="M60 10 L70 45 L105 45 L77 65 L87 100 L60 78 L33 100 L43 65 L15 45 L50 45Z" stroke={BLUE} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }} transition={{ duration: 2.5, ease: "easeInOut" }} />
-        <motion.circle cx="60" cy="55" r="12" stroke={BLUE_LIGHT} strokeWidth="1.5" fill="none" opacity={0.4} initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 2, delay: 1 }} />
-        <motion.circle cx="95" cy="25" r="3" fill={BLUE_LIGHT} animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.2, 0.8] }} transition={{ duration: 2, repeat: Infinity }} />
-        <motion.circle cx="25" cy="30" r="2" fill={BLUE_LIGHT} animate={{ opacity: [0.2, 0.8, 0.2], scale: [0.8, 1.3, 0.8] }} transition={{ duration: 2.5, repeat: Infinity, delay: 0.5 }} />
+    <div className="relative flex items-center justify-center">
+      {/* Pulsing glow behind */}
+      <motion.div
+        className="absolute inset-0 rounded-full"
+        style={{ background: `radial-gradient(circle, ${BLUE_GLOW} 0%, transparent 70%)`, filter: "blur(40px)" }}
+        animate={{ scale: [1, 1.2, 1], opacity: [0.6, 1, 0.6] }}
+        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <svg viewBox="0 0 200 200" className="relative z-10 w-52 h-52 md:w-64 md:h-64" fill="none">
+        {/* Outer glow rings */}
+        <motion.circle cx="100" cy="100" r="90" stroke={BLUE} strokeWidth="0.5" opacity={0.12}
+          animate={{ r: [88, 92, 88] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} />
+        <motion.circle cx="100" cy="100" r="80" stroke={BLUE} strokeWidth="0.3" opacity={0.08}
+          animate={{ r: [78, 82, 78] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }} />
+
+        {/* Main sparkle star — filled */}
+        <motion.path
+          d="M100 20 L112 72 L165 72 L122 100 L135 152 L100 125 L65 152 L78 100 L35 72 L88 72Z"
+          fill={`${BLUE}22`} stroke={BLUE} strokeWidth="2" strokeLinejoin="round"
+          initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }}
+          transition={{ duration: 2.5, ease: "easeInOut" }}
+        />
+        {/* Inner star highlight */}
+        <path d="M100 45 L108 78 L140 78 L114 96 L122 130 L100 112 L78 130 L86 96 L60 78 L92 78Z"
+          fill={`${BLUE}0d`} />
+
+        {/* Center circle glow */}
+        <motion.circle cx="100" cy="90" r="16" fill={`${BLUE}18`} stroke={BLUE_LIGHT} strokeWidth="1.5"
+          initial={{ scale: 0 }} animate={{ scale: 1 }}
+          transition={{ duration: 0.8, delay: 1.2, ease: "backOut" }} />
+        <motion.circle cx="100" cy="90" r="8" fill={`${BLUE_LIGHT}30`}
+          animate={{ r: [7, 10, 7], opacity: [0.4, 0.8, 0.4] }}
+          transition={{ duration: 2, repeat: Infinity }} />
+
+        {/* Spray mist arcs */}
+        <motion.path d="M55 55 C40 40, 25 50, 20 65" stroke={BLUE_LIGHT} strokeWidth="1" strokeLinecap="round" fill="none" opacity={0.3}
+          initial={{ pathLength: 0 }} animate={{ pathLength: [0, 1, 0] }}
+          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }} />
+        <motion.path d="M145 55 C160 40, 175 50, 180 65" stroke={BLUE_LIGHT} strokeWidth="1" strokeLinecap="round" fill="none" opacity={0.3}
+          initial={{ pathLength: 0 }} animate={{ pathLength: [0, 1, 0] }}
+          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 0.5 }} />
+
+        {/* Bubble effects */}
+        <motion.circle cx="35" cy="75" r="6" fill={`${BLUE}15`} stroke={BLUE_LIGHT} strokeWidth="0.8"
+          animate={{ cy: [75, 65, 75], opacity: [0.3, 0.6, 0.3] }}
+          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }} />
+        <motion.circle cx="165" cy="80" r="5" fill={`${BLUE}12`} stroke={BLUE_LIGHT} strokeWidth="0.6"
+          animate={{ cy: [80, 68, 80], opacity: [0.2, 0.5, 0.2] }}
+          transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 0.6 }} />
+        <motion.circle cx="50" cy="140" r="4" fill={`${BLUE}10`} stroke={BLUE_LIGHT} strokeWidth="0.5"
+          animate={{ cy: [140, 130, 140], opacity: [0.2, 0.4, 0.2] }}
+          transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut", delay: 1.2 }} />
+        <motion.circle cx="155" cy="145" r="3.5" fill={`${BLUE}10`} stroke={BLUE_LIGHT} strokeWidth="0.5"
+          animate={{ cy: [145, 136, 145], opacity: [0.15, 0.35, 0.15] }}
+          transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut", delay: 0.9 }} />
+
+        {/* Sparkle accents */}
+        <motion.circle cx="170" cy="35" r="3" fill={BLUE_LIGHT}
+          animate={{ opacity: [0.2, 1, 0.2], scale: [0.7, 1.3, 0.7] }}
+          transition={{ duration: 2.5, repeat: Infinity }} />
+        <motion.circle cx="25" cy="40" r="2" fill={BLUE_LIGHT}
+          animate={{ opacity: [0.1, 0.8, 0.1], scale: [0.5, 1.2, 0.5] }}
+          transition={{ duration: 3, repeat: Infinity, delay: 0.8 }} />
+        <motion.circle cx="175" cy="160" r="2.5" fill={BLUE_LIGHT}
+          animate={{ opacity: [0.15, 0.7, 0.15] }}
+          transition={{ duration: 2, repeat: Infinity, delay: 1.2 }} />
+        <motion.circle cx="22" cy="155" r="2" fill={BLUE_LIGHT}
+          animate={{ opacity: [0.1, 0.6, 0.1] }}
+          transition={{ duration: 2.5, repeat: Infinity, delay: 0.4 }} />
+
+        {/* Tiny sparkle crosses */}
+        <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2 }}>
+          <rect x="28" y="118" width="10" height="2.5" rx="1.25" fill={BLUE_LIGHT} opacity={0.35} />
+          <rect x="31.75" y="114.25" width="2.5" height="10" rx="1.25" fill={BLUE_LIGHT} opacity={0.35} />
+        </motion.g>
+        <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.3 }}>
+          <rect x="158" y="110" width="8" height="2" rx="1" fill={BLUE_LIGHT} opacity={0.3} />
+          <rect x="161" y="107" width="2" height="8" rx="1" fill={BLUE_LIGHT} opacity={0.3} />
+        </motion.g>
       </svg>
-    </motion.div>
+    </div>
   );
 }
 

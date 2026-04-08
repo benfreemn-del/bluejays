@@ -84,6 +84,9 @@ function FloatingDoc({ delay, x, size }: { delay: number; x: number; size: numbe
 
 /* ─── animated scale of justice ─── */
 function ScaleOfJustice() {
+  const EMERALD = "#059669";
+  const EMERALD_LIGHT = "#10b981";
+  const GOLD_ACCENT = "#ca8a04";
   const tilt = useMotionValue(0);
   const smoothTilt = useSpring(tilt, { stiffness: 40, damping: 12 });
 
@@ -98,75 +101,100 @@ function ScaleOfJustice() {
 
   return (
     <div className="relative w-full max-w-md mx-auto aspect-square flex items-center justify-center">
-      <svg viewBox="0 0 300 300" className="w-full h-full" fill="none">
-        {/* base */}
+      {/* Pulsing glow behind */}
+      <motion.div
+        className="absolute inset-0 rounded-full"
+        style={{ background: "radial-gradient(circle, rgba(5,150,105,0.12) 0%, transparent 70%)", filter: "blur(40px)" }}
+        animate={{ scale: [1, 1.2, 1], opacity: [0.6, 1, 0.6] }}
+        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <svg viewBox="0 0 300 300" className="relative z-10 w-full h-full" fill="none">
+        {/* Outer glow rings */}
+        <motion.circle cx="150" cy="150" r="140" stroke={EMERALD} strokeWidth="0.5" opacity={0.1}
+          animate={{ r: [138, 142, 138] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} />
+        <motion.circle cx="150" cy="150" r="130" stroke={EMERALD} strokeWidth="0.3" opacity={0.06}
+          animate={{ r: [128, 132, 128] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }} />
+
+        {/* Ornate base pedestal */}
+        <motion.path d="M110 268 L120 258 L180 258 L190 268 Z" fill={`${EMERALD}22`} stroke={EMERALD} strokeWidth="2"
+          initial={{ opacity: 0, scaleX: 0 }} animate={{ opacity: 1, scaleX: 1 }}
+          transition={{ ...spring, delay: 0.4 }} />
+        <motion.rect x="125" y="256" width="50" height="4" rx="2" fill={`${EMERALD}30`}
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} />
+        <rect x="130" y="253" width="40" height="3" rx="1.5" fill={`${EMERALD}15`} />
+
+        {/* Pillar with gradient fill */}
         <motion.rect
-          x="125"
-          y="260"
-          width="50"
-          height="12"
-          rx="4"
-          fill="#059669"
-          initial={{ opacity: 0, scaleX: 0 }}
-          animate={{ opacity: 1, scaleX: 1 }}
-          transition={{ ...spring, delay: 0.5 }}
-        />
-        {/* pillar */}
-        <motion.rect
-          x="146"
-          y="100"
-          width="8"
-          height="164"
-          rx="4"
-          fill="#059669"
-          initial={{ opacity: 0, scaleY: 0 }}
-          animate={{ opacity: 1, scaleY: 1 }}
+          x="145" y="100" width="10" height="156" rx="5"
+          fill={`${EMERALD}22`} stroke={EMERALD} strokeWidth="1.5"
+          initial={{ opacity: 0, scaleY: 0 }} animate={{ opacity: 1, scaleY: 1 }}
           transition={{ ...spring, delay: 0.3 }}
-          style={{ transformOrigin: "150px 264px" }}
+          style={{ transformOrigin: "150px 256px" }}
         />
-        {/* beam */}
+        {/* Pillar inner highlight */}
+        <rect x="148" y="105" width="4" height="148" rx="2" fill={`${EMERALD}0d`} />
+
+        {/* Beam with detail */}
         <motion.g style={{ rotate: smoothTilt, transformOrigin: "150px 100px" }}>
-          <rect x="50" y="96" width="200" height="8" rx="4" fill="#059669" />
-          {/* left pan */}
-          <g>
-            <line x1="70" y1="104" x2="50" y2="160" stroke="#059669" strokeWidth="2" />
-            <line x1="70" y1="104" x2="90" y2="160" stroke="#059669" strokeWidth="2" />
-            <path
-              d="M40 160 Q70 180 100 160"
-              stroke="#059669"
-              strokeWidth="3"
-              fill="#059669"
-              fillOpacity="0.15"
-            />
-          </g>
-          {/* right pan */}
-          <g>
-            <line x1="230" y1="104" x2="210" y2="160" stroke="#059669" strokeWidth="2" />
-            <line x1="230" y1="104" x2="250" y2="160" stroke="#059669" strokeWidth="2" />
-            <path
-              d="M200 160 Q230 180 260 160"
-              stroke="#059669"
-              strokeWidth="3"
-              fill="#059669"
-              fillOpacity="0.15"
-            />
-          </g>
+          <rect x="45" y="95" width="210" height="10" rx="5" fill={`${EMERALD}22`} stroke={EMERALD} strokeWidth="1.5" />
+          <rect x="50" y="97" width="200" height="4" rx="2" fill={`${EMERALD}0d`} />
+
+          {/* Left chain links */}
+          <motion.circle cx="70" cy="115" r="4" stroke={EMERALD_LIGHT} strokeWidth="1.2" fill="none" opacity={0.5}
+            initial={{ opacity: 0 }} animate={{ opacity: 0.5 }} transition={{ delay: 0.8 }} />
+          <motion.circle cx="70" cy="125" r="4" stroke={EMERALD_LIGHT} strokeWidth="1.2" fill="none" opacity={0.5}
+            initial={{ opacity: 0 }} animate={{ opacity: 0.5 }} transition={{ delay: 0.9 }} />
+          <motion.circle cx="70" cy="135" r="4" stroke={EMERALD_LIGHT} strokeWidth="1.2" fill="none" opacity={0.5}
+            initial={{ opacity: 0 }} animate={{ opacity: 0.5 }} transition={{ delay: 1.0 }} />
+          {/* Left pan — detailed */}
+          <line x1="70" y1="105" x2="42" y2="155" stroke={EMERALD} strokeWidth="1.5" />
+          <line x1="70" y1="105" x2="98" y2="155" stroke={EMERALD} strokeWidth="1.5" />
+          <path d="M32 155 Q70 180 108 155" stroke={EMERALD} strokeWidth="2.5"
+            fill={`${EMERALD}18`} />
+          <path d="M42 155 Q70 170 98 155" fill={`${EMERALD}0d`} />
+
+          {/* Right chain links */}
+          <motion.circle cx="230" cy="115" r="4" stroke={EMERALD_LIGHT} strokeWidth="1.2" fill="none" opacity={0.5}
+            initial={{ opacity: 0 }} animate={{ opacity: 0.5 }} transition={{ delay: 0.8 }} />
+          <motion.circle cx="230" cy="125" r="4" stroke={EMERALD_LIGHT} strokeWidth="1.2" fill="none" opacity={0.5}
+            initial={{ opacity: 0 }} animate={{ opacity: 0.5 }} transition={{ delay: 0.9 }} />
+          <motion.circle cx="230" cy="135" r="4" stroke={EMERALD_LIGHT} strokeWidth="1.2" fill="none" opacity={0.5}
+            initial={{ opacity: 0 }} animate={{ opacity: 0.5 }} transition={{ delay: 1.0 }} />
+          {/* Right pan — detailed */}
+          <line x1="230" y1="105" x2="202" y2="155" stroke={EMERALD} strokeWidth="1.5" />
+          <line x1="230" y1="105" x2="258" y2="155" stroke={EMERALD} strokeWidth="2" />
+          <path d="M192 155 Q230 180 268 155" stroke={EMERALD} strokeWidth="2.5"
+            fill={`${EMERALD}18`} />
+          <path d="M202 155 Q230 170 258 155" fill={`${EMERALD}0d`} />
         </motion.g>
-        {/* top ornament */}
-        <motion.circle
-          cx="150"
-          cy="90"
-          r="14"
-          fill="#0f172a"
-          stroke="#059669"
-          strokeWidth="3"
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ ...spring, delay: 0.7 }}
-        />
+
+        {/* Top ornament — detailed */}
+        <motion.circle cx="150" cy="88" r="16" fill={`${EMERALD}22`} stroke={EMERALD} strokeWidth="2.5"
+          initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ ...spring, delay: 0.7 }} />
+        <circle cx="150" cy="86" r="8" fill={`${EMERALD}15`} />
+        <motion.circle cx="150" cy="88" r="4" fill={EMERALD_LIGHT}
+          animate={{ opacity: [0.4, 0.9, 0.4], scale: [0.9, 1.1, 0.9] }}
+          transition={{ duration: 3, repeat: Infinity }} />
+
+        {/* Justice glow pulse */}
+        <motion.circle cx="150" cy="88" r="22" fill={`${EMERALD}08`}
+          animate={{ r: [20, 28, 20], opacity: [0.1, 0.3, 0.1] }}
+          transition={{ duration: 2.5, repeat: Infinity }} />
+
+        {/* Sparkle accents */}
+        <motion.circle cx="270" cy="55" r="3" fill={EMERALD_LIGHT}
+          animate={{ opacity: [0.2, 1, 0.2], scale: [0.7, 1.3, 0.7] }}
+          transition={{ duration: 2.5, repeat: Infinity }} />
+        <motion.circle cx="25" cy="70" r="2" fill={GOLD_ACCENT}
+          animate={{ opacity: [0.1, 0.8, 0.1], scale: [0.5, 1.2, 0.5] }}
+          transition={{ duration: 3, repeat: Infinity, delay: 0.8 }} />
+        <motion.circle cx="275" cy="200" r="2.5" fill={EMERALD_LIGHT}
+          animate={{ opacity: [0.15, 0.7, 0.15] }}
+          transition={{ duration: 2, repeat: Infinity, delay: 1.2 }} />
+        <motion.circle cx="20" cy="220" r="2" fill={GOLD_ACCENT}
+          animate={{ opacity: [0.1, 0.6, 0.1] }}
+          transition={{ duration: 2.5, repeat: Infinity, delay: 0.4 }} />
       </svg>
-      {/* glow behind */}
-      <div className="absolute inset-0 bg-emerald-500/5 rounded-full blur-3xl" />
     </div>
   );
 }

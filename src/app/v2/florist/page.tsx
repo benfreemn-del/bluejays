@@ -150,25 +150,89 @@ function ShimmerBorder({ children, className = "" }: { children: React.ReactNode
 /* ───────────────────────── FLOWER HERO SVG ───────────────────────── */
 function FlowerHeroIcon() {
   return (
-    <motion.div className="relative flex items-center justify-center" style={{ perspective: 800 }}>
-      <motion.div className="absolute inset-0 rounded-full" style={{ background: `radial-gradient(circle, ${ROSE_GLOW} 0%, transparent 70%)`, filter: "blur(30px)" }} animate={{ scale: [1, 1.15, 1] }} transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }} />
-      <svg viewBox="0 0 120 120" className="relative z-10 w-48 h-48 md:w-64 md:h-64" fill="none" xmlns="http://www.w3.org/2000/svg">
-        {/* Petals */}
+    <div className="relative flex items-center justify-center">
+      {/* Pulsing glow behind */}
+      <motion.div
+        className="absolute inset-0 rounded-full"
+        style={{ background: `radial-gradient(circle, ${ROSE_GLOW} 0%, transparent 70%)`, filter: "blur(40px)" }}
+        animate={{ scale: [1, 1.2, 1], opacity: [0.6, 1, 0.6] }}
+        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <svg viewBox="0 0 200 220" className="relative z-10 w-52 h-60 md:w-64 md:h-72" fill="none">
+        {/* Outer glow rings */}
+        <motion.circle cx="100" cy="100" r="90" stroke={ROSE} strokeWidth="0.5" opacity={0.12}
+          animate={{ r: [88, 92, 88] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} />
+        <motion.circle cx="100" cy="100" r="80" stroke={ROSE} strokeWidth="0.3" opacity={0.08}
+          animate={{ r: [78, 82, 78] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }} />
+
+        {/* Outer petals — filled with gradient */}
         {[0, 60, 120, 180, 240, 300].map((angle, i) => (
-          <motion.ellipse key={i} cx="60" cy="30" rx="12" ry="25" stroke={i % 2 === 0 ? ROSE : ROSE_LIGHT} strokeWidth="1.5" fill="none"
-            style={{ transformOrigin: "60px 60px", transform: `rotate(${angle}deg)` }}
-            initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 0.7 }}
-            transition={{ duration: 2, delay: i * 0.2, ease: "easeInOut" }}
+          <motion.ellipse key={`outer-${i}`} cx="100" cy="52" rx="16" ry="38"
+            fill={`${i % 2 === 0 ? ROSE : ROSE_LIGHT}18`}
+            stroke={i % 2 === 0 ? ROSE : ROSE_LIGHT} strokeWidth="1.8"
+            style={{ transformOrigin: "100px 100px", transform: `rotate(${angle}deg)` }}
+            initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 0.8 }}
+            transition={{ duration: 0.7, delay: i * 0.15, ease: "backOut" }}
           />
         ))}
-        {/* Center */}
-        <motion.circle cx="60" cy="60" r="10" stroke={SAGE} strokeWidth="2" fill="none" initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ duration: 1, delay: 1.5 }} />
-        <motion.circle cx="60" cy="60" r="4" fill={ROSE_LIGHT} animate={{ opacity: [0.4, 1, 0.4], scale: [0.9, 1.1, 0.9] }} transition={{ duration: 3, repeat: Infinity }} />
-        {/* Sparkles */}
-        <motion.circle cx="95" cy="20" r="2.5" fill={ROSE_LIGHT} animate={{ opacity: [0.2, 0.8, 0.2] }} transition={{ duration: 2, repeat: Infinity }} />
-        <motion.circle cx="20" cy="90" r="2" fill={SAGE} animate={{ opacity: [0.2, 0.7, 0.2] }} transition={{ duration: 2.5, repeat: Infinity, delay: 0.5 }} />
+
+        {/* Inner petal highlights */}
+        {[0, 60, 120, 180, 240, 300].map((angle, i) => (
+          <ellipse key={`inner-${i}`} cx="100" cy="62" rx="7" ry="20"
+            fill={`${ROSE_LIGHT}0d`}
+            style={{ transformOrigin: "100px 100px", transform: `rotate(${angle}deg)` }}
+          />
+        ))}
+
+        {/* Center pistil ring */}
+        <motion.circle cx="100" cy="100" r="18" fill={`${SAGE}22`} stroke={SAGE} strokeWidth="2"
+          initial={{ scale: 0 }} animate={{ scale: 1 }}
+          transition={{ duration: 0.8, delay: 1.2, ease: "backOut" }} />
+        {/* Inner center highlight */}
+        <circle cx="100" cy="98" r="10" fill={`${SAGE}15`} />
+        {/* Center dot bloom */}
+        <motion.circle cx="100" cy="100" r="6" fill={ROSE_LIGHT}
+          animate={{ opacity: [0.5, 1, 0.5], scale: [0.9, 1.15, 0.9] }}
+          transition={{ duration: 3, repeat: Infinity }} />
+
+        {/* Stem */}
+        <motion.line x1="100" y1="138" x2="100" y2="210" stroke={SAGE} strokeWidth="2.5" strokeLinecap="round"
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
+          transition={{ duration: 1.5, delay: 1.5, ease: "easeInOut" }} />
+        {/* Stem leaves */}
+        <motion.path d="M100 165 C88 155, 72 158, 68 170" stroke={SAGE} strokeWidth="1.5" fill={`${SAGE}18`} strokeLinecap="round"
+          initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 0.7 }}
+          transition={{ duration: 1, delay: 2 }} />
+        <motion.path d="M100 185 C112 175, 128 178, 132 190" stroke={SAGE} strokeWidth="1.5" fill={`${SAGE}18`} strokeLinecap="round"
+          initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 0.7 }}
+          transition={{ duration: 1, delay: 2.2 }} />
+
+        {/* Pollen sparkles */}
+        <motion.circle cx="88" cy="88" r="2" fill={ROSE_LIGHT}
+          animate={{ opacity: [0, 0.8, 0], cy: [88, 80, 88] }}
+          transition={{ duration: 2.5, repeat: Infinity, delay: 1.5 }} />
+        <motion.circle cx="112" cy="92" r="1.5" fill={ROSE_LIGHT}
+          animate={{ opacity: [0, 0.6, 0], cy: [92, 84, 92] }}
+          transition={{ duration: 3, repeat: Infinity, delay: 2 }} />
+        <motion.circle cx="95" cy="110" r="1.5" fill={ROSE_LIGHT}
+          animate={{ opacity: [0, 0.7, 0], cy: [110, 102, 110] }}
+          transition={{ duration: 2.8, repeat: Infinity, delay: 2.5 }} />
+
+        {/* Sparkle accents */}
+        <motion.circle cx="165" cy="30" r="3" fill={ROSE_LIGHT}
+          animate={{ opacity: [0.2, 1, 0.2], scale: [0.7, 1.3, 0.7] }}
+          transition={{ duration: 2.5, repeat: Infinity }} />
+        <motion.circle cx="30" cy="45" r="2" fill={SAGE}
+          animate={{ opacity: [0.1, 0.8, 0.1], scale: [0.5, 1.2, 0.5] }}
+          transition={{ duration: 3, repeat: Infinity, delay: 0.8 }} />
+        <motion.circle cx="170" cy="130" r="2.5" fill={ROSE_LIGHT}
+          animate={{ opacity: [0.15, 0.7, 0.15] }}
+          transition={{ duration: 2, repeat: Infinity, delay: 1.2 }} />
+        <motion.circle cx="25" cy="150" r="2" fill={SAGE}
+          animate={{ opacity: [0.1, 0.6, 0.1] }}
+          transition={{ duration: 2.5, repeat: Infinity, delay: 0.4 }} />
       </svg>
-    </motion.div>
+    </div>
   );
 }
 

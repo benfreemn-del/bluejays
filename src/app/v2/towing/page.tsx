@@ -58,14 +58,99 @@ const ACCENT_GLOW = "rgba(239, 68, 68, 0.15)";
 
 /* ───────────────────────── TOW TRUCK NAV ICON ───────────────────────── */
 function TowTruckIcon({ size = 24 }: { size?: number }) {
+  if (size <= 32) {
+    return (
+      <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
+        <rect x="2" y="14" width="18" height="10" rx="2" stroke={ACCENT} strokeWidth="2" fill={`${ACCENT}22`} />
+        <path d="M20 18H26L30 22V24H20V18Z" stroke={ACCENT_LIGHT} strokeWidth="2" strokeLinejoin="round" />
+        <circle cx="8" cy="26" r="2.5" stroke={ACCENT_LIGHT} strokeWidth="1.5" />
+        <circle cx="25" cy="26" r="2.5" stroke={ACCENT_LIGHT} strokeWidth="1.5" />
+        <path d="M6 14L10 6H16" stroke={ACCENT} strokeWidth="1.5" strokeLinecap="round" />
+        <line x1="10" y1="6" x2="10" y2="14" stroke={ACCENT} strokeWidth="1.5" />
+      </svg>
+    );
+  }
   return (
-    <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
-      <rect x="2" y="14" width="18" height="10" rx="2" stroke={ACCENT} strokeWidth="2" />
-      <path d="M20 18H26L30 22V24H20V18Z" stroke={ACCENT_LIGHT} strokeWidth="2" strokeLinejoin="round" />
-      <circle cx="8" cy="26" r="2.5" stroke={ACCENT_LIGHT} strokeWidth="1.5" />
-      <circle cx="25" cy="26" r="2.5" stroke={ACCENT_LIGHT} strokeWidth="1.5" />
-      <path d="M6 14L10 6H16" stroke={ACCENT} strokeWidth="1.5" strokeLinecap="round" />
-      <line x1="10" y1="6" x2="10" y2="14" stroke={ACCENT} strokeWidth="1.5" />
+    <svg width={size} height={size} viewBox="0 0 240 200" fill="none">
+      {/* Outer glow rings */}
+      <motion.ellipse cx="120" cy="100" rx="110" ry="90" stroke={ACCENT} strokeWidth="0.5" opacity={0.12}
+        animate={{ rx: [108, 112, 108], ry: [88, 92, 88] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} />
+
+      {/* Road line */}
+      <motion.line x1="10" y1="165" x2="230" y2="165" stroke={ACCENT} strokeWidth="1.5" opacity={0.2} strokeDasharray="12 8"
+        initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
+        transition={{ duration: 2, ease: "easeInOut" }} />
+      <rect x="0" y="168" width="240" height="3" fill={`${ACCENT}08`} rx="1.5" />
+
+      {/* Truck flatbed body */}
+      <motion.rect x="20" y="100" width="120" height="55" rx="6" fill={`${ACCENT}18`} stroke={ACCENT} strokeWidth="2.5"
+        initial={{ x: -150, opacity: 0 }} animate={{ x: 20, opacity: 1 }}
+        transition={{ duration: 1.2, ease: "easeOut" }} />
+      {/* Flatbed inner highlight */}
+      <rect x="28" y="106" width="104" height="40" rx="4" fill={`${ACCENT}0d`} />
+      {/* Flatbed detail lines */}
+      <line x1="55" y1="100" x2="55" y2="155" stroke={ACCENT} strokeWidth="0.8" opacity={0.2} />
+      <line x1="90" y1="100" x2="90" y2="155" stroke={ACCENT} strokeWidth="0.8" opacity={0.2} />
+
+      {/* Truck cab */}
+      <motion.path d="M140 115 L175 115 L190 135 L190 155 L140 155 Z" fill={`${ACCENT}22`} stroke={ACCENT} strokeWidth="2.5"
+        initial={{ x: -150, opacity: 0 }} animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 1.2, ease: "easeOut", delay: 0.1 }} />
+      {/* Cab window */}
+      <motion.path d="M148 120 L170 120 L180 133 L148 133 Z" fill={`${ACCENT}12`} stroke={ACCENT_LIGHT} strokeWidth="1"
+        initial={{ opacity: 0 }} animate={{ opacity: 0.6 }}
+        transition={{ delay: 1.5 }} />
+      {/* Cab inner highlight */}
+      <path d="M145 138 L185 138 L185 150 L145 150 Z" fill={`${ACCENT}0d`} rx="2" />
+
+      {/* Hook and chain */}
+      <motion.path d="M30 100 L30 65 C30 55, 40 50, 45 50 L55 50" stroke={ACCENT_LIGHT} strokeWidth="2" strokeLinecap="round" fill="none"
+        initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
+        transition={{ duration: 1.5, delay: 1.2 }} />
+      {/* Chain links */}
+      <motion.circle cx="30" cy="78" r="3.5" stroke={ACCENT_LIGHT} strokeWidth="1.2" fill="none" opacity={0.5}
+        initial={{ opacity: 0 }} animate={{ opacity: 0.5 }} transition={{ delay: 1.5 }} />
+      <motion.circle cx="30" cy="70" r="3.5" stroke={ACCENT_LIGHT} strokeWidth="1.2" fill="none" opacity={0.5}
+        initial={{ opacity: 0 }} animate={{ opacity: 0.5 }} transition={{ delay: 1.6 }} />
+      {/* Hook */}
+      <motion.path d="M55 50 C65 50, 68 55, 65 62 C62 68, 55 68, 52 62" stroke={ACCENT} strokeWidth="2.5" strokeLinecap="round" fill="none"
+        initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
+        transition={{ duration: 1, delay: 1.8 }} />
+
+      {/* Wheels */}
+      <motion.g initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.8, type: "spring" }}>
+        {/* Rear wheel */}
+        <circle cx="55" cy="162" r="14" fill={`${ACCENT}22`} stroke={ACCENT} strokeWidth="2" />
+        <circle cx="55" cy="162" r="8" fill={`${ACCENT}0d`} stroke={ACCENT_LIGHT} strokeWidth="1" />
+        <circle cx="55" cy="162" r="3" fill={ACCENT_LIGHT} opacity={0.5} />
+      </motion.g>
+      <motion.g initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.9, type: "spring" }}>
+        {/* Front wheel */}
+        <circle cx="170" cy="162" r="14" fill={`${ACCENT}22`} stroke={ACCENT} strokeWidth="2" />
+        <circle cx="170" cy="162" r="8" fill={`${ACCENT}0d`} stroke={ACCENT_LIGHT} strokeWidth="1" />
+        <circle cx="170" cy="162" r="3" fill={ACCENT_LIGHT} opacity={0.5} />
+      </motion.g>
+
+      {/* Emergency light on cab roof */}
+      <motion.rect x="155" y="108" width="18" height="8" rx="4" fill={`${ACCENT}30`} stroke={ACCENT} strokeWidth="1.5"
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.3 }} />
+      <motion.rect x="158" y="110" width="5" height="4" rx="2" fill={ACCENT_LIGHT}
+        animate={{ opacity: [0.3, 1, 0.3] }}
+        transition={{ duration: 1, repeat: Infinity }} />
+      <motion.rect x="165" y="110" width="5" height="4" rx="2" fill="#3b82f6"
+        animate={{ opacity: [1, 0.3, 1] }}
+        transition={{ duration: 1, repeat: Infinity }} />
+
+      {/* Sparkle accents */}
+      <motion.circle cx="210" cy="30" r="3" fill={ACCENT_LIGHT}
+        animate={{ opacity: [0.2, 1, 0.2], scale: [0.7, 1.3, 0.7] }}
+        transition={{ duration: 2.5, repeat: Infinity }} />
+      <motion.circle cx="15" cy="40" r="2" fill={ACCENT_LIGHT}
+        animate={{ opacity: [0.1, 0.8, 0.1], scale: [0.5, 1.2, 0.5] }}
+        transition={{ duration: 3, repeat: Infinity, delay: 0.8 }} />
+      <motion.circle cx="220" cy="130" r="2.5" fill={ACCENT_LIGHT}
+        animate={{ opacity: [0.15, 0.7, 0.15] }}
+        transition={{ duration: 2, repeat: Infinity, delay: 1.2 }} />
     </svg>
   );
 }
@@ -275,7 +360,7 @@ export default function V2TowingPage() {
           <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ ...spring, delay: 0.3 }} className="hidden lg:flex items-center justify-center">
             <div className="relative">
               <motion.div className="absolute inset-0 rounded-full" style={{ background: `radial-gradient(circle, ${ACCENT_GLOW} 0%, transparent 70%)`, filter: "blur(40px)" }} animate={{ scale: [1, 1.3, 1], opacity: [0.6, 1, 0.6] }} transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }} />
-              <Truck size={200} weight="duotone" style={{ color: ACCENT }} className="relative z-10" />
+              <div className="relative z-10"><TowTruckIcon size={280} /></div>
             </div>
           </motion.div>
         </div>

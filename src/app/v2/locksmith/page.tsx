@@ -59,13 +59,89 @@ const ACCENT_GLOW = "rgba(234, 179, 8, 0.15)";
 
 /* ───────────────────────── KEY/LOCK NAV ICON ───────────────────────── */
 function KeyLockIcon({ size = 24 }: { size?: number }) {
+  if (size <= 32) {
+    return (
+      <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
+        <circle cx="12" cy="12" r="6" stroke={ACCENT} strokeWidth="2" fill={`${ACCENT}22`} />
+        <circle cx="12" cy="12" r="2.5" fill={ACCENT_LIGHT} opacity="0.6" />
+        <line x1="17" y1="14" x2="28" y2="25" stroke={ACCENT_LIGHT} strokeWidth="2" strokeLinecap="round" />
+        <line x1="24" y1="21" x2="27" y2="18" stroke={ACCENT_LIGHT} strokeWidth="1.5" strokeLinecap="round" />
+        <line x1="21" y1="24" x2="24" y2="21" stroke={ACCENT_LIGHT} strokeWidth="1.5" strokeLinecap="round" />
+      </svg>
+    );
+  }
   return (
-    <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
-      <circle cx="12" cy="12" r="6" stroke={ACCENT} strokeWidth="2" />
-      <circle cx="12" cy="12" r="2.5" fill={ACCENT_LIGHT} opacity="0.6" />
-      <line x1="17" y1="14" x2="28" y2="25" stroke={ACCENT_LIGHT} strokeWidth="2" strokeLinecap="round" />
-      <line x1="24" y1="21" x2="27" y2="18" stroke={ACCENT_LIGHT} strokeWidth="1.5" strokeLinecap="round" />
-      <line x1="21" y1="24" x2="24" y2="21" stroke={ACCENT_LIGHT} strokeWidth="1.5" strokeLinecap="round" />
+    <svg width={size} height={size} viewBox="0 0 200 220" fill="none">
+      {/* Outer glow rings */}
+      <motion.circle cx="100" cy="105" r="90" stroke={ACCENT} strokeWidth="0.5" opacity={0.12}
+        animate={{ r: [88, 92, 88] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} />
+      <motion.circle cx="100" cy="105" r="80" stroke={ACCENT} strokeWidth="0.3" opacity={0.08}
+        animate={{ r: [78, 82, 78] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }} />
+
+      {/* Lock body */}
+      <motion.rect x="55" y="85" width="90" height="70" rx="10" fill={`${ACCENT}18`} stroke={ACCENT} strokeWidth="2.5"
+        initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 0.8, ease: "backOut" }} />
+      {/* Lock body inner highlight */}
+      <rect x="62" y="90" width="76" height="55" rx="7" fill={`${ACCENT}0d`} />
+
+      {/* Lock shackle */}
+      <motion.path d="M72 85 L72 60 C72 40, 128 40, 128 60 L128 85" stroke={ACCENT} strokeWidth="3" strokeLinecap="round" fill="none"
+        initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
+        transition={{ duration: 1.5, delay: 0.5, ease: "easeInOut" }} />
+      <motion.path d="M78 85 L78 62 C78 46, 122 46, 122 62 L122 85" stroke={ACCENT_LIGHT} strokeWidth="1" strokeLinecap="round" fill="none" opacity={0.3}
+        initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
+        transition={{ duration: 1.5, delay: 0.7, ease: "easeInOut" }} />
+
+      {/* Keyhole */}
+      <motion.circle cx="100" cy="112" r="10" fill={`${ACCENT}30`} stroke={ACCENT_LIGHT} strokeWidth="1.5"
+        initial={{ scale: 0 }} animate={{ scale: 1 }}
+        transition={{ duration: 0.6, delay: 1.2, ease: "backOut" }} />
+      <motion.path d="M96 118 L92 140 L108 140 L104 118" fill={`${ACCENT}25`} stroke={ACCENT_LIGHT} strokeWidth="1"
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+        transition={{ duration: 0.5, delay: 1.5 }} />
+      {/* Keyhole glow */}
+      <motion.circle cx="100" cy="112" r="15" fill={`${ACCENT}08`}
+        animate={{ r: [13, 18, 13], opacity: [0.1, 0.3, 0.1] }}
+        transition={{ duration: 2, repeat: Infinity }} />
+
+      {/* Tumbler hint lines */}
+      <motion.line x1="65" y1="100" x2="75" y2="100" stroke={ACCENT_LIGHT} strokeWidth="1" opacity={0.3}
+        initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 1.8 }} />
+      <motion.line x1="65" y1="108" x2="78" y2="108" stroke={ACCENT_LIGHT} strokeWidth="1" opacity={0.25}
+        initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 1.9 }} />
+      <motion.line x1="65" y1="116" x2="73" y2="116" stroke={ACCENT_LIGHT} strokeWidth="1" opacity={0.2}
+        initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 2.0 }} />
+
+      {/* Key floating beside lock */}
+      <motion.g
+        animate={{ x: [0, 5, 0], y: [0, -3, 0] }}
+        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}>
+        {/* Key head ring */}
+        <motion.circle cx="38" cy="180" r="12" fill={`${ACCENT}22`} stroke={ACCENT} strokeWidth="2"
+          initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 2, ease: "backOut" }} />
+        <circle cx="38" cy="178" r="5" fill={`${ACCENT}15`} />
+        {/* Key shaft */}
+        <motion.line x1="50" y1="180" x2="100" y2="180" stroke={ACCENT_LIGHT} strokeWidth="2.5" strokeLinecap="round"
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 2.2, duration: 1 }} />
+        {/* Key teeth */}
+        <motion.path d="M78 180 L78 188 M86 180 L86 186 M94 180 L94 190" stroke={ACCENT_LIGHT} strokeWidth="2" strokeLinecap="round"
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 2.5, duration: 0.8 }} />
+      </motion.g>
+
+      {/* Sparkle accents */}
+      <motion.circle cx="170" cy="35" r="3" fill={ACCENT_LIGHT}
+        animate={{ opacity: [0.2, 1, 0.2], scale: [0.7, 1.3, 0.7] }}
+        transition={{ duration: 2.5, repeat: Infinity }} />
+      <motion.circle cx="25" cy="50" r="2" fill={ACCENT_LIGHT}
+        animate={{ opacity: [0.1, 0.8, 0.1], scale: [0.5, 1.2, 0.5] }}
+        transition={{ duration: 3, repeat: Infinity, delay: 0.8 }} />
+      <motion.circle cx="175" cy="170" r="2.5" fill={ACCENT_LIGHT}
+        animate={{ opacity: [0.15, 0.7, 0.15] }}
+        transition={{ duration: 2, repeat: Infinity, delay: 1.2 }} />
+      <motion.circle cx="20" cy="145" r="2" fill={ACCENT_LIGHT}
+        animate={{ opacity: [0.1, 0.6, 0.1] }}
+        transition={{ duration: 2.5, repeat: Infinity, delay: 0.4 }} />
     </svg>
   );
 }
@@ -268,7 +344,7 @@ export default function V2LocksmithPage() {
           <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ ...spring, delay: 0.3 }} className="hidden lg:flex items-center justify-center">
             <div className="relative">
               <motion.div className="absolute inset-0 rounded-full" style={{ background: `radial-gradient(circle, ${ACCENT_GLOW} 0%, transparent 70%)`, filter: "blur(40px)" }} animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} />
-              <Key size={200} weight="duotone" style={{ color: ACCENT }} className="relative z-10" />
+              <div className="relative z-10"><KeyLockIcon size={260} /></div>
             </div>
           </motion.div>
         </div>

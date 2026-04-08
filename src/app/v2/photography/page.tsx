@@ -55,56 +55,108 @@ const GOLD_GLOW = "rgba(202, 138, 4, 0.12)";
 /* ───────────────────────── APERTURE SVG ───────────────────────── */
 function ApertureSVG() {
   return (
-    <motion.div
-      className="relative flex items-center justify-center"
-      style={{ perspective: 800, willChange: "transform" }}
-    >
+    <div className="relative flex items-center justify-center">
+      {/* Pulsing glow behind */}
       <motion.div
         className="absolute inset-0 rounded-full"
-        style={{ background: `radial-gradient(circle, ${GOLD_GLOW} 0%, transparent 70%)`, filter: "blur(30px)", willChange: "transform" }}
-        animate={{ scale: [1, 1.15, 1] }}
+        style={{ background: `radial-gradient(circle, ${GOLD_GLOW} 0%, transparent 70%)`, filter: "blur(40px)" }}
+        animate={{ scale: [1, 1.2, 1], opacity: [0.6, 1, 0.6] }}
         transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
       />
-      <svg viewBox="0 0 140 140" className="relative z-10 w-44 h-44 md:w-60 md:h-60" fill="none">
-        {/* Outer ring */}
-        <motion.circle cx="70" cy="70" r="60" stroke={GOLD} strokeWidth="2" fill="none" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 2, ease: "easeInOut" }} />
-        {/* Aperture blades */}
-        {[0, 60, 120, 180, 240, 300].map((angle, i) => (
-          <motion.line
-            key={i}
-            x1="70"
-            y1="70"
-            x2={70 + 45 * Math.cos((angle * Math.PI) / 180)}
-            y2={70 + 45 * Math.sin((angle * Math.PI) / 180)}
-            stroke={GOLD_LIGHT}
-            strokeWidth="1.5"
-            opacity={0.5}
-            initial={{ pathLength: 0 }}
-            animate={{ pathLength: 1 }}
-            transition={{ duration: 1, delay: 0.3 + i * 0.15 }}
-          />
-        ))}
-        {/* Inner hexagon */}
+      <svg viewBox="0 0 200 200" className="relative z-10 w-52 h-52 md:w-64 md:h-64" fill="none">
+        {/* Outer glow rings */}
+        <motion.circle cx="100" cy="100" r="94" stroke={GOLD} strokeWidth="0.5" opacity={0.12}
+          animate={{ r: [92, 96, 92] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} />
+        <motion.circle cx="100" cy="100" r="86" stroke={GOLD} strokeWidth="0.3" opacity={0.08}
+          animate={{ r: [84, 88, 84] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }} />
+
+        {/* Outer lens barrel */}
+        <motion.circle cx="100" cy="100" r="78" fill={`${GOLD}08`} stroke={GOLD} strokeWidth="2.5"
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
+          transition={{ duration: 2, ease: "easeInOut" }} />
+        {/* Focus ring grooves */}
+        <motion.circle cx="100" cy="100" r="72" stroke={GOLD} strokeWidth="0.8" opacity={0.25}
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
+          transition={{ duration: 1.5, delay: 0.5 }} />
+        <motion.circle cx="100" cy="100" r="68" stroke={GOLD_LIGHT} strokeWidth="0.5" opacity={0.15}
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
+          transition={{ duration: 1.5, delay: 0.7 }} />
+
+        {/* Aperture blades — filled trapezoids */}
+        {[0, 51.4, 102.8, 154.3, 205.7, 257.1, 308.6].map((angle, i) => {
+          const rad = (angle * Math.PI) / 180;
+          const nextRad = ((angle + 51.4) * Math.PI) / 180;
+          const innerR = 22;
+          const outerR = 55;
+          const x1 = 100 + innerR * Math.cos(rad);
+          const y1 = 100 + innerR * Math.sin(rad);
+          const x2 = 100 + outerR * Math.cos(rad + 0.15);
+          const y2 = 100 + outerR * Math.sin(rad + 0.15);
+          const x3 = 100 + outerR * Math.cos(nextRad - 0.15);
+          const y3 = 100 + outerR * Math.sin(nextRad - 0.15);
+          const x4 = 100 + innerR * Math.cos(nextRad);
+          const y4 = 100 + innerR * Math.sin(nextRad);
+          return (
+            <motion.polygon
+              key={i}
+              points={`${x1},${y1} ${x2},${y2} ${x3},${y3} ${x4},${y4}`}
+              fill={`${GOLD}18`} stroke={GOLD_LIGHT} strokeWidth="0.8"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 0.7, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.8 + i * 0.1, ease: "backOut" }}
+              style={{ transformOrigin: "100px 100px" }}
+            />
+          );
+        })}
+
+        {/* Inner hexagon aperture opening */}
         <motion.polygon
-          points="70,40 96,55 96,85 70,100 44,85 44,55"
-          stroke={GOLD_LIGHT}
-          strokeWidth="1.5"
-          fill="none"
-          initial={{ pathLength: 0, opacity: 0 }}
-          animate={{ pathLength: 1, opacity: 0.6 }}
-          transition={{ duration: 2, delay: 1 }}
+          points="100,78 119,89 119,111 100,122 81,111 81,89"
+          fill={`${GOLD}0d`} stroke={GOLD_LIGHT} strokeWidth="1.5"
+          initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 0.6 }}
+          transition={{ duration: 2, delay: 1.5 }}
         />
-        {/* Rotating center dot */}
-        <motion.circle cx="70" cy="70" r="4" fill={GOLD_LIGHT} animate={{ opacity: [0.4, 1, 0.4], scale: [0.8, 1.2, 0.8] }} transition={{ duration: 2, repeat: Infinity }} />
+
+        {/* Center lens element */}
+        <motion.circle cx="100" cy="100" r="15" fill={`${GOLD}22`} stroke={GOLD} strokeWidth="1.5"
+          initial={{ scale: 0 }} animate={{ scale: 1 }}
+          transition={{ duration: 0.8, delay: 1.8, ease: "backOut" }} />
+        <circle cx="100" cy="98" r="8" fill={`${GOLD}15`} />
+        <motion.circle cx="100" cy="100" r="5" fill={GOLD_LIGHT}
+          animate={{ opacity: [0.5, 1, 0.5], scale: [0.8, 1.2, 0.8] }}
+          transition={{ duration: 2, repeat: Infinity }} />
+
+        {/* Light refraction sparkles */}
+        <motion.circle cx="88" cy="88" r="2" fill={GOLD_LIGHT}
+          animate={{ opacity: [0, 0.9, 0], scale: [0.5, 1.5, 0.5] }}
+          transition={{ duration: 2, repeat: Infinity, delay: 2 }} />
+        <motion.circle cx="115" cy="92" r="1.5" fill="#ffffff"
+          animate={{ opacity: [0, 0.6, 0], scale: [0.5, 1.3, 0.5] }}
+          transition={{ duration: 2.5, repeat: Infinity, delay: 2.3 }} />
+        <motion.circle cx="92" cy="112" r="1.5" fill={GOLD_LIGHT}
+          animate={{ opacity: [0, 0.7, 0] }}
+          transition={{ duration: 3, repeat: Infinity, delay: 2.6 }} />
+
+        {/* Lens flare streak */}
+        <motion.line x1="75" y1="75" x2="125" y2="125" stroke={GOLD_LIGHT} strokeWidth="0.8" strokeLinecap="round" opacity={0.15}
+          animate={{ opacity: [0.05, 0.2, 0.05] }}
+          transition={{ duration: 3, repeat: Infinity }} />
+
+        {/* Sparkle accents */}
+        <motion.circle cx="175" cy="25" r="3" fill={GOLD_LIGHT}
+          animate={{ opacity: [0.2, 1, 0.2], scale: [0.7, 1.3, 0.7] }}
+          transition={{ duration: 2.5, repeat: Infinity }} />
+        <motion.circle cx="20" cy="35" r="2" fill="#ffffff"
+          animate={{ opacity: [0.1, 0.6, 0.1], scale: [0.5, 1.2, 0.5] }}
+          transition={{ duration: 3, repeat: Infinity, delay: 0.8 }} />
+        <motion.circle cx="180" cy="165" r="2.5" fill={GOLD_LIGHT}
+          animate={{ opacity: [0.15, 0.7, 0.15] }}
+          transition={{ duration: 2, repeat: Infinity, delay: 1.2 }} />
+        <motion.circle cx="18" cy="170" r="2" fill="#ffffff"
+          animate={{ opacity: [0.1, 0.5, 0.1] }}
+          transition={{ duration: 2.5, repeat: Infinity, delay: 0.4 }} />
       </svg>
-      {/* Slow rotation */}
-      <motion.div
-        className="absolute inset-0"
-        animate={{ rotate: [0, 360] }}
-        transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-        style={{ willChange: "transform" }}
-      />
-    </motion.div>
+    </div>
   );
 }
 

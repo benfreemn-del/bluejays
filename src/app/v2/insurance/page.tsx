@@ -144,14 +144,94 @@ function ShimmerBorder({ children, className = "" }: { children: React.ReactNode
 /* ───────────────────────── SHIELD SVG ───────────────────────── */
 function AnimatedShield() {
   return (
-    <motion.div className="relative flex items-center justify-center" style={{ willChange: "transform" }}>
-      <motion.div className="absolute inset-0 rounded-full" style={{ background: `radial-gradient(circle, ${BLUE_GLOW} 0%, transparent 70%)`, filter: "blur(40px)" }} animate={{ scale: [1, 1.15, 1] }} transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }} />
-      <svg viewBox="0 0 160 190" className="relative z-10 w-48 h-60 md:w-64 md:h-80" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <motion.path d="M80 10 L145 40 C145 40 150 100 130 140 C115 170 80 185 80 185 C80 185 45 170 30 140 C10 100 15 40 15 40 Z" stroke={BLUE} strokeWidth="2.5" fill="none" initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }} transition={{ duration: 2.5, ease: "easeInOut" }} />
-        <motion.path d="M80 50 L60 80 L75 80 L70 110 L100 70 L85 70 L90 50 Z" stroke={EMERALD} strokeWidth="2" fill="none" opacity={0.6} initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 2, delay: 1, ease: "easeInOut" }} />
-        <motion.circle cx="80" cy="25" r="3" fill={BLUE_LIGHT} animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.2, 0.8] }} transition={{ duration: 2, repeat: Infinity }} />
+    <div className="relative flex items-center justify-center">
+      {/* Pulsing glow behind */}
+      <motion.div
+        className="absolute inset-0 rounded-full"
+        style={{ background: `radial-gradient(circle, ${BLUE_GLOW} 0%, transparent 70%)`, filter: "blur(40px)" }}
+        animate={{ scale: [1, 1.2, 1], opacity: [0.6, 1, 0.6] }}
+        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <svg viewBox="0 0 200 230" className="relative z-10 w-52 h-64 md:w-64 md:h-80" fill="none">
+        {/* Outer glow rings */}
+        <motion.circle cx="100" cy="105" r="98" stroke={BLUE} strokeWidth="0.5" opacity={0.12}
+          animate={{ r: [96, 100, 96] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} />
+        <motion.circle cx="100" cy="105" r="88" stroke={BLUE} strokeWidth="0.3" opacity={0.08}
+          animate={{ r: [86, 90, 86] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }} />
+
+        {/* Main shield — filled */}
+        <motion.path
+          d="M100 15 L170 50 C170 50 176 120 155 165 C140 195 100 215 100 215 C100 215 60 195 45 165 C24 120 30 50 30 50 Z"
+          fill={`${BLUE}18`} stroke={BLUE} strokeWidth="2.5"
+          initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }}
+          transition={{ duration: 2, ease: "easeInOut" }}
+        />
+        {/* Shield inner highlight */}
+        <path
+          d="M100 35 L152 60 C152 60 156 115 140 150 C128 175 100 190 100 190 C100 190 72 175 60 150 C44 115 48 60 48 60 Z"
+          fill={`${BLUE}0d`}
+        />
+
+        {/* Inner shield border */}
+        <motion.path
+          d="M100 40 L148 62 C148 62 152 112 138 145 C126 170 100 183 100 183 C100 183 74 170 62 145 C48 112 52 62 52 62 Z"
+          stroke={BLUE_LIGHT} strokeWidth="1" fill="none" opacity={0.3}
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
+          transition={{ duration: 1.5, delay: 1.2 }}
+        />
+
+        {/* Checkmark inside shield */}
+        <motion.path
+          d="M75 110 L92 128 L128 82"
+          stroke={EMERALD} strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" fill="none"
+          initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }}
+          transition={{ duration: 1.5, delay: 1.5, ease: "easeInOut" }}
+        />
+        {/* Checkmark glow */}
+        <motion.path
+          d="M75 110 L92 128 L128 82"
+          stroke={EMERALD_LIGHT} strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" fill="none" opacity={0.15}
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
+          transition={{ duration: 1.5, delay: 1.5, ease: "easeInOut" }}
+        />
+
+        {/* Umbrella symbol at top of shield */}
+        <motion.path
+          d="M88 55 C88 42, 112 42, 112 55"
+          stroke={BLUE_LIGHT} strokeWidth="1.5" strokeLinecap="round" fill={`${BLUE}15`}
+          initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 0.5 }}
+          transition={{ duration: 1, delay: 2 }}
+        />
+        <motion.line x1="100" y1="55" x2="100" y2="68" stroke={BLUE_LIGHT} strokeWidth="1.2" strokeLinecap="round" opacity={0.5}
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
+          transition={{ duration: 0.5, delay: 2.3 }} />
+
+        {/* Trust glow pulse at center */}
+        <motion.circle cx="100" cy="108" r="20" fill={`${EMERALD}12`}
+          animate={{ r: [18, 24, 18], opacity: [0.2, 0.5, 0.2] }}
+          transition={{ duration: 2.5, repeat: Infinity }} />
+
+        {/* Sparkle accents */}
+        <motion.circle cx="175" cy="30" r="3" fill={BLUE_LIGHT}
+          animate={{ opacity: [0.2, 1, 0.2], scale: [0.7, 1.3, 0.7] }}
+          transition={{ duration: 2.5, repeat: Infinity }} />
+        <motion.circle cx="22" cy="50" r="2" fill={EMERALD_LIGHT}
+          animate={{ opacity: [0.1, 0.8, 0.1], scale: [0.5, 1.2, 0.5] }}
+          transition={{ duration: 3, repeat: Infinity, delay: 0.8 }} />
+        <motion.circle cx="180" cy="150" r="2.5" fill={BLUE_LIGHT}
+          animate={{ opacity: [0.15, 0.7, 0.15] }}
+          transition={{ duration: 2, repeat: Infinity, delay: 1.2 }} />
+        <motion.circle cx="18" cy="170" r="2" fill={EMERALD_LIGHT}
+          animate={{ opacity: [0.1, 0.6, 0.1] }}
+          transition={{ duration: 2.5, repeat: Infinity, delay: 0.4 }} />
+
+        {/* Small shield badge */}
+        <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.5 }}>
+          <path d="M168 185 L178 190 C178 195, 175 200, 168 203 C161 200, 158 195, 158 190 Z"
+            fill={`${BLUE}25`} stroke={BLUE_LIGHT} strokeWidth="0.8" />
+        </motion.g>
       </svg>
-    </motion.div>
+    </div>
   );
 }
 
