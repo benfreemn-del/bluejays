@@ -99,7 +99,47 @@ export default function V2PhysicalTherapyShowcase() {
             </div>
             <div className="flex flex-wrap gap-6 text-sm text-slate-400"><span className="flex items-center gap-2"><MapPin size={16} weight="duotone" style={{ color: BLUE }} /> Olympia, WA</span><span className="flex items-center gap-2"><Clock size={16} weight="duotone" style={{ color: BLUE }} /> Mon-Fri 7AM-7PM</span></div>
           </div>
-          <div className="hidden md:block relative"><div className="relative rounded-2xl overflow-hidden border border-white/10"><img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=1400&q=80" alt="Physical therapy session" className="w-full h-[500px] object-cover" /><div className="absolute inset-0 bg-gradient-to-t from-[#0a0f1a] via-transparent to-transparent" /><div className="absolute bottom-6 left-6"><div className="px-4 py-2 rounded-full backdrop-blur-md bg-black/50 border flex items-center gap-2" style={{ borderColor: `${BLUE}4d` }}><Certificate size={18} weight="fill" style={{ color: BLUE }} /><span className="text-sm font-semibold text-white">Board Certified</span></div></div></div></div>
+          <div className="hidden md:flex items-center justify-center relative">
+            <motion.div className="absolute inset-0 rounded-full" style={{ background: `radial-gradient(circle, ${BLUE}20 0%, transparent 70%)`, filter: "blur(50px)" }} animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }} transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }} />
+            <svg viewBox="0 0 320 360" className="relative z-10 w-72 h-80 md:w-96 md:h-[28rem]" fill="none">
+              {/* Glow rings */}
+              <motion.circle cx="160" cy="170" r="140" stroke={BLUE} strokeWidth="0.5" opacity={0.1} animate={{ r: [138, 142, 138] }} transition={{ duration: 4, repeat: Infinity }} />
+              {/* Person silhouette — stretching/recovery pose */}
+              {/* Head */}
+              <motion.circle cx="160" cy="60" r="22" fill={`${BLUE}20`} stroke={BLUE} strokeWidth="2.5" initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.2, ease: "backOut" }} />
+              <circle cx="160" cy="58" r="10" fill={`${BLUE}10`} />
+              {/* Torso */}
+              <motion.path d="M160 82 L160 180" stroke={BLUE} strokeWidth="3" strokeLinecap="round" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1, delay: 0.4 }} />
+              {/* Arms — one reaching up (stretching) */}
+              <motion.path d="M160 110 L120 80 L100 55" stroke={GREEN} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.8, delay: 0.6 }} />
+              <motion.path d="M160 110 L200 130 L230 115" stroke={BLUE} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.8, delay: 0.8 }} />
+              {/* Legs — lunge position */}
+              <motion.path d="M160 180 L130 240 L110 300" stroke={BLUE} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" fill="none" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.8, delay: 1 }} />
+              <motion.path d="M160 180 L200 240 L220 300" stroke={BLUE} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" fill="none" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.8, delay: 1.2 }} />
+              {/* Joint circles — knees and elbows */}
+              <motion.circle cx="120" cy="80" r="5" fill={`${GREEN}33`} stroke={GREEN} strokeWidth="1.5" initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 1.4, ease: "backOut" }} />
+              <motion.circle cx="200" cy="130" r="5" fill={`${BLUE}33`} stroke={BLUE} strokeWidth="1.5" initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 1.5, ease: "backOut" }} />
+              <motion.circle cx="130" cy="240" r="5" fill={`${BLUE}33`} stroke={BLUE} strokeWidth="1.5" initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 1.6, ease: "backOut" }} />
+              <motion.circle cx="200" cy="240" r="5" fill={`${BLUE}33`} stroke={BLUE} strokeWidth="1.5" initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 1.7, ease: "backOut" }} />
+              {/* Healing energy arcs */}
+              <motion.path d="M95 50 C85 40 85 30 95 25" stroke={GREEN} strokeWidth="2" strokeLinecap="round" fill="none" opacity={0.5} animate={{ opacity: [0.2, 0.7, 0.2] }} transition={{ duration: 2, repeat: Infinity }} />
+              <motion.path d="M88 55 C75 42 75 28 88 20" stroke={GREEN} strokeWidth="1.5" strokeLinecap="round" fill="none" opacity={0.3} animate={{ opacity: [0.1, 0.5, 0.1] }} transition={{ duration: 2, repeat: Infinity, delay: 0.3 }} />
+              {/* Motion lines on stretching arm */}
+              <motion.path d="M235 110 L250 105" stroke={BLUE} strokeWidth="1.5" strokeLinecap="round" opacity={0.4} animate={{ opacity: [0.2, 0.6, 0.2], x: [0, 5, 0] }} transition={{ duration: 1.5, repeat: Infinity }} />
+              <motion.path d="M235 120 L248 118" stroke={BLUE} strokeWidth="1" strokeLinecap="round" opacity={0.3} animate={{ opacity: [0.1, 0.5, 0.1], x: [0, 4, 0] }} transition={{ duration: 1.5, repeat: Infinity, delay: 0.2 }} />
+              {/* Heartbeat line */}
+              <motion.path d="M60 170 L90 170 L100 155 L110 185 L120 145 L130 185 L140 170 L160 170" stroke={GREEN} strokeWidth="2" strokeLinecap="round" fill="none" initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: [0, 1, 1, 0], opacity: [0, 1, 1, 0] }} transition={{ duration: 3, repeat: Infinity, times: [0, 0.4, 0.6, 1] }} />
+              {/* Sparkles */}
+              <motion.circle cx="80" cy="100" r="3" fill={GREEN} animate={{ opacity: [0.2, 1, 0.2], scale: [0.7, 1.3, 0.7] }} transition={{ duration: 2.5, repeat: Infinity }} />
+              <motion.circle cx="250" cy="80" r="2.5" fill={BLUE} animate={{ opacity: [0.1, 0.8, 0.1] }} transition={{ duration: 3, repeat: Infinity, delay: 0.8 }} />
+              <motion.circle cx="70" cy="250" r="2" fill={GREEN} animate={{ opacity: [0.15, 0.6, 0.15] }} transition={{ duration: 2, repeat: Infinity, delay: 1.2 }} />
+              {/* Board Certified badge */}
+              <motion.g initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 2 }}>
+                <rect x="110" y="315" width="100" height="30" rx="15" fill="rgba(0,0,0,0.5)" stroke={`${BLUE}4d`} strokeWidth="1" />
+                <text x="160" y="334" textAnchor="middle" fill="white" fontSize="10" fontWeight="600">Board Certified</text>
+              </motion.g>
+            </svg>
+          </div>
         </div>
       </section>
 
