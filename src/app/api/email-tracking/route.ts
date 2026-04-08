@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
+import { processBounce, recordEmailSent } from "@/lib/email-deliverability";
+import { getProspectByEmail } from "@/lib/store";
 
 /**
  * SendGrid Event Webhook — receives open, click, delivered, bounce events.
@@ -8,7 +10,10 @@ import { supabase, isSupabaseConfigured } from "@/lib/supabase";
  * URL: https://bluejayportfolio.com/api/email-tracking
  * Events: Delivered, Opened, Clicked, Bounced, Spam Report, Unsubscribe
  *
- * This endpoint is PUBLIC (no auth) since SendGrid calls it.
+ * Now integrates with the deliverability engine for:
+ * - Automatic bounce handling (hard bounce removal, soft bounce retry)
+ * - Warm-up volume tracking
+ * - Open rate monitoring
  */
 
 interface SendGridEvent {
@@ -20,17 +25,19 @@ interface SendGridEvent {
   useragent?: string;
   ip?: string;
   category?: string[];
+  type?: string; // For bounces: "bounce" or "blocked"
+  reason?: string; // Bounce reason
+  status?: string; // SMTP status code like "550"
 }
 
 export async function POST(request: NextRequest) {
   try {
     const events: SendGridEvent[] = await request.json();
 
-    console.log(`📊 Received ${events.length} email tracking events`);
+    console.log(`[Email Tracking] Received ${events.length} events`);
 
-    // Log each event
     for (const event of events) {
-      console.log(`  ${event.event.toUpperCase()} — ${event.email} ${event.url ? "→ " + event.url : ""}`);
+      console.log(`  ${event.event.toUpperCase()} — ${event.email} ${event.url ? "-> " + event.url : ""}`);
 
       // Store in Supabase if configured
       if (isSupabaseConfigured()) {
@@ -45,7 +52,49 @@ export async function POST(request: NextRequest) {
             ip: event.ip || null,
           });
         } catch {
-          // Table might not exist yet — that's ok
+          // Table might not exist yet
+        }
+      }
+
+      // Handle bounce events through the deliverability engine
+      if (event.event === "bounce" || event.event === "dropped") {
+        try {
+          const prospect = await getProspectByEmail(event.email);
+          if (prospect) {
+            // Determine bounce type from SMTP status code
+            // 5xx = hard bounce (permanent), 4xx = soft bounce (temporary)
+            const isHardBounce =
+              event.event === "dropped" ||
+              (event.status && event.status.startsWith("5")) ||
+              (event.reason && (
+                event.reason.includes("does not exist") ||
+                event.reason.includes("invalid") ||
+                event.reason.includes("unknown user") ||
+                event.reason.includes("no such user")
+              ));
+
+            await processBounce(
+              event.email,
+              prospect.id,
+              isHardBounce ? "hard" : "soft",
+              event.reason || event.event
+            );
+            console.log(`  [Deliverability] Processed ${isHardBounce ? "hard" : "soft"} bounce for ${event.email}`);
+          }
+        } catch (err) {
+          console.error(`  [Deliverability] Bounce processing failed:`, err);
+        }
+      }
+
+      // Track delivered emails for warm-up monitoring
+      if (event.event === "delivered") {
+        try {
+          const domain = event.email.split("@")[1];
+          if (domain) {
+            recordEmailSent(domain);
+          }
+        } catch {
+          // Non-critical
         }
       }
     }
@@ -59,5 +108,5 @@ export async function POST(request: NextRequest) {
 
 // Also handle GET for webhook validation
 export async function GET() {
-  return NextResponse.json({ status: "Email tracking webhook active" });
+  return NextResponse.json({ status: "Email tracking webhook active — with deliverability engine" });
 }
