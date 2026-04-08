@@ -143,6 +143,8 @@ When spawning sub-agents to build templates or components:
 - **Agents must not use `initial={{ opacity: 0 }}` on generated/preview components** — content for business owners must be ALWAYS VISIBLE. Framer Motion opacity animations are only allowed on V2 showcase templates, never on PreviewRenderer or dynamic preview components.
 - **Agents must verify image URLs load** — after building, grep all unsplash URLs and test at least 2-3 to confirm they return 200.
 - **Every agent-built template needs a post-build image audit** — grep all image URLs, check for duplicates within the file AND across all other templates before pushing.
+- **ZERO TOLERANCE for broken images on live portfolio sites** — before ANY V2 showcase or preview goes live, EVERY Unsplash URL must be tested with `curl -s -o /dev/null -w "%{http_code}"` and confirmed HTTP 200. This is the #1 recurring issue and it's unacceptable. If an agent builds a template, the agent MUST test every image URL before declaring done. Broken images showing alt text on a portfolio site destroys credibility instantly.
+- **Before/after and gallery images must make sense for the industry** — a roofing before/after should show ROOFS, not luxury houses with pools. A pet gallery should show PETS, not stock photos of random objects. Industry relevance is non-negotiable.
 
 ## V2 Upgrade Checklist (MANDATORY when building a new V2 for any category)
 When Ben asks to build a V2 (or higher) template for a category, ALL of these steps must be completed:
@@ -161,6 +163,12 @@ When Ben asks to build a V2 (or higher) template for a category, ALL of these st
 - **Current active categories** (have premium templates — all 30 categories have V1, 11 have V2): real-estate, dental, law-firm, landscaping, salon, electrician, plumber, hvac, roofing, auto-repair, chiropractic, fitness, veterinary, photography, cleaning, pest-control, accounting, moving, florist, daycare, insurance, interior-design, tattoo, martial-arts, physical-therapy, tutoring, pool-spa, general-contractor, catering, pet-services, church
 - **Add new categories only after building their premium template first** — template first, then scout.
 - **Categories with FULL V2 pipeline (showcase + dynamic renderer + preview routing)**: electrician, dental, law-firm, salon, fitness, real-estate, church, plumber, hvac, roofing, auto-repair, chiropractic, veterinary, photography, interior-design, landscaping, cleaning, pest-control, accounting, tattoo, florist, moving, daycare, insurance, martial-arts, pool-spa (ALL 26 V2 categories complete)
+
+## Version Toggle Rules (NON-NEGOTIABLE)
+- **Every preview must have a V1/V2 toggle** — the preview-device page must allow Ben to flip between V1 (generic PreviewRenderer) and V2 (dynamic V2 renderer) for any prospect. This lets Ben compare quality levels.
+- **Default to highest version** — when a prospect's preview loads, it should default to V2 if available, V1 otherwise.
+- **If no V1 template exists for a category, the toggle is disabled** — only show the toggle when both versions are available.
+- **Future versions (V3+)** — the toggle should support any number of versions as we upgrade categories.
 
 ## Preview = Product Rules (NON-NEGOTIABLE)
 - **The preview URL IS the product** — `/preview/[id]` is the exact link sent to business owners in pitch emails, texts, and DMs. It must look like a $997 website, not a prototype.

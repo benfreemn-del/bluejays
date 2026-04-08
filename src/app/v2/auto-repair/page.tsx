@@ -106,15 +106,10 @@ function FloatingParticles() {
   );
 }
 
-/* ───────────────────────── ROTATING WRENCH SVG ───────────────────────── */
-function RotatingWrench() {
+/* ───────────────────────── ANIMATED PISTON SVG ───────────────────────── */
+function AnimatedPiston() {
   return (
-    <motion.div
-      className="relative flex items-center justify-center"
-      animate={{ rotateY: [0, 360] }}
-      transition={{ duration: 14, repeat: Infinity, ease: "linear" }}
-      style={{ perspective: 800, willChange: "transform" }}
-    >
+    <div className="relative flex items-center justify-center">
       <motion.div
         className="absolute inset-0 rounded-full"
         style={{
@@ -126,81 +121,87 @@ function RotatingWrench() {
         transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
       />
       <svg
-        viewBox="0 0 200 200"
-        className="relative z-10 w-48 h-48 md:w-64 md:h-64"
+        viewBox="0 0 200 260"
+        className="relative z-10 w-48 h-60 md:w-64 md:h-80"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        {/* Gear outline */}
+        {/* Cylinder walls */}
         <motion.path
-          d="M100 30 L108 30 L112 18 L120 16 L128 26 L136 24 L138 12 L146 14 L148 26 L156 30 L164 20 L170 26 L164 36 L170 44 L182 42 L184 50 L174 54 L176 62 L188 68 L186 76 L174 74 L170 82 L180 90 L176 98 L166 94 L160 100 L166 106 L160 112 L152 106 L144 110 L146 122 L138 124 L134 114 L126 114 L124 126 L116 126 L114 114 L106 112 L100 122 L94 114 L88 112 L86 126 L78 124 L76 114 L68 112 L62 122 L56 114 L60 106 L54 100 L44 106 L40 98 L50 90 L46 82 L34 78 L36 70 L48 68 L48 60 L36 54 L38 46 L50 44 L52 36 L42 26 L48 20 L58 30 L66 26 L64 14 L72 12 L76 24 L84 26 L88 16 L96 18 L92 30 Z"
+          d="M60 30 L60 180 M140 30 L140 180"
           stroke={SILVER}
-          strokeWidth="1.5"
+          strokeWidth="3"
           strokeLinecap="round"
-          strokeLinejoin="round"
-          fill="none"
-          opacity={0.3}
-          initial={{ pathLength: 0, opacity: 0 }}
-          animate={{ pathLength: 1, opacity: 0.3 }}
-          transition={{ duration: 3, ease: "easeInOut" }}
-        />
-        {/* Inner gear circle */}
-        <motion.circle
-          cx="100"
-          cy="70"
-          r="28"
-          stroke={RED}
-          strokeWidth="2"
-          fill="none"
+          opacity={0.4}
           initial={{ pathLength: 0 }}
           animate={{ pathLength: 1 }}
-          transition={{ duration: 2, delay: 0.5, ease: "easeInOut" }}
+          transition={{ duration: 1.5, ease: "easeInOut" }}
         />
-        {/* Wrench shape */}
+        {/* Cylinder head (top) */}
         <motion.path
-          d="M70 130 L80 100 C82 94, 88 90, 94 90 L106 90 C112 90, 118 94, 120 100 L130 130 L122 134 L114 110 C112 106, 108 104, 104 104 L96 104 C92 104, 88 106, 86 110 L78 134 Z"
-          stroke={RED}
-          strokeWidth="2"
+          d="M55 30 L145 30"
+          stroke={SILVER}
+          strokeWidth="4"
           strokeLinecap="round"
-          strokeLinejoin="round"
-          fill="none"
-          initial={{ pathLength: 0, opacity: 0 }}
-          animate={{ pathLength: 1, opacity: 1 }}
-          transition={{ duration: 2.5, delay: 1, ease: "easeInOut" }}
+          opacity={0.5}
+          initial={{ pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={{ duration: 1, ease: "easeInOut" }}
         />
-        {/* Wrench handle */}
-        <motion.rect
-          x="88"
-          y="130"
-          width="24"
-          height="50"
-          rx="4"
-          stroke={RED}
-          strokeWidth="2"
-          fill="none"
-          initial={{ pathLength: 0, opacity: 0 }}
-          animate={{ pathLength: 1, opacity: 1 }}
-          transition={{ duration: 1.5, delay: 2, ease: "easeInOut" }}
-        />
-        {/* Spark accents */}
+        {/* Piston head — animated up/down */}
+        <motion.g
+          animate={{ y: [0, 60, 0] }}
+          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+        >
+          {/* Piston crown */}
+          <rect x="65" y="70" width="70" height="20" rx="3" stroke={RED} strokeWidth="2.5" fill={`${RED}22`} />
+          {/* Piston rings */}
+          <line x1="68" y1="78" x2="132" y2="78" stroke={RED} strokeWidth="1" opacity={0.6} />
+          <line x1="68" y1="84" x2="132" y2="84" stroke={RED} strokeWidth="1" opacity={0.4} />
+          {/* Connecting rod */}
+          <line x1="100" y1="90" x2="100" y2="160" stroke={SILVER} strokeWidth="3" strokeLinecap="round" />
+          {/* Wrist pin */}
+          <circle cx="100" cy="90" r="4" fill={RED} stroke={RED} strokeWidth="1" />
+        </motion.g>
+        {/* Crankshaft circle — rotates */}
+        <motion.g
+          animate={{ rotate: [0, 360] }}
+          transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+          style={{ transformOrigin: "100px 210px" }}
+        >
+          <circle cx="100" cy="210" r="25" stroke={SILVER} strokeWidth="2" fill="none" opacity={0.3} />
+          <line x1="100" y1="210" x2="100" y2="185" stroke={RED} strokeWidth="2.5" strokeLinecap="round" />
+          <circle cx="100" cy="185" r="4" fill={RED} />
+        </motion.g>
+        {/* Crankshaft center */}
+        <circle cx="100" cy="210" r="6" fill={`${RED}44`} stroke={RED} strokeWidth="1.5" />
+        {/* Spark/combustion effect at top */}
         <motion.circle
-          cx="155"
+          cx="100"
+          cy="45"
+          r="8"
+          fill={RED}
+          animate={{ opacity: [0, 0.8, 0], scale: [0.5, 1.5, 0.5] }}
+          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut", delay: 0.1 }}
+        />
+        <motion.circle
+          cx="85"
           cy="40"
-          r="2.5"
+          r="3"
           fill={RED_LIGHT}
-          animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.3, 0.8] }}
-          transition={{ duration: 2, repeat: Infinity }}
+          animate={{ opacity: [0, 0.6, 0], scale: [0.5, 1.2, 0.5] }}
+          transition={{ duration: 1.5, repeat: Infinity, delay: 0.2 }}
         />
         <motion.circle
-          cx="50"
-          cy="55"
-          r="2"
-          fill={SILVER}
-          animate={{ opacity: [0.2, 0.8, 0.2], scale: [0.8, 1.2, 0.8] }}
-          transition={{ duration: 2.5, repeat: Infinity, delay: 0.5 }}
+          cx="115"
+          cy="42"
+          r="3"
+          fill={RED_LIGHT}
+          animate={{ opacity: [0, 0.6, 0], scale: [0.5, 1.2, 0.5] }}
+          transition={{ duration: 1.5, repeat: Infinity, delay: 0.3 }}
         />
       </svg>
-    </motion.div>
+    </div>
   );
 }
 
@@ -786,7 +787,7 @@ export default function V2AutoRepairPage() {
             transition={{ ...spring, delay: 0.3 }}
             className="hidden md:flex items-center justify-center lg:justify-end"
           >
-            <RotatingWrench />
+            <AnimatedPiston />
           </motion.div>
         </div>
       </section>
