@@ -40,7 +40,7 @@ async function sendViaSendGrid(
       personalizations: [{ to: [{ email: to }] }],
       from: { email: FROM_EMAIL, name: "BlueJays" },
       subject,
-      content: [{ type: "text/html", value: body.replace(/\n/g, "<br>") }],
+      content: [{ type: "text/plain", value: body }],
     }),
   });
   if (!response.ok) {
@@ -104,9 +104,10 @@ export async function sendEmail(
 
   if (SENDGRID_API_KEY) {
     console.log(`  📧 Sending email via SendGrid to ${to}...`);
+    console.log(`  📧 Key starts with: ${SENDGRID_API_KEY.substring(0, 10)}...`);
     const success = await sendViaSendGrid(to, subject, body);
     if (!success) {
-      throw new Error("SendGrid API failed");
+      throw new Error(`SendGrid API failed — key starts with ${SENDGRID_API_KEY.substring(0, 10)}`);
     }
   } else {
     console.log(`  📧 [MOCK] Email to ${to}: "${subject}"`);
