@@ -78,6 +78,36 @@ function generateStats(category: Category, reviewCount?: number): { value: strin
       { value: `${Math.floor(Math.random() * 10 + 5)}+`, label: "Years Open" },
       { value: reviewCount ? `${(reviewCount > 100 ? 4.9 : 4.7).toFixed(1)}★` : "4.9★", label: "Average Rating" },
     ],
+    "med-spa": [
+      { value: `${Math.floor(Math.random() * 5000 + 1000)}+`, label: "Treatments Done" },
+      { value: `${Math.floor(Math.random() * 10 + 5)}+`, label: "Years Experience" },
+      { value: "Board Certified", label: "Medical Staff" },
+      { value: reviewCount ? `${(reviewCount > 100 ? 4.9 : 4.7).toFixed(1)}★` : "4.9★", label: "Patient Rating" },
+    ],
+    "appliance-repair": [
+      { value: `${Math.floor(Math.random() * 3000 + 1000)}+`, label: "Repairs Completed" },
+      { value: "Same Day", label: "Service Available" },
+      { value: `${Math.floor(Math.random() * 15 + 5)}+`, label: "Years Experience" },
+      { value: reviewCount ? `${(reviewCount > 100 ? 4.8 : 4.6).toFixed(1)}★` : "4.8★", label: "Customer Rating" },
+    ],
+    "junk-removal": [
+      { value: `${Math.floor(Math.random() * 1500 + 500)}+`, label: "Jobs Completed" },
+      { value: "Same Day", label: "Service Available" },
+      { value: "70%", label: "Recycled & Donated" },
+      { value: reviewCount ? `${(reviewCount > 100 ? 4.9 : 4.7).toFixed(1)}★` : "4.9★", label: "Customer Rating" },
+    ],
+    "carpet-cleaning": [
+      { value: `${Math.floor(Math.random() * 4000 + 1000)}+`, label: "Homes Cleaned" },
+      { value: `${Math.floor(Math.random() * 10 + 5)}+`, label: "Years Experience" },
+      { value: "100%", label: "Satisfaction Guaranteed" },
+      { value: reviewCount ? `${(reviewCount > 100 ? 4.8 : 4.6).toFixed(1)}★` : "4.8★", label: "Customer Rating" },
+    ],
+    "event-planning": [
+      { value: `${Math.floor(Math.random() * 500 + 200)}+`, label: "Events Planned" },
+      { value: `${Math.floor(Math.random() * 10 + 5)}+`, label: "Years Experience" },
+      { value: "Full Service", label: "Planning & Design" },
+      { value: reviewCount ? `${(reviewCount > 100 ? 4.9 : 4.8).toFixed(1)}★` : "4.9★", label: "Client Rating" },
+    ],
   };
   const rating = reviewCount ? `${(reviewCount > 100 ? 4.8 : 4.6).toFixed(1)}★` : "4.8★";
   return baseStats[category] || [
@@ -282,6 +312,36 @@ function getDefaultServices(category: Category) {
       { name: "Surgery", description: "Spay/neuter, dental, and soft tissue surgery." },
       { name: "Emergency Care", description: "Urgent and emergency veterinary services." },
     ],
+    "med-spa": [
+      { name: "Botox & Fillers", description: "Injectable treatments for wrinkles and volume restoration." },
+      { name: "Laser Treatments", description: "Advanced laser skin resurfacing and hair removal." },
+      { name: "Chemical Peels", description: "Medical-grade peels for skin rejuvenation." },
+      { name: "Body Contouring", description: "Non-invasive body sculpting and fat reduction." },
+    ],
+    "appliance-repair": [
+      { name: "Refrigerator Repair", description: "Diagnosis and repair for all refrigerator brands." },
+      { name: "Washer & Dryer", description: "Full-service washer and dryer repair and maintenance." },
+      { name: "Dishwasher Repair", description: "Expert dishwasher troubleshooting and repair." },
+      { name: "Oven & Range", description: "Gas and electric oven repair and calibration." },
+    ],
+    "junk-removal": [
+      { name: "Residential Junk Removal", description: "Furniture, appliances, and household item hauling." },
+      { name: "Commercial Cleanouts", description: "Office and retail space cleanout services." },
+      { name: "Estate Cleanouts", description: "Compassionate full-property estate clearing." },
+      { name: "Construction Debris", description: "Post-construction cleanup and debris removal." },
+    ],
+    "carpet-cleaning": [
+      { name: "Deep Steam Cleaning", description: "Hot water extraction for deep carpet cleaning." },
+      { name: "Stain Removal", description: "Professional treatment for tough stains and spots." },
+      { name: "Pet Odor Treatment", description: "Enzyme-based pet odor and stain elimination." },
+      { name: "Upholstery Cleaning", description: "Professional cleaning for sofas, chairs, and more." },
+    ],
+    "event-planning": [
+      { name: "Wedding Planning", description: "Full-service wedding coordination and design." },
+      { name: "Corporate Events", description: "Professional conferences, galas, and team events." },
+      { name: "Birthday & Celebrations", description: "Custom party planning for all ages." },
+      { name: "Event Design", description: "Creative decor, floral, and venue styling." },
+    ],
   };
   const label = CATEGORY_CONFIG[category]?.label || "Business";
   return defaults[category] || [
@@ -318,6 +378,31 @@ function getDefaultTestimonials(category: Category) {
       { name: "Regular Client", text: "Best salon in town. My hair has never looked better!" },
       { name: "New Client", text: "Finally found my forever salon. The talent here is incredible." },
       { name: "Bride", text: "Made me feel like a princess on my wedding day. Couldn't be happier." },
+    ],
+    "med-spa": [
+      { name: "Happy Client", text: "The results are incredible. I look 10 years younger and it was completely painless." },
+      { name: "Regular Patient", text: "Best med spa in the area. The staff is knowledgeable and the facility is gorgeous." },
+      { name: "New Client", text: "Finally found a place I trust for my treatments. Professional and results-driven." },
+    ],
+    "appliance-repair": [
+      { name: "Homeowner", text: "Fixed my refrigerator same day. Fair price and the tech explained everything clearly." },
+      { name: "Repeat Customer", text: "They've fixed our washer, dryer, and dishwasher over the years. Always reliable." },
+      { name: "Happy Client", text: "Saved us from buying a new oven. Quick diagnosis and affordable repair." },
+    ],
+    "junk-removal": [
+      { name: "Homeowner", text: "Cleared out our entire garage in under an hour. Fast, professional, and fairly priced." },
+      { name: "Estate Client", text: "Handled my mother's estate cleanout with care and respect. Highly recommend." },
+      { name: "Contractor", text: "We use them for all our post-construction cleanups. Always on time and thorough." },
+    ],
+    "carpet-cleaning": [
+      { name: "Homeowner", text: "Our carpets look brand new. They got out stains we thought were permanent." },
+      { name: "Pet Owner", text: "Finally got rid of the pet odor. The house smells fresh for the first time in years." },
+      { name: "Repeat Client", text: "We have them come twice a year. Consistent quality every single time." },
+    ],
+    "event-planning": [
+      { name: "Bride", text: "Our wedding was absolutely perfect. Every detail was handled flawlessly." },
+      { name: "Corporate Client", text: "They planned our annual gala and it was our best event ever. Incredible attention to detail." },
+      { name: "Birthday Client", text: "Threw my daughter the party of her dreams. Creative, organized, and so much fun." },
     ],
   };
   return defaults[category] || [

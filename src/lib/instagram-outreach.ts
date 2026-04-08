@@ -78,6 +78,11 @@ const CATEGORY_COMPLIMENTS: Partial<Record<Category, string>> = {
   "tree-service": "your work looks really professional",
   "pressure-washing": "those before/after results are impressive",
   painting: "the transformations you do are amazing",
+  "med-spa": "your treatments and results look incredible",
+  "appliance-repair": "your quick turnaround and expertise really stand out",
+  "junk-removal": "your before-and-after cleanouts are so satisfying",
+  "carpet-cleaning": "those cleaning results are seriously impressive",
+  "event-planning": "the events you put together look absolutely stunning",
 };
 
 function getCategoryCompliment(category: Category): string {

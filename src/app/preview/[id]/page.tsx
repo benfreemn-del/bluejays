@@ -42,13 +42,18 @@ import V2GarageDoorPreview from "@/components/templates/V2GarageDoorPreview";
 import V2LocksmithPreview from "@/components/templates/V2LocksmithPreview";
 import V2TowingPreview from "@/components/templates/V2TowingPreview";
 import V2ConstructionPreview from "@/components/templates/V2ConstructionPreview";
+import V2MedSpaPreview from "@/components/templates/V2MedSpaPreview";
+import V2ApplianceRepairPreview from "@/components/templates/V2ApplianceRepairPreview";
+import V2JunkRemovalPreview from "@/components/templates/V2JunkRemovalPreview";
+import V2CarpetCleaningPreview from "@/components/templates/V2CarpetCleaningPreview";
+import V2EventPlanningPreview from "@/components/templates/V2EventPlanningPreview";
 import { getScrapedData, getProspect } from "@/lib/store";
 import { proxyPhotos } from "@/lib/image-proxy";
 import { getHeroHeading, getHeroSubtitle, getHeroImage, getAboutImage, getNavName } from "@/lib/preview-utils";
 
 export const dynamic = "force-dynamic";
 
-// V2 preview renderers by category — ALL 41 categories have V2 dynamic renderers
+// V2 preview renderers by category — ALL 46 categories have V2 dynamic renderers
 const V2_RENDERERS: Partial<Record<string, React.ComponentType<{ data: GeneratedSiteData }>>> = {
   electrician: V2ElectricianPreview,
   dental: V2DentalPreview,
@@ -91,6 +96,11 @@ const V2_RENDERERS: Partial<Record<string, React.ComponentType<{ data: Generated
   locksmith: V2LocksmithPreview,
   towing: V2TowingPreview,
   construction: V2ConstructionPreview,
+  "med-spa": V2MedSpaPreview,
+  "appliance-repair": V2ApplianceRepairPreview,
+  "junk-removal": V2JunkRemovalPreview,
+  "carpet-cleaning": V2CarpetCleaningPreview,
+  "event-planning": V2EventPlanningPreview,
 };
 
 export default async function PreviewPage({

@@ -422,4 +422,9 @@ const defaultSiteCards: SiteCard[] = [
   { name: "Happy Tails Pet Care", category: "Pet Services", color: "#0a1015", href: "/v2/pet-services", icon: "🐕", tagline: "Playful energy — happy pets" },
   { name: "Summit PT & Rehab", category: "Physical Therapy", color: "#0a0f1a", href: "/v2/physical-therapy", icon: "💪", tagline: "Healing waves — recovery focus" },
   { name: "Bright Minds Tutoring", category: "Tutoring", color: "#0a0f1a", href: "/v2/tutoring", icon: "📚", tagline: "Academic excellence — grade boost" },
+  { name: "Radiance Med Spa", category: "Med Spa", color: "#1a0f1e", href: "/v2/med-spa", icon: "✨", tagline: "Flowing elegance — rejuvenation premium" },
+  { name: "ProFix Appliance Repair", category: "Appliance Repair", color: "#0f1720", href: "/v2/appliance-repair", icon: "🔧", tagline: "Circuit grid — technical precision" },
+  { name: "CleanSlate Junk Removal", category: "Junk Removal", color: "#0f1a12", href: "/v2/junk-removal", icon: "🚛", tagline: "Eco-friendly — clear the clutter" },
+  { name: "FreshStart Carpet Cleaning", category: "Carpet Cleaning", color: "#0f1520", href: "/v2/carpet-cleaning", icon: "💧", tagline: "Bubble fresh — deep clean magic" },
+  { name: "Elevate Events", category: "Event Planning", color: "#1a1520", href: "/v2/event-planning", icon: "🎉", tagline: "Confetti sparkle — celebration design" },
 ];

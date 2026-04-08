@@ -39,7 +39,12 @@ export type Category =
   | "garage-door"
   | "locksmith"
   | "towing"
-  | "construction";
+  | "construction"
+  | "med-spa"
+  | "appliance-repair"
+  | "junk-removal"
+  | "carpet-cleaning"
+  | "event-planning";
 
 export type ProspectStatus =
   | "scouted"
@@ -185,4 +190,9 @@ export const CATEGORY_CONFIG: Record<
   locksmith: { label: "Locksmith", accentColor: "#eab308", heroGradient: "linear-gradient(135deg, #1a1a0a 0%, #121208 100%)" },
   towing: { label: "Towing", accentColor: "#ef4444", heroGradient: "linear-gradient(135deg, #1a0f0f 0%, #120a0a 100%)" },
   construction: { label: "Construction", accentColor: "#ea580c", heroGradient: "linear-gradient(135deg, #1a1208 0%, #120e06 100%)" },
+  "med-spa": { label: "Med Spa", accentColor: "#c084fc", heroGradient: "linear-gradient(135deg, #1a0f1e 0%, #120a16 100%)" },
+  "appliance-repair": { label: "Appliance Repair", accentColor: "#3b82f6", heroGradient: "linear-gradient(135deg, #0f1720 0%, #0a1018 100%)" },
+  "junk-removal": { label: "Junk Removal", accentColor: "#22c55e", heroGradient: "linear-gradient(135deg, #0f1a12 0%, #0a120e 100%)" },
+  "carpet-cleaning": { label: "Carpet Cleaning", accentColor: "#06b6d4", heroGradient: "linear-gradient(135deg, #0f1520 0%, #0a1018 100%)" },
+  "event-planning": { label: "Event Planning", accentColor: "#f59e0b", heroGradient: "linear-gradient(135deg, #1a1520 0%, #120e18 100%)" },
 };

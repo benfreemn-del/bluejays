@@ -41,6 +41,9 @@ const LIGHT_LEANING_CATEGORIES: Category[] = [
   "real-estate",
   "law-firm",
   "spa" as Category, // future-proofing
+  "med-spa",
+  "event-planning",
+  "carpet-cleaning",
 ];
 
 /**
@@ -71,6 +74,8 @@ const DARK_LEANING_CATEGORIES: Category[] = [
   "restaurant",
   "landscaping",
   "cleaning",
+  "junk-removal",
+  "appliance-repair",
 ];
 
 /**
