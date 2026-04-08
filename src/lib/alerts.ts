@@ -1,4 +1,5 @@
 import type { Prospect } from "./types";
+import { logCost, COST_RATES } from "./cost-logger";
 
 const OWNER_PHONE = process.env.OWNER_PHONE_NUMBER;
 const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID;
@@ -40,6 +41,16 @@ async function sendOwnerSms(message: string): Promise<boolean> {
       Body: message,
     }),
   });
+
+  if (response.ok) {
+    await logCost({
+      service: "twilio_sms",
+      action: "owner_alert",
+      costUsd: COST_RATES.twilio_sms,
+      metadata: { to: OWNER_PHONE, type: "alert" },
+    });
+  }
+
   return response.ok;
 }
 

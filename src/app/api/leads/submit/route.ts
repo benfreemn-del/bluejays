@@ -4,6 +4,7 @@ import { addProspect } from "@/lib/store";
 import { generatePreview } from "@/lib/generator";
 import { scrapeWebsite } from "@/lib/scraper";
 import { alertOwner } from "@/lib/alerts";
+import { logCost, COST_RATES } from "@/lib/cost-logger";
 import type { Prospect, Category } from "@/lib/types";
 
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
@@ -45,6 +46,13 @@ async function notifyOwnerEmail(lead: { businessName: string; phone: string; ema
         content: [{ type: "text/html", value: htmlBody }],
       }),
     });
+
+    await logCost({
+      service: "sendgrid_email",
+      action: "owner_lead_notification",
+      costUsd: COST_RATES.sendgrid_email,
+      metadata: { businessName: lead.businessName, type: "lead_notification" },
+    });
   } catch (err) {
     console.error("[Lead Submit] Email notification failed:", err);
   }
@@ -58,7 +66,7 @@ async function notifyOwnerSms(lead: { businessName: string; phone: string; categ
   try {
     const msg = `BlueJays: New lead! ${lead.businessName} (${lead.category || "Unknown"}) — ${lead.phone}. Check dashboard.`;
     const url = `https://api.twilio.com/2010-04-01/Accounts/${TWILIO_ACCOUNT_SID}/Messages.json`;
-    await fetch(url, {
+    const smsRes = await fetch(url, {
       method: "POST",
       headers: {
         Authorization: "Basic " + Buffer.from(`${TWILIO_ACCOUNT_SID}:${TWILIO_AUTH_TOKEN}`).toString("base64"),
@@ -70,6 +78,15 @@ async function notifyOwnerSms(lead: { businessName: string; phone: string; categ
         Body: msg,
       }),
     });
+
+    if (smsRes.ok) {
+      await logCost({
+        service: "twilio_sms",
+        action: "owner_lead_sms",
+        costUsd: COST_RATES.twilio_sms,
+        metadata: { businessName: lead.businessName, type: "lead_notification" },
+      });
+    }
   } catch (err) {
     console.error("[Lead Submit] SMS notification failed:", err);
   }

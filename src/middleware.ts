@@ -30,6 +30,7 @@ const PROTECTED_PATHS = [
   "/api/funnel/enroll",
   "/api/outreach/bulk",
   "/api/costs",
+  "/api/costs/analytics",
   "/api/notes",
   "/api/voicemail/drop",
   "/api/winback",

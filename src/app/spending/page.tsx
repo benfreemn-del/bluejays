@@ -27,6 +27,36 @@ interface SystemCosts {
   } | null;
 }
 
+interface CostAnalytics {
+  dailyCosts: { date: string; total: number; byService: Record<string, number> }[];
+  allTime: { total: number; byService: Record<string, number>; count: number };
+  today: { total: number; byService: Record<string, number> };
+  thisWeek: { total: number; byService: Record<string, number> };
+  thisMonth: { total: number; byService: Record<string, number> };
+  perLeadCost: {
+    average: number;
+    median: number;
+    breakdown: {
+      googlePlaces: number;
+      sendgrid: number;
+      twilio: number;
+      siteGeneration: number;
+      aiProcessing: number;
+    };
+  };
+  roi: {
+    totalRevenue: number;
+    totalSpend: number;
+    netProfit: number;
+    roiMultiple: number;
+    conversionRate: number;
+    costPerAcquisition: number;
+    projectedMonthlyRevenue: number;
+    projectedMonthlyProfit: number;
+    breakEvenLeads: number;
+  };
+}
+
 interface PipelineVelocity {
   funnel: { stage: string; count: number; color: string }[];
   velocity: { avgDaysToContact: number; avgDaysToResponse: number; avgDaysToSale: number };
@@ -50,6 +80,7 @@ interface EmailStats {
 
 export default function SpendingPage() {
   const [costs, setCosts] = useState<SystemCosts | null>(null);
+  const [analytics, setAnalytics] = useState<CostAnalytics | null>(null);
   const [pipeline, setPipeline] = useState<PipelineVelocity | null>(null);
   const [emailStats, setEmailStats] = useState<EmailStats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -57,10 +88,11 @@ export default function SpendingPage() {
   useEffect(() => {
     Promise.all([
       fetch("/api/costs").then((r) => r.json()),
+      fetch("/api/costs/analytics").then((r) => r.json()).catch(() => null),
       fetch("/api/pipeline-velocity").then((r) => r.json()),
       fetch("/api/email-stats").then((r) => r.json()).catch(() => null),
     ])
-      .then(([c, p, e]) => { setCosts(c); setPipeline(p); setEmailStats(e); })
+      .then(([c, a, p, e]) => { setCosts(c); setAnalytics(a); setPipeline(p); setEmailStats(e); })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
@@ -86,66 +118,231 @@ export default function SpendingPage() {
         {costs && (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <StatCard label="Total Revenue" value={`$${costs.revenue.toLocaleString()}`} color="text-green-400" />
-            <StatCard label="Total Spent" value={`$${costs.totalEstimatedCost.toFixed(2)}`} color="text-red-400" />
-            <StatCard label="Net Profit" value={`$${costs.profit.toFixed(2)}`} color={costs.profit >= 0 ? "text-green-400" : "text-red-400"} />
+            <StatCard label="Total Spent" value={`$${(analytics?.allTime.total || costs.totalEstimatedCost).toFixed(2)}`} color="text-red-400" />
+            <StatCard label="Net Profit" value={`$${(analytics?.roi.netProfit ?? costs.profit).toFixed(2)}`} color={(analytics?.roi.netProfit ?? costs.profit) >= 0 ? "text-green-400" : "text-red-400"} />
             <StatCard label="Paid Customers" value={costs.paidCustomers.toString()} color="text-amber-400" />
           </div>
         )}
 
-        {/* Real-Time Spend (from system_costs) */}
-        {costs?.actualSpend && (
+        {/* Real-Time Spend Dashboard */}
+        {analytics && (
           <div className="p-6 rounded-2xl border border-sky-500/20 bg-sky-500/[0.03]">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-bold">Real-Time Spend</h2>
+              <h2 className="text-lg font-bold">Real-Time Cost Dashboard</h2>
               <span className="text-xs px-2 py-1 rounded-full bg-sky-500/20 text-sky-400">LIVE DATA</span>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-              <div className="text-center p-3 rounded-xl bg-white/[0.03]">
-                <p className="text-xl font-extrabold text-sky-400">${costs.actualSpend.today.total.toFixed(2)}</p>
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+              <div className="text-center p-4 rounded-xl bg-white/[0.03]">
+                <p className="text-2xl font-extrabold text-sky-400">${analytics.today.total.toFixed(2)}</p>
                 <p className="text-white/40 text-xs mt-1">Today</p>
               </div>
-              <div className="text-center p-3 rounded-xl bg-white/[0.03]">
-                <p className="text-xl font-extrabold text-sky-400">${costs.actualSpend.thisWeek.total.toFixed(2)}</p>
+              <div className="text-center p-4 rounded-xl bg-white/[0.03]">
+                <p className="text-2xl font-extrabold text-sky-400">${analytics.thisWeek.total.toFixed(2)}</p>
                 <p className="text-white/40 text-xs mt-1">This Week</p>
               </div>
-              <div className="text-center p-3 rounded-xl bg-white/[0.03]">
-                <p className="text-xl font-extrabold text-sky-400">${costs.actualSpend.thisMonth.total.toFixed(2)}</p>
+              <div className="text-center p-4 rounded-xl bg-white/[0.03]">
+                <p className="text-2xl font-extrabold text-sky-400">${analytics.thisMonth.total.toFixed(2)}</p>
                 <p className="text-white/40 text-xs mt-1">This Month</p>
               </div>
-              <div className="text-center p-3 rounded-xl bg-white/[0.03]">
-                <p className="text-xl font-extrabold text-amber-400">${costs.actualSpend.projectedMonthly.toFixed(2)}</p>
-                <p className="text-white/40 text-xs mt-1">Projected Monthly</p>
+              <div className="text-center p-4 rounded-xl bg-white/[0.03]">
+                <p className="text-2xl font-extrabold text-purple-400">${analytics.allTime.total.toFixed(2)}</p>
+                <p className="text-white/40 text-xs mt-1">All-Time</p>
+              </div>
+              <div className="text-center p-4 rounded-xl bg-white/[0.03]">
+                <p className="text-2xl font-extrabold text-amber-400">{analytics.allTime.count}</p>
+                <p className="text-white/40 text-xs mt-1">Total Actions</p>
               </div>
             </div>
-            {/* Service breakdown for this month */}
-            {Object.keys(costs.actualSpend.thisMonth.byService).length > 0 && (
-              <div className="space-y-2 mb-4">
-                <p className="text-sm font-medium text-white/50">This Month by Service</p>
-                {Object.entries(costs.actualSpend.thisMonth.byService)
-                  .sort(([, a], [, b]) => b - a)
-                  .map(([service, cost]) => (
-                    <div key={service} className="flex justify-between items-center text-sm">
-                      <span className="text-white/60 capitalize">{service.replace(/_/g, " ")}</span>
-                      <span className="font-medium">${cost.toFixed(4)}</span>
+          </div>
+        )}
+
+        {/* Daily Cost Chart */}
+        {analytics && analytics.dailyCosts.length > 0 && (
+          <div className="p-6 rounded-2xl border border-white/[0.06] bg-white/[0.02]">
+            <h2 className="text-lg font-bold mb-2">Daily Cost Chart</h2>
+            <p className="text-white/40 text-sm mb-6">Last 30 days of API spending</p>
+            <div className="flex items-end gap-[3px] h-40">
+              {analytics.dailyCosts.map((day) => {
+                const maxCost = Math.max(...analytics.dailyCosts.map((d) => d.total), 0.01);
+                const height = day.total > 0 ? Math.max(4, (day.total / maxCost) * 100) : 2;
+                const isToday = day.date === new Date().toISOString().split("T")[0];
+                return (
+                  <div key={day.date} className="flex-1 flex flex-col items-center group relative">
+                    <div
+                      className={`w-full rounded-t transition-all cursor-pointer ${
+                        isToday ? "bg-sky-400" : day.total > 0 ? "bg-sky-500/70 hover:bg-sky-400" : "bg-white/[0.04]"
+                      }`}
+                      style={{ height: `${height}%` }}
+                    />
+                    {/* Tooltip */}
+                    <div className="absolute bottom-full mb-2 hidden group-hover:block z-10">
+                      <div className="bg-[#1a2744] border border-white/10 rounded-lg px-3 py-2 text-xs whitespace-nowrap shadow-xl">
+                        <p className="font-medium text-white">{day.date}</p>
+                        <p className="text-sky-400 font-bold">${day.total.toFixed(4)}</p>
+                        {Object.entries(day.byService).map(([svc, cost]) => (
+                          <p key={svc} className="text-white/50">
+                            {svc.replace(/_/g, " ")}: ${(cost as number).toFixed(4)}
+                          </p>
+                        ))}
+                      </div>
                     </div>
-                  ))}
-              </div>
-            )}
-            {/* Top cost leads */}
-            {costs.actualSpend.topCostLeads.length > 0 && (
-              <div className="mt-4">
-                <p className="text-sm font-medium text-white/50 mb-2">Top Cost Leads</p>
-                <div className="space-y-1">
-                  {costs.actualSpend.topCostLeads.slice(0, 5).map((lead) => (
-                    <div key={lead.prospectId} className="flex justify-between items-center text-sm">
-                      <span className="text-white/60">{lead.businessName}</span>
-                      <span className="font-medium">${lead.totalCost.toFixed(3)}</span>
-                    </div>
-                  ))}
+                  </div>
+                );
+              })}
+            </div>
+            <div className="flex justify-between mt-2 text-[10px] text-white/30">
+              <span>{analytics.dailyCosts[0]?.date}</span>
+              <span>{analytics.dailyCosts[analytics.dailyCosts.length - 1]?.date}</span>
+            </div>
+          </div>
+        )}
+
+        {/* Per-Lead Cost Breakdown */}
+        {analytics && (
+          <div className="p-6 rounded-2xl border border-white/[0.06] bg-white/[0.02]">
+            <h2 className="text-lg font-bold mb-2">Per-Lead Cost Breakdown</h2>
+            <p className="text-white/40 text-sm mb-6">Average cost to acquire a lead through the full funnel</p>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div>
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                  <div className="p-4 rounded-xl bg-white/[0.03] text-center">
+                    <p className="text-3xl font-extrabold text-sky-400">${analytics.perLeadCost.average.toFixed(3)}</p>
+                    <p className="text-white/40 text-xs mt-1">Average Per Lead</p>
+                  </div>
+                  <div className="p-4 rounded-xl bg-white/[0.03] text-center">
+                    <p className="text-3xl font-extrabold text-green-400">${analytics.perLeadCost.median.toFixed(3)}</p>
+                    <p className="text-white/40 text-xs mt-1">Median Per Lead</p>
+                  </div>
                 </div>
               </div>
-            )}
-            <p className="text-white/20 text-xs mt-4">Per-lead average: ${costs.actualSpend.perLeadAverage.toFixed(3)}</p>
+              <div className="space-y-3">
+                <CostBreakdownRow
+                  label="Google Places API"
+                  cost={analytics.perLeadCost.breakdown.googlePlaces}
+                  total={analytics.perLeadCost.average}
+                  color="bg-blue-500"
+                />
+                <CostBreakdownRow
+                  label="SendGrid Email"
+                  cost={analytics.perLeadCost.breakdown.sendgrid}
+                  total={analytics.perLeadCost.average}
+                  color="bg-green-500"
+                />
+                <CostBreakdownRow
+                  label="Twilio (SMS/Voice)"
+                  cost={analytics.perLeadCost.breakdown.twilio}
+                  total={analytics.perLeadCost.average}
+                  color="bg-purple-500"
+                />
+                <CostBreakdownRow
+                  label="Site Generation"
+                  cost={analytics.perLeadCost.breakdown.siteGeneration}
+                  total={analytics.perLeadCost.average}
+                  color="bg-amber-500"
+                />
+                <CostBreakdownRow
+                  label="AI Processing"
+                  cost={analytics.perLeadCost.breakdown.aiProcessing}
+                  total={analytics.perLeadCost.average}
+                  color="bg-red-500"
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Cost by Service */}
+        {analytics && Object.keys(analytics.allTime.byService).length > 0 && (
+          <div className="p-6 rounded-2xl border border-white/[0.06] bg-white/[0.02]">
+            <h2 className="text-lg font-bold mb-4">Cost by Service (All-Time)</h2>
+            <div className="space-y-3">
+              {Object.entries(analytics.allTime.byService)
+                .sort(([, a], [, b]) => b - a)
+                .map(([service, cost]) => {
+                  const pct = analytics.allTime.total > 0 ? (cost / analytics.allTime.total) * 100 : 0;
+                  const serviceColors: Record<string, string> = {
+                    google_places: "bg-blue-500",
+                    sendgrid_email: "bg-green-500",
+                    twilio_sms: "bg-purple-500",
+                    twilio_voice: "bg-indigo-500",
+                    site_generation: "bg-amber-500",
+                    ai_response: "bg-red-500",
+                    pipeline: "bg-sky-500",
+                  };
+                  return (
+                    <div key={service}>
+                      <div className="flex justify-between items-center text-sm mb-1">
+                        <span className="text-white/60 capitalize">{service.replace(/_/g, " ")}</span>
+                        <span className="font-medium">${cost.toFixed(4)} ({pct.toFixed(1)}%)</span>
+                      </div>
+                      <div className="h-2 bg-white/[0.04] rounded-full overflow-hidden">
+                        <div
+                          className={`h-full rounded-full ${serviceColors[service] || "bg-white/20"}`}
+                          style={{ width: `${Math.max(2, pct)}%` }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+            </div>
+          </div>
+        )}
+
+        {/* ROI Projections */}
+        {analytics && (
+          <div className="p-6 rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.03]">
+            <h2 className="text-lg font-bold mb-2 text-emerald-400">ROI Projections</h2>
+            <p className="text-white/40 text-sm mb-6">Based on current conversion rates and $997 price point</p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+              <div className="text-center p-4 rounded-xl bg-white/[0.03]">
+                <p className="text-2xl font-extrabold text-green-400">${analytics.roi.totalRevenue.toLocaleString()}</p>
+                <p className="text-white/40 text-xs mt-1">Total Revenue</p>
+              </div>
+              <div className="text-center p-4 rounded-xl bg-white/[0.03]">
+                <p className="text-2xl font-extrabold text-red-400">${analytics.roi.totalSpend.toFixed(2)}</p>
+                <p className="text-white/40 text-xs mt-1">Total Spend</p>
+              </div>
+              <div className="text-center p-4 rounded-xl bg-white/[0.03]">
+                <p className={`text-2xl font-extrabold ${analytics.roi.netProfit >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                  ${analytics.roi.netProfit.toLocaleString()}
+                </p>
+                <p className="text-white/40 text-xs mt-1">Net Profit</p>
+              </div>
+              <div className="text-center p-4 rounded-xl bg-white/[0.03]">
+                <p className="text-2xl font-extrabold text-amber-400">{analytics.roi.roiMultiple}x</p>
+                <p className="text-white/40 text-xs mt-1">ROI Multiple</p>
+              </div>
+            </div>
+            <div className="grid md:grid-cols-3 gap-4 mb-4">
+              <div className="p-4 rounded-xl bg-white/[0.03] text-center">
+                <p className="text-xl font-bold text-white">{analytics.roi.conversionRate}%</p>
+                <p className="text-white/40 text-xs mt-1">Conversion Rate</p>
+              </div>
+              <div className="p-4 rounded-xl bg-white/[0.03] text-center">
+                <p className="text-xl font-bold text-white">${analytics.roi.costPerAcquisition.toFixed(2)}</p>
+                <p className="text-white/40 text-xs mt-1">Cost Per Acquisition</p>
+              </div>
+              <div className="p-4 rounded-xl bg-white/[0.03] text-center">
+                <p className="text-xl font-bold text-white">{analytics.roi.breakEvenLeads}</p>
+                <p className="text-white/40 text-xs mt-1">Leads to Break Even</p>
+              </div>
+            </div>
+            <div className="grid md:grid-cols-2 gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+              <div className="text-center">
+                <p className="text-sm text-white/50 mb-1">Projected Monthly Revenue</p>
+                <p className="text-2xl font-black text-emerald-400">${analytics.roi.projectedMonthlyRevenue.toLocaleString()}</p>
+              </div>
+              <div className="text-center">
+                <p className="text-sm text-white/50 mb-1">Projected Monthly Profit</p>
+                <p className={`text-2xl font-black ${analytics.roi.projectedMonthlyProfit >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                  ${analytics.roi.projectedMonthlyProfit.toLocaleString()}
+                </p>
+              </div>
+            </div>
+            <p className="text-white/30 text-xs mt-4 text-center">
+              Projections based on current {analytics.roi.conversionRate}% conversion rate at $997/sale.
+              {analytics.roi.roiMultiple > 0 && ` Every $1 spent returns $${analytics.roi.roiMultiple.toFixed(1)} in revenue.`}
+            </p>
           </div>
         )}
 
@@ -153,8 +350,12 @@ export default function SpendingPage() {
         {costs && (
           <div className="p-6 rounded-2xl border border-white/[0.06] bg-white/[0.02]">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-bold">Cost Breakdown</h2>
-              {!costs.actualSpend && <span className="text-xs px-2 py-1 rounded-full bg-white/10 text-white/40">ESTIMATED</span>}
+              <h2 className="text-lg font-bold">Cost Breakdown (Estimated)</h2>
+              {analytics?.allTime.total ? (
+                <span className="text-xs px-2 py-1 rounded-full bg-green-500/20 text-green-400">REAL DATA ABOVE</span>
+              ) : (
+                <span className="text-xs px-2 py-1 rounded-full bg-white/10 text-white/40">ESTIMATED</span>
+              )}
             </div>
             <div className="space-y-4">
               <CostRow label="Email Sending (SendGrid)" count={`${costs.totalEmailsSent} emails`} cost={costs.estimatedEmailCost} color="bg-green-500" />
@@ -165,24 +366,6 @@ export default function SpendingPage() {
                 <span className="font-bold">Total</span>
                 <span className="font-bold text-lg">${costs.totalEstimatedCost.toFixed(2)}</span>
               </div>
-            </div>
-          </div>
-        )}
-
-        {/* Unit Economics */}
-        {costs && (
-          <div className="grid md:grid-cols-3 gap-4">
-            <div className="p-6 rounded-2xl border border-white/[0.06] bg-white/[0.02] text-center">
-              <p className="text-3xl font-extrabold text-sky-400">${costs.costPerLead.toFixed(2)}</p>
-              <p className="text-white/40 text-sm mt-1">Cost Per Lead</p>
-            </div>
-            <div className="p-6 rounded-2xl border border-white/[0.06] bg-white/[0.02] text-center">
-              <p className="text-3xl font-extrabold text-green-400">${costs.revenuePerSale}</p>
-              <p className="text-white/40 text-sm mt-1">Revenue Per Sale</p>
-            </div>
-            <div className="p-6 rounded-2xl border border-white/[0.06] bg-white/[0.02] text-center">
-              <p className="text-3xl font-extrabold text-amber-400">{costs.breakEvenLeads}</p>
-              <p className="text-white/40 text-sm mt-1">Leads to Break Even</p>
             </div>
           </div>
         )}
@@ -244,7 +427,7 @@ export default function SpendingPage() {
         {pipeline && pipeline.stuckLeads > 0 && (
           <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20">
             <p className="text-red-400 font-semibold">
-              ⚠️ {pipeline.stuckLeads} leads stuck (contacted but no response in 7+ days)
+              {pipeline.stuckLeads} leads stuck (contacted but no response in 7+ days)
             </p>
             <p className="text-white/40 text-sm mt-1">Consider running the auto-funnel follow-up or trying a different channel.</p>
           </div>
@@ -389,7 +572,7 @@ export default function SpendingPage() {
           </div>
         )}
 
-        {/* ROI Calculator */}
+        {/* The Math That Matters */}
         <div className="p-6 rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.03]">
           <h2 className="text-lg font-bold mb-2 text-emerald-400">The Math That Matters</h2>
           <div className="grid md:grid-cols-3 gap-6 mt-4">
@@ -398,11 +581,17 @@ export default function SpendingPage() {
               <p className="text-white/40 text-sm mt-1">Revenue per sale</p>
             </div>
             <div className="text-center">
-              <p className="text-4xl font-black text-sky-400">~$2.50</p>
-              <p className="text-white/40 text-sm mt-1">Cost per lead at scale</p>
+              <p className="text-4xl font-black text-sky-400">
+                {analytics ? `$${analytics.perLeadCost.average.toFixed(2)}` : "~$2.50"}
+              </p>
+              <p className="text-white/40 text-sm mt-1">Cost per lead {analytics ? "(actual)" : "(estimated)"}</p>
             </div>
             <div className="text-center">
-              <p className="text-4xl font-black text-emerald-400">399x</p>
+              <p className="text-4xl font-black text-emerald-400">
+                {analytics && analytics.perLeadCost.average > 0
+                  ? `${Math.round(997 / analytics.perLeadCost.average)}x`
+                  : "399x"}
+              </p>
               <p className="text-white/40 text-sm mt-1">ROI per sale</p>
             </div>
           </div>
@@ -431,6 +620,21 @@ function CostRow({ label, count, cost, color }: { label: string; count: string; 
         <p className="text-xs text-white/40">{count}</p>
       </div>
       <p className="font-semibold">${cost.toFixed(2)}</p>
+    </div>
+  );
+}
+
+function CostBreakdownRow({ label, cost, total, color }: { label: string; cost: number; total: number; color: string }) {
+  const pct = total > 0 ? (cost / total) * 100 : 0;
+  return (
+    <div>
+      <div className="flex justify-between items-center text-sm mb-1">
+        <span className="text-white/60">{label}</span>
+        <span className="font-medium">${cost.toFixed(4)} ({pct.toFixed(0)}%)</span>
+      </div>
+      <div className="h-1.5 bg-white/[0.04] rounded-full overflow-hidden">
+        <div className={`h-full rounded-full ${color}`} style={{ width: `${Math.max(2, pct)}%` }} />
+      </div>
     </div>
   );
 }

@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 import type { Prospect, ScoutOptions, Category } from "./types";
 import { getMockProspects } from "./mock-prospects";
 import { addProspect, getAllProspects, updateProspect } from "./store";
+import { logCost, COST_RATES } from "./cost-logger";
 
 const GOOGLE_API_KEY = process.env.GOOGLE_PLACES_API_KEY;
 
@@ -13,6 +14,14 @@ async function scoutWithGoogle(options: ScoutOptions): Promise<Prospect[]> {
   const searchUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(query)}&key=${GOOGLE_API_KEY}`;
   const searchResponse = await fetch(searchUrl);
   const searchData = await searchResponse.json();
+
+  // Log Google Places search cost
+  await logCost({
+    service: "google_places",
+    action: "text_search",
+    costUsd: COST_RATES.google_places_search,
+    metadata: { query, city, category },
+  });
 
   if (searchData.status !== "OK") {
     throw new Error(`Google Places API error: ${searchData.status} - ${searchData.error_message || "Unknown error"}`);
@@ -36,6 +45,14 @@ async function scoutWithGoogle(options: ScoutOptions): Promise<Prospect[]> {
           phone = detailsData.result.formatted_phone_number;
           website = detailsData.result.website;
         }
+
+        // Log Google Places detail cost
+        await logCost({
+          service: "google_places",
+          action: "place_details",
+          costUsd: COST_RATES.google_places_detail,
+          metadata: { placeId: place.place_id, businessName: place.name },
+        });
       } catch {
         // Details fetch failed, continue without
       }

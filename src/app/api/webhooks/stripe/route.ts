@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { constructWebhookEvent } from "@/lib/stripe";
 import { getProspect, updateProspect } from "@/lib/store";
 import { alertProspectPaid } from "@/lib/alerts";
+import { logCost, COST_RATES } from "@/lib/cost-logger";
 
 /**
  * POST /api/webhooks/stripe
@@ -181,6 +182,13 @@ async function notifyOwnerPayment(
       }),
     });
     console.log(`[Stripe Webhook] Payment notification email sent to ${OWNER_EMAIL}`);
+
+    await logCost({
+      service: "sendgrid_email",
+      action: "owner_payment_notification",
+      costUsd: COST_RATES.sendgrid_email,
+      metadata: { businessName, customerEmail, type: "payment_notification" },
+    });
   } catch (err) {
     console.error("[Stripe Webhook] Failed to send payment notification:", err);
   }
