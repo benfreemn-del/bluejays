@@ -165,6 +165,234 @@ function Particles() {
   );
 }
 
+/* ─── RunnerSVG ─── */
+function RunnerSVG() {
+  return (
+    <div className="relative w-72 h-80 md:w-96 md:h-[28rem] mx-auto">
+      {/* Pulsing energy glow behind the runner */}
+      <motion.div
+        className="absolute inset-0 rounded-full"
+        style={{
+          background: "radial-gradient(circle, rgba(220,38,38,0.25) 0%, rgba(220,38,38,0.08) 40%, transparent 70%)",
+        }}
+        animate={{ scale: [0.85, 1.05, 0.85], opacity: [0.5, 0.9, 0.5] }}
+        transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <svg
+        viewBox="0 0 340 400"
+        className="w-full h-full relative z-10"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <defs>
+          <linearGradient id="runnerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#dc2626" />
+            <stop offset="50%" stopColor="#ef4444" />
+            <stop offset="100%" stopColor="#f87171" />
+          </linearGradient>
+          <linearGradient id="glowGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#dc2626" stopOpacity="0" />
+            <stop offset="50%" stopColor="#dc2626" stopOpacity="0.6" />
+            <stop offset="100%" stopColor="#dc2626" stopOpacity="0" />
+          </linearGradient>
+          <filter id="runnerGlow">
+            <feGaussianBlur stdDeviation="4" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          </filter>
+          <filter id="energyGlow">
+            <feGaussianBlur stdDeviation="6" />
+          </filter>
+        </defs>
+
+        {/* Ground line */}
+        <motion.line
+          x1="30" y1="350" x2="310" y2="350"
+          stroke="#dc2626" strokeWidth="2" strokeOpacity="0.4"
+          initial={{ pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={{ duration: 1.5, ease: "easeOut" }}
+        />
+
+        {/* Speed marks on ground */}
+        {[60, 90, 120, 150].map((x, i) => (
+          <motion.line
+            key={`speed-${i}`}
+            x1={x} y1="348" x2={x - 20} y2="348"
+            stroke="#dc2626" strokeWidth="1.5" strokeOpacity="0.3"
+            animate={{ x: [-10, -60], opacity: [0.5, 0] }}
+            transition={{ duration: 0.8, repeat: Infinity, delay: i * 0.2, ease: "linear" }}
+          />
+        ))}
+
+        {/* Motion lines behind runner */}
+        {[0, 1, 2, 3, 4].map((i) => (
+          <motion.line
+            key={`motion-${i}`}
+            x1={80} y1={180 + i * 25} x2={30} y2={180 + i * 25}
+            stroke="#dc2626" strokeWidth={2 - i * 0.3} strokeLinecap="round"
+            animate={{ x: [-20, -80], opacity: [0.6, 0] }}
+            transition={{ duration: 1, repeat: Infinity, delay: i * 0.15, ease: "linear" }}
+          />
+        ))}
+
+        {/* Runner body - torso */}
+        <motion.g filter="url(#runnerGlow)">
+          {/* Head */}
+          <motion.circle
+            cx="200" cy="120" r="22"
+            fill="url(#runnerGrad)"
+            animate={{ y: [-3, 3, -3] }}
+            transition={{ duration: 0.6, repeat: Infinity, ease: "easeInOut" }}
+          />
+          {/* Inner head highlight */}
+          <motion.circle
+            cx="195" cy="114" r="8"
+            fill="#f87171" fillOpacity="0.4"
+            animate={{ y: [-3, 3, -3] }}
+            transition={{ duration: 0.6, repeat: Infinity, ease: "easeInOut" }}
+          />
+
+          {/* Neck */}
+          <motion.rect
+            x="194" y="140" width="12" height="14" rx="4"
+            fill="url(#runnerGrad)"
+            animate={{ y: [-2, 2, -2] }}
+            transition={{ duration: 0.6, repeat: Infinity, ease: "easeInOut" }}
+          />
+
+          {/* Torso */}
+          <motion.path
+            d="M178 155 L222 155 L218 230 L182 230 Z"
+            fill="url(#runnerGrad)"
+            animate={{ y: [-2, 3, -2] }}
+            transition={{ duration: 0.6, repeat: Infinity, ease: "easeInOut" }}
+          />
+          {/* Torso highlight */}
+          <motion.path
+            d="M185 160 L210 160 L208 220 L187 220 Z"
+            fill="#f87171" fillOpacity="0.2"
+            animate={{ y: [-2, 3, -2] }}
+            transition={{ duration: 0.6, repeat: Infinity, ease: "easeInOut" }}
+          />
+
+          {/* Front arm (pumping forward) */}
+          <motion.path
+            d="M215 162 Q240 180 250 160 Q258 148 248 145"
+            stroke="url(#runnerGrad)" strokeWidth="14" strokeLinecap="round" fill="none"
+            animate={{ d: [
+              "M215 162 Q240 180 250 160 Q258 148 248 145",
+              "M215 162 Q230 195 220 215 Q215 225 210 220",
+              "M215 162 Q240 180 250 160 Q258 148 248 145",
+            ]}}
+            transition={{ duration: 0.6, repeat: Infinity, ease: "easeInOut" }}
+          />
+
+          {/* Back arm (pumping backward) */}
+          <motion.path
+            d="M185 162 Q165 195 160 215 Q158 225 163 220"
+            stroke="url(#runnerGrad)" strokeWidth="14" strokeLinecap="round" fill="none"
+            animate={{ d: [
+              "M185 162 Q165 195 160 215 Q158 225 163 220",
+              "M185 162 Q160 180 150 160 Q142 148 152 145",
+              "M185 162 Q165 195 160 215 Q158 225 163 220",
+            ]}}
+            transition={{ duration: 0.6, repeat: Infinity, ease: "easeInOut" }}
+          />
+
+          {/* Front leg (striding forward) */}
+          <motion.path
+            d="M205 228 Q230 270 260 300 Q272 315 268 330 L258 345"
+            stroke="url(#runnerGrad)" strokeWidth="16" strokeLinecap="round" fill="none"
+            animate={{ d: [
+              "M205 228 Q230 270 260 300 Q272 315 268 330 L258 345",
+              "M205 228 Q215 280 210 310 Q208 330 210 345 L212 348",
+              "M205 228 Q230 270 260 300 Q272 315 268 330 L258 345",
+            ]}}
+            transition={{ duration: 0.6, repeat: Infinity, ease: "easeInOut" }}
+          />
+
+          {/* Back leg (pushing off) */}
+          <motion.path
+            d="M195 228 Q175 280 150 310 Q140 330 145 345 L148 348"
+            stroke="url(#runnerGrad)" strokeWidth="16" strokeLinecap="round" fill="none"
+            animate={{ d: [
+              "M195 228 Q175 280 150 310 Q140 330 145 345 L148 348",
+              "M195 228 Q210 270 240 300 Q250 318 245 335 L240 348",
+              "M195 228 Q175 280 150 310 Q140 330 145 345 L148 348",
+            ]}}
+            transition={{ duration: 0.6, repeat: Infinity, ease: "easeInOut" }}
+          />
+
+          {/* Shoe details - front foot */}
+          <motion.ellipse
+            cx="258" cy="348" rx="14" ry="5"
+            fill="#dc2626" fillOpacity="0.8"
+            animate={{ cx: [258, 212, 258], cy: [348, 348, 348] }}
+            transition={{ duration: 0.6, repeat: Infinity, ease: "easeInOut" }}
+          />
+
+          {/* Shoe details - back foot */}
+          <motion.ellipse
+            cx="148" cy="348" rx="14" ry="5"
+            fill="#dc2626" fillOpacity="0.8"
+            animate={{ cx: [148, 240, 148], cy: [348, 348, 348] }}
+            transition={{ duration: 0.6, repeat: Infinity, ease: "easeInOut" }}
+          />
+        </motion.g>
+
+        {/* Energy sparkles */}
+        {[
+          { cx: 130, cy: 140, delay: 0 },
+          { cx: 110, cy: 190, delay: 0.3 },
+          { cx: 120, cy: 240, delay: 0.6 },
+          { cx: 260, cy: 130, delay: 0.2 },
+          { cx: 270, cy: 200, delay: 0.5 },
+          { cx: 140, cy: 100, delay: 0.8 },
+          { cx: 250, cy: 260, delay: 0.4 },
+          { cx: 100, cy: 160, delay: 0.7 },
+        ].map((spark, i) => (
+          <motion.circle
+            key={`spark-${i}`}
+            cx={spark.cx} cy={spark.cy} r="2.5"
+            fill="#f87171"
+            animate={{
+              opacity: [0, 1, 0],
+              scale: [0.5, 1.5, 0.5],
+              x: [0, -30],
+              y: [0, -10],
+            }}
+            transition={{
+              duration: 1.2,
+              repeat: Infinity,
+              delay: spark.delay,
+              ease: "easeOut",
+            }}
+          />
+        ))}
+
+        {/* Energy burst lines radiating from runner */}
+        {[0, 1, 2, 3].map((i) => {
+          const angle = -30 + i * 20;
+          const rad = (angle * Math.PI) / 180;
+          const x1 = 200 + Math.cos(rad) * 50;
+          const y1 = 190 + Math.sin(rad) * 50;
+          const x2 = 200 + Math.cos(rad) * 80;
+          const y2 = 190 + Math.sin(rad) * 80;
+          return (
+            <motion.line
+              key={`burst-${i}`}
+              x1={x1} y1={y1} x2={x2} y2={y2}
+              stroke="#dc2626" strokeWidth="1.5" strokeLinecap="round"
+              filter="url(#energyGlow)"
+              animate={{ opacity: [0.3, 0.8, 0.3], x2: [x2, x2 + 15, x2], y2: [y2, y2 - 10, y2] }}
+              transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.25 }}
+            />
+          );
+        })}
+      </svg>
+    </div>
+  );
+}
+
 /* ─── HeartbeatSVG ─── */
 function HeartbeatLine() {
   return (
@@ -365,8 +593,15 @@ export default function V2FitnessPage() {
             />
           </div>
 
-          {/* Right — tagline + CTA (40%) */}
+          {/* Right — Runner Animation + tagline + CTA (40%) */}
           <div className="lg:col-span-2 flex flex-col gap-6">
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ ...spring, delay: 0.3 }}
+            >
+              <RunnerSVG />
+            </motion.div>
             <motion.p
               initial={{ x: 40, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}

@@ -140,43 +140,13 @@ export default function GetStartedPage() {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-white/70 mb-1.5">Industry</label>
-              <select
+              <input
+                type="text"
                 value={form.category}
                 onChange={(e) => setForm({ ...form, category: e.target.value })}
-                className="w-full h-12 px-4 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white focus:border-sky-500/50 focus:outline-none transition-colors"
-              >
-                <option value="">Select...</option>
-                <option value="real-estate">Real Estate</option>
-                <option value="dental">Dental</option>
-                <option value="law-firm">Law Firm</option>
-                <option value="landscaping">Landscaping</option>
-                <option value="salon">Salon / Barbershop</option>
-                <option value="electrician">Electrician</option>
-                <option value="plumber">Plumber</option>
-                <option value="hvac">HVAC</option>
-                <option value="roofing">Roofing</option>
-                <option value="auto-repair">Auto Repair</option>
-                <option value="chiropractic">Chiropractic</option>
-                <option value="fitness">Fitness / Gym</option>
-                <option value="veterinary">Veterinary</option>
-                <option value="photography">Photography</option>
-                <option value="cleaning">Cleaning Service</option>
-                <option value="pest-control">Pest Control</option>
-                <option value="accounting">Accounting / Tax</option>
-                <option value="moving">Moving Company</option>
-                <option value="florist">Florist</option>
-                <option value="daycare">Daycare</option>
-                <option value="insurance">Insurance</option>
-                <option value="interior-design">Interior Design</option>
-                <option value="tattoo">Tattoo Studio</option>
-                <option value="martial-arts">Martial Arts</option>
-                <option value="physical-therapy">Physical Therapy</option>
-                <option value="tutoring">Tutoring</option>
-                <option value="pool-spa">Pool / Spa</option>
-                <option value="general-contractor">General Contractor</option>
-                <option value="catering">Catering</option>
-                <option value="pet-services">Pet Services</option>
-              </select>
+                placeholder="e.g., Plumbing, Dental, Landscaping"
+                className="w-full h-12 px-4 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white placeholder:text-white/30 focus:border-sky-500/50 focus:outline-none transition-colors"
+              />
             </div>
             <div>
               <label className="block text-sm font-medium text-white/70 mb-1.5">City</label>
