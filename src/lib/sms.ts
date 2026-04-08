@@ -42,10 +42,31 @@ async function sendViaTwilio(to: string, body: string): Promise<boolean> {
 }
 
 async function logSms(sms: SentSms) {
+  // Log to Supabase if configured (production)
   if (isSupabaseConfigured()) {
-    // TODO: add sms table to schema
+    try {
+      await supabase.from("sms_messages").insert({
+        id: sms.id,
+        prospect_id: sms.prospectId,
+        to_number: sms.to,
+        from_number: sms.from,
+        body: sms.body,
+        sequence: sms.sequence,
+        sent_at: sms.sentAt,
+        method: sms.method,
+      });
+    } catch {
+      // Table might not exist yet — fall through to file logging
+    }
     return;
   }
+
+  // Skip file writes on Vercel (read-only filesystem)
+  if (process.env.VERCEL) {
+    console.log(`  SMS logged (skipped file write on Vercel): seq ${sms.sequence} to ${sms.to}`);
+    return;
+  }
+
   ensureSmsDir();
   const filePath = path.join(SMS_DIR, `${sms.prospectId}.json`);
   let messages: SentSms[] = [];
@@ -86,9 +107,38 @@ export async function sendSms(
 }
 
 export async function getSmsHistory(prospectId: string): Promise<SentSms[]> {
+  // Read from Supabase if configured (production)
   if (isSupabaseConfigured()) {
+    try {
+      const { data, error } = await supabase
+        .from("sms_messages")
+        .select("*")
+        .eq("prospect_id", prospectId)
+        .order("sent_at", { ascending: true });
+
+      if (!error && data) {
+        return data.map((row: Record<string, unknown>) => ({
+          id: row.id as string,
+          prospectId: row.prospect_id as string,
+          to: row.to_number as string,
+          from: row.from_number as string,
+          body: row.body as string,
+          sequence: row.sequence as number,
+          sentAt: row.sent_at as string,
+          method: row.method as "twilio" | "mock",
+        }));
+      }
+    } catch {
+      // Table might not exist yet
+    }
     return [];
   }
+
+  // Skip file reads on Vercel if no Supabase
+  if (process.env.VERCEL) {
+    return [];
+  }
+
   ensureSmsDir();
   const filePath = path.join(SMS_DIR, `${prospectId}.json`);
   if (!fs.existsSync(filePath)) return [];

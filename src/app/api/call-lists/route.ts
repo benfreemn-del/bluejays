@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 import { getAllProspects } from "@/lib/store";
+import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const PRIORITY_LIST_FILE = path.join(DATA_DIR, "priority-call-list.json");
@@ -10,13 +11,54 @@ function ensureDir() {
   if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 }
 
-function getPriorityList(): string[] {
+async function getPriorityList(): Promise<string[]> {
+  // Read from Supabase if configured (production)
+  if (isSupabaseConfigured()) {
+    try {
+      const { data, error } = await supabase
+        .from("priority_call_list")
+        .select("prospect_id");
+      if (!error && data) {
+        return data.map((row: Record<string, unknown>) => row.prospect_id as string);
+      }
+    } catch {
+      // Table might not exist yet
+    }
+  }
+
+  // Skip file reads on Vercel if no Supabase
+  if (process.env.VERCEL) {
+    return [];
+  }
+
   ensureDir();
   if (!fs.existsSync(PRIORITY_LIST_FILE)) return [];
   return JSON.parse(fs.readFileSync(PRIORITY_LIST_FILE, "utf-8"));
 }
 
-function savePriorityList(ids: string[]) {
+async function savePriorityList(ids: string[]) {
+  // Save to Supabase if configured (production)
+  if (isSupabaseConfigured()) {
+    try {
+      // Replace entire list: delete all, then insert
+      await supabase.from("priority_call_list").delete().neq("prospect_id", "");
+      if (ids.length > 0) {
+        await supabase.from("priority_call_list").insert(
+          ids.map((id) => ({ prospect_id: id }))
+        );
+      }
+    } catch {
+      // Table might not exist yet
+    }
+    return;
+  }
+
+  // Skip file writes on Vercel (read-only filesystem)
+  if (process.env.VERCEL) {
+    console.log("[Call Lists] Skipped file write on Vercel");
+    return;
+  }
+
   ensureDir();
   fs.writeFileSync(PRIORITY_LIST_FILE, JSON.stringify(ids, null, 2));
 }
@@ -25,7 +67,7 @@ export async function GET(request: NextRequest) {
   const listType = request.nextUrl.searchParams.get("type") || "all";
   const format = request.nextUrl.searchParams.get("format") || "json";
   const prospects = await getAllProspects();
-  const priorityIds = getPriorityList();
+  const priorityIds = await getPriorityList();
 
   let filtered;
   if (listType === "priority") {
@@ -78,17 +120,17 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "prospectId required" }, { status: 400 });
   }
 
-  const ids = getPriorityList();
+  const ids = await getPriorityList();
 
   if (action === "add") {
     if (!ids.includes(prospectId)) {
       ids.push(prospectId);
-      savePriorityList(ids);
+      await savePriorityList(ids);
     }
     return NextResponse.json({ message: "Added to priority call list", total: ids.length });
   } else if (action === "remove") {
     const filtered = ids.filter((id) => id !== prospectId);
-    savePriorityList(filtered);
+    await savePriorityList(filtered);
     return NextResponse.json({ message: "Removed from priority call list", total: filtered.length });
   }
 
