@@ -74,7 +74,7 @@ function getServiceIcon(n: string) {
 
 /* ───────────────────────── STOCK FALLBACK IMAGES ───────────────────────── */
 const STOCK_HERO = "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1400&q=80";
-const STOCK_ABOUT = "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=600&q=80";
+const STOCK_ABOUT = "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&q=80";
 const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=600&q=80",
   "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80",

@@ -60,7 +60,7 @@ function getServiceIcon(n: string) {
 }
 
 const STOCK_HERO = "https://images.unsplash.com/photo-1558002038-1055907df827?w=1400&q=80";
-const STOCK_ABOUT = "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=600&q=80";
+const STOCK_ABOUT = "https://images.unsplash.com/photo-1621274403997-37aace184f49?w=600&q=80";
 const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1595079676339-1534801ad6cf?w=600&q=80",
   "https://images.unsplash.com/photo-1585153298856-89e0e1502d12?w=600&q=80",

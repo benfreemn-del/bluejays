@@ -58,8 +58,8 @@ function getServiceIcon(n: string) {
   return Drop;
 }
 
-const STOCK_HERO = "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=1400&q=80";
-const STOCK_ABOUT = "https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?w=600&q=80";
+const STOCK_HERO = "https://images.unsplash.com/photo-1460317442991-0ec209397118?w=1400&q=80";
+const STOCK_ABOUT = "https://images.unsplash.com/photo-1622126807280-9b5b32b28e77?w=600&q=80";
 const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=600&q=80",
   "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600&q=80",
