@@ -27,6 +27,9 @@ import V2DaycarePreview from "@/components/templates/V2DaycarePreview";
 import V2InsurancePreview from "@/components/templates/V2InsurancePreview";
 import V2MartialArtsPreview from "@/components/templates/V2MartialArtsPreview";
 import V2PoolSpaPreview from "@/components/templates/V2PoolSpaPreview";
+import V2GeneralContractorPreview from "@/components/templates/V2GeneralContractorPreview";
+import V2CateringPreview from "@/components/templates/V2CateringPreview";
+import V2PetServicesPreview from "@/components/templates/V2PetServicesPreview";
 import { getScrapedData } from "@/lib/store";
 import { proxyPhotos } from "@/lib/image-proxy";
 import { getHeroHeading, getHeroSubtitle, getHeroImage, getAboutImage, getNavName } from "@/lib/preview-utils";
@@ -61,6 +64,9 @@ const V2_RENDERERS: Partial<Record<string, React.ComponentType<{ data: Generated
   insurance: V2InsurancePreview,
   "martial-arts": V2MartialArtsPreview,
   "pool-spa": V2PoolSpaPreview,
+  "general-contractor": V2GeneralContractorPreview,
+  catering: V2CateringPreview,
+  "pet-services": V2PetServicesPreview,
 };
 
 export default async function PreviewPage({
