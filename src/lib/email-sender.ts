@@ -4,7 +4,8 @@ import { v4 as uuidv4 } from "uuid";
 import { supabase, isSupabaseConfigured } from "./supabase";
 
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
-const FROM_EMAIL = process.env.FROM_EMAIL || "bluejaycontactme@gmail.com";
+// Hardcoded — this must match the verified sender identity in SendGrid
+const FROM_EMAIL = "bluejaycontactme@gmail.com";
 const EMAILS_DIR = path.join(process.cwd(), "data", "emails");
 
 export interface SentEmail {
