@@ -99,9 +99,19 @@ export default function V2PhysicalTherapyShowcase() {
             </div>
             <div className="flex flex-wrap gap-6 text-sm text-slate-400"><span className="flex items-center gap-2"><MapPin size={16} weight="duotone" style={{ color: BLUE }} /> Olympia, WA</span><span className="flex items-center gap-2"><Clock size={16} weight="duotone" style={{ color: BLUE }} /> Mon-Fri 7AM-7PM</span></div>
           </div>
-          <div className="hidden md:flex items-center justify-center relative">
-            <motion.div className="absolute inset-0 rounded-full" style={{ background: `radial-gradient(circle, ${BLUE}20 0%, transparent 70%)`, filter: "blur(50px)" }} animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }} transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }} />
-            <svg viewBox="0 0 320 360" className="relative z-10 w-72 h-80 md:w-96 md:h-[28rem]" fill="none">
+          <div className="hidden md:block relative">
+            <div className="relative rounded-2xl overflow-hidden border border-white/10">
+              <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&q=80" alt="Physical therapist helping patient" className="w-full h-[500px] object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0a0f1a] via-transparent to-transparent" />
+              <div className="absolute bottom-6 left-6">
+                <div className="px-4 py-2 rounded-full backdrop-blur-md bg-black/50 border flex items-center gap-2" style={{ borderColor: `${BLUE}4d` }}>
+                  <Certificate size={18} weight="fill" style={{ color: BLUE }} />
+                  <span className="text-sm font-semibold text-white">Board Certified</span>
+                </div>
+              </div>
+            </div>
+            {/* Remove old SVG — keeping this comment for reference */}
+            <svg viewBox="0 0 0 0" className="hidden" fill="none">
               {/* Glow rings */}
               <motion.circle cx="160" cy="170" r="140" stroke={BLUE} strokeWidth="0.5" opacity={0.1} animate={{ r: [138, 142, 138] }} transition={{ duration: 4, repeat: Infinity }} />
               {/* Person silhouette — stretching/recovery pose */}

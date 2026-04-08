@@ -528,7 +528,16 @@ export default function V2SalonPage() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ ...spring, delay: 0.5 }}
             >
-              <ScissorsHairSVG />
+              <div className="relative rounded-2xl overflow-hidden border border-white/10">
+                <img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=800&q=80" alt="Luxury salon interior" className="w-full h-[500px] object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#1c1917] via-transparent to-transparent" />
+                <div className="absolute bottom-6 left-6">
+                  <div className="px-4 py-2 rounded-full backdrop-blur-md bg-black/50 border border-rose-500/30 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
+                    <span className="text-sm font-semibold text-white">Now Booking</span>
+                  </div>
+                </div>
+              </div>
             </motion.div>
           </div>
         </motion.div>
