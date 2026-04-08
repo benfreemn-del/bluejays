@@ -3,6 +3,7 @@ import path from "path";
 import { v4 as uuidv4 } from "uuid";
 import { supabase, isSupabaseConfigured } from "./supabase";
 import { logCost, COST_RATES } from "./cost-logger";
+import { canSendEmail, recordEmailSent, isEmailBounced, getSendingDomain } from "./email-deliverability";
 
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 // Hardcoded — this must match the verified sender identity in SendGrid
@@ -100,6 +101,20 @@ export async function sendEmail(
   body: string,
   sequence: number
 ): Promise<SentEmail> {
+  // Check if email has hard-bounced — skip sending
+  if (isEmailBounced(to)) {
+    console.log(`  [Deliverability] Skipping ${to} — hard bounced`);
+    throw new Error(`Email ${to} has hard-bounced and was removed`);
+  }
+
+  // Check warm-up daily limit
+  const sendingDomain = getSendingDomain();
+  const warmupCheck = canSendEmail(sendingDomain);
+  if (!warmupCheck.allowed) {
+    console.log(`  [Deliverability] Daily warm-up limit reached (${warmupCheck.limit}). Deferring send.`);
+    throw new Error(`Daily warm-up limit reached (${warmupCheck.limit} emails). Try again tomorrow.`);
+  }
+
   const email: SentEmail = {
     id: uuidv4(),
     prospectId,
@@ -137,6 +152,13 @@ export async function sendEmail(
 
   // Always log for history
   await logEmailToFile(email);
+
+  // Track send for warm-up monitoring
+  try {
+    recordEmailSent(sendingDomain);
+  } catch {
+    // Non-critical — don't block sending
+  }
 
   return email;
 }

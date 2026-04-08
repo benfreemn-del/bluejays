@@ -3,6 +3,7 @@ import { getProspectByPhone, getAllProspects } from "@/lib/store";
 import { processIncomingMessage } from "@/lib/ai-responder";
 import { sendSms } from "@/lib/sms";
 import { alertProspectResponded, alertAngryResponse, alertCustomRequest, alertObjectionResponse, alertEscalation } from "@/lib/alerts";
+import { trackAiResponse, markProspectReplied } from "@/lib/followup-scheduler";
 
 /**
  * POST /api/inbound/sms
@@ -63,6 +64,9 @@ export async function POST(request: NextRequest) {
       return twimlResponse("");
     }
 
+    // Track that the prospect replied (for follow-up scheduler)
+    markProspectReplied(prospect.id);
+
     // Process through AI responder
     const aiResponse = await processIncomingMessage(prospect, {
       from: fromPhone,
@@ -85,6 +89,9 @@ export async function POST(request: NextRequest) {
           99 // sequence 99 = AI reply
         );
         console.log(`[Inbound SMS] AI reply sent to ${fromPhone}`);
+
+        // Track AI response for follow-up scheduler
+        trackAiResponse(prospect.id, prospect.businessName, "sms");
       } catch (err) {
         console.error(`[Inbound SMS] Failed to send reply: ${(err as Error).message}`);
       }

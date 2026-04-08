@@ -2,12 +2,40 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useParams, useSearchParams } from "next/navigation";
+import SmartSocialProof from "@/components/SmartSocialProof";
+
+/**
+ * CLAIM PAGE — Conversion-Optimized Layout
+ *
+ * Structure:
+ * 1. Hero section: business name, "what you get" value breakdown
+ * 2. Before/After visual comparison
+ * 3. Trust badges + money-back guarantee
+ * 4. Detailed "what's included" breakdown (makes $997 feel like a steal)
+ * 5. Social proof elements (smart-triggered via engagement)
+ * 6. Chat interface for questions
+ * 7. Sticky CTA footer
+ */
 
 interface ProspectInfo {
   businessName: string;
   category: string;
   previewUrl: string;
   accentColor: string;
+  city?: string;
+  googleRating?: number;
+  reviewCount?: number;
+  currentWebsite?: string;
+  scrapedData?: {
+    services?: { name: string; description?: string }[];
+    testimonials?: { name: string; text: string }[];
+  };
+}
+
+interface EngagementTriggers {
+  showSocialProof: boolean;
+  showUrgency: boolean;
+  showCountdown: boolean;
 }
 
 interface Message {
@@ -24,12 +52,14 @@ export default function ClaimPage() {
   const [input, setInput] = useState("");
   const [step, setStep] = useState(0);
   const [isRedirecting, setIsRedirecting] = useState(false);
+  const [showChat, setShowChat] = useState(false);
+  const [triggers, setTriggers] = useState<EngagementTriggers | undefined>(undefined);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Handle payment=cancelled query param
   const paymentCancelled = searchParams.get("payment") === "cancelled";
 
   useEffect(() => {
+    // Fetch prospect data
     fetch(`/api/prospects/${prospectId}`)
       .then((r) => r.json())
       .then((data) => {
@@ -39,10 +69,14 @@ export default function ClaimPage() {
           category: data.category,
           previewUrl: data.generatedSiteUrl || `/preview/${prospectId}`,
           accentColor: "#0ea5e9",
+          city: data.city,
+          googleRating: data.googleRating,
+          reviewCount: data.reviewCount,
+          currentWebsite: data.currentWebsite,
+          scrapedData: data.scrapedData,
         });
 
         if (paymentCancelled) {
-          // Prospect cancelled checkout — show a friendly message
           setMessages([
             {
               role: "agent",
@@ -53,6 +87,7 @@ export default function ClaimPage() {
               text: `Whenever you're ready, just let me know and I can take you back to the payment page. Or if you have any questions, I'm happy to help!`,
             },
           ]);
+          setShowChat(true);
         } else {
           setMessages([
             {
@@ -74,6 +109,17 @@ export default function ClaimPage() {
           },
         ]);
       });
+
+    // Fetch engagement triggers for smart social proof
+    fetch(`/api/engagement/${prospectId}`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (!data.error) {
+          setTriggers(data.triggers);
+        }
+      })
+      .catch(() => {});
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [prospectId]);
 
@@ -81,9 +127,6 @@ export default function ClaimPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  /**
-   * Redirect the prospect to Stripe Checkout.
-   */
   const redirectToCheckout = async () => {
     setIsRedirecting(true);
     setMessages((prev) => [
@@ -132,7 +175,6 @@ export default function ClaimPage() {
     setInput("");
     setMessages((prev) => [...prev, { role: "user", text: userMsg }]);
 
-    // Simple conversation flow
     setTimeout(() => {
       const result = getNextResponse(step, userMsg, info?.businessName || "your business");
       setMessages((prev) => [
@@ -141,65 +183,57 @@ export default function ClaimPage() {
       ]);
       setStep((s) => s + 1);
 
-      // If the response triggers checkout, redirect after a brief delay
       if (result.triggerCheckout) {
         setTimeout(() => redirectToCheckout(), 1500);
       }
     }, 800);
   };
 
+  const categoryLabel = info?.category?.replace(/-/g, " ") || "business";
+
+  // Value items for the "what you get" breakdown
+  const valueItems = [
+    { label: "Custom Website Design & Development", value: "$3,500", icon: "🎨" },
+    { label: "Mobile-First Responsive Layout", value: "$800", icon: "📱" },
+    { label: "SEO Optimization & Local Search Setup", value: "$1,200", icon: "🔍" },
+    { label: "Professional Copywriting", value: "$600", icon: "✍️" },
+    { label: "Hosting Setup & SSL Certificate", value: "$300", icon: "🔒" },
+    { label: "1 Year of Site Management & Updates", value: "$1,200", icon: "🛠️" },
+    { label: "Google Business Profile Optimization", value: "$400", icon: "📍" },
+  ];
+
+  const totalValue = "$8,000";
+
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      {/* Header */}
-      <header className="border-b border-border bg-surface">
-        <div className="max-w-2xl mx-auto px-6 h-16 flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-electric to-blue-deep" />
-          <span className="font-bold text-lg">BlueJays</span>
+    <div className="min-h-screen bg-[#050a14] text-white">
+      {/* ═══════════════════════════════════════════════════════════ */}
+      {/* HERO SECTION */}
+      {/* ═══════════════════════════════════════════════════════════ */}
+      <header className="border-b border-white/10 bg-[#050a14]/80 backdrop-blur-lg sticky top-0 z-50">
+        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-sky-400 to-blue-600" />
+            <span className="font-bold text-lg">BlueJays</span>
+          </div>
           {info && (
-            <span className="text-muted text-sm ml-auto">
-              {info.businessName}
+            <span className="text-white/40 text-sm hidden sm:block">
+              Custom website for {info.businessName}
             </span>
           )}
+          <button
+            onClick={redirectToCheckout}
+            disabled={isRedirecting}
+            className="h-9 px-5 rounded-full bg-green-500 text-white text-sm font-bold hover:bg-green-400 transition-colors disabled:opacity-50"
+          >
+            {isRedirecting ? "Redirecting..." : "Claim — $997"}
+          </button>
         </div>
       </header>
-
-      {/* Preview Banner */}
-      {info?.previewUrl && (
-        <div className="bg-blue-electric/10 border-b border-blue-electric/20">
-          <div className="max-w-2xl mx-auto px-6 py-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <span className="text-sm font-medium text-blue-electric block">
-                Your custom website is ready.
-              </span>
-              <span className="text-xs text-muted">
-                You can preview it first or claim and pay right away.
-              </span>
-            </div>
-            <div className="flex gap-2">
-              <a
-                href={info.previewUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm px-4 py-1.5 rounded-full bg-blue-electric text-white font-medium hover:bg-blue-deep transition-colors"
-              >
-                View Preview
-              </a>
-              <button
-                onClick={redirectToCheckout}
-                disabled={isRedirecting}
-                className="text-sm px-4 py-1.5 rounded-full bg-green-600 text-white font-medium hover:bg-green-700 transition-colors disabled:opacity-50"
-              >
-                {isRedirecting ? "Redirecting..." : "Claim & Pay"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Payment Cancelled Banner */}
       {paymentCancelled && (
         <div className="bg-amber-500/10 border-b border-amber-500/20">
-          <div className="max-w-2xl mx-auto px-6 py-3 flex items-center justify-between">
+          <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
             <span className="text-sm text-amber-400">
               Checkout was cancelled — your site is still reserved
             </span>
@@ -214,116 +248,573 @@ export default function ClaimPage() {
         </div>
       )}
 
-      {/* Chat Area */}
-      <div className="flex-1 overflow-y-auto">
-        <div className="max-w-2xl mx-auto px-6 py-8 space-y-4">
-          {messages.map((msg, i) => (
-            <div
-              key={i}
-              className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+      {/* Hero */}
+      <section className="py-16 px-6">
+        <div className="max-w-4xl mx-auto text-center">
+          <p className="text-sky-400 text-xs font-bold uppercase tracking-[0.25em] mb-4">
+            Your Custom Website Is Ready
+          </p>
+          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-4">
+            {info ? (
+              <>Claim the website we built for <span className="text-sky-400">{info.businessName}</span></>
+            ) : (
+              <>Your new website is <span className="text-sky-400">ready</span></>
+            )}
+          </h1>
+          <p className="text-white/50 text-lg max-w-2xl mx-auto mb-8">
+            A premium, mobile-optimized website designed specifically for your {categoryLabel} business — ready to go live in 48 hours.
+          </p>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
+            <button
+              onClick={redirectToCheckout}
+              disabled={isRedirecting}
+              className="h-14 px-10 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 text-white text-lg font-bold hover:shadow-[0_0_40px_rgba(34,197,94,0.4)] transition-all duration-300 disabled:opacity-50"
             >
-              <div
-                className={`max-w-[80%] px-4 py-3 rounded-2xl text-sm leading-relaxed ${
-                  msg.role === "user"
-                    ? "bg-blue-electric text-white rounded-br-sm"
-                    : "bg-surface border border-border rounded-bl-sm"
-                }`}
+              {isRedirecting ? "Redirecting..." : "Claim Your Website — $997"}
+            </button>
+            {info?.previewUrl && (
+              <a
+                href={info.previewUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="h-14 px-8 rounded-full border border-white/20 text-white/70 text-lg font-medium hover:border-white/40 hover:text-white transition-all flex items-center gap-2"
               >
-                {msg.text}
-              </div>
-            </div>
-          ))}
-          <div ref={messagesEndRef} />
-        </div>
-      </div>
-
-      {/* Quick Actions */}
-      {step === 0 && !paymentCancelled && (
-        <div className="border-t border-border bg-surface">
-          <div className="max-w-2xl mx-auto px-6 py-3 flex gap-2 overflow-x-auto">
-            {["Yes, I love it!", "I have some questions", "How much does this cost?", "Not interested"].map(
-              (option) => (
-                <button
-                  key={option}
-                  disabled={isRedirecting}
-                  onClick={() => {
-                    setInput(option);
-                    setTimeout(() => {
-                      setMessages((prev) => [
-                        ...prev,
-                        { role: "user", text: option },
-                      ]);
-                      const result = getNextResponse(0, option, info?.businessName || "your business");
-                      setTimeout(() => {
-                        setMessages((prev) => [
-                          ...prev,
-                          ...result.responses.map((text) => ({
-                            role: "agent" as const,
-                            text,
-                          })),
-                        ]);
-                        setStep(1);
-
-                        if (result.triggerCheckout) {
-                          setTimeout(() => redirectToCheckout(), 1500);
-                        }
-                      }, 800);
-                    }, 100);
-                  }}
-                  className="shrink-0 px-4 py-2 rounded-full bg-surface-light border border-border text-sm text-muted hover:text-foreground hover:border-blue-electric/40 transition-colors disabled:opacity-50"
-                >
-                  {option}
-                </button>
-              )
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+                Preview First
+              </a>
             )}
           </div>
+
+          {/* Money-Back Guarantee Badge */}
+          <div className="inline-flex items-center gap-2 bg-green-500/10 border border-green-500/20 rounded-full px-5 py-2">
+            <svg className="w-5 h-5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+            <span className="text-green-400 text-sm font-semibold">100% Satisfaction Guarantee — Love it or get a full refund</span>
+          </div>
         </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════════════ */}
+      {/* BEFORE / AFTER VISUAL COMPARISON */}
+      {/* ═══════════════════════════════════════════════════════════ */}
+      <section className="py-12 px-6">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-2xl font-bold text-center mb-8">
+            See the <span className="text-sky-400">Transformation</span>
+          </h2>
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* Before */}
+            <div className="rounded-2xl border border-red-500/20 overflow-hidden">
+              <div className="bg-red-500/10 px-5 py-2.5 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-red-500" />
+                  <span className="font-bold text-sm">Before</span>
+                </div>
+                <span className="text-[10px] text-red-400 uppercase tracking-wider font-bold">Current</span>
+              </div>
+              <div className="aspect-[16/10] bg-[#0a0a0a] relative">
+                {info?.currentWebsite ? (
+                  <iframe
+                    src={info.currentWebsite}
+                    className="w-full h-full border-0 pointer-events-none"
+                    sandbox="allow-scripts"
+                    title="Current website"
+                  />
+                ) : (
+                  <div className="flex flex-col items-center justify-center h-full text-center px-8">
+                    <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mb-4">
+                      <svg className="w-8 h-8 text-red-400/50" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                        <path d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                      </svg>
+                    </div>
+                    <p className="text-white/40 text-sm font-semibold mb-1">No Website</p>
+                    <p className="text-white/25 text-xs">Potential customers can&apos;t find you online</p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* After */}
+            <div className="rounded-2xl border border-green-500/20 overflow-hidden">
+              <div className="bg-green-500/10 px-5 py-2.5 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-green-500" />
+                  <span className="font-bold text-sm">After</span>
+                </div>
+                <span className="text-[10px] text-green-400 uppercase tracking-wider font-bold">Your New Site</span>
+              </div>
+              <div className="aspect-[16/10] bg-[#0a0a0a] relative">
+                {info?.previewUrl ? (
+                  <iframe
+                    src={info.previewUrl}
+                    className="w-full h-full border-0 pointer-events-none"
+                    title="New website preview"
+                  />
+                ) : (
+                  <div className="flex items-center justify-center h-full text-white/30 text-sm">
+                    Loading preview...
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {info?.currentWebsite && (
+            <div className="text-center mt-4">
+              <a
+                href={`/compare/${prospectId}`}
+                className="text-sky-400 hover:text-sky-300 text-sm font-medium transition-colors"
+              >
+                See detailed side-by-side comparison →
+              </a>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════════════ */}
+      {/* TRUST BADGES */}
+      {/* ═══════════════════════════════════════════════════════════ */}
+      <section className="py-8 px-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <TrustBadge
+              icon={<svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>}
+              title="Secure Checkout"
+              subtitle="256-bit SSL encryption"
+            />
+            <TrustBadge
+              icon={<svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>}
+              title="One-Time Payment"
+              subtitle="No hidden fees or subscriptions"
+            />
+            <TrustBadge
+              icon={<svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
+              title="Live in 48 Hours"
+              subtitle="Fast turnaround guaranteed"
+            />
+            <TrustBadge
+              icon={<svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>}
+              title="Satisfaction Guarantee"
+              subtitle="Full refund if you're not happy"
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════════════ */}
+      {/* WHAT YOU GET — Value Breakdown */}
+      {/* ═══════════════════════════════════════════════════════════ */}
+      <section className="py-16 px-6">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-2xl font-bold text-center mb-2">
+            Everything Included for <span className="text-sky-400">One Price</span>
+          </h2>
+          <p className="text-white/40 text-center mb-10">
+            Here&apos;s what agencies charge for each piece — and what you get for $997.
+          </p>
+
+          <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
+            {valueItems.map((item, i) => (
+              <div
+                key={i}
+                className={`flex items-center justify-between px-6 py-4 ${i < valueItems.length - 1 ? "border-b border-white/5" : ""}`}
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-lg">{item.icon}</span>
+                  <span className="text-sm font-medium text-white/80">{item.label}</span>
+                </div>
+                <span className="text-sm text-white/40 line-through">{item.value}</span>
+              </div>
+            ))}
+
+            {/* Total */}
+            <div className="bg-white/5 px-6 py-4 border-t border-white/10">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-sm text-white/50">Total value if purchased separately</span>
+                <span className="text-lg font-bold text-white/40 line-through">{totalValue}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-lg font-bold text-green-400">Your price today</span>
+                <span className="text-3xl font-extrabold text-green-400">$997</span>
+              </div>
+              <p className="text-xs text-white/30 mt-1">One-time. No monthly fees. No contracts.</p>
+            </div>
+          </div>
+
+          {/* CTA after value breakdown */}
+          <div className="text-center mt-8">
+            <button
+              onClick={redirectToCheckout}
+              disabled={isRedirecting}
+              className="h-14 px-10 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 text-white text-lg font-bold hover:shadow-[0_0_40px_rgba(34,197,94,0.4)] transition-all duration-300 disabled:opacity-50"
+            >
+              {isRedirecting ? "Redirecting..." : "Claim Your Website — $997"}
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════════════ */}
+      {/* MONEY-BACK GUARANTEE — Detailed */}
+      {/* ═══════════════════════════════════════════════════════════ */}
+      <section className="py-12 px-6">
+        <div className="max-w-3xl mx-auto">
+          <div className="bg-green-500/5 border border-green-500/20 rounded-2xl p-8 text-center">
+            <div className="w-16 h-16 rounded-full bg-green-500/10 flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-bold text-green-400 mb-3">
+              100% Satisfaction Guarantee
+            </h3>
+            <p className="text-white/60 text-sm leading-relaxed max-w-xl mx-auto mb-4">
+              We&apos;re confident you&apos;ll love your new website. But if for any reason you&apos;re not completely satisfied after we deliver the final version, we&apos;ll refund your money — no questions asked, no hoops to jump through.
+            </p>
+            <p className="text-white/40 text-xs">
+              That&apos;s how sure we are that this website will help {info?.businessName || "your business"} grow.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════════════ */}
+      {/* GOOGLE REVIEWS SOCIAL PROOF (if prospect has reviews) */}
+      {/* ═══════════════════════════════════════════════════════════ */}
+      {info?.googleRating && info?.reviewCount && info.reviewCount > 3 && (
+        <section className="py-8 px-6">
+          <div className="max-w-3xl mx-auto">
+            <div className="bg-amber-500/5 border border-amber-500/20 rounded-2xl p-6 text-center">
+              <div className="flex items-center justify-center gap-1 mb-2">
+                {[...Array(5)].map((_, i) => (
+                  <svg
+                    key={i}
+                    className={`w-5 h-5 ${i < Math.round(info.googleRating!) ? "text-amber-400" : "text-white/10"}`}
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                ))}
+              </div>
+              <p className="text-amber-400 font-bold text-lg mb-1">
+                {info.googleRating} stars across {info.reviewCount} Google reviews
+              </p>
+              <p className="text-white/40 text-sm">
+                Your new website prominently displays these reviews to build instant trust with visitors.
+              </p>
+            </div>
+          </div>
+        </section>
       )}
 
-      {/* Claim CTA */}
-      <div className="border-t border-border bg-surface">
-        <div className="max-w-2xl mx-auto px-6 py-3 flex gap-2">
+      {/* ═══════════════════════════════════════════════════════════ */}
+      {/* SMART SOCIAL PROOF — Engagement-Gated */}
+      {/* ═══════════════════════════════════════════════════════════ */}
+      <section className="py-4 px-6">
+        <div className="max-w-3xl mx-auto">
+          <SmartSocialProof
+            prospectId={prospectId}
+            city={info?.city}
+            category={info?.category}
+            triggers={triggers}
+          />
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════════════ */}
+      {/* WHAT HAPPENS NEXT — Process Steps */}
+      {/* ═══════════════════════════════════════════════════════════ */}
+      <section className="py-16 px-6">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-2xl font-bold text-center mb-10">
+            What Happens After You <span className="text-sky-400">Claim</span>
+          </h2>
+          <div className="space-y-6">
+            <ProcessStep
+              number={1}
+              title="Secure Checkout"
+              description="Quick, secure payment through Stripe. Takes about 2 minutes."
+            />
+            <ProcessStep
+              number={2}
+              title="Customization Form"
+              description="Tell us exactly what you want changed — colors, photos, content, layout. We'll make it yours."
+            />
+            <ProcessStep
+              number={3}
+              title="We Build & Refine"
+              description="Our team implements your changes and optimizes everything for performance."
+            />
+            <ProcessStep
+              number={4}
+              title="Your Site Goes Live"
+              description="Within 48 hours, your new website is live and ready to bring in customers."
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════════════ */}
+      {/* FAQ Section */}
+      {/* ═══════════════════════════════════════════════════════════ */}
+      <section className="py-12 px-6">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-2xl font-bold text-center mb-8">Common Questions</h2>
+          <div className="space-y-3">
+            <FaqItem
+              question="Can I make changes to the design?"
+              answer="Absolutely! The preview is just a starting point. After you claim, you'll fill out a customization form where you can request any changes — colors, photos, layout, content, features. We'll make it exactly how you want it."
+            />
+            <FaqItem
+              question="Do I own the website?"
+              answer="Yes, 100%. Once you pay, the website is yours. We handle hosting and management for the first year, but you own all the content and design."
+            />
+            <FaqItem
+              question="What if I already have a website?"
+              answer="Great! We can either replace your current site or set up the new one alongside it. Many of our clients upgrade from older sites that aren't mobile-friendly or SEO-optimized."
+            />
+            <FaqItem
+              question="Is there a monthly fee?"
+              answer="No monthly fees for the first year. After year one, it's just $100/year for hosting, security updates, and site management. That's it — no hidden costs."
+            />
+            <FaqItem
+              question="What if I'm not satisfied?"
+              answer="We offer a 100% satisfaction guarantee. If you're not happy with the final product, we'll refund your money. No questions asked."
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════════════ */}
+      {/* CHAT INTERFACE — Expandable */}
+      {/* ═══════════════════════════════════════════════════════════ */}
+      {showChat ? (
+        <section className="py-8 px-6">
+          <div className="max-w-2xl mx-auto">
+            <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
+              <div className="px-6 py-3 border-b border-white/10 flex items-center justify-between">
+                <span className="font-bold text-sm">Chat with BlueJays</span>
+                <button
+                  onClick={() => setShowChat(false)}
+                  className="text-white/30 hover:text-white/60 text-sm"
+                >
+                  Minimize
+                </button>
+              </div>
+              <div className="max-h-80 overflow-y-auto px-6 py-4 space-y-3">
+                {messages.map((msg, i) => (
+                  <div
+                    key={i}
+                    className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+                  >
+                    <div
+                      className={`max-w-[80%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
+                        msg.role === "user"
+                          ? "bg-sky-500 text-white rounded-br-sm"
+                          : "bg-white/10 rounded-bl-sm"
+                      }`}
+                    >
+                      {msg.text}
+                    </div>
+                  </div>
+                ))}
+                <div ref={messagesEndRef} />
+              </div>
+
+              {/* Quick Actions */}
+              {step === 0 && !paymentCancelled && (
+                <div className="px-6 py-2 border-t border-white/5 flex gap-2 overflow-x-auto">
+                  {["Yes, I love it!", "I have questions", "How much?", "Not interested"].map(
+                    (option) => (
+                      <button
+                        key={option}
+                        disabled={isRedirecting}
+                        onClick={() => {
+                          setInput(option);
+                          setTimeout(() => {
+                            setMessages((prev) => [
+                              ...prev,
+                              { role: "user", text: option },
+                            ]);
+                            const result = getNextResponse(0, option, info?.businessName || "your business");
+                            setTimeout(() => {
+                              setMessages((prev) => [
+                                ...prev,
+                                ...result.responses.map((text) => ({
+                                  role: "agent" as const,
+                                  text,
+                                })),
+                              ]);
+                              setStep(1);
+                              if (result.triggerCheckout) {
+                                setTimeout(() => redirectToCheckout(), 1500);
+                              }
+                            }, 800);
+                          }, 100);
+                        }}
+                        className="shrink-0 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-white/50 hover:text-white hover:border-sky-400/40 transition-colors disabled:opacity-50"
+                      >
+                        {option}
+                      </button>
+                    )
+                  )}
+                </div>
+              )}
+
+              {/* Input */}
+              <div className="px-6 py-3 border-t border-white/10">
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handleSend();
+                  }}
+                  className="flex gap-2"
+                >
+                  <input
+                    type="text"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    placeholder="Type a message..."
+                    disabled={isRedirecting}
+                    className="flex-1 h-10 px-4 rounded-xl bg-white/5 border border-white/10 text-white text-sm placeholder:text-white/25 disabled:opacity-50"
+                  />
+                  <button
+                    type="submit"
+                    disabled={!input.trim() || isRedirecting}
+                    className="h-10 px-5 rounded-xl bg-sky-500 text-white text-sm font-medium disabled:opacity-30 hover:bg-sky-400 transition-colors"
+                  >
+                    Send
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </section>
+      ) : (
+        <section className="py-8 px-6">
+          <div className="max-w-3xl mx-auto text-center">
+            <button
+              onClick={() => setShowChat(true)}
+              className="inline-flex items-center gap-2 text-sky-400 hover:text-sky-300 font-medium text-sm transition-colors"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+              </svg>
+              Have questions? Chat with us
+            </button>
+          </div>
+        </section>
+      )}
+
+      {/* ═══════════════════════════════════════════════════════════ */}
+      {/* FINAL CTA */}
+      {/* ═══════════════════════════════════════════════════════════ */}
+      <section className="py-16 px-6 border-t border-white/5">
+        <div className="max-w-3xl mx-auto text-center">
+          <h2 className="text-3xl font-extrabold mb-4">
+            Ready to grow {info?.businessName || "your business"} online?
+          </h2>
+          <p className="text-white/40 mb-8 max-w-xl mx-auto">
+            Your custom website is built, tested, and ready to go live. All that&apos;s left is for you to claim it.
+          </p>
           <button
             onClick={redirectToCheckout}
             disabled={isRedirecting}
-            className="flex-1 h-11 rounded-xl bg-green-600 text-white text-sm font-medium hover:bg-green-700 transition-colors disabled:opacity-50"
+            className="h-16 px-12 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 text-white text-xl font-bold hover:shadow-[0_0_60px_rgba(34,197,94,0.4)] transition-all duration-300 disabled:opacity-50"
           >
-            {isRedirecting ? "Redirecting to checkout..." : "Claim & Pay — $997"}
+            {isRedirecting ? "Redirecting..." : "Claim Your Website — $997"}
           </button>
+          <div className="flex items-center justify-center gap-6 mt-6 text-xs text-white/30">
+            <span className="flex items-center gap-1">
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path d="M5 13l4 4L19 7" /></svg>
+              One-time payment
+            </span>
+            <span className="flex items-center gap-1">
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path d="M5 13l4 4L19 7" /></svg>
+              Live in 48 hours
+            </span>
+            <span className="flex items-center gap-1">
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path d="M5 13l4 4L19 7" /></svg>
+              Satisfaction guaranteed
+            </span>
+          </div>
         </div>
-      </div>
+      </section>
 
-      {/* Input */}
-      <div className="border-t border-border bg-surface">
-        <div className="max-w-2xl mx-auto px-6 py-4">
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleSend();
-            }}
-            className="flex gap-3"
-          >
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Type a message..."
-              disabled={isRedirecting}
-              className="flex-1 h-11 px-4 rounded-xl bg-surface-light border border-border text-foreground text-sm placeholder:text-muted/50 disabled:opacity-50"
-            />
-            <button
-              type="submit"
-              disabled={!input.trim() || isRedirecting}
-              className="h-11 px-6 rounded-xl bg-blue-electric text-white text-sm font-medium disabled:opacity-30 hover:bg-blue-deep transition-colors"
-            >
-              Send
-            </button>
-          </form>
+      {/* Footer */}
+      <footer className="border-t border-white/5 py-8 px-6">
+        <div className="max-w-6xl mx-auto text-center text-xs text-white/20">
+          <p>BlueJays Web Design — Custom websites for local businesses</p>
+          <p className="mt-1">Questions? Email us at bluejaycontactme@gmail.com</p>
         </div>
+      </footer>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SUB-COMPONENTS
+// ═══════════════════════════════════════════════════════════════
+
+function TrustBadge({ icon, title, subtitle }: { icon: React.ReactNode; title: string; subtitle: string }) {
+  return (
+    <div className="bg-white/5 border border-white/10 rounded-xl p-4 text-center">
+      <div className="text-green-400 flex justify-center mb-2">{icon}</div>
+      <p className="text-xs font-bold text-white/80 mb-0.5">{title}</p>
+      <p className="text-[10px] text-white/30">{subtitle}</p>
+    </div>
+  );
+}
+
+function ProcessStep({ number, title, description }: { number: number; title: string; description: string }) {
+  return (
+    <div className="flex gap-4">
+      <div className="w-10 h-10 rounded-full bg-sky-500/10 border border-sky-500/20 flex items-center justify-center shrink-0">
+        <span className="text-sky-400 font-bold text-sm">{number}</span>
+      </div>
+      <div>
+        <h3 className="font-bold text-sm mb-1">{title}</h3>
+        <p className="text-white/40 text-sm">{description}</p>
       </div>
     </div>
   );
 }
+
+function FaqItem({ question, answer }: { question: string; answer: string }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div
+      className="bg-white/5 border border-white/10 rounded-xl overflow-hidden cursor-pointer"
+      onClick={() => setOpen(!open)}
+    >
+      <div className="px-5 py-3.5 flex items-center justify-between">
+        <span className="text-sm font-medium text-white/80">{question}</span>
+        <svg
+          className={`w-4 h-4 text-white/30 transition-transform ${open ? "rotate-180" : ""}`}
+          fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
+        >
+          <path d="M19 9l-7 7-7-7" />
+        </svg>
+      </div>
+      {open && (
+        <div className="px-5 pb-4 text-sm text-white/50 border-t border-white/5 pt-3">
+          {answer}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════
+// CHAT RESPONSE LOGIC
+// ═══════════════════════════════════════════════════════════════
 
 interface ResponseResult {
   responses: string[];
@@ -333,16 +824,10 @@ interface ResponseResult {
 function getNextResponse(step: number, userMessage: string, businessName: string): ResponseResult {
   const lower = userMessage.toLowerCase();
 
-  // Ready to claim / proceed signals
   if (
-    lower.includes("ready") ||
-    lower.includes("claim") ||
-    lower.includes("get started") ||
-    lower.includes("let's do it") ||
-    lower.includes("sign up") ||
-    lower.includes("proceed") ||
-    lower.includes("move forward") ||
-    lower.includes("try again")
+    lower.includes("ready") || lower.includes("claim") || lower.includes("get started") ||
+    lower.includes("let's do it") || lower.includes("sign up") || lower.includes("proceed") ||
+    lower.includes("move forward") || lower.includes("try again")
   ) {
     return {
       responses: [
@@ -352,79 +837,81 @@ function getNextResponse(step: number, userMessage: string, businessName: string
     };
   }
 
-  // Interest signals
   if (lower.includes("love") || lower.includes("amazing") || lower.includes("great") || lower.includes("yes")) {
     return {
       responses: [
         `Awesome, so glad you like it! The site is fully custom — built specifically for ${businessName}.`,
         `Here's what's included: custom design, mobile optimization, SEO setup, hosting, and a year of site management. We handle everything so you can focus on running your business.`,
-        `The total is $997 one-time for the site, plus $100/year for hosting and management. Ready to claim it? Just click the button below!`,
+        `The total is $997 one-time. No monthly fees, no contracts. Ready to claim it? Just click the green button!`,
       ],
       triggerCheckout: false,
     };
   }
 
-  // Price questions
   if (lower.includes("cost") || lower.includes("price") || lower.includes("how much") || lower.includes("pricing")) {
     return {
       responses: [
-        `Great question! The website is a one-time investment of $997 — that includes everything: design, development, content, SEO, hosting setup, and your first year of site management.`,
-        `After the first year, it's just $100/year to keep everything running, updated, and secure. No hidden fees, no contracts.`,
-        `For comparison, most agencies charge $3,000-$10,000 for a site like this. $997 is firm — it's already the lowest we can go for this level of quality. We're able to offer it at this price because of our streamlined process. Would you like to move forward?`,
+        `Great question! It's $997 one-time — that covers everything: design, development, content, SEO, hosting setup, and your first year of management.`,
+        `After year one, it's just $100/year to keep everything running. No hidden fees, no contracts.`,
+        `For context, agencies charge $3,000-$10,000+ for this. And you've already seen the actual site we built — no guesswork. Would you like to move forward?`,
       ],
       triggerCheckout: false,
     };
   }
 
-  // Questions
   if (lower.includes("question") || lower.includes("wondering") || lower.includes("curious")) {
     return {
       responses: [
-        `Of course! I'm here to help. What would you like to know? Common questions I get:`,
-        `- Can I make changes to the design?\n- What's included in the price?\n- How long until it's live?\n- Do I own the website?\n- What about hosting and domain?\n\nFeel free to ask anything!`,
+        `Of course! I'm here to help. What would you like to know? Common questions:`,
+        `• Can I make changes to the design?\n• What's included in the price?\n• How long until it's live?\n• Do I own the website?\n• What about hosting and domain?\n\nFeel free to ask anything!`,
       ],
       triggerCheckout: false,
     };
   }
 
-  // Not interested
   if (lower.includes("not interested") || lower.includes("no thanks") || lower.includes("pass")) {
     return {
       responses: [
-        `No worries at all! The preview site will stay up for a while if you change your mind. We work with a lot of ${businessName.includes(" ") ? "businesses in your industry" : "local businesses"} so we know the value a strong web presence brings.`,
-        `If you ever want to revisit, just come back to this page or reply to our email. Wishing you all the best!`,
+        `No worries at all! The preview will stay up if you change your mind. Wishing you and ${businessName} all the best!`,
       ],
       triggerCheckout: false,
     };
   }
 
-  // Changes/customization
   if (lower.includes("change") || lower.includes("custom") || lower.includes("modify") || lower.includes("different")) {
     return {
       responses: [
-        `Absolutely! The preview site is just a starting point. Once you claim it, we'll customize everything — colors, content, photos, layout — whatever you need.`,
-        `After you're set up, you'll fill out a quick form where you can tell us exactly what you want changed. Most customizations are included in the price. Want to get started?`,
+        `Absolutely! The preview is just a starting point. Once you claim it, we'll customize everything — colors, content, photos, layout — whatever you need.`,
+        `You'll fill out a quick form telling us what you want changed, and we'll make it happen before going live. Want to get started?`,
       ],
       triggerCheckout: false,
     };
   }
 
-  // Domain questions
   if (lower.includes("domain") || lower.includes("hosting") || lower.includes("url")) {
     return {
       responses: [
-        `We handle all the technical stuff! If you already have a domain (like yourbusiness.com), we'll connect the new site to it. If you don't have one yet, we'll help you get one set up.`,
-        `Hosting is included — your site will be fast, secure, and always online. No extra costs for hosting or SSL certificates.`,
+        `We handle all the technical stuff! If you have a domain, we'll connect it. If not, we'll help you get one.`,
+        `Hosting is included — fast, secure, always online. No extra costs for hosting or SSL certificates.`,
       ],
       triggerCheckout: false,
     };
   }
 
-  // Default / general
+  if (lower.includes("guarantee") || lower.includes("refund") || lower.includes("money back")) {
+    return {
+      responses: [
+        `We offer a 100% satisfaction guarantee. If you're not happy with the final product after we implement your customizations, we'll refund your money — no questions asked.`,
+        `We're that confident you'll love it. Ready to get started?`,
+      ],
+      triggerCheckout: false,
+    };
+  }
+
   if (step <= 1) {
     return {
       responses: [
-        `Thanks for your interest! The website we built for ${businessName} is ready to go live whenever you are.`,
+        `Thanks for your interest! The website for ${businessName} is ready to go live whenever you are.`,
         `Would you like to know more about what's included, the pricing, or are you ready to claim your site?`,
       ],
       triggerCheckout: false,
@@ -433,7 +920,7 @@ function getNextResponse(step: number, userMessage: string, businessName: string
 
   return {
     responses: [
-      `Thanks for sharing that! Is there anything specific about the website or the process you'd like to know more about? I'm here to help with any questions.`,
+      `Thanks for sharing that! Is there anything specific about the website or the process you'd like to know more about?`,
     ],
     triggerCheckout: false,
   };

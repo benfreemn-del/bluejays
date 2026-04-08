@@ -21,114 +21,35 @@ interface ProspectData {
   };
 }
 
-// ═══════════════════════════════════════════════════════════════
-// REAL "BEFORE" METRICS — Proposal Refinement 2.1
-// Checks HTTPS, mobile-friendliness, phone number visibility
-// ═══════════════════════════════════════════════════════════════
-
-interface BeforeMetrics {
-  https: { pass: boolean; label: string };
-  mobile: { pass: boolean; label: string };
-  phoneVisible: { pass: boolean; label: string };
+interface WebsiteMetric {
+  label: string;
+  category: string;
+  currentSite: { value: string; pass: boolean; detail?: string };
+  bluejaySite: { value: string; pass: boolean; detail?: string };
 }
 
-function analyzeBeforeMetrics(currentWebsite?: string, scrapedPhone?: string): BeforeMetrics {
-  const defaultMetrics: BeforeMetrics = {
-    https: { pass: false, label: "No HTTPS" },
-    mobile: { pass: false, label: "Not Mobile-Friendly" },
-    phoneVisible: { pass: false, label: "Phone Not Visible" },
+interface ComparisonData {
+  metrics: WebsiteMetric[];
+  overallScore: { current: number; bluejay: number };
+  headline: string;
+  subheadline: string;
+  painPoints: string[];
+  hasCurrentWebsite: boolean;
+}
+
+interface EngagementData {
+  score: number;
+  level: string;
+  triggers: {
+    showSocialProof: boolean;
+    showUrgency: boolean;
+    showCompetitorComparison: boolean;
+    showCountdown: boolean;
   };
-
-  if (!currentWebsite) {
-    return {
-      https: { pass: false, label: "No Website" },
-      mobile: { pass: false, label: "No Website" },
-      phoneVisible: { pass: false, label: "No Website" },
-    };
-  }
-
-  // HTTPS check — simple URL prefix analysis
-  const hasHttps = currentWebsite.startsWith("https://");
-  defaultMetrics.https = {
-    pass: hasHttps,
-    label: hasHttps ? "HTTPS Secured" : "No HTTPS",
-  };
-
-  // Mobile-friendliness — we can't fully check from client, but we check
-  // if the site has common mobile-unfriendly patterns in the URL
-  // (e.g., flash-based sites, very old domains). Default to "Unknown" and
-  // let the iframe rendering hint at mobile issues.
-  defaultMetrics.mobile = {
-    pass: false,
-    label: "Likely Not Mobile-Optimized",
-  };
-
-  // Phone visibility — check if scraped data found a phone number on the site
-  const hasPhone = !!scrapedPhone && scrapedPhone.length > 6;
-  defaultMetrics.phoneVisible = {
-    pass: hasPhone,
-    label: hasPhone ? "Phone Visible" : "Phone Not Visible",
-  };
-
-  return defaultMetrics;
 }
 
 // ═══════════════════════════════════════════════════════════════
-// PERSONALIZED "AFTER" CALLOUTS — Proposal Refinement 2.2
-// Uses scraped data for specific callouts
-// ═══════════════════════════════════════════════════════════════
-
-function getAfterCallouts(data: ProspectData): string[] {
-  const callouts: string[] = [];
-
-  // Google rating callout
-  if (data.googleRating && data.googleRating >= 4.0) {
-    callouts.push(`Featuring your ${data.googleRating}-star Google reviews`);
-  }
-
-  // Top service callout
-  const topService = data.scrapedData?.services?.[0];
-  if (topService) {
-    callouts.push(`Highlights your ${topService.name} service`);
-  }
-
-  // City-specific callout
-  if (data.city) {
-    callouts.push(`Built for ${data.city} customers`);
-  }
-
-  // Review count callout
-  if (data.reviewCount && data.reviewCount > 10) {
-    callouts.push(`Showcases ${data.reviewCount} customer reviews`);
-  }
-
-  // Fallback callouts if no scraped data
-  if (callouts.length === 0) {
-    callouts.push("Professional, modern design");
-    callouts.push("Mobile-optimized for all devices");
-    callouts.push("Built to convert visitors into calls");
-  }
-
-  return callouts.slice(0, 3); // Max 3 callouts
-}
-
-// ═══════════════════════════════════════════════════════════════
-// REVIEW PAIN POINT HEADLINE — Proposal Refinement 3.1
-// Surface googleRating/reviewCount as a pain point
-// ═══════════════════════════════════════════════════════════════
-
-function getReviewHeadline(data: ProspectData): string | null {
-  if (data.googleRating && data.reviewCount && data.reviewCount > 5) {
-    return `${data.businessName} has ${data.googleRating} stars across ${data.reviewCount} reviews — but your website doesn't reflect that reputation.`;
-  }
-  if (data.reviewCount && data.reviewCount > 5) {
-    return `${data.businessName} has ${data.reviewCount} reviews — but does your website match that reputation?`;
-  }
-  return null;
-}
-
-// ═══════════════════════════════════════════════════════════════
-// COMPARE PAGE COMPONENT
+// ENHANCED COMPARE PAGE — Smart-Trigger Competitor Comparison
 // ═══════════════════════════════════════════════════════════════
 
 const CALENDAR_LINK = "https://calendly.com/bluejays";
@@ -137,35 +58,71 @@ export default function ComparePage() {
   const params = useParams();
   const id = params.id as string;
   const [data, setData] = useState<ProspectData | null>(null);
+  const [comparison, setComparison] = useState<ComparisonData | null>(null);
+  const [engagement, setEngagement] = useState<EngagementData | null>(null);
+  const [expandedMetric, setExpandedMetric] = useState<number | null>(null);
 
   useEffect(() => {
+    // Fetch prospect data
     fetch(`/api/prospects/${id}`)
       .then((r) => r.json())
-      .then((d) => { if (!d.error) setData(d); })
+      .then((d) => {
+        if (!d.error) setData(d);
+      })
+      .catch(() => {});
+
+    // Fetch engagement data for smart triggers
+    fetch(`/api/engagement/${id}`)
+      .then((r) => r.json())
+      .then((d) => {
+        if (!d.error) setEngagement(d);
+      })
+      .catch(() => {});
+
+    // Fetch competitor analysis
+    fetch(`/api/compare/${id}`)
+      .then((r) => r.json())
+      .then((d) => {
+        if (!d.error) setComparison(d);
+      })
       .catch(() => {});
   }, [id]);
 
   if (!data) {
-    return <div className="min-h-screen bg-[#050a14] flex items-center justify-center text-white/50">Loading...</div>;
+    return (
+      <div className="min-h-screen bg-[#050a14] flex items-center justify-center text-white/50">
+        Loading comparison...
+      </div>
+    );
   }
 
-  const beforeMetrics = analyzeBeforeMetrics(data.currentWebsite, data.scrapedData?.phone || data.phone);
-  const afterCallouts = getAfterCallouts(data);
-  const reviewHeadline = getReviewHeadline(data);
+  const metrics = comparison?.metrics || [];
+  const overallScore = comparison?.overallScore || { current: 25, bluejay: 95 };
+  const painPoints = comparison?.painPoints || [];
+  const headline = comparison?.headline || `See the difference for ${data.businessName}`;
+  const subheadline = comparison?.subheadline || "Your current website vs. the premium site we built";
+
+  // Review pain point headline
+  const reviewHeadline = data.googleRating && data.reviewCount && data.reviewCount > 5
+    ? `${data.businessName} has ${data.googleRating} stars across ${data.reviewCount} reviews — but your website doesn't reflect that reputation.`
+    : null;
 
   return (
     <div className="min-h-screen bg-[#050a14] text-white">
       {/* Header */}
       <div className="text-center py-12 px-6">
-        <p className="text-sky-400 text-xs font-bold uppercase tracking-[0.25em] mb-3">Side-by-Side Comparison</p>
-        <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4">
-          See the <span className="text-sky-400">difference</span>
-        </h1>
-        <p className="text-white/50 text-lg max-w-xl mx-auto">
-          Your current website vs. the premium site we built for {data.businessName}
+        <p className="text-sky-400 text-xs font-bold uppercase tracking-[0.25em] mb-3">
+          Side-by-Side Comparison
         </p>
+        <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4">
+          {headline.includes("compares") ? (
+            <>How {data.businessName}&apos;s site <span className="text-sky-400">compares</span></>
+          ) : (
+            <>See the <span className="text-sky-400">difference</span></>
+          )}
+        </h1>
+        <p className="text-white/50 text-lg max-w-xl mx-auto">{subheadline}</p>
 
-        {/* Review pain point headline — Proposal Refinement 3.1 */}
         {reviewHeadline && (
           <div className="mt-6 max-w-2xl mx-auto">
             <p className="text-amber-400/90 text-base md:text-lg font-medium italic">
@@ -175,8 +132,48 @@ export default function ComparePage() {
         )}
       </div>
 
-      {/* Comparison */}
-      <div className="max-w-6xl mx-auto px-6 pb-16">
+      {/* Overall Score Cards */}
+      <div className="max-w-4xl mx-auto px-6 mb-10">
+        <div className="grid grid-cols-2 gap-4">
+          <div className="bg-red-500/5 border border-red-500/20 rounded-2xl p-6 text-center">
+            <p className="text-xs text-red-400 uppercase tracking-wider mb-2 font-bold">Current Site</p>
+            <div className="relative w-24 h-24 mx-auto mb-3">
+              <svg className="w-24 h-24 -rotate-90" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(239,68,68,0.1)" strokeWidth="8" />
+                <circle
+                  cx="50" cy="50" r="42" fill="none" stroke="#ef4444" strokeWidth="8"
+                  strokeDasharray={`${overallScore.current * 2.64} 264`}
+                  strokeLinecap="round"
+                />
+              </svg>
+              <span className="absolute inset-0 flex items-center justify-center text-2xl font-bold text-red-400">
+                {overallScore.current}
+              </span>
+            </div>
+            <p className="text-white/40 text-sm">out of 100</p>
+          </div>
+          <div className="bg-green-500/5 border border-green-500/20 rounded-2xl p-6 text-center">
+            <p className="text-xs text-green-400 uppercase tracking-wider mb-2 font-bold">BlueJays Site</p>
+            <div className="relative w-24 h-24 mx-auto mb-3">
+              <svg className="w-24 h-24 -rotate-90" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(34,197,94,0.1)" strokeWidth="8" />
+                <circle
+                  cx="50" cy="50" r="42" fill="none" stroke="#22c55e" strokeWidth="8"
+                  strokeDasharray={`${overallScore.bluejay * 2.64} 264`}
+                  strokeLinecap="round"
+                />
+              </svg>
+              <span className="absolute inset-0 flex items-center justify-center text-2xl font-bold text-green-400">
+                {overallScore.bluejay}
+              </span>
+            </div>
+            <p className="text-white/40 text-sm">out of 100</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Visual Comparison — Before / After iframes */}
+      <div className="max-w-6xl mx-auto px-6 pb-8">
         <div className="grid md:grid-cols-2 gap-6">
           {/* Before */}
           <div className="rounded-2xl border border-red-500/20 overflow-hidden">
@@ -200,33 +197,10 @@ export default function ComparePage() {
                   <div className="text-5xl mb-4 opacity-30">🚫</div>
                   <p className="text-white/40 text-lg font-semibold mb-2">No Website Found</p>
                   <p className="text-white/30 text-sm">
-                    {data.businessName} doesn&apos;t have a website yet. That means potential customers are going to competitors instead.
+                    {data.businessName} doesn&apos;t have a website yet. Potential customers are going to competitors instead.
                   </p>
                 </div>
               )}
-            </div>
-            {/* Real "Before" metrics — Proposal Refinement 2.1 */}
-            <div className="px-6 py-4 bg-red-500/5">
-              <div className="grid grid-cols-3 gap-4 text-center text-xs">
-                <div>
-                  <p className={`font-bold ${beforeMetrics.https.pass ? "text-green-400" : "text-red-400"}`}>
-                    {beforeMetrics.https.pass ? "✓" : "✗"} {beforeMetrics.https.label}
-                  </p>
-                  <p className="text-white/30">Security</p>
-                </div>
-                <div>
-                  <p className={`font-bold ${beforeMetrics.mobile.pass ? "text-green-400" : "text-red-400"}`}>
-                    {beforeMetrics.mobile.pass ? "✓" : "✗"} {beforeMetrics.mobile.label}
-                  </p>
-                  <p className="text-white/30">Mobile</p>
-                </div>
-                <div>
-                  <p className={`font-bold ${beforeMetrics.phoneVisible.pass ? "text-green-400" : "text-red-400"}`}>
-                    {beforeMetrics.phoneVisible.pass ? "✓" : "✗"} {beforeMetrics.phoneVisible.label}
-                  </p>
-                  <p className="text-white/30">Contact Info</p>
-                </div>
-              </div>
             </div>
           </div>
 
@@ -252,22 +226,94 @@ export default function ComparePage() {
                 </div>
               )}
             </div>
-            {/* Personalized "After" callouts — Proposal Refinement 2.2 */}
-            <div className="px-6 py-4 bg-green-500/5">
-              <div className="grid grid-cols-3 gap-4 text-center text-xs">
-                {afterCallouts.map((callout, i) => (
-                  <div key={i}>
-                    <p className="text-green-400 font-bold">✓ {callout}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Detailed Metrics Comparison Table */}
+      {metrics.length > 0 && (
+        <div className="max-w-4xl mx-auto px-6 pb-12">
+          <h2 className="text-xl font-bold mb-6 text-center">
+            Detailed Comparison — {metrics.length} Key Factors
+          </h2>
+          <div className="space-y-2">
+            {metrics.map((metric, i) => (
+              <div
+                key={i}
+                className="bg-white/5 border border-white/10 rounded-xl overflow-hidden cursor-pointer hover:bg-white/[0.07] transition-colors"
+                onClick={() => setExpandedMetric(expandedMetric === i ? null : i)}
+              >
+                <div className="px-5 py-3.5 flex items-center gap-4">
+                  <span className="text-sm font-medium text-white/80 flex-1">{metric.label}</span>
+                  <div className="flex items-center gap-6 text-sm">
+                    <span className={`flex items-center gap-1.5 ${metric.currentSite.pass ? "text-green-400" : "text-red-400"}`}>
+                      {metric.currentSite.pass ? (
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path d="M5 13l4 4L19 7" /></svg>
+                      ) : (
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path d="M6 18L18 6M6 6l12 12" /></svg>
+                      )}
+                      {metric.currentSite.value}
+                    </span>
+                    <span className="text-white/20">vs</span>
+                    <span className={`flex items-center gap-1.5 ${metric.bluejaySite.pass ? "text-green-400" : "text-red-400"}`}>
+                      {metric.bluejaySite.pass ? (
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path d="M5 13l4 4L19 7" /></svg>
+                      ) : (
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path d="M6 18L18 6M6 6l12 12" /></svg>
+                      )}
+                      {metric.bluejaySite.value}
+                    </span>
                   </div>
-                ))}
+                  <svg
+                    className={`w-4 h-4 text-white/30 transition-transform ${expandedMetric === i ? "rotate-180" : ""}`}
+                    fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
+                  >
+                    <path d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+                {expandedMetric === i && (
+                  <div className="px-5 pb-4 grid grid-cols-2 gap-4 text-xs border-t border-white/5 pt-3">
+                    <div>
+                      <p className="text-white/30 uppercase tracking-wider mb-1 font-medium">Current Site</p>
+                      <p className="text-white/60">{metric.currentSite.detail}</p>
+                    </div>
+                    <div>
+                      <p className="text-white/30 uppercase tracking-wider mb-1 font-medium">BlueJays Site</p>
+                      <p className="text-white/60">{metric.bluejaySite.detail}</p>
+                    </div>
+                  </div>
+                )}
               </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Pain Points — Only shown for engaged prospects */}
+      {painPoints.length > 0 && engagement && engagement.score >= 25 && (
+        <div className="max-w-3xl mx-auto px-6 pb-12">
+          <div className="bg-amber-500/5 border border-amber-500/20 rounded-2xl p-6">
+            <h3 className="text-lg font-bold text-amber-400 mb-4 flex items-center gap-2">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+              What This Means for {data.businessName}
+            </h3>
+            <div className="space-y-3">
+              {painPoints.map((point, i) => (
+                <div key={i} className="flex gap-3 text-sm">
+                  <span className="text-amber-400 shrink-0 mt-0.5">•</span>
+                  <p className="text-white/60">{point}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
+      )}
 
-        {/* CTA Section — Proposal Refinement 2.3 */}
-        <div className="text-center mt-12">
-          {/* Primary CTA: Claim / Checkout */}
+      {/* CTA Section */}
+      <div className="max-w-6xl mx-auto px-6 pb-16">
+        <div className="text-center mt-4">
           <a
             href={`/claim/${id}`}
             className="inline-flex items-center gap-3 h-14 px-8 rounded-full bg-gradient-to-r from-sky-500 to-blue-600 text-white font-bold text-lg hover:shadow-[0_0_40px_rgba(14,165,233,0.4)] transition-all duration-300"
@@ -281,7 +327,6 @@ export default function ComparePage() {
             One-time investment. Includes everything. Live within 48 hours.
           </p>
 
-          {/* Secondary CTA: Schedule a call — Proposal Refinement 2.3 */}
           <div className="mt-6 pt-6 border-t border-white/10 max-w-md mx-auto">
             <p className="text-white/40 text-sm mb-3">
               Have questions? Not ready to commit just yet?

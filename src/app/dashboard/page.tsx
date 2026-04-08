@@ -139,6 +139,12 @@ export default function DashboardPage() {
             <a href="/spending" className="text-sm text-muted hover:text-foreground transition-colors">
               Spending
             </a>
+            <a href="/deliverability" className="text-sm text-muted hover:text-foreground transition-colors">
+              Deliverability
+            </a>
+            <a href="/analytics" className="text-sm text-muted hover:text-foreground transition-colors">
+              Analytics
+            </a>
             <a
               href="/api/call-lists?type=all&format=csv"
               className="h-9 px-4 rounded-lg bg-surface border border-border text-muted text-sm font-medium flex items-center hover:text-foreground hover:border-blue-electric/40 transition-colors"
