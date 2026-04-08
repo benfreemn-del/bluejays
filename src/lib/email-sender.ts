@@ -103,11 +103,14 @@ export async function sendEmail(
   };
 
   if (SENDGRID_API_KEY) {
-    console.log(`  📧 Sending email via SendGrid to ${to}...`);
-    console.log(`  📧 Key starts with: ${SENDGRID_API_KEY.substring(0, 10)}...`);
-    const success = await sendViaSendGrid(to, subject, body);
+    console.log(`  Sending email via SendGrid to ${to}...`);
+    // Strip emojis from subject to avoid encoding issues
+    const cleanSubject = subject.replace(/[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu, "").trim();
+    // Strip non-ASCII from body to avoid encoding issues
+    const cleanBody = body.replace(/[^\x00-\x7F]/g, "").trim();
+    const success = await sendViaSendGrid(to, cleanSubject || subject, cleanBody || body);
     if (!success) {
-      throw new Error(`SendGrid API failed — key starts with ${SENDGRID_API_KEY.substring(0, 10)}`);
+      throw new Error(`SendGrid API failed`);
     }
   } else {
     console.log(`  📧 [MOCK] Email to ${to}: "${subject}"`);
