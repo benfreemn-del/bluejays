@@ -8,6 +8,7 @@ import ProspectTable from "@/components/dashboard/ProspectTable";
 import ScoutModal from "@/components/dashboard/ScoutModal";
 import ProspectDetail from "@/components/dashboard/ProspectDetail";
 import MapView from "@/components/dashboard/MapView";
+import PipelineDashboard from "@/components/dashboard/PipelineDashboard";
 
 export default function DashboardPage() {
   const [prospects, setProspects] = useState<Prospect[]>([]);
@@ -22,6 +23,7 @@ export default function DashboardPage() {
   const [addLeadOpen, setAddLeadOpen] = useState(false);
   const [newLead, setNewLead] = useState({ businessName: "", phone: "", email: "", website: "", category: "dental", city: "Seattle, WA" });
   const [addingLead, setAddingLead] = useState(false);
+  const [pipelineOpen, setPipelineOpen] = useState(false);
 
   const fetchProspects = useCallback(async () => {
     try {
@@ -175,6 +177,12 @@ export default function DashboardPage() {
               + Add Lead
             </button>
             <button
+              onClick={() => setPipelineOpen(true)}
+              className="h-9 px-4 rounded-lg bg-surface border border-sky-500/30 text-sky-400 text-sm font-medium hover:border-sky-500/60 transition-colors"
+            >
+              Pipeline
+            </button>
+            <button
               onClick={() => setScoutOpen(true)}
               className="h-9 px-4 rounded-lg bg-blue-electric text-white text-sm font-medium hover:bg-blue-deep transition-colors"
             >
@@ -254,6 +262,14 @@ export default function DashboardPage() {
       <ScoutModal
         isOpen={scoutOpen}
         onClose={() => setScoutOpen(false)}
+        onComplete={() => {
+          fetchProspects();
+        }}
+      />
+
+      <PipelineDashboard
+        isOpen={pipelineOpen}
+        onClose={() => setPipelineOpen(false)}
         onComplete={() => {
           fetchProspects();
         }}
