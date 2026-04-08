@@ -27,9 +27,7 @@ export function getStripe(): Stripe {
     if (!STRIPE_SECRET_KEY) {
       throw new Error("STRIPE_SECRET_KEY is not configured");
     }
-    _stripe = new Stripe(STRIPE_SECRET_KEY, {
-      apiVersion: "2025-03-31.basil",
-    });
+    _stripe = new Stripe(STRIPE_SECRET_KEY);
   }
   return _stripe;
 }
@@ -70,7 +68,8 @@ export async function createCheckoutSession(
   const mgmtPriceId = process.env.STRIPE_PRICE_MGMT_ID;
 
   // Build line items — use configured Price IDs if available, otherwise use inline pricing
-  const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const lineItems: any[] = [];
 
   if (setupPriceId) {
     lineItems.push({ price: setupPriceId, quantity: 1 });
@@ -109,17 +108,15 @@ export async function createCheckoutSession(
   const hasRecurring = mgmtPriceId || !setupPriceId;
   const mode = hasRecurring ? "subscription" : "payment";
 
-  const sessionParams: Stripe.Checkout.SessionCreateParams = {
-    mode,
+  const session = await stripe.checkout.sessions.create({
+    mode: mode as "subscription" | "payment",
     line_items: lineItems,
     success_url: `${baseUrl}/onboarding/${prospectId}?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${baseUrl}/claim/${prospectId}?payment=cancelled`,
     metadata: { prospectId, businessName },
     customer_email: email || undefined,
     payment_method_types: ["card"],
-  };
-
-  const session = await stripe.checkout.sessions.create(sessionParams);
+  });
 
   return {
     id: session.id,
