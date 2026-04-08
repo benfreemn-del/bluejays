@@ -2,7 +2,7 @@
 // Portfolio pages (/, /templates/*, /preview/*) are public
 // Dashboard, scripts, API routes require auth
 
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "bluejay2026";
+const ADMIN_PASSWORD = (process.env.ADMIN_PASSWORD || "bluejay2026").trim();
 
 export function isProtectedRoute(pathname: string): boolean {
   const publicPrefixes = [
@@ -10,10 +10,14 @@ export function isProtectedRoute(pathname: string): boolean {
     "/templates",
     "/preview",
     "/claim",
+    "/proposal",
+    "/book",
     "/onboarding",
     "/welcome",
     "/edit",
     "/api/portfolio",
+    "/api/proposals/",
+    "/api/calendar/available-slots",
     "/api/prospects/", // individual prospect lookups for preview pages
     "/_next",
     "/favicon",

@@ -166,18 +166,32 @@ export default function ClaimPage() {
       {/* Preview Banner */}
       {info?.previewUrl && (
         <div className="bg-blue-electric/10 border-b border-blue-electric/20">
-          <div className="max-w-2xl mx-auto px-6 py-3 flex items-center justify-between">
-            <span className="text-sm text-blue-electric">
-              Your custom website is ready!
-            </span>
-            <a
-              href={info.previewUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm px-4 py-1.5 rounded-full bg-blue-electric text-white font-medium hover:bg-blue-deep transition-colors"
-            >
-              View Preview
-            </a>
+          <div className="max-w-2xl mx-auto px-6 py-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <span className="text-sm font-medium text-blue-electric block">
+                Your custom website is ready.
+              </span>
+              <span className="text-xs text-muted">
+                You can preview it first or claim and pay right away.
+              </span>
+            </div>
+            <div className="flex gap-2">
+              <a
+                href={info.previewUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm px-4 py-1.5 rounded-full bg-blue-electric text-white font-medium hover:bg-blue-deep transition-colors"
+              >
+                View Preview
+              </a>
+              <button
+                onClick={redirectToCheckout}
+                disabled={isRedirecting}
+                className="text-sm px-4 py-1.5 rounded-full bg-green-600 text-white font-medium hover:bg-green-700 transition-colors disabled:opacity-50"
+              >
+                {isRedirecting ? "Redirecting..." : "Claim & Pay"}
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -266,20 +280,18 @@ export default function ClaimPage() {
         </div>
       )}
 
-      {/* Claim CTA — shows after initial conversation */}
-      {step >= 1 && (
-        <div className="border-t border-border bg-surface">
-          <div className="max-w-2xl mx-auto px-6 py-3 flex gap-2">
-            <button
-              onClick={redirectToCheckout}
-              disabled={isRedirecting}
-              className="flex-1 h-11 rounded-xl bg-green-600 text-white text-sm font-medium hover:bg-green-700 transition-colors disabled:opacity-50"
-            >
-              {isRedirecting ? "Redirecting to checkout..." : "Claim My Website — $997"}
-            </button>
-          </div>
+      {/* Claim CTA */}
+      <div className="border-t border-border bg-surface">
+        <div className="max-w-2xl mx-auto px-6 py-3 flex gap-2">
+          <button
+            onClick={redirectToCheckout}
+            disabled={isRedirecting}
+            className="flex-1 h-11 rounded-xl bg-green-600 text-white text-sm font-medium hover:bg-green-700 transition-colors disabled:opacity-50"
+          >
+            {isRedirecting ? "Redirecting to checkout..." : "Claim & Pay — $997"}
+          </button>
         </div>
-      )}
+      </div>
 
       {/* Input */}
       <div className="border-t border-border bg-surface">

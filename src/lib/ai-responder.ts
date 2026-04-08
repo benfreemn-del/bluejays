@@ -46,6 +46,37 @@ interface IncomingMessage {
   channel: "email" | "sms";
 }
 
+function getBaseUrl(): string {
+  return process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+}
+
+function getSalesLinks(prospect: Prospect) {
+  return {
+    previewUrl: `${getBaseUrl()}${prospect.generatedSiteUrl || `/preview/${prospect.id}`}`,
+    proposalUrl: `${getBaseUrl()}/proposal/${prospect.id}`,
+    bookingUrl: `${getBaseUrl()}/book/${prospect.id}`,
+    claimUrl: `${getBaseUrl()}/claim/${prospect.id}`,
+  };
+}
+
+function ensureInterestedReplyLinks(reply: string | undefined, prospect: Prospect): string {
+  const links = getSalesLinks(prospect);
+  const baseReply = (reply || `Thanks for the interest in ${prospect.businessName}.`).trim();
+
+  const hasBooking = baseReply.includes(links.bookingUrl) || /calendar|book a call|hop on a quick call/i.test(baseReply);
+  const hasProposal = baseReply.includes(links.proposalUrl) || /proposal/i.test(baseReply);
+
+  let nextReply = baseReply;
+  if (!hasProposal) {
+    nextReply += `\n\nI also put together a personalized proposal for ${prospect.businessName} here: ${links.proposalUrl}`;
+  }
+  if (!hasBooking) {
+    nextReply += `\n\nWant to hop on a quick call so I can walk you through everything? Here's my calendar: ${links.bookingUrl}`;
+  }
+
+  return nextReply;
+}
+
 export interface AiResponse {
   shouldReply: boolean;
   reply?: string;
@@ -544,7 +575,8 @@ function getMockResponse(prompt: string): string {
  */
 function buildPrompt(prospect: Prospect, message: IncomingMessage): string {
   const categoryLabel = CATEGORY_CONFIG[prospect.category]?.label || prospect.category;
-  const previewUrl = prospect.generatedSiteUrl || "/preview/" + prospect.id;
+  const links = getSalesLinks(prospect);
+  const previewUrl = links.previewUrl;
   const name = prospect.ownerName?.split(" ")[0] || "there";
   const checkoutUrl = `${CHECKOUT_BASE_URL}/claim/${prospect.id}`;
   const compareUrl = `${CHECKOUT_BASE_URL}/compare/${prospect.id}`;
@@ -606,6 +638,9 @@ PROSPECT CONTEXT:
 - Business: ${prospect.businessName} (${categoryLabel})
 - Owner: ${name}
 - Preview site: ${previewUrl}
+- Personalized proposal: ${links.proposalUrl}
+- Booking link: ${links.bookingUrl}
+- Claim link: ${links.claimUrl}
 - Current status: ${prospect.status}
 - Channel: ${message.channel}
 - Revenue tier: ${prospect.estimatedRevenueTier}
@@ -618,7 +653,7 @@ ${message.subject ? `Subject: ${message.subject}\n` : ""}Body: ${message.body}
 INSTRUCTIONS:
 Analyze their message and respond as JSON with these exact fields:
 1. "shouldReply" (boolean): Should the AI auto-reply? (false if angry/threatening or if escalating to human)
-2. "reply" (string): The reply message body. Use the agent voice. Reference their business by name. Keep it short and genuine. Use the EXACT objection scripts when an objection matches. Include checkout URL or calendar URL based on the decision framework.
+2. "reply" (string): The reply message body. Use the agent voice. Reference their business by name. Keep it short and genuine. Use the EXACT objection scripts when an objection matches. Include checkout URL or calendar URL based on the decision framework. If intent is "interested", include the personalized proposal link and optionally suggest booking a call using the booking link.
 3. "escalate" (boolean): Should this be escalated to Ben (the human owner)?
 4. "escalateReason" (string): Why escalate? (empty string if not escalating)
 5. "escalateUrgency" (string): "immediate" or "next-day" (empty if not escalating)
@@ -783,6 +818,10 @@ export async function processIncomingMessage(
         parsed.escalateReason = escalation.reason;
         parsed.escalateUrgency = escalation.urgency;
       }
+    }
+
+    if (parsed.intent === "interested") {
+      parsed.reply = ensureInterestedReplyLinks(parsed.reply, prospect);
     }
 
     // Apply CRM status transition from intent mapping

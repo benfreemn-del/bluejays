@@ -63,6 +63,60 @@ CREATE TABLE IF NOT EXISTS edit_requests (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- SMS history
+CREATE TABLE IF NOT EXISTS sms_messages (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  prospect_id UUID REFERENCES prospects(id) ON DELETE CASCADE,
+  to_number TEXT NOT NULL,
+  from_number TEXT,
+  body TEXT NOT NULL,
+  sequence INTEGER DEFAULT 1,
+  method TEXT DEFAULT 'mock',
+  sent_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- CRM notes
+CREATE TABLE IF NOT EXISTS notes (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  prospect_id UUID REFERENCES prospects(id) ON DELETE CASCADE,
+  text TEXT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Personalized proposals
+CREATE TABLE IF NOT EXISTS proposals (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  prospect_id UUID UNIQUE REFERENCES prospects(id) ON DELETE CASCADE,
+  business_name TEXT NOT NULL,
+  summary TEXT NOT NULL,
+  content TEXT NOT NULL,
+  pain_points JSONB DEFAULT '[]'::jsonb,
+  context_data JSONB DEFAULT '{}'::jsonb,
+  generated_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Sales call calendar bookings
+CREATE TABLE IF NOT EXISTS calendar_bookings (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  prospect_id UUID REFERENCES prospects(id) ON DELETE CASCADE,
+  business_name TEXT NOT NULL,
+  contact_name TEXT,
+  email TEXT NOT NULL,
+  phone TEXT,
+  slot_iso TIMESTAMPTZ NOT NULL UNIQUE,
+  timezone TEXT NOT NULL DEFAULT 'America/Los_Angeles',
+  notes TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Priority call list
+CREATE TABLE IF NOT EXISTS priority_call_list (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  prospect_id UUID UNIQUE REFERENCES prospects(id) ON DELETE CASCADE,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- Auto-update timestamps
 CREATE OR REPLACE FUNCTION update_updated_at()
 RETURNS TRIGGER AS $$
@@ -83,6 +137,11 @@ ALTER TABLE generated_sites ENABLE ROW LEVEL SECURITY;
 ALTER TABLE emails ENABLE ROW LEVEL SECURITY;
 ALTER TABLE onboarding ENABLE ROW LEVEL SECURITY;
 ALTER TABLE edit_requests ENABLE ROW LEVEL SECURITY;
+ALTER TABLE sms_messages ENABLE ROW LEVEL SECURITY;
+ALTER TABLE notes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE proposals ENABLE ROW LEVEL SECURITY;
+ALTER TABLE calendar_bookings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE priority_call_list ENABLE ROW LEVEL SECURITY;
 
 -- Policies: allow all operations via service role key
 CREATE POLICY "Allow all for service role" ON prospects FOR ALL USING (true);
@@ -90,3 +149,8 @@ CREATE POLICY "Allow all for service role" ON generated_sites FOR ALL USING (tru
 CREATE POLICY "Allow all for service role" ON emails FOR ALL USING (true);
 CREATE POLICY "Allow all for service role" ON onboarding FOR ALL USING (true);
 CREATE POLICY "Allow all for service role" ON edit_requests FOR ALL USING (true);
+CREATE POLICY "Allow all for service role" ON sms_messages FOR ALL USING (true);
+CREATE POLICY "Allow all for service role" ON notes FOR ALL USING (true);
+CREATE POLICY "Allow all for service role" ON proposals FOR ALL USING (true);
+CREATE POLICY "Allow all for service role" ON calendar_bookings FOR ALL USING (true);
+CREATE POLICY "Allow all for service role" ON priority_call_list FOR ALL USING (true);

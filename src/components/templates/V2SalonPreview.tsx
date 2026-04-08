@@ -35,7 +35,7 @@ const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
 
 /* ───────────────────────── COLORS ───────────────────────── */
-const DARK = "#fdf2f8";
+const DARK = "#1a0a10";
 const DEFAULT_ROSE = "#e11d48";
 const ROSE_LIGHT = "#fb7185";
 
@@ -160,7 +160,7 @@ function RosePattern({ opacity = 0.03, accent }: { opacity?: number; accent: str
 /* ───────────────────────── GLASS CARD ───────────────────────── */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`rounded-2xl border border-pink-200/60 bg-white/80 backdrop-blur-xl shadow-sm ${className}`}>
+    <div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
       {children}
     </div>
   );
@@ -207,11 +207,11 @@ function AccordionItem({ question, answer, isOpen, onToggle }: { question: strin
   return (
     <GlassCard className="overflow-hidden">
       <button onClick={onToggle} className="w-full flex items-center justify-between p-5 md:p-6 text-left group cursor-pointer">
-        <span className="text-lg font-semibold text-slate-900 pr-4">{question}</span>
-        <motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={spring}><CaretDown size={20} className="text-slate-600 shrink-0" /></motion.div>
+        <span className="text-lg font-semibold text-white pr-4">{question}</span>
+        <motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={spring}><CaretDown size={20} className="text-slate-400 shrink-0" /></motion.div>
       </button>
       <AnimatePresence initial={false}>
-        {isOpen && (<motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={spring} className="overflow-hidden"><p className="px-5 pb-5 md:px-6 md:pb-6 text-slate-600 leading-relaxed">{answer}</p></motion.div>)}
+        {isOpen && (<motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={spring} className="overflow-hidden"><p className="px-5 pb-5 md:px-6 md:pb-6 text-slate-400 leading-relaxed">{answer}</p></motion.div>)}
       </AnimatePresence>
     </GlassCard>
   );
@@ -222,9 +222,9 @@ function SectionHeader({ badge, title, subtitle, accent }: { badge: string; titl
   return (
     <div className="text-center mb-16">
       <span className="inline-block text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border" style={{ color: accent, borderColor: `${accent}33`, background: `${accent}0d` }}>{badge}</span>
-      <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-slate-900">{title}</h2>
+      <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white">{title}</h2>
       <div className="h-0.5 w-16 mx-auto mt-4" style={{ background: `linear-gradient(to right, ${accent}, transparent)` }} />
-      {subtitle && <p className="text-slate-600 mt-4 max-w-2xl text-lg leading-relaxed mx-auto">{subtitle}</p>}
+      {subtitle && <p className="text-slate-400 mt-4 max-w-2xl text-lg leading-relaxed mx-auto">{subtitle}</p>}
     </div>
   );
 }
@@ -240,8 +240,8 @@ function ClaimBanner({ businessName, accentColor, prospectId }: { businessName: 
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50">
-      <div className="bg-slate-900/90 backdrop-blur-sm border-t border-white/10 px-4 py-2 flex items-center justify-center gap-4">
-        <p className="text-xs text-slate-400"><span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1.5 animate-pulse" />47 businesses in your area upgraded their website this month</p>
+      <div className="bg-[#1a0a10]/90 backdrop-blur-sm border-t border-white/10 px-4 py-2 flex items-center justify-center gap-4">
+        <p className="text-xs text-slate-400"><span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1.5 animate-pulse" />Custom-built preview for this business</p>
         {timeLeft && timeLeft !== "EXPIRED" && <p className="text-xs font-bold" style={{ color: accentColor }}>Preview expires in {timeLeft}</p>}
       </div>
       <div className="px-6 py-4 flex items-center justify-between gap-4" style={{ background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}10)`, borderTop: `1px solid ${accentColor}30` }}>
@@ -283,7 +283,7 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
   ];
 
   return (
-    <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: DARK, color: "#1e293b" }}>
+    <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: DARK, color: "#f1f5f9" }}>
       <FlowingGradient accent={ROSE} />
 
       {/* ══════════════════ 1. NAV ══════════════════ */}
@@ -292,19 +292,19 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
           <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
             <div className="flex items-center gap-2">
               <Scissors size={24} weight="duotone" style={{ color: ROSE }} />
-              <span className="text-lg font-bold tracking-tight text-slate-900">{data.businessName}</span>
+              <span className="text-lg font-bold tracking-tight text-white">{data.businessName}</span>
             </div>
-            <div className="hidden md:flex items-center gap-8 text-sm text-slate-600">
-              <a href="#services" className="hover:text-slate-900 transition-colors">Services</a>
-              <a href="#about" className="hover:text-slate-900 transition-colors">About</a>
-              <a href="#gallery" className="hover:text-slate-900 transition-colors">Gallery</a>
-              <a href="#contact" className="hover:text-slate-900 transition-colors">Contact</a>
+            <div className="hidden md:flex items-center gap-8 text-sm text-slate-400">
+              <a href="#services" className="hover:text-white transition-colors">Services</a>
+              <a href="#about" className="hover:text-white transition-colors">About</a>
+              <a href="#gallery" className="hover:text-white transition-colors">Gallery</a>
+              <a href="#contact" className="hover:text-white transition-colors">Contact</a>
             </div>
             <div className="flex items-center gap-3">
-              <MagneticButton className="px-4 md:px-5 py-2 rounded-full text-sm font-semibold text-slate-900 transition-colors cursor-pointer" style={{ background: ROSE } as React.CSSProperties}>
+              <MagneticButton className="px-4 md:px-5 py-2 rounded-full text-sm font-semibold text-white transition-colors cursor-pointer" style={{ background: ROSE } as React.CSSProperties}>
                 Book Now
               </MagneticButton>
-              <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden p-2 rounded-lg text-slate-900 hover:bg-pink-50 transition-colors">
+              <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden p-2 rounded-lg text-white hover:bg-white/10 transition-colors">
                 {mobileMenuOpen ? <X size={24} /> : <List size={24} />}
               </button>
             </div>
@@ -315,7 +315,7 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
               <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.3, ease: "easeInOut" }} className="md:hidden mt-2 overflow-hidden">
                 <GlassCard className="flex flex-col gap-1 px-4 py-4">
                   {[{ label: "Services", href: "#services" }, { label: "About", href: "#about" }, { label: "Gallery", href: "#gallery" }, { label: "Contact", href: "#contact" }].map((link) => (
-                    <a key={link.label} href={link.href} onClick={() => setMobileMenuOpen(false)} className="block px-4 py-3 rounded-lg text-sm text-slate-700 hover:text-slate-900 hover:bg-pink-50/50 transition-colors">{link.label}</a>
+                    <a key={link.label} href={link.href} onClick={() => setMobileMenuOpen(false)} className="block px-4 py-3 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-white/5 transition-colors">{link.label}</a>
                   ))}
                 </GlassCard>
               </motion.div>
@@ -337,22 +337,22 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
                 <Sparkle size={14} weight="fill" className="inline mr-2" />
                 Premium Beauty Studio
               </p>
-              <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-slate-900" style={{ textShadow: "none" }}>
+              <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}>
                 {data.tagline}
               </h1>
             </div>
-            <p className="text-lg text-slate-600 max-w-md leading-relaxed">
+            <p className="text-lg text-slate-400 max-w-md leading-relaxed">
               {data.about.length > 160 ? data.about.slice(0, 160).trim() + "..." : data.about}
             </p>
             <div className="flex flex-wrap gap-4">
-              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-slate-900 flex items-center gap-2 cursor-pointer" style={{ background: ROSE } as React.CSSProperties}>
+              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer" style={{ background: ROSE } as React.CSSProperties}>
                 Book Appointment <ArrowRight size={18} weight="bold" />
               </MagneticButton>
-              <MagneticButton href={`tel:${phoneDigits}`} className="px-8 py-4 rounded-full text-base font-semibold text-slate-900 border border-pink-200/60 flex items-center gap-2 cursor-pointer">
+              <MagneticButton href={`tel:${phoneDigits}`} className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
                 <Phone size={18} weight="duotone" /> <PhoneLink phone={data.phone} />
               </MagneticButton>
             </div>
-            <div className="flex flex-wrap gap-6 text-sm text-slate-600">
+            <div className="flex flex-wrap gap-6 text-sm text-slate-400">
               <span className="flex items-center gap-2"><MapPin size={16} weight="duotone" style={{ color: ROSE }} /><MapLink address={data.address} /></span>
               <span className="flex items-center gap-2"><CalendarBlank size={16} weight="duotone" style={{ color: ROSE }} />Online Booking Available</span>
             </div>
@@ -378,7 +378,7 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
                 <div key={stat.label} className="text-center">
                   <div className="flex items-center justify-center gap-2 mb-2">
                     <Icon size={22} weight="fill" style={{ color: ROSE }} />
-                    <span className="text-3xl md:text-4xl font-extrabold text-slate-900">{stat.value}</span>
+                    <span className="text-3xl md:text-4xl font-extrabold text-white">{stat.value}</span>
                   </div>
                   <span className="text-slate-500 text-sm font-medium tracking-wide uppercase">{stat.label}</span>
                 </div>
@@ -400,7 +400,7 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
             {data.services.map((service, i) => {
               const Icon = getServiceIcon(service.name);
               return (
-                <div key={service.name} className="group relative p-7 rounded-2xl border border-pink-200/40 hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/60">
+                <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.02]">
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${ROSE}15, transparent 70%)` }} />
                   <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${ROSE}4d, transparent)` }} />
                   <div className="relative z-10">
@@ -410,8 +410,8 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
                       </div>
                       <span className="text-xs font-mono text-slate-600">{String(i + 1).padStart(2, "0")}</span>
                     </div>
-                    <h3 className="text-lg font-bold text-slate-900 mb-2">{service.name}</h3>
-                    <p className="text-sm text-slate-600 leading-relaxed">{service.description || ""}</p>
+                    <h3 className="text-lg font-bold text-white mb-2">{service.name}</h3>
+                    <p className="text-sm text-slate-400 leading-relaxed">{service.description || ""}</p>
                     {service.price && <p className="text-sm font-semibold mt-3" style={{ color: ROSE }}>{service.price}</p>}
                   </div>
                 </div>
@@ -423,30 +423,30 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
 
       {/* ══════════════════ 5. ABOUT ══════════════════ */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #fce7f3 50%, ${DARK} 100%)` }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #120910 50%, ${DARK} 100%)` }} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${ROSE}06` }} /></div>
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="relative">
-              <div className="rounded-2xl overflow-hidden border border-pink-200/60">
+              <div className="rounded-2xl overflow-hidden border border-white/10">
                 <img src={aboutImage} alt={`${data.businessName} salon`} className="w-full h-[400px] object-cover" />
               </div>
               <div className="absolute -bottom-4 -right-4 md:bottom-6 md:-right-6">
-                <div className="px-5 py-3 rounded-xl backdrop-blur-md border text-slate-900 font-bold text-sm shadow-lg" style={{ background: `${ROSE}e6`, borderColor: `${ROSE}80` }}>
+                <div className="px-5 py-3 rounded-xl backdrop-blur-md border text-white font-bold text-sm shadow-lg" style={{ background: `${ROSE}e6`, borderColor: `${ROSE}80` }}>
                   {data.stats[0] ? `${data.stats[0].value} ${data.stats[0].label}` : "Award-Winning Studio"}
                 </div>
               </div>
             </div>
             <div>
               <span className="inline-block text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border" style={{ color: ROSE, borderColor: `${ROSE}33`, background: `${ROSE}0d` }}>About Us</span>
-              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-6 text-slate-900">Where Beauty Meets Artistry</h2>
-              <p className="text-slate-600 leading-relaxed mb-8">{data.about}</p>
+              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-6 text-white">Where Beauty Meets Artistry</h2>
+              <p className="text-slate-400 leading-relaxed mb-8">{data.about}</p>
               <div className="grid grid-cols-2 gap-4">
                 {[{ icon: Scissors, label: "Expert Stylists" }, { icon: Sparkle, label: "Premium Products" }, { icon: Star, label: "5-Star Reviews" }, { icon: Heart, label: "Personalized Care" }].map((badge) => (
                   <GlassCard key={badge.label} className="p-4 flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: ROSE_GLOW }}><badge.icon size={20} weight="duotone" style={{ color: ROSE }} /></div>
-                    <span className="text-sm font-semibold text-slate-900">{badge.label}</span>
+                    <span className="text-sm font-semibold text-white">{badge.label}</span>
                   </GlassCard>
                 ))}
               </div>
@@ -468,8 +468,8 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
                 {i < processSteps.length - 1 && <div className="hidden lg:block absolute top-10 left-[calc(50%+40px)] w-[calc(100%-80px)] h-px" style={{ background: `linear-gradient(to right, ${ROSE}33, ${ROSE}11)` }} />}
                 <GlassCard className="p-6 text-center relative">
                   <div className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center text-2xl font-black" style={{ background: `linear-gradient(135deg, ${ROSE}22, ${ROSE}0a)`, color: ROSE, border: `1px solid ${ROSE}33` }}>{step.step}</div>
-                  <h3 className="text-lg font-bold text-slate-900 mb-2">{step.title}</h3>
-                  <p className="text-sm text-slate-600 leading-relaxed">{step.desc}</p>
+                  <h3 className="text-lg font-bold text-white mb-2">{step.title}</h3>
+                  <p className="text-sm text-slate-400 leading-relaxed">{step.desc}</p>
                 </GlassCard>
               </div>
             ))}
@@ -479,7 +479,7 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
 
       {/* ══════════════════ 7. GALLERY ══════════════════ */}
       <section id="gallery" className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #fce7f3 50%, ${DARK} 100%)` }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #120910 50%, ${DARK} 100%)` }} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] left-[20%] w-[500px] h-[500px] rounded-full blur-[200px]" style={{ background: `${ROSE}06` }} /></div>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <SectionHeader badge="Portfolio" title="Our Work" accent={ROSE} />
@@ -487,10 +487,10 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
             {galleryImages.map((src, i) => {
               const titles = ["Signature Color Transformation", "Precision Styling", "Bridal Elegance", "Creative Artistry"];
               return (
-                <div key={i} className="group relative rounded-2xl overflow-hidden border border-pink-200/40 hover:border-opacity-30 transition-all duration-500">
+                <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.06] hover:border-opacity-30 transition-all duration-500">
                   <img src={src} alt={titles[i] || `Work ${i + 1}`} className="w-full h-64 object-cover transition-transform duration-700 group-hover:scale-105" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 p-6"><h3 className="text-lg font-bold text-slate-900 mb-1">{titles[i] || `Work ${i + 1}`}</h3></div>
+                  <div className="absolute bottom-0 left-0 right-0 p-6"><h3 className="text-lg font-bold text-white mb-1">{titles[i] || `Work ${i + 1}`}</h3></div>
                 </div>
               );
             })}
@@ -509,8 +509,8 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
             {data.testimonials.map((t, i) => (
               <GlassCard key={i} className="p-6 h-full flex flex-col">
                 <div className="flex gap-0.5 mb-4">{Array.from({ length: t.rating || 5 }).map((_, j) => <Star key={j} size={16} weight="fill" style={{ color: ROSE }} />)}</div>
-                <p className="text-slate-700 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p>
-                <div className="pt-4 border-t border-pink-100 flex items-center justify-between"><span className="text-sm font-semibold text-slate-900">{t.name}</span></div>
+                <p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p>
+                <div className="pt-4 border-t border-white/5 flex items-center justify-between"><span className="text-sm font-semibold text-white">{t.name}</span></div>
               </GlassCard>
             ))}
           </div>
@@ -533,17 +533,17 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
 
       {/* ══════════════════ 10. INSTAGRAM / SOCIAL ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #fce7f3 50%, ${DARK} 100%)` }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #120910 50%, ${DARK} 100%)` }} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[40%] right-[20%] w-[400px] h-[400px] rounded-full blur-[180px]" style={{ background: `${ROSE_LIGHT}06` }} /></div>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <SectionHeader badge="Follow Us" title="Stay Connected" accent={ROSE} />
           <div className="text-center">
             <GlassCard className="p-8 inline-block">
               <InstagramLogo size={32} weight="duotone" style={{ color: ROSE }} className="mx-auto mb-3" />
-              <p className="text-slate-900 font-semibold text-lg mb-2">Follow us on social media</p>
-              <p className="text-slate-600 text-sm">See our latest work, promotions, and behind-the-scenes content</p>
+              <p className="text-white font-semibold text-lg mb-2">Follow us on social media</p>
+              <p className="text-slate-400 text-sm">See our latest work, promotions, and behind-the-scenes content</p>
               {data.socialLinks && Object.entries(data.socialLinks).map(([platform, url]) => (
-                <a key={platform} href={url} target="_blank" rel="noopener noreferrer" className="inline-block mt-3 px-4 py-2 rounded-full text-sm font-medium border transition-colors hover:bg-pink-50/50 capitalize" style={{ color: ROSE, borderColor: `${ROSE}33` }}>
+                <a key={platform} href={url} target="_blank" rel="noopener noreferrer" className="inline-block mt-3 px-4 py-2 rounded-full text-sm font-medium border transition-colors hover:bg-white/5 capitalize" style={{ color: ROSE, borderColor: `${ROSE}33` }}>
                   {platform}
                 </a>
               ))}
@@ -560,7 +560,7 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
           <div className="max-w-3xl mx-auto px-6 relative z-10">
             <SectionHeader badge="Hours" title="When to Visit" accent={ROSE} />
             <div className="text-center">
-              <ShimmerBorder accent={ROSE}><div className="p-8"><Clock size={32} weight="duotone" style={{ color: ROSE }} className="mx-auto mb-4" /><p className="text-slate-700 leading-relaxed whitespace-pre-line text-lg">{data.hours}</p></div></ShimmerBorder>
+              <ShimmerBorder accent={ROSE}><div className="p-8"><Clock size={32} weight="duotone" style={{ color: ROSE }} className="mx-auto mb-4" /><p className="text-slate-300 leading-relaxed whitespace-pre-line text-lg">{data.hours}</p></div></ShimmerBorder>
             </div>
           </div>
         </section>
@@ -578,36 +578,36 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
 
       {/* ══════════════════ 13. CONTACT ══════════════════ */}
       <section id="contact" className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #fce7f3 50%, ${DARK} 100%)` }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #120910 50%, ${DARK} 100%)` }} />
         <RosePattern opacity={0.02} accent={ROSE} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${ROSE}06` }} /></div>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
             <div>
               <span className="inline-block text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border" style={{ color: ROSE, borderColor: `${ROSE}33`, background: `${ROSE}0d` }}>Contact</span>
-              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-6 text-slate-900">Book Your Visit</h2>
-              <p className="text-slate-600 leading-relaxed mb-8">Ready to look and feel your best? Contact {data.businessName} today to schedule your appointment.</p>
+              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-6 text-white">Book Your Visit</h2>
+              <p className="text-slate-400 leading-relaxed mb-8">Ready to look and feel your best? Contact {data.businessName} today to schedule your appointment.</p>
               <div className="space-y-5">
-                <div className="flex items-start gap-4"><div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: ROSE_GLOW }}><MapPin size={20} weight="duotone" style={{ color: ROSE }} /></div><div><p className="text-sm font-semibold text-slate-900">Address</p><MapLink address={data.address} className="text-sm text-slate-600" /></div></div>
-                <div className="flex items-start gap-4"><div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: ROSE_GLOW }}><Phone size={20} weight="duotone" style={{ color: ROSE }} /></div><div><p className="text-sm font-semibold text-slate-900">Phone</p><PhoneLink phone={data.phone} className="text-sm text-slate-600" /></div></div>
-                {data.hours && <div className="flex items-start gap-4"><div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: ROSE_GLOW }}><Clock size={20} weight="duotone" style={{ color: ROSE }} /></div><div><p className="text-sm font-semibold text-slate-900">Hours</p><p className="text-sm text-slate-600 whitespace-pre-line">{data.hours}</p></div></div>}
+                <div className="flex items-start gap-4"><div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: ROSE_GLOW }}><MapPin size={20} weight="duotone" style={{ color: ROSE }} /></div><div><p className="text-sm font-semibold text-white">Address</p><MapLink address={data.address} className="text-sm text-slate-400" /></div></div>
+                <div className="flex items-start gap-4"><div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: ROSE_GLOW }}><Phone size={20} weight="duotone" style={{ color: ROSE }} /></div><div><p className="text-sm font-semibold text-white">Phone</p><PhoneLink phone={data.phone} className="text-sm text-slate-400" /></div></div>
+                {data.hours && <div className="flex items-start gap-4"><div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: ROSE_GLOW }}><Clock size={20} weight="duotone" style={{ color: ROSE }} /></div><div><p className="text-sm font-semibold text-white">Hours</p><p className="text-sm text-slate-400 whitespace-pre-line">{data.hours}</p></div></div>}
               </div>
             </div>
             <GlassCard className="p-8">
-              <h3 className="text-xl font-semibold text-slate-900 mb-6">Book an Appointment</h3>
+              <h3 className="text-xl font-semibold text-white mb-6">Book an Appointment</h3>
               <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div><label className="block text-sm text-slate-600 mb-1.5">Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-pink-50/50 border border-pink-200/60 text-slate-900 placeholder-slate-400 focus:outline-none transition-colors text-sm" placeholder="Your name" /></div>
-                  <div><label className="block text-sm text-slate-600 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-pink-50/50 border border-pink-200/60 text-slate-900 placeholder-slate-400 focus:outline-none transition-colors text-sm" placeholder="(555) 123-4567" /></div>
+                  <div><label className="block text-sm text-slate-400 mb-1.5">Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="Your name" /></div>
+                  <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="(555) 123-4567" /></div>
                 </div>
-                <div><label className="block text-sm text-slate-600 mb-1.5">Service</label>
-                  <select className="w-full px-4 py-3 rounded-xl bg-pink-50/50 border border-pink-200/60 text-slate-900 focus:outline-none transition-colors text-sm">
-                    <option value="" className="bg-white">Select a service</option>
-                    {data.services.map((s) => <option key={s.name} value={s.name.toLowerCase().replace(/\s+/g, "-")} className="bg-white">{s.name}</option>)}
+                <div><label className="block text-sm text-slate-400 mb-1.5">Service</label>
+                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none transition-colors text-sm">
+                    <option value="" className="bg-neutral-900">Select a service</option>
+                    {data.services.map((s) => <option key={s.name} value={s.name.toLowerCase().replace(/\s+/g, "-")} className="bg-neutral-900">{s.name}</option>)}
                   </select>
                 </div>
-                <div><label className="block text-sm text-slate-600 mb-1.5">Message</label><textarea rows={3} className="w-full px-4 py-3 rounded-xl bg-pink-50/50 border border-pink-200/60 text-slate-900 placeholder-slate-400 focus:outline-none transition-colors text-sm resize-none" placeholder="Any preferences or requests..." /></div>
-                <MagneticButton className="w-full py-4 rounded-xl text-base font-semibold text-slate-900 flex items-center justify-center gap-2 cursor-pointer" style={{ background: ROSE } as React.CSSProperties}>
+                <div><label className="block text-sm text-slate-400 mb-1.5">Message</label><textarea rows={3} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm resize-none" placeholder="Any preferences or requests..." /></div>
+                <MagneticButton className="w-full py-4 rounded-xl text-base font-semibold text-white flex items-center justify-center gap-2 cursor-pointer" style={{ background: ROSE } as React.CSSProperties}>
                   Book Now <ArrowRight size={18} weight="bold" />
                 </MagneticButton>
               </form>
@@ -625,8 +625,8 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
           <ShimmerBorder accent={ROSE}>
             <div className="p-8 md:p-12">
               <Heart size={48} weight="fill" style={{ color: ROSE }} className="mx-auto mb-4" />
-              <h2 className="text-2xl md:text-4xl font-extrabold text-slate-900 mb-4">Our Beauty Promise</h2>
-              <p className="text-slate-600 leading-relaxed max-w-2xl mx-auto text-lg">At {data.businessName}, we are committed to making every client feel beautiful, confident, and cared for. Your satisfaction is our passion.</p>
+              <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-4">Our Beauty Promise</h2>
+              <p className="text-slate-400 leading-relaxed max-w-2xl mx-auto text-lg">At {data.businessName}, we are committed to making every client feel beautiful, confident, and cared for. Your satisfaction is our passion.</p>
               <div className="flex flex-wrap justify-center gap-4 mt-8">
                 {["Expert Stylists", "Premium Products", "Relaxing Atmosphere", "100% Satisfaction"].map((item) => (
                   <span key={item} className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border" style={{ color: ROSE, borderColor: `${ROSE}33`, background: `${ROSE}0d` }}><CheckCircle size={16} weight="fill" />{item}</span>
@@ -638,28 +638,28 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
       </section>
 
       {/* ══════════════════ 15. FOOTER ══════════════════ */}
-      <footer className="relative z-10 border-t border-pink-100 py-10 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #f9e4ef 100%)` }} />
+      <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #0f0710 100%)` }} />
         <RosePattern opacity={0.015} accent={ROSE} />
         <div className="mx-auto max-w-6xl px-6 relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
             <div>
-              <div className="flex items-center gap-2 mb-3"><Scissors size={22} weight="duotone" style={{ color: ROSE }} /><span className="text-lg font-bold text-slate-900">{data.businessName}</span></div>
+              <div className="flex items-center gap-2 mb-3"><Scissors size={22} weight="duotone" style={{ color: ROSE }} /><span className="text-lg font-bold text-white">{data.businessName}</span></div>
               <p className="text-sm text-slate-500 leading-relaxed">{data.about.length > 120 ? data.about.slice(0, 120).trim() + "..." : data.about}</p>
             </div>
             <div>
-              <h4 className="text-sm font-semibold text-slate-900 mb-3">Quick Links</h4>
-              <div className="space-y-2">{["Services", "About", "Gallery", "Contact"].map((link) => <a key={link} href={`#${link.toLowerCase()}`} className="block text-sm text-slate-500 hover:text-slate-900 transition-colors">{link}</a>)}</div>
+              <h4 className="text-sm font-semibold text-white mb-3">Quick Links</h4>
+              <div className="space-y-2">{["Services", "About", "Gallery", "Contact"].map((link) => <a key={link} href={`#${link.toLowerCase()}`} className="block text-sm text-slate-500 hover:text-white transition-colors">{link}</a>)}</div>
             </div>
             <div>
-              <h4 className="text-sm font-semibold text-slate-900 mb-3">Contact</h4>
+              <h4 className="text-sm font-semibold text-white mb-3">Contact</h4>
               <div className="space-y-2 text-sm text-slate-500">
                 <p><PhoneLink phone={data.phone} /></p><p><MapLink address={data.address} /></p>
-                {data.socialLinks && Object.entries(data.socialLinks).map(([platform, url]) => <a key={platform} href={url} target="_blank" rel="noopener noreferrer" className="block hover:text-slate-900 transition-colors capitalize">{platform}</a>)}
+                {data.socialLinks && Object.entries(data.socialLinks).map(([platform, url]) => <a key={platform} href={url} target="_blank" rel="noopener noreferrer" className="block hover:text-white transition-colors capitalize">{platform}</a>)}
               </div>
             </div>
           </div>
-          <div className="border-t border-pink-100 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="border-t border-white/5 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-sm text-slate-500"><Scissors size={14} weight="duotone" style={{ color: ROSE }} /><span>{data.businessName} &copy; {new Date().getFullYear()}</span></div>
             <div className="flex items-center gap-2 text-xs text-slate-600"><BluejayLogo className="w-4 h-4" /><span>Website created by Bluejay Business Solutions</span></div>
           </div>

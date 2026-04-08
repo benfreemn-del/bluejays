@@ -92,6 +92,32 @@ export default function DashboardPage() {
     }
   };
 
+  const handleStartFunnelForSelected = async () => {
+    if (!selectedProspect) {
+      alert("Select a prospect first, then start the funnel.");
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/funnel/enroll", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prospectIds: [selectedProspect.id] }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.error || data.message || "Failed to start funnel");
+        return;
+      }
+
+      alert(data.message || `Started funnel for ${selectedProspect.businessName}`);
+      fetchProspects();
+    } catch (err) {
+      alert(`Failed to start funnel: ${(err as Error).message}`);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Top Bar */}
@@ -124,6 +150,12 @@ export default function DashboardPage() {
               Priority List
             </a>
             <button
+              onClick={handleStartFunnelForSelected}
+              className="h-9 px-4 rounded-lg bg-surface border border-sky-500/30 text-sky-400 text-sm font-medium hover:border-sky-500/60 transition-colors"
+            >
+              {selectedProspect ? `Start Funnel: ${selectedProspect.businessName}` : "Start Funnel (Select Prospect)"}
+            </button>
+            <button
               onClick={async () => {
                 if (!confirm("Send test funnel to benfreemn@gmail.com? This will send 2 real emails.")) return;
                 try {
@@ -134,7 +166,7 @@ export default function DashboardPage() {
               }}
               className="h-9 px-4 rounded-lg bg-surface border border-purple-500/30 text-purple-400 text-sm font-medium hover:border-purple-500/60 transition-colors"
             >
-              Test Funnel
+              Send Ben Test Funnel
             </button>
             <button
               onClick={() => setAddLeadOpen(true)}

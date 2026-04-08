@@ -320,7 +320,7 @@ function ClaimBanner({ businessName, accentColor, prospectId }: {
       <div className="bg-[#1a1a2e]/90 backdrop-blur-sm border-t border-white/10 px-4 py-2 flex items-center justify-center gap-4">
         <p className="text-xs text-slate-400">
           <span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1.5 animate-pulse" />
-          47 churches in your area upgraded their website this month
+          Custom-built preview for this business
         </p>
         {timeLeft && timeLeft !== "EXPIRED" && (
           <p className="text-xs font-bold" style={{ color: accentColor }}>Preview expires in {timeLeft}</p>

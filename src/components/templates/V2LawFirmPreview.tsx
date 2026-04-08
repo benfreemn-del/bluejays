@@ -36,7 +36,7 @@ const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
 
 /* ───────────────────────── COLORS ───────────────────────── */
-const DARK = "#1a2540";
+const DARK = "#0f172a";
 const DEFAULT_EMERALD = "#059669";
 const EMERALD_LIGHT = "#34d399";
 const GOLD = "#d4a017";
@@ -241,7 +241,7 @@ function ShimmerBorder({ children, className = "", accent }: { children: React.R
   return (
     <div className={`relative rounded-2xl p-[1px] overflow-hidden ${className}`}>
       <motion.div className="absolute inset-0 rounded-2xl" style={{ background: `conic-gradient(from 0deg, transparent, ${accent}, transparent, ${GOLD}, transparent)`, willChange: "transform" }} animate={{ rotate: [0, 360] }} transition={{ duration: 4, repeat: Infinity, ease: "linear" }} />
-      <div className="relative rounded-2xl bg-[#1a2540] z-10">{children}</div>
+      <div className="relative rounded-2xl bg-[#0f172a] z-10">{children}</div>
     </div>
   );
 }
@@ -295,8 +295,8 @@ function ClaimBanner({ businessName, accentColor, prospectId }: { businessName: 
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50">
-      <div className="bg-[#1a2540]/90 backdrop-blur-sm border-t border-white/10 px-4 py-2 flex items-center justify-center gap-4">
-        <p className="text-xs text-slate-400"><span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1.5 animate-pulse" />47 businesses in your area upgraded their website this month</p>
+      <div className="bg-[#0f172a]/90 backdrop-blur-sm border-t border-white/10 px-4 py-2 flex items-center justify-center gap-4">
+        <p className="text-xs text-slate-400"><span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1.5 animate-pulse" />Custom-built preview for this business</p>
         {timeLeft && timeLeft !== "EXPIRED" && <p className="text-xs font-bold" style={{ color: accentColor }}>Preview expires in {timeLeft}</p>}
       </div>
       <div className="px-6 py-4 flex items-center justify-between gap-4" style={{ background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}10)`, borderTop: `1px solid ${accentColor}30` }}>
@@ -385,7 +385,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
 
       {/* ══════════════════ 2. HERO ══════════════════ */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, #1a2540 0%, #1a2540 50%, #152238 100%)" }} />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, #0f172a 0%, #0f172a 50%, #0a1628 100%)" }} />
         <LawPattern opacity={0.04} accent={EMERALD} />
         <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full blur-[200px] pointer-events-none" style={{ background: `${EMERALD}08` }} />
 
@@ -422,7 +422,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
 
       {/* ══════════════════ 3. STATS ══════════════════ */}
       <section className="relative z-10 py-16 overflow-hidden border-y" style={{ borderColor: `${EMERALD}1a` }}>
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #162035 0%, #1a2540 100%)" }} />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0c1320 0%, #0f172a 100%)" }} />
         <LawPattern opacity={0.02} accent={EMERALD} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] rounded-full blur-[180px]" style={{ background: `${EMERALD}08` }} /></div>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -446,7 +446,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
 
       {/* ══════════════════ 4. SERVICES ══════════════════ */}
       <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a2540 0%, #162238 50%, #1a2540 100%)" }} />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1522 50%, #0f172a 100%)" }} />
         <LawPattern accent={EMERALD} />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-[10%] right-[5%] w-[500px] h-[500px] rounded-full blur-[160px]" style={{ background: `${EMERALD}08` }} />
@@ -481,7 +481,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
 
       {/* ══════════════════ 5. WHY CHOOSE US / ABOUT ══════════════════ */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a2540 0%, #152035 50%, #1a2540 100%)" }} />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0b1320 50%, #0f172a 100%)" }} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${EMERALD}06` }} /></div>
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -523,7 +523,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
 
       {/* ══════════════════ 6. PROCESS ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a2540 0%, #162238 50%, #1a2540 100%)" }} />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1522 50%, #0f172a 100%)" }} />
         <LawPattern opacity={0.025} accent={EMERALD} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${GOLD}06` }} /></div>
 
@@ -548,7 +548,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
 
       {/* ══════════════════ 7. GALLERY ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a2540 0%, #152035 50%, #1a2540 100%)" }} />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0b1320 50%, #0f172a 100%)" }} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] left-[20%] w-[500px] h-[500px] rounded-full blur-[200px]" style={{ background: `${EMERALD}06` }} /></div>
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -572,7 +572,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
 
       {/* ══════════════════ 8. TESTIMONIALS ══════════════════ */}
       <section id="testimonials" className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a2540 0%, #162238 50%, #1a2540 100%)" }} />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1522 50%, #0f172a 100%)" }} />
         <LawPattern opacity={0.02} accent={EMERALD} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] right-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${EMERALD}06` }} /></div>
 
@@ -613,7 +613,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
 
       {/* ══════════════════ 10. SERVICE AREAS ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a2540 0%, #152035 50%, #1a2540 100%)" }} />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0b1320 50%, #0f172a 100%)" }} />
         <LawPattern opacity={0.02} accent={EMERALD} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[40%] right-[20%] w-[400px] h-[400px] rounded-full blur-[180px]" style={{ background: `${GOLD}06` }} /></div>
 
@@ -631,7 +631,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
       {/* ══════════════════ 11. HOURS ══════════════════ */}
       {data.hours && (
         <section className="relative z-10 py-24 md:py-32 overflow-hidden">
-          <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a2540 0%, #162238 50%, #1a2540 100%)" }} />
+          <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1522 50%, #0f172a 100%)" }} />
           <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${EMERALD}06` }} /></div>
           <div className="max-w-3xl mx-auto px-6 relative z-10">
             <SectionHeader badge="Office Hours" title="When We Are Available" accent={EMERALD} />
@@ -644,7 +644,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
 
       {/* ══════════════════ 12. FAQ ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a2540 0%, #162238 50%, #1a2540 100%)" }} />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1522 50%, #0f172a 100%)" }} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${EMERALD}06` }} /></div>
         <div className="max-w-3xl mx-auto px-6 relative z-10">
           <SectionHeader badge="FAQ" title="Common Questions" accent={EMERALD} />
@@ -658,7 +658,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
 
       {/* ══════════════════ 13. CONTACT ══════════════════ */}
       <section id="contact" className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a2540 0%, #152035 50%, #1a2540 100%)" }} />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0b1320 50%, #0f172a 100%)" }} />
         <LawPattern opacity={0.02} accent={EMERALD} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${EMERALD}06` }} /></div>
 
@@ -701,7 +701,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
 
       {/* ══════════════════ 14. GUARANTEE ══════════════════ */}
       <section className="relative z-10 py-16 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a2540 0%, #162238 100%)" }} />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1522 100%)" }} />
         <LawPattern opacity={0.015} accent={EMERALD} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full blur-[180px]" style={{ background: `${EMERALD}06` }} /></div>
         <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
@@ -726,7 +726,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
 
       {/* ══════════════════ 15. FOOTER ══════════════════ */}
       <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a2540 0%, #141c28 100%)" }} />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0a1018 100%)" }} />
         <LawPattern opacity={0.015} accent={EMERALD} />
         <div className="mx-auto max-w-6xl px-6 relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">

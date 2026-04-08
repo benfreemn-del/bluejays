@@ -15,6 +15,8 @@ This system is designed to function like a money printer. Every feature should d
 - **All generated sites must include the Bluejay footer branding** — "Website created by Bluejay Business Solutions" with the BluejayLogo SVG.
 - **Review approval required** — sites go to "pending-review" before outreach, not straight to "contacted".
 - **Color review agent must pass** — every generated site's color scheme is reviewed for vibrancy and category fit before approval.
+- **Social proof overlays MUST use real data or be removed. NEVER show fake or inflated numbers.**
+- **Personalized proposals MUST be generated before entering the sales funnel, combining all CRM data, scraped info, reviews, and notes.**
 
 ## Image Rules (NON-NEGOTIABLE)
 - **NEVER reuse the same stock photo across multiple templates** — every template must have completely unique images. If two templates use the same person photo, it's immediately obvious and kills trust.
