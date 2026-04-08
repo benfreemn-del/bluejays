@@ -1,5 +1,6 @@
 import type { Prospect } from "./types";
 import { CATEGORY_CONFIG } from "./types";
+import { EMAIL_FOOTER } from "./email-templates";
 
 /**
  * Smart Follow-Up Generator
@@ -59,7 +60,8 @@ People trust reviews more than anything else. When a potential customer lands on
 Thought you'd want to see it. Let me know what you think!
 
 Best,
-BlueJays Team`,
+BlueJays Team
+${EMAIL_FOOTER.replace("{{baseUrl}}", process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000").replace("{{prospectId}}", prospect.id)}`,
     },
     sms: `Hey ${name}! Saw a great review from ${review.name} about ${biz}. We featured it on the website we built you — check it out: ${previewUrl}`,
   };
@@ -81,7 +83,8 @@ But here's the thing — when someone Googles you and clicks through to your sit
 Your reviews tell people you're amazing. Your website should do the same. Take a look and let me know what you think.
 
 Best,
-BlueJays Team`,
+BlueJays Team
+${EMAIL_FOOTER.replace("{{baseUrl}}", process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000").replace("{{prospectId}}", prospect.id)}`,
     },
     sms: `Hey ${name}! ${rating} stars on ${reviews} reviews is amazing. The site we built matches that quality — take a look: ${previewUrl}`,
   };
@@ -105,7 +108,8 @@ Most ${category.toLowerCase()} websites bury their services. Yours puts them fro
 Take a look!
 
 Best,
-BlueJays Team`,
+BlueJays Team
+${EMAIL_FOOTER.replace("{{baseUrl}}", process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000").replace("{{prospectId}}", prospect.id)}`,
     },
     sms: `Hey ${name}! I highlighted ${topService.name} on the website we built for ${biz}. Check it out: ${previewUrl}`,
   };
@@ -129,7 +133,8 @@ I built you a site designed to convert visitors into customers: ${previewUrl}
 It's free to look at. If it doesn't blow you away, no worries at all.
 
 Best,
-BlueJays Team`,
+BlueJays Team
+${EMAIL_FOOTER.replace("{{baseUrl}}", process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000").replace("{{prospectId}}", prospect.id)}`,
     },
     sms: `Hey ${name}! ${reviews} reviews means people are finding ${biz} — the site we built converts those visitors into calls. Check it out: ${previewUrl}`,
   };
@@ -153,7 +158,8 @@ It's 100% free to look at. I built it specifically for ${biz} because I think yo
 Let me know what you think!
 
 Best,
-BlueJays Team`,
+BlueJays Team
+${EMAIL_FOOTER.replace("{{baseUrl}}", process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000").replace("{{prospectId}}", prospect.id)}`,
     },
     sms: `Hey ${name}! Quick question — does ${biz}'s website match the quality of your work? I built you a free upgrade: ${previewUrl}`,
   };
