@@ -119,11 +119,13 @@ export function reviewSiteQuality(
 
   // --- Score Calculation ---
   let score = 100;
+  let suggestionDeductions = 0;
   for (const issue of issues) {
     if (issue.severity === "critical") score -= 20;
     else if (issue.severity === "warning") score -= 10;
-    else score -= 3;
+    else { suggestionDeductions += 2; } // suggestions are minor (2pts, capped at 15)
   }
+  score -= Math.min(suggestionDeductions, 15); // Cap suggestion deductions
   score = Math.max(0, Math.min(100, score));
 
   const passed = score >= 70 && issues.filter((i) => i.severity === "critical").length === 0;
