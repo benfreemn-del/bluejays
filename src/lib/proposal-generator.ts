@@ -8,6 +8,14 @@ import { getSmsHistory } from "./sms";
 import { reviewSiteQuality, type QualityReport } from "./quality-review";
 import type { GeneratedSiteData } from "./generator";
 import { supabase, isSupabaseConfigured } from "./supabase";
+import { logCost } from "./cost-logger";
+
+/**
+ * GPT-4.1-mini cost estimate for proposal generation:
+ * ~2200 output tokens + ~1000 input tokens = ~3200 tokens
+ * At $0.40/1M input + $1.60/1M output ≈ $0.004 per proposal
+ */
+const PROPOSAL_GENERATION_COST = 0.004;
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const PROPOSALS_DIR = path.join(DATA_DIR, "proposals");
@@ -347,6 +355,20 @@ ${JSON.stringify({ context, painPoints }, null, 2)}`;
     response_format: { type: "json_object" },
     messages: [{ role: "user", content: prompt }],
     max_tokens: 2200,
+  });
+
+  // Log AI cost for proposal generation
+  const usage = completion.usage;
+  await logCost({
+    service: "openai",
+    action: "proposal_generation",
+    costUsd: PROPOSAL_GENERATION_COST,
+    metadata: {
+      model: "gpt-4.1-mini",
+      promptTokens: usage?.prompt_tokens,
+      completionTokens: usage?.completion_tokens,
+      totalTokens: usage?.total_tokens,
+    },
   });
 
   const raw = completion.choices[0]?.message?.content?.trim();

@@ -266,13 +266,31 @@ export default function SpendingPage() {
                     twilio_sms: "bg-purple-500",
                     twilio_voice: "bg-indigo-500",
                     site_generation: "bg-amber-500",
+                    manus: "bg-amber-500",          // Manus site generation
+                    openai: "bg-emerald-500",       // OpenAI GPT calls
+                    claude: "bg-violet-500",        // Anthropic Claude calls
+                    perplexity: "bg-cyan-500",      // Perplexity research calls
                     ai_response: "bg-red-500",
                     pipeline: "bg-sky-500",
+                  };
+                  // Human-readable service labels
+                  const serviceLabels: Record<string, string> = {
+                    google_places: "Google Places",
+                    sendgrid_email: "SendGrid Email",
+                    twilio_sms: "Twilio SMS",
+                    twilio_voice: "Twilio Voice",
+                    site_generation: "Site Generation",
+                    manus: "Manus (Site Gen)",
+                    openai: "OpenAI (GPT)",
+                    claude: "Anthropic (Claude)",
+                    perplexity: "Perplexity AI",
+                    ai_response: "AI Sales Agent",
+                    pipeline: "Pipeline Total",
                   };
                   return (
                     <div key={service}>
                       <div className="flex justify-between items-center text-sm mb-1">
-                        <span className="text-white/60 capitalize">{service.replace(/_/g, " ")}</span>
+                        <span className="text-white/60">{serviceLabels[service] || service.replace(/_/g, " ")}</span>
                         <span className="font-medium">${cost.toFixed(4)} ({pct.toFixed(1)}%)</span>
                       </div>
                       <div className="h-2 bg-white/[0.04] rounded-full overflow-hidden">

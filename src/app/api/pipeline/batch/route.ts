@@ -262,10 +262,10 @@ export async function POST(request: NextRequest) {
         await logCost({
           batchId,
           prospectId: id,
-          service: "site_generation",
-          action: "batch_generate",
+          service: "manus",
+          action: "site_generation",
           costUsd: genCost,
-          metadata: { quality, methods, businessName },
+          metadata: { quality, methods, businessName, model: "template_engine" },
         });
 
         batch.results.generated++;

@@ -3,6 +3,7 @@ import { getProspect, updateProspect } from "@/lib/store";
 import { generatePreview } from "@/lib/generator";
 import { extractBusinessData } from "@/lib/data-extractor";
 import { recommendTheme } from "@/lib/theme-recommender";
+import { logCost, COST_RATES } from "@/lib/cost-logger";
 
 // Vercel Pro: up to 300s
 export const maxDuration = 120;
@@ -79,6 +80,21 @@ export async function POST(
 
     // STEP 3: Generate preview (quality gate built into generator)
     const previewUrl = await generatePreview(prospect);
+
+    // Log site generation cost (Manus template engine + data extraction pipeline)
+    await logCost({
+      prospectId: id,
+      service: "manus",
+      action: "site_generation",
+      costUsd: COST_RATES.site_generation,
+      metadata: {
+        model: "template_engine",
+        quality,
+        methods,
+        theme: prospect.selectedTheme,
+        category: prospect.category,
+      },
+    });
 
     return NextResponse.json({
       message: `Preview generated for ${prospect.businessName}`,

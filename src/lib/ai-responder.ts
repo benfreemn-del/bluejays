@@ -120,13 +120,13 @@ async function getAiResponse(prompt: string, prospectId?: string): Promise<strin
       throw new Error(`Claude API error: ${response.status}`);
     }
 
-    // Log AI cost
+    // Log AI cost — Claude Sonnet: ~$3/1M input + $15/1M output, ~$0.003 per short response
     await logCost({
       prospectId,
-      service: "ai_response",
-      action: "classify_and_respond",
+      service: "claude",
+      action: "sales_agent_response",
       costUsd: COST_RATES.site_generation, // ~$0.003 per response
-      metadata: { model: "claude-sonnet-4-20250514" },
+      metadata: { model: "claude-sonnet-4-20250514", channel: "inbound" },
     });
 
     const data = await response.json();
@@ -142,12 +142,13 @@ async function getAiResponse(prompt: string, prospectId?: string): Promise<strin
     max_tokens: 1024,
   });
 
+  // Log AI cost — GPT-4.1-mini: ~$0.40/1M input + $1.60/1M output, ~$0.003 per short response
   await logCost({
     prospectId,
-    service: "ai_response",
-    action: "classify_and_respond",
+    service: "openai",
+    action: "sales_agent_response",
     costUsd: COST_RATES.site_generation,
-    metadata: { model: "gpt-4.1-mini" },
+    metadata: { model: "gpt-4.1-mini", channel: "inbound" },
   });
 
   return completion.choices[0]?.message?.content || "";

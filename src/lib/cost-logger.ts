@@ -23,13 +23,26 @@ import { supabase, isSupabaseConfigured } from "./supabase";
 
 /** Known cost rates per service action */
 export const COST_RATES = {
+  // Google APIs
   google_places_detail: 0.017,
   google_places_photo: 0.007,
   google_places_search: 0.032,
+  // Twilio
   twilio_sms: 0.0079,
   twilio_voice: 0.015,
+  // SendGrid
   sendgrid_email: 0.0006,
-  site_generation: 0.003, // AI cost for generation
+  // Manus / AI site generation (template engine)
+  site_generation: 0.003,
+  manus_site_generation: 0.003,
+  // OpenAI GPT-4.1-mini (~$0.40/1M input + $1.60/1M output)
+  openai_sales_response: 0.003,      // ~1K input + 1K output tokens
+  openai_proposal_generation: 0.004, // ~1K input + 2.2K output tokens
+  // Anthropic Claude Sonnet (~$3/1M input + $15/1M output)
+  claude_sales_response: 0.003,      // ~1K input + 1K output tokens
+  // Perplexity Sonar (~$5/1M tokens)
+  perplexity_research: 0.005,        // ~1K tokens per query
+  perplexity_pitch: 0.005,
 } as const;
 
 export type CostService = keyof typeof COST_RATES;

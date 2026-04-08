@@ -1,6 +1,10 @@
 import type { Category, ScrapedData } from "./types";
+import { logCost } from "./cost-logger";
 
 const PERPLEXITY_API_KEY = process.env.PERPLEXITY_API_KEY;
+
+/** Perplexity sonar model cost: ~$5 per 1M tokens, ~$0.005 per query */
+const PERPLEXITY_COST_PER_QUERY = 0.005;
 
 interface PerplexityResponse {
   choices: { message: { content: string } }[];
@@ -31,6 +35,22 @@ async function queryPerplexity(prompt: string): Promise<string> {
   return data.choices[0].message.content;
 }
 
+async function queryPerplexityWithCost(
+  prompt: string,
+  action: string,
+  prospectId?: string
+): Promise<string> {
+  const result = await queryPerplexity(prompt);
+  await logCost({
+    prospectId,
+    service: "perplexity",
+    action,
+    costUsd: PERPLEXITY_COST_PER_QUERY,
+    metadata: { model: "sonar", promptLength: prompt.length },
+  });
+  return result;
+}
+
 export async function researchBusiness(
   businessName: string,
   city: string,
@@ -53,7 +73,7 @@ export async function researchBusiness(
 
 Format each section clearly with labels.`;
 
-  const result = await queryPerplexity(prompt);
+  const result = await queryPerplexityWithCost(prompt, "research_business");
   return parsePerplexityResult(result, businessName);
 }
 
@@ -86,7 +106,7 @@ export async function findBusinesses(
 
 Focus on established businesses that appear to be doing well (good reviews, been around for years) but have weak web presence. List them numbered.`;
 
-  const result = await queryPerplexity(prompt);
+  const result = await queryPerplexityWithCost(prompt, "find_businesses");
   return parseBusinessList(result);
 }
 
@@ -115,7 +135,7 @@ Write THREE things:
 
 Format clearly with "EMAIL SUBJECT:", "EMAIL BODY:", "INSTAGRAM DM:", "FOLLOW-UP DM:" labels.`;
 
-  const result = await queryPerplexity(prompt);
+  const result = await queryPerplexityWithCost(prompt, "generate_pitch");
   return parsePitchResult(result, businessName, name, previewUrl);
 }
 
