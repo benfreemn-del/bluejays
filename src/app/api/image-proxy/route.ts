@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { logCost, COST_RATES } from "@/lib/cost-logger";
 
 /**
  * Image Proxy — serves external images through our server.
@@ -16,6 +17,7 @@ const GOOGLE_API_KEY = process.env.GOOGLE_PLACES_API_KEY;
 
 export async function GET(request: NextRequest) {
   const url = request.nextUrl.searchParams.get("url");
+  const prospectId = request.nextUrl.searchParams.get("prospectId") || undefined;
 
   if (!url) {
     return NextResponse.json({ error: "Missing url parameter" }, { status: 400 });
@@ -23,9 +25,10 @@ export async function GET(request: NextRequest) {
 
   try {
     let fetchUrl = decodeURIComponent(url).trim();
+    const isGooglePhoto = fetchUrl.includes("maps.googleapis.com");
 
     // If it's a Google Places photo URL, ensure API key is appended
-    if (fetchUrl.includes("maps.googleapis.com") && GOOGLE_API_KEY) {
+    if (isGooglePhoto && GOOGLE_API_KEY) {
       if (!fetchUrl.includes("key=")) {
         fetchUrl += (fetchUrl.includes("?") ? "&" : "?") + `key=${GOOGLE_API_KEY}`;
       }
@@ -51,6 +54,17 @@ export async function GET(request: NextRequest) {
           }
         }
       );
+    }
+
+    // Log cost for Google Places photo fetches
+    if (isGooglePhoto) {
+      await logCost({
+        prospectId,
+        service: "google_places_photo",
+        action: "generate",
+        costUsd: COST_RATES.google_places_photo,
+        metadata: { url: fetchUrl.substring(0, 200) },
+      });
     }
 
     const contentType = response.headers.get("content-type") || "image/jpeg";

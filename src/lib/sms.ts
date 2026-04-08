@@ -3,6 +3,7 @@ import path from "path";
 import { v4 as uuidv4 } from "uuid";
 import type { Prospect } from "./types";
 import { supabase, isSupabaseConfigured } from "./supabase";
+import { logCost, COST_RATES } from "./cost-logger";
 
 const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID;
 const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN;
@@ -18,13 +19,14 @@ export interface SentSms {
   sequence: number;
   sentAt: string;
   method: "twilio" | "mock";
+  messageSid?: string;
 }
 
 function ensureSmsDir() {
   if (!fs.existsSync(SMS_DIR)) fs.mkdirSync(SMS_DIR, { recursive: true });
 }
 
-async function sendViaTwilio(to: string, body: string): Promise<boolean> {
+async function sendViaTwilio(to: string, body: string): Promise<{ ok: boolean; sid?: string }> {
   const url = `https://api.twilio.com/2010-04-01/Accounts/${TWILIO_ACCOUNT_SID}/Messages.json`;
   const response = await fetch(url, {
     method: "POST",
@@ -38,12 +40,28 @@ async function sendViaTwilio(to: string, body: string): Promise<boolean> {
       Body: body,
     }),
   });
-  return response.ok;
+  if (!response.ok) return { ok: false };
+  const data = await response.json();
+  return { ok: true, sid: data.sid };
 }
 
 async function logSms(sms: SentSms) {
   if (isSupabaseConfigured()) {
-    // TODO: add sms table to schema
+    try {
+      await supabase.from("sms_messages").insert({
+        id: sms.id,
+        prospect_id: sms.prospectId,
+        to_number: sms.to,
+        from_number: sms.from,
+        body: sms.body,
+        sequence: sms.sequence,
+        sent_at: sms.sentAt,
+        method: sms.method,
+        message_sid: sms.messageSid || null,
+      });
+    } catch (err) {
+      console.error("SMS log to Supabase failed:", err);
+    }
     return;
   }
   ensureSmsDir();
@@ -74,11 +92,21 @@ export async function sendSms(
   };
 
   if (TWILIO_ACCOUNT_SID && TWILIO_AUTH_TOKEN && TWILIO_PHONE_NUMBER) {
-    console.log(`  📱 Sending SMS via Twilio to ${to}...`);
-    const success = await sendViaTwilio(to, body);
-    if (!success) throw new Error("Twilio SMS failed");
+    console.log(`  Sending SMS via Twilio to ${to}...`);
+    const result = await sendViaTwilio(to, body);
+    if (!result.ok) throw new Error("Twilio SMS failed");
+    sms.messageSid = result.sid;
+
+    // Log the cost of this SMS send
+    await logCost({
+      prospectId,
+      service: "twilio_sms",
+      action: `sms_sequence_${sequence}`,
+      costUsd: COST_RATES.twilio_sms,
+      metadata: { messageSid: result.sid, to },
+    });
   } else {
-    console.log(`  📱 [MOCK] SMS to ${to}: "${body.substring(0, 60)}..."`);
+    console.log(`  [MOCK] SMS to ${to}: "${body.substring(0, 60)}..."`);
   }
 
   await logSms(sms);
@@ -87,7 +115,27 @@ export async function sendSms(
 
 export async function getSmsHistory(prospectId: string): Promise<SentSms[]> {
   if (isSupabaseConfigured()) {
-    return [];
+    try {
+      const { data, error } = await supabase
+        .from("sms_messages")
+        .select("*")
+        .eq("prospect_id", prospectId)
+        .order("sent_at", { ascending: true });
+      if (error || !data) return [];
+      return data.map((row: Record<string, unknown>) => ({
+        id: row.id as string,
+        prospectId: row.prospect_id as string,
+        to: row.to_number as string,
+        from: row.from_number as string,
+        body: row.body as string,
+        sequence: row.sequence as number,
+        sentAt: row.sent_at as string,
+        method: row.method as "twilio" | "mock",
+        messageSid: row.message_sid as string | undefined,
+      }));
+    } catch {
+      return [];
+    }
   }
   ensureSmsDir();
   const filePath = path.join(SMS_DIR, `${prospectId}.json`);

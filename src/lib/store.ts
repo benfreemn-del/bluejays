@@ -43,6 +43,10 @@ function dbToProspect(row: Record<string, unknown>): Prospect {
     status: (row.status as string) as Prospect["status"],
     scrapedData: row.scraped_data as ScrapedData | undefined,
     generatedSiteUrl: row.generated_site_url as string | undefined,
+    stripeCustomerId: row.stripe_customer_id as string | undefined,
+    paidAt: row.paid_at as string | undefined,
+    subscriptionStatus: row.subscription_status as Prospect["subscriptionStatus"],
+    funnelPaused: row.funnel_paused as boolean | undefined,
     createdAt: row.created_at as string,
     updatedAt: row.updated_at as string,
   };
@@ -66,6 +70,10 @@ function prospectToDb(p: Prospect) {
     status: p.status,
     scraped_data: p.scrapedData || {},
     generated_site_url: p.generatedSiteUrl || null,
+    stripe_customer_id: p.stripeCustomerId || null,
+    paid_at: p.paidAt || null,
+    subscription_status: p.subscriptionStatus || "none",
+    funnel_paused: p.funnelPaused || false,
   };
 }
 
@@ -104,6 +112,46 @@ export async function getProspect(id: string): Promise<Prospect | undefined> {
   return readProspectsFile().find((p) => p.id === id);
 }
 
+/**
+ * Look up a prospect by email address.
+ */
+export async function getProspectByEmail(email: string): Promise<Prospect | undefined> {
+  if (isSupabaseConfigured()) {
+    const { data, error } = await supabase
+      .from("prospects")
+      .select("*")
+      .eq("email", email)
+      .limit(1)
+      .single();
+    if (error || !data) return undefined;
+    return dbToProspect(data);
+  }
+  return readProspectsFile().find((p) => p.email === email);
+}
+
+/**
+ * Look up a prospect by phone number.
+ * Normalizes the phone number by stripping non-digit characters for matching.
+ */
+export async function getProspectByPhone(phone: string): Promise<Prospect | undefined> {
+  const normalized = phone.replace(/\D/g, "");
+  if (isSupabaseConfigured()) {
+    // Try exact match first, then normalized
+    const { data, error } = await supabase
+      .from("prospects")
+      .select("*")
+      .or(`phone.eq.${phone},phone.eq.+${normalized},phone.eq.+1${normalized}`)
+      .limit(1);
+    if (error || !data || data.length === 0) return undefined;
+    return dbToProspect(data[0]);
+  }
+  return readProspectsFile().find((p) => {
+    if (!p.phone) return false;
+    const pNorm = p.phone.replace(/\D/g, "");
+    return pNorm === normalized || pNorm.endsWith(normalized) || normalized.endsWith(pNorm);
+  });
+}
+
 export async function addProspect(prospect: Prospect): Promise<Prospect> {
   if (isSupabaseConfigured()) {
     const { error } = await supabase
@@ -134,6 +182,10 @@ export async function updateProspect(
     if (updates.phone) dbUpdates.phone = updates.phone;
     if (updates.email) dbUpdates.email = updates.email;
     if (updates.ownerName) dbUpdates.owner_name = updates.ownerName;
+    if (updates.stripeCustomerId) dbUpdates.stripe_customer_id = updates.stripeCustomerId;
+    if (updates.paidAt) dbUpdates.paid_at = updates.paidAt;
+    if (updates.subscriptionStatus) dbUpdates.subscription_status = updates.subscriptionStatus;
+    if (updates.funnelPaused !== undefined) dbUpdates.funnel_paused = updates.funnelPaused;
 
     const { data, error } = await supabase
       .from("prospects")

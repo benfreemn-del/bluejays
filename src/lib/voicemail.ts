@@ -11,6 +11,7 @@
 
 import { v4 as uuidv4 } from "uuid";
 import { supabase, isSupabaseConfigured } from "./supabase";
+import { logCost, COST_RATES } from "./cost-logger";
 
 const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID;
 const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN;
@@ -50,14 +51,14 @@ export async function dropVoicemail(
   };
 
   if (!TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN || !TWILIO_PHONE_NUMBER) {
-    console.log(`  📞 [MOCK] Voicemail drop to ${to} for ${businessName}`);
+    console.log(`  [MOCK] Voicemail drop to ${to} for ${businessName}`);
     drop.status = "sent";
     await logVoicemailDrop(drop);
     return drop;
   }
 
   try {
-    console.log(`  📞 Dropping voicemail to ${to} for ${businessName}...`);
+    console.log(`  Dropping voicemail to ${to} for ${businessName}...`);
 
     // Create a Twilio call with AMD (Answering Machine Detection)
     const url = `https://api.twilio.com/2010-04-01/Accounts/${TWILIO_ACCOUNT_SID}/Calls.json`;
@@ -84,14 +85,33 @@ export async function dropVoicemail(
     if (response.ok) {
       const data = await response.json();
       drop.status = "sent";
-      console.log(`  ✅ Voicemail call initiated: ${data.sid}`);
+      console.log(`  Voicemail call initiated: ${data.sid}`);
+
+      // Log the cost of this voicemail drop
+      await logCost({
+        prospectId,
+        service: "twilio_voice",
+        action: "voicemail_drop",
+        costUsd: COST_RATES.twilio_voice,
+        metadata: { callSid: data.sid, to, businessName },
+      });
     } else {
       const errText = await response.text();
-      console.error(`  ❌ Twilio call failed: ${errText}`);
+      console.error(`  Twilio call failed: ${errText}`);
       drop.status = "failed";
+
+      // Log the failed cost attempt
+      await logCost({
+        prospectId,
+        service: "twilio_voice",
+        action: "voicemail_drop",
+        costUsd: 0,
+        status: "failed",
+        metadata: { error: errText.substring(0, 200), to },
+      });
     }
   } catch (error) {
-    console.error(`  ❌ Voicemail drop error: ${(error as Error).message}`);
+    console.error(`  Voicemail drop error: ${(error as Error).message}`);
     drop.status = "failed";
   }
 
@@ -105,8 +125,8 @@ export async function dropVoicemail(
  * Otherwise, use Twilio TTS with a natural-sounding script.
  */
 export function getVoicemailTwiml(businessName: string): string {
-  // Check if a custom recording exists
-  const hasRecording = false; // TODO: check if /public/voicemail.mp3 exists
+  // Check if a custom recording exists — set to true once Ben uploads /public/voicemail.mp3
+  const hasRecording = false;
 
   if (hasRecording) {
     return `<?xml version="1.0" encoding="UTF-8"?>
@@ -162,7 +182,7 @@ async function logVoicemailDrop(drop: VoicemailDrop) {
       // Table might not exist yet
     }
   }
-  console.log(`  📞 Voicemail drop logged: ${drop.status}`);
+  console.log(`  Voicemail drop logged: ${drop.status}`);
 }
 
 export function isTwilioVoiceConfigured(): boolean {

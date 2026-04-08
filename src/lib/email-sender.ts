@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
 import { supabase, isSupabaseConfigured } from "./supabase";
+import { logCost, COST_RATES } from "./cost-logger";
 
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 // Hardcoded — this must match the verified sender identity in SendGrid
@@ -121,8 +122,17 @@ export async function sendEmail(
     if (!success) {
       throw new Error(`SendGrid API failed`);
     }
+
+    // Log the cost of this email send
+    await logCost({
+      prospectId,
+      service: "sendgrid_email",
+      action: `email_sequence_${sequence}`,
+      costUsd: COST_RATES.sendgrid_email,
+      metadata: { emailId: email.id, to, subject: cleanSubject || subject },
+    });
   } else {
-    console.log(`  📧 [MOCK] Email to ${to}: "${subject}"`);
+    console.log(`  [MOCK] Email to ${to}: "${subject}"`);
   }
 
   // Always log for history

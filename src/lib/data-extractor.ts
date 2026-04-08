@@ -10,6 +10,7 @@
 
 import { scrapeWebsite } from "./scraper";
 import type { ScrapedData } from "./types";
+import { logCost, COST_RATES } from "./cost-logger";
 
 const GOOGLE_API_KEY = process.env.GOOGLE_PLACES_API_KEY;
 
@@ -27,7 +28,8 @@ export async function extractBusinessData(
   businessName: string,
   city: string,
   website?: string | null,
-  placeId?: string | null
+  placeId?: string | null,
+  prospectId?: string
 ): Promise<ExtractionResult> {
   const methods: string[] = [];
   let data: ScrapedData = {
@@ -40,7 +42,7 @@ export async function extractBusinessData(
   // ── LEVEL 1: Cheerio HTML scraper ──
   if (website) {
     try {
-      console.log(`  📋 Level 1: Cheerio scraping ${website}...`);
+      console.log(`  Level 1: Cheerio scraping ${website}...`);
       const scraped = await scrapeWebsite(website);
       const hasUsefulData =
         scraped.phone ||
@@ -52,58 +54,50 @@ export async function extractBusinessData(
         data = mergeScrapedData(data, scraped);
         methods.push("cheerio");
         console.log(
-          `  ✅ Level 1 success: phone=${!!data.phone}, services=${data.services.length}, photos=${data.photos.length}`
+          `  Level 1 success: phone=${!!data.phone}, services=${data.services.length}, photos=${data.photos.length}`
         );
       } else {
-        console.log(`  ⚠️ Level 1: Cheerio returned no useful data (site may use JS rendering)`);
+        console.log(`  Level 1 returned no useful data`);
       }
     } catch (err) {
-      console.log(`  ⚠️ Level 1 failed: ${(err as Error).message}`);
+      console.log(`  Level 1 failed: ${(err as Error).message}`);
     }
   }
 
-  // ── LEVEL 2: Google Places Details API ──
-  if (!data.phone || data.services.length === 0 || data.photos.length === 0) {
+  // ── LEVEL 2: Google Places Details ──
+  if (GOOGLE_API_KEY) {
     try {
-      console.log(`  📋 Level 2: Google Places Details...`);
-      const placeData = await fetchGooglePlaceDetails(businessName, city, placeId);
+      console.log(`  Level 2: Google Places Details...`);
+      const placeData = await fetchGooglePlaceDetails(businessName, city, placeId, prospectId);
       if (placeData) {
         data = mergeScrapedData(data, placeData);
         methods.push("google-places");
         console.log(
-          `  ✅ Level 2 success: phone=${!!data.phone}, photos=${data.photos.length}`
+          `  Level 2 success: phone=${!!data.phone}, photos=${data.photos.length}`
         );
       }
     } catch (err) {
-      console.log(`  ⚠️ Level 2 failed: ${(err as Error).message}`);
+      console.log(`  Level 2 failed: ${(err as Error).message}`);
     }
   }
 
   // ── LEVEL 3: Web search fallback ──
-  if (!data.phone || data.services.length === 0) {
+  if (!data.phone || data.photos.length === 0) {
     try {
-      console.log(`  📋 Level 3: Web search fallback...`);
+      console.log(`  Level 3: Web search fallback...`);
       const searchData = await searchForBusinessData(businessName, city);
       if (searchData) {
         data = mergeScrapedData(data, searchData);
         methods.push("web-search");
-        console.log(
-          `  ✅ Level 3 success: phone=${!!data.phone}, services=${data.services.length}`
-        );
+        console.log(`  Level 3 success: phone=${!!data.phone}`);
       }
     } catch (err) {
-      console.log(`  ⚠️ Level 3 failed: ${(err as Error).message}`);
+      console.log(`  Level 3 failed: ${(err as Error).message}`);
     }
   }
 
-  // Ensure business name is set
-  data.businessName = data.businessName || businessName;
-
-  // Calculate quality
+  // Calculate quality score
   const quality = calculateQuality(data);
-  console.log(
-    `  📊 Extraction complete: quality=${quality}, methods=[${methods.join(", ")}], phone=${!!data.phone}, services=${data.services.length}, photos=${data.photos.length}`
-  );
 
   return { data, methods, quality };
 }
@@ -114,7 +108,8 @@ export async function extractBusinessData(
 async function fetchGooglePlaceDetails(
   businessName: string,
   city: string,
-  placeId?: string | null
+  placeId?: string | null,
+  prospectId?: string
 ): Promise<Partial<ScrapedData> | null> {
   if (!GOOGLE_API_KEY) {
     console.log("    No Google API key configured");
@@ -129,6 +124,16 @@ async function fetchGooglePlaceDetails(
     )}&key=${GOOGLE_API_KEY}`;
     const searchRes = await fetch(searchUrl, { signal: AbortSignal.timeout(10000) });
     const searchData = await searchRes.json();
+
+    // Log cost for the text search
+    await logCost({
+      prospectId,
+      service: "google_places_search",
+      action: "scout",
+      costUsd: COST_RATES.google_places_search,
+      metadata: { query: `${businessName} in ${city}` },
+    });
+
     if (searchData.status === "OK" && searchData.results?.[0]) {
       resolvedPlaceId = searchData.results[0].place_id;
     } else {
@@ -140,6 +145,15 @@ async function fetchGooglePlaceDetails(
   const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${resolvedPlaceId}&fields=formatted_phone_number,website,opening_hours,photos,reviews,editorial_summary&key=${GOOGLE_API_KEY}`;
   const detailsRes = await fetch(detailsUrl, { signal: AbortSignal.timeout(10000) });
   const detailsData = await detailsRes.json();
+
+  // Log cost for the details request
+  await logCost({
+    prospectId,
+    service: "google_places_detail",
+    action: "scout",
+    costUsd: COST_RATES.google_places_detail,
+    metadata: { placeId: resolvedPlaceId },
+  });
 
   if (!detailsData.result) return null;
 
@@ -201,86 +215,86 @@ async function searchForBusinessData(
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-");
 
-    // Try Google search for the business phone number
-    const searchQuery = encodeURIComponent(
-      `"${businessName}" ${city} phone number site:yelp.com OR site:bbb.org OR site:yellowpages.com`
-    );
+    const yelpUrl = `https://www.yelp.com/biz/${yelpSlug}-${citySlug}`;
+    const response = await fetch(yelpUrl, {
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+      },
+      signal: AbortSignal.timeout(8000),
+      redirect: "follow",
+    });
 
-    // Use Google Places text search as a more reliable method
-    if (GOOGLE_API_KEY) {
-      const searchUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(
-        `${businessName} in ${city}`
-      )}&key=${GOOGLE_API_KEY}`;
-      const res = await fetch(searchUrl, { signal: AbortSignal.timeout(10000) });
-      const searchData = await res.json();
+    if (response.ok) {
+      const html = await response.text();
+      const data: Partial<ScrapedData> = {};
 
-      if (searchData.status === "OK" && searchData.results?.[0]) {
-        const place = searchData.results[0];
-        const data: Partial<ScrapedData> = {};
-
-        // Get details for the first result
-        if (place.place_id) {
-          const details = await fetchGooglePlaceDetails(businessName, city, place.place_id);
-          if (details) return details;
-        }
+      // Extract phone from Yelp page
+      const phoneMatch = html.match(
+        /\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/
+      );
+      if (phoneMatch) {
+        data.phone = phoneMatch[0];
       }
+
+      return Object.keys(data).length > 0 ? data : null;
     }
   } catch {
-    // Search failed
+    // Yelp search failed, continue
   }
 
   return null;
 }
 
 /**
- * Merge new data into existing data, preferring non-empty values.
+ * Merge two ScrapedData objects, preferring non-empty values from the newer source.
  */
 function mergeScrapedData(
   existing: ScrapedData,
-  newData: Partial<ScrapedData>
+  incoming: Partial<ScrapedData>
 ): ScrapedData {
   return {
-    businessName: newData.businessName || existing.businessName,
-    tagline: newData.tagline || existing.tagline,
-    phone: newData.phone || existing.phone,
-    address: newData.address || existing.address,
+    businessName: incoming.businessName || existing.businessName,
+    tagline: incoming.tagline || existing.tagline,
+    email: incoming.email || existing.email,
+    phone: incoming.phone || existing.phone,
+    address: incoming.address || existing.address,
     services:
-      (newData.services?.length || 0) > (existing.services?.length || 0)
-        ? newData.services!
+      incoming.services && incoming.services.length > 0
+        ? incoming.services
         : existing.services,
     testimonials:
-      (newData.testimonials?.length || 0) > (existing.testimonials?.length || 0)
-        ? newData.testimonials!
+      incoming.testimonials && incoming.testimonials.length > 0
+        ? incoming.testimonials
         : existing.testimonials,
-    photos: [
-      ...existing.photos,
-      ...(newData.photos || []).filter((p) => !existing.photos.includes(p)),
-    ].slice(0, 20),
-    about: newData.about || existing.about,
-    hours: newData.hours || existing.hours,
-    socialLinks: { ...existing.socialLinks, ...newData.socialLinks },
-    brandColor: newData.brandColor || existing.brandColor,
-    logoUrl: newData.logoUrl || existing.logoUrl,
+    photos:
+      incoming.photos && incoming.photos.length > 0
+        ? [...new Set([...existing.photos, ...incoming.photos])]
+        : existing.photos,
+    hours: incoming.hours || existing.hours,
+    socialLinks: { ...existing.socialLinks, ...incoming.socialLinks },
+    about: incoming.about || existing.about,
+    brandColor: incoming.brandColor || existing.brandColor,
+    logoUrl: incoming.logoUrl || existing.logoUrl,
   };
 }
 
 /**
- * Calculate data quality based on what we have.
+ * Calculate data quality based on completeness.
  */
-function calculateQuality(data: ScrapedData): "high" | "medium" | "low" {
-  const checks = [
-    !!data.phone,
-    data.services.length >= 3,
-    !!data.about && data.about.length > 50,
-    data.photos.length >= 2,
-    !!data.brandColor,
-    data.testimonials.length >= 1,
-    !!data.hours,
-    !!data.tagline,
-    !!data.address,
-  ];
-  const score = checks.filter(Boolean).length;
-  if (score >= 6) return "high";
-  if (score >= 3) return "medium";
+function calculateQuality(
+  data: ScrapedData
+): "high" | "medium" | "low" {
+  let score = 0;
+  if (data.phone) score += 3;
+  if (data.about) score += 2;
+  if (data.services.length > 0) score += 2;
+  if (data.photos.length > 0) score += 2;
+  if (data.testimonials.length > 0) score += 1;
+  if (data.hours) score += 1;
+  if (data.email) score += 1;
+
+  if (score >= 8) return "high";
+  if (score >= 4) return "medium";
   return "low";
 }

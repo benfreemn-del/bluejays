@@ -49,9 +49,14 @@ export type ProspectStatus =
   | "approved"
   | "deployed"
   | "contacted"
+  | "engaged"
+  | "link_clicked"
   | "responded"
+  | "interested"
+  | "claimed"
   | "paid"
   | "dismissed"
+  | "unsubscribed"
   | "pro-bono";
 
 export interface Prospect {
@@ -71,6 +76,10 @@ export interface Prospect {
   status: ProspectStatus;
   scrapedData?: ScrapedData;
   generatedSiteUrl?: string;
+  stripeCustomerId?: string;
+  paidAt?: string;
+  subscriptionStatus?: "none" | "active" | "past_due" | "cancelled";
+  funnelPaused?: boolean;
   createdAt: string;
   updatedAt: string;
 }
