@@ -258,6 +258,9 @@ The sales agent is a LIVING SYSTEM that must improve over time, not stay static.
 - **Suggestion deductions in quality gate add up fast** — cap them at 15pts total so anonymous Google reviews ("Happy Customer") don't tank the score for otherwise good sites.
 - **SendGrid domain auth requires the domain WITHOUT https://** — just "bluejayportfolio.com", not "https://bluejayportfolio.com/". This caused days of 401 errors.
 - **Vercel env vars are sensitive to trailing characters** — always verify no extra space or newline after pasting API keys.
+- **FROM_EMAIL must be hardcoded, not from env var** — the Vercel FROM_EMAIL env var was set to an invalid value causing "Invalid from email address" errors. Hardcoded to `bluejaycontactme@gmail.com` in email-sender.ts to prevent this.
+- **Vercel serverless functions have READ-ONLY filesystems** — cannot write to `data/emails/` or any local directory. Skip file logging when `process.env.VERCEL` is set. Use Supabase for production logging instead.
+- **When debugging API failures, check the ACTUAL error response** — don't assume it's the API key. Add error detail logging (response status + body) to every external API call. The error "SendGrid API failed" was useless — "Invalid from email address" was the real issue.
 
 ## Tech Stack
 - Next.js 16 + React 19 + TypeScript + Tailwind v4 + Framer Motion
