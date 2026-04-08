@@ -951,7 +951,7 @@ export default function V2ElectricianPage() {
                 desc: "Full 400-amp service upgrade for a downtown Seattle office building.",
               },
               {
-                src: "https://images.unsplash.com/photo-1611348586804-61bf6c080437?w=600&q=80",
+                src: "https://images.unsplash.com/photo-1555664424-778a1e5e1b48?w=600&q=80",
                 title: "Residential Smart Home Wiring",
                 desc: "Complete smart home wiring and automation for a modern Bellevue residence.",
               },

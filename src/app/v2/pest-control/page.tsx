@@ -337,7 +337,7 @@ export default function V2PestControlPage() {
             </div>
           </div>
           <div className="relative rounded-2xl overflow-hidden aspect-[4/3]">
-            <img src="https://images.unsplash.com/photo-1632935318567-c83e7f8b0a0c?w=800&q=80" alt="Pest control technician inspecting a home" className="w-full h-full object-cover" />
+            <img src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=800&q=80" alt="Pest control technician inspecting a home" className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
           </div>
         </div>

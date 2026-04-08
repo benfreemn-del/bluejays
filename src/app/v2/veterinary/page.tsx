@@ -205,7 +205,7 @@ const petGallery = [
   { src: "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&q=80", alt: "Two dogs playing" },
   { src: "https://images.unsplash.com/photo-1495360010541-f48722b34f7d?w=600&q=80", alt: "Orange cat close up" },
   { src: "https://images.unsplash.com/photo-1596492784531-6e6eb5ea9993?w=600&q=80", alt: "Puppy at vet" },
-  { src: "https://images.unsplash.com/photo-1526336024174-e58f5cdd8e13?w=600&q=80", alt: "Cat being examined" },
+  { src: "https://images.unsplash.com/photo-1495360010541-f48722b34f7d?w=600&q=80", alt: "Cat being examined" },
 ];
 
 const testimonials = [

@@ -80,7 +80,7 @@ const STOCK_HERO = "https://images.unsplash.com/photo-1621905251189-08b45d6a269e
 const STOCK_ABOUT = "https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=600&q=80";
 const STOCK_PROJECTS = [
   "https://images.unsplash.com/photo-1545259741-2ea3ebf61fa3?w=600&q=80",
-  "https://images.unsplash.com/photo-1611348586804-61bf6c080437?w=600&q=80",
+  "https://images.unsplash.com/photo-1555664424-778a1e5e1b48?w=600&q=80",
   "https://images.unsplash.com/photo-1555664424-778a1e5e1b48?w=800&q=80",
   "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?w=800&q=80",
 ];

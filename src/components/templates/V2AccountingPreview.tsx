@@ -32,7 +32,7 @@ const SERVICE_ICON_MAP: Record<string, any> = {
 function getServiceIcon(n: string) { const l = n.toLowerCase(); for (const [k, I] of Object.entries(SERVICE_ICON_MAP)) { if (l.includes(k)) return I; } return Calculator; }
 
 const STOCK_HERO = "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=1400&q=80";
-const STOCK_ABOUT = "https://images.unsplash.com/photo-1507679799987-c73b4eb5b8d3?w=600&q=80";
+const STOCK_ABOUT = "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&q=80";
 const STOCK_PROJECTS = [
   "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=80",
   "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=80",

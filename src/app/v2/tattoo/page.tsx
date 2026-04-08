@@ -143,8 +143,8 @@ function ShimmerBorder({ children, className = "" }: { children: React.ReactNode
 /* ───────────────────────── GALLERY DATA ───────────────────────── */
 const galleryImages = [
   { src: "https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?w=600&q=80", alt: "Intricate sleeve tattoo with black and gray shading", span: "col-span-2 row-span-2" },
-  { src: "https://images.unsplash.com/photo-1598371839696-5c5bb1c12015?w=400&q=80", alt: "Geometric mandala tattoo on forearm", span: "col-span-1 row-span-1" },
-  { src: "https://images.unsplash.com/photo-1590246814883-57c511c0a0e7?w=400&q=80", alt: "Watercolor style floral tattoo", span: "col-span-1 row-span-1" },
+  { src: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&q=80", alt: "Geometric mandala tattoo on forearm", span: "col-span-1 row-span-1" },
+  { src: "https://images.unsplash.com/photo-1565058379802-bbe93b2f703a?w=400&q=80", alt: "Watercolor style floral tattoo", span: "col-span-1 row-span-1" },
   { src: "https://images.unsplash.com/photo-1562962230-16e4623d36e6?w=400&q=80", alt: "Traditional American tattoo design", span: "col-span-1 row-span-1" },
   { src: "https://images.unsplash.com/photo-1612459284270-27b3a394b076?w=400&q=80", alt: "Fine line minimalist tattoo work", span: "col-span-1 row-span-1" },
   { src: "https://images.unsplash.com/photo-1565058379802-bbe93b2f703a?w=600&q=80", alt: "Full back piece Japanese style tattoo", span: "col-span-2 row-span-1" },
@@ -334,7 +334,7 @@ export default function V2TattooPage() {
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="relative rounded-2xl overflow-hidden aspect-[4/3]">
-              <img src="https://images.unsplash.com/photo-1598371839696-5c5bb1c12015?w=800&q=80" alt="Tattoo artist at work in studio" className="w-full h-full object-cover" />
+              <img src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80" alt="Tattoo artist at work in studio" className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
             </div>
             <div>

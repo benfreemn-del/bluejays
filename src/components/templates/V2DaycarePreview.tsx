@@ -71,12 +71,12 @@ function getServiceIcon(serviceName: string) {
 }
 
 /* ───────────────────────── STOCK FALLBACK IMAGES ───────────────────────── */
-const STOCK_HERO = "https://images.unsplash.com/photo-1587654780291-39c9404d7dd0?w=1400&q=80";
+const STOCK_HERO = "https://images.unsplash.com/photo-1587616211892-f743fcca64f9?w=1400&q=80";
 const STOCK_ABOUT = "https://images.unsplash.com/photo-1544776193-352d25ca82cd?w=600&q=80";
 const STOCK_PROJECTS = [
   "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=600&q=80",
   "https://images.unsplash.com/photo-1560969184-10fe8719e047?w=600&q=80",
-  "https://images.unsplash.com/photo-1576495199011-eb94736d05d6?w=800&q=80",
+  "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=800&q=80",
   "https://images.unsplash.com/photo-1596464716127-f2a82984de30?w=800&q=80",
 ];
 

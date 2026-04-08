@@ -91,16 +91,16 @@ const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=600&q=80",
   "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&q=80",
   "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&q=80",
-  "https://images.unsplash.com/photo-1597446087340-0d9e4b13b4aa?w=800&q=80",
-  "https://images.unsplash.com/photo-1598902108854-d1446f28c93f?w=800&q=80",
+  "https://images.unsplash.com/photo-1558904541-efa843a96f01?w=800&q=80",
+  "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800&q=80",
   "https://images.unsplash.com/photo-1560749003-f4b1e17e2dff?w=600&q=80",
   "https://images.unsplash.com/photo-1588880331179-bc9b93a8cb5e?w=600&q=80",
-  "https://images.unsplash.com/photo-1600566753376-12c8ab7c4f29?w=800&q=80",
+  "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=800&q=80",
 ];
 /* Before/After pairs for showcase */
 const STOCK_BEFORE_AFTER = [
-  { before: "https://images.unsplash.com/photo-1605117882932-f9e32ef3b8e5?w=600&q=80", after: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=600&q=80" },
-  { before: "https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=600&q=80", after: "https://images.unsplash.com/photo-1598902108854-d1446f28c93f?w=600&q=80" },
+  { before: "https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?w=600&q=80", after: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=600&q=80" },
+  { before: "https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=600&q=80", after: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&q=80" },
 ];
 
 /* ───────────────────────── FLOATING LEAF PARTICLES ───────────────────────── */

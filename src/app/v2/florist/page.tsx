@@ -178,8 +178,8 @@ const galleryImages = [
   { src: "https://images.unsplash.com/photo-1561181286-d3fee7d55364?w=400&q=80", alt: "Elegant centerpiece arrangement", span: "col-span-1 row-span-1" },
   { src: "https://images.unsplash.com/photo-1563241527-3004b7be0ffd?w=400&q=80", alt: "Spring wildflower bouquet", span: "col-span-1 row-span-1" },
   { src: "https://images.unsplash.com/photo-1508610048659-a06b669e3321?w=400&q=80", alt: "Funeral tribute wreath", span: "col-span-1 row-span-1" },
-  { src: "https://images.unsplash.com/photo-1471696035578-3d8c78d99571?w=400&q=80", alt: "Modern minimalist arrangement", span: "col-span-1 row-span-1" },
-  { src: "https://images.unsplash.com/photo-1490750967868-88aa4f44baee?w=600&q=80", alt: "Wedding arch floral installation", span: "col-span-2 row-span-1" },
+  { src: "https://images.unsplash.com/photo-1517423440428-a5a00ad493e8?w=400&q=80", alt: "Modern minimalist arrangement", span: "col-span-1 row-span-1" },
+  { src: "https://images.unsplash.com/photo-1487530811176-3780de880c2d?w=600&q=80", alt: "Wedding arch floral installation", span: "col-span-2 row-span-1" },
 ];
 
 /* ───────────────────────── DATA ───────────────────────── */

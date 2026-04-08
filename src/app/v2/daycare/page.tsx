@@ -198,7 +198,7 @@ const faqs = [
 ];
 
 const galleryImages = [
-  { src: "https://images.unsplash.com/photo-1587654780291-39c9404d7dd0?w=600&q=80", alt: "Children painting in art class" },
+  { src: "https://images.unsplash.com/photo-1587616211892-f743fcca64f9?w=600&q=80", alt: "Children painting in art class" },
   { src: "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=600&q=80", alt: "Child playing outdoors" },
   { src: "https://images.unsplash.com/photo-1544776193-352d25ca82cd?w=600&q=80", alt: "Reading circle time" },
   { src: "https://images.unsplash.com/photo-1560969184-10fe8719e047?w=600&q=80", alt: "Playground fun" },
@@ -255,7 +255,7 @@ export default function V2DaycarePage() {
       {/* ─── HERO ─── */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10">
         <div className="absolute inset-0 z-0">
-          <img src="https://images.unsplash.com/photo-1587654780291-39c9404d7dd0?w=1600&q=80" alt="" className="w-full h-full object-cover opacity-12" />
+          <img src="https://images.unsplash.com/photo-1587616211892-f743fcca64f9?w=1600&q=80" alt="" className="w-full h-full object-cover opacity-12" />
           <div className="absolute inset-0" style={{ background: `linear-gradient(to bottom, ${BG}, transparent 30%, ${BG})` }} />
         </div>
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-4 items-center">

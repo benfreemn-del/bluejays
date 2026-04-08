@@ -57,10 +57,10 @@ function getServiceIcon(serviceName: string) {
   return Shield;
 }
 
-const STOCK_HERO = "https://images.unsplash.com/photo-1632935190508-1f1e4b1a7a07?w=1400&q=80";
+const STOCK_HERO = "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=1400&q=80";
 const STOCK_ABOUT = "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=600&q=80";
 const STOCK_PROJECTS = [
-  "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=600&q=80",
+  "https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=600&q=80",
   "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=600&q=80",
   "https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=800&q=80",
   "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80",

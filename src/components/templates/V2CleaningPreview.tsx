@@ -78,7 +78,7 @@ const STOCK_PROJECTS = [
   "https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?w=600&q=80",
   "https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?w=600&q=80",
   "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80",
-  "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=800&q=80",
+  "https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=800&q=80",
 ];
 
 /* ───────────────────────── FLOATING SPARKLE PARTICLES ───────────────────────── */
