@@ -38,6 +38,10 @@ import V2PaintingPreview from "@/components/templates/V2PaintingPreview";
 import V2FencingPreview from "@/components/templates/V2FencingPreview";
 import V2TreeServicePreview from "@/components/templates/V2TreeServicePreview";
 import V2PressureWashingPreview from "@/components/templates/V2PressureWashingPreview";
+import V2GarageDoorPreview from "@/components/templates/V2GarageDoorPreview";
+import V2LocksmithPreview from "@/components/templates/V2LocksmithPreview";
+import V2TowingPreview from "@/components/templates/V2TowingPreview";
+import V2ConstructionPreview from "@/components/templates/V2ConstructionPreview";
 import { getScrapedData } from "@/lib/store";
 import { proxyPhotos } from "@/lib/image-proxy";
 import { getHeroHeading, getHeroSubtitle, getHeroImage, getAboutImage, getNavName } from "@/lib/preview-utils";
@@ -83,6 +87,10 @@ const V2_RENDERERS: Partial<Record<string, React.ComponentType<{ data: Generated
   fencing: V2FencingPreview,
   "tree-service": V2TreeServicePreview,
   "pressure-washing": V2PressureWashingPreview,
+  "garage-door": V2GarageDoorPreview,
+  locksmith: V2LocksmithPreview,
+  towing: V2TowingPreview,
+  construction: V2ConstructionPreview,
 };
 
 export default async function PreviewPage({

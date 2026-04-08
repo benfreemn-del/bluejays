@@ -91,8 +91,10 @@ export const OBJECTION_RESPONSES: Record<string, { response: string; followUp: s
  */
 export const CONSERVATIVE_FUNNEL = [
   { day: 0, channels: ["email", "sms"] as const, label: "Initial Pitch", description: "Friendly intro with preview link" },
+  { day: 2, channels: ["voicemail"] as const, label: "Voicemail Drop", description: "Ben's pre-recorded VM — personal, genuine, mentions their business name" },
   { day: 5, channels: ["email"] as const, label: "Gentle Follow-Up", description: "\"Did you get a chance to look?\" — no pressure" },
   { day: 12, channels: ["email", "sms"] as const, label: "Value Reframe", description: "Share a stat or insight about their industry" },
+  { day: 18, channels: ["voicemail"] as const, label: "Follow-Up VM", description: "Second voicemail — \"just checking if you saw the text with your website link\"" },
   { day: 21, channels: ["email"] as const, label: "Social Proof", description: "\"X businesses in your area upgraded this month\"" },
   { day: 30, channels: ["email"] as const, label: "Final Check-In", description: "\"Just wanted to make sure you saw this\" — easy out" },
 ];

@@ -208,6 +208,15 @@ The sales agent is a LIVING SYSTEM that must improve over time, not stay static.
   - When updating sales copy, apply: benefit-first headlines, social proof, urgency without sleaze, objection preemption, CRO principles, psychological triggers, A/B testing mindset. Think like a growth marketer.
 - **Version the improvements** — when the sales strategy is updated, log what changed and why (e.g., "Changed email 1 subject line because open rate was 12%, new version targets 25%"). This creates an audit trail of what's working.
 
+## Voicemail Drop Rules (NON-NEGOTIABLE)
+- **Voicemail drops are part of the funnel** — Day 2 (initial VM) and Day 18 (follow-up VM) are auto-deployed as part of the sales funnel.
+- **Only drop voicemails, never live calls** — the system uses Twilio AMD (Answering Machine Detection) to detect voicemail. If a human answers, it hangs up immediately. We are NOT cold calling.
+- **Ben records the voicemail** — the pre-recorded voicemail lives at `/public/voicemail.mp3`. Until Ben records, the system uses Twilio TTS as fallback.
+- **Voicemail script must be genuine** — matches the agent personality (friendly, casual, authentic). Mentions the business by name. Under 30 seconds.
+- **Max 2 voicemail drops per prospect** — initial (Day 2) and follow-up (Day 18). No more.
+- **Always follow up a voicemail with a text** — the VM says "I'll shoot you a text with the link." The text must be sent within minutes of the VM drop.
+- **API endpoints**: POST /api/voicemail/drop/[id] (trigger drop), GET /api/voicemail/twiml (Twilio callback), POST /api/voicemail/status (AMD callback)
+
 ## Outreach Safety Rules (NON-NEGOTIABLE)
 - **Rate limit outreach** — no more than 20 emails, 10 texts, or 10 DMs per day. Sending too many triggers spam filters and gets accounts flagged.
 - **Never outreach without a working preview** — before sending any email/text/DM, verify the preview URL loads and looks premium. A broken link in a pitch email is worse than no email.
