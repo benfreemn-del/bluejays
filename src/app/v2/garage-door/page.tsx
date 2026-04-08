@@ -573,7 +573,7 @@ export default function V2GarageDoorPage() {
             <Garage size={16} weight="duotone" style={{ color: ACCENT }} />
             <span>IronGate Doors &copy; {new Date().getFullYear()}</span>
           </div>
-          <p className="text-xs text-slate-600">Website created by Bluejay Business Solutions</p>
+          <p className="text-xs text-slate-600">Created by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" style={{textDecoration:"underline"}}>bluejayportfolio.com</a></p>
         </div>
       </footer>
     </main>

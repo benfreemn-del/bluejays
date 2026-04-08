@@ -628,7 +628,7 @@ export default function V2PhotographyPage() {
             <Camera size={16} weight="duotone" style={{ color: GOLD }} />
             <span>Lumen Studios &copy; {new Date().getFullYear()}</span>
           </div>
-          <p className="text-xs text-[#6b7280]">Website created by Bluejay Business Solutions</p>
+          <p className="text-xs text-[#6b7280]">Created by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" style={{textDecoration:"underline"}}>bluejayportfolio.com</a></p>
         </div>
       </footer>
     </main>

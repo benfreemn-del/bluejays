@@ -792,7 +792,7 @@ export default function V2LawFirmPage() {
           </p>
         </div>
         <div className="border-t border-white/5 mt-8 pt-4 text-center">
-          <p className="text-xs text-slate-600">Website created by Bluejay Business Solutions</p>
+          <p className="text-xs text-slate-600">Created by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" style={{textDecoration:"underline"}}>bluejayportfolio.com</a></p>
         </div>
       </footer>
     </div>

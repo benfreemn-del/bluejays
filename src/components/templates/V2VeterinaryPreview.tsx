@@ -922,7 +922,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
             </div>
             <div className="flex items-center gap-2 text-xs text-[#6b7280]">
               <BluejayLogo className="w-4 h-4" />
-              <span>Website created by Bluejay Business Solutions</span>
+              <span>Created by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" style={{textDecoration:"underline"}}>bluejayportfolio.com</a></span>
             </div>
           </div>
         </div>

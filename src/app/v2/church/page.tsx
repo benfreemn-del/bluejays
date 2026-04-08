@@ -1161,7 +1161,7 @@ export default function V2ChurchPage() {
               <span>Grace Community Church &copy; {new Date().getFullYear()}</span>
             </div>
             <p className="text-xs text-slate-600">
-              Website created by Bluejay Business Solutions
+              Created by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" style={{textDecoration:"underline"}}>bluejayportfolio.com</a>
             </p>
           </div>
         </div>

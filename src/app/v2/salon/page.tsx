@@ -863,7 +863,7 @@ export default function V2SalonPage() {
           </p>
         </div>
         <div className="border-t border-gray-200 mt-8 pt-4 text-center">
-          <p className="text-xs text-[#6b7280]">Website created by Bluejay Business Solutions</p>
+          <p className="text-xs text-[#6b7280]">Created by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" style={{textDecoration:"underline"}}>bluejayportfolio.com</a></p>
         </div>
       </footer>
     </div>

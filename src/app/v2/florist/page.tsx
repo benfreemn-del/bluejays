@@ -597,7 +597,7 @@ export default function V2FloristPage() {
             <FlowerTulip size={16} weight="duotone" style={{ color: ROSE }} />
             <span>Petals & Bloom &copy; {new Date().getFullYear()}</span>
           </div>
-          <p className="text-xs text-[#6b7280]">Website created by Bluejay Business Solutions</p>
+          <p className="text-xs text-[#6b7280]">Created by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" style={{textDecoration:"underline"}}>bluejayportfolio.com</a></p>
         </div>
       </footer>
     </main>

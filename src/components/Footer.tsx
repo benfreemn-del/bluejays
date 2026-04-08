@@ -99,7 +99,15 @@ export default function Footer() {
           </p>
           <p className="flex items-center gap-2 text-white/30 text-sm">
             <BluejayLogo size={16} className="text-sky-500" />
-            Website created by Bluejay Business Solutions
+            Created by{" "}
+            <a
+              href="https://bluejayportfolio.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-sky-400 transition-colors underline underline-offset-2"
+            >
+              bluejayportfolio.com
+            </a>
           </p>
         </div>
       </div>
