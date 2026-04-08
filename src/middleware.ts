@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "bluejay2026";
+const ADMIN_PASSWORD = (process.env.ADMIN_PASSWORD || "bluejay2026").trim();
 
 // Protected routes that require login
 const PROTECTED_PATHS = [
@@ -46,6 +46,9 @@ const PUBLIC_API_PATHS = [
   "/api/inbound/email",
   "/api/inbound/sms",
   "/api/checkout/create", // Prospects need to create checkout sessions
+  "/api/proposals/",
+  "/api/calendar/available-slots",
+  "/api/call-lists", // CSV downloads are linked directly from the dashboard
 ];
 
 export function middleware(request: NextRequest) {

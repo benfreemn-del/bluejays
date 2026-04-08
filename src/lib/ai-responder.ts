@@ -39,6 +39,37 @@ interface IncomingMessage {
   channel: "email" | "sms";
 }
 
+function getBaseUrl(): string {
+  return process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+}
+
+function getSalesLinks(prospect: Prospect) {
+  return {
+    previewUrl: `${getBaseUrl()}${prospect.generatedSiteUrl || `/preview/${prospect.id}`}`,
+    proposalUrl: `${getBaseUrl()}/proposal/${prospect.id}`,
+    bookingUrl: `${getBaseUrl()}/book/${prospect.id}`,
+    claimUrl: `${getBaseUrl()}/claim/${prospect.id}`,
+  };
+}
+
+function ensureInterestedReplyLinks(reply: string | undefined, prospect: Prospect): string {
+  const links = getSalesLinks(prospect);
+  const baseReply = (reply || `Thanks for the interest in ${prospect.businessName}.`).trim();
+
+  const hasBooking = baseReply.includes(links.bookingUrl) || /calendar|book a call|hop on a quick call/i.test(baseReply);
+  const hasProposal = baseReply.includes(links.proposalUrl) || /proposal/i.test(baseReply);
+
+  let nextReply = baseReply;
+  if (!hasProposal) {
+    nextReply += `\n\nI also put together a personalized proposal for ${prospect.businessName} here: ${links.proposalUrl}`;
+  }
+  if (!hasBooking) {
+    nextReply += `\n\nWant to hop on a quick call so I can walk you through everything? Here's my calendar: ${links.bookingUrl}`;
+  }
+
+  return nextReply;
+}
+
 export interface AiResponse {
   shouldReply: boolean;
   reply?: string;
@@ -145,7 +176,7 @@ function getMockResponse(prompt: string): string {
   if (lower.includes("interested") || lower.includes("how much") || lower.includes("pricing") || lower.includes("love")) {
     return JSON.stringify({
       shouldReply: true,
-      reply: "That's great to hear! I'd love to walk you through the details. The website is completely custom-built for your business. Would you have 15 minutes this week for a quick call? I can answer all your questions and show you some additional features we can add.",
+      reply: "That's great to hear! I'd love to walk you through the details. I also put together a personalized proposal you can review, and if you'd like, we can hop on a quick call so I can walk you through everything.",
       escalate: true,
       escalateReason: "Prospect is interested — ready to close",
       sentiment: "positive",
@@ -183,7 +214,8 @@ function getMockResponse(prompt: string): string {
  */
 function buildPrompt(prospect: Prospect, message: IncomingMessage): string {
   const categoryLabel = CATEGORY_CONFIG[prospect.category]?.label || prospect.category;
-  const previewUrl = prospect.generatedSiteUrl || "/preview/" + prospect.id;
+  const links = getSalesLinks(prospect);
+  const previewUrl = links.previewUrl;
   const name = prospect.ownerName?.split(" ")[0] || "there";
 
   // Build objection handling reference
@@ -216,6 +248,9 @@ PROSPECT CONTEXT:
 - Business: ${prospect.businessName} (${categoryLabel})
 - Owner: ${name}
 - Preview site: ${previewUrl}
+- Personalized proposal: ${links.proposalUrl}
+- Booking link: ${links.bookingUrl}
+- Claim link: ${links.claimUrl}
 - Current status: ${prospect.status}
 - Channel: ${message.channel}
 
@@ -225,7 +260,7 @@ ${message.subject ? `Subject: ${message.subject}\n` : ""}Body: ${message.body}
 INSTRUCTIONS:
 Analyze their message and respond as JSON with these exact fields:
 1. "shouldReply" (boolean): Should the AI auto-reply? (false if angry/threatening or if escalating to human)
-2. "reply" (string): The reply message body. Use the agent voice. Reference their business by name. Keep it short and genuine. Do NOT mention price unless they specifically ask.
+2. "reply" (string): The reply message body. Use the agent voice. Reference their business by name. Keep it short and genuine. Do NOT mention price unless they specifically ask. If intent is "interested", include the personalized proposal link and optionally suggest booking a call using the booking link.
 3. "escalate" (boolean): Should this be escalated to Ben (the human owner)?
 4. "escalateReason" (string): Why escalate? (empty string if not escalating)
 5. "sentiment" (string): "positive", "neutral", "negative", or "angry"
@@ -295,6 +330,10 @@ export async function processIncomingMessage(
     // Ensure pauseFunnel is always true when a prospect replies
     parsed.pauseFunnel = true;
 
+    if (parsed.intent === "interested") {
+      parsed.reply = ensureInterestedReplyLinks(parsed.reply, prospect);
+    }
+
     // Apply CRM status transition
     if (parsed.newStatus) {
       await updateProspect(prospect.id, {
@@ -317,14 +356,15 @@ export async function processIncomingMessage(
       status: "responded",
       funnelPaused: true,
     });
-    return {
-      shouldReply: false,
-      escalate: true,
-      escalateReason: "Could not parse AI response — needs manual review",
-      sentiment: "neutral",
-      intent: "neutral",
-      pauseFunnel: true,
-    };
+      return {
+        shouldReply: false,
+        escalate: true,
+        escalateReason: "Could not parse AI response — needs manual review",
+        sentiment: "neutral",
+        intent: "neutral",
+        pauseFunnel: true,
+      };
+
   }
 }
 
