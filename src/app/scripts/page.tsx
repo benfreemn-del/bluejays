@@ -21,6 +21,8 @@ export default function ConversationsPage() {
   const [selected, setSelected] = useState<Prospect | null>(null);
   const [comms, setComms] = useState<CommsEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [commsLoading, setCommsLoading] = useState(false);
+  const [commsError, setCommsError] = useState<string | null>(null);
   const [simInput, setSimInput] = useState("");
   const [aiResponse, setAiResponse] = useState<{
     reply?: string;
@@ -47,12 +49,72 @@ export default function ConversationsPage() {
     setSelected(prospect);
     setAiResponse(null);
     setSimInput("");
+    setCommsLoading(true);
+    setCommsError(null);
+
+    const normalizeTimeline = (timeline: unknown[]): CommsEntry[] =>
+      timeline.map((entry, index) => {
+        const record = entry as Partial<CommsEntry> & { sentAt?: string };
+        return {
+          id: record.id || `${prospect.id}-${index}`,
+          type: record.type === "sms" ? "sms" : "email",
+          channel: record.channel || (record.type === "sms" ? "SMS" : "Email"),
+          to: record.to || "",
+          subject: record.subject || "",
+          body: record.body || "",
+          sequence: record.sequence || index + 1,
+          timestamp: record.timestamp || record.sentAt || new Date().toISOString(),
+        };
+      });
+
     try {
       const res = await fetch(`/api/comms/${prospect.id}`);
       const data = await res.json();
-      setComms(data.timeline || []);
+
+      if (res.ok && Array.isArray(data.timeline)) {
+        setComms(normalizeTimeline(data.timeline));
+        return;
+      }
+
+      const [emailRes, smsRes] = await Promise.all([
+        fetch(`/api/email/history/${prospect.id}`),
+        fetch(`/api/sms/history/${prospect.id}`),
+      ]);
+      const emailData = await emailRes.json();
+      const smsData = await smsRes.json();
+
+      const fallbackTimeline = [
+        ...((emailData.emails || []) as Array<Record<string, unknown>>).map((email, index) => ({
+          id: String(email.id || `${prospect.id}-email-${index}`),
+          type: "email" as const,
+          channel: "Email",
+          to: String(email.to || email.to_address || ""),
+          subject: String(email.subject || ""),
+          body: String(email.body || ""),
+          sequence: Number(email.sequence || index + 1),
+          timestamp: String(email.sentAt || email.sent_at || new Date().toISOString()),
+        })),
+        ...((smsData.messages || []) as Array<Record<string, unknown>>).map((sms, index) => ({
+          id: String(sms.id || `${prospect.id}-sms-${index}`),
+          type: "sms" as const,
+          channel: "SMS",
+          to: String(sms.to || sms.to_number || ""),
+          subject: "",
+          body: String(sms.body || ""),
+          sequence: Number(sms.sequence || index + 1),
+          timestamp: String(sms.sentAt || sms.sent_at || new Date().toISOString()),
+        })),
+      ].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+
+      setComms(fallbackTimeline);
+      if (!emailRes.ok && !smsRes.ok) {
+        setCommsError(data.error || "Could not load conversation history.");
+      }
     } catch {
       setComms([]);
+      setCommsError("Could not load conversation history.");
+    } finally {
+      setCommsLoading(false);
     }
   };
 
@@ -175,7 +237,13 @@ export default function ConversationsPage() {
 
               {/* Messages */}
               <div className="flex-1 overflow-y-auto p-6 space-y-4">
-                {comms.length === 0 && (
+                {commsLoading && (
+                  <p className="text-center text-muted text-sm py-8">Loading conversation history...</p>
+                )}
+                {!commsLoading && commsError && (
+                  <p className="text-center text-red-400 text-sm py-4">{commsError}</p>
+                )}
+                {!commsLoading && comms.length === 0 && (
                   <p className="text-center text-muted text-sm py-8">
                     No messages sent yet. Use the dashboard to send emails or texts.
                   </p>

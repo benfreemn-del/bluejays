@@ -297,7 +297,7 @@ export default function V2CateringShowcase() {
           <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
             <div className="flex items-center gap-2">
               <ForkKnife size={24} weight="fill" style={{ color: BURGUNDY }} />
-              <span className="text-lg font-bold tracking-tight" className="text-[#1c1917]">Ember &amp; Oak Catering</span>
+              <span className="text-lg font-bold tracking-tight text-[#1c1917]">Ember &amp; Oak Catering</span>
             </div>
             <div className="hidden md:flex items-center gap-8 text-sm text-[#6b7280]">
               <a href="#services" className="hover:text-[#1c1917] transition-colors">Services</a>
@@ -627,7 +627,7 @@ export default function V2CateringShowcase() {
         <div className="mx-auto max-w-6xl px-6 relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
             <div>
-              <div className="flex items-center gap-2 mb-3"><ForkKnife size={22} weight="fill" style={{ color: BURGUNDY }} /><span className="text-lg font-bold" className="text-[#1c1917]">Ember &amp; Oak Catering</span></div>
+              <div className="flex items-center gap-2 mb-3"><ForkKnife size={22} weight="fill" style={{ color: BURGUNDY }} /><span className="text-lg font-bold text-[#1c1917]">Ember &amp; Oak Catering</span></div>
               <p className="text-sm text-[#9ca3af] leading-relaxed">Award-winning catering for weddings, corporate events, and private dining.</p>
             </div>
             <div>
