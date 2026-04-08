@@ -52,7 +52,7 @@ const fadeUp = {
 };
 
 /* ───────────────────────── COLORS ───────────────────────── */
-const BG = "#0a1a0f";
+const BG = "#f7faf8";
 const GREEN = "#16a34a";
 const GREEN_LIGHT = "#22c55e";
 const CREAM = "#fef3c7";
@@ -212,7 +212,7 @@ function SectionReveal({ children, className = "", id }: { children: React.React
 }
 
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>;
+  return <div className={`rounded-2xl border border-gray-200 bg-white/70 backdrop-blur-xl shadow-sm ${className}`}>{children}</div>;
 }
 
 function MagneticButton({ children, className = "", onClick, style }: { children: React.ReactNode; className?: string; onClick?: () => void; style?: React.CSSProperties }) {
@@ -240,7 +240,7 @@ function ShimmerBorder({ children, className = "" }: { children: React.ReactNode
   return (
     <div className={`relative rounded-2xl p-[1px] overflow-hidden ${className}`}>
       <motion.div className="absolute inset-0 rounded-2xl" style={{ background: `conic-gradient(from 0deg, transparent, ${GREEN}, transparent, ${CREAM}, transparent)`, willChange: "transform" }} animate={{ rotate: [0, 360] }} transition={{ duration: 4, repeat: Infinity, ease: "linear" }} />
-      <div className="relative rounded-2xl z-10" style={{ background: BG }}>{children}</div>
+      <div className="relative rounded-2xl bg-white z-10">{children}</div>
     </div>
   );
 }
@@ -287,7 +287,7 @@ export default function V2VeterinaryPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   return (
-    <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: BG, color: "#f1f5f9" }}>
+    <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: BG, color: "#1c1917" }}>
       <FloatingPawPrints />
 
       {/* ─── NAV ─── */}
@@ -296,20 +296,20 @@ export default function V2VeterinaryPage() {
           <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
             <div className="flex items-center gap-2">
               <PawPrint size={24} weight="duotone" style={{ color: GREEN_LIGHT }} />
-              <span className="text-lg font-bold tracking-tight text-white">Evergreen Veterinary</span>
+              <span className="text-lg font-bold tracking-tight text-[#1c1917]">Evergreen Veterinary</span>
             </div>
-            <div className="hidden md:flex items-center gap-8 text-sm text-slate-400">
-              <a href="#services" className="hover:text-white transition-colors">Services</a>
-              <a href="#about" className="hover:text-white transition-colors">About</a>
-              <a href="#gallery" className="hover:text-white transition-colors">Gallery</a>
-              <a href="#testimonials" className="hover:text-white transition-colors">Reviews</a>
-              <a href="#contact" className="hover:text-white transition-colors">Contact</a>
+            <div className="hidden md:flex items-center gap-8 text-sm text-[#6b7280]">
+              <a href="#services" className="hover:text-[#1c1917] transition-colors">Services</a>
+              <a href="#about" className="hover:text-[#1c1917] transition-colors">About</a>
+              <a href="#gallery" className="hover:text-[#1c1917] transition-colors">Gallery</a>
+              <a href="#testimonials" className="hover:text-[#1c1917] transition-colors">Reviews</a>
+              <a href="#contact" className="hover:text-[#1c1917] transition-colors">Contact</a>
             </div>
             <div className="flex items-center gap-3">
-              <MagneticButton className="px-4 md:px-5 py-2 rounded-full text-sm font-semibold text-white" style={{ background: GREEN } as React.CSSProperties}>
+              <MagneticButton className="px-4 md:px-5 py-2 rounded-full text-sm font-semibold text-[#1c1917]" style={{ background: GREEN } as React.CSSProperties}>
                 Book Visit
               </MagneticButton>
-              <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden p-2 rounded-lg text-white hover:bg-white/10 transition-colors">
+              <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden p-2 rounded-lg text-[#1c1917] hover:bg-gray-100 transition-colors">
                 {mobileMenuOpen ? <X size={24} /> : <List size={24} />}
               </button>
             </div>
@@ -319,7 +319,7 @@ export default function V2VeterinaryPage() {
               <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.3, ease: "easeInOut" }} className="md:hidden mt-2 overflow-hidden">
                 <GlassCard className="flex flex-col gap-1 px-4 py-4">
                   {[{ label: "Services", href: "#services" }, { label: "About", href: "#about" }, { label: "Gallery", href: "#gallery" }, { label: "Reviews", href: "#testimonials" }, { label: "Contact", href: "#contact" }].map((link) => (
-                    <a key={link.label} href={link.href} onClick={() => setMobileMenuOpen(false)} className="block px-4 py-3 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-white/5 transition-colors">{link.label}</a>
+                    <a key={link.label} href={link.href} onClick={() => setMobileMenuOpen(false)} className="block px-4 py-3 rounded-lg text-sm text-[#4b5563] hover:text-[#1c1917] hover:bg-gray-50 transition-colors">{link.label}</a>
                   ))}
                 </GlassCard>
               </motion.div>
@@ -340,22 +340,22 @@ export default function V2VeterinaryPage() {
               <motion.p initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ ...spring, delay: 0.1 }} className="text-sm uppercase tracking-widest mb-4" style={{ color: GREEN_LIGHT }}>
                 Compassionate Pet Care
               </motion.p>
-              <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}>
+              <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-[#1c1917]" style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}>
                 <WordReveal text="Where Every Pet Is Family" />
               </h1>
             </div>
-            <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.6 }} className="text-lg text-slate-400 max-w-md leading-relaxed">
+            <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.6 }} className="text-lg text-[#6b7280] max-w-md leading-relaxed">
               Modern veterinary medicine with old-fashioned compassion. From wellness check-ups to emergency care, your pet deserves the very best.
             </motion.p>
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.8 }} className="flex flex-wrap gap-4">
-              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer" style={{ background: GREEN } as React.CSSProperties}>
+              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-[#1c1917] flex items-center gap-2 cursor-pointer" style={{ background: GREEN } as React.CSSProperties}>
                 Book Appointment <ArrowRight size={18} weight="bold" />
               </MagneticButton>
-              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
+              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-[#1c1917] border border-gray-200 flex items-center gap-2 cursor-pointer">
                 <Phone size={18} weight="duotone" /> (555) 867-5309
               </MagneticButton>
             </motion.div>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ ...spring, delay: 1 }} className="flex flex-wrap gap-6 text-sm text-slate-400">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ ...spring, delay: 1 }} className="flex flex-wrap gap-6 text-sm text-[#6b7280]">
               <span className="flex items-center gap-2"><MapPin size={16} weight="duotone" style={{ color: GREEN_LIGHT }} />789 Pet Haven Dr</span>
               <span className="flex items-center gap-2"><Clock size={16} weight="duotone" style={{ color: GREEN_LIGHT }} />Mon-Sat 7am-8pm</span>
             </motion.div>
@@ -379,8 +379,8 @@ export default function V2VeterinaryPage() {
               ].map((stat, i) => (
                 <motion.div key={i} variants={fadeUp} className="text-center">
                   <stat.icon size={24} weight="duotone" style={{ color: GREEN_LIGHT }} className="mx-auto mb-2" />
-                  <div className="text-2xl md:text-3xl font-bold text-white">{stat.value}</div>
-                  <div className="text-xs text-slate-400 mt-1">{stat.label}</div>
+                  <div className="text-2xl md:text-3xl font-bold text-[#1c1917]">{stat.value}</div>
+                  <div className="text-xs text-[#6b7280] mt-1">{stat.label}</div>
                 </motion.div>
               ))}
             </motion.div>
@@ -397,10 +397,10 @@ export default function V2VeterinaryPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
             <div className="lg:sticky lg:top-32">
               <p className="text-sm uppercase tracking-widest mb-3" style={{ color: GREEN_LIGHT }}>Our Services</p>
-              <h2 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white mb-6">
+              <h2 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-[#1c1917] mb-6">
                 <WordReveal text="Complete Pet Healthcare" />
               </h2>
-              <p className="text-slate-400 leading-relaxed max-w-md">
+              <p className="text-[#6b7280] leading-relaxed max-w-md">
                 From nose to tail, we provide comprehensive care for your beloved companions. Click any service to learn more.
               </p>
             </div>
@@ -413,16 +413,16 @@ export default function V2VeterinaryPage() {
                         <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: GREEN_GLOW }}>
                           <svc.icon size={20} weight="duotone" style={{ color: GREEN_LIGHT }} />
                         </div>
-                        <span className="text-lg font-semibold text-white">{svc.title}</span>
+                        <span className="text-lg font-semibold text-[#1c1917]">{svc.title}</span>
                       </div>
                       <motion.div animate={{ rotate: openService === i ? 180 : 0 }} transition={spring}>
-                        <CaretDown size={20} className="text-slate-400" />
+                        <CaretDown size={20} className="text-[#6b7280]" />
                       </motion.div>
                     </button>
                     <AnimatePresence initial={false}>
                       {openService === i && (
                         <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={spring} className="overflow-hidden">
-                          <p className="px-5 pb-5 md:px-6 md:pb-6 text-slate-400 leading-relaxed pl-[4.5rem]">{svc.description}</p>
+                          <p className="px-5 pb-5 md:px-6 md:pb-6 text-[#6b7280] leading-relaxed pl-[4.5rem]">{svc.description}</p>
                         </motion.div>
                       )}
                     </AnimatePresence>
@@ -443,10 +443,10 @@ export default function V2VeterinaryPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <p className="text-sm uppercase tracking-widest mb-3" style={{ color: GREEN_LIGHT }}>About Us</p>
-              <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white mb-6">
+              <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-[#1c1917] mb-6">
                 <WordReveal text="Trusted by Pet Parents" />
               </h2>
-              <div className="space-y-4 text-slate-400 leading-relaxed">
+              <div className="space-y-4 text-[#6b7280] leading-relaxed">
                 <p>Evergreen Veterinary was founded with one simple mission: provide the same level of care for your pets that we would want for our own. Our team of board-certified veterinarians and compassionate support staff treats every animal with gentleness and respect.</p>
                 <p>We have invested in the latest diagnostic technology, from digital X-rays to in-house blood labs, so we can diagnose and treat your pet faster. Our fear-free certified practice ensures that every visit is as stress-free as possible for both you and your companion.</p>
               </div>
@@ -461,7 +461,7 @@ export default function V2VeterinaryPage() {
                     <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: GREEN_GLOW }}>
                       <item.icon size={16} weight="duotone" style={{ color: GREEN_LIGHT }} />
                     </div>
-                    <span className="text-sm text-slate-300">{item.label}</span>
+                    <span className="text-sm text-[#4b5563]">{item.label}</span>
                   </div>
                 ))}
               </div>
@@ -472,7 +472,7 @@ export default function V2VeterinaryPage() {
               <div className="absolute bottom-6 left-6 right-6">
                 <GlassCard className="px-4 py-3 inline-flex items-center gap-3">
                   <Heart size={20} weight="duotone" style={{ color: GREEN_LIGHT }} />
-                  <span className="text-sm text-white font-medium">Fear-free, compassionate care</span>
+                  <span className="text-sm text-[#1c1917] font-medium">Fear-free, compassionate care</span>
                 </GlassCard>
               </div>
             </div>
@@ -485,7 +485,7 @@ export default function V2VeterinaryPage() {
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="text-center mb-16">
             <p className="text-sm uppercase tracking-widest mb-3" style={{ color: GREEN_LIGHT }}>Happy Pet Parents</p>
-            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white">
+            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-[#1c1917]">
               <WordReveal text="What Our Clients Say" />
             </h2>
           </div>
@@ -494,9 +494,9 @@ export default function V2VeterinaryPage() {
               <motion.div key={i} variants={fadeUp}>
                 <GlassCard className="p-6 h-full flex flex-col">
                   <Quotes size={28} weight="fill" style={{ color: GREEN_LIGHT }} className="mb-3 opacity-50" />
-                  <p className="text-slate-300 leading-relaxed flex-1 text-sm">{t.text}</p>
-                  <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
-                    <span className="text-sm font-semibold text-white">{t.name}</span>
+                  <p className="text-[#4b5563] leading-relaxed flex-1 text-sm">{t.text}</p>
+                  <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
+                    <span className="text-sm font-semibold text-[#1c1917]">{t.name}</span>
                     <div className="flex gap-0.5">{Array.from({ length: t.rating }).map((_, j) => (<Star key={j} size={12} weight="fill" style={{ color: GREEN_LIGHT }} />))}</div>
                   </div>
                 </GlassCard>
@@ -511,7 +511,7 @@ export default function V2VeterinaryPage() {
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="text-center mb-12">
             <p className="text-sm uppercase tracking-widest mb-3" style={{ color: GREEN_LIGHT }}>Our Patients</p>
-            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white">
+            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-[#1c1917]">
               <WordReveal text="Happy & Healthy Pets" />
             </h2>
           </div>
@@ -532,11 +532,11 @@ export default function V2VeterinaryPage() {
             <div className="p-8 md:p-12 text-center">
               <motion.div initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={spring}>
                 <PawPrint size={48} weight="duotone" style={{ color: GREEN_LIGHT }} className="mx-auto mb-4" />
-                <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white mb-4">New Patient Special</h2>
-                <p className="text-slate-400 text-lg mb-2">Complete wellness exam, vaccinations review, and health consultation</p>
+                <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-[#1c1917] mb-4">New Patient Special</h2>
+                <p className="text-[#6b7280] text-lg mb-2">Complete wellness exam, vaccinations review, and health consultation</p>
                 <p className="text-5xl md:text-6xl font-bold tracking-tighter mb-6" style={{ color: GREEN_LIGHT }}>$49</p>
-                <p className="text-slate-500 text-sm mb-8">Regular value $120 &mdash; first visit discount for new furry friends</p>
-                <MagneticButton className="px-10 py-4 rounded-full text-base font-semibold text-white inline-flex items-center gap-2 cursor-pointer" style={{ background: GREEN } as React.CSSProperties}>
+                <p className="text-[#9ca3af] text-sm mb-8">Regular value $120 &mdash; first visit discount for new furry friends</p>
+                <MagneticButton className="px-10 py-4 rounded-full text-base font-semibold text-[#1c1917] inline-flex items-center gap-2 cursor-pointer" style={{ background: GREEN } as React.CSSProperties}>
                   <CalendarCheck size={20} weight="duotone" /> Schedule First Visit
                 </MagneticButton>
               </motion.div>
@@ -550,7 +550,7 @@ export default function V2VeterinaryPage() {
         <div className="mx-auto max-w-3xl px-4 md:px-6">
           <div className="text-center mb-12">
             <p className="text-sm uppercase tracking-widest mb-3" style={{ color: GREEN_LIGHT }}>Common Questions</p>
-            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white">
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-[#1c1917]">
               <WordReveal text="Frequently Asked Questions" />
             </h2>
           </div>
@@ -558,15 +558,15 @@ export default function V2VeterinaryPage() {
             {faqs.map((faq, i) => (
               <GlassCard key={i} className="overflow-hidden">
                 <button onClick={() => setOpenFaq(openFaq === i ? null : i)} className="w-full flex items-center justify-between p-5 text-left cursor-pointer">
-                  <span className="text-base font-semibold text-white pr-4">{faq.q}</span>
+                  <span className="text-base font-semibold text-[#1c1917] pr-4">{faq.q}</span>
                   <motion.div animate={{ rotate: openFaq === i ? 180 : 0 }} transition={spring}>
-                    <CaretDown size={20} className="text-slate-400 shrink-0" />
+                    <CaretDown size={20} className="text-[#6b7280] shrink-0" />
                   </motion.div>
                 </button>
                 <AnimatePresence initial={false}>
                   {openFaq === i && (
                     <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={spring} className="overflow-hidden">
-                      <p className="px-5 pb-5 text-slate-400 leading-relaxed">{faq.a}</p>
+                      <p className="px-5 pb-5 text-[#6b7280] leading-relaxed">{faq.a}</p>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -582,10 +582,10 @@ export default function V2VeterinaryPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
             <div>
               <p className="text-sm uppercase tracking-widest mb-3" style={{ color: GREEN_LIGHT }}>Get in Touch</p>
-              <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white mb-6">
+              <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-[#1c1917] mb-6">
                 <WordReveal text="Schedule a Visit" />
               </h2>
-              <p className="text-slate-400 leading-relaxed max-w-md mb-8">
+              <p className="text-[#6b7280] leading-relaxed max-w-md mb-8">
                 Your pet&apos;s health is our priority. Book an appointment today and experience the Evergreen difference.
               </p>
               <div className="space-y-4">
@@ -597,28 +597,28 @@ export default function V2VeterinaryPage() {
                   <div key={i} className="flex items-start gap-4">
                     <item.icon size={20} weight="duotone" style={{ color: GREEN_LIGHT }} className="mt-0.5 shrink-0" />
                     <div>
-                      <p className="text-sm font-semibold text-white">{item.label}</p>
-                      <p className="text-sm text-slate-400 whitespace-pre-line">{item.value}</p>
+                      <p className="text-sm font-semibold text-[#1c1917]">{item.label}</p>
+                      <p className="text-sm text-[#6b7280] whitespace-pre-line">{item.value}</p>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
             <GlassCard className="p-6 md:p-8">
-              <h3 className="text-xl font-semibold text-white mb-6">Book an Appointment</h3>
+              <h3 className="text-xl font-semibold text-[#1c1917] mb-6">Book an Appointment</h3>
               <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <input type="text" placeholder="Your Name" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-green-500/50" />
-                  <input type="text" placeholder="Pet's Name" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-green-500/50" />
+                  <input type="text" placeholder="Your Name" className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[#1c1917] placeholder-gray-400 text-sm focus:outline-none focus:border-green-500/50" />
+                  <input type="text" placeholder="Pet's Name" className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[#1c1917] placeholder-gray-400 text-sm focus:outline-none focus:border-green-500/50" />
                 </div>
-                <input type="email" placeholder="Email Address" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-green-500/50" />
-                <input type="tel" placeholder="Phone Number" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-green-500/50" />
-                <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-slate-500 text-sm focus:outline-none focus:border-green-500/50">
+                <input type="email" placeholder="Email Address" className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[#1c1917] placeholder-gray-400 text-sm focus:outline-none focus:border-green-500/50" />
+                <input type="tel" placeholder="Phone Number" className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[#1c1917] placeholder-gray-400 text-sm focus:outline-none focus:border-green-500/50" />
+                <select className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[#9ca3af] text-sm focus:outline-none focus:border-green-500/50">
                   <option value="">Pet Type</option>
                   <option>Dog</option><option>Cat</option><option>Bird</option><option>Reptile</option><option>Other</option>
                 </select>
-                <textarea placeholder="Describe your pet's needs..." rows={3} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-green-500/50 resize-none" />
-                <MagneticButton className="w-full py-3 rounded-xl text-sm font-semibold text-white cursor-pointer" style={{ background: GREEN } as React.CSSProperties}>
+                <textarea placeholder="Describe your pet's needs..." rows={3} className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[#1c1917] placeholder-gray-400 text-sm focus:outline-none focus:border-green-500/50 resize-none" />
+                <MagneticButton className="w-full py-3 rounded-xl text-sm font-semibold text-[#1c1917] cursor-pointer" style={{ background: GREEN } as React.CSSProperties}>
                   <span className="flex items-center justify-center gap-2"><CalendarCheck size={18} weight="duotone" /> Request Appointment</span>
                 </MagneticButton>
               </form>
@@ -632,7 +632,7 @@ export default function V2VeterinaryPage() {
         <div className="mx-auto max-w-4xl px-4 md:px-6">
           <div className="text-center mb-12">
             <p className="text-sm uppercase tracking-widest mb-3" style={{ color: GREEN_LIGHT }}>We Are Here For You</p>
-            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white">
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-[#1c1917]">
               <WordReveal text="Our Hours" />
             </h2>
           </div>
@@ -644,9 +644,9 @@ export default function V2VeterinaryPage() {
                 { day: "Sunday", hours: "10:00 AM - 4:00 PM" },
                 { day: "Emergency", hours: "Available 24/7 via partner" },
               ].map((item, i) => (
-                <div key={i} className="flex items-center justify-between py-3 px-4 rounded-xl bg-white/5">
-                  <span className="text-sm font-medium text-white">{item.day}</span>
-                  <span className="text-sm text-slate-400">{item.hours}</span>
+                <div key={i} className="flex items-center justify-between py-3 px-4 rounded-xl bg-gray-50">
+                  <span className="text-sm font-medium text-[#1c1917]">{item.day}</span>
+                  <span className="text-sm text-[#6b7280]">{item.hours}</span>
                 </div>
               ))}
             </div>
@@ -655,13 +655,13 @@ export default function V2VeterinaryPage() {
       </SectionReveal>
 
       {/* ─── FOOTER ─── */}
-      <footer className="relative z-10 border-t border-white/5 py-8">
+      <footer className="relative z-10 border-t border-gray-100 py-8">
         <div className="mx-auto max-w-7xl px-4 md:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2 text-sm text-slate-500">
+          <div className="flex items-center gap-2 text-sm text-[#9ca3af]">
             <PawPrint size={16} weight="duotone" style={{ color: GREEN_LIGHT }} />
             <span>Evergreen Veterinary &copy; {new Date().getFullYear()}</span>
           </div>
-          <p className="text-xs text-slate-600">Website created by Bluejay Business Solutions</p>
+          <p className="text-xs text-[#6b7280]">Website created by Bluejay Business Solutions</p>
         </div>
       </footer>
     </main>

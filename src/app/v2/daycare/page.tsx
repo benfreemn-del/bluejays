@@ -48,7 +48,7 @@ const fadeUp = {
 };
 
 /* ───────────────────────── COLORS ───────────────────────── */
-const BG = "#0f0a1a";
+const BG = "#faf9ff";
 const PURPLE = "#7c3aed";
 const PURPLE_LIGHT = "#a78bfa";
 const YELLOW = "#eab308";
@@ -211,7 +211,7 @@ function SectionReveal({ children, className = "", id }: { children: React.React
 }
 
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>;
+  return <div className={`rounded-2xl border border-gray-200 bg-white/70 backdrop-blur-xl shadow-sm ${className}`}>{children}</div>;
 }
 
 function MagneticButton({ children, className = "", onClick, style }: { children: React.ReactNode; className?: string; onClick?: () => void; style?: React.CSSProperties }) {
@@ -249,7 +249,7 @@ function ShimmerBorder({ children, className = "" }: { children: React.ReactNode
   return (
     <div className={`relative rounded-2xl p-[1px] overflow-hidden ${className}`}>
       <motion.div className="absolute inset-0 rounded-2xl" style={{ background: `conic-gradient(from 0deg, transparent, ${PURPLE}, transparent, ${YELLOW}, transparent)`, willChange: "transform" }} animate={{ rotate: [0, 360] }} transition={{ duration: 4, repeat: Infinity, ease: "linear" }} />
-      <div className="relative rounded-2xl z-10" style={{ background: "#1a0f2e" }}>{children}</div>
+      <div className="relative rounded-2xl z-10" style={{ background: "#ffffff" }}>{children}</div>
     </div>
   );
 }
@@ -325,7 +325,7 @@ export default function V2DaycarePage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: BG, color: "#f1f5f9" }}>
+    <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: BG, color: "#1c1917" }}>
       <FloatingStars />
 
       {/* ─── NAV ─── */}
@@ -334,17 +334,17 @@ export default function V2DaycarePage() {
           <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
             <div className="flex items-center gap-2">
               <Heart size={24} weight="duotone" style={{ color: PURPLE }} />
-              <span className="text-lg font-bold tracking-tight text-white">Sunshine Kids Academy</span>
+              <span className="text-lg font-bold tracking-tight text-[#1c1917]">Sunshine Kids Academy</span>
             </div>
-            <div className="hidden md:flex items-center gap-8 text-sm text-slate-400">
-              <a href="#programs" className="hover:text-white transition-colors">Programs</a>
-              <a href="#schedule" className="hover:text-white transition-colors">Schedule</a>
-              <a href="#gallery" className="hover:text-white transition-colors">Gallery</a>
-              <a href="#testimonials" className="hover:text-white transition-colors">Reviews</a>
+            <div className="hidden md:flex items-center gap-8 text-sm text-[#6b7280]">
+              <a href="#programs" className="hover:text-[#1c1917] transition-colors">Programs</a>
+              <a href="#schedule" className="hover:text-[#1c1917] transition-colors">Schedule</a>
+              <a href="#gallery" className="hover:text-[#1c1917] transition-colors">Gallery</a>
+              <a href="#testimonials" className="hover:text-[#1c1917] transition-colors">Reviews</a>
             </div>
             <div className="flex items-center gap-3">
-              <MagneticButton className="px-4 md:px-5 py-2 rounded-full text-sm font-semibold text-white transition-colors" style={{ background: PURPLE }}>Enroll Now</MagneticButton>
-              <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden p-2 rounded-lg text-white hover:bg-white/10 transition-colors">
+              <MagneticButton className="px-4 md:px-5 py-2 rounded-full text-sm font-semibold text-[#1c1917] transition-colors" style={{ background: PURPLE }}>Enroll Now</MagneticButton>
+              <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden p-2 rounded-lg text-[#1c1917] hover:bg-gray-100 transition-colors">
                 {mobileMenuOpen ? <X size={24} /> : <List size={24} />}
               </button>
             </div>
@@ -354,7 +354,7 @@ export default function V2DaycarePage() {
               <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.3, ease: "easeInOut" }} className="md:hidden mt-2 overflow-hidden">
                 <GlassCard className="flex flex-col gap-1 px-4 py-4">
                   {[{ label: "Programs", href: "#programs" }, { label: "Schedule", href: "#schedule" }, { label: "Gallery", href: "#gallery" }, { label: "Reviews", href: "#testimonials" }].map((link) => (
-                    <a key={link.label} href={link.href} onClick={() => setMobileMenuOpen(false)} className="block px-4 py-3 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-white/5 transition-colors">{link.label}</a>
+                    <a key={link.label} href={link.href} onClick={() => setMobileMenuOpen(false)} className="block px-4 py-3 rounded-lg text-sm text-[#4b5563] hover:text-[#1c1917] hover:bg-gray-50 transition-colors">{link.label}</a>
                   ))}
                 </GlassCard>
               </motion.div>
@@ -373,22 +373,22 @@ export default function V2DaycarePage() {
           <div className="space-y-8">
             <div>
               <motion.p initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ ...spring, delay: 0.1 }} className="text-sm uppercase tracking-widest mb-4" style={{ color: YELLOW }}>Where Learning Meets Love</motion.p>
-              <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}>
+              <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-[#1c1917]" style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}>
                 <WordReveal text="A Safe Place to Grow" />
               </h1>
             </div>
-            <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.6 }} className="text-lg text-slate-400 max-w-md leading-relaxed">
+            <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.6 }} className="text-lg text-[#6b7280] max-w-md leading-relaxed">
               Every child deserves a nurturing environment where they feel safe, loved, and inspired to learn. Our dedicated educators create magical moments of discovery every single day.
             </motion.p>
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.8 }} className="flex flex-wrap gap-4">
-              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer" style={{ background: PURPLE }}>
+              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-[#1c1917] flex items-center gap-2 cursor-pointer" style={{ background: PURPLE }}>
                 Schedule a Tour <ArrowRight size={18} weight="bold" />
               </MagneticButton>
-              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
+              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-[#1c1917] border border-gray-200 flex items-center gap-2 cursor-pointer">
                 <Phone size={18} weight="duotone" /> (555) 321-7890
               </MagneticButton>
             </motion.div>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ ...spring, delay: 1 }} className="flex flex-wrap gap-6 text-sm text-slate-400">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ ...spring, delay: 1 }} className="flex flex-wrap gap-6 text-sm text-[#6b7280]">
               <span className="flex items-center gap-2"><MapPin size={16} weight="duotone" style={{ color: PURPLE }} />456 Sunshine Lane</span>
               <span className="flex items-center gap-2"><Clock size={16} weight="duotone" style={{ color: PURPLE }} />Mon-Fri 6:30am-6:30pm</span>
             </motion.div>
@@ -407,7 +407,7 @@ export default function V2DaycarePage() {
               {stats.map((s, i) => (
                 <motion.div key={i} variants={fadeUp} className="text-center">
                   <p className="text-3xl md:text-4xl font-bold tracking-tight" style={{ color: PURPLE }}>{s.value}</p>
-                  <p className="text-sm text-slate-400 mt-1">{s.label}</p>
+                  <p className="text-sm text-[#6b7280] mt-1">{s.label}</p>
                 </motion.div>
               ))}
             </motion.div>
@@ -420,7 +420,7 @@ export default function V2DaycarePage() {
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="text-center mb-16">
             <p className="text-sm uppercase tracking-widest mb-3" style={{ color: YELLOW }}>Our Programs</p>
-            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white">
+            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-[#1c1917]">
               <WordReveal text="Programs for Every Age" />
             </h2>
           </div>
@@ -431,8 +431,8 @@ export default function V2DaycarePage() {
                   <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: i % 2 === 0 ? PURPLE_GLOW : YELLOW_GLOW }}>
                     <prog.icon size={24} weight="duotone" style={{ color: i % 2 === 0 ? PURPLE : YELLOW }} />
                   </div>
-                  <h3 className="text-lg font-semibold text-white mb-2">{prog.title}</h3>
-                  <p className="text-sm text-slate-400 leading-relaxed">{prog.description}</p>
+                  <h3 className="text-lg font-semibold text-[#1c1917] mb-2">{prog.title}</h3>
+                  <p className="text-sm text-[#6b7280] leading-relaxed">{prog.description}</p>
                 </GlassCard>
               </motion.div>
             ))}
@@ -448,13 +448,13 @@ export default function V2DaycarePage() {
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div>
             <p className="text-sm uppercase tracking-widest mb-3" style={{ color: YELLOW }}>Our Philosophy</p>
-            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white mb-6">
+            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-[#1c1917] mb-6">
               <WordReveal text="Play, Learn, and Thrive" />
             </h2>
-            <p className="text-slate-400 leading-relaxed mb-4">
+            <p className="text-[#6b7280] leading-relaxed mb-4">
               At Sunshine Kids Academy, we believe every child is naturally curious, capable, and creative. Our play-based curriculum follows the latest research in early childhood development, blending structured learning with joyful exploration.
             </p>
-            <p className="text-slate-400 leading-relaxed">
+            <p className="text-[#6b7280] leading-relaxed">
               Our warm, home-like classrooms are designed to feel safe and inspiring. Small group sizes ensure every child gets the individual attention they deserve, building confidence and social skills that last a lifetime.
             </p>
           </div>
@@ -468,8 +468,8 @@ export default function V2DaycarePage() {
               <motion.div key={i} variants={fadeUp}>
                 <GlassCard className="p-5 text-center">
                   <item.icon size={28} weight="duotone" style={{ color: i % 2 === 0 ? PURPLE : YELLOW }} className="mx-auto mb-2" />
-                  <p className="text-sm font-semibold text-white">{item.label}</p>
-                  <p className="text-xs text-slate-400 mt-1">{item.desc}</p>
+                  <p className="text-sm font-semibold text-[#1c1917]">{item.label}</p>
+                  <p className="text-xs text-[#6b7280] mt-1">{item.desc}</p>
                 </GlassCard>
               </motion.div>
             ))}
@@ -483,10 +483,10 @@ export default function V2DaycarePage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
             <div className="lg:sticky lg:top-32">
               <p className="text-sm uppercase tracking-widest mb-3" style={{ color: YELLOW }}>A Day at Sunshine</p>
-              <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white mb-6">
+              <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-[#1c1917] mb-6">
                 <WordReveal text="Sample Daily Schedule" />
               </h2>
-              <p className="text-slate-400 leading-relaxed max-w-md">Every day is thoughtfully planned to balance learning, play, creativity, and rest. Our routine provides structure while allowing flexibility for each child&apos;s needs.</p>
+              <p className="text-[#6b7280] leading-relaxed max-w-md">Every day is thoughtfully planned to balance learning, play, creativity, and rest. Our routine provides structure while allowing flexibility for each child&apos;s needs.</p>
             </div>
             <motion.div className="space-y-3" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
               {schedule.map((item, i) => (
@@ -497,7 +497,7 @@ export default function V2DaycarePage() {
                     </div>
                     <div>
                       <p className="text-xs font-semibold" style={{ color: PURPLE_LIGHT }}>{item.time}</p>
-                      <p className="text-sm font-semibold text-white">{item.activity}</p>
+                      <p className="text-sm font-semibold text-[#1c1917]">{item.activity}</p>
                     </div>
                   </GlassCard>
                 </motion.div>
@@ -512,7 +512,7 @@ export default function V2DaycarePage() {
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="text-center mb-16">
             <p className="text-sm uppercase tracking-widest mb-3" style={{ color: YELLOW }}>Parent Stories</p>
-            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white">
+            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-[#1c1917]">
               <WordReveal text="Loved by Families" />
             </h2>
           </div>
@@ -521,9 +521,9 @@ export default function V2DaycarePage() {
               <motion.div key={i} variants={fadeUp}>
                 <GlassCard className="p-6 h-full flex flex-col">
                   <Quotes size={28} weight="fill" style={{ color: PURPLE }} className="mb-3 opacity-50" />
-                  <p className="text-slate-300 leading-relaxed flex-1 text-sm">{t.text}</p>
-                  <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
-                    <span className="text-sm font-semibold text-white">{t.name}</span>
+                  <p className="text-[#4b5563] leading-relaxed flex-1 text-sm">{t.text}</p>
+                  <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
+                    <span className="text-sm font-semibold text-[#1c1917]">{t.name}</span>
                     <div className="flex gap-0.5">{Array.from({ length: t.rating }).map((_, j) => (<Star key={j} size={12} weight="fill" style={{ color: YELLOW }} />))}</div>
                   </div>
                 </GlassCard>
@@ -539,10 +539,10 @@ export default function V2DaycarePage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <p className="text-sm uppercase tracking-widest mb-3" style={{ color: YELLOW }}>Safety First</p>
-              <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white mb-6">
+              <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-[#1c1917] mb-6">
                 <WordReveal text="Safety & Certifications" />
               </h2>
-              <p className="text-slate-400 leading-relaxed max-w-md">Your child&apos;s safety is our top priority. We exceed all state licensing requirements and maintain the highest standards of care, cleanliness, and security.</p>
+              <p className="text-[#6b7280] leading-relaxed max-w-md">Your child&apos;s safety is our top priority. We exceed all state licensing requirements and maintain the highest standards of care, cleanliness, and security.</p>
             </div>
             <motion.div className="space-y-3" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
               {certifications.map((cert, i) => (
@@ -550,7 +550,7 @@ export default function V2DaycarePage() {
                   <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: PURPLE_GLOW }}>
                     {i < 3 ? <Certificate size={16} weight="duotone" style={{ color: PURPLE }} /> : <ShieldCheck size={16} weight="duotone" style={{ color: PURPLE }} />}
                   </div>
-                  <span className="text-slate-300 text-sm">{cert}</span>
+                  <span className="text-[#4b5563] text-sm">{cert}</span>
                 </motion.div>
               ))}
             </motion.div>
@@ -563,7 +563,7 @@ export default function V2DaycarePage() {
         <div className="mx-auto max-w-3xl px-4 md:px-6">
           <div className="text-center mb-16">
             <p className="text-sm uppercase tracking-widest mb-3" style={{ color: YELLOW }}>Common Questions</p>
-            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white">
+            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-[#1c1917]">
               <WordReveal text="Frequently Asked Questions" />
             </h2>
           </div>
@@ -572,13 +572,13 @@ export default function V2DaycarePage() {
               <motion.div key={i} variants={fadeUp}>
                 <GlassCard className="overflow-hidden">
                   <button onClick={() => setOpenFaq(openFaq === i ? null : i)} className="w-full flex items-center justify-between p-5 md:p-6 text-left cursor-pointer">
-                    <span className="text-lg font-semibold text-white pr-4">{faq.q}</span>
-                    <motion.div animate={{ rotate: openFaq === i ? 180 : 0 }} transition={spring}><CaretDown size={20} className="text-slate-400" /></motion.div>
+                    <span className="text-lg font-semibold text-[#1c1917] pr-4">{faq.q}</span>
+                    <motion.div animate={{ rotate: openFaq === i ? 180 : 0 }} transition={spring}><CaretDown size={20} className="text-[#6b7280]" /></motion.div>
                   </button>
                   <AnimatePresence initial={false}>
                     {openFaq === i && (
                       <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={spring} className="overflow-hidden">
-                        <p className="px-5 pb-5 md:px-6 md:pb-6 text-slate-400 leading-relaxed">{faq.a}</p>
+                        <p className="px-5 pb-5 md:px-6 md:pb-6 text-[#6b7280] leading-relaxed">{faq.a}</p>
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -596,13 +596,13 @@ export default function V2DaycarePage() {
             <div className="p-8 md:p-12 text-center">
               <motion.div initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={spring}>
                 <p className="text-sm uppercase tracking-widest mb-3" style={{ color: YELLOW }}>Join Our Family</p>
-                <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white mb-4">Enrollment is Open</h2>
-                <p className="text-slate-400 text-lg mb-8 max-w-lg mx-auto">Schedule a tour today and see why families choose Sunshine Kids Academy. Limited spots available for the current term.</p>
+                <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-[#1c1917] mb-4">Enrollment is Open</h2>
+                <p className="text-[#6b7280] text-lg mb-8 max-w-lg mx-auto">Schedule a tour today and see why families choose Sunshine Kids Academy. Limited spots available for the current term.</p>
                 <div className="flex flex-wrap justify-center gap-4">
-                  <MagneticButton className="px-10 py-4 rounded-full text-base font-semibold text-white inline-flex items-center gap-2 cursor-pointer" style={{ background: PURPLE }}>
+                  <MagneticButton className="px-10 py-4 rounded-full text-base font-semibold text-[#1c1917] inline-flex items-center gap-2 cursor-pointer" style={{ background: PURPLE }}>
                     <CalendarCheck size={20} weight="duotone" /> Schedule Tour
                   </MagneticButton>
-                  <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 inline-flex items-center gap-2 cursor-pointer">
+                  <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-[#1c1917] border border-gray-200 inline-flex items-center gap-2 cursor-pointer">
                     <Phone size={18} weight="duotone" /> Call Us
                   </MagneticButton>
                 </div>
@@ -617,7 +617,7 @@ export default function V2DaycarePage() {
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="text-center mb-12">
             <p className="text-sm uppercase tracking-widest mb-3" style={{ color: YELLOW }}>Take a Peek</p>
-            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white">
+            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-[#1c1917]">
               <WordReveal text="Virtual Tour Gallery" />
             </h2>
           </div>
@@ -632,13 +632,13 @@ export default function V2DaycarePage() {
       </SectionReveal>
 
       {/* ─── FOOTER ─── */}
-      <footer className="relative z-10 border-t border-white/5 py-8">
+      <footer className="relative z-10 border-t border-gray-100 py-8">
         <div className="mx-auto max-w-7xl px-4 md:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2 text-sm text-slate-500">
+          <div className="flex items-center gap-2 text-sm text-[#9ca3af]">
             <Heart size={16} weight="duotone" style={{ color: PURPLE }} />
             <span>Sunshine Kids Academy &copy; {new Date().getFullYear()}</span>
           </div>
-          <p className="text-xs text-slate-600">Website created by Bluejay Business Solutions</p>
+          <p className="text-xs text-[#6b7280]">Website created by Bluejay Business Solutions</p>
         </div>
       </footer>
     </main>

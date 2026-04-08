@@ -53,7 +53,7 @@ const fadeUp = {
 };
 
 /* ───────────────────────── COLORS ───────────────────────── */
-const BG = "#0f0a10";
+const BG = "#fdf9f7";
 const ROSE = "#e11d48";
 const ROSE_LIGHT = "#fb7185";
 const ROSE_GLOW = "rgba(225, 29, 72, 0.12)";
@@ -112,7 +112,7 @@ function SectionReveal({ children, className = "", id }: { children: React.React
 }
 
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>;
+  return <div className={`rounded-2xl border border-gray-200 bg-white/70 backdrop-blur-xl shadow-sm ${className}`}>{children}</div>;
 }
 
 function MagneticButton({ children, className = "", onClick, style }: { children: React.ReactNode; className?: string; onClick?: () => void; style?: React.CSSProperties }) {
@@ -142,7 +142,7 @@ function ShimmerBorder({ children, className = "" }: { children: React.ReactNode
   return (
     <div className={`relative rounded-2xl p-[1px] overflow-hidden ${className}`}>
       <motion.div className="absolute inset-0 rounded-2xl" style={{ background: `conic-gradient(from 0deg, transparent, ${ROSE}, transparent, ${SAGE}, transparent)`, willChange: "transform" }} animate={{ rotate: [0, 360] }} transition={{ duration: 5, repeat: Infinity, ease: "linear" }} />
-      <div className="relative rounded-2xl z-10" style={{ background: BG }}>{children}</div>
+      <div className="relative rounded-2xl bg-white z-10">{children}</div>
     </div>
   );
 }
@@ -300,7 +300,7 @@ export default function V2FloristPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   return (
-    <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: BG, color: "#f1f5f9" }}>
+    <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: BG, color: "#1c1917" }}>
       <FloatingPetals />
 
       {/* ─── NAV ─── */}
@@ -309,18 +309,18 @@ export default function V2FloristPage() {
           <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
             <div className="flex items-center gap-2">
               <FlowerTulip size={24} weight="duotone" style={{ color: ROSE }} />
-              <span className="text-lg font-bold tracking-tight text-white">Petals & Bloom</span>
+              <span className="text-lg font-bold tracking-tight text-[#1c1917]">Petals & Bloom</span>
             </div>
-            <div className="hidden md:flex items-center gap-8 text-sm text-slate-400">
-              <a href="#gallery" className="hover:text-white transition-colors">Gallery</a>
-              <a href="#services" className="hover:text-white transition-colors">Services</a>
-              <a href="#seasons" className="hover:text-white transition-colors">Seasonal</a>
-              <a href="#testimonials" className="hover:text-white transition-colors">Reviews</a>
-              <a href="#contact" className="hover:text-white transition-colors">Contact</a>
+            <div className="hidden md:flex items-center gap-8 text-sm text-[#6b7280]">
+              <a href="#gallery" className="hover:text-[#1c1917] transition-colors">Gallery</a>
+              <a href="#services" className="hover:text-[#1c1917] transition-colors">Services</a>
+              <a href="#seasons" className="hover:text-[#1c1917] transition-colors">Seasonal</a>
+              <a href="#testimonials" className="hover:text-[#1c1917] transition-colors">Reviews</a>
+              <a href="#contact" className="hover:text-[#1c1917] transition-colors">Contact</a>
             </div>
             <div className="flex items-center gap-3">
-              <MagneticButton className="px-4 md:px-5 py-2 rounded-full text-sm font-semibold text-white" style={{ background: ROSE }}>Order Now</MagneticButton>
-              <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden p-2 rounded-lg text-white hover:bg-white/10 transition-colors">{mobileMenuOpen ? <X size={24} /> : <List size={24} />}</button>
+              <MagneticButton className="px-4 md:px-5 py-2 rounded-full text-sm font-semibold text-[#1c1917]" style={{ background: ROSE }}>Order Now</MagneticButton>
+              <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden p-2 rounded-lg text-[#1c1917] hover:bg-gray-100 transition-colors">{mobileMenuOpen ? <X size={24} /> : <List size={24} />}</button>
             </div>
           </GlassCard>
           <AnimatePresence>
@@ -328,7 +328,7 @@ export default function V2FloristPage() {
               <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.3, ease: "easeInOut" }} className="md:hidden mt-2 overflow-hidden">
                 <GlassCard className="flex flex-col gap-1 px-4 py-4">
                   {[{ label: "Gallery", href: "#gallery" }, { label: "Services", href: "#services" }, { label: "Seasonal", href: "#seasons" }, { label: "Reviews", href: "#testimonials" }, { label: "Contact", href: "#contact" }].map((link) => (
-                    <a key={link.label} href={link.href} onClick={() => setMobileMenuOpen(false)} className="block px-4 py-3 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-white/5 transition-colors">{link.label}</a>
+                    <a key={link.label} href={link.href} onClick={() => setMobileMenuOpen(false)} className="block px-4 py-3 rounded-lg text-sm text-[#4b5563] hover:text-[#1c1917] hover:bg-gray-50 transition-colors">{link.label}</a>
                   ))}
                 </GlassCard>
               </motion.div>
@@ -344,22 +344,22 @@ export default function V2FloristPage() {
           <div className="space-y-8">
             <div>
               <motion.p initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ ...spring, delay: 0.1 }} className="text-sm uppercase tracking-widest mb-4" style={{ color: ROSE }}>Artisan Floral Studio</motion.p>
-              <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}>
+              <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-[#1c1917]" style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}>
                 <WordReveal text="Where Every Petal Tells a Story" />
               </h1>
             </div>
-            <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.6 }} className="text-lg text-slate-400 max-w-md leading-relaxed">
+            <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.6 }} className="text-lg text-[#6b7280] max-w-md leading-relaxed">
               Hand-crafted floral arrangements for weddings, events, and everyday celebrations. Fresh, stunning, and designed with love for over 15 years.
             </motion.p>
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.8 }} className="flex flex-wrap gap-4">
-              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer" style={{ background: ROSE }}>
+              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-[#1c1917] flex items-center gap-2 cursor-pointer" style={{ background: ROSE }}>
                 Shop Arrangements <ArrowRight size={18} weight="bold" />
               </MagneticButton>
-              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
+              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-[#1c1917] border border-gray-200 flex items-center gap-2 cursor-pointer">
                 <Phone size={18} weight="duotone" /> (555) 876-5432
               </MagneticButton>
             </motion.div>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ ...spring, delay: 1 }} className="flex flex-wrap gap-6 text-sm text-slate-400">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ ...spring, delay: 1 }} className="flex flex-wrap gap-6 text-sm text-[#6b7280]">
               <span className="flex items-center gap-2"><Truck size={16} weight="duotone" style={{ color: ROSE }} />Same-Day Delivery</span>
               <span className="flex items-center gap-2"><Leaf size={16} weight="duotone" style={{ color: SAGE }} />Sustainably Sourced</span>
             </motion.div>
@@ -378,7 +378,7 @@ export default function V2FloristPage() {
               {stats.map((s, i) => (
                 <motion.div key={i} variants={fadeUp} className="text-center">
                   <p className="text-3xl md:text-4xl font-bold tracking-tight" style={{ color: ROSE }}>{s.value}</p>
-                  <p className="text-sm text-slate-400 mt-1">{s.label}</p>
+                  <p className="text-sm text-[#6b7280] mt-1">{s.label}</p>
                 </motion.div>
               ))}
             </motion.div>
@@ -391,7 +391,7 @@ export default function V2FloristPage() {
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="text-center mb-16">
             <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ROSE }}>Our Creations</p>
-            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white"><WordReveal text="Gallery Showcase" /></h2>
+            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-[#1c1917]"><WordReveal text="Gallery Showcase" /></h2>
           </div>
           <motion.div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 auto-rows-[200px] md:auto-rows-[250px]" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
             {galleryImages.map((img, i) => (
@@ -399,7 +399,7 @@ export default function V2FloristPage() {
                 <img src={img.src} alt={img.alt} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                  <p className="text-sm text-white font-medium">{img.alt}</p>
+                  <p className="text-sm text-[#1c1917] font-medium">{img.alt}</p>
                 </div>
               </motion.div>
             ))}
@@ -413,8 +413,8 @@ export default function V2FloristPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
             <div className="lg:sticky lg:top-32">
               <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ROSE }}>What We Create</p>
-              <h2 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white mb-6"><WordReveal text="Floral Services for Every Occasion" /></h2>
-              <p className="text-slate-400 leading-relaxed max-w-md">From intimate bouquets to grand wedding installations, every arrangement is hand-crafted with the freshest seasonal blooms and an eye for beauty.</p>
+              <h2 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-[#1c1917] mb-6"><WordReveal text="Floral Services for Every Occasion" /></h2>
+              <p className="text-[#6b7280] leading-relaxed max-w-md">From intimate bouquets to grand wedding installations, every arrangement is hand-crafted with the freshest seasonal blooms and an eye for beauty.</p>
             </div>
             <motion.div className="space-y-3" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
               {services.map((svc, i) => (
@@ -423,14 +423,14 @@ export default function V2FloristPage() {
                     <button onClick={() => setOpenService(openService === i ? null : i)} className="w-full flex items-center justify-between p-5 md:p-6 text-left cursor-pointer">
                       <div className="flex items-center gap-4">
                         <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: ROSE_GLOW }}><svc.icon size={20} weight="duotone" style={{ color: ROSE }} /></div>
-                        <span className="text-lg font-semibold text-white">{svc.title}</span>
+                        <span className="text-lg font-semibold text-[#1c1917]">{svc.title}</span>
                       </div>
-                      <motion.div animate={{ rotate: openService === i ? 180 : 0 }} transition={spring}><CaretDown size={20} className="text-slate-400" /></motion.div>
+                      <motion.div animate={{ rotate: openService === i ? 180 : 0 }} transition={spring}><CaretDown size={20} className="text-[#6b7280]" /></motion.div>
                     </button>
                     <AnimatePresence initial={false}>
                       {openService === i && (
                         <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={spring} className="overflow-hidden">
-                          <p className="px-5 pb-5 md:px-6 md:pb-6 text-slate-400 leading-relaxed pl-[4.5rem]">{svc.description}</p>
+                          <p className="px-5 pb-5 md:px-6 md:pb-6 text-[#6b7280] leading-relaxed pl-[4.5rem]">{svc.description}</p>
                         </motion.div>
                       )}
                     </AnimatePresence>
@@ -448,13 +448,13 @@ export default function V2FloristPage() {
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div>
             <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ROSE }}>Our Story</p>
-            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white mb-6"><WordReveal text="15 Years of Floral Artistry" /></h2>
-            <p className="text-slate-400 leading-relaxed mb-4">Petals & Bloom began as a small studio with a simple belief: flowers have the power to transform moments into memories. What started as a passion for beauty has grown into the area's most trusted floral studio.</p>
-            <p className="text-slate-400 leading-relaxed mb-6">Every arrangement is designed by our team of certified floral designers who source the finest blooms from local farms and premium international growers. We are committed to sustainability, freshness, and creating something truly special for every client.</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-[#1c1917] mb-6"><WordReveal text="15 Years of Floral Artistry" /></h2>
+            <p className="text-[#6b7280] leading-relaxed mb-4">Petals & Bloom began as a small studio with a simple belief: flowers have the power to transform moments into memories. What started as a passion for beauty has grown into the area's most trusted floral studio.</p>
+            <p className="text-[#6b7280] leading-relaxed mb-6">Every arrangement is designed by our team of certified floral designers who source the finest blooms from local farms and premium international growers. We are committed to sustainability, freshness, and creating something truly special for every client.</p>
             <div className="flex flex-wrap gap-4">
-              <div className="flex items-center gap-2 text-sm"><Crown size={18} weight="duotone" style={{ color: ROSE }} /><span className="text-slate-300">Award-Winning Design</span></div>
-              <div className="flex items-center gap-2 text-sm"><Palette size={18} weight="duotone" style={{ color: ROSE }} /><span className="text-slate-300">5 Certified Designers</span></div>
-              <div className="flex items-center gap-2 text-sm"><Leaf size={18} weight="duotone" style={{ color: SAGE }} /><span className="text-slate-300">Locally Sourced</span></div>
+              <div className="flex items-center gap-2 text-sm"><Crown size={18} weight="duotone" style={{ color: ROSE }} /><span className="text-[#4b5563]">Award-Winning Design</span></div>
+              <div className="flex items-center gap-2 text-sm"><Palette size={18} weight="duotone" style={{ color: ROSE }} /><span className="text-[#4b5563]">5 Certified Designers</span></div>
+              <div className="flex items-center gap-2 text-sm"><Leaf size={18} weight="duotone" style={{ color: SAGE }} /><span className="text-[#4b5563]">Locally Sourced</span></div>
             </div>
           </div>
           <div className="relative rounded-2xl overflow-hidden aspect-[4/3]">
@@ -469,16 +469,16 @@ export default function V2FloristPage() {
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="text-center mb-16">
             <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ROSE }}>Client Love</p>
-            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white"><WordReveal text="Words from Our Clients" /></h2>
+            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-[#1c1917]"><WordReveal text="Words from Our Clients" /></h2>
           </div>
           <motion.div className="grid grid-cols-1 md:grid-cols-3 gap-6" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
             {testimonials.map((t, i) => (
               <motion.div key={i} variants={fadeUp}>
                 <GlassCard className="p-6 h-full flex flex-col">
                   <Quotes size={28} weight="fill" style={{ color: ROSE }} className="mb-3 opacity-50" />
-                  <p className="text-slate-300 leading-relaxed flex-1 text-sm">{t.text}</p>
-                  <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
-                    <span className="text-sm font-semibold text-white">{t.name}</span>
+                  <p className="text-[#4b5563] leading-relaxed flex-1 text-sm">{t.text}</p>
+                  <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
+                    <span className="text-sm font-semibold text-[#1c1917]">{t.name}</span>
                     <div className="flex gap-0.5">{Array.from({ length: t.rating }).map((_, j) => (<Star key={j} size={12} weight="fill" style={{ color: ROSE }} />))}</div>
                   </div>
                 </GlassCard>
@@ -494,16 +494,16 @@ export default function V2FloristPage() {
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6">
           <div className="text-center mb-16">
             <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ROSE }}>Year-Round Beauty</p>
-            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white"><WordReveal text="Seasonal Collections" /></h2>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-[#1c1917]"><WordReveal text="Seasonal Collections" /></h2>
           </div>
           <motion.div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
             {seasonalCollections.map((col, i) => (
               <motion.div key={i} variants={fadeUp}>
                 <GlassCard className="p-6 h-full text-center">
                   <col.icon size={32} weight="duotone" style={{ color: ROSE }} className="mx-auto mb-4" />
-                  <h3 className="text-xl font-bold text-white mb-1">{col.season}</h3>
+                  <h3 className="text-xl font-bold text-[#1c1917] mb-1">{col.season}</h3>
                   <p className="text-xs uppercase tracking-widest mb-3" style={{ color: SAGE }}>{col.blooms}</p>
-                  <p className="text-sm text-slate-400 leading-relaxed">{col.description}</p>
+                  <p className="text-sm text-[#6b7280] leading-relaxed">{col.description}</p>
                 </GlassCard>
               </motion.div>
             ))}
@@ -516,20 +516,20 @@ export default function V2FloristPage() {
         <div className="mx-auto max-w-3xl px-4 md:px-6">
           <div className="text-center mb-16">
             <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ROSE }}>Common Questions</p>
-            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white"><WordReveal text="Frequently Asked Questions" /></h2>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-[#1c1917]"><WordReveal text="Frequently Asked Questions" /></h2>
           </div>
           <motion.div className="space-y-3" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true }}>
             {faqItems.map((faq, i) => (
               <motion.div key={i} variants={fadeUp}>
                 <GlassCard className="overflow-hidden">
                   <button onClick={() => setOpenFaq(openFaq === i ? null : i)} className="w-full flex items-center justify-between p-5 text-left cursor-pointer">
-                    <span className="text-base font-semibold text-white pr-4">{faq.q}</span>
-                    <motion.div animate={{ rotate: openFaq === i ? 180 : 0 }} transition={spring}><CaretDown size={20} className="text-slate-400" /></motion.div>
+                    <span className="text-base font-semibold text-[#1c1917] pr-4">{faq.q}</span>
+                    <motion.div animate={{ rotate: openFaq === i ? 180 : 0 }} transition={spring}><CaretDown size={20} className="text-[#6b7280]" /></motion.div>
                   </button>
                   <AnimatePresence initial={false}>
                     {openFaq === i && (
                       <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={spring} className="overflow-hidden">
-                        <p className="px-5 pb-5 text-slate-400 leading-relaxed">{faq.a}</p>
+                        <p className="px-5 pb-5 text-[#6b7280] leading-relaxed">{faq.a}</p>
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -545,15 +545,15 @@ export default function V2FloristPage() {
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="text-center mb-16">
             <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ROSE }}>Delivery</p>
-            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white"><WordReveal text="Fresh to Your Door" /></h2>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-[#1c1917]"><WordReveal text="Fresh to Your Door" /></h2>
           </div>
           <motion.div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
             {deliveryInfo.map((info, i) => (
               <motion.div key={i} variants={fadeUp}>
                 <GlassCard className="p-6 text-center h-full">
                   <info.icon size={28} weight="duotone" style={{ color: ROSE }} className="mx-auto mb-3" />
-                  <h3 className="text-base font-semibold text-white mb-1">{info.label}</h3>
-                  <p className="text-sm text-slate-400">{info.detail}</p>
+                  <h3 className="text-base font-semibold text-[#1c1917] mb-1">{info.label}</h3>
+                  <p className="text-sm text-[#6b7280]">{info.detail}</p>
                 </GlassCard>
               </motion.div>
             ))}
@@ -566,24 +566,24 @@ export default function V2FloristPage() {
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white mb-6"><WordReveal text="Send Something Beautiful" /></h2>
-              <p className="text-slate-400 leading-relaxed max-w-md mb-8">Whether you need a stunning wedding design or a spontaneous bouquet to brighten someone's day, we are here to create something unforgettable. Same-day delivery available.</p>
+              <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-[#1c1917] mb-6"><WordReveal text="Send Something Beautiful" /></h2>
+              <p className="text-[#6b7280] leading-relaxed max-w-md mb-8">Whether you need a stunning wedding design or a spontaneous bouquet to brighten someone's day, we are here to create something unforgettable. Same-day delivery available.</p>
               <div className="flex flex-wrap gap-4">
-                <MagneticButton className="px-10 py-4 rounded-full text-base font-semibold text-white inline-flex items-center gap-2 cursor-pointer" style={{ background: ROSE }}>
+                <MagneticButton className="px-10 py-4 rounded-full text-base font-semibold text-[#1c1917] inline-flex items-center gap-2 cursor-pointer" style={{ background: ROSE }}>
                   <CalendarCheck size={20} weight="duotone" /> Order Flowers
                 </MagneticButton>
-                <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
+                <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-[#1c1917] border border-gray-200 flex items-center gap-2 cursor-pointer">
                   <Phone size={18} weight="duotone" /> Call Studio
                 </MagneticButton>
               </div>
             </div>
             <GlassCard className="p-8">
-              <h3 className="text-xl font-semibold text-white mb-6">Visit Our Studio</h3>
+              <h3 className="text-xl font-semibold text-[#1c1917] mb-6">Visit Our Studio</h3>
               <div className="space-y-4">
-                <div className="flex items-start gap-4"><MapPin size={20} weight="duotone" style={{ color: ROSE }} className="mt-0.5 shrink-0" /><div><p className="text-sm font-semibold text-white">Studio</p><p className="text-sm text-slate-400">128 Bloom Lane<br />Savannah, GA 31401</p></div></div>
-                <div className="flex items-start gap-4"><Phone size={20} weight="duotone" style={{ color: ROSE }} className="mt-0.5 shrink-0" /><div><p className="text-sm font-semibold text-white">Phone</p><p className="text-sm text-slate-400">(555) 876-5432</p></div></div>
-                <div className="flex items-start gap-4"><Clock size={20} weight="duotone" style={{ color: ROSE }} className="mt-0.5 shrink-0" /><div><p className="text-sm font-semibold text-white">Hours</p><p className="text-sm text-slate-400">Monday - Saturday: 8:00 AM - 6:00 PM<br />Sunday: 10:00 AM - 4:00 PM<br />Holiday hours may vary</p></div></div>
-                <div className="flex items-start gap-4"><Heart size={20} weight="duotone" style={{ color: ROSE }} className="mt-0.5 shrink-0" /><div><p className="text-sm font-semibold text-white">Wedding Consultations</p><p className="text-sm text-slate-400">By appointment, evenings available<br />Complimentary for events over $2,000</p></div></div>
+                <div className="flex items-start gap-4"><MapPin size={20} weight="duotone" style={{ color: ROSE }} className="mt-0.5 shrink-0" /><div><p className="text-sm font-semibold text-[#1c1917]">Studio</p><p className="text-sm text-[#6b7280]">128 Bloom Lane<br />Savannah, GA 31401</p></div></div>
+                <div className="flex items-start gap-4"><Phone size={20} weight="duotone" style={{ color: ROSE }} className="mt-0.5 shrink-0" /><div><p className="text-sm font-semibold text-[#1c1917]">Phone</p><p className="text-sm text-[#6b7280]">(555) 876-5432</p></div></div>
+                <div className="flex items-start gap-4"><Clock size={20} weight="duotone" style={{ color: ROSE }} className="mt-0.5 shrink-0" /><div><p className="text-sm font-semibold text-[#1c1917]">Hours</p><p className="text-sm text-[#6b7280]">Monday - Saturday: 8:00 AM - 6:00 PM<br />Sunday: 10:00 AM - 4:00 PM<br />Holiday hours may vary</p></div></div>
+                <div className="flex items-start gap-4"><Heart size={20} weight="duotone" style={{ color: ROSE }} className="mt-0.5 shrink-0" /><div><p className="text-sm font-semibold text-[#1c1917]">Wedding Consultations</p><p className="text-sm text-[#6b7280]">By appointment, evenings available<br />Complimentary for events over $2,000</p></div></div>
               </div>
             </GlassCard>
           </div>
@@ -591,13 +591,13 @@ export default function V2FloristPage() {
       </SectionReveal>
 
       {/* ─── FOOTER ─── */}
-      <footer className="relative z-10 border-t border-white/5 py-8">
+      <footer className="relative z-10 border-t border-gray-100 py-8">
         <div className="mx-auto max-w-7xl px-4 md:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2 text-sm text-slate-500">
+          <div className="flex items-center gap-2 text-sm text-[#9ca3af]">
             <FlowerTulip size={16} weight="duotone" style={{ color: ROSE }} />
             <span>Petals & Bloom &copy; {new Date().getFullYear()}</span>
           </div>
-          <p className="text-xs text-slate-600">Website created by Bluejay Business Solutions</p>
+          <p className="text-xs text-[#6b7280]">Website created by Bluejay Business Solutions</p>
         </div>
       </footer>
     </main>
