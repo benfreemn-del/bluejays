@@ -318,7 +318,16 @@ export default function V2LandscapingPage() {
             </motion.div>
           </div>
           <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ ...spring, delay: 0.3 }} className="hidden md:flex items-center justify-center lg:justify-end">
-            <LandscapeSVG />
+            <div className="relative rounded-2xl overflow-hidden border border-white/10">
+              <img src="https://images.unsplash.com/photo-1558904541-efa843a96f01?w=800&q=80" alt="Beautiful landscaped backyard" className="w-full h-[500px] object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0a1a0a] via-transparent to-transparent" />
+              <div className="absolute bottom-6 left-6">
+                <div className="px-4 py-2 rounded-full backdrop-blur-md bg-black/50 border border-green-500/30 flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                  <span className="text-sm font-semibold text-white">Free Estimates</span>
+                </div>
+              </div>
+            </div>
           </motion.div>
         </div>
       </section>
