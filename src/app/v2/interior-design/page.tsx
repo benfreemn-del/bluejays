@@ -144,7 +144,7 @@ function ShimmerBorder({ children, className = "" }: { children: React.ReactNode
 /* ───────────────────────── DATA ───────────────────────── */
 const portfolioGallery = [
   { src: "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=800&q=80", alt: "Modern minimalist living room", span: "col-span-2 row-span-2" },
-  { src: "https://images.unsplash.com/photo-1600210492493-0946911123ea?w=600&q=80", alt: "Luxury bedroom suite", span: "col-span-1 row-span-1" },
+  { src: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=600&q=80", alt: "Luxury bedroom suite", span: "col-span-1 row-span-1" },
   { src: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=600&q=80", alt: "Contemporary kitchen", span: "col-span-1 row-span-1" },
   { src: "https://images.unsplash.com/photo-1600607687644-c7171b42498f?w=600&q=80", alt: "Designer bathroom", span: "col-span-1 row-span-1" },
   { src: "https://images.unsplash.com/photo-1631679706909-1844bbd07221?w=600&q=80", alt: "Home office design", span: "col-span-1 row-span-1" },

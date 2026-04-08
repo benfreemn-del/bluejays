@@ -201,9 +201,9 @@ const services = [
 ];
 
 const beforeAfterGallery = [
-  { before: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=600&q=80", after: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=600&q=80", label: "Front Yard Transformation" },
-  { before: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&q=80", after: "https://images.unsplash.com/photo-1598902108854-d1446c080876?w=600&q=80", label: "Backyard Patio Project" },
-  { before: "https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?w=600&q=80", after: "https://images.unsplash.com/photo-1558171813-01342dfc214a?w=600&q=80", label: "Garden Redesign" },
+  { before: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&q=80", after: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=600&q=80", label: "Front Yard Transformation" },
+  { before: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&q=80", after: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=600&q=80", label: "Backyard Patio Project" },
+  { before: "https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?w=600&q=80", after: "https://images.unsplash.com/photo-1558904541-efa843a96f01?w=600&q=80", label: "Garden Redesign" },
 ];
 
 const processSteps = [

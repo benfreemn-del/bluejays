@@ -283,7 +283,7 @@ export default function V2MovingPage() {
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10">
         {/* Hero bg image overlay */}
         <div className="absolute inset-0 z-0">
-          <img src="https://images.unsplash.com/photo-1600518464441-9154a4dea21b?w=1600&q=80" alt="" className="w-full h-full object-cover opacity-15" />
+          <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1600&q=80" alt="" className="w-full h-full object-cover opacity-15" />
           <div className="absolute inset-0" style={{ background: `linear-gradient(to bottom, ${BG}, transparent 30%, ${BG})` }} />
         </div>
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-4 items-center">
@@ -357,7 +357,7 @@ export default function V2MovingPage() {
       {/* ─── ABOUT ─── */}
       <SectionReveal className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0 opacity-10">
-          <img src="https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=1600&q=80" alt="" className="w-full h-full object-cover" />
+          <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1600&q=80" alt="" className="w-full h-full object-cover" />
         </div>
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div>

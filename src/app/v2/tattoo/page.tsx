@@ -146,7 +146,7 @@ const galleryImages = [
   { src: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&q=80", alt: "Geometric mandala tattoo on forearm", span: "col-span-1 row-span-1" },
   { src: "https://images.unsplash.com/photo-1565058379802-bbe93b2f703a?w=400&q=80", alt: "Watercolor style floral tattoo", span: "col-span-1 row-span-1" },
   { src: "https://images.unsplash.com/photo-1562962230-16e4623d36e6?w=400&q=80", alt: "Traditional American tattoo design", span: "col-span-1 row-span-1" },
-  { src: "https://images.unsplash.com/photo-1612459284270-27b3a394b076?w=400&q=80", alt: "Fine line minimalist tattoo work", span: "col-span-1 row-span-1" },
+  { src: "https://images.unsplash.com/photo-1562259929-b4e1fd3aef09?w=400&q=80", alt: "Fine line minimalist tattoo work", span: "col-span-1 row-span-1" },
   { src: "https://images.unsplash.com/photo-1565058379802-bbe93b2f703a?w=600&q=80", alt: "Full back piece Japanese style tattoo", span: "col-span-2 row-span-1" },
 ];
 

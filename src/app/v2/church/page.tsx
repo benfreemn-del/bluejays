@@ -311,7 +311,7 @@ const ministries = [
 ];
 
 const pastors = [
-  { name: "Pastor David Thompson", role: "Lead Pastor", photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&q=80", initials: "DT" },
+  { name: "Pastor David Thompson", role: "Lead Pastor", photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80", initials: "DT" },
   { name: "Pastor Maria Gonzalez", role: "Worship & Care Pastor", photo: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=400&q=80", initials: "MG" },
   { name: "Pastor James Mitchell", role: "Youth & Outreach Pastor", photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&q=80", initials: "JM" },
 ];

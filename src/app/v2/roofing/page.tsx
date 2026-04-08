@@ -516,7 +516,7 @@ const materials = [
     description:
       "The gold standard of roofing. Natural slate and clay tiles that can last over 100 years with proper installation.",
     image:
-      "https://images.unsplash.com/photo-1600573472592-401b489a3cdc?w=400&q=80",
+      "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=400&q=80",
   },
 ];
 

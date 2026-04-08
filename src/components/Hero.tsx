@@ -405,16 +405,16 @@ function getCategoryTagline(category: string): string {
 
 const defaultSiteCards: SiteCard[] = [
   // Each card has a unique business name, specific tagline, and distinct color shade
-  { name: "Puget Sound Realty", category: "Real Estate V2", color: "#09090b", href: "/v2/real-estate", icon: "🏠", tagline: "Cinematic luxury reveal — animated" },
-  { name: "Emerald City Dental", category: "Dental V2", color: "#0f172a", href: "/v2/dental", icon: "🦷", tagline: "Sparkle particles — calming motion" },
-  { name: "Pacific Law Group", category: "Law Firm V2", color: "#0f172a", href: "/v2/law-firm", icon: "⚖️", tagline: "Animated scales of justice" },
-  { name: "Cascade Electric Co.", category: "Electrician V2", color: "#1a1a1a", href: "/v2/electrician", icon: "⚡", tagline: "Lightning animations — premium electrical" },
-  { name: "Emerald City Plumbing", category: "Plumber V2", color: "#0f172a", href: "/v2/plumber", icon: "🔧", tagline: "Water flow animations — premium plumbing" },
-  { name: "Iron & Oak Fitness", category: "Fitness V2", color: "#0a0a0a", href: "/v2/fitness", icon: "💪", tagline: "Pulsing heartbeat — raw energy" },
-  { name: "Summit Roofing NW", category: "Roofing V2", color: "#111827", href: "/v2/roofing", icon: "🏗️", tagline: "Storm protection — premium roofing" },
-  { name: "Pacific Auto Works", category: "Auto Repair V2", color: "#111111", href: "/v2/auto-repair", icon: "🚗", tagline: "Garage vibes — premium auto repair" },
-  { name: "Velvet Hair Studio", category: "Salon V2", color: "#1c1917", href: "/v2/salon", icon: "✂️", tagline: "Morphing beauty — editorial design" },
-  { name: "Cascade Landscapes", category: "Landscaping V2", color: "#0a1a0a", href: "/v2/landscaping", icon: "🌳", tagline: "Nature transforms — premium landscaping" },
-  { name: "Grace Community Church", category: "Church V2", color: "#1a1a2e", href: "/v2/church", icon: "✝️", tagline: "A place to belong — premium ministry site" },
-  { name: "Northshore Vet Clinic", category: "Veterinary V2", color: "#0a1a0f", href: "/v2/veterinary", icon: "🐾", tagline: "Paw prints — premium pet care" },
+  { name: "Puget Sound Realty", category: "Real Estate", color: "#09090b", href: "/v2/real-estate", icon: "🏠", tagline: "Cinematic luxury reveal — animated" },
+  { name: "Emerald City Dental", category: "Dental", color: "#0f172a", href: "/v2/dental", icon: "🦷", tagline: "Sparkle particles — calming motion" },
+  { name: "Pacific Law Group", category: "Law Firm", color: "#0f172a", href: "/v2/law-firm", icon: "⚖️", tagline: "Animated scales of justice" },
+  { name: "Cascade Electric Co.", category: "Electrician", color: "#1a1a1a", href: "/v2/electrician", icon: "⚡", tagline: "Lightning animations — premium electrical" },
+  { name: "Emerald City Plumbing", category: "Plumber", color: "#0f172a", href: "/v2/plumber", icon: "🔧", tagline: "Water flow animations — premium plumbing" },
+  { name: "Iron & Oak Fitness", category: "Fitness", color: "#0a0a0a", href: "/v2/fitness", icon: "💪", tagline: "Pulsing heartbeat — raw energy" },
+  { name: "Summit Roofing NW", category: "Roofing", color: "#111827", href: "/v2/roofing", icon: "🏗️", tagline: "Storm protection — premium roofing" },
+  { name: "Pacific Auto Works", category: "Auto Repair", color: "#111111", href: "/v2/auto-repair", icon: "🚗", tagline: "Garage vibes — premium auto repair" },
+  { name: "Velvet Hair Studio", category: "Salon", color: "#1c1917", href: "/v2/salon", icon: "✂️", tagline: "Morphing beauty — editorial design" },
+  { name: "Cascade Landscapes", category: "Landscaping", color: "#0a1a0a", href: "/v2/landscaping", icon: "🌳", tagline: "Nature transforms — premium landscaping" },
+  { name: "Grace Community Church", category: "Church", color: "#1a1a2e", href: "/v2/church", icon: "✝️", tagline: "A place to belong — premium ministry site" },
+  { name: "Northshore Vet Clinic", category: "Veterinary", color: "#0a1a0f", href: "/v2/veterinary", icon: "🐾", tagline: "Paw prints — premium pet care" },
 ];
