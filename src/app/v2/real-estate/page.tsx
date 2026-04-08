@@ -495,9 +495,9 @@ export default function V2RealEstatePage() {
             >
               <div className="relative rounded-2xl overflow-hidden aspect-[4/3]">
                 <img
-                  src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=800&h=600&fit=crop"
+                  src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=800&q=80"
                   alt="Lead agent"
-                  className="w-full h-full object-cover object-top"
+                  className="w-full h-full object-cover object-[center_15%]"
                 />
                 <div className="absolute inset-0 bg-gradient-to-r from-[#09090b]/40 to-transparent" />
               </div>
