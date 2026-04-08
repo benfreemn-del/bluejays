@@ -236,6 +236,86 @@ function ShimmerBorder({ children, className = "" }: { children: React.ReactNode
   );
 }
 
+/* ───────────────────────── STETHOSCOPE SVG ───────────────────────── */
+function StethoscopeSVG() {
+  return (
+    <div className="relative flex items-center justify-center">
+      <motion.div
+        className="absolute inset-0 rounded-full"
+        style={{ background: `radial-gradient(circle, ${TEAL_GLOW} 0%, transparent 70%)`, filter: "blur(40px)" }}
+        animate={{ scale: [1, 1.2, 1], opacity: [0.6, 1, 0.6] }}
+        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <svg viewBox="0 0 200 240" className="relative z-10 w-48 h-56 md:w-56 md:h-72" fill="none">
+        <motion.circle cx="100" cy="115" r="92" stroke={TEAL} strokeWidth="0.5" opacity={0.12}
+          animate={{ r: [90, 94, 90] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} />
+        <motion.circle cx="100" cy="115" r="82" stroke={TEAL_LIGHT} strokeWidth="0.3" opacity={0.08}
+          animate={{ r: [80, 84, 80] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }} />
+
+        {/* Earpieces */}
+        <motion.circle cx="55" cy="30" r="8" fill={`${TEAL}22`} stroke={TEAL} strokeWidth="2"
+          initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.2, ease: "backOut" }} />
+        <circle cx="55" cy="28" rx="3" ry="4" fill={`${TEAL}0d`} />
+        <motion.circle cx="145" cy="30" r="8" fill={`${TEAL}22`} stroke={TEAL} strokeWidth="2"
+          initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.4, ease: "backOut" }} />
+        <circle cx="145" cy="28" rx="3" ry="4" fill={`${TEAL}0d`} />
+
+        {/* Tubes from earpieces */}
+        <motion.path d="M55 38 L55 55 Q55 75 75 85" stroke={TEAL} strokeWidth="2.5" fill="none" strokeLinecap="round"
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.8, delay: 0.5 }} />
+        <motion.path d="M145 38 L145 55 Q145 75 125 85" stroke={TEAL} strokeWidth="2.5" fill="none" strokeLinecap="round"
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.8, delay: 0.6 }} />
+
+        {/* Y-junction */}
+        <motion.path d="M75 85 Q100 95 125 85" stroke={TEAL} strokeWidth="2.5" fill="none" strokeLinecap="round"
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.5, delay: 1 }} />
+
+        {/* Main tube going down */}
+        <motion.path d="M100 90 L100 140 Q100 170 120 180 Q145 192 145 165 L145 145"
+          stroke={TEAL} strokeWidth="2.5" fill="none" strokeLinecap="round"
+          initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }}
+          transition={{ duration: 1.5, delay: 1.2 }} />
+
+        {/* Chest piece (diaphragm) */}
+        <motion.circle cx="145" cy="140" r="18" fill={`${TEAL}22`} stroke={TEAL} strokeWidth="2.5"
+          initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.6, delay: 2, ease: "backOut" }} />
+        <circle cx="145" cy="137" r="10" fill={`${TEAL}0d`} />
+        <motion.circle cx="145" cy="140" r="6" fill={`${TEAL}15`} stroke={TEAL_LIGHT} strokeWidth="1"
+          initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 2.3 }} />
+
+        {/* Heartbeat line through center */}
+        <motion.path
+          d="M30 155 L55 155 L62 142 L70 165 L78 130 L86 170 L92 142 L100 155 L170 155"
+          stroke={TEAL_LIGHT} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"
+          initial={{ pathLength: 0, opacity: 0 }}
+          animate={{ pathLength: [0, 1, 1, 0], opacity: [0, 1, 1, 0] }}
+          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", times: [0, 0.4, 0.6, 1] }} />
+
+        {/* Medical cross */}
+        <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.5 }}>
+          <rect x="45" y="195" width="20" height="6" rx="2" fill={TEAL_LIGHT} opacity={0.3} />
+          <rect x="52" y="188" width="6" height="20" rx="2" fill={TEAL_LIGHT} opacity={0.3} />
+        </motion.g>
+
+        {/* Sparkle accents */}
+        <motion.circle cx="170" cy="50" r="3" fill={TEAL_LIGHT}
+          animate={{ opacity: [0.2, 1, 0.2], scale: [0.7, 1.3, 0.7] }}
+          transition={{ duration: 2.5, repeat: Infinity }} />
+        <motion.circle cx="25" cy="70" r="2" fill={TEAL}
+          animate={{ opacity: [0.1, 0.8, 0.1], scale: [0.5, 1.2, 0.5] }}
+          transition={{ duration: 3, repeat: Infinity, delay: 0.8 }} />
+        <motion.circle cx="180" cy="120" r="2.5" fill={TEAL_LIGHT}
+          animate={{ opacity: [0.15, 0.7, 0.15] }}
+          transition={{ duration: 2, repeat: Infinity, delay: 1.2 }} />
+        <motion.circle cx="20" cy="140" r="2" fill={TEAL}
+          animate={{ opacity: [0.1, 0.6, 0.1] }}
+          transition={{ duration: 2.5, repeat: Infinity, delay: 0.4 }} />
+      </svg>
+    </div>
+  );
+}
+
 /* ───────────────────────── ACCORDION ───────────────────────── */
 function AccordionItem({
   title,
@@ -420,7 +500,7 @@ export default function V2MedicalPage() {
           <div className="absolute inset-0" style={{ background: `linear-gradient(to right, ${BG} 45%, transparent 100%)` }} />
           <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${BG} 10%, transparent 50%)` }} />
         </div>
-        <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full">
+        <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
           <div className="max-w-2xl space-y-8">
             <motion.p
               initial={{ opacity: 0, x: -20 }}
@@ -432,7 +512,7 @@ export default function V2MedicalPage() {
               Comprehensive Medical Care
             </motion.p>
             <h1
-              className="text-4xl md:text-7xl tracking-tighter leading-none font-bold text-white"
+              className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white"
               style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}
             >
               <WordReveal text="Your Health, Our Priority" />
@@ -466,6 +546,9 @@ export default function V2MedicalPage() {
               </MagneticButton>
             </motion.div>
           </div>
+          <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ ...spring, delay: 0.3 }} className="hidden md:flex items-center justify-center lg:justify-end">
+            <StethoscopeSVG />
+          </motion.div>
         </div>
       </section>
 

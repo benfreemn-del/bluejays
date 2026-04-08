@@ -36,6 +36,113 @@ function MagneticButton({ children, className = "", onClick, style }: { children
 
 function ShimmerBorder({ children, className = "" }: { children: React.ReactNode; className?: string }) { return <div className={`relative rounded-2xl p-[1px] overflow-hidden ${className}`}><motion.div className="absolute inset-0 rounded-2xl" style={{ background: `conic-gradient(from 0deg, transparent, ${BLUE}, transparent, ${GREEN}, transparent)`, willChange: "transform" }} animate={{ rotate: [0, 360] }} transition={{ duration: 4, repeat: Infinity, ease: "linear" }} /><div className="relative rounded-2xl bg-[#0a0f1a] z-10">{children}</div></div>; }
 
+/* ───────────────────────── BOOK CAP SVG ───────────────────────── */
+function BookCapSVG() {
+  return (
+    <div className="relative flex items-center justify-center">
+      <motion.div
+        className="absolute inset-0 rounded-full"
+        style={{ background: `radial-gradient(circle, rgba(30,64,175,0.15) 0%, transparent 70%)`, filter: "blur(40px)" }}
+        animate={{ scale: [1, 1.2, 1], opacity: [0.6, 1, 0.6] }}
+        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <svg viewBox="0 0 200 240" className="relative z-10 w-48 h-56 md:w-56 md:h-72" fill="none">
+        <motion.circle cx="100" cy="115" r="92" stroke={BLUE} strokeWidth="0.5" opacity={0.12}
+          animate={{ r: [90, 94, 90] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} />
+        <motion.circle cx="100" cy="115" r="82" stroke={GREEN} strokeWidth="0.3" opacity={0.08}
+          animate={{ r: [80, 84, 80] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }} />
+
+        {/* Open book - left page */}
+        <motion.path d="M100 95 L100 200 Q70 195 40 200 L40 100 Q70 95 100 95Z"
+          fill={`${BLUE}18`} stroke={BLUE} strokeWidth="2" strokeLinejoin="round"
+          initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }}
+          transition={{ duration: 1.2, delay: 0.3 }} />
+        <path d="M95 100 L95 192 Q72 188 48 192 L48 105 Q72 100 95 100Z" fill={`${BLUE}0d`} />
+
+        {/* Open book - right page */}
+        <motion.path d="M100 95 L100 200 Q130 195 160 200 L160 100 Q130 95 100 95Z"
+          fill={`${BLUE}18`} stroke={BLUE} strokeWidth="2" strokeLinejoin="round"
+          initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }}
+          transition={{ duration: 1.2, delay: 0.5 }} />
+        <path d="M105 100 L105 192 Q128 188 152 192 L152 105 Q128 100 105 100Z" fill={`${BLUE}0d`} />
+
+        {/* Book spine */}
+        <motion.line x1="100" y1="95" x2="100" y2="200" stroke={BLUE} strokeWidth="2.5"
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.8, delay: 0.8 }} />
+
+        {/* Text lines on left page */}
+        {[115, 125, 135, 145, 155, 165].map((y, i) => (
+          <motion.line key={`l${i}`} x1="52" y1={y} x2={82 - (i % 2) * 8} y2={y}
+            stroke={BLUE} strokeWidth="1" opacity={0.25}
+            initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
+            transition={{ delay: 1.2 + i * 0.08, duration: 0.3 }} />
+        ))}
+        {/* Text lines on right page */}
+        {[115, 125, 135, 145, 155, 165].map((y, i) => (
+          <motion.line key={`r${i}`} x1="110" y1={y} x2={140 + (i % 2) * 8} y2={y}
+            stroke={BLUE} strokeWidth="1" opacity={0.25}
+            initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
+            transition={{ delay: 1.4 + i * 0.08, duration: 0.3 }} />
+        ))}
+
+        {/* Graduation cap above book */}
+        <motion.path d="M100 30 L55 55 L100 75 L145 55 Z"
+          fill={`${BLUE}22`} stroke={BLUE} strokeWidth="2" strokeLinejoin="round"
+          initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }}
+          transition={{ duration: 1, delay: 1.5 }} />
+        <path d="M100 38 L68 55 L100 70 L132 55 Z" fill={`${BLUE}0d`} />
+
+        {/* Cap board (mortar board) */}
+        <motion.path d="M70 50 L70 38 Q70 30 100 20 Q130 30 130 38 L130 50"
+          fill={`${BLUE}18`} stroke={BLUE} strokeWidth="1.5" fill-opacity="0.5"
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.8 }} />
+        <path d="M78 45 L78 40 Q78 34 100 26 Q122 34 122 40 L122 45" fill={`${BLUE}0d`} />
+
+        {/* Tassel */}
+        <motion.path d="M145 55 L155 55 L155 80 L152 85 L149 80 L149 55"
+          stroke={GREEN} strokeWidth="1.5" fill={`${GREEN}22`}
+          initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 2, duration: 0.5 }} />
+        <motion.circle cx="155" cy="55" r="3" fill={`${GREEN}44`}
+          initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 2.2 }} />
+
+        {/* Floating math symbols */}
+        <motion.text x="30" y="100" fill={GREEN} fontSize="14" fontWeight="bold" opacity={0.3}
+          animate={{ y: [100, 92, 100], opacity: [0.2, 0.4, 0.2] }}
+          transition={{ duration: 3, repeat: Infinity }}>+</motion.text>
+        <motion.text x="168" y="90" fill={BLUE} fontSize="16" fontWeight="bold" opacity={0.3}
+          animate={{ y: [90, 82, 90], opacity: [0.2, 0.4, 0.2] }}
+          transition={{ duration: 3.5, repeat: Infinity, delay: 0.5 }}>=</motion.text>
+        <motion.text x="170" y="170" fill={GREEN} fontSize="12" fontWeight="bold" opacity={0.3}
+          animate={{ y: [170, 162, 170], opacity: [0.15, 0.35, 0.15] }}
+          transition={{ duration: 4, repeat: Infinity, delay: 1 }}>%</motion.text>
+
+        {/* Light emanating from book pages */}
+        <motion.path d="M80 95 L65 75" stroke={GREEN} strokeWidth="1" strokeLinecap="round" opacity={0.2}
+          animate={{ opacity: [0.1, 0.3, 0.1] }}
+          transition={{ duration: 2, repeat: Infinity }} />
+        <motion.path d="M120 95 L135 75" stroke={GREEN} strokeWidth="1" strokeLinecap="round" opacity={0.2}
+          animate={{ opacity: [0.1, 0.3, 0.1] }}
+          transition={{ duration: 2, repeat: Infinity, delay: 0.5 }} />
+
+        {/* Sparkle accents */}
+        <motion.circle cx="170" cy="30" r="3" fill={GREEN}
+          animate={{ opacity: [0.2, 1, 0.2], scale: [0.7, 1.3, 0.7] }}
+          transition={{ duration: 2.5, repeat: Infinity }} />
+        <motion.circle cx="25" cy="55" r="2" fill={BLUE}
+          animate={{ opacity: [0.1, 0.8, 0.1], scale: [0.5, 1.2, 0.5] }}
+          transition={{ duration: 3, repeat: Infinity, delay: 0.8 }} />
+        <motion.circle cx="185" cy="140" r="2.5" fill={GREEN}
+          animate={{ opacity: [0.15, 0.7, 0.15] }}
+          transition={{ duration: 2, repeat: Infinity, delay: 1.2 }} />
+        <motion.circle cx="15" cy="140" r="2" fill={BLUE}
+          animate={{ opacity: [0.1, 0.6, 0.1] }}
+          transition={{ duration: 2.5, repeat: Infinity, delay: 0.4 }} />
+      </svg>
+    </div>
+  );
+}
+
 const services = [
   { name: "Mathematics", desc: "From basic arithmetic to calculus and statistics — we make math click. All levels, all ages.", icon: MathOperations },
   { name: "Science", desc: "Biology, chemistry, physics, and AP sciences taught through hands-on experiments and real-world applications.", icon: Atom },
@@ -102,7 +209,9 @@ export default function V2TutoringShowcase() {
             </div>
             <div className="flex flex-wrap gap-6 text-sm text-slate-400"><span className="flex items-center gap-2"><MapPin size={16} weight="duotone" style={{ color: BLUE }} /> Redmond, WA</span><span className="flex items-center gap-2"><Clock size={16} weight="duotone" style={{ color: BLUE }} /> In-Person &amp; Online</span></div>
           </div>
-          <div className="hidden md:block relative"><div className="relative rounded-2xl overflow-hidden border border-white/10"><img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1400&q=80" alt="Tutoring session" className="w-full h-[500px] object-cover" /><div className="absolute inset-0 bg-gradient-to-t from-[#0a0f1a] via-transparent to-transparent" /><div className="absolute bottom-6 left-6"><div className="px-4 py-2 rounded-full backdrop-blur-md bg-black/50 border flex items-center gap-2" style={{ borderColor: `${BLUE}4d` }}><GraduationCap size={18} weight="fill" style={{ color: GREEN }} /><span className="text-sm font-semibold text-white">95% Grade Improvement</span></div></div></div></div>
+          <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ ...spring, delay: 0.3 }} className="hidden md:flex items-center justify-center lg:justify-end">
+            <BookCapSVG />
+          </motion.div>
         </div>
       </section>
 

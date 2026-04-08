@@ -111,6 +111,107 @@ function ShimmerBorder({ children, className = "" }: { children: React.ReactNode
   );
 }
 
+/* ───────────────────────── FENCE GATE SVG ───────────────────────── */
+function FenceGateSVG() {
+  return (
+    <div className="relative flex items-center justify-center">
+      <motion.div
+        className="absolute inset-0 rounded-full"
+        style={{ background: `radial-gradient(circle, ${WOOD_GLOW} 0%, transparent 70%)`, filter: "blur(40px)" }}
+        animate={{ scale: [1, 1.2, 1], opacity: [0.6, 1, 0.6] }}
+        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <svg viewBox="0 0 200 220" className="relative z-10 w-48 h-56 md:w-56 md:h-72" fill="none">
+        {/* Outer glow rings */}
+        <motion.circle cx="100" cy="110" r="92" stroke={WOOD_LIGHT} strokeWidth="0.5" opacity={0.12}
+          animate={{ r: [90, 94, 90] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} />
+
+        {/* Decorative iron arch gate top */}
+        <motion.path d="M40 80 Q40 25 100 25 Q160 25 160 80"
+          stroke={STONE_LIGHT} strokeWidth="2.5" fill={`${STONE}0d`}
+          initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }}
+          transition={{ duration: 1.5, ease: "easeInOut" }} />
+        {/* Inner arch */}
+        <motion.path d="M52 80 Q52 40 100 40 Q148 40 148 80"
+          stroke={STONE} strokeWidth="1.5" fill={`${STONE}08`}
+          initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }}
+          transition={{ duration: 1.2, delay: 0.3, ease: "easeInOut" }} />
+
+        {/* Decorative scrollwork at arch top */}
+        <motion.path d="M80 45 Q90 30 100 40 Q110 30 120 45" stroke={WOOD_LIGHT} strokeWidth="1.5" fill="none" strokeLinecap="round"
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
+          transition={{ duration: 0.8, delay: 0.8 }} />
+
+        {/* Left gate panel */}
+        <motion.rect x="42" y="80" width="52" height="110" rx="2" fill={`${WOOD}18`} stroke={WOOD} strokeWidth="2"
+          initial={{ scaleY: 0 }} animate={{ scaleY: 1 }} style={{ transformOrigin: "50% 100%" }}
+          transition={{ duration: 0.8, delay: 0.5, ease: "backOut" }} />
+        <rect x="48" y="85" width="40" height="100" rx="1" fill={`${WOOD}0d`} />
+
+        {/* Right gate panel */}
+        <motion.rect x="106" y="80" width="52" height="110" rx="2" fill={`${WOOD}18`} stroke={WOOD} strokeWidth="2"
+          initial={{ scaleY: 0 }} animate={{ scaleY: 1 }} style={{ transformOrigin: "50% 100%" }}
+          transition={{ duration: 0.8, delay: 0.7, ease: "backOut" }} />
+        <rect x="112" y="85" width="40" height="100" rx="1" fill={`${WOOD}0d`} />
+
+        {/* Vertical bars on left panel */}
+        {[52, 62, 72, 82].map((x, i) => (
+          <motion.line key={`l${i}`} x1={x} y1="85" x2={x} y2="185" stroke={WOOD_LIGHT} strokeWidth="1.5"
+            initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
+            transition={{ duration: 0.5, delay: 1 + i * 0.1 }} />
+        ))}
+        {/* Vertical bars on right panel */}
+        {[118, 128, 138, 148].map((x, i) => (
+          <motion.line key={`r${i}`} x1={x} y1="85" x2={x} y2="185" stroke={WOOD_LIGHT} strokeWidth="1.5"
+            initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
+            transition={{ duration: 0.5, delay: 1.2 + i * 0.1 }} />
+        ))}
+
+        {/* Horizontal rails */}
+        <motion.line x1="42" y1="120" x2="94" y2="120" stroke={WOOD_LIGHT} strokeWidth="1.5"
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.5, delay: 1.5 }} />
+        <motion.line x1="106" y1="120" x2="158" y2="120" stroke={WOOD_LIGHT} strokeWidth="1.5"
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.5, delay: 1.6 }} />
+        <motion.line x1="42" y1="155" x2="94" y2="155" stroke={WOOD_LIGHT} strokeWidth="1.5"
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.5, delay: 1.7 }} />
+        <motion.line x1="106" y1="155" x2="158" y2="155" stroke={WOOD_LIGHT} strokeWidth="1.5"
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.5, delay: 1.8 }} />
+
+        {/* Gate post caps - decorative finials */}
+        <motion.path d="M35 80 L35 75 L40 68 L45 75 L45 80" fill={`${STONE}22`} stroke={STONE} strokeWidth="1.5"
+          initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.8, duration: 0.5 }} />
+        <motion.path d="M155 80 L155 75 L160 68 L165 75 L165 80" fill={`${STONE}22`} stroke={STONE} strokeWidth="1.5"
+          initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 2, duration: 0.5 }} />
+
+        {/* Gate handle/latch */}
+        <motion.circle cx="94" cy="135" r="3" fill={`${STONE_LIGHT}44`} stroke={STONE_LIGHT} strokeWidth="1.5"
+          initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 2.2 }} />
+        <motion.circle cx="106" cy="135" r="3" fill={`${STONE_LIGHT}44`} stroke={STONE_LIGHT} strokeWidth="1.5"
+          initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 2.3 }} />
+
+        {/* Stone base */}
+        <motion.rect x="30" y="190" width="140" height="12" rx="3" fill={`${STONE}18`} stroke={STONE} strokeWidth="1.5"
+          initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 0.6, delay: 0.3 }} />
+        <rect x="35" y="192" width="130" height="6" rx="2" fill={`${STONE}0d`} />
+
+        {/* Sparkle accents */}
+        <motion.circle cx="170" cy="35" r="3" fill={WOOD_LIGHT}
+          animate={{ opacity: [0.2, 1, 0.2], scale: [0.7, 1.3, 0.7] }}
+          transition={{ duration: 2.5, repeat: Infinity }} />
+        <motion.circle cx="25" cy="50" r="2" fill={STONE_LIGHT}
+          animate={{ opacity: [0.1, 0.8, 0.1], scale: [0.5, 1.2, 0.5] }}
+          transition={{ duration: 3, repeat: Infinity, delay: 0.8 }} />
+        <motion.circle cx="180" cy="110" r="2.5" fill={WOOD_LIGHT}
+          animate={{ opacity: [0.15, 0.7, 0.15] }}
+          transition={{ duration: 2, repeat: Infinity, delay: 1.2 }} />
+        <motion.circle cx="18" cy="130" r="2" fill={STONE_LIGHT}
+          animate={{ opacity: [0.1, 0.6, 0.1] }}
+          transition={{ duration: 2.5, repeat: Infinity, delay: 0.4 }} />
+      </svg>
+    </div>
+  );
+}
+
 /* ───────────────────────── ACCORDION ───────────────────────── */
 function AccordionItem({ title, description, isOpen, onToggle }: { title: string; description: string; isOpen: boolean; onToggle: () => void }) {
   return (
@@ -240,7 +341,7 @@ export default function V2FencingPage() {
           <div className="absolute inset-0" style={{ background: `linear-gradient(to right, ${BG} 45%, transparent 100%)` }} />
           <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${BG} 10%, transparent 50%)` }} />
         </div>
-        <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full">
+        <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
           <div className="max-w-2xl space-y-8">
             <motion.p initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ ...spring, delay: 0.1 }} className="text-sm uppercase tracking-widest" style={{ color: WOOD_LIGHT }}>
               Premium Fence Installation
@@ -262,6 +363,9 @@ export default function V2FencingPage() {
               </MagneticButton>
             </motion.div>
           </div>
+          <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ ...spring, delay: 0.3 }} className="hidden md:flex items-center justify-center lg:justify-end">
+            <FenceGateSVG />
+          </motion.div>
         </div>
       </section>
 

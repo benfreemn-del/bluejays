@@ -239,6 +239,88 @@ function ShimmerBorder({ children, className = "" }: { children: React.ReactNode
   );
 }
 
+/* ───────────────────────── PLATE SETTING SVG ───────────────────────── */
+function PlateSettingSVG() {
+  return (
+    <div className="relative flex items-center justify-center">
+      <motion.div
+        className="absolute inset-0 rounded-full"
+        style={{ background: `radial-gradient(circle, ${RED_GLOW} 0%, transparent 70%)`, filter: "blur(40px)" }}
+        animate={{ scale: [1, 1.2, 1], opacity: [0.6, 1, 0.6] }}
+        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <svg viewBox="0 0 200 220" className="relative z-10 w-48 h-56 md:w-56 md:h-72" fill="none">
+        <motion.circle cx="100" cy="110" r="92" stroke={RED} strokeWidth="0.5" opacity={0.12}
+          animate={{ r: [90, 94, 90] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} />
+
+        {/* Plate outer ring */}
+        <motion.circle cx="100" cy="115" r="60" fill={`${RED}0d`} stroke={RED} strokeWidth="2"
+          initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.3, ease: "backOut" }} />
+        <motion.circle cx="100" cy="115" r="52" fill={`${RED}08`} stroke={GOLD} strokeWidth="1"
+          initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.7, delay: 0.5, ease: "backOut" }} />
+        <circle cx="100" cy="112" r="40" fill={`${RED}06`} />
+        {/* Plate inner highlight */}
+        <circle cx="95" cy="108" r="22" fill={`${GOLD}08`} />
+
+        {/* Fork (left) */}
+        <motion.g initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 1, duration: 0.5 }}>
+          <line x1="25" y1="55" x2="25" y2="65" stroke={GOLD} strokeWidth="1.5" />
+          <line x1="29" y1="55" x2="29" y2="65" stroke={GOLD} strokeWidth="1.5" />
+          <line x1="33" y1="55" x2="33" y2="65" stroke={GOLD} strokeWidth="1.5" />
+          <line x1="37" y1="55" x2="37" y2="65" stroke={GOLD} strokeWidth="1.5" />
+          <rect x="24" y="65" width="14" height="5" rx="2" fill={`${GOLD}33`} />
+          <line x1="31" y1="70" x2="31" y2="185" stroke={GOLD} strokeWidth="2.5" strokeLinecap="round" />
+          <path d="M24 55 Q24 48 31 48 Q38 48 38 55" fill="none" stroke={GOLD} strokeWidth="1.5" />
+        </motion.g>
+
+        {/* Knife (right) */}
+        <motion.g initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 1.2, duration: 0.5 }}>
+          <path d="M169 48 Q176 48 176 58 L176 70 Q176 72 173 72 L169 72 L169 48Z" fill={`${GOLD}22`} stroke={GOLD} strokeWidth="1.5" />
+          <line x1="169" y1="72" x2="169" y2="185" stroke={GOLD} strokeWidth="2.5" strokeLinecap="round" />
+          <path d="M170 50 L174 55 L174 68" stroke={`${GOLD}44`} strokeWidth="0.5" fill="none" />
+        </motion.g>
+
+        {/* Flame above plate */}
+        <motion.path d="M100 35 C95 25 85 20 90 8 C92 15 100 10 100 0 C100 10 108 15 110 8 C115 20 105 25 100 35Z"
+          fill={`${RED}22`} stroke={RED_LIGHT} strokeWidth="1.5"
+          initial={{ opacity: 0, y: 10, scale: 0.5 }} animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ delay: 1.5, duration: 0.5 }} />
+        <motion.path d="M100 30 C97 22 92 18 95 10 C96 16 100 13 100 8 C100 13 104 16 105 10 C108 18 103 22 100 30Z"
+          fill={`${GOLD}22`}
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.8 }} />
+        {/* Flame glow */}
+        <motion.circle cx="100" cy="20" r="12" fill={RED_LIGHT}
+          animate={{ opacity: [0.05, 0.15, 0.05], r: [10, 14, 10] }}
+          transition={{ duration: 2, repeat: Infinity }} />
+
+        {/* Steam wisps from plate */}
+        <motion.path d="M85 70 C82 60 88 55 85 48" stroke={GOLD} strokeWidth="1" strokeLinecap="round" fill="none" opacity={0.4}
+          animate={{ opacity: [0, 0.4, 0], y: [0, -5, 0] }}
+          transition={{ duration: 3, repeat: Infinity }} />
+        <motion.path d="M115 68 C118 58 112 52 115 45" stroke={GOLD} strokeWidth="1" strokeLinecap="round" fill="none" opacity={0.4}
+          animate={{ opacity: [0, 0.4, 0], y: [0, -5, 0] }}
+          transition={{ duration: 3.5, repeat: Infinity, delay: 0.5 }} />
+
+        {/* Sparkle accents */}
+        <motion.circle cx="170" cy="30" r="3" fill={GOLD_LIGHT}
+          animate={{ opacity: [0.2, 1, 0.2], scale: [0.7, 1.3, 0.7] }}
+          transition={{ duration: 2.5, repeat: Infinity }} />
+        <motion.circle cx="25" cy="35" r="2" fill={RED_LIGHT}
+          animate={{ opacity: [0.1, 0.8, 0.1], scale: [0.5, 1.2, 0.5] }}
+          transition={{ duration: 3, repeat: Infinity, delay: 0.8 }} />
+        <motion.circle cx="185" cy="130" r="2.5" fill={GOLD_LIGHT}
+          animate={{ opacity: [0.15, 0.7, 0.15] }}
+          transition={{ duration: 2, repeat: Infinity, delay: 1.2 }} />
+        <motion.circle cx="15" cy="130" r="2" fill={RED_LIGHT}
+          animate={{ opacity: [0.1, 0.6, 0.1] }}
+          transition={{ duration: 2.5, repeat: Infinity, delay: 0.4 }} />
+      </svg>
+    </div>
+  );
+}
+
 /* ───────────────────────── FAQ ACCORDION ───────────────────────── */
 function AccordionItem({
   title,
@@ -433,52 +515,36 @@ export default function V2RestaurantPage() {
           <div className="absolute inset-0" style={{ background: `linear-gradient(to right, ${BG} 40%, transparent 100%)` }} />
           <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${BG} 10%, transparent 50%)` }} />
         </div>
-        <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full">
-          <div className="max-w-2xl space-y-8">
-            <motion.p
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ ...spring, delay: 0.1 }}
-              className="text-sm uppercase tracking-widest"
-              style={{ color: GOLD }}
-            >
+        <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+          <div className="space-y-8">
+            <motion.p initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ ...spring, delay: 0.1 }}
+              className="text-sm uppercase tracking-widest" style={{ color: GOLD }}>
               Fine Dining Experience
             </motion.p>
-            <h1
-              className="text-4xl md:text-7xl tracking-tighter leading-none font-bold text-white"
-              style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}
-            >
+            <h1 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white"
+              style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}>
               <WordReveal text="Where Fire Meets Flavor" />
             </h1>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ ...spring, delay: 0.6 }}
-              className="text-lg text-slate-300 max-w-md leading-relaxed"
-            >
+            <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.6 }}
+              className="text-lg text-slate-300 max-w-md leading-relaxed">
               An intimate culinary journey crafted from the finest seasonal
               ingredients, open flame, and decades of passion. Every dish tells
               a story.
             </motion.p>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ ...spring, delay: 0.8 }}
-              className="flex flex-wrap gap-4"
-            >
-              <MagneticButton
-                className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer"
-                style={{ background: RED } as React.CSSProperties}
-              >
-                Reserve a Table
-                <ArrowRight size={18} weight="bold" />
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.8 }}
+              className="flex flex-wrap gap-4">
+              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer"
+                style={{ background: RED } as React.CSSProperties}>
+                Reserve a Table <ArrowRight size={18} weight="bold" />
               </MagneticButton>
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
-                <Phone size={18} weight="duotone" />
-                (555) 867-5309
+                <Phone size={18} weight="duotone" /> (555) 867-5309
               </MagneticButton>
             </motion.div>
           </div>
+          <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ ...spring, delay: 0.3 }} className="hidden md:flex items-center justify-center lg:justify-end">
+            <PlateSettingSVG />
+          </motion.div>
         </div>
       </section>
 

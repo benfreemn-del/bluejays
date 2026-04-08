@@ -140,6 +140,99 @@ function ShimmerBorder({ children, className = "" }: { children: React.ReactNode
   );
 }
 
+/* ───────────────────────── TATTOO MACHINE SVG ───────────────────────── */
+function TattooMachineSVG() {
+  return (
+    <div className="relative flex items-center justify-center">
+      <motion.div
+        className="absolute inset-0 rounded-full"
+        style={{ background: `radial-gradient(circle, ${CRIMSON_GLOW} 0%, transparent 70%)`, filter: "blur(40px)" }}
+        animate={{ scale: [1, 1.2, 1], opacity: [0.6, 1, 0.6] }}
+        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <svg viewBox="0 0 200 240" className="relative z-10 w-48 h-56 md:w-56 md:h-72" fill="none">
+        <motion.circle cx="100" cy="115" r="92" stroke={CRIMSON} strokeWidth="0.5" opacity={0.12}
+          animate={{ r: [90, 94, 90] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} />
+        <motion.circle cx="100" cy="115" r="82" stroke={CRIMSON_LIGHT} strokeWidth="0.3" opacity={0.08}
+          animate={{ r: [80, 84, 80] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }} />
+
+        {/* Machine body */}
+        <motion.path d="M75 40 L75 30 L125 30 L125 40 L130 40 L130 100 L120 100 L120 110 L80 110 L80 100 L70 100 L70 40 Z"
+          fill={`${CRIMSON}18`} stroke={CRIMSON} strokeWidth="2" strokeLinejoin="round"
+          initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }}
+          transition={{ duration: 1.5, delay: 0.3 }} />
+        <path d="M80 35 L80 45 L120 45 L120 35 Z" fill={`${CRIMSON}0d`} />
+        <path d="M76 50 L124 50 L124 95 L76 95 Z" fill={`${CRIMSON}08`} />
+
+        {/* Machine coils */}
+        <motion.ellipse cx="90" cy="65" rx="10" ry="6" fill={`${CRIMSON}22`} stroke={CRIMSON_LIGHT} strokeWidth="1.5"
+          initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 1, ease: "backOut" }} />
+        <motion.ellipse cx="110" cy="65" rx="10" ry="6" fill={`${CRIMSON}22`} stroke={CRIMSON_LIGHT} strokeWidth="1.5"
+          initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 1.1, ease: "backOut" }} />
+        <ellipse cx="90" cy="63" rx="5" ry="3" fill={`${CRIMSON}0d`} />
+        <ellipse cx="110" cy="63" rx="5" ry="3" fill={`${CRIMSON}0d`} />
+
+        {/* Grip tube */}
+        <motion.rect x="92" y="110" width="16" height="60" rx="4" fill={`${CRIMSON}18`} stroke={CRIMSON} strokeWidth="2"
+          initial={{ scaleY: 0 }} animate={{ scaleY: 1 }} style={{ transformOrigin: "50% 0%" }}
+          transition={{ duration: 0.6, delay: 1.3 }} />
+        <rect x="95" y="115" width="10" height="50" rx="3" fill={`${CRIMSON}0d`} />
+
+        {/* Grip texture */}
+        {[120, 128, 136, 144, 152, 160].map((y, i) => (
+          <motion.line key={i} x1="94" y1={y} x2="106" y2={y} stroke={CRIMSON_LIGHT} strokeWidth="0.5" opacity={0.3}
+            initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 1.6 + i * 0.05 }} />
+        ))}
+
+        {/* Needle */}
+        <motion.line x1="100" y1="170" x2="100" y2="200" stroke={CRIMSON_LIGHT} strokeWidth="2" strokeLinecap="round"
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
+          transition={{ duration: 0.5, delay: 1.8 }} />
+        {/* Needle tip vibration */}
+        <motion.circle cx="100" cy="200" r="2" fill={CRIMSON_LIGHT}
+          animate={{ y: [0, -2, 0, 2, 0], opacity: [0.5, 1, 0.5] }}
+          transition={{ duration: 0.3, repeat: Infinity }} />
+
+        {/* Ink drops falling from needle */}
+        <motion.circle cx="100" cy="210" r="3" fill={`${CRIMSON}44`}
+          animate={{ y: [0, 15, 30], opacity: [0.8, 0.4, 0], scale: [1, 0.8, 0.5] }}
+          transition={{ duration: 1.5, repeat: Infinity, delay: 2 }} />
+        <motion.circle cx="96" cy="215" r="2" fill={`${CRIMSON}33`}
+          animate={{ y: [0, 12, 25], opacity: [0.6, 0.3, 0], scale: [1, 0.7, 0.4] }}
+          transition={{ duration: 1.8, repeat: Infinity, delay: 2.5 }} />
+        <motion.circle cx="104" cy="212" r="2.5" fill={`${CRIMSON}33`}
+          animate={{ y: [0, 14, 28], opacity: [0.7, 0.3, 0], scale: [1, 0.7, 0.4] }}
+          transition={{ duration: 1.6, repeat: Infinity, delay: 2.3 }} />
+
+        {/* Ink splat on surface */}
+        <motion.ellipse cx="100" cy="225" rx="15" ry="4" fill={`${CRIMSON}22`}
+          initial={{ scale: 0 }} animate={{ scale: [0, 1.2, 1] }}
+          transition={{ delay: 2.5, duration: 0.5 }} />
+        <ellipse cx="98" cy="224" rx="8" ry="2" fill={`${CRIMSON}0d`} />
+
+        {/* Power cord */}
+        <motion.path d="M125 50 C135 50 145 45 150 55 C155 65 145 70 140 65"
+          stroke={CRIMSON} strokeWidth="1.5" fill="none" strokeLinecap="round"
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 0.8, duration: 0.6 }} />
+
+        {/* Sparkle accents */}
+        <motion.circle cx="165" cy="25" r="3" fill={CRIMSON_LIGHT}
+          animate={{ opacity: [0.2, 1, 0.2], scale: [0.7, 1.3, 0.7] }}
+          transition={{ duration: 2.5, repeat: Infinity }} />
+        <motion.circle cx="30" cy="45" r="2" fill={CRIMSON}
+          animate={{ opacity: [0.1, 0.8, 0.1], scale: [0.5, 1.2, 0.5] }}
+          transition={{ duration: 3, repeat: Infinity, delay: 0.8 }} />
+        <motion.circle cx="175" cy="130" r="2.5" fill={CRIMSON_LIGHT}
+          animate={{ opacity: [0.15, 0.7, 0.15] }}
+          transition={{ duration: 2, repeat: Infinity, delay: 1.2 }} />
+        <motion.circle cx="22" cy="140" r="2" fill={CRIMSON}
+          animate={{ opacity: [0.1, 0.6, 0.1] }}
+          transition={{ duration: 2.5, repeat: Infinity, delay: 0.4 }} />
+      </svg>
+    </div>
+  );
+}
+
 /* ───────────────────────── GALLERY DATA ───────────────────────── */
 const galleryImages = [
   { src: "https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?w=600&q=80", alt: "Intricate sleeve tattoo with black and gray shading", span: "col-span-2 row-span-2" },
@@ -242,10 +335,10 @@ export default function V2TattooPage() {
       {/* ─── HERO ─── */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10">
         <div className="absolute inset-0 pointer-events-none" style={{ background: `radial-gradient(ellipse 60% 40% at 50% 30%, ${CRIMSON_GLOW} 0%, transparent 70%)` }} />
-        <div className="mx-auto max-w-7xl px-4 md:px-6 w-full">
-          <div className="max-w-3xl space-y-8">
+        <div className="mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+          <div className="space-y-8">
             <motion.p initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ ...spring, delay: 0.1 }} className="text-sm uppercase tracking-[0.3em] mb-4" style={{ color: CRIMSON }}>Premium Tattoo Studio</motion.p>
-            <h1 className="text-4xl md:text-7xl tracking-tighter leading-none font-black text-white" style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}>
+            <h1 className="text-4xl md:text-6xl tracking-tighter leading-none font-black text-white" style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}>
               <WordReveal text="Your Body. Your Art. Your Story." />
             </h1>
             <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.6 }} className="text-lg text-slate-400 max-w-lg leading-relaxed">
@@ -265,6 +358,9 @@ export default function V2TattooPage() {
               <span className="flex items-center gap-2"><Drop size={16} weight="duotone" style={{ color: CRIMSON }} />Premium Inks Only</span>
             </motion.div>
           </div>
+          <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ ...spring, delay: 0.3 }} className="hidden md:flex items-center justify-center lg:justify-end">
+            <TattooMachineSVG />
+          </motion.div>
         </div>
       </section>
 

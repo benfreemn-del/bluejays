@@ -140,6 +140,97 @@ function ShimmerBorder({ children, className = "" }: { children: React.ReactNode
   );
 }
 
+/* ───────────────────────── FIST ENERGY SVG ───────────────────────── */
+function FistEnergySVG() {
+  return (
+    <div className="relative flex items-center justify-center">
+      <motion.div
+        className="absolute inset-0 rounded-full"
+        style={{ background: `radial-gradient(circle, ${RED_GLOW} 0%, transparent 70%)`, filter: "blur(40px)" }}
+        animate={{ scale: [1, 1.2, 1], opacity: [0.6, 1, 0.6] }}
+        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <svg viewBox="0 0 200 240" className="relative z-10 w-48 h-56 md:w-56 md:h-72" fill="none">
+        {/* Outer glow rings */}
+        <motion.circle cx="100" cy="110" r="92" stroke={RED} strokeWidth="0.5" opacity={0.12}
+          animate={{ r: [90, 94, 90] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} />
+        <motion.circle cx="100" cy="110" r="82" stroke={GOLD} strokeWidth="0.3" opacity={0.08}
+          animate={{ r: [80, 84, 80] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }} />
+
+        {/* Energy burst lines radiating outward */}
+        {[0, 40, 80, 120, 160, 200, 240, 280, 320].map((angle, i) => (
+          <motion.line key={i}
+            x1={100 + 55 * Math.cos((angle * Math.PI) / 180)} y1={110 + 55 * Math.sin((angle * Math.PI) / 180)}
+            x2={100 + 85 * Math.cos((angle * Math.PI) / 180)} y2={110 + 85 * Math.sin((angle * Math.PI) / 180)}
+            stroke={i % 2 === 0 ? RED_LIGHT : GOLD} strokeWidth="2" strokeLinecap="round"
+            initial={{ pathLength: 0, opacity: 0 }}
+            animate={{ pathLength: [0, 1, 0], opacity: [0, 0.7, 0] }}
+            transition={{ duration: 2, repeat: Infinity, delay: i * 0.15, ease: "easeInOut" }} />
+        ))}
+
+        {/* Yin-yang circle behind fist */}
+        <motion.circle cx="100" cy="105" r="50" fill={`${RED}0d`} stroke={RED} strokeWidth="2"
+          initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.2, ease: "backOut" }} />
+        <circle cx="100" cy="105" r="42" fill={`${RED}08`} />
+
+        {/* Yin-yang inner design */}
+        <motion.path d="M100 55 A50 50 0 0 1 100 155 A25 25 0 0 0 100 105 A25 25 0 0 1 100 55"
+          fill={`${RED}18`} stroke="none"
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+          transition={{ delay: 0.8, duration: 0.5 }} />
+        <motion.circle cx="100" cy="80" r="7" fill={`${GOLD}33`}
+          initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 1.2 }} />
+        <motion.circle cx="100" cy="130" r="7" fill={`${RED}33`}
+          initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 1.3 }} />
+
+        {/* Fist outline */}
+        <motion.path
+          d="M80 85 L80 70 Q80 62 88 62 L92 62 Q96 62 96 66 L96 62 Q96 55 104 55 L104 55 Q112 55 112 62 L112 62 Q112 55 120 55 Q128 55 128 64 L128 75 Q136 72 136 82 L136 110 Q136 135 110 140 L90 140 Q72 135 72 115 L72 95 Q72 85 80 85Z"
+          fill={`${RED}22`} stroke={RED_LIGHT} strokeWidth="2" strokeLinejoin="round"
+          initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }}
+          transition={{ duration: 2, delay: 0.5, ease: "easeInOut" }} />
+        {/* Fist inner highlight */}
+        <path d="M84 88 L84 74 Q84 68 90 68 L106 68 Q116 68 116 74 L116 84 Q120 78 124 82 L124 108 Q124 128 106 132 L94 132 Q80 128 80 112 L80 95 Q80 88 84 88Z" fill={`${RED}0d`} />
+
+        {/* Belt below */}
+        <motion.rect x="55" y="165" width="90" height="12" rx="3" fill={`${GOLD}22`} stroke={GOLD} strokeWidth="1.5"
+          initial={{ scaleX: 0 }} animate={{ scaleX: 1 }}
+          transition={{ duration: 0.6, delay: 2 }} />
+        <rect x="60" y="167" width="80" height="6" rx="2" fill={`${GOLD}0d`} />
+        {/* Belt knot */}
+        <motion.circle cx="100" cy="171" r="5" fill={`${GOLD}33`} stroke={GOLD} strokeWidth="1"
+          initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 2.3 }} />
+        {/* Belt tails */}
+        <motion.path d="M95 177 L88 200 L92 200 L98 180" stroke={GOLD} strokeWidth="1.5" fill={`${GOLD}15`}
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.4 }} />
+        <motion.path d="M105 177 L112 200 L108 200 L102 180" stroke={GOLD} strokeWidth="1.5" fill={`${GOLD}15`}
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.5 }} />
+
+        {/* Kanji character */}
+        <motion.text x="100" y="225" textAnchor="middle" fill={RED_LIGHT} fontSize="16" fontWeight="bold" fontFamily="serif"
+          initial={{ opacity: 0 }} animate={{ opacity: 0.4 }} transition={{ delay: 2.8 }}>
+          武道
+        </motion.text>
+
+        {/* Sparkle accents */}
+        <motion.circle cx="165" cy="30" r="3" fill={GOLD_LIGHT}
+          animate={{ opacity: [0.2, 1, 0.2], scale: [0.7, 1.3, 0.7] }}
+          transition={{ duration: 2.5, repeat: Infinity }} />
+        <motion.circle cx="30" cy="55" r="2" fill={RED_LIGHT}
+          animate={{ opacity: [0.1, 0.8, 0.1], scale: [0.5, 1.2, 0.5] }}
+          transition={{ duration: 3, repeat: Infinity, delay: 0.8 }} />
+        <motion.circle cx="175" cy="130" r="2.5" fill={GOLD_LIGHT}
+          animate={{ opacity: [0.15, 0.7, 0.15] }}
+          transition={{ duration: 2, repeat: Infinity, delay: 1.2 }} />
+        <motion.circle cx="25" cy="150" r="2" fill={RED_LIGHT}
+          animate={{ opacity: [0.1, 0.6, 0.1] }}
+          transition={{ duration: 2.5, repeat: Infinity, delay: 0.4 }} />
+      </svg>
+    </div>
+  );
+}
+
 /* ───────────────────────── DATA ───────────────────────── */
 const programs = [
   { title: "Karate", description: "Traditional Shotokan karate for all ages. Build discipline, focus, and powerful striking technique through kata, kumite, and kihon training with certified black belt instructors.", icon: HandFist },
@@ -269,16 +360,7 @@ export default function V2MartialArtsPage() {
             </motion.div>
           </div>
           <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ ...spring, delay: 0.3 }} className="hidden md:flex items-center justify-center lg:justify-end">
-            <div className="relative">
-              <motion.div className="absolute inset-0 rounded-full" style={{ background: `radial-gradient(circle, ${RED_GLOW} 0%, transparent 70%)`, filter: "blur(50px)" }} animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }} />
-              <svg viewBox="0 0 180 200" className="relative z-10 w-52 h-60 md:w-68 md:h-80" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <motion.path d="M90 15 L165 55 C165 55 170 115 145 155 C125 185 90 195 90 195 C90 195 55 185 35 155 C10 115 15 55 15 55 Z" stroke={RED} strokeWidth="2" fill="none" initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }} transition={{ duration: 2, ease: "easeInOut" }} />
-                <motion.text x="90" y="115" textAnchor="middle" fill={GOLD} fontSize="50" fontWeight="900" fontFamily="serif" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5, duration: 1 }}>
-                  武
-                </motion.text>
-                <motion.circle cx="90" cy="30" r="3" fill={GOLD_LIGHT} animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.3, 0.8] }} transition={{ duration: 2, repeat: Infinity }} />
-              </svg>
-            </div>
+            <FistEnergySVG />
           </motion.div>
         </div>
       </section>

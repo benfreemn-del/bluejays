@@ -162,6 +162,99 @@ function ShimmerBorder({ children, className = "" }: { children: React.ReactNode
   );
 }
 
+/* ───────────────────────── TREE SVG ───────────────────────── */
+function TreeSVG() {
+  return (
+    <div className="relative flex items-center justify-center">
+      <motion.div
+        className="absolute inset-0 rounded-full"
+        style={{ background: `radial-gradient(circle, ${GREEN_GLOW} 0%, transparent 70%)`, filter: "blur(40px)" }}
+        animate={{ scale: [1, 1.2, 1], opacity: [0.6, 1, 0.6] }}
+        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <svg viewBox="0 0 200 240" className="relative z-10 w-48 h-56 md:w-56 md:h-72" fill="none">
+        <motion.circle cx="100" cy="110" r="92" stroke={GREEN} strokeWidth="0.5" opacity={0.12}
+          animate={{ r: [90, 94, 90] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} />
+
+        {/* Tree trunk */}
+        <motion.path d="M90 140 L88 210 L112 210 L110 140"
+          fill={`${BROWN}22`} stroke={BROWN} strokeWidth="2" strokeLinejoin="round"
+          initial={{ scaleY: 0, opacity: 0 }} animate={{ scaleY: 1, opacity: 1 }}
+          style={{ transformOrigin: "50% 100%" }}
+          transition={{ duration: 0.8, delay: 0.2 }} />
+        <path d="M93 145 L92 205 L108 205 L107 145" fill={`${BROWN}0d`} />
+
+        {/* Trunk texture lines */}
+        {[155, 170, 185, 195].map((y, i) => (
+          <motion.path key={i} d={`M92 ${y} Q100 ${y + 3} 108 ${y}`} stroke={BROWN_LIGHT} strokeWidth="0.5" opacity={0.3}
+            initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 0.8 + i * 0.1 }} />
+        ))}
+
+        {/* Root base */}
+        <motion.path d="M85 210 C80 212 70 215 68 218 M115 210 C120 212 130 215 132 218"
+          stroke={BROWN} strokeWidth="2" fill="none" strokeLinecap="round"
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 0.6, duration: 0.5 }} />
+
+        {/* Crown layer 1 (bottom, widest) */}
+        <motion.path d="M40 145 L100 80 L160 145 Z"
+          fill={`${GREEN}22`} stroke={GREEN} strokeWidth="2" strokeLinejoin="round"
+          initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }}
+          transition={{ duration: 1, delay: 0.8 }} />
+        <path d="M55 140 L100 92 L145 140 Z" fill={`${GREEN}0d`} />
+
+        {/* Crown layer 2 (middle) */}
+        <motion.path d="M50 110 L100 50 L150 110 Z"
+          fill={`${GREEN}22`} stroke={GREEN} strokeWidth="2" strokeLinejoin="round"
+          initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }}
+          transition={{ duration: 1, delay: 1.2 }} />
+        <path d="M62 105 L100 60 L138 105 Z" fill={`${GREEN}0d`} />
+
+        {/* Crown layer 3 (top) */}
+        <motion.path d="M62 75 L100 22 L138 75 Z"
+          fill={`${GREEN}22`} stroke={GREEN_LIGHT} strokeWidth="2" strokeLinejoin="round"
+          initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }}
+          transition={{ duration: 1, delay: 1.6 }} />
+        <path d="M72 70 L100 32 L128 70 Z" fill={`${GREEN_LIGHT}0d`} />
+
+        {/* Falling leaves */}
+        {[{x: 35, delay: 2}, {x: 155, delay: 2.3}, {x: 50, delay: 2.6}, {x: 140, delay: 2.9}].map((leaf, i) => (
+          <motion.g key={i}>
+            <motion.path d={`M${leaf.x} 60 Q${leaf.x + 5} 55 ${leaf.x + 8} 60 Q${leaf.x + 5} 65 ${leaf.x} 60`}
+              fill={i % 2 === 0 ? `${GREEN_LIGHT}44` : `${BROWN_LIGHT}44`}
+              animate={{
+                y: [0, 80, 160],
+                x: [0, (i % 2 === 0 ? 15 : -15), (i % 2 === 0 ? -5 : 5)],
+                rotate: [0, 180, 360],
+                opacity: [0.8, 0.5, 0],
+              }}
+              transition={{ duration: 4, repeat: Infinity, delay: leaf.delay, ease: "easeIn" }} />
+          </motion.g>
+        ))}
+
+        {/* Ground line */}
+        <motion.line x1="40" y1="220" x2="160" y2="220" stroke={BROWN} strokeWidth="1" opacity={0.3}
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 0.4, duration: 0.6 }} />
+        <motion.path d="M45 220 Q100 225 155 220" stroke={GREEN} strokeWidth="1" opacity={0.2} fill="none"
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 0.5, duration: 0.6 }} />
+
+        {/* Sparkle accents */}
+        <motion.circle cx="170" cy="30" r="3" fill={GREEN_LIGHT}
+          animate={{ opacity: [0.2, 1, 0.2], scale: [0.7, 1.3, 0.7] }}
+          transition={{ duration: 2.5, repeat: Infinity }} />
+        <motion.circle cx="25" cy="55" r="2" fill={BROWN_LIGHT}
+          animate={{ opacity: [0.1, 0.8, 0.1], scale: [0.5, 1.2, 0.5] }}
+          transition={{ duration: 3, repeat: Infinity, delay: 0.8 }} />
+        <motion.circle cx="180" cy="130" r="2.5" fill={GREEN_LIGHT}
+          animate={{ opacity: [0.15, 0.7, 0.15] }}
+          transition={{ duration: 2, repeat: Infinity, delay: 1.2 }} />
+        <motion.circle cx="18" cy="150" r="2" fill={BROWN_LIGHT}
+          animate={{ opacity: [0.1, 0.6, 0.1] }}
+          transition={{ duration: 2.5, repeat: Infinity, delay: 0.4 }} />
+      </svg>
+    </div>
+  );
+}
+
 /* ───────────────────────── ACCORDION ───────────────────────── */
 function AccordionItem({ title, description, isOpen, onToggle }: { title: string; description: string; isOpen: boolean; onToggle: () => void }) {
   return (
@@ -291,12 +384,12 @@ export default function V2TreeServicePage() {
           <div className="absolute inset-0" style={{ background: `linear-gradient(to right, ${BG} 45%, transparent 100%)` }} />
           <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${BG} 10%, transparent 50%)` }} />
         </div>
-        <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full">
-          <div className="max-w-2xl space-y-8">
+        <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+          <div className="space-y-8">
             <motion.p initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ ...spring, delay: 0.1 }} className="text-sm uppercase tracking-widest" style={{ color: GREEN_LIGHT }}>
               ISA-Certified Arborists
             </motion.p>
-            <h1 className="text-4xl md:text-7xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}>
+            <h1 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}>
               <WordReveal text="Expert Tree Care You Can Trust" />
             </h1>
             <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.6 }} className="text-lg text-slate-300 max-w-md leading-relaxed">
@@ -317,6 +410,9 @@ export default function V2TreeServicePage() {
               <span>24/7 Emergency Storm Response Available</span>
             </motion.div>
           </div>
+          <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ ...spring, delay: 0.3 }} className="hidden md:flex items-center justify-center lg:justify-end">
+            <TreeSVG />
+          </motion.div>
         </div>
       </section>
 

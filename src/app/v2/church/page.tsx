@@ -147,6 +147,106 @@ function SectionReveal({
   );
 }
 
+/* ───────────────────────── STAINED GLASS CROSS SVG ───────────────────────── */
+function StainedGlassCrossSVG() {
+  return (
+    <div className="relative flex items-center justify-center">
+      <motion.div
+        className="absolute inset-0 rounded-full"
+        style={{ background: `radial-gradient(circle, ${GOLD_GLOW} 0%, transparent 70%)`, filter: "blur(40px)" }}
+        animate={{ scale: [1, 1.2, 1], opacity: [0.6, 1, 0.6] }}
+        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <svg viewBox="0 0 200 240" className="relative z-10 w-48 h-56 md:w-56 md:h-72" fill="none">
+        {/* Outer glow rings */}
+        <motion.circle cx="100" cy="115" r="92" stroke={GOLD} strokeWidth="0.5" opacity={0.12}
+          animate={{ r: [90, 94, 90] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} />
+        <motion.circle cx="100" cy="115" r="82" stroke={GOLD} strokeWidth="0.3" opacity={0.08}
+          animate={{ r: [80, 84, 80] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }} />
+
+        {/* Radiant light rays behind cross */}
+        {[0, 30, 60, 90, 120, 150].map((angle, i) => (
+          <motion.line key={i} x1="100" y1="115" x2={100 + 80 * Math.cos((angle * Math.PI) / 180)} y2={115 + 80 * Math.sin((angle * Math.PI) / 180)}
+            stroke={GOLD} strokeWidth="0.8" opacity={0.15}
+            animate={{ opacity: [0.05, 0.2, 0.05] }}
+            transition={{ duration: 3, repeat: Infinity, delay: i * 0.3, ease: "easeInOut" }} />
+        ))}
+        {[15, 45, 75, 105, 135, 165].map((angle, i) => (
+          <motion.line key={`r${i}`} x1="100" y1="115" x2={100 + 70 * Math.cos((angle * Math.PI) / 180)} y2={115 + 70 * Math.sin((angle * Math.PI) / 180)}
+            stroke={GOLD_LIGHT} strokeWidth="0.5" opacity={0.1}
+            animate={{ opacity: [0.03, 0.15, 0.03] }}
+            transition={{ duration: 3.5, repeat: Infinity, delay: i * 0.25 + 0.5, ease: "easeInOut" }} />
+        ))}
+
+        {/* Stained glass arc window behind cross */}
+        <motion.path d="M55 170 L55 80 Q55 30 100 30 Q145 30 145 80 L145 170"
+          stroke={GOLD} strokeWidth="1.5" fill={`${GOLD}08`}
+          initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }}
+          transition={{ duration: 2, ease: "easeInOut" }} />
+        {/* Stained glass colored panels */}
+        <motion.path d="M65 80 Q65 50 100 50 Q135 50 135 80 L135 100 L65 100Z"
+          fill={`${GOLD}0d`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1, duration: 1 }} />
+        <motion.path d="M65 100 L135 100 L135 140 L65 140Z"
+          fill={`${GOLD}08`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2, duration: 1 }} />
+        <motion.path d="M65 140 L135 140 L135 170 L65 170Z"
+          fill={`${GOLD}06`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.4, duration: 1 }} />
+
+        {/* Main cross - vertical beam */}
+        <motion.path d="M92 45 L92 195 L108 195 L108 45 Z"
+          fill={`${GOLD}22`} stroke={GOLD} strokeWidth="2" strokeLinejoin="round"
+          initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }}
+          transition={{ duration: 1.5, delay: 0.5, ease: "easeInOut" }} />
+        {/* Cross inner highlight - vertical */}
+        <rect x="96" y="50" width="8" height="140" fill={`${GOLD}0d`} />
+
+        {/* Main cross - horizontal beam */}
+        <motion.path d="M60 85 L140 85 L140 105 L60 105 Z"
+          fill={`${GOLD}22`} stroke={GOLD} strokeWidth="2" strokeLinejoin="round"
+          initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }}
+          transition={{ duration: 1.2, delay: 1, ease: "easeInOut" }} />
+        {/* Cross inner highlight - horizontal */}
+        <rect x="65" y="89" width="70" height="8" fill={`${GOLD}0d`} />
+
+        {/* Decorative circle at cross center */}
+        <motion.circle cx="100" cy="95" r="12" fill={`${GOLD}15`} stroke={GOLD} strokeWidth="1.5"
+          initial={{ scale: 0 }} animate={{ scale: 1 }}
+          transition={{ duration: 0.5, delay: 1.5, ease: "backOut" }} />
+        <circle cx="100" cy="95" r="6" fill={`${GOLD}0d`} />
+        <motion.circle cx="100" cy="95" r="3" fill={GOLD}
+          animate={{ opacity: [0.3, 0.8, 0.3], scale: [0.9, 1.2, 0.9] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }} />
+
+        {/* Small decorative elements at cross tips */}
+        <motion.circle cx="100" cy="42" r="4" fill={`${GOLD}22`} stroke={GOLD} strokeWidth="1"
+          initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 2, ease: "backOut" }} />
+        <motion.circle cx="60" cy="95" r="3.5" fill={`${GOLD}22`} stroke={GOLD} strokeWidth="1"
+          initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 2.1, ease: "backOut" }} />
+        <motion.circle cx="140" cy="95" r="3.5" fill={`${GOLD}22`} stroke={GOLD} strokeWidth="1"
+          initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 2.2, ease: "backOut" }} />
+
+        {/* Sparkle accents */}
+        <motion.circle cx="165" cy="40" r="3" fill={GOLD_LIGHT}
+          animate={{ opacity: [0.2, 1, 0.2], scale: [0.7, 1.3, 0.7] }}
+          transition={{ duration: 2.5, repeat: Infinity }} />
+        <motion.circle cx="30" cy="60" r="2" fill={GOLD}
+          animate={{ opacity: [0.1, 0.8, 0.1], scale: [0.5, 1.2, 0.5] }}
+          transition={{ duration: 3, repeat: Infinity, delay: 0.8 }} />
+        <motion.circle cx="175" cy="130" r="2.5" fill={GOLD_LIGHT}
+          animate={{ opacity: [0.15, 0.7, 0.15] }}
+          transition={{ duration: 2, repeat: Infinity, delay: 1.2 }} />
+        <motion.circle cx="25" cy="150" r="2" fill={GOLD}
+          animate={{ opacity: [0.1, 0.6, 0.1] }}
+          transition={{ duration: 2.5, repeat: Infinity, delay: 0.4 }} />
+
+        {/* Pulsing glow at base */}
+        <motion.ellipse cx="100" cy="200" rx="40" ry="5" fill={GOLD}
+          animate={{ opacity: [0.05, 0.15, 0.05], rx: [38, 42, 38] }}
+          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }} />
+      </svg>
+    </div>
+  );
+}
+
 /* ───────────────────────── LIQUID GLASS CARD ───────────────────────── */
 function GlassCard({
   children,
@@ -444,8 +544,8 @@ export default function V2ChurchPage() {
             backgroundSize: "60px 60px",
           }}
         />
-        <div className="mx-auto max-w-7xl px-4 md:px-6 w-full text-center relative z-10">
-          <div className="max-w-3xl mx-auto space-y-8">
+        <div className="mx-auto max-w-7xl px-4 md:px-6 w-full relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+          <div className="space-y-8 text-center lg:text-left">
             <motion.p
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -465,7 +565,7 @@ export default function V2ChurchPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ ...spring, delay: 0.6 }}
-              className="text-lg md:text-xl text-slate-400 max-w-xl mx-auto leading-relaxed"
+              className="text-lg md:text-xl text-slate-400 max-w-xl leading-relaxed"
             >
               A welcoming community where faith comes alive, lives are transformed,
               and everyone has a place at the table.
@@ -474,7 +574,7 @@ export default function V2ChurchPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ ...spring, delay: 0.8 }}
-              className="flex flex-wrap justify-center gap-4"
+              className="flex flex-wrap justify-center lg:justify-start gap-4"
             >
               <MagneticButton
                 className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer"
@@ -489,6 +589,9 @@ export default function V2ChurchPage() {
               </MagneticButton>
             </motion.div>
           </div>
+          <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ ...spring, delay: 0.3 }} className="hidden md:flex items-center justify-center lg:justify-end">
+            <StainedGlassCrossSVG />
+          </motion.div>
         </div>
       </section>
 

@@ -141,6 +141,119 @@ function ShimmerBorder({ children, className = "" }: { children: React.ReactNode
   );
 }
 
+/* ───────────────────────── CHANDELIER SVG ───────────────────────── */
+function ChandelierSVG() {
+  return (
+    <div className="relative flex items-center justify-center">
+      <motion.div
+        className="absolute inset-0 rounded-full"
+        style={{ background: `radial-gradient(circle, ${GOLD_GLOW} 0%, transparent 70%)`, filter: "blur(40px)" }}
+        animate={{ scale: [1, 1.2, 1], opacity: [0.6, 1, 0.6] }}
+        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <svg viewBox="0 0 200 240" className="relative z-10 w-48 h-56 md:w-56 md:h-72" fill="none">
+        {/* Outer glow rings */}
+        <motion.circle cx="100" cy="120" r="92" stroke={GOLD} strokeWidth="0.5" opacity={0.12}
+          animate={{ r: [90, 94, 90] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} />
+        <motion.circle cx="100" cy="120" r="82" stroke={GOLD_LIGHT} strokeWidth="0.3" opacity={0.08}
+          animate={{ r: [80, 84, 80] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }} />
+
+        {/* Ceiling mount */}
+        <motion.rect x="90" y="10" width="20" height="8" rx="4" fill={`${GOLD}22`} stroke={GOLD} strokeWidth="1.5"
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }} />
+        {/* Chain/rod */}
+        <motion.line x1="100" y1="18" x2="100" y2="55" stroke={GOLD} strokeWidth="1.5"
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.5, delay: 0.2 }} />
+
+        {/* Main body - elegant bowl shape */}
+        <motion.path d="M60 55 Q60 45 100 45 Q140 45 140 55 L145 70 Q145 80 100 85 Q55 80 55 70 Z"
+          fill={`${GOLD}18`} stroke={GOLD} strokeWidth="2"
+          initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }}
+          transition={{ duration: 1.5, delay: 0.5 }} />
+        <path d="M68 52 Q68 48 100 48 Q132 48 132 52 L135 65 Q135 72 100 76 Q65 72 65 65 Z" fill={`${GOLD}0d`} />
+
+        {/* Crystal tier 1 - curved arms */}
+        <motion.path d="M55 70 Q30 85 25 100" stroke={GOLD} strokeWidth="1.5" fill="none" strokeLinecap="round"
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.6, delay: 1 }} />
+        <motion.path d="M145 70 Q170 85 175 100" stroke={GOLD} strokeWidth="1.5" fill="none" strokeLinecap="round"
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.6, delay: 1.1 }} />
+        <motion.path d="M65 75 Q45 92 40 110" stroke={GOLD} strokeWidth="1.5" fill="none" strokeLinecap="round"
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.6, delay: 1.2 }} />
+        <motion.path d="M135 75 Q155 92 160 110" stroke={GOLD} strokeWidth="1.5" fill="none" strokeLinecap="round"
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.6, delay: 1.3 }} />
+
+        {/* Light bulb glow points */}
+        {[{cx: 25, cy: 100}, {cx: 175, cy: 100}, {cx: 40, cy: 110}, {cx: 160, cy: 110}].map((p, i) => (
+          <motion.g key={i}>
+            <motion.circle cx={p.cx} cy={p.cy} r="6" fill={`${GOLD}22`}
+              animate={{ r: [5, 8, 5], opacity: [0.3, 0.6, 0.3] }}
+              transition={{ duration: 2, repeat: Infinity, delay: i * 0.3 }} />
+            <motion.circle cx={p.cx} cy={p.cy} r="3" fill={`${GOLD}44`}
+              animate={{ opacity: [0.4, 0.9, 0.4] }}
+              transition={{ duration: 2, repeat: Infinity, delay: i * 0.3 }} />
+          </motion.g>
+        ))}
+
+        {/* Crystal drops - tier 1 */}
+        {[{x: 70, y: 90}, {x: 85, y: 95}, {x: 100, y: 98}, {x: 115, y: 95}, {x: 130, y: 90}].map((p, i) => (
+          <motion.g key={`c1${i}`}>
+            <motion.path d={`M${p.x} ${p.y} L${p.x - 3} ${p.y + 15} L${p.x} ${p.y + 20} L${p.x + 3} ${p.y + 15} Z`}
+              fill={`${GOLD_LIGHT}22`} stroke={GOLD_LIGHT} strokeWidth="0.8"
+              initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.5 + i * 0.1, duration: 0.5 }} />
+          </motion.g>
+        ))}
+
+        {/* Crystal drops - tier 2, longer */}
+        {[{x: 60, y: 105}, {x: 80, y: 112}, {x: 100, y: 115}, {x: 120, y: 112}, {x: 140, y: 105}].map((p, i) => (
+          <motion.g key={`c2${i}`}>
+            <motion.line x1={p.x} y1={p.y - 5} x2={p.x} y2={p.y + 5} stroke={GOLD} strokeWidth="0.5" opacity={0.4}
+              initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 1.8 + i * 0.08 }} />
+            <motion.path d={`M${p.x} ${p.y + 5} L${p.x - 3} ${p.y + 22} L${p.x} ${p.y + 28} L${p.x + 3} ${p.y + 22} Z`}
+              fill={`${GOLD_LIGHT}18`} stroke={GOLD_LIGHT} strokeWidth="0.8"
+              initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.8 + i * 0.1, duration: 0.5 }} />
+            <motion.circle cx={p.x} cy={p.y + 30} r="2" fill={`${GOLD_LIGHT}33`}
+              animate={{ opacity: [0.2, 0.6, 0.2] }}
+              transition={{ duration: 2.5, repeat: Infinity, delay: i * 0.3 }} />
+          </motion.g>
+        ))}
+
+        {/* Bottom crystal pendant */}
+        <motion.line x1="100" y1="98" x2="100" y2="165" stroke={GOLD} strokeWidth="0.8"
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.8, delay: 2 }} />
+        <motion.path d="M100 158 L93 175 L100 185 L107 175 Z"
+          fill={`${GOLD}22`} stroke={GOLD} strokeWidth="1.5"
+          initial={{ opacity: 0, scale: 0 }} animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 2.5, duration: 0.5, ease: "backOut" }} />
+        <path d="M100 162 L96 172 L100 178 L104 172 Z" fill={`${GOLD}0d`} />
+        <motion.circle cx="100" cy="188" r="3" fill={GOLD_LIGHT}
+          animate={{ opacity: [0.3, 0.8, 0.3], scale: [0.8, 1.2, 0.8] }}
+          transition={{ duration: 2, repeat: Infinity }} />
+
+        {/* Sparkle accents */}
+        <motion.circle cx="170" cy="30" r="3" fill={GOLD_LIGHT}
+          animate={{ opacity: [0.2, 1, 0.2], scale: [0.7, 1.3, 0.7] }}
+          transition={{ duration: 2.5, repeat: Infinity }} />
+        <motion.circle cx="25" cy="55" r="2" fill={GOLD}
+          animate={{ opacity: [0.1, 0.8, 0.1], scale: [0.5, 1.2, 0.5] }}
+          transition={{ duration: 3, repeat: Infinity, delay: 0.8 }} />
+        <motion.circle cx="185" cy="140" r="2.5" fill={GOLD_LIGHT}
+          animate={{ opacity: [0.15, 0.7, 0.15] }}
+          transition={{ duration: 2, repeat: Infinity, delay: 1.2 }} />
+        <motion.circle cx="15" cy="130" r="2" fill={GOLD}
+          animate={{ opacity: [0.1, 0.6, 0.1] }}
+          transition={{ duration: 2.5, repeat: Infinity, delay: 0.4 }} />
+
+        {/* Light shimmer effect */}
+        <motion.ellipse cx="100" cy="200" rx="50" ry="6" fill={GOLD}
+          animate={{ opacity: [0.03, 0.1, 0.03], rx: [45, 55, 45] }}
+          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }} />
+      </svg>
+    </div>
+  );
+}
+
 /* ───────────────────────── DATA ───────────────────────── */
 const portfolioGallery = [
   { src: "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=800&q=80", alt: "Modern minimalist living room", span: "col-span-2 row-span-2" },
@@ -249,12 +362,12 @@ export default function V2InteriorDesignPage() {
           <img src="https://images.unsplash.com/photo-1618219908412-a29a1bb7b86e?w=1920&q=80" alt="Luxury interior" className="w-full h-full object-cover opacity-20" />
           <div className="absolute inset-0" style={{ background: `linear-gradient(to bottom, ${BG} 0%, transparent 30%, transparent 70%, ${BG} 100%)` }} />
         </div>
-        <div className="mx-auto max-w-7xl px-4 md:px-6 w-full relative z-10">
-          <div className="max-w-3xl space-y-8">
+        <div className="mx-auto max-w-7xl px-4 md:px-6 w-full relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+          <div className="space-y-8">
             <motion.p initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ ...spring, delay: 0.1 }} className="text-sm uppercase tracking-[0.3em] mb-4" style={{ color: GOLD }}>
               Luxury Interior Design Studio
             </motion.p>
-            <h1 className="text-4xl md:text-7xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 20px rgba(0,0,0,0.5)" }}>
+            <h1 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 20px rgba(0,0,0,0.5)" }}>
               <WordReveal text="Spaces That Inspire. Interiors That Transform." />
             </h1>
             <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.6 }} className="text-lg text-slate-400 max-w-lg leading-relaxed">
@@ -269,6 +382,9 @@ export default function V2InteriorDesignPage() {
               </MagneticButton>
             </motion.div>
           </div>
+          <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ ...spring, delay: 0.3 }} className="hidden md:flex items-center justify-center lg:justify-end">
+            <ChandelierSVG />
+          </motion.div>
         </div>
       </section>
 

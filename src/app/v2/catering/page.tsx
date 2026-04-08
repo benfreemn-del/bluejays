@@ -76,6 +76,112 @@ function ElegantPattern({ opacity = 0.03 }: { opacity?: number }) {
   );
 }
 
+/* ───────────────── CHEF HAT SVG ───────────────── */
+function ChefHatSVG() {
+  return (
+    <div className="relative flex items-center justify-center">
+      <motion.div
+        className="absolute inset-0 rounded-full"
+        style={{ background: `radial-gradient(circle, rgba(136,19,55,0.15) 0%, transparent 70%)`, filter: "blur(40px)" }}
+        animate={{ scale: [1, 1.2, 1], opacity: [0.6, 1, 0.6] }}
+        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <svg viewBox="0 0 200 240" className="relative z-10 w-48 h-56 md:w-56 md:h-72" fill="none">
+        {/* Outer glow rings */}
+        <motion.circle cx="100" cy="110" r="95" stroke={BURGUNDY} strokeWidth="0.5" opacity={0.12}
+          animate={{ r: [93, 97, 93] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} />
+        <motion.circle cx="100" cy="110" r="85" stroke={GOLD} strokeWidth="0.3" opacity={0.08}
+          animate={{ r: [83, 87, 83] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }} />
+
+        {/* Chef hat top puffs */}
+        <motion.ellipse cx="60" cy="55" rx="28" ry="30" fill={`${BURGUNDY}18`} stroke={BURGUNDY} strokeWidth="2"
+          initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.2, ease: "backOut" }} />
+        <motion.ellipse cx="100" cy="40" rx="30" ry="32" fill={`${BURGUNDY}18`} stroke={BURGUNDY} strokeWidth="2"
+          initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.4, ease: "backOut" }} />
+        <motion.ellipse cx="140" cy="55" rx="28" ry="30" fill={`${BURGUNDY}18`} stroke={BURGUNDY} strokeWidth="2"
+          initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.6, ease: "backOut" }} />
+
+        {/* Inner highlights on puffs */}
+        <ellipse cx="60" cy="50" rx="12" ry="14" fill={`${BURGUNDY}0d`} />
+        <ellipse cx="100" cy="35" rx="14" ry="15" fill={`${BURGUNDY}0d`} />
+        <ellipse cx="140" cy="50" rx="12" ry="14" fill={`${BURGUNDY}0d`} />
+
+        {/* Hat band */}
+        <motion.rect x="55" y="80" width="90" height="20" rx="4" fill={`${GOLD}22`} stroke={GOLD} strokeWidth="1.5"
+          initial={{ scaleX: 0, opacity: 0 }} animate={{ scaleX: 1, opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.8, ease: "easeOut" }} />
+        <rect x="55" y="83" width="90" height="10" rx="3" fill={`${GOLD}0d`} />
+
+        {/* Hat body */}
+        <motion.path
+          d="M55 100 L55 80 C55 70 55 65 60 60 M145 100 L145 80 C145 70 145 65 140 60"
+          stroke={BURGUNDY} strokeWidth="2" fill="none"
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
+          transition={{ duration: 1, delay: 0.5 }} />
+
+        {/* Hat brim */}
+        <motion.path
+          d="M45 100 L155 100 C155 100 158 110 155 115 L45 115 C42 110 45 100 45 100Z"
+          fill={`${BURGUNDY}18`} stroke={BURGUNDY} strokeWidth="2" strokeLinejoin="round"
+          initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }}
+          transition={{ duration: 1.2, delay: 1 }} />
+        <path d="M50 103 L150 103 C150 103 152 108 150 112 L50 112 C48 108 50 103 50 103Z" fill={`${BURGUNDY}0d`} />
+
+        {/* Steam lines rising from plate */}
+        <motion.path d="M80 145 C80 135 70 130 75 120" stroke={GOLD} strokeWidth="1.5" strokeLinecap="round" fill="none"
+          initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: [0, 1, 1, 0], opacity: [0, 0.6, 0.6, 0] }}
+          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", times: [0, 0.3, 0.7, 1] }} />
+        <motion.path d="M100 150 C100 138 90 132 95 120" stroke={BURGUNDY} strokeWidth="1.5" strokeLinecap="round" fill="none"
+          initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: [0, 1, 1, 0], opacity: [0, 0.5, 0.5, 0] }}
+          transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 0.5, times: [0, 0.3, 0.7, 1] }} />
+        <motion.path d="M120 145 C120 135 130 130 125 120" stroke={GOLD} strokeWidth="1.5" strokeLinecap="round" fill="none"
+          initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: [0, 1, 1, 0], opacity: [0, 0.6, 0.6, 0] }}
+          transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut", delay: 1, times: [0, 0.3, 0.7, 1] }} />
+
+        {/* Plate / serving dome base */}
+        <motion.path
+          d="M45 180 Q100 160 155 180"
+          stroke={GOLD} strokeWidth="2" fill="none" strokeLinecap="round"
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
+          transition={{ duration: 1, delay: 1.5 }} />
+        <motion.ellipse cx="100" cy="182" rx="55" ry="8" fill={`${GOLD}15`} stroke={GOLD} strokeWidth="1.5"
+          initial={{ scaleX: 0 }} animate={{ scaleX: 1 }}
+          transition={{ duration: 0.8, delay: 1.8 }} />
+        <ellipse cx="100" cy="180" rx="40" ry="4" fill={`${GOLD}0d`} />
+
+        {/* Fork and knife crossed */}
+        <motion.path d="M70 200 L70 215 M66 200 L66 203 M70 200 L70 203 M74 200 L74 203" stroke={CREAM} strokeWidth="1" strokeLinecap="round"
+          initial={{ opacity: 0 }} animate={{ opacity: 0.4 }} transition={{ delay: 2.2, duration: 0.5 }} />
+        <motion.path d="M130 200 L130 215 M128 200 Q130 208 130 200" stroke={CREAM} strokeWidth="1" strokeLinecap="round"
+          initial={{ opacity: 0 }} animate={{ opacity: 0.4 }} transition={{ delay: 2.4, duration: 0.5 }} />
+
+        {/* Sparkle accents */}
+        <motion.circle cx="165" cy="30" r="3" fill={GOLD}
+          animate={{ opacity: [0.2, 1, 0.2], scale: [0.7, 1.3, 0.7] }}
+          transition={{ duration: 2.5, repeat: Infinity }} />
+        <motion.circle cx="30" cy="50" r="2" fill={CREAM}
+          animate={{ opacity: [0.1, 0.8, 0.1], scale: [0.5, 1.2, 0.5] }}
+          transition={{ duration: 3, repeat: Infinity, delay: 0.8 }} />
+        <motion.circle cx="175" cy="100" r="2.5" fill={GOLD}
+          animate={{ opacity: [0.15, 0.7, 0.15] }}
+          transition={{ duration: 2, repeat: Infinity, delay: 1.2 }} />
+        <motion.circle cx="25" cy="120" r="2" fill={CREAM}
+          animate={{ opacity: [0.1, 0.6, 0.1] }}
+          transition={{ duration: 2.5, repeat: Infinity, delay: 0.4 }} />
+
+        {/* Small star accent */}
+        <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2 }}>
+          <motion.circle cx="160" cy="160" r="4" fill={GOLD} opacity={0.3}
+            animate={{ scale: [1, 1.4, 1] }} transition={{ duration: 2, repeat: Infinity }} />
+        </motion.g>
+      </svg>
+    </div>
+  );
+}
+
 /* ───────────────── VINE SVG ───────────────── */
 function VineDecor({ opacity = 0.04 }: { opacity?: number }) {
   return (
@@ -250,18 +356,9 @@ export default function V2CateringShowcase() {
               </MagneticButton>
             </div>
           </div>
-          <div className="hidden md:block relative">
-            <div className="relative rounded-2xl overflow-hidden border border-white/10">
-              <img src="https://images.unsplash.com/photo-1555244162-803834f70033?w=1400&q=80" alt="Elegant catered event" className="w-full h-[500px] object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0f0a0a] via-transparent to-transparent" />
-              <div className="absolute bottom-6 left-6">
-                <div className="px-4 py-2 rounded-full backdrop-blur-md bg-black/50 border flex items-center gap-2" style={{ borderColor: `${BURGUNDY}4d` }}>
-                  <Star size={18} weight="fill" style={{ color: GOLD }} />
-                  <span className="text-sm font-semibold text-white">Award-Winning Cuisine</span>
-                </div>
-              </div>
-            </div>
-          </div>
+          <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ ...spring, delay: 0.3 }} className="hidden md:flex items-center justify-center lg:justify-end">
+            <ChefHatSVG />
+          </motion.div>
         </div>
       </section>
 

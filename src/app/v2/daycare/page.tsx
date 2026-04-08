@@ -88,6 +88,117 @@ function FloatingStars() {
   );
 }
 
+/* ───────────────────────── SUNSHINE SVG ───────────────────────── */
+function SunshineSVG() {
+  return (
+    <div className="relative flex items-center justify-center">
+      <motion.div
+        className="absolute inset-0 rounded-full"
+        style={{ background: `radial-gradient(circle, ${YELLOW_GLOW} 0%, transparent 70%)`, filter: "blur(40px)" }}
+        animate={{ scale: [1, 1.2, 1], opacity: [0.6, 1, 0.6] }}
+        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <svg viewBox="0 0 200 220" className="relative z-10 w-48 h-56 md:w-56 md:h-72" fill="none">
+        {/* Outer glow rings */}
+        <motion.circle cx="100" cy="100" r="92" stroke={YELLOW} strokeWidth="0.5" opacity={0.12}
+          animate={{ r: [90, 94, 90] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} />
+        <motion.circle cx="100" cy="100" r="82" stroke={PURPLE} strokeWidth="0.3" opacity={0.08}
+          animate={{ r: [80, 84, 80] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }} />
+
+        {/* Sun rays */}
+        {[0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map((angle, i) => (
+          <motion.line key={i}
+            x1={100 + 45 * Math.cos((angle * Math.PI) / 180)} y1={100 + 45 * Math.sin((angle * Math.PI) / 180)}
+            x2={100 + 75 * Math.cos((angle * Math.PI) / 180)} y2={100 + 75 * Math.sin((angle * Math.PI) / 180)}
+            stroke={YELLOW} strokeWidth="3" strokeLinecap="round"
+            initial={{ pathLength: 0, opacity: 0 }}
+            animate={{ pathLength: 1, opacity: [0.3, 0.8, 0.3] }}
+            transition={{ duration: 2, repeat: Infinity, delay: i * 0.1, ease: "easeInOut" }} />
+        ))}
+        {/* Shorter inner rays */}
+        {[15, 45, 75, 105, 135, 165, 195, 225, 255, 285, 315, 345].map((angle, i) => (
+          <motion.line key={`s${i}`}
+            x1={100 + 42 * Math.cos((angle * Math.PI) / 180)} y1={100 + 42 * Math.sin((angle * Math.PI) / 180)}
+            x2={100 + 58 * Math.cos((angle * Math.PI) / 180)} y2={100 + 58 * Math.sin((angle * Math.PI) / 180)}
+            stroke={YELLOW_LIGHT} strokeWidth="2" strokeLinecap="round"
+            initial={{ pathLength: 0, opacity: 0 }}
+            animate={{ pathLength: 1, opacity: [0.2, 0.6, 0.2] }}
+            transition={{ duration: 2.5, repeat: Infinity, delay: i * 0.12 + 0.5, ease: "easeInOut" }} />
+        ))}
+
+        {/* Sun face circle */}
+        <motion.circle cx="100" cy="100" r="38" fill={`${YELLOW}22`} stroke={YELLOW} strokeWidth="2.5"
+          initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.3, ease: "backOut" }} />
+        {/* Inner highlight */}
+        <circle cx="100" cy="95" r="25" fill={`${YELLOW}0d`} />
+
+        {/* Happy face - eyes */}
+        <motion.circle cx="87" cy="93" r="4" fill={`${PURPLE}88`}
+          initial={{ scale: 0 }} animate={{ scale: 1 }}
+          transition={{ duration: 0.3, delay: 1.2 }} />
+        <motion.circle cx="113" cy="93" r="4" fill={`${PURPLE}88`}
+          initial={{ scale: 0 }} animate={{ scale: 1 }}
+          transition={{ duration: 0.3, delay: 1.3 }} />
+        {/* Eye sparkles */}
+        <circle cx="89" cy="91" r="1.5" fill="white" opacity="0.6" />
+        <circle cx="115" cy="91" r="1.5" fill="white" opacity="0.6" />
+
+        {/* Happy smile */}
+        <motion.path d="M85 105 Q100 118 115 105" stroke={`${PURPLE}88`} strokeWidth="2.5" strokeLinecap="round" fill="none"
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
+          transition={{ duration: 0.6, delay: 1.5 }} />
+
+        {/* Rosy cheeks */}
+        <motion.circle cx="80" cy="105" r="5" fill={`#ec489933`}
+          initial={{ opacity: 0 }} animate={{ opacity: [0, 0.6, 0.4] }}
+          transition={{ duration: 1, delay: 1.8 }} />
+        <motion.circle cx="120" cy="105" r="5" fill={`#ec489933`}
+          initial={{ opacity: 0 }} animate={{ opacity: [0, 0.6, 0.4] }}
+          transition={{ duration: 1, delay: 1.9 }} />
+
+        {/* Building blocks at bottom */}
+        <motion.rect x="55" y="175" width="25" height="25" rx="4" fill={`${PURPLE}22`} stroke={PURPLE} strokeWidth="1.5"
+          initial={{ y: 210, opacity: 0 }} animate={{ y: 175, opacity: 1 }}
+          transition={{ duration: 0.5, delay: 2, ease: "backOut" }} />
+        <rect x="60" y="178" width="15" height="15" rx="2" fill={`${PURPLE}0d`} />
+
+        <motion.rect x="85" y="170" width="30" height="30" rx="4" fill={`${YELLOW}22`} stroke={YELLOW} strokeWidth="1.5"
+          initial={{ y: 210, opacity: 0 }} animate={{ y: 170, opacity: 1 }}
+          transition={{ duration: 0.5, delay: 2.2, ease: "backOut" }} />
+        <rect x="91" y="174" width="18" height="18" rx="2" fill={`${YELLOW}0d`} />
+
+        <motion.rect x="120" y="175" width="25" height="25" rx="4" fill={`${PURPLE_LIGHT}22`} stroke={PURPLE_LIGHT} strokeWidth="1.5"
+          initial={{ y: 210, opacity: 0 }} animate={{ y: 175, opacity: 1 }}
+          transition={{ duration: 0.5, delay: 2.4, ease: "backOut" }} />
+        <rect x="125" y="178" width="15" height="15" rx="2" fill={`${PURPLE_LIGHT}0d`} />
+
+        {/* ABC letters on blocks */}
+        <motion.text x="67" y="193" textAnchor="middle" fill={PURPLE} fontSize="12" fontWeight="bold"
+          initial={{ opacity: 0 }} animate={{ opacity: 0.6 }} transition={{ delay: 2.5 }}>A</motion.text>
+        <motion.text x="100" y="191" textAnchor="middle" fill={YELLOW} fontSize="14" fontWeight="bold"
+          initial={{ opacity: 0 }} animate={{ opacity: 0.6 }} transition={{ delay: 2.6 }}>B</motion.text>
+        <motion.text x="132" y="193" textAnchor="middle" fill={PURPLE_LIGHT} fontSize="12" fontWeight="bold"
+          initial={{ opacity: 0 }} animate={{ opacity: 0.6 }} transition={{ delay: 2.7 }}>C</motion.text>
+
+        {/* Sparkle accents */}
+        <motion.circle cx="165" cy="35" r="3" fill={YELLOW_LIGHT}
+          animate={{ opacity: [0.2, 1, 0.2], scale: [0.7, 1.3, 0.7] }}
+          transition={{ duration: 2.5, repeat: Infinity }} />
+        <motion.circle cx="30" cy="55" r="2" fill={PURPLE_LIGHT}
+          animate={{ opacity: [0.1, 0.8, 0.1], scale: [0.5, 1.2, 0.5] }}
+          transition={{ duration: 3, repeat: Infinity, delay: 0.8 }} />
+        <motion.circle cx="175" cy="120" r="2.5" fill={YELLOW_LIGHT}
+          animate={{ opacity: [0.15, 0.7, 0.15] }}
+          transition={{ duration: 2, repeat: Infinity, delay: 1.2 }} />
+        <motion.circle cx="25" cy="140" r="2" fill={PURPLE_LIGHT}
+          animate={{ opacity: [0.1, 0.6, 0.1] }}
+          transition={{ duration: 2.5, repeat: Infinity, delay: 0.4 }} />
+      </svg>
+    </div>
+  );
+}
+
 /* ───────────────────────── SHARED COMPONENTS ───────────────────────── */
 function SectionReveal({ children, className = "", id }: { children: React.ReactNode; className?: string; id?: string }) {
   const ref = useRef(null);
@@ -283,15 +394,7 @@ export default function V2DaycarePage() {
             </motion.div>
           </div>
           <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ ...spring, delay: 0.3 }} className="hidden md:flex items-center justify-center lg:justify-end">
-            <div className="relative">
-              <motion.div className="absolute inset-0 rounded-full" style={{ background: `radial-gradient(circle, ${PURPLE_GLOW} 0%, transparent 70%)`, filter: "blur(40px)" }} animate={{ scale: [1, 1.15, 1] }} transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }} />
-              <div className="relative z-10 w-64 h-64 md:w-80 md:h-80 rounded-full overflow-hidden border-4" style={{ borderColor: PURPLE }}>
-                <img src="https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=600&q=80" alt="Happy child learning" className="w-full h-full object-cover" />
-              </div>
-              <motion.div className="absolute -top-4 -right-4 w-16 h-16 rounded-full flex items-center justify-center" style={{ background: YELLOW }} animate={{ rotate: [0, 10, -10, 0] }} transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}>
-                <Star size={28} weight="fill" className="text-white" />
-              </motion.div>
-            </div>
+            <SunshineSVG />
           </motion.div>
         </div>
       </section>

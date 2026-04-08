@@ -195,6 +195,100 @@ function ShimmerBorder({ children, className = "" }: { children: React.ReactNode
   );
 }
 
+/* ───────────────────────── PAINT ROLLER SVG ───────────────────────── */
+function PaintRollerSVG() {
+  return (
+    <div className="relative flex items-center justify-center">
+      <motion.div
+        className="absolute inset-0 rounded-full"
+        style={{ background: `radial-gradient(circle, ${PURPLE_GLOW} 0%, transparent 70%)`, filter: "blur(40px)" }}
+        animate={{ scale: [1, 1.2, 1], opacity: [0.6, 1, 0.6] }}
+        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <svg viewBox="0 0 200 240" className="relative z-10 w-48 h-56 md:w-56 md:h-72" fill="none">
+        <motion.circle cx="100" cy="115" r="92" stroke={PURPLE} strokeWidth="0.5" opacity={0.12}
+          animate={{ r: [90, 94, 90] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} />
+
+        {/* Paint roller - main cylinder */}
+        <motion.rect x="45" y="40" width="110" height="35" rx="17" fill={`${PURPLE}22`} stroke={PURPLE} strokeWidth="2.5"
+          initial={{ scaleX: 0, opacity: 0 }} animate={{ scaleX: 1, opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.3, ease: "backOut" }} />
+        <rect x="52" y="45" width="96" height="22" rx="11" fill={`${PURPLE}0d`} />
+
+        {/* Roller texture lines */}
+        {[60, 72, 84, 96, 108, 120, 132, 144].map((x, i) => (
+          <motion.line key={i} x1={x} y1="45" x2={x} y2="70" stroke={PURPLE_LIGHT} strokeWidth="0.5" opacity={0.3}
+            initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 0.8 + i * 0.05 }} />
+        ))}
+
+        {/* Handle connection */}
+        <motion.path d="M100 75 L100 95 Q100 105 110 105 L120 105"
+          stroke={PURPLE} strokeWidth="3" fill="none" strokeLinecap="round"
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.6, delay: 0.8 }} />
+
+        {/* Handle grip */}
+        <motion.rect x="120" y="95" width="45" height="20" rx="10" fill={`${PURPLE}18`} stroke={PURPLE} strokeWidth="2"
+          initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} style={{ transformOrigin: "left center" }}
+          transition={{ duration: 0.5, delay: 1.2 }} />
+        <rect x="125" y="99" width="35" height="12" rx="6" fill={`${PURPLE}0d`} />
+
+        {/* Paint drips from roller */}
+        <motion.path d="M60 75 C60 75 58 95 62 110 C64 118 60 120 60 120"
+          stroke={SPLASH_PINK} strokeWidth="2" strokeLinecap="round" fill={`${SPLASH_PINK}15`}
+          initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 0.7 }}
+          transition={{ duration: 1, delay: 1.5, ease: "easeOut" }} />
+        <motion.circle cx="60" cy="122" r="4" fill={`${SPLASH_PINK}44`}
+          initial={{ scale: 0 }} animate={{ scale: [0, 1.2, 1] }}
+          transition={{ delay: 2.3, duration: 0.5 }} />
+
+        <motion.path d="M85 75 C85 75 83 100 87 120 C89 130 85 135 85 135"
+          stroke={SPLASH_BLUE} strokeWidth="2" strokeLinecap="round" fill={`${SPLASH_BLUE}15`}
+          initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 0.7 }}
+          transition={{ duration: 1.2, delay: 1.7, ease: "easeOut" }} />
+        <motion.circle cx="85" cy="137" r="5" fill={`${SPLASH_BLUE}44`}
+          initial={{ scale: 0 }} animate={{ scale: [0, 1.3, 1] }}
+          transition={{ delay: 2.5, duration: 0.5 }} />
+
+        <motion.path d="M115 75 C115 75 117 92 113 108"
+          stroke={PURPLE_LIGHT} strokeWidth="2" strokeLinecap="round" fill="none"
+          initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 0.6 }}
+          transition={{ duration: 0.8, delay: 1.9, ease: "easeOut" }} />
+        <motion.circle cx="113" cy="110" r="3.5" fill={`${PURPLE_LIGHT}44`}
+          initial={{ scale: 0 }} animate={{ scale: [0, 1.2, 1] }}
+          transition={{ delay: 2.4, duration: 0.5 }} />
+
+        {/* Color palette at bottom */}
+        <motion.circle cx="50" cy="175" r="12" fill={`${SPLASH_PINK}22`} stroke={SPLASH_PINK} strokeWidth="1.5"
+          initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 2.5, ease: "backOut" }} />
+        <circle cx="50" cy="173" r="6" fill={`${SPLASH_PINK}0d`} />
+        <motion.circle cx="85" cy="180" r="14" fill={`${PURPLE}22`} stroke={PURPLE} strokeWidth="1.5"
+          initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 2.6, ease: "backOut" }} />
+        <circle cx="85" cy="177" r="7" fill={`${PURPLE}0d`} />
+        <motion.circle cx="120" cy="175" r="12" fill={`${SPLASH_BLUE}22`} stroke={SPLASH_BLUE} strokeWidth="1.5"
+          initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 2.7, ease: "backOut" }} />
+        <circle cx="120" cy="173" r="6" fill={`${SPLASH_BLUE}0d`} />
+        <motion.circle cx="150" cy="178" r="10" fill="#facc1522" stroke="#facc15" strokeWidth="1.5"
+          initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 2.8, ease: "backOut" }} />
+        <circle cx="150" cy="176" r="5" fill="#facc150d" />
+
+        {/* Sparkle accents */}
+        <motion.circle cx="170" cy="30" r="3" fill={PURPLE_LIGHT}
+          animate={{ opacity: [0.2, 1, 0.2], scale: [0.7, 1.3, 0.7] }}
+          transition={{ duration: 2.5, repeat: Infinity }} />
+        <motion.circle cx="25" cy="55" r="2" fill={SPLASH_PINK}
+          animate={{ opacity: [0.1, 0.8, 0.1], scale: [0.5, 1.2, 0.5] }}
+          transition={{ duration: 3, repeat: Infinity, delay: 0.8 }} />
+        <motion.circle cx="180" cy="120" r="2.5" fill={SPLASH_BLUE}
+          animate={{ opacity: [0.15, 0.7, 0.15] }}
+          transition={{ duration: 2, repeat: Infinity, delay: 1.2 }} />
+        <motion.circle cx="20" cy="140" r="2" fill={PURPLE_LIGHT}
+          animate={{ opacity: [0.1, 0.6, 0.1] }}
+          transition={{ duration: 2.5, repeat: Infinity, delay: 0.4 }} />
+      </svg>
+    </div>
+  );
+}
+
 /* ───────────────────────── ACCORDION ───────────────────────── */
 function AccordionItem({ title, description, isOpen, onToggle }: { title: string; description: string; isOpen: boolean; onToggle: () => void }) {
   return (
@@ -360,12 +454,12 @@ export default function V2PaintingPage() {
           <div className="absolute inset-0" style={{ background: `linear-gradient(to right, ${BG} 45%, transparent 100%)` }} />
           <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${BG} 10%, transparent 50%)` }} />
         </div>
-        <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full">
-          <div className="max-w-2xl space-y-8">
+        <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+          <div className="space-y-8">
             <motion.p initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ ...spring, delay: 0.1 }} className="text-sm uppercase tracking-widest" style={{ color: PURPLE }}>
               Professional Painting Contractors
             </motion.p>
-            <h1 className="text-4xl md:text-7xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}>
+            <h1 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}>
               <WordReveal text="Transform Every Surface" />
             </h1>
             <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.6 }} className="text-lg text-slate-300 max-w-md leading-relaxed">
@@ -382,6 +476,9 @@ export default function V2PaintingPage() {
               </MagneticButton>
             </motion.div>
           </div>
+          <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ ...spring, delay: 0.3 }} className="hidden md:flex items-center justify-center lg:justify-end">
+            <PaintRollerSVG />
+          </motion.div>
         </div>
       </section>
 
