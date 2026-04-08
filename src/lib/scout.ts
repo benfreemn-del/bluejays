@@ -3,12 +3,25 @@ import type { Prospect, ScoutOptions, Category } from "./types";
 import { getMockProspects } from "./mock-prospects";
 import { addProspect, getAllProspects, updateProspect } from "./store";
 import { logCost, COST_RATES } from "./cost-logger";
+import {
+  getSmartQueries,
+  checkDuplicate,
+  checkWebsiteQuality,
+  calculateScoutingScore,
+  type ScoutingScore,
+  type WebsiteQualityResult,
+} from "./scout-optimizer";
 
 const GOOGLE_API_KEY = process.env.GOOGLE_PLACES_API_KEY;
 
 async function scoutWithGoogle(options: ScoutOptions): Promise<Prospect[]> {
   const { city, state, category, limit = 10 } = options;
-  const query = `${category.replace("-", " ")} in ${city}${state ? `, ${state}` : ""}`;
+
+  // Use smart queries for better search coverage
+  const smartQueries = getSmartQueries(category, 2);
+  const primaryQuery = smartQueries[0] || category.replace("-", " ");
+  const query = `${primaryQuery} in ${city}${state ? `, ${state}` : ""}`;
+  console.log(`  [Scout Optimizer] Using smart query: "${query}" (${smartQueries.length} variants available)`);
 
   // Step 1: Text Search to find businesses
   const searchUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(query)}&key=${GOOGLE_API_KEY}`;
@@ -176,6 +189,51 @@ export async function scout(options: ScoutOptions): Promise<Prospect[]> {
   }
 
   const totalFound = newProspects.length + rescoutedProspects.length;
-  console.log(`  Found ${totalFound} businesses (${newProspects.length} new, ${rescoutedProspects.length} re-scouted)\n`);
-  return [...newProspects, ...rescoutedProspects];
+  console.log(`  Found ${totalFound} businesses (${newProspects.length} new, ${rescoutedProspects.length} re-scouted)`);
+
+  // Calculate scouting quality scores and check website quality for new prospects
+  const allResults = [...newProspects, ...rescoutedProspects];
+  let checkedWebsites = 0;
+  let filteredModern = 0;
+  const scoredResults: Prospect[] = [];
+
+  for (const prospect of allResults) {
+    // Quick website quality check (with rate limiting)
+    let websiteQuality: WebsiteQualityResult | undefined;
+    if (prospect.currentWebsite && checkedWebsites < 5) {
+      try {
+        websiteQuality = await checkWebsiteQuality(prospect.currentWebsite);
+        checkedWebsites++;
+
+        // Filter out businesses with modern/good websites
+        if (websiteQuality.isModern && websiteQuality.score < 30) {
+          console.log(`  [Scout Optimizer] Filtered ${prospect.businessName} — modern website detected (score: ${websiteQuality.score})`);
+          filteredModern++;
+          continue;
+        }
+      } catch {
+        // Website check failed — keep the prospect
+      }
+    }
+
+    // Calculate scouting quality score
+    const score = calculateScoutingScore(prospect, websiteQuality);
+    console.log(`  [Scout Optimizer] ${prospect.businessName}: Score ${score.overall}/100 (${score.grade}) — ${score.recommendation}`);
+
+    scoredResults.push(prospect);
+  }
+
+  if (filteredModern > 0) {
+    console.log(`  [Scout Optimizer] Filtered out ${filteredModern} businesses with modern websites`);
+  }
+
+  // Sort by scouting score (best prospects first)
+  scoredResults.sort((a, b) => {
+    const scoreA = calculateScoutingScore(a).overall;
+    const scoreB = calculateScoutingScore(b).overall;
+    return scoreB - scoreA;
+  });
+
+  console.log(`  Final: ${scoredResults.length} prospects after quality filtering\n`);
+  return scoredResults;
 }
