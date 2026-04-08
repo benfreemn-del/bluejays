@@ -50,6 +50,9 @@ function dbToProspect(row: Record<string, unknown>): Prospect {
     funnelPaused: row.funnel_paused as boolean | undefined,
     selectedTheme: (row.selected_theme as "light" | "dark" | undefined) || undefined,
     aiThemeRecommendation: (row.ai_theme_recommendation as "light" | "dark" | undefined) || undefined,
+    qualityScore: row.quality_score as number | undefined,
+    qualityNotes: row.quality_notes as string | undefined,
+    qcReviewedAt: row.qc_reviewed_at as string | undefined,
     createdAt: row.created_at as string,
     updatedAt: row.updated_at as string,
   };
@@ -195,6 +198,9 @@ export async function updateProspect(
     if (updates.funnelPaused !== undefined) dbUpdates.funnel_paused = updates.funnelPaused;
     if (updates.selectedTheme) dbUpdates.selected_theme = updates.selectedTheme;
     if (updates.aiThemeRecommendation) dbUpdates.ai_theme_recommendation = updates.aiThemeRecommendation;
+    if (updates.qualityScore !== undefined) dbUpdates.quality_score = updates.qualityScore;
+    if (updates.qualityNotes !== undefined) dbUpdates.quality_notes = updates.qualityNotes;
+    if (updates.qcReviewedAt !== undefined) dbUpdates.qc_reviewed_at = updates.qcReviewedAt;
 
     const { data, error } = await supabase
       .from("prospects")

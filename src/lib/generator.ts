@@ -152,30 +152,46 @@ export async function generatePreview(prospect: Prospect): Promise<string> {
   const hasPhotos = siteData.photos.length > 0;
   const dataChecks = [hasRealPhone, hasRealServices, hasRealAbout, hasPhotos].filter(Boolean).length;
 
-  // ═══ FAILSAFE 2: Quality review agent ═══
+  // ═══ FAILSAFE 2: Quality review agent (QC gate) ═══
   const qualityReport = reviewSiteQuality(prospect, siteData);
   const criticalIssues = qualityReport.issues.filter(i => i.severity === "critical").length;
 
   const previewUrl = `/preview/${prospect.id}`;
+
   // Must pass BOTH failsafes: data checks (3/4) AND quality review (no critical issues, score >= 70)
   const passesFailsafe1 = dataChecks >= 3;
   const passesFailsafe2 = qualityReport.passed;
-  const status = (passesFailsafe1 && passesFailsafe2) ? "pending-review" : "generated";
+  const passesQc = passesFailsafe1 && passesFailsafe2;
+
+  // QC gate: pass → "ready_to_review", fail → "qc_failed"
+  // Sites that don't even have a generated URL yet stay as "generated" (not enough data)
+  const status = passesQc ? "ready_to_review" : (dataChecks >= 2 ? "qc_failed" : "generated");
+
+  // Build quality notes for the prospect record
+  const qualityNotes = [
+    `Score: ${qualityReport.score}/100 ${qualityReport.passed ? "PASSED" : "FAILED"}`,
+    `Data checks: ${dataChecks}/4 (phone=${hasRealPhone}, services=${hasRealServices}, about=${hasRealAbout}, photos=${hasPhotos})`,
+    ...qualityReport.issues.filter(i => i.severity === "critical").map(i => `CRITICAL [${i.section}]: ${i.message}`),
+    ...qualityReport.issues.filter(i => i.severity === "warning").map(i => `WARNING [${i.section}]: ${i.message}`),
+  ].join("\n");
 
   console.log(`  ── Failsafe 1 (Data): ${dataChecks}/4 checks (phone=${hasRealPhone}, services=${hasRealServices}, about=${hasRealAbout}, photos=${hasPhotos}) → ${passesFailsafe1 ? "PASS" : "FAIL"}`);
   console.log(`  ── Failsafe 2 (Quality): score=${qualityReport.score}/100, critical=${criticalIssues} → ${passesFailsafe2 ? "PASS" : "FAIL"}`);
-  console.log(`  ── Final status: ${status.toUpperCase()}`);
+  console.log(`  ── QC Gate: ${passesQc ? "✅ PASSED → ready_to_review" : `❌ FAILED → ${status}`}`);
 
-  if (status === "generated") {
+  if (!passesQc) {
     const reasons = [];
     if (!passesFailsafe1) reasons.push(`data checks ${dataChecks}/4`);
-    if (!passesFailsafe2) reasons.push(`quality score ${qualityReport.score}/100`);
-    console.log(`  ⚠️ NOT READY — ${reasons.join(", ")}. Stays in processing.`);
+    if (!passesFailsafe2) reasons.push(`quality score ${qualityReport.score}/100, ${criticalIssues} critical issue(s)`);
+    console.log(`  ⚠️ QC FAILED — ${reasons.join(", ")}`);
   }
 
   await updateProspect(prospect.id, {
     status,
     generatedSiteUrl: previewUrl,
+    qualityScore: qualityReport.score,
+    qualityNotes,
+    qcReviewedAt: new Date().toISOString(),
   });
 
   console.log(`  📍 Preview at: ${previewUrl}`);

@@ -18,8 +18,9 @@ interface ProspectTableProps {
 }
 
 const allStatuses: ProspectStatus[] = [
-  "scouted", "scraped", "generated", "pending-review", "approved",
-  "deployed", "contacted", "responded", "paid",
+  "scouted", "scraped", "generated", "pending-review",
+  "ready_to_review", "qc_failed",
+  "approved", "deployed", "contacted", "responded", "paid",
 ];
 
 export default function ProspectTable({
@@ -314,7 +315,7 @@ export default function ProspectTable({
                         {buildingIds.includes(prospect.id) ? "Building..." : "Build Site"}
                       </button>
                     )}
-                    {prospect.status === "pending-review" && (
+                    {(prospect.status === "pending-review" || prospect.status === "ready_to_review") && (
                       <button
                         onClick={async () => {
                           await fetch(`/api/prospects/${prospect.id}`, {
@@ -328,6 +329,18 @@ export default function ProspectTable({
                         title="Approve for outreach"
                       >
                         ✓ Approve
+                      </button>
+                    )}
+                    {prospect.status === "qc_failed" && (
+                      <button
+                        onClick={async () => {
+                          await fetch(`/api/qc/review/${prospect.id}`, { method: "POST" });
+                          onRefresh?.();
+                        }}
+                        className="text-xs px-2.5 py-1.5 rounded-lg bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 transition-colors"
+                        title="Re-run QC check"
+                      >
+                        Re-QC
                       </button>
                     )}
                     {prospect.email && prospect.generatedSiteUrl && (

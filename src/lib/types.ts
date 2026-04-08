@@ -46,6 +46,8 @@ export type ProspectStatus =
   | "scraped"
   | "generated"
   | "pending-review"
+  | "ready_to_review"   // passed QC gate — ready for Ben's manual approval
+  | "qc_failed"         // failed QC gate — needs fixes before approval
   | "approved"
   | "deployed"
   | "contacted"
@@ -83,6 +85,10 @@ export interface Prospect {
   subscriptionStatus?: "none" | "active" | "past_due" | "cancelled";
   instagramHandle?: string;
   funnelPaused?: boolean;
+  /** QC gate results — populated by /api/qc/review/[id] */
+  qualityScore?: number;       // 0-100
+  qualityNotes?: string;       // formatted text summary of issues
+  qcReviewedAt?: string;       // ISO timestamp of last QC run
   createdAt: string;
   updatedAt: string;
 }

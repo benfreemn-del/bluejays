@@ -16,6 +16,16 @@ const statusConfig: Record<
     bg: "bg-red-900/50",
     text: "text-red-300",
   },
+  ready_to_review: {
+    label: "QC Passed ✓",
+    bg: "bg-emerald-900/60",
+    text: "text-emerald-300",
+  },
+  qc_failed: {
+    label: "QC Failed ✗",
+    bg: "bg-rose-900/60",
+    text: "text-rose-300",
+  },
   approved: {
     label: "Approved",
     bg: "bg-emerald-900/50",

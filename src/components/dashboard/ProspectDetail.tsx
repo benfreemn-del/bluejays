@@ -68,6 +68,11 @@ export default function ProspectDetail({
   const [simReport, setSimReport] = useState<any>(null);
   const [simLoading, setSimLoading] = useState(false);
   const [simOpen, setSimOpen] = useState(false);
+  // QC gate state
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [qcResult, setQcResult] = useState<any>(null);
+  const [qcLoading, setQcLoading] = useState(false);
+  const [qcExpanded, setQcExpanded] = useState(false);
 
   useEffect(() => {
     if (!prospect) return;
@@ -217,7 +222,7 @@ export default function ProspectDetail({
             />
           )}
 
-          {/* Review Banner */}
+          {/* Review Banner — pending-review (legacy) */}
           {prospect.status === "pending-review" && (
             <section className="p-4 rounded-xl bg-red-500/10 border border-red-500/30">
               <h3 className="text-sm font-bold text-red-400 mb-2">
@@ -242,6 +247,105 @@ export default function ProspectDetail({
                   Review Site
                 </a>
               </div>
+            </section>
+          )}
+
+          {/* QC Gate Banner — ready_to_review (passed) */}
+          {prospect.status === "ready_to_review" && (
+            <section className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-bold text-emerald-400">QC Passed ✓ — Ready for Review</h3>
+                {prospect.qualityScore !== undefined && (
+                  <span className="text-xs font-bold text-emerald-300 bg-emerald-500/20 px-2 py-0.5 rounded-full">
+                    Score: {prospect.qualityScore}/100
+                  </span>
+                )}
+              </div>
+              <p className="text-muted text-xs mb-3">
+                This site passed automated QC checks. Review it and approve to start outreach.
+              </p>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => onStatusChange(prospect.id, "approved")}
+                  className="flex-1 h-10 rounded-lg bg-emerald-500/20 text-emerald-400 text-sm font-medium hover:bg-emerald-500/30 transition-colors"
+                >
+                  Approve
+                </button>
+                <a
+                  href={prospect.generatedSiteUrl || "#"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 h-10 rounded-lg bg-blue-electric/20 text-blue-electric text-sm font-medium flex items-center justify-center hover:bg-blue-electric/30 transition-colors"
+                >
+                  Review Site
+                </a>
+              </div>
+              {prospect.qualityNotes && (
+                <button
+                  onClick={() => setQcExpanded(!qcExpanded)}
+                  className="mt-2 w-full text-xs text-emerald-400/60 hover:text-emerald-400 text-left"
+                >
+                  {qcExpanded ? "Hide QC Notes" : "Show QC Notes"}
+                </button>
+              )}
+              {qcExpanded && prospect.qualityNotes && (
+                <pre className="mt-2 text-xs text-muted whitespace-pre-wrap bg-black/20 rounded p-2 max-h-40 overflow-y-auto">
+                  {prospect.qualityNotes}
+                </pre>
+              )}
+            </section>
+          )}
+
+          {/* QC Gate Banner — qc_failed */}
+          {prospect.status === "qc_failed" && (
+            <section className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/30">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-bold text-rose-400">QC Failed ✗ — Needs Fixes</h3>
+                {prospect.qualityScore !== undefined && (
+                  <span className="text-xs font-bold text-rose-300 bg-rose-500/20 px-2 py-0.5 rounded-full">
+                    Score: {prospect.qualityScore}/100
+                  </span>
+                )}
+              </div>
+              <p className="text-muted text-xs mb-3">
+                This site failed QC checks. Fix the issues below, then re-run QC.
+              </p>
+              {prospect.qualityNotes && (
+                <pre className="text-xs text-muted whitespace-pre-wrap bg-black/20 rounded p-2 max-h-48 overflow-y-auto mb-3">
+                  {prospect.qualityNotes}
+                </pre>
+              )}
+              <div className="flex gap-2">
+                <button
+                  onClick={async () => {
+                    setQcLoading(true);
+                    try {
+                      const res = await fetch(`/api/qc/review/${prospect.id}`, { method: "POST" });
+                      const data = await res.json();
+                      setQcResult(data);
+                      if (data.status) onStatusChange(prospect.id, data.status);
+                    } catch { /* ignore */ }
+                    setQcLoading(false);
+                  }}
+                  disabled={qcLoading}
+                  className="flex-1 h-10 rounded-lg bg-rose-500/20 text-rose-400 text-sm font-medium hover:bg-rose-500/30 transition-colors disabled:opacity-50"
+                >
+                  {qcLoading ? "Running QC..." : "Re-run QC"}
+                </button>
+                <a
+                  href={prospect.generatedSiteUrl || "#"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 h-10 rounded-lg bg-blue-electric/20 text-blue-electric text-sm font-medium flex items-center justify-center hover:bg-blue-electric/30 transition-colors"
+                >
+                  View Site
+                </a>
+              </div>
+              {qcResult && (
+                <p className="mt-2 text-xs text-center" style={{ color: qcResult.passed ? "#34d399" : "#fb7185" }}>
+                  QC re-run: {qcResult.passed ? `PASSED (${qcResult.score}/100)` : `FAILED (${qcResult.score}/100)`}
+                </p>
+              )}
             </section>
           )}
 
@@ -352,8 +456,10 @@ export default function ProspectDetail({
                   Send SMS
                 </button>
               )}
-              {prospect.status === "pending-review" && prospect.email && (
-                <p className="text-xs text-muted text-center">Approve this site before sending outreach</p>
+              {(prospect.status === "pending-review" || prospect.status === "ready_to_review" || prospect.status === "qc_failed") && prospect.email && (
+                <p className="text-xs text-muted text-center">
+                  {prospect.status === "qc_failed" ? "Fix QC issues before sending outreach" : "Approve this site before sending outreach"}
+                </p>
               )}
               <button
                 onClick={async () => {
@@ -382,6 +488,8 @@ export default function ProspectDetail({
                 <option value="scraped">Scraped</option>
                 <option value="generated">Generated</option>
                 <option value="pending-review">Needs Review</option>
+                <option value="ready_to_review">QC Passed</option>
+                <option value="qc_failed">QC Failed</option>
                 <option value="approved">Approved</option>
                 <option value="deployed">Deployed</option>
                 <option value="contacted">Contacted</option>

@@ -60,7 +60,7 @@ export default function MapView({ prospects }: MapViewProps) {
     countyData[c].count++;
     if (p.status === "paid") { countyData[c].hasPaid = true; countyData[c].paidBusinesses.push(p.businessName); }
     if (p.status === "contacted" || p.status === "responded") countyData[c].hasContacted = true;
-    if (p.status === "pending-review" || p.status === "approved") countyData[c].hasReady = true;
+    if (p.status === "pending-review" || p.status === "ready_to_review" || p.status === "approved") countyData[c].hasReady = true;
     if (!countyData[c].categories.includes(p.category)) countyData[c].categories.push(p.category);
   }
 
