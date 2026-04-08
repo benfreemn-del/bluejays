@@ -9,6 +9,13 @@
  * 4. Trigger CRM status transitions based on intent-to-status mapping
  * 5. Pause the automated funnel when a prospect replies
  * 6. Escalate to Ben when needed per escalation rules
+ *
+ * CONVERSATIONAL AI TUNING (v2):
+ * - Responses are warmer, more human, and less template-y
+ * - Better hooks for re-engaging cold/stalled prospects
+ * - Personality-driven: genuine curiosity, empathy, light humor
+ * - Context-aware: references specific business data when available
+ * - Varied openers: never starts two messages the same way
  */
 
 import type { Prospect, ProspectStatus } from "./types";
@@ -152,6 +159,104 @@ async function getAiResponse(prompt: string, prospectId?: string): Promise<strin
   });
 
   return completion.choices[0]?.message?.content || "";
+}
+
+// ═══════════════════════════════════════════════════════════════
+// CONVERSATIONAL WARMTH HELPERS
+// Make responses feel human, not robotic
+// ═══════════════════════════════════════════════════════════════
+
+/**
+ * Varied conversational openers — never start two messages the same way.
+ * Picks based on a hash of the prospect name for consistency.
+ */
+function getWarmOpener(name: string, intent: "positive" | "neutral" | "empathetic" | "re-engage"): string {
+  const hash = name.split("").reduce((a, c) => a + c.charCodeAt(0), 0);
+
+  const openers: Record<string, string[]> = {
+    positive: [
+      `That's awesome to hear, ${name}!`,
+      `Love that, ${name}!`,
+      `Really glad you reached out, ${name}!`,
+      `This made my day, ${name}!`,
+      `${name}, that's exactly what I was hoping to hear!`,
+    ],
+    neutral: [
+      `Hey ${name}, thanks for getting back to me!`,
+      `${name}! Good to hear from you.`,
+      `Appreciate you taking the time to reply, ${name}.`,
+      `Hey ${name} — glad you reached out.`,
+      `Thanks for the message, ${name}!`,
+    ],
+    empathetic: [
+      `I totally hear you, ${name}.`,
+      `That makes complete sense, ${name}.`,
+      `${name}, I really appreciate your honesty.`,
+      `Completely understand where you're coming from, ${name}.`,
+      `Fair enough, ${name} — I respect that.`,
+    ],
+    "re-engage": [
+      `Hey ${name}, just wanted to circle back on something.`,
+      `${name}! Been thinking about your business and had an idea.`,
+      `Hey ${name} — quick thought I wanted to share with you.`,
+      `${name}, something came up that made me think of your business.`,
+      `Hey ${name}, hope business is going well! Quick question for you.`,
+    ],
+  };
+
+  const options = openers[intent] || openers.neutral;
+  return options[hash % options.length];
+}
+
+/**
+ * Add personality-driven sign-offs that feel genuine.
+ */
+function getWarmSignoff(name: string): string {
+  const hash = name.split("").reduce((a, c) => a + c.charCodeAt(0), 0);
+  const signoffs = [
+    `Rooting for ${name}'s business either way!`,
+    `Here if you need anything.`,
+    `Talk soon!`,
+    `Cheering you on!`,
+    `Here whenever you're ready.`,
+  ];
+  return signoffs[hash % signoffs.length];
+}
+
+/**
+ * Generate a personalized context hook based on prospect data.
+ * Makes the response feel researched and specific, not generic.
+ */
+function getPersonalHook(prospect: Prospect): string {
+  if (prospect.googleRating && prospect.reviewCount && prospect.reviewCount > 10) {
+    return `By the way, I noticed ${prospect.businessName} has ${prospect.googleRating} stars across ${prospect.reviewCount} reviews — that's really impressive. The site I built actually features those reviews prominently.`;
+  }
+  if (prospect.scrapedData?.services && prospect.scrapedData.services.length > 0) {
+    const topService = prospect.scrapedData.services[0].name;
+    return `I made sure to highlight ${topService} on the site since that seems like a key service for ${prospect.businessName}.`;
+  }
+  if (prospect.city) {
+    return `I designed it specifically for ${CATEGORY_CONFIG[prospect.category]?.label || prospect.category} businesses in the ${prospect.city} area.`;
+  }
+  return `I put a lot of thought into making it feel authentic to ${prospect.businessName}.`;
+}
+
+/**
+ * Generate re-engagement hooks for cold/stalled prospects.
+ * These are conversation starters that create curiosity without being pushy.
+ */
+function getReEngagementHook(prospect: Prospect): string {
+  const category = CATEGORY_CONFIG[prospect.category]?.label || prospect.category;
+  const hooks = [
+    `I was just working with another ${category.toLowerCase()} business in the area and it reminded me — your preview site is still live if you ever want to take another look.`,
+    `Quick question: have you noticed more people searching for ${category.toLowerCase()} services online lately? I've been seeing a big uptick, and your site is ready to capture that traffic.`,
+    `I updated a few things on the site I built for ${prospect.businessName} — it's looking even better now. Just thought you'd want to know it's still there for you.`,
+    `I was curious — what's the #1 way new customers find ${prospect.businessName} right now? Because the website I built is designed to add a whole new channel of leads.`,
+    `No pitch here — I just wanted to share that a ${category.toLowerCase()} business similar to yours claimed their site last week and already got their first online lead. Thought that might be interesting to you.`,
+  ];
+
+  const hash = prospect.businessName.split("").reduce((a, c) => a + c.charCodeAt(0), 0);
+  return hooks[hash % hooks.length];
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -345,7 +450,7 @@ function detectObjectionType(body: string): string | null {
 
 // ═══════════════════════════════════════════════════════════════
 // MOCK RESPONSE (for development without API keys)
-// Now implements full playbook logic locally
+// Implements full playbook logic locally with conversational warmth
 // ═══════════════════════════════════════════════════════════════
 
 function getMockResponse(prompt: string): string {
@@ -354,15 +459,27 @@ function getMockResponse(prompt: string): string {
   // Extract prospect context from prompt
   const businessNameMatch = prompt.match(/Business: (.+?) \(/);
   const businessName = businessNameMatch ? businessNameMatch[1] : "your business";
+  const ownerMatch = prompt.match(/Owner: (\w+)/);
+  const name = ownerMatch ? ownerMatch[1] : "there";
   const categoryMatch = prompt.match(/\(([^)]+)\)\n- Owner/);
   const category = categoryMatch ? categoryMatch[1] : "";
+  const ratingMatch = prompt.match(/Google rating: ([\d.]+)/);
+  const rating = ratingMatch ? ratingMatch[1] : null;
+  const reviewMatch = prompt.match(/\((\d+) reviews\)/);
+  const reviewCount = reviewMatch ? reviewMatch[1] : null;
+
+  // Build personalized context snippet
+  let personalTouch = "";
+  if (rating && reviewCount && parseInt(reviewCount) > 5) {
+    personalTouch = ` I noticed you've got ${rating} stars across ${reviewCount} reviews — that's the kind of reputation that deserves a website to match.`;
+  }
 
   // Unsubscribe / angry detection
   if (lower.includes("stop") || lower.includes("unsubscribe") || lower.includes("remove me") ||
       lower.includes("opt out") || lower.includes("don't contact")) {
     return JSON.stringify({
       shouldReply: true,
-      reply: `Absolutely — I've removed you from all future messages right away. I'm sorry for the bother, and I wish you and ${businessName} all the best!`,
+      reply: `Done — I've taken you off our list right away. Genuinely sorry if I overstepped. I was just excited about what I built for ${businessName}, but I completely respect your space. Wishing you all the best!`,
       escalate: false,
       sentiment: "neutral",
       intent: "unsubscribe",
@@ -376,7 +493,7 @@ function getMockResponse(prompt: string): string {
       lower.includes("harassment") || lower.includes("attorney general")) {
     return JSON.stringify({
       shouldReply: true,
-      reply: `Absolutely — I've removed you from all future messages right away. I'm sorry for the bother, and I wish you and ${businessName} all the best!`,
+      reply: `I hear you, and I'm sorry — that was never my intention. I've removed you from everything immediately. I genuinely just wanted to help ${businessName}, but I understand this wasn't welcome. You won't hear from me again.`,
       escalate: true,
       escalateReason: "Angry/threatening response — immediate human intervention needed",
       escalateUrgency: "immediate",
@@ -393,7 +510,7 @@ function getMockResponse(prompt: string): string {
       lower.includes("no thank you") || lower.includes("not for me")) {
     return JSON.stringify({
       shouldReply: true,
-      reply: `No worries at all! I appreciate you being straight with me. The site I built is yours to look at anytime if you change your mind. I wish you and ${businessName} all the best!`,
+      reply: `Totally respect that, ${name}. No hard feelings at all — I appreciate you being upfront with me. The site I built is yours to look at anytime if you ever get curious. Wishing you and ${businessName} nothing but good things!`,
       escalate: false,
       sentiment: "neutral",
       intent: "not_interested",
@@ -403,13 +520,12 @@ function getMockResponse(prompt: string): string {
     });
   }
 
-  // Objection: too expensive
+  // Objection: too expensive — warm, empathetic reframe
   if (lower.includes("expensive") || lower.includes("too much") || lower.includes("can't afford") ||
       lower.includes("pricey") || lower.includes("$997")) {
-    const objResp = OBJECTION_RESPONSES["too expensive"];
     return JSON.stringify({
       shouldReply: true,
-      reply: objResp.response + (objResp.followUp ? "\n\n" + objResp.followUp : ""),
+      reply: `I hear you, ${name} — $997 is real money, and I'd never want you to feel pressured into something that doesn't make sense for you.\n\nHere's how I think about it though: most ${category || "local"} businesses tell me they get their first new customer from their website within the first month. At your price point, that probably pays for the whole thing.\n\nAnd unlike agencies that charge $3K-$10K, this is a one-time investment — no monthly fees eating into your bottom line.${personalTouch}\n\nThe preview is still live whenever you want to take another look. Zero pressure from me.`,
       escalate: false,
       sentiment: "neutral",
       intent: "objection",
@@ -420,13 +536,13 @@ function getMockResponse(prompt: string): string {
     });
   }
 
-  // Objection: already have a website
+  // Objection: already have a website — curious, not dismissive
   if (lower.includes("already have a website") || lower.includes("already have a site") ||
       lower.includes("have a website")) {
-    const objResp = OBJECTION_RESPONSES["already have a website"];
+    const compareUrl = `${CHECKOUT_BASE_URL}/compare/{prospectId}`;
     return JSON.stringify({
       shouldReply: true,
-      reply: objResp.response + (objResp.followUp ? "\n\n" + objResp.followUp : ""),
+      reply: `Oh nice — yeah, I actually found your current site, that's how I discovered ${businessName} in the first place! I'm not trying to trash what you have. I just thought you might be curious to see a fresh take on it.\n\nI put together a side-by-side comparison so you can see them next to each other: ${compareUrl}\n\nHonestly, even if you stick with your current site, the comparison might give you some ideas for improvements. No strings attached.`,
       escalate: false,
       sentiment: "neutral",
       intent: "objection",
@@ -437,13 +553,12 @@ function getMockResponse(prompt: string): string {
     });
   }
 
-  // Objection: have a developer
+  // Objection: have a developer — respectful, non-competitive
   if (lower.includes("have a developer") || lower.includes("have a web guy") ||
       lower.includes("my developer")) {
-    const objResp = OBJECTION_RESPONSES["have a developer"];
     return JSON.stringify({
       shouldReply: true,
-      reply: objResp.response,
+      reply: `That's great that you have someone! Having a trusted developer is valuable. I'm definitely not trying to step on anyone's toes here.\n\nHonestly? Maybe show them the preview I built — it might spark some ideas for your next update. Think of it as a free mood board. The site is yours to look at regardless: ${CHECKOUT_BASE_URL}/preview/{prospectId}\n\nEither way, sounds like ${businessName} is in good hands.`,
       escalate: false,
       sentiment: "neutral",
       intent: "objection",
@@ -454,14 +569,13 @@ function getMockResponse(prompt: string): string {
     });
   }
 
-  // Objection: bad timing
+  // Objection: bad timing / need to think — patient, door-open
   if (lower.includes("bad timing") || lower.includes("not the right time") ||
       lower.includes("think about it") || lower.includes("maybe later") ||
       lower.includes("not right now")) {
-    const objResp = OBJECTION_RESPONSES["bad timing"] || OBJECTION_RESPONSES["need to think about it"];
     return JSON.stringify({
       shouldReply: true,
-      reply: objResp.response,
+      reply: `Completely get it, ${name} — running a business means a million things competing for your attention. There's no expiration date on this.\n\nOne thing worth knowing: what you saw in the preview is just version one. Once you're ready, we customize everything — colors, photos, layout, content — to match exactly what you want. So don't judge the final product by the preview alone.\n\nI'll leave the link here for whenever the timing feels right: ${CHECKOUT_BASE_URL}/preview/{prospectId}\n\nNo follow-up from me unless you reach out. Take care, ${name}!`,
       escalate: false,
       sentiment: "neutral",
       intent: "objection",
@@ -472,7 +586,7 @@ function getMockResponse(prompt: string): string {
     });
   }
 
-  // Interested / ready to buy
+  // Interested / ready to buy — enthusiastic but not over-the-top
   if (lower.includes("interested") || lower.includes("love it") || lower.includes("looks great") ||
       lower.includes("how do i get started") || lower.includes("sign me up") ||
       lower.includes("i want it") || lower.includes("how much")) {
@@ -483,7 +597,7 @@ function getMockResponse(prompt: string): string {
     if (closeAction === "checkout") {
       return JSON.stringify({
         shouldReply: true,
-        reply: `That's awesome to hear! The next step is simple — just head here to claim your site: ${CHECKOUT_BASE_URL}/claim/{prospectId}. It takes about 5 minutes, and once you're in, we'll customize everything to your exact preferences before it goes live. Any questions, just reply here!`,
+        reply: `${name}, that's awesome! Really glad you like what I put together for ${businessName}.${personalTouch}\n\nHere's the next step — it's super simple: ${CHECKOUT_BASE_URL}/claim/{prospectId}\n\nTakes about 2 minutes. Once you're in, I'll send you a quick form where you can tell me any changes you want — colors, photos, content, layout — and I'll make it happen before we go live.\n\nAny questions at all, just reply here. I'm around!`,
         escalate: true,
         escalateReason: "Prospect is interested — ready to close",
         escalateUrgency: "immediate",
@@ -496,7 +610,7 @@ function getMockResponse(prompt: string): string {
     } else {
       return JSON.stringify({
         shouldReply: true,
-        reply: `Great question — there's a lot of flexibility in what we can do. Rather than try to explain it all over text, would it be easier to hop on a quick 10-minute call with Ben? He can walk you through exactly what's possible and answer anything you're wondering about. Here's his calendar: ${CALENDAR_LINK}`,
+        reply: `Really appreciate the interest, ${name}! There's actually a lot we can do beyond what's in the preview — it's just the starting point.\n\nRather than try to explain everything over text, would you be up for a quick 10-minute call with Ben? He's the founder and can walk you through the whole process, answer any questions, and talk about what's possible for ${businessName}.\n\nHere's his calendar — pick whatever time works: ${CALENDAR_LINK}\n\nNo pressure at all. Just thought it'd be easier than going back and forth here.`,
         escalate: true,
         escalateReason: "High-value prospect interested — calendar booking recommended",
         escalateUrgency: "immediate",
@@ -509,12 +623,12 @@ function getMockResponse(prompt: string): string {
     }
   }
 
-  // Custom request
+  // Custom request — helpful, forward to Ben
   if (lower.includes("custom") || lower.includes("integration") || lower.includes("specific feature") ||
       lower.includes("can you add") || lower.includes("special request")) {
     return JSON.stringify({
       shouldReply: true,
-      reply: `Great question — there's a lot of flexibility in what we can do. Rather than try to explain it all over text, would it be easier to hop on a quick 10-minute call with Ben? He can walk you through exactly what's possible and answer anything you're wondering about. Here's his calendar: ${CALENDAR_LINK}`,
+      reply: `Oh interesting — I love when business owners have specific ideas for their site. That tells me you're thinking about this the right way.\n\nCustom work is definitely something we can do. Rather than me guessing at what's possible, let me connect you with Ben (our founder) — he's the one who can really dig into the specifics with you.\n\nHere's his calendar: ${CALENDAR_LINK}\n\nOr if you'd rather, just tell me what you're thinking and I'll make sure he sees it before your call.`,
       escalate: true,
       escalateReason: "Custom feature request — needs Ben's input",
       escalateUrgency: "next-day",
@@ -526,12 +640,12 @@ function getMockResponse(prompt: string): string {
     });
   }
 
-  // Wants to talk to a human
+  // Wants to talk to a human — warm handoff
   if (lower.includes("speak to") || lower.includes("talk to") || lower.includes("call me") ||
       lower.includes("real person") || lower.includes("human")) {
     return JSON.stringify({
       shouldReply: true,
-      reply: `Absolutely! I'm going to have Ben reach out to you directly — he's the founder and can answer everything in detail. You'll hear from him within a few hours. In the meantime, your preview is still live!`,
+      reply: `Of course! I'm going to loop in Ben — he's the founder and the person behind everything we build. He's great to talk to and can answer anything way better than I can over text.\n\nYou'll hear from him within a few hours. In the meantime, your preview site is still live if you want to poke around.\n\nThanks for your patience, ${name}!`,
       escalate: true,
       escalateReason: "Prospect requested human contact",
       escalateUrgency: "immediate",
@@ -543,11 +657,12 @@ function getMockResponse(prompt: string): string {
     });
   }
 
-  // General question / skepticism
-  if (lower.includes("is this real") || lower.includes("scam") || lower.includes("legit")) {
+  // Skepticism — is this real? — transparent and disarming
+  if (lower.includes("is this real") || lower.includes("scam") || lower.includes("legit") ||
+      lower.includes("is this a") || lower.includes("too good to be true")) {
     return JSON.stringify({
       shouldReply: true,
-      reply: `Totally fair question — there's a lot of sketchy stuff online. I'm Ben, and I run BlueJays. The site I built for you is 100% real and live right now. No credit card, no obligation to look. If you like it, we can talk about getting it on your domain. If not, no hard feelings at all.`,
+      reply: `Ha — I get that question more than you'd think, and honestly? I'd be skeptical too. There's so much junk out there.\n\nHere's the deal: I'm Ben, I run BlueJays, and I genuinely built a custom website for ${businessName}. It's live right now — no login, no credit card, nothing. Just a URL you can open and look at.\n\nWhy? Because I've found that the best way to earn someone's trust is to do the work first. If you like it, great. If not, you got a free website preview and I got the practice. Win-win.\n\nThe site is real. I'm real. And there's zero obligation to do anything with it.`,
       escalate: false,
       sentiment: "neutral",
       intent: "question",
@@ -557,10 +672,25 @@ function getMockResponse(prompt: string): string {
     });
   }
 
-  // Default: general question
+  // "Who are you?" / "How did you find me?" — transparent
+  if (lower.includes("who are you") || lower.includes("how did you find") ||
+      lower.includes("how did you get my") || lower.includes("where did you")) {
+    return JSON.stringify({
+      shouldReply: true,
+      reply: `Great question! I'm Ben from BlueJays — we're a small web design studio. I found ${businessName} through a Google search for ${category || "local businesses"} in your area.\n\nI was impressed by what I saw, so I went ahead and built a custom website as a way of introducing myself. Think of it like a portfolio piece that happens to be built for YOUR business.\n\nYour contact info is publicly listed on Google Business, which is how I reached out. If you'd prefer I didn't contact you again, just say the word and I'll remove you immediately. No hard feelings.`,
+      escalate: false,
+      sentiment: "neutral",
+      intent: "question",
+      newStatus: "responded",
+      pauseFunnel: true,
+      closeAction: "none",
+    });
+  }
+
+  // Generic question with warmth and personality
   return JSON.stringify({
     shouldReply: true,
-    reply: `Thanks for getting back to me! I completely understand you might have questions. The website I built for you is fully custom — no cookie-cutter templates. It's mobile-friendly, fast-loading, and designed to bring in new customers. Would you like me to make any changes to the preview?`,
+    reply: `Hey ${name}, thanks for getting back to me! Always good to hear from the people behind the businesses I work with.\n\nThe website I built for ${businessName} is fully custom — not a template or a cookie-cutter thing. It's mobile-friendly, loads fast, and is designed to actually bring in new customers (not just look pretty).${personalTouch}\n\nIs there something specific you're wondering about? I'm an open book — ask me anything about the site, the process, pricing, whatever's on your mind.`,
     escalate: false,
     sentiment: "neutral",
     intent: "question",
@@ -573,6 +703,13 @@ function getMockResponse(prompt: string): string {
 /**
  * Build the AI prompt with full context from agent personality, objection playbook,
  * decision framework, and escalation rules.
+ *
+ * TUNED for conversational warmth — the prompt now emphasizes:
+ * - Genuine personality over scripted responses
+ * - Varied openers (never start two messages the same way)
+ * - Empathy-first objection handling
+ * - Personal hooks from prospect data
+ * - Re-engagement strategies for cold prospects
  */
 function buildPrompt(prospect: Prospect, message: IncomingMessage): string {
   const categoryLabel = CATEGORY_CONFIG[prospect.category]?.label || prospect.category;
@@ -596,6 +733,15 @@ function buildPrompt(prospect: Prospect, message: IncomingMessage): string {
     ? "This is a DIRECT-CLOSE category — send checkout link when they show interest."
     : "Standard category — use checkout for clear interest, calendar for questions/hesitation.";
 
+  // Personal context for richer responses
+  const personalContext: string[] = [];
+  if (prospect.googleRating) personalContext.push(`They have ${prospect.googleRating} stars on Google`);
+  if (prospect.reviewCount && prospect.reviewCount > 5) personalContext.push(`${prospect.reviewCount} reviews`);
+  if (prospect.scrapedData?.services?.length) {
+    personalContext.push(`Key services: ${prospect.scrapedData.services.slice(0, 3).map(s => s.name).join(", ")}`);
+  }
+  if (prospect.city) personalContext.push(`Located in ${prospect.city}`);
+
   return `You are an AI sales assistant for BlueJays, a web design agency. A prospect has replied to your outreach.
 
 AGENT VOICE:
@@ -606,6 +752,21 @@ AGENT VOICE:
 - NEVER say: ${AGENT_VOICE.neverSay.join(", ")}
 - ALWAYS: ${AGENT_VOICE.alwaysDo.join("; ")}
 
+CONVERSATIONAL STYLE RULES (CRITICAL):
+- Write like a real person texting a friend who owns a business, not like a sales bot
+- VARY your openers — never start with "Thanks for reaching out" or "Great question" twice
+- Use the prospect's first name naturally, not in every sentence
+- Show genuine curiosity about their business — ask follow-up questions
+- When handling objections, VALIDATE first ("I totally get that"), then reframe
+- Use contractions (I'm, you're, don't, won't) — formal language kills trust
+- Keep paragraphs short — 2-3 sentences max. This is a conversation, not an essay
+- Add a personal touch: reference their Google rating, services, or location when relevant
+- End with an open door, not a hard close. "Here if you need anything" > "Click here to buy"
+- If they seem cold or stalled, use a curiosity hook to re-engage rather than repeating the pitch
+
+PERSONAL CONTEXT TO REFERENCE:
+${personalContext.length > 0 ? personalContext.map(c => `- ${c}`).join("\n") : "- No specific data available — keep it general but genuine"}
+
 PRICING:
 - One-time: $${PRICING_FRAMEWORK.price}
 - Annual management: $${PRICING_FRAMEWORK.yearlyManagement}/year
@@ -613,7 +774,7 @@ PRICING:
 - Comparison: ${PRICING_FRAMEWORK.comparisonPoints.join("; ")}
 - NEVER negotiate on price
 
-OBJECTION PLAYBOOK (use these EXACT scripts when matching):
+OBJECTION PLAYBOOK (use these as INSPIRATION, not word-for-word scripts — make them conversational):
 ${objectionRef}
 
 DECISION FRAMEWORK — CHECKOUT vs CALENDAR:
@@ -628,6 +789,13 @@ ESCALATION RULES:
 Immediate escalation: ${ESCALATION_RULES.immediate.join("; ")}
 Next-day escalation: ${ESCALATION_RULES.nextDay.join("; ")}
 Handoff script: "${ESCALATION_RULES.handoffScript}"
+
+RE-ENGAGEMENT STRATEGIES (for cold/stalled prospects):
+- Ask a genuine question about their business instead of repeating the pitch
+- Share a relevant insight about their industry
+- Mention that you updated or improved their preview
+- Reference a success story from a similar business (anonymized)
+- Lead with curiosity: "I was wondering..." or "Quick question..."
 
 STOP RULES (immediately stop all outreach if):
 ${CONTACT_RULES.stopImmediatelyIf.map((r) => `- ${r}`).join("\n")}
@@ -654,7 +822,7 @@ ${message.subject ? `Subject: ${message.subject}\n` : ""}Body: ${message.body}
 INSTRUCTIONS:
 Analyze their message and respond as JSON with these exact fields:
 1. "shouldReply" (boolean): Should the AI auto-reply? (false if angry/threatening or if escalating to human)
-2. "reply" (string): The reply message body. Use the agent voice. Reference their business by name. Keep it short and genuine. Use the EXACT objection scripts when an objection matches. Include checkout URL or calendar URL based on the decision framework. If intent is "interested", include the personalized proposal link and optionally suggest booking a call using the booking link.
+2. "reply" (string): The reply message body. Use the conversational agent voice. Reference their business by name. Keep it short, warm, and genuine. Use the objection playbook as INSPIRATION (not word-for-word). Include checkout URL or calendar URL based on the decision framework. If intent is "interested", include the personalized proposal link and optionally suggest booking a call.
 3. "escalate" (boolean): Should this be escalated to Ben (the human owner)?
 4. "escalateReason" (string): Why escalate? (empty string if not escalating)
 5. "escalateUrgency" (string): "immediate" or "next-day" (empty if not escalating)
@@ -667,24 +835,26 @@ Analyze their message and respond as JSON with these exact fields:
 
 CRITICAL RULES:
 - ALWAYS validate before reframing objections ("I totally get that..." / "That makes sense...")
-- For objections, use the EXACT scripts from the objection playbook
+- For objections, use the playbook as inspiration but make it CONVERSATIONAL — don't copy-paste
 - For "already have a website", include the compare URL: ${compareUrl}
 - For interested prospects in high-value categories, push calendar booking
 - For interested prospects in direct-close categories, push checkout link
 - ALWAYS pause the funnel when a prospect replies (pauseFunnel: true)
 - Map intent to CRM status using the INTENT-TO-STATUS MAPPING above
+- VARY your language — if this were a real text conversation, you wouldn't use the same phrases twice
 
 Respond ONLY with valid JSON. No markdown, no code fences.`;
 }
 
 /**
  * Process an incoming message (email or SMS) from a prospect.
- * Implements the full Sales Strategy Playbook:
+ * Implements the full Sales Strategy Playbook with conversational warmth:
  * - Classifies intent into 6 categories
- * - Applies objection handling scripts
+ * - Applies objection handling scripts (conversationally)
  * - Uses decision framework for checkout vs calendar
  * - Triggers escalation rules
  * - Updates CRM status per intent mapping
+ * - Adds personal hooks and warm tone
  */
 export async function processIncomingMessage(
   prospect: Prospect,
@@ -697,6 +867,8 @@ export async function processIncomingMessage(
   // First: always pause the funnel when a prospect replies
   await updateProspect(prospect.id, { funnelPaused: true });
 
+  const name = prospect.ownerName?.split(" ")[0] || "there";
+
   // ═══ FAST-PATH: Check for immediate unsubscribe keywords (don't need AI) ═══
   const lowerBody = message.body.toLowerCase();
   const unsubKeywords = ["stop", "unsubscribe", "remove me", "opt out", "don't contact", "do not contact", "take me off"];
@@ -708,7 +880,7 @@ export async function processIncomingMessage(
     });
     return {
       shouldReply: true,
-      reply: `Absolutely — I've removed you from all future messages right away. I'm sorry for the bother, and I wish you and ${prospect.businessName} all the best!`,
+      reply: `Done — I've taken you off our list right away. Genuinely sorry if I overstepped, ${name}. Wishing you and ${prospect.businessName} all the best!`,
       escalate: false,
       sentiment: "neutral",
       intent: "unsubscribe",
@@ -728,7 +900,7 @@ export async function processIncomingMessage(
     });
     return {
       shouldReply: true,
-      reply: `Absolutely — I've removed you from all future messages right away. I'm sorry for the bother, and I wish you and ${prospect.businessName} all the best!`,
+      reply: `I hear you, and I'm sorry — that was never my intention. I've removed you from everything immediately. You won't hear from me again. Wishing you and ${prospect.businessName} the best.`,
       escalate: true,
       escalateReason: "Angry/threatening response — immediate human intervention needed",
       escalateUrgency: "immediate",
@@ -750,7 +922,7 @@ export async function processIncomingMessage(
     });
     return {
       shouldReply: true,
-      reply: `No worries at all! I appreciate you being straight with me. The site I built is yours to look at anytime if you change your mind. I wish you and ${prospect.businessName} all the best!`,
+      reply: `Totally respect that, ${name}. No hard feelings at all — I appreciate you being upfront with me. The site I built is yours to look at anytime if you ever get curious. Wishing you and ${prospect.businessName} nothing but good things!`,
       escalate: false,
       sentiment: "neutral",
       intent: "not_interested",
@@ -760,20 +932,53 @@ export async function processIncomingMessage(
     };
   }
 
-  // ═══ FAST-PATH: Check for known objections with playbook scripts ═══
+  // ═══ FAST-PATH: Check for known objections with conversational scripts ═══
   const objectionType = detectObjectionType(message.body);
   if (objectionType && OBJECTION_RESPONSES[objectionType]) {
-    const objResp = OBJECTION_RESPONSES[objectionType];
     console.log(`  Objection detected: "${objectionType}" for ${prospect.businessName}`);
 
-    let reply = objResp.response
-      .replace("{businessName}", prospect.businessName)
-      .replace("{name}", prospect.ownerName?.split(" ")[0] || "there");
+    // Generate a warm, conversational response based on the objection type
+    let reply = "";
+    const personalHook = getPersonalHook(prospect);
 
-    // Add compare URL for "already have a website" objection
-    if (objectionType === "already have a website" && objResp.followUp) {
-      const compareUrl = `${CHECKOUT_BASE_URL}/compare/${prospect.id}`;
-      reply += "\n\n" + objResp.followUp.replace("{compareUrl}", compareUrl);
+    switch (objectionType) {
+      case "too expensive":
+        reply = `${getWarmOpener(name, "empathetic")} $997 is real money, and I'd never want you to feel pressured.\n\nHere's how I think about it though: most ${CATEGORY_CONFIG[prospect.category]?.label || ""} businesses tell me they get their first new customer from their website within the first month. That usually more than covers it.\n\nAnd unlike agencies that charge $3K-$10K, this is a one-time investment — no monthly fees eating into your bottom line.\n\n${personalHook}\n\nThe preview is still live whenever you want to take another look. Zero pressure from me. ${getWarmSignoff(name)}`;
+        break;
+
+      case "already have a website": {
+        const compareUrl = `${CHECKOUT_BASE_URL}/compare/${prospect.id}`;
+        reply = `Oh nice — yeah, I actually found your current site, that's how I discovered ${prospect.businessName}! I'm not trying to trash what you have. I just thought you might be curious to see a fresh take.\n\nI put together a side-by-side comparison: ${compareUrl}\n\nEven if you stick with your current site, the comparison might give you some ideas. No strings attached.`;
+        break;
+      }
+
+      case "have a developer":
+        reply = `That's great that you have someone! Having a trusted developer is valuable, and I'm definitely not trying to step on anyone's toes.\n\nHonestly? Maybe show them the preview I built — it might spark some ideas for your next update. Think of it as a free mood board.\n\nEither way, sounds like ${prospect.businessName} is in good hands. ${getWarmSignoff(name)}`;
+        break;
+
+      case "bad timing":
+        reply = `${getWarmOpener(name, "empathetic")} Running a business means a million things competing for your attention. There's no expiration date on this.\n\nOne thing worth knowing: what you saw is just version one. Once you're ready, we customize everything — colors, photos, layout, content — to match exactly what you want.\n\nI'll leave the link here for whenever the timing feels right. No follow-up from me unless you reach out. Take care, ${name}!`;
+        break;
+
+      case "can you do it cheaper":
+        reply = `I wish I could, ${name} — but $997 is our standard rate and we keep it firm because we don't cut corners. For context, most agencies charge $3K-$10K for this level of work. We just found a way to do it efficiently without sacrificing quality.\n\nThe good news? It's a one-time investment. No monthly subscriptions, no hidden fees. And most owners tell me they make it back from their first new online customer.\n\n${personalHook}`;
+        break;
+
+      case "what's included":
+        reply = `Great question! Here's the full breakdown:\n\nWhat you see in the preview is actually just the starting point. After you sign on, we customize everything to your exact preferences — colors, photos, layout, content, any features you want.\n\nThe $997 covers:\n- Custom design + development\n- Mobile optimization\n- SEO setup (so people can actually find you)\n- Professional copywriting\n- Hosting setup + domain connection\n- A full year of site management\n\nNo hidden fees, no monthly subscriptions. ${personalHook}\n\nWant me to go deeper on any of those?`;
+        break;
+
+      default: {
+        const objResp = OBJECTION_RESPONSES[objectionType];
+        reply = objResp.response
+          .replace("{businessName}", prospect.businessName)
+          .replace("{name}", name);
+        if (objResp.followUp) {
+          reply += "\n\n" + objResp.followUp
+            .replace("{compareUrl}", `${CHECKOUT_BASE_URL}/compare/${prospect.id}`)
+            .replace("{name}", name);
+        }
+      }
     }
 
     await updateProspect(prospect.id, {
@@ -884,3 +1089,6 @@ export async function processIncomingEmail(
 export function isAiResponderConfigured(): boolean {
   return !!(CLAUDE_API_KEY || process.env.OPENAI_API_KEY);
 }
+
+// Export helpers for use in other modules (e.g., retargeting, winback)
+export { getWarmOpener, getWarmSignoff, getPersonalHook, getReEngagementHook };
