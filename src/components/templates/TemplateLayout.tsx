@@ -26,6 +26,7 @@ interface TemplateLayoutProps {
   address: string;
   prospectId?: string;
   socialLinks?: SocialLinks;
+  themeMode?: "light" | "dark";
   children: ReactNode;
 }
 
@@ -39,15 +40,22 @@ export default function TemplateLayout({
   address,
   prospectId,
   socialLinks,
+  themeMode,
   children,
 }: TemplateLayoutProps) {
+  const isLight = themeMode === "light";
+  const bgClass = isLight ? "bg-white text-gray-900" : "bg-background text-foreground";
+  const navBg = isLight ? "bg-white/80" : "bg-background/80";
+  const mutedClass = isLight ? "text-gray-500" : "text-muted";
+  const borderClass = isLight ? "border-gray-200" : "border-border";
+  const footerBg = isLight ? "bg-gray-50" : "bg-background";
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className={`min-h-screen ${bgClass}`}>
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
+      <nav className={`fixed top-0 left-0 right-0 z-50 ${navBg} backdrop-blur-md border-b ${borderClass}`}>
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <span className="text-xl font-bold">{businessName}</span>
-          <div className="hidden md:flex items-center gap-8 text-sm text-muted">
+          <div className={`hidden md:flex items-center gap-8 text-sm ${mutedClass}`}>
             <a href="#services" className="hover:text-foreground transition-colors">Services</a>
             <a href="#about" className="hover:text-foreground transition-colors">About</a>
             <a href="#testimonials" className="hover:text-foreground transition-colors">Testimonials</a>
@@ -171,7 +179,7 @@ export default function TemplateLayout({
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-border bg-background">
+      <footer className={`border-t ${borderClass} ${footerBg}`}>
         <div className="max-w-5xl mx-auto px-6 py-10">
           <div className="grid md:grid-cols-3 gap-8 mb-8">
             {/* Business info */}

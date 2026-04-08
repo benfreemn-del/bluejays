@@ -16,6 +16,16 @@
   --font-mono: var(--font-geist-mono);
 }
 
+/* Light theme overrides for preview sites */
+[data-theme="light"] {
+  --color-background: #ffffff;
+  --color-foreground: #1a1a1a;
+  --color-surface: #f8f8f8;
+  --color-surface-light: #f0f0f0;
+  --color-border: #e5e5e5;
+  --color-muted: #6b7280;
+}
+
 * {
   box-sizing: border-box;
 }

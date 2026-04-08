@@ -74,6 +74,24 @@ export default function DashboardPage() {
     }
   };
 
+  const handleUpdateProspect = async (id: string, updates: Partial<Prospect>) => {
+    try {
+      await fetch(`/api/prospects/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updates),
+      });
+      fetchProspects();
+      if (selectedProspect?.id === id) {
+        setSelectedProspect((prev) =>
+          prev ? { ...prev, ...updates } : null
+        );
+      }
+    } catch (err) {
+      console.error("Failed to update prospect:", err);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Top Bar */}
@@ -214,6 +232,7 @@ export default function DashboardPage() {
         onClose={() => setSelectedProspect(null)}
         onSendEmail={handleSendEmail}
         onStatusChange={handleStatusChange}
+        onUpdateProspect={handleUpdateProspect}
       />
 
       {/* Add Lead Modal */}

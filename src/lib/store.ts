@@ -47,6 +47,8 @@ function dbToProspect(row: Record<string, unknown>): Prospect {
     paidAt: row.paid_at as string | undefined,
     subscriptionStatus: row.subscription_status as Prospect["subscriptionStatus"],
     funnelPaused: row.funnel_paused as boolean | undefined,
+    selectedTheme: (row.selected_theme as "light" | "dark" | undefined) || undefined,
+    aiThemeRecommendation: (row.ai_theme_recommendation as "light" | "dark" | undefined) || undefined,
     createdAt: row.created_at as string,
     updatedAt: row.updated_at as string,
   };
@@ -74,6 +76,8 @@ function prospectToDb(p: Prospect) {
     paid_at: p.paidAt || null,
     subscription_status: p.subscriptionStatus || "none",
     funnel_paused: p.funnelPaused || false,
+    selected_theme: p.selectedTheme || null,
+    ai_theme_recommendation: p.aiThemeRecommendation || null,
   };
 }
 
@@ -186,6 +190,8 @@ export async function updateProspect(
     if (updates.paidAt) dbUpdates.paid_at = updates.paidAt;
     if (updates.subscriptionStatus) dbUpdates.subscription_status = updates.subscriptionStatus;
     if (updates.funnelPaused !== undefined) dbUpdates.funnel_paused = updates.funnelPaused;
+    if (updates.selectedTheme) dbUpdates.selected_theme = updates.selectedTheme;
+    if (updates.aiThemeRecommendation) dbUpdates.ai_theme_recommendation = updates.aiThemeRecommendation;
 
     const { data, error } = await supabase
       .from("prospects")

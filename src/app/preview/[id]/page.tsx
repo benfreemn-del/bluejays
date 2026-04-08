@@ -42,7 +42,7 @@ import V2GarageDoorPreview from "@/components/templates/V2GarageDoorPreview";
 import V2LocksmithPreview from "@/components/templates/V2LocksmithPreview";
 import V2TowingPreview from "@/components/templates/V2TowingPreview";
 import V2ConstructionPreview from "@/components/templates/V2ConstructionPreview";
-import { getScrapedData } from "@/lib/store";
+import { getScrapedData, getProspect } from "@/lib/store";
 import { proxyPhotos } from "@/lib/image-proxy";
 import { getHeroHeading, getHeroSubtitle, getHeroImage, getAboutImage, getNavName } from "@/lib/preview-utils";
 
@@ -98,11 +98,17 @@ export default async function PreviewPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ version?: string }>;
+  searchParams: Promise<{ version?: string; theme?: string }>;
 }) {
   const { id } = await params;
-  const { version } = await searchParams;
+  const { version, theme: themeParam } = await searchParams;
   const forceV1 = version === "v1";
+
+  // Load prospect to get persisted theme selection
+  const prospect = await getProspect(id);
+  const selectedTheme: "light" | "dark" = 
+    (themeParam === "light" || themeParam === "dark") ? themeParam :
+    prospect?.selectedTheme || prospect?.aiThemeRecommendation || "dark";
 
   // Read generated site data from store
   const siteData = await getScrapedData(id) as GeneratedSiteData | null;
@@ -122,21 +128,30 @@ export default async function PreviewPage({
     ...cleanPhotos.slice(2),
   ].filter(Boolean) as string[];
 
-  const proxiedData: GeneratedSiteData = {
+  const proxiedData: GeneratedSiteData & { themeMode?: "light" | "dark" } = {
     ...siteData,
     businessName: getNavName(siteData),
     tagline: getHeroHeading(siteData),
     about: getHeroSubtitle(siteData) !== siteData.about ? (siteData.about || getHeroSubtitle(siteData)) : siteData.about,
     photos: orderedPhotos.length > 0 ? orderedPhotos : cleanPhotos,
+    themeMode: selectedTheme,
   };
 
   // Use V2 renderer if available (unless ?version=v1 forces generic)
   if (!forceV1) {
     const V2Renderer = V2_RENDERERS[proxiedData.category];
     if (V2Renderer) {
-      return <V2Renderer data={proxiedData} />;
+      return (
+        <div data-theme={selectedTheme}>
+          <V2Renderer data={proxiedData} />
+        </div>
+      );
     }
   }
 
-  return <PreviewRenderer data={proxiedData} />;
+  return (
+    <div data-theme={selectedTheme}>
+      <PreviewRenderer data={proxiedData} />
+    </div>
+  );
 }

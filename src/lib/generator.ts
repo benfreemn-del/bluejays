@@ -19,6 +19,7 @@ export interface GeneratedSiteData {
   hours?: string;
   socialLinks?: Record<string, string>;
   stats: { value: string; label: string }[];
+  themeMode?: "light" | "dark";
 }
 
 function generateDefaultTagline(businessName: string, category: Category): string {

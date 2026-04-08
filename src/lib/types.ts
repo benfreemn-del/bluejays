@@ -78,6 +78,8 @@ export interface Prospect {
   generatedSiteUrl?: string;
   stripeCustomerId?: string;
   paidAt?: string;
+  selectedTheme?: "light" | "dark";
+  aiThemeRecommendation?: "light" | "dark";
   subscriptionStatus?: "none" | "active" | "past_due" | "cancelled";
   funnelPaused?: boolean;
   createdAt: string;

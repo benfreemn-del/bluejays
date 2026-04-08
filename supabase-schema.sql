@@ -19,6 +19,8 @@ CREATE TABLE IF NOT EXISTS prospects (
   status TEXT DEFAULT 'scouted',
   scraped_data JSONB DEFAULT '{}',
   generated_site_url TEXT,
+  selected_theme TEXT DEFAULT NULL,
+  ai_theme_recommendation TEXT DEFAULT NULL,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );

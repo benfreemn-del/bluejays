@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getProspect, updateProspect } from "@/lib/store";
 import { generatePreview } from "@/lib/generator";
 import { extractBusinessData } from "@/lib/data-extractor";
+import { recommendTheme } from "@/lib/theme-recommender";
 
 // Vercel Pro: up to 300s
 export const maxDuration = 120;
@@ -59,7 +60,18 @@ export async function POST(
       console.log(`  ⚠️ No data extracted from any source — using defaults`);
     }
 
-    // STEP 2: Generate preview (quality gate built into generator)
+    // STEP 2: AI theme recommendation based on category, brand colors, and business data
+    const themeRec = recommendTheme(prospect);
+    await updateProspect(id, {
+      aiThemeRecommendation: themeRec.recommended,
+      selectedTheme: themeRec.recommended,
+    });
+    prospect.aiThemeRecommendation = themeRec.recommended;
+    prospect.selectedTheme = themeRec.recommended;
+    console.log(`  🎨 Theme recommendation: ${themeRec.recommended} (confidence: ${themeRec.confidence}%)`);
+    console.log(`     Reasons: ${themeRec.reasons.join("; ")}`);
+
+    // STEP 3: Generate preview (quality gate built into generator)
     const previewUrl = await generatePreview(prospect);
 
     return NextResponse.json({

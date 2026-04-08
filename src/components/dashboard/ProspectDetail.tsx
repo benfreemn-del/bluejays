@@ -29,6 +29,7 @@ interface ProspectDetailProps {
   onClose: () => void;
   onSendEmail: (p: Prospect) => void;
   onStatusChange: (id: string, status: string) => void;
+  onUpdateProspect?: (id: string, updates: Partial<Prospect>) => void;
 }
 
 export default function ProspectDetail({
@@ -36,6 +37,7 @@ export default function ProspectDetail({
   onClose,
   onSendEmail,
   onStatusChange,
+  onUpdateProspect,
 }: ProspectDetailProps) {
   const [emails, setEmails] = useState<EmailRecord[]>([]);
   const [igData, setIgData] = useState<InstagramData | null>(null);
@@ -175,6 +177,14 @@ export default function ProspectDetail({
                 </div>
               </section>
             )}
+
+          {/* Theme Toggle */}
+          {prospect.generatedSiteUrl && (
+            <ThemeToggleSection
+              prospect={prospect}
+              onUpdateProspect={onUpdateProspect}
+            />
+          )}
 
           {/* Review Banner */}
           {prospect.status === "pending-review" && (
@@ -356,5 +366,101 @@ export default function ProspectDetail({
         </div>
       </div>
     </div>
+  );
+}
+
+/**
+ * Theme Toggle Section — Allows admin to switch between light/dark themes
+ * for a prospect's preview site. Shows AI recommendation and allows override.
+ */
+function ThemeToggleSection({
+  prospect,
+  onUpdateProspect,
+}: {
+  prospect: Prospect;
+  onUpdateProspect?: (id: string, updates: Partial<Prospect>) => void;
+}) {
+  const currentTheme = prospect.selectedTheme || prospect.aiThemeRecommendation || "dark";
+  const aiRecommended = prospect.aiThemeRecommendation || "dark";
+  const isOverridden = prospect.selectedTheme && prospect.selectedTheme !== aiRecommended;
+
+  const handleThemeChange = async (theme: "light" | "dark") => {
+    if (onUpdateProspect) {
+      onUpdateProspect(prospect.id, { selectedTheme: theme });
+    } else {
+      // Fallback: direct API call
+      await fetch(`/api/prospects/${prospect.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ selectedTheme: theme }),
+      });
+    }
+  };
+
+  return (
+    <section className="p-4 rounded-xl border border-border bg-surface-light">
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="text-sm font-semibold text-muted uppercase tracking-wider">
+          Theme
+        </h3>
+        {aiRecommended && (
+          <span className="text-xs px-2 py-0.5 rounded-full bg-blue-electric/10 text-blue-electric">
+            AI suggests: {aiRecommended}
+          </span>
+        )}
+      </div>
+
+      <div className="flex gap-2 mb-2">
+        <button
+          onClick={() => handleThemeChange("light")}
+          className={`flex-1 h-10 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-all duration-200 ${
+            currentTheme === "light"
+              ? "bg-white text-gray-900 border-2 border-blue-electric shadow-sm"
+              : "bg-surface border border-border text-muted hover:text-foreground hover:border-border/80"
+          }`}
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
+            <circle cx="12" cy="12" r="5" />
+            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+          </svg>
+          Light
+        </button>
+        <button
+          onClick={() => handleThemeChange("dark")}
+          className={`flex-1 h-10 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-all duration-200 ${
+            currentTheme === "dark"
+              ? "bg-gray-900 text-white border-2 border-blue-electric shadow-sm"
+              : "bg-surface border border-border text-muted hover:text-foreground hover:border-border/80"
+          }`}
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
+            <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+          </svg>
+          Dark
+        </button>
+      </div>
+
+      {isOverridden && (
+        <p className="text-xs text-yellow-400 flex items-center gap-1">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-3 h-3">
+            <path d="M12 9v2m0 4h.01M5.07 19h13.86c1.54 0 2.5-1.67 1.73-3L13.73 4c-.77-1.33-2.69-1.33-3.46 0L3.34 16c-.77 1.33.19 3 1.73 3z" />
+          </svg>
+          Overriding AI recommendation ({aiRecommended})
+        </p>
+      )}
+
+      {prospect.generatedSiteUrl && (
+        <div className="mt-3 flex gap-2">
+          <a
+            href={`${prospect.generatedSiteUrl}?theme=${currentTheme}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 h-9 rounded-lg bg-blue-electric/10 text-blue-electric text-xs font-medium flex items-center justify-center hover:bg-blue-electric/20 transition-colors"
+          >
+            Preview {currentTheme} theme
+          </a>
+        </div>
+      )}
+    </section>
   );
 }

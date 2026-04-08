@@ -70,6 +70,7 @@ export default function PreviewRenderer({ data }: { data: GeneratedSiteData }) {
       address={address}
       prospectId={data.id}
       socialLinks={data.socialLinks}
+      themeMode={data.themeMode}
     >
       {/* Stats Bar */}
       {stats.length > 0 && (
