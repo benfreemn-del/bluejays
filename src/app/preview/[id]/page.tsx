@@ -17,12 +17,22 @@ import V2VeterinaryPreview from "@/components/templates/V2VeterinaryPreview";
 import V2PhotographyPreview from "@/components/templates/V2PhotographyPreview";
 import V2InteriorDesignPreview from "@/components/templates/V2InteriorDesignPreview";
 import V2LandscapingPreview from "@/components/templates/V2LandscapingPreview";
+import V2CleaningPreview from "@/components/templates/V2CleaningPreview";
+import V2PestControlPreview from "@/components/templates/V2PestControlPreview";
+import V2AccountingPreview from "@/components/templates/V2AccountingPreview";
+import V2TattooPreview from "@/components/templates/V2TattooPreview";
+import V2FloristPreview from "@/components/templates/V2FloristPreview";
+import V2MovingPreview from "@/components/templates/V2MovingPreview";
+import V2DaycarePreview from "@/components/templates/V2DaycarePreview";
+import V2InsurancePreview from "@/components/templates/V2InsurancePreview";
+import V2MartialArtsPreview from "@/components/templates/V2MartialArtsPreview";
+import V2PoolSpaPreview from "@/components/templates/V2PoolSpaPreview";
 import { getScrapedData } from "@/lib/store";
-import { proxyImage, proxyPhotos } from "@/lib/image-proxy";
+import { proxyPhotos } from "@/lib/image-proxy";
 
 export const dynamic = "force-dynamic";
 
-// V2 preview renderers by category — ALL 16 V2 categories have dynamic renderers
+// V2 preview renderers by category — ALL 26 V2 categories have dynamic renderers
 const V2_RENDERERS: Partial<Record<string, React.ComponentType<{ data: GeneratedSiteData }>>> = {
   electrician: V2ElectricianPreview,
   dental: V2DentalPreview,
@@ -40,6 +50,16 @@ const V2_RENDERERS: Partial<Record<string, React.ComponentType<{ data: Generated
   photography: V2PhotographyPreview,
   "interior-design": V2InteriorDesignPreview,
   landscaping: V2LandscapingPreview,
+  cleaning: V2CleaningPreview,
+  "pest-control": V2PestControlPreview,
+  accounting: V2AccountingPreview,
+  tattoo: V2TattooPreview,
+  florist: V2FloristPreview,
+  moving: V2MovingPreview,
+  daycare: V2DaycarePreview,
+  insurance: V2InsurancePreview,
+  "martial-arts": V2MartialArtsPreview,
+  "pool-spa": V2PoolSpaPreview,
 };
 
 export default async function PreviewPage({

@@ -74,7 +74,7 @@ After Failsafe 1 passes, a quality review agent MUST:
 - **Verdict: PASS or FAIL** — if FAIL, the site stays in "generated" and the agent logs what needs to be fixed
 - **Only a PASS from the visual review agent allows promotion to "pending-review"**
 - This agent has PERMANENT PERMISSION to use Chrome extensions and screenshots
-- **Current highest templates by category**: electrician=V2, plumber=V2, hvac=V2, roofing=V2, auto-repair=V2, dental=V2, law-firm=V2, salon=V2, fitness=V2, real-estate=V2, church=V2, chiropractic=V2, veterinary=V2, photography=V2, interior-design=V2, landscaping=V2. All other categories=V1.
+- **Current highest templates by category**: electrician=V2, plumber=V2, hvac=V2, roofing=V2, auto-repair=V2, dental=V2, law-firm=V2, salon=V2, fitness=V2, real-estate=V2, church=V2, chiropractic=V2, veterinary=V2, photography=V2, interior-design=V2, landscaping=V2, cleaning=V2, pest-control=V2, accounting=V2, tattoo=V2, florist=V2, moving=V2, daycare=V2, insurance=V2, martial-arts=V2, pool-spa=V2. Remaining V1 only: general-contractor, catering, pet-services, physical-therapy, tutoring.
 
 ### Failsafe 2.5: Brand Asset Preservation & Verification (MANDATORY)
 **Preservation rule:** When re-scraping or re-generating a prospect, NEVER overwrite existing brand assets with empty/default values. The generate route MUST merge new extraction data with existing scrapedData, preserving:
@@ -149,7 +149,7 @@ When Ben asks to build a V2 (or higher) template for a category, ALL of these st
 - **Only scout categories that have a built template** — don't scout categories we can't generate premium sites for yet.
 - **Current active categories** (have premium templates — all 30 categories have V1, 11 have V2): real-estate, dental, law-firm, landscaping, salon, electrician, plumber, hvac, roofing, auto-repair, chiropractic, fitness, veterinary, photography, cleaning, pest-control, accounting, moving, florist, daycare, insurance, interior-design, tattoo, martial-arts, physical-therapy, tutoring, pool-spa, general-contractor, catering, pet-services, church
 - **Add new categories only after building their premium template first** — template first, then scout.
-- **Categories with FULL V2 pipeline (showcase + dynamic renderer + preview routing)**: electrician, dental, law-firm, salon, fitness, real-estate, church, plumber, hvac, roofing, auto-repair, chiropractic, veterinary, photography, interior-design, landscaping (ALL 16 V2 categories complete)
+- **Categories with FULL V2 pipeline (showcase + dynamic renderer + preview routing)**: electrician, dental, law-firm, salon, fitness, real-estate, church, plumber, hvac, roofing, auto-repair, chiropractic, veterinary, photography, interior-design, landscaping, cleaning, pest-control, accounting, tattoo, florist, moving, daycare, insurance, martial-arts, pool-spa (ALL 26 V2 categories complete)
 
 ## Preview = Product Rules (NON-NEGOTIABLE)
 - **The preview URL IS the product** — `/preview/[id]` is the exact link sent to business owners in pitch emails, texts, and DMs. It must look like a $997 website, not a prototype.
