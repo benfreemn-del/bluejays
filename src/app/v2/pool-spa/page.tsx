@@ -216,7 +216,7 @@ const galleryImages = [
   { src: "https://images.unsplash.com/photo-1562778612-e1e0cda9915c?w=600&q=80", alt: "Evening pool lighting" },
   { src: "https://images.unsplash.com/photo-1540539234-c14a20fb7c7b?w=600&q=80", alt: "Resort-style backyard pool" },
   { src: "https://images.unsplash.com/photo-1583922606661-0822ed0bd916?w=600&q=80", alt: "Modern pool design" },
-  { src: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80", alt: "Outdoor spa and hot tub" },
+  { src: "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=600&q=80", alt: "Outdoor spa and hot tub" },
 ];
 
 const faqs = [

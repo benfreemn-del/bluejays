@@ -509,7 +509,7 @@ const materials = [
     description:
       "Natural wood shakes delivering timeless beauty and excellent insulation. Hand-split for an authentic rustic aesthetic.",
     image:
-      "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=400&q=80",
+      "https://images.unsplash.com/photo-1575517111478-7f6afd0973db?w=400&q=80",
   },
   {
     name: "Slate & Tile",

@@ -1343,7 +1343,7 @@ export default function V2HvacPage() {
             >
               <div className="relative rounded-2xl overflow-hidden aspect-[4/3]">
                 <img
-                  src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=800&q=80"
+                  src="https://images.unsplash.com/photo-1621460248083-6271cc4437a8?w=800&q=80"
                   alt="Modern energy-efficient HVAC system"
                   className="w-full h-full object-cover"
                 />

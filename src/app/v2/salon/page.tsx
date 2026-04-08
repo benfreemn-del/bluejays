@@ -735,6 +735,9 @@ export default function V2SalonPage() {
             &copy; {new Date().getFullYear()} Luxe Studio. All rights reserved.
           </p>
         </div>
+        <div className="border-t border-white/5 mt-8 pt-4 text-center">
+          <p className="text-xs text-stone-600">Website created by Bluejay Business Solutions</p>
+        </div>
       </footer>
     </div>
   );
