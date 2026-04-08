@@ -256,11 +256,11 @@ const services = [
 ];
 
 const petGallery = [
-  { src: "https://images.unsplash.com/photo-1628009368231-7bb7cfcb0def?w=600&q=80", alt: "Happy golden retriever" },
+  { src: "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600&q=80", alt: "Happy golden retriever" },
   { src: "https://images.unsplash.com/photo-1574158622682-e40e69881006?w=600&q=80", alt: "Cute tabby cat" },
-  { src: "https://images.unsplash.com/photo-1583337130417-13571a35e157?w=600&q=80", alt: "Two dogs playing" },
-  { src: "https://images.unsplash.com/photo-1495360010541-f48722b34f7d?w=600&q=80", alt: "Orange cat close up" },
-  { src: "https://images.unsplash.com/photo-1450778869180-cfe0112515ba?w=600&q=80", alt: "Puppy at vet" },
+  { src: "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=600&q=80", alt: "Two dogs playing" },
+  { src: "https://images.unsplash.com/photo-1573865526739-10659fec78a5?w=600&q=80", alt: "Orange cat close up" },
+  { src: "https://images.unsplash.com/photo-1544568100-847a948585b9?w=600&q=80", alt: "Puppy at vet" },
   { src: "https://images.unsplash.com/photo-1495360010541-f48722b34f7d?w=600&q=80", alt: "Cat being examined" },
 ];
 
@@ -467,7 +467,7 @@ export default function V2VeterinaryPage() {
               </div>
             </div>
             <div className="relative rounded-2xl overflow-hidden aspect-[4/3]">
-              <img src="https://images.unsplash.com/photo-1628009368231-7bb7cfcb0def?w=800&q=80" alt="Veterinarian with dog" className="w-full h-full object-cover" />
+              <img src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=800&q=80" alt="Veterinarian with dog" className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
               <div className="absolute bottom-6 left-6 right-6">
                 <GlassCard className="px-4 py-3 inline-flex items-center gap-3">

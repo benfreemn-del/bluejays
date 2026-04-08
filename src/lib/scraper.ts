@@ -26,6 +26,7 @@ export async function scrapeWebsite(url: string): Promise<ScrapedData> {
     const data: ScrapedData = {
       businessName: extractBusinessName($),
       tagline: extractTagline($),
+      email: extractEmail($, html),
       phone: extractPhone($, html),
       address: extractAddress($, html),
       services: extractServices($),
@@ -92,6 +93,56 @@ function extractTagline($: cheerio.CheerioAPI): string | undefined {
     return subtitle;
 
   return undefined;
+}
+
+function extractEmail($: cheerio.CheerioAPI, html: string): string | undefined {
+  // Try mailto: links first (most reliable)
+  const mailtoLink = $('a[href^="mailto:"]').first().attr("href");
+  if (mailtoLink) {
+    const email = mailtoLink.replace("mailto:", "").split("?")[0].trim();
+    if (isValidEmail(email)) return email;
+  }
+
+  // Look for email in common contact elements
+  const contactSelectors = [
+    '[class*="contact"] a[href*="@"]',
+    '[class*="email"]',
+    '[id*="email"]',
+    'footer a[href*="@"]',
+  ];
+  for (const selector of contactSelectors) {
+    const el = $(selector).first();
+    const href = el.attr("href") || "";
+    const text = el.text().trim();
+    if (href.includes("mailto:")) {
+      const email = href.replace("mailto:", "").split("?")[0].trim();
+      if (isValidEmail(email)) return email;
+    }
+    if (isValidEmail(text)) return text;
+  }
+
+  // Regex for email addresses in the HTML (last resort — can find spam traps)
+  const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
+  const matches = html.match(emailRegex) || [];
+  // Filter out common false positives
+  const filtered = matches.filter(e =>
+    !e.includes("example.com") &&
+    !e.includes("sentry") &&
+    !e.includes("webpack") &&
+    !e.includes("wix") &&
+    !e.includes("googleapis") &&
+    !e.includes("schema.org") &&
+    !e.endsWith(".png") &&
+    !e.endsWith(".jpg") &&
+    e.length < 60
+  );
+  if (filtered.length > 0) return filtered[0];
+
+  return undefined;
+}
+
+function isValidEmail(email: string): boolean {
+  return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email) && email.length < 60;
 }
 
 function extractPhone($: cheerio.CheerioAPI, html: string): string | undefined {

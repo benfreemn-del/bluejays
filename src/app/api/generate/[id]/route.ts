@@ -46,6 +46,10 @@ export async function POST(
         prospect.phone = data.phone;
         updates.phone = data.phone;
       }
+      if (data.email && !prospect.email) {
+        prospect.email = data.email;
+        updates.email = data.email;
+      }
       if (data.brandColor) {
         // Store for future reference
       }

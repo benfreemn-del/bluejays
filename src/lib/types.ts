@@ -78,6 +78,7 @@ export interface Prospect {
 export interface ScrapedData {
   businessName: string;
   tagline?: string;
+  email?: string;
   phone?: string;
   address?: string;
   services: ServiceItem[];
