@@ -96,7 +96,7 @@ const services = [
 const stats = [{ value: "5,000+", label: "Happy Pets Served" }, { value: "12+", label: "Years Experience" }, { value: "100%", label: "Certified Staff" }, { value: "4.9★", label: "Pet Parent Rating" }];
 
 const galleryImages = [
-  "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600&q=80",
+  "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&q=80",
   "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&q=80",
   "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=600&q=80",
   "https://images.unsplash.com/photo-1535930749574-1399327ce78f?w=600&q=80",
@@ -232,7 +232,7 @@ export default function V2PetServicesShowcase() {
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="relative">
-              <div className="rounded-2xl overflow-hidden border border-white/10"><img src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600&q=80" alt="Pet care team" className="w-full h-[400px] object-cover" /></div>
+              <div className="rounded-2xl overflow-hidden border border-white/10"><img src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&q=80" alt="Pet care team" className="w-full h-[400px] object-cover" /></div>
               <div className="absolute -bottom-4 -right-4 md:bottom-6 md:-right-6"><div className="px-5 py-3 rounded-xl backdrop-blur-md border text-black font-bold text-sm shadow-lg" style={{ background: `${ORANGE}e6`, borderColor: `${ORANGE}80` }}>5,000+ Happy Pets</div></div>
             </div>
             <div>

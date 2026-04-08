@@ -58,7 +58,7 @@ const properties = [
     beds: 5,
     baths: 4,
     sqft: "4,200",
-    image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&h=500&fit=crop",
+    image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=500&fit=crop",
     tag: "New",
   },
   {
@@ -495,7 +495,7 @@ export default function V2RealEstatePage() {
             >
               <div className="relative rounded-2xl overflow-hidden aspect-[4/3]">
                 <img
-                  src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=800&q=80"
+                  src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=800&q=80"
                   alt="Lead agent"
                   className="w-full h-full object-cover object-[center_15%]"
                 />

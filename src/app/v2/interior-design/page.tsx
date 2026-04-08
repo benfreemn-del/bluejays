@@ -261,7 +261,7 @@ const portfolioGallery = [
   { src: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=600&q=80", alt: "Contemporary kitchen", span: "col-span-1 row-span-1" },
   { src: "https://images.unsplash.com/photo-1600607687644-c7171b42498f?w=600&q=80", alt: "Designer bathroom", span: "col-span-1 row-span-1" },
   { src: "https://images.unsplash.com/photo-1631679706909-1844bbd07221?w=600&q=80", alt: "Home office design", span: "col-span-1 row-span-1" },
-  { src: "https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=800&q=80", alt: "Open concept dining", span: "col-span-2 row-span-1" },
+  { src: "https://images.unsplash.com/photo-1600210491892-03d54c0aaf87?w=800&q=80", alt: "Open concept dining", span: "col-span-2 row-span-1" },
 ];
 
 const services = [

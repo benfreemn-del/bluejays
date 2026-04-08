@@ -202,7 +202,7 @@ const services = [
 
 const beforeAfterGallery = [
   { before: "https://images.unsplash.com/photo-1560749003-f4b1e17e2dff?w=600&q=80", after: "https://images.unsplash.com/photo-1592150621744-aca64f48394a?w=600&q=80", label: "Front Yard Transformation" },
-  { before: "https://images.unsplash.com/photo-1609347744403-2306e8a9ae27?w=600&q=80", after: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=600&q=80", label: "Backyard Patio Project" },
+  { before: "https://images.unsplash.com/photo-1609347744403-2306e8a9ae27?w=600&q=80", after: "https://images.unsplash.com/photo-1600573472592-401b489a3cdc?w=600&q=80", label: "Backyard Patio Project" },
   { before: "https://images.unsplash.com/photo-1501685532562-aa6846b14a0e?w=600&q=80", after: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=600&q=80", label: "Garden Redesign" },
 ];
 
