@@ -7,8 +7,9 @@ export default function PreviewDevicePage() {
   const params = useParams();
   const id = params.id as string;
   const [device, setDevice] = useState<"desktop" | "mobile">("desktop");
+  const [version, setVersion] = useState<"v2" | "v1">("v2");
   const [businessName, setBusinessName] = useState("");
-  const previewUrl = `/preview/${id}`;
+  const previewUrl = version === "v1" ? `/preview/${id}?version=v1` : `/preview/${id}`;
 
   useEffect(() => {
     fetch(`/api/prospects/${id}`)
@@ -27,8 +28,30 @@ export default function PreviewDevicePage() {
           <h1 className="text-sm font-bold text-white">{businessName || "Preview"}</h1>
         </div>
 
-        {/* Device toggle */}
+        {/* Version + Device toggles */}
         <div className="flex items-center gap-2">
+          {/* V1/V2 toggle */}
+          <button
+            onClick={() => setVersion("v2")}
+            className={`h-9 px-3 rounded-lg text-sm font-medium transition-all ${
+              version === "v2"
+                ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40"
+                : "bg-white/[0.04] text-white/40 border border-white/[0.08] hover:text-white/60"
+            }`}
+          >
+            V2
+          </button>
+          <button
+            onClick={() => setVersion("v1")}
+            className={`h-9 px-3 rounded-lg text-sm font-medium transition-all ${
+              version === "v1"
+                ? "bg-orange-500/20 text-orange-400 border border-orange-500/40"
+                : "bg-white/[0.04] text-white/40 border border-white/[0.08] hover:text-white/60"
+            }`}
+          >
+            V1
+          </button>
+          <span className="w-px h-6 bg-white/10 mx-1" />
           <button
             onClick={() => setDevice("desktop")}
             className={`h-9 px-4 rounded-lg text-sm font-medium flex items-center gap-2 transition-all ${

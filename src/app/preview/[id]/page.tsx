@@ -95,10 +95,14 @@ const V2_RENDERERS: Partial<Record<string, React.ComponentType<{ data: Generated
 
 export default async function PreviewPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ version?: string }>;
 }) {
   const { id } = await params;
+  const { version } = await searchParams;
+  const forceV1 = version === "v1";
 
   // Read generated site data from store
   const siteData = await getScrapedData(id) as GeneratedSiteData | null;
@@ -126,10 +130,12 @@ export default async function PreviewPage({
     photos: orderedPhotos.length > 0 ? orderedPhotos : cleanPhotos,
   };
 
-  // Use V2 renderer if available for this category, otherwise fall back to generic
-  const V2Renderer = V2_RENDERERS[proxiedData.category];
-  if (V2Renderer) {
-    return <V2Renderer data={proxiedData} />;
+  // Use V2 renderer if available (unless ?version=v1 forces generic)
+  if (!forceV1) {
+    const V2Renderer = V2_RENDERERS[proxiedData.category];
+    if (V2Renderer) {
+      return <V2Renderer data={proxiedData} />;
+    }
   }
 
   return <PreviewRenderer data={proxiedData} />;

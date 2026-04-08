@@ -99,38 +99,94 @@ function FloatingPawPrints() {
 /* ───────────────────────── PAW HEART SVG ───────────────────────── */
 function PawHeartSVG() {
   return (
-    <motion.div
-      className="relative flex items-center justify-center"
-      animate={{ rotateY: [0, 360] }}
-      transition={{ duration: 14, repeat: Infinity, ease: "linear" }}
-      style={{ perspective: 800, willChange: "transform" }}
-    >
+    <div className="relative flex items-center justify-center">
+      {/* Pulsing glow behind */}
       <motion.div
         className="absolute inset-0 rounded-full"
-        style={{ background: `radial-gradient(circle, ${GREEN_GLOW} 0%, transparent 70%)`, filter: "blur(30px)", willChange: "transform" }}
-        animate={{ scale: [1, 1.15, 1] }}
+        style={{ background: `radial-gradient(circle, ${GREEN_GLOW} 0%, transparent 70%)`, filter: "blur(40px)" }}
+        animate={{ scale: [1, 1.2, 1], opacity: [0.6, 1, 0.6] }}
         transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
       />
-      <svg viewBox="0 0 120 140" className="relative z-10 w-44 h-56 md:w-56 md:h-72" fill="none">
-        {/* Paw pads */}
-        <motion.ellipse cx="42" cy="35" rx="12" ry="14" stroke={GREEN_LIGHT} strokeWidth="2" fill="none" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.5, ease: "easeInOut" }} />
-        <motion.ellipse cx="78" cy="35" rx="12" ry="14" stroke={GREEN_LIGHT} strokeWidth="2" fill="none" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.5, delay: 0.2, ease: "easeInOut" }} />
-        <motion.ellipse cx="28" cy="60" rx="10" ry="12" stroke={GREEN_LIGHT} strokeWidth="2" fill="none" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.5, delay: 0.4, ease: "easeInOut" }} />
-        <motion.ellipse cx="92" cy="60" rx="10" ry="12" stroke={GREEN_LIGHT} strokeWidth="2" fill="none" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.5, delay: 0.6, ease: "easeInOut" }} />
-        {/* Main pad with heart shape */}
+      <svg viewBox="0 0 200 220" className="relative z-10 w-52 h-64 md:w-64 md:h-80" fill="none">
+        {/* Outer glow ring */}
+        <motion.circle cx="100" cy="105" r="90" stroke={GREEN} strokeWidth="0.5" opacity={0.15}
+          animate={{ r: [88, 92, 88] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} />
+        <motion.circle cx="100" cy="105" r="80" stroke={GREEN} strokeWidth="0.3" opacity={0.1}
+          animate={{ r: [78, 82, 78] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }} />
+
+        {/* Top toe pads — filled with gradient effect */}
+        <motion.ellipse cx="68" cy="42" rx="16" ry="20" fill={`${GREEN}22`} stroke={GREEN} strokeWidth="2"
+          initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.2, ease: "backOut" }} />
+        <motion.ellipse cx="132" cy="42" rx="16" ry="20" fill={`${GREEN}22`} stroke={GREEN} strokeWidth="2"
+          initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.4, ease: "backOut" }} />
+
+        {/* Side toe pads */}
+        <motion.ellipse cx="42" cy="78" rx="14" ry="18" fill={`${GREEN}22`} stroke={GREEN} strokeWidth="2"
+          initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.6, ease: "backOut" }} />
+        <motion.ellipse cx="158" cy="78" rx="14" ry="18" fill={`${GREEN}22`} stroke={GREEN} strokeWidth="2"
+          initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.8, ease: "backOut" }} />
+
+        {/* Inner toe pad details — small highlights */}
+        <ellipse cx="68" cy="40" rx="6" ry="8" fill={`${GREEN}15`} />
+        <ellipse cx="132" cy="40" rx="6" ry="8" fill={`${GREEN}15`} />
+        <ellipse cx="42" cy="76" rx="5" ry="7" fill={`${GREEN}15`} />
+        <ellipse cx="158" cy="76" rx="5" ry="7" fill={`${GREEN}15`} />
+
+        {/* Main pad — large heart-shaped bottom */}
         <motion.path
-          d="M60 75 C45 75, 30 85, 35 100 C38 108, 48 118, 60 128 C72 118, 82 108, 85 100 C90 85, 75 75, 60 75Z"
-          stroke={GREEN_LIGHT}
+          d="M100 105 C78 105, 52 118, 58 140 C62 152, 76 166, 100 185 C124 166, 138 152, 142 140 C148 118, 122 105, 100 105Z"
+          fill={`${GREEN}18`}
+          stroke={GREEN}
           strokeWidth="2.5"
-          fill="none"
-          initial={{ pathLength: 0 }}
-          animate={{ pathLength: 1 }}
-          transition={{ duration: 2, delay: 0.8, ease: "easeInOut" }}
+          strokeLinejoin="round"
+          initial={{ pathLength: 0, opacity: 0 }}
+          animate={{ pathLength: 1, opacity: 1 }}
+          transition={{ duration: 1.5, delay: 1, ease: "easeInOut" }}
         />
-        {/* Sparkle */}
-        <motion.circle cx="95" cy="28" r="3" fill={CREAM} animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.2, 0.8] }} transition={{ duration: 2, repeat: Infinity }} />
+        {/* Main pad inner highlight */}
+        <path
+          d="M100 115 C85 115, 68 124, 72 138 C74 146, 84 155, 100 168 C116 155, 126 146, 128 138 C132 124, 115 115, 100 115Z"
+          fill={`${GREEN}0d`}
+        />
+
+        {/* Heartbeat line through the center of the main pad */}
+        <motion.path
+          d="M65 148 L82 148 L88 135 L94 158 L100 128 L106 158 L112 135 L118 148 L135 148"
+          stroke={GREEN_LIGHT}
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          fill="none"
+          initial={{ pathLength: 0, opacity: 0 }}
+          animate={{ pathLength: [0, 1, 1, 0], opacity: [0, 1, 1, 0] }}
+          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", times: [0, 0.4, 0.6, 1] }}
+        />
+
+        {/* Sparkle accents */}
+        <motion.circle cx="160" cy="30" r="3" fill={GREEN_LIGHT}
+          animate={{ opacity: [0.2, 1, 0.2], scale: [0.7, 1.3, 0.7] }}
+          transition={{ duration: 2.5, repeat: Infinity }} />
+        <motion.circle cx="35" cy="45" r="2" fill={CREAM}
+          animate={{ opacity: [0.1, 0.8, 0.1], scale: [0.5, 1.2, 0.5] }}
+          transition={{ duration: 3, repeat: Infinity, delay: 0.8 }} />
+        <motion.circle cx="170" cy="95" r="2.5" fill={GREEN_LIGHT}
+          animate={{ opacity: [0.15, 0.7, 0.15] }}
+          transition={{ duration: 2, repeat: Infinity, delay: 1.2 }} />
+        <motion.circle cx="28" cy="110" r="2" fill={CREAM}
+          animate={{ opacity: [0.1, 0.6, 0.1] }}
+          transition={{ duration: 2.5, repeat: Infinity, delay: 0.4 }} />
+
+        {/* Small cross/plus sign — medical symbol */}
+        <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2 }}>
+          <rect x="148" cy="160" y="155" width="16" height="4" rx="2" fill={GREEN_LIGHT} opacity={0.4} />
+          <rect x="154" cy="160" y="149" width="4" height="16" rx="2" fill={GREEN_LIGHT} opacity={0.4} />
+        </motion.g>
       </svg>
-    </motion.div>
+    </div>
   );
 }
 

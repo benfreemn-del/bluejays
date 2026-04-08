@@ -52,15 +52,20 @@ export default function MapView({ prospects }: MapViewProps) {
     if (p.status === "paid") stateData[st].hasPaid = true;
   }
 
-  // Group by city
-  const countyData: Record<string, { count: number; hasPaid: boolean; categories: string[] }> = {};
+  // Group by city/county with full status tracking
+  const countyData: Record<string, { count: number; hasPaid: boolean; hasContacted: boolean; hasReady: boolean; categories: string[]; paidBusinesses: string[] }> = {};
   for (const p of prospects) {
     const c = p.city || "Unknown";
-    if (!countyData[c]) countyData[c] = { count: 0, hasPaid: false, categories: [] };
+    if (!countyData[c]) countyData[c] = { count: 0, hasPaid: false, hasContacted: false, hasReady: false, categories: [], paidBusinesses: [] };
     countyData[c].count++;
-    if (p.status === "paid") countyData[c].hasPaid = true;
+    if (p.status === "paid") { countyData[c].hasPaid = true; countyData[c].paidBusinesses.push(p.businessName); }
+    if (p.status === "contacted" || p.status === "responded") countyData[c].hasContacted = true;
+    if (p.status === "pending-review" || p.status === "approved") countyData[c].hasReady = true;
     if (!countyData[c].categories.includes(p.category)) countyData[c].categories.push(p.category);
   }
+
+  // Paid customer pins (for overlay on county view)
+  const paidProspects = prospects.filter(p => p.status === "paid");
 
   // Load GeoJSON data
   useEffect(() => {
@@ -72,17 +77,18 @@ export default function MapView({ prospects }: MapViewProps) {
 
   const getColor = useCallback((name: string, isState: boolean) => {
     if (isState) {
-      // Match state name to abbreviation
       const abbr = STATE_ABBR[name];
       const d = abbr ? stateData[abbr] : null;
-      if (!d) return "#1a2744";
-      if (d.hasPaid) return "#166534";
-      return "#92400e";
+      if (!d) return "#1a2744"; // Not started — dark blue
+      if (d.hasPaid) return "#166534"; // Has sales — green
+      return "#92400e"; // In progress — amber
     } else {
       const d = countyData[name];
-      if (!d) return "#1a2744";
-      if (d.hasPaid) return "#166534";
-      return "#92400e";
+      if (!d) return "#1a2744"; // Not started
+      if (d.hasPaid) return "#166534"; // Has paid customers — green
+      if (d.hasContacted) return "#1e3a5f"; // Contacted — blue
+      if (d.hasReady) return "#92400e"; // Sites ready — amber
+      return "#44403c"; // Scouted but not ready — stone
     }
   }, [stateData, countyData]);
 
@@ -96,8 +102,10 @@ export default function MapView({ prospects }: MapViewProps) {
     } else {
       const d = countyData[name];
       if (!d) return "#334155";
-      if (d.hasPaid) return "#22c55e";
-      return "#f59e0b";
+      if (d.hasPaid) return "#22c55e"; // Green border
+      if (d.hasContacted) return "#3b82f6"; // Blue border
+      if (d.hasReady) return "#f59e0b"; // Amber border
+      return "#78716c"; // Stone border
     }
   }, [stateData, countyData]);
 
@@ -172,15 +180,24 @@ export default function MapView({ prospects }: MapViewProps) {
             </span>
           )}
         </div>
-        <div className="flex items-center gap-4 text-xs text-muted">
+        <div className="flex flex-wrap items-center gap-3 text-xs text-muted">
           <span className="flex items-center gap-1.5">
             <span className="w-3 h-3 rounded border border-[#334155] bg-[#1a2744] inline-block" /> Not Started
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded border border-amber-500 bg-[#92400e] inline-block" /> In Progress
+            <span className="w-3 h-3 rounded border border-[#78716c] bg-[#44403c] inline-block" /> Scouted
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded border border-green-500 bg-[#166534] inline-block" /> Completed
+            <span className="w-3 h-3 rounded border border-amber-500 bg-[#92400e] inline-block" /> Sites Ready
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="w-3 h-3 rounded border border-blue-500 bg-[#1e3a5f] inline-block" /> Contacted
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="w-3 h-3 rounded border border-green-500 bg-[#166534] inline-block" /> Paid
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-red-500 inline-block" /> 📌 Purchase
           </span>
         </div>
       </div>
