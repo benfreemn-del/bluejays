@@ -23,7 +23,7 @@ const SERVICE_ICON_MAP: Record<string, any> = {
 function getServiceIcon(serviceName: string) { const lower = serviceName.toLowerCase(); for (const [key, Icon] of Object.entries(SERVICE_ICON_MAP)) { if (lower.includes(key)) return Icon; } return Wall; }
 
 const STOCK_HERO = "https://images.unsplash.com/photo-1584395630827-860eee694d7b?w=1400&q=80";
-const STOCK_ABOUT = "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=600&q=80";
+const STOCK_ABOUT = "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=600&q=80";
 const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1592767449601-baba tried-6be3-48ea-aff5-fce37db0e4b0?w=600&q=80",
   "https://images.unsplash.com/photo-1597173663379-cadd369a30cf?w=600&q=80",

@@ -90,7 +90,7 @@ const STOCK_ABOUT = "https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1
 const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=600&q=80",
   "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&q=80",
-  "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&q=80",
+  "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&q=80",
   "https://images.unsplash.com/photo-1558904541-efa843a96f01?w=800&q=80",
   "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800&q=80",
   "https://images.unsplash.com/photo-1560749003-f4b1e17e2dff?w=600&q=80",

@@ -72,10 +72,10 @@ function getServiceIcon(serviceName: string) {
 const STOCK_HERO = "https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=1400&q=80";
 const STOCK_ABOUT = "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=600&q=80";
 const STOCK_PROJECTS = [
-  "https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=600&q=80",
+  "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=600&q=80",
   "https://images.unsplash.com/photo-1558002038-1055907df827?w=600&q=80",
   "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=800&q=80",
-  "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80",
+  "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=800&q=80",
 ];
 
 /* ───────────────────────── FLOATING PARTICLES ───────────────────────── */
