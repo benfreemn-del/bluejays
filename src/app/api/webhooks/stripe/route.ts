@@ -22,7 +22,9 @@ const FROM_EMAIL = process.env.FROM_EMAIL || "bluejaycontactme@gmail.com";
 const OWNER_EMAIL = "bluejaycontactme@gmail.com";
 
 /** Amount (in cents) that identifies a $997 one-time setup payment */
-const SETUP_AMOUNT_CENTS = 99700;
+const SETUP_AMOUNT_CENTS_STANDARD = 99700;
+/** Amount (in cents) that identifies a $30 free-tier setup payment */
+const SETUP_AMOUNT_CENTS_FREE = 3000;
 
 export async function POST(request: NextRequest) {
   try {
@@ -53,7 +55,7 @@ export async function POST(request: NextRequest) {
       case "checkout.session.completed": {
         const session = event.data.object as {
           id: string;
-          metadata?: { prospectId?: string; businessName?: string };
+          metadata?: { prospectId?: string; businessName?: string; pricingTier?: string };
           customer?: string;
           customer_email?: string;
           amount_total?: number;
@@ -89,15 +91,16 @@ export async function POST(request: NextRequest) {
           await notifyOwnerPayment(businessName, session.customer_email || prospect.email || "N/A", session.amount_total);
 
           // ─── Create deferred $100/year management subscription ───
-          // Only for one-time $997 setup payments (mode === "payment").
+          // For both standard ($997) and free ($30) one-time setup payments.
           // We create a subscription with a 1-year trial so the first
           // $100 charge happens exactly 1 year after the initial purchase.
-          if (
+          const isValidSetupPayment =
             session.mode === "payment" &&
             session.customer &&
             session.amount_total &&
-            session.amount_total >= SETUP_AMOUNT_CENTS
-          ) {
+            (session.amount_total >= SETUP_AMOUNT_CENTS_STANDARD ||
+             session.amount_total >= SETUP_AMOUNT_CENTS_FREE);
+          if (isValidSetupPayment) {
             try {
               const mgmtSubscription = await createDeferredManagementSubscription(
                 session.customer,

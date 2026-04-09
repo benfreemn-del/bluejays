@@ -26,6 +26,7 @@ interface ProspectInfo {
   googleRating?: number;
   reviewCount?: number;
   currentWebsite?: string;
+  pricingTier?: "standard" | "free";
   scrapedData?: {
     services?: { name: string; description?: string }[];
     testimonials?: { name: string; text: string }[];
@@ -73,6 +74,7 @@ export default function ClaimPage() {
           googleRating: data.googleRating,
           reviewCount: data.reviewCount,
           currentWebsite: data.currentWebsite,
+          pricingTier: data.pricingTier || "standard",
           scrapedData: data.scrapedData,
         });
 
@@ -176,7 +178,7 @@ export default function ClaimPage() {
     setMessages((prev) => [...prev, { role: "user", text: userMsg }]);
 
     setTimeout(() => {
-      const result = getNextResponse(step, userMsg, info?.businessName || "your business");
+      const result = getNextResponse(step, userMsg, info?.businessName || "your business", isFreeTier);
       setMessages((prev) => [
         ...prev,
         ...result.responses.map((text) => ({ role: "agent" as const, text })),
@@ -190,6 +192,8 @@ export default function ClaimPage() {
   };
 
   const categoryLabel = info?.category?.replace(/-/g, " ") || "business";
+  const isFreeTier = info?.pricingTier === "free";
+  const displayPrice = isFreeTier ? "$30" : "$997";
 
   // Value items for the "what you get" breakdown
   const valueItems = [
@@ -225,7 +229,7 @@ export default function ClaimPage() {
             disabled={isRedirecting}
             className="h-9 px-5 rounded-full bg-green-500 text-white text-sm font-bold hover:bg-green-400 transition-colors disabled:opacity-50"
           >
-            {isRedirecting ? "Redirecting..." : "Claim — $997"}
+            {isRedirecting ? "Redirecting..." : `Claim — ${displayPrice}`}
           </button>
         </div>
       </header>
@@ -252,7 +256,7 @@ export default function ClaimPage() {
       <section className="py-16 px-6">
         <div className="max-w-4xl mx-auto text-center">
           <p className="text-sky-400 text-xs font-bold uppercase tracking-[0.25em] mb-4">
-            Your Custom Website Is Ready
+            {isFreeTier ? "Your Website Is Ready" : "Your Custom Website Is Ready"}
           </p>
           <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-4">
             {info ? (
@@ -262,7 +266,9 @@ export default function ClaimPage() {
             )}
           </h1>
           <p className="text-white/50 text-lg max-w-2xl mx-auto mb-8">
-            A premium, mobile-optimized website designed specifically for your {categoryLabel} business — ready to go live in 48 hours.
+            {isFreeTier
+              ? "Your website is ready! Just cover the setup costs to get started."
+              : `A premium, mobile-optimized website designed specifically for your ${categoryLabel} business — ready to go live in 48 hours.`}
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
@@ -271,7 +277,7 @@ export default function ClaimPage() {
               disabled={isRedirecting}
               className="h-14 px-10 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 text-white text-lg font-bold hover:shadow-[0_0_40px_rgba(34,197,94,0.4)] transition-all duration-300 disabled:opacity-50"
             >
-              {isRedirecting ? "Redirecting..." : "Claim Your Website — $997"}
+              {isRedirecting ? "Redirecting..." : `Claim Your Website — ${displayPrice}`}
             </button>
             {info?.previewUrl && (
               <a
@@ -294,7 +300,7 @@ export default function ClaimPage() {
             <svg className="w-5 h-5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
             </svg>
-            <span className="text-green-400 text-sm font-semibold">100% Satisfaction Guarantee — Love it or get a full refund</span>
+            <span className="text-green-400 text-sm font-semibold">{isFreeTier ? "Setup covers domain registration & first year of hosting" : "100% Satisfaction Guarantee — Love it or get a full refund"}</span>
           </div>
         </div>
       </section>
@@ -391,7 +397,7 @@ export default function ClaimPage() {
             <TrustBadge
               icon={<svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>}
               title="One-Time Payment"
-              subtitle="$997 setup + $100/yr after year one"
+              subtitle={isFreeTier ? "$30 setup + $100/yr after year one" : "$997 setup + $100/yr after year one"}
             />
             <TrustBadge
               icon={<svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
@@ -416,7 +422,9 @@ export default function ClaimPage() {
             Everything Included for <span className="text-sky-400">One Price</span>
           </h2>
           <p className="text-white/40 text-center mb-10">
-            Here&apos;s what agencies charge for each piece — and what you get for $997.
+            {isFreeTier
+              ? "Everything you need to get online — included in your setup."
+              : "Here's what agencies charge for each piece \u2014 and what you get for $997."}
           </p>
 
           <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
@@ -441,7 +449,7 @@ export default function ClaimPage() {
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-lg font-bold text-green-400">Your price today</span>
-                <span className="text-3xl font-extrabold text-green-400">$997</span>
+                <span className="text-3xl font-extrabold text-green-400">{displayPrice}</span>
               </div>
               <p className="text-xs text-white/30 mt-1">One-time setup fee. Includes 1 year of hosting &amp; management. After year one, a $100/year management fee applies.</p>
             </div>
@@ -454,7 +462,7 @@ export default function ClaimPage() {
               disabled={isRedirecting}
               className="h-14 px-10 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 text-white text-lg font-bold hover:shadow-[0_0_40px_rgba(34,197,94,0.4)] transition-all duration-300 disabled:opacity-50"
             >
-              {isRedirecting ? "Redirecting..." : "Claim Your Website — $997"}
+              {isRedirecting ? "Redirecting..." : `Claim Your Website \u2014 ${displayPrice}`}
             </button>
           </div>
         </div>
@@ -643,7 +651,7 @@ export default function ClaimPage() {
                               ...prev,
                               { role: "user", text: option },
                             ]);
-                            const result = getNextResponse(0, option, info?.businessName || "your business");
+                            const result = getNextResponse(0, option, info?.businessName || "your business", isFreeTier);
                             setTimeout(() => {
                               setMessages((prev) => [
                                 ...prev,
@@ -729,7 +737,7 @@ export default function ClaimPage() {
             disabled={isRedirecting}
             className="h-16 px-12 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 text-white text-xl font-bold hover:shadow-[0_0_60px_rgba(34,197,94,0.4)] transition-all duration-300 disabled:opacity-50"
           >
-            {isRedirecting ? "Redirecting..." : "Claim Your Website — $997"}
+            {isRedirecting ? "Redirecting..." : `Claim Your Website \u2014 ${displayPrice}`}
           </button>
           <div className="flex items-center justify-center gap-6 mt-6 text-xs text-white/30">
             <span className="flex items-center gap-1">
@@ -753,7 +761,7 @@ export default function ClaimPage() {
         <div className="max-w-6xl mx-auto text-center text-xs text-white/20">
           <p>BlueJays Web Design — Custom websites for local businesses</p>
           <p className="mt-1">Questions? Email us at bluejaycontactme@gmail.com</p>
-          <p className="mt-2 text-white/15">$997 one-time setup includes 1 year of website hosting, domain management, and security updates. After the first year, a $100/year management fee is automatically billed to keep your site live and maintained. You may cancel anytime.</p>
+          <p className="mt-2 text-white/15">{isFreeTier ? "$30" : "$997"} one-time setup includes 1 year of website hosting, domain management, and security updates. After the first year, a $100/year management fee is automatically billed to keep your site live and maintained. You may cancel anytime.</p>
         </div>
       </footer>
     </div>
@@ -822,7 +830,7 @@ interface ResponseResult {
   triggerCheckout: boolean;
 }
 
-function getNextResponse(step: number, userMessage: string, businessName: string): ResponseResult {
+function getNextResponse(step: number, userMessage: string, businessName: string, isFreeTier: boolean = false): ResponseResult {
   const lower = userMessage.toLowerCase();
 
   if (
@@ -843,7 +851,9 @@ function getNextResponse(step: number, userMessage: string, businessName: string
       responses: [
         `Awesome, so glad you like it! The site is fully custom — built specifically for ${businessName}.`,
         `Here's what's included: custom design, mobile optimization, SEO setup, hosting, and a year of site management. We handle everything so you can focus on running your business.`,
-        `The total is $997 one-time, which includes your first year of hosting and management. After year one, it's just $100/year. Ready to claim it? Just click the green button!`,
+        isFreeTier
+          ? `The total is just $30 one-time to cover setup costs. After year one, it's $100/year for management. Ready to claim it? Just click the green button!`
+          : `The total is $997 one-time, which includes your first year of hosting and management. After year one, it's just $100/year. Ready to claim it? Just click the green button!`,
       ],
       triggerCheckout: false,
     };
@@ -852,9 +862,11 @@ function getNextResponse(step: number, userMessage: string, businessName: string
   if (lower.includes("cost") || lower.includes("price") || lower.includes("how much") || lower.includes("pricing")) {
     return {
       responses: [
-        `Great question! It's $997 one-time — that covers everything: design, development, content, SEO, hosting setup, and your first year of hosting & management.`,
+        isFreeTier
+          ? `Great question! It's just $30 one-time — that covers domain registration and server setup costs.`
+          : `Great question! It's $997 one-time — that covers everything: design, development, content, SEO, hosting setup, and your first year of hosting & management.`,
         `After year one, there's a $100/year management fee for hosting, security updates, and site maintenance. You can cancel anytime — no contracts.`,
-        `For context, agencies charge $3,000-$10,000+ for this. And you've already seen the actual site we built — no guesswork. Would you like to move forward?`,
+        ...(isFreeTier ? [] : [`For context, agencies charge $3,000-$10,000+ for this. And you've already seen the actual site we built — no guesswork. Would you like to move forward?`]),
       ],
       triggerCheckout: false,
     };

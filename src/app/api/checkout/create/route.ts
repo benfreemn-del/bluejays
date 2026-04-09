@@ -42,10 +42,12 @@ export async function POST(request: NextRequest) {
     }
 
     const email = prospect.email || "";
+    const pricingTier = (prospect.pricingTier as "standard" | "free") || "standard";
     const session = await createCheckoutSession(
       prospectId,
       prospect.businessName,
-      email
+      email,
+      pricingTier
     );
 
     return NextResponse.json({ url: session.url, sessionId: session.id });

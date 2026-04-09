@@ -124,6 +124,9 @@ export default function ProspectDetail({
                 {config.label}
               </span>
               <StatusBadge status={prospect.status} />
+              {prospect.pricingTier === "free" && (
+                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold tracking-wide border border-emerald-500/30">Free</span>
+              )}
             </div>
           </div>
           <button
@@ -135,6 +138,40 @@ export default function ProspectDetail({
         </div>
 
         <div className="p-6 space-y-6">
+          {/* Pricing Tier Toggle */}
+          <section className="p-4 rounded-xl bg-surface-light border border-border">
+            <h3 className="text-sm font-semibold text-muted uppercase tracking-wider mb-3">
+              Pricing Tier
+            </h3>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => onUpdateProspect?.(prospect.id, { pricingTier: "standard" })}
+                className={`flex-1 h-10 rounded-lg text-sm font-medium transition-colors ${
+                  (!prospect.pricingTier || prospect.pricingTier === "standard")
+                    ? "bg-sky-500/20 text-sky-400 border border-sky-500/40"
+                    : "bg-surface border border-border text-muted hover:text-foreground"
+                }`}
+              >
+                Standard ($997)
+              </button>
+              <button
+                onClick={() => onUpdateProspect?.(prospect.id, { pricingTier: "free" })}
+                className={`flex-1 h-10 rounded-lg text-sm font-medium transition-colors ${
+                  prospect.pricingTier === "free"
+                    ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40"
+                    : "bg-surface border border-border text-muted hover:text-foreground"
+                }`}
+              >
+                Free ($30)
+              </button>
+            </div>
+            {prospect.pricingTier === "free" && (
+              <p className="text-xs text-emerald-400/70 mt-2">
+                Friends/family pricing — $30 covers domain + server costs. $100/yr management after 1 year.
+              </p>
+            )}
+          </section>
+
           {/* Contact Info */}
           <section>
             <h3 className="text-sm font-semibold text-muted uppercase tracking-wider mb-3">

@@ -94,6 +94,8 @@ export interface Prospect {
   funnelPaused?: boolean;
   /** Lead source: "inbound" for self-submitted, "scouted" for automated pipeline */
   source?: "inbound" | "scouted";
+  /** Pricing tier: "standard" ($997) or "free" ($30 for friends/family) */
+  pricingTier?: "standard" | "free";
   /** QC gate results — populated by /api/qc/review/[id] */
   qualityScore?: number;       // 0-100
   qualityNotes?: string;       // formatted text summary of issues
@@ -145,6 +147,7 @@ export interface PipelineResult {
 
 export const PRICING = {
   basePrice: 997,
+  freePrice: 30,
   remarketingPrice: 497,
   yearlyManagement: 100,
 };

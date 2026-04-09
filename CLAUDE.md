@@ -300,6 +300,11 @@ The sales agent is a LIVING SYSTEM that must improve over time, not stay static.
 - Dashboard, lead pages, API routes = PROTECTED (login required)
 - Password: set via ADMIN_PASSWORD env var (default: bluejay2026)
 
+## Approval & Pricing Rules (NON-NEGOTIABLE)
+- **Ben approves ALL preview sites and final sites manually before they go live or enter the funnel. No site goes out without approval.** This applies to both standard and free-tier prospects. Every site must pass quality gates AND receive explicit manual approval from Ben before any outreach or deployment.
+- **Free tier ($30) is for friends/family only. Default pricing tier is always standard ($997).** The free tier exists solely for prospects Ben personally tags as "free" in the dashboard. It charges $30 upfront (covers domain + server costs) instead of $997, but still creates the same deferred $100/year management subscription after 1 year. Never auto-assign free tier — it requires manual tagging by Ben.
+- **Two pricing tiers exist**: Standard ($997 upfront → $100/yr after 1 year) and Free ($30 upfront → $100/yr after 1 year). The `pricing_tier` column on the prospects table controls which tier applies. The claim page, checkout API, and Stripe session all respect this field dynamically.
+
 ## Active Template Categories (41 total)
 real-estate, dental, law-firm, landscaping, salon, electrician, plumber, hvac, roofing, auto-repair, chiropractic, fitness, veterinary, photography, cleaning, pest-control, accounting, moving, florist, daycare, insurance, interior-design, tattoo, martial-arts, physical-therapy, tutoring, pool-spa, general-contractor, catering, pet-services, church, restaurant, medical, painting, fencing, tree-service, pressure-washing, garage-door, locksmith, towing, construction
 

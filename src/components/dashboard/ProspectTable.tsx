@@ -246,7 +246,11 @@ export default function ProspectTable({
                 className={`border-b border-border hover:bg-surface-light/50 transition-colors ${
                   isSelected(prospect.id) ? "bg-blue-electric/5" : ""
                 } ${
-                  prospect.source === "inbound" ? "border-l-2 border-l-amber-400 bg-amber-500/[0.03]" : ""
+                  prospect.pricingTier === "free"
+                    ? "border-l-2 border-l-emerald-400 bg-emerald-500/[0.03]"
+                    : prospect.source === "inbound"
+                      ? "border-l-2 border-l-amber-400 bg-amber-500/[0.03]"
+                      : ""
                 }`}
               >
                 <td className="p-3" onClick={(e) => e.stopPropagation()}>
@@ -260,6 +264,9 @@ export default function ProspectTable({
                 <td className="p-3 cursor-pointer" onClick={() => router.push(`/lead/${prospect.id}`)}>
                   <div className="flex items-center gap-2">
                     <p className="font-medium text-blue-electric hover:underline">{prospect.businessName}</p>
+                    {prospect.pricingTier === "free" && (
+                      <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold tracking-wide border border-emerald-500/30">Free</span>
+                    )}
                     {prospect.source === "inbound" && (
                       <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 font-bold tracking-wide border border-amber-500/30">Inbound</span>
                     )}

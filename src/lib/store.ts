@@ -50,6 +50,7 @@ function dbToProspect(row: Record<string, unknown>): Prospect {
     instagramHandle: row.instagram_handle as string | undefined,
     funnelPaused: row.funnel_paused as boolean | undefined,
     source: (row.source as "inbound" | "scouted" | undefined) || undefined,
+    pricingTier: (row.pricing_tier as "standard" | "free" | undefined) || "standard",
     selectedTheme: (row.selected_theme as "light" | "dark" | undefined) || undefined,
     aiThemeRecommendation: (row.ai_theme_recommendation as "light" | "dark" | undefined) || undefined,
     qualityScore: row.quality_score as number | undefined,
@@ -85,6 +86,7 @@ function prospectToDb(p: Prospect) {
     instagram_handle: p.instagramHandle || null,
     funnel_paused: p.funnelPaused || false,
     source: p.source || "scouted",
+    pricing_tier: p.pricingTier || "standard",
     selected_theme: p.selectedTheme || null,
     ai_theme_recommendation: p.aiThemeRecommendation || null,
   };
@@ -206,6 +208,7 @@ export async function updateProspect(
     if (updates.qualityScore !== undefined) dbUpdates.quality_score = updates.qualityScore;
     if (updates.qualityNotes !== undefined) dbUpdates.quality_notes = updates.qualityNotes;
     if (updates.qcReviewedAt !== undefined) dbUpdates.qc_reviewed_at = updates.qcReviewedAt;
+    if (updates.pricingTier !== undefined) dbUpdates.pricing_tier = updates.pricingTier;
 
     const { data, error } = await supabase
       .from("prospects")

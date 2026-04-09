@@ -59,11 +59,12 @@ export interface CheckoutSession {
 export async function createCheckoutSession(
   prospectId: string,
   businessName: string,
-  email: string
+  email: string,
+  pricingTier: "standard" | "free" = "standard"
 ): Promise<CheckoutSession> {
   if (!STRIPE_SECRET_KEY) {
     // Mock mode — return fake checkout URL for development
-    console.log(`  [MOCK] Stripe Checkout for ${businessName} (${email})`);
+    console.log(`  [MOCK] Stripe Checkout for ${businessName} (${email}) [tier=${pricingTier}]`);
     return {
       id: `mock_session_${prospectId}`,
       url: `/onboarding/${prospectId}?mock=true`,
@@ -80,7 +81,15 @@ export async function createCheckoutSession(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const lineItems: any[] = [];
 
-  if (setupPriceId) {
+  // Determine setup amount based on pricing tier
+  const isFreeTier = pricingTier === "free";
+  const setupAmountCents = isFreeTier ? 3000 : 99700; // $30 or $997
+  const setupDescription = isFreeTier
+    ? "Website setup — domain and server costs"
+    : "Premium custom website design, hosting setup, and deployment";
+
+  if (setupPriceId && !isFreeTier) {
+    // Only use the pre-created $997 price ID for standard tier
     lineItems.push({ price: setupPriceId, quantity: 1 });
   } else {
     lineItems.push({
@@ -88,9 +97,9 @@ export async function createCheckoutSession(
         currency: "usd",
         product_data: {
           name: `Custom Website — ${businessName}`,
-          description: "Premium custom website design, hosting setup, and deployment",
+          description: setupDescription,
         },
-        unit_amount: 99700, // $997.00
+        unit_amount: setupAmountCents,
       },
       quantity: 1,
     });
@@ -120,7 +129,7 @@ export async function createCheckoutSession(
     line_items: lineItems,
     success_url: `${baseUrl}/onboarding/${prospectId}?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${baseUrl}/claim/${prospectId}?payment=cancelled`,
-    metadata: { prospectId, businessName },
+    metadata: { prospectId, businessName, pricingTier },
   };
 
   // Only set customer_email if we have one
