@@ -34,8 +34,9 @@ export async function POST(request: NextRequest) {
     // Update status to 'claimed' if not already past that stage
     const prePaymentStatuses = [
       "scouted", "scraped", "generated", "pending-review",
-      "approved", "deployed", "contacted", "engaged",
-      "link_clicked", "responded", "interested",
+      "ready_to_review", "qc_failed", "approved", "deployed",
+      "contacted", "engaged", "link_clicked", "responded",
+      "interested",
     ];
     if (prePaymentStatuses.includes(prospect.status)) {
       await updateProspect(prospectId, { status: "claimed" });

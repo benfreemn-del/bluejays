@@ -291,7 +291,7 @@ export default function LeadPage() {
                   Build Site →
                 </button>
               )}
-              {prospect.status === "pending-review" && prospect.generatedSiteUrl && (
+              {(prospect.status === "pending-review" || prospect.status === "ready_to_review" || prospect.status === "qc_failed") && prospect.generatedSiteUrl && (
                 <div className="flex gap-2">
                   <a href={prospect.generatedSiteUrl} target="_blank" rel="noopener noreferrer"
                     className="h-9 px-4 rounded-lg bg-blue-electric/20 text-blue-electric text-sm font-bold flex items-center">
@@ -325,13 +325,13 @@ export default function LeadPage() {
                 { key: "scouted", label: "Scouted", icon: "🔍", desc: "Found via Google" },
                 { key: "scraped", label: "Scraped", icon: "🌐", desc: "Data collected" },
                 { key: "generated", label: "Site Built", icon: "🏗️", desc: "Preview ready" },
-                { key: "pending-review", label: "Review", icon: "👁️", desc: "Needs your OK" },
+                { key: "ready_to_review", label: "Review", icon: "👁️", desc: "Needs your OK" },
                 { key: "approved", label: "Approved", icon: "✅", desc: "Ready to send" },
                 { key: "contacted", label: "Contacted", icon: "📧", desc: "Outreach sent" },
                 { key: "responded", label: "Responded", icon: "💬", desc: "They replied!" },
                 { key: "paid", label: "Paid", icon: "💰", desc: "$997 received" },
               ].map((stage, i, arr) => {
-                const statusOrder = ["scouted", "scraped", "generated", "pending-review", "approved", "contacted", "responded", "paid"];
+                const statusOrder = ["scouted", "scraped", "generated", "pending-review", "ready_to_review", "approved", "contacted", "responded", "paid"];
                 const currentIdx = statusOrder.indexOf(prospect.status);
                 const stageIdx = statusOrder.indexOf(stage.key);
                 const isComplete = stageIdx < currentIdx;

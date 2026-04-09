@@ -38,7 +38,7 @@ export default function ConversationsPage() {
       .then((data) => {
         // Show prospects that have been contacted or responded
         const active = (data.prospects as Prospect[]).filter((p) =>
-          ["contacted", "responded", "approved", "generated", "pending-review"].includes(p.status)
+          ["contacted", "responded", "approved", "generated", "pending-review", "ready_to_review", "qc_failed"].includes(p.status)
         );
         setProspects(active);
       })

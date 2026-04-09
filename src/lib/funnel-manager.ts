@@ -55,6 +55,7 @@ const FUNNEL_STOP_STATUSES = [
   "paid",
   "dismissed",
   "unsubscribed",
+  "qc_failed",
 ];
 
 function ensureDir() {
@@ -150,6 +151,12 @@ export async function enrollInFunnel(prospectId: string): Promise<{ success: boo
   // Don't enroll if prospect is in a stop state
   if (FUNNEL_STOP_STATUSES.includes(prospect.status)) {
     return { success: false, message: `Prospect status is '${prospect.status}' — cannot enroll in funnel` };
+  }
+
+  // Allow enrollment for approved or ready_to_review prospects
+  const canEnroll = ["approved", "ready_to_review", "generated", "contacted"].includes(prospect.status);
+  if (!canEnroll) {
+    return { success: false, message: `Prospect status is '${prospect.status}' — must be approved or ready to review first` };
   }
 
   // Don't enroll if funnel is paused on the prospect record

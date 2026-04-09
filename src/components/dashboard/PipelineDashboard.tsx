@@ -146,7 +146,7 @@ export default function PipelineDashboard({ isOpen, onClose, onComplete }: Pipel
             <>
               {/* Queue Status */}
               <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-                <QueueCard label="Pending Review" count={data?.queueStatus.pendingReview || 0} color="text-amber-400" bg="bg-amber-500/10" />
+                <QueueCard label="Needs Review" count={data?.queueStatus.pendingReview || 0} color="text-amber-400" bg="bg-amber-500/10" />
                 <QueueCard label="Approved" count={data?.queueStatus.approved || 0} color="text-green-400" bg="bg-green-500/10" />
                 <QueueCard label="Generated" count={data?.queueStatus.generated || 0} color="text-sky-400" bg="bg-sky-500/10" />
                 <QueueCard label="Scouted" count={data?.queueStatus.scouted || 0} color="text-purple-400" bg="bg-purple-500/10" />

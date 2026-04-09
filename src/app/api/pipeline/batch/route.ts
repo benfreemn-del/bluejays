@@ -346,7 +346,7 @@ export async function GET() {
     // Get queue status from prospects
     const allProspects = await getAllProspects();
     const queueStatus = {
-      pendingReview: allProspects.filter((p) => p.status === "pending-review").length,
+      pendingReview: allProspects.filter((p) => ["pending-review", "ready_to_review", "qc_failed"].includes(p.status)).length,
       approved: allProspects.filter((p) => p.status === "approved").length,
       generated: allProspects.filter((p) => p.status === "generated").length,
       scouted: allProspects.filter((p) => p.status === "scouted").length,

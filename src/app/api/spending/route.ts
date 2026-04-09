@@ -9,13 +9,16 @@ import { getCostData } from "@/lib/cost-logger";
  * GET /api/spending
  *
  * Alias for /api/costs — returns cost and spending data for the dashboard.
+ * Updated to prioritize real cost data from Supabase system_costs table.
  */
 export async function GET() {
   const prospects = await getAllProspects();
 
+  // Try to get real cost data from system_costs table
   const realCosts = await getCostData();
   const hasRealData = realCosts.thisMonth.total > 0;
 
+  // Always compute legacy estimates as fallback / comparison
   let totalEmails = 0;
   let totalSms = 0;
   for (const p of prospects) {
@@ -29,11 +32,16 @@ export async function GET() {
   const paid = prospects.filter((p) => p.status === "paid").length;
 
   return NextResponse.json({
+    // Legacy fields (for backward compatibility)
     ...systemCost,
     paidCustomers: paid,
     revenue: paid * 997,
     profit: paid * 997 - systemCost.totalEstimatedCost,
+    
+    // Real cost data from system_costs table
     realCosts: hasRealData ? realCosts : null,
+    
+    // Summary: prefer real data when available
     actualSpend: hasRealData ? {
       today: realCosts.today,
       thisWeek: realCosts.thisWeek,

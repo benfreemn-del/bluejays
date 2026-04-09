@@ -101,12 +101,15 @@ const SOFT_BOUNCE_MAX_RETRIES = 3;
  * Day 31+:   "full"     — unlimited (but respect SendGrid limits)
  */
 function getWarmupDailyLimit(day: number): number {
-  if (day <= 0) return 5;
-  if (day <= 7) return Math.min(5 + (day - 1) * 3, 25);
-  if (day <= 14) return Math.min(30 + (day - 8) * 7, 75);
-  if (day <= 21) return Math.min(80 + (day - 15) * 10, 150);
-  if (day <= 30) return Math.min(150 + (day - 21) * 6, 200);
-  return 500; // Full capacity
+  // Check for bypass flag
+  if (process.env.SKIP_WARMUP === "true") return 1000;
+
+  if (day <= 0) return 100; // Increased from 5 to 100 for Day 1
+  if (day <= 7) return Math.min(100 + (day - 1) * 20, 250);
+  if (day <= 14) return Math.min(250 + (day - 8) * 30, 500);
+  if (day <= 21) return Math.min(500 + (day - 15) * 50, 1000);
+  if (day <= 30) return Math.min(1000 + (day - 21) * 100, 2000);
+  return 5000; // Full capacity
 }
 
 function getWarmupPhase(day: number): "warming" | "ramping" | "full" {
