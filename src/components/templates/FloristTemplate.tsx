@@ -289,7 +289,7 @@ export default function FloristTemplate() {
       accentColorLight="#fda4af"
       heroGradient="linear-gradient(135deg, #fdf5f0 0%, #f0f5f0 50%, #fdf9f7 100%)"
       themeMode="light"
-      heroImage="https://images.unsplash.com/photo-1469259943454-aa100abba749?w=1400&q=80"
+      heroImage="https://images.unsplash.com/photo-1561181286-d3fee7d55364?w=1400&q=80"
       phone="(206) 555-0113"
       address="Pike Place Market District, Seattle, WA"
     >

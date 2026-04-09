@@ -281,7 +281,7 @@ export default function PlumberTemplate() {
       accentColor="#3b82f6"
       accentColorLight="#60a5fa"
       heroGradient="linear-gradient(135deg, #0c1929 0%, #0a1220 100%)"
-      heroImage="https://images.unsplash.com/photo-1585704032915-c3400ca199e7?w=1400&q=80"
+      heroImage="https://images.unsplash.com/photo-1620626011761-996317b8d101?w=1400&q=80"
       phone="(206) 555-0102"
       address="4712 Rainier Ave S, Seattle, WA 98118"
     >

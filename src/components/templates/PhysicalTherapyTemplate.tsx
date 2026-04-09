@@ -309,7 +309,7 @@ export default function PhysicalTherapyTemplate() {
       accentColor="#2dd4bf"
       accentColorLight="#5eead4"
       heroGradient="linear-gradient(135deg, #0f1f1d 0%, #0a1412 100%)"
-      heroImage="https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=1400&q=80"
+      heroImage="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1400&q=80"
       phone="(425) 555-0134"
       address="245 Summit Ave, Bellevue, WA 98004"
     >

@@ -316,7 +316,7 @@ export default function RoofingTemplate() {
       accentColor="#d97706"
       accentColorLight="#f59e0b"
       heroGradient="linear-gradient(135deg, #1a1206 0%, #0f0c08 100%)"
-      heroImage="https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1400&q=80"
+      heroImage="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1400&q=80"
       phone="(253) 555-0105"
       address="Tacoma, WA"
     >

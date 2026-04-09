@@ -403,7 +403,7 @@ export default function HvacTemplate() {
       accentColor="#06b6d4"
       accentColorLight="#22d3ee"
       heroGradient="linear-gradient(135deg, #0a1628 0%, #0c1a2e 50%, #061220 100%)"
-      heroImage="https://images.unsplash.com/photo-1631545806609-3c480b4bb5a6?w=1400&q=80"
+      heroImage="https://images.unsplash.com/photo-1600210492493-0946911123ea?w=1400&q=80"
       phone="(425) 555-0104"
       address="1240 Main St, Bellevue, WA 98004"
     >

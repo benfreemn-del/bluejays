@@ -315,7 +315,7 @@ export default function TattooTemplate() {
       accentColor="#a3a3a3"
       accentColorLight="#d4d4d4"
       heroGradient="linear-gradient(135deg, #0a0a0a 0%, #111111 50%, #0a0a0a 100%)"
-      heroImage="https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?w=1400&q=80"
+      heroImage="https://images.unsplash.com/photo-1562962230-16e4623d36e6?w=1400&q=80"
       phone="(206) 555-0132"
       address="Capitol Hill, Seattle, WA"
     >

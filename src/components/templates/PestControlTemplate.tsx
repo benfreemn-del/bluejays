@@ -291,7 +291,7 @@ export default function PestControlTemplate() {
       accentColor="#84cc16"
       accentColorLight="#a3e635"
       heroGradient="linear-gradient(135deg, #111a0a 0%, #0d1408 100%)"
-      heroImage="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1400&q=80"
+      heroImage="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1400&q=80"
       phone="(360) 555-0108"
       address="Olympia, WA"
     >

@@ -298,7 +298,7 @@ export default function CleaningTemplate() {
       accentColor="#38bdf8"
       accentColorLight="#7dd3fc"
       heroGradient="linear-gradient(135deg, #0c1929 0%, #0a1220 100%)"
-      heroImage="https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=1400&q=80"
+      heroImage="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=1400&q=80"
       phone="(206) 555-0120"
       address="Seattle, WA"
     >
