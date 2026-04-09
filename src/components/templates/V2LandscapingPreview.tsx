@@ -394,24 +394,21 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[10%] w-[500px] h-[500px] rounded-full blur-[200px]" style={{ background: `${PRIMARY}06` }} /></div>
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Transformations" title="Before & After" subtitle={`See the dramatic transformations ${data.businessName} delivers for our clients.`} accent={PRIMARY} />
+          <SectionHeader badge="Our Work" title="Recent Transformations" subtitle={`See the quality of work ${data.businessName} delivers for our clients.`} accent={PRIMARY} />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {STOCK_BEFORE_AFTER.map((pair, i) => (
-              <div key={i} className="space-y-3">
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="relative rounded-xl overflow-hidden border border-white/[0.06]">
-                    <img src={pair.before} alt={`Before ${i + 1}`} className="w-full h-48 object-cover" />
-                    <div className="absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-bold bg-red-500/80 text-white backdrop-blur-sm">Before</div>
-                  </div>
-                  <div className="relative rounded-xl overflow-hidden border border-white/[0.06]">
-                    <img src={pair.after} alt={`After ${i + 1}`} className="w-full h-48 object-cover" />
-                    <div className="absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-bold text-white backdrop-blur-sm" style={{ background: `${PRIMARY}cc` }}>After</div>
+            {STOCK_GALLERY.slice(0, 4).map((src, i) => {
+              const titles = ["Front Yard Makeover", "Backyard Patio", "Garden Redesign", "Full Property Refresh"];
+              return (
+                <div key={i} className="group relative rounded-xl overflow-hidden border border-white/[0.06] hover:border-opacity-30 transition-all duration-500">
+                  <img src={src} alt={titles[i]} className="w-full h-48 object-cover transition-transform duration-700 group-hover:scale-105" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <div className="absolute bottom-0 left-0 right-0 p-3 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                    <p className="text-sm text-white font-medium">{titles[i]}</p>
                   </div>
                 </div>
-                <p className="text-sm text-slate-400 text-center">Complete landscape transformation by {data.businessName}</p>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>

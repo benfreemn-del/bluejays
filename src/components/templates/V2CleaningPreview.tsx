@@ -499,7 +499,7 @@ export default function V2CleaningPreview({ data }: { data: GeneratedSiteData })
         <WaterDropBackground opacity={0.02} accent={ACCENT} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] left-[20%] w-[500px] h-[500px] rounded-full blur-[200px]" style={{ background: `${ACCENT}06` }} /></div>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <AnimatedSection>          <SectionHeader badge="Our Work" title="Before & After Results" accent={ACCENT} /></AnimatedSection>
+          <AnimatedSection>          <SectionHeader badge="Our Work" title="Recent Projects" accent={ACCENT} /></AnimatedSection>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {projectImages.map((src, i) => {
               const titles = ["Deep Kitchen Clean", "Office Sanitization", "Move-Out Cleaning", "Post-Construction Cleanup"];

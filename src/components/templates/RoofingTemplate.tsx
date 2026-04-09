@@ -207,20 +207,17 @@ const materialComparison = [
 
 const projects = [
   {
-    before: "https://images.unsplash.com/photo-1558036117-15d82a90b9b1?w=500&q=80",
-    after: "https://images.unsplash.com/photo-1449844908441-8829872d2607?w=500&q=80",
+    image: "https://images.unsplash.com/photo-1449844908441-8829872d2607?w=500&q=80",
     title: "Full Replacement - Tacoma Hills",
     type: "Architectural Shingles",
   },
   {
-    before: "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=500&q=80",
-    after: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=500&q=80",
+    image: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=500&q=80",
     title: "Metal Roof Upgrade - Puyallup",
     type: "Standing Seam Metal",
   },
   {
-    before: "https://images.unsplash.com/photo-1523217582562-09d0def993a6?w=500&q=80",
-    after: "https://images.unsplash.com/photo-1480074568708-e7b720bb3f09?w=500&q=80",
+    image: "https://images.unsplash.com/photo-1480074568708-e7b720bb3f09?w=500&q=80",
     title: "Storm Restoration - Lakewood",
     type: "Emergency + Full Replacement",
   },
@@ -630,7 +627,7 @@ export default function RoofingTemplate() {
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <SectionHeader
             tag="OUR WORK"
-            title="Before & After Projects"
+            title="Recent Projects"
             highlightWord="Projects"
             subtitle="Real transformations from real Tacoma homes. See the Summit difference for yourself."
           />
@@ -644,21 +641,9 @@ export default function RoofingTemplate() {
                 transition={{ delay: i * 0.12 }}
                 className="group relative rounded-2xl border border-white/[0.06] hover:border-[#d97706]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
               >
-                {/* Before/After images */}
                 <div className="relative aspect-[4/3] overflow-hidden">
-                  <div className="absolute inset-0 grid grid-cols-2">
-                    <div className="relative overflow-hidden">
-                      <img src={project.before} alt="Before" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                      <div className="absolute inset-0 bg-black/20" />
-                      <span className="absolute bottom-2 left-2 text-[10px] font-bold uppercase tracking-wider bg-black/60 text-white/80 px-2 py-1 rounded">Before</span>
-                    </div>
-                    <div className="relative overflow-hidden">
-                      <img src={project.after} alt="After" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                      <span className="absolute bottom-2 right-2 text-[10px] font-bold uppercase tracking-wider bg-[#d97706]/80 text-white px-2 py-1 rounded">After</span>
-                    </div>
-                  </div>
-                  {/* Center divider */}
-                  <div className="absolute top-0 bottom-0 left-1/2 w-0.5 bg-[#d97706]/60 z-10" />
+                  <img src={project.image} alt={project.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
                 </div>
                 {/* Info */}
                 <div className="p-5">

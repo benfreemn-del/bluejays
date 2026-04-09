@@ -525,28 +525,22 @@ export default function V2PaintingPage() {
         </div>
       </SectionReveal>
 
-      {/* ─── 4. BEFORE/AFTER GALLERY ─── */}
+      {/* ─── 4. PROJECT GALLERY ─── */}
       <SectionReveal id="gallery" className="relative z-10 py-16 md:py-24">
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="text-center mb-16">
             <p className="text-sm uppercase tracking-widest mb-3" style={{ color: PURPLE }}>Our Work</p>
             <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white">
-              <WordReveal text="See the Transformation" />
+              <WordReveal text="Our Recent Work" />
             </h2>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-            <BeforeAfterSlider
-              beforeSrc="https://images.unsplash.com/photo-1560184897-ae75f418493e?w=800&q=80"
-              afterSrc="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=800&q=80"
-              beforeAlt="Room before painting"
-              afterAlt="Room after professional painting"
-            />
-            <BeforeAfterSlider
-              beforeSrc="https://images.unsplash.com/photo-1513694203232-719a280e022f?w=800&q=80"
-              afterSrc="https://images.unsplash.com/photo-1600210492493-0946911123ea?w=800&q=80"
-              beforeAlt="Exterior before painting"
-              afterAlt="Exterior after professional painting"
-            />
+            <div className="rounded-2xl overflow-hidden">
+              <img src="https://images.unsplash.com/photo-1513694203232-719a280e022f?w=800&q=80" alt="Interior painting project" className="w-full aspect-[16/10] object-cover" />
+            </div>
+            <div className="rounded-2xl overflow-hidden">
+              <img src="https://images.unsplash.com/photo-1600210492493-0946911123ea?w=800&q=80" alt="Exterior painting project" className="w-full aspect-[16/10] object-cover" />
+            </div>
           </div>
           <motion.div className="grid grid-cols-2 md:grid-cols-3 gap-4" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
             {galleryPhotos.map((photo, i) => (

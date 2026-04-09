@@ -921,19 +921,25 @@ export default function V2DentalPage() {
                 Smile Gallery
               </p>
               <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white mb-6">
-                <WordReveal text="See the Difference" />
+                <WordReveal text="Our Results" />
               </h2>
               <p className="text-slate-400 leading-relaxed max-w-md mb-6">
-                Drag the slider to reveal the transformative results our
-                patients have experienced. Every smile tells a story of renewed
-                confidence.
+                See the transformative results our patients have experienced.
+                Every smile tells a story of renewed confidence.
               </p>
               <div className="flex items-center gap-3 text-sm text-slate-400">
                 <CheckCircle size={18} weight="duotone" style={{ color: TEAL }} />
                 <span>Real patient results shown with permission</span>
               </div>
             </div>
-            <BeforeAfterSlider />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="rounded-2xl overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=800&q=80" alt="Beautiful bright smile" className="w-full aspect-square object-cover" />
+              </div>
+              <div className="rounded-2xl overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=800&q=80" alt="Dental care results" className="w-full aspect-square object-cover" />
+              </div>
+            </div>
           </div>
         </div>
       </SectionReveal>

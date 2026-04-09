@@ -200,10 +200,10 @@ const services = [
   { title: "Outdoor Lighting", description: "Architectural and landscape lighting that transforms your property after dark. Path lights, uplights, accent lighting, and smart controls for ambiance and security.", icon: Lightning },
 ];
 
-const beforeAfterGallery = [
-  { before: "https://images.unsplash.com/photo-1560749003-f4b1e17e2dff?w=600&q=80", after: "https://images.unsplash.com/photo-1592150621744-aca64f48394a?w=600&q=80", label: "Front Yard Transformation" },
-  { before: "https://images.unsplash.com/photo-1609347744403-2306e8a9ae27?w=600&q=80", after: "https://images.unsplash.com/photo-1600573472592-401b489a3cdc?w=600&q=80", label: "Backyard Patio Project" },
-  { before: "https://images.unsplash.com/photo-1501685532562-aa6846b14a0e?w=600&q=80", after: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=600&q=80", label: "Garden Redesign" },
+const projectGallery = [
+  { image: "https://images.unsplash.com/photo-1592150621744-aca64f48394a?w=600&q=80", label: "Front Yard Transformation" },
+  { image: "https://images.unsplash.com/photo-1600573472592-401b489a3cdc?w=600&q=80", label: "Backyard Patio Project" },
+  { image: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=600&q=80", label: "Garden Redesign" },
 ];
 
 const processSteps = [
@@ -241,7 +241,6 @@ export default function V2LandscapingPage() {
   const [openService, setOpenService] = useState<number | null>(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const [activeBA, setActiveBA] = useState(0);
 
   return (
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: BG, color: "#f1f5f9" }}>
@@ -400,33 +399,25 @@ export default function V2LandscapingPage() {
         </div>
       </SectionReveal>
 
-      {/* ─── BEFORE / AFTER SHOWCASE ─── */}
+      {/* ─── PROJECT GALLERY ─── */}
       <SectionReveal id="gallery" className="relative z-10 py-16 md:py-24">
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="text-center mb-12">
-            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: BROWN_LIGHT }}>Transformations</p>
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: BROWN_LIGHT }}>Our Work</p>
             <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white">
-              <WordReveal text="Before & After" />
+              <WordReveal text="Recent Projects" />
             </h2>
           </div>
-          {/* Tab buttons */}
-          <div className="flex justify-center gap-3 mb-8">
-            {beforeAfterGallery.map((item, i) => (
-              <button key={i} onClick={() => setActiveBA(i)} className={`px-4 py-2 rounded-full text-sm font-medium transition-colors cursor-pointer ${activeBA === i ? "text-white" : "text-slate-500 hover:text-slate-300"}`} style={activeBA === i ? { background: GREEN } : {}}>
-                {item.label}
-              </button>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {projectGallery.map((item, i) => (
+              <div key={i} className="group relative rounded-2xl overflow-hidden aspect-[16/10]">
+                <img src={item.image} alt={item.label} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                <div className="absolute bottom-4 left-4">
+                  <p className="text-white font-semibold text-sm">{item.label}</p>
+                </div>
+              </div>
             ))}
-          </div>
-          {/* Gallery display */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="relative rounded-2xl overflow-hidden aspect-[16/10]">
-              <img src={beforeAfterGallery[activeBA].before} alt="Before" className="w-full h-full object-cover" />
-              <div className="absolute top-4 left-4 px-3 py-1.5 rounded-full bg-slate-700/80 backdrop-blur-sm text-white text-sm font-bold">Before</div>
-            </div>
-            <div className="relative rounded-2xl overflow-hidden aspect-[16/10]">
-              <img src={beforeAfterGallery[activeBA].after} alt="After" className="w-full h-full object-cover" />
-              <div className="absolute top-4 left-4 px-3 py-1.5 rounded-full backdrop-blur-sm text-white text-sm font-bold" style={{ background: `${GREEN}cc` }}>After</div>
-            </div>
           </div>
         </div>
       </SectionReveal>

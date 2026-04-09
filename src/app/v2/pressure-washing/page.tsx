@@ -420,13 +420,11 @@ const packages = [
 /* ───────────────────────── BEFORE/AFTER DATA ───────────────────────── */
 const galleryItems = [
   {
-    before: "https://images.unsplash.com/photo-1603796846097-bee99e4a601f?w=800&q=80",
-    after: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=800&q=80",
     label: "House Exterior",
   },
   {
-    before: "https://images.unsplash.com/photo-1600585152220-90363fe7e115?w=800&q=80",
-    after: "https://images.unsplash.com/photo-1574362848149-11496d93a7c7?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1574362848149-11496d93a7c7?w=800&q=80",
     label: "Driveway Clean",
   },
 ];
@@ -583,7 +581,7 @@ export default function V2PressureWashingPage() {
           <div className="text-center mb-12">
             <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ACCENT }}>Results Gallery</p>
             <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white mb-4">
-              <WordReveal text="See the Transformation" />
+              <WordReveal text="Our Recent Work" />
             </h2>
             <div className="flex justify-center gap-3 mt-6">
               {galleryItems.map((item, i) => (
@@ -593,8 +591,8 @@ export default function V2PressureWashingPage() {
               ))}
             </div>
           </div>
-          <div className="max-w-3xl mx-auto">
-            <BeforeAfterSlider beforeImg={galleryItems[activeGallery].before} afterImg={galleryItems[activeGallery].after} />
+          <div className="max-w-3xl mx-auto rounded-2xl overflow-hidden">
+            <img src={galleryItems[activeGallery].image} alt={galleryItems[activeGallery].label} className="w-full aspect-[16/10] object-cover" />
           </div>
           <div className="flex items-center justify-center gap-3 text-sm text-slate-400 mt-6">
             <CheckCircle size={18} weight="duotone" style={{ color: ACCENT }} />
