@@ -236,9 +236,9 @@ function ClaimBanner({ businessName, accentColor, prospectId }: { businessName: 
         <p className="text-xs text-zinc-400"><span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1.5 animate-pulse" />Custom-built preview for this business</p>
         {timeLeft && timeLeft !== "EXPIRED" && <p className="text-xs font-bold" style={{ color: accentColor }}>Preview expires in {timeLeft}</p>}
       </div>
-      <div className="px-6 py-4 flex items-center justify-between gap-4" style={{ background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}10)`, borderTop: `1px solid ${accentColor}30` }}>
-        <div className="flex-1 min-w-0"><p className="text-sm font-semibold text-white truncate">This website was built for {businessName}</p><p className="text-xs text-zinc-400">Claim it before we offer it to a competitor</p></div>
-        <a href={`/claim/${prospectId}`} className="shrink-0 h-11 px-6 rounded-full text-white text-sm font-bold flex items-center gap-2 hover:shadow-lg transition-all duration-300" style={{ background: accentColor }}>
+      <div className="px-4 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4" style={{ background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}10)`, borderTop: `1px solid ${accentColor}30` }}>
+        <div className="flex-1 min-w-0"><p className="text-sm font-semibold text-white truncate">This website was built for {businessName}</p><p className="text-xs text-zinc-400">Limited time — claim your free website today</p></div>
+        <a href={`/claim/${prospectId}`} className="shrink-0 min-h-[48px] px-5 sm:px-6 rounded-full text-white text-sm font-bold flex items-center gap-2 hover:shadow-lg transition-all duration-300 shadow-lg" style={{ background: accentColor }}>
           Claim Your Website <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4"><path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
         </a>
       </div>
@@ -249,6 +249,21 @@ function ClaimBanner({ businessName, accentColor, prospectId }: { businessName: 
 /* ═══════════════════════════════════════════════════════════════════
    MAIN PREVIEW COMPONENT
    ═══════════════════════════════════════════════════════════════════ */
+/* ───────────────────────── ANIMATED SECTION ───────────────────────── */
+function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return (
+    <motion.div
+      initial={ opacity: 0, scale: 0.92 }
+      whileInView={ opacity: 1, scale: 1 }
+      viewport={{ once: true, margin: "-80px" }}
+      transition={ duration: 0.5, ease: "easeOut" as const }
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
 export default function V2FitnessPreview({ data }: { data: GeneratedSiteData }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -273,6 +288,14 @@ export default function V2FitnessPreview({ data }: { data: GeneratedSiteData }) 
     { q: "Is there a free trial?", a: `Absolutely. ${data.businessName} offers a complimentary first visit so you can experience our facility, equipment, and community before committing.` },
     { q: "What are the membership options?", a: "We offer flexible membership plans including monthly, quarterly, and annual options. Contact us for current pricing and any special promotions." },
   ];
+
+  /* Fallback testimonials */
+  const fallbackTestimonials = [
+    { name: "Alex T.", text: "Lost 30 pounds in four months. The trainers here actually care about your progress.", rating: 5 },
+    { name: "Megan R.", text: "Best gym I've ever been to. Clean equipment, great classes, and an incredibly supportive community.", rating: 5 },
+    { name: "Jason K.", text: "The personal training program completely changed my life. I'm stronger and more confident than ever.", rating: 5 }
+  ];
+  const testimonials = data.testimonials?.length > 0 ? data.testimonials : fallbackTestimonials;
 
   return (
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: CHARCOAL, color: "#fff" }}>
@@ -389,7 +412,39 @@ export default function V2FitnessPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 4. PROGRAMS / SERVICES ══════════════════ */}
+      {/* ══════════════════ 4. ABOUT ══════════════════ */}
+      <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #080808 50%, #0a0a0a 100%)" }} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${RED}06` }} /></div>
+
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            <div className="relative">
+              <div className="rounded-2xl overflow-hidden border border-white/10"><img src={aboutImage} alt={`${data.businessName} gym`} className="w-full h-[400px] object-cover" /></div>
+              <div className="absolute -bottom-4 -right-4 md:bottom-6 md:-right-6">
+                <div className="px-5 py-3 rounded-xl backdrop-blur-md border text-white font-bold text-sm shadow-lg" style={{ background: `${RED}e6`, borderColor: `${RED}80` }}>
+                  {data.stats[0] ? `${data.stats[0].value} ${data.stats[0].label}` : "Results Driven"}
+                </div>
+              </div>
+            </div>
+            <div>
+              <span className="inline-block text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border" style={{ color: RED, borderColor: `${RED}33`, background: `${RED}0d` }}>About Us</span>
+              <h2 className="text-3xl md:text-5xl font-black tracking-tighter mb-6 text-white">Your Coaches, Your Edge</h2>
+              <p className="text-zinc-400 leading-relaxed mb-8">{data.about}</p>
+              <div className="grid grid-cols-2 gap-4">
+                {[{ icon: ShieldCheck, label: "Certified Trainers" }, { icon: Lightning, label: "Elite Equipment" }, { icon: Star, label: "Top Rated" }, { icon: Users, label: "Community Driven" }].map((badge) => (
+                  <GlassCard key={badge.label} className="p-4 flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: RED_GLOW }}><badge.icon size={20} weight="bold" style={{ color: RED }} /></div>
+                    <span className="text-sm font-semibold text-white">{badge.label}</span>
+                  </GlassCard>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ 5. PROGRAMS / SERVICES ══════════════════ */}
       <section id="programs" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #080808 50%, #0a0a0a 100%)" }} />
         <FitnessPattern accent={RED} />
@@ -422,44 +477,12 @@ export default function V2FitnessPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 5. ABOUT ══════════════════ */}
-      <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #080808 50%, #0a0a0a 100%)" }} />
-        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${RED}06` }} /></div>
-
-        <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-            <div className="relative">
-              <div className="rounded-2xl overflow-hidden border border-white/10"><img src={aboutImage} alt={`${data.businessName} gym`} className="w-full h-[400px] object-cover" /></div>
-              <div className="absolute -bottom-4 -right-4 md:bottom-6 md:-right-6">
-                <div className="px-5 py-3 rounded-xl backdrop-blur-md border text-white font-bold text-sm shadow-lg" style={{ background: `${RED}e6`, borderColor: `${RED}80` }}>
-                  {data.stats[0] ? `${data.stats[0].value} ${data.stats[0].label}` : "Results Driven"}
-                </div>
-              </div>
-            </div>
-            <div>
-              <span className="inline-block text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border" style={{ color: RED, borderColor: `${RED}33`, background: `${RED}0d` }}>About Us</span>
-              <h2 className="text-3xl md:text-5xl font-black tracking-tighter mb-6 text-white">Your Coaches, Your Edge</h2>
-              <p className="text-zinc-400 leading-relaxed mb-8">{data.about}</p>
-              <div className="grid grid-cols-2 gap-4">
-                {[{ icon: ShieldCheck, label: "Certified Trainers" }, { icon: Lightning, label: "Elite Equipment" }, { icon: Star, label: "Top Rated" }, { icon: Users, label: "Community Driven" }].map((badge) => (
-                  <GlassCard key={badge.label} className="p-4 flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: RED_GLOW }}><badge.icon size={20} weight="bold" style={{ color: RED }} /></div>
-                    <span className="text-sm font-semibold text-white">{badge.label}</span>
-                  </GlassCard>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* ══════════════════ 6. PROCESS ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #080808 50%, #0a0a0a 100%)" }} />
         <FitnessPattern opacity={0.025} accent={RED} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Get Started" title="Your Journey Begins Here" accent={RED} />
+          <AnimatedSection>          <SectionHeader badge="Get Started" title="Your Journey Begins Here" accent={RED} /></AnimatedSection>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {processSteps.map((step, i) => (
               <div key={step.step} className="relative">
@@ -480,7 +503,7 @@ export default function V2FitnessPreview({ data }: { data: GeneratedSiteData }) 
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #080808 50%, #0a0a0a 100%)" }} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] left-[20%] w-[500px] h-[500px] rounded-full blur-[200px]" style={{ background: `${RED}06` }} /></div>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Facility" title="Our Training Ground" accent={RED} />
+          <AnimatedSection>          <SectionHeader badge="Facility" title="Our Training Ground" accent={RED} /></AnimatedSection>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {galleryImages.map((src, i) => {
               const titles = ["Strength Training Floor", "HIIT Studio", "Cardio Zone", "Recovery Area"];
@@ -501,9 +524,9 @@ export default function V2FitnessPreview({ data }: { data: GeneratedSiteData }) 
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #080808 50%, #0a0a0a 100%)" }} />
         <FitnessPattern opacity={0.02} accent={RED} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Results" title="Member Success Stories" accent={RED} />
+          <AnimatedSection>          <SectionHeader badge="Results" title="Member Success Stories" accent={RED} /></AnimatedSection>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {data.testimonials.map((t, i) => (
+            {testimonials.map((t, i) => (
               <GlassCard key={i} className="p-6 h-full flex flex-col">
                 <div className="flex gap-0.5 mb-4">{Array.from({ length: t.rating || 5 }).map((_, j) => <Star key={j} size={16} weight="fill" style={{ color: RED }} />)}</div>
                 <p className="text-zinc-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p>
@@ -533,7 +556,7 @@ export default function V2FitnessPreview({ data }: { data: GeneratedSiteData }) 
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #080808 50%, #0a0a0a 100%)" }} />
         <FitnessPattern opacity={0.02} accent={RED} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Location" title="Find Us" accent={RED} />
+          <AnimatedSection>          <SectionHeader badge="Location" title="Find Us" accent={RED} /></AnimatedSection>
           <div className="text-center"><GlassCard className="p-8 inline-block"><div className="flex items-center gap-3 text-lg"><MapPin size={24} weight="duotone" style={{ color: RED }} /><MapLink address={data.address} className="text-white font-semibold" /></div><p className="text-zinc-400 text-sm mt-2">Free parking available</p></GlassCard></div>
         </div>
       </section>
@@ -543,17 +566,44 @@ export default function V2FitnessPreview({ data }: { data: GeneratedSiteData }) 
         <section className="relative z-10 py-24 md:py-32 overflow-hidden">
           <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #080808 50%, #0a0a0a 100%)" }} />
           <div className="max-w-3xl mx-auto px-6 relative z-10">
-            <SectionHeader badge="Hours" title="When We Are Open" accent={RED} />
+            <AnimatedSection>          <SectionHeader badge="Hours" title="When We Are Open" accent={RED} /></AnimatedSection>
             <div className="text-center"><ShimmerBorder accent={RED}><div className="p-8"><Clock size={32} weight="duotone" style={{ color: RED }} className="mx-auto mb-4" /><p className="text-zinc-300 leading-relaxed whitespace-pre-line text-lg">{data.hours}</p></div></ShimmerBorder></div>
           </div>
         </section>
       )}
 
+      
+      {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
+      <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15, ${ACCENT}08)` }} />
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
+          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: ACCENT }}>
+            Don&apos;t Miss Out
+          </p>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-3">
+            Ready to Get Started?
+          </h2>
+          <p className="text-slate-400 mb-6 text-sm sm:text-base">
+            Limited time — claim your free professional website today before it&apos;s offered to a competitor.
+          </p>
+          <a
+            href={`/claim/${data.id}`}
+            className="inline-flex items-center gap-2 min-h-[48px] px-8 py-3 rounded-full text-white font-bold text-base hover:shadow-lg transition-all duration-300"
+            style={{ background: ACCENT }}
+          >
+            Claim This Website
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
+              <path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </svg>
+          </a>
+        </div>
+      </section>
+
       {/* ══════════════════ 12. FAQ ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #080808 50%, #0a0a0a 100%)" }} />
         <div className="max-w-3xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="FAQ" title="Common Questions" accent={RED} />
+          <AnimatedSection>          <SectionHeader badge="FAQ" title="Common Questions" accent={RED} /></AnimatedSection>
           <div className="space-y-3">{faqs.map((faq, i) => <AccordionItem key={i} question={faq.q} answer={faq.a} isOpen={openFaq === i} onToggle={() => setOpenFaq(openFaq === i ? null : i)} />)}</div>
         </div>
       </section>

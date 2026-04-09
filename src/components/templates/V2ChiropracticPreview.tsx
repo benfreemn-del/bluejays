@@ -349,19 +349,19 @@ function ClaimBanner({ businessName, accentColor, prospectId }: {
         )}
       </div>
       <div
-        className="px-6 py-4 flex items-center justify-between gap-4"
+        className="px-4 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4"
         style={{ background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}10)`, borderTop: `1px solid ${accentColor}30` }}
       >
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold text-white truncate">This website was built for {businessName}</p>
-          <p className="text-xs text-slate-400">Claim it before we offer it to a competitor</p>
+          <p className="text-xs text-slate-400">Limited time — claim your free website today</p>
         </div>
         <a
           href={`/claim/${prospectId}`}
-          className="shrink-0 h-11 px-6 rounded-full text-white text-sm font-bold flex items-center gap-2 hover:shadow-lg transition-all duration-300"
+          className="shrink-0 min-h-[48px] px-5 sm:px-6 rounded-full text-white text-sm font-bold flex items-center gap-2 hover:shadow-lg transition-all duration-300 shadow-lg w-full sm:w-auto justify-center"
           style={{ background: accentColor }}
         >
-          Claim Your Website
+          Claim This Website
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4"><path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
         </a>
       </div>
@@ -372,6 +372,21 @@ function ClaimBanner({ businessName, accentColor, prospectId }: {
 /* ═══════════════════════════════════════════════════════════════════
    MAIN PREVIEW COMPONENT
    ═══════════════════════════════════════════════════════════════════ */
+/* ───────────────────────── ANIMATED SECTION ───────────────────────── */
+function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return (
+    <motion.div
+      initial={ opacity: 0, x: 50 }
+      whileInView={ opacity: 1, x: 0 }
+      viewport={{ once: true, margin: "-80px" }}
+      transition={ duration: 0.7, ease: "easeOut" as const }
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
 export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteData }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -395,6 +410,14 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
     { q: "Do I need a referral to visit?", a: `No referral is needed. You can call ${data.businessName} directly to schedule your first appointment. We accept most major insurance plans.` },
     { q: "How many visits will I need?", a: `Every patient is unique. After your initial exam, we'll create a personalized care plan. Some patients feel relief after the first visit, while others benefit from ongoing wellness care.` },
   ];
+
+  /* Fallback testimonials */
+  const fallbackTestimonials = [
+    { name: "Kevin M.", text: "After years of back pain, I finally found relief. Dr. is incredibly skilled and genuinely cares.", rating: 5 },
+    { name: "Lisa A.", text: "I was nervous about my first adjustment but they made me feel completely comfortable. Pain-free now!", rating: 5 },
+    { name: "Brian T.", text: "Three months of treatment and my chronic neck pain is gone. Life-changing experience.", rating: 5 }
+  ];
+  const testimonials = data.testimonials?.length > 0 ? data.testimonials : fallbackTestimonials;
 
   return (
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: CHARCOAL, color: "#f1f5f9" }}>
@@ -558,12 +581,14 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
         </div>
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <AnimatedSection>
           <SectionHeader
             badge="Our Services"
             title="Comprehensive Chiropractic Care"
             subtitle={`${data.businessName} offers personalized treatments to relieve pain, restore mobility, and enhance your overall wellness.`}
             accent={PRIMARY}
           />
+          </AnimatedSection>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {data.services.map((service, i) => {
@@ -652,7 +677,7 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
         </div>
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Your Journey" title="How We Help You Heal" accent={PRIMARY} />
+          <AnimatedSection>          <SectionHeader badge="Your Journey" title="How We Help You Heal" accent={PRIMARY} /></AnimatedSection>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {processSteps.map((step, i) => (
@@ -682,7 +707,7 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
         </div>
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Our Practice" title="Inside Our Clinic" accent={PRIMARY} />
+          <AnimatedSection>          <SectionHeader badge="Our Practice" title="Inside Our Clinic" accent={PRIMARY} /></AnimatedSection>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {galleryImages.map((src, i) => {
@@ -712,10 +737,10 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
         </div>
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Testimonials" title="Patient Success Stories" accent={PRIMARY} />
+          <AnimatedSection>          <SectionHeader badge="Testimonials" title="Patient Success Stories" accent={PRIMARY} /></AnimatedSection>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {data.testimonials.map((t, i) => (
+            {testimonials.map((t, i) => (
               <GlassCard key={i} className="p-6 h-full flex flex-col">
                 <div className="flex gap-0.5 mb-4">
                   {Array.from({ length: t.rating || 5 }).map((_, j) => (
@@ -765,7 +790,7 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
         </div>
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Coverage Area" title="Areas We Serve" accent={PRIMARY} />
+          <AnimatedSection>          <SectionHeader badge="Coverage Area" title="Areas We Serve" accent={PRIMARY} /></AnimatedSection>
           <div className="text-center">
             <GlassCard className="p-8 inline-block">
               <div className="flex items-center gap-3 text-lg">
@@ -788,7 +813,7 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
           </div>
 
           <div className="max-w-3xl mx-auto px-6 relative z-10">
-            <SectionHeader badge="Office Hours" title="When We&apos;re Open" accent={PRIMARY} />
+            <AnimatedSection>          <SectionHeader badge="Office Hours" title="When We&apos;re Open" accent={PRIMARY} /></AnimatedSection>
             <div className="text-center">
               <ShimmerBorder accent={PRIMARY}>
                 <div className="p-8">
@@ -802,6 +827,33 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
         </section>
       )}
 
+      
+      {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
+      <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15, ${ACCENT}08)` }} />
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
+          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: ACCENT }}>
+            Don&apos;t Miss Out
+          </p>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-3">
+            Ready to Get Started?
+          </h2>
+          <p className="text-slate-400 mb-6 text-sm sm:text-base">
+            Limited time — claim your free professional website today before it&apos;s offered to a competitor.
+          </p>
+          <a
+            href={`/claim/${data.id}`}
+            className="inline-flex items-center gap-2 min-h-[48px] px-8 py-3 rounded-full text-white font-bold text-base hover:shadow-lg transition-all duration-300"
+            style={{ background: ACCENT }}
+          >
+            Claim This Website
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
+              <path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </svg>
+          </a>
+        </div>
+      </section>
+
       {/* ══════════════════ 12. FAQ ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #121514 50%, #1a1a1a 100%)" }} />
@@ -811,7 +863,7 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
         </div>
 
         <div className="max-w-3xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="FAQ" title="Common Questions" accent={PRIMARY} />
+          <AnimatedSection>          <SectionHeader badge="FAQ" title="Common Questions" accent={PRIMARY} /></AnimatedSection>
           <div className="space-y-3">
             {faqs.map((faq, i) => (
               <AccordionItem key={i} question={faq.q} answer={faq.a} isOpen={openFaq === i} onToggle={() => setOpenFaq(openFaq === i ? null : i)} />

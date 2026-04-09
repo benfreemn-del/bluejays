@@ -248,10 +248,10 @@ function ClaimBanner({ businessName, accentColor, prospectId }: { businessName: 
         <p className="text-xs text-[#6b7280]"><span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1.5 animate-pulse" />Custom-built preview for this business</p>
         {timeLeft && timeLeft !== "EXPIRED" && <p className="text-xs font-bold" style={{ color: accentColor }}>Preview expires in {timeLeft}</p>}
       </div>
-      <div className="px-6 py-4 flex items-center justify-between gap-4" style={{ background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}10)`, borderTop: `1px solid ${accentColor}30` }}>
+      <div className="px-4 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4" style={{ background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}10)`, borderTop: `1px solid ${accentColor}30` }}>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold text-[#1c1917] truncate">This website was built for {businessName}</p>
-          <p className="text-xs text-[#6b7280]">Claim it before we offer it to a competitor</p>
+          <p className="text-xs text-[#6b7280]">Limited time — claim your free website today</p>
         </div>
         <a href={`/claim/${prospectId}`} className="shrink-0 h-11 px-6 rounded-full text-[#1c1917] text-sm font-bold flex items-center gap-2 hover:shadow-lg transition-all duration-300" style={{ background: accentColor }}>
           Claim Your Website <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4"><path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
@@ -264,6 +264,21 @@ function ClaimBanner({ businessName, accentColor, prospectId }: { businessName: 
 /* ═══════════════════════════════════════════════════════════════════
    MAIN COMPONENT
    ═══════════════════════════════════════════════════════════════════ */
+/* ───────────────────────── ANIMATED SECTION ───────────────────────── */
+function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return (
+    <motion.div
+      initial={ opacity: 0, scale: 0.92 }
+      whileInView={ opacity: 1, scale: 1 }
+      viewport={{ once: true, margin: "-80px" }}
+      transition={ duration: 0.5, ease: "easeOut" as const }
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
 export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -286,6 +301,14 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
     { q: "Are your staff background checked?", a: `Every team member at ${data.businessName} undergoes thorough background checks, CPR certification, and ongoing professional development.` },
     { q: "What is your staff-to-child ratio?", a: "We maintain ratios that exceed state requirements to ensure every child gets individual attention and care." },
   ];
+
+  /* Fallback testimonials */
+  const fallbackTestimonials = [
+    { name: "Jessica M.", text: "My daughter runs to the door every morning excited to go. The teachers are wonderful and caring.", rating: 5 },
+    { name: "Ryan K.", text: "Clean, safe, and educational. Our son has learned so much since starting here.", rating: 5 },
+    { name: "Michelle T.", text: "The daily updates and photos give us such peace of mind. Best daycare decision we've made.", rating: 5 }
+  ];
+  const testimonials = data.testimonials?.length > 0 ? data.testimonials : fallbackTestimonials;
 
   return (
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: CHARCOAL, color: "#1c1917" }}>
@@ -398,43 +421,7 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 4. SERVICES ══════════════════ */}
-      <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9ff 0%, #f5f0ff 50%, #faf9ff 100%)" }} />
-        <SparklePattern accent={ACCENT} />
-        <WaterDropBackground opacity={0.025} accent={ACCENT} />
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-[10%] right-[5%] w-[500px] h-[500px] rounded-full blur-[160px]" style={{ background: `${ACCENT}08` }} />
-          <div className="absolute bottom-[10%] left-[5%] w-[400px] h-[400px] rounded-full blur-[140px]" style={{ background: `${YELLOW}05` }} />
-        </div>
-        <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Our Services" title="Programs for Every Age" subtitle={`From infant care to pre-K and after school programs, ${data.businessName} nurtures your child's growth in a safe, loving environment.`} accent={ACCENT} />
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {data.services.map((service, i) => {
-              const Icon = getServiceIcon(service.name);
-              return (
-                <div key={service.name} className="group relative p-7 rounded-2xl border border-gray-200/60 hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/60">
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${ACCENT}15, transparent 70%)` }} />
-                  <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${ACCENT}4d, transparent)` }} />
-                  <div className="relative z-10">
-                    <div className="flex items-start justify-between mb-5">
-                      <div className="w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 border" style={{ background: ACCENT_GLOW, borderColor: `${ACCENT}33` }}>
-                        <Icon size={24} weight="duotone" style={{ color: ACCENT }} />
-                      </div>
-                      <span className="text-xs font-mono text-[#6b7280]">{String(i + 1).padStart(2, "0")}</span>
-                    </div>
-                    <h3 className="text-lg font-bold text-[#1c1917] mb-2">{service.name}</h3>
-                    <p className="text-sm text-[#6b7280] leading-relaxed">{service.description || ""}</p>
-                    {service.price && <p className="text-sm font-semibold mt-3" style={{ color: ACCENT }}>{service.price}</p>}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════════════ 5. WHY CHOOSE US / ABOUT ══════════════════ */}
+      {/* ══════════════════ 4. WHY CHOOSE US / ABOUT ══════════════════ */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9ff 0%, #f0ecff 50%, #faf9ff 100%)" }} />
         <WaterDropBackground opacity={0.02} accent={ACCENT} />
@@ -470,13 +457,49 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
+      {/* ══════════════════ 5. SERVICES ══════════════════ */}
+      <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9ff 0%, #f5f0ff 50%, #faf9ff 100%)" }} />
+        <SparklePattern accent={ACCENT} />
+        <WaterDropBackground opacity={0.025} accent={ACCENT} />
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-[10%] right-[5%] w-[500px] h-[500px] rounded-full blur-[160px]" style={{ background: `${ACCENT}08` }} />
+          <div className="absolute bottom-[10%] left-[5%] w-[400px] h-[400px] rounded-full blur-[140px]" style={{ background: `${YELLOW}05` }} />
+        </div>
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Our Services" title="Programs for Every Age" subtitle={`From infant care to pre-K and after school programs, ${data.businessName} nurtures your child's growth in a safe, loving environment.`} accent={ACCENT} />
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {data.services.map((service, i) => {
+              const Icon = getServiceIcon(service.name);
+              return (
+                <div key={service.name} className="group relative p-7 rounded-2xl border border-gray-200/60 hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/60">
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${ACCENT}15, transparent 70%)` }} />
+                  <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${ACCENT}4d, transparent)` }} />
+                  <div className="relative z-10">
+                    <div className="flex items-start justify-between mb-5">
+                      <div className="w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 border" style={{ background: ACCENT_GLOW, borderColor: `${ACCENT}33` }}>
+                        <Icon size={24} weight="duotone" style={{ color: ACCENT }} />
+                      </div>
+                      <span className="text-xs font-mono text-[#6b7280]">{String(i + 1).padStart(2, "0")}</span>
+                    </div>
+                    <h3 className="text-lg font-bold text-[#1c1917] mb-2">{service.name}</h3>
+                    <p className="text-sm text-[#6b7280] leading-relaxed">{service.description || ""}</p>
+                    {service.price && <p className="text-sm font-semibold mt-3" style={{ color: ACCENT }}>{service.price}</p>}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
       {/* ══════════════════ 6. PROCESS ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9ff 0%, #f5f0ff 50%, #faf9ff 100%)" }} />
         <SparklePattern opacity={0.025} accent={ACCENT} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${YELLOW}06` }} /></div>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Our Process" title="How We Work" accent={ACCENT} />
+          <AnimatedSection>          <SectionHeader badge="Our Process" title="How We Work" accent={ACCENT} /></AnimatedSection>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {processSteps.map((step, i) => (
               <div key={step.step} className="relative">
@@ -500,7 +523,7 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
         <WaterDropBackground opacity={0.02} accent={ACCENT} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] left-[20%] w-[500px] h-[500px] rounded-full blur-[200px]" style={{ background: `${ACCENT}06` }} /></div>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Our Work" title="Our Facilities" accent={ACCENT} />
+          <AnimatedSection>          <SectionHeader badge="Our Work" title="Our Facilities" accent={ACCENT} /></AnimatedSection>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {projectImages.map((src, i) => {
               const titles = ["Creative Arts Room", "Outdoor Play Area", "Learning Center", "Nap & Rest Area"];
@@ -526,9 +549,9 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
         <SparklePattern opacity={0.02} accent={ACCENT} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] right-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${ACCENT}06` }} /></div>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Testimonials" title="What Our Clients Say" accent={ACCENT} />
+          <AnimatedSection>          <SectionHeader badge="Testimonials" title="What Our Clients Say" accent={ACCENT} /></AnimatedSection>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {data.testimonials.map((t, i) => (
+            {testimonials.map((t, i) => (
               <GlassCard key={i} className="p-6 h-full flex flex-col">
                 <div className="flex gap-0.5 mb-4">{Array.from({ length: t.rating || 5 }).map((_, j) => <Star key={j} size={16} weight="fill" style={{ color: ACCENT }} />)}</div>
                 <p className="text-[#4b5563] leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p>
@@ -562,7 +585,7 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
         <SparklePattern opacity={0.02} accent={ACCENT} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[40%] right-[20%] w-[400px] h-[400px] rounded-full blur-[180px]" style={{ background: `${YELLOW}06` }} /></div>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Programs" title="Age-Appropriate Programs" accent={ACCENT} />
+          <AnimatedSection>          <SectionHeader badge="Programs" title="Age-Appropriate Programs" accent={ACCENT} /></AnimatedSection>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {["Infant Care", "Toddler Program", "Preschool", "Pre-K", "After School", "Summer Camp", "Enrichment", "Drop-In Care"].map((item) => (
               <GlassCard key={item} className="p-4 flex items-center gap-3">
@@ -580,7 +603,7 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
         <SparklePattern opacity={0.02} accent={ACCENT} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[40%] right-[20%] w-[400px] h-[400px] rounded-full blur-[180px]" style={{ background: `${ACCENT}06` }} /></div>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Coverage Area" title="Areas We Serve" accent={ACCENT} />
+          <AnimatedSection>          <SectionHeader badge="Coverage Area" title="Areas We Serve" accent={ACCENT} /></AnimatedSection>
           <div className="text-center">
             <GlassCard className="p-8 inline-block">
               <div className="flex items-center gap-3 text-lg"><MapPin size={24} weight="duotone" style={{ color: ACCENT }} /><MapLink address={data.address} className="text-[#1c1917] font-semibold" /></div>
@@ -597,7 +620,7 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
           <WaterDropBackground opacity={0.02} accent={ACCENT} />
           <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${ACCENT}06` }} /></div>
           <div className="max-w-3xl mx-auto px-6 relative z-10">
-            <SectionHeader badge="Business Hours" title="When We're Available" accent={ACCENT} />
+            <AnimatedSection>          <SectionHeader badge="Business Hours" title="When We're Available" accent={ACCENT} /></AnimatedSection>
             <div className="text-center">
               <ShimmerBorder accent={ACCENT}>
                 <div className="p-8">
@@ -610,13 +633,40 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
         </section>
       )}
 
+      
+      {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
+      <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15, ${ACCENT}08)` }} />
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
+          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: ACCENT }}>
+            Don&apos;t Miss Out
+          </p>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-3">
+            Ready to Get Started?
+          </h2>
+          <p className="text-slate-400 mb-6 text-sm sm:text-base">
+            Limited time — claim your free professional website today before it&apos;s offered to a competitor.
+          </p>
+          <a
+            href={`/claim/${data.id}`}
+            className="inline-flex items-center gap-2 min-h-[48px] px-8 py-3 rounded-full text-white font-bold text-base hover:shadow-lg transition-all duration-300"
+            style={{ background: ACCENT }}
+          >
+            Claim This Website
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
+              <path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </svg>
+          </a>
+        </div>
+      </section>
+
       {/* ══════════════════ 13. FAQ ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9ff 0%, #f5f0ff 50%, #faf9ff 100%)" }} />
         <WaterDropBackground opacity={0.02} accent={ACCENT} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${ACCENT}06` }} /></div>
         <div className="max-w-3xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="FAQ" title="Common Questions" accent={ACCENT} />
+          <AnimatedSection>          <SectionHeader badge="FAQ" title="Common Questions" accent={ACCENT} /></AnimatedSection>
           <div className="space-y-3">
             {faqs.map((faq, i) => (
               <AccordionItem key={i} question={faq.q} answer={faq.a} isOpen={openFaq === i} onToggle={() => setOpenFaq(openFaq === i ? null : i)} />

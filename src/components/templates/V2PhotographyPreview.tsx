@@ -299,10 +299,10 @@ function ClaimBanner({ businessName, accentColor, prospectId }: { businessName: 
         <p className="text-xs text-[#6b7280]"><span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1.5 animate-pulse" />Custom-built preview for this business</p>
         {timeLeft && timeLeft !== "EXPIRED" && <p className="text-xs font-bold" style={{ color: accentColor }}>Preview expires in {timeLeft}</p>}
       </div>
-      <div className="px-6 py-4 flex items-center justify-between gap-4" style={{ background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}10)`, borderTop: `1px solid ${accentColor}30` }}>
+      <div className="px-4 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4" style={{ background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}10)`, borderTop: `1px solid ${accentColor}30` }}>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold text-[#1c1917] truncate">This website was built for {businessName}</p>
-          <p className="text-xs text-[#6b7280]">Claim it before we offer it to a competitor</p>
+          <p className="text-xs text-[#6b7280]">Limited time — claim your free website today</p>
         </div>
         <a href={`/claim/${prospectId}`} className="shrink-0 h-11 px-6 rounded-full text-black text-sm font-bold flex items-center gap-2 hover:shadow-lg transition-all duration-300" style={{ background: accentColor }}>
           Claim Your Website
@@ -316,6 +316,21 @@ function ClaimBanner({ businessName, accentColor, prospectId }: { businessName: 
 /* ═══════════════════════════════════════════════════════════════════
    MAIN PREVIEW COMPONENT — GALLERY-HEAVY PHOTOGRAPHY
    ═══════════════════════════════════════════════════════════════════ */
+/* ───────────────────────── ANIMATED SECTION ───────────────────────── */
+function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return (
+    <motion.div
+      initial={ opacity: 0, x: 50 }
+      whileInView={ opacity: 1, x: 0 }
+      viewport={{ once: true, margin: "-80px" }}
+      transition={ duration: 0.7, ease: "easeOut" as const }
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
 export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -332,6 +347,14 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
     { q: "Do you provide edited photos?", a: "Absolutely. Every package includes professional editing and retouching. We deliver a curated gallery of high-resolution images within 2-3 weeks." },
     { q: "Can I request a specific style or location?", a: `Yes! We love collaborating with clients on creative direction. Whether you have a mood board or a dream location, ${data.businessName} will bring your vision to life.` },
   ];
+
+  /* Fallback testimonials */
+  const fallbackTestimonials = [
+    { name: "Natalie S.", text: "Our wedding photos are absolutely breathtaking. Every moment was captured perfectly.", rating: 5 },
+    { name: "Derek J.", text: "The family portraits turned out better than we could have imagined. A true artist behind the lens.", rating: 5 },
+    { name: "Alicia W.", text: "Professional, creative, and made us feel so comfortable during the shoot. Stunning results.", rating: 5 }
+  ];
+  const testimonials = data.testimonials?.length > 0 ? data.testimonials : fallbackTestimonials;
 
   return (
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: CHARCOAL, color: "#1c1917" }}>
@@ -477,7 +500,35 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 5. SERVICES ══════════════════ */}
+      {/* ══════════════════ 5. TESTIMONIALS ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #141210 50%, #faf9f7 100%)" }} />
+        <AperturePattern opacity={0.02} accent={PRIMARY} />
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-[20%] right-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${PRIMARY}06` }} />
+        </div>
+
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <AnimatedSection>          <SectionHeader badge="Testimonials" title="Client Love" accent={PRIMARY} /></AnimatedSection>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {testimonials.map((t, i) => (
+              <GlassCard key={i} className="p-6 h-full flex flex-col">
+                <div className="flex gap-0.5 mb-4">
+                  {Array.from({ length: t.rating || 5 }).map((_, j) => (
+                    <Star key={j} size={16} weight="fill" style={{ color: PRIMARY }} />
+                  ))}
+                </div>
+                <p className="text-[#4b5563] leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p>
+                <div className="pt-4 border-t border-gray-100 flex items-center justify-between">
+                  <span className="text-sm font-semibold text-[#1c1917]">{t.name}</span>
+                </div>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ 6. SERVICES ══════════════════ */}
       <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #141210 50%, #faf9f7 100%)" }} />
         <FilmStripBG opacity={0.025} accent={PRIMARY} />
@@ -513,7 +564,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 6. ABOUT ══════════════════ */}
+      {/* ══════════════════ 7. ABOUT ══════════════════ */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #0f0e0c 50%, #faf9f7 100%)" }} />
         <FilmStripBG opacity={0.02} accent={PRIMARY} />
@@ -557,7 +608,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 7. FEATURED GALLERY ROW ══════════════════ */}
+      {/* ══════════════════ 8. FEATURED GALLERY ROW ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #12100e 50%, #faf9f7 100%)" }} />
         <AperturePattern opacity={0.02} accent={PRIMARY} />
@@ -566,7 +617,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
         </div>
 
         <div className="max-w-7xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Featured" title="Recent Sessions" accent={PRIMARY} />
+          <AnimatedSection>          <SectionHeader badge="Featured" title="Recent Sessions" accent={PRIMARY} /></AnimatedSection>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {galleryImages.slice(0, 4).map((src, i) => (
               <div key={i} className="group relative aspect-square rounded-2xl overflow-hidden border border-gray-200/60 hover:border-opacity-30 transition-all duration-500">
@@ -575,34 +626,6 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
                   <Aperture size={32} weight="duotone" style={{ color: PRIMARY }} />
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════════════ 8. TESTIMONIALS ══════════════════ */}
-      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #141210 50%, #faf9f7 100%)" }} />
-        <AperturePattern opacity={0.02} accent={PRIMARY} />
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-[20%] right-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${PRIMARY}06` }} />
-        </div>
-
-        <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Testimonials" title="Client Love" accent={PRIMARY} />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {data.testimonials.map((t, i) => (
-              <GlassCard key={i} className="p-6 h-full flex flex-col">
-                <div className="flex gap-0.5 mb-4">
-                  {Array.from({ length: t.rating || 5 }).map((_, j) => (
-                    <Star key={j} size={16} weight="fill" style={{ color: PRIMARY }} />
-                  ))}
-                </div>
-                <p className="text-[#4b5563] leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p>
-                <div className="pt-4 border-t border-gray-100 flex items-center justify-between">
-                  <span className="text-sm font-semibold text-[#1c1917]">{t.name}</span>
-                </div>
-              </GlassCard>
             ))}
           </div>
         </div>
@@ -635,7 +658,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
         </div>
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Location" title="Areas We Serve" accent={PRIMARY} />
+          <AnimatedSection>          <SectionHeader badge="Location" title="Areas We Serve" accent={PRIMARY} /></AnimatedSection>
           <div className="text-center">
             <GlassCard className="p-8 inline-block">
               <div className="flex items-center gap-3 text-lg">
@@ -657,7 +680,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
             <div className="absolute top-[20%] left-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${PRIMARY}06` }} />
           </div>
           <div className="max-w-3xl mx-auto px-6 relative z-10">
-            <SectionHeader badge="Availability" title="Studio Hours" accent={PRIMARY} />
+            <AnimatedSection>          <SectionHeader badge="Availability" title="Studio Hours" accent={PRIMARY} /></AnimatedSection>
             <div className="text-center">
               <ShimmerBorder accent={PRIMARY}>
                 <div className="p-8">
@@ -671,6 +694,33 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
         </section>
       )}
 
+      
+      {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
+      <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15, ${ACCENT}08)` }} />
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
+          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: ACCENT }}>
+            Don&apos;t Miss Out
+          </p>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-3">
+            Ready to Get Started?
+          </h2>
+          <p className="text-slate-400 mb-6 text-sm sm:text-base">
+            Limited time — claim your free professional website today before it&apos;s offered to a competitor.
+          </p>
+          <a
+            href={`/claim/${data.id}`}
+            className="inline-flex items-center gap-2 min-h-[48px] px-8 py-3 rounded-full text-white font-bold text-base hover:shadow-lg transition-all duration-300"
+            style={{ background: ACCENT }}
+          >
+            Claim This Website
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
+              <path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </svg>
+          </a>
+        </div>
+      </section>
+
       {/* ══════════════════ 12. FAQ ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #141210 50%, #faf9f7 100%)" }} />
@@ -679,7 +729,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
           <div className="absolute top-[20%] left-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${PRIMARY}06` }} />
         </div>
         <div className="max-w-3xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="FAQ" title="Common Questions" accent={PRIMARY} />
+          <AnimatedSection>          <SectionHeader badge="FAQ" title="Common Questions" accent={PRIMARY} /></AnimatedSection>
           <div className="space-y-3">
             {faqs.map((faq, i) => (
               <AccordionItem key={i} question={faq.q} answer={faq.a} isOpen={openFaq === i} onToggle={() => setOpenFaq(openFaq === i ? null : i)} />

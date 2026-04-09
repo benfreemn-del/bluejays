@@ -90,7 +90,22 @@ function SectionHeader({ badge, title, subtitle, accent }: { badge: string; titl
 function ClaimBanner({ businessName, accentColor, prospectId }: { businessName: string; accentColor: string; prospectId: string }) {
   const [timeLeft, setTimeLeft] = useState("");
   useEffect(() => { const expiry = new Date(); expiry.setDate(expiry.getDate() + 7); const tick = () => { const diff = expiry.getTime() - Date.now(); if (diff <= 0) { setTimeLeft("EXPIRED"); return; } const d = Math.floor(diff / 86400000); const h = Math.floor((diff % 86400000) / 3600000); const m = Math.floor((diff % 3600000) / 60000); setTimeLeft(`${d}d ${h}h ${m}m`); }; tick(); const interval = setInterval(tick, 60000); return () => clearInterval(interval); }, []);
-  return (<div className="fixed bottom-0 left-0 right-0 z-50"><div className="bg-[#1a1a1a]/90 backdrop-blur-sm border-t border-white/10 px-4 py-2 flex items-center justify-center gap-4"><p className="text-xs text-slate-400"><span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1.5 animate-pulse" />Custom-built preview for this business</p>{timeLeft && timeLeft !== "EXPIRED" && <p className="text-xs font-bold" style={{ color: accentColor }}>Preview expires in {timeLeft}</p>}</div><div className="px-6 py-4 flex items-center justify-between gap-4" style={{ background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}10)`, borderTop: `1px solid ${accentColor}30` }}><div className="flex-1 min-w-0"><p className="text-sm font-semibold text-white truncate">This website was built for {businessName}</p><p className="text-xs text-slate-400">Claim it before we offer it to a competitor</p></div><a href={`/claim/${prospectId}`} className="shrink-0 h-11 px-6 rounded-full text-white text-sm font-bold flex items-center gap-2 hover:shadow-lg transition-all duration-300" style={{ background: accentColor }}>Claim Your Website <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4"><path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg></a></div></div>);
+  return (<div className="fixed bottom-0 left-0 right-0 z-50"><div className="bg-[#1a1a1a]/90 backdrop-blur-sm border-t border-white/10 px-4 py-2 flex items-center justify-center gap-4"><p className="text-xs text-slate-400"><span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1.5 animate-pulse" />Custom-built preview for this business</p>{timeLeft && timeLeft !== "EXPIRED" && <p className="text-xs font-bold" style={{ color: accentColor }}>Preview expires in {timeLeft}</p>}</div><div className="px-4 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4" style={{ background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}10)`, borderTop: `1px solid ${accentColor}30` }}><div className="flex-1 min-w-0"><p className="text-sm font-semibold text-white truncate">This website was built for {businessName}</p><p className="text-xs text-slate-400">Limited time — claim your free website today</p></div><a href={`/claim/${prospectId}`} className="shrink-0 min-h-[48px] px-5 sm:px-6 rounded-full text-white text-sm font-bold flex items-center gap-2 hover:shadow-lg transition-all duration-300 shadow-lg w-full sm:w-auto justify-center" style={{ background: accentColor }}>Claim This Website <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4"><path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg></a></div></div>);
+}
+
+/* ───────────────────────── ANIMATED SECTION ───────────────────────── */
+function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return (
+    <motion.div
+      initial={ opacity: 0, x: -50 }
+      whileInView={ opacity: 1, x: 0 }
+      viewport={{ once: true, margin: "-80px" }}
+      transition={ duration: 0.7, ease: "easeOut" as const }
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
 }
 
 export default function V2FencingPreview({ data }: { data: GeneratedSiteData }) {
@@ -115,6 +130,14 @@ export default function V2FencingPreview({ data }: { data: GeneratedSiteData }) 
     { q: "How long does fence installation take?", a: "Most residential fencing projects take 1-3 days depending on the property size and fence type. We provide an estimated timeline with every quote." },
     { q: "Do you offer fence repair services?", a: `Yes! ${data.businessName} handles all types of fence repairs including post replacement, panel repair, gate adjustments, and storm damage restoration.` },
   ];
+
+  /* Fallback testimonials */
+  const fallbackTestimonials = [
+    { name: "Greg P.", text: "Beautiful cedar fence installed in just two days. The crew was professional and cleaned up perfectly.", rating: 5 },
+    { name: "Diana L.", text: "Got quotes from five companies. Best price AND best quality. Our neighbors are jealous.", rating: 5 },
+    { name: "Paul M.", text: "They replaced our old chain link with a gorgeous privacy fence. Transformed our backyard.", rating: 5 }
+  ];
+  const testimonials = data.testimonials?.length > 0 ? data.testimonials : fallbackTestimonials;
 
   return (
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: CHARCOAL, color: "#f1f5f9" }}>
@@ -186,7 +209,7 @@ export default function V2FencingPreview({ data }: { data: GeneratedSiteData }) 
         <WallPostBackground opacity={0.02} accent={ACCENT} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] left-[20%] w-[500px] h-[500px] rounded-full blur-[200px]" style={{ background: `${ACCENT}06` }} /></div>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Our Work" title="Recent Installations" accent={ACCENT} />
+          <AnimatedSection>          <SectionHeader badge="Our Work" title="Recent Installations" accent={ACCENT} /></AnimatedSection>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">{galleryImages.map((src, i) => { const titles = ["Cedar Privacy Wall", "Vinyl Fencing", "Chain Link Installation", "Custom Gate Work"]; return (<div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.06] hover:border-opacity-30 transition-all duration-500"><img src={src} alt={titles[i] || `Project ${i + 1}`} className="w-full h-64 object-cover transition-transform duration-700 group-hover:scale-105" /><div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" /><div className="absolute bottom-0 left-0 right-0 p-6"><h3 className="text-lg font-bold text-white mb-1">{titles[i] || `Project ${i + 1}`}</h3></div></div>); })}</div>
         </div>
       </section>
@@ -194,7 +217,7 @@ export default function V2FencingPreview({ data }: { data: GeneratedSiteData }) 
       {/* 8. TESTIMONIALS */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #141210 50%, #1a1a1a 100%)" }} /><WoodGrainPattern opacity={0.02} accent={ACCENT} /><div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] right-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${ACCENT}06` }} /></div>
-        <div className="max-w-6xl mx-auto px-6 relative z-10"><SectionHeader badge="Reviews" title="What Our Clients Say" accent={ACCENT} /><div className="grid grid-cols-1 md:grid-cols-3 gap-6">{data.testimonials.map((t, i) => (<GlassCard key={i} className="p-6 h-full flex flex-col"><div className="flex gap-0.5 mb-4">{Array.from({ length: t.rating || 5 }).map((_, j) => <Star key={j} size={16} weight="fill" style={{ color: ACCENT }} />)}</div><p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p><div className="pt-4 border-t border-white/5"><span className="text-sm font-semibold text-white">{t.name}</span></div></GlassCard>))}</div></div>
+        <div className="max-w-6xl mx-auto px-6 relative z-10"><SectionHeader badge="Reviews" title="What Our Clients Say" accent={ACCENT} /><div className="grid grid-cols-1 md:grid-cols-3 gap-6">{testimonials.map((t, i) => (<GlassCard key={i} className="p-6 h-full flex flex-col"><div className="flex gap-0.5 mb-4">{Array.from({ length: t.rating || 5 }).map((_, j) => <Star key={j} size={16} weight="fill" style={{ color: ACCENT }} />)}</div><p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p><div className="pt-4 border-t border-white/5"><span className="text-sm font-semibold text-white">{t.name}</span></div></GlassCard>))}</div></div>
       </section>
 
       {/* 9. CTA */}

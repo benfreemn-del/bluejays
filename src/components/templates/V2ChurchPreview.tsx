@@ -326,12 +326,12 @@ function ClaimBanner({ businessName, accentColor, prospectId }: {
           <p className="text-xs font-bold" style={{ color: accentColor }}>Preview expires in {timeLeft}</p>
         )}
       </div>
-      <div className="px-6 py-4 flex items-center justify-between gap-4" style={{ background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}10)`, borderTop: `1px solid ${accentColor}30` }}>
+      <div className="px-4 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4" style={{ background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}10)`, borderTop: `1px solid ${accentColor}30` }}>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold text-white truncate">This website was built for {businessName}</p>
           <p className="text-xs text-slate-400">Claim it before we offer it to another church</p>
         </div>
-        <a href={`/claim/${prospectId}`} className="shrink-0 h-11 px-6 rounded-full text-white text-sm font-bold flex items-center gap-2 hover:shadow-lg transition-all duration-300" style={{ background: accentColor }}>
+        <a href={`/claim/${prospectId}`} className="shrink-0 min-h-[48px] px-5 sm:px-6 rounded-full text-white text-sm font-bold flex items-center gap-2 hover:shadow-lg transition-all duration-300 shadow-lg" style={{ background: accentColor }}>
           Claim Your Website
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4"><path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
         </a>
@@ -343,6 +343,21 @@ function ClaimBanner({ businessName, accentColor, prospectId }: {
 /* ═══════════════════════════════════════════════════════════════════
    MAIN PREVIEW COMPONENT
    ═══════════════════════════════════════════════════════════════════ */
+/* ───────────────────────── ANIMATED SECTION ───────────────────────── */
+function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return (
+    <motion.div
+      initial={ opacity: 0, y: 40 }
+      whileInView={ opacity: 1, y: 0 }
+      viewport={{ once: true, margin: "-80px" }}
+      transition={ duration: 0.6, ease: "easeOut" as const }
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
 export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -370,6 +385,14 @@ export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
     { q: "Is there something for my kids?", a: `Absolutely! ${data.businessName} offers engaging, age-appropriate programs for children of all ages during our services.` },
     { q: "How can I get connected?", a: `The best way to connect is to visit us on a Sunday, fill out a connect card, or call us at ${data.phone}. We would love to help you find your place here.` },
   ];
+
+  /* Fallback testimonials */
+  const fallbackTestimonials = [
+    { name: "Grace H.", text: "This community welcomed our family with open arms. The sermons are inspiring and the people are genuine.", rating: 5 },
+    { name: "Daniel F.", text: "Found my spiritual home here. The youth programs are incredible and my kids love it.", rating: 5 },
+    { name: "Maria S.", text: "The worship experience is uplifting every single week. Truly a blessing in our lives.", rating: 5 }
+  ];
+  const testimonials = data.testimonials?.length > 0 ? data.testimonials : fallbackTestimonials;
 
   return (
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: NAVY, color: "#f1f5f9" }}>
@@ -486,45 +509,7 @@ export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 4. SERVICES / SERVICE TIMES ══════════════════ */}
-      <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #161628 50%, ${NAVY} 100%)` }} />
-        <CrossPattern accent={GOLD} />
-        <WaveBackground accent={GOLD} />
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-[10%] right-[5%] w-[500px] h-[500px] rounded-full blur-[160px]" style={{ background: `${GOLD}08` }} />
-          <div className="absolute bottom-[10%] left-[5%] w-[400px] h-[400px] rounded-full blur-[140px]" style={{ background: `${GOLD}05` }} />
-        </div>
-
-        <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Join Us" title="Services & Programs" subtitle={`${data.businessName} offers worship, fellowship, and programs for every age and season of life.`} accent={GOLD} />
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {data.services.map((service, i) => {
-              const Icon = getServiceIcon(service.name);
-              return (
-                <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.02]">
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${GOLD}15, transparent 70%)` }} />
-                  <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${GOLD}4d, transparent)` }} />
-                  <div className="relative z-10">
-                    <div className="flex items-start justify-between mb-5">
-                      <div className="w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 border" style={{ background: GOLD_GLOW, borderColor: `${GOLD}33` }}>
-                        <Icon size={24} weight="duotone" style={{ color: GOLD }} />
-                      </div>
-                      <span className="text-xs font-mono text-slate-600">{String(i + 1).padStart(2, "0")}</span>
-                    </div>
-                    <h3 className="text-lg font-bold text-white mb-2">{service.name}</h3>
-                    <p className="text-sm text-slate-400 leading-relaxed">{service.description || ""}</p>
-                    {service.price && <p className="text-sm font-semibold mt-3" style={{ color: GOLD }}>{service.price}</p>}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════════════ 5. ABOUT ══════════════════ */}
+      {/* ══════════════════ 4. ABOUT ══════════════════ */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #12122a 50%, ${NAVY} 100%)` }} />
         <WaveBackground accent={GOLD} />
@@ -570,6 +555,44 @@ export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
+      {/* ══════════════════ 5. SERVICES / SERVICE TIMES ══════════════════ */}
+      <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #161628 50%, ${NAVY} 100%)` }} />
+        <CrossPattern accent={GOLD} />
+        <WaveBackground accent={GOLD} />
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-[10%] right-[5%] w-[500px] h-[500px] rounded-full blur-[160px]" style={{ background: `${GOLD}08` }} />
+          <div className="absolute bottom-[10%] left-[5%] w-[400px] h-[400px] rounded-full blur-[140px]" style={{ background: `${GOLD}05` }} />
+        </div>
+
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Join Us" title="Services & Programs" subtitle={`${data.businessName} offers worship, fellowship, and programs for every age and season of life.`} accent={GOLD} />
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {data.services.map((service, i) => {
+              const Icon = getServiceIcon(service.name);
+              return (
+                <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.02]">
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${GOLD}15, transparent 70%)` }} />
+                  <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${GOLD}4d, transparent)` }} />
+                  <div className="relative z-10">
+                    <div className="flex items-start justify-between mb-5">
+                      <div className="w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 border" style={{ background: GOLD_GLOW, borderColor: `${GOLD}33` }}>
+                        <Icon size={24} weight="duotone" style={{ color: GOLD }} />
+                      </div>
+                      <span className="text-xs font-mono text-slate-600">{String(i + 1).padStart(2, "0")}</span>
+                    </div>
+                    <h3 className="text-lg font-bold text-white mb-2">{service.name}</h3>
+                    <p className="text-sm text-slate-400 leading-relaxed">{service.description || ""}</p>
+                    {service.price && <p className="text-sm font-semibold mt-3" style={{ color: GOLD }}>{service.price}</p>}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
       {/* ══════════════════ 6. BELIEFS ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #161628 50%, ${NAVY} 100%)` }} />
@@ -579,7 +602,7 @@ export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
         </div>
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="What We Believe" title="Our Core Beliefs" accent={GOLD} />
+          <AnimatedSection>          <SectionHeader badge="What We Believe" title="Our Core Beliefs" accent={GOLD} /></AnimatedSection>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
@@ -642,7 +665,7 @@ export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
         </div>
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Our Community" title="Life at Our Church" accent={GOLD} />
+          <AnimatedSection>          <SectionHeader badge="Our Community" title="Life at Our Church" accent={GOLD} /></AnimatedSection>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {galleryImages.map((src, i) => {
@@ -670,10 +693,10 @@ export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
         </div>
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Stories" title="What Our Members Say" accent={GOLD} />
+          <AnimatedSection>          <SectionHeader badge="Stories" title="What Our Members Say" accent={GOLD} /></AnimatedSection>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {data.testimonials.map((t, i) => (
+            {testimonials.map((t, i) => (
               <GlassCard key={i} className="p-6 h-full flex flex-col">
                 <div className="flex gap-0.5 mb-4">
                   {Array.from({ length: t.rating || 5 }).map((_, j) => (
@@ -716,7 +739,7 @@ export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
         </div>
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Find Us" title="Our Location" accent={GOLD} />
+          <AnimatedSection>          <SectionHeader badge="Find Us" title="Our Location" accent={GOLD} /></AnimatedSection>
           <div className="text-center">
             <GlassCard className="p-8 inline-block">
               <div className="flex items-center gap-3 text-lg">
@@ -739,7 +762,7 @@ export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
           </div>
 
           <div className="max-w-3xl mx-auto px-6 relative z-10">
-            <SectionHeader badge="Service Times" title="When We Gather" accent={GOLD} />
+            <AnimatedSection>          <SectionHeader badge="Service Times" title="When We Gather" accent={GOLD} /></AnimatedSection>
             <div className="text-center">
               <ShimmerBorder accent={GOLD}>
                 <div className="p-8">
@@ -753,6 +776,33 @@ export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
         </section>
       )}
 
+      
+      {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
+      <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15, ${ACCENT}08)` }} />
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
+          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: ACCENT }}>
+            Don&apos;t Miss Out
+          </p>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-3">
+            Ready to Get Started?
+          </h2>
+          <p className="text-slate-400 mb-6 text-sm sm:text-base">
+            Limited time — claim your free professional website today before it&apos;s offered to a competitor.
+          </p>
+          <a
+            href={`/claim/${data.id}`}
+            className="inline-flex items-center gap-2 min-h-[48px] px-8 py-3 rounded-full text-white font-bold text-base hover:shadow-lg transition-all duration-300"
+            style={{ background: ACCENT }}
+          >
+            Claim This Website
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
+              <path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </svg>
+          </a>
+        </div>
+      </section>
+
       {/* ══════════════════ 13. FAQ ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #12122a 50%, ${NAVY} 100%)` }} />
@@ -762,7 +812,7 @@ export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
         </div>
 
         <div className="max-w-3xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="FAQ" title="Common Questions" accent={GOLD} />
+          <AnimatedSection>          <SectionHeader badge="FAQ" title="Common Questions" accent={GOLD} /></AnimatedSection>
           <div className="space-y-3">
             {faqs.map((faq, i) => (
               <AccordionItem key={i} question={faq.q} answer={faq.a} isOpen={openFaq === i} onToggle={() => setOpenFaq(openFaq === i ? null : i)} />

@@ -299,12 +299,12 @@ function ClaimBanner({ businessName, accentColor, prospectId }: { businessName: 
         <p className="text-xs text-slate-400"><span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1.5 animate-pulse" />Custom-built preview for this business</p>
         {timeLeft && timeLeft !== "EXPIRED" && <p className="text-xs font-bold" style={{ color: accentColor }}>Preview expires in {timeLeft}</p>}
       </div>
-      <div className="px-6 py-4 flex items-center justify-between gap-4" style={{ background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}10)`, borderTop: `1px solid ${accentColor}30` }}>
+      <div className="px-4 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4" style={{ background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}10)`, borderTop: `1px solid ${accentColor}30` }}>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold text-white truncate">This website was built for {businessName}</p>
-          <p className="text-xs text-slate-400">Claim it before we offer it to a competitor</p>
+          <p className="text-xs text-slate-400">Limited time — claim your free website today</p>
         </div>
-        <a href={`/claim/${prospectId}`} className="shrink-0 h-11 px-6 rounded-full text-white text-sm font-bold flex items-center gap-2 hover:shadow-lg transition-all duration-300" style={{ background: accentColor }}>
+        <a href={`/claim/${prospectId}`} className="shrink-0 min-h-[48px] px-5 sm:px-6 rounded-full text-white text-sm font-bold flex items-center gap-2 hover:shadow-lg transition-all duration-300 shadow-lg" style={{ background: accentColor }}>
           Claim Your Website
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4"><path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
         </a>
@@ -316,6 +316,21 @@ function ClaimBanner({ businessName, accentColor, prospectId }: { businessName: 
 /* ═══════════════════════════════════════════════════════════════════
    MAIN PREVIEW COMPONENT
    ═══════════════════════════════════════════════════════════════════ */
+/* ───────────────────────── ANIMATED SECTION ───────────────────────── */
+function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return (
+    <motion.div
+      initial={ opacity: 0, y: 40 }
+      whileInView={ opacity: 1, y: 0 }
+      viewport={{ once: true, margin: "-80px" }}
+      transition={ duration: 0.6, ease: "easeOut" as const }
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
 export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -340,6 +355,14 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
     { q: "How are your fees structured?", a: "Fee structures vary by case type. Many cases are handled on contingency, meaning you pay nothing unless we win. We always discuss fees upfront with full transparency." },
     { q: "How quickly can you take my case?", a: `${data.businessName} prioritizes timely action. Most cases receive an attorney review within 24 hours of initial contact.` },
   ];
+
+  /* Fallback testimonials */
+  const fallbackTestimonials = [
+    { name: "Margaret R.", text: "They fought for me when no one else would. Got the settlement I deserved. Forever grateful.", rating: 5 },
+    { name: "Thomas K.", text: "Professional, compassionate, and incredibly effective. They made a difficult time bearable.", rating: 5 },
+    { name: "Sandra L.", text: "Was referred by a friend and now I understand why. Outstanding legal representation.", rating: 5 }
+  ];
+  const testimonials = data.testimonials?.length > 0 ? data.testimonials : fallbackTestimonials;
 
   return (
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: DARK, color: "#f1f5f9" }}>
@@ -528,7 +551,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
         <div className="absolute inset-0 pointer-events-none"><div className="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${GOLD}06` }} /></div>
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Our Process" title="How We Handle Your Case" accent={EMERALD} />
+          <AnimatedSection>          <SectionHeader badge="Our Process" title="How We Handle Your Case" accent={EMERALD} /></AnimatedSection>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {processSteps.map((step, i) => (
               <div key={step.step} className="relative">
@@ -552,7 +575,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] left-[20%] w-[500px] h-[500px] rounded-full blur-[200px]" style={{ background: `${EMERALD}06` }} /></div>
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Our Firm" title="Inside Our Practice" accent={EMERALD} />
+          <AnimatedSection>          <SectionHeader badge="Our Firm" title="Inside Our Practice" accent={EMERALD} /></AnimatedSection>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {galleryImages.map((src, i) => {
               const titles = ["Modern Conference Room", "Law Library & Research", "Client Meeting Space", "Professional Team"];
@@ -577,9 +600,9 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] right-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${EMERALD}06` }} /></div>
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Testimonials" title="Client Stories" accent={EMERALD} />
+          <AnimatedSection>          <SectionHeader badge="Testimonials" title="Client Stories" accent={EMERALD} /></AnimatedSection>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {data.testimonials.map((t, i) => (
+            {testimonials.map((t, i) => (
               <GlassCard key={i} className="p-6 h-full flex flex-col">
                 <div className="flex gap-0.5 mb-4">{Array.from({ length: t.rating || 5 }).map((_, j) => <Star key={j} size={16} weight="fill" style={{ color: EMERALD }} />)}</div>
                 <p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p>
@@ -618,7 +641,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[40%] right-[20%] w-[400px] h-[400px] rounded-full blur-[180px]" style={{ background: `${GOLD}06` }} /></div>
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Service Area" title="Areas We Serve" accent={EMERALD} />
+          <AnimatedSection>          <SectionHeader badge="Service Area" title="Areas We Serve" accent={EMERALD} /></AnimatedSection>
           <div className="text-center">
             <GlassCard className="p-8 inline-block">
               <div className="flex items-center gap-3 text-lg"><MapPin size={24} weight="duotone" style={{ color: EMERALD }} /><MapLink address={data.address} className="text-white font-semibold" /></div>
@@ -634,7 +657,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
           <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1522 50%, #0f172a 100%)" }} />
           <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${EMERALD}06` }} /></div>
           <div className="max-w-3xl mx-auto px-6 relative z-10">
-            <SectionHeader badge="Office Hours" title="When We Are Available" accent={EMERALD} />
+            <AnimatedSection>          <SectionHeader badge="Office Hours" title="When We Are Available" accent={EMERALD} /></AnimatedSection>
             <div className="text-center">
               <ShimmerBorder accent={EMERALD}><div className="p-8"><Clock size={32} weight="duotone" style={{ color: EMERALD }} className="mx-auto mb-4" /><p className="text-slate-300 leading-relaxed whitespace-pre-line text-lg">{data.hours}</p><p className="text-sm mt-4 font-semibold" style={{ color: EMERALD }}>Emergency Legal Assistance Available 24/7</p></div></ShimmerBorder>
             </div>
@@ -642,12 +665,39 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
         </section>
       )}
 
+      
+      {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
+      <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15, ${ACCENT}08)` }} />
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
+          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: ACCENT }}>
+            Don&apos;t Miss Out
+          </p>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-3">
+            Ready to Get Started?
+          </h2>
+          <p className="text-slate-400 mb-6 text-sm sm:text-base">
+            Limited time — claim your free professional website today before it&apos;s offered to a competitor.
+          </p>
+          <a
+            href={`/claim/${data.id}`}
+            className="inline-flex items-center gap-2 min-h-[48px] px-8 py-3 rounded-full text-white font-bold text-base hover:shadow-lg transition-all duration-300"
+            style={{ background: ACCENT }}
+          >
+            Claim This Website
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
+              <path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </svg>
+          </a>
+        </div>
+      </section>
+
       {/* ══════════════════ 12. FAQ ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1522 50%, #0f172a 100%)" }} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${EMERALD}06` }} /></div>
         <div className="max-w-3xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="FAQ" title="Common Questions" accent={EMERALD} />
+          <AnimatedSection>          <SectionHeader badge="FAQ" title="Common Questions" accent={EMERALD} /></AnimatedSection>
           <div className="space-y-3">
             {faqs.map((faq, i) => (
               <AccordionItem key={i} question={faq.q} answer={faq.a} isOpen={openFaq === i} onToggle={() => setOpenFaq(openFaq === i ? null : i)} />

@@ -385,21 +385,21 @@ function ClaimBanner({ businessName, accentColor, prospectId }: {
         )}
       </div>
       <div
-        className="px-6 py-4 flex items-center justify-between gap-4"
+        className="px-4 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4"
         style={{ background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}10)`, borderTop: `1px solid ${accentColor}30` }}
       >
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold text-white truncate">
             This website was built for {businessName}
           </p>
-          <p className="text-xs text-slate-400">Claim it before we offer it to a competitor</p>
+          <p className="text-xs text-slate-400">Limited time — claim your free website today</p>
         </div>
         <a
           href={`/claim/${prospectId}`}
-          className="shrink-0 h-11 px-6 rounded-full text-white text-sm font-bold flex items-center gap-2 hover:shadow-lg transition-all duration-300"
+          className="shrink-0 min-h-[48px] px-5 sm:px-6 rounded-full text-white text-sm font-bold flex items-center gap-2 hover:shadow-lg transition-all duration-300 shadow-lg w-full sm:w-auto justify-center"
           style={{ background: accentColor }}
         >
-          Claim Your Website
+          Claim This Website
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
             <path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
           </svg>
@@ -412,6 +412,21 @@ function ClaimBanner({ businessName, accentColor, prospectId }: {
 /* ═══════════════════════════════════════════════════════════════════
    MAIN PREVIEW COMPONENT
    ═══════════════════════════════════════════════════════════════════ */
+/* ───────────────────────── ANIMATED SECTION ───────────────────────── */
+function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return (
+    <motion.div
+      initial={ opacity: 0, y: 40 }
+      whileInView={ opacity: 1, y: 0 }
+      viewport={{ once: true, margin: "-80px" }}
+      transition={ duration: 0.6, ease: "easeOut" as const }
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
 export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -439,6 +454,14 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
     { q: "Is the first visit covered by insurance?", a: "Most insurance plans cover preventive visits including exams and cleanings at 80-100%. We verify your benefits before your appointment." },
     { q: "Do you offer emergency dental care?", a: `Yes. ${data.businessName} provides same-day emergency appointments for dental pain, broken teeth, and other urgent issues. Call us immediately if you have a dental emergency.` },
   ];
+
+  /* Fallback testimonials */
+  const fallbackTestimonials = [
+    { name: "Sarah M.", text: "Best dental experience I've ever had. The whole team is gentle, professional, and thorough.", rating: 5 },
+    { name: "David K.", text: "My kids actually look forward to their dental visits now. The staff is amazing with children.", rating: 5 },
+    { name: "Laura P.", text: "Modern office, friendly team, and completely painless procedures. Finally found my forever dentist.", rating: 5 }
+  ];
+  const testimonials = data.testimonials?.length > 0 ? data.testimonials : fallbackTestimonials;
 
   return (
     <main
@@ -526,7 +549,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
                 Modern Dental Care
               </p>
               <h1
-                className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white"
+                className="text-2xl sm:text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white"
                 style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}
               >
                 {data.tagline}
@@ -576,8 +599,8 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] rounded-full blur-[180px]" style={{ background: `${TEAL}08` }} />
         </div>
-        <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8">
             {data.stats.map((stat, i) => {
               const statIcons = [Users, Sparkle, Heart, Star];
               const Icon = statIcons[i % statIcons.length];
@@ -585,7 +608,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
                 <div key={stat.label} className="text-center">
                   <div className="flex items-center justify-center gap-2 mb-2">
                     <Icon size={22} weight="fill" style={{ color: TEAL }} />
-                    <span className="text-3xl md:text-4xl font-extrabold text-white">{stat.value}</span>
+                    <span className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white">{stat.value}</span>
                   </div>
                   <span className="text-slate-500 text-sm font-medium tracking-wide uppercase">{stat.label}</span>
                 </div>
@@ -604,15 +627,17 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
           <div className="absolute bottom-[10%] left-[5%] w-[400px] h-[400px] rounded-full blur-[140px]" style={{ background: `${TEAL_LIGHT}05` }} />
         </div>
 
-        <div className="max-w-6xl mx-auto px-6 relative z-10">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
+          <AnimatedSection>
           <SectionHeader
             badge="Our Services"
             title="Comprehensive Dental Care"
             subtitle={`From routine cleanings to advanced cosmetic treatments, ${data.businessName} provides exceptional dental services for the whole family.`}
             accent={TEAL}
           />
+          </AnimatedSection>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {data.services.map((service, i) => {
               const Icon = getServiceIcon(service.name);
               return (
@@ -652,7 +677,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
           <div className="absolute top-[20%] left-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${TEAL}06` }} />
         </div>
 
-        <div className="max-w-6xl mx-auto px-6 relative z-10">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="relative">
               <div className="rounded-2xl overflow-hidden border border-white/10">
@@ -679,7 +704,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
                 {data.about}
               </p>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 xs:grid-cols-2 gap-3 sm:gap-4">
                 {[
                   { icon: ShieldCheck, label: "Certified Dentists" },
                   { icon: Sparkle, label: "Modern Technology" },
@@ -707,10 +732,10 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
           <div className="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${TEAL_LIGHT}06` }} />
         </div>
 
-        <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Our Process" title="Your Visit, Step by Step" accent={TEAL} />
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
+          <AnimatedSection>          <SectionHeader badge="Our Process" title="Your Visit, Step by Step" accent={TEAL} /></AnimatedSection>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {processSteps.map((step, i) => (
               <div key={step.step} className="relative">
                 {i < processSteps.length - 1 && (
@@ -739,8 +764,8 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
           <div className="absolute top-[30%] left-[20%] w-[500px] h-[500px] rounded-full blur-[200px]" style={{ background: `${TEAL}06` }} />
         </div>
 
-        <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Our Practice" title="See Our Modern Facility" accent={TEAL} />
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
+          <AnimatedSection>          <SectionHeader badge="Our Practice" title="See Our Modern Facility" accent={TEAL} /></AnimatedSection>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {galleryImages.map((src, i) => {
@@ -767,11 +792,11 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
           <div className="absolute top-[20%] right-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${TEAL}06` }} />
         </div>
 
-        <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Testimonials" title="What Our Patients Say" accent={TEAL} />
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
+          <AnimatedSection>          <SectionHeader badge="Testimonials" title="What Our Patients Say" accent={TEAL} /></AnimatedSection>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {data.testimonials.map((t, i) => (
+            {testimonials.map((t, i) => (
               <GlassCard key={i} className="p-6 h-full flex flex-col">
                 <div className="flex gap-0.5 mb-4">
                   {Array.from({ length: t.rating || 5 }).map((_, j) => (
@@ -795,7 +820,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${TEAL}, ${TEAL}cc, ${TEAL})` }} />
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='40' height='40' fill='none'/%3E%3Cpath d='M0 0L40 40M40 0L0 40' stroke='%23000' stroke-width='0.5'/%3E%3C/svg%3E\")" }} />
 
-        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 relative z-10 text-center">
           <SmileyWink size={48} weight="fill" className="mx-auto mb-6 text-white/80" />
           <h2 className="text-3xl md:text-5xl font-black tracking-tight text-white mb-4">
             New Patients Welcome
@@ -821,8 +846,8 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
           <div className="absolute top-[40%] right-[20%] w-[400px] h-[400px] rounded-full blur-[180px]" style={{ background: `${TEAL_LIGHT}06` }} />
         </div>
 
-        <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Location" title="Conveniently Located" accent={TEAL} />
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
+          <AnimatedSection>          <SectionHeader badge="Location" title="Conveniently Located" accent={TEAL} /></AnimatedSection>
 
           <div className="text-center">
             <GlassCard className="p-8 inline-block">
@@ -844,8 +869,8 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
             <div className="absolute top-[20%] left-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${TEAL}06` }} />
           </div>
 
-          <div className="max-w-3xl mx-auto px-6 relative z-10">
-            <SectionHeader badge="Office Hours" title="When We Are Available" accent={TEAL} />
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10">
+            <AnimatedSection>          <SectionHeader badge="Office Hours" title="When We Are Available" accent={TEAL} /></AnimatedSection>
             <div className="text-center">
               <ShimmerBorder accent={TEAL}>
                 <div className="p-8">
@@ -859,6 +884,33 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
         </section>
       )}
 
+      
+      {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
+      <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${TEAL}15, ${TEAL}08)` }} />
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
+          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: TEAL }}>
+            Don&apos;t Miss Out
+          </p>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-3">
+            Ready to Get Started?
+          </h2>
+          <p className="text-slate-400 mb-6 text-sm sm:text-base">
+            Limited time — claim your free professional website today before it&apos;s offered to a competitor.
+          </p>
+          <a
+            href={`/claim/${data.id}`}
+            className="inline-flex items-center gap-2 min-h-[48px] px-8 py-3 rounded-full text-white font-bold text-base hover:shadow-lg transition-all duration-300"
+            style={{ background: TEAL }}
+          >
+            Claim This Website
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
+              <path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </svg>
+          </a>
+        </div>
+      </section>
+
       {/* ══════════════════ 12. FAQ ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1522 50%, #0f172a 100%)" }} />
@@ -866,8 +918,8 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
           <div className="absolute top-[20%] left-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${TEAL}06` }} />
         </div>
 
-        <div className="max-w-3xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="FAQ" title="Common Questions" accent={TEAL} />
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10">
+          <AnimatedSection>          <SectionHeader badge="FAQ" title="Common Questions" accent={TEAL} /></AnimatedSection>
 
           <div className="space-y-3">
             {faqs.map((faq, i) => (
@@ -891,7 +943,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
           <div className="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${TEAL}06` }} />
         </div>
 
-        <div className="max-w-6xl mx-auto px-6 relative z-10">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
             <div>
               <span
@@ -993,7 +1045,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full blur-[180px]" style={{ background: `${TEAL}06` }} />
         </div>
 
-        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 relative z-10 text-center">
           <ShimmerBorder accent={TEAL}>
             <div className="p-8 md:p-12">
               <ShieldCheck size={48} weight="fill" style={{ color: TEAL }} className="mx-auto mb-4" />
@@ -1022,7 +1074,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
       <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0a1018 100%)" }} />
         <DentalPattern opacity={0.015} accent={TEAL} />
-        <div className="mx-auto max-w-6xl px-6 relative z-10">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
             <div>
               <div className="flex items-center gap-2 mb-3">

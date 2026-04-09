@@ -50,7 +50,22 @@ function AccordionItem({ question, answer, isOpen, onToggle }: { question: strin
 function ClaimBanner({ businessName, accentColor, prospectId }: { businessName: string; accentColor: string; prospectId: string }) {
   const [timeLeft, setTimeLeft] = useState("");
   useEffect(() => { const exp = new Date(); exp.setDate(exp.getDate() + 7); const tick = () => { const diff = exp.getTime() - Date.now(); if (diff <= 0) { setTimeLeft("EXPIRED"); return; } setTimeLeft(`${Math.floor(diff / 86400000)}d ${Math.floor((diff % 86400000) / 3600000)}h ${Math.floor((diff % 3600000) / 60000)}m`); }; tick(); const i = setInterval(tick, 60000); return () => clearInterval(i); }, []);
-  return <div className="fixed bottom-0 left-0 right-0 z-50"><div className="bg-[#1a1a1a]/90 backdrop-blur-sm border-t border-white/10 px-4 py-2 flex items-center justify-center gap-4"><p className="text-xs text-slate-400"><span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1.5 animate-pulse" />Custom-built preview for this business</p>{timeLeft && timeLeft !== "EXPIRED" && <p className="text-xs font-bold" style={{ color: accentColor }}>Preview expires in {timeLeft}</p>}</div><div className="px-6 py-4 flex items-center justify-between gap-4" style={{ background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}10)`, borderTop: `1px solid ${accentColor}30` }}><div className="flex-1 min-w-0"><p className="text-sm font-semibold text-white truncate">This website was built for {businessName}</p><p className="text-xs text-slate-400">Claim it before we offer it to a competitor</p></div><a href={`/claim/${prospectId}`} className="shrink-0 h-11 px-6 rounded-full text-white text-sm font-bold flex items-center gap-2 hover:shadow-lg transition-all duration-300" style={{ background: accentColor }}>Claim Your Website <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4"><path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg></a></div></div>;
+  return <div className="fixed bottom-0 left-0 right-0 z-50"><div className="bg-[#1a1a1a]/90 backdrop-blur-sm border-t border-white/10 px-4 py-2 flex items-center justify-center gap-4"><p className="text-xs text-slate-400"><span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1.5 animate-pulse" />Custom-built preview for this business</p>{timeLeft && timeLeft !== "EXPIRED" && <p className="text-xs font-bold" style={{ color: accentColor }}>Preview expires in {timeLeft}</p>}</div><div className="px-4 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4" style={{ background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}10)`, borderTop: `1px solid ${accentColor}30` }}><div className="flex-1 min-w-0"><p className="text-sm font-semibold text-white truncate">This website was built for {businessName}</p><p className="text-xs text-slate-400">Limited time — claim your free website today</p></div><a href={`/claim/${prospectId}`} className="shrink-0 min-h-[48px] px-5 sm:px-6 rounded-full text-white text-sm font-bold flex items-center gap-2 hover:shadow-lg transition-all duration-300 shadow-lg w-full sm:w-auto justify-center" style={{ background: accentColor }}>Claim This Website <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4"><path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg></a></div></div>;
+}
+
+/* ───────────────────────── ANIMATED SECTION ───────────────────────── */
+function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return (
+    <motion.div
+      initial={ opacity: 0, y: 40 }
+      whileInView={ opacity: 1, y: 0 }
+      viewport={{ once: true, margin: "-80px" }}
+      transition={ duration: 0.6, ease: "easeOut" as const }
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
 }
 
 export default function V2TutoringPreview({ data }: { data: GeneratedSiteData }) {
@@ -73,6 +88,9 @@ export default function V2TutoringPreview({ data }: { data: GeneratedSiteData })
     { q: "What's the session format?", a: "Sessions are typically 60 minutes, available in-person or online. We recommend 1-2 sessions per week." },
     { q: "Do you offer group rates?", a: "Yes! We offer small group sessions and family discounts for siblings. Contact us for pricing." },
   ];
+
+  const fallbackTestimonials = [{ name: "Melissa H.", text: "My son's math grade went from a C to an A in just two months. The tutors here are exceptional.", rating: 5 }, { name: "Brandon K.", text: "SAT prep here boosted my score by 200 points. The strategies they teach really work.", rating: 5 }, { name: "Irene S.", text: "Patient, encouraging, and effective. My daughter actually enjoys studying now.", rating: 5 }];
+  const testimonials = data.testimonials?.length > 0 ? data.testimonials : fallbackTestimonials;
 
   return (
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: BG, color: "#f1f5f9" }}>
@@ -137,7 +155,7 @@ export default function V2TutoringPreview({ data }: { data: GeneratedSiteData })
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0c1220 50%, ${BG} 100%)` }} />
         <NotebookPattern opacity={0.025} accent={ACCENT} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Our Approach" title="How We Help Students Succeed" accent={ACCENT} />
+          <AnimatedSection>          <SectionHeader badge="Our Approach" title="How We Help Students Succeed" accent={ACCENT} /></AnimatedSection>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">{approach.map((step, i) => <div key={step.step} className="relative">{i < approach.length - 1 && <div className="hidden lg:block absolute top-10 left-[calc(50%+40px)] w-[calc(100%-80px)] h-px" style={{ background: `linear-gradient(to right, ${ACCENT}33, ${ACCENT}11)` }} />}<GlassCard className="p-6 text-center relative"><div className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center text-2xl font-black" style={{ background: `linear-gradient(135deg, ${ACCENT}22, ${ACCENT}0a)`, color: ACCENT, border: `1px solid ${ACCENT}33` }}>{step.step}</div><h3 className="text-lg font-bold text-white mb-2">{step.title}</h3><p className="text-sm text-slate-400 leading-relaxed">{step.desc}</p></GlassCard></div>)}</div>
         </div>
       </section>
@@ -146,8 +164,8 @@ export default function V2TutoringPreview({ data }: { data: GeneratedSiteData })
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0d1220 50%, ${BG} 100%)` }} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Testimonials" title="Parent & Student Reviews" accent={ACCENT} />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">{data.testimonials.map((t, i) => <GlassCard key={i} className="p-6 h-full flex flex-col"><div className="flex gap-0.5 mb-4">{Array.from({ length: t.rating || 5 }).map((_, j) => <Star key={j} size={16} weight="fill" style={{ color: GREEN }} />)}</div><p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p><div className="pt-4 border-t border-white/5"><span className="text-sm font-semibold text-white">{t.name}</span></div></GlassCard>)}</div>
+          <AnimatedSection>          <SectionHeader badge="Testimonials" title="Parent & Student Reviews" accent={ACCENT} /></AnimatedSection>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">{testimonials.map((t, i) => <GlassCard key={i} className="p-6 h-full flex flex-col"><div className="flex gap-0.5 mb-4">{Array.from({ length: t.rating || 5 }).map((_, j) => <Star key={j} size={16} weight="fill" style={{ color: GREEN }} />)}</div><p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p><div className="pt-4 border-t border-white/5"><span className="text-sm font-semibold text-white">{t.name}</span></div></GlassCard>)}</div>
         </div>
       </section>
 
@@ -156,7 +174,7 @@ export default function V2TutoringPreview({ data }: { data: GeneratedSiteData })
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0c1220 50%, ${BG} 100%)` }} />
         <NotebookPattern opacity={0.02} accent={ACCENT} />
         <div className="max-w-3xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="FAQ" title="Common Questions" accent={ACCENT} />
+          <AnimatedSection>          <SectionHeader badge="FAQ" title="Common Questions" accent={ACCENT} /></AnimatedSection>
           <div className="space-y-3">{faqs.map((f, i) => <AccordionItem key={i} question={f.q} answer={f.a} isOpen={openFaq === i} onToggle={() => setOpenFaq(openFaq === i ? null : i)} />)}</div>
         </div>
       </section>

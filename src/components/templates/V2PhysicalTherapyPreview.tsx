@@ -49,8 +49,10 @@ function AccordionItem({ question, answer, isOpen, onToggle }: { question: strin
 function ClaimBanner({ businessName, accentColor, prospectId }: { businessName: string; accentColor: string; prospectId: string }) {
   const [timeLeft, setTimeLeft] = useState("");
   useEffect(() => { const exp = new Date(); exp.setDate(exp.getDate() + 7); const tick = () => { const diff = exp.getTime() - Date.now(); if (diff <= 0) { setTimeLeft("EXPIRED"); return; } setTimeLeft(`${Math.floor(diff / 86400000)}d ${Math.floor((diff % 86400000) / 3600000)}h ${Math.floor((diff % 3600000) / 60000)}m`); }; tick(); const i = setInterval(tick, 60000); return () => clearInterval(i); }, []);
-  return <div className="fixed bottom-0 left-0 right-0 z-50"><div className="bg-[#1a1a1a]/90 backdrop-blur-sm border-t border-white/10 px-4 py-2 flex items-center justify-center gap-4"><p className="text-xs text-slate-400"><span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1.5 animate-pulse" />Custom-built preview for this business</p>{timeLeft && timeLeft !== "EXPIRED" && <p className="text-xs font-bold" style={{ color: accentColor }}>Preview expires in {timeLeft}</p>}</div><div className="px-6 py-4 flex items-center justify-between gap-4" style={{ background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}10)`, borderTop: `1px solid ${accentColor}30` }}><div className="flex-1 min-w-0"><p className="text-sm font-semibold text-white truncate">This website was built for {businessName}</p><p className="text-xs text-slate-400">Claim it before we offer it to a competitor</p></div><a href={`/claim/${prospectId}`} className="shrink-0 h-11 px-6 rounded-full text-white text-sm font-bold flex items-center gap-2 hover:shadow-lg transition-all duration-300" style={{ background: accentColor }}>Claim Your Website <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4"><path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg></a></div></div>;
+  return <div className="fixed bottom-0 left-0 right-0 z-50"><div className="bg-[#1a1a1a]/90 backdrop-blur-sm border-t border-white/10 px-4 py-2 flex items-center justify-center gap-4"><p className="text-xs text-slate-400"><span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1.5 animate-pulse" />Custom-built preview for this business</p>{timeLeft && timeLeft !== "EXPIRED" && <p className="text-xs font-bold" style={{ color: accentColor }}>Preview expires in {timeLeft}</p>}</div><div className="px-4 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4" style={{ background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}10)`, borderTop: `1px solid ${accentColor}30` }}><div className="flex-1 min-w-0"><p className="text-sm font-semibold text-white truncate">This website was built for {businessName}</p><p className="text-xs text-slate-400">Limited time — claim your free website today</p></div><a href={`/claim/${prospectId}`} className="shrink-0 min-h-[48px] px-5 sm:px-6 rounded-full text-white text-sm font-bold flex items-center gap-2 hover:shadow-lg transition-all duration-300 shadow-lg w-full sm:w-auto justify-center" style={{ background: accentColor }}>Claim This Website <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4"><path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg></a></div></div>;
 }
+
+function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) { return <motion.div initial={ opacity: 0, y: 40 } whileInView={ opacity: 1, y: 0 } viewport={{ once: true, margin: "-80px" }} transition={ duration: 0.6, ease: "easeOut" as const } className={className}>{children}</motion.div>; }
 
 export default function V2PhysicalTherapyPreview({ data }: { data: GeneratedSiteData }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -67,6 +69,9 @@ export default function V2PhysicalTherapyPreview({ data }: { data: GeneratedSite
     { q: "How long are sessions?", a: "Initial evaluations are 60 minutes. Follow-up sessions are 45-60 minutes of one-on-one care." },
     { q: "What insurance do you accept?", a: `${data.businessName} is in-network with most major insurance providers. Contact us to verify your coverage.` },
   ];
+
+  const fallbackTestimonials = [{ name: "Richard H.", text: "After knee surgery, they got me back to running in three months. Incredible therapists.", rating: 5 }, { name: "Paula M.", text: "My chronic shoulder pain is finally gone. They created a personalized plan that actually worked.", rating: 5 }, { name: "Edward T.", text: "Patient, knowledgeable, and genuinely invested in my recovery. Best PT experience ever.", rating: 5 }];
+  const testimonials = data.testimonials?.length > 0 ? data.testimonials : fallbackTestimonials;
 
   return (
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: BG, color: "#f1f5f9" }}>
@@ -131,7 +136,7 @@ export default function V2PhysicalTherapyPreview({ data }: { data: GeneratedSite
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0c1220 50%, ${BG} 100%)` }} />
         <WavePattern opacity={0.02} accent={ACCENT} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Conditions" title="Conditions We Treat" accent={ACCENT} />
+          <AnimatedSection><SectionHeader badge="Conditions" title="Conditions We Treat" accent={ACCENT} /></AnimatedSection>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">{conditions.map((c) => <GlassCard key={c} className="p-4 flex items-center gap-3"><CheckCircle size={18} weight="fill" style={{ color: GREEN }} /><span className="text-sm font-medium text-white">{c}</span></GlassCard>)}</div>
         </div>
       </section>
@@ -140,8 +145,8 @@ export default function V2PhysicalTherapyPreview({ data }: { data: GeneratedSite
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0d1220 50%, ${BG} 100%)` }} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Testimonials" title="Patient Success Stories" accent={ACCENT} />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">{data.testimonials.map((t, i) => <GlassCard key={i} className="p-6 h-full flex flex-col"><div className="flex gap-0.5 mb-4">{Array.from({ length: t.rating || 5 }).map((_, j) => <Star key={j} size={16} weight="fill" style={{ color: GREEN }} />)}</div><p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p><div className="pt-4 border-t border-white/5"><span className="text-sm font-semibold text-white">{t.name}</span></div></GlassCard>)}</div>
+          <AnimatedSection><SectionHeader badge="Testimonials" title="Patient Success Stories" accent={ACCENT} /></AnimatedSection>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">{testimonials.map((t, i) => <GlassCard key={i} className="p-6 h-full flex flex-col"><div className="flex gap-0.5 mb-4">{Array.from({ length: t.rating || 5 }).map((_, j) => <Star key={j} size={16} weight="fill" style={{ color: GREEN }} />)}</div><p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p><div className="pt-4 border-t border-white/5"><span className="text-sm font-semibold text-white">{t.name}</span></div></GlassCard>)}</div>
         </div>
       </section>
 
@@ -150,7 +155,7 @@ export default function V2PhysicalTherapyPreview({ data }: { data: GeneratedSite
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0c1220 50%, ${BG} 100%)` }} />
         <WavePattern opacity={0.02} accent={ACCENT} />
         <div className="max-w-3xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="FAQ" title="Common Questions" accent={ACCENT} />
+          <AnimatedSection><SectionHeader badge="FAQ" title="Common Questions" accent={ACCENT} /></AnimatedSection>
           <div className="space-y-3">{faqs.map((f, i) => <AccordionItem key={i} question={f.q} answer={f.a} isOpen={openFaq === i} onToggle={() => setOpenFaq(openFaq === i ? null : i)} />)}</div>
         </div>
       </section>

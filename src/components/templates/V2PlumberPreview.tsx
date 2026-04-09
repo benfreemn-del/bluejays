@@ -229,12 +229,12 @@ function ClaimBanner({ businessName, accentColor, prospectId }: { businessName: 
         <p className="text-xs text-slate-400"><span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1.5 animate-pulse" />Custom-built preview for this business</p>
         {timeLeft && timeLeft !== "EXPIRED" && <p className="text-xs font-bold" style={{ color: accentColor }}>Preview expires in {timeLeft}</p>}
       </div>
-      <div className="px-6 py-4 flex items-center justify-between gap-4" style={{ background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}10)`, borderTop: `1px solid ${accentColor}30` }}>
+      <div className="px-4 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4" style={{ background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}10)`, borderTop: `1px solid ${accentColor}30` }}>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold text-white truncate">This website was built for {businessName}</p>
-          <p className="text-xs text-slate-400">Claim it before we offer it to a competitor</p>
+          <p className="text-xs text-slate-400">Limited time — claim your free website today</p>
         </div>
-        <a href={`/claim/${prospectId}`} className="shrink-0 h-11 px-6 rounded-full text-white text-sm font-bold flex items-center gap-2 hover:shadow-lg transition-all duration-300" style={{ background: accentColor }}>
+        <a href={`/claim/${prospectId}`} className="shrink-0 min-h-[48px] px-5 sm:px-6 rounded-full text-white text-sm font-bold flex items-center gap-2 hover:shadow-lg transition-all duration-300 shadow-lg" style={{ background: accentColor }}>
           Claim Your Website <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4"><path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
         </a>
       </div>
@@ -245,6 +245,21 @@ function ClaimBanner({ businessName, accentColor, prospectId }: { businessName: 
 /* ═══════════════════════════════════════════════════════════════════
    MAIN PREVIEW COMPONENT
    ═══════════════════════════════════════════════════════════════════ */
+/* ───────────────────────── ANIMATED SECTION ───────────────────────── */
+function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return (
+    <motion.div
+      initial={ opacity: 0, x: -50 }
+      whileInView={ opacity: 1, x: 0 }
+      viewport={{ once: true, margin: "-80px" }}
+      transition={ duration: 0.7, ease: "easeOut" as const }
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
 export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -269,6 +284,14 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
     { q: "How much does a plumber cost?", a: "We provide upfront pricing before any work begins. No hidden fees, no surprises. Call for a free estimate on your specific issue." },
     { q: "Are your plumbers licensed and insured?", a: `Every plumber at ${data.businessName} is fully licensed, bonded, and insured. We are committed to professional, code-compliant work on every job.` },
   ];
+
+  /* Fallback testimonials */
+  const fallbackTestimonials = [
+    { name: "Gary N.", text: "Fixed our burst pipe at 3 AM. Fast response, fair price, and saved us from major water damage.", rating: 5 },
+    { name: "Debbie R.", text: "Complete bathroom remodel plumbing done perfectly. Everything works flawlessly.", rating: 5 },
+    { name: "Howard K.", text: "Honest plumber who doesn't try to sell you things you don't need. Refreshing and reliable.", rating: 5 }
+  ];
+  const testimonials = data.testimonials?.length > 0 ? data.testimonials : fallbackTestimonials;
 
   return (
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: SLATE, color: "#f1f5f9" }}>
@@ -415,7 +438,30 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 5. ABOUT ══════════════════ */}
+      {/* ══════════════════ 5. PROCESS ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1222 50%, #0f172a 100%)" }} />
+        <PipePattern opacity={0.025} accent={BLUE} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${TEAL}06` }} /></div>
+
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <AnimatedSection>          <SectionHeader badge="Our Process" title="How We Work" accent={TEAL} /></AnimatedSection>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {processSteps.map((step, i) => (
+              <div key={step.step} className="relative">
+                {i < processSteps.length - 1 && <div className="hidden lg:block absolute top-10 left-[calc(50%+40px)] w-[calc(100%-80px)] h-px" style={{ background: `linear-gradient(to right, ${TEAL}33, ${TEAL}11)` }} />}
+                <GlassCard className="p-6 text-center relative">
+                  <div className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center text-2xl font-black" style={{ background: `linear-gradient(135deg, ${TEAL}22, ${TEAL}0a)`, color: TEAL, border: `1px solid ${TEAL}33` }}>{step.step}</div>
+                  <h3 className="text-lg font-bold text-white mb-2">{step.title}</h3>
+                  <p className="text-sm text-slate-400 leading-relaxed">{step.desc}</p>
+                </GlassCard>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ 6. ABOUT ══════════════════ */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1830 50%, #0f172a 100%)" }} />
         <WaterFlowSVG opacity={0.02} accent={BLUE} />
@@ -457,29 +503,6 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 6. PROCESS ══════════════════ */}
-      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1222 50%, #0f172a 100%)" }} />
-        <PipePattern opacity={0.025} accent={BLUE} />
-        <div className="absolute inset-0 pointer-events-none"><div className="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${TEAL}06` }} /></div>
-
-        <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Our Process" title="How We Work" accent={TEAL} />
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {processSteps.map((step, i) => (
-              <div key={step.step} className="relative">
-                {i < processSteps.length - 1 && <div className="hidden lg:block absolute top-10 left-[calc(50%+40px)] w-[calc(100%-80px)] h-px" style={{ background: `linear-gradient(to right, ${TEAL}33, ${TEAL}11)` }} />}
-                <GlassCard className="p-6 text-center relative">
-                  <div className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center text-2xl font-black" style={{ background: `linear-gradient(135deg, ${TEAL}22, ${TEAL}0a)`, color: TEAL, border: `1px solid ${TEAL}33` }}>{step.step}</div>
-                  <h3 className="text-lg font-bold text-white mb-2">{step.title}</h3>
-                  <p className="text-sm text-slate-400 leading-relaxed">{step.desc}</p>
-                </GlassCard>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ══════════════════ 7. PROJECTS GALLERY ══════════════════ */}
       <section id="projects" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1830 50%, #0f172a 100%)" }} />
@@ -487,7 +510,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] left-[20%] w-[500px] h-[500px] rounded-full blur-[200px]" style={{ background: `${TEAL}06` }} /></div>
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Our Work" title="Recent Projects" accent={TEAL} />
+          <AnimatedSection>          <SectionHeader badge="Our Work" title="Recent Projects" accent={TEAL} /></AnimatedSection>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {projectImages.map((src, i) => {
               const titles = ["Full Bathroom Remodel", "Whole-House Repiping", "Emergency Pipe Repair", "Water Heater Installation"];
@@ -514,9 +537,9 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] right-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${TEAL}06` }} /></div>
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Testimonials" title="What Our Clients Say" accent={TEAL} />
+          <AnimatedSection>          <SectionHeader badge="Testimonials" title="What Our Clients Say" accent={TEAL} /></AnimatedSection>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {data.testimonials.map((t, i) => (
+            {testimonials.map((t, i) => (
               <GlassCard key={i} className="p-6 h-full flex flex-col">
                 <div className="flex gap-0.5 mb-4">{Array.from({ length: t.rating || 5 }).map((_, j) => <Star key={j} size={16} weight="fill" style={{ color: TEAL }} />)}</div>
                 <p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p>
@@ -550,7 +573,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[40%] right-[20%] w-[400px] h-[400px] rounded-full blur-[180px]" style={{ background: `${TEAL}06` }} /></div>
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Coverage Area" title="Areas We Serve" accent={TEAL} />
+          <AnimatedSection>          <SectionHeader badge="Coverage Area" title="Areas We Serve" accent={TEAL} /></AnimatedSection>
           <div className="text-center">
             <GlassCard className="p-8 inline-block">
               <div className="flex items-center gap-3 text-lg"><MapPin size={24} weight="duotone" style={{ color: TEAL }} /><MapLink address={data.address} className="text-white font-semibold" /></div>
@@ -567,7 +590,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
           <WaterFlowSVG opacity={0.02} accent={BLUE} />
           <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${TEAL}06` }} /></div>
           <div className="max-w-3xl mx-auto px-6 relative z-10">
-            <SectionHeader badge="Business Hours" title="When We're Available" accent={TEAL} />
+            <AnimatedSection>          <SectionHeader badge="Business Hours" title="When We're Available" accent={TEAL} /></AnimatedSection>
             <div className="text-center">
               <ShimmerBorder accent={TEAL}>
                 <div className="p-8">
@@ -581,13 +604,40 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
         </section>
       )}
 
+      
+      {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
+      <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15, ${ACCENT}08)` }} />
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
+          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: ACCENT }}>
+            Don&apos;t Miss Out
+          </p>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-3">
+            Ready to Get Started?
+          </h2>
+          <p className="text-slate-400 mb-6 text-sm sm:text-base">
+            Limited time — claim your free professional website today before it&apos;s offered to a competitor.
+          </p>
+          <a
+            href={`/claim/${data.id}`}
+            className="inline-flex items-center gap-2 min-h-[48px] px-8 py-3 rounded-full text-white font-bold text-base hover:shadow-lg transition-all duration-300"
+            style={{ background: ACCENT }}
+          >
+            Claim This Website
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
+              <path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </svg>
+          </a>
+        </div>
+      </section>
+
       {/* ══════════════════ 12. FAQ ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1222 50%, #0f172a 100%)" }} />
         <PipePattern opacity={0.02} accent={BLUE} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${TEAL}06` }} /></div>
         <div className="max-w-3xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="FAQ" title="Common Questions" accent={TEAL} />
+          <AnimatedSection>          <SectionHeader badge="FAQ" title="Common Questions" accent={TEAL} /></AnimatedSection>
           <div className="space-y-3">
             {faqs.map((faq, i) => <AccordionItem key={i} question={faq.q} answer={faq.a} isOpen={openFaq === i} onToggle={() => setOpenFaq(openFaq === i ? null : i)} />)}
           </div>

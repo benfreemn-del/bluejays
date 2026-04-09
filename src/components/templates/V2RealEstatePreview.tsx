@@ -214,8 +214,8 @@ function ClaimBanner({ businessName, accentColor, prospectId }: { businessName: 
         <p className="text-xs text-zinc-400"><span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1.5 animate-pulse" />Custom-built preview for this business</p>
         {timeLeft && timeLeft !== "EXPIRED" && <p className="text-xs font-bold" style={{ color: accentColor }}>Preview expires in {timeLeft}</p>}
       </div>
-      <div className="px-6 py-4 flex items-center justify-between gap-4" style={{ background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}10)`, borderTop: `1px solid ${accentColor}30` }}>
-        <div className="flex-1 min-w-0"><p className="text-sm font-semibold text-white truncate">This website was built for {businessName}</p><p className="text-xs text-zinc-400">Claim it before we offer it to a competitor</p></div>
+      <div className="px-4 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4" style={{ background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}10)`, borderTop: `1px solid ${accentColor}30` }}>
+        <div className="flex-1 min-w-0"><p className="text-sm font-semibold text-white truncate">This website was built for {businessName}</p><p className="text-xs text-zinc-400">Limited time — claim your free website today</p></div>
         <a href={`/claim/${prospectId}`} className="shrink-0 h-11 px-6 rounded-full text-black text-sm font-bold flex items-center gap-2 hover:shadow-lg transition-all duration-300" style={{ background: accentColor }}>
           Claim Your Website <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4"><path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
         </a>
@@ -227,6 +227,21 @@ function ClaimBanner({ businessName, accentColor, prospectId }: { businessName: 
 /* ═══════════════════════════════════════════════════════════════════
    MAIN PREVIEW COMPONENT
    ═══════════════════════════════════════════════════════════════════ */
+/* ───────────────────────── ANIMATED SECTION ───────────────────────── */
+function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return (
+    <motion.div
+      initial={ opacity: 0, y: 40 }
+      whileInView={ opacity: 1, y: 0 }
+      viewport={{ once: true, margin: "-80px" }}
+      transition={ duration: 0.6, ease: "easeOut" as const }
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
 export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -251,6 +266,14 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
     { q: "How do you determine listing prices?", a: "We conduct thorough comparative market analysis using current sales data, market trends, and property condition to recommend an optimal listing price." },
     { q: "What areas do you serve?", a: `${data.businessName} serves ${data.address} and surrounding communities. Contact us to discuss your specific area.` },
   ];
+
+  /* Fallback testimonials */
+  const fallbackTestimonials = [
+    { name: "Jennifer H.", text: "Found our dream home in just two weeks. The process was incredibly smooth and stress-free.", rating: 5 },
+    { name: "Michael T.", text: "Sold above asking price in just ten days. Their market knowledge is unmatched.", rating: 5 },
+    { name: "Amanda K.", text: "As first-time buyers, they guided us through everything. Patient, knowledgeable, and trustworthy.", rating: 5 }
+  ];
+  const testimonials = data.testimonials?.length > 0 ? data.testimonials : fallbackTestimonials;
 
   return (
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: BLACK, color: "#fff" }}>
@@ -428,7 +451,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #09090b 0%, #070707 50%, #09090b 100%)" }} />
         <LuxuryPattern opacity={0.025} accent={GOLD} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Our Process" title="How We Work for You" accent={GOLD} />
+          <AnimatedSection>          <SectionHeader badge="Our Process" title="How We Work for You" accent={GOLD} /></AnimatedSection>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {processSteps.map((step, i) => (
               <div key={step.step} className="relative">
@@ -449,7 +472,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #09090b 0%, #070707 50%, #09090b 100%)" }} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] left-[20%] w-[500px] h-[500px] rounded-full blur-[200px]" style={{ background: `${GOLD}06` }} /></div>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Portfolio" title="Featured Properties" accent={GOLD} />
+          <AnimatedSection>          <SectionHeader badge="Portfolio" title="Featured Properties" accent={GOLD} /></AnimatedSection>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {galleryImages.map((src, i) => {
               const titles = ["Modern Luxury Estate", "Waterfront Retreat", "Contemporary Villa", "Penthouse Living"];
@@ -471,9 +494,9 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #09090b 0%, #070707 50%, #09090b 100%)" }} />
         <LuxuryPattern opacity={0.02} accent={GOLD} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Testimonials" title="Client Success Stories" accent={GOLD} />
+          <AnimatedSection>          <SectionHeader badge="Testimonials" title="Client Success Stories" accent={GOLD} /></AnimatedSection>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {data.testimonials.map((t, i) => (
+            {testimonials.map((t, i) => (
               <GlassCard key={i} className="p-6 h-full flex flex-col">
                 <div className="flex gap-0.5 mb-4">{Array.from({ length: t.rating || 5 }).map((_, j) => <Star key={j} size={16} weight="fill" style={{ color: GOLD }} />)}</div>
                 <p className="text-zinc-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p>
@@ -503,7 +526,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #09090b 0%, #070707 50%, #09090b 100%)" }} />
         <LuxuryPattern opacity={0.02} accent={GOLD} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Office" title="Visit Us" accent={GOLD} />
+          <AnimatedSection>          <SectionHeader badge="Office" title="Visit Us" accent={GOLD} /></AnimatedSection>
           <div className="text-center"><GlassCard className="p-8 inline-block"><div className="flex items-center gap-3 text-lg"><MapPin size={24} weight="duotone" style={{ color: GOLD }} /><MapLink address={data.address} className="text-white font-semibold" /></div><p className="text-zinc-400 text-sm mt-2">Serving buyers and sellers across the region</p></GlassCard></div>
         </div>
       </section>
@@ -513,17 +536,44 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
         <section className="relative z-10 py-24 md:py-32 overflow-hidden">
           <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #09090b 0%, #070707 50%, #09090b 100%)" }} />
           <div className="max-w-3xl mx-auto px-6 relative z-10">
-            <SectionHeader badge="Hours" title="Office Hours" accent={GOLD} />
+            <AnimatedSection>          <SectionHeader badge="Hours" title="Office Hours" accent={GOLD} /></AnimatedSection>
             <div className="text-center"><ShimmerBorder accent={GOLD}><div className="p-8"><Clock size={32} weight="duotone" style={{ color: GOLD }} className="mx-auto mb-4" /><p className="text-zinc-300 leading-relaxed whitespace-pre-line text-lg">{data.hours}</p><p className="text-sm mt-4 font-semibold" style={{ color: GOLD }}>Private viewings available by appointment</p></div></ShimmerBorder></div>
           </div>
         </section>
       )}
 
+      
+      {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
+      <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15, ${ACCENT}08)` }} />
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
+          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: ACCENT }}>
+            Don&apos;t Miss Out
+          </p>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-3">
+            Ready to Get Started?
+          </h2>
+          <p className="text-slate-400 mb-6 text-sm sm:text-base">
+            Limited time — claim your free professional website today before it&apos;s offered to a competitor.
+          </p>
+          <a
+            href={`/claim/${data.id}`}
+            className="inline-flex items-center gap-2 min-h-[48px] px-8 py-3 rounded-full text-white font-bold text-base hover:shadow-lg transition-all duration-300"
+            style={{ background: ACCENT }}
+          >
+            Claim This Website
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
+              <path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </svg>
+          </a>
+        </div>
+      </section>
+
       {/* ══════════════════ 12. FAQ ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #09090b 0%, #070707 50%, #09090b 100%)" }} />
         <div className="max-w-3xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="FAQ" title="Common Questions" accent={GOLD} />
+          <AnimatedSection>          <SectionHeader badge="FAQ" title="Common Questions" accent={GOLD} /></AnimatedSection>
           <div className="space-y-3">{faqs.map((faq, i) => <AccordionItem key={i} question={faq.q} answer={faq.a} isOpen={openFaq === i} onToggle={() => setOpenFaq(openFaq === i ? null : i)} />)}</div>
         </div>
       </section>

@@ -340,10 +340,10 @@ function ClaimBanner({ businessName, accentColor, prospectId }: {
           <p className="text-xs font-bold" style={{ color: accentColor }}>Preview expires in {timeLeft}</p>
         )}
       </div>
-      <div className="px-6 py-4 flex items-center justify-between gap-4" style={{ background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}10)`, borderTop: `1px solid ${accentColor}30` }}>
+      <div className="px-4 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4" style={{ background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}10)`, borderTop: `1px solid ${accentColor}30` }}>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold text-[#1c1917] truncate">This website was built for {businessName}</p>
-          <p className="text-xs text-[#6b7280]">Claim it before we offer it to a competitor</p>
+          <p className="text-xs text-[#6b7280]">Limited time — claim your free website today</p>
         </div>
         <a href={`/claim/${prospectId}`} className="shrink-0 h-11 px-6 rounded-full text-[#1c1917] text-sm font-bold flex items-center gap-2 hover:shadow-lg transition-all duration-300" style={{ background: accentColor }}>
           Claim Your Website
@@ -357,6 +357,21 @@ function ClaimBanner({ businessName, accentColor, prospectId }: {
 /* ═══════════════════════════════════════════════════════════════════
    MAIN PREVIEW COMPONENT
    ═══════════════════════════════════════════════════════════════════ */
+/* ───────────────────────── ANIMATED SECTION ───────────────────────── */
+function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return (
+    <motion.div
+      initial={ opacity: 0, y: 40 }
+      whileInView={ opacity: 1, y: 0 }
+      viewport={{ once: true, margin: "-80px" }}
+      transition={ duration: 0.6, ease: "easeOut" as const }
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
 export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -380,6 +395,14 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
     { q: "What should I bring to my pet's first visit?", a: "Please bring any previous medical records, vaccination history, and a list of current medications. If your pet is anxious, a favorite toy or blanket can help them feel at ease." },
     { q: "Do you see exotic pets?", a: `Our team primarily treats dogs and cats, but we also have experience with many other companion animals. Call ${data.businessName} to ask about your specific pet.` },
   ];
+
+  /* Fallback testimonials */
+  const fallbackTestimonials = [
+    { name: "Heather R.", text: "They saved our dog's life with quick diagnosis and expert care. We trust them completely.", rating: 5 },
+    { name: "Patrick M.", text: "The whole staff is gentle and caring with our anxious cat. Best vet experience we've had.", rating: 5 },
+    { name: "Allison T.", text: "Affordable, thorough, and they truly love animals. Our pets are always in great hands here.", rating: 5 }
+  ];
+  const testimonials = data.testimonials?.length > 0 ? data.testimonials : fallbackTestimonials;
 
   return (
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: CHARCOAL, color: "#1c1917" }}>
@@ -596,7 +619,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
         </div>
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Your Visit" title="What to Expect" accent={PRIMARY} />
+          <AnimatedSection>          <SectionHeader badge="Your Visit" title="What to Expect" accent={PRIMARY} /></AnimatedSection>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {processSteps.map((step, i) => (
               <div key={step.step} className="relative">
@@ -625,7 +648,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
         </div>
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Our Family" title="Happy Patients" accent={PRIMARY} />
+          <AnimatedSection>          <SectionHeader badge="Our Family" title="Happy Patients" accent={PRIMARY} /></AnimatedSection>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {galleryImages.map((src, i) => {
               const titles = ["Wellness Checkups", "Playful Patients", "State-of-the-Art Facility", "Happy & Healthy Pets"];
@@ -654,9 +677,9 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
         </div>
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Testimonials" title="What Pet Parents Say" accent={PRIMARY} />
+          <AnimatedSection>          <SectionHeader badge="Testimonials" title="What Pet Parents Say" accent={PRIMARY} /></AnimatedSection>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {data.testimonials.map((t, i) => (
+            {testimonials.map((t, i) => (
               <GlassCard key={i} className="p-6 h-full flex flex-col">
                 <div className="flex gap-0.5 mb-4">
                   {Array.from({ length: t.rating || 5 }).map((_, j) => (
@@ -700,7 +723,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
         </div>
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Coverage Area" title="Areas We Serve" accent={PRIMARY} />
+          <AnimatedSection>          <SectionHeader badge="Coverage Area" title="Areas We Serve" accent={PRIMARY} /></AnimatedSection>
           <div className="text-center">
             <GlassCard className="p-8 inline-block">
               <div className="flex items-center gap-3 text-lg">
@@ -723,7 +746,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
           </div>
 
           <div className="max-w-3xl mx-auto px-6 relative z-10">
-            <SectionHeader badge="Clinic Hours" title="When We&apos;re Open" accent={PRIMARY} />
+            <AnimatedSection>          <SectionHeader badge="Clinic Hours" title="When We&apos;re Open" accent={PRIMARY} /></AnimatedSection>
             <div className="text-center">
               <ShimmerBorder accent={PRIMARY}>
                 <div className="p-8">
@@ -737,6 +760,33 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
         </section>
       )}
 
+      
+      {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
+      <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15, ${ACCENT}08)` }} />
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
+          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: ACCENT }}>
+            Don&apos;t Miss Out
+          </p>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-3">
+            Ready to Get Started?
+          </h2>
+          <p className="text-slate-400 mb-6 text-sm sm:text-base">
+            Limited time — claim your free professional website today before it&apos;s offered to a competitor.
+          </p>
+          <a
+            href={`/claim/${data.id}`}
+            className="inline-flex items-center gap-2 min-h-[48px] px-8 py-3 rounded-full text-white font-bold text-base hover:shadow-lg transition-all duration-300"
+            style={{ background: ACCENT }}
+          >
+            Claim This Website
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
+              <path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </svg>
+          </a>
+        </div>
+      </section>
+
       {/* ══════════════════ 12. FAQ ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #f7faf8 0%, #111512 50%, #f7faf8 100%)" }} />
@@ -746,7 +796,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
         </div>
 
         <div className="max-w-3xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="FAQ" title="Common Questions" accent={PRIMARY} />
+          <AnimatedSection>          <SectionHeader badge="FAQ" title="Common Questions" accent={PRIMARY} /></AnimatedSection>
           <div className="space-y-3">
             {faqs.map((faq, i) => (
               <AccordionItem key={i} question={faq.q} answer={faq.a} isOpen={openFaq === i} onToggle={() => setOpenFaq(openFaq === i ? null : i)} />

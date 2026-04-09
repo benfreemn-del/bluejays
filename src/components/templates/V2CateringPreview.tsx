@@ -146,8 +146,8 @@ function ClaimBanner({ businessName, accentColor, prospectId }: { businessName: 
         <p className="text-xs text-[#6b7280]"><span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1.5 animate-pulse" />Custom-built preview for this business</p>
         {timeLeft && timeLeft !== "EXPIRED" && <p className="text-xs font-bold" style={{ color: accentColor }}>Preview expires in {timeLeft}</p>}
       </div>
-      <div className="px-6 py-4 flex items-center justify-between gap-4" style={{ background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}10)`, borderTop: `1px solid ${accentColor}30` }}>
-        <div className="flex-1 min-w-0"><p className="text-sm font-semibold text-[#1c1917] truncate">This website was built for {businessName}</p><p className="text-xs text-[#6b7280]">Claim it before we offer it to a competitor</p></div>
+      <div className="px-4 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4" style={{ background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}10)`, borderTop: `1px solid ${accentColor}30` }}>
+        <div className="flex-1 min-w-0"><p className="text-sm font-semibold text-[#1c1917] truncate">This website was built for {businessName}</p><p className="text-xs text-[#6b7280]">Limited time — claim your free website today</p></div>
         <a href={`/claim/${prospectId}`} className="shrink-0 h-11 px-6 rounded-full text-[#1c1917] text-sm font-bold flex items-center gap-2 hover:shadow-lg transition-all duration-300" style={{ background: accentColor }}>Claim Your Website <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4"><path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg></a>
       </div>
     </div>
@@ -155,6 +155,21 @@ function ClaimBanner({ businessName, accentColor, prospectId }: { businessName: 
 }
 
 /* ═══════════════════════════════════════════════════ */
+/* ───────────────────────── ANIMATED SECTION ───────────────────────── */
+function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return (
+    <motion.div
+      initial={ opacity: 0, x: 50 }
+      whileInView={ opacity: 1, x: 0 }
+      viewport={{ once: true, margin: "-80px" }}
+      transition={ duration: 0.7, ease: "easeOut" as const }
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
 export default function V2CateringPreview({ data }: { data: GeneratedSiteData }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -170,6 +185,14 @@ export default function V2CateringPreview({ data }: { data: GeneratedSiteData })
     { q: "How far in advance should I book?", a: "We recommend booking 3-6 months in advance for weddings and large events. Corporate events can often be arranged with 2-4 weeks notice." },
     { q: "Can we schedule a tasting?", a: `Yes! Contact ${data.businessName} to arrange a tasting session. We want every dish to be perfect for your event.` },
   ];
+
+  /* Fallback testimonials */
+  const fallbackTestimonials = [
+    { name: "Emily C.", text: "They catered our wedding and every single guest raved about the food. Absolutely perfect.", rating: 5 },
+    { name: "Marcus D.", text: "Best corporate event catering we've ever had. Professional, on time, and the food was outstanding.", rating: 5 },
+    { name: "Sophia R.", text: "The presentation was as beautiful as the taste. They made our anniversary party unforgettable.", rating: 5 }
+  ];
+  const testimonials = data.testimonials?.length > 0 ? data.testimonials : fallbackTestimonials;
 
   const processSteps = [
     { step: "01", title: "Consultation", desc: "We discuss your vision, dietary needs, guest count, and budget." },
@@ -287,7 +310,7 @@ export default function V2CateringPreview({ data }: { data: GeneratedSiteData })
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #f5efe8 50%, ${BG} 100%)` }} />
         <VineDecor opacity={0.02} accent={ACCENT} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Gallery" title="A Feast for the Eyes" accent={ACCENT} />
+          <AnimatedSection>          <SectionHeader badge="Gallery" title="A Feast for the Eyes" accent={ACCENT} /></AnimatedSection>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {galleryImages.map((src, i) => (
               <div key={i} className="group relative rounded-2xl overflow-hidden border border-gray-200/60">
@@ -331,9 +354,9 @@ export default function V2CateringPreview({ data }: { data: GeneratedSiteData })
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #f5efe8 50%, ${BG} 100%)` }} />
         <ElegantPattern opacity={0.02} accent={ACCENT} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Testimonials" title="What Our Clients Say" accent={ACCENT} />
+          <AnimatedSection>          <SectionHeader badge="Testimonials" title="What Our Clients Say" accent={ACCENT} /></AnimatedSection>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {data.testimonials.map((t, i) => (
+            {testimonials.map((t, i) => (
               <GlassCard key={i} className="p-6 h-full flex flex-col">
                 <div className="flex gap-0.5 mb-4">{Array.from({ length: t.rating || 5 }).map((_, j) => <Star key={j} size={16} weight="fill" style={{ color: GOLD }} />)}</div>
                 <p className="text-[#4b5563] leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p>
@@ -349,7 +372,7 @@ export default function V2CateringPreview({ data }: { data: GeneratedSiteData })
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #f5efe8 50%, ${BG} 100%)` }} />
         <VineDecor opacity={0.02} accent={ACCENT} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Our Process" title="From Vision to Table" accent={ACCENT} />
+          <AnimatedSection>          <SectionHeader badge="Our Process" title="From Vision to Table" accent={ACCENT} /></AnimatedSection>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {processSteps.map((step, i) => (
               <div key={step.step} className="relative">
@@ -370,7 +393,7 @@ export default function V2CateringPreview({ data }: { data: GeneratedSiteData })
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #f5efe8 50%, ${BG} 100%)` }} />
         <ElegantPattern opacity={0.02} accent={ACCENT} />
         <div className="max-w-3xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="FAQ" title="Questions & Answers" accent={ACCENT} />
+          <AnimatedSection>          <SectionHeader badge="FAQ" title="Questions & Answers" accent={ACCENT} /></AnimatedSection>
           <div className="space-y-3">{faqs.map((faq, i) => <AccordionItem key={i} question={faq.q} answer={faq.a} isOpen={openFaq === i} onToggle={() => setOpenFaq(openFaq === i ? null : i)} />)}</div>
         </div>
       </section>

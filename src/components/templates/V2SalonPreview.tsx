@@ -244,9 +244,9 @@ function ClaimBanner({ businessName, accentColor, prospectId }: { businessName: 
         <p className="text-xs text-slate-400"><span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1.5 animate-pulse" />Custom-built preview for this business</p>
         {timeLeft && timeLeft !== "EXPIRED" && <p className="text-xs font-bold" style={{ color: accentColor }}>Preview expires in {timeLeft}</p>}
       </div>
-      <div className="px-6 py-4 flex items-center justify-between gap-4" style={{ background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}10)`, borderTop: `1px solid ${accentColor}30` }}>
-        <div className="flex-1 min-w-0"><p className="text-sm font-semibold text-white truncate">This website was built for {businessName}</p><p className="text-xs text-slate-400">Claim it before we offer it to a competitor</p></div>
-        <a href={`/claim/${prospectId}`} className="shrink-0 h-11 px-6 rounded-full text-white text-sm font-bold flex items-center gap-2 hover:shadow-lg transition-all duration-300" style={{ background: accentColor }}>
+      <div className="px-4 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4" style={{ background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}10)`, borderTop: `1px solid ${accentColor}30` }}>
+        <div className="flex-1 min-w-0"><p className="text-sm font-semibold text-white truncate">This website was built for {businessName}</p><p className="text-xs text-slate-400">Limited time — claim your free website today</p></div>
+        <a href={`/claim/${prospectId}`} className="shrink-0 min-h-[48px] px-5 sm:px-6 rounded-full text-white text-sm font-bold flex items-center gap-2 hover:shadow-lg transition-all duration-300 shadow-lg" style={{ background: accentColor }}>
           Claim Your Website <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4"><path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
         </a>
       </div>
@@ -257,6 +257,21 @@ function ClaimBanner({ businessName, accentColor, prospectId }: { businessName: 
 /* ═══════════════════════════════════════════════════════════════════
    MAIN PREVIEW COMPONENT
    ═══════════════════════════════════════════════════════════════════ */
+/* ───────────────────────── ANIMATED SECTION ───────────────────────── */
+function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return (
+    <motion.div
+      initial={ opacity: 0, x: 50 }
+      whileInView={ opacity: 1, x: 0 }
+      viewport={{ once: true, margin: "-80px" }}
+      transition={ duration: 0.7, ease: "easeOut" as const }
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
 export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -281,6 +296,14 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
     { q: "What products do you use?", a: "We use only premium, professional-grade products from top salon brands to ensure the best results and healthiest hair." },
     { q: "Do you offer gift cards?", a: `Yes! ${data.businessName} gift cards are available in any denomination and make the perfect gift for any occasion.` },
   ];
+
+  /* Fallback testimonials */
+  const fallbackTestimonials = [
+    { name: "Jessica P.", text: "Best haircut I've ever had! The stylists here are true artists. I'll never go anywhere else.", rating: 5 },
+    { name: "Brittany M.", text: "My color came out exactly how I wanted. They really listen and deliver beautiful results.", rating: 5 },
+    { name: "Vanessa K.", text: "Made me feel like a princess for my wedding day. Hair and makeup were absolutely flawless.", rating: 5 }
+  ];
+  const testimonials = data.testimonials?.length > 0 ? data.testimonials : fallbackTestimonials;
 
   return (
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: DARK, color: "#f1f5f9" }}>
@@ -388,7 +411,26 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 4. SERVICES ══════════════════ */}
+      {/* ══════════════════ 4. TESTIMONIALS ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #150810 50%, ${DARK} 100%)` }} />
+        <RosePattern opacity={0.02} accent={ROSE} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] right-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${ROSE}06` }} /></div>
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <AnimatedSection>          <SectionHeader badge="Reviews" title="What Our Clients Say" accent={ROSE} /></AnimatedSection>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {testimonials.map((t, i) => (
+              <GlassCard key={i} className="p-6 h-full flex flex-col">
+                <div className="flex gap-0.5 mb-4">{Array.from({ length: t.rating || 5 }).map((_, j) => <Star key={j} size={16} weight="fill" style={{ color: ROSE }} />)}</div>
+                <p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p>
+                <div className="pt-4 border-t border-white/5 flex items-center justify-between"><span className="text-sm font-semibold text-white">{t.name}</span></div>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ 5. SERVICES ══════════════════ */}
       <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #150810 50%, ${DARK} 100%)` }} />
         <RosePattern accent={ROSE} />
@@ -421,7 +463,7 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 5. ABOUT ══════════════════ */}
+      {/* ══════════════════ 6. ABOUT ══════════════════ */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #120910 50%, ${DARK} 100%)` }} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${ROSE}06` }} /></div>
@@ -455,13 +497,13 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 6. PROCESS ══════════════════ */}
+      {/* ══════════════════ 7. PROCESS ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #150810 50%, ${DARK} 100%)` }} />
         <RosePattern opacity={0.025} accent={ROSE} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${ROSE_LIGHT}06` }} /></div>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Your Visit" title="The Experience" accent={ROSE} />
+          <AnimatedSection>          <SectionHeader badge="Your Visit" title="The Experience" accent={ROSE} /></AnimatedSection>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {processSteps.map((step, i) => (
               <div key={step.step} className="relative">
@@ -477,12 +519,12 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 7. GALLERY ══════════════════ */}
+      {/* ══════════════════ 8. GALLERY ══════════════════ */}
       <section id="gallery" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #120910 50%, ${DARK} 100%)` }} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] left-[20%] w-[500px] h-[500px] rounded-full blur-[200px]" style={{ background: `${ROSE}06` }} /></div>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Portfolio" title="Our Work" accent={ROSE} />
+          <AnimatedSection>          <SectionHeader badge="Portfolio" title="Our Work" accent={ROSE} /></AnimatedSection>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {galleryImages.map((src, i) => {
               const titles = ["Signature Color Transformation", "Precision Styling", "Bridal Elegance", "Creative Artistry"];
@@ -494,25 +536,6 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
                 </div>
               );
             })}
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════════════ 8. TESTIMONIALS ══════════════════ */}
-      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #150810 50%, ${DARK} 100%)` }} />
-        <RosePattern opacity={0.02} accent={ROSE} />
-        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] right-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${ROSE}06` }} /></div>
-        <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Reviews" title="What Our Clients Say" accent={ROSE} />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {data.testimonials.map((t, i) => (
-              <GlassCard key={i} className="p-6 h-full flex flex-col">
-                <div className="flex gap-0.5 mb-4">{Array.from({ length: t.rating || 5 }).map((_, j) => <Star key={j} size={16} weight="fill" style={{ color: ROSE }} />)}</div>
-                <p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p>
-                <div className="pt-4 border-t border-white/5 flex items-center justify-between"><span className="text-sm font-semibold text-white">{t.name}</span></div>
-              </GlassCard>
-            ))}
           </div>
         </div>
       </section>
@@ -536,7 +559,7 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #120910 50%, ${DARK} 100%)` }} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[40%] right-[20%] w-[400px] h-[400px] rounded-full blur-[180px]" style={{ background: `${ROSE_LIGHT}06` }} /></div>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Follow Us" title="Stay Connected" accent={ROSE} />
+          <AnimatedSection>          <SectionHeader badge="Follow Us" title="Stay Connected" accent={ROSE} /></AnimatedSection>
           <div className="text-center">
             <GlassCard className="p-8 inline-block">
               <InstagramLogo size={32} weight="duotone" style={{ color: ROSE }} className="mx-auto mb-3" />
@@ -558,7 +581,7 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
           <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #150810 50%, ${DARK} 100%)` }} />
           <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${ROSE}06` }} /></div>
           <div className="max-w-3xl mx-auto px-6 relative z-10">
-            <SectionHeader badge="Hours" title="When to Visit" accent={ROSE} />
+            <AnimatedSection>          <SectionHeader badge="Hours" title="When to Visit" accent={ROSE} /></AnimatedSection>
             <div className="text-center">
               <ShimmerBorder accent={ROSE}><div className="p-8"><Clock size={32} weight="duotone" style={{ color: ROSE }} className="mx-auto mb-4" /><p className="text-slate-300 leading-relaxed whitespace-pre-line text-lg">{data.hours}</p></div></ShimmerBorder>
             </div>
@@ -566,12 +589,39 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
         </section>
       )}
 
+      
+      {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
+      <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15, ${ACCENT}08)` }} />
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
+          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: ACCENT }}>
+            Don&apos;t Miss Out
+          </p>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-3">
+            Ready to Get Started?
+          </h2>
+          <p className="text-slate-400 mb-6 text-sm sm:text-base">
+            Limited time — claim your free professional website today before it&apos;s offered to a competitor.
+          </p>
+          <a
+            href={`/claim/${data.id}`}
+            className="inline-flex items-center gap-2 min-h-[48px] px-8 py-3 rounded-full text-white font-bold text-base hover:shadow-lg transition-all duration-300"
+            style={{ background: ACCENT }}
+          >
+            Claim This Website
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
+              <path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </svg>
+          </a>
+        </div>
+      </section>
+
       {/* ══════════════════ 12. FAQ ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #150810 50%, ${DARK} 100%)` }} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${ROSE}06` }} /></div>
         <div className="max-w-3xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="FAQ" title="Common Questions" accent={ROSE} />
+          <AnimatedSection>          <SectionHeader badge="FAQ" title="Common Questions" accent={ROSE} /></AnimatedSection>
           <div className="space-y-3">{faqs.map((faq, i) => <AccordionItem key={i} question={faq.q} answer={faq.a} isOpen={openFaq === i} onToggle={() => setOpenFaq(openFaq === i ? null : i)} />)}</div>
         </div>
       </section>

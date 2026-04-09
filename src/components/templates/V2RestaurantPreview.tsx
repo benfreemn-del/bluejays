@@ -319,12 +319,12 @@ function ClaimBanner({ businessName, accentColor, prospectId }: { businessName: 
         <p className="text-xs text-slate-400"><span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1.5 animate-pulse" />Custom-built preview for this business</p>
         {timeLeft && timeLeft !== "EXPIRED" && <p className="text-xs font-bold" style={{ color: accentColor }}>Preview expires in {timeLeft}</p>}
       </div>
-      <div className="px-6 py-4 flex items-center justify-between gap-4" style={{ background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}10)`, borderTop: `1px solid ${accentColor}30` }}>
+      <div className="px-4 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4" style={{ background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}10)`, borderTop: `1px solid ${accentColor}30` }}>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold text-white truncate">This website was built for {businessName}</p>
-          <p className="text-xs text-slate-400">Claim it before we offer it to a competitor</p>
+          <p className="text-xs text-slate-400">Limited time — claim your free website today</p>
         </div>
-        <a href={`/claim/${prospectId}`} className="shrink-0 h-11 px-6 rounded-full text-white text-sm font-bold flex items-center gap-2 hover:shadow-lg transition-all duration-300" style={{ background: accentColor }}>
+        <a href={`/claim/${prospectId}`} className="shrink-0 min-h-[48px] px-5 sm:px-6 rounded-full text-white text-sm font-bold flex items-center gap-2 hover:shadow-lg transition-all duration-300 shadow-lg" style={{ background: accentColor }}>
           Claim Your Website <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4"><path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
         </a>
       </div>
@@ -335,6 +335,21 @@ function ClaimBanner({ businessName, accentColor, prospectId }: { businessName: 
 /* ═══════════════════════════════════════════════════════════════════
    MAIN PREVIEW COMPONENT
    ═══════════════════════════════════════════════════════════════════ */
+/* ───────────────────────── ANIMATED SECTION ───────────────────────── */
+function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return (
+    <motion.div
+      initial={ opacity: 0, scale: 0.92 }
+      whileInView={ opacity: 1, scale: 1 }
+      viewport={{ once: true, margin: "-80px" }}
+      transition={ duration: 0.5, ease: "easeOut" as const }
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
 export default function V2RestaurantPreview({ data }: { data: GeneratedSiteData }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -362,6 +377,14 @@ export default function V2RestaurantPreview({ data }: { data: GeneratedSiteData 
     { q: "Do you offer catering or private dining?", a: `Absolutely! ${data.businessName} offers full-service catering and private dining for events of all sizes. Contact us for a custom menu consultation.` },
     { q: "Do you accommodate dietary restrictions?", a: "We are happy to accommodate vegetarian, vegan, gluten-free, and other dietary needs. Please inform your server or mention it when making your reservation." },
   ];
+
+  /* Fallback testimonials */
+  const fallbackTestimonials = [
+    { name: "Sarah M.", text: "Best dining experience in town. The ambiance and food were absolutely incredible.", rating: 5 },
+    { name: "Kevin D.", text: "We come here every Friday night. The menu never disappoints and the service is always top-notch.", rating: 5 },
+    { name: "Rachel L.", text: "Hosted our anniversary dinner here and it was perfect. The chef even prepared a special dessert.", rating: 5 }
+  ];
+  const testimonials = data.testimonials?.length > 0 ? data.testimonials : fallbackTestimonials;
 
   return (
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: CHARCOAL, color: "#f1f5f9" }}>
@@ -476,7 +499,28 @@ export default function V2RestaurantPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 4. MENU / SERVICES ══════════════════ */}
+      {/* ══════════════════ 4. TESTIMONIALS ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #141010 50%, #1a1a1a 100%)" }} />
+        <DiningPattern opacity={0.02} accent={ACCENT} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] right-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${ACCENT}06` }} /></div>
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <AnimatedSection>          <SectionHeader badge="Reviews" title="What Our Guests Say" accent={ACCENT} /></AnimatedSection>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {testimonials.map((t, i) => (
+              <GlassCard key={i} className="p-6 h-full flex flex-col">
+                <div className="flex gap-0.5 mb-4">{Array.from({ length: t.rating || 5 }).map((_, j) => <Star key={j} size={16} weight="fill" style={{ color: ACCENT }} />)}</div>
+                <p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p>
+                <div className="pt-4 border-t border-white/5 flex items-center justify-between">
+                  <span className="text-sm font-semibold text-white">{t.name}</span>
+                </div>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ 5. MENU / SERVICES ══════════════════ */}
       <section id="menu" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #141010 50%, #1a1a1a 100%)" }} />
         <DiningPattern accent={ACCENT} />
@@ -512,7 +556,7 @@ export default function V2RestaurantPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 5. ABOUT ══════════════════ */}
+      {/* ══════════════════ 6. ABOUT ══════════════════ */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f0c0c 50%, #1a1a1a 100%)" }} />
         <FlameBackground opacity={0.02} accent={ACCENT} />
@@ -553,13 +597,13 @@ export default function V2RestaurantPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 6. PROCESS ══════════════════ */}
+      {/* ══════════════════ 7. PROCESS ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #141010 50%, #1a1a1a 100%)" }} />
         <DiningPattern opacity={0.025} accent={ACCENT} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${GOLD_ACCENT}06` }} /></div>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Your Experience" title="How It Works" accent={ACCENT} />
+          <AnimatedSection>          <SectionHeader badge="Your Experience" title="How It Works" accent={ACCENT} /></AnimatedSection>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {processSteps.map((step, i) => (
               <div key={step.step} className="relative">
@@ -577,7 +621,7 @@ export default function V2RestaurantPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 7. GALLERY (GALLERY-HEAVY) ══════════════════ */}
+      {/* ══════════════════ 8. GALLERY (GALLERY-HEAVY) ══════════════════ */}
       <section id="gallery" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f0c0c 50%, #1a1a1a 100%)" }} />
         <FlameBackground opacity={0.02} accent={ACCENT} />
@@ -597,27 +641,6 @@ export default function V2RestaurantPreview({ data }: { data: GeneratedSiteData 
                 </div>
               );
             })}
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════════════ 8. TESTIMONIALS ══════════════════ */}
-      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #141010 50%, #1a1a1a 100%)" }} />
-        <DiningPattern opacity={0.02} accent={ACCENT} />
-        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] right-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${ACCENT}06` }} /></div>
-        <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Reviews" title="What Our Guests Say" accent={ACCENT} />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {data.testimonials.map((t, i) => (
-              <GlassCard key={i} className="p-6 h-full flex flex-col">
-                <div className="flex gap-0.5 mb-4">{Array.from({ length: t.rating || 5 }).map((_, j) => <Star key={j} size={16} weight="fill" style={{ color: ACCENT }} />)}</div>
-                <p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p>
-                <div className="pt-4 border-t border-white/5 flex items-center justify-between">
-                  <span className="text-sm font-semibold text-white">{t.name}</span>
-                </div>
-              </GlassCard>
-            ))}
           </div>
         </div>
       </section>
@@ -642,7 +665,7 @@ export default function V2RestaurantPreview({ data }: { data: GeneratedSiteData 
         <DiningPattern opacity={0.02} accent={ACCENT} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[40%] right-[20%] w-[400px] h-[400px] rounded-full blur-[180px]" style={{ background: `${GOLD_ACCENT}06` }} /></div>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Location" title="Find Us" accent={ACCENT} />
+          <AnimatedSection>          <SectionHeader badge="Location" title="Find Us" accent={ACCENT} /></AnimatedSection>
           <div className="text-center">
             <GlassCard className="p-8 inline-block">
               <div className="flex items-center gap-3 text-lg">
@@ -662,7 +685,7 @@ export default function V2RestaurantPreview({ data }: { data: GeneratedSiteData 
           <FlameBackground opacity={0.02} accent={ACCENT} />
           <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${ACCENT}06` }} /></div>
           <div className="max-w-3xl mx-auto px-6 relative z-10">
-            <SectionHeader badge="Hours" title="When We're Open" accent={ACCENT} />
+            <AnimatedSection>          <SectionHeader badge="Hours" title="When We're Open" accent={ACCENT} /></AnimatedSection>
             <div className="text-center">
               <ShimmerBorder accent={ACCENT}>
                 <div className="p-8">
@@ -676,13 +699,40 @@ export default function V2RestaurantPreview({ data }: { data: GeneratedSiteData 
         </section>
       )}
 
+      
+      {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
+      <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15, ${ACCENT}08)` }} />
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
+          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: ACCENT }}>
+            Don&apos;t Miss Out
+          </p>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-3">
+            Ready to Get Started?
+          </h2>
+          <p className="text-slate-400 mb-6 text-sm sm:text-base">
+            Limited time — claim your free professional website today before it&apos;s offered to a competitor.
+          </p>
+          <a
+            href={`/claim/${data.id}`}
+            className="inline-flex items-center gap-2 min-h-[48px] px-8 py-3 rounded-full text-white font-bold text-base hover:shadow-lg transition-all duration-300"
+            style={{ background: ACCENT }}
+          >
+            Claim This Website
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
+              <path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </svg>
+          </a>
+        </div>
+      </section>
+
       {/* ══════════════════ 12. FAQ ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #141010 50%, #1a1a1a 100%)" }} />
         <FlameBackground opacity={0.02} accent={ACCENT} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${ACCENT}06` }} /></div>
         <div className="max-w-3xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="FAQ" title="Common Questions" accent={ACCENT} />
+          <AnimatedSection>          <SectionHeader badge="FAQ" title="Common Questions" accent={ACCENT} /></AnimatedSection>
           <div className="space-y-3">
             {faqs.map((faq, i) => (
               <AccordionItem key={i} question={faq.q} answer={faq.a} isOpen={openFaq === i} onToggle={() => setOpenFaq(openFaq === i ? null : i)} />

@@ -122,7 +122,22 @@ function SectionHeader({ badge, title, subtitle, accent }: { badge: string; titl
 function ClaimBanner({ businessName, accentColor, prospectId }: { businessName: string; accentColor: string; prospectId: string }) {
   const [timeLeft, setTimeLeft] = useState("");
   useEffect(() => { const expiry = new Date(); expiry.setDate(expiry.getDate() + 7); const tick = () => { const diff = expiry.getTime() - Date.now(); if (diff <= 0) { setTimeLeft("EXPIRED"); return; } const d = Math.floor(diff / 86400000); const h = Math.floor((diff % 86400000) / 3600000); const m = Math.floor((diff % 3600000) / 60000); setTimeLeft(`${d}d ${h}h ${m}m`); }; tick(); const interval = setInterval(tick, 60000); return () => clearInterval(interval); }, []);
-  return (<div className="fixed bottom-0 left-0 right-0 z-50"><div className="bg-[#0a0a0a]/90 backdrop-blur-sm border-t border-white/10 px-4 py-2 flex items-center justify-center gap-4"><p className="text-xs text-slate-400"><span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1.5 animate-pulse" />Custom-built preview for this business</p>{timeLeft && timeLeft !== "EXPIRED" && <p className="text-xs font-bold" style={{ color: accentColor }}>Preview expires in {timeLeft}</p>}</div><div className="px-6 py-4 flex items-center justify-between gap-4" style={{ background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}10)`, borderTop: `1px solid ${accentColor}30` }}><div className="flex-1 min-w-0"><p className="text-sm font-semibold text-white truncate">This website was built for {businessName}</p><p className="text-xs text-slate-400">Claim it before we offer it to a competitor</p></div><a href={`/claim/${prospectId}`} className="shrink-0 h-11 px-6 rounded-full text-white text-sm font-bold flex items-center gap-2 hover:shadow-lg transition-all duration-300" style={{ background: accentColor }}>Claim Your Website <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4"><path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg></a></div></div>);
+  return (<div className="fixed bottom-0 left-0 right-0 z-50"><div className="bg-[#0a0a0a]/90 backdrop-blur-sm border-t border-white/10 px-4 py-2 flex items-center justify-center gap-4"><p className="text-xs text-slate-400"><span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1.5 animate-pulse" />Custom-built preview for this business</p>{timeLeft && timeLeft !== "EXPIRED" && <p className="text-xs font-bold" style={{ color: accentColor }}>Preview expires in {timeLeft}</p>}</div><div className="px-4 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4" style={{ background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}10)`, borderTop: `1px solid ${accentColor}30` }}><div className="flex-1 min-w-0"><p className="text-sm font-semibold text-white truncate">This website was built for {businessName}</p><p className="text-xs text-slate-400">Limited time — claim your free website today</p></div><a href={`/claim/${prospectId}`} className="shrink-0 min-h-[48px] px-5 sm:px-6 rounded-full text-white text-sm font-bold flex items-center gap-2 hover:shadow-lg transition-all duration-300 shadow-lg w-full sm:w-auto justify-center" style={{ background: accentColor }}>Claim This Website <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4"><path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg></a></div></div>);
+}
+
+/* ───────────────────────── ANIMATED SECTION ───────────────────────── */
+function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return (
+    <motion.div
+      initial={ opacity: 0, x: 50 }
+      whileInView={ opacity: 1, x: 0 }
+      viewport={{ once: true, margin: "-80px" }}
+      transition={ duration: 0.7, ease: "easeOut" as const }
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
 }
 
 export default function V2TattooPreview({ data }: { data: GeneratedSiteData }) {
@@ -140,6 +155,14 @@ export default function V2TattooPreview({ data }: { data: GeneratedSiteData }) {
     { q: "Do you do cover-ups?", a: `Yes! Our artists at ${data.businessName} are experienced in cover-up work. We can transform old or unwanted tattoos into beautiful new pieces.` },
     { q: "How much does a tattoo cost?", a: "Pricing varies based on size, detail, placement, and time required. We offer free consultations to provide accurate quotes for your specific design." },
   ];
+
+  /* Fallback testimonials */
+  const fallbackTestimonials = [
+    { name: "Jake R.", text: "Incredible artistry. My sleeve turned out better than I ever imagined. True talent here.", rating: 5 },
+    { name: "Amber L.", text: "Super clean shop, friendly artists, and the design process was collaborative and fun.", rating: 5 },
+    { name: "Marcus T.", text: "Got my first tattoo here and the experience was amazing. They made me feel completely comfortable.", rating: 5 }
+  ];
+  const testimonials = data.testimonials?.length > 0 ? data.testimonials : fallbackTestimonials;
 
   const styles = ["Custom Design", "Black & Grey", "Color Realism", "Traditional", "Japanese", "Geometric", "Watercolor", "Fine Line"];
 
@@ -283,7 +306,7 @@ export default function V2TattooPreview({ data }: { data: GeneratedSiteData }) {
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #0f0505 50%, #0a0a0a 100%)" }} />
         <InkDripBackground opacity={0.02} accent={ACCENT} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Tattoo Styles" title="Styles We Master" accent={ACCENT} />
+          <AnimatedSection>          <SectionHeader badge="Tattoo Styles" title="Styles We Master" accent={ACCENT} /></AnimatedSection>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {styles.map((st) => (
               <GlassCard key={st} className="p-5 text-center group hover:border-opacity-30 transition-all duration-300">
@@ -300,9 +323,9 @@ export default function V2TattooPreview({ data }: { data: GeneratedSiteData }) {
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #1a0505 50%, #0a0a0a 100%)" }} />
         <InkSplatterPattern opacity={0.02} accent={ACCENT} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Reviews" title="Client Experiences" accent={ACCENT} />
+          <AnimatedSection>          <SectionHeader badge="Reviews" title="Client Experiences" accent={ACCENT} /></AnimatedSection>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {data.testimonials.map((t, i) => (
+            {testimonials.map((t, i) => (
               <GlassCard key={i} className="p-6 h-full flex flex-col"><div className="flex gap-0.5 mb-4">{Array.from({ length: t.rating || 5 }).map((_, j) => <Star key={j} size={16} weight="fill" style={{ color: ACCENT }} />)}</div><p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p><div className="pt-4 border-t border-white/5"><span className="text-sm font-semibold text-white">{t.name}</span></div></GlassCard>
             ))}
           </div>
@@ -326,7 +349,7 @@ export default function V2TattooPreview({ data }: { data: GeneratedSiteData }) {
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #0f0505 50%, #0a0a0a 100%)" }} />
         <InkSplatterPattern opacity={0.025} accent={ACCENT} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="The Process" title="From Concept to Ink" accent={ACCENT} />
+          <AnimatedSection>          <SectionHeader badge="The Process" title="From Concept to Ink" accent={ACCENT} /></AnimatedSection>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[{ step: "01", title: "Consultation", desc: "Discuss your ideas, placement, and style preferences with your artist." },
               { step: "02", title: "Custom Design", desc: "Your artist creates a unique design tailored to your vision." },
@@ -346,7 +369,7 @@ export default function V2TattooPreview({ data }: { data: GeneratedSiteData }) {
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #1a0505 50%, #0a0a0a 100%)" }} />
         <InkSplatterPattern opacity={0.02} accent={ACCENT} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Location" title="Visit Our Studio" accent={ACCENT} />
+          <AnimatedSection>          <SectionHeader badge="Location" title="Visit Our Studio" accent={ACCENT} /></AnimatedSection>
           <div className="text-center"><GlassCard className="p-8 inline-block"><div className="flex items-center gap-3 text-lg"><MapPin size={24} weight="duotone" style={{ color: ACCENT }} /><MapLink address={data.address} className="text-white font-semibold" /></div><p className="text-slate-400 text-sm mt-2">Walk-ins Welcome</p></GlassCard></div>
         </div>
       </section>
@@ -357,7 +380,7 @@ export default function V2TattooPreview({ data }: { data: GeneratedSiteData }) {
           <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #0f0505 50%, #0a0a0a 100%)" }} />
           <InkDripBackground opacity={0.02} accent={ACCENT} />
           <div className="max-w-3xl mx-auto px-6 relative z-10">
-            <SectionHeader badge="Studio Hours" title="When We're Open" accent={ACCENT} />
+            <AnimatedSection>          <SectionHeader badge="Studio Hours" title="When We're Open" accent={ACCENT} /></AnimatedSection>
             <div className="text-center"><ShimmerBorder accent={ACCENT}><div className="p-8"><Clock size={32} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-4" /><p className="text-slate-300 leading-relaxed whitespace-pre-line text-lg">{data.hours}</p></div></ShimmerBorder></div>
           </div>
         </section>
@@ -368,7 +391,7 @@ export default function V2TattooPreview({ data }: { data: GeneratedSiteData }) {
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #1a0505 50%, #0a0a0a 100%)" }} />
         <InkSplatterPattern opacity={0.02} accent={ACCENT} />
         <div className="max-w-3xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="FAQ" title="Common Questions" accent={ACCENT} />
+          <AnimatedSection>          <SectionHeader badge="FAQ" title="Common Questions" accent={ACCENT} /></AnimatedSection>
           <div className="space-y-3">{faqs.map((faq, i) => <AccordionItem key={i} question={faq.q} answer={faq.a} isOpen={openFaq === i} onToggle={() => setOpenFaq(openFaq === i ? null : i)} />)}</div>
         </div>
       </section>

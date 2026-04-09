@@ -120,7 +120,22 @@ function SectionHeader({ badge, title, subtitle, accent }: { badge: string; titl
 function ClaimBanner({ businessName, accentColor, prospectId }: { businessName: string; accentColor: string; prospectId: string }) {
   const [timeLeft, setTimeLeft] = useState("");
   useEffect(() => { const expiry = new Date(); expiry.setDate(expiry.getDate() + 7); const tick = () => { const diff = expiry.getTime() - Date.now(); if (diff <= 0) { setTimeLeft("EXPIRED"); return; } const d = Math.floor(diff / 86400000); const h = Math.floor((diff % 86400000) / 3600000); const m = Math.floor((diff % 3600000) / 60000); setTimeLeft(`${d}d ${h}h ${m}m`); }; tick(); const interval = setInterval(tick, 60000); return () => clearInterval(interval); }, []);
-  return (<div className="fixed bottom-0 left-0 right-0 z-50"><div className="bg-[#1a1a1a]/90 backdrop-blur-sm border-t border-white/10 px-4 py-2 flex items-center justify-center gap-4"><p className="text-xs text-slate-400"><span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1.5 animate-pulse" />Custom-built preview for this business</p>{timeLeft && timeLeft !== "EXPIRED" && <p className="text-xs font-bold" style={{ color: accentColor }}>Preview expires in {timeLeft}</p>}</div><div className="px-6 py-4 flex items-center justify-between gap-4" style={{ background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}10)`, borderTop: `1px solid ${accentColor}30` }}><div className="flex-1 min-w-0"><p className="text-sm font-semibold text-white truncate">This website was built for {businessName}</p><p className="text-xs text-slate-400">Claim it before we offer it to a competitor</p></div><a href={`/claim/${prospectId}`} className="shrink-0 h-11 px-6 rounded-full text-white text-sm font-bold flex items-center gap-2 hover:shadow-lg transition-all duration-300" style={{ background: GOLD }}>Claim Your Website <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4"><path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg></a></div></div>);
+  return (<div className="fixed bottom-0 left-0 right-0 z-50"><div className="bg-[#1a1a1a]/90 backdrop-blur-sm border-t border-white/10 px-4 py-2 flex items-center justify-center gap-4"><p className="text-xs text-slate-400"><span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1.5 animate-pulse" />Custom-built preview for this business</p>{timeLeft && timeLeft !== "EXPIRED" && <p className="text-xs font-bold" style={{ color: accentColor }}>Preview expires in {timeLeft}</p>}</div><div className="px-4 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4" style={{ background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}10)`, borderTop: `1px solid ${accentColor}30` }}><div className="flex-1 min-w-0"><p className="text-sm font-semibold text-white truncate">This website was built for {businessName}</p><p className="text-xs text-slate-400">Limited time — claim your free website today</p></div><a href={`/claim/${prospectId}`} className="shrink-0 min-h-[48px] px-5 sm:px-6 rounded-full text-white text-sm font-bold flex items-center gap-2 hover:shadow-lg transition-all duration-300 shadow-lg" style={{ background: GOLD }}>Claim Your Website <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4"><path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg></a></div></div>);
+}
+
+/* ───────────────────────── ANIMATED SECTION ───────────────────────── */
+function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return (
+    <motion.div
+      initial={ opacity: 0, y: 40 }
+      whileInView={ opacity: 1, y: 0 }
+      viewport={{ once: true, margin: "-80px" }}
+      transition={ duration: 0.6, ease: "easeOut" as const }
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
 }
 
 export default function V2AccountingPreview({ data }: { data: GeneratedSiteData }) {
@@ -145,6 +160,14 @@ export default function V2AccountingPreview({ data }: { data: GeneratedSiteData 
     { q: "Do you work with small businesses?", a: "Absolutely! We specialize in serving small and medium businesses as well as individuals. Our scalable services grow with your business needs." },
     { q: "Is my financial data secure?", a: "Yes. We use bank-level encryption and follow strict data security protocols. All your financial information is protected with the highest industry standards." },
   ];
+
+  /* Fallback testimonials */
+  const fallbackTestimonials = [
+    { name: "Sarah M.", text: "They saved us thousands on our tax return. Incredibly knowledgeable and always available when we have questions.", rating: 5 },
+    { name: "David R.", text: "Finally found an accountant who explains things in plain English. Our books have never been cleaner.", rating: 5 },
+    { name: "Jennifer L.", text: "Switched from a big firm and couldn't be happier. Personal attention and they actually care about our business.", rating: 5 }
+  ];
+  const testimonials = data.testimonials?.length > 0 ? data.testimonials : fallbackTestimonials;
 
   return (
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: CHARCOAL, color: "#f1f5f9" }}>
@@ -265,7 +288,7 @@ export default function V2AccountingPreview({ data }: { data: GeneratedSiteData 
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #1a1a1a 0%, ${ACCENT}30 50%, #1a1a1a 100%)` }} />
         <GraphPattern opacity={0.025} accent={ACCENT} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Our Process" title="How We Work" accent={ACCENT} />
+          <AnimatedSection>          <SectionHeader badge="Our Process" title="How We Work" accent={ACCENT} /></AnimatedSection>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {processSteps.map((step, i) => (
               <div key={step.step} className="relative">
@@ -282,7 +305,7 @@ export default function V2AccountingPreview({ data }: { data: GeneratedSiteData 
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #1a1a1a 0%, ${ACCENT}20 50%, #1a1a1a 100%)` }} />
         <ChartBackground opacity={0.02} accent={ACCENT} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Client Success" title="Proven Results" accent={ACCENT} />
+          <AnimatedSection>          <SectionHeader badge="Client Success" title="Proven Results" accent={ACCENT} /></AnimatedSection>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {projectImages.map((src, i) => { const titles = ["Tax Strategy Optimization", "Business Growth Advisory", "Financial Restructuring", "Startup CFO Services"]; const descs = ["Saved clients thousands through strategic tax planning.", "Helped businesses double revenue with financial guidance.", "Restructured finances for maximum efficiency.", "Full CFO services for fast-growing startups."]; return (
               <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.06] hover:border-opacity-30 transition-all duration-500">
@@ -300,9 +323,9 @@ export default function V2AccountingPreview({ data }: { data: GeneratedSiteData 
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #1a1a1a 0%, ${ACCENT}30 50%, #1a1a1a 100%)` }} />
         <GraphPattern opacity={0.02} accent={ACCENT} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Testimonials" title="What Our Clients Say" accent={ACCENT} />
+          <AnimatedSection>          <SectionHeader badge="Testimonials" title="What Our Clients Say" accent={ACCENT} /></AnimatedSection>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {data.testimonials.map((t, i) => (
+            {testimonials.map((t, i) => (
               <GlassCard key={i} className="p-6 h-full flex flex-col"><div className="flex gap-0.5 mb-4">{Array.from({ length: t.rating || 5 }).map((_, j) => <Star key={j} size={16} weight="fill" style={{ color: GOLD }} />)}</div><p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p><div className="pt-4 border-t border-white/5"><span className="text-sm font-semibold text-white">{t.name}</span></div></GlassCard>
             ))}
           </div>
@@ -326,7 +349,7 @@ export default function V2AccountingPreview({ data }: { data: GeneratedSiteData 
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #1a1a1a 0%, ${ACCENT}20 50%, #1a1a1a 100%)` }} />
         <GraphPattern opacity={0.02} accent={ACCENT} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Coverage Area" title="Areas We Serve" accent={ACCENT} />
+          <AnimatedSection>          <SectionHeader badge="Coverage Area" title="Areas We Serve" accent={ACCENT} /></AnimatedSection>
           <div className="text-center"><GlassCard className="p-8 inline-block"><div className="flex items-center gap-3 text-lg"><MapPin size={24} weight="duotone" style={{ color: GOLD }} /><MapLink address={data.address} className="text-white font-semibold" /></div><p className="text-slate-400 text-sm mt-2">&amp; Surrounding Areas</p></GlassCard></div>
         </div>
       </section>
@@ -337,7 +360,7 @@ export default function V2AccountingPreview({ data }: { data: GeneratedSiteData 
           <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #1a1a1a 0%, ${ACCENT}30 50%, #1a1a1a 100%)` }} />
           <ChartBackground opacity={0.02} accent={ACCENT} />
           <div className="max-w-3xl mx-auto px-6 relative z-10">
-            <SectionHeader badge="Business Hours" title="When We're Available" accent={ACCENT} />
+            <AnimatedSection>          <SectionHeader badge="Business Hours" title="When We're Available" accent={ACCENT} /></AnimatedSection>
             <div className="text-center"><ShimmerBorder accent={ACCENT}><div className="p-8"><Clock size={32} weight="duotone" style={{ color: GOLD }} className="mx-auto mb-4" /><p className="text-slate-300 leading-relaxed whitespace-pre-line text-lg">{data.hours}</p></div></ShimmerBorder></div>
           </div>
         </section>
@@ -348,7 +371,7 @@ export default function V2AccountingPreview({ data }: { data: GeneratedSiteData 
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #1a1a1a 0%, ${ACCENT}20 50%, #1a1a1a 100%)` }} />
         <ChartBackground opacity={0.02} accent={ACCENT} />
         <div className="max-w-3xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="FAQ" title="Common Questions" accent={ACCENT} />
+          <AnimatedSection>          <SectionHeader badge="FAQ" title="Common Questions" accent={ACCENT} /></AnimatedSection>
           <div className="space-y-3">{faqs.map((faq, i) => <AccordionItem key={i} question={faq.q} answer={faq.a} isOpen={openFaq === i} onToggle={() => setOpenFaq(openFaq === i ? null : i)} />)}</div>
         </div>
       </section>

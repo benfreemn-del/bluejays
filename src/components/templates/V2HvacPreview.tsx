@@ -219,12 +219,12 @@ function ClaimBanner({ businessName, accentColor, prospectId }: { businessName: 
         <p className="text-xs text-slate-400"><span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1.5 animate-pulse" />Custom-built preview for this business</p>
         {timeLeft && timeLeft !== "EXPIRED" && <p className="text-xs font-bold" style={{ color: accentColor }}>Preview expires in {timeLeft}</p>}
       </div>
-      <div className="px-6 py-4 flex items-center justify-between gap-4" style={{ background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}10)`, borderTop: `1px solid ${accentColor}30` }}>
+      <div className="px-4 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4" style={{ background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}10)`, borderTop: `1px solid ${accentColor}30` }}>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold text-white truncate">This website was built for {businessName}</p>
-          <p className="text-xs text-slate-400">Claim it before we offer it to a competitor</p>
+          <p className="text-xs text-slate-400">Limited time — claim your free website today</p>
         </div>
-        <a href={`/claim/${prospectId}`} className="shrink-0 h-11 px-6 rounded-full text-white text-sm font-bold flex items-center gap-2 hover:shadow-lg transition-all duration-300" style={{ background: accentColor }}>
+        <a href={`/claim/${prospectId}`} className="shrink-0 min-h-[48px] px-5 sm:px-6 rounded-full text-white text-sm font-bold flex items-center gap-2 hover:shadow-lg transition-all duration-300 shadow-lg" style={{ background: accentColor }}>
           Claim Your Website <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4"><path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
         </a>
       </div>
@@ -235,6 +235,21 @@ function ClaimBanner({ businessName, accentColor, prospectId }: { businessName: 
 /* ═══════════════════════════════════════════════════════════════════
    MAIN PREVIEW COMPONENT
    ═══════════════════════════════════════════════════════════════════ */
+/* ───────────────────────── ANIMATED SECTION ───────────────────────── */
+function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return (
+    <motion.div
+      initial={ opacity: 0, x: -50 }
+      whileInView={ opacity: 1, x: 0 }
+      viewport={{ once: true, margin: "-80px" }}
+      transition={ duration: 0.7, ease: "easeOut" as const }
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
 export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -259,6 +274,14 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
     { q: "Do you offer emergency HVAC service?", a: `Yes! ${data.businessName} provides 24/7 emergency service. No heat in winter or no AC in summer? We respond fast.` },
     { q: "How long does a new HVAC system last?", a: "A well-maintained system typically lasts 15-20 years. We can assess your current system and recommend whether repair or replacement makes more financial sense." },
   ];
+
+  /* Fallback testimonials */
+  const fallbackTestimonials = [
+    { name: "Dan W.", text: "AC died in July and they had a new system installed the next day. Saved us from the heat wave.", rating: 5 },
+    { name: "Mary K.", text: "Our energy bills dropped 40% after they installed the new furnace. Pays for itself.", rating: 5 },
+    { name: "Scott R.", text: "Annual maintenance plan keeps everything running perfectly. Haven't had a breakdown in years.", rating: 5 }
+  ];
+  const testimonials = data.testimonials?.length > 0 ? data.testimonials : fallbackTestimonials;
 
   return (
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: NAVY, color: "#f1f5f9" }}>
@@ -401,7 +424,30 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 5. ABOUT ══════════════════ */}
+      {/* ══════════════════ 5. PROCESS ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #0a1020 50%, ${NAVY} 100%)` }} />
+        <VentPattern opacity={0.025} accent={BLUE} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${ORANGE}06` }} /></div>
+
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <AnimatedSection>          <SectionHeader badge="Our Process" title="How We Work" accent={BLUE} /></AnimatedSection>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {processSteps.map((step, i) => (
+              <div key={step.step} className="relative">
+                {i < processSteps.length - 1 && <div className="hidden lg:block absolute top-10 left-[calc(50%+40px)] w-[calc(100%-80px)] h-px" style={{ background: `linear-gradient(to right, ${BLUE}33, ${BLUE}11)` }} />}
+                <GlassCard className="p-6 text-center relative">
+                  <div className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center text-2xl font-black" style={{ background: `linear-gradient(135deg, ${BLUE}22, ${BLUE}0a)`, color: BLUE, border: `1px solid ${BLUE}33` }}>{step.step}</div>
+                  <h3 className="text-lg font-bold text-white mb-2">{step.title}</h3>
+                  <p className="text-sm text-slate-400 leading-relaxed">{step.desc}</p>
+                </GlassCard>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ 6. ABOUT ══════════════════ */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #0a1628 50%, ${NAVY} 100%)` }} />
         <AirflowWaves opacity={0.02} accent={BLUE} />
@@ -441,29 +487,6 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 6. PROCESS ══════════════════ */}
-      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #0a1020 50%, ${NAVY} 100%)` }} />
-        <VentPattern opacity={0.025} accent={BLUE} />
-        <div className="absolute inset-0 pointer-events-none"><div className="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${ORANGE}06` }} /></div>
-
-        <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Our Process" title="How We Work" accent={BLUE} />
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {processSteps.map((step, i) => (
-              <div key={step.step} className="relative">
-                {i < processSteps.length - 1 && <div className="hidden lg:block absolute top-10 left-[calc(50%+40px)] w-[calc(100%-80px)] h-px" style={{ background: `linear-gradient(to right, ${BLUE}33, ${BLUE}11)` }} />}
-                <GlassCard className="p-6 text-center relative">
-                  <div className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center text-2xl font-black" style={{ background: `linear-gradient(135deg, ${BLUE}22, ${BLUE}0a)`, color: BLUE, border: `1px solid ${BLUE}33` }}>{step.step}</div>
-                  <h3 className="text-lg font-bold text-white mb-2">{step.title}</h3>
-                  <p className="text-sm text-slate-400 leading-relaxed">{step.desc}</p>
-                </GlassCard>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ══════════════════ 7. PROJECTS ══════════════════ */}
       <section id="projects" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #0a1628 50%, ${NAVY} 100%)` }} />
@@ -471,7 +494,7 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] left-[20%] w-[500px] h-[500px] rounded-full blur-[200px]" style={{ background: `${BLUE}06` }} /></div>
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Our Work" title="Recent Installations" accent={BLUE} />
+          <AnimatedSection>          <SectionHeader badge="Our Work" title="Recent Installations" accent={BLUE} /></AnimatedSection>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {projectImages.map((src, i) => {
               const titles = ["Central AC Installation", "Furnace Replacement", "Ductless Mini-Split System", "Commercial HVAC Upgrade"];
@@ -495,9 +518,9 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] right-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${BLUE}06` }} /></div>
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Testimonials" title="What Our Clients Say" accent={BLUE} />
+          <AnimatedSection>          <SectionHeader badge="Testimonials" title="What Our Clients Say" accent={BLUE} /></AnimatedSection>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {data.testimonials.map((t, i) => (
+            {testimonials.map((t, i) => (
               <GlassCard key={i} className="p-6 h-full flex flex-col">
                 <div className="flex gap-0.5 mb-4">{Array.from({ length: t.rating || 5 }).map((_, j) => <Star key={j} size={16} weight="fill" style={{ color: BLUE }} />)}</div>
                 <p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p>
@@ -530,7 +553,7 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
         <VentPattern opacity={0.02} accent={BLUE} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[40%] right-[20%] w-[400px] h-[400px] rounded-full blur-[180px]" style={{ background: `${ORANGE}06` }} /></div>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Coverage Area" title="Areas We Serve" accent={BLUE} />
+          <AnimatedSection>          <SectionHeader badge="Coverage Area" title="Areas We Serve" accent={BLUE} /></AnimatedSection>
           <div className="text-center">
             <GlassCard className="p-8 inline-block">
               <div className="flex items-center gap-3 text-lg"><MapPin size={24} weight="duotone" style={{ color: BLUE }} /><MapLink address={data.address} className="text-white font-semibold" /></div>
@@ -547,7 +570,7 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
           <AirflowWaves opacity={0.02} accent={BLUE} />
           <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${BLUE}06` }} /></div>
           <div className="max-w-3xl mx-auto px-6 relative z-10">
-            <SectionHeader badge="Business Hours" title="When We're Available" accent={BLUE} />
+            <AnimatedSection>          <SectionHeader badge="Business Hours" title="When We're Available" accent={BLUE} /></AnimatedSection>
             <div className="text-center">
               <ShimmerBorder accent={BLUE}>
                 <div className="p-8">
@@ -561,13 +584,40 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
         </section>
       )}
 
+      
+      {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
+      <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15, ${ACCENT}08)` }} />
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
+          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: ACCENT }}>
+            Don&apos;t Miss Out
+          </p>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-3">
+            Ready to Get Started?
+          </h2>
+          <p className="text-slate-400 mb-6 text-sm sm:text-base">
+            Limited time — claim your free professional website today before it&apos;s offered to a competitor.
+          </p>
+          <a
+            href={`/claim/${data.id}`}
+            className="inline-flex items-center gap-2 min-h-[48px] px-8 py-3 rounded-full text-white font-bold text-base hover:shadow-lg transition-all duration-300"
+            style={{ background: ACCENT }}
+          >
+            Claim This Website
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
+              <path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </svg>
+          </a>
+        </div>
+      </section>
+
       {/* ══════════════════ 12. FAQ ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #0a1020 50%, ${NAVY} 100%)` }} />
         <VentPattern opacity={0.02} accent={BLUE} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${BLUE}06` }} /></div>
         <div className="max-w-3xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="FAQ" title="Common Questions" accent={BLUE} />
+          <AnimatedSection>          <SectionHeader badge="FAQ" title="Common Questions" accent={BLUE} /></AnimatedSection>
           <div className="space-y-3">
             {faqs.map((faq, i) => <AccordionItem key={i} question={faq.q} answer={faq.a} isOpen={openFaq === i} onToggle={() => setOpenFaq(openFaq === i ? null : i)} />)}
           </div>

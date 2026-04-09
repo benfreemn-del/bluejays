@@ -360,21 +360,21 @@ function ClaimBanner({ businessName, accentColor, prospectId }: {
         )}
       </div>
       <div
-        className="px-6 py-4 flex items-center justify-between gap-4"
+        className="px-4 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4"
         style={{ background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}10)`, borderTop: `1px solid ${accentColor}30` }}
       >
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold text-white truncate">
             This website was built for {businessName}
           </p>
-          <p className="text-xs text-slate-400">Claim it before we offer it to a competitor</p>
+          <p className="text-xs text-slate-400">Limited time — claim your free website today</p>
         </div>
         <a
           href={`/claim/${prospectId}`}
-          className="shrink-0 h-11 px-6 rounded-full text-white text-sm font-bold flex items-center gap-2 hover:shadow-lg transition-all duration-300"
+          className="shrink-0 min-h-[48px] px-5 sm:px-6 rounded-full text-white text-sm font-bold flex items-center gap-2 hover:shadow-lg transition-all duration-300 shadow-lg w-full sm:w-auto justify-center"
           style={{ background: accentColor }}
         >
-          Claim Your Website
+          Claim This Website
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
             <path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
           </svg>
@@ -387,6 +387,21 @@ function ClaimBanner({ businessName, accentColor, prospectId }: {
 /* ═══════════════════════════════════════════════════════════════════
    MAIN PREVIEW COMPONENT
    ═══════════════════════════════════════════════════════════════════ */
+/* ───────────────────────── ANIMATED SECTION ───────────────────────── */
+function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return (
+    <motion.div
+      initial={ opacity: 0, x: -50 }
+      whileInView={ opacity: 1, x: 0 }
+      viewport={{ once: true, margin: "-80px" }}
+      transition={ duration: 0.7, ease: "easeOut" as const }
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
 export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -416,6 +431,14 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
     { q: "How fast can you respond to an emergency?", a: "Our emergency team typically arrives within 60 minutes for urgent calls. We are available 24 hours a day, 7 days a week, 365 days a year." },
     { q: "Are your electricians licensed and insured?", a: `Every technician at ${data.businessName} holds a valid Journeyman or Master Electrician license. We carry full liability insurance and bonding for your protection.` },
   ];
+
+  /* Fallback testimonials */
+  const fallbackTestimonials = [
+    { name: "John R.", text: "Rewired our entire house and it was done perfectly. Clean work, fair price, and on schedule.", rating: 5 },
+    { name: "Angela M.", text: "Called for an emergency at 2 AM and they were here in 30 minutes. Lifesavers, literally.", rating: 5 },
+    { name: "Chris B.", text: "Installed our EV charger and smart home system. Extremely knowledgeable and professional.", rating: 5 }
+  ];
+  const testimonials = data.testimonials?.length > 0 ? data.testimonials : fallbackTestimonials;
 
   return (
     <main
@@ -505,7 +528,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
                 Licensed Master Electricians
               </p>
               <h1
-                className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white"
+                className="text-2xl sm:text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white"
                 style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}
               >
                 {data.tagline}
@@ -516,7 +539,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
             </p>
             <div className="flex flex-wrap gap-4">
               <MagneticButton
-                className="px-8 py-4 rounded-full text-base font-semibold text-black flex items-center gap-2 cursor-pointer"
+                className="px-5 sm:px-8 py-4 rounded-full text-sm sm:text-base font-semibold text-black flex items-center gap-2 cursor-pointer"
                 style={{ background: AMBER } as React.CSSProperties}
               >
                 Get Free Estimate
@@ -524,7 +547,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
               </MagneticButton>
               <MagneticButton
                 href={`tel:${phoneDigits}`}
-                className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer"
+                className="px-5 sm:px-8 py-4 rounded-full text-sm sm:text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer"
               >
                 <Phone size={18} weight="duotone" />
                 <PhoneLink phone={data.phone} />
@@ -572,7 +595,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] rounded-full blur-[180px]" style={{ background: `${AMBER}08` }} />
         </div>
-        <div className="max-w-6xl mx-auto px-6 relative z-10">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {data.stats.map((stat, i) => {
               const statIcons = [ShieldCheck, Lightning, Clock, Star];
@@ -581,7 +604,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
                 <div key={stat.label} className="text-center">
                   <div className="flex items-center justify-center gap-2 mb-2">
                     <Icon size={22} weight="fill" style={{ color: AMBER }} />
-                    <span className="text-3xl md:text-4xl font-extrabold text-white">{stat.value}</span>
+                    <span className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white">{stat.value}</span>
                   </div>
                   <span className="text-slate-500 text-sm font-medium tracking-wide uppercase">{stat.label}</span>
                 </div>
@@ -601,13 +624,15 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
           <div className="absolute bottom-[10%] left-[5%] w-[400px] h-[400px] rounded-full blur-[140px]" style={{ background: `${BLUE_SPARK}05` }} />
         </div>
 
-        <div className="max-w-6xl mx-auto px-6 relative z-10">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
+          <AnimatedSection>
           <SectionHeader
             badge="Our Services"
             title="Expert Electrical Services"
             subtitle={`From residential rewiring to commercial build-outs, ${data.businessName} delivers safe, code-compliant work every time.`}
             accent={AMBER}
           />
+          </AnimatedSection>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {data.services.map((service, i) => {
@@ -651,7 +676,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
           <div className="absolute top-[20%] left-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${AMBER}06` }} />
         </div>
 
-        <div className="max-w-6xl mx-auto px-6 relative z-10">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             {/* Photo */}
             <div className="relative">
@@ -684,7 +709,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
                 {data.about}
               </p>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 xs:grid-cols-2 gap-3 sm:gap-4">
                 {[
                   { icon: ShieldCheck, label: "Fully Licensed" },
                   { icon: CheckCircle, label: "Bonded & Insured" },
@@ -712,8 +737,8 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
           <div className="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${BLUE_SPARK}06` }} />
         </div>
 
-        <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Our Process" title="How We Work" accent={AMBER} />
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
+          <AnimatedSection>          <SectionHeader badge="Our Process" title="How We Work" accent={AMBER} /></AnimatedSection>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {processSteps.map((step, i) => (
@@ -745,8 +770,8 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
           <div className="absolute top-[30%] left-[20%] w-[500px] h-[500px] rounded-full blur-[200px]" style={{ background: `${AMBER}06` }} />
         </div>
 
-        <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Our Work" title="Recent Projects" accent={AMBER} />
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
+          <AnimatedSection>          <SectionHeader badge="Our Work" title="Recent Projects" accent={AMBER} /></AnimatedSection>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {projectImages.map((src, i) => {
@@ -792,11 +817,11 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
           <div className="absolute top-[20%] right-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${AMBER}06` }} />
         </div>
 
-        <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Testimonials" title="What Our Clients Say" accent={AMBER} />
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
+          <AnimatedSection>          <SectionHeader badge="Testimonials" title="What Our Clients Say" accent={AMBER} /></AnimatedSection>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {data.testimonials.map((t, i) => (
+            {testimonials.map((t, i) => (
               <GlassCard key={i} className="p-6 h-full flex flex-col">
                 <div className="flex gap-0.5 mb-4">
                   {Array.from({ length: t.rating || 5 }).map((_, j) => (
@@ -821,7 +846,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='40' height='40' fill='none'/%3E%3Cpath d='M0 0L40 40M40 0L0 40' stroke='%23000' stroke-width='0.5'/%3E%3C/svg%3E\")" }} />
         <LightningBackground opacity={0.06} accent={AMBER} />
 
-        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 relative z-10 text-center">
           <Warning size={48} weight="fill" className="mx-auto mb-6 text-black/70" />
           <h2 className="text-3xl md:text-5xl font-black tracking-tight text-black mb-4">
             Electrical Emergency? We&apos;re Here 24/7
@@ -831,7 +856,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
           </p>
           <PhoneLink
             phone={data.phone}
-            className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-black text-white font-bold text-lg hover:bg-black/80 transition-colors"
+            className="inline-flex items-center gap-3 px-5 sm:px-8 py-4 rounded-full bg-black text-white font-bold text-base sm:text-lg hover:bg-black/80 transition-colors"
           >
             <span className="relative flex h-3 w-3">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75" />
@@ -850,8 +875,8 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
           <div className="absolute top-[40%] right-[20%] w-[400px] h-[400px] rounded-full blur-[180px]" style={{ background: `${BLUE_SPARK}06` }} />
         </div>
 
-        <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Coverage Area" title="Areas We Serve" accent={AMBER} />
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
+          <AnimatedSection>          <SectionHeader badge="Coverage Area" title="Areas We Serve" accent={AMBER} /></AnimatedSection>
 
           <div className="text-center">
             <GlassCard className="p-8 inline-block">
@@ -874,8 +899,8 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
             <div className="absolute top-[20%] left-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${AMBER}06` }} />
           </div>
 
-          <div className="max-w-3xl mx-auto px-6 relative z-10">
-            <SectionHeader badge="Business Hours" title="When We're Available" accent={AMBER} />
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10">
+            <AnimatedSection>          <SectionHeader badge="Business Hours" title="When We're Available" accent={AMBER} /></AnimatedSection>
             <div className="text-center">
               <ShimmerBorder accent={AMBER}>
                 <div className="p-8">
@@ -889,6 +914,33 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
         </section>
       )}
 
+      
+      {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
+      <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${AMBER}15, ${AMBER}08)` }} />
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
+          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: AMBER }}>
+            Don&apos;t Miss Out
+          </p>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-3">
+            Ready to Get Started?
+          </h2>
+          <p className="text-slate-400 mb-6 text-sm sm:text-base">
+            Limited time — claim your free professional website today before it&apos;s offered to a competitor.
+          </p>
+          <a
+            href={`/claim/${data.id}`}
+            className="inline-flex items-center gap-2 min-h-[48px] px-8 py-3 rounded-full text-white font-bold text-base hover:shadow-lg transition-all duration-300"
+            style={{ background: AMBER }}
+          >
+            Claim This Website
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
+              <path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </svg>
+          </a>
+        </div>
+      </section>
+
       {/* ══════════════════ 12. FAQ ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #141210 50%, #1a1a1a 100%)" }} />
@@ -897,8 +949,8 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
           <div className="absolute top-[20%] left-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${AMBER}06` }} />
         </div>
 
-        <div className="max-w-3xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="FAQ" title="Common Questions" accent={AMBER} />
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10">
+          <AnimatedSection>          <SectionHeader badge="FAQ" title="Common Questions" accent={AMBER} /></AnimatedSection>
 
           <div className="space-y-3">
             {faqs.map((faq, i) => (
@@ -922,7 +974,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
           <div className="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${AMBER}06` }} />
         </div>
 
-        <div className="max-w-6xl mx-auto px-6 relative z-10">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
             {/* Info side */}
             <div>
@@ -1052,7 +1104,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full blur-[180px]" style={{ background: `${AMBER}06` }} />
         </div>
 
-        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 relative z-10 text-center">
           <ShimmerBorder accent={AMBER}>
             <div className="p-8 md:p-12">
               <ShieldCheck size={48} weight="fill" style={{ color: AMBER }} className="mx-auto mb-4" />
@@ -1060,7 +1112,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
               <p className="text-slate-400 leading-relaxed max-w-2xl mx-auto text-lg">
                 Every job by {data.businessName} is backed by our satisfaction guarantee. We stand behind our work with warranties on all electrical installations and repairs. Your safety and satisfaction are our top priorities.
               </p>
-              <div className="flex flex-wrap justify-center gap-4 mt-8">
+              <div className="flex flex-wrap justify-center gap-2 sm:gap-4 mt-8">
                 {["Licensed Electricians", "Free Estimates", "Satisfaction Guaranteed", "24/7 Emergency"].map((item) => (
                   <span
                     key={item}
@@ -1081,7 +1133,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
       <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111 100%)" }} />
         <CircuitPattern opacity={0.015} accent={AMBER} />
-        <div className="mx-auto max-w-6xl px-6 relative z-10">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
             {/* Brand */}
             <div>

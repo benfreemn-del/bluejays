@@ -183,11 +183,26 @@ function ClaimBanner({ businessName, accentColor, prospectId }: { businessName: 
         <p className="text-xs text-slate-400"><span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1.5 animate-pulse" />Custom-built preview for this business</p>
         {timeLeft && timeLeft !== "EXPIRED" && <p className="text-xs font-bold" style={{ color: accentColor }}>Preview expires in {timeLeft}</p>}
       </div>
-      <div className="px-6 py-4 flex items-center justify-between gap-4" style={{ background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}10)`, borderTop: `1px solid ${accentColor}30` }}>
-        <div className="flex-1 min-w-0"><p className="text-sm font-semibold text-white truncate">This website was built for {businessName}</p><p className="text-xs text-slate-400">Claim it before we offer it to a competitor</p></div>
-        <a href={`/claim/${prospectId}`} className="shrink-0 h-11 px-6 rounded-full text-white text-sm font-bold flex items-center gap-2 hover:shadow-lg transition-all duration-300" style={{ background: accentColor }}>Claim Your Website <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4"><path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg></a>
+      <div className="px-4 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4" style={{ background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}10)`, borderTop: `1px solid ${accentColor}30` }}>
+        <div className="flex-1 min-w-0"><p className="text-sm font-semibold text-white truncate">This website was built for {businessName}</p><p className="text-xs text-slate-400">Limited time — claim your free website today</p></div>
+        <a href={`/claim/${prospectId}`} className="shrink-0 min-h-[48px] px-5 sm:px-6 rounded-full text-white text-sm font-bold flex items-center gap-2 hover:shadow-lg transition-all duration-300 shadow-lg w-full sm:w-auto justify-center" style={{ background: accentColor }}>Claim This Website <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4"><path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg></a>
       </div>
     </div>
+  );
+}
+
+/* ───────────────────────── ANIMATED SECTION ───────────────────────── */
+function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return (
+    <motion.div
+      initial={ opacity: 0, x: -50 }
+      whileInView={ opacity: 1, x: 0 }
+      viewport={{ once: true, margin: "-80px" }}
+      transition={ duration: 0.7, ease: "easeOut" as const }
+      className={className}
+    >
+      {children}
+    </motion.div>
   );
 }
 
@@ -213,6 +228,14 @@ export default function V2PestControlPreview({ data }: { data: GeneratedSiteData
     { q: "How fast can you respond?", a: "We offer same-day and next-day service for most pest emergencies. Our emergency team is available 24/7 for urgent infestations." },
     { q: "Do you offer a guarantee?", a: "Yes! All our treatments come with a satisfaction guarantee. If pests return between scheduled visits, we re-treat at no additional cost." },
   ];
+
+  /* Fallback testimonials */
+  const fallbackTestimonials = [
+    { name: "Roger B.", text: "Ant problem gone after one treatment. They were thorough and explained everything they did.", rating: 5 },
+    { name: "Cindy L.", text: "Monthly service keeps our home completely pest-free. Worth every penny for peace of mind.", rating: 5 },
+    { name: "Wayne S.", text: "Had a serious termite issue and they handled it expertly. Saved our home from major damage.", rating: 5 }
+  ];
+  const testimonials = data.testimonials?.length > 0 ? data.testimonials : fallbackTestimonials;
 
   const pestTypes = ["Termites", "Ants", "Roaches", "Spiders", "Rodents", "Mosquitoes", "Wasps", "Bed Bugs"];
 
@@ -356,7 +379,7 @@ export default function V2PestControlPreview({ data }: { data: GeneratedSiteData
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #1a1208 50%, #1a1a1a 100%)" }} />
         <ShieldPattern opacity={0.025} accent={ACCENT} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Our Process" title="How We Eliminate Pests" accent={ACCENT} />
+          <AnimatedSection>          <SectionHeader badge="Our Process" title="How We Eliminate Pests" accent={ACCENT} /></AnimatedSection>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {processSteps.map((step, i) => (
               <div key={step.step} className="relative">
@@ -376,7 +399,7 @@ export default function V2PestControlPreview({ data }: { data: GeneratedSiteData
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #150e04 50%, #1a1a1a 100%)" }} />
         <BugBackground opacity={0.02} accent={ACCENT} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Our Results" title="Pest-Free Properties" accent={ACCENT} />
+          <AnimatedSection>          <SectionHeader badge="Our Results" title="Pest-Free Properties" accent={ACCENT} /></AnimatedSection>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {projectImages.map((src, i) => { const titles = ["Termite Treatment", "Rodent Exclusion", "Bed Bug Elimination", "Commercial Fumigation"]; const descs = ["Complete termite barrier installation.", "Full rodent exclusion and sealing.", "Heat treatment bed bug elimination.", "Commercial-grade fumigation service."]; return (
               <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.06] hover:border-opacity-30 transition-all duration-500">
@@ -394,9 +417,9 @@ export default function V2PestControlPreview({ data }: { data: GeneratedSiteData
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #1a1208 50%, #1a1a1a 100%)" }} />
         <ShieldPattern opacity={0.02} accent={ACCENT} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Testimonials" title="What Our Clients Say" accent={ACCENT} />
+          <AnimatedSection>          <SectionHeader badge="Testimonials" title="What Our Clients Say" accent={ACCENT} /></AnimatedSection>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {data.testimonials.map((t, i) => (
+            {testimonials.map((t, i) => (
               <GlassCard key={i} className="p-6 h-full flex flex-col">
                 <div className="flex gap-0.5 mb-4">{Array.from({ length: t.rating || 5 }).map((_, j) => <Star key={j} size={16} weight="fill" style={{ color: ACCENT }} />)}</div>
                 <p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p>
@@ -426,7 +449,7 @@ export default function V2PestControlPreview({ data }: { data: GeneratedSiteData
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #150e04 50%, #1a1a1a 100%)" }} />
         <ShieldPattern opacity={0.02} accent={ACCENT} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Pests We Handle" title="Complete Coverage" accent={ACCENT} />
+          <AnimatedSection>          <SectionHeader badge="Pests We Handle" title="Complete Coverage" accent={ACCENT} /></AnimatedSection>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {pestTypes.map((pest) => (
               <GlassCard key={pest} className="p-4 flex items-center gap-3">
@@ -442,7 +465,7 @@ export default function V2PestControlPreview({ data }: { data: GeneratedSiteData
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #1a1208 50%, #1a1a1a 100%)" }} />
         <ShieldPattern opacity={0.02} accent={ACCENT} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Coverage Area" title="Areas We Serve" accent={ACCENT} />
+          <AnimatedSection>          <SectionHeader badge="Coverage Area" title="Areas We Serve" accent={ACCENT} /></AnimatedSection>
           <div className="text-center"><GlassCard className="p-8 inline-block"><div className="flex items-center gap-3 text-lg"><MapPin size={24} weight="duotone" style={{ color: ACCENT }} /><MapLink address={data.address} className="text-white font-semibold" /></div><p className="text-slate-400 text-sm mt-2">&amp; Surrounding Areas</p></GlassCard></div>
         </div>
       </section>
@@ -453,7 +476,7 @@ export default function V2PestControlPreview({ data }: { data: GeneratedSiteData
           <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #150e04 50%, #1a1a1a 100%)" }} />
           <BugBackground opacity={0.02} accent={ACCENT} />
           <div className="max-w-3xl mx-auto px-6 relative z-10">
-            <SectionHeader badge="Business Hours" title="When We're Available" accent={ACCENT} />
+            <AnimatedSection>          <SectionHeader badge="Business Hours" title="When We're Available" accent={ACCENT} /></AnimatedSection>
             <div className="text-center"><ShimmerBorder accent={ACCENT}><div className="p-8"><Clock size={32} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-4" /><p className="text-slate-300 leading-relaxed whitespace-pre-line text-lg">{data.hours}</p><p className="text-sm mt-4 font-semibold" style={{ color: ACCENT }}>Emergency Service: 24/7/365</p></div></ShimmerBorder></div>
           </div>
         </section>
@@ -464,7 +487,7 @@ export default function V2PestControlPreview({ data }: { data: GeneratedSiteData
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #1a1208 50%, #1a1a1a 100%)" }} />
         <BugBackground opacity={0.02} accent={ACCENT} />
         <div className="max-w-3xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="FAQ" title="Common Questions" accent={ACCENT} />
+          <AnimatedSection>          <SectionHeader badge="FAQ" title="Common Questions" accent={ACCENT} /></AnimatedSection>
           <div className="space-y-3">{faqs.map((faq, i) => <AccordionItem key={i} question={faq.q} answer={faq.a} isOpen={openFaq === i} onToggle={() => setOpenFaq(openFaq === i ? null : i)} />)}</div>
         </div>
       </section>
