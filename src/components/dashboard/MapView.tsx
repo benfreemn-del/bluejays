@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import type { Prospect, Category } from "@/lib/types";
 import { CATEGORY_CONFIG } from "@/lib/types";
 
@@ -31,7 +31,25 @@ const ALL_COUNTIES_GEOJSON_URL = "https://raw.githubusercontent.com/plotly/datas
 // WA state FIPS code is 53
 const WA_FIPS = "53";
 
-export default function MapView({ prospects }: MapViewProps) {
+/**
+ * Parse the county name out of a prospect's `city` field.
+ *
+ * The scouting system stores `city` as "{County Name}, {State Abbreviation}"
+ * (e.g. "King, WA") so that the map can colour counties correctly.
+ * This helper extracts just the county name portion so it can be matched
+ * against the GeoJSON `NAME` property.
+ *
+ * If the value doesn't match the expected "County, ST" pattern it is
+ * returned unchanged, which keeps backwards-compatibility with any
+ * records that may have been stored with a plain city name.
+ */
+function parseCountyName(city: string): string {
+  // Match "Something, XX" where XX is a 2-letter state abbreviation
+  const match = city.match(/^(.+),\s*[A-Z]{2}$/);
+  return match ? match[1].trim() : city;
+}
+
+export default function MapView({ prospects, onStateClick }: MapViewProps) {
   const [view, setView] = useState<ViewLevel>("us");
   const [selectedState, setSelectedState] = useState("");
   const [hoveredName, setHoveredName] = useState("");
@@ -41,7 +59,6 @@ export default function MapView({ prospects }: MapViewProps) {
   const [scoutCategory, setScoutCategory] = useState<Category>("dental");
   const [scouting, setScouting] = useState(false);
   const [scoutResult, setScoutResult] = useState("");
-  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   // Group prospects by state
   const stateData: Record<string, { count: number; hasPaid: boolean }> = {};
@@ -52,16 +69,20 @@ export default function MapView({ prospects }: MapViewProps) {
     if (p.status === "paid") stateData[st].hasPaid = true;
   }
 
-  // Group by city/county with full status tracking
+  // Group by county with full status tracking.
+  // The prospect's `city` field is stored as "{County Name}, {State Abbreviation}"
+  // by the scouting system (e.g. "King, WA"). We parse out the county name so
+  // it matches the GeoJSON NAME property used to render county polygons.
   const countyData: Record<string, { count: number; hasPaid: boolean; hasContacted: boolean; hasReady: boolean; categories: string[]; paidBusinesses: string[] }> = {};
   for (const p of prospects) {
-    const c = p.city || "Unknown";
-    if (!countyData[c]) countyData[c] = { count: 0, hasPaid: false, hasContacted: false, hasReady: false, categories: [], paidBusinesses: [] };
-    countyData[c].count++;
-    if (p.status === "paid") { countyData[c].hasPaid = true; countyData[c].paidBusinesses.push(p.businessName); }
-    if (p.status === "contacted" || p.status === "responded") countyData[c].hasContacted = true;
-    if (p.status === "pending-review" || p.status === "ready_to_review" || p.status === "approved") countyData[c].hasReady = true;
-    if (!countyData[c].categories.includes(p.category)) countyData[c].categories.push(p.category);
+    const rawCity = p.city || "Unknown";
+    const countyName = parseCountyName(rawCity);
+    if (!countyData[countyName]) countyData[countyName] = { count: 0, hasPaid: false, hasContacted: false, hasReady: false, categories: [], paidBusinesses: [] };
+    countyData[countyName].count++;
+    if (p.status === "paid") { countyData[countyName].hasPaid = true; countyData[countyName].paidBusinesses.push(p.businessName); }
+    if (p.status === "contacted" || p.status === "responded") countyData[countyName].hasContacted = true;
+    if (p.status === "pending-review" || p.status === "ready_to_review" || p.status === "approved") countyData[countyName].hasReady = true;
+    if (!countyData[countyName].categories.includes(p.category)) countyData[countyName].categories.push(p.category);
   }
 
   // Paid customer pins (for overlay on county view)
@@ -115,6 +136,10 @@ export default function MapView({ prospects }: MapViewProps) {
     setView("county");
     setScoutCounty("");
     setScoutResult("");
+
+    // Bug fix: invoke the onStateClick callback so the parent (DashboardPage)
+    // can open the ScoutModal pre-filled with the selected state abbreviation.
+    onStateClick(abbr);
 
     if (!countiesGeo) {
       const fips = STATE_FIPS[abbr] || WA_FIPS;
@@ -274,7 +299,10 @@ export default function MapView({ prospects }: MapViewProps) {
               <h4 className="font-semibold mb-1">{scoutCounty} County, {selectedState}</h4>
               {countyData[scoutCounty] ? (
                 <p className="text-sm text-muted mb-3">
-                  {countyData[scoutCounty].count} prospects — {countyData[scoutCounty].categories.join(", ")}
+                  {countyData[scoutCounty].count} prospect{countyData[scoutCounty].count !== 1 ? "s" : ""} scouted
+                  {countyData[scoutCounty].paidBusinesses.length > 0 && (
+                    <span className="text-green-400 ml-1">· {countyData[scoutCounty].paidBusinesses.length} paid</span>
+                  )}
                 </p>
               ) : (
                 <p className="text-sm text-muted mb-3">No prospects yet — run a scout!</p>
@@ -310,8 +338,6 @@ export default function MapView({ prospects }: MapViewProps) {
       {view === "county" && (!countiesGeo || countiesGeo.features.length === 0) && (
         <div className="py-20 text-center text-muted">Loading county boundaries...</div>
       )}
-
-      <canvas ref={canvasRef} className="hidden" />
     </div>
   );
 }
