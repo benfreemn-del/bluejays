@@ -85,7 +85,12 @@ export default function V2PhysicalTherapyPreview({ data }: { data: GeneratedSite
 
       {/* HERO */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, #0a1520 0%, ${BG} 50%, #0d1220 100%)` }} />
+
+        <div className="absolute inset-0">
+          <img src={heroImage} alt={`${data.businessName}`} className="w-full h-full object-cover object-center" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/20" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+        </div>
         <WavePattern opacity={0.05} accent={ACCENT} />
         <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full blur-[200px] pointer-events-none" style={{ background: `${ACCENT}0a` }} />
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">

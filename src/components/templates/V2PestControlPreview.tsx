@@ -61,8 +61,8 @@ function getServiceIcon(serviceName: string) {
 const STOCK_HERO = "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=1400&q=80";
 const STOCK_ABOUT = "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=600&q=80";
 const STOCK_PROJECTS = [
-  "https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&q=80",
-  "https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?w=600&q=80",
+  "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=600&q=80",
+  "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=600&q=80",
   "https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=800&q=80",
   "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80",
 ];
@@ -272,7 +272,12 @@ export default function V2PestControlPreview({ data }: { data: GeneratedSiteData
 
       {/* 2. HERO */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, #1a0f00 0%, #1a1208 50%, #1a1a1a 100%)" }} />
+
+        <div className="absolute inset-0">
+          <img src={heroImage} alt={`${data.businessName}`} className="w-full h-full object-cover object-center" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/20" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+        </div>
         <ShieldPattern opacity={0.04} accent={ACCENT} />
         <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full blur-[200px] pointer-events-none" style={{ background: `${ACCENT}08` }} />
         <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full blur-[160px] pointer-events-none" style={{ background: `${RED_WARN}06` }} />

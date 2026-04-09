@@ -75,7 +75,7 @@ const STOCK_HERO = "https://images.unsplash.com/photo-1558036117-15d82a90b9b1?w=
 const STOCK_ABOUT = "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=600&q=80";
 const STOCK_PROJECTS = [
   "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=600&q=80",
-  "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=600&q=80",
+  "https://images.unsplash.com/photo-1558036117-15d82a90b9b1?w=600&q=80",
   "https://images.unsplash.com/photo-1615799998603-7c6270a45196?w=800&q=80",
   "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=800&q=80",
 ];
@@ -322,7 +322,12 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
 
       {/* ══════════════════ 2. HERO ══════════════════ */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, #111827 0%, #0f172a 50%, #111827 100%)" }} />
+
+        <div className="absolute inset-0">
+          <img src={heroImage} alt={`${data.businessName}`} className="w-full h-full object-cover object-center" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/20" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+        </div>
         <RooflinePattern opacity={0.06} />
         <StormBackground opacity={0.04} accent={ACCENT} />
         <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full blur-[200px] pointer-events-none" style={{ background: `${ACCENT}08` }} />

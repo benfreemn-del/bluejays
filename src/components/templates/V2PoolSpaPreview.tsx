@@ -71,7 +71,7 @@ function getServiceIcon(serviceName: string) {
 }
 
 /* ───────────────────────── STOCK FALLBACK IMAGES ───────────────────────── */
-const STOCK_HERO = "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1400&q=80";
+const STOCK_HERO = "https://images.unsplash.com/photo-1575429198097-0414ec08e8cd?w=1400&q=80";
 const STOCK_ABOUT = "https://images.unsplash.com/photo-1575429198097-0414ec08e8cd?w=600&q=80";
 const STOCK_PROJECTS = [
   "https://images.unsplash.com/photo-1562778612-e1e0cda9915c?w=600&q=80",
@@ -353,7 +353,12 @@ export default function V2PoolSpaPreview({ data }: { data: GeneratedSiteData }) 
 
       {/* ══════════════════ 2. HERO ══════════════════ */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, #051a20 0%, #0a1520 50%, #1a1a1a 100%)" }} />
+
+        <div className="absolute inset-0">
+          <img src={heroImage} alt={`${data.businessName}`} className="w-full h-full object-cover object-center" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/20" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+        </div>
         <SparklePattern opacity={0.04} accent={ACCENT} />
         <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full blur-[200px] pointer-events-none" style={{ background: `${ACCENT}08` }} />
         <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full blur-[160px] pointer-events-none" style={{ background: `${DEEP_BLUE}06` }} />

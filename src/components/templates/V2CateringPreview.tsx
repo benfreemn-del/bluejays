@@ -35,11 +35,11 @@ function getServiceIcon(name: string) {
 const STOCK_HERO = "https://images.unsplash.com/photo-1555244162-803834f70033?w=1400&q=80";
 const STOCK_ABOUT = "https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=600&q=80";
 const STOCK_GALLERY = [
-  "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80",
+  "https://images.unsplash.com/photo-1555244162-803834f70033?w=600&q=80",
   "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=600&q=80",
-  "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=80",
+  "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=600&q=80",
   "https://images.unsplash.com/photo-1530062845289-9109b2c9c868?w=600&q=80",
-  "https://images.unsplash.com/photo-1551218808-94e220e084d2?w=600&q=80",
+  "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80",
   "https://images.unsplash.com/photo-1547573854-74d2a71d0826?w=600&q=80",
 ];
 
@@ -234,7 +234,12 @@ export default function V2CateringPreview({ data }: { data: GeneratedSiteData })
 
       {/* 2. HERO */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, #fdf8f5 0%, ${BG} 50%, #f5efe8 100%)` }} />
+
+        <div className="absolute inset-0">
+          <img src={heroImage} alt={`${data.businessName}`} className="w-full h-full object-cover object-center" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-black/10" />
+          <div className="absolute inset-0 bg-gradient-to-t from-white/80 via-transparent to-transparent" />
+        </div>
         <ElegantPattern opacity={0.04} accent={ACCENT} />
         <VineDecor accent={ACCENT} />
         <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full blur-[200px] pointer-events-none" style={{ background: `${ACCENT}10` }} />

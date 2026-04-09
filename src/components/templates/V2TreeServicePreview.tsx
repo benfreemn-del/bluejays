@@ -27,12 +27,12 @@ const SERVICE_ICON_MAP: Record<string, any> = {
 function getServiceIcon(serviceName: string) { const lower = serviceName.toLowerCase(); for (const [key, Icon] of Object.entries(SERVICE_ICON_MAP)) { if (lower.includes(key)) return Icon; } return Tree; }
 
 const STOCK_HERO = "https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?w=1400&q=80";
-const STOCK_ABOUT = "https://images.unsplash.com/photo-1598902108854-d1446671c3aa?w=600&q=80";
+const STOCK_ABOUT = "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&q=80";
 const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=600&q=80",
   "https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=600&q=80",
   "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?w=600&q=80",
-  "https://images.unsplash.com/photo-1516027828283-84c9c98e3dee?w=600&q=80",
+  "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=600&q=80",
 ];
 
 function FloatingParticles({ accent }: { accent: string }) {
@@ -128,7 +128,12 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
 
       {/* HERO */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, #0a1a10 0%, #0c120e 50%, #1a1a1a 100%)" }} />
+
+        <div className="absolute inset-0">
+          <img src={heroImage} alt={`${data.businessName}`} className="w-full h-full object-cover object-center" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/20" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+        </div>
         <LeafPattern opacity={0.04} accent={ACCENT} /><TreeBranchBackground opacity={0.03} accent={ACCENT} />
         <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full blur-[200px] pointer-events-none" style={{ background: `${ACCENT}08` }} />
         <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full blur-[160px] pointer-events-none" style={{ background: `${BARK_ACCENT}06` }} />

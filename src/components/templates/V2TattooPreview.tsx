@@ -34,13 +34,13 @@ const SERVICE_ICON_MAP: Record<string, any> = {
 function getServiceIcon(n: string) { const l = n.toLowerCase(); for (const [k, I] of Object.entries(SERVICE_ICON_MAP)) { if (l.includes(k)) return I; } return PenNib; }
 
 const STOCK_HERO = "https://images.unsplash.com/photo-1562259929-b4e1fd3aef09?w=1400&q=80";
-const STOCK_ABOUT = "https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?w=600&q=80";
+const STOCK_ABOUT = "https://images.unsplash.com/photo-1562962230-16e4623d36e6?w=600&q=80";
 const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1562962230-16e4623d36e6?w=600&q=80",
-  "https://images.unsplash.com/photo-1562259929-b4e1fd3aef09?w=600&q=80",
   "https://images.unsplash.com/photo-1542727313-4f3e99aa2568?w=600&q=80",
-  "https://images.unsplash.com/photo-1562259929-b4e1fd3aef09?w=600&q=80",
-  "https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?w=600&q=80",
+  "https://images.unsplash.com/photo-1542727313-4f3e99aa2568?w=600&q=80",
+  "https://images.unsplash.com/photo-1542727313-4f3e99aa2568?w=600&q=80",
+  "https://images.unsplash.com/photo-1562962230-16e4623d36e6?w=600&q=80",
   "https://images.unsplash.com/photo-1568515045052-f9a854d70bfd?w=600&q=80",
 ];
 
@@ -191,7 +191,12 @@ export default function V2TattooPreview({ data }: { data: GeneratedSiteData }) {
 
       {/* 2. HERO */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, #1a0505 0%, #0a0a0a 50%, #0f0505 100%)" }} />
+
+        <div className="absolute inset-0">
+          <img src={heroImage} alt={`${data.businessName}`} className="w-full h-full object-cover object-center" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/20" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+        </div>
         <InkSplatterPattern opacity={0.05} accent={ACCENT} />
         <InkDripBackground opacity={0.04} accent={ACCENT} />
         <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full blur-[200px] pointer-events-none" style={{ background: `${ACCENT}08` }} />

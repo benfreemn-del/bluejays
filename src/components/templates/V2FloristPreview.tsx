@@ -32,7 +32,7 @@ const STOCK_HERO = "https://images.unsplash.com/photo-1487530811176-3780de880c2d
 const STOCK_ABOUT = "https://images.unsplash.com/photo-1563241527-3004b7be0ffd?w=600&q=80";
 const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1561181286-d3fee7d55364?w=600&q=80",
-  "https://images.unsplash.com/photo-1478146059778-26028b07395a?w=600&q=80",
+  "https://images.unsplash.com/photo-1487530811176-3780de880c2d?w=600&q=80",
   "https://images.unsplash.com/photo-1455659817273-f96807779a8a?w=600&q=80",
   "https://images.unsplash.com/photo-1487530811176-3780de880c2d?w=600&q=80",
   "https://images.unsplash.com/photo-1508610048659-a06b669e3321?w=600&q=80",
@@ -125,7 +125,12 @@ export default function V2FloristPreview({ data }: { data: GeneratedSiteData }) 
 
       {/* 2. HERO */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, #fdf5f0 0%, #f0f5f0 50%, #fdf9f7 100%)" }} />
+
+        <div className="absolute inset-0">
+          <img src={heroImage} alt={`${data.businessName}`} className="w-full h-full object-cover object-center" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-black/10" />
+          <div className="absolute inset-0 bg-gradient-to-t from-white/80 via-transparent to-transparent" />
+        </div>
         <PetalPattern opacity={0.04} accent={ACCENT} /><VineBackground opacity={0.03} accent={ACCENT} />
         <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full blur-[200px] pointer-events-none" style={{ background: `${ACCENT}08` }} />
         <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full blur-[160px] pointer-events-none" style={{ background: `${SAGE}06` }} />

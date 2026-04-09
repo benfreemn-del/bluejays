@@ -78,7 +78,7 @@ function getServiceIcon(serviceName: string) {
 
 /* ───────────────────────── STOCK FALLBACK IMAGES (UNIQUE TO LAW) ───────────────────────── */
 const STOCK_HERO = "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=1400&q=80";
-const STOCK_ABOUT = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80";
+const STOCK_ABOUT = "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=600&q=80";
 const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1453945619913-79ec89a82c51?w=600&q=80",
   "https://images.unsplash.com/photo-1521791055366-0d553872125f?w=600&q=80",
@@ -409,7 +409,12 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
 
       {/* ══════════════════ 2. HERO ══════════════════ */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, #0f172a 0%, #0f172a 50%, #0a1628 100%)" }} />
+
+        <div className="absolute inset-0">
+          <img src={heroImage} alt={`${data.businessName}`} className="w-full h-full object-cover object-center" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-black/10" />
+          <div className="absolute inset-0 bg-gradient-to-t from-white/80 via-transparent to-transparent" />
+        </div>
         <LawPattern opacity={0.04} accent={EMERALD} />
         <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full blur-[200px] pointer-events-none" style={{ background: `${EMERALD}08` }} />
 
