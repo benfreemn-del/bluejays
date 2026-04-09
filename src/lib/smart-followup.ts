@@ -113,7 +113,7 @@ function reviewSpotlightAngle(
   review: { name: string; text: string },
   prospect: Prospect
 ): SmartFollowUp {
-  const previewUrl = `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}${prospect.generatedSiteUrl}`;
+  const previewUrl = `${process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com"}${prospect.generatedSiteUrl}`;
   const snippet = review.text.length > 60 ? review.text.slice(0, 60) + "..." : review.text;
 
   return {
@@ -132,7 +132,7 @@ Thought you'd want to see it. Let me know what you think!
 
 Best,
 BlueJays Team
-${EMAIL_FOOTER.replace("{{baseUrl}}", process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000").replace("{{prospectId}}", prospect.id)}`,
+${EMAIL_FOOTER.replace("{{baseUrl}}", process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com").replace("{{prospectId}}", prospect.id)}`,
     },
     sms: `Hey ${name}! Saw a great review from ${review.name} about ${biz}. We featured it on the website we built you — check it out: ${previewUrl}`,
   };
@@ -149,7 +149,7 @@ function highRatingAngle(
   reviews: number,
   prospect: Prospect
 ): SmartFollowUp {
-  const previewUrl = `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}${prospect.generatedSiteUrl}`;
+  const previewUrl = `${process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com"}${prospect.generatedSiteUrl}`;
 
   return {
     angle: "High Rating",
@@ -165,7 +165,7 @@ Your reviews tell people you're amazing. Your website should do the same. Take a
 
 Best,
 BlueJays Team
-${EMAIL_FOOTER.replace("{{baseUrl}}", process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000").replace("{{prospectId}}", prospect.id)}`,
+${EMAIL_FOOTER.replace("{{baseUrl}}", process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com").replace("{{prospectId}}", prospect.id)}`,
     },
     sms: `Hey ${name}! ${rating} stars on ${reviews} reviews is amazing. The site we built matches that quality — take a look: ${previewUrl}`,
   };
@@ -182,7 +182,7 @@ function serviceSpecificAngle(
   category: string,
   prospect: Prospect
 ): SmartFollowUp {
-  const previewUrl = `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}${prospect.generatedSiteUrl}`;
+  const previewUrl = `${process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com"}${prospect.generatedSiteUrl}`;
 
   return {
     angle: "Service-Specific",
@@ -200,7 +200,7 @@ Take a look!
 
 Best,
 BlueJays Team
-${EMAIL_FOOTER.replace("{{baseUrl}}", process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000").replace("{{prospectId}}", prospect.id)}`,
+${EMAIL_FOOTER.replace("{{baseUrl}}", process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com").replace("{{prospectId}}", prospect.id)}`,
     },
     sms: `Hey ${name}! I highlighted ${topService.name} on the website we built for ${biz}. Check it out: ${previewUrl}`,
   };
@@ -217,7 +217,7 @@ function growthOpportunityAngle(
   category: string,
   prospect: Prospect
 ): SmartFollowUp {
-  const previewUrl = `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}${prospect.generatedSiteUrl}`;
+  const previewUrl = `${process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com"}${prospect.generatedSiteUrl}`;
 
   return {
     angle: "Growth Opportunity",
@@ -235,7 +235,7 @@ It's free to look at. If it doesn't blow you away, no worries at all.
 
 Best,
 BlueJays Team
-${EMAIL_FOOTER.replace("{{baseUrl}}", process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000").replace("{{prospectId}}", prospect.id)}`,
+${EMAIL_FOOTER.replace("{{baseUrl}}", process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com").replace("{{prospectId}}", prospect.id)}`,
     },
     sms: `Hey ${name}! ${reviews} reviews means people are finding ${biz} — the site we built converts those visitors into calls. Check it out: ${previewUrl}`,
   };
@@ -252,7 +252,7 @@ function genericPersonalAngle(
   category: string,
   prospect: Prospect
 ): SmartFollowUp {
-  const previewUrl = `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}${prospect.generatedSiteUrl}`;
+  const previewUrl = `${process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com"}${prospect.generatedSiteUrl}`;
 
   return {
     angle: "Generic Personal",
@@ -270,7 +270,7 @@ Let me know what you think!
 
 Best,
 BlueJays Team
-${EMAIL_FOOTER.replace("{{baseUrl}}", process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000").replace("{{prospectId}}", prospect.id)}`,
+${EMAIL_FOOTER.replace("{{baseUrl}}", process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com").replace("{{prospectId}}", prospect.id)}`,
     },
     sms: `Hey ${name}! Quick question — does ${biz}'s website match the quality of your work? I built you a free upgrade: ${previewUrl}`,
   };

@@ -13,7 +13,7 @@ export interface EmailTemplate {
  */
 export const EMAIL_FOOTER = `
 —
-BlueJays Business Solutions, WA
+BlueJays Business Solutions | Washington, USA
 You're receiving this because we built a free website for your business.
 Unsubscribe: {{baseUrl}}/unsubscribe/{{prospectId}}
 `;
@@ -48,7 +48,7 @@ Either way, I'd love to hear what you think.
 Best,
 The BlueJays Team
 bluejaycontactme@gmail.com
-${EMAIL_FOOTER.replace("{{baseUrl}}", process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000").replace("{{prospectId}}", prospect.id)}`;
+${EMAIL_FOOTER.replace("{{baseUrl}}", process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com").replace("{{prospectId}}", prospect.id)}`;
 
   return { subject, body, sequence: 1 };
 }
@@ -74,7 +74,7 @@ Would love to hear your thoughts — even a quick "looks good" or "not intereste
 
 Best,
 The BlueJays Team
-${EMAIL_FOOTER.replace("{{baseUrl}}", process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000").replace("{{prospectId}}", prospect.id)}`,
+${EMAIL_FOOTER.replace("{{baseUrl}}", process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com").replace("{{prospectId}}", prospect.id)}`,
     sequence: 2,
   };
 }
@@ -87,20 +87,20 @@ export function getFollowUp2(
     prospect.ownerName?.split(" ")[0] || prospect.businessName;
 
   return {
-    subject: `Last chance — your custom ${prospect.businessName} website`,
+    subject: `A quick thought about ${prospect.businessName}'s online presence`,
     body: `Hi ${name},
 
-This is my last note about the website I built for ${prospect.businessName}:
+I was doing some research on local businesses in your area and wanted to share a quick thought. Did you know that having a modern, fast-loading website can significantly increase the number of customers who reach out to you?
+
+Many businesses with great services lose out on potential clients simply because their online presence doesn't reflect the quality of their work. That's exactly why I built this custom website for ${prospect.businessName}:
 
 ${previewUrl}
 
-I'm going to be moving on to other businesses in your area soon, so I wanted to give you one last chance to claim it before I do.
-
-If you're interested, just reply to this email and we'll get it set up on your domain. If not, no worries — I wish you all the best!
+I thought you'd find this interesting, and I'd love to help you get it set up if you're ready to take your online presence to the next level. Take a look when you have a moment, and let me know what you think.
 
 Best,
 The BlueJays Team
-${EMAIL_FOOTER.replace("{{baseUrl}}", process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000").replace("{{prospectId}}", prospect.id)}`,
+${EMAIL_FOOTER.replace("{{baseUrl}}", process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com").replace("{{prospectId}}", prospect.id)}`,
     sequence: 3,
   };
 }

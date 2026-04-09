@@ -3,7 +3,7 @@ import path from "path";
 import type { Prospect } from "./types";
 import { getProspect, updateProspect } from "./store";
 import { sendEmail, getEmailHistory } from "./email-sender";
-import { sendSms, getSmsHistory, getInitialSms, getFollowUpSms1, getFollowUpSms2 } from "./sms";
+import { sendSms, getSmsHistory, getInitialSms, getFollowUpSms1, getFollowUpSms2, getPostVoicemailSms } from "./sms";
 import { getPitchEmail, getFollowUp1, getFollowUp2 } from "./email-templates";
 import { generateSmartFollowUp } from "./smart-followup";
 import { alertOwner } from "./alerts";
@@ -353,7 +353,7 @@ async function sendFunnelStep(
       // Send a follow-up SMS shortly after the voicemail drop
       if (voicemailSent) {
         try {
-          const vmFollowUpText = `Hey! This is BlueJays — I just left you a quick voicemail about the website I built for ${prospect.businessName}. Here's the link: ${previewUrl}`;
+          const vmFollowUpText = getPostVoicemailSms(prospect, previewUrl);
           const smsHistory = await getSmsHistory(prospect.id);
           const nextSeq = smsHistory.length > 0 ? Math.max(...smsHistory.map((s) => s.sequence)) + 1 : 1;
           if (nextSeq <= 3) {
