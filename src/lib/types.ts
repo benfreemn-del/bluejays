@@ -54,6 +54,8 @@ export type ProspectStatus =
   | "ready_to_review"   // passed QC gate — ready for Ben's manual approval
   | "qc_failed"         // failed QC gate — needs fixes before approval
   | "approved"
+  | "changes_pending"
+  | "ready_to_finalize"
   | "deployed"
   | "contacted"
   | "engaged"
@@ -100,6 +102,12 @@ export interface Prospect {
   qualityScore?: number;       // 0-100
   qualityNotes?: string;       // formatted text summary of issues
   qcReviewedAt?: string;       // ISO timestamp of last QC run
+  /** Persisted admin instructions for future site revisions */
+  adminNotes?: string;
+  adminNotesUpdatedAt?: string;
+  adminNotesSubmittedAt?: string;
+  lastSubmittedAdminNotes?: string;
+  lastSubmittedTheme?: "light" | "dark";
   createdAt: string;
   updatedAt: string;
 }

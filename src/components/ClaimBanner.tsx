@@ -14,7 +14,15 @@
  *   • No dismiss — always visible.
  */
 
-import { useState, useEffect } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
+
+type ProspectStatus =
+  | "paid"
+  | "deployed"
+  | "changes_pending"
+  | "ready_to_finalize"
+  | "claimed"
+  | string;
 
 interface ClaimBannerProps {
   businessName: string;
@@ -23,6 +31,13 @@ interface ClaimBannerProps {
   /** Optional dark/light override for the ticker row background. */
   darkBg?: boolean;
 }
+
+const DELIVERED_STATUSES = new Set<ProspectStatus>([
+  "paid",
+  "deployed",
+  "changes_pending",
+  "ready_to_finalize",
+]);
 
 export default function ClaimBanner({
   businessName,
@@ -35,6 +50,16 @@ export default function ClaimBanner({
   const [minimised, setMinimised] = useState(false);
   /** Whether the mobile banner is expanded to show the full detail row. */
   const [expanded, setExpanded] = useState(false);
+  const [prospectStatus, setProspectStatus] = useState<ProspectStatus | null>(null);
+  const [requestOpen, setRequestOpen] = useState(false);
+  const [submitState, setSubmitState] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [formValues, setFormValues] = useState({
+    customerName: "",
+    customerEmail: "",
+    customerPhone: "",
+    requestText: "",
+  });
 
   useEffect(() => {
     const expiry = new Date();
@@ -55,10 +80,223 @@ export default function ClaimBanner({
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    let active = true;
+
+    const loadProspectStatus = async () => {
+      try {
+        const response = await fetch(`/api/prospects/${prospectId}`, {
+          cache: "no-store",
+        });
+        if (!response.ok) return;
+
+        const prospect = (await response.json()) as { status?: ProspectStatus };
+        if (active) {
+          setProspectStatus(prospect.status || null);
+        }
+      } catch {
+        // Keep the default claim CTA if the prospect lookup fails.
+      }
+    };
+
+    void loadProspectStatus();
+
+    return () => {
+      active = false;
+    };
+  }, [prospectId]);
+
   const claimHref = `/claim/${prospectId}`;
   const tickerBg = darkBg ? "bg-[#111]/90" : "bg-white/90";
   const tickerBorder = darkBg ? "border-white/10" : "border-black/10";
   const tickerText = darkBg ? "text-slate-400" : "text-slate-600";
+  const isDeliveredSite = useMemo(
+    () => (prospectStatus ? DELIVERED_STATUSES.has(prospectStatus) : false),
+    [prospectStatus]
+  );
+
+  const resetRequestState = () => {
+    setSubmitState("idle");
+    setErrorMessage("");
+  };
+
+  const submitChangeRequest = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setSubmitState("submitting");
+    setErrorMessage("");
+
+    try {
+      const response = await fetch("/api/change-requests", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          prospectId,
+          customerName: formValues.customerName,
+          customerEmail: formValues.customerEmail,
+          customerPhone: formValues.customerPhone,
+          requestText: formValues.requestText,
+        }),
+      });
+
+      const data = (await response.json()) as { error?: string };
+      if (!response.ok) {
+        throw new Error(data.error || "Unable to submit your request right now.");
+      }
+
+      setSubmitState("success");
+      setFormValues({
+        customerName: "",
+        customerEmail: "",
+        customerPhone: "",
+        requestText: "",
+      });
+    } catch (error) {
+      setSubmitState("error");
+      setErrorMessage(
+        error instanceof Error ? error.message : "Unable to submit your request right now."
+      );
+    }
+  };
+
+  if (isDeliveredSite) {
+    return (
+      <>
+        <div className="fixed bottom-4 right-4 z-50">
+          <button
+            onClick={() => {
+              resetRequestState();
+              setRequestOpen(true);
+            }}
+            className="h-10 px-4 rounded-full border border-white/15 bg-black/55 text-white/80 text-xs font-medium backdrop-blur-md hover:text-white hover:bg-black/70 transition-colors shadow-lg"
+            aria-label="Request changes"
+          >
+            Request Changes
+          </button>
+        </div>
+
+        {requestOpen && (
+          <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-black/55 px-4 py-6">
+            <div className="w-full max-w-lg rounded-3xl border border-white/10 bg-[#0f1720] text-white shadow-2xl overflow-hidden">
+              <div className="flex items-start justify-between gap-4 px-6 py-5 border-b border-white/10">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.24em] text-white/45">Support</p>
+                  <h3 className="mt-2 text-xl font-semibold">Request changes to {businessName}</h3>
+                  <p className="mt-2 text-sm text-white/60">
+                    Share the updates you want made and include the best contact information for follow-up.
+                  </p>
+                </div>
+                <button
+                  onClick={() => setRequestOpen(false)}
+                  className="w-9 h-9 rounded-full border border-white/10 text-white/60 hover:text-white hover:border-white/20 transition-colors"
+                  aria-label="Close request changes form"
+                >
+                  ×
+                </button>
+              </div>
+
+              {submitState === "success" ? (
+                <div className="px-6 py-8">
+                  <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-4 text-sm text-emerald-100">
+                    Thanks — your request has been sent. We will review it and follow up using the contact information you provided.
+                  </div>
+                  <div className="mt-6 flex justify-end">
+                    <button
+                      onClick={() => setRequestOpen(false)}
+                      className="h-11 px-5 rounded-xl text-sm font-semibold text-white"
+                      style={{ background: accentColor }}
+                    >
+                      Close
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <form onSubmit={submitChangeRequest} className="px-6 py-6 space-y-4">
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <label className="space-y-2">
+                      <span className="text-sm text-white/70">Name</span>
+                      <input
+                        type="text"
+                        value={formValues.customerName}
+                        onChange={(event) =>
+                          setFormValues((prev) => ({ ...prev, customerName: event.target.value }))
+                        }
+                        className="w-full h-11 rounded-xl border border-white/10 bg-white/5 px-4 text-sm text-white placeholder:text-white/30 outline-none focus:border-white/25"
+                        placeholder="Your name"
+                      />
+                    </label>
+                    <label className="space-y-2">
+                      <span className="text-sm text-white/70">Email</span>
+                      <input
+                        type="email"
+                        value={formValues.customerEmail}
+                        onChange={(event) =>
+                          setFormValues((prev) => ({ ...prev, customerEmail: event.target.value }))
+                        }
+                        className="w-full h-11 rounded-xl border border-white/10 bg-white/5 px-4 text-sm text-white placeholder:text-white/30 outline-none focus:border-white/25"
+                        placeholder="you@example.com"
+                      />
+                    </label>
+                  </div>
+
+                  <label className="space-y-2 block">
+                    <span className="text-sm text-white/70">Phone</span>
+                    <input
+                      type="tel"
+                      value={formValues.customerPhone}
+                      onChange={(event) =>
+                        setFormValues((prev) => ({ ...prev, customerPhone: event.target.value }))
+                      }
+                      className="w-full h-11 rounded-xl border border-white/10 bg-white/5 px-4 text-sm text-white placeholder:text-white/30 outline-none focus:border-white/25"
+                      placeholder="Optional if email is provided"
+                    />
+                  </label>
+
+                  <label className="space-y-2 block">
+                    <span className="text-sm text-white/70">What would you like changed?</span>
+                    <textarea
+                      value={formValues.requestText}
+                      onChange={(event) =>
+                        setFormValues((prev) => ({ ...prev, requestText: event.target.value }))
+                      }
+                      className="w-full min-h-36 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-white/30 outline-none resize-y focus:border-white/25"
+                      placeholder="Examples: update the hero image, revise the about section, or change the color theme."
+                      required
+                    />
+                  </label>
+
+                  {submitState === "error" && (
+                    <div className="rounded-2xl border border-rose-500/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-100">
+                      {errorMessage}
+                    </div>
+                  )}
+
+                  <div className="flex items-center justify-end gap-3 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => setRequestOpen(false)}
+                      className="h-11 px-5 rounded-xl border border-white/10 text-sm font-medium text-white/75 hover:text-white transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={submitState === "submitting"}
+                      className="h-11 px-5 rounded-xl text-sm font-semibold text-white disabled:opacity-60"
+                      style={{ background: accentColor }}
+                    >
+                      {submitState === "submitting" ? "Sending..." : "Send Request"}
+                    </button>
+                  </div>
+                </form>
+              )}
+            </div>
+          </div>
+        )}
+      </>
+    );
+  }
 
   /* ─── Minimised pill (mobile only) ─── */
   if (minimised) {

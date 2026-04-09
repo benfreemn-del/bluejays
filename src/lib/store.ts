@@ -38,6 +38,8 @@ function sanitizeGeneratedSiteData(data: object | null): object | null {
 function sanitizeProspect(prospect: Prospect): Prospect {
   return {
     ...prospect,
+    adminNotes: prospect.adminNotes ?? undefined,
+    lastSubmittedAdminNotes: prospect.lastSubmittedAdminNotes ?? undefined,
     scrapedData: sanitizeScrapedData(prospect.scrapedData),
   };
 }
@@ -92,6 +94,11 @@ function dbToProspect(row: Record<string, unknown>): Prospect {
     qualityScore: row.quality_score as number | undefined,
     qualityNotes: row.quality_notes as string | undefined,
     qcReviewedAt: row.qc_reviewed_at as string | undefined,
+    adminNotes: (row.admin_notes as string | null) || undefined,
+    adminNotesUpdatedAt: row.admin_notes_updated_at as string | undefined,
+    adminNotesSubmittedAt: row.admin_notes_submitted_at as string | undefined,
+    lastSubmittedAdminNotes: (row.last_submitted_admin_notes as string | null) || undefined,
+    lastSubmittedTheme: (row.last_submitted_theme as "light" | "dark" | null) || undefined,
     createdAt: row.created_at as string,
     updatedAt: row.updated_at as string,
   });
@@ -127,6 +134,14 @@ function prospectToDb(p: Prospect) {
     pricing_tier: sanitized.pricingTier || "standard",
     selected_theme: sanitized.selectedTheme || null,
     ai_theme_recommendation: sanitized.aiThemeRecommendation || null,
+    quality_score: sanitized.qualityScore || null,
+    quality_notes: sanitized.qualityNotes || null,
+    qc_reviewed_at: sanitized.qcReviewedAt || null,
+    admin_notes: sanitized.adminNotes || null,
+    admin_notes_updated_at: sanitized.adminNotesUpdatedAt || null,
+    admin_notes_submitted_at: sanitized.adminNotesSubmittedAt || null,
+    last_submitted_admin_notes: sanitized.lastSubmittedAdminNotes || null,
+    last_submitted_theme: sanitized.lastSubmittedTheme || null,
   };
 }
 
@@ -247,12 +262,17 @@ export async function updateProspect(
     if (sanitizedUpdates.mgmtSubscriptionId) dbUpdates.mgmt_subscription_id = sanitizedUpdates.mgmtSubscriptionId;
     if (sanitizedUpdates.instagramHandle !== undefined) dbUpdates.instagram_handle = sanitizedUpdates.instagramHandle;
     if (sanitizedUpdates.funnelPaused !== undefined) dbUpdates.funnel_paused = sanitizedUpdates.funnelPaused;
-    if (sanitizedUpdates.selectedTheme) dbUpdates.selected_theme = sanitizedUpdates.selectedTheme;
+    if (sanitizedUpdates.selectedTheme !== undefined) dbUpdates.selected_theme = sanitizedUpdates.selectedTheme || null;
     if (sanitizedUpdates.aiThemeRecommendation) dbUpdates.ai_theme_recommendation = sanitizedUpdates.aiThemeRecommendation;
     if (sanitizedUpdates.qualityScore !== undefined) dbUpdates.quality_score = sanitizedUpdates.qualityScore;
     if (sanitizedUpdates.qualityNotes !== undefined) dbUpdates.quality_notes = sanitizedUpdates.qualityNotes;
     if (sanitizedUpdates.qcReviewedAt !== undefined) dbUpdates.qc_reviewed_at = sanitizedUpdates.qcReviewedAt;
     if (sanitizedUpdates.pricingTier !== undefined) dbUpdates.pricing_tier = sanitizedUpdates.pricingTier;
+    if (sanitizedUpdates.adminNotes !== undefined) dbUpdates.admin_notes = sanitizedUpdates.adminNotes || null;
+    if (sanitizedUpdates.adminNotesUpdatedAt !== undefined) dbUpdates.admin_notes_updated_at = sanitizedUpdates.adminNotesUpdatedAt || null;
+    if (sanitizedUpdates.adminNotesSubmittedAt !== undefined) dbUpdates.admin_notes_submitted_at = sanitizedUpdates.adminNotesSubmittedAt || null;
+    if (sanitizedUpdates.lastSubmittedAdminNotes !== undefined) dbUpdates.last_submitted_admin_notes = sanitizedUpdates.lastSubmittedAdminNotes || null;
+    if (sanitizedUpdates.lastSubmittedTheme !== undefined) dbUpdates.last_submitted_theme = sanitizedUpdates.lastSubmittedTheme || null;
 
     const { data, error } = await supabase
       .from("prospects")
