@@ -18,23 +18,87 @@ This system is designed to function like a money printer. Every feature should d
 - **Social proof overlays MUST use real data or be removed. NEVER show fake or inflated numbers.**
 - **Personalized proposals MUST be generated before entering the sales funnel, combining all CRM data, scraped info, reviews, and notes.**
 
-## Image Rules (NON-NEGOTIABLE)
-These image rules are governed by `QC_RULES.md`, which is the authoritative single source of truth for image validation, fallback behavior, duplicate detection, contextual relevance, sanitization, and section-by-section image approval standards. If this file and `QC_RULES.md` ever differ, follow `QC_RULES.md`.
+## Locked QC Generation Rules (NON-NEGOTIABLE)
+Every AI agent, generator, reviewer, and automation path that creates or updates a prospect site MUST treat the QC standards below as blocking release requirements. These rules are permanently embedded from `QC_RULES.md` and are not optional polish. A generated site that fails any requirement below is **not ready** for outreach, manual review, owner delivery, or deployment.
 
-- **NEVER reuse the same stock photo across multiple templates** — every template must have completely unique images. If two templates use the same person photo, it's immediately obvious and kills trust.
-- **Every team/staff photo must be unique per template** — no sharing headshots between electrician, plumber, dental, etc.
-- **Verify all image URLs actually load** — broken images are unacceptable. Test before deploying.
-- **For generated preview sites**: use the business's real photos when scraped. Only fall back to stock as last resort, and never reuse stock across different prospects.
-- **All external images must go through the image proxy** — Google Places photo URLs need the API key server-side, and Wix/Squarespace CDN URLs expire. Use `proxyImage()` from `@/lib/image-proxy` or serve through `/api/image-proxy?url=ENCODED_URL`. The preview page already proxies all photos before passing to renderers. Unsplash URLs bypass the proxy (they work directly).
-- **ALL preview images must pass a resolution check** — the `isLowQualityImage()` function in `preview-utils.ts` automatically skips: logos, favicons, icons, Wix thumbnails (<200px wide), blurred previews, screenshots. If ALL scraped photos are low-res, use Google Places photos instead. A tiny pixelated logo used as a hero image is the #1 way to make a preview look amateur. This check runs automatically in `getHeroImage()` and `getAboutImage()`.
-- **REJECT blurry, low-quality, or poorly-framed scraped images** — if a business's scraped photos are blurry, tiny, dark, poorly cropped, or show mundane things (bathroom fixtures, random pipes, blank walls), DO NOT USE THEM. Replace with high-quality stock photos for that industry. A blurry real photo is WORSE than a clean stock photo. The business owner will think we did a bad job if their preview has ugly images. This applies to hero images, gallery images, and about section images.
-- **Stock images are LAST RESORT only** — but they are PREFERRED over bad real photos — always attempt to use scraped photos from the business's website first. Only use hardcoded stock images if nothing of reasonable quality can be scraped. A real photo of their actual business (even if lower quality) is better than a generic stock photo.
+### 1. Image Integrity, Validation, and Fallback Rules
+- **MUST sanitize every stored and rendered image URL before validation, proxying, or display** — trim leading/trailing whitespace, newline characters, tabs, control characters, and `%0A`-style corruption before using any URL.
+- **MUST only accept well-formed `http` or `https` image URLs for production imagery** — malformed URLs, `data:` URIs for hero/gallery images, localhost references, and dead placeholder URLs are immediate QC failures.
+- **MUST verify every major image URL actually resolves before approval** — hero, about, gallery, testimonial, supporting, and logo images must return a valid response and render visibly.
+- **NEVER count a transparent pixel, invisible placeholder, broken proxy response, blank image, or silently hidden asset as a pass** — failed images must surface as blockers or be replaced with an approved visible fallback.
+- **MUST use the image proxy for external business photos that require stable server-side access** — Google Places and expiring Wix/Squarespace-style CDN assets must be proxied before rendering. Approved Unsplash fallbacks may render directly.
+- **MUST prefer validated real business photos from the business website, Google Places, or validated social sources over stock whenever those real photos are good enough.**
+- **MUST use approved high-quality Unsplash fallbacks when real photos are missing, broken, expired, duplicate-heavy, blurred, thumbnail-sized, off-brand, or otherwise unusable.**
+- **NEVER use logos, icons, favicons, screenshots, collages, or thumbnail-scale assets as hero/about/gallery imagery.**
+- **MUST reject risky low-quality image patterns** — thumbnail dimensions, blur parameters, screenshot assets, obvious logo crops, expiring-token URLs, or other metadata that strongly suggests poor quality or poor longevity must be downgraded, replaced, or rejected.
+- **MUST treat duplicate URLs, query-string variants of the same asset, and visually repeated major images as duplicates for QC purposes.**
+- **NEVER reuse the same major image across hero, about, gallery, testimonial, or supporting sections unless there is a deliberate business reason and no stronger alternative exists.**
+- **MUST keep hero, about, and gallery imagery visually distinct whenever enough usable assets exist.**
+- **NEVER reuse the same stock photo across multiple templates or prospects when a unique category-appropriate alternative is available.**
+
+### 2. Minimum Photo Coverage Requirements
+
+| Category group | Hard requirement |
+|---|---|
+| Standard service categories | **MUST have at least 3 usable real photos** that can cover the hero, about/supporting section, and at least one additional gallery image. |
+| Gallery-heavy categories | **MUST have at least 5 usable real photos** suitable for hero, about, and gallery use. This applies to `tattoo`, `photography`, `interior-design`, `florist`, `landscaping`, `salon`, `catering`, and `pet-services`. |
+| Zero-photo prospects | **NEVER treat zero real photos as approval-ready.** Approved stock fallbacks may keep the preview visually functional, but the site still fails QC until the imagery gap is corrected or consciously waived. |
+
+### 3. Hero Image Requirements
+- **Every site MUST display a real, contextual hero image above the fold on desktop and mobile** unless that category has an explicitly approved image-free hero treatment.
+- **Text-only heroes are NOT allowed by default.** A plain dark or flat hero without a real visual treatment fails QC.
+- **The promoted hero image MUST exist, render visibly, and be relevant to the business category, brand vibe, or core service.**
+- **Hero images MUST be at least 800px wide, or the URL metadata must strongly indicate comparable or better quality.**
+- **The hero image MUST NOT be a logo, favicon, icon, screenshot, thumbnail, or badly cropped asset.**
+- **Hero framing MUST feel premium on desktop and mobile** — use intentional centering and cropping, not awkward empty space, cut-off subjects, or logo zoom-ins.
+- **If no good hero image is available, the system MUST use an approved category fallback rather than shipping a broken, low-res, or irrelevant hero.**
+
+### 4. About, Gallery, and Industry-Relevance Rules
+- **About and gallery images MUST be at least 400px wide, or the URL metadata must strongly indicate comparable or better quality.**
+- **Gallery and project images MUST match the business category and the section purpose.** Roofing must show roofs, pet services must show pets, interior design must show interiors, landscaping must show outdoor work, and so on.
+- **Gallery-heavy categories MUST use gallery-forward layouts and prominent visual proof, not token filler images.**
+- **NEVER approve a site whose gallery is populated with irrelevant, repeated, or obviously generic filler imagery.**
+- **If a prospect lacks enough usable real imagery, approved fallbacks may keep the preview functional, but the prospect still fails QC until the real coverage issue is fixed or consciously waived.**
+
+### 5. Before/After Rules
+- **ONLY use before/after sections for transformation-based businesses where a real or clearly valid transformation story exists.**
+- **Both images in a before/after pair MUST show the same type of thing** — for example, both roofs, both lawns, both bathrooms, both driveways, or both painted surfaces.
+- **The “before” image MUST look worse than the “after” image and MUST communicate a real transformation.**
+- **Both images MUST be relevant to the industry and make sense as a pair.**
+- **Both before/after URLs MUST load successfully and MUST be visually reviewed as a matched pair.**
+- **If no strong, matched, industry-relevant pair is available, NEVER include a before/after section. Use a regular gallery or another proof section instead.**
+- **After modifying a before/after section, the agent MUST run `npx tsx scripts/validate-before-after.ts` and must describe in plain English what each image shows and why the pair is valid.**
+
+### 6. Content and Business Accuracy Rules
+- **NEVER ship placeholder text, lorem ipsum, generic filler copy, fake phone numbers, fake testimonials, unfinished sections, or “Call Us Today” style stand-ins.**
+- **Business name, phone number, address, services, and about copy MUST be real, prospect-specific, and production-ready before the site can pass QC.**
+- **The business name MUST be the real business name** — reject values such as `website`, `My Site`, `Home`, or any other generic placeholder and fall back to the prospect record when necessary.
+- **Services MUST be populated with real or confidently extracted business-specific services, not default category filler.**
+- **Social proof overlays, metrics, and badges MUST use real data or be removed. NEVER invent or inflate credibility signals.**
+- **The claim banner and all business-identifying copy MUST show the actual business name, not a placeholder.**
+
+### 7. Contact Formatting Rules
+- **A real phone number MUST be present before generation approval.** If no real phone number is found, the prospect stays in processing/manual-review.
+- **Phone numbers MUST render as clickable `tel:` links and MUST be visibly formatted as real business phone numbers.**
+- **Addresses MUST be present when available and MUST render as clickable Google Maps links using the encoded address.**
+- **NEVER mark a site as ready if contact information is missing, malformed, placeholder-filled, or visually hidden.**
+
+### 8. Template Selection and Readiness Rules
+- **Generated preview sites MUST use the highest-quality category-appropriate renderer available.** If a V2 template exists for the category, the preview MUST use the V2 component. The generic `PreviewRenderer` is ONLY allowed for categories that do not yet have a V2 renderer.
+- **Template selection MUST match the business category, tone, image density, and proof style.** If the assigned template does not clearly fit the business category, the site fails QC.
+- **Gallery-heavy categories MUST use gallery-forward templates. Transformation-service categories MUST only include before/after when the pair passes all before/after rules above.**
+- **A site MUST remain in `generated` or another non-ready state until every locked QC rule passes. It MUST NEVER move to `pending-review` or outreach-ready status while any blocker remains.**
+
+### 9. QC Enforcement Reminder
+- **MUST verify both desktop and mobile before approval.**
+- **MUST verify hero visibility, image loading, business identity accuracy, contact info, and link integrity before a site is considered ready.**
+- **If any locked QC rule fails, the reviewer or automation MUST log the exact issue and keep the site out of the outreach batch until the fix is confirmed.**
 
 ## Customization Rules (NON-NEGOTIABLE)
 Every generated website MUST be heavily customized to the specific business. Generic is unacceptable. The site generation agent must:
 - **Use the business's actual logo** if available (scraped from their current site or Google Business Profile). If no logo, generate a text-based logo with their name in a style matching the industry.
 - **Match their brand colors** — scrape their existing site/socials for brand colors and use those as the accent color. Only fall back to category defaults if no brand colors are found.
-- **Use their actual photos** — pull photos from their Google Business Profile, existing website, and social media. Prioritize real photos over stock. Use stock only as a last resort.
+- **Use their actual photos** — pull photos from their Google Business Profile, existing website, and social media. Prioritize real photos over stock only when those real photos pass the locked QC rules above.
 - **Match their copywriting style** — if their current site is formal, be formal. If casual and friendly, match that tone. Scrape their "about" text and mirror the voice.
 - **Include their real services, real prices, real testimonials** — never use placeholder data when real data is available from scraping.
 - **Each generated site must feel like THEIR site** — not a template with their name swapped in. If you showed it to the business owner, they should think "this was made specifically for me."
