@@ -111,8 +111,10 @@ export default function Hero() {
         </div>
         {/* Desktop nav */}
         <div className="hidden md:flex items-center gap-5">
-          {isAuthenticated && (
+          {isAuthenticated ? (
             <a href="/dashboard" className="text-sm text-white/60 hover:text-white transition-colors duration-300 font-medium">Dashboard</a>
+          ) : (
+            <a href="/login" className="text-sm text-white/60 hover:text-white transition-colors duration-300 font-medium">Login</a>
           )}
           <a href="/get-started" className="group relative h-10 px-6 rounded-full bg-gradient-to-r from-sky-500 to-blue-600 text-white text-sm font-semibold flex items-center gap-2 hover:shadow-[0_0_30px_rgba(14,165,233,0.5)] transition-all duration-300">
             Request a Free Website <ArrowUpRightIcon />
