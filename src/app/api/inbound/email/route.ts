@@ -3,7 +3,8 @@ import { getProspectByEmail, getAllProspects } from "@/lib/store";
 import { processIncomingMessage } from "@/lib/ai-responder";
 import { sendEmail } from "@/lib/email-sender";
 import { alertProspectResponded, alertAngryResponse, alertCustomRequest, alertObjectionResponse, alertEscalation } from "@/lib/alerts";
-import { trackAiResponse, markProspectReplied } from "@/lib/followup-scheduler";
+import { markProspectReplied } from "@/lib/followup-scheduler";
+import { queueDelayedReply } from "@/lib/delayed-replies";
 
 /**
  * POST /api/inbound/email
@@ -92,24 +93,21 @@ export async function POST(request: NextRequest) {
       channel: "email",
     });
 
-    // Send AI-generated reply if appropriate
+    // Queue AI-generated reply with a human-like delay (1-10 minutes)
+    // This avoids appearing automated by not replying instantly.
     if (aiResponse.shouldReply && aiResponse.reply) {
       const replySubject = subject.startsWith("Re:") ? subject : `Re: ${subject}`;
       try {
-        await sendEmail(
+        await queueDelayedReply(
           prospect.id,
+          "email",
           fromEmail,
-          replySubject,
           aiResponse.reply,
-          99 // sequence 99 = AI reply
+          replySubject
         );
-        console.log(`[Inbound Email] AI reply sent to ${fromEmail}`);
-
-        // Track AI response for follow-up scheduler
-        // If prospect doesn't reply within the configured window, funnel auto-resumes
-        trackAiResponse(prospect.id, prospect.businessName, "email");
+        console.log(`[Inbound Email] AI reply queued for ${fromEmail}`);
       } catch (err) {
-        console.error(`[Inbound Email] Failed to send reply: ${(err as Error).message}`);
+        console.error(`[Inbound Email] Failed to queue reply: ${(err as Error).message}`);
       }
     }
 

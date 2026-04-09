@@ -3,7 +3,8 @@ import { getProspectByPhone, getAllProspects } from "@/lib/store";
 import { processIncomingMessage } from "@/lib/ai-responder";
 import { sendSms } from "@/lib/sms";
 import { alertProspectResponded, alertAngryResponse, alertCustomRequest, alertObjectionResponse, alertEscalation } from "@/lib/alerts";
-import { trackAiResponse, markProspectReplied } from "@/lib/followup-scheduler";
+import { markProspectReplied } from "@/lib/followup-scheduler";
+import { queueDelayedReply } from "@/lib/delayed-replies";
 
 /**
  * POST /api/inbound/sms
@@ -74,26 +75,19 @@ export async function POST(request: NextRequest) {
       channel: "sms",
     });
 
-    // Send AI-generated reply via SMS if appropriate
+    // Queue AI-generated reply with a human-like delay (1-10 minutes)
+    // This avoids appearing automated by not replying instantly.
     if (aiResponse.shouldReply && aiResponse.reply) {
       try {
-        // Truncate reply to SMS-friendly length (320 chars = ~2 segments)
-        const smsReply = aiResponse.reply.length > 320
-          ? aiResponse.reply.substring(0, 317) + "..."
-          : aiResponse.reply;
-
-        await sendSms(
+        await queueDelayedReply(
           prospect.id,
+          "sms",
           fromPhone,
-          smsReply,
-          99 // sequence 99 = AI reply
+          aiResponse.reply
         );
-        console.log(`[Inbound SMS] AI reply sent to ${fromPhone}`);
-
-        // Track AI response for follow-up scheduler
-        trackAiResponse(prospect.id, prospect.businessName, "sms");
+        console.log(`[Inbound SMS] AI reply queued for ${fromPhone}`);
       } catch (err) {
-        console.error(`[Inbound SMS] Failed to send reply: ${(err as Error).message}`);
+        console.error(`[Inbound SMS] Failed to queue reply: ${(err as Error).message}`);
       }
     }
 
