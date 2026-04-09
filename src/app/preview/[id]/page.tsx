@@ -198,6 +198,7 @@ export default async function PreviewPage({
 
   const proxiedData: GeneratedSiteData & { themeMode?: "light" | "dark" } = {
     ...siteData,
+    id,
     businessName: getNavName(siteData),
     tagline: getHeroHeading(siteData),
     about: getHeroSubtitle(siteData) !== siteData.about ? (siteData.about || getHeroSubtitle(siteData)) : siteData.about,
