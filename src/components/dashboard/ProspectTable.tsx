@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Prospect, Category, ProspectStatus } from "@/lib/types";
 import { CATEGORY_CONFIG } from "@/lib/types";
 import { hasPendingAdminUpdates } from "@/lib/admin-notes";
 import StatusBadge from "./StatusBadge";
+import ProspectNotesDrawer, { ProspectNotesButton } from "./ProspectNotesDrawer";
 
 interface ProspectTableProps {
   prospects: Prospect[];
@@ -52,17 +53,9 @@ function getInitialDraft(prospect: Prospect): NoteDraft {
   };
 }
 
-function NoteButton({ hasPending }: { hasPending: boolean }) {
-  return (
-    <span className="relative inline-flex items-center justify-center">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
-        <path d="M4 5.5A1.5 1.5 0 015.5 4h8.879a2 2 0 011.414.586l3.621 3.621A2 2 0 0120 9.621V18.5A1.5 1.5 0 0118.5 20h-13A1.5 1.5 0 014 18.5v-13z" />
-        <path d="M14 4v4a1 1 0 001 1h4" />
-        <path d="M8 12h8M8 16h5" />
-      </svg>
-      {hasPending && <span className="absolute -right-1 -top-1 w-2.5 h-2.5 rounded-full bg-amber-400 border border-slate-950" />}
-    </span>
-  );
+function getThemedPreviewHref(prospect: Prospect) {
+  const theme = prospect.selectedTheme || prospect.aiThemeRecommendation || "dark";
+  return `/preview-device/${prospect.id}?theme=${theme}`;
 }
 
 export default function ProspectTable({
@@ -107,18 +100,24 @@ export default function ProspectTable({
     }
   };
 
-  const getProspectById = (id: string | null) => prospects.find((prospect) => prospect.id === id);
+  const getProspectById = useCallback(
+    (id: string | null) => prospects.find((prospect) => prospect.id === id),
+    [prospects]
+  );
 
-  const getMergedProspect = (prospect: Prospect): Prospect => {
-    const draft = noteDrafts[prospect.id];
-    if (!draft) return prospect;
+  const getMergedProspect = useCallback(
+    (prospect: Prospect): Prospect => {
+      const draft = noteDrafts[prospect.id];
+      if (!draft) return prospect;
 
-    return {
-      ...prospect,
-      adminNotes: draft.adminNotes,
-      selectedTheme: draft.selectedTheme,
-    };
-  };
+      return {
+        ...prospect,
+        adminNotes: draft.adminNotes,
+        selectedTheme: draft.selectedTheme,
+      };
+    },
+    [noteDrafts]
+  );
 
   const openNotesProspect = openNotesId ? getProspectById(openNotesId) : undefined;
   const openNotesDraft = openNotesId ? noteDrafts[openNotesId] : undefined;
@@ -135,7 +134,7 @@ export default function ProspectTable({
     });
   }, [openNotesProspect]);
 
-  const persistDraft = async (prospectId: string, draftOverride?: NoteDraft) => {
+  const persistDraft = useCallback(async (prospectId: string, draftOverride?: NoteDraft) => {
     const prospect = getProspectById(prospectId);
     const draft = draftOverride || noteDrafts[prospectId];
     if (!prospect || !draft) return;
@@ -202,7 +201,7 @@ export default function ProspectTable({
         },
       }));
     }
-  };
+  }, [getProspectById, noteDrafts]);
 
   useEffect(() => {
     if (!openNotesId || !openNotesDraft) return;
@@ -219,14 +218,14 @@ export default function ProspectTable({
     }, 500);
 
     return () => window.clearTimeout(timeout);
-  }, [openNotesId, openNotesDraft?.adminNotes, openNotesDraft?.selectedTheme]);
+  }, [openNotesId, openNotesDraft, persistDraft]);
 
   const pendingProspectIds = useMemo(
     () =>
       prospects
         .filter((prospect) => hasPendingAdminUpdates(getMergedProspect(prospect)))
         .map((prospect) => prospect.id),
-    [prospects, noteDrafts]
+    [getMergedProspect, prospects]
   );
 
   const pendingCount = pendingProspectIds.length;
@@ -515,7 +514,7 @@ export default function ProspectTable({
                     <div className="flex flex-wrap gap-1.5" onClick={(e) => e.stopPropagation()}>
                       {prospect.generatedSiteUrl ? (
                         <a
-                          href={`/preview-device/${prospect.id}`}
+                          href={getThemedPreviewHref(mergedProspect)}
                           className="text-xs px-2.5 py-1.5 rounded-lg bg-blue-electric/10 text-blue-electric hover:bg-blue-electric/20 transition-colors"
                           title="Preview desktop & mobile"
                         >
@@ -553,7 +552,7 @@ export default function ProspectTable({
                         }`}
                         title="Open notes and theme settings"
                       >
-                        <NoteButton hasPending={hasPendingNotes} />
+                        <ProspectNotesButton hasPending={hasPendingNotes} />
                       </button>
                       {(prospect.status === "pending-review" || prospect.status === "ready_to_review") && (
                         <button
@@ -676,132 +675,37 @@ export default function ProspectTable({
         </span>
       </button>
 
-      {openNotesMerged && openNotesDraft && (
-        <>
-          <button
-            type="button"
-            onClick={() => void closeNotesDrawer()}
-            className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"
-            aria-label="Close notes panel"
-          />
-          <aside className="fixed inset-y-0 right-0 z-50 w-full max-w-md border-l border-border bg-slate-950 shadow-2xl flex flex-col">
-            <div className="p-5 border-b border-border bg-surface-light/70">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <p className="text-xs uppercase tracking-[0.24em] text-muted">Site change notes</p>
-                  <h3 className="mt-1 text-xl font-semibold text-foreground">{openNotesMerged.businessName}</h3>
-                  <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
-                    {openNotesMerged.generatedSiteUrl ? (
-                      <a
-                        href={`/preview-device/${openNotesMerged.id}`}
-                        className="inline-flex items-center gap-1 rounded-full bg-blue-electric/10 px-3 py-1 text-blue-electric hover:bg-blue-electric/20"
-                      >
-                        Current preview
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-3.5 h-3.5">
-                          <path d="M7 17L17 7M17 7H8M17 7v9" />
-                        </svg>
-                      </a>
-                    ) : (
-                      <span className="rounded-full bg-yellow-500/10 px-3 py-1 text-yellow-300">Preview not generated yet</span>
-                    )}
-                    {hasPendingAdminUpdates(openNotesMerged) ? (
-                      <span className="rounded-full bg-amber-500/10 px-3 py-1 text-amber-300">Pending submission</span>
-                    ) : (
-                      <span className="rounded-full bg-emerald-500/10 px-3 py-1 text-emerald-300">No unsubmitted changes</span>
-                    )}
-                  </div>
-                </div>
-                <button
-                  onClick={() => void closeNotesDrawer()}
-                  className="w-10 h-10 rounded-full bg-surface border border-border text-muted hover:text-foreground"
-                  aria-label="Close notes drawer"
-                >
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4 mx-auto">
-                    <path d="M18 6L6 18M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-            </div>
-
-            <div className="flex-1 overflow-y-auto p-5 space-y-5">
-              <section className="rounded-2xl border border-border bg-surface-light p-4">
-                <div className="flex items-center justify-between mb-3">
-                  <h4 className="text-sm font-semibold text-foreground">Theme</h4>
-                  <span className="text-xs text-muted">
-                    {openNotesDraft.saveState === "saving"
-                      ? "Saving…"
-                      : openNotesDraft.saveState === "saved"
-                        ? "Saved"
-                        : openNotesDraft.saveState === "error"
-                          ? "Save failed"
-                          : "Autosaves"}
-                  </span>
-                </div>
-                <div className="grid grid-cols-2 gap-2">
-                  {(["light", "dark"] as const).map((theme) => {
-                    const selected = (openNotesDraft.selectedTheme || openNotesMerged.aiThemeRecommendation || "dark") === theme;
-                    return (
-                      <button
-                        key={theme}
-                        onClick={() => {
-                          setNoteDrafts((prev) => ({
-                            ...prev,
-                            [openNotesMerged.id]: {
-                              ...(prev[openNotesMerged.id] || getInitialDraft(openNotesMerged)),
-                              selectedTheme: theme,
-                              saveState: "idle",
-                            },
-                          }));
-                        }}
-                        className={`h-11 rounded-xl border text-sm font-medium transition-colors ${
-                          selected
-                            ? theme === "light"
-                              ? "border-blue-electric bg-white text-slate-900"
-                              : "border-blue-electric bg-slate-900 text-white"
-                            : "border-border bg-surface text-muted hover:text-foreground"
-                        }`}
-                      >
-                        {theme === "light" ? "Light" : "Dark"}
-                      </button>
-                    );
-                  })}
-                </div>
-                {openNotesMerged.aiThemeRecommendation && (
-                  <p className="mt-3 text-xs text-muted">
-                    AI recommendation: <span className="text-blue-electric">{openNotesMerged.aiThemeRecommendation}</span>
-                  </p>
-                )}
-              </section>
-
-              <section className="rounded-2xl border border-border bg-surface-light p-4">
-                <div className="flex items-center justify-between mb-3">
-                  <h4 className="text-sm font-semibold text-foreground">Notes for revisions</h4>
-                  <span className="text-xs text-muted">Saved to Supabase</span>
-                </div>
-                <textarea
-                  value={openNotesDraft.adminNotes}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    setNoteDrafts((prev) => ({
-                      ...prev,
-                      [openNotesMerged.id]: {
-                        ...(prev[openNotesMerged.id] || getInitialDraft(openNotesMerged)),
-                        adminNotes: value,
-                        saveState: "idle",
-                      },
-                    }));
-                  }}
-                  placeholder="Examples: change hero image, tighten the about section, swap to a darker palette, add a contact CTA above the fold..."
-                  className="min-h-[220px] w-full rounded-xl border border-border bg-slate-950/70 px-4 py-3 text-sm text-foreground outline-none focus:border-blue-electric resize-y"
-                />
-                <p className="mt-3 text-xs text-muted leading-5">
-                  Notes are stored immediately so you can close this panel and return later. Use “Submit All Notes” when you are ready to move every changed site into the revision queue.
-                </p>
-              </section>
-            </div>
-          </aside>
-        </>
-      )}
+      <ProspectNotesDrawer
+        prospect={openNotesMerged}
+        draft={openNotesDraft}
+        isOpen={!!openNotesMerged && !!openNotesDraft}
+        onClose={() => void closeNotesDrawer()}
+        onNotesChange={(value) => {
+          if (!openNotesMerged) return;
+          setNoteDrafts((prev) => ({
+            ...prev,
+            [openNotesMerged.id]: {
+              ...(prev[openNotesMerged.id] || getInitialDraft(openNotesMerged)),
+              adminNotes: value,
+              saveState: "idle",
+            },
+          }));
+        }}
+        onThemeChange={(theme) => {
+          if (!openNotesMerged) return;
+          const nextDraft: NoteDraft = {
+            ...(noteDrafts[openNotesMerged.id] || getInitialDraft(openNotesMerged)),
+            selectedTheme: theme,
+            saveState: "idle",
+          };
+          setNoteDrafts((prev) => ({
+            ...prev,
+            [openNotesMerged.id]: nextDraft,
+          }));
+          void persistDraft(openNotesMerged.id, nextDraft);
+        }}
+        previewHref={openNotesMerged ? getThemedPreviewHref(openNotesMerged) : undefined}
+      />
     </div>
   );
 }

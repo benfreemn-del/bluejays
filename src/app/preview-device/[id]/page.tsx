@@ -1,36 +1,198 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useParams, useSearchParams } from "next/navigation";
+import ProspectNotesDrawer, { ProspectNotesButton } from "@/components/dashboard/ProspectNotesDrawer";
+import type { Prospect } from "@/lib/types";
+
+interface NoteDraft {
+  adminNotes: string;
+  selectedTheme?: "light" | "dark";
+  persistedAdminNotes: string;
+  persistedSelectedTheme?: "light" | "dark";
+  saveState: "idle" | "saving" | "saved" | "error";
+}
+
+function getInitialDraft(prospect: Prospect): NoteDraft {
+  return {
+    adminNotes: prospect.adminNotes || "",
+    selectedTheme: prospect.selectedTheme,
+    persistedAdminNotes: prospect.adminNotes || "",
+    persistedSelectedTheme: prospect.selectedTheme,
+    saveState: "idle",
+  };
+}
+
+function getThemeFromSearchParam(theme: string | null): "light" | "dark" | undefined {
+  return theme === "light" || theme === "dark" ? theme : undefined;
+}
+
+function buildPreviewUrl(id: string, version: "v1" | "v2", theme: "light" | "dark") {
+  const params = new URLSearchParams({ theme });
+  if (version === "v1") {
+    params.set("version", "v1");
+  }
+  return `/preview/${id}?${params.toString()}`;
+}
 
 export default function PreviewDevicePage() {
   const params = useParams();
+  const searchParams = useSearchParams();
   const id = params.id as string;
+  const searchTheme = getThemeFromSearchParam(searchParams.get("theme"));
+
   const [device, setDevice] = useState<"desktop" | "mobile">("desktop");
   const [version, setVersion] = useState<"v2" | "v1">("v2");
-  const [businessName, setBusinessName] = useState("");
-  const previewUrl = version === "v1" ? `/preview/${id}?version=v1` : `/preview/${id}`;
+  const [prospect, setProspect] = useState<Prospect | null>(null);
+  const [notesOpen, setNotesOpen] = useState(false);
+  const [noteDraft, setNoteDraft] = useState<NoteDraft | null>(null);
 
   useEffect(() => {
-    fetch(`/api/prospects/${id}`)
-      .then((r) => r.json())
-      .then((d) => { if (!d.error) setBusinessName(d.businessName); })
-      .catch(() => {});
+    let cancelled = false;
+
+    async function loadProspect() {
+      try {
+        const response = await fetch(`/api/prospects/${id}`, { cache: "no-store" });
+        const data = await response.json();
+        if (cancelled || data.error) return;
+
+        const nextProspect = data as Prospect;
+        setProspect(nextProspect);
+        setNoteDraft((current) => current || getInitialDraft(nextProspect));
+      } catch {
+        // noop
+      }
+    }
+
+    void loadProspect();
+
+    return () => {
+      cancelled = true;
+    };
   }, [id]);
+
+  const mergedProspect = useMemo(() => {
+    if (!prospect) return null;
+    if (!noteDraft) return prospect;
+
+    return {
+      ...prospect,
+      adminNotes: noteDraft.adminNotes,
+      selectedTheme: noteDraft.selectedTheme,
+    } satisfies Prospect;
+  }, [prospect, noteDraft]);
+
+  const effectiveTheme =
+    noteDraft?.selectedTheme ||
+    searchTheme ||
+    prospect?.selectedTheme ||
+    prospect?.aiThemeRecommendation ||
+    "dark";
+
+  const previewUrl = buildPreviewUrl(id, version, effectiveTheme);
+
+  const persistDraft = useCallback(async (draftOverride?: NoteDraft) => {
+    const currentDraft = draftOverride || noteDraft;
+    if (!prospect || !currentDraft) return;
+
+    if (
+      currentDraft.adminNotes === currentDraft.persistedAdminNotes &&
+      (currentDraft.selectedTheme || "") === (currentDraft.persistedSelectedTheme || "")
+    ) {
+      return;
+    }
+
+    setNoteDraft((prev) => (prev ? { ...prev, saveState: "saving" } : prev));
+
+    try {
+      const response = await fetch(`/api/prospects/${prospect.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          adminNotes: currentDraft.adminNotes,
+          adminNotesUpdatedAt: new Date().toISOString(),
+          selectedTheme: currentDraft.selectedTheme,
+        }),
+      });
+
+      const data = await response.json();
+      if (!response.ok || data.error) {
+        throw new Error("Failed to save notes");
+      }
+
+      const updatedProspect = data as Prospect;
+      setProspect(updatedProspect);
+      setNoteDraft((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          adminNotes: updatedProspect.adminNotes || prev.adminNotes,
+          selectedTheme: updatedProspect.selectedTheme,
+          persistedAdminNotes: updatedProspect.adminNotes || "",
+          persistedSelectedTheme: updatedProspect.selectedTheme,
+          saveState: "saved",
+        };
+      });
+
+      window.setTimeout(() => {
+        setNoteDraft((prev) => {
+          if (!prev || prev.saveState !== "saved") return prev;
+          return { ...prev, saveState: "idle" };
+        });
+      }, 1200);
+    } catch {
+      setNoteDraft((prev) => (prev ? { ...prev, saveState: "error" } : prev));
+    }
+  }, [noteDraft, prospect]);
+
+  useEffect(() => {
+    if (!notesOpen || !noteDraft) return;
+
+    if (
+      noteDraft.adminNotes === noteDraft.persistedAdminNotes &&
+      (noteDraft.selectedTheme || "") === (noteDraft.persistedSelectedTheme || "")
+    ) {
+      return;
+    }
+
+    const timeout = window.setTimeout(() => {
+      void persistDraft(noteDraft);
+    }, 500);
+
+    return () => window.clearTimeout(timeout);
+  }, [notesOpen, noteDraft, persistDraft]);
+
+  const closeNotesDrawer = async () => {
+    await persistDraft();
+    setNotesOpen(false);
+  };
 
   return (
     <div className="min-h-screen bg-[#050a14] flex flex-col">
-      {/* Header */}
-      <div className="border-b border-white/[0.06] bg-[#0a1628] px-6 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-4">
+      <div className="border-b border-white/[0.06] bg-[#0a1628] px-6 py-3 flex items-center justify-between gap-4">
+        <div className="flex items-center gap-4 min-w-0">
           <a href="/dashboard" className="text-sm text-white/40 hover:text-white">&larr; Dashboard</a>
           <span className="text-white/20">|</span>
-          <h1 className="text-sm font-bold text-white">{businessName || "Preview"}</h1>
+          <h1 className="text-sm font-bold text-white truncate">{prospect?.businessName || "Preview"}</h1>
         </div>
 
-        {/* Version + Device toggles */}
-        <div className="flex items-center gap-2">
-          {/* V1/V2 toggle */}
+        <div className="flex items-center gap-2 flex-wrap justify-end">
+          <button
+            onClick={() => setNotesOpen(true)}
+            className={`h-9 px-3 rounded-lg border text-sm font-medium flex items-center gap-2 transition-all ${
+              notesOpen
+                ? "bg-amber-500/20 text-amber-300 border-amber-500/40"
+                : "bg-white/[0.04] text-white/50 border-white/[0.08] hover:text-white/70"
+            }`}
+            title="Open notes and theme settings"
+          >
+            <ProspectNotesButton hasPending={!!mergedProspect && !!noteDraft && (
+              noteDraft.adminNotes !== noteDraft.persistedAdminNotes ||
+              (noteDraft.selectedTheme || "") !== (noteDraft.persistedSelectedTheme || "")
+            )} />
+            Notes
+          </button>
+          <span className="w-px h-6 bg-white/10 mx-1" />
           <button
             onClick={() => setVersion("v2")}
             className={`h-9 px-3 rounded-lg text-sm font-medium transition-all ${
@@ -92,7 +254,6 @@ export default function PreviewDevicePage() {
         </div>
       </div>
 
-      {/* Preview iframe */}
       <div className="flex-1 flex items-start justify-center p-6 bg-[#0a0a0a]">
         <div
           className="bg-white rounded-lg shadow-2xl overflow-hidden transition-all duration-500 relative"
@@ -102,17 +263,17 @@ export default function PreviewDevicePage() {
             height: device === "desktop" ? "calc(100vh - 80px)" : "812px",
           }}
         >
-          {/* Device chrome */}
           {device === "mobile" && (
             <div className="h-6 bg-black flex items-center justify-center">
               <div className="w-20 h-1.5 rounded-full bg-white/20" />
             </div>
           )}
           <iframe
+            key={previewUrl}
             src={previewUrl}
             className="w-full border-0"
             style={{ height: device === "mobile" ? "786px" : "100%" }}
-            title={`${businessName} preview - ${device}`}
+            title={`${prospect?.businessName || "Preview"} preview - ${device}`}
           />
           {device === "mobile" && (
             <div className="h-5 bg-black flex items-center justify-center">
@@ -121,6 +282,32 @@ export default function PreviewDevicePage() {
           )}
         </div>
       </div>
+
+      <ProspectNotesDrawer
+        prospect={mergedProspect || undefined}
+        draft={noteDraft || undefined}
+        isOpen={notesOpen}
+        onClose={() => void closeNotesDrawer()}
+        onNotesChange={(value) => {
+          if (!mergedProspect) return;
+          setNoteDraft((prev) => ({
+            ...(prev || getInitialDraft(mergedProspect)),
+            adminNotes: value,
+            saveState: "idle",
+          }));
+        }}
+        onThemeChange={(theme) => {
+          if (!mergedProspect) return;
+          const nextDraft: NoteDraft = {
+            ...(noteDraft || getInitialDraft(mergedProspect)),
+            selectedTheme: theme,
+            saveState: "idle",
+          };
+          setNoteDraft(nextDraft);
+          void persistDraft(nextDraft);
+        }}
+        previewHref={previewUrl}
+      />
     </div>
   );
 }

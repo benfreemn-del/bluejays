@@ -69,12 +69,13 @@ export async function POST(
 
     // STEP 2: AI theme recommendation based on category, brand colors, and business data
     const themeRec = recommendTheme(prospect);
+    const resolvedTheme = prospect.selectedTheme || themeRec.recommended;
     await updateProspect(id, {
       aiThemeRecommendation: themeRec.recommended,
-      selectedTheme: themeRec.recommended,
+      ...(prospect.selectedTheme ? {} : { selectedTheme: themeRec.recommended }),
     });
     prospect.aiThemeRecommendation = themeRec.recommended;
-    prospect.selectedTheme = themeRec.recommended;
+    prospect.selectedTheme = resolvedTheme;
     console.log(`  🎨 Theme recommendation: ${themeRec.recommended} (confidence: ${themeRec.confidence}%)`);
     console.log(`     Reasons: ${themeRec.reasons.join("; ")}`);
 
