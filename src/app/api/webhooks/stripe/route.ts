@@ -103,7 +103,7 @@ export async function POST(request: NextRequest) {
           if (isValidSetupPayment) {
             try {
               const mgmtSubscription = await createDeferredManagementSubscription(
-                session.customer,
+                session.customer as string,
                 prospectId,
                 businessName
               );

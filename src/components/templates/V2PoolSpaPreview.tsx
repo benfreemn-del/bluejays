@@ -229,37 +229,6 @@ function SectionHeader({ badge, title, subtitle, accent }: { badge: string; titl
   );
 }
 
-/* ───────────────────────── CLAIM BANNER ───────────────────────── */
-function ClaimBanner({ businessName, accentColor, prospectId }: { businessName: string; accentColor: string; prospectId: string }) {
-  const [timeLeft, setTimeLeft] = useState("");
-  useEffect(() => {
-    const expiry = new Date(); expiry.setDate(expiry.getDate() + 7);
-    const tick = () => {
-      const diff = expiry.getTime() - Date.now();
-      if (diff <= 0) { setTimeLeft("EXPIRED"); return; }
-      const d = Math.floor(diff / 86400000); const h = Math.floor((diff % 86400000) / 3600000); const m = Math.floor((diff % 3600000) / 60000);
-      setTimeLeft(`${d}d ${h}h ${m}m`);
-    };
-    tick(); const interval = setInterval(tick, 60000); return () => clearInterval(interval);
-  }, []);
-  return (
-    <div className="fixed bottom-0 left-0 right-0 z-50">
-      <div className="bg-[#1a1a1a]/90 backdrop-blur-sm border-t border-white/10 px-4 py-2 flex items-center justify-center gap-4">
-        <p className="text-xs text-slate-400"><span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1.5 animate-pulse" />Custom-built preview for this business</p>
-        {timeLeft && timeLeft !== "EXPIRED" && <p className="text-xs font-bold" style={{ color: accentColor }}>Preview expires in {timeLeft}</p>}
-      </div>
-      <div className="px-4 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4" style={{ background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}10)`, borderTop: `1px solid ${accentColor}30` }}>
-        <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-white truncate">This website was built for {businessName}</p>
-          <p className="text-xs text-slate-400">Limited time — claim your free website today</p>
-        </div>
-        <a href={`/claim/${prospectId}`} className="shrink-0 min-h-[48px] px-5 sm:px-6 rounded-full text-white text-sm font-bold flex items-center gap-2 hover:shadow-lg transition-all duration-300 shadow-lg" style={{ background: accentColor }}>
-          Claim Your Website <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4"><path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
-        </a>
-      </div>
-    </div>
-  );
-}
 
 /* ═══════════════════════════════════════════════════════════════════
    MAIN COMPONENT
@@ -268,10 +237,10 @@ function ClaimBanner({ businessName, accentColor, prospectId }: { businessName: 
 function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <motion.div
-      initial={ opacity: 0, x: 50 }
-      whileInView={ opacity: 1, x: 0 }
+      initial={{ opacity: 0, x: 50 }}
+      whileInView={{ opacity: 1, x: 0 }}
       viewport={{ once: true, margin: "-80px" }}
-      transition={ duration: 0.7, ease: "easeOut" as const }
+      transition={{ duration: 0.7, ease: "easeOut" as const }}
       className={className}
     >
       {children}
