@@ -325,8 +325,8 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
 
         <div className="absolute inset-0">
           <img src={heroImage} alt={`${data.businessName}`} className="w-full h-full object-cover object-center" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/20" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/25 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
         </div>
         <RooflinePattern opacity={0.06} />
         <StormBackground opacity={0.04} accent={ACCENT} />

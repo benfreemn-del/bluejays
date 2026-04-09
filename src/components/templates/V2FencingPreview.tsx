@@ -27,9 +27,9 @@ const STOCK_HERO = "https://images.unsplash.com/photo-1584395630827-860eee694d7b
 const STOCK_ABOUT = "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=600&q=80";
 const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1592767449601-baba tried-6be3-48ea-aff5-fce37db0e4b0?w=600&q=80",
-  "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=600&q=80",
-  "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=600&q=80",
-  "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=600&q=80",
+  "https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=600&q=80",
+  "https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=600&q=80",
+  "https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=600&q=80",
 ];
 
 function FloatingParticles({ accent }: { accent: string }) {
@@ -152,8 +152,8 @@ export default function V2FencingPreview({ data }: { data: GeneratedSiteData }) 
 
         <div className="absolute inset-0">
           <img src={heroImage} alt={`${data.businessName}`} className="w-full h-full object-cover object-center" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/20" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/25 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
         </div>
         <WoodGrainPattern opacity={0.04} accent={ACCENT} />
         <WallPostBackground opacity={0.03} accent={ACCENT} />
