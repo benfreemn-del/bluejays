@@ -134,7 +134,7 @@ function AccordionItem({ question, answer, isOpen, onToggle }: { question: strin
   );
 }
 
-: { businessName: string; accentColor: string; prospectId: string }) {
+function ClaimBanner({ businessName, accentColor, prospectId }: { businessName: string; accentColor: string; prospectId: string }) {
   const [timeLeft, setTimeLeft] = useState("");
   useEffect(() => {
     const expiry = new Date(); expiry.setDate(expiry.getDate() + 7);

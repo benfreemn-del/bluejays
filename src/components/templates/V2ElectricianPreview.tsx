@@ -324,7 +324,7 @@ function SectionHeader({ badge, title, subtitle, accent }: {
 }
 
 /* ───────────────────────── CLAIM BANNER ───────────────────────── */
-: {
+function ClaimBanner({ businessName, accentColor, prospectId }: {
   businessName: string;
   accentColor: string;
   prospectId: string;
