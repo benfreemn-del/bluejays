@@ -294,7 +294,8 @@ export default function PhotographyTemplate() {
       tagline="Artistry. Emotion. Storytelling. Premium photography that captures the moments that matter most."
       accentColor="#a855f7"
       accentColorLight="#c084fc"
-      heroGradient="linear-gradient(135deg, #201030 0%, #180a24 100%)"
+      heroGradient="linear-gradient(135deg, #f5f0ff 0%, #ede5ff 100%)"
+      themeMode="light"
       heroImage="https://images.unsplash.com/photo-1471341971476-ae15ff5dd4ea?w=1400&q=80"
       phone="(360) 555-0115"
       address="Olympia, WA"
@@ -314,7 +315,7 @@ export default function PhotographyTemplate() {
       </section>
 
       {/* ════════════════ Stats Banner ════════════════ */}
-      <section className="py-12 relative overflow-hidden bg-[#0c0818] border-b border-[#a855f7]/10">
+      <section className="py-12 relative overflow-hidden bg-[#faf9f7] border-b border-[#a855f7]/10">
         <GridPattern opacity={0.02} />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] rounded-full blur-[180px] bg-[#a855f7]/5" />
@@ -337,7 +338,7 @@ export default function PhotographyTemplate() {
               >
                 <div className="flex items-center justify-center gap-2 mb-2">
                   <span className="text-[#a855f7]">{stat.icon}</span>
-                  <span className="text-3xl md:text-4xl font-extrabold text-white">{stat.value}</span>
+                  <span className="text-3xl md:text-4xl font-extrabold text-[#1c1917]">{stat.value}</span>
                 </div>
                 <span className="text-muted text-sm font-medium tracking-wide uppercase">{stat.label}</span>
               </motion.div>
@@ -350,7 +351,7 @@ export default function PhotographyTemplate() {
       <section
         id="services"
         className="py-28 relative overflow-hidden"
-        style={{ background: "linear-gradient(180deg, #0c0818 0%, #120d20 50%, #0c0818 100%)" }}
+        style={{ background: "linear-gradient(180deg, #ffffff 0%, #faf9f7 50%, #ffffff 100%)" }}
       >
         <GridPattern />
         <AperturePattern />
@@ -373,7 +374,7 @@ export default function PhotographyTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.12 }}
-                className="group relative rounded-2xl border border-white/[0.06] hover:border-[#a855f7]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative rounded-2xl border border-gray-200 hover:border-[#a855f7]/30 transition-all duration-500 overflow-hidden bg-white shadow-sm hover:shadow-md"
               >
                 {/* Image */}
                 <div className="relative aspect-[4/5] overflow-hidden">
@@ -382,7 +383,7 @@ export default function PhotographyTemplate() {
                     alt={cat.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0c0818] via-[#0c0818]/40 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#faf9f7] via-[#faf9f7]/60 to-transparent" />
                   {/* Count badge */}
                   <div className="absolute top-4 right-4 bg-[#a855f7]/90 backdrop-blur-sm text-white text-xs font-bold px-3 py-1.5 rounded-full border border-[#c084fc]/30">
                     {cat.count}
@@ -402,7 +403,7 @@ export default function PhotographyTemplate() {
       {/* ════════════════ Packages (3-Tier Pricing) ════════════════ */}
       <section
         className="py-28 relative overflow-hidden"
-        style={{ background: "linear-gradient(180deg, #120d20 0%, #160f28 50%, #120d20 100%)" }}
+        style={{ background: "linear-gradient(180deg, #faf9f7 0%, #f5f0ff 50%, #faf9f7 100%)" }}
       >
         <GridPattern opacity={0.025} />
         <div className="absolute inset-0 pointer-events-none">
@@ -426,7 +427,7 @@ export default function PhotographyTemplate() {
                 className={`group relative p-8 rounded-2xl border transition-all duration-500 overflow-hidden flex flex-col ${
                   pkg.popular
                     ? "border-[#a855f7]/40 bg-gradient-to-b from-[#a855f7]/[0.08] to-transparent scale-[1.02]"
-                    : "border-white/[0.06] hover:border-[#a855f7]/30 bg-white/[0.02]"
+                    : "border-gray-200 hover:border-[#a855f7]/30 bg-white"
                 }`}
               >
                 {/* Popular badge */}
@@ -476,7 +477,7 @@ export default function PhotographyTemplate() {
       <section
         id="about"
         className="py-28 relative overflow-hidden"
-        style={{ background: "linear-gradient(180deg, #0c0818 0%, #100c1e 50%, #0c0818 100%)" }}
+        style={{ background: "linear-gradient(180deg, #ffffff 0%, #faf9f7 50%, #ffffff 100%)" }}
       >
         <GridPattern />
         <div className="absolute inset-0 pointer-events-none">
@@ -494,7 +495,7 @@ export default function PhotographyTemplate() {
             >
               <div className="relative w-full aspect-[4/5] max-w-md mx-auto">
                 {/* Main image */}
-                <div className="absolute top-0 left-0 w-[75%] h-[70%] rounded-2xl overflow-hidden border-2 border-white/[0.06] shadow-2xl z-10">
+                <div className="absolute top-0 left-0 w-[75%] h-[70%] rounded-2xl overflow-hidden border-2 border-gray-200 shadow-2xl z-10">
                   <img
                     src="https://images.unsplash.com/photo-1554048612-b6a482bc67e5?w=600&q=80"
                     alt="Photographer at work"
@@ -502,7 +503,7 @@ export default function PhotographyTemplate() {
                   />
                 </div>
                 {/* Secondary image */}
-                <div className="absolute bottom-0 right-0 w-[65%] h-[55%] rounded-2xl overflow-hidden border-2 border-white/[0.06] shadow-2xl z-20">
+                <div className="absolute bottom-0 right-0 w-[65%] h-[55%] rounded-2xl overflow-hidden border-2 border-gray-200 shadow-2xl z-20">
                   <img
                     src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=400&q=80"
                     alt="Camera detail"
@@ -511,8 +512,8 @@ export default function PhotographyTemplate() {
                 </div>
                 {/* Accent badge */}
                 <div className="absolute top-[55%] left-[60%] z-30 bg-[#a855f7] rounded-2xl px-5 py-4 shadow-xl shadow-[#a855f7]/20 border border-[#c084fc]/30">
-                  <span className="block text-3xl font-extrabold text-white leading-none">12+</span>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-white/80">Years of<br />Artistry</span>
+                  <span className="block text-3xl font-extrabold text-[#1c1917] leading-none">12+</span>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#4b5563]">Years of<br />Artistry</span>
                 </div>
                 {/* Decorative corner lines */}
                 <div className="absolute -top-3 -left-3 w-16 h-16 border-t-2 border-l-2 border-[#a855f7]/20 rounded-tl-xl" />
@@ -545,7 +546,7 @@ export default function PhotographyTemplate() {
                   { icon: <LensIcon />, title: "Premium Gear", desc: "Professional-grade cameras, lenses, and lighting for flawless results" },
                   { icon: <FrameIcon />, title: "Full Service", desc: "From consultation to gallery delivery, a seamless experience start to finish" },
                 ].map((feature) => (
-                  <div key={feature.title} className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/[0.04] hover:border-[#a855f7]/20 transition-colors duration-300">
+                  <div key={feature.title} className="flex items-start gap-4 p-4 rounded-xl bg-white border border-gray-100 hover:border-[#a855f7]/20 transition-colors duration-300">
                     <div className="w-10 h-10 rounded-lg bg-[#a855f7]/10 border border-[#a855f7]/20 flex items-center justify-center text-[#a855f7] shrink-0">
                       {feature.icon}
                     </div>
@@ -565,7 +566,7 @@ export default function PhotographyTemplate() {
       <section
         id="testimonials"
         className="py-28 relative overflow-hidden"
-        style={{ background: "linear-gradient(180deg, #120d20 0%, #160f28 50%, #120d20 100%)" }}
+        style={{ background: "linear-gradient(180deg, #faf9f7 0%, #f5f0ff 50%, #faf9f7 100%)" }}
       >
         <GridPattern />
         <div className="absolute inset-0 pointer-events-none">
@@ -591,7 +592,7 @@ export default function PhotographyTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-[#a855f7]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative p-7 rounded-2xl border border-gray-200 hover:border-[#a855f7]/30 transition-all duration-500 overflow-hidden bg-white shadow-sm hover:shadow-md"
               >
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-[#a855f7]/40 via-[#a855f7]/10 to-transparent" />
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_0%_0%,#a855f710,transparent_70%)]" />
@@ -605,7 +606,7 @@ export default function PhotographyTemplate() {
                     ))}
                   </div>
                   <p className="text-muted leading-relaxed mb-6 text-sm">&ldquo;{t.text}&rdquo;</p>
-                  <div className="flex items-center gap-3 pt-4 border-t border-white/[0.06]">
+                  <div className="flex items-center gap-3 pt-4 border-t border-gray-200">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#a855f7]/30 to-[#a855f7]/10 flex items-center justify-center text-sm font-bold text-[#a855f7]">
                       {t.name.charAt(0)}
                     </div>
@@ -624,7 +625,7 @@ export default function PhotographyTemplate() {
       {/* ════════════════ Booking Process ════════════════ */}
       <section
         className="py-28 relative overflow-hidden"
-        style={{ background: "linear-gradient(180deg, #0c0818 0%, #100c1e 50%, #0c0818 100%)" }}
+        style={{ background: "linear-gradient(180deg, #ffffff 0%, #faf9f7 50%, #ffffff 100%)" }}
       >
         <GridPattern />
         <AperturePattern opacity={0.015} />
@@ -647,7 +648,7 @@ export default function PhotographyTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group relative text-center p-7 rounded-2xl border border-white/[0.06] hover:border-[#a855f7]/30 bg-white/[0.02] transition-all duration-500"
+                className="group relative text-center p-7 rounded-2xl border border-gray-200 hover:border-[#a855f7]/30 bg-white transition-all duration-500 shadow-sm hover:shadow-md"
               >
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_50%_0%,#a855f712,transparent_70%)]" />
                 <div className="relative z-10">
@@ -664,7 +665,7 @@ export default function PhotographyTemplate() {
       {/* ════════════════ FAQ ════════════════ */}
       <section
         className="py-28 relative overflow-hidden"
-        style={{ background: "linear-gradient(180deg, #120d20 0%, #160f28 50%, #120d20 100%)" }}
+        style={{ background: "linear-gradient(180deg, #faf9f7 0%, #f5f0ff 50%, #faf9f7 100%)" }}
       >
         <GridPattern />
         <div className="absolute inset-0 pointer-events-none">
@@ -685,7 +686,7 @@ export default function PhotographyTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.06 }}
-                className="group p-6 rounded-2xl border border-white/[0.06] hover:border-[#a855f7]/20 transition-all duration-500 overflow-hidden relative bg-white/[0.02]"
+                className="group p-6 rounded-2xl border border-gray-200 hover:border-[#a855f7]/20 transition-all duration-500 overflow-hidden relative bg-white shadow-sm hover:shadow-md"
               >
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_0%_50%,#a855f710,transparent_70%)]" />
                 <div className="relative z-10 flex gap-4">
@@ -693,7 +694,7 @@ export default function PhotographyTemplate() {
                     {String(i + 1).padStart(2, "0")}
                   </div>
                   <div>
-                    <h3 className="font-bold mb-2 text-white group-hover:text-[#a855f7] transition-colors duration-300">{faq.q}</h3>
+                    <h3 className="font-bold mb-2 text-[#1c1917] group-hover:text-[#a855f7] transition-colors duration-300">{faq.q}</h3>
                     <p className="text-muted text-sm leading-relaxed">{faq.a}</p>
                   </div>
                 </div>
@@ -707,7 +708,7 @@ export default function PhotographyTemplate() {
       <section
         id="contact"
         className="py-28 relative overflow-hidden"
-        style={{ background: "linear-gradient(180deg, #0c0818 0%, #100c1e 50%, #0c0818 100%)" }}
+        style={{ background: "linear-gradient(180deg, #ffffff 0%, #faf9f7 50%, #ffffff 100%)" }}
       >
         <GridPattern opacity={0.02} />
         <div className="absolute inset-0 pointer-events-none">
@@ -741,30 +742,30 @@ export default function PhotographyTemplate() {
                   <input
                     type="text"
                     placeholder="Your Name"
-                    className="w-full h-13 px-5 rounded-xl bg-white/5 border border-[#a855f7]/15 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#a855f7]/50 transition-colors"
+                    className="w-full h-13 px-5 rounded-xl bg-white border border-gray-200 text-[#1c1917] placeholder-gray-400 text-sm focus:outline-none focus:border-[#a855f7]/50 transition-colors"
                   />
                   <input
                     type="email"
                     placeholder="Email Address"
-                    className="w-full h-13 px-5 rounded-xl bg-white/5 border border-[#a855f7]/15 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#a855f7]/50 transition-colors"
+                    className="w-full h-13 px-5 rounded-xl bg-white border border-gray-200 text-[#1c1917] placeholder-gray-400 text-sm focus:outline-none focus:border-[#a855f7]/50 transition-colors"
                   />
                 </div>
                 <div className="grid md:grid-cols-2 gap-4">
                   <input
                     type="tel"
                     placeholder="Phone Number"
-                    className="w-full h-13 px-5 rounded-xl bg-white/5 border border-[#a855f7]/15 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#a855f7]/50 transition-colors"
+                    className="w-full h-13 px-5 rounded-xl bg-white border border-gray-200 text-[#1c1917] placeholder-gray-400 text-sm focus:outline-none focus:border-[#a855f7]/50 transition-colors"
                   />
                   <input
                     type="text"
                     placeholder="Session Type (Wedding, Portrait, etc.)"
-                    className="w-full h-13 px-5 rounded-xl bg-white/5 border border-[#a855f7]/15 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#a855f7]/50 transition-colors"
+                    className="w-full h-13 px-5 rounded-xl bg-white border border-gray-200 text-[#1c1917] placeholder-gray-400 text-sm focus:outline-none focus:border-[#a855f7]/50 transition-colors"
                   />
                 </div>
                 <textarea
                   placeholder="Tell us about your vision, preferred dates, and any special requests..."
                   rows={4}
-                  className="w-full px-5 py-4 rounded-xl bg-white/5 border border-[#a855f7]/15 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#a855f7]/50 resize-none transition-colors"
+                  className="w-full px-5 py-4 rounded-xl bg-white border border-gray-200 text-[#1c1917] placeholder-gray-400 text-sm focus:outline-none focus:border-[#a855f7]/50 resize-none transition-colors"
                 />
                 <button
                   type="button"
@@ -772,7 +773,7 @@ export default function PhotographyTemplate() {
                 >
                   Send Inquiry
                 </button>
-                <p className="text-center text-white/30 text-xs">
+                <p className="text-center text-gray-400 text-xs">
                   No commitment required. We will follow up within 24 hours with availability and a custom quote.
                 </p>
               </div>
@@ -783,7 +784,7 @@ export default function PhotographyTemplate() {
 
       {/* ════════════════ Final CTA ════════════════ */}
       <section className="py-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#a855f7]/10 via-[#a855f7]/5 to-[#0c0818]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#a855f7]/5 via-[#a855f7]/[0.02] to-white" />
         <GridPattern opacity={0.03} />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#a855f7]/30 to-transparent" />

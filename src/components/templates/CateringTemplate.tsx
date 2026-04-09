@@ -276,7 +276,7 @@ function SectionHeader({
         initial={{ opacity: 0, y: -10 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        className="inline-block text-[#fb923c] text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border border-[#fb923c]/20 bg-[#fb923c]/5"
+        className="inline-block text-[#fb923c] text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border border-[#fb923c]/20 bg-[#fb923c]/10"
       >
         {tag}
       </motion.span>
@@ -322,7 +322,8 @@ export default function CateringTemplate() {
       tagline="Flavor. Celebration. Unforgettable events. Seattle's premier catering for weddings, corporate galas, and private gatherings."
       accentColor="#fb923c"
       accentColorLight="#fdba74"
-      heroGradient="linear-gradient(135deg, #1a1208 0%, #13100a 100%)"
+      heroGradient="linear-gradient(135deg, #fff7ed 0%, #fef3e2 100%)"
+      themeMode="light"
       heroImage="https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?w=1400&q=80"
       phone="(206) 555-0138"
       address="312 Pike Place, Seattle, WA"
@@ -346,10 +347,10 @@ export default function CateringTemplate() {
       </section>
 
       {/* ════════════════ Stats Banner ════════════════ */}
-      <section className="py-12 relative overflow-hidden bg-[#0c0a08] border-b border-[#fb923c]/10">
+      <section className="py-12 relative overflow-hidden bg-[#faf8f6] border-b border-[#fb923c]/10">
         <GridPattern opacity={0.02} />
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] rounded-full blur-[180px] bg-[#fb923c]/5" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] rounded-full blur-[180px] bg-[#fb923c]/[0.03]" />
         </div>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
@@ -369,7 +370,7 @@ export default function CateringTemplate() {
               >
                 <div className="flex items-center justify-center gap-2 mb-2">
                   <span className="text-[#fb923c]">{stat.icon}</span>
-                  <span className="text-3xl md:text-4xl font-extrabold text-white">{stat.value}</span>
+                  <span className="text-3xl md:text-4xl font-extrabold text-[#1c1917]">{stat.value}</span>
                 </div>
                 <span className="text-muted text-sm font-medium tracking-wide uppercase">{stat.label}</span>
               </motion.div>
@@ -382,12 +383,12 @@ export default function CateringTemplate() {
       <section
         id="services"
         className="py-28 relative overflow-hidden"
-        style={{ background: "linear-gradient(180deg, #0a0906 0%, #110e08 50%, #0a0906 100%)" }}
+        style={{ background: "linear-gradient(180deg, #ffffff 0%, #faf8f6 50%, #ffffff 100%)" }}
       >
         <GridPattern />
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-[10%] right-[5%] w-[500px] h-[500px] rounded-full blur-[160px] bg-[#fb923c]/6" />
-          <div className="absolute bottom-[10%] left-[5%] w-[400px] h-[400px] rounded-full blur-[140px] bg-[#fb923c]/4" />
+          <div className="absolute top-[10%] right-[5%] w-[500px] h-[500px] rounded-full blur-[160px] bg-[#fb923c]/[0.04]" />
+          <div className="absolute bottom-[10%] left-[5%] w-[400px] h-[400px] rounded-full blur-[140px] bg-[#fb923c]/[0.02]" />
         </div>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <SectionHeader
@@ -404,7 +405,7 @@ export default function CateringTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-[#fb923c]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative p-7 rounded-2xl border border-gray-200 hover:border-[#fb923c]/30 transition-all duration-500 overflow-hidden bg-white shadow-sm hover:shadow-md"
               >
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_50%_0%,#fb923c15,transparent_70%)]" />
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#fb923c]/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -413,7 +414,7 @@ export default function CateringTemplate() {
                     <div className="w-12 h-12 rounded-xl bg-[#fb923c]/10 border border-[#fb923c]/20 flex items-center justify-center text-[#fb923c] group-hover:bg-[#fb923c]/20 group-hover:border-[#fb923c]/40 transition-all duration-300">
                       {service.icon}
                     </div>
-                    <span className="text-4xl font-extrabold text-white/[0.04] group-hover:text-[#fb923c]/10 transition-colors duration-300 leading-none">
+                    <span className="text-4xl font-extrabold text-gray-100 group-hover:text-[#fb923c]/10 transition-colors duration-300 leading-none">
                       {String(i + 1).padStart(2, "0")}
                     </span>
                   </div>
@@ -423,7 +424,7 @@ export default function CateringTemplate() {
                     {service.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="text-[10px] font-semibold uppercase tracking-wider text-[#fb923c]/70 bg-[#fb923c]/8 border border-[#fb923c]/10 px-2.5 py-1 rounded-full"
+                        className="text-[10px] font-semibold uppercase tracking-wider text-[#fb923c]/70 bg-[#fb923c]/[0.05] border border-[#fb923c]/10 px-2.5 py-1 rounded-full"
                       >
                         {tag}
                       </span>
@@ -439,12 +440,12 @@ export default function CateringTemplate() {
       {/* ════════════════ Sample Menus ════════════════ */}
       <section
         className="py-28 relative overflow-hidden"
-        style={{ background: "linear-gradient(180deg, #110e08 0%, #15110a 50%, #110e08 100%)" }}
+        style={{ background: "linear-gradient(180deg, #faf8f6 0%, #fff7ed 50%, #faf8f6 100%)" }}
       >
         <GridPattern opacity={0.025} />
         <PlateDecoration />
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-[30%] left-[50%] -translate-x-1/2 w-[700px] h-[400px] rounded-full blur-[180px] bg-[#fb923c]/6" />
+          <div className="absolute top-[30%] left-[50%] -translate-x-1/2 w-[700px] h-[400px] rounded-full blur-[180px] bg-[#fb923c]/[0.04]" />
         </div>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <SectionHeader
@@ -461,12 +462,12 @@ export default function CateringTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.12 }}
-                className="group relative rounded-2xl border border-white/[0.06] hover:border-[#fb923c]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative rounded-2xl border border-gray-200 hover:border-[#fb923c]/30 transition-all duration-500 overflow-hidden bg-white shadow-sm hover:shadow-md"
               >
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_50%_0%,#fb923c12,transparent_70%)]" />
                 <div className="p-7">
                   <div className="relative z-10">
-                    <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#fb923c]/70 bg-[#fb923c]/8 border border-[#fb923c]/10 px-2.5 py-1 rounded-full">
+                    <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#fb923c]/70 bg-[#fb923c]/[0.05] border border-[#fb923c]/10 px-2.5 py-1 rounded-full">
                       {menu.accent}
                     </span>
                     <h3 className="text-xl font-bold mt-4 mb-2 group-hover:text-[#fb923c] transition-colors duration-300">{menu.style}</h3>
@@ -477,7 +478,7 @@ export default function CateringTemplate() {
                           <div className="w-5 h-5 shrink-0 rounded-full bg-[#fb923c]/10 border border-[#fb923c]/20 flex items-center justify-center mt-0.5">
                             <div className="w-1.5 h-1.5 rounded-full bg-[#fb923c]" />
                           </div>
-                          <span className="text-sm text-white/80">{item}</span>
+                          <span className="text-sm text-[#4b5563]">{item}</span>
                         </div>
                       ))}
                     </div>
@@ -494,11 +495,11 @@ export default function CateringTemplate() {
       {/* ════════════════ Event Gallery ════════════════ */}
       <section
         className="py-28 relative overflow-hidden"
-        style={{ background: "linear-gradient(180deg, #0a0906 0%, #0d0b07 50%, #0a0906 100%)" }}
+        style={{ background: "linear-gradient(180deg, #ffffff 0%, #faf8f6 50%, #ffffff 100%)" }}
       >
         <GridPattern />
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-[20%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px] bg-[#fb923c]/5" />
+          <div className="absolute top-[20%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px] bg-[#fb923c]/[0.03]" />
         </div>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <SectionHeader
@@ -515,14 +516,14 @@ export default function CateringTemplate() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className="group relative aspect-[4/3] rounded-2xl overflow-hidden border border-white/[0.06] hover:border-[#fb923c]/30 transition-all duration-500"
+                className="group relative aspect-[4/3] rounded-2xl overflow-hidden border border-gray-200 hover:border-[#fb923c]/30 transition-all duration-500"
               >
                 <img
                   src={img.src}
                   alt={img.alt}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500">
                   <p className="text-white text-sm font-semibold">{img.alt}</p>
                 </div>
@@ -535,11 +536,11 @@ export default function CateringTemplate() {
       {/* ════════════════ Planning Process ════════════════ */}
       <section
         className="py-28 relative overflow-hidden"
-        style={{ background: "linear-gradient(180deg, #110e08 0%, #15110a 50%, #110e08 100%)" }}
+        style={{ background: "linear-gradient(180deg, #faf8f6 0%, #fff7ed 50%, #faf8f6 100%)" }}
       >
         <GridPattern opacity={0.025} />
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-[30%] left-[20%] w-[600px] h-[400px] rounded-full blur-[180px] bg-[#fb923c]/5" />
+          <div className="absolute top-[30%] left-[20%] w-[600px] h-[400px] rounded-full blur-[180px] bg-[#fb923c]/[0.03]" />
         </div>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <SectionHeader
@@ -556,7 +557,7 @@ export default function CateringTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.12 }}
-                className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-[#fb923c]/30 transition-all duration-500 overflow-hidden bg-white/[0.02] text-center"
+                className="group relative p-7 rounded-2xl border border-gray-200 hover:border-[#fb923c]/30 transition-all duration-500 overflow-hidden bg-white text-center"
               >
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_50%_0%,#fb923c12,transparent_70%)]" />
                 <div className="relative z-10">
@@ -577,7 +578,7 @@ export default function CateringTemplate() {
       </section>
 
       {/* ════════════════ Why Choose Us Banner ════════════════ */}
-      <section className="py-20 relative overflow-hidden bg-gradient-to-b from-[#fb923c]/10 to-[#0a0906]">
+      <section className="py-20 relative overflow-hidden bg-gradient-to-b from-[#fb923c]/5 to-white">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#fb923c]/30 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#fb923c]/10 to-transparent" />
@@ -611,7 +612,7 @@ export default function CateringTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group text-center p-6 rounded-2xl border border-white/[0.06] hover:border-[#fb923c]/30 bg-white/[0.02] transition-all duration-500"
+                className="group text-center p-6 rounded-2xl border border-gray-200 hover:border-[#fb923c]/30 bg-white shadow-sm hover:shadow-md transition-all duration-500"
               >
                 <div className="w-14 h-14 mx-auto rounded-xl bg-[#fb923c]/10 border border-[#fb923c]/20 flex items-center justify-center text-[#fb923c] mb-4 group-hover:bg-[#fb923c]/20 group-hover:scale-110 transition-all duration-300">
                   {item.icon}
@@ -628,11 +629,11 @@ export default function CateringTemplate() {
       <section
         id="testimonials"
         className="py-28 relative overflow-hidden"
-        style={{ background: "linear-gradient(180deg, #0a0906 0%, #0d0b07 50%, #0a0906 100%)" }}
+        style={{ background: "linear-gradient(180deg, #ffffff 0%, #faf8f6 50%, #ffffff 100%)" }}
       >
         <GridPattern />
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-[30%] left-[40%] w-[600px] h-[400px] rounded-full blur-[180px] bg-[#fb923c]/5" />
+          <div className="absolute top-[30%] left-[40%] w-[600px] h-[400px] rounded-full blur-[180px] bg-[#fb923c]/[0.03]" />
           <svg className="absolute inset-0 w-full h-full opacity-[0.025]" viewBox="0 0 800 400">
             <circle cx="400" cy="200" r="100" stroke="#fb923c" strokeWidth="0.5" fill="none" />
             <circle cx="400" cy="200" r="180" stroke="#fb923c" strokeWidth="0.3" fill="none" />
@@ -654,12 +655,12 @@ export default function CateringTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-[#fb923c]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative p-7 rounded-2xl border border-gray-200 hover:border-[#fb923c]/30 transition-all duration-500 overflow-hidden bg-white shadow-sm hover:shadow-md"
               >
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-[#fb923c]/40 via-[#fb923c]/10 to-transparent" />
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_0%_0%,#fb923c10,transparent_70%)]" />
                 <div className="relative z-10">
-                  <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#fb923c]/70 bg-[#fb923c]/8 border border-[#fb923c]/10 px-2.5 py-1 rounded-full">
+                  <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#fb923c]/70 bg-[#fb923c]/[0.05] border border-[#fb923c]/10 px-2.5 py-1 rounded-full">
                     {t.eventType}
                   </span>
                   <div className="flex items-center gap-0.5 text-[#fb923c] mt-4 mb-4">
@@ -668,7 +669,7 @@ export default function CateringTemplate() {
                     ))}
                   </div>
                   <p className="text-muted leading-relaxed mb-6 text-sm">&ldquo;{t.text}&rdquo;</p>
-                  <div className="flex items-center gap-3 pt-4 border-t border-white/[0.06]">
+                  <div className="flex items-center gap-3 pt-4 border-t border-gray-200">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#fb923c]/30 to-[#fb923c]/10 flex items-center justify-center text-sm font-bold text-[#fb923c]">
                       {t.name.charAt(0)}
                     </div>
@@ -687,11 +688,11 @@ export default function CateringTemplate() {
       {/* ════════════════ Quote Request CTA ════════════════ */}
       <section
         className="py-28 relative overflow-hidden"
-        style={{ background: "linear-gradient(180deg, #110e08 0%, #15110a 50%, #110e08 100%)" }}
+        style={{ background: "linear-gradient(180deg, #faf8f6 0%, #fff7ed 50%, #faf8f6 100%)" }}
       >
         <GridPattern opacity={0.02} />
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full blur-[200px] bg-[#fb923c]/6" />
+          <div className="absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full blur-[200px] bg-[#fb923c]/[0.04]" />
         </div>
         <div className="max-w-3xl mx-auto px-6 relative z-10">
           <motion.div
@@ -721,30 +722,30 @@ export default function CateringTemplate() {
                   <input
                     type="text"
                     placeholder="Your Name"
-                    className="w-full h-13 px-5 rounded-xl bg-white/5 border border-[#fb923c]/15 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#fb923c]/50 transition-colors"
+                    className="w-full h-13 px-5 rounded-xl bg-white border border-gray-200 text-[#1c1917] placeholder-gray-400 text-sm focus:outline-none focus:border-[#fb923c]/50 transition-colors"
                   />
                   <input
                     type="email"
                     placeholder="Email Address"
-                    className="w-full h-13 px-5 rounded-xl bg-white/5 border border-[#fb923c]/15 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#fb923c]/50 transition-colors"
+                    className="w-full h-13 px-5 rounded-xl bg-white border border-gray-200 text-[#1c1917] placeholder-gray-400 text-sm focus:outline-none focus:border-[#fb923c]/50 transition-colors"
                   />
                 </div>
                 <div className="grid md:grid-cols-2 gap-4">
                   <input
                     type="tel"
                     placeholder="Phone Number"
-                    className="w-full h-13 px-5 rounded-xl bg-white/5 border border-[#fb923c]/15 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#fb923c]/50 transition-colors"
+                    className="w-full h-13 px-5 rounded-xl bg-white border border-gray-200 text-[#1c1917] placeholder-gray-400 text-sm focus:outline-none focus:border-[#fb923c]/50 transition-colors"
                   />
                   <input
                     type="text"
                     placeholder="Event Date"
-                    className="w-full h-13 px-5 rounded-xl bg-white/5 border border-[#fb923c]/15 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#fb923c]/50 transition-colors"
+                    className="w-full h-13 px-5 rounded-xl bg-white border border-gray-200 text-[#1c1917] placeholder-gray-400 text-sm focus:outline-none focus:border-[#fb923c]/50 transition-colors"
                   />
                 </div>
                 <textarea
                   placeholder="Tell us about your event (guest count, venue, cuisine preferences)..."
                   rows={4}
-                  className="w-full px-5 py-4 rounded-xl bg-white/5 border border-[#fb923c]/15 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#fb923c]/50 resize-none transition-colors"
+                  className="w-full px-5 py-4 rounded-xl bg-white border border-gray-200 text-[#1c1917] placeholder-gray-400 text-sm focus:outline-none focus:border-[#fb923c]/50 resize-none transition-colors"
                 />
                 <button
                   type="button"
@@ -752,7 +753,7 @@ export default function CateringTemplate() {
                 >
                   Get Your Free Quote
                 </button>
-                <p className="text-center text-white/30 text-xs">
+                <p className="text-center text-gray-400 text-xs">
                   We respond within 24 hours with a customized proposal and tasting invitation.
                 </p>
               </div>
@@ -764,12 +765,12 @@ export default function CateringTemplate() {
       {/* ════════════════ FAQ ════════════════ */}
       <section
         className="py-28 relative overflow-hidden"
-        style={{ background: "linear-gradient(180deg, #0a0906 0%, #0d0b07 50%, #0a0906 100%)" }}
+        style={{ background: "linear-gradient(180deg, #ffffff 0%, #faf8f6 50%, #ffffff 100%)" }}
       >
         <GridPattern />
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-[20%] left-[10%] w-[400px] h-[400px] rounded-full blur-[140px] bg-[#fb923c]/5" />
-          <div className="absolute bottom-[15%] right-[10%] w-[350px] h-[350px] rounded-full blur-[120px] bg-[#fb923c]/4" />
+          <div className="absolute top-[20%] left-[10%] w-[400px] h-[400px] rounded-full blur-[140px] bg-[#fb923c]/[0.03]" />
+          <div className="absolute bottom-[15%] right-[10%] w-[350px] h-[350px] rounded-full blur-[120px] bg-[#fb923c]/[0.02]" />
         </div>
         <div className="max-w-3xl mx-auto px-6 relative z-10">
           <SectionHeader
@@ -785,7 +786,7 @@ export default function CateringTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.06 }}
-                className="group p-6 rounded-2xl border border-white/[0.06] hover:border-[#fb923c]/20 transition-all duration-500 overflow-hidden relative bg-white/[0.02]"
+                className="group p-6 rounded-2xl border border-gray-200 hover:border-[#fb923c]/20 transition-all duration-500 overflow-hidden relative bg-white shadow-sm hover:shadow-md"
               >
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_0%_50%,#fb923c10,transparent_70%)]" />
                 <div className="relative z-10 flex gap-4">
@@ -793,7 +794,7 @@ export default function CateringTemplate() {
                     {String(i + 1).padStart(2, "0")}
                   </div>
                   <div>
-                    <h3 className="font-bold mb-2 text-white group-hover:text-[#fb923c] transition-colors duration-300">{faq.q}</h3>
+                    <h3 className="font-bold mb-2 text-[#1c1917] group-hover:text-[#fb923c] transition-colors duration-300">{faq.q}</h3>
                     <p className="text-muted text-sm leading-relaxed">{faq.a}</p>
                   </div>
                 </div>
@@ -805,11 +806,11 @@ export default function CateringTemplate() {
 
       {/* ════════════════ Final CTA ════════════════ */}
       <section className="py-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#fb923c]/10 via-[#fb923c]/5 to-[#0a0906]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#fb923c]/5 via-[#fb923c]/[0.02] to-white" />
         <GridPattern opacity={0.03} />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#fb923c]/30 to-transparent" />
-          <div className="absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] rounded-full blur-[180px] bg-[#fb923c]/8" />
+          <div className="absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] rounded-full blur-[180px] bg-[#fb923c]/[0.05]" />
         </div>
         <div className="max-w-3xl mx-auto px-6 text-center relative z-10">
           <motion.div
@@ -817,7 +818,7 @@ export default function CateringTemplate() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <span className="inline-block text-[#fb923c] text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border border-[#fb923c]/20 bg-[#fb923c]/5">
+            <span className="inline-block text-[#fb923c] text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border border-[#fb923c]/20 bg-[#fb923c]/10">
               BOOK NOW
             </span>
             <h2 className="text-3xl md:text-5xl font-extrabold mb-4 tracking-tight">

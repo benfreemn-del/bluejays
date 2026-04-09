@@ -340,7 +340,8 @@ export default function InteriorDesignTemplate() {
       tagline="Transforming spaces into extraordinary experiences. Elegance, style, and soul in every room."
       accentColor="#e879f9"
       accentColorLight="#f0abfc"
-      heroGradient="linear-gradient(135deg, #1a0a1e 0%, #150d1a 100%)"
+      heroGradient="linear-gradient(135deg, #faf5ff 0%, #f5f0ff 100%)"
+      themeMode="light"
       heroImage="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=1400&q=80"
       phone="(206) 555-0131"
       address="412 Pine Street, Seattle, WA 98101"
@@ -364,7 +365,7 @@ export default function InteriorDesignTemplate() {
       </section>
 
       {/* ════════════════ Stats Banner ════════════════ */}
-      <section className="py-12 relative overflow-hidden bg-[#0e060f] border-b border-[#e879f9]/10">
+      <section className="py-12 relative overflow-hidden bg-[#faf9f7] border-b border-[#e879f9]/10">
         <GridPattern opacity={0.02} />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] rounded-full blur-[180px] bg-[#e879f9]/5" />
@@ -387,7 +388,7 @@ export default function InteriorDesignTemplate() {
               >
                 <div className="flex items-center justify-center gap-2 mb-2">
                   <span className="text-[#e879f9]">{stat.icon}</span>
-                  <span className="text-3xl md:text-4xl font-extrabold text-white">{stat.value}</span>
+                  <span className="text-3xl md:text-4xl font-extrabold text-[#1c1917]">{stat.value}</span>
                 </div>
                 <span className="text-muted text-sm font-medium tracking-wide uppercase">{stat.label}</span>
               </motion.div>
@@ -400,7 +401,7 @@ export default function InteriorDesignTemplate() {
       <section
         id="services"
         className="py-28 relative overflow-hidden"
-        style={{ background: "linear-gradient(180deg, #0d050f 0%, #140a18 50%, #0d050f 100%)" }}
+        style={{ background: "linear-gradient(180deg, #ffffff 0%, #faf9f7 50%, #ffffff 100%)" }}
       >
         <GridPattern />
         <DesignBgPattern opacity={0.02} />
@@ -423,7 +424,7 @@ export default function InteriorDesignTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group relative rounded-2xl border border-white/[0.06] hover:border-[#e879f9]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative rounded-2xl border border-gray-200 hover:border-[#e879f9]/30 transition-all duration-500 overflow-hidden bg-white shadow-sm hover:shadow-md"
               >
                 {/* Image */}
                 <div className="relative aspect-[16/10] overflow-hidden">
@@ -432,13 +433,13 @@ export default function InteriorDesignTemplate() {
                     alt={item.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0d050f] via-[#0d050f]/40 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#faf9f7] via-[#faf9f7]/60 to-transparent" />
                   {/* Category badge */}
                   <div className="absolute top-4 right-4 bg-[#e879f9]/90 backdrop-blur-sm text-white text-xs font-bold px-3 py-1.5 rounded-full border border-[#f0abfc]/30">
                     {item.category}
                   </div>
                   {/* Number */}
-                  <span className="absolute top-4 left-4 text-5xl font-extrabold text-white/[0.06] group-hover:text-[#e879f9]/15 transition-colors duration-300 leading-none">
+                  <span className="absolute top-4 left-4 text-5xl font-extrabold text-gray-100 group-hover:text-[#e879f9]/15 transition-colors duration-300 leading-none">
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   {/* Info overlay */}
@@ -456,7 +457,7 @@ export default function InteriorDesignTemplate() {
       {/* ════════════════ Design Process (4 Steps) ════════════════ */}
       <section
         className="py-28 relative overflow-hidden"
-        style={{ background: "linear-gradient(180deg, #140a18 0%, #1a0e20 50%, #140a18 100%)" }}
+        style={{ background: "linear-gradient(180deg, #faf9f7 0%, #faf5ff 50%, #faf9f7 100%)" }}
       >
         <GridPattern opacity={0.025} />
         <div className="absolute inset-0 pointer-events-none">
@@ -477,7 +478,7 @@ export default function InteriorDesignTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-[#e879f9]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative p-7 rounded-2xl border border-gray-200 hover:border-[#e879f9]/30 transition-all duration-500 overflow-hidden bg-white shadow-sm hover:shadow-md"
               >
                 {/* Hover glow */}
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_50%_0%,#e879f915,transparent_70%)]" />
@@ -488,7 +489,7 @@ export default function InteriorDesignTemplate() {
                     <div className="w-12 h-12 rounded-xl bg-[#e879f9]/10 border border-[#e879f9]/20 flex items-center justify-center text-[#e879f9] group-hover:bg-[#e879f9]/20 group-hover:border-[#e879f9]/40 transition-all duration-300">
                       {step.icon}
                     </div>
-                    <span className="text-4xl font-extrabold text-white/[0.04] group-hover:text-[#e879f9]/10 transition-colors duration-300 leading-none">
+                    <span className="text-4xl font-extrabold text-gray-100 group-hover:text-[#e879f9]/10 transition-colors duration-300 leading-none">
                       {String(i + 1).padStart(2, "0")}
                     </span>
                   </div>
@@ -506,7 +507,7 @@ export default function InteriorDesignTemplate() {
       {/* ════════════════ Packages (3-Tier Pricing) ════════════════ */}
       <section
         className="py-28 relative overflow-hidden"
-        style={{ background: "linear-gradient(180deg, #0d050f 0%, #130a16 50%, #0d050f 100%)" }}
+        style={{ background: "linear-gradient(180deg, #ffffff 0%, #faf9f7 50%, #ffffff 100%)" }}
       >
         <GridPattern />
         <DesignBgPattern opacity={0.015} />
@@ -532,7 +533,7 @@ export default function InteriorDesignTemplate() {
                 className={`group relative p-8 rounded-2xl border transition-all duration-500 overflow-hidden ${
                   pkg.popular
                     ? "border-[#e879f9]/40 bg-gradient-to-b from-[#e879f9]/[0.08] to-transparent scale-[1.02]"
-                    : "border-white/[0.06] hover:border-[#e879f9]/30 bg-white/[0.02]"
+                    : "border-gray-200 hover:border-[#e879f9]/30 bg-white"
                 }`}
               >
                 {/* Hover glow */}
@@ -584,7 +585,7 @@ export default function InteriorDesignTemplate() {
       <section
         id="about"
         className="py-28 relative overflow-hidden"
-        style={{ background: "linear-gradient(180deg, #140a18 0%, #1a0e20 50%, #140a18 100%)" }}
+        style={{ background: "linear-gradient(180deg, #faf9f7 0%, #faf5ff 50%, #faf9f7 100%)" }}
       >
         <GridPattern />
         <div className="absolute inset-0 pointer-events-none">
@@ -602,7 +603,7 @@ export default function InteriorDesignTemplate() {
             >
               <div className="relative w-full aspect-[4/5] max-w-md mx-auto">
                 {/* Main image */}
-                <div className="absolute top-0 left-0 w-[75%] h-[70%] rounded-2xl overflow-hidden border-2 border-white/[0.06] shadow-2xl z-10">
+                <div className="absolute top-0 left-0 w-[75%] h-[70%] rounded-2xl overflow-hidden border-2 border-gray-200 shadow-2xl z-10">
                   <img
                     src="https://images.unsplash.com/photo-1599351431613-18ef1fdd27e1?w=600&q=80"
                     alt="Design studio"
@@ -610,7 +611,7 @@ export default function InteriorDesignTemplate() {
                   />
                 </div>
                 {/* Secondary image */}
-                <div className="absolute bottom-0 right-0 w-[65%] h-[55%] rounded-2xl overflow-hidden border-2 border-white/[0.06] shadow-2xl z-20">
+                <div className="absolute bottom-0 right-0 w-[65%] h-[55%] rounded-2xl overflow-hidden border-2 border-gray-200 shadow-2xl z-20">
                   <img
                     src="https://images.unsplash.com/photo-1594744803329-e58b31de8bf5?w=400&q=80"
                     alt="Lead designer"
@@ -619,8 +620,8 @@ export default function InteriorDesignTemplate() {
                 </div>
                 {/* Accent badge */}
                 <div className="absolute top-[55%] left-[60%] z-30 bg-[#e879f9] rounded-2xl px-5 py-4 shadow-xl shadow-[#e879f9]/20 border border-[#f0abfc]/30">
-                  <span className="block text-3xl font-extrabold text-white leading-none">200+</span>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-white/80">Spaces<br />Designed</span>
+                  <span className="block text-3xl font-extrabold text-[#1c1917] leading-none">200+</span>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#4b5563]">Spaces<br />Designed</span>
                 </div>
                 {/* Decorative corner lines */}
                 <div className="absolute -top-3 -left-3 w-16 h-16 border-t-2 border-l-2 border-[#e879f9]/20 rounded-tl-xl" />
@@ -653,7 +654,7 @@ export default function InteriorDesignTemplate() {
                   { icon: <RulerIcon />, title: "Architecture Background", desc: "Degree in architecture ensures every design is structurally informed" },
                   { icon: <PlantIcon />, title: "Sustainable Focus", desc: "Commitment to eco-friendly materials and local artisan partnerships" },
                 ].map((feature) => (
-                  <div key={feature.title} className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/[0.04] hover:border-[#e879f9]/20 transition-colors duration-300">
+                  <div key={feature.title} className="flex items-start gap-4 p-4 rounded-xl bg-white border border-gray-100 hover:border-[#e879f9]/20 transition-colors duration-300">
                     <div className="w-10 h-10 rounded-lg bg-[#e879f9]/10 border border-[#e879f9]/20 flex items-center justify-center text-[#e879f9] shrink-0">
                       {feature.icon}
                     </div>
@@ -673,7 +674,7 @@ export default function InteriorDesignTemplate() {
       <section
         id="testimonials"
         className="py-28 relative overflow-hidden"
-        style={{ background: "linear-gradient(180deg, #0d050f 0%, #110a14 50%, #0d050f 100%)" }}
+        style={{ background: "linear-gradient(180deg, #ffffff 0%, #faf9f7 50%, #ffffff 100%)" }}
       >
         <GridPattern />
         <div className="absolute inset-0 pointer-events-none">
@@ -699,7 +700,7 @@ export default function InteriorDesignTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-[#e879f9]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative p-7 rounded-2xl border border-gray-200 hover:border-[#e879f9]/30 transition-all duration-500 overflow-hidden bg-white shadow-sm hover:shadow-md"
               >
                 {/* Top accent line */}
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-[#e879f9]/40 via-[#e879f9]/10 to-transparent" />
@@ -718,7 +719,7 @@ export default function InteriorDesignTemplate() {
                   {/* Quote */}
                   <p className="text-muted leading-relaxed mb-6 text-sm">&ldquo;{t.text}&rdquo;</p>
                   {/* Author */}
-                  <div className="flex items-center gap-3 pt-4 border-t border-white/[0.06]">
+                  <div className="flex items-center gap-3 pt-4 border-t border-gray-200">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#e879f9]/30 to-[#e879f9]/10 flex items-center justify-center text-sm font-bold text-[#e879f9]">
                       {t.name.charAt(0)}
                     </div>
@@ -737,7 +738,7 @@ export default function InteriorDesignTemplate() {
       {/* ════════════════ FAQ ════════════════ */}
       <section
         className="py-28 relative overflow-hidden"
-        style={{ background: "linear-gradient(180deg, #140a18 0%, #1a0e20 50%, #140a18 100%)" }}
+        style={{ background: "linear-gradient(180deg, #faf9f7 0%, #faf5ff 50%, #faf9f7 100%)" }}
       >
         <GridPattern />
         <div className="absolute inset-0 pointer-events-none">
@@ -758,7 +759,7 @@ export default function InteriorDesignTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.06 }}
-                className="group p-6 rounded-2xl border border-white/[0.06] hover:border-[#e879f9]/20 transition-all duration-500 overflow-hidden relative bg-white/[0.02]"
+                className="group p-6 rounded-2xl border border-gray-200 hover:border-[#e879f9]/20 transition-all duration-500 overflow-hidden relative bg-white shadow-sm hover:shadow-md"
               >
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_0%_50%,#e879f910,transparent_70%)]" />
                 <div className="relative z-10 flex gap-4">
@@ -766,7 +767,7 @@ export default function InteriorDesignTemplate() {
                     {String(i + 1).padStart(2, "0")}
                   </div>
                   <div>
-                    <h3 className="font-bold mb-2 text-white group-hover:text-[#e879f9] transition-colors duration-300">{faq.q}</h3>
+                    <h3 className="font-bold mb-2 text-[#1c1917] group-hover:text-[#e879f9] transition-colors duration-300">{faq.q}</h3>
                     <p className="text-muted text-sm leading-relaxed">{faq.a}</p>
                   </div>
                 </div>
@@ -778,7 +779,7 @@ export default function InteriorDesignTemplate() {
 
       {/* ════════════════ Consultation CTA ════════════════ */}
       <section className="py-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#e879f9]/10 via-[#e879f9]/5 to-[#0d050f]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#e879f9]/5 via-[#e879f9]/[0.02] to-white" />
         <GridPattern opacity={0.03} />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#e879f9]/30 to-transparent" />

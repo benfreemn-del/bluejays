@@ -332,7 +332,8 @@ export default function VeterinaryTemplate() {
       tagline="Compassionate, trusted veterinary care for your whole family. Where every pet is treated like our own."
       accentColor="#34d399"
       accentColorLight="#6ee7b7"
-      heroGradient="linear-gradient(135deg, #0a2e1a 0%, #071f12 100%)"
+      heroGradient="linear-gradient(135deg, #ecfdf5 0%, #e6f7ed 100%)"
+      themeMode="light"
       heroImage="https://images.unsplash.com/photo-1628009368231-7bb7cfcb0def?w=1400&q=80"
       phone="(425) 555-0110"
       address="Kenmore, WA"
@@ -356,7 +357,7 @@ export default function VeterinaryTemplate() {
       </section>
 
       {/* ════════════════ Stats Banner ════════════════ */}
-      <section className="py-12 relative overflow-hidden bg-[#060f0a] border-b border-[#34d399]/10">
+      <section className="py-12 relative overflow-hidden bg-[#f7faf8] border-b border-[#34d399]/10">
         <GridPattern opacity={0.02} />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] rounded-full blur-[180px] bg-[#34d399]/5" />
@@ -379,7 +380,7 @@ export default function VeterinaryTemplate() {
               >
                 <div className="flex items-center justify-center gap-2 mb-2">
                   <span className="text-[#34d399]">{stat.icon}</span>
-                  <span className="text-3xl md:text-4xl font-extrabold text-white">{stat.value}</span>
+                  <span className="text-3xl md:text-4xl font-extrabold text-[#1c1917]">{stat.value}</span>
                 </div>
                 <span className="text-muted text-sm font-medium tracking-wide uppercase">{stat.label}</span>
               </motion.div>
@@ -392,7 +393,7 @@ export default function VeterinaryTemplate() {
       <section
         id="services"
         className="py-28 relative overflow-hidden"
-        style={{ background: "linear-gradient(180deg, #060f0a 0%, #081a10 50%, #060f0a 100%)" }}
+        style={{ background: "linear-gradient(180deg, #ffffff 0%, #f7faf8 50%, #ffffff 100%)" }}
       >
         <GridPattern />
         <PawPattern />
@@ -415,7 +416,7 @@ export default function VeterinaryTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-[#34d399]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative p-7 rounded-2xl border border-gray-200 hover:border-[#34d399]/30 transition-all duration-500 overflow-hidden bg-white shadow-sm hover:shadow-md"
               >
                 {/* Hover glow */}
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_50%_0%,#34d39915,transparent_70%)]" />
@@ -427,7 +428,7 @@ export default function VeterinaryTemplate() {
                     <div className="w-12 h-12 rounded-xl bg-[#34d399]/10 border border-[#34d399]/20 flex items-center justify-center text-[#34d399] group-hover:bg-[#34d399]/20 group-hover:border-[#34d399]/40 transition-all duration-300">
                       {service.icon}
                     </div>
-                    <span className="text-4xl font-extrabold text-white/[0.04] group-hover:text-[#34d399]/10 transition-colors duration-300 leading-none">
+                    <span className="text-4xl font-extrabold text-gray-100 group-hover:text-[#34d399]/10 transition-colors duration-300 leading-none">
                       {String(i + 1).padStart(2, "0")}
                     </span>
                   </div>
@@ -454,7 +455,7 @@ export default function VeterinaryTemplate() {
       {/* ════════════════ Meet the Vets ════════════════ */}
       <section
         className="py-28 relative overflow-hidden"
-        style={{ background: "linear-gradient(180deg, #081a10 0%, #0a2215 50%, #081a10 100%)" }}
+        style={{ background: "linear-gradient(180deg, #f7faf8 0%, #ecfdf5 50%, #f7faf8 100%)" }}
       >
         <GridPattern opacity={0.025} />
         <div className="absolute inset-0 pointer-events-none">
@@ -475,7 +476,7 @@ export default function VeterinaryTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.12 }}
-                className="group relative rounded-2xl border border-white/[0.06] hover:border-[#34d399]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative rounded-2xl border border-gray-200 hover:border-[#34d399]/30 transition-all duration-500 overflow-hidden bg-white shadow-sm hover:shadow-md"
               >
                 {/* Photo */}
                 <div className="relative aspect-[3/4] overflow-hidden">
@@ -484,7 +485,7 @@ export default function VeterinaryTemplate() {
                     alt={vet.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#060f0a] via-[#060f0a]/30 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#f7faf8] via-[#f7faf8]/60 to-transparent" />
                   {/* Years badge */}
                   <div className="absolute top-4 right-4 bg-[#34d399]/90 backdrop-blur-sm text-white text-xs font-bold px-3 py-1.5 rounded-full border border-[#6ee7b7]/30">
                     {vet.yearsExp}+ YRS
@@ -495,7 +496,7 @@ export default function VeterinaryTemplate() {
                     <p className="text-[#34d399] text-sm font-semibold mb-3">{vet.title}</p>
                     <div className="flex flex-wrap gap-2">
                       {vet.specialties.map((s) => (
-                        <span key={s} className="text-[10px] font-semibold uppercase tracking-wider text-white/60 bg-white/10 border border-white/10 px-2.5 py-1 rounded-full">
+                        <span key={s} className="text-[10px] font-semibold uppercase tracking-wider text-[#6b7280] bg-white/10 border border-white/10 px-2.5 py-1 rounded-full">
                           {s}
                         </span>
                       ))}
@@ -511,7 +512,7 @@ export default function VeterinaryTemplate() {
       {/* ════════════════ Patient Gallery ════════════════ */}
       <section
         className="py-28 relative overflow-hidden"
-        style={{ background: "linear-gradient(180deg, #060f0a 0%, #081a10 50%, #060f0a 100%)" }}
+        style={{ background: "linear-gradient(180deg, #ffffff 0%, #f7faf8 50%, #ffffff 100%)" }}
       >
         <GridPattern />
         <PawPattern opacity={0.015} />
@@ -533,7 +534,7 @@ export default function VeterinaryTemplate() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className="group relative rounded-2xl overflow-hidden border border-white/[0.06] hover:border-[#34d399]/30 transition-all duration-500"
+                className="group relative rounded-2xl overflow-hidden border border-gray-200 hover:border-[#34d399]/30 transition-all duration-500"
               >
                 <div className="aspect-square overflow-hidden">
                   <img
@@ -542,9 +543,9 @@ export default function VeterinaryTemplate() {
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                   />
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-[#060f0a] via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500">
-                  <p className="font-bold text-white">{pet.name}</p>
+                  <p className="font-bold text-[#1c1917]">{pet.name}</p>
                   <p className="text-[#34d399] text-sm">{pet.breed}</p>
                 </div>
               </motion.div>
@@ -554,7 +555,7 @@ export default function VeterinaryTemplate() {
       </section>
 
       {/* ════════════════ Emergency Info ════════════════ */}
-      <section className="py-20 relative overflow-hidden bg-gradient-to-b from-[#34d399]/10 to-[#060f0a]">
+      <section className="py-20 relative overflow-hidden bg-gradient-to-b from-[#34d399]/5 to-white">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#34d399]/30 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#34d399]/10 to-transparent" />
@@ -588,7 +589,7 @@ export default function VeterinaryTemplate() {
                 </p>
               </div>
               <div className="grid md:grid-cols-2 gap-6">
-                <div className="p-5 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+                <div className="p-5 rounded-xl bg-white/[0.03] border border-gray-200">
                   <h4 className="font-bold text-sm mb-3 text-[#f87171]">When to Call</h4>
                   <ul className="space-y-2 text-muted text-sm">
                     {["Difficulty breathing or choking", "Severe bleeding or trauma", "Ingestion of toxic substances", "Seizures or collapse", "Unable to urinate or defecate"].map((item) => (
@@ -599,7 +600,7 @@ export default function VeterinaryTemplate() {
                     ))}
                   </ul>
                 </div>
-                <div className="p-5 rounded-xl bg-white/[0.03] border border-white/[0.06] flex flex-col items-center justify-center text-center">
+                <div className="p-5 rounded-xl bg-white/[0.03] border border-gray-200 flex flex-col items-center justify-center text-center">
                   <p className="text-muted text-sm mb-4">24/7 Emergency Hotline</p>
                   <a href="tel:4255550110" className="text-3xl md:text-4xl font-extrabold text-[#34d399] hover:text-[#6ee7b7] transition-colors mb-4">
                     (425) 555-0110
@@ -615,7 +616,7 @@ export default function VeterinaryTemplate() {
       {/* ════════════════ New Client Welcome ════════════════ */}
       <section
         className="py-28 relative overflow-hidden"
-        style={{ background: "linear-gradient(180deg, #060f0a 0%, #081a10 50%, #060f0a 100%)" }}
+        style={{ background: "linear-gradient(180deg, #f7faf8 0%, #ecfdf5 50%, #f7faf8 100%)" }}
       >
         <GridPattern />
         <div className="absolute inset-0 pointer-events-none">
@@ -637,7 +638,7 @@ export default function VeterinaryTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group relative text-center p-7 rounded-2xl border border-white/[0.06] hover:border-[#34d399]/30 bg-white/[0.02] transition-all duration-500"
+                className="group relative text-center p-7 rounded-2xl border border-gray-200 hover:border-[#34d399]/30 bg-white transition-all duration-500 shadow-sm hover:shadow-md"
               >
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_50%_0%,#34d39912,transparent_70%)]" />
                 <div className="relative z-10">
@@ -655,7 +656,7 @@ export default function VeterinaryTemplate() {
       <section
         id="testimonials"
         className="py-28 relative overflow-hidden"
-        style={{ background: "linear-gradient(180deg, #081a10 0%, #0a2215 50%, #081a10 100%)" }}
+        style={{ background: "linear-gradient(180deg, #ffffff 0%, #f7faf8 50%, #ffffff 100%)" }}
       >
         <GridPattern />
         <div className="absolute inset-0 pointer-events-none">
@@ -681,7 +682,7 @@ export default function VeterinaryTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-[#34d399]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative p-7 rounded-2xl border border-gray-200 hover:border-[#34d399]/30 transition-all duration-500 overflow-hidden bg-white shadow-sm hover:shadow-md"
               >
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-[#34d399]/40 via-[#34d399]/10 to-transparent" />
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_0%_0%,#34d39910,transparent_70%)]" />
@@ -695,7 +696,7 @@ export default function VeterinaryTemplate() {
                     ))}
                   </div>
                   <p className="text-muted leading-relaxed mb-6 text-sm">&ldquo;{t.text}&rdquo;</p>
-                  <div className="flex items-center gap-3 pt-4 border-t border-white/[0.06]">
+                  <div className="flex items-center gap-3 pt-4 border-t border-gray-200">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#34d399]/30 to-[#34d399]/10 flex items-center justify-center text-sm font-bold text-[#34d399]">
                       {t.name.charAt(0)}
                     </div>
@@ -714,7 +715,7 @@ export default function VeterinaryTemplate() {
       {/* ════════════════ FAQ ════════════════ */}
       <section
         className="py-28 relative overflow-hidden"
-        style={{ background: "linear-gradient(180deg, #060f0a 0%, #081a10 50%, #060f0a 100%)" }}
+        style={{ background: "linear-gradient(180deg, #f7faf8 0%, #ecfdf5 50%, #f7faf8 100%)" }}
       >
         <GridPattern />
         <div className="absolute inset-0 pointer-events-none">
@@ -735,7 +736,7 @@ export default function VeterinaryTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.06 }}
-                className="group p-6 rounded-2xl border border-white/[0.06] hover:border-[#34d399]/20 transition-all duration-500 overflow-hidden relative bg-white/[0.02]"
+                className="group p-6 rounded-2xl border border-gray-200 hover:border-[#34d399]/20 transition-all duration-500 overflow-hidden relative bg-white shadow-sm hover:shadow-md"
               >
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_0%_50%,#34d39910,transparent_70%)]" />
                 <div className="relative z-10 flex gap-4">
@@ -743,7 +744,7 @@ export default function VeterinaryTemplate() {
                     {String(i + 1).padStart(2, "0")}
                   </div>
                   <div>
-                    <h3 className="font-bold mb-2 text-white group-hover:text-[#34d399] transition-colors duration-300">{faq.q}</h3>
+                    <h3 className="font-bold mb-2 text-[#1c1917] group-hover:text-[#34d399] transition-colors duration-300">{faq.q}</h3>
                     <p className="text-muted text-sm leading-relaxed">{faq.a}</p>
                   </div>
                 </div>
@@ -757,7 +758,7 @@ export default function VeterinaryTemplate() {
       <section
         id="contact"
         className="py-28 relative overflow-hidden"
-        style={{ background: "linear-gradient(180deg, #081a10 0%, #0a2215 50%, #081a10 100%)" }}
+        style={{ background: "linear-gradient(180deg, #ffffff 0%, #f7faf8 50%, #ffffff 100%)" }}
       >
         <GridPattern opacity={0.02} />
         <div className="absolute inset-0 pointer-events-none">
@@ -791,30 +792,30 @@ export default function VeterinaryTemplate() {
                   <input
                     type="text"
                     placeholder="Your Name"
-                    className="w-full h-13 px-5 rounded-xl bg-white/5 border border-[#34d399]/15 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#34d399]/50 transition-colors"
+                    className="w-full h-13 px-5 rounded-xl bg-white border border-gray-200 text-[#1c1917] placeholder-gray-400 text-sm focus:outline-none focus:border-[#34d399]/50 transition-colors"
                   />
                   <input
                     type="email"
                     placeholder="Email Address"
-                    className="w-full h-13 px-5 rounded-xl bg-white/5 border border-[#34d399]/15 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#34d399]/50 transition-colors"
+                    className="w-full h-13 px-5 rounded-xl bg-white border border-gray-200 text-[#1c1917] placeholder-gray-400 text-sm focus:outline-none focus:border-[#34d399]/50 transition-colors"
                   />
                 </div>
                 <div className="grid md:grid-cols-2 gap-4">
                   <input
                     type="tel"
                     placeholder="Phone Number"
-                    className="w-full h-13 px-5 rounded-xl bg-white/5 border border-[#34d399]/15 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#34d399]/50 transition-colors"
+                    className="w-full h-13 px-5 rounded-xl bg-white border border-gray-200 text-[#1c1917] placeholder-gray-400 text-sm focus:outline-none focus:border-[#34d399]/50 transition-colors"
                   />
                   <input
                     type="text"
                     placeholder="Pet Name & Breed"
-                    className="w-full h-13 px-5 rounded-xl bg-white/5 border border-[#34d399]/15 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#34d399]/50 transition-colors"
+                    className="w-full h-13 px-5 rounded-xl bg-white border border-gray-200 text-[#1c1917] placeholder-gray-400 text-sm focus:outline-none focus:border-[#34d399]/50 transition-colors"
                   />
                 </div>
                 <textarea
                   placeholder="Reason for visit or any concerns..."
                   rows={4}
-                  className="w-full px-5 py-4 rounded-xl bg-white/5 border border-[#34d399]/15 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#34d399]/50 resize-none transition-colors"
+                  className="w-full px-5 py-4 rounded-xl bg-white border border-gray-200 text-[#1c1917] placeholder-gray-400 text-sm focus:outline-none focus:border-[#34d399]/50 resize-none transition-colors"
                 />
                 <button
                   type="button"
@@ -822,7 +823,7 @@ export default function VeterinaryTemplate() {
                 >
                   Book Appointment
                 </button>
-                <p className="text-center text-white/30 text-xs">
+                <p className="text-center text-gray-400 text-xs">
                   We respond within 1 business hour. Emergency cases call (425) 555-0110 directly.
                 </p>
               </div>
@@ -833,7 +834,7 @@ export default function VeterinaryTemplate() {
 
       {/* ════════════════ Final CTA ════════════════ */}
       <section className="py-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#34d399]/10 via-[#34d399]/5 to-[#060f0a]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#34d399]/5 via-[#34d399]/[0.02] to-white" />
         <GridPattern opacity={0.03} />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#34d399]/30 to-transparent" />

@@ -316,7 +316,8 @@ export default function DaycareTemplate() {
       tagline="Where curiosity grows and every child shines. Nurturing care and joyful learning in Redmond."
       accentColor="#60a5fa"
       accentColorLight="#93c5fd"
-      heroGradient="linear-gradient(135deg, #0f1a2e 0%, #080d1a 100%)"
+      heroGradient="linear-gradient(135deg, #eff6ff 0%, #e0ecff 100%)"
+      themeMode="light"
       heroImage="https://images.unsplash.com/photo-1540479859555-17af45c78602?w=1400&q=80"
       phone="(425) 555-0114"
       address="123 Discovery Lane, Redmond, WA"
@@ -340,7 +341,7 @@ export default function DaycareTemplate() {
       </section>
 
       {/* ════════════════ Stats Banner ════════════════ */}
-      <section className="py-12 relative overflow-hidden bg-[#080c14] border-b border-[#60a5fa]/10">
+      <section className="py-12 relative overflow-hidden bg-[#f8faff] border-b border-[#60a5fa]/10">
         <PlayPattern opacity={0.02} />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] rounded-full blur-[180px] bg-[#60a5fa]/5" />
@@ -361,7 +362,7 @@ export default function DaycareTemplate() {
                 transition={{ delay: i * 0.1 }}
                 className="text-center"
               >
-                <span className="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-b from-white to-[#60a5fa]">
+                <span className="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-b from-[#1c1917] to-[#3b82f6]">
                   {stat.value}
                 </span>
                 <span className="block text-muted text-sm font-medium tracking-wide uppercase mt-2">{stat.label}</span>
@@ -375,7 +376,7 @@ export default function DaycareTemplate() {
       <section
         id="services"
         className="py-28 relative overflow-hidden"
-        style={{ background: "linear-gradient(180deg, #080c14 0%, #0a1020 50%, #080c14 100%)" }}
+        style={{ background: "linear-gradient(180deg, #ffffff 0%, #f8faff 50%, #ffffff 100%)" }}
       >
         <PlayPattern />
         <ChildSilhouette />
@@ -398,7 +399,7 @@ export default function DaycareTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-[#60a5fa]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative p-7 rounded-2xl border border-gray-200 hover:border-[#60a5fa]/30 transition-all duration-500 overflow-hidden bg-white shadow-sm hover:shadow-md"
               >
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_50%_0%,#60a5fa15,transparent_70%)]" />
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#60a5fa]/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -407,7 +408,7 @@ export default function DaycareTemplate() {
                     <div className="w-12 h-12 rounded-xl bg-[#60a5fa]/10 border border-[#60a5fa]/20 flex items-center justify-center text-[#60a5fa] group-hover:bg-[#60a5fa]/20 group-hover:border-[#60a5fa]/40 transition-all duration-300">
                       {program.icon}
                     </div>
-                    <span className="text-4xl font-extrabold text-white/[0.04] group-hover:text-[#60a5fa]/10 transition-colors duration-300 leading-none">
+                    <span className="text-4xl font-extrabold text-gray-100 group-hover:text-[#60a5fa]/10 transition-colors duration-300 leading-none">
                       {String(i + 1).padStart(2, "0")}
                     </span>
                   </div>
@@ -438,7 +439,7 @@ export default function DaycareTemplate() {
       {/* ════════════════ Daily Schedule ════════════════ */}
       <section
         className="py-28 relative overflow-hidden"
-        style={{ background: "linear-gradient(180deg, #0a1020 0%, #0c1228 50%, #0a1020 100%)" }}
+        style={{ background: "linear-gradient(180deg, #f8faff 0%, #eff6ff 50%, #f8faff 100%)" }}
       >
         <PlayPattern opacity={0.025} />
         <div className="absolute inset-0 pointer-events-none">
@@ -459,7 +460,7 @@ export default function DaycareTemplate() {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.05 }}
-                className="group flex items-center gap-4 p-4 rounded-xl border border-white/[0.06] hover:border-[#60a5fa]/20 transition-all duration-300 overflow-hidden relative bg-white/[0.02]"
+                className="group flex items-center gap-4 p-4 rounded-xl border border-gray-200 hover:border-[#60a5fa]/20 transition-all duration-300 overflow-hidden relative bg-white shadow-sm hover:shadow-md"
               >
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_0%_50%,#60a5fa08,transparent_70%)]" />
                 <div className="relative z-10 flex items-center gap-4 w-full">
@@ -482,7 +483,7 @@ export default function DaycareTemplate() {
       {/* ════════════════ Our Teachers ════════════════ */}
       <section
         className="py-28 relative overflow-hidden"
-        style={{ background: "linear-gradient(180deg, #080c14 0%, #0a0f1c 50%, #080c14 100%)" }}
+        style={{ background: "linear-gradient(180deg, #ffffff 0%, #f8faff 50%, #ffffff 100%)" }}
       >
         <PlayPattern opacity={0.025} />
         <div className="absolute inset-0 pointer-events-none">
@@ -503,7 +504,7 @@ export default function DaycareTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.12 }}
-                className="group relative rounded-2xl border border-white/[0.06] hover:border-[#60a5fa]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative rounded-2xl border border-gray-200 hover:border-[#60a5fa]/30 transition-all duration-500 overflow-hidden bg-white shadow-sm hover:shadow-md"
               >
                 <div className="relative aspect-[3/4] overflow-hidden">
                   <img
@@ -511,14 +512,14 @@ export default function DaycareTemplate() {
                     alt={teacher.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#080c14] via-[#080c14]/30 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#f8faff] via-[#f8faff]/60 to-transparent" />
                   <div className="absolute top-4 right-4 bg-[#60a5fa]/90 backdrop-blur-sm text-white text-xs font-bold px-3 py-1.5 rounded-full border border-[#93c5fd]/30">
                     {teacher.years}+ YRS
                   </div>
                   <div className="absolute bottom-0 left-0 right-0 p-6">
                     <h3 className="text-xl font-bold mb-1">{teacher.name}</h3>
                     <p className="text-[#60a5fa] text-sm font-semibold mb-2">{teacher.title}</p>
-                    <span className="text-[10px] font-semibold uppercase tracking-wider text-white/60 bg-white/10 border border-white/10 px-2.5 py-1 rounded-full">
+                    <span className="text-[10px] font-semibold uppercase tracking-wider text-[#6b7280] bg-white/10 border border-white/10 px-2.5 py-1 rounded-full">
                       {teacher.credentials}
                     </span>
                   </div>
@@ -533,7 +534,7 @@ export default function DaycareTemplate() {
       <section
         id="about"
         className="py-28 relative overflow-hidden"
-        style={{ background: "linear-gradient(180deg, #0a1020 0%, #0d1328 50%, #0a1020 100%)" }}
+        style={{ background: "linear-gradient(180deg, #f8faff 0%, #eff6ff 50%, #f8faff 100%)" }}
       >
         <PlayPattern />
         <div className="absolute inset-0 pointer-events-none">
@@ -555,7 +556,7 @@ export default function DaycareTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group flex items-start gap-5 p-6 rounded-2xl border border-white/[0.06] hover:border-[#60a5fa]/30 transition-all duration-500 overflow-hidden relative bg-white/[0.02]"
+                className="group flex items-start gap-5 p-6 rounded-2xl border border-gray-200 hover:border-[#60a5fa]/30 transition-all duration-500 overflow-hidden relative bg-white shadow-sm hover:shadow-md"
               >
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_0%_0%,#60a5fa10,transparent_70%)]" />
                 <div className="relative z-10 flex items-start gap-5">
@@ -576,7 +577,7 @@ export default function DaycareTemplate() {
       {/* ════════════════ Safety & Security ════════════════ */}
       <section
         className="py-28 relative overflow-hidden"
-        style={{ background: "linear-gradient(180deg, #080c14 0%, #0a0f1c 50%, #080c14 100%)" }}
+        style={{ background: "linear-gradient(180deg, #ffffff 0%, #f8faff 50%, #ffffff 100%)" }}
       >
         <PlayPattern opacity={0.02} />
         <ChildSilhouette />
@@ -598,7 +599,7 @@ export default function DaycareTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className="group relative p-6 rounded-2xl border border-white/[0.06] hover:border-[#60a5fa]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative p-6 rounded-2xl border border-gray-200 hover:border-[#60a5fa]/30 transition-all duration-500 overflow-hidden bg-white shadow-sm hover:shadow-md"
               >
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_50%_0%,#60a5fa12,transparent_70%)]" />
                 <div className="relative z-10">
@@ -607,7 +608,7 @@ export default function DaycareTemplate() {
                       <ShieldIcon />
                     </div>
                     <div className="flex-1">
-                      <span className="text-4xl font-extrabold text-white/[0.04] group-hover:text-[#60a5fa]/10 transition-colors duration-300 leading-none float-right">
+                      <span className="text-4xl font-extrabold text-gray-100 group-hover:text-[#60a5fa]/10 transition-colors duration-300 leading-none float-right">
                         {String(i + 1).padStart(2, "0")}
                       </span>
                     </div>
@@ -622,7 +623,7 @@ export default function DaycareTemplate() {
       </section>
 
       {/* ════════════════ Why Choose Us Banner ════════════════ */}
-      <section className="py-20 relative overflow-hidden bg-gradient-to-b from-[#60a5fa]/10 to-[#080c14]">
+      <section className="py-20 relative overflow-hidden bg-gradient-to-b from-[#60a5fa]/5 to-white">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#60a5fa]/30 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#60a5fa]/10 to-transparent" />
@@ -657,7 +658,7 @@ export default function DaycareTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group text-center p-6 rounded-2xl border border-white/[0.06] hover:border-[#60a5fa]/30 bg-white/[0.02] transition-all duration-500"
+                className="group text-center p-6 rounded-2xl border border-gray-200 hover:border-[#60a5fa]/30 bg-white transition-all duration-500 shadow-sm hover:shadow-md"
               >
                 <div className="w-14 h-14 mx-auto rounded-xl bg-[#60a5fa]/10 border border-[#60a5fa]/20 flex items-center justify-center text-[#60a5fa] mb-4 group-hover:bg-[#60a5fa]/20 group-hover:scale-110 transition-all duration-300">
                   {item.icon}
@@ -674,7 +675,7 @@ export default function DaycareTemplate() {
       <section
         id="testimonials"
         className="py-28 relative overflow-hidden"
-        style={{ background: "linear-gradient(180deg, #080c14 0%, #0a1020 50%, #080c14 100%)" }}
+        style={{ background: "linear-gradient(180deg, #f8faff 0%, #eff6ff 50%, #f8faff 100%)" }}
       >
         <PlayPattern />
         <div className="absolute inset-0 pointer-events-none">
@@ -700,7 +701,7 @@ export default function DaycareTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-[#60a5fa]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative p-7 rounded-2xl border border-gray-200 hover:border-[#60a5fa]/30 transition-all duration-500 overflow-hidden bg-white shadow-sm hover:shadow-md"
               >
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-[#60a5fa]/40 via-[#60a5fa]/10 to-transparent" />
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_0%_0%,#60a5fa10,transparent_70%)]" />
@@ -714,7 +715,7 @@ export default function DaycareTemplate() {
                     ))}
                   </div>
                   <p className="text-muted leading-relaxed mb-6 text-sm">&ldquo;{t.text}&rdquo;</p>
-                  <div className="flex items-center gap-3 pt-4 border-t border-white/[0.06]">
+                  <div className="flex items-center gap-3 pt-4 border-t border-gray-200">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#60a5fa]/30 to-[#60a5fa]/10 flex items-center justify-center text-sm font-bold text-[#60a5fa]">
                       {t.name.charAt(0)}
                     </div>
@@ -733,7 +734,7 @@ export default function DaycareTemplate() {
       {/* ════════════════ Enrollment CTA ════════════════ */}
       <section
         className="py-28 relative overflow-hidden"
-        style={{ background: "linear-gradient(180deg, #0a1020 0%, #0d1328 50%, #0a1020 100%)" }}
+        style={{ background: "linear-gradient(180deg, #ffffff 0%, #f8faff 50%, #ffffff 100%)" }}
       >
         <PlayPattern opacity={0.02} />
         <div className="absolute inset-0 pointer-events-none">
@@ -767,30 +768,30 @@ export default function DaycareTemplate() {
                   <input
                     type="text"
                     placeholder="Parent's Name"
-                    className="w-full h-13 px-5 rounded-xl bg-white/5 border border-[#60a5fa]/15 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#60a5fa]/50 transition-colors"
+                    className="w-full h-13 px-5 rounded-xl bg-white border border-gray-200 text-[#1c1917] placeholder-gray-400 text-sm focus:outline-none focus:border-[#60a5fa]/50 transition-colors"
                   />
                   <input
                     type="email"
                     placeholder="Email Address"
-                    className="w-full h-13 px-5 rounded-xl bg-white/5 border border-[#60a5fa]/15 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#60a5fa]/50 transition-colors"
+                    className="w-full h-13 px-5 rounded-xl bg-white border border-gray-200 text-[#1c1917] placeholder-gray-400 text-sm focus:outline-none focus:border-[#60a5fa]/50 transition-colors"
                   />
                 </div>
                 <div className="grid md:grid-cols-2 gap-4">
                   <input
                     type="tel"
                     placeholder="Phone Number"
-                    className="w-full h-13 px-5 rounded-xl bg-white/5 border border-[#60a5fa]/15 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#60a5fa]/50 transition-colors"
+                    className="w-full h-13 px-5 rounded-xl bg-white border border-gray-200 text-[#1c1917] placeholder-gray-400 text-sm focus:outline-none focus:border-[#60a5fa]/50 transition-colors"
                   />
                   <input
                     type="text"
                     placeholder="Child's Age"
-                    className="w-full h-13 px-5 rounded-xl bg-white/5 border border-[#60a5fa]/15 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#60a5fa]/50 transition-colors"
+                    className="w-full h-13 px-5 rounded-xl bg-white border border-gray-200 text-[#1c1917] placeholder-gray-400 text-sm focus:outline-none focus:border-[#60a5fa]/50 transition-colors"
                   />
                 </div>
                 <textarea
                   placeholder="Tell us about your family and what you are looking for..."
                   rows={4}
-                  className="w-full px-5 py-4 rounded-xl bg-white/5 border border-[#60a5fa]/15 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#60a5fa]/50 resize-none transition-colors"
+                  className="w-full px-5 py-4 rounded-xl bg-white border border-gray-200 text-[#1c1917] placeholder-gray-400 text-sm focus:outline-none focus:border-[#60a5fa]/50 resize-none transition-colors"
                 />
                 <div className="grid md:grid-cols-2 gap-4">
                   <button
@@ -806,7 +807,7 @@ export default function DaycareTemplate() {
                     Book a Tour
                   </button>
                 </div>
-                <p className="text-center text-white/30 text-xs">
+                <p className="text-center text-gray-400 text-xs">
                   We respond to all inquiries within 24 hours. Tours available Monday through Friday.
                 </p>
               </div>
@@ -817,7 +818,7 @@ export default function DaycareTemplate() {
 
       {/* ════════════════ Final CTA ════════════════ */}
       <section className="py-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#60a5fa]/10 via-[#60a5fa]/5 to-[#080c14]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#60a5fa]/5 via-[#60a5fa]/[0.02] to-white" />
         <PlayPattern opacity={0.03} />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#60a5fa]/30 to-transparent" />

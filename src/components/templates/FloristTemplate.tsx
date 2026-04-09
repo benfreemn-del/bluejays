@@ -287,7 +287,8 @@ export default function FloristTemplate() {
       tagline="Artisan floral design for life's most beautiful moments. Hand-crafted with love in Seattle."
       accentColor="#fb7185"
       accentColorLight="#fda4af"
-      heroGradient="linear-gradient(135deg, #1f1018 0%, #13080d 100%)"
+      heroGradient="linear-gradient(135deg, #fdf5f0 0%, #f0f5f0 50%, #fdf9f7 100%)"
+      themeMode="light"
       heroImage="https://images.unsplash.com/photo-1469259943454-aa100abba749?w=1400&q=80"
       phone="(206) 555-0113"
       address="Pike Place Market District, Seattle, WA"
@@ -311,7 +312,7 @@ export default function FloristTemplate() {
       </section>
 
       {/* ════════════════ Stats Banner ════════════════ */}
-      <section className="py-12 relative overflow-hidden bg-[#0c0a10] border-b border-[#fb7185]/10">
+      <section className="py-12 relative overflow-hidden bg-[#fdf9f7] border-b border-[#fb7185]/10">
         <FloralPattern opacity={0.02} />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] rounded-full blur-[180px] bg-[#fb7185]/5" />
@@ -346,7 +347,7 @@ export default function FloristTemplate() {
       <section
         id="services"
         className="py-28 relative overflow-hidden"
-        style={{ background: "linear-gradient(180deg, #0a080d 0%, #110a10 50%, #0a080d 100%)" }}
+        style={{ background: "linear-gradient(180deg, #ffffff 0%, #fdf9f7 50%, #ffffff 100%)" }}
       >
         <FloralPattern />
         <RoseSilhouette />
@@ -369,7 +370,7 @@ export default function FloristTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-[#fb7185]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative p-7 rounded-2xl border border-gray-200 hover:border-[#fb7185]/30 transition-all duration-500 overflow-hidden bg-white shadow-sm hover:shadow-md"
               >
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_50%_0%,#fb718515,transparent_70%)]" />
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#fb7185]/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -378,7 +379,7 @@ export default function FloristTemplate() {
                     <div className="w-12 h-12 rounded-xl bg-[#fb7185]/10 border border-[#fb7185]/20 flex items-center justify-center text-[#fb7185] group-hover:bg-[#fb7185]/20 group-hover:border-[#fb7185]/40 transition-all duration-300">
                       {service.icon}
                     </div>
-                    <span className="text-4xl font-extrabold text-white/[0.04] group-hover:text-[#fb7185]/10 transition-colors duration-300 leading-none">
+                    <span className="text-4xl font-extrabold text-gray-100 group-hover:text-[#fb7185]/10 transition-colors duration-300 leading-none">
                       {String(i + 1).padStart(2, "0")}
                     </span>
                   </div>
@@ -404,7 +405,7 @@ export default function FloristTemplate() {
       {/* ════════════════ Gallery ════════════════ */}
       <section
         className="py-28 relative overflow-hidden"
-        style={{ background: "linear-gradient(180deg, #110a10 0%, #150c12 50%, #110a10 100%)" }}
+        style={{ background: "linear-gradient(180deg, #fdf9f7 0%, #fff1f2 50%, #fdf9f7 100%)" }}
       >
         <FloralPattern opacity={0.025} />
         <div className="absolute inset-0 pointer-events-none">
@@ -425,7 +426,7 @@ export default function FloristTemplate() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className="group relative rounded-2xl overflow-hidden border border-white/[0.06] hover:border-[#fb7185]/30 transition-all duration-500"
+                className="group relative rounded-2xl overflow-hidden border border-gray-200 hover:border-[#fb7185]/30 transition-all duration-500"
               >
                 <div className="aspect-[4/5] overflow-hidden">
                   <img
@@ -433,7 +434,7 @@ export default function FloristTemplate() {
                     alt={item.title}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0a080d] via-[#0a080d]/20 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#fdf9f7] via-[#fdf9f7]/60 to-transparent" />
                 </div>
                 <div className="absolute bottom-0 left-0 right-0 p-6">
                   <div className="flex items-center gap-2 mb-2">
@@ -451,7 +452,7 @@ export default function FloristTemplate() {
       {/* ════════════════ Wedding Packages ════════════════ */}
       <section
         className="py-28 relative overflow-hidden"
-        style={{ background: "linear-gradient(180deg, #0a080d 0%, #0f0910 50%, #0a080d 100%)" }}
+        style={{ background: "linear-gradient(180deg, #ffffff 0%, #fdf9f7 50%, #ffffff 100%)" }}
       >
         <FloralPattern />
         <div className="absolute inset-0 pointer-events-none">
@@ -476,7 +477,7 @@ export default function FloristTemplate() {
                 className={`group relative p-8 rounded-2xl border transition-all duration-500 overflow-hidden ${
                   pkg.popular
                     ? "border-[#fb7185]/40 bg-gradient-to-b from-[#fb7185]/[0.08] to-transparent"
-                    : "border-white/[0.06] hover:border-[#fb7185]/30 bg-white/[0.02]"
+                    : "border-gray-200 hover:border-[#fb7185]/30 bg-white"
                 }`}
               >
                 {pkg.popular && (
@@ -524,7 +525,7 @@ export default function FloristTemplate() {
       {/* ════════════════ Subscription Plans ════════════════ */}
       <section
         className="py-28 relative overflow-hidden"
-        style={{ background: "linear-gradient(180deg, #110a10 0%, #130b11 50%, #110a10 100%)" }}
+        style={{ background: "linear-gradient(180deg, #fdf9f7 0%, #fff1f2 50%, #fdf9f7 100%)" }}
       >
         <FloralPattern opacity={0.02} />
         <div className="absolute inset-0 pointer-events-none">
@@ -545,7 +546,7 @@ export default function FloristTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-[#fb7185]/30 transition-all duration-500 overflow-hidden bg-white/[0.02] text-center"
+                className="group relative p-7 rounded-2xl border border-gray-200 hover:border-[#fb7185]/30 transition-all duration-500 overflow-hidden bg-white text-center"
               >
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_50%_50%,#fb718510,transparent_70%)]" />
                 <div className="relative z-10">
@@ -565,7 +566,7 @@ export default function FloristTemplate() {
       {/* ════════════════ Seasonal Specials ════════════════ */}
       <section
         className="py-28 relative overflow-hidden"
-        style={{ background: "linear-gradient(180deg, #0a080d 0%, #0d090e 50%, #0a080d 100%)" }}
+        style={{ background: "linear-gradient(180deg, #ffffff 0%, #fdf9f7 50%, #ffffff 100%)" }}
       >
         <FloralPattern />
         <RoseSilhouette />
@@ -587,7 +588,7 @@ export default function FloristTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group relative p-6 rounded-2xl border border-white/[0.06] hover:border-[#fb7185]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative p-6 rounded-2xl border border-gray-200 hover:border-[#fb7185]/30 transition-all duration-500 overflow-hidden bg-white shadow-sm hover:shadow-md"
               >
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_50%_0%,#fb718512,transparent_70%)]" />
                 <div className="relative z-10">
@@ -607,7 +608,7 @@ export default function FloristTemplate() {
       <section
         id="testimonials"
         className="py-28 relative overflow-hidden"
-        style={{ background: "linear-gradient(180deg, #110a10 0%, #140b12 50%, #110a10 100%)" }}
+        style={{ background: "linear-gradient(180deg, #fdf9f7 0%, #fff1f2 50%, #fdf9f7 100%)" }}
       >
         <FloralPattern />
         <div className="absolute inset-0 pointer-events-none">
@@ -633,7 +634,7 @@ export default function FloristTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-[#fb7185]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative p-7 rounded-2xl border border-gray-200 hover:border-[#fb7185]/30 transition-all duration-500 overflow-hidden bg-white shadow-sm hover:shadow-md"
               >
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-[#fb7185]/40 via-[#fb7185]/10 to-transparent" />
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_0%_0%,#fb718510,transparent_70%)]" />
@@ -647,7 +648,7 @@ export default function FloristTemplate() {
                     ))}
                   </div>
                   <p className="text-muted leading-relaxed mb-6 text-sm">&ldquo;{t.text}&rdquo;</p>
-                  <div className="flex items-center gap-3 pt-4 border-t border-white/[0.06]">
+                  <div className="flex items-center gap-3 pt-4 border-t border-gray-200">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#fb7185]/30 to-[#fb7185]/10 flex items-center justify-center text-sm font-bold text-[#fb7185]">
                       {t.name.charAt(0)}
                     </div>
@@ -666,7 +667,7 @@ export default function FloristTemplate() {
       {/* ════════════════ Order / Inquiry CTA ════════════════ */}
       <section
         className="py-28 relative overflow-hidden"
-        style={{ background: "linear-gradient(180deg, #0a080d 0%, #100a10 50%, #0a080d 100%)" }}
+        style={{ background: "linear-gradient(180deg, #ffffff 0%, #fdf9f7 50%, #ffffff 100%)" }}
       >
         <FloralPattern opacity={0.02} />
         <div className="absolute inset-0 pointer-events-none">
@@ -700,30 +701,30 @@ export default function FloristTemplate() {
                   <input
                     type="text"
                     placeholder="Your Name"
-                    className="w-full h-13 px-5 rounded-xl bg-white/5 border border-[#fb7185]/15 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#fb7185]/50 transition-colors"
+                    className="w-full h-13 px-5 rounded-xl bg-white border border-gray-200 text-[#1c1917] placeholder-gray-400 text-sm focus:outline-none focus:border-[#fb7185]/50 transition-colors"
                   />
                   <input
                     type="email"
                     placeholder="Email Address"
-                    className="w-full h-13 px-5 rounded-xl bg-white/5 border border-[#fb7185]/15 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#fb7185]/50 transition-colors"
+                    className="w-full h-13 px-5 rounded-xl bg-white border border-gray-200 text-[#1c1917] placeholder-gray-400 text-sm focus:outline-none focus:border-[#fb7185]/50 transition-colors"
                   />
                 </div>
                 <div className="grid md:grid-cols-2 gap-4">
                   <input
                     type="tel"
                     placeholder="Phone Number"
-                    className="w-full h-13 px-5 rounded-xl bg-white/5 border border-[#fb7185]/15 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#fb7185]/50 transition-colors"
+                    className="w-full h-13 px-5 rounded-xl bg-white border border-gray-200 text-[#1c1917] placeholder-gray-400 text-sm focus:outline-none focus:border-[#fb7185]/50 transition-colors"
                   />
                   <input
                     type="text"
                     placeholder="Event Date (if applicable)"
-                    className="w-full h-13 px-5 rounded-xl bg-white/5 border border-[#fb7185]/15 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#fb7185]/50 transition-colors"
+                    className="w-full h-13 px-5 rounded-xl bg-white border border-gray-200 text-[#1c1917] placeholder-gray-400 text-sm focus:outline-none focus:border-[#fb7185]/50 transition-colors"
                   />
                 </div>
                 <textarea
                   placeholder="Tell us about your floral vision..."
                   rows={4}
-                  className="w-full px-5 py-4 rounded-xl bg-white/5 border border-[#fb7185]/15 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#fb7185]/50 resize-none transition-colors"
+                  className="w-full px-5 py-4 rounded-xl bg-white border border-gray-200 text-[#1c1917] placeholder-gray-400 text-sm focus:outline-none focus:border-[#fb7185]/50 resize-none transition-colors"
                 />
                 <button
                   type="button"
@@ -731,7 +732,7 @@ export default function FloristTemplate() {
                 >
                   Send Inquiry
                 </button>
-                <p className="text-center text-white/30 text-xs">
+                <p className="text-center text-gray-400 text-xs">
                   We respond to all inquiries within 24 hours. Same-day orders call (206) 555-0113 directly.
                 </p>
               </div>
@@ -742,7 +743,7 @@ export default function FloristTemplate() {
 
       {/* ════════════════ Final CTA ════════════════ */}
       <section className="py-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#fb7185]/10 via-[#fb7185]/5 to-[#0a080d]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#fb7185]/5 via-[#fb7185]/[0.02] to-white" />
         <FloralPattern opacity={0.03} />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#fb7185]/30 to-transparent" />
