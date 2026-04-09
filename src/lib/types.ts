@@ -88,6 +88,8 @@ export interface Prospect {
   selectedTheme?: "light" | "dark";
   aiThemeRecommendation?: "light" | "dark";
   subscriptionStatus?: "none" | "active" | "past_due" | "cancelled";
+  /** Stripe subscription ID for the $100/year management fee (deferred 1 year) */
+  mgmtSubscriptionId?: string;
   instagramHandle?: string;
   funnelPaused?: boolean;
   /** QC gate results — populated by /api/qc/review/[id] */

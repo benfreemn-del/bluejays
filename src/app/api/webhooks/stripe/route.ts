@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { constructWebhookEvent } from "@/lib/stripe";
+import { constructWebhookEvent, getStripe } from "@/lib/stripe";
 import { getProspect, updateProspect } from "@/lib/store";
 import { alertProspectPaid } from "@/lib/alerts";
 import { logCost, COST_RATES } from "@/lib/cost-logger";
@@ -11,7 +11,8 @@ import { logCost, COST_RATES } from "@/lib/cost-logger";
  * (excluded from middleware auth checks).
  *
  * Handles:
- * - checkout.session.completed — marks prospect as 'paid', notifies Ben via email
+ * - checkout.session.completed — marks prospect as 'paid', notifies Ben via email,
+ *   and creates a deferred $100/year management subscription (1-year trial)
  * - customer.subscription.updated — tracks subscription status changes
  * - customer.subscription.deleted — marks subscription as cancelled
  */
@@ -19,6 +20,9 @@ import { logCost, COST_RATES } from "@/lib/cost-logger";
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 const FROM_EMAIL = process.env.FROM_EMAIL || "bluejaycontactme@gmail.com";
 const OWNER_EMAIL = "bluejaycontactme@gmail.com";
+
+/** Amount (in cents) that identifies a $997 one-time setup payment */
+const SETUP_AMOUNT_CENTS = 99700;
 
 export async function POST(request: NextRequest) {
   try {
@@ -54,6 +58,7 @@ export async function POST(request: NextRequest) {
           customer_email?: string;
           amount_total?: number;
           subscription?: string;
+          mode?: string;
         };
 
         const prospectId = session.metadata?.prospectId;
@@ -82,6 +87,43 @@ export async function POST(request: NextRequest) {
 
           // Send payment confirmation email to Ben
           await notifyOwnerPayment(businessName, session.customer_email || prospect.email || "N/A", session.amount_total);
+
+          // ─── Create deferred $100/year management subscription ───
+          // Only for one-time $997 setup payments (mode === "payment").
+          // We create a subscription with a 1-year trial so the first
+          // $100 charge happens exactly 1 year after the initial purchase.
+          if (
+            session.mode === "payment" &&
+            session.customer &&
+            session.amount_total &&
+            session.amount_total >= SETUP_AMOUNT_CENTS
+          ) {
+            try {
+              const mgmtSubscription = await createDeferredManagementSubscription(
+                session.customer,
+                prospectId,
+                businessName
+              );
+
+              // Store the subscription ID in Supabase for tracking
+              await updateProspect(prospectId, {
+                mgmtSubscriptionId: mgmtSubscription.id,
+                subscriptionStatus: "active", // trialing counts as active
+              });
+
+              console.log(
+                `[Stripe Webhook] Created deferred management subscription ${mgmtSubscription.id} for ${businessName} (${prospectId}). ` +
+                `First charge: ${new Date(mgmtSubscription.trial_end! * 1000).toISOString()}`
+              );
+            } catch (subErr) {
+              // Log but don't fail the webhook — the $997 payment already succeeded.
+              // Ben can manually create the subscription from the Stripe dashboard.
+              console.error(
+                `[Stripe Webhook] Failed to create deferred management subscription for ${prospectId}:`,
+                subErr
+              );
+            }
+          }
         }
 
         break;
@@ -98,6 +140,7 @@ export async function POST(request: NextRequest) {
         if (prospectId) {
           const statusMap: Record<string, "active" | "past_due" | "cancelled"> = {
             active: "active",
+            trialing: "active",
             past_due: "past_due",
             canceled: "cancelled",
             unpaid: "past_due",
@@ -137,6 +180,78 @@ export async function POST(request: NextRequest) {
   }
 }
 
+// ═══════════════════════════════════════════════════════════════
+// DEFERRED MANAGEMENT SUBSCRIPTION
+// ═══════════════════════════════════════════════════════════════
+
+/**
+ * Create a $100/year management subscription with a 1-year free trial.
+ *
+ * This means the customer pays nothing extra at checkout, and the first
+ * $100 charge happens automatically 1 year after their initial purchase.
+ *
+ * Uses STRIPE_PRICE_MGMT_ID if configured; otherwise creates an inline
+ * recurring price via price_data.
+ */
+async function createDeferredManagementSubscription(
+  customerId: string,
+  prospectId: string,
+  businessName: string
+) {
+  const stripe = getStripe();
+
+  // Calculate trial_end: exactly 1 year from now (Unix timestamp)
+  const oneYearFromNow = Math.floor(Date.now() / 1000) + 365 * 24 * 60 * 60;
+
+  const mgmtPriceId = process.env.STRIPE_PRICE_MGMT_ID;
+
+  // Build subscription params
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const subscriptionParams: any = {
+    customer: customerId,
+    trial_end: oneYearFromNow,
+    metadata: {
+      prospectId,
+      businessName,
+      type: "management_fee",
+    },
+    // Don't send an invoice email for the $0 trial start
+    payment_settings: {
+      save_default_payment_method: "on_subscription",
+    },
+  };
+
+  if (mgmtPriceId) {
+    // Use the pre-created price from Stripe Dashboard
+    subscriptionParams.items = [{ price: mgmtPriceId }];
+  } else {
+    // Create inline recurring price — $100/year
+    subscriptionParams.items = [
+      {
+        price_data: {
+          currency: "usd",
+          product_data: {
+            name: `Website Management — ${businessName}`,
+            description:
+              "Annual website hosting, domain management, security updates, and site maintenance",
+          },
+          unit_amount: 10000, // $100.00
+          recurring: {
+            interval: "year",
+          },
+        },
+      },
+    ];
+  }
+
+  const subscription = await stripe.subscriptions.create(subscriptionParams);
+  return subscription;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// NOTIFICATION HELPERS
+// ═══════════════════════════════════════════════════════════════
+
 /**
  * Send a payment notification email to Ben.
  */
@@ -175,6 +290,7 @@ async function notifyOwnerPayment(
                 <tr><td style="padding:4px 12px;font-weight:bold;">Time:</td><td style="padding:4px 12px;">${new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" })}</td></tr>
               </table>
               <p style="margin-top:16px;">The prospect has been moved to <strong>paid</strong> status and their automated funnel has been paused.</p>
+              <p>A <strong>$100/year management subscription</strong> has been created with a 1-year free trial (first charge in 12 months).</p>
               <p>Check the dashboard to begin onboarding.</p>
             `,
           },

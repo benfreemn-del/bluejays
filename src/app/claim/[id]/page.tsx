@@ -391,7 +391,7 @@ export default function ClaimPage() {
             <TrustBadge
               icon={<svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>}
               title="One-Time Payment"
-              subtitle="No hidden fees or subscriptions"
+              subtitle="$997 setup + $100/yr after year one"
             />
             <TrustBadge
               icon={<svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
@@ -443,7 +443,7 @@ export default function ClaimPage() {
                 <span className="text-lg font-bold text-green-400">Your price today</span>
                 <span className="text-3xl font-extrabold text-green-400">$997</span>
               </div>
-              <p className="text-xs text-white/30 mt-1">One-time. No monthly fees. No contracts.</p>
+              <p className="text-xs text-white/30 mt-1">One-time setup fee. Includes 1 year of hosting &amp; management. After year one, a $100/year management fee applies.</p>
             </div>
           </div>
 
@@ -734,7 +734,7 @@ export default function ClaimPage() {
           <div className="flex items-center justify-center gap-6 mt-6 text-xs text-white/30">
             <span className="flex items-center gap-1">
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path d="M5 13l4 4L19 7" /></svg>
-              One-time payment
+              One-time setup payment
             </span>
             <span className="flex items-center gap-1">
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path d="M5 13l4 4L19 7" /></svg>
@@ -753,6 +753,7 @@ export default function ClaimPage() {
         <div className="max-w-6xl mx-auto text-center text-xs text-white/20">
           <p>BlueJays Web Design — Custom websites for local businesses</p>
           <p className="mt-1">Questions? Email us at bluejaycontactme@gmail.com</p>
+          <p className="mt-2 text-white/15">$997 one-time setup includes 1 year of website hosting, domain management, and security updates. After the first year, a $100/year management fee is automatically billed to keep your site live and maintained. You may cancel anytime.</p>
         </div>
       </footer>
     </div>
@@ -842,7 +843,7 @@ function getNextResponse(step: number, userMessage: string, businessName: string
       responses: [
         `Awesome, so glad you like it! The site is fully custom — built specifically for ${businessName}.`,
         `Here's what's included: custom design, mobile optimization, SEO setup, hosting, and a year of site management. We handle everything so you can focus on running your business.`,
-        `The total is $997 one-time. No monthly fees, no contracts. Ready to claim it? Just click the green button!`,
+        `The total is $997 one-time, which includes your first year of hosting and management. After year one, it's just $100/year. Ready to claim it? Just click the green button!`,
       ],
       triggerCheckout: false,
     };
@@ -851,8 +852,8 @@ function getNextResponse(step: number, userMessage: string, businessName: string
   if (lower.includes("cost") || lower.includes("price") || lower.includes("how much") || lower.includes("pricing")) {
     return {
       responses: [
-        `Great question! It's $997 one-time — that covers everything: design, development, content, SEO, hosting setup, and your first year of management.`,
-        `After year one, it's just $100/year to keep everything running. No hidden fees, no contracts.`,
+        `Great question! It's $997 one-time — that covers everything: design, development, content, SEO, hosting setup, and your first year of hosting & management.`,
+        `After year one, there's a $100/year management fee for hosting, security updates, and site maintenance. You can cancel anytime — no contracts.`,
         `For context, agencies charge $3,000-$10,000+ for this. And you've already seen the actual site we built — no guesswork. Would you like to move forward?`,
       ],
       triggerCheckout: false,
