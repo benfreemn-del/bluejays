@@ -51,7 +51,8 @@ export interface VoicemailDrop {
 export async function dropVoicemail(
   prospectId: string,
   to: string,
-  businessName: string
+  businessName: string,
+  stage: "initial" | "followUp" = "initial"
 ): Promise<VoicemailDrop> {
   const drop: VoicemailDrop = {
     id: uuidv4(),
@@ -74,7 +75,7 @@ export async function dropVoicemail(
 
     // Create a Twilio call with AMD (Answering Machine Detection)
     const url = `https://api.twilio.com/2010-04-01/Accounts/${TWILIO_ACCOUNT_SID}/Calls.json`;
-    const twimlUrl = `${BASE_URL}/api/voicemail/twiml?prospectId=${encodeURIComponent(prospectId)}&businessName=${encodeURIComponent(businessName)}`;
+    const twimlUrl = `${BASE_URL}/api/voicemail/twiml?prospectId=${encodeURIComponent(prospectId)}&businessName=${encodeURIComponent(businessName)}&stage=${encodeURIComponent(stage)}`;
 
     const response = await fetch(url, {
       method: "POST",
@@ -381,47 +382,27 @@ function generateReEngageScript(
 
 /**
  * Get the TwiML script for the voicemail.
- * Now supports personalized scripts from prospect data.
+ * Uses pre-recorded MP3 files hosted at bluejayportfolio.com:
+ *   - initial  (Day 2)  → /public/voicemail-initial.mp3
+ *   - followUp (Day 18) → /public/voicemail-followup.mp3
  *
- * If Ben has uploaded a recording, use that.
- * Otherwise, use Twilio TTS with a personalized script.
+ * Falls back to Twilio TTS only if the stage is unrecognized.
  */
-export function getVoicemailTwiml(businessName: string, prospect?: Prospect): string {
-  // Check if a custom recording exists — set to true once Ben uploads /public/voicemail.mp3
-  const hasRecording = false;
-
-  if (hasRecording) {
-    return `<?xml version="1.0" encoding="UTF-8"?>
-<Response>
-  <Pause length="1"/>
-  <Play>${BASE_URL}/voicemail.mp3</Play>
-</Response>`;
-  }
-
-  // Generate personalized script if prospect data is available
-  let script: string;
-  if (prospect) {
-    const ctx = extractVoicemailContext(prospect);
-    script = generatePersonalizedScript(ctx, "initial");
-  } else {
-    // Fallback to basic script with just business name
-    script = `Hey, this is Ben from BlueJays. I came across ${businessName} and was really impressed with what you've built. So I actually went ahead and put together a custom website for you, completely free. No catch. I'll shoot you a text with the link so you can check it out on your phone. If you love it, awesome. If not, no worries at all. Have a great day!`;
-  }
-
-  // Escape XML special characters in the script
-  const escapedScript = script
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&apos;");
+export function getVoicemailTwiml(
+  businessName: string,
+  prospect?: Prospect,
+  stage: "initial" | "followUp" = "initial"
+): string {
+  // Pre-recorded MP3s are live — use them directly.
+  const audioUrl =
+    stage === "followUp"
+      ? `${BASE_URL}/voicemail-followup.mp3`
+      : `${BASE_URL}/voicemail-initial.mp3`;
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
   <Pause length="1"/>
-  <Say voice="man" language="en-US">
-    ${escapedScript}
-  </Say>
+  <Play>${audioUrl}</Play>
 </Response>`;
 }
 
@@ -430,10 +411,15 @@ export function getVoicemailTwiml(businessName: string, prospect?: Prospect): st
  * - If voicemail: play the message after the beep
  * - If human answers: hang up politely (we only want voicemail)
  */
-export function getAmdTwiml(amdResult: string, businessName: string, prospect?: Prospect): string {
+export function getAmdTwiml(
+  amdResult: string,
+  businessName: string,
+  prospect?: Prospect,
+  stage: "initial" | "followUp" = "initial"
+): string {
   if (amdResult === "machine_end_beep" || amdResult === "machine_end_silence") {
     // Voicemail detected — play our message
-    return getVoicemailTwiml(businessName, prospect);
+    return getVoicemailTwiml(businessName, prospect, stage);
   }
 
   // Human answered — hang up (we only want voicemail drops)

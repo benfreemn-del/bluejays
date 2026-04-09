@@ -345,7 +345,9 @@ async function sendFunnelStep(
   // Drop voicemail (Days 2 and 18 per CLAUDE.md)
   if (step.channels.includes("voicemail") && prospect.phone) {
     try {
-      const drop = await dropVoicemail(prospect.id, prospect.phone, prospect.businessName);
+      // Day 2 = initial voicemail; Day 18 = follow-up voicemail
+      const vmStage: "initial" | "followUp" = step.day === 18 ? "followUp" : "initial";
+      const drop = await dropVoicemail(prospect.id, prospect.phone, prospect.businessName, vmStage);
       voicemailSent = drop.status === "sent";
       console.log(`  📞 Funnel step ${stepIndex} (Day ${step.day}) voicemail ${drop.status} for ${prospect.businessName}`);
 
