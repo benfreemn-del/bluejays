@@ -99,13 +99,13 @@ export default function Hero() {
         <div className="hidden md:flex items-center gap-5">
           <a href="/dashboard" className="text-sm text-white/60 hover:text-white transition-colors duration-300 font-medium">Dashboard</a>
           <a href="/get-started" className="group relative h-10 px-6 rounded-full bg-gradient-to-r from-sky-500 to-blue-600 text-white text-sm font-semibold flex items-center gap-2 hover:shadow-[0_0_30px_rgba(14,165,233,0.5)] transition-all duration-300">
-            Get Started <ArrowUpRightIcon />
+            Request a Free Website <ArrowUpRightIcon />
           </a>
         </div>
         {/* Mobile nav — hamburger */}
         <div className="md:hidden flex items-center gap-3">
           <a href="/get-started" className="h-9 px-4 rounded-full bg-gradient-to-r from-sky-500 to-blue-600 text-white text-xs font-semibold flex items-center">
-            Get Started
+            Free Website
           </a>
           <details className="relative">
             <summary className="list-none cursor-pointer p-2">
@@ -116,7 +116,7 @@ export default function Hero() {
             <div className="absolute right-0 top-12 w-48 py-2 rounded-xl bg-[#0a1628]/95 backdrop-blur-xl border border-white/10 shadow-2xl z-50">
               <a href="/dashboard" className="block px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5">Dashboard</a>
               <a href="/login" className="block px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5">Login</a>
-              <a href="/get-started" className="block px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5">Get Started</a>
+              <a href="/get-started" className="block px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5">Request a Free Website</a>
               <a href="/spending" className="block px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5">Spending</a>
               <a href="/scripts" className="block px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5">AI Convos</a>
             </div>
@@ -344,6 +344,35 @@ export default function Hero() {
           ))}
         </div>
       </div>
+
+      {/* ── CTA Banner: Request a Free Website ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 3, duration: 0.8 }}
+        className="relative z-20 w-full max-w-3xl px-6 mt-16"
+      >
+        <div className="relative overflow-hidden rounded-2xl border border-sky-500/20 bg-gradient-to-r from-sky-500/10 via-blue-600/10 to-sky-500/10 p-8 md:p-10 text-center">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(14,165,233,0.15),transparent_70%)]" />
+          <div className="relative z-10">
+            <h3 className="text-2xl md:text-3xl font-extrabold tracking-tight mb-3">
+              Want a website like these?
+            </h3>
+            <p className="text-white/50 text-base md:text-lg mb-6 max-w-lg mx-auto">
+              Get a free custom website preview for your business. No credit card, no obligation — see it before you pay anything.
+            </p>
+            <a
+              href="/get-started"
+              className="inline-flex items-center gap-2 h-12 px-8 rounded-full bg-gradient-to-r from-sky-500 to-blue-600 text-white font-bold text-base hover:shadow-[0_0_40px_rgba(14,165,233,0.5)] active:scale-[0.97] transition-all duration-300"
+            >
+              Request a Free Website
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
+                <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </motion.div>
 
       {/* ── Scroll indicator ── */}
       <motion.div

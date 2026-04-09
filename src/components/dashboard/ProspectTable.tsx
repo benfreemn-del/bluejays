@@ -245,6 +245,8 @@ export default function ProspectTable({
                 key={prospect.id}
                 className={`border-b border-border hover:bg-surface-light/50 transition-colors ${
                   isSelected(prospect.id) ? "bg-blue-electric/5" : ""
+                } ${
+                  prospect.source === "inbound" ? "border-l-2 border-l-amber-400 bg-amber-500/[0.03]" : ""
                 }`}
               >
                 <td className="p-3" onClick={(e) => e.stopPropagation()}>
@@ -258,7 +260,10 @@ export default function ProspectTable({
                 <td className="p-3 cursor-pointer" onClick={() => router.push(`/lead/${prospect.id}`)}>
                   <div className="flex items-center gap-2">
                     <p className="font-medium text-blue-electric hover:underline">{prospect.businessName}</p>
-                    {prospect.createdAt !== prospect.updatedAt && prospect.status === "scouted" && (
+                    {prospect.source === "inbound" && (
+                      <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 font-bold tracking-wide border border-amber-500/30">Inbound</span>
+                    )}
+                    {prospect.createdAt !== prospect.updatedAt && prospect.status === "scouted" && prospect.source !== "inbound" && (
                       <span className="text-[10px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-400 font-medium">Re-scouted</span>
                     )}
                   </div>

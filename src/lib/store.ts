@@ -49,6 +49,7 @@ function dbToProspect(row: Record<string, unknown>): Prospect {
     mgmtSubscriptionId: row.mgmt_subscription_id as string | undefined,
     instagramHandle: row.instagram_handle as string | undefined,
     funnelPaused: row.funnel_paused as boolean | undefined,
+    source: (row.source as "inbound" | "scouted" | undefined) || undefined,
     selectedTheme: (row.selected_theme as "light" | "dark" | undefined) || undefined,
     aiThemeRecommendation: (row.ai_theme_recommendation as "light" | "dark" | undefined) || undefined,
     qualityScore: row.quality_score as number | undefined,
@@ -83,6 +84,7 @@ function prospectToDb(p: Prospect) {
     mgmt_subscription_id: p.mgmtSubscriptionId || null,
     instagram_handle: p.instagramHandle || null,
     funnel_paused: p.funnelPaused || false,
+    source: p.source || "scouted",
     selected_theme: p.selectedTheme || null,
     ai_theme_recommendation: p.aiThemeRecommendation || null,
   };

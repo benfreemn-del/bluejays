@@ -92,6 +92,8 @@ export interface Prospect {
   mgmtSubscriptionId?: string;
   instagramHandle?: string;
   funnelPaused?: boolean;
+  /** Lead source: "inbound" for self-submitted, "scouted" for automated pipeline */
+  source?: "inbound" | "scouted";
   /** QC gate results — populated by /api/qc/review/[id] */
   qualityScore?: number;       // 0-100
   qualityNotes?: string;       // formatted text summary of issues
