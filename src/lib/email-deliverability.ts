@@ -13,7 +13,7 @@ import path from "path";
 import { supabase, isSupabaseConfigured } from "./supabase";
 import { updateProspect } from "./store";
 
-const DATA_DIR = path.join(process.cwd(), "data");
+const DATA_DIR = process.env.VERCEL ? "/tmp" : path.join(process.cwd(), "data");
 const DELIVERABILITY_FILE = path.join(DATA_DIR, "email-deliverability.json");
 const WARMUP_FILE = path.join(DATA_DIR, "email-warmup.json");
 const BOUNCE_FILE = path.join(DATA_DIR, "email-bounces.json");
