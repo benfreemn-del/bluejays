@@ -38,7 +38,6 @@ import {
   Images,
   Envelope,
 } from "@phosphor-icons/react";
-import BluejayLogo from "@/components/BluejayLogo";
 
 /* ───────────────────────── SPRING CONFIG ───────────────────────── */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
@@ -1472,11 +1471,7 @@ export default function V2AutoRepairPage() {
             <span>Pacific Auto Works &copy; {new Date().getFullYear()}</span>
           </div>
           <div className="flex items-center gap-2 text-xs text-slate-600">
-            <span>Website created by</span>
-            <BluejayLogo size={16} className="text-blue-400" />
-            <span className="text-blue-400 font-medium">
-              Bluejay Business Solutions
-            </span>
+            <span>Created by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" style={{textDecoration:"underline"}}>bluejayportfolio.com</a></span>
           </div>
         </div>
       </footer>
