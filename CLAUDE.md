@@ -19,6 +19,8 @@ This system is designed to function like a money printer. Every feature should d
 - **Personalized proposals MUST be generated before entering the sales funnel, combining all CRM data, scraped info, reviews, and notes.**
 
 ## Image Rules (NON-NEGOTIABLE)
+These image rules are governed by `QC_RULES.md`, which is the authoritative single source of truth for image validation, fallback behavior, duplicate detection, contextual relevance, sanitization, and section-by-section image approval standards. If this file and `QC_RULES.md` ever differ, follow `QC_RULES.md`.
+
 - **NEVER reuse the same stock photo across multiple templates** — every template must have completely unique images. If two templates use the same person photo, it's immediately obvious and kills trust.
 - **Every team/staff photo must be unique per template** — no sharing headshots between electrician, plumber, dental, etc.
 - **Verify all image URLs actually load** — broken images are unacceptable. Test before deploying.

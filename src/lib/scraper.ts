@@ -279,10 +279,19 @@ function extractPhotos($: cheerio.CheerioAPI, baseUrl: string): string[] {
 
   // Get meaningful images (not icons/logos)
   $("img").each((_, el) => {
-    const src = $(el).attr("src") || $(el).attr("data-src");
+    const rawSrc = $(el).attr("src") || $(el).attr("data-src");
+    const src = rawSrc?.trim();
     if (!src) return;
 
-    const fullUrl = src.startsWith("http") ? src : new URL(src, baseUrl).href;
+    let fullUrl = "";
+    try {
+      fullUrl = src.startsWith("http") ? src : new URL(src, baseUrl).href;
+      fullUrl = fullUrl.trim();
+    } catch {
+      return;
+    }
+
+    if (!fullUrl) return;
     if (seen.has(fullUrl)) return;
     seen.add(fullUrl);
 
@@ -290,8 +299,8 @@ function extractPhotos($: cheerio.CheerioAPI, baseUrl: string): string[] {
     const width = parseInt($(el).attr("width") || "0");
     const height = parseInt($(el).attr("height") || "0");
     if ((width > 0 && width < 50) || (height > 0 && height < 50)) return;
-    if (fullUrl.endsWith(".svg") || fullUrl.includes("icon")) return;
-    if (fullUrl.includes("logo") && photos.length > 0) return;
+    if (fullUrl.toLowerCase().endsWith(".svg") || fullUrl.toLowerCase().includes("icon")) return;
+    if (fullUrl.toLowerCase().includes("logo") && photos.length > 0) return;
 
     photos.push(fullUrl);
   });

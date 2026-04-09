@@ -34,6 +34,11 @@ export interface GeneratedSiteData {
   city?: string;
 }
 
+function sanitizePhotoUrls(photos: string[] | undefined): string[] {
+  if (!photos) return [];
+  return photos.map((photo) => photo.trim()).filter(Boolean);
+}
+
 function generateDefaultTagline(businessName: string, category: Category): string {
   const label = CATEGORY_CONFIG[category]?.label || "business";
   const taglines: Partial<Record<Category, string>> = {
@@ -133,7 +138,7 @@ function generateStats(category: Category, reviewCount?: number): { value: strin
 export function generateSiteData(prospect: Prospect): GeneratedSiteData {
   const { category, scrapedData } = prospect;
   const config = CATEGORY_CONFIG[category];
-  const sd = scrapedData || {} as ScrapedData;
+  const sd = ({ ...(scrapedData || {} as ScrapedData), photos: sanitizePhotoUrls(scrapedData?.photos) }) as ScrapedData;
 
   // CUSTOMIZATION PRIORITY: Always prefer real business data over defaults
   // 1. Use scraped brand color if found, otherwise category default
@@ -172,7 +177,7 @@ export function generateSiteData(prospect: Prospect): GeneratedSiteData {
     about: sd.about || generateDefaultAbout(prospect.businessName, category),
     services: sd.services?.length > 0 ? sd.services : getDefaultServices(category),
     testimonials: sd.testimonials?.length > 0 ? sd.testimonials : getDefaultTestimonials(category),
-    photos: sd.photos || [],
+    photos: sanitizePhotoUrls(sd.photos),
     hours: sd.hours,
     socialLinks: sd.socialLinks,
     stats: generateStats(category, prospect.reviewCount),

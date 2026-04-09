@@ -9,19 +9,20 @@
  */
 
 export function proxyImage(url: string | undefined | null): string {
-  if (!url) return "";
+  const cleanUrl = url?.trim();
+  if (!cleanUrl) return "";
 
   // Don't proxy Unsplash URLs — they work directly and have good CDN
-  if (url.includes("images.unsplash.com")) return url;
+  if (cleanUrl.includes("images.unsplash.com")) return cleanUrl;
 
   // Don't proxy URLs that are already proxied
-  if (url.includes("/api/image-proxy")) return url;
+  if (cleanUrl.includes("/api/image-proxy")) return cleanUrl;
 
   // Don't proxy data: URLs
-  if (url.startsWith("data:")) return url;
+  if (cleanUrl.startsWith("data:")) return cleanUrl;
 
   // Proxy everything else (Google Places, Wix, Squarespace, etc.)
-  return `/api/image-proxy?url=${encodeURIComponent(url)}`;
+  return `/api/image-proxy?url=${encodeURIComponent(cleanUrl)}`;
 }
 
 /**

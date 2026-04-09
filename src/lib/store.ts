@@ -6,6 +6,42 @@ import { supabase, isSupabaseConfigured } from "./supabase";
 const DATA_DIR = path.join(process.cwd(), "data");
 const PROSPECTS_FILE = path.join(DATA_DIR, "prospects.json");
 
+function sanitizePhotoUrls(photos: unknown): string[] {
+  if (!Array.isArray(photos)) return [];
+
+  return photos
+    .filter((photo): photo is string => typeof photo === "string")
+    .map((photo) => photo.trim())
+    .filter(Boolean);
+}
+
+function sanitizeScrapedData(scrapedData: ScrapedData | undefined): ScrapedData | undefined {
+  if (!scrapedData) return scrapedData;
+
+  return {
+    ...scrapedData,
+    photos: sanitizePhotoUrls(scrapedData.photos),
+    logoUrl: scrapedData.logoUrl?.trim() || undefined,
+  };
+}
+
+function sanitizeGeneratedSiteData(data: object | null): object | null {
+  if (!data || typeof data !== "object" || Array.isArray(data)) return data;
+
+  const record = data as Record<string, unknown>;
+  return {
+    ...record,
+    photos: sanitizePhotoUrls(record.photos),
+  };
+}
+
+function sanitizeProspect(prospect: Prospect): Prospect {
+  return {
+    ...prospect,
+    scrapedData: sanitizeScrapedData(prospect.scrapedData),
+  };
+}
+
 // ==================== FILE-BASED (LOCAL DEV) ====================
 
 function ensureDataDir() {
@@ -15,18 +51,18 @@ function ensureDataDir() {
 function readProspectsFile(): Prospect[] {
   ensureDataDir();
   if (!fs.existsSync(PROSPECTS_FILE)) return [];
-  return JSON.parse(fs.readFileSync(PROSPECTS_FILE, "utf-8"));
+  return JSON.parse(fs.readFileSync(PROSPECTS_FILE, "utf-8")).map((prospect: Prospect) => sanitizeProspect(prospect));
 }
 
 function writeProspectsFile(prospects: Prospect[]) {
   ensureDataDir();
-  fs.writeFileSync(PROSPECTS_FILE, JSON.stringify(prospects, null, 2));
+  fs.writeFileSync(PROSPECTS_FILE, JSON.stringify(prospects.map(sanitizeProspect), null, 2));
 }
 
 // ==================== SUPABASE (PRODUCTION) ====================
 
 function dbToProspect(row: Record<string, unknown>): Prospect {
-  return {
+  return sanitizeProspect({
     id: row.id as string,
     businessName: row.business_name as string,
     ownerName: row.owner_name as string | undefined,
@@ -58,37 +94,39 @@ function dbToProspect(row: Record<string, unknown>): Prospect {
     qcReviewedAt: row.qc_reviewed_at as string | undefined,
     createdAt: row.created_at as string,
     updatedAt: row.updated_at as string,
-  };
+  });
 }
 
 function prospectToDb(p: Prospect) {
+  const sanitized = sanitizeProspect(p);
+
   return {
-    id: p.id,
-    business_name: p.businessName,
-    owner_name: p.ownerName || null,
-    phone: p.phone || null,
-    email: p.email || null,
-    address: p.address,
-    city: p.city,
-    state: p.state,
-    category: p.category,
-    current_website: p.currentWebsite || null,
-    google_rating: p.googleRating || null,
-    review_count: p.reviewCount || null,
-    estimated_revenue_tier: p.estimatedRevenueTier,
-    status: p.status,
-    scraped_data: p.scrapedData || {},
-    generated_site_url: p.generatedSiteUrl || null,
-    stripe_customer_id: p.stripeCustomerId || null,
-    paid_at: p.paidAt || null,
-    subscription_status: p.subscriptionStatus || "none",
-    mgmt_subscription_id: p.mgmtSubscriptionId || null,
-    instagram_handle: p.instagramHandle || null,
-    funnel_paused: p.funnelPaused || false,
-    source: p.source || "scouted",
-    pricing_tier: p.pricingTier || "standard",
-    selected_theme: p.selectedTheme || null,
-    ai_theme_recommendation: p.aiThemeRecommendation || null,
+    id: sanitized.id,
+    business_name: sanitized.businessName,
+    owner_name: sanitized.ownerName || null,
+    phone: sanitized.phone || null,
+    email: sanitized.email || null,
+    address: sanitized.address,
+    city: sanitized.city,
+    state: sanitized.state,
+    category: sanitized.category,
+    current_website: sanitized.currentWebsite || null,
+    google_rating: sanitized.googleRating || null,
+    review_count: sanitized.reviewCount || null,
+    estimated_revenue_tier: sanitized.estimatedRevenueTier,
+    status: sanitized.status,
+    scraped_data: sanitized.scrapedData || {},
+    generated_site_url: sanitized.generatedSiteUrl || null,
+    stripe_customer_id: sanitized.stripeCustomerId || null,
+    paid_at: sanitized.paidAt || null,
+    subscription_status: sanitized.subscriptionStatus || "none",
+    mgmt_subscription_id: sanitized.mgmtSubscriptionId || null,
+    instagram_handle: sanitized.instagramHandle || null,
+    funnel_paused: sanitized.funnelPaused || false,
+    source: sanitized.source || "scouted",
+    pricing_tier: sanitized.pricingTier || "standard",
+    selected_theme: sanitized.selectedTheme || null,
+    ai_theme_recommendation: sanitized.aiThemeRecommendation || null,
   };
 }
 
@@ -168,47 +206,53 @@ export async function getProspectByPhone(phone: string): Promise<Prospect | unde
 }
 
 export async function addProspect(prospect: Prospect): Promise<Prospect> {
+  const sanitizedProspect = sanitizeProspect(prospect);
+
   if (isSupabaseConfigured()) {
     const { error } = await supabase
       .from("prospects")
-      .upsert(prospectToDb(prospect));
+      .upsert(prospectToDb(sanitizedProspect));
     if (error) throw error;
-    return prospect;
+    return sanitizedProspect;
   }
   const prospects = readProspectsFile();
-  const existing = prospects.findIndex((p) => p.id === prospect.id);
-  if (existing >= 0) prospects[existing] = prospect;
-  else prospects.push(prospect);
+  const existing = prospects.findIndex((p) => p.id === sanitizedProspect.id);
+  if (existing >= 0) prospects[existing] = sanitizedProspect;
+  else prospects.push(sanitizedProspect);
   writeProspectsFile(prospects);
-  return prospect;
+  return sanitizedProspect;
 }
 
 export async function updateProspect(
   id: string,
   updates: Partial<Prospect>
 ): Promise<Prospect | undefined> {
+  const sanitizedUpdates: Partial<Prospect> = {
+    ...updates,
+    scrapedData: sanitizeScrapedData(updates.scrapedData),
+  };
   if (isSupabaseConfigured()) {
     const dbUpdates: Record<string, unknown> = {};
-    if (updates.status) dbUpdates.status = updates.status;
-    if (updates.scrapedData) dbUpdates.scraped_data = updates.scrapedData;
-    if (updates.generatedSiteUrl) dbUpdates.generated_site_url = updates.generatedSiteUrl;
-    if (updates.businessName) dbUpdates.business_name = updates.businessName;
-    if (updates.currentWebsite) dbUpdates.current_website = updates.currentWebsite;
-    if (updates.phone) dbUpdates.phone = updates.phone;
-    if (updates.email) dbUpdates.email = updates.email;
-    if (updates.ownerName) dbUpdates.owner_name = updates.ownerName;
-    if (updates.stripeCustomerId) dbUpdates.stripe_customer_id = updates.stripeCustomerId;
-    if (updates.paidAt) dbUpdates.paid_at = updates.paidAt;
-    if (updates.subscriptionStatus) dbUpdates.subscription_status = updates.subscriptionStatus;
-    if (updates.mgmtSubscriptionId) dbUpdates.mgmt_subscription_id = updates.mgmtSubscriptionId;
-    if (updates.instagramHandle !== undefined) dbUpdates.instagram_handle = updates.instagramHandle;
-    if (updates.funnelPaused !== undefined) dbUpdates.funnel_paused = updates.funnelPaused;
-    if (updates.selectedTheme) dbUpdates.selected_theme = updates.selectedTheme;
-    if (updates.aiThemeRecommendation) dbUpdates.ai_theme_recommendation = updates.aiThemeRecommendation;
-    if (updates.qualityScore !== undefined) dbUpdates.quality_score = updates.qualityScore;
-    if (updates.qualityNotes !== undefined) dbUpdates.quality_notes = updates.qualityNotes;
-    if (updates.qcReviewedAt !== undefined) dbUpdates.qc_reviewed_at = updates.qcReviewedAt;
-    if (updates.pricingTier !== undefined) dbUpdates.pricing_tier = updates.pricingTier;
+    if (sanitizedUpdates.status) dbUpdates.status = sanitizedUpdates.status;
+    if (sanitizedUpdates.scrapedData) dbUpdates.scraped_data = sanitizedUpdates.scrapedData;
+    if (sanitizedUpdates.generatedSiteUrl) dbUpdates.generated_site_url = sanitizedUpdates.generatedSiteUrl;
+    if (sanitizedUpdates.businessName) dbUpdates.business_name = sanitizedUpdates.businessName;
+    if (sanitizedUpdates.currentWebsite) dbUpdates.current_website = sanitizedUpdates.currentWebsite;
+    if (sanitizedUpdates.phone) dbUpdates.phone = sanitizedUpdates.phone;
+    if (sanitizedUpdates.email) dbUpdates.email = sanitizedUpdates.email;
+    if (sanitizedUpdates.ownerName) dbUpdates.owner_name = sanitizedUpdates.ownerName;
+    if (sanitizedUpdates.stripeCustomerId) dbUpdates.stripe_customer_id = sanitizedUpdates.stripeCustomerId;
+    if (sanitizedUpdates.paidAt) dbUpdates.paid_at = sanitizedUpdates.paidAt;
+    if (sanitizedUpdates.subscriptionStatus) dbUpdates.subscription_status = sanitizedUpdates.subscriptionStatus;
+    if (sanitizedUpdates.mgmtSubscriptionId) dbUpdates.mgmt_subscription_id = sanitizedUpdates.mgmtSubscriptionId;
+    if (sanitizedUpdates.instagramHandle !== undefined) dbUpdates.instagram_handle = sanitizedUpdates.instagramHandle;
+    if (sanitizedUpdates.funnelPaused !== undefined) dbUpdates.funnel_paused = sanitizedUpdates.funnelPaused;
+    if (sanitizedUpdates.selectedTheme) dbUpdates.selected_theme = sanitizedUpdates.selectedTheme;
+    if (sanitizedUpdates.aiThemeRecommendation) dbUpdates.ai_theme_recommendation = sanitizedUpdates.aiThemeRecommendation;
+    if (sanitizedUpdates.qualityScore !== undefined) dbUpdates.quality_score = sanitizedUpdates.qualityScore;
+    if (sanitizedUpdates.qualityNotes !== undefined) dbUpdates.quality_notes = sanitizedUpdates.qualityNotes;
+    if (sanitizedUpdates.qcReviewedAt !== undefined) dbUpdates.qc_reviewed_at = sanitizedUpdates.qcReviewedAt;
+    if (sanitizedUpdates.pricingTier !== undefined) dbUpdates.pricing_tier = sanitizedUpdates.pricingTier;
 
     const { data, error } = await supabase
       .from("prospects")
@@ -222,7 +266,7 @@ export async function updateProspect(
   const prospects = readProspectsFile();
   const index = prospects.findIndex((p) => p.id === id);
   if (index < 0) return undefined;
-  prospects[index] = { ...prospects[index], ...updates, updatedAt: new Date().toISOString() };
+  prospects[index] = sanitizeProspect({ ...prospects[index], ...sanitizedUpdates, updatedAt: new Date().toISOString() });
   writeProspectsFile(prospects);
   return prospects[index];
 }
@@ -249,18 +293,20 @@ export async function filterProspects(filters: {
 }
 
 export async function saveScrapedData(id: string, data: object): Promise<void> {
+  const sanitizedData = sanitizeGeneratedSiteData(data);
+
   if (isSupabaseConfigured()) {
     // Delete existing then insert (no unique constraint needed)
     await supabase.from("generated_sites").delete().eq("prospect_id", id);
     await supabase.from("generated_sites").insert({
       prospect_id: id,
-      site_data: data,
+      site_data: sanitizedData,
     });
     return;
   }
   const scrapedDir = path.join(DATA_DIR, "scraped");
   if (!fs.existsSync(scrapedDir)) fs.mkdirSync(scrapedDir, { recursive: true });
-  fs.writeFileSync(path.join(scrapedDir, `${id}.json`), JSON.stringify(data, null, 2));
+  fs.writeFileSync(path.join(scrapedDir, `${id}.json`), JSON.stringify(sanitizedData, null, 2));
 }
 
 export async function getScrapedData(id: string): Promise<object | null> {
@@ -271,9 +317,9 @@ export async function getScrapedData(id: string): Promise<object | null> {
       .eq("prospect_id", id)
       .single();
     if (error || !data) return null;
-    return data.site_data;
+    return sanitizeGeneratedSiteData(data.site_data);
   }
   const filePath = path.join(DATA_DIR, "scraped", `${id}.json`);
   if (!fs.existsSync(filePath)) return null;
-  return JSON.parse(fs.readFileSync(filePath, "utf-8"));
+  return sanitizeGeneratedSiteData(JSON.parse(fs.readFileSync(filePath, "utf-8")));
 }

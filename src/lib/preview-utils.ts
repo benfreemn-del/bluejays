@@ -4,6 +4,7 @@
  */
 
 import type { GeneratedSiteData } from "./generator";
+import { sanitizeImageUrl, sanitizeImageUrls, validateImageUrl } from "./image-validator";
 
 /**
  * Get a clean, short hero heading from the data.
@@ -59,63 +60,48 @@ export function getHeroSubtitle(data: GeneratedSiteData): string {
  * Returns the URL or empty string.
  */
 export function getHeroImage(data: GeneratedSiteData): string {
-  const photos = data.photos || [];
+  const photos = sanitizeImageUrls(data.photos);
   if (photos.length === 0) return "";
 
-  // Find the first photo that's suitable for hero (not a logo, not tiny)
   for (const photo of photos) {
-    if (isLowQualityImage(photo)) continue;
-    return photo;
+    const validation = validateImageUrl(photo, data.category, "hero");
+    if (validation.shouldUseFallback) continue;
+    return validation.sanitizedUrl;
   }
 
-  // All photos are low quality — return first Google Places photo if any
-  const googlePhoto = photos.find(p => p.includes("maps.googleapis.com"));
-  if (googlePhoto) return googlePhoto;
+  const googlePhoto = photos.find((photo) => photo.includes("maps.googleapis.com"));
+  if (googlePhoto) return sanitizeImageUrl(googlePhoto);
 
-  return photos[0]; // Last resort
+  return sanitizeImageUrl(photos[0]);
 }
 
 /**
  * Check if an image URL looks low-quality or is a logo/icon.
  * Used to skip bad images for hero/about sections.
  */
-export function isLowQualityImage(url: string): boolean {
-  if (!url) return true;
-
-  // Logo/icon detection
-  if (url.includes("logo") || url.includes("favicon") || url.includes("icon") || url.includes("parastorage")) return true;
-
-  // Tiny Wix images (dimensions in URL)
-  const widthMatch = url.match(/w_(\d+)/);
-  const heightMatch = url.match(/h_(\d+)/);
-  if (widthMatch && parseInt(widthMatch[1]) < 200) return true;
-  if (heightMatch && parseInt(heightMatch[1]) < 150) return true;
-
-  // Very small fill dimensions
-  const fillMatch = url.match(/fill\/w_(\d+),h_(\d+)/);
-  if (fillMatch && parseInt(fillMatch[1]) < 200 && parseInt(fillMatch[2]) < 150) return true;
-
-  // Blur indicators (Wix uses blur_ for thumbnails)
-  if (url.includes("blur_2") || url.includes("blur_3")) return true;
-
-  // Screenshot/small images from Wix
-  if (url.includes("Screen%20Shot") || url.includes("screenshot")) return true;
-
-  return false;
+export function isLowQualityImage(url: string, category: GeneratedSiteData["category"] = "electrician"): boolean {
+  return validateImageUrl(url, category, "gallery").shouldUseFallback;
 }
 
 /**
  * Get the about section image — skip the hero image.
  */
 export function getAboutImage(data: GeneratedSiteData): string {
-  const photos = data.photos || [];
-  const heroImg = getHeroImage(data);
+  const photos = sanitizeImageUrls(data.photos);
+  const heroImg = sanitizeImageUrl(getHeroImage(data));
 
-  // Find first photo that isn't the hero
   for (const photo of photos) {
-    if (photo !== heroImg && !photo.includes("logo") && !photo.includes("favicon")) {
-      return photo;
-    }
+    const sanitizedPhoto = sanitizeImageUrl(photo);
+    if (!sanitizedPhoto || sanitizedPhoto === heroImg) continue;
+
+    const validation = validateImageUrl(sanitizedPhoto, data.category, "about");
+    if (validation.shouldUseFallback) continue;
+    return validation.sanitizedUrl;
+  }
+
+  for (const photo of photos) {
+    const sanitizedPhoto = sanitizeImageUrl(photo);
+    if (sanitizedPhoto && sanitizedPhoto !== heroImg) return sanitizedPhoto;
   }
 
   return "";

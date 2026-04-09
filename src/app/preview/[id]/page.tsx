@@ -50,6 +50,7 @@ import V2CarpetCleaningPreview from "@/components/templates/V2CarpetCleaningPrev
 import V2EventPlanningPreview from "@/components/templates/V2EventPlanningPreview";
 import { getScrapedData, getProspect } from "@/lib/store";
 import { proxyPhotos } from "@/lib/image-proxy";
+import { sanitizeImageUrl, sanitizeImageUrls } from "@/lib/image-validator";
 import { getHeroHeading, getHeroSubtitle, getHeroImage, getAboutImage, getNavName } from "@/lib/preview-utils";
 
 export const dynamic = "force-dynamic";
@@ -184,15 +185,24 @@ export default async function PreviewPage({
     notFound();
   }
 
-  // Clean data: proxy images, fix long taglines, detect logos, clean business names
-  const heroImg = getHeroImage(siteData);
-  const aboutImg = getAboutImage(siteData);
-  const cleanPhotos = proxyPhotos(siteData.photos);
+  // Clean data: sanitize image URLs before proxying and matching to avoid preview crashes
+  const sanitizedPhotos = sanitizeImageUrls(siteData.photos);
+  const safeSiteData = { ...siteData, photos: sanitizedPhotos };
+  const heroImg = sanitizeImageUrl(getHeroImage(safeSiteData));
+  const aboutImg = sanitizeImageUrl(getAboutImage(safeSiteData));
+  const cleanPhotos = proxyPhotos(sanitizedPhotos);
+
+  const findMatchingProxyPhoto = (targetUrl: string | undefined, fallback: string | undefined) => {
+    if (!targetUrl) return fallback;
+
+    const baseTarget = encodeURIComponent(sanitizeImageUrl(targetUrl).split("?")[0]);
+    return cleanPhotos.find((photo) => photo.includes(baseTarget)) || fallback;
+  };
 
   // Reorder photos: hero image first, about image second, rest after
   const orderedPhotos = [
-    heroImg ? cleanPhotos.find(p => p.includes(encodeURIComponent(heroImg.split("?")[0]))) || cleanPhotos[0] : cleanPhotos[0],
-    aboutImg ? cleanPhotos.find(p => p.includes(encodeURIComponent(aboutImg.split("?")[0]))) || cleanPhotos[1] : cleanPhotos[1],
+    findMatchingProxyPhoto(heroImg, cleanPhotos[0]),
+    findMatchingProxyPhoto(aboutImg, cleanPhotos[1]),
     ...cleanPhotos.slice(2),
   ].filter(Boolean) as string[];
 
