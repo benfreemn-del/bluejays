@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import React, { ReactNode, useState, useEffect } from "react";
 import BluejayLogo from "../BluejayLogo";
 import { MapLink, PhoneLink } from "@/components/templates/MapLink";
+import ClaimBanner from "@/components/ClaimBanner";
 
 interface SocialLinks {
   facebook?: string;
@@ -253,82 +254,6 @@ export default function TemplateLayout({
   );
 }
 
-function ClaimBanner({ businessName, accentColor, prospectId }: { businessName: string; accentColor: string; prospectId: string }) {
-  // Countdown: 7 days from now (resets each visit, creates urgency)
-  const [timeLeft, setTimeLeft] = useState("");
-  const [showDisclosure, setShowDisclosure] = useState(true);
-
-  useEffect(() => {
-    const expiry = new Date();
-    expiry.setDate(expiry.getDate() + 7);
-
-    const tick = () => {
-      const diff = expiry.getTime() - Date.now();
-      if (diff <= 0) { setTimeLeft("EXPIRED"); return; }
-      const d = Math.floor(diff / 86400000);
-      const h = Math.floor((diff % 86400000) / 3600000);
-      const m = Math.floor((diff % 3600000) / 60000);
-      setTimeLeft(`${d}d ${h}h ${m}m`);
-    };
-    tick();
-    const interval = setInterval(tick, 60000);
-    return () => clearInterval(interval);
-  }, []);
-
-  return (
-    <div className="fixed bottom-0 left-0 right-0 z-50">
-      {/* Placeholder content disclosure — per proposal refinement 1.1 */}
-      {showDisclosure && (
-        <div className="bg-amber-500/10 border-t border-amber-500/30 px-4 py-2.5 flex items-center justify-between">
-          <p className="text-xs text-amber-200/80 flex-1">
-            <span className="font-semibold text-amber-300">Preview Note:</span>{" "}
-            This is your preview — after you claim it, we replace all placeholder text with content specific to your business. Colors, photos, layout, and copy are all fully customizable.
-          </p>
-          <button
-            onClick={() => setShowDisclosure(false)}
-            className="ml-3 text-amber-400/60 hover:text-amber-300 transition-colors text-xs"
-          >
-            Dismiss
-          </button>
-        </div>
-      )}
-      {/* Social proof ticker */}
-      <div className="bg-background/90 backdrop-blur-sm border-t border-border px-4 py-2 flex items-center justify-center gap-4">
-        <p className="text-xs text-muted">
-          <span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1.5 animate-pulse" />
-          Custom-built preview for this business
-        </p>
-        {timeLeft && timeLeft !== "EXPIRED" && (
-          <p className="text-xs font-bold" style={{ color: accentColor }}>
-            Preview expires in {timeLeft}
-          </p>
-        )}
-      </div>
-      {/* Claim CTA */}
-      <div
-        className="px-6 py-4 flex items-center justify-between gap-4"
-        style={{ background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}10)`, borderTop: `1px solid ${accentColor}30` }}
-      >
-        <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-foreground truncate">
-            This website was built for {businessName}
-          </p>
-          <p className="text-xs text-muted">Claim it before we offer it to a competitor</p>
-        </div>
-        <a
-          href={`/claim/${prospectId}`}
-          className="shrink-0 h-11 px-6 rounded-full text-white text-sm font-bold flex items-center gap-2 hover:shadow-lg transition-all duration-300"
-          style={{ background: accentColor }}
-        >
-          Claim Your Website
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
-            <path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-          </svg>
-        </a>
-      </div>
-    </div>
-  );
-}
 
 function SocialIcon({ platform, href, color }: { platform: string; href: string; color: string }) {
   const icons: Record<string, React.ReactNode> = {

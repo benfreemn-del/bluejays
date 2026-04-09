@@ -30,6 +30,7 @@ import {
 import type { GeneratedSiteData } from "@/lib/generator";
 import BluejayLogo from "../BluejayLogo";
 import { MapLink, PhoneLink } from "@/components/templates/MapLink";
+import ClaimBanner from "@/components/ClaimBanner";
 
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
@@ -170,7 +171,7 @@ function SectionHeader({ badge, title, subtitle, accent }: { badge: string; titl
   );
 }
 
-function ClaimBanner({ businessName, accentColor, prospectId }: { businessName: string; accentColor: string; prospectId: string }) {
+: { businessName: string; accentColor: string; prospectId: string }) {
   const [timeLeft, setTimeLeft] = useState("");
   useEffect(() => {
     const expiry = new Date(); expiry.setDate(expiry.getDate() + 7);
@@ -546,7 +547,7 @@ export default function V2PestControlPreview({ data }: { data: GeneratedSiteData
       </footer>
 
       <ClaimBanner businessName={data.businessName} accentColor={ACCENT} prospectId={data.id} />
-      <div className="h-28" />
+      <div className="h-14 md:h-28" />
     </main>
   );
 }

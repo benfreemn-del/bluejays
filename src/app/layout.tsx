@@ -12,10 +12,44 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const BASE_URL = "https://bluejayportfolio.com";
+const OG_IMAGE = `${BASE_URL}/og-image.png`;
+
 export const metadata: Metadata = {
-  title: "BlueJays | Premium Web Design for Local Businesses",
+  metadataBase: new URL(BASE_URL),
+  title: {
+    default: "BlueJays | Premium Web Design for Local Businesses",
+    template: "%s | BlueJays",
+  },
   description:
-    "We build stunning, high-converting websites for local businesses. See your new site before you pay.",
+    "We build stunning, high-converting websites for local businesses. See your new site before you pay. No obligation, no credit card required.",
+  keywords: ["web design", "local business website", "small business website", "website builder"],
+  openGraph: {
+    type: "website",
+    siteName: "BlueJays",
+    title: "BlueJays | Premium Web Design for Local Businesses",
+    description:
+      "We build stunning, high-converting websites for local businesses. See your new site before you pay.",
+    url: BASE_URL,
+    images: [
+      {
+        url: OG_IMAGE,
+        width: 1200,
+        height: 630,
+        alt: "BlueJays — Premium Web Design for Local Businesses",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "BlueJays | Premium Web Design for Local Businesses",
+    description:
+      "We build stunning, high-converting websites for local businesses. See your new site before you pay.",
+    images: [OG_IMAGE],
+  },
+  alternates: {
+    canonical: BASE_URL,
+  },
 };
 
 export default function RootLayout({

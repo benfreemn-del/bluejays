@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import type { GeneratedSiteData } from "@/lib/generator";
 import PreviewRenderer from "@/components/templates/PreviewRenderer";
 import V2ElectricianPreview from "@/components/templates/V2ElectricianPreview";
@@ -52,6 +53,63 @@ import { proxyPhotos } from "@/lib/image-proxy";
 import { getHeroHeading, getHeroSubtitle, getHeroImage, getAboutImage, getNavName } from "@/lib/preview-utils";
 
 export const dynamic = "force-dynamic";
+
+const BASE_URL = "https://bluejayportfolio.com";
+const OG_IMAGE = `${BASE_URL}/og-image.png`;
+
+// ─── Dynamic OG metadata for SMS/social link previews ───────────────────────
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+
+  let businessName = "Your Business Preview";
+  let category = "";
+  let city = "";
+
+  try {
+    const siteData = await getScrapedData(id) as GeneratedSiteData | null;
+    if (siteData) {
+      businessName = siteData.businessName || businessName;
+      category = siteData.category || "";
+      city = siteData.city || "";
+    }
+  } catch {
+    // Silently fall back to generic metadata
+  }
+
+  const categoryLabel = category
+    ? category.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
+    : "";
+  const locationSuffix = city ? ` in ${city}` : "";
+  const title = `${businessName} — Custom Website Preview | BlueJays`;
+  const description = categoryLabel
+    ? `See the custom ${categoryLabel} website we built for ${businessName}${locationSuffix}. Claim it today — no contracts, 100% satisfaction guaranteed.`
+    : `See the custom website we built for ${businessName}${locationSuffix}. Claim it today — no contracts, 100% satisfaction guaranteed.`;
+  const pageUrl = `${BASE_URL}/preview/${id}`;
+
+  return {
+    title,
+    description,
+    alternates: { canonical: pageUrl },
+    openGraph: {
+      type: "website",
+      siteName: "BlueJays",
+      title,
+      description,
+      url: pageUrl,
+      images: [{ url: OG_IMAGE, width: 1200, height: 630, alt: `${businessName} — Website Preview by BlueJays` }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [OG_IMAGE],
+    },
+  };
+}
 
 // V2 preview renderers by category — ALL 46 categories have V2 dynamic renderers
 const V2_RENDERERS: Partial<Record<string, React.ComponentType<{ data: GeneratedSiteData }>>> = {

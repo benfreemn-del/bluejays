@@ -30,6 +30,7 @@ import {
 import type { GeneratedSiteData } from "@/lib/generator";
 import BluejayLogo from "../BluejayLogo";
 import { MapLink, PhoneLink } from "@/components/templates/MapLink";
+import ClaimBanner from "@/components/ClaimBanner";
 
 /* ───────────────────────── SPRING CONFIGS ───────────────────────── */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
@@ -348,7 +349,7 @@ function SectionHeader({ badge, title, subtitle, accent }: {
 }
 
 /* ───────────────────────── CLAIM BANNER ───────────────────────── */
-function ClaimBanner({ businessName, accentColor, prospectId }: {
+: {
   businessName: string;
   accentColor: string;
   prospectId: string;
@@ -1123,7 +1124,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
       </footer>
 
       <ClaimBanner businessName={data.businessName} accentColor={TEAL} prospectId={data.id} />
-      <div className="h-28" />
+      <div className="h-14 md:h-28" />
     </main>
   );
 }
