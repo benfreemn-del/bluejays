@@ -325,8 +325,6 @@ export default function V2FitnessPreview({ data }: { data: GeneratedSiteData }) 
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
         </div>
         <HeartbeatLine accent={RED} />
-        <FitnessPattern opacity={0.04} accent={RED} />
-        <div className="absolute top-1/4 right-1/4 w-[500px] h-[500px] rounded-full blur-[200px] pointer-events-none" style={{ background: `${RED}06` }} />
 
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
           <div className="space-y-8">

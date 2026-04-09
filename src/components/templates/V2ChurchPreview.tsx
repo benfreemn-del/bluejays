@@ -399,8 +399,6 @@ export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
           <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-black/10" />
           <div className="absolute inset-0 bg-gradient-to-t from-white/80 via-transparent to-transparent" />
         </div>
-        <CrossPattern opacity={0.03} accent={GOLD} />
-        <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full blur-[200px] pointer-events-none" style={{ background: `${GOLD}08` }} />
 
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
           <div className="space-y-8">

@@ -9,6 +9,7 @@ A site is **not outreach-ready** unless it passes every required rule below. Rev
 | Standard | Requirement | Pass condition |
 |---|---|---|
 | Hero image quality | Every site must display a real hero image above the fold on desktop and mobile. Text-only heroes are not acceptable unless the category template has an approved image-free design treatment. | The hero shows a loaded, relevant, professional image in both viewport sizes. |
+| V2 hero layering | No V2 template may stack a decorative animation, loading animation, SVG effect, particle system, or floating glow on top of a hero image section. Only the hero image itself and non-animated readability overlays are allowed in image-based V2 heroes. | Any V2 hero that uses a real hero image renders without decorative or animated foreground layers covering that hero image. |
 | Image integrity | No image on the page may be broken, blank, malformed, or silently replaced by an invisible transparent pixel. | Every displayed image resolves and renders visibly; failures must trigger an approved fallback image instead of a hidden placeholder. |
 | Image uniqueness | The same major image must not be reused across hero, about, gallery, testimonial, or supporting sections unless there is a deliberate business reason. | Major images are visually distinct across sections. |
 | Footer attribution | The footer must say **Created by bluejayportfolio.com** and the text must link to `https://bluejayportfolio.com`. | Footer copy exactly matches the approved attribution standard. |
@@ -34,6 +35,7 @@ Image quality is a first-class approval gate. Weak images can make an otherwise 
 | Rule | Requirement | Enforcement expectation |
 |---|---|---|
 | Hero image requirement | `photos[0]` must exist, be a real contextual photo, and must not be a logo, icon, favicon, screenshot, or thumbnail-scale asset. | A missing or low-quality hero image is a blocking failure. |
+| V2 hero overlay rule | If a V2 template uses a real hero image, the hero section must not place decorative or loading animations, particle fields, SVG effects, or floating glows on top of that image. | The image-based V2 hero remains visually clean, with only readability-focused non-animated overlays permitted. |
 | URL validity | Every production image URL must be a well-formed `http` or `https` URL after trimming. `data:` URIs are not acceptable for hero or gallery imagery. | Invalid URLs fail QC and must be replaced. |
 | Trailing whitespace removal | All image URLs from scraping must be sanitized before storage, and the stored values must be trimmed again before preview rendering or proxying. | Newlines, tabs, control characters, and encoded newline fragments such as `%0A` or `%0D` must never survive into persisted or proxied URLs. |
 | Low-quality pattern detection | URLs that indicate thumbnail dimensions, blur parameters, screenshot assets, or expiring CDN tokens must be treated as risky or low quality. | Such images must be downgraded, replaced, or rejected depending on severity. |

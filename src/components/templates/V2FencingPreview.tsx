@@ -150,10 +150,6 @@ export default function V2FencingPreview({ data }: { data: GeneratedSiteData }) 
           <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/25 to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
         </div>
-        <WoodGrainPattern opacity={0.04} accent={ACCENT} />
-        <WallPostBackground opacity={0.03} accent={ACCENT} />
-        <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full blur-[200px] pointer-events-none" style={{ background: `${ACCENT}08` }} />
-        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full blur-[160px] pointer-events-none" style={{ background: `${WOOD_ACCENT}06` }} />
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
           <div className="space-y-8">
             <div><p className="text-sm uppercase tracking-widest mb-4" style={{ color: ACCENT }}>Professional Fencing Contractors</p><h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}>{data.tagline}</h1></div>

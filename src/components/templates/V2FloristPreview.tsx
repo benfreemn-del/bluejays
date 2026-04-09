@@ -126,9 +126,6 @@ export default function V2FloristPreview({ data }: { data: GeneratedSiteData }) 
           <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-black/10" />
           <div className="absolute inset-0 bg-gradient-to-t from-white/80 via-transparent to-transparent" />
         </div>
-        <PetalPattern opacity={0.04} accent={ACCENT} /><VineBackground opacity={0.03} accent={ACCENT} />
-        <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full blur-[200px] pointer-events-none" style={{ background: `${ACCENT}08` }} />
-        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full blur-[160px] pointer-events-none" style={{ background: `${SAGE}06` }} />
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
           <div className="space-y-8">
             <div><p className="text-sm uppercase tracking-widest mb-4" style={{ color: ACCENT }}>Artisan Floral Design</p><h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-[#1c1917]" style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}>{data.tagline}</h1></div>

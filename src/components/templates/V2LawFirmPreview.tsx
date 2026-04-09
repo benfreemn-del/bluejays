@@ -382,8 +382,6 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
           <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-black/10" />
           <div className="absolute inset-0 bg-gradient-to-t from-white/80 via-transparent to-transparent" />
         </div>
-        <LawPattern opacity={0.04} accent={EMERALD} />
-        <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full blur-[200px] pointer-events-none" style={{ background: `${EMERALD}08` }} />
 
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
           <div className="space-y-8">
@@ -641,9 +639,9 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
       
       {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
       <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15, ${ACCENT}08)` }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${PRIMARY}15, ${PRIMARY}08)` }} />
         <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
-          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: ACCENT }}>
+          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: PRIMARY }}>
             Don&apos;t Miss Out
           </p>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-3">
@@ -655,7 +653,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
           <a
             href={`/claim/${data.id}`}
             className="inline-flex items-center gap-2 min-h-[48px] px-8 py-3 rounded-full text-white font-bold text-base hover:shadow-lg transition-all duration-300"
-            style={{ background: ACCENT }}
+            style={{ background: PRIMARY }}
           >
             Claim This Website
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">

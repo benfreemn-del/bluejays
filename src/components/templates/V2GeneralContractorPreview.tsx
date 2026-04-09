@@ -300,7 +300,6 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
         </div>
         <BlueprintGrid opacity={0.04} accent={ACCENT} />
         <ConstructionBeams opacity={0.04} accent={ACCENT} />
-        <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full blur-[200px] pointer-events-none" style={{ background: `${ACCENT}08` }} />
 
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
           <div className="space-y-8">

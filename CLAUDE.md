@@ -50,6 +50,7 @@ Every AI agent, generator, reviewer, and automation path that creates or updates
 - **The promoted hero image MUST exist, render visibly, and be relevant to the business category, brand vibe, or core service.**
 - **Hero images MUST be at least 800px wide, or the URL metadata must strongly indicate comparable or better quality.**
 - **The hero image MUST NOT be a logo, favicon, icon, screenshot, thumbnail, or badly cropped asset.**
+- **No V2 template may layer a decorative animation, loading animation, SVG effect, particle system, or floating glow on top of a hero image section.** If a V2 hero uses a real hero image, the hero image itself plus readability overlays may remain, but animated or decorative foreground layers must be removed from that hero section.
 - **Hero framing MUST feel premium on desktop and mobile** — use intentional centering and cropping, not awkward empty space, cut-off subjects, or logo zoom-ins.
 - **If no good hero image is available, the system MUST use an approved category fallback rather than shipping a broken, low-res, or irrelevant hero.**
 

@@ -59,7 +59,6 @@ export default function Hero() {
   const [phase, setPhase] = useState(0);
   const [bubbleVisible, setBubbleVisible] = useState(true);
   const [cards, setCards] = useState<SiteCard[]>(defaultSiteCards);
-  const isAuthenticated = useIsAuthenticated();
 
   useEffect(() => {
     const timers = [
@@ -111,11 +110,7 @@ export default function Hero() {
         </div>
         {/* Desktop nav */}
         <div className="hidden md:flex items-center gap-5">
-          {isAuthenticated ? (
-            <a href="/dashboard" className="text-sm text-white/60 hover:text-white transition-colors duration-300 font-medium">Dashboard</a>
-          ) : (
-            <a href="/login" className="text-sm text-white/60 hover:text-white transition-colors duration-300 font-medium">Login</a>
-          )}
+          <a href="/login" className="text-sm text-white/60 hover:text-white transition-colors duration-300 font-medium">Login</a>
           <a href="/get-started" className="group relative h-10 px-6 rounded-full bg-gradient-to-r from-sky-500 to-blue-600 text-white text-sm font-semibold flex items-center gap-2 hover:shadow-[0_0_30px_rgba(14,165,233,0.5)] transition-all duration-300">
             Request a Free Website <ArrowUpRightIcon />
           </a>
@@ -134,17 +129,7 @@ export default function Hero() {
             <div className="absolute right-0 top-12 w-48 py-2 rounded-xl bg-[#0a1628]/95 backdrop-blur-xl border border-white/10 shadow-2xl z-50">
               {/* Public links — always visible */}
               <a href="/get-started" className="block px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5">Request a Free Website</a>
-              {/* Auth-gated links — only shown when logged in */}
-              {isAuthenticated ? (
-                <>
-                  <div className="my-1 border-t border-white/10" />
-                  <a href="/dashboard" className="block px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5">Dashboard</a>
-                  <a href="/spending" className="block px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5">Spending</a>
-                  <a href="/scripts" className="block px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5">AI Convos</a>
-                </>
-              ) : (
-                <a href="/login" className="block px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5">Login</a>
-              )}
+              <a href="/login" className="block px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5">Login</a>
             </div>
           </details>
         </div>

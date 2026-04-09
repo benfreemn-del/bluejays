@@ -32,7 +32,6 @@ export default function Footer() {
             <ul className="space-y-3">
               {[
                 { label: "Portfolio", href: "#" },
-                { label: "Dashboard", href: "/dashboard" },
                 { label: "Templates", href: "/templates" },
                 { label: "Contact", href: "mailto:bluejaycontactme@gmail.com" },
               ].map((link) => (

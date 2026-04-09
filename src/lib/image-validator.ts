@@ -306,7 +306,17 @@ const EXPIRED_TOKEN_PATTERNS = [
   /parastorage\.com/i,
 ];
 
-const LOGO_PATTERNS = [/logo/i, /favicon/i, /icon/i];
+const LOGO_PATTERNS = [
+  /logo/i,
+  /favicon/i,
+  /icon/i,
+  /\/core\//i,
+  /\/brand\//i,
+  /\/assets\/logo/i,
+  /\/assets\/icon/i,
+  /(?:^|[\/_-])(16x16|32x32|48x48|64x64|96x96|128x128|192x192)(?:[\/_.-]|$)/i,
+  /(?:google|facebook|yelp|instagram|linkedin|x|twitter|youtube|tiktok|pinterest)\.(?:png|jpe?g|webp|svg)(?:$|[?#])/i,
+];
 const SCREENSHOT_PATTERNS = [/screen\s?shot/i, /screenshot/i, /thumbnail/i, /thumb/i];
 
 function buildUnsplashUrl(photoId: string, variant: FallbackImageVariant): string {
@@ -419,7 +429,18 @@ export function validateImageUrl(
 
   if (sanitizedUrl) {
     const dimensions = extractDimensionHints(sanitizedUrl);
-    if (dimensions.some((dimension) => dimension > 0 && dimension < 400)) {
+    const hasIconSizedDimensions = dimensions.some((dimension) => dimension > 0 && dimension < 200);
+    const hasTinyDimensions = dimensions.some((dimension) => dimension >= 200 && dimension < 400);
+
+    if (hasIconSizedDimensions) {
+      issues.push({
+        code: "logo_or_icon",
+        severity: "critical",
+        message: "Image URL includes very small dimension metadata that strongly suggests a logo, icon, or other non-hero asset.",
+      });
+    }
+
+    if (hasTinyDimensions) {
       issues.push({
         code: "tiny_dimensions",
         severity: "warning",
@@ -446,8 +467,8 @@ export function validateImageUrl(
     if (LOGO_PATTERNS.some((pattern) => pattern.test(sanitizedUrl))) {
       issues.push({
         code: "logo_or_icon",
-        severity: "warning",
-        message: "Image URL appears to reference a logo or icon instead of a true photo.",
+        severity: "critical",
+        message: "Image URL appears to reference a logo, icon, badge, or social-brand asset instead of a true photo.",
       });
     }
 
