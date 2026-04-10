@@ -18,9 +18,20 @@ You're receiving this because we built a free website for your business.
 Unsubscribe: {{baseUrl}}/unsubscribe/{{prospectId}}
 `;
 
+function buildVideoBlock(videoUrl?: string) {
+  if (!videoUrl) return "";
+
+  return `
+I also recorded a quick personalized walkthrough of the site so you can see the full vision in under 90 seconds:
+
+${videoUrl}
+`;
+}
+
 export function getPitchEmail(
   prospect: Prospect,
-  previewUrl: string
+  previewUrl: string,
+  videoUrl?: string,
 ): EmailTemplate {
   const name =
     prospect.ownerName?.split(" ")[0] || prospect.businessName;
@@ -38,7 +49,7 @@ ${hasWebsite ? `I took a look at your current site and thought I could do someth
 So I went ahead and built you a brand new website — completely free, no strings attached. Here it is:
 
 ${previewUrl}
-
+${buildVideoBlock(videoUrl)}
 It's modern, mobile-friendly, and designed specifically for ${category.toLowerCase()} businesses like yours. Take 30 seconds to check it out.
 
 If you love it, we can have it live on your own domain within 48 hours. If not, no hard feelings at all.
@@ -55,7 +66,8 @@ ${EMAIL_FOOTER.replace("{{baseUrl}}", process.env.NEXT_PUBLIC_BASE_URL || "https
 
 export function getFollowUp1(
   prospect: Prospect,
-  previewUrl: string
+  previewUrl: string,
+  videoUrl?: string,
 ): EmailTemplate {
   const name =
     prospect.ownerName?.split(" ")[0] || prospect.businessName;
@@ -67,7 +79,7 @@ export function getFollowUp1(
 Just wanted to make sure you had a chance to check out the website I built for ${prospect.businessName}:
 
 ${previewUrl}
-
+${buildVideoBlock(videoUrl)}
 I put a lot of thought into making it perfect for your business. It's fully responsive, fast-loading, and ready to go live whenever you are.
 
 Would love to hear your thoughts — even a quick "looks good" or "not interested" helps me out!
@@ -81,7 +93,8 @@ ${EMAIL_FOOTER.replace("{{baseUrl}}", process.env.NEXT_PUBLIC_BASE_URL || "https
 
 export function getFollowUp2(
   prospect: Prospect,
-  previewUrl: string
+  previewUrl: string,
+  videoUrl?: string,
 ): EmailTemplate {
   const name =
     prospect.ownerName?.split(" ")[0] || prospect.businessName;
@@ -95,7 +108,7 @@ I was doing some research on local businesses in your area and wanted to share a
 Many businesses with great services lose out on potential clients simply because their online presence doesn't reflect the quality of their work. That's exactly why I built this custom website for ${prospect.businessName}:
 
 ${previewUrl}
-
+${buildVideoBlock(videoUrl)}
 I thought you'd find this interesting, and I'd love to help you get it set up if you're ready to take your online presence to the next level. Take a look when you have a moment, and let me know what you think.
 
 Best,

@@ -10,6 +10,7 @@ const PROTECTED_PATHS = [
   "/preview-device",
   "/spending",
   "/analytics",
+  "/videos",
   "/v2",
   "/api/scout",
   "/api/prospects",
@@ -47,6 +48,7 @@ const PROTECTED_PATHS = [
   "/api/onboarding",
   "/api/vsl/generate",
   "/api/voicemail",
+  "/api/videos",
 ];
 
 // Public API routes that must bypass auth (webhooks, inbound handlers)
@@ -127,6 +129,7 @@ export const config = {
     "/lead/:path*",
     "/spending",
     "/analytics",
+    "/videos/:path*",
     "/api/spending/:path*",
     "/api/funnel-analytics/:path*",
     // Newly protected sensitive routes
@@ -146,6 +149,7 @@ export const config = {
     "/api/funnel/:path*",
     "/api/vsl/:path*",
     "/api/voicemail/:path*",
+    "/api/videos/:path*",
     "/api/leads/submit/:path*",
     "/api/portfolio/:path*",
     "/api/social-proof/:path*",

@@ -309,23 +309,27 @@ export function getConfiguredSmsProviders(): SmsMethod[] {
   return providers;
 }
 
+function buildVideoSuffix(videoUrl?: string): string {
+  return videoUrl ? ` Video walkthrough: ${videoUrl}` : "";
+}
+
 // --- SMS Templates ---
 
-export function getInitialSms(prospect: Prospect, previewUrl: string): string {
+export function getInitialSms(prospect: Prospect, previewUrl: string, videoUrl?: string): string {
   const name = prospect.ownerName?.split(" ")[0] || "there";
-  return `Hey ${name}! This is BlueJays. We built a free custom website for ${prospect.businessName} — check it out: ${previewUrl} Let us know what you think! Reply STOP to opt out.`;
+  return `Hey ${name}! This is BlueJays. We built a free custom website for ${prospect.businessName} — check it out: ${previewUrl}${buildVideoSuffix(videoUrl)} Let us know what you think! Reply STOP to opt out.`;
 }
 
-export function getFollowUpSms1(prospect: Prospect, previewUrl: string): string {
+export function getFollowUpSms1(prospect: Prospect, previewUrl: string, videoUrl?: string): string {
   const name = prospect.ownerName?.split(" ")[0] || "there";
-  return `Hi ${name}, just following up on the website we built for ${prospect.businessName}. Have you had a chance to look? ${previewUrl} Reply STOP to opt out.`;
+  return `Hi ${name}, just following up on the website we built for ${prospect.businessName}. Have you had a chance to look? ${previewUrl}${buildVideoSuffix(videoUrl)} Reply STOP to opt out.`;
 }
 
-export function getFollowUpSms2(prospect: Prospect, previewUrl: string): string {
+export function getFollowUpSms2(prospect: Prospect, previewUrl: string, videoUrl?: string): string {
   const name = prospect.ownerName?.split(" ")[0] || "there";
-  return `Last message from us ${name} — your free ${prospect.businessName} website is still live at ${previewUrl}. Claim it before we move on! No pressure either way. Reply STOP to opt out.`;
+  return `Last message from us ${name} — your free ${prospect.businessName} website is still live at ${previewUrl}.${buildVideoSuffix(videoUrl)} Claim it before we move on! No pressure either way. Reply STOP to opt out.`;
 }
 
-export function getPostVoicemailSms(prospect: Prospect, previewUrl: string): string {
-  return `Hey! This is BlueJays — I just left you a quick voicemail about the website I built for ${prospect.businessName}. Here's the link: ${previewUrl} Reply STOP to opt out.`;
+export function getPostVoicemailSms(prospect: Prospect, previewUrl: string, videoUrl?: string): string {
+  return `Hey! This is BlueJays — I just left you a quick voicemail about the website we built for ${prospect.businessName}. Here's the preview: ${previewUrl}.${buildVideoSuffix(videoUrl)} Reply STOP to opt out.`;
 }

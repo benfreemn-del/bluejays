@@ -6,6 +6,7 @@ import {
   getFollowUp1,
   getFollowUp2,
 } from "./email-templates";
+import { getProspectVideoUrl } from "./video-generator";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
@@ -38,6 +39,7 @@ export async function sendPitchEmail(prospect: Prospect) {
   }
 
   const previewUrl = `${BASE_URL}${prospect.generatedSiteUrl}`;
+  const videoUrl = await getProspectVideoUrl(prospect.id);
 
   // Check what sequence we're on
   const history = await getEmailHistory(prospect.id);
@@ -47,11 +49,11 @@ export async function sendPitchEmail(prospect: Prospect) {
 
   let template;
   if (lastSequence === 0) {
-    template = getPitchEmail(prospect, previewUrl);
+    template = getPitchEmail(prospect, previewUrl, videoUrl);
   } else if (lastSequence === 1) {
-    template = getFollowUp1(prospect, previewUrl);
+    template = getFollowUp1(prospect, previewUrl, videoUrl);
   } else if (lastSequence === 2) {
-    template = getFollowUp2(prospect, previewUrl);
+    template = getFollowUp2(prospect, previewUrl, videoUrl);
   } else {
     throw new Error(
       `All 3 emails already sent to ${prospect.businessName}`
