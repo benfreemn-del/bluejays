@@ -40,6 +40,29 @@ body {
   font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
 }
 
+.v2-preview-theme {
+  background: var(--color-background);
+  color: var(--color-foreground);
+}
+
+.v2-preview-theme--light {
+  background: #f8fafc;
+  color: #0f172a;
+  color-scheme: light;
+}
+
+.v2-preview-theme--light .v2-preview-root {
+  background: #f8fafc;
+  filter: invert(1) hue-rotate(180deg);
+}
+
+.v2-preview-theme--light .v2-preview-root img,
+.v2-preview-theme--light .v2-preview-root video,
+.v2-preview-theme--light .v2-preview-root canvas,
+.v2-preview-theme--light .v2-preview-root iframe {
+  filter: invert(1) hue-rotate(180deg);
+}
+
 ::selection {
   background: var(--color-blue-electric);
   color: white;

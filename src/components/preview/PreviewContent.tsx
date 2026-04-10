@@ -154,9 +154,16 @@ export default function PreviewContent({
   if (!forceV1) {
     const V2Renderer = V2_RENDERERS[proxiedData.category];
     if (V2Renderer) {
+      const isLightV2Theme = selectedTheme === "light";
+
       return (
-        <div data-theme={selectedTheme}>
-          <V2Renderer data={proxiedData} />
+        <div
+          data-theme={selectedTheme}
+          className={isLightV2Theme ? "v2-preview-theme v2-preview-theme--light" : "v2-preview-theme"}
+        >
+          <div className="v2-preview-root">
+            <V2Renderer data={proxiedData} />
+          </div>
         </div>
       );
     }
