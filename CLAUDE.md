@@ -3,7 +3,7 @@
 # BlueJays Project — The Money Printer
 
 ## Core Philosophy
-This system is designed to function like a money printer. Every feature should drive toward one goal: scout businesses, build them premium websites, sell those websites at $997, and automate as much of the pipeline as possible. Efficiency = profit.
+This system is designed to function like a money printer. Every feature should drive toward one goal: scout businesses, build them premium websites, sell those websites at $1,000, and automate as much of the pipeline as possible. Efficiency = profit.
 
 ## Quality Rules (NON-NEGOTIABLE)
 - **Every website must match OPS quality level** — the Olympic Protective Services site is the minimum quality bar. Numbered service cards, SVG icons (never emojis), section headers with accent words, decorative underlines, grid patterns, glow effects, rich hover states, industry-specific SVG patterns, and unique personality per category.
@@ -11,12 +11,33 @@ This system is designed to function like a money printer. Every feature should d
 - **Generated preview sites MUST use V2 template components** — for any category that has a V2 template, generated preview sites must render using the V2 component (not the generic PreviewRenderer). The V2 template is the quality standard. A preview sent to a business owner should look identical to the V2 showcase, just with their data injected. The generic PreviewRenderer is only for categories without a V2 template.
 - **Match theme darkness to the industry's vibe** — feminine/elegant businesses (salon, florist, daycare, photography, interior-design, catering) should use LIGHT themes (white/cream backgrounds, dark text). Masculine/trade businesses (electrician, plumber, roofing, auto-repair, towing, construction) should use DARK themes. Medical/professional (dental, law, insurance, accounting) can go either way but lean light for trust. This is a fundamental design principle — a salon site shouldn't look like a garage.
 - **Each template must SCREAM its industry** — Real Estate screams luxury. Dental screams trust. Law screams authority. Landscaping screams nature. Salon screams beauty. If it could be any industry, it's not good enough.
-- **$997 is the base price** — firm, no negotiation for agents. Period.
+- **$1,000 is the base price** — firm, no negotiation for agents. Period.
 - **All generated sites and templates must use the footer credit** — `Created by bluejayportfolio.com`, with `bluejayportfolio.com` rendered as a clickable link to `https://bluejayportfolio.com`. Never use BlueJay Business Solutions wording, BluejayLogo branding, or any other footer variation.
 - **Review approval required** — sites go to "pending-review" before outreach, not straight to "contacted".
 - **Color review agent must pass** — every generated site's color scheme is reviewed for vibrancy and category fit before approval.
 - **Social proof overlays MUST use real data or be removed. NEVER show fake or inflated numbers.**
 - **Personalized proposals MUST be generated before entering the sales funnel, combining all CRM data, scraped info, reviews, and notes.**
+
+## Visual QC Rules
+1. **No duplicate images within a site** — compare by Unsplash photo ID, not just exact URL. Same photo with different query params counts as a duplicate.
+2. **Every image URL must be HTTP-verified** (HEAD request, status 200) before saving to Supabase.
+3. **Hero copy must be short** — 5-10 word tagline max, one supporting sentence. No walls of text on the hero section.
+4. **Use the business's real logo** in the header top-left if a high-quality version is available. Don't force a bad/blurry logo.
+5. **Every site must be visually reviewed** — actually open it in a browser on desktop AND mobile (375px). Don't just check the data.
+6. **Compare against the business's real website** for brand colors, services, and tone.
+7. **Before/after sections only for transformation businesses** (landscaping, painting, cleaning, pressure washing) — remove for law firms, accounting, dental, insurance, etc.
+8. **Footer must say "Created by bluejayportfolio.com"** — NOT "BlueJay Business Solutions" or any other variation.
+9. **No hallucinated Unsplash URLs** — only use known working photo IDs or search the Unsplash API. Never guess a photo ID.
+10. **About text must name the business and reference what they actually do** — no generic placeholder copy.
+11. **Services must match the business's real offerings** from their actual website.
+12. **No logos used as hero images.**
+
+## Project Rules
+1. **Pricing**: $1,000 upfront per website + $100/year maintenance. Domain and hosting included (~$15-17/year cost per client).
+2. **Never assume a site passes QC** without visually reviewing it in the browser.
+3. **When a batch fix fails to save to Supabase**, don't declare victory — always verify with a re-fetch after patching.
+4. **Don't give up on fixing all sites in a batch** — if some fail, fix ALL of them before reporting done.
+5. **When updating site_data in Supabase**, the column is JSONB. Send the value as a JSON object, NOT a stringified JSON string.
 
 ## Locked QC Generation Rules (NON-NEGOTIABLE)
 Every AI agent, generator, reviewer, and automation path that creates or updates a prospect site MUST treat the QC standards below as blocking release requirements. These rules are permanently embedded from `QC_RULES.md` and are not optional polish. A generated site that fails any requirement below is **not ready** for outreach, manual review, owner delivery, or deployment.
@@ -88,7 +109,6 @@ This policy applies to ALL images everywhere in the system — scraped, stock, g
 - **Gallery and project images MUST match the business category and the section purpose.** Roofing must show roofs, pet services must show pets, interior design must show interiors, landscaping must show outdoor work, and so on.
 - **Gallery-heavy categories MUST use gallery-forward layouts and prominent visual proof, not token filler images.**
 - **NEVER approve a site whose gallery is populated with irrelevant, repeated, or obviously generic filler imagery.**
-- **If a prospect lacks enough usable real imagery, approved fallbacks may keep the preview functional, but the prospect still fails QC until the real coverage issue is fixed or consciously waived.**
 
 ### 5. Before/After Rules
 - **ONLY use before/after sections for transformation-based businesses where a real or clearly valid transformation story exists.**
@@ -202,7 +222,7 @@ Before any site can proceed past the quality gate, verify it has attempted to sc
 This agent reviews scraped/Google photos BEFORE they go into the generated site:
 - **Check image quality** — blurry, tiny, dark, or poorly composed photos must be REJECTED. In these cases, use high-quality stock photos instead. This is the ONE exception to the "real photos first" rule: a bad photo is worse than a good stock photo.
 - **Check color scheme** — does the accent color work? Is the palette vibrant and professional? Does it match the industry's premium feel? A site with a muddy or clashing color scheme fails.
-- **Check premium feel** — does this site look like a $997 product? Would a business owner be impressed? If it looks cheap, generic, or amateur, it FAILS.
+- **Check premium feel** — does this site look like a $1,000 product? Would a business owner be impressed? If it looks cheap, generic, or amateur, it FAILS.
 - **Image replacement authority** — this agent has the authority to swap low-quality scraped photos for premium stock alternatives. Customization matters, but visual quality matters MORE. A stunning stock photo beats a blurry phone photo every time.
 - **This agent's review is part of the pipeline** — no site can be marked "pending-review" without passing the image quality check.
 
@@ -291,80 +311,13 @@ When Ben asks to build a V2 (or higher) template for a category, ALL of these st
 - **Future versions (V3+)** — the toggle should support any number of versions as we upgrade categories.
 
 ## Preview = Product Rules (NON-NEGOTIABLE)
-- **The preview URL IS the product** — `/preview/[id]` is the exact link sent to business owners in pitch emails, texts, and DMs. It must look like a $997 website, not a prototype.
+- **The preview URL IS the product** — `/preview/[id]` is the exact link sent to business owners in pitch emails, texts, and DMs. It must look like a $1,000 website, not a prototype.
 - **Preview must match the V2 template quality for its category** — if electrician has a V2 template, the electrician preview must render with V2-level quality (14 sections, glass morphism, particles, trust badges, etc.)
 - **Never send outreach with a generic-looking preview** — if the preview doesn't match V2 quality, it stays in processing until it does.
 - **The preview is the pitch** — a business owner's first impression of our work. One chance. Make it count.
 
 ## Deployment Rules (NON-NEGOTIABLE)
 - **Vercel deploys take 60-90 seconds after git push** — always wait for deploy before Chrome-verifying on the live site.
-- **Hard refresh (Ctrl+Shift+R) when verifying** — browser cache can show old code.
-- **Commit and push to GitHub periodically** — don't wait until the end of a session. Push after completing major features.
-- **Always run `npm run build` before declaring something done** — catch TypeScript errors early.
-
-## Funnel Testing Rules (NON-NEGOTIABLE)
-- **Test before live outreach** — before sending any real outreach campaign, ALWAYS run the Test Funnel button first. This sends the complete funnel (all emails + all texts) to Ben's personal email (benfreemn@gmail.com) for review.
-- **Test funnel must use the highest version template** — the test preview link must point to the best V2 template we have for the category being tested. Currently defaults to /v2/electrician.
-- **Two test emails are sent**: (1) Full strategy document with agent voice, funnel timeline, pricing framework, objection handling, and all 3 email sequences. (2) All 3 SMS text sequences in order.
-- **Verify links work** — Ben will click the preview links in the test emails to confirm they load correctly. If they don't, fix before going live.
-- **The funnel and strategy should evolve** — as we aggregate data (open rates, response rates, what objections come up), the agent's strategy should be updated. The test funnel is how Ben reviews these changes.
-- **API endpoint**: POST /api/test-funnel (protected, dashboard only)
-
-## Sales Agent Evolution Rules (NON-NEGOTIABLE)
-The sales agent is a LIVING SYSTEM that must improve over time, not stay static.
-- **Always use the latest version of everything** — when generating outreach (emails, texts, DMs), the system must pull from the most current version of: agent-personality.ts, email-templates.ts, sms.ts, conservative funnel timing, objection handling, and pricing framework. Never cache old versions.
-- **Refresh before every output** — before the test funnel sends emails OR before live outreach fires, the system must read the current state of all sales configuration files. This ensures any improvements made to the agent's strategy are immediately reflected in all output.
-- **The test funnel button triggers a full knowledge refresh** — when Ben clicks "Test Funnel", it reads the latest agent-personality.ts, email-templates.ts, sms.ts, and funnel-manager.ts LIVE (not from any cache). The test output always reflects the most current strategy.
-- **New leads trigger the latest pipeline** — when a new prospect enters the funnel (via scout, manual add, or get-started form), all outreach uses the current version of templates and strategy. No stale copy.
-- **Aggregate and learn** — track which email subjects get opened, which preview links get clicked, which objections come up most. Use this data to periodically update: email-templates.ts (better subject lines), agent-personality.ts (better objection responses), sms.ts (better text hooks).
-- **Skills and frameworks** — the sales agent and all building agents should leverage these skill libraries:
-  - **coreyhaines31/marketingskills**: CRO, cold outreach sequences, conversion optimization, pricing strategy, churn prevention
-  - **OpenClaudia/openclaudia-skills**: write-landing (high-converting copy), page-cro (conversion rate optimization), copywriting, copy-editing, competitor-analysis, pricing-strategy, growth-strategy, demand-gen
-  - **onewave-ai/claude-skills**: landing-page-copywriter, sales prospecting, email generation, content optimization (100 skills)
-  - **anthropics/skills/frontend-design**: production-grade landing page code (React + Tailwind + shadcn/ui)
-  - **anthropics/skills/web-artifacts-builder**: beautiful modern web components with animations
-  - **alirezarezvani/claude-skills**: 220+ skills — Landing Page Generator, Sales Engineer, Revenue Ops, CMO Advisor, VP Sales Advisor, CRO pod, SEO Audit, Customer Success, SaaS Scaffolder
-  - **VoltAgent/awesome-agent-skills**: 1,234+ agentic skills across all categories, universal SKILL.md format
-  - When updating sales copy, apply: benefit-first headlines, social proof, urgency without sleaze, objection preemption, CRO principles, psychological triggers, A/B testing mindset. Think like a growth marketer.
-- **Version the improvements** — when the sales strategy is updated, log what changed and why (e.g., "Changed email 1 subject line because open rate was 12%, new version targets 25%"). This creates an audit trail of what's working.
-
-## Voicemail Drop Rules (NON-NEGOTIABLE)
-- **Voicemail drops are part of the funnel** — Day 2 (initial VM) and Day 18 (follow-up VM) are auto-deployed as part of the sales funnel.
-- **Only drop voicemails, never live calls** — the system uses Twilio AMD (Answering Machine Detection) to detect voicemail. If a human answers, it hangs up immediately. We are NOT cold calling.
-- **Ben records the voicemail** — the pre-recorded voicemail lives at `/public/voicemail.mp3`. Until Ben records, the system uses Twilio TTS as fallback.
-- **Voicemail script must be genuine** — matches the agent personality (friendly, casual, authentic). Mentions the business by name. Under 30 seconds.
-- **Max 2 voicemail drops per prospect** — initial (Day 2) and follow-up (Day 18). No more.
-- **Always follow up a voicemail with a text** — the VM says "I'll shoot you a text with the link." The text must be sent within minutes of the VM drop.
-- **API endpoints**: POST /api/voicemail/drop/[id] (trigger drop), GET /api/voicemail/twiml (Twilio callback), POST /api/voicemail/status (AMD callback)
-
-## Outreach Safety Rules (NON-NEGOTIABLE)
-- **Rate limit outreach** — no more than 20 emails, 10 texts, or 10 DMs per day. Sending too many triggers spam filters and gets accounts flagged.
-- **Never outreach without a working preview** — before sending any email/text/DM, verify the preview URL loads and looks premium. A broken link in a pitch email is worse than no email.
-- **Mobile-first verification** — most business owners will open the preview on their phone. ALWAYS verify mobile layout before marking ready for outreach.
-- **Competitor check before pitching** — if a business already has a modern, professional website, don't pitch them. Focus on businesses with bad/outdated/no websites. The scraper should flag this.
-
-## Cost & Efficiency Rules
-- **Track API costs per prospect** — every Google Places API call, every scrape, every generation has a cost. Log it. The cost-tracker at src/lib/cost-tracker.ts must be maintained.
-- **Don't re-scrape unnecessarily** — if a prospect already has good scraped data, don't re-scrape on every generate. Only re-scrape if data is missing or stale (>7 days).
-- **Batch operations when possible** — bulk generate, bulk scrape, bulk outreach. Don't make individual API calls when a batch would do.
-
-## Workflow Rules
-- **Ben's phone**: +12538863753 — for owner alerts
-- **Ben's email**: bluejaycontactme@gmail.com
-- **Save learnings to memory** — when a mistake is caught and fixed, save it to the memory system so future sessions don't repeat it.
-- **Design as systems, not one-offs** — every fix should be a reusable solution that works for all categories, not a category-specific patch.
-- **Test on mobile AND desktop** — every page, every template, every preview. Mobile is where the money is.
-
-## Lessons Learned (HARD-WON — DO NOT REPEAT THESE MISTAKES)
-- **SVG animations that look bad are worse than no animation** — if a hero SVG looks like a rough sketch (salon scissors, PT stick figure, fitness runner), replace it with a beautiful photo instead. A stunning photo > a mediocre animation every time.
-- **Photos > animations for feminine/elegant categories** — salon, florist, photography, interior-design look better with real photos than SVG animations. Save animations for industrial/trade categories where they can be bold and simple (barbell, piston, lightning bolt).
-- **Gallery images MUST match their labels** — "Modern Kitchen Remodel" must show a kitchen, not curtains. If an agent assigns labels to a gallery, the agent must verify each image matches its label. This was caught on general-contractor.
-- **Wix sites return "My Site" or "website" as business name** — the generator must reject these and use the prospect's name from the database instead. This is handled in generator.ts but ALWAYS check.
-- **Google Places photo URLs expire and need the API key** — all external images go through /api/image-proxy which handles this. Never render Google Places photos directly.
-- **Most small businesses don't have email addresses on their websites** — phone/SMS/voicemail will be the primary outreach channel for most prospects. Don't rely on email scraping alone.
-- **Suggestion deductions in quality gate add up fast** — cap them at 15pts total so anonymous Google reviews ("Happy Customer") don't tank the score for otherwise good sites.
-- **SendGrid domain auth requires the domain WITHOUT https://** — just "bluejayportfolio.com", not "https://bluejayportfolio.com/". This caused days of 401 errors.
-- **Vercel env vars are sensitive to trailing characters** — always verify no extra space or newline after pasting API keys.
 - **FROM_EMAIL must be hardcoded, not from env var** — the Vercel FROM_EMAIL env var was set to an invalid value causing "Invalid from email address" errors. Hardcoded to `bluejaycontactme@gmail.com` in email-sender.ts to prevent this.
 - **Vercel serverless functions have READ-ONLY filesystems** — cannot write to `data/emails/` or any local directory. Skip file logging when `process.env.VERCEL` is set. Use Supabase for production logging instead.
 - **When debugging API failures, check the ACTUAL error response** — don't assume it's the API key. Add error detail logging (response status + body) to every external API call. The error "SendGrid API failed" was useless — "Invalid from email address" was the real issue.
@@ -373,31 +326,6 @@ The sales agent is a LIVING SYSTEM that must improve over time, not stay static.
 - Next.js 16 + React 19 + TypeScript + Tailwind v4 + Framer Motion
 - Supabase for production database (with JSON file fallback for local dev)
 - SendGrid for emails (LIVE — domain authenticated, sender verified)
-- Twilio for SMS + Voicemail (LIVE — upgraded from trial)
-- File-based store at `data/` for local development
-- **Domain**: bluejayportfolio.com — DNS managed by **Vercel** (ns1.vercel-dns.com, ns2.vercel-dns.com)
-- **Hosting**: Vercel Pro (benfreemn-dels-projects/bluejays)
-- **Domain registrar**: Vercel (DNS records added through Vercel dashboard → project → Domains)
-- **Image proxy**: /api/image-proxy — proxies Google Places + Wix/Squarespace CDN images server-side
-- **Preview utils**: src/lib/preview-utils.ts — smart hero text truncation, logo detection, nav name cleanup
-
-## Key Files
-- `scripts/pipeline.ts` — CLI to run scout/scrape/generate pipeline
-- `src/lib/types.ts` — All types, categories, pricing, and category config
-- `src/lib/data-extractor.ts` — Cascading data extraction (Cheerio → Google Places → Web Search)
-- `src/lib/generator.ts` — Site data generator with dual quality failsafes
-- `src/lib/quality-review.ts` — AI quality review agent
-- `src/lib/color-review.ts` — Color scheme review agent
-- `src/app/preview/[id]/page.tsx` — **Preview routing** — V2_RENDERERS map routes to V2 components per category
-- `src/components/templates/PreviewRenderer.tsx` — Generic preview (fallback for categories without V2 dynamic renderer)
-- `src/components/templates/V2ElectricianPreview.tsx` — Dynamic V2 electrician preview (accepts GeneratedSiteData)
-- `src/components/templates/TemplateLayout.tsx` — Shared layout with claim banner, footer branding
-- `src/components/Hero.tsx` — Homepage with portfolio cards (update href when adding V2s)
-- `src/app/v2/[category]/page.tsx` — V2 showcase templates (11 categories)
-- `src/components/BluejayLogo.tsx` — BluejayLogo SVG component used everywhere
-- `src/lib/auto-funnel.ts` — 6-step automated retargeting funnel
-- `src/lib/cost-tracker.ts` — Per-lead and system-wide cost tracking
-- `src/middleware.ts` — Auth protection (portfolio public, dashboard behind login)
 
 ## Auth
 - Portfolio (/, /templates/*, /preview/*, /claim/*) = PUBLIC
@@ -406,8 +334,8 @@ The sales agent is a LIVING SYSTEM that must improve over time, not stay static.
 
 ## Approval & Pricing Rules (NON-NEGOTIABLE)
 - **Ben approves ALL preview sites and final sites manually before they go live or enter the funnel. No site goes out without approval.** This applies to both standard and free-tier prospects. Every site must pass quality gates AND receive explicit manual approval from Ben before any outreach or deployment.
-- **Free tier ($30) is for friends/family only. Default pricing tier is always standard ($997).** The free tier exists solely for prospects Ben personally tags as "free" in the dashboard. It charges $30 upfront (covers domain + server costs) instead of $997, but still creates the same deferred $100/year management subscription after 1 year. Never auto-assign free tier — it requires manual tagging by Ben.
-- **Two pricing tiers exist**: Standard ($997 upfront → $100/yr after 1 year) and Free ($30 upfront → $100/yr after 1 year). The `pricing_tier` column on the prospects table controls which tier applies. The claim page, checkout API, and Stripe session all respect this field dynamically.
+- **Free tier ($30) is for friends/family only. Default pricing tier is always standard ($1,000).** The free tier exists solely for prospects Ben personally tags as "free" in the dashboard. It charges $30 upfront (covers domain + server costs) instead of $1,000, but still creates the same deferred $100/year management subscription after 1 year. Never auto-assign free tier — it requires manual tagging by Ben.
+- **Two pricing tiers exist**: Standard ($1,000 upfront → $100/yr after 1 year) and Free ($30 upfront → $100/yr after 1 year). The `pricing_tier` column on the prospects table controls which tier applies. The claim page, checkout API, and Stripe session all respect this field dynamically.
 
 ## Active Template Categories (41 total)
 real-estate, dental, law-firm, landscaping, salon, electrician, plumber, hvac, roofing, auto-repair, chiropractic, fitness, veterinary, photography, cleaning, pest-control, accounting, moving, florist, daycare, insurance, interior-design, tattoo, martial-arts, physical-therapy, tutoring, pool-spa, general-contractor, catering, pet-services, church, restaurant, medical, painting, fencing, tree-service, pressure-washing, garage-door, locksmith, towing, construction
