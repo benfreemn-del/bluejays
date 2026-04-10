@@ -1,30 +1,33 @@
 /**
  * /api/qc/review/[id]
  *
- * Automated Quality Control gate for generated preview sites.
+ * Premium Quality Control gate for generated preview sites.
  *
- * POST — Run the full QC check on a prospect's generated site.
- *   - Verifies personalization (business name, city, phone, services populated — no placeholders)
- *   - Checks brand colors were applied (if scraped)
- *   - Verifies all image URLs are reachable (no broken URLs)
- *   - Checks the template matches the business category
- *   - Writes quality_score and quality_notes to the prospect record
- *   - Sets status to "ready_to_review" (pass) or "qc_failed" (fail)
- *   - Only sites that PASS get status "ready_to_review"
+ * POST — Run the full QC pipeline on a prospect's generated site.
+ *   1. Deep-research the prospect's original website when available
+ *   2. Send the site through a Claude-powered supercharge pass
+ *   3. Run the automated QC checks against the upgraded site data
+ *   4. Run a separate Claude QC review using CLAUDE.md + QC rules
+ *   5. Persist combined quality_score and quality_notes
  *
  * GET — Return the stored QC result for a prospect (no re-run).
  */
 
+import path from "path";
+import { readFile } from "fs/promises";
 import { NextResponse } from "next/server";
-import { getProspect, getScrapedData, updateProspect } from "@/lib/store";
+import { getProspect, getScrapedData, saveScrapedData, updateProspect } from "@/lib/store";
 import { reviewSiteQuality, formatQualityReport } from "@/lib/quality-review";
 import { CATEGORY_CONFIG } from "@/lib/types";
 import type { GeneratedSiteData } from "@/lib/generator";
+import {
+  researchBusinessWebsite,
+  runClaudeQcReview,
+  runClaudeSupercharge,
+} from "@/lib/claude-qc";
 
-// QC pass threshold — must score >= 70 AND have zero critical issues
 const QC_PASS_SCORE = 70;
 
-// Placeholder strings that indicate un-personalized content
 const PLACEHOLDER_PATTERNS = [
   "Call Us Today",
   "(555) 000-0000",
@@ -45,17 +48,61 @@ interface QcCheckResult {
   detail: string;
 }
 
-/**
- * Run extended QC checks beyond the base quality-review:
- * placeholder detection, brand color, image reachability, category match.
- */
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function mergeScrapedRecords(
+  existing: Record<string, unknown> | undefined,
+  incoming: Record<string, unknown> | undefined
+): Record<string, unknown> | undefined {
+  if (!existing && !incoming) return undefined;
+
+  return {
+    ...(existing || {}),
+    ...(incoming || {}),
+    services:
+      Array.isArray(incoming?.services) && incoming.services.length > 0
+        ? incoming.services
+        : existing?.services,
+    testimonials:
+      Array.isArray(incoming?.testimonials) && incoming.testimonials.length > 0
+        ? incoming.testimonials
+        : existing?.testimonials,
+    photos:
+      Array.isArray(incoming?.photos) && incoming.photos.length > 0
+        ? incoming.photos
+        : existing?.photos,
+    socialLinks: {
+      ...(isRecord(existing?.socialLinks) ? existing.socialLinks : {}),
+      ...(isRecord(incoming?.socialLinks) ? incoming.socialLinks : {}),
+    },
+  };
+}
+
+async function loadRuleDocuments() {
+  const projectRoot = process.cwd();
+  const [claudeRules, qcRules, qcGuide] = await Promise.all([
+    readFile(path.join(projectRoot, "CLAUDE.md"), "utf-8"),
+    readFile(path.join(projectRoot, "QC_RULES.md"), "utf-8"),
+    readFile(path.join(projectRoot, "VISUAL_QC_REVIEW_GUIDE.md"), "utf-8").catch(() => ""),
+  ]);
+
+  return { claudeRules, qcRules, qcGuide };
+}
+
 async function runExtendedQcChecks(
-  prospect: { businessName: string; city: string; phone?: string; category: string; scrapedData?: Record<string, unknown> },
+  prospect: {
+    businessName: string;
+    city: string;
+    phone?: string;
+    category: string;
+    scrapedData?: Record<string, unknown>;
+  },
   siteData: GeneratedSiteData
 ): Promise<QcCheckResult[]> {
   const checks: QcCheckResult[] = [];
 
-  // 1. Business name personalization
   const hasRealName =
     siteData.businessName &&
     siteData.businessName.length >= 3 &&
@@ -65,10 +112,9 @@ async function runExtendedQcChecks(
     passed: !!hasRealName,
     detail: hasRealName
       ? `Business name "${siteData.businessName}" is populated`
-      : `Business name is missing or contains a placeholder`,
+      : "Business name is missing or contains a placeholder",
   });
 
-  // 2. City present in address or about
   const cityInSite =
     siteData.address?.toLowerCase().includes(prospect.city.toLowerCase()) ||
     siteData.about?.toLowerCase().includes(prospect.city.toLowerCase());
@@ -80,7 +126,6 @@ async function runExtendedQcChecks(
       : `City "${prospect.city}" not found in address or about section — site may be generic`,
   });
 
-  // 3. Phone number — real number, not placeholder
   const hasRealPhone =
     !!siteData.phone &&
     siteData.phone !== "Call Us Today" &&
@@ -95,14 +140,31 @@ async function runExtendedQcChecks(
       : `Phone number is missing or is a placeholder ("${siteData.phone || "none"}")`,
   });
 
-  // 4. Services populated — at least 3 real (non-default) services
   const defaultServiceNames = new Set([
-    "Buyer Representation", "Seller Services", "Market Analysis", "Investment Properties",
-    "General Dentistry", "Cosmetic Dentistry", "Dental Implants", "Emergency Care",
-    "Personal Injury", "Family Law", "Criminal Defense", "Estate Planning",
-    "Landscape Design", "Lawn Maintenance", "Hardscaping", "Tree Services",
-    "Haircuts & Styling", "Color Services", "Treatments", "Special Occasions",
-    "Consultation", "Full Service", "Emergency Service", "Maintenance",
+    "Buyer Representation",
+    "Seller Services",
+    "Market Analysis",
+    "Investment Properties",
+    "General Dentistry",
+    "Cosmetic Dentistry",
+    "Dental Implants",
+    "Emergency Care",
+    "Personal Injury",
+    "Family Law",
+    "Criminal Defense",
+    "Estate Planning",
+    "Landscape Design",
+    "Lawn Maintenance",
+    "Hardscaping",
+    "Tree Services",
+    "Haircuts & Styling",
+    "Color Services",
+    "Treatments",
+    "Special Occasions",
+    "Consultation",
+    "Full Service",
+    "Emergency Service",
+    "Maintenance",
   ]);
   const realServices = siteData.services.filter((s) => !defaultServiceNames.has(s.name));
   const hasRealServices = realServices.length >= 1 || siteData.services.length >= 3;
@@ -114,8 +176,7 @@ async function runExtendedQcChecks(
       : `All ${siteData.services.length} services appear to be generic defaults — no real business data scraped`,
   });
 
-  // 5. Brand color applied (if scraped from website)
-  const scrapedBrandColor = ((prospect.scrapedData as unknown) as Record<string, unknown> | undefined)?.brandColor as string | undefined;
+  const scrapedBrandColor = prospect.scrapedData?.brandColor as string | undefined;
   if (scrapedBrandColor) {
     const colorApplied = siteData.accentColor === scrapedBrandColor;
     checks.push({
@@ -133,7 +194,6 @@ async function runExtendedQcChecks(
     });
   }
 
-  // 6. Template category match
   const categoryConfig = CATEGORY_CONFIG[siteData.category as keyof typeof CATEGORY_CONFIG];
   const categoryMatches = siteData.category === prospect.category;
   checks.push({
@@ -144,34 +204,28 @@ async function runExtendedQcChecks(
       : `Template category "${siteData.category}" does NOT match prospect category "${prospect.category}"`,
   });
 
-  // 7. Image URL reachability (check up to 3 photos, 3s timeout each)
   const photosToCheck = siteData.photos.slice(0, 3);
   if (photosToCheck.length > 0) {
     let brokenCount = 0;
-    const brokenUrls: string[] = [];
     for (const url of photosToCheck) {
-      if (!url || url.startsWith("/") || url.startsWith("data:")) continue; // local/data URLs are fine
+      if (!url || url.startsWith("/") || url.startsWith("data:")) continue;
       try {
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 3000);
         const res = await fetch(url, { method: "HEAD", signal: controller.signal });
         clearTimeout(timeout);
-        if (!res.ok) {
-          brokenCount++;
-          brokenUrls.push(url);
-        }
+        if (!res.ok) brokenCount += 1;
       } catch {
-        brokenCount++;
-        brokenUrls.push(url);
+        brokenCount += 1;
       }
     }
-    const allLoad = brokenCount === 0;
     checks.push({
       check: "Image URLs",
-      passed: allLoad,
-      detail: allLoad
-        ? `All ${photosToCheck.length} checked images load successfully`
-        : `${brokenCount} of ${photosToCheck.length} images are broken or unreachable`,
+      passed: brokenCount === 0,
+      detail:
+        brokenCount === 0
+          ? `All ${photosToCheck.length} checked images load successfully`
+          : `${brokenCount} of ${photosToCheck.length} images are broken or unreachable`,
     });
   } else {
     checks.push({
@@ -181,103 +235,200 @@ async function runExtendedQcChecks(
     });
   }
 
+  if (categoryConfig) {
+    checks.push({
+      check: "Category Config",
+      passed: true,
+      detail: `Using ${categoryConfig.template || "configured"} template family for ${prospect.category}`,
+    });
+  }
+
   return checks;
+}
+
+function formatExtendedChecks(checks: QcCheckResult[]): string {
+  if (!checks.length) return "";
+  return [
+    "EXTENDED QC CHECKS:",
+    ...checks.map((check) => `  ${check.passed ? "✓" : "✗"} [${check.check}] ${check.detail}`),
+  ].join("\n");
 }
 
 export async function POST(
   _request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = await params;
+  try {
+    const { id } = await params;
 
-  const prospect = await getProspect(id);
-  if (!prospect) {
-    return NextResponse.json({ error: "Prospect not found" }, { status: 404 });
-  }
+    const prospect = await getProspect(id);
+    if (!prospect) {
+      return NextResponse.json({ error: "Prospect not found" }, { status: 404 });
+    }
 
-  const siteData = (await getScrapedData(id)) as GeneratedSiteData | null;
-  if (!siteData) {
+    const siteData = (await getScrapedData(id)) as GeneratedSiteData | null;
+    if (!siteData) {
+      return NextResponse.json(
+        { error: "No generated site data found. Run site generation first." },
+        { status: 400 }
+      );
+    }
+
+    const { claudeRules, qcRules, qcGuide } = await loadRuleDocuments();
+    const websiteResearch = await researchBusinessWebsite(prospect.currentWebsite);
+
+    const mergedScrapedData = mergeScrapedRecords(
+      prospect.scrapedData as Record<string, unknown> | undefined,
+      websiteResearch?.mergedScrapedData as Record<string, unknown> | undefined
+    );
+
+    if (websiteResearch?.mergedScrapedData) {
+      await updateProspect(id, {
+        scrapedData: mergedScrapedData,
+        phone: prospect.phone || (websiteResearch.mergedScrapedData.phone as string | undefined),
+        email: prospect.email || (websiteResearch.mergedScrapedData.email as string | undefined),
+      });
+    }
+
+    const superchargeResult = await runClaudeSupercharge({
+      prospect: {
+        ...prospect,
+        phone: prospect.phone || (websiteResearch?.mergedScrapedData.phone as string | undefined),
+        email: prospect.email || (websiteResearch?.mergedScrapedData.email as string | undefined),
+        scrapedData: mergedScrapedData,
+      },
+      siteData,
+      websiteResearch,
+      claudeRules,
+      qcRules,
+    });
+
+    await saveScrapedData(id, superchargeResult.siteData);
+
+    const qcProspect = {
+      ...prospect,
+      phone: prospect.phone || superchargeResult.siteData.phone || (websiteResearch?.mergedScrapedData.phone as string | undefined),
+      scrapedData: mergedScrapedData,
+    };
+
+    const baseReport = reviewSiteQuality(qcProspect, superchargeResult.siteData);
+    const extendedChecks = await runExtendedQcChecks(
+      {
+        businessName: prospect.businessName,
+        city: prospect.city,
+        phone: qcProspect.phone,
+        category: prospect.category,
+        scrapedData: mergedScrapedData,
+      },
+      superchargeResult.siteData
+    );
+
+    const formattedBase = formatQualityReport(baseReport);
+    const formattedExtended = formatExtendedChecks(extendedChecks);
+    const automatedQcNotes = [formattedBase, formattedExtended].filter(Boolean).join("\n\n");
+
+    const claudeQc = await runClaudeQcReview({
+      prospect: qcProspect,
+      siteData: superchargeResult.siteData,
+      websiteResearch,
+      claudeRules,
+      qcRules,
+      qcGuide,
+      automatedQcNotes,
+    });
+
+    const extendedFailures = extendedChecks.filter((check) => !check.passed);
+    const extendedCritical = extendedChecks.filter(
+      (check) =>
+        !check.passed &&
+        (check.check === "Phone Number" ||
+          check.check === "Business Name" ||
+          check.check === "Template Category Match")
+    );
+    const automatedScore = Math.max(0, baseReport.score - extendedCritical.length * 5);
+    const baseCriticals = baseReport.issues.filter((issue) => issue.severity === "critical").length;
+    const finalScore = Math.round(automatedScore * 0.45 + claudeQc.score * 0.55);
+    const passed =
+      finalScore >= QC_PASS_SCORE &&
+      baseCriticals === 0 &&
+      extendedCritical.length === 0 &&
+      claudeQc.passed;
+    const newStatus = passed ? "ready_to_review" : "qc_failed";
+    const reviewedAt = new Date().toISOString();
+
+    const qualityNotes = [
+      `QC PIPELINE: Claude supercharge → automated checks → Claude premium review`,
+      `Supercharge summary: ${superchargeResult.summary}`,
+      websiteResearch?.summary ? `Website research:\n${websiteResearch.summary}` : "Website research: no original website available.",
+      automatedQcNotes,
+      "CLAUDE PREMIUM REVIEW:",
+      claudeQc.qualityNotes,
+      `FINAL DECISION: ${passed ? "PASS" : "FAIL"}`,
+      `Combined score: ${finalScore}/100 (automated ${automatedScore}/100, Claude ${claudeQc.score}/100)`,
+      `Final status: ${newStatus}`,
+    ]
+      .filter(Boolean)
+      .join("\n\n");
+
+    await updateProspect(id, {
+      status: newStatus,
+      qualityScore: finalScore,
+      qualityNotes,
+      qcReviewedAt: reviewedAt,
+      phone: qcProspect.phone,
+    });
+
+    console.log(
+      `[QC] ${prospect.businessName}: automated=${automatedScore}/100, claude=${claudeQc.score}/100, final=${finalScore}/100, status=${newStatus}`
+    );
+
+    return NextResponse.json({
+      prospectId: id,
+      businessName: prospect.businessName,
+      score: finalScore,
+      passed,
+      status: newStatus,
+      reviewedAt,
+      websiteResearch: {
+        sourceUrl: websiteResearch?.sourceUrl,
+        pageCount: websiteResearch?.pages.length || 0,
+      },
+      supercharge: {
+        model: superchargeResult.model,
+        summary: superchargeResult.summary,
+      },
+      automated: {
+        score: automatedScore,
+        baseReport: {
+          score: baseReport.score,
+          passed: baseReport.passed,
+          issues: baseReport.issues,
+        },
+        extendedChecks,
+        extendedFailures,
+      },
+      claudeReview: {
+        model: claudeQc.model,
+        summary: claudeQc.summary,
+        premiumVerdict: claudeQc.premiumVerdict,
+        score: claudeQc.score,
+        passed: claudeQc.passed,
+        strengths: claudeQc.strengths,
+        blockers: claudeQc.blockers,
+        notes: claudeQc.notes,
+      },
+      qualityNotes,
+    });
+  } catch (error) {
+    console.error("[QC] review pipeline failed:", error);
     return NextResponse.json(
-      { error: "No generated site data found. Run site generation first." },
-      { status: 400 }
+      {
+        error:
+          error instanceof Error ? error.message : "QC review failed unexpectedly.",
+      },
+      { status: 500 }
     );
   }
-
-  // Run base quality review (existing checks)
-  const baseReport = reviewSiteQuality(prospect, siteData);
-
-  // Run extended QC checks (personalization, brand color, images, category)
-  const extendedChecks = await runExtendedQcChecks(
-    {
-      businessName: prospect.businessName,
-      city: prospect.city,
-      phone: prospect.phone,
-      category: prospect.category,
-      scrapedData: prospect.scrapedData as Record<string, unknown> | undefined,
-    },
-    siteData
-  );
-
-  // Merge extended check failures into the report
-  const extendedFailures = extendedChecks.filter((c) => !c.passed);
-  const extendedCritical = extendedChecks.filter(
-    (c) =>
-      !c.passed &&
-      (c.check === "Phone Number" ||
-        c.check === "Business Name" ||
-        c.check === "Template Category Match")
-  );
-
-  // Compute final score: base score minus 5pts per extended critical failure
-  const finalScore = Math.max(0, baseReport.score - extendedCritical.length * 5);
-
-  // Pass criteria: score >= 70 AND no critical issues in base report AND no critical extended failures
-  const baseCriticals = baseReport.issues.filter((i) => i.severity === "critical").length;
-  const passed = finalScore >= QC_PASS_SCORE && baseCriticals === 0 && extendedCritical.length === 0;
-
-  // Build quality notes
-  const formattedBase = formatQualityReport(baseReport);
-  const extendedLines: string[] = [];
-  if (extendedChecks.length > 0) {
-    extendedLines.push("\nEXTENDED QC CHECKS:");
-    for (const c of extendedChecks) {
-      extendedLines.push(`  ${c.passed ? "✓" : "✗"} [${c.check}] ${c.detail}`);
-    }
-  }
-  const qualityNotes = formattedBase + extendedLines.join("\n");
-
-  // Determine new status
-  const newStatus = passed ? "ready_to_review" : "qc_failed";
-
-  // Persist QC results to the prospect record
-  await updateProspect(id, {
-    status: newStatus,
-    qualityScore: finalScore,
-    qualityNotes,
-    qcReviewedAt: new Date().toISOString(),
-  });
-
-  console.log(
-    `  [QC] ${prospect.businessName}: score=${finalScore}/100, status=${newStatus}, ` +
-      `baseCriticals=${baseCriticals}, extendedCriticals=${extendedCritical.length}`
-  );
-
-  return NextResponse.json({
-    prospectId: id,
-    businessName: prospect.businessName,
-    score: finalScore,
-    passed,
-    status: newStatus,
-    baseReport: {
-      score: baseReport.score,
-      passed: baseReport.passed,
-      issues: baseReport.issues,
-    },
-    extendedChecks,
-    extendedFailures,
-    qualityNotes,
-    reviewedAt: new Date().toISOString(),
-  });
 }
 
 export async function GET(
@@ -291,7 +442,6 @@ export async function GET(
     return NextResponse.json({ error: "Prospect not found" }, { status: 404 });
   }
 
-  // Return stored QC result without re-running
   if (prospect.qualityScore === undefined) {
     return NextResponse.json(
       {
