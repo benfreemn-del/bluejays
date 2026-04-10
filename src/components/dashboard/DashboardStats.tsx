@@ -14,10 +14,10 @@ export default function DashboardStats({
   const active = prospects.filter((p) => p.status !== "dismissed");
   const total = active.length;
   const processing = active.filter(
-    (p) => p.status === "scouted" || p.status === "scraped"
+    (p) => p.status === "scouted" || p.status === "scraped" || p.status === "generated"
   ).length;
   const generated = active.filter(
-    (p) => p.generatedSiteUrl && p.status !== "scouted" && p.status !== "scraped"
+    (p) => p.generatedSiteUrl && p.status !== "scouted" && p.status !== "scraped" && p.status !== "generated"
   ).length;
   const contacted = active.filter(
     (p) => p.status === "contacted" || p.status === "responded" || p.status === "paid"

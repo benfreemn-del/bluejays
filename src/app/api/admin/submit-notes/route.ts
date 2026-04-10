@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     const updatedProspects = await Promise.all(
       prospectsToSubmit.map((prospect) =>
         updateProspect(prospect.id, {
-          status: "changes_pending",
+          status: "ready_to_review",
           adminNotesSubmittedAt: submittedAt,
           lastSubmittedAdminNotes: prospect.adminNotes || "",
           lastSubmittedTheme: prospect.selectedTheme,
