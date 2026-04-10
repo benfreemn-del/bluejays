@@ -73,13 +73,30 @@ function getServiceIcon(serviceName: string) {
 }
 
 /* ───────────────────────── STOCK FALLBACK IMAGES ───────────────────────── */
-const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1600518464441-9154a4dea21b?w=1400&q=80"];
-const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1600880292089-90a7e086ee0c?w=600&q=80"];
+/* Moving-relevant stock photos — movers, trucks, boxes, packing */
+const STOCK_HERO_POOL = [
+  "https://images.unsplash.com/photo-1600518464441-9154a4dea21b?w=1400&q=80",   // person carrying box
+  "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=1400&q=80",       // moving boxes stacked
+  "https://images.unsplash.com/photo-1603796846097-bee99e4a601f?w=1400&q=80",     // packed boxes in room
+  "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=1400&q=80",     // couple moving boxes
+  "https://images.unsplash.com/photo-1600585152220-90363fe7e115?w=1400&q=80",     // bright room with boxes
+];
+const STOCK_ABOUT_POOL = [
+  "https://images.unsplash.com/photo-1600880292089-90a7e086ee0c?w=600&q=80",      // people packing
+  "https://images.unsplash.com/photo-1556761175-4b46a572b786?w=600&q=80",         // moving team
+  "https://images.unsplash.com/photo-1527689368864-3a821dbccc34?w=600&q=80",      // apartment packing
+  "https://images.unsplash.com/photo-1586105251261-72a756497a11?w=600&q=80",      // loading truck
+  "https://images.unsplash.com/photo-1600566752355-35792bedcfea?w=600&q=80",      // movers working
+];
 const STOCK_PROJECTS = [
-  "https://images.unsplash.com/photo-1556761175-4b46a572b786?w=600&q=80",
-  "https://images.unsplash.com/photo-1603796846097-bee99e4a601f?w=600&q=80",
-  "https://images.unsplash.com/photo-1494526585095-c41746248156?w=800&q=80",
-  "https://images.unsplash.com/photo-1494526585095-c41746248156?w=800&q=80",
+  "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=600&q=80",         // stacked boxes
+  "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=600&q=80",      // couple with boxes
+  "https://images.unsplash.com/photo-1600585152220-90363fe7e115?w=600&q=80",      // room with boxes
+  "https://images.unsplash.com/photo-1556761175-4b46a572b786?w=600&q=80",         // moving team
+  "https://images.unsplash.com/photo-1527689368864-3a821dbccc34?w=600&q=80",      // apartment move
+  "https://images.unsplash.com/photo-1586105251261-72a756497a11?w=600&q=80",      // truck loading
+  "https://images.unsplash.com/photo-1600566752355-35792bedcfea?w=600&q=80",      // movers at work
+  "https://images.unsplash.com/photo-1600518464441-9154a4dea21b?w=600&q=80",      // carrying boxes
 ];
 
 /* ───────────────────────── FLOATING SPARKLE PARTICLES ───────────────────────── */
@@ -255,9 +272,14 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const { ACCENT, ACCENT_GLOW } = getAccent(data.accentColor);
 
-  const heroImage = data.photos?.[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
-  const aboutImage = data.photos?.[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName);
-  const projectImages = data.photos?.length > 2 ? data.photos.slice(2, 6) : pickGallery(STOCK_PROJECTS, data.businessName);
+  /* Deduplicate scraped photos — ensure hero, card, and about are NEVER the same */
+  const uniquePhotos = data.photos ? [...new Set(data.photos)] : [];
+  const heroImage = uniquePhotos[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
+  const heroCardImage = uniquePhotos[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 1);
+  const aboutImage = uniquePhotos.length >= 2 && uniquePhotos[1] !== uniquePhotos[0]
+    ? uniquePhotos[1]
+    : uniquePhotos[2] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 2);
+  const projectImages = uniquePhotos.length > 2 ? uniquePhotos.slice(2, 6) : pickGallery(STOCK_PROJECTS, data.businessName);
 
   const processSteps = [
     { step: "01", title: "Free Moving Quote", desc: "Tell us about your move and get a detailed, no-obligation estimate." },
@@ -356,7 +378,7 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
           </div>
           <div className="hidden md:block relative">
             <div className="relative rounded-2xl overflow-hidden border border-white/10">
-              <img src={heroImage} alt={`${data.businessName} professional moving`} className="w-full h-[500px] object-cover" />
+              <img src={heroCardImage} alt={`${data.businessName} professional moving`} className="w-full h-[500px] object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a1a] via-transparent to-transparent" />
               <div className="absolute inset-0 bg-gradient-to-r from-[#1a1a1a]/40 to-transparent" />
               <div className="absolute bottom-6 left-6 flex items-center gap-3">
