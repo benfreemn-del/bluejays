@@ -76,6 +76,9 @@ export default function ProspectTable({
   const [openNotesId, setOpenNotesId] = useState<string | null>(null);
   const [noteDrafts, setNoteDrafts] = useState<Record<string, NoteDraft>>({});
   const [submitAllLoading, setSubmitAllLoading] = useState(false);
+  const [sendToClaudeById, setSendToClaudeById] = useState<
+    Record<string, { state: "idle" | "sending" | "success" | "error"; message: string }>
+  >({});
 
   const filtered = prospects.filter((p) => {
     if (categoryFilter && p.category !== categoryFilter) return false;
@@ -293,6 +296,76 @@ export default function ProspectTable({
       setSubmitAllLoading(false);
     }
   };
+
+  const handleSendToClaude = useCallback(async (prospectId: string) => {
+    const prospect = getProspectById(prospectId);
+    const draft = noteDrafts[prospectId];
+    if (!prospect || !draft) return;
+
+    await persistDraft(prospectId, draft);
+    setSendToClaudeById((prev) => ({
+      ...prev,
+      [prospectId]: {
+        state: "sending",
+        message: "Sending the current site context and saved notes to Claude...",
+      },
+    }));
+
+    try {
+      const response = await fetch(`/api/admin/send-to-claude/${prospectId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          adminNotes: draft.adminNotes,
+          selectedTheme: draft.selectedTheme,
+        }),
+      });
+      const data = await response.json();
+
+      if (!response.ok || data.error) {
+        throw new Error(data.error || "Failed to send this site to Claude.");
+      }
+
+      const updatedProspect = data.prospect as Prospect | undefined;
+      if (updatedProspect) {
+        setNoteDrafts((prev) => ({
+          ...prev,
+          [prospectId]: {
+            ...(prev[prospectId] || getInitialDraft(updatedProspect)),
+            adminNotes: updatedProspect.adminNotes || draft.adminNotes,
+            selectedTheme: updatedProspect.selectedTheme,
+            persistedAdminNotes: updatedProspect.adminNotes || "",
+            persistedSelectedTheme: updatedProspect.selectedTheme,
+            saveState: "saved",
+          },
+        }));
+      }
+
+      setSendToClaudeById((prev) => ({
+        ...prev,
+        [prospectId]: {
+          state: "success",
+          message: [
+            data.message,
+            data.handoff?.summary,
+            data.limitations?.dashboardConversationCreated === false ? data.limitations.reason : null,
+          ]
+            .filter(Boolean)
+            .join(" "),
+        },
+      }));
+      onRefresh?.();
+    } catch (error) {
+      setSendToClaudeById((prev) => ({
+        ...prev,
+        [prospectId]: {
+          state: "error",
+          message:
+            error instanceof Error ? error.message : "Failed to send this site to Claude.",
+        },
+      }));
+    }
+  }, [getProspectById, noteDrafts, onRefresh, persistDraft]);
 
   return (
     <div className="relative">
@@ -682,6 +755,13 @@ export default function ProspectTable({
         onClose={() => void closeNotesDrawer()}
         onNotesChange={(value) => {
           if (!openNotesMerged) return;
+          setSendToClaudeById((prev) => ({
+            ...prev,
+            [openNotesMerged.id]: {
+              state: "idle",
+              message: "",
+            },
+          }));
           setNoteDrafts((prev) => ({
             ...prev,
             [openNotesMerged.id]: {
@@ -698,12 +778,22 @@ export default function ProspectTable({
             selectedTheme: theme,
             saveState: "idle",
           };
+          setSendToClaudeById((prev) => ({
+            ...prev,
+            [openNotesMerged.id]: {
+              state: "idle",
+              message: "",
+            },
+          }));
           setNoteDrafts((prev) => ({
             ...prev,
             [openNotesMerged.id]: nextDraft,
           }));
           void persistDraft(openNotesMerged.id, nextDraft);
         }}
+        onSendToClaude={openNotesMerged ? () => handleSendToClaude(openNotesMerged.id) : undefined}
+        sendToClaudeState={openNotesId ? sendToClaudeById[openNotesId]?.state || "idle" : "idle"}
+        sendToClaudeMessage={openNotesId ? sendToClaudeById[openNotesId]?.message || "" : ""}
         previewHref={openNotesMerged ? getThemedPreviewHref(openNotesMerged) : undefined}
       />
     </div>

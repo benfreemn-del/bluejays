@@ -56,6 +56,9 @@ export default function PreviewDevicePage() {
   const [prospect, setProspect] = useState<Prospect | null>(null);
   const [notesOpen, setNotesOpen] = useState(false);
   const [noteDraft, setNoteDraft] = useState<NoteDraft | null>(null);
+  const [sendToClaudeState, setSendToClaudeState] = useState<"idle" | "sending" | "success" | "error">("idle");
+  const [sendToClaudeMessage, setSendToClaudeMessage] = useState("");
+  const [previewRevisionKey, setPreviewRevisionKey] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -221,9 +224,68 @@ export default function PreviewDevicePage() {
       saveState: "idle",
     };
 
+    setSendToClaudeState("idle");
+    setSendToClaudeMessage("");
     setNoteDraft(nextDraft);
     void persistDraft(nextDraft);
   }, [mergedProspect, noteDraft, persistDraft]);
+
+  const handleSendToClaude = useCallback(async () => {
+    if (!mergedProspect || !noteDraft) return;
+
+    await persistDraft(noteDraft);
+    setSendToClaudeState("sending");
+    setSendToClaudeMessage("Sending the current site context and saved notes to Claude...");
+
+    try {
+      const response = await fetch(`/api/admin/send-to-claude/${mergedProspect.id}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          adminNotes: noteDraft.adminNotes,
+          selectedTheme: noteDraft.selectedTheme || effectiveTheme,
+        }),
+      });
+      const data = await response.json();
+
+      if (!response.ok || data.error) {
+        throw new Error(data.error || "Failed to send this site to Claude.");
+      }
+
+      const updatedProspect = data.prospect as Prospect | undefined;
+      if (updatedProspect) {
+        setProspect(updatedProspect);
+        setNoteDraft((prev) => {
+          if (!prev) return prev;
+          return {
+            ...prev,
+            adminNotes: updatedProspect.adminNotes || prev.adminNotes,
+            selectedTheme: updatedProspect.selectedTheme,
+            persistedAdminNotes: updatedProspect.adminNotes || "",
+            persistedSelectedTheme: updatedProspect.selectedTheme,
+            saveState: "saved",
+          };
+        });
+      }
+
+      setSendToClaudeState("success");
+      setSendToClaudeMessage(
+        [data.message, data.handoff?.summary, data.limitations?.dashboardConversationCreated === false ? data.limitations.reason : null]
+          .filter(Boolean)
+          .join(" ")
+      );
+      setPreviewRevisionKey((current) => current + 1);
+    } catch (error) {
+      console.error("[preview-device] Failed to send site to Claude", {
+        id: mergedProspect.id,
+        error,
+      });
+      setSendToClaudeState("error");
+      setSendToClaudeMessage(
+        error instanceof Error ? error.message : "Failed to send this site to Claude."
+      );
+    }
+  }, [effectiveTheme, mergedProspect, noteDraft, persistDraft]);
 
   return (
     <div className="min-h-screen bg-[#050a14] flex flex-col">
@@ -349,8 +411,9 @@ export default function PreviewDevicePage() {
                 <div className="w-20 h-1.5 rounded-full bg-white/20" />
               </div>
             )}
-            <iframe
-              key={previewUrl}
+              <iframe
+                key={`${previewUrl}-${previewRevisionKey}`}
+
               src={previewUrl}
               className="w-full border-0"
               style={{ height: device === "mobile" ? "786px" : "100%" }}
@@ -372,6 +435,8 @@ export default function PreviewDevicePage() {
         onClose={() => void closeNotesDrawer()}
         onNotesChange={(value) => {
           if (!mergedProspect) return;
+          setSendToClaudeState("idle");
+          setSendToClaudeMessage("");
           setNoteDraft((prev) => ({
             ...(prev || getInitialDraft(mergedProspect)),
             adminNotes: value,
@@ -379,6 +444,9 @@ export default function PreviewDevicePage() {
           }));
         }}
         onThemeChange={handleThemeChange}
+        onSendToClaude={handleSendToClaude}
+        sendToClaudeState={sendToClaudeState}
+        sendToClaudeMessage={sendToClaudeMessage}
         previewHref={previewUrl}
       />
     </div>

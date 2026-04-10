@@ -20,6 +20,9 @@ interface ProspectNotesDrawerProps {
   onClose: () => void;
   onNotesChange: (value: string) => void;
   onThemeChange: (theme: "light" | "dark") => void;
+  onSendToClaude?: () => void | Promise<void>;
+  sendToClaudeState?: "idle" | "sending" | "success" | "error";
+  sendToClaudeMessage?: string;
   previewHref?: string;
 }
 
@@ -43,6 +46,9 @@ export default function ProspectNotesDrawer({
   onClose,
   onNotesChange,
   onThemeChange,
+  onSendToClaude,
+  sendToClaudeState = "idle",
+  sendToClaudeMessage,
   previewHref,
 }: ProspectNotesDrawerProps) {
   if (!isOpen || !prospect || !draft) return null;
@@ -53,6 +59,11 @@ export default function ProspectNotesDrawer({
     adminNotes: draft.adminNotes,
     selectedTheme: draft.selectedTheme,
   });
+  const sendToClaudeDisabled =
+    !onSendToClaude ||
+    !draft.adminNotes.trim() ||
+    draft.saveState === "saving" ||
+    sendToClaudeState === "sending";
 
   return (
     <>
@@ -156,6 +167,37 @@ export default function ProspectNotesDrawer({
             <p className="mt-3 text-xs text-muted leading-5">
               Notes are stored immediately so you can close this panel and return later. Use “Submit All Notes” when you are ready to move every changed site into the revision queue.
             </p>
+
+            <div className="mt-4 space-y-3 rounded-xl border border-border/80 bg-slate-950/60 p-3">
+              <button
+                type="button"
+                onClick={() => void onSendToClaude?.()}
+                disabled={sendToClaudeDisabled}
+                className={`inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold transition-colors ${
+                  sendToClaudeDisabled
+                    ? "cursor-not-allowed border border-border bg-surface text-muted"
+                    : "border border-violet-500/40 bg-violet-500/15 text-violet-100 hover:bg-violet-500/25"
+                }`}
+              >
+                {sendToClaudeState === "sending" ? "Sending to Claude…" : "Send to Claude"}
+              </button>
+              <p className="text-xs leading-5 text-muted">
+                Sends this site&apos;s saved notes, business context, current site data, and the visual QC guide to Claude Opus for an immediate revision pass.
+              </p>
+              {sendToClaudeMessage ? (
+                <p
+                  className={`text-xs leading-5 ${
+                    sendToClaudeState === "error"
+                      ? "text-rose-300"
+                      : sendToClaudeState === "success"
+                        ? "text-emerald-300"
+                        : "text-muted"
+                  }`}
+                >
+                  {sendToClaudeMessage}
+                </p>
+              ) : null}
+            </div>
           </section>
         </div>
       </aside>

@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import React, { ReactNode, useState, useEffect } from "react";
+import React, { ReactNode } from "react";
 import BluejayLogo from "../BluejayLogo";
 import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
@@ -19,6 +19,7 @@ interface SocialLinks {
 interface TemplateLayoutProps {
   businessName: string;
   tagline: string;
+  heroSubtitle?: string;
   accentColor: string;
   accentColorLight: string;
   heroGradient: string;
@@ -34,6 +35,7 @@ interface TemplateLayoutProps {
 export default function TemplateLayout({
   businessName,
   tagline,
+  heroSubtitle,
   accentColor,
   heroGradient,
   heroImage,
@@ -50,6 +52,9 @@ export default function TemplateLayout({
   const mutedClass = isLight ? "text-gray-500" : "text-muted";
   const borderClass = isLight ? "border-gray-200" : "border-border";
   const footerBg = isLight ? "bg-gray-50" : "bg-background";
+  const heroTitle = tagline.trim() || businessName;
+  const heroBody = heroSubtitle?.trim();
+
   return (
     <div className={`min-h-screen ${bgClass}`}>
       {/* Navigation */}
@@ -89,10 +94,20 @@ export default function TemplateLayout({
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-4xl md:text-6xl font-bold text-white mb-8"
+            className="text-4xl md:text-6xl font-bold text-white mb-6"
           >
-            {tagline}
+            {heroTitle}
           </motion.h1>
+          {heroBody ? (
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="text-xl text-white/80 mb-8"
+            >
+              {heroBody}
+            </motion.p>
+          ) : null}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
