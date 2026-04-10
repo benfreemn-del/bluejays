@@ -15,6 +15,37 @@ import { logCost, COST_RATES } from "@/lib/cost-logger";
 
 const GOOGLE_API_KEY = process.env.GOOGLE_PLACES_API_KEY;
 
+async function logImageProxyFailure(params: {
+  prospectId?: string;
+  url: string;
+  detail: string;
+  upstreamStatus?: number;
+}): Promise<void> {
+  console.error("[image-proxy] Upstream image fetch failed", {
+    url: params.url,
+    upstreamStatus: params.upstreamStatus,
+    detail: params.detail,
+    prospectId: params.prospectId,
+  });
+
+  if (!params.prospectId) {
+    return;
+  }
+
+  await logCost({
+    prospectId: params.prospectId,
+    service: "image_proxy",
+    action: "fetch",
+    costUsd: 0,
+    status: "failed",
+    metadata: {
+      failedUrl: params.url.substring(0, 500),
+      upstreamStatus: params.upstreamStatus ?? null,
+      error: params.detail.substring(0, 500),
+    },
+  });
+}
+
 export async function GET(request: NextRequest) {
   const url = request.nextUrl.searchParams.get("url");
   const prospectId = request.nextUrl.searchParams.get("prospectId") || undefined;
@@ -23,15 +54,15 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Missing url parameter" }, { status: 400 });
   }
 
+  let fetchUrl = "";
+
   try {
-    let fetchUrl = decodeURIComponent(url).trim();
+    fetchUrl = decodeURIComponent(url).trim();
     const isGooglePhoto = fetchUrl.includes("maps.googleapis.com");
 
     // If it's a Google Places photo URL, ensure API key is appended
-    if (isGooglePhoto && GOOGLE_API_KEY) {
-      if (!fetchUrl.includes("key=")) {
-        fetchUrl += (fetchUrl.includes("?") ? "&" : "?") + `key=${GOOGLE_API_KEY}`;
-      }
+    if (isGooglePhoto && GOOGLE_API_KEY && !fetchUrl.includes("key=")) {
+      fetchUrl += (fetchUrl.includes("?") ? "&" : "?") + `key=${GOOGLE_API_KEY}`;
     }
 
     const response = await fetch(fetchUrl, {
@@ -43,16 +74,21 @@ export async function GET(request: NextRequest) {
     });
 
     if (!response.ok) {
-      // Return a 1x1 transparent pixel instead of an error
-      return new NextResponse(
-        Buffer.from("R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7", "base64"),
+      const detail = `Upstream responded with ${response.status} ${response.statusText}`;
+      await logImageProxyFailure({
+        prospectId,
+        url: fetchUrl,
+        detail,
+        upstreamStatus: response.status,
+      });
+
+      return NextResponse.json(
         {
-          status: 200,
-          headers: {
-            "Content-Type": "image/gif",
-            "Cache-Control": "public, max-age=60",
-          }
-        }
+          error: "Failed to fetch upstream image",
+          detail,
+          url: fetchUrl,
+        },
+        { status: 502 },
       );
     }
 
@@ -74,21 +110,25 @@ export async function GET(request: NextRequest) {
       status: 200,
       headers: {
         "Content-Type": contentType,
-        "Cache-Control": "public, max-age=86400, s-maxage=86400", // Cache 24h
+        "Cache-Control": "public, max-age=86400, s-maxage=86400",
         "Access-Control-Allow-Origin": "*",
       },
     });
-  } catch {
-    // Return transparent pixel on any error
-    return new NextResponse(
-      Buffer.from("R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7", "base64"),
+  } catch (error) {
+    const detail = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
+    await logImageProxyFailure({
+      prospectId,
+      url: fetchUrl || url,
+      detail,
+    });
+
+    return NextResponse.json(
       {
-        status: 200,
-        headers: {
-          "Content-Type": "image/gif",
-          "Cache-Control": "public, max-age=60",
-        }
-      }
+        error: "Failed to fetch upstream image",
+        detail,
+        url: fetchUrl || url,
+      },
+      { status: 502 },
     );
   }
 }
