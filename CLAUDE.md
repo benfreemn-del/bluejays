@@ -3,7 +3,7 @@
 # BlueJays Project — The Money Printer
 
 ## Core Philosophy
-This system is designed to function like a money printer. Every feature should drive toward one goal: scout businesses, build them premium websites, sell those websites at $1,000, and automate as much of the pipeline as possible. Efficiency = profit.
+This system is designed to function like a money printer. Every feature should drive toward one goal: scout businesses, build them premium websites, sell those websites at $997, and automate as much of the pipeline as possible. Efficiency = profit.
 
 ## Quality Rules (NON-NEGOTIABLE)
 - **Every website must match OPS quality level** — the Olympic Protective Services site is the minimum quality bar. Numbered service cards, SVG icons (never emojis), section headers with accent words, decorative underlines, grid patterns, glow effects, rich hover states, industry-specific SVG patterns, and unique personality per category.
@@ -11,7 +11,7 @@ This system is designed to function like a money printer. Every feature should d
 - **Generated preview sites MUST use V2 template components** — for any category that has a V2 template, generated preview sites must render using the V2 component (not the generic PreviewRenderer). The V2 template is the quality standard. A preview sent to a business owner should look identical to the V2 showcase, just with their data injected. The generic PreviewRenderer is only for categories without a V2 template.
 - **Match theme darkness to the industry's vibe** — feminine/elegant businesses (salon, florist, daycare, photography, interior-design, catering) should use LIGHT themes (white/cream backgrounds, dark text). Masculine/trade businesses (electrician, plumber, roofing, auto-repair, towing, construction) should use DARK themes. Medical/professional (dental, law, insurance, accounting) can go either way but lean light for trust. This is a fundamental design principle — a salon site shouldn't look like a garage.
 - **Each template must SCREAM its industry** — Real Estate screams luxury. Dental screams trust. Law screams authority. Landscaping screams nature. Salon screams beauty. If it could be any industry, it's not good enough.
-- **$1,000 is the base price** — firm, no negotiation for agents. Period.
+- **$997 is the base price** — firm, no negotiation for agents. Period.
 - **All generated sites and templates must use the footer credit** — `Created by bluejayportfolio.com`, with `bluejayportfolio.com` rendered as a clickable link to `https://bluejayportfolio.com`. Never use BlueJay Business Solutions wording, BluejayLogo branding, or any other footer variation.
 - **Review approval required** — sites go to "pending-review" before outreach, not straight to "contacted".
 - **Color review agent must pass** — every generated site's color scheme is reviewed for vibrancy and category fit before approval.
@@ -33,7 +33,7 @@ This system is designed to function like a money printer. Every feature should d
 12. **No logos used as hero images.**
 
 ## Project Rules
-1. **Pricing**: $1,000 upfront per website + $100/year maintenance. Domain and hosting included (~$15-17/year cost per client).
+1. **Pricing**: $997 upfront per website + $100/year maintenance. Domain and hosting included.
 2. **Never assume a site passes QC** without visually reviewing it in the browser.
 3. **When a batch fix fails to save to Supabase**, don't declare victory — always verify with a re-fetch after patching.
 4. **Don't give up on fixing all sites in a batch** — if some fail, fix ALL of them before reporting done.
@@ -222,7 +222,7 @@ Before any site can proceed past the quality gate, verify it has attempted to sc
 This agent reviews scraped/Google photos BEFORE they go into the generated site:
 - **Check image quality** — blurry, tiny, dark, or poorly composed photos must be REJECTED. In these cases, use high-quality stock photos instead. This is the ONE exception to the "real photos first" rule: a bad photo is worse than a good stock photo.
 - **Check color scheme** — does the accent color work? Is the palette vibrant and professional? Does it match the industry's premium feel? A site with a muddy or clashing color scheme fails.
-- **Check premium feel** — does this site look like a $1,000 product? Would a business owner be impressed? If it looks cheap, generic, or amateur, it FAILS.
+- **Check premium feel** — does this site look like a $997 product? Would a business owner be impressed? If it looks cheap, generic, or amateur, it FAILS.
 - **Image replacement authority** — this agent has the authority to swap low-quality scraped photos for premium stock alternatives. Customization matters, but visual quality matters MORE. A stunning stock photo beats a blurry phone photo every time.
 - **This agent's review is part of the pipeline** — no site can be marked "pending-review" without passing the image quality check.
 
@@ -311,7 +311,7 @@ When Ben asks to build a V2 (or higher) template for a category, ALL of these st
 - **Future versions (V3+)** — the toggle should support any number of versions as we upgrade categories.
 
 ## Preview = Product Rules (NON-NEGOTIABLE)
-- **The preview URL IS the product** — `/preview/[id]` is the exact link sent to business owners in pitch emails, texts, and DMs. It must look like a $1,000 website, not a prototype.
+- **The preview URL IS the product** — `/preview/[id]` is the exact link sent to business owners in pitch emails, texts, and DMs. It must look like a $997 website, not a prototype.
 - **Preview must match the V2 template quality for its category** — if electrician has a V2 template, the electrician preview must render with V2-level quality (14 sections, glass morphism, particles, trust badges, etc.)
 - **Never send outreach with a generic-looking preview** — if the preview doesn't match V2 quality, it stays in processing until it does.
 - **The preview is the pitch** — a business owner's first impression of our work. One chance. Make it count.
@@ -334,8 +334,8 @@ When Ben asks to build a V2 (or higher) template for a category, ALL of these st
 
 ## Approval & Pricing Rules (NON-NEGOTIABLE)
 - **Ben approves ALL preview sites and final sites manually before they go live or enter the funnel. No site goes out without approval.** This applies to both standard and free-tier prospects. Every site must pass quality gates AND receive explicit manual approval from Ben before any outreach or deployment.
-- **Free tier ($30) is for friends/family only. Default pricing tier is always standard ($1,000).** The free tier exists solely for prospects Ben personally tags as "free" in the dashboard. It charges $30 upfront (covers domain + server costs) instead of $1,000, but still creates the same deferred $100/year management subscription after 1 year. Never auto-assign free tier — it requires manual tagging by Ben.
-- **Two pricing tiers exist**: Standard ($1,000 upfront → $100/yr after 1 year) and Free ($30 upfront → $100/yr after 1 year). The `pricing_tier` column on the prospects table controls which tier applies. The claim page, checkout API, and Stripe session all respect this field dynamically.
+- **Free tier ($30) is for friends/family only. Default pricing tier is always standard ($997).** The free tier exists solely for prospects Ben personally tags as "free" in the dashboard. It charges $30 upfront (covers domain + server costs) instead of $997, but still creates the same deferred $100/year management subscription after 1 year. Never auto-assign free tier — it requires manual tagging by Ben.
+- **Two pricing tiers exist**: Standard ($997 upfront → $100/yr after 1 year) and Free ($30 upfront → $100/yr after 1 year). The `pricing_tier` column on the prospects table controls which tier applies. The claim page, checkout API, and Stripe session all respect this field dynamically.
 
 ## Active Template Categories (41 total)
 real-estate, dental, law-firm, landscaping, salon, electrician, plumber, hvac, roofing, auto-repair, chiropractic, fitness, veterinary, photography, cleaning, pest-control, accounting, moving, florist, daycare, insurance, interior-design, tattoo, martial-arts, physical-therapy, tutoring, pool-spa, general-contractor, catering, pet-services, church, restaurant, medical, painting, fencing, tree-service, pressure-washing, garage-door, locksmith, towing, construction
