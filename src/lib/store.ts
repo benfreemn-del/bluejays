@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import type { Prospect, ScrapedData } from "./types";
 import { supabase, isSupabaseConfigured } from "./supabase";
+import { normalizeAddress } from "./address-normalizer";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const PROSPECTS_FILE = path.join(DATA_DIR, "prospects.json");
@@ -77,6 +78,7 @@ function sanitizeScrapedData(scrapedData: ScrapedData | undefined): ScrapedData 
 
   return {
     ...scrapedData,
+    address: normalizeAddress(scrapedData.address),
     photos: sanitizePhotoUrls(scrapedData.photos),
     logoUrl: scrapedData.logoUrl?.trim() || undefined,
   };
@@ -88,6 +90,7 @@ function sanitizeGeneratedSiteData(data: object | null): object | null {
   const record = data as Record<string, unknown>;
   return {
     ...record,
+    address: normalizeAddress(typeof record.address === "string" ? record.address : undefined),
     photos: sanitizePhotoUrls(record.photos),
   };
 }
@@ -95,6 +98,7 @@ function sanitizeGeneratedSiteData(data: object | null): object | null {
 function sanitizeProspect(prospect: Prospect): Prospect {
   return {
     ...prospect,
+    address: normalizeAddress(prospect.address) || "",
     adminNotes: prospect.adminNotes ?? undefined,
     lastSubmittedAdminNotes: prospect.lastSubmittedAdminNotes ?? undefined,
     scrapedData: sanitizeScrapedData(prospect.scrapedData),

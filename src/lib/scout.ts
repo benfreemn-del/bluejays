@@ -3,6 +3,7 @@ import type { Prospect, ScoutOptions, Category } from "./types";
 import { getMockProspects } from "./mock-prospects";
 import { addProspect, getAllProspects, updateProspect } from "./store";
 import { logCost, COST_RATES } from "./cost-logger";
+import { normalizeAddress } from "./address-normalizer";
 import {
   getSmartQueries,
   checkDuplicate,
@@ -75,7 +76,7 @@ async function scoutWithGoogle(options: ScoutOptions): Promise<Prospect[]> {
       id: uuidv4(),
       businessName: place.name,
       phone,
-      address: place.formatted_address,
+      address: normalizeAddress(place.formatted_address) || "",
       city,
       state: state || "",
       category,

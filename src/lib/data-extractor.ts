@@ -11,6 +11,7 @@
 import { scrapeWebsite, extractInstagramHandle } from "./scraper";
 import type { ScrapedData } from "./types";
 import { logCost, COST_RATES } from "./cost-logger";
+import { normalizeAddress } from "./address-normalizer";
 
 const GOOGLE_API_KEY = process.env.GOOGLE_PLACES_API_KEY;
 
@@ -150,7 +151,7 @@ async function fetchGooglePlaceDetails(
   }
 
   // Fetch full details
-  const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${resolvedPlaceId}&fields=formatted_phone_number,website,opening_hours,photos,reviews,editorial_summary&key=${GOOGLE_API_KEY}`;
+  const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${resolvedPlaceId}&fields=formatted_address,formatted_phone_number,website,opening_hours,photos,reviews,editorial_summary&key=${GOOGLE_API_KEY}`;
   const detailsRes = await fetch(detailsUrl, { signal: AbortSignal.timeout(10000) });
   const detailsData = await detailsRes.json();
 
@@ -167,6 +168,10 @@ async function fetchGooglePlaceDetails(
 
   const result = detailsData.result;
   const data: Partial<ScrapedData> = {};
+
+  if (result.formatted_address) {
+    data.address = normalizeAddress(result.formatted_address);
+  }
 
   if (result.formatted_phone_number) {
     data.phone = result.formatted_phone_number;
@@ -266,7 +271,7 @@ function mergeScrapedData(
     tagline: incoming.tagline || existing.tagline,
     email: incoming.email || existing.email,
     phone: incoming.phone || existing.phone,
-    address: incoming.address || existing.address,
+    address: normalizeAddress(incoming.address || existing.address),
     services:
       incoming.services && incoming.services.length > 0
         ? incoming.services

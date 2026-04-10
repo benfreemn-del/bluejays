@@ -2,6 +2,7 @@ import type { Prospect, Category, ScrapedData } from "./types";
 import { CATEGORY_CONFIG } from "./types";
 import { updateProspect, saveScrapedData } from "./store";
 import { reviewSiteQuality } from "./quality-review";
+import { normalizeAddress } from "./address-normalizer";
 
 /** Pick the best business name — reject truncated, "website", "My Site", empty */
 function getCleanBusinessName(scraped: string | undefined, prospect: string): string {
@@ -138,7 +139,11 @@ function generateStats(category: Category, reviewCount?: number): { value: strin
 export function generateSiteData(prospect: Prospect): GeneratedSiteData {
   const { category, scrapedData } = prospect;
   const config = CATEGORY_CONFIG[category];
-  const sd = ({ ...(scrapedData || {} as ScrapedData), photos: sanitizePhotoUrls(scrapedData?.photos) }) as ScrapedData;
+  const sd = ({
+    ...(scrapedData || {} as ScrapedData),
+    address: normalizeAddress(scrapedData?.address),
+    photos: sanitizePhotoUrls(scrapedData?.photos),
+  }) as ScrapedData;
 
   // CUSTOMIZATION PRIORITY: Always prefer real business data over defaults
   // 1. Use scraped brand color if found, otherwise category default
@@ -173,7 +178,7 @@ export function generateSiteData(prospect: Prospect): GeneratedSiteData {
     accentColor,
     heroGradient,
     phone: sd.phone || prospect.phone || "Call Us Today",
-    address: sd.address || `${prospect.address}, ${prospect.city}, ${prospect.state}`,
+    address: normalizeAddress(sd.address || prospect.address || `${prospect.city}, ${prospect.state}`) || `${prospect.city}, ${prospect.state}`,
     about: sd.about || generateDefaultAbout(prospect.businessName, category),
     services: sd.services?.length > 0 ? sd.services : getDefaultServices(category),
     testimonials: sd.testimonials?.length > 0 ? sd.testimonials : getDefaultTestimonials(category),

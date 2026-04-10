@@ -1,5 +1,6 @@
 import * as cheerio from "cheerio";
 import type { ScrapedData, ServiceItem, Testimonial } from "./types";
+import { normalizeAddress } from "./address-normalizer";
 
 export async function scrapeWebsite(url: string): Promise<ScrapedData> {
   console.log(`  🌐 Scraping ${url}...`);
@@ -166,7 +167,7 @@ function extractAddress(
   if (streetAddress) {
     const locality = $('[itemprop="addressLocality"]').text().trim();
     const region = $('[itemprop="addressRegion"]').text().trim();
-    return [streetAddress, locality, region].filter(Boolean).join(", ");
+    return normalizeAddress([streetAddress, locality, region].filter(Boolean).join(", "));
   }
 
   // Look for address-like elements
@@ -174,13 +175,13 @@ function extractAddress(
     .first()
     .text()
     .trim();
-  if (addressEl && addressEl.length < 200) return addressEl;
+  if (addressEl && addressEl.length < 200) return normalizeAddress(addressEl);
 
   // Regex for street addresses
   const addrRegex =
     /\d{1,5}\s[\w\s]{2,30}(?:St|Street|Ave|Avenue|Blvd|Boulevard|Dr|Drive|Rd|Road|Ln|Lane|Way|Ct|Court|Pl|Place)\.?/i;
   const match = html.match(addrRegex);
-  return match ? match[0] : undefined;
+  return match ? normalizeAddress(match[0]) : undefined;
 }
 
 function extractServices($: cheerio.CheerioAPI): ServiceItem[] {
