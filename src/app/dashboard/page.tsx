@@ -27,9 +27,13 @@ export default function DashboardPage() {
 
   const fetchProspects = useCallback(async () => {
     try {
-      const res = await fetch("/api/prospects");
+      const res = await fetch("/api/prospects", { credentials: "include" });
+      if (!res.ok) {
+        console.error("Failed to fetch prospects:", res.status, res.statusText);
+        return;
+      }
       const data = await res.json();
-      setProspects(data.prospects);
+      setProspects(data.prospects || []);
     } catch (err) {
       console.error("Failed to fetch prospects:", err);
     } finally {
@@ -43,7 +47,7 @@ export default function DashboardPage() {
 
   const handleSendEmail = async (prospect: Prospect) => {
     try {
-      const res = await fetch(`/api/email/send/${prospect.id}`, {
+      const res = await fetch(`/api/email/send/${prospect.id}`, { credentials: "include",
         method: "POST",
       });
       const data = await res.json();
@@ -60,7 +64,7 @@ export default function DashboardPage() {
 
   const handleStatusChange = async (id: string, status: string) => {
     try {
-      await fetch(`/api/prospects/${id}`, {
+      await fetch(`/api/prospects/${id}`, { credentials: "include",
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status }),
@@ -78,7 +82,7 @@ export default function DashboardPage() {
 
   const handleUpdateProspect = async (id: string, updates: Partial<Prospect>) => {
     try {
-      await fetch(`/api/prospects/${id}`, {
+      await fetch(`/api/prospects/${id}`, { credentials: "include",
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updates),
@@ -101,7 +105,7 @@ export default function DashboardPage() {
     }
 
     try {
-      const res = await fetch("/api/funnel/enroll", {
+      const res = await fetch("/api/funnel/enroll", { credentials: "include",
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ prospectIds: [selectedProspect.id] }),
@@ -167,7 +171,7 @@ export default function DashboardPage() {
               onClick={async () => {
                 if (!confirm("Send test funnel to benfreemn@gmail.com? This will send 2 real emails.")) return;
                 try {
-                  const res = await fetch("/api/test-funnel", { method: "POST" });
+                  const res = await fetch("/api/test-funnel", { method: "POST", credentials: "include" });
                   const data = await res.json();
                   alert(data.message || data.error);
                 } catch { alert("Error sending test funnel"); }
@@ -345,7 +349,7 @@ export default function DashboardPage() {
                 onClick={async () => {
                   setAddingLead(true);
                   try {
-                    const res = await fetch("/api/leads/manual", {
+                    const res = await fetch("/api/leads/manual", { credentials: "include",
                       method: "POST",
                       headers: { "Content-Type": "application/json" },
                       body: JSON.stringify(newLead),

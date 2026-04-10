@@ -76,15 +76,15 @@ export default function ProspectDetail({
 
   useEffect(() => {
     if (!prospect) return;
-    fetch(`/api/email/history/${prospect.id}`)
+    fetch(`/api/email/history/${prospect.id}`, { credentials: 'include' })
       .then((r) => r.json())
       .then((data) => setEmails(data.emails || []))
       .catch(() => setEmails([]));
-    fetch(`/api/instagram/${prospect.id}`)
+    fetch(`/api/instagram/${prospect.id}`, { credentials: 'include' })
       .then((r) => r.json())
       .then((data) => setIgData(data))
       .catch(() => setIgData(null));
-    fetch(`/api/vsl/generate/${prospect.id}`)
+    fetch(`/api/vsl/generate/${prospect.id}`, { credentials: 'include' })
       .then((r) => r.json())
       .then((data) => setVslScript(data.vslScript || null))
       .catch(() => setVslScript(null));
@@ -357,7 +357,7 @@ export default function ProspectDetail({
                   onClick={async () => {
                     setQcLoading(true);
                     try {
-                      const res = await fetch(`/api/qc/review/${prospect.id}`, { method: "POST" });
+                      const res = await fetch(`/api/qc/review/${prospect.id}`, { method: "POST", credentials: "include" });
                       const data = await res.json();
                       setQcResult(data);
                       if (data.status) onStatusChange(prospect.id, data.status);
@@ -483,7 +483,7 @@ export default function ProspectDetail({
               {prospect.phone && prospect.generatedSiteUrl && (prospect.status === "approved" || prospect.status === "deployed" || prospect.status === "generated") && (
                 <button
                   onClick={async () => {
-                    const res = await fetch(`/api/sms/send/${prospect.id}`, { method: "POST" });
+                    const res = await fetch(`/api/sms/send/${prospect.id}`, { method: "POST", credentials: "include" });
                     const data = await res.json();
                     if (res.ok) alert(`SMS sent to ${prospect.phone}!`);
                     else alert(`Error: ${data.error}`);
@@ -502,7 +502,7 @@ export default function ProspectDetail({
                 onClick={async () => {
                   setSimLoading(true);
                   try {
-                    const res = await fetch(`/api/funnel/simulate/${prospect.id}`);
+                    const res = await fetch(`/api/funnel/simulate/${prospect.id}`, { credentials: 'include' });
                     const data = await res.json();
                     setSimReport(data);
                     setSimOpen(true);
@@ -570,7 +570,7 @@ export default function ProspectDetail({
                           body: JSON.stringify({ instagramHandle: igHandleEdit.trim() }),
                         });
                         // Refresh IG data
-                        const res = await fetch(`/api/instagram/${prospect.id}`);
+                        const res = await fetch(`/api/instagram/${prospect.id}`, { credentials: 'include' });
                         const data = await res.json();
                         setIgData(data);
                         setIgHandleEdit("");
@@ -893,7 +893,7 @@ function ThemeToggleSection({
       onUpdateProspect(prospect.id, { selectedTheme: theme });
     } else {
       // Fallback: direct API call
-      await fetch(`/api/prospects/${prospect.id}`, {
+      await fetch(`/api/prospects/${prospect.id}`, { credentials: "include",
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ selectedTheme: theme }),

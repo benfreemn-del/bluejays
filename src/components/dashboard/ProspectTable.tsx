@@ -155,7 +155,7 @@ export default function ProspectTable({
     }));
 
     try {
-      const res = await fetch(`/api/prospects/${prospectId}`, {
+      const res = await fetch(`/api/prospects/${prospectId}`, { credentials: "include",
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -381,7 +381,7 @@ export default function ProspectTable({
               onClick={async () => {
                 setBulkSending(true);
                 for (const pid of selectedIds) {
-                  await fetch(`/api/prospects/${pid}`, {
+                  await fetch(`/api/prospects/${pid}`, { credentials: "include",
                     method: "PATCH",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ status: "dismissed" }),
@@ -526,7 +526,7 @@ export default function ProspectTable({
                           onClick={async () => {
                             setBuildingIds((prev) => [...prev, prospect.id]);
                             try {
-                              await fetch(`/api/generate/${prospect.id}`, { method: "POST" });
+                              await fetch(`/api/generate/${prospect.id}`, { method: "POST", credentials: "include" });
                             } catch {
                               // noop
                             }
@@ -557,7 +557,7 @@ export default function ProspectTable({
                       {(prospect.status === "pending-review" || prospect.status === "ready_to_review") && (
                         <button
                           onClick={async () => {
-                            await fetch(`/api/prospects/${prospect.id}`, {
+                            await fetch(`/api/prospects/${prospect.id}`, { credentials: "include",
                               method: "PATCH",
                               headers: { "Content-Type": "application/json" },
                               body: JSON.stringify({ status: "approved" }),
@@ -573,7 +573,7 @@ export default function ProspectTable({
                       {prospect.status === "qc_failed" && (
                         <button
                           onClick={async () => {
-                            await fetch(`/api/qc/review/${prospect.id}`, { method: "POST" });
+                            await fetch(`/api/qc/review/${prospect.id}`, { method: "POST", credentials: "include" });
                             onRefresh?.();
                           }}
                           className="text-xs px-2.5 py-1.5 rounded-lg bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 transition-colors"
@@ -595,7 +595,7 @@ export default function ProspectTable({
                         <>
                           <button
                             onClick={async () => {
-                              await fetch(`/api/sms/send/${prospect.id}`, { method: "POST" });
+                              await fetch(`/api/sms/send/${prospect.id}`, { method: "POST", credentials: "include" });
                               alert(`Text sent to ${prospect.phone}!`);
                               onRefresh?.();
                             }}
@@ -607,7 +607,7 @@ export default function ProspectTable({
                           <button
                             onClick={async () => {
                               if (!confirm(`Drop voicemail to ${prospect.phone}?`)) return;
-                              const res = await fetch(`/api/voicemail/drop/${prospect.id}`, { method: "POST" });
+                              const res = await fetch(`/api/voicemail/drop/${prospect.id}`, { method: "POST", credentials: "include" });
                               const data = await res.json();
                               alert(data.message || data.error);
                               onRefresh?.();
