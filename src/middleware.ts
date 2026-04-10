@@ -54,6 +54,7 @@ const PUBLIC_API_PATHS = [
   "/api/webhooks/stripe",
   "/api/inbound/email",
   "/api/inbound/sms",
+  "/api/inbound/vonage-sms",
   "/api/checkout/create", // Prospects need to create checkout sessions
   "/api/proposals/",
   "/api/calendar/available-slots",

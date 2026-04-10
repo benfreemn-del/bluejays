@@ -357,12 +357,13 @@ async function executeSend(channel: DeliveryChannel, payload: FunnelDeliveryPayl
   }
 
   if (!payload.sms) throw new Error("SMS payload missing");
-  await sendSms(
+  const sms = await sendSms(
     payload.prospectId,
     payload.sms.to,
     payload.sms.body,
     payload.sms.sequence
   );
+  console.log(`[Funnel Delivery] SMS sent via ${sms.method} to ${payload.sms.to}`);
 }
 
 export async function getActiveFunnelRetry(

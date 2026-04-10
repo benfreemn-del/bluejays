@@ -46,6 +46,10 @@ export type Category =
   | "carpet-cleaning"
   | "event-planning";
 
+export type SmsMethod = "twilio" | "vonage" | "mock";
+
+export type SmsProvider = "vonage" | "twilio" | "auto";
+
 export type ProspectStatus =
   | "scouted"
   | "scraped"
