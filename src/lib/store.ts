@@ -5,6 +5,63 @@ import { supabase, isSupabaseConfigured } from "./supabase";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const PROSPECTS_FILE = path.join(DATA_DIR, "prospects.json");
+const GENERATED_SITE_FETCH_RETRIES = 3;
+const GENERATED_SITE_BACKOFF_MS = 250;
+
+function wait(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function logGeneratedSiteFetchError(id: string, attempt: number, error: unknown) {
+  console.error("[store] Failed to load generated site data", {
+    prospectId: id,
+    attempt,
+    error,
+  });
+}
+
+function logGeneratedSiteMissing(id: string) {
+  console.warn("[store] No generated site data found for prospect", {
+    prospectId: id,
+  });
+}
+
+interface GeneratedSiteRow {
+  site_data: object | null;
+}
+
+async function fetchGeneratedSiteRow(id: string): Promise<GeneratedSiteRow | null> {
+  const { data, error } = await supabase
+    .from("generated_sites")
+    .select("site_data")
+    .eq("prospect_id", id)
+    .limit(1);
+
+  if (error) {
+    throw error;
+  }
+
+  return Array.isArray(data) && data.length > 0 ? (data[0] as GeneratedSiteRow) : null;
+}
+
+async function getGeneratedSiteRowWithRetry(id: string): Promise<GeneratedSiteRow | null> {
+  for (let attempt = 1; attempt <= GENERATED_SITE_FETCH_RETRIES; attempt += 1) {
+    try {
+      return await fetchGeneratedSiteRow(id);
+    } catch (error) {
+      logGeneratedSiteFetchError(id, attempt, error);
+
+      if (attempt === GENERATED_SITE_FETCH_RETRIES) {
+        return null;
+      }
+
+      await wait(GENERATED_SITE_BACKOFF_MS * attempt);
+    }
+  }
+
+  return null;
+}
+
 
 function sanitizePhotoUrls(photos: unknown): string[] {
   if (!Array.isArray(photos)) return [];
@@ -331,13 +388,14 @@ export async function saveScrapedData(id: string, data: object): Promise<void> {
 
 export async function getScrapedData(id: string): Promise<object | null> {
   if (isSupabaseConfigured()) {
-    const { data, error } = await supabase
-      .from("generated_sites")
-      .select("site_data")
-      .eq("prospect_id", id)
-      .single();
-    if (error || !data) return null;
-    return sanitizeGeneratedSiteData(data.site_data);
+    const row = await getGeneratedSiteRowWithRetry(id);
+
+    if (!row?.site_data) {
+      logGeneratedSiteMissing(id);
+      return null;
+    }
+
+    return sanitizeGeneratedSiteData(row.site_data);
   }
   const filePath = path.join(DATA_DIR, "scraped", `${id}.json`);
   if (!fs.existsSync(filePath)) return null;

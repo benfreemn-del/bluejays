@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
 import ProspectNotesDrawer, { ProspectNotesButton } from "@/components/dashboard/ProspectNotesDrawer";
 import type { Prospect } from "@/lib/types";
 
@@ -27,6 +27,14 @@ function getThemeFromSearchParam(theme: string | null): "light" | "dark" | undef
   return theme === "light" || theme === "dark" ? theme : undefined;
 }
 
+function getVersionFromSearchParam(version: string | null): "v1" | "v2" {
+  return version === "v1" ? "v1" : "v2";
+}
+
+function getDeviceFromSearchParam(device: string | null): "desktop" | "mobile" {
+  return device === "mobile" ? "mobile" : "desktop";
+}
+
 function buildPreviewUrl(id: string, version: "v1" | "v2", theme: "light" | "dark") {
   const params = new URLSearchParams({ theme });
   if (version === "v1") {
@@ -37,12 +45,14 @@ function buildPreviewUrl(id: string, version: "v1" | "v2", theme: "light" | "dar
 
 export default function PreviewDevicePage() {
   const params = useParams();
+  const pathname = usePathname();
+  const router = useRouter();
   const searchParams = useSearchParams();
   const id = params.id as string;
   const searchTheme = getThemeFromSearchParam(searchParams.get("theme"));
 
-  const [device, setDevice] = useState<"desktop" | "mobile">("desktop");
-  const [version, setVersion] = useState<"v2" | "v1">("v2");
+  const [device, setDevice] = useState<"desktop" | "mobile">(() => getDeviceFromSearchParam(searchParams.get("device")));
+  const [version, setVersion] = useState<"v2" | "v1">(() => getVersionFromSearchParam(searchParams.get("version")));
   const [prospect, setProspect] = useState<Prospect | null>(null);
   const [notesOpen, setNotesOpen] = useState(false);
   const [noteDraft, setNoteDraft] = useState<NoteDraft | null>(null);
@@ -58,9 +68,13 @@ export default function PreviewDevicePage() {
 
         const nextProspect = data as Prospect;
         setProspect(nextProspect);
-        setNoteDraft((current) => current || getInitialDraft(nextProspect));
-      } catch {
-        // noop
+        setNoteDraft((current) => {
+          if (current) return current;
+          const initialDraft = getInitialDraft(nextProspect);
+          return searchTheme ? { ...initialDraft, selectedTheme: searchTheme } : initialDraft;
+        });
+      } catch (error) {
+        console.error("[preview-device] Failed to load prospect", { id, error });
       }
     }
 
@@ -69,7 +83,7 @@ export default function PreviewDevicePage() {
     return () => {
       cancelled = true;
     };
-  }, [id]);
+  }, [id, searchTheme]);
 
   const mergedProspect = useMemo(() => {
     if (!prospect) return null;
@@ -90,6 +104,36 @@ export default function PreviewDevicePage() {
     "dark";
 
   const previewUrl = buildPreviewUrl(id, version, effectiveTheme);
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams.toString());
+    const currentTheme = nextParams.get("theme");
+    const currentVersion = nextParams.get("version") || "v2";
+    const currentDevice = nextParams.get("device") || "desktop";
+
+    if (
+      currentTheme === effectiveTheme &&
+      currentVersion === version &&
+      currentDevice === device
+    ) {
+      return;
+    }
+
+    nextParams.set("theme", effectiveTheme);
+    if (version === "v1") {
+      nextParams.set("version", "v1");
+    } else {
+      nextParams.delete("version");
+    }
+    if (device === "mobile") {
+      nextParams.set("device", "mobile");
+    } else {
+      nextParams.delete("device");
+    }
+
+    const nextQuery = nextParams.toString();
+    router.replace(nextQuery ? `${pathname}?${nextQuery}` : pathname, { scroll: false });
+  }, [device, effectiveTheme, pathname, router, searchParams, version]);
 
   const persistDraft = useCallback(async (draftOverride?: NoteDraft) => {
     const currentDraft = draftOverride || noteDraft;
@@ -140,7 +184,8 @@ export default function PreviewDevicePage() {
           return { ...prev, saveState: "idle" };
         });
       }, 1200);
-    } catch {
+    } catch (error) {
+      console.error("[preview-device] Failed to persist draft", { id: prospect.id, error });
       setNoteDraft((prev) => (prev ? { ...prev, saveState: "error" } : prev));
     }
   }, [noteDraft, prospect]);
@@ -166,6 +211,19 @@ export default function PreviewDevicePage() {
     await persistDraft();
     setNotesOpen(false);
   };
+
+  const handleThemeChange = useCallback((theme: "light" | "dark") => {
+    if (!mergedProspect) return;
+
+    const nextDraft: NoteDraft = {
+      ...(noteDraft || getInitialDraft(mergedProspect)),
+      selectedTheme: theme,
+      saveState: "idle",
+    };
+
+    setNoteDraft(nextDraft);
+    void persistDraft(nextDraft);
+  }, [mergedProspect, noteDraft, persistDraft]);
 
   return (
     <div className="min-h-screen bg-[#050a14] flex flex-col">
@@ -215,6 +273,27 @@ export default function PreviewDevicePage() {
           </button>
           <span className="w-px h-6 bg-white/10 mx-1" />
           <button
+            onClick={() => handleThemeChange("dark")}
+            className={`h-9 px-3 rounded-lg text-sm font-medium transition-all ${
+              effectiveTheme === "dark"
+                ? "bg-violet-500/20 text-violet-300 border border-violet-500/40"
+                : "bg-white/[0.04] text-white/40 border border-white/[0.08] hover:text-white/60"
+            }`}
+          >
+            Dark
+          </button>
+          <button
+            onClick={() => handleThemeChange("light")}
+            className={`h-9 px-3 rounded-lg text-sm font-medium transition-all ${
+              effectiveTheme === "light"
+                ? "bg-amber-500/20 text-amber-300 border border-amber-500/40"
+                : "bg-white/[0.04] text-white/40 border border-white/[0.08] hover:text-white/60"
+            }`}
+          >
+            Light
+          </button>
+          <span className="w-px h-6 bg-white/10 mx-1" />
+          <button
             onClick={() => setDevice("desktop")}
             className={`h-9 px-4 rounded-lg text-sm font-medium flex items-center gap-2 transition-all ${
               device === "desktop"
@@ -254,32 +333,35 @@ export default function PreviewDevicePage() {
         </div>
       </div>
 
-      <div className="flex-1 flex items-start justify-center p-6 bg-[#0a0a0a]">
-        <div
-          className="bg-white rounded-lg shadow-2xl overflow-hidden transition-all duration-500 relative"
-          style={{
-            width: device === "desktop" ? "100%" : "375px",
-            maxWidth: device === "desktop" ? "1280px" : "375px",
-            height: device === "desktop" ? "calc(100vh - 80px)" : "812px",
-          }}
-        >
-          {device === "mobile" && (
-            <div className="h-6 bg-black flex items-center justify-center">
-              <div className="w-20 h-1.5 rounded-full bg-white/20" />
-            </div>
-          )}
-          <iframe
-            key={previewUrl}
-            src={previewUrl}
-            className="w-full border-0"
-            style={{ height: device === "mobile" ? "786px" : "100%" }}
-            title={`${prospect?.businessName || "Preview"} preview - ${device}`}
-          />
-          {device === "mobile" && (
-            <div className="h-5 bg-black flex items-center justify-center">
-              <div className="w-32 h-1 rounded-full bg-white/20" />
-            </div>
-          )}
+      <div className="flex-1 flex items-start justify-center p-6 bg-[#0a0a0a] overflow-auto">
+        <div className={`w-full flex justify-center ${device === "desktop" ? "items-stretch" : "items-start"}`}>
+          <div
+            className="bg-white rounded-lg shadow-2xl overflow-hidden transition-all duration-500 relative"
+            style={{
+              width: device === "desktop" ? "100%" : "375px",
+              maxWidth: device === "desktop" ? "1280px" : "375px",
+              minWidth: device === "desktop" ? "0" : "375px",
+              height: device === "desktop" ? "calc(100vh - 104px)" : "812px",
+            }}
+          >
+            {device === "mobile" && (
+              <div className="h-6 bg-black flex items-center justify-center">
+                <div className="w-20 h-1.5 rounded-full bg-white/20" />
+              </div>
+            )}
+            <iframe
+              key={previewUrl}
+              src={previewUrl}
+              className="w-full border-0"
+              style={{ height: device === "mobile" ? "786px" : "100%" }}
+              title={`${prospect?.businessName || "Preview"} preview - ${device}`}
+            />
+            {device === "mobile" && (
+              <div className="h-5 bg-black flex items-center justify-center">
+                <div className="w-32 h-1 rounded-full bg-white/20" />
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -296,16 +378,7 @@ export default function PreviewDevicePage() {
             saveState: "idle",
           }));
         }}
-        onThemeChange={(theme) => {
-          if (!mergedProspect) return;
-          const nextDraft: NoteDraft = {
-            ...(noteDraft || getInitialDraft(mergedProspect)),
-            selectedTheme: theme,
-            saveState: "idle",
-          };
-          setNoteDraft(nextDraft);
-          void persistDraft(nextDraft);
-        }}
+        onThemeChange={handleThemeChange}
         previewHref={previewUrl}
       />
     </div>
