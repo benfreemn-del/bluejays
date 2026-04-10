@@ -149,7 +149,7 @@ function WaterDropBackground({ opacity = 0.03, accent }: { opacity?: number; acc
 /* ───────────────────────── GLASS CARD ───────────────────────── */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
+    <div className={`rounded-2xl border border-white/15 bg-white/[0.06] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.08)] ${className}`}>
       {children}
     </div>
   );
@@ -374,7 +374,7 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
       <section className="relative z-10 py-16 overflow-hidden border-y" style={{ borderColor: `${ACCENT}1a` }}>
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f0d08 0%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
-        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] rounded-full blur-[180px]" style={{ background: `${ACCENT}08` }} /></div>
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] rounded-full blur-[180px]" style={{ background: `${ACCENT}15` }} /></div>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {data.stats.map((stat, i) => {
@@ -395,12 +395,12 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
       </section>
 
       {/* ══════════════════ 4. SERVICES ══════════════════ */}
-      <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <section id="services" className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f0d08 50%, #1a1a1a 100%)" }} />
         <SparklePattern accent={ACCENT} />
         <WaterDropBackground opacity={0.025} accent={ACCENT} />
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-[10%] right-[5%] w-[500px] h-[500px] rounded-full blur-[160px]" style={{ background: `${ACCENT}08` }} />
+          <div className="absolute top-[10%] right-[5%] w-[500px] h-[500px] rounded-full blur-[160px]" style={{ background: `${ACCENT}15` }} />
           <div className="absolute bottom-[10%] left-[5%] w-[400px] h-[400px] rounded-full blur-[140px]" style={{ background: `${BROWN}05` }} />
         </div>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -431,7 +431,7 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
       </section>
 
       {/* ══════════════════ 5. WHY CHOOSE US / ABOUT ══════════════════ */}
-      <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <section id="about" className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #1a1005 50%, #1a1a1a 100%)" }} />
         <WaterDropBackground opacity={0.02} accent={ACCENT} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${ACCENT}06` }} /></div>
@@ -467,7 +467,7 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
       </section>
 
       {/* ══════════════════ 6. PROCESS ══════════════════ */}
-      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f0d08 50%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.025} accent={ACCENT} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${BROWN}06` }} /></div>
@@ -491,7 +491,7 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
       </section>
 
       {/* ══════════════════ 7. GALLERY ══════════════════ */}
-      <section id="gallery" className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <section id="gallery" className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #1a1005 50%, #1a1a1a 100%)" }} />
         <WaterDropBackground opacity={0.02} accent={ACCENT} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] left-[20%] w-[500px] h-[500px] rounded-full blur-[200px]" style={{ background: `${ACCENT}06` }} /></div>
@@ -517,7 +517,7 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
       </section>
 
       {/* ══════════════════ 8. TESTIMONIALS ══════════════════ */}
-      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f0d08 50%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] right-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${ACCENT}06` }} /></div>
@@ -553,7 +553,7 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
       </section>
 
       {/* ══════════════════ 10. CHECKLIST / WHAT WE CLEAN ══════════════════ */}
-      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #1a1005 50%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[40%] right-[20%] w-[400px] h-[400px] rounded-full blur-[180px]" style={{ background: `${BROWN}06` }} /></div>
@@ -571,7 +571,7 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
       </section>
 
       {/* ══════════════════ 11. SERVICE AREAS ══════════════════ */}
-      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f0d08 50%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[40%] right-[20%] w-[400px] h-[400px] rounded-full blur-[180px]" style={{ background: `${ACCENT}06` }} /></div>
@@ -588,7 +588,7 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
 
       {/* ══════════════════ 12. HOURS ══════════════════ */}
       {data.hours && (
-        <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <section className="relative z-10 py-16 md:py-24 overflow-hidden">
           <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #1a1005 50%, #1a1a1a 100%)" }} />
           <WaterDropBackground opacity={0.02} accent={ACCENT} />
           <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${ACCENT}06` }} /></div>
@@ -609,7 +609,7 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
       
       {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
       <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15, ${ACCENT}08)` }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15, ${ACCENT}15)` }} />
         <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
           <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: ACCENT }}>
             Don&apos;t Miss Out
@@ -634,7 +634,7 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
       </section>
 
       {/* ══════════════════ 13. FAQ ══════════════════ */}
-      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f0d08 50%, #1a1a1a 100%)" }} />
         <WaterDropBackground opacity={0.02} accent={ACCENT} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${ACCENT}06` }} /></div>
@@ -649,7 +649,7 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
       </section>
 
       {/* ══════════════════ 14. CONTACT ══════════════════ */}
-      <section id="contact" className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <section id="contact" className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #1a1005 50%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${ACCENT}06` }} /></div>
