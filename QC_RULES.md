@@ -1,5 +1,7 @@
 # BlueJays Quality Control Rules
 
+> **Important:** This file covers automated QC data checks. For the full visual review process (which is mandatory before any site enters the preview queue), see VISUAL_QC_REVIEW_GUIDE.md.
+
 This document is the **single source of truth** for BlueJays preview-site quality standards. Every generated preview must satisfy these rules before it can be approved for outreach, manual review, delivery, or deployment. If any required rule fails, the site is **not ready**.
 
 ## Release Standard

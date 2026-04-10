@@ -404,3 +404,10 @@ tattoo, photography, interior-design, florist, landscaping, salon, catering, pet
 - **Every template MUST have a visually engaging hero section** — either a background image, hero image, gradient with animation, or decorative SVG pattern. No empty/flat text-only heroes. First impressions are critical: prospects open these sites from a text message and the hero is the first thing they see.
 - **Acceptable hero treatments**: full-bleed background image with overlay, animated gradient, decorative SVG silhouette pattern, or a prominent foreground hero image. A solid color or simple linear gradient with no visual element is NOT acceptable.
 - **Mobile must look premium too** — hero images must use `object-cover` and be properly centered. Test at 375px width. A hero that looks great on desktop but breaks on mobile is a failure.
+
+## Visual QC Review Guide
+- **Every generated site MUST pass the full Visual QC Review Guide (VISUAL_QC_REVIEW_GUIDE.md) before entering Ben's preview queue.**
+- **The reviewer MUST open each site in a browser, view it on desktop AND mobile (375px), visit the prospect's existing website, and compare.**
+- **No automated-only review is sufficient. Every site must be visually inspected one at a time.**
+- **Only A-grade sites (as defined in the guide) can move to pending-review status.**
+- **See VISUAL_QC_REVIEW_GUIDE.md for the complete checklist.**
