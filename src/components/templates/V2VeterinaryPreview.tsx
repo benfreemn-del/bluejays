@@ -96,15 +96,20 @@ const STOCK_ABOUT_POOL = [
   "https://images.unsplash.com/photo-1548767797-d8c844163c4c?w=600&q=80",       // cat portrait
   "https://images.unsplash.com/photo-1450778869180-e77e3ec1c771?w=600&q=80",    // vet holding puppy
 ];
+/* 12 unique vet-relevant gallery images — enough to pick 4 without collisions */
 const STOCK_GALLERY_POOL = [
-  "https://images.unsplash.com/photo-1601758003122-53c40e686a19?w=600&q=80",
-  "https://images.unsplash.com/photo-1534361960057-19889db9621e?w=600&q=80",
-  "https://images.unsplash.com/photo-1592194996308-7b43878e84a6?w=600&q=80",
-  "https://images.unsplash.com/photo-1574158622682-e40e69881006?w=600&q=80",
-  "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=600&q=80",
-  "https://images.unsplash.com/photo-1583512603805-3cc6b41f3edb?w=600&q=80",
-  "https://images.unsplash.com/photo-1596854407944-bf87f6fdd49e?w=600&q=80",
-  "https://images.unsplash.com/photo-1552053831-71594a27632d?w=600&q=80",
+  "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600&q=80",   // golden retriever happy
+  "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=600&q=80",   // bulldog portrait
+  "https://images.unsplash.com/photo-1574158622682-e40e69881006?w=600&q=80",   // cat looking up
+  "https://images.unsplash.com/photo-1596854407944-bf87f6fdd49e?w=600&q=80",   // golden puppy
+  "https://images.unsplash.com/photo-1534361960057-19889db9621e?w=600&q=80",   // dog running field
+  "https://images.unsplash.com/photo-1583512603805-3cc6b41f3edb?w=600&q=80",   // french bulldog
+  "https://images.unsplash.com/photo-1552053831-71594a27632d?w=600&q=80",      // golden with scarf
+  "https://images.unsplash.com/photo-1592194996308-7b43878e84a6?w=600&q=80",   // cat closeup
+  "https://images.unsplash.com/photo-1601758003122-53c40e686a19?w=600&q=80",   // corgi puppy
+  "https://images.unsplash.com/photo-1576201836106-db1758fd1c97?w=600&q=80",   // dog at vet visit
+  "https://images.unsplash.com/photo-1511382686815-a9a670c26849?w=600&q=80",   // cat with vet
+  "https://images.unsplash.com/photo-1535930749574-1399327ce78f?w=600&q=80",   // lab puppy face
 ];
 
 function hashName(name: string) {
@@ -119,9 +124,14 @@ function pickFromPool<T>(pool: T[], name: string, offset = 0): T {
 
 function pickGallery(name: string): string[] {
   const h = hashName(name);
+  const used = new Set<number>();
   const result: string[] = [];
-  for (let i = 0; i < 4; i++) {
-    result.push(STOCK_GALLERY_POOL[(h + i * 3) % STOCK_GALLERY_POOL.length]);
+  for (let i = 0; result.length < 4 && i < 20; i++) {
+    const idx = (h + i * 7) % STOCK_GALLERY_POOL.length;
+    if (!used.has(idx)) {
+      used.add(idx);
+      result.push(STOCK_GALLERY_POOL[idx]);
+    }
   }
   return result;
 }
