@@ -49,8 +49,9 @@ function getProviderOrder(): ResolvedSmsProvider[] {
   if (preferred === "vonage") return ["vonage", "twilio"];
   if (preferred === "twilio") return ["twilio", "vonage"];
 
-  if (isVonageConfigured()) return ["vonage", "twilio"];
-  return ["twilio", "vonage"];
+  // Default: Twilio primary, Vonage backup
+  if (isTwilioConfigured()) return ["twilio", "vonage"];
+  return ["vonage", "twilio"];
 }
 
 async function sendViaTwilio(to: string, body: string): Promise<SmsSendAttemptResult> {
