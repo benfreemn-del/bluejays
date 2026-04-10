@@ -239,7 +239,7 @@ export default function V2CateringPreview({ data }: { data: GeneratedSiteData })
             <div className="relative rounded-2xl overflow-hidden border border-gray-200">
               <img src={heroImage} alt={`${data.businessName} catering`} className="w-full h-[500px] object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-              <div className="absolute bottom-6 left-6"><div className="px-4 py-2 rounded-full backdrop-blur-md bg-black/50 border flex items-center gap-2" style={{ borderColor: `${ACCENT}4d` }}><Star size={18} weight="fill" style={{ color: GOLD }} /><span className="text-sm font-semibold text-[#1c1917]">Award-Winning Cuisine</span></div></div>
+              <div className="absolute bottom-6 left-6"><div className="px-4 py-2 rounded-full backdrop-blur-md bg-black/50 border flex items-center gap-2" style={{ borderColor: `${ACCENT}4d` }}><Star size={18} weight="fill" style={{ color: GOLD }} /><span className="text-sm font-semibold text-white">Award-Winning Cuisine</span></div></div>
             </div>
           </div>
         </div>

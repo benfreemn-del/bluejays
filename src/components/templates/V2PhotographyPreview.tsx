@@ -377,11 +377,11 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
           <div className="max-w-2xl space-y-8">
             <div>
               <p className="text-sm uppercase tracking-widest mb-4" style={{ color: PRIMARY }}>Professional Photography</p>
-              <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-[#1c1917]" style={{ textShadow: "0 2px 20px rgba(0,0,0,0.7)" }}>
+              <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 20px rgba(0,0,0,0.7)" }}>
                 {data.tagline}
               </h1>
             </div>
-            <p className="text-lg text-[#4b5563] max-w-md leading-relaxed">
+            <p className="text-lg text-white/70 max-w-md leading-relaxed">
               {data.about.length > 160 ? data.about.slice(0, 160).trim() + "..." : data.about}
             </p>
             <div className="flex flex-wrap gap-4">
@@ -389,12 +389,12 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
                 View Portfolio
                 <ArrowRight size={18} weight="bold" />
               </MagneticButton>
-              <MagneticButton href={`tel:${data.phone.replace(/\D/g, "")}`} className="px-8 py-4 rounded-full text-base font-semibold text-[#1c1917] border border-white/20 flex items-center gap-2 cursor-pointer backdrop-blur-sm">
+              <MagneticButton href={`tel:${data.phone.replace(/\D/g, "")}`} className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/20 flex items-center gap-2 cursor-pointer backdrop-blur-sm">
                 <Phone size={18} weight="duotone" />
                 <PhoneLink phone={data.phone} />
               </MagneticButton>
             </div>
-            <div className="flex flex-wrap gap-6 text-sm text-[#4b5563]">
+            <div className="flex flex-wrap gap-6 text-sm text-white/70">
               <span className="flex items-center gap-2">
                 <MapPin size={16} weight="duotone" style={{ color: PRIMARY }} />
                 <MapLink address={data.address} />
@@ -609,7 +609,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
           <p className="text-lg text-black/70 mb-8 max-w-xl mx-auto">
             Let&apos;s create something beautiful together. {data.businessName} is booking for the upcoming season.
           </p>
-          <PhoneLink phone={data.phone} className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-black text-[#1c1917] font-bold text-lg hover:bg-black/80 transition-colors">
+          <PhoneLink phone={data.phone} className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-black text-white font-bold text-lg hover:bg-black/80 transition-colors">
             <Phone size={22} weight="fill" />
             {data.phone}
           </PhoneLink>

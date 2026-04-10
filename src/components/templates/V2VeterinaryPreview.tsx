@@ -81,14 +81,50 @@ function getServiceIcon(serviceName: string) {
 }
 
 /* ───────────────────────── STOCK FALLBACK IMAGES ───────────────────────── */
-const STOCK_HERO = "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=1400&q=80";
-const STOCK_ABOUT = "https://images.unsplash.com/photo-1629740067905-bd3f515aa739?w=600&q=80";
-const STOCK_GALLERY = [
-  "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600&q=80",
-  "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&q=80",
-  "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=800&q=80",
-  "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=800&q=80",
+/* Pool of unique images — pick based on business name hash to avoid duplicates */
+const STOCK_HERO_POOL = [
+  "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=1400&q=80",   // golden retriever portrait
+  "https://images.unsplash.com/photo-1583337130417-13104dec14a3?w=1400&q=80",   // vet examining dog
+  "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=1400&q=80",   // happy dog closeup
+  "https://images.unsplash.com/photo-1560807707-8cc77767d783?w=1400&q=80",       // puppy face
+  "https://images.unsplash.com/photo-1537151625747-768eb6cf92b2?w=1400&q=80",   // dog on beach
 ];
+const STOCK_ABOUT_POOL = [
+  "https://images.unsplash.com/photo-1629740067905-bd3f515aa739?w=600&q=80",    // vet with pet
+  "https://images.unsplash.com/photo-1612531386530-97d5822c0d6f?w=600&q=80",    // vet clinic interior
+  "https://images.unsplash.com/photo-1576201836106-db1758fd1c97?w=600&q=80",    // dog at vet
+  "https://images.unsplash.com/photo-1548767797-d8c844163c4c?w=600&q=80",       // cat portrait
+  "https://images.unsplash.com/photo-1450778869180-e77e3ec1c771?w=600&q=80",    // vet holding puppy
+];
+const STOCK_GALLERY_POOL = [
+  "https://images.unsplash.com/photo-1601758003122-53c40e686a19?w=600&q=80",
+  "https://images.unsplash.com/photo-1534361960057-19889db9621e?w=600&q=80",
+  "https://images.unsplash.com/photo-1592194996308-7b43878e84a6?w=600&q=80",
+  "https://images.unsplash.com/photo-1574158622682-e40e69881006?w=600&q=80",
+  "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=600&q=80",
+  "https://images.unsplash.com/photo-1583512603805-3cc6b41f3edb?w=600&q=80",
+  "https://images.unsplash.com/photo-1596854407944-bf87f6fdd49e?w=600&q=80",
+  "https://images.unsplash.com/photo-1552053831-71594a27632d?w=600&q=80",
+];
+
+function hashName(name: string) {
+  let h = 0;
+  for (let i = 0; i < name.length; i++) h = ((h << 5) - h + name.charCodeAt(i)) | 0;
+  return Math.abs(h);
+}
+
+function pickFromPool<T>(pool: T[], name: string, offset = 0): T {
+  return pool[(hashName(name) + offset) % pool.length];
+}
+
+function pickGallery(name: string): string[] {
+  const h = hashName(name);
+  const result: string[] = [];
+  for (let i = 0; i < 4; i++) {
+    result.push(STOCK_GALLERY_POOL[(h + i * 3) % STOCK_GALLERY_POOL.length]);
+  }
+  return result;
+}
 
 /* ───────────────────────── FLOATING PAW PARTICLES ───────────────────────── */
 function FloatingPaws({ accent }: { accent: string }) {
@@ -331,9 +367,11 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
 
   const { PRIMARY, PRIMARY_GLOW } = getAccent(data.accentColor);
 
-  const heroImage = data.photos?.[0] || STOCK_HERO;
-  const aboutImage = data.photos?.[1] || STOCK_ABOUT;
-  const galleryImages = data.photos?.length > 2 ? data.photos.slice(2, 6) : STOCK_GALLERY;
+  const heroImage = data.photos?.[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
+  const aboutImage = data.photos?.[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName);
+  /* Use photo[1] for hero card (different from background), fall back to about image */
+  const heroCardImage = data.photos?.[1] || data.photos?.[0] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 1);
+  const galleryImages = data.photos?.length > 2 ? data.photos.slice(2, 6) : pickGallery(data.businessName);
 
   const processSteps = [
     { step: "01", title: "Schedule a Visit", desc: `Book an appointment online or by phone. We accommodate same-day urgent care needs.` },
@@ -400,55 +438,59 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
 
       {/* ══════════════════ 2. HERO ══════════════════ */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
-
+        {/* Full-bleed hero background image with strong overlay for text readability */}
         <div className="absolute inset-0">
-          <img src={heroImage} alt={`${data.businessName}`} className="w-full h-full object-cover object-center" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/25 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+          <img src={heroImage} alt="" className="absolute inset-0 w-full h-full object-cover" aria-hidden="true" />
+          <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/80 to-white/30" />
+          <div className="absolute inset-0 bg-gradient-to-b from-white/40 via-transparent to-white/60" />
         </div>
+        <PawPattern opacity={0.03} accent={PRIMARY} />
+        <HeroPetSVG accent={PRIMARY} />
+        <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full blur-[200px] pointer-events-none" style={{ background: `${PRIMARY}12` }} />
 
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
           <div className="space-y-8">
             <div>
-              <p className="text-sm uppercase tracking-widest mb-4" style={{ color: PRIMARY }}>Compassionate Veterinary Care</p>
-              <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-[#1c1917]" style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}>
+              <p className="text-sm uppercase tracking-widest mb-4 font-semibold" style={{ color: PRIMARY }}>Trusted Veterinary Care</p>
+              <h1 className="text-4xl md:text-6xl tracking-tighter leading-[1.05] font-extrabold text-[#1c1917]">
                 {data.tagline}
               </h1>
             </div>
-            <p className="text-lg text-[#6b7280] max-w-md leading-relaxed">
+            <p className="text-lg text-[#4b5563] max-w-md leading-relaxed">
               {data.about.length > 160 ? data.about.slice(0, 160).trim() + "..." : data.about}
             </p>
             <div className="flex flex-wrap gap-4">
-              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-[#1c1917] flex items-center gap-2 cursor-pointer" style={{ background: PRIMARY } as React.CSSProperties}>
+              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer shadow-lg" style={{ background: PRIMARY } as React.CSSProperties}>
                 Schedule a Visit
                 <ArrowRight size={18} weight="bold" />
               </MagneticButton>
-              <MagneticButton href={`tel:${data.phone.replace(/\D/g, "")}`} className="px-8 py-4 rounded-full text-base font-semibold text-[#1c1917] border border-gray-200 flex items-center gap-2 cursor-pointer">
+              <MagneticButton href={`tel:${data.phone.replace(/\D/g, "")}`} className="px-8 py-4 rounded-full text-base font-semibold text-[#1c1917] border border-gray-300 bg-white/80 backdrop-blur-sm flex items-center gap-2 cursor-pointer shadow-sm">
                 <Phone size={18} weight="duotone" />
                 <PhoneLink phone={data.phone} />
               </MagneticButton>
             </div>
-            <div className="flex flex-wrap gap-6 text-sm text-[#6b7280]">
+            <div className="flex flex-wrap gap-6 text-sm text-[#4b5563]">
               <span className="flex items-center gap-2">
                 <MapPin size={16} weight="duotone" style={{ color: PRIMARY }} />
                 <MapLink address={data.address} />
               </span>
-              <span className="flex items-center gap-2">
-                <Heart size={16} weight="duotone" style={{ color: PRIMARY }} />
-                Caring for Pets Since Day One
-              </span>
+              {data.stats[0] && (
+                <span className="flex items-center gap-2">
+                  <Heart size={16} weight="fill" style={{ color: WARM_ROSE }} />
+                  {data.stats[0].value} {data.stats[0].label}
+                </span>
+              )}
             </div>
           </div>
 
           <div className="hidden md:block relative">
-            <div className="relative rounded-2xl overflow-hidden border border-gray-200">
-              <img src={heroImage} alt={`${data.businessName} veterinary care`} className="w-full h-[500px] object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#f7faf8] via-transparent to-transparent" />
-              <div className="absolute inset-0 bg-gradient-to-r from-[#f7faf8]/40 to-transparent" />
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-white/60">
+              <img src={heroCardImage} alt={`${data.businessName} veterinary care`} className="w-full h-[500px] object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
               <div className="absolute bottom-6 left-6 flex items-center gap-3">
-                <div className="px-4 py-2 rounded-full backdrop-blur-md bg-black/50 border flex items-center gap-2" style={{ borderColor: `${PRIMARY}4d` }}>
+                <div className="px-4 py-2 rounded-full backdrop-blur-md bg-white/20 border border-white/30 flex items-center gap-2">
                   <Heart size={18} weight="fill" style={{ color: WARM_ROSE }} />
-                  <span className="text-sm font-semibold text-[#1c1917]">Your Pet&apos;s Best Friend</span>
+                  <span className="text-sm font-semibold text-white">{data.rating ? `${data.rating} Stars` : "Top Rated"}</span>
                 </div>
               </div>
             </div>
@@ -458,7 +500,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
 
       {/* ══════════════════ 3. STATS ══════════════════ */}
       <section className="relative z-10 py-16 overflow-hidden border-y" style={{ borderColor: `${PRIMARY}1a` }}>
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #111512 0%, #f7faf8 100%)" }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${PRIMARY}08 0%, #f7faf8 100%)` }} />
         <PawPattern opacity={0.02} accent={PRIMARY} />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] rounded-full blur-[180px]" style={{ background: `${PRIMARY}08` }} />
@@ -484,7 +526,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
 
       {/* ══════════════════ 4. SERVICES ══════════════════ */}
       <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #f7faf8 0%, #0d140f 50%, #f7faf8 100%)" }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #f7faf8 0%, ${PRIMARY}0a 50%, #f7faf8 100%)` }} />
         <PawPattern accent={PRIMARY} />
         <HeartbeatLine opacity={0.025} accent={PRIMARY} />
         <div className="absolute inset-0 pointer-events-none">
@@ -522,7 +564,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
 
       {/* ══════════════════ 5. ABOUT ══════════════════ */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #f7faf8 0%, #0b120e 50%, #f7faf8 100%)" }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #f7faf8 0%, #f0f5f2 50%, #f7faf8 100%)` }} />
         <HeartbeatLine opacity={0.02} accent={PRIMARY} />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-[20%] left-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${PRIMARY}06` }} />
@@ -566,7 +608,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
 
       {/* ══════════════════ 6. PROCESS ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #f7faf8 0%, #111512 50%, #f7faf8 100%)" }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #f7faf8 0%, ${PRIMARY}08 50%, #f7faf8 100%)` }} />
         <PawPattern opacity={0.025} accent={PRIMARY} />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${WARM_ROSE}06` }} />
@@ -595,7 +637,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
 
       {/* ══════════════════ 7. GALLERY ══════════════════ */}
       <section id="gallery" className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #f7faf8 0%, #0b120e 50%, #f7faf8 100%)" }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #f7faf8 0%, #f0f5f2 50%, #f7faf8 100%)` }} />
         <HeartbeatLine opacity={0.02} accent={PRIMARY} />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-[30%] left-[20%] w-[500px] h-[500px] rounded-full blur-[200px]" style={{ background: `${PRIMARY}06` }} />
@@ -612,8 +654,8 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
                   <img src={src} alt={titles[i] || `Gallery ${i + 1}`} className="w-full h-64 object-cover transition-transform duration-700 group-hover:scale-105" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-6">
-                    <h3 className="text-lg font-bold text-[#1c1917] mb-1">{titles[i] || `Gallery ${i + 1}`}</h3>
-                    <p className="text-sm text-[#4b5563]">{descs[i] || ""}</p>
+                    <h3 className="text-lg font-bold text-white mb-1">{titles[i] || `Gallery ${i + 1}`}</h3>
+                    <p className="text-sm text-white/70">{descs[i] || ""}</p>
                   </div>
                 </div>
               );
@@ -624,7 +666,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
 
       {/* ══════════════════ 8. TESTIMONIALS ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #f7faf8 0%, #111512 50%, #f7faf8 100%)" }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #f7faf8 0%, ${PRIMARY}08 50%, #f7faf8 100%)` }} />
         <PawPattern opacity={0.02} accent={PRIMARY} />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-[20%] right-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${PRIMARY}06` }} />
@@ -657,7 +699,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
 
         <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
           <PawPrint size={48} weight="fill" className="mx-auto mb-6 text-white/70" />
-          <h2 className="text-3xl md:text-5xl font-black tracking-tight text-[#1c1917] mb-4">Your Pet Deserves the Best Care</h2>
+          <h2 className="text-3xl md:text-5xl font-black tracking-tight text-white mb-4">Your Pet Deserves the Best Care</h2>
           <p className="text-lg text-white/80 mb-8 max-w-xl mx-auto">
             Don&apos;t wait until something&apos;s wrong. Schedule a wellness visit with {data.businessName} and give your pet the care they deserve.
           </p>
@@ -670,7 +712,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
 
       {/* ══════════════════ 10. SERVICE AREAS ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #f7faf8 0%, #0b120e 50%, #f7faf8 100%)" }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #f7faf8 0%, #f0f5f2 50%, #f7faf8 100%)` }} />
         <PawPattern opacity={0.02} accent={PRIMARY} />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-[40%] right-[20%] w-[400px] h-[400px] rounded-full blur-[180px]" style={{ background: `${WARM_ROSE}06` }} />
@@ -693,7 +735,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
       {/* ══════════════════ 11. HOURS ══════════════════ */}
       {data.hours && (
         <section className="relative z-10 py-24 md:py-32 overflow-hidden">
-          <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #f7faf8 0%, #111512 50%, #f7faf8 100%)" }} />
+          <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #f7faf8 0%, ${PRIMARY}08 50%, #f7faf8 100%)` }} />
           <HeartbeatLine opacity={0.02} accent={PRIMARY} />
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute top-[20%] left-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${PRIMARY}06` }} />
@@ -743,7 +785,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
 
       {/* ══════════════════ 12. FAQ ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #f7faf8 0%, #111512 50%, #f7faf8 100%)" }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #f7faf8 0%, ${PRIMARY}08 50%, #f7faf8 100%)` }} />
         <HeartbeatLine opacity={0.02} accent={PRIMARY} />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-[20%] left-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${PRIMARY}06` }} />
@@ -761,7 +803,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
 
       {/* ══════════════════ 13. CONTACT ══════════════════ */}
       <section id="contact" className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #f7faf8 0%, #0b120e 50%, #f7faf8 100%)" }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #f7faf8 0%, #f0f5f2 50%, #f7faf8 100%)` }} />
         <PawPattern opacity={0.02} accent={PRIMARY} />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${PRIMARY}06` }} />
@@ -859,7 +901,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
 
       {/* ══════════════════ 14. GUARANTEE ══════════════════ */}
       <section className="relative z-10 py-16 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #f7faf8 0%, #111512 100%)" }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #f7faf8 0%, ${PRIMARY}06 100%)` }} />
         <PawPattern opacity={0.015} accent={PRIMARY} />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full blur-[180px]" style={{ background: `${PRIMARY}06` }} />

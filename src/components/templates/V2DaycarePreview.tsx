@@ -361,7 +361,7 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
               <div className="absolute bottom-6 left-6 flex items-center gap-3">
                 <div className="px-4 py-2 rounded-full backdrop-blur-md bg-black/50 border flex items-center gap-2" style={{ borderColor: `${ACCENT}4d` }}>
                   <ShieldCheck size={18} weight="fill" style={{ color: ACCENT }} />
-                  <span className="text-sm font-semibold text-[#1c1917]">Bonded &amp; Insured</span>
+                  <span className="text-sm font-semibold text-white">Bonded &amp; Insured</span>
                 </div>
               </div>
             </div>
@@ -505,8 +505,8 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
                   <img src={src} alt={titles[i] || `Project ${i + 1}`} className="w-full h-64 object-cover transition-transform duration-700 group-hover:scale-105" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-6">
-                    <h3 className="text-lg font-bold text-[#1c1917] mb-1">{titles[i] || `Project ${i + 1}`}</h3>
-                    <p className="text-sm text-[#4b5563]">{descs[i] || ""}</p>
+                    <h3 className="text-lg font-bold text-white mb-1">{titles[i] || `Project ${i + 1}`}</h3>
+                    <p className="text-sm text-white/70">{descs[i] || ""}</p>
                   </div>
                 </div>
               );
