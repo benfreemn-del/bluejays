@@ -7,6 +7,7 @@ import type { GeneratedSiteData } from "@/lib/generator";
 import BluejayLogo from "../BluejayLogo";
 import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
+import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
 
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
@@ -20,8 +21,8 @@ function getAccent(c?: string) { const a = c || DEFAULT_ORANGE; return { ACCENT:
 const ICON_MAP: Record<string, any> = { groom: Scissors, board: Heart, daycare: Dog, train: Star, walk: PawPrint, taxi: Van, cat: Cat, bath: Scissors, sit: Heart };
 function getServiceIcon(n: string) { const l = n.toLowerCase(); for (const [k, I] of Object.entries(ICON_MAP)) { if (l.includes(k)) return I; } return PawPrint; }
 
-const STOCK_HERO = "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=1400&q=80";
-const STOCK_ABOUT = "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1?w=600&q=80";
+const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=1400&q=80"];
+const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1535268647677-300dbf3d78d1?w=600&q=80"];
 const STOCK_GALLERY = ["https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=600&q=80","https://images.unsplash.com/photo-1535268647677-300dbf3d78d1?w=600&q=80","https://images.unsplash.com/photo-1596492784531-6e6eb5ea9993?w=600&q=80","https://images.unsplash.com/photo-1560807707-8cc77767d783?w=600&q=80","https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=600&q=80","https://images.unsplash.com/photo-1544568100-847a948585b9?w=600&q=80"];
 
 function FloatingSparks({ accent }: { accent: string }) {
@@ -77,9 +78,9 @@ export default function V2PetServicesPreview({ data }: { data: GeneratedSiteData
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const { ACCENT, ACCENT_GLOW } = getAccent(data.accentColor);
-  const heroImage = data.photos?.[0] || STOCK_HERO;
-  const aboutImage = data.photos?.[1] || STOCK_ABOUT;
-  const galleryImages = data.photos?.length > 2 ? data.photos.slice(2, 8) : STOCK_GALLERY;
+  const heroImage = data.photos?.[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
+  const aboutImage = data.photos?.[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName);
+  const galleryImages = data.photos?.length > 2 ? data.photos.slice(2, 8) : pickGallery(STOCK_GALLERY, data.businessName);
 
   const faqs = [
     { q: `What services does ${data.businessName} offer?`, a: `We offer ${data.services.slice(0, 3).map(s => s.name).join(", ")}, and more. Contact us to learn about our full range of pet care services.` },

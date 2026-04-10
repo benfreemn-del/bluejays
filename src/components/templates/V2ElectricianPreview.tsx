@@ -31,6 +31,7 @@ import type { GeneratedSiteData } from "@/lib/generator";
 import BluejayLogo from "../BluejayLogo";
 import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
+import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
 
 /* ───────────────────────── SPRING CONFIGS ───────────────────────── */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
@@ -77,8 +78,8 @@ function getServiceIcon(serviceName: string) {
 }
 
 /* ───────────────────────── STOCK FALLBACK IMAGES ───────────────────────── */
-const STOCK_HERO = "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=1400&q=80";
-const STOCK_ABOUT = "https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=600&q=80";
+const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=1400&q=80"];
+const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=600&q=80"];
 const STOCK_PROJECTS = [
   "https://images.unsplash.com/photo-1545259741-2ea3ebf61fa3?w=600&q=80",
   "https://images.unsplash.com/photo-1555664424-778a1e5e1b48?w=600&q=80",
@@ -348,11 +349,11 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
 
   const { AMBER, AMBER_GLOW } = getAccent(data.accentColor);
 
-  const heroImage = data.photos?.[0] || STOCK_HERO;
-  const aboutImage = data.photos?.[1] || STOCK_ABOUT;
+  const heroImage = data.photos?.[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
+  const aboutImage = data.photos?.[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName);
   const projectImages = data.photos?.length > 2
     ? data.photos.slice(2, 6)
-    : STOCK_PROJECTS;
+    : pickGallery(STOCK_PROJECTS, data.businessName);
 
   const phoneDigits = data.phone.replace(/\D/g, "");
 

@@ -6,6 +6,7 @@ import type { GeneratedSiteData } from "@/lib/generator";
 import BluejayLogo from "../BluejayLogo";
 import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
+import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
 
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
@@ -17,8 +18,8 @@ function getAccent(accentColor?: string) { const c = accentColor || DEFAULT_BLUE
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SERVICE_ICON_MAP: Record<string, any> = { driveway: HouseLine, house: HouseLine, home: HouseLine, residential: HouseLine, commercial: Buildings, roof: HouseLine, deck: HouseLine, fence: HouseLine, concrete: HouseLine, gutter: Broom, soft: Drop, power: Drop, pressure: Drop, clean: Broom, wash: Drop, fleet: Buildings, building: Buildings, restore: Wrench };
 function getServiceIcon(serviceName: string) { const lower = serviceName.toLowerCase(); for (const [key, Icon] of Object.entries(SERVICE_ICON_MAP)) { if (lower.includes(key)) return Icon; } return Drop; }
-const STOCK_HERO = "https://images.unsplash.com/photo-1523413555809-0fb1d4da238d?w=1400&q=80";
-const STOCK_ABOUT = "https://images.unsplash.com/photo-1528238646472-f2366160b6c1?w=600&q=80";
+const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1523413555809-0fb1d4da238d?w=1400&q=80"];
+const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1528238646472-f2366160b6c1?w=600&q=80"];
 const STOCK_GALLERY = ["https://images.unsplash.com/photo-1523413555809-0fb1d4da238d?w=600&q=80","https://images.unsplash.com/photo-1523413555809-0fb1d4da238d?w=600&q=80","https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&q=80","https://images.unsplash.com/photo-1528238646472-f2366160b6c1?w=600&q=80"];
 
 function FloatingParticles({ accent }: { accent: string }) { const particles = Array.from({ length: 18 }, (_, i) => ({ id: i, x: Math.random() * 100, delay: Math.random() * 8, duration: 5 + Math.random() * 7, size: 2 + Math.random() * 3, opacity: 0.12 + Math.random() * 0.25, isCyan: Math.random() > 0.6 })); return (<div className="pointer-events-none fixed inset-0 z-0 overflow-hidden hidden md:block">{particles.map((p) => (<motion.div key={p.id} className="absolute rounded-full" style={{ left: `${p.x}%`, width: p.size, height: p.size, background: p.isCyan ? CYAN_ACCENT : accent, willChange: "transform, opacity" }} animate={{ y: ["-10vh", "110vh"], opacity: [0, p.opacity, p.opacity, 0] }} transition={{ y: { duration: p.duration, repeat: Infinity, delay: p.delay, ease: "linear" }, opacity: { duration: p.duration, repeat: Infinity, delay: p.delay, times: [0, 0.1, 0.9, 1] } }} />))}</div>); }
@@ -44,8 +45,8 @@ export default function V2PressureWashingPreview({ data }: { data: GeneratedSite
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const { ACCENT, ACCENT_GLOW } = getAccent(data.accentColor);
-  const heroImage = data.photos?.[0] || STOCK_HERO; const aboutImage = data.photos?.[1] || STOCK_ABOUT;
-  const galleryImages = data.photos?.length > 2 ? data.photos.slice(2, 6) : STOCK_GALLERY;
+  const heroImage = data.photos?.[0] || pickFromPool(STOCK_HERO_POOL, data.businessName); const aboutImage = data.photos?.[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName);
+  const galleryImages = data.photos?.length > 2 ? data.photos.slice(2, 6) : pickGallery(STOCK_GALLERY, data.businessName);
   const phoneDigits = data.phone.replace(/\D/g, "");
   const processSteps = [{ step: "01", title: "Free Assessment", desc: "We evaluate your surfaces and recommend the right cleaning approach for optimal results." },{ step: "02", title: "Clear Quote", desc: "Receive a detailed, no-surprise estimate covering the full scope of work." },{ step: "03", title: "Pro Cleaning", desc: "Using commercial-grade equipment and eco-friendly solutions, we restore your surfaces." },{ step: "04", title: "Final Review", desc: "We walk the property with you, ensure everything meets your expectations, and leave it spotless." }];
   const faqs = [{ q: `What surfaces does ${data.businessName} clean?`, a: `We clean all exterior surfaces including ${data.services.slice(0, 3).map(s => s.name).join(", ")}, and more. Our team uses the right pressure and technique for each surface.` },{ q: "Is pressure washing safe for all surfaces?", a: "We use soft washing for delicate surfaces like vinyl siding and roofs, and higher pressure for concrete and brick. Our technicians know exactly what each surface needs." },{ q: "How often should I have my property pressure washed?", a: "We recommend annually for most homes and twice yearly for commercial properties. Regular cleaning prevents buildup that can cause permanent damage." },{ q: "Do you use eco-friendly cleaning solutions?", a: `Yes! ${data.businessName} uses biodegradable, eco-friendly cleaning solutions that are safe for your landscaping, pets, and family.` }];

@@ -29,6 +29,7 @@ import {
 } from "@phosphor-icons/react";
 import type { GeneratedSiteData } from "@/lib/generator";
 import BluejayLogo from "../BluejayLogo";
+import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
 import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
 
@@ -60,8 +61,8 @@ function getServiceIcon(serviceName: string) {
   return FirstAid;
 }
 
-const STOCK_HERO = "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=1400&q=80";
-const STOCK_ABOUT = "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=600&q=80";
+const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=1400&q=80"];
+const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=600&q=80"];
 const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1516549655169-df83a0774514?w=600&q=80",
   "https://images.unsplash.com/photo-1631815588090-d4bfec5b1ccb?w=600&q=80",
@@ -191,9 +192,9 @@ export default function V2MedicalPreview({ data }: { data: GeneratedSiteData }) 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const { ACCENT, ACCENT_GLOW } = getAccent(data.accentColor);
-  const heroImage = data.photos?.[0] || STOCK_HERO;
-  const aboutImage = data.photos?.[1] || STOCK_ABOUT;
-  const galleryImages = data.photos?.length > 2 ? data.photos.slice(2, 6) : STOCK_GALLERY;
+  const heroImage = data.photos?.[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
+  const aboutImage = data.photos?.[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName);
+  const galleryImages = data.photos?.length > 2 ? data.photos.slice(2, 6) : pickGallery(STOCK_GALLERY, data.businessName);
   const phoneDigits = data.phone.replace(/\D/g, "");
 
   const processSteps = [

@@ -29,6 +29,7 @@ import {
 } from "@phosphor-icons/react";
 import type { GeneratedSiteData } from "@/lib/generator";
 import BluejayLogo from "../BluejayLogo";
+import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
 import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
 
@@ -85,8 +86,8 @@ function getServiceIcon(serviceName: string) {
 }
 
 /* ───────────────────────── STOCK FALLBACK IMAGES ───────────────────────── */
-const STOCK_HERO = "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1400&q=80";
-const STOCK_ABOUT = "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80";
+const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1400&q=80"];
+const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80"];
 const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=80",
   "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=600&q=80",
@@ -325,11 +326,11 @@ export default function V2RestaurantPreview({ data }: { data: GeneratedSiteData 
 
   const { ACCENT, ACCENT_GLOW } = getAccent(data.accentColor);
 
-  const heroImage = data.photos?.[0] || STOCK_HERO;
-  const aboutImage = data.photos?.[1] || STOCK_ABOUT;
+  const heroImage = data.photos?.[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
+  const aboutImage = data.photos?.[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName);
   const galleryImages = data.photos?.length > 2
     ? data.photos.slice(2, 8)
-    : STOCK_GALLERY;
+    : pickGallery(STOCK_GALLERY, data.businessName);
 
   const phoneDigits = data.phone.replace(/\D/g, "");
 

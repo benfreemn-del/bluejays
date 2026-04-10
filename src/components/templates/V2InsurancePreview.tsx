@@ -30,6 +30,7 @@ import type { GeneratedSiteData } from "@/lib/generator";
 import BluejayLogo from "../BluejayLogo";
 import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
+import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
 
 /* ───────────────────────── SPRING CONFIGS ───────────────────────── */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
@@ -72,8 +73,8 @@ function getServiceIcon(serviceName: string) {
 }
 
 /* ───────────────────────── STOCK FALLBACK IMAGES ───────────────────────── */
-const STOCK_HERO = "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=1400&q=80";
-const STOCK_ABOUT = "https://images.unsplash.com/photo-1573497620053-ea5300f94f21?w=600&q=80";
+const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=1400&q=80"];
+const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1573497620053-ea5300f94f21?w=600&q=80"];
 const STOCK_PROJECTS = [
   "https://images.unsplash.com/photo-1556745753-b2904692b3cd?w=600&q=80",
   "https://images.unsplash.com/photo-1521791136064-7986c2920216?w=600&q=80",
@@ -254,9 +255,9 @@ export default function V2InsurancePreview({ data }: { data: GeneratedSiteData }
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const { ACCENT, ACCENT_GLOW } = getAccent(data.accentColor);
 
-  const heroImage = data.photos?.[0] || STOCK_HERO;
-  const aboutImage = data.photos?.[1] || STOCK_ABOUT;
-  const projectImages = data.photos?.length > 2 ? data.photos.slice(2, 6) : STOCK_PROJECTS;
+  const heroImage = data.photos?.[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
+  const aboutImage = data.photos?.[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName);
+  const projectImages = data.photos?.length > 2 ? data.photos.slice(2, 6) : pickGallery(STOCK_PROJECTS, data.businessName);
 
   const processSteps = [
     { step: "01", title: "Free Coverage Review", desc: "We analyze your current coverage and identify gaps or savings opportunities." },

@@ -7,6 +7,7 @@ import type { GeneratedSiteData } from "@/lib/generator";
 import BluejayLogo from "../BluejayLogo";
 import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
+import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
 
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
@@ -20,8 +21,8 @@ function getAccent(c?: string) { const a = c || DEFAULT_BLUE; return { ACCENT: a
 const ICON_MAP: Record<string, any> = { math: MathOperations, algebra: MathOperations, calcul: MathOperations, science: Atom, biology: Atom, chem: Atom, physic: Atom, sat: GraduationCap, act: GraduationCap, test: GraduationCap, prep: GraduationCap, language: Translate, spanish: Translate, french: Translate, esl: Translate, cod: Code, program: Code, computer: Code, special: Brain, adhd: Brain, dyslexia: Brain, read: BookOpen, writ: BookOpen, english: BookOpen };
 function getServiceIcon(n: string) { const l = n.toLowerCase(); for (const [k, I] of Object.entries(ICON_MAP)) { if (l.includes(k)) return I; } return BookOpen; }
 
-const STOCK_HERO = "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1400&q=80";
-const STOCK_ABOUT = "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=600&q=80";
+const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1400&q=80"];
+const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1509062522246-3755977927d7?w=600&q=80"];
 
 function FloatingSparks({ accent }: { accent: string }) {
   const ps = Array.from({ length: 18 }, (_, i) => ({ id: i, x: Math.random() * 100, delay: Math.random() * 8, dur: 5 + Math.random() * 7, size: 2 + Math.random() * 3, op: 0.12 + Math.random() * 0.3, isGreen: Math.random() > 0.5 }));
@@ -68,8 +69,8 @@ export default function V2TutoringPreview({ data }: { data: GeneratedSiteData })
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const { ACCENT, ACCENT_GLOW } = getAccent(data.accentColor);
-  const heroImage = data.photos?.[0] || STOCK_HERO;
-  const aboutImage = data.photos?.[1] || STOCK_ABOUT;
+  const heroImage = data.photos?.[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
+  const aboutImage = data.photos?.[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName);
 
   const approach = [
     { step: "01", title: "Assessment", desc: "Comprehensive diagnostic to identify strengths and gaps." },

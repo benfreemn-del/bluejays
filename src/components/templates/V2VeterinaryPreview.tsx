@@ -29,6 +29,7 @@ import {
   Pill,
 } from "@phosphor-icons/react";
 import type { GeneratedSiteData } from "@/lib/generator";
+import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
 import BluejayLogo from "../BluejayLogo";
 import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
@@ -112,29 +113,6 @@ const STOCK_GALLERY_POOL = [
   "https://images.unsplash.com/photo-1535930749574-1399327ce78f?w=600&q=80",   // lab puppy face
 ];
 
-function hashName(name: string) {
-  let h = 0;
-  for (let i = 0; i < name.length; i++) h = ((h << 5) - h + name.charCodeAt(i)) | 0;
-  return Math.abs(h);
-}
-
-function pickFromPool<T>(pool: T[], name: string, offset = 0): T {
-  return pool[(hashName(name) + offset) % pool.length];
-}
-
-function pickGallery(name: string): string[] {
-  const h = hashName(name);
-  const used = new Set<number>();
-  const result: string[] = [];
-  for (let i = 0; result.length < 4 && i < 20; i++) {
-    const idx = (h + i * 7) % STOCK_GALLERY_POOL.length;
-    if (!used.has(idx)) {
-      used.add(idx);
-      result.push(STOCK_GALLERY_POOL[idx]);
-    }
-  }
-  return result;
-}
 
 /* ───────────────────────── FLOATING PAW PARTICLES ───────────────────────── */
 function FloatingPaws({ accent }: { accent: string }) {
@@ -381,7 +359,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
   const aboutImage = data.photos?.[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName);
   /* Use photo[1] for hero card (different from background), fall back to about image */
   const heroCardImage = data.photos?.[1] || data.photos?.[0] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 1);
-  const galleryImages = data.photos?.length > 2 ? data.photos.slice(2, 6) : pickGallery(data.businessName);
+  const galleryImages = data.photos?.length > 2 ? data.photos.slice(2, 6) : pickGallery(STOCK_GALLERY_POOL, data.businessName);
 
   const processSteps = [
     { step: "01", title: "Schedule a Visit", desc: `Book an appointment online or by phone. We accommodate same-day urgent care needs.` },

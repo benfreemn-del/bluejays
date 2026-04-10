@@ -11,6 +11,7 @@ import type { GeneratedSiteData } from "@/lib/generator";
 import BluejayLogo from "../BluejayLogo";
 import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
+import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
 
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
@@ -32,8 +33,8 @@ const SERVICE_ICON_MAP: Record<string, any> = {
 };
 function getServiceIcon(n: string) { const l = n.toLowerCase(); for (const [k, I] of Object.entries(SERVICE_ICON_MAP)) { if (l.includes(k)) return I; } return Calculator; }
 
-const STOCK_HERO = "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=1400&q=80";
-const STOCK_ABOUT = "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&q=80";
+const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=1400&q=80"];
+const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&q=80"];
 const STOCK_PROJECTS = [
   "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=80",
   "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=80",
@@ -139,9 +140,9 @@ export default function V2AccountingPreview({ data }: { data: GeneratedSiteData 
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const { ACCENT, ACCENT_GLOW } = getAccent(data.accentColor);
 
-  const heroImage = data.photos?.[0] || STOCK_HERO;
-  const aboutImage = data.photos?.[1] || STOCK_ABOUT;
-  const projectImages = data.photos?.length > 2 ? data.photos.slice(2, 6) : STOCK_PROJECTS;
+  const heroImage = data.photos?.[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
+  const aboutImage = data.photos?.[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName);
+  const projectImages = data.photos?.length > 2 ? data.photos.slice(2, 6) : pickGallery(STOCK_PROJECTS, data.businessName);
 
   const processSteps = [
     { step: "01", title: "Free Consultation", desc: "We discuss your financial goals, current situation, and how we can help maximize your returns." },

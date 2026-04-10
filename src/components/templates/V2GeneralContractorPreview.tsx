@@ -32,6 +32,7 @@ import type { GeneratedSiteData } from "@/lib/generator";
 import BluejayLogo from "../BluejayLogo";
 import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
+import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
 
 /* ───────────────── SPRING ───────────────── */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
@@ -67,8 +68,8 @@ function getServiceIcon(serviceName: string) {
 }
 
 /* ───────────────── STOCK IMAGES ───────────────── */
-const STOCK_HERO = "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=1400&q=80";
-const STOCK_ABOUT = "https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=600&q=80";
+const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=1400&q=80"];
+const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=600&q=80"];
 const STOCK_PROJECTS = [
   "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=600&q=80",
   "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=600&q=80",
@@ -225,9 +226,9 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
 
   const { ACCENT, ACCENT_GLOW } = getAccent(data.accentColor);
 
-  const heroImage = data.photos?.[0] || STOCK_HERO;
-  const aboutImage = data.photos?.[1] || STOCK_ABOUT;
-  const projectImages = data.photos?.length > 2 ? data.photos.slice(2, 6) : STOCK_PROJECTS;
+  const heroImage = data.photos?.[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
+  const aboutImage = data.photos?.[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName);
+  const projectImages = data.photos?.length > 2 ? data.photos.slice(2, 6) : pickGallery(STOCK_PROJECTS, data.businessName);
 
   const processSteps = [
     { step: "01", title: "Free Consultation", desc: `We visit your site, discuss your vision, timeline, and budget at no cost.` },

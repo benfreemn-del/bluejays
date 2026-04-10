@@ -11,6 +11,7 @@ import type { GeneratedSiteData } from "@/lib/generator";
 import BluejayLogo from "../BluejayLogo";
 import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
+import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
 
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
@@ -33,8 +34,8 @@ const SERVICE_ICON_MAP: Record<string, any> = {
 };
 function getServiceIcon(n: string) { const l = n.toLowerCase(); for (const [k, I] of Object.entries(SERVICE_ICON_MAP)) { if (l.includes(k)) return I; } return PenNib; }
 
-const STOCK_HERO = "https://images.unsplash.com/photo-1562259929-b4e1fd3aef09?w=1400&q=80";
-const STOCK_ABOUT = "https://images.unsplash.com/photo-1562962230-16e4623d36e6?w=600&q=80";
+const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1562259929-b4e1fd3aef09?w=1400&q=80"];
+const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1562962230-16e4623d36e6?w=600&q=80"];
 const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1562962230-16e4623d36e6?w=600&q=80",
   "https://images.unsplash.com/photo-1542727313-4f3e99aa2568?w=600&q=80",
@@ -141,9 +142,9 @@ export default function V2TattooPreview({ data }: { data: GeneratedSiteData }) {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const { ACCENT, ACCENT_GLOW } = getAccent(data.accentColor);
 
-  const heroImage = data.photos?.[0] || STOCK_HERO;
-  const aboutImage = data.photos?.[1] || STOCK_ABOUT;
-  const galleryImages = data.photos?.length > 2 ? data.photos.slice(2, 8) : STOCK_GALLERY;
+  const heroImage = data.photos?.[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
+  const aboutImage = data.photos?.[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName);
+  const galleryImages = data.photos?.length > 2 ? data.photos.slice(2, 8) : pickGallery(STOCK_GALLERY, data.businessName);
 
   const faqs = [
     { q: `What tattoo styles does ${data.businessName} specialize in?`, a: `Our artists specialize in ${data.services.slice(0, 3).map(s => s.name).join(", ")}, and many more styles. Book a consultation to discuss your vision.` },

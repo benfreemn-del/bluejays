@@ -32,6 +32,7 @@ import type { GeneratedSiteData } from "@/lib/generator";
 import BluejayLogo from "../BluejayLogo";
 import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
+import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
 
 /* ───────────────────────── SPRING CONFIGS ───────────────────────── */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
@@ -81,8 +82,8 @@ function getServiceIcon(serviceName: string) {
 }
 
 /* ───────────────────────── STOCK FALLBACK IMAGES ───────────────────────── */
-const STOCK_HERO = "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=1400&q=80";
-const STOCK_ABOUT = "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&q=80";
+const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=1400&q=80"];
+const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&q=80"];
 const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=600&q=80",
   "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=600&q=80",
@@ -265,9 +266,9 @@ export default function V2InteriorDesignPreview({ data }: { data: GeneratedSiteD
 
   const { PRIMARY, PRIMARY_GLOW } = getAccent(data.accentColor);
 
-  const heroImage = data.photos?.[0] || STOCK_HERO;
-  const aboutImage = data.photos?.[1] || STOCK_ABOUT;
-  const galleryImages = data.photos?.length > 2 ? data.photos.slice(2, 10) : STOCK_GALLERY;
+  const heroImage = data.photos?.[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
+  const aboutImage = data.photos?.[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName);
+  const galleryImages = data.photos?.length > 2 ? data.photos.slice(2, 10) : pickGallery(STOCK_GALLERY, data.businessName);
 
   const processSteps = [
     { step: "01", title: "Discovery Call", desc: `We discuss your vision, lifestyle, budget, and timeline to understand your unique needs.` },

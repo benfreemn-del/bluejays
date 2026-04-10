@@ -30,6 +30,7 @@ import type { GeneratedSiteData } from "@/lib/generator";
 import BluejayLogo from "../BluejayLogo";
 import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
+import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
 
 /* ───────────────────────── SPRING CONFIGS ───────────────────────── */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
@@ -77,8 +78,8 @@ function getServiceIcon(serviceName: string) {
 }
 
 /* ───────────────────────── STOCK FALLBACK IMAGES (UNIQUE TO SALON) ───────────────────────── */
-const STOCK_HERO = "https://images.unsplash.com/photo-1560066984-138dadb4c035?w=1400&q=80";
-const STOCK_ABOUT = "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600&q=80";
+const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1560066984-138dadb4c035?w=1400&q=80"];
+const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600&q=80"];
 const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?w=600&q=80",
   "https://images.unsplash.com/photo-1559599101-f09722fb4948?w=600&q=80",
@@ -255,9 +256,9 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
 
   const { ROSE, ROSE_GLOW } = getAccent(data.accentColor);
 
-  const heroImage = data.photos?.[0] || STOCK_HERO;
-  const aboutImage = data.photos?.[1] || STOCK_ABOUT;
-  const galleryImages = data.photos?.length > 2 ? data.photos.slice(2, 6) : STOCK_GALLERY;
+  const heroImage = data.photos?.[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
+  const aboutImage = data.photos?.[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName);
+  const galleryImages = data.photos?.length > 2 ? data.photos.slice(2, 6) : pickGallery(STOCK_GALLERY, data.businessName);
   const phoneDigits = data.phone.replace(/\D/g, "");
 
   const processSteps = [
