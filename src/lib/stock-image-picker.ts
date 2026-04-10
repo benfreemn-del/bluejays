@@ -63,15 +63,43 @@ export function getPreviewImages(
   const unique = photos ? [...new Set(photos)] : [];
 
   const heroImage = unique[0] || pickFromPool(heroPool, businessName);
-  // Card MUST differ from hero — use unique[1] or a different stock
-  const heroCardImage = unique[1] || pickFromPool(aboutPool, businessName, 1);
-  // About MUST differ from both hero and card
-  const aboutImage = unique.length >= 2 && unique[1] !== unique[0]
-    ? unique[1]
-    : unique[2] || pickFromPool(aboutPool, businessName, 2);
-  const galleryImages = unique.length > 2
-    ? unique.slice(2, 6)
-    : pickGallery(galleryPool, businessName);
 
-  return { heroImage, heroCardImage, aboutImage, galleryImages };
+  const usedImages = new Set<string>(heroImage ? [heroImage] : []);
+
+  function pickNextUnique(candidates: string[], fallbackPool: string[], offset: number): string {
+    for (const candidate of candidates) {
+      if (candidate && !usedImages.has(candidate)) {
+        usedImages.add(candidate);
+        return candidate;
+      }
+    }
+
+    for (let i = 0; i < fallbackPool.length; i++) {
+      const fallback = pickFromPool(fallbackPool, businessName, offset + i);
+      if (fallback && !usedImages.has(fallback)) {
+        usedImages.add(fallback);
+        return fallback;
+      }
+    }
+
+    const fallback = pickFromPool(fallbackPool, businessName, offset);
+    usedImages.add(fallback);
+    return fallback;
+  }
+
+  // Card MUST differ from hero
+  const heroCardImage = pickNextUnique(unique.slice(1), aboutPool, 1);
+  // About MUST differ from both hero and card
+  const aboutImage = pickNextUnique(unique.slice(1), aboutPool, 2);
+
+  const galleryImages = unique.length > 2
+    ? unique.filter((image) => !usedImages.has(image)).slice(0, 4)
+    : [];
+
+  return {
+    heroImage,
+    heroCardImage,
+    aboutImage,
+    galleryImages: galleryImages.length > 0 ? galleryImages : pickGallery(galleryPool, businessName),
+  };
 }

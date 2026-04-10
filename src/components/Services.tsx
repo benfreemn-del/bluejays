@@ -48,13 +48,15 @@ const services = [
   {
     title: "Custom Website Design",
     description:
-      "A premium, modern website built specifically for your business and industry. Mobile-responsive, fast-loading, and designed to convert visitors into customers.",
+      "A premium, modern website built specifically for your business and industry. Includes custom design, domain registration, and hosting setup so you can launch without piecing together extra services.",
     price: "$997",
     tag: "One-Time",
     icon: <CodeBracketIcon />,
     popular: true,
     features: [
       "Fully custom design for your industry",
+      "Domain registration included",
+      "Hosting setup included",
       "Mobile-first responsive layout",
       "SEO-optimized content & structure",
       "Fast-loading (90+ PageSpeed score)",
@@ -65,7 +67,7 @@ const services = [
   {
     title: "Site Management",
     description:
-      "We keep your site updated, secure, and running smoothly. Includes hosting, SSL, updates, and minor content changes whenever you need them.",
+      "After year one, we keep your site updated, secure, and running smoothly for $100/year. Includes hosting, SSL, updates, and minor content changes whenever you need them.",
     price: "$100",
     tag: "/year",
     icon: <ShieldCheckIcon />,
@@ -153,7 +155,7 @@ export default function Services() {
             className="text-white/50 mt-4 max-w-2xl text-lg leading-relaxed mx-auto"
           >
             No hidden fees. No monthly subscriptions you don&apos;t need. Just a
-            stunning website at one transparent price.
+            stunning website for $997 one-time, with optional ongoing maintenance at $100/year after year one.
           </motion.p>
         </div>
 

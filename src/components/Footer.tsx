@@ -31,7 +31,7 @@ export default function Footer() {
             </h4>
             <ul className="space-y-3">
               {[
-                { label: "Portfolio", href: "#" },
+                { label: "Portfolio", href: "/" },
                 { label: "Templates", href: "/templates" },
                 { label: "Privacy Policy", href: "/privacy" },
                 { label: "Terms of Service", href: "/terms" },

@@ -41,7 +41,7 @@ const sections = [
   {
     title: "Our Services",
     content: [
-      "BlueJays provides custom web design and related business website services for local businesses. Our service offering may include design, development, copy adaptation, media integration, domain registration assistance, hosting setup, launch support, maintenance, support, and related consulting or implementation services.",
+      "BlueJays provides custom web design and related business website services for local businesses. Our service offering may include design, development, copy adaptation, media integration, domain registration, hosting setup, launch support, maintenance, support, and related consulting or implementation services.",
       "We may also create unsolicited or invited preview websites, mockups, or demo pages using publicly available business information so that a business can evaluate our work before purchasing. These previews are for demonstration purposes unless and until a paid engagement is completed.",
     ],
   },
@@ -55,7 +55,7 @@ const sections = [
   {
     title: "Pricing and Payment Terms",
     content: [
-      "Unless otherwise agreed in writing, BlueJays currently offers a standard pricing structure of $997 as a one-time fee for a custom website package, which may include a custom website, domain registration assistance, and hosting setup. Ongoing services may be offered at $100 per year for domain renewal, hosting, maintenance, and support.",
+      "Unless otherwise agreed in writing, BlueJays currently offers a standard pricing structure of $997 as a one-time fee for a custom website package, which includes a custom website, domain registration, and hosting setup. Ongoing services may be offered at $100 per year for domain renewal, hosting, maintenance, and support.",
       "Pricing is subject to change for future transactions, but any approved proposal or written agreement in effect at the time of purchase will control that transaction. Payment may be collected through third-party processors, including Stripe when enabled. You authorize us and our payment processors to charge the applicable fees, taxes, and related charges associated with your purchase.",
       "Unless otherwise stated in writing, fees are non-refundable once project work has materially commenced, domain purchases have been made, hosting has been provisioned, or deliverables have been transferred. Custom work often involves immediate allocation of labor and third-party costs, which is why refunds may be limited or unavailable after work begins.",
     ],
@@ -213,7 +213,7 @@ export default function TermsPage() {
                   </tr>
                   <tr>
                     <th className="px-4 py-4 font-medium text-white">Included in standard package</th>
-                    <td className="px-4 py-4">Custom website, domain registration assistance, and hosting setup</td>
+                    <td className="px-4 py-4">Custom website, domain registration, and hosting setup</td>
                   </tr>
                   <tr>
                     <th className="px-4 py-4 font-medium text-white">Ongoing annual service</th>
