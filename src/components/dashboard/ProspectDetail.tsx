@@ -88,7 +88,9 @@ export default function ProspectDetail({
       .then((r) => r.json())
       .then((data) => setVslScript(data.vslScript || null))
       .catch(() => setVslScript(null));
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Resetting transient copy state when the selected prospect changes is intentional UI cleanup.
     setCopiedIdx(null);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Resetting the expanded VSL state on prospect changes prevents stale panel state between records.
     setVslExpanded(false);
   }, [prospect]);
 

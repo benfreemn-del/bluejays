@@ -1,5 +1,8 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element -- These static marketing and preview components intentionally use plain img tags to preserve existing markup and visual behavior during lint-only cleanup. */
+/* eslint-disable react-hooks/purity -- Decorative particle values are intentionally randomized for static visual effects in these marketing pages and previews; this preserves existing appearance without changing business logic. */
+
 import { useState, useRef, useCallback } from "react";
 import {
   motion,
@@ -449,7 +452,7 @@ export default function V2FloristPage() {
           <div>
             <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ROSE }}>Our Story</p>
             <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-[#1c1917] mb-6"><WordReveal text="15 Years of Floral Artistry" /></h2>
-            <p className="text-[#6b7280] leading-relaxed mb-4">Petals & Bloom began as a small studio with a simple belief: flowers have the power to transform moments into memories. What started as a passion for beauty has grown into the area's most trusted floral studio.</p>
+            <p className="text-[#6b7280] leading-relaxed mb-4">Petals & Bloom began as a small studio with a simple belief: flowers have the power to transform moments into memories. What started as a passion for beauty has grown into the area’s most trusted floral studio.</p>
             <p className="text-[#6b7280] leading-relaxed mb-6">Every arrangement is designed by our team of certified floral designers who source the finest blooms from local farms and premium international growers. We are committed to sustainability, freshness, and creating something truly special for every client.</p>
             <div className="flex flex-wrap gap-4">
               <div className="flex items-center gap-2 text-sm"><Crown size={18} weight="duotone" style={{ color: ROSE }} /><span className="text-[#4b5563]">Award-Winning Design</span></div>
@@ -567,7 +570,7 @@ export default function V2FloristPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-[#1c1917] mb-6"><WordReveal text="Send Something Beautiful" /></h2>
-              <p className="text-[#6b7280] leading-relaxed max-w-md mb-8">Whether you need a stunning wedding design or a spontaneous bouquet to brighten someone's day, we are here to create something unforgettable. Same-day delivery available.</p>
+              <p className="text-[#6b7280] leading-relaxed max-w-md mb-8">Whether you need a stunning wedding design or a spontaneous bouquet to brighten someone’s day, we are here to create something unforgettable. Same-day delivery available.</p>
               <div className="flex flex-wrap gap-4">
                 <MagneticButton className="px-10 py-4 rounded-full text-base font-semibold text-[#1c1917] inline-flex items-center gap-2 cursor-pointer" style={{ background: ROSE }}>
                   <CalendarCheck size={20} weight="duotone" /> Order Flowers

@@ -1,6 +1,9 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+/* eslint-disable @next/next/no-img-element -- These static marketing and preview components intentionally use plain img tags to preserve existing markup and visual behavior during lint-only cleanup. */
+/* eslint-disable react-hooks/purity -- Decorative particle values are intentionally randomized for static visual effects in these marketing pages and previews; this preserves existing appearance without changing business logic. */
+
+import { useState, useRef, useCallback, type SVGProps } from "react";
 import {
   motion,
   useMotionValue,
@@ -382,7 +385,7 @@ export default function V2CarpetCleaningPage() {
           <div>
             <h2 className="text-4xl font-bold text-white mb-4">Your Local Carpet Experts</h2>
             <p className="text-slate-300 mb-4">FreshStart Carpet Cleaning was founded on a simple principle: to provide our community with the highest quality cleaning services, backed by honesty and integrity. We are a family-owned business dedicated to creating healthier, happier homes.</p>
-            <p className="text-slate-300 mb-6">Our IICRC-certified technicians use state-of-the-art equipment and eco-friendly products to deliver a superior clean every time. We don't just clean your carpets; we care for your home.</p>
+            <p className="text-slate-300 mb-6">Our IICRC-certified technicians use state-of-the-art equipment and eco-friendly products to deliver a superior clean every time. We don’t just clean your carpets; we care for your home.</p>
             <MagneticButton className="px-6 py-3 rounded-full text-md font-semibold text-white" style={{ background: ACCENT }} onClick={() => scrollTo("contact")}>
               Meet the Team
             </MagneticButton>
@@ -426,7 +429,7 @@ export default function V2CarpetCleaningPage() {
             {testimonials.map((t, i) => (
               <GlassCard key={i} className="p-6 flex flex-col">
                 <Quotes size={32} weight="fill" className="mb-4" style={{ color: ACCENT }} />
-                <p className="text-slate-300 mb-6 flex-grow">"{t.text}"</p>
+                <p className="text-slate-300 mb-6 flex-grow">&ldquo;{t.text}&rdquo;</p>
                 <div className="flex items-center justify-between">
                   <p className="font-semibold text-white">{t.name}</p>
                   <div className="flex gap-1">{Array(t.rating).fill(0).map((_, j) => <Star key={j} size={16} weight="fill" style={{ color: "#f59e0b" }} />)}</div>
@@ -442,7 +445,7 @@ export default function V2CarpetCleaningPage() {
             <div className="grid md:grid-cols-2 gap-12 items-center">
               <div className="text-center md:text-left">
                 <h2 className="text-3xl font-bold text-white mb-4">Our 100% Satisfaction Guarantee</h2>
-                <p className="text-slate-300 mb-6">We stand behind our work. If you're not completely satisfied with the results of our cleaning, simply let us know within 48 hours and we will re-clean the area for free. Your happiness is our top priority.</p>
+                <p className="text-slate-300 mb-6">We stand behind our work. If you’re not completely satisfied with the results of our cleaning, simply let us know within 48 hours and we will re-clean the area for free. Your happiness is our top priority.</p>
                 <div className="flex justify-center md:justify-start">
                   <ShieldCheck size={64} weight="duotone" style={{ color: ACCENT }} />
                 </div>
@@ -489,7 +492,7 @@ export default function V2CarpetCleaningPage() {
           <ShimmerBorder>
             <div className="p-8 md:p-12 text-center rounded-2xl">
               <h2 className="text-3xl font-bold text-white mb-4">Ready for Spotless Carpets?</h2>
-              <p className="text-slate-300 max-w-2xl mx-auto mb-8">Let us bring new life to your floors. Get a free, no-obligation quote today and see why we're the top-rated carpet cleaners in the area.</p>
+              <p className="text-slate-300 max-w-2xl mx-auto mb-8">Let us bring new life to your floors. Get a free, no-obligation quote today and see why we’re the top-rated carpet cleaners in the area.</p>
               <MagneticButton className="px-8 py-4 rounded-full text-lg font-semibold text-white" style={{ background: ACCENT }} onClick={() => scrollTo("contact")}>
                 Get My Free Quote Now
               </MagneticButton>
@@ -501,7 +504,7 @@ export default function V2CarpetCleaningPage() {
         <SectionReveal id="contact" className="py-24 grid md:grid-cols-2 gap-12">
           <div>
             <h2 className="text-4xl font-bold text-white mb-4">Contact Us</h2>
-            <p className="text-slate-300 mb-8">Have questions or ready to schedule? Reach out to our friendly team. We're here to help!</p>
+            <p className="text-slate-300 mb-8">Have questions or ready to schedule? Reach out to our friendly team. We’re here to help!</p>
             <div className="space-y-6">
               <div className="flex items-center gap-4">
                 <GlassCard className="p-3 rounded-full"><Phone size={24} style={{ color: ACCENT_LIGHT }} /></GlassCard>
@@ -558,7 +561,7 @@ export default function V2CarpetCleaningPage() {
 }
 
 // Helper component, assuming Plus icon might not be in the library
-const Plus = (props: any) => (
+const Plus = (props: SVGProps<SVGSVGElement>) => (
   <svg {...props} viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
     <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd" />
   </svg>

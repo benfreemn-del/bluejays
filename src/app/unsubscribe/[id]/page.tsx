@@ -30,6 +30,7 @@ export default function UnsubscribePage() {
 
   useEffect(() => {
     if (id) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- This effect intentionally starts the initial async status check, which updates only local view state after the request completes.
       checkStatus();
     }
   }, [id, checkStatus]);

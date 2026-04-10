@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import type { Prospect, Category } from "@/lib/types";
 import { CATEGORY_CONFIG } from "@/lib/types";
 
@@ -61,32 +61,38 @@ export default function MapView({ prospects, onStateClick }: MapViewProps) {
   const [scoutResult, setScoutResult] = useState("");
 
   // Group prospects by state
-  const stateData: Record<string, { count: number; hasPaid: boolean }> = {};
-  for (const p of prospects) {
-    const st = p.state || "WA";
-    if (!stateData[st]) stateData[st] = { count: 0, hasPaid: false };
-    stateData[st].count++;
-    if (p.status === "paid") stateData[st].hasPaid = true;
-  }
+  const stateData = useMemo<Record<string, { count: number; hasPaid: boolean }>>(() => {
+    const grouped: Record<string, { count: number; hasPaid: boolean }> = {};
+    for (const prospect of prospects) {
+      const state = prospect.state || "WA";
+      if (!grouped[state]) grouped[state] = { count: 0, hasPaid: false };
+      grouped[state].count++;
+      if (prospect.status === "paid") grouped[state].hasPaid = true;
+    }
+    return grouped;
+  }, [prospects]);
 
   // Group by county with full status tracking.
   // The prospect's `city` field is stored as "{County Name}, {State Abbreviation}"
   // by the scouting system (e.g. "King, WA"). We parse out the county name so
   // it matches the GeoJSON NAME property used to render county polygons.
-  const countyData: Record<string, { count: number; hasPaid: boolean; hasContacted: boolean; hasReady: boolean; categories: string[]; paidBusinesses: string[] }> = {};
-  for (const p of prospects) {
-    const rawCity = p.city || "Unknown";
-    const countyName = parseCountyName(rawCity);
-    if (!countyData[countyName]) countyData[countyName] = { count: 0, hasPaid: false, hasContacted: false, hasReady: false, categories: [], paidBusinesses: [] };
-    countyData[countyName].count++;
-    if (p.status === "paid") { countyData[countyName].hasPaid = true; countyData[countyName].paidBusinesses.push(p.businessName); }
-    if (p.status === "contacted" || p.status === "responded") countyData[countyName].hasContacted = true;
-    if (p.status === "pending-review" || p.status === "ready_to_review" || p.status === "approved") countyData[countyName].hasReady = true;
-    if (!countyData[countyName].categories.includes(p.category)) countyData[countyName].categories.push(p.category);
-  }
-
-  // Paid customer pins (for overlay on county view)
-  const paidProspects = prospects.filter(p => p.status === "paid");
+  const countyData = useMemo<Record<string, { count: number; hasPaid: boolean; hasContacted: boolean; hasReady: boolean; categories: string[]; paidBusinesses: string[] }>>(() => {
+    const grouped: Record<string, { count: number; hasPaid: boolean; hasContacted: boolean; hasReady: boolean; categories: string[]; paidBusinesses: string[] }> = {};
+    for (const prospect of prospects) {
+      const rawCity = prospect.city || "Unknown";
+      const countyName = parseCountyName(rawCity);
+      if (!grouped[countyName]) grouped[countyName] = { count: 0, hasPaid: false, hasContacted: false, hasReady: false, categories: [], paidBusinesses: [] };
+      grouped[countyName].count++;
+      if (prospect.status === "paid") {
+        grouped[countyName].hasPaid = true;
+        grouped[countyName].paidBusinesses.push(prospect.businessName);
+      }
+      if (prospect.status === "contacted" || prospect.status === "responded") grouped[countyName].hasContacted = true;
+      if (prospect.status === "pending-review" || prospect.status === "ready_to_review" || prospect.status === "approved") grouped[countyName].hasReady = true;
+      if (!grouped[countyName].categories.includes(prospect.category)) grouped[countyName].categories.push(prospect.category);
+    }
+    return grouped;
+  }, [prospects]);
 
   // Load GeoJSON data
   useEffect(() => {

@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import { useState, useEffect, useCallback } from "react";
 import type { Prospect, Category } from "@/lib/types";
 import { CATEGORY_CONFIG } from "@/lib/types";
@@ -135,14 +137,13 @@ export default function DashboardPage() {
               <h1 className="truncate text-lg font-semibold sm:text-xl">Dashboard</h1>
             </div>
           </div>
-
           <div className="flex flex-wrap items-center gap-2 lg:justify-end">
-            <a href="/" className="rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-background hover:text-foreground">
+            <Link href="/" className="rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-background hover:text-foreground">
               Home
-            </a>
-            <a href="/scripts" className="rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-background hover:text-foreground">
+            </Link>
+            <Link href="/scripts" className="rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-background hover:text-foreground">
               AI
-            </a>
+            </Link>
             <a href="/spending" className="rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-background hover:text-foreground">
               Spend
             </a>

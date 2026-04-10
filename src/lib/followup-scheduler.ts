@@ -16,12 +16,9 @@
  */
 import fs from "fs";
 import path from "path";
-import { getProspect, updateProspect, getAllProspects } from "./store";
-import { resumeFunnel, getEnrollment, getAllEnrollments } from "./funnel-manager";
-import { getEmailHistory } from "./email-sender";
-import { getSmsHistory } from "./sms";
+import { getProspect } from "./store";
+import { resumeFunnel } from "./funnel-manager";
 import { supabase, isSupabaseConfigured } from "./supabase";
-import type { Prospect } from "./types";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const SCHEDULER_FILE = path.join(DATA_DIR, "followup-scheduler.json");

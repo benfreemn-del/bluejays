@@ -1,5 +1,8 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element -- These static marketing and preview components intentionally use plain img tags to preserve existing markup and visual behavior during lint-only cleanup. */
+/* eslint-disable react-hooks/purity -- Decorative particle values are intentionally randomized for static visual effects in these marketing pages and previews; this preserves existing appearance without changing business logic. */
+
 import { useState, useRef, useCallback } from "react";
 import {
   motion,
@@ -333,7 +336,7 @@ export default function V2ApplianceRepairPage() {
             <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white mb-6">
               <WordReveal text="Comprehensive Appliance Repair" />
             </h2>
-            <p className="text-slate-400 max-w-2xl mx-auto text-lg">From refrigerators that won't cool to washers that won't spin, our expert technicians can fix it all.</p>
+            <p className="text-slate-400 max-w-2xl mx-auto text-lg">From refrigerators that won’t cool to washers that won’t spin, our expert technicians can fix it all.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {services.map((service, i) => (
@@ -420,7 +423,7 @@ export default function V2ApplianceRepairPage() {
               </h2>
               <div className="space-y-6 text-slate-400 text-lg leading-relaxed mb-8">
                 <p>
-                  At ProFix Appliance Repair, we understand how disruptive a broken appliance can be to your daily routine. That's why we've dedicated ourselves to providing fast, reliable, and honest repair services to our community for over 15 years.
+                  At ProFix Appliance Repair, we understand how disruptive a broken appliance can be to your daily routine. That’s why we’ve dedicated ourselves to providing fast, reliable, and honest repair services to our community for over 15 years.
                 </p>
                 <p>
                   Our team of factory-trained technicians arrives fully equipped with the tools and common parts needed to fix most issues on the first visit. We believe in transparent pricing, clear communication, and treating your home with the utmost respect.
@@ -500,7 +503,7 @@ export default function V2ApplianceRepairPage() {
                     <Star key={j} size={18} weight="fill" style={{ color: ACCENT_LIGHT }} />
                   ))}
                 </div>
-                <p className="text-slate-300 leading-relaxed mb-8 flex-1 relative z-10 italic">"{testimonial.text}"</p>
+                <p className="text-slate-300 leading-relaxed mb-8 flex-1 relative z-10 italic">&ldquo;{testimonial.text}&rdquo;</p>
                 <div className="flex items-center gap-4 relative z-10">
                   <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-white font-bold border border-white/10">
                     {testimonial.name.charAt(0)}
@@ -577,7 +580,7 @@ export default function V2ApplianceRepairPage() {
               <motion.div initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={spring}>
                 <p className="text-sm uppercase tracking-widest mb-3 font-semibold" style={{ color: ACCENT_LIGHT }}>Fast Service</p>
                 <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white mb-4">Need a Repair Today?</h2>
-                <p className="text-slate-400 text-lg mb-8 max-w-lg mx-auto">Don't wait days for a technician. Call now to schedule same-day service and get your appliance working again.</p>
+                <p className="text-slate-400 text-lg mb-8 max-w-lg mx-auto">Don’t wait days for a technician. Call now to schedule same-day service and get your appliance working again.</p>
                 <div className="flex flex-wrap justify-center gap-4">
                   <MagneticButton className="px-10 py-4 rounded-full text-base font-semibold text-white inline-flex items-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
                     <CalendarCheck size={20} weight="duotone" /> Book Online

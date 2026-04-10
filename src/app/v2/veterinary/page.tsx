@@ -1,5 +1,8 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element -- These static marketing and preview components intentionally use plain img tags to preserve existing markup and visual behavior during lint-only cleanup. */
+/* eslint-disable react-hooks/purity -- Decorative particle values are intentionally randomized for static visual effects in these marketing pages and previews; this preserves existing appearance without changing business logic. */
+
 import { useState, useRef, useCallback } from "react";
 import {
   motion,
@@ -10,7 +13,6 @@ import {
 } from "framer-motion";
 import {
   Star,
-  ShieldCheck,
   CaretDown,
   Phone,
   MapPin,
@@ -18,9 +20,7 @@ import {
   ArrowRight,
   Heart,
   FirstAidKit,
-  Users,
   CalendarCheck,
-  CheckCircle,
   Quotes,
   X,
   List,
@@ -29,7 +29,6 @@ import {
   Scissors,
   Stethoscope,
   Dog,
-  Cat,
   Heartbeat,
   Warning,
   Pill,
@@ -57,7 +56,6 @@ const GREEN = "#16a34a";
 const GREEN_LIGHT = "#22c55e";
 const CREAM = "#fef3c7";
 const GREEN_GLOW = "rgba(22, 163, 74, 0.15)";
-const CREAM_GLOW = "rgba(254, 243, 199, 0.08)";
 
 /* ───────────────────────── FLOATING PAW PRINTS ───────────────────────── */
 function FloatingPawPrints() {

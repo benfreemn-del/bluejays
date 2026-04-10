@@ -1,5 +1,7 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element -- These static marketing and preview components intentionally use plain img tags to preserve existing markup and visual behavior during lint-only cleanup. */
+
 import { useRef, useState, useCallback, useEffect } from "react";
 import {
   motion,
@@ -16,7 +18,6 @@ import {
   Sparkle,
   Drop,
   Flower,
-  Heart,
   Phone,
   EnvelopeSimple,
   MapPin,
@@ -25,7 +26,6 @@ import {
   InstagramLogo,
   Clock,
   CalendarBlank,
-  User,
   X,
   List,
 } from "@phosphor-icons/react";
@@ -35,10 +35,6 @@ const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
 
 /* ─── stagger ─── */
-const stagger = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.03 } },
-};
 const letterReveal = {
   hidden: { opacity: 0, y: 30 },
   show: { opacity: 1, y: 0, transition: spring },
@@ -476,7 +472,7 @@ export default function V2SalonPage() {
               variants={{ hidden: {}, show: { transition: { staggerChildren: 0.12 } } }}
               className="flex flex-wrap gap-x-3 md:gap-x-5"
             >
-              {heroWords.map((word, i) => (
+              {heroWords.map((word) => (
                 <motion.span
                   key={word}
                   variants={letterReveal}

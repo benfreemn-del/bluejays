@@ -1,6 +1,9 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+/* eslint-disable @next/next/no-img-element -- These static marketing and preview components intentionally use plain img tags to preserve existing markup and visual behavior during lint-only cleanup. */
+/* eslint-disable react-hooks/purity -- Decorative particle values are intentionally randomized for static visual effects in these marketing pages and previews; this preserves existing appearance without changing business logic. */
+
+import { useState, useRef, useCallback } from "react";
 import {
   motion,
   useMotionValue,
@@ -26,10 +29,7 @@ import {
   List,
   Timer,
   Certificate,
-  Hammer,
-  Envelope,
   ThumbsUp,
-  CurrencyDollar,
 } from "@phosphor-icons/react";
 import type { GeneratedSiteData } from "@/lib/generator";
 import BluejayLogo from "../BluejayLogo";
@@ -79,7 +79,7 @@ const STOCK_PROJECTS = [
 ];
 
 /* ───────────────────────── FLOATING WATER DROPS ───────────────────────── */
-function FloatingWaterDrops({ accent }: { accent: string }) {
+function FloatingWaterDrops() {
   const particles = Array.from({ length: 20 }, (_, i) => ({
     id: i, x: Math.random() * 100, delay: Math.random() * 10,
     duration: 7 + Math.random() * 7, size: 3 + Math.random() * 5, opacity: 0.1 + Math.random() * 0.25,
@@ -265,7 +265,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
 
   return (
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: SLATE, color: "#f1f5f9" }}>
-      <FloatingWaterDrops accent={BLUE} />
+      <FloatingWaterDrops />
 
       {/* ══════════════════ 1. NAV ══════════════════ */}
       <nav className="fixed top-0 left-0 right-0 z-50">
