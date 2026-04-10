@@ -355,10 +355,13 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
 
   const { PRIMARY, PRIMARY_GLOW } = getAccent(data.accentColor);
 
-  const heroImage = data.photos?.[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
-  const aboutImage = data.photos?.[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName);
-  /* Use photo[1] for hero card (different from background), fall back to about image */
-  const heroCardImage = data.photos?.[1] || data.photos?.[0] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 1);
+  /* Deduplicate scraped photos — ensure hero, card, and about are NEVER the same image */
+  const uniquePhotos = data.photos ? [...new Set(data.photos)] : [];
+  const heroImage = uniquePhotos[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
+  const heroCardImage = uniquePhotos[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 1);
+  const aboutImage = uniquePhotos[1] && uniquePhotos[1] !== uniquePhotos[0]
+    ? uniquePhotos[1]
+    : uniquePhotos[2] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 2);
   const galleryImages = data.photos?.length > 2 ? data.photos.slice(2, 6) : pickGallery(STOCK_GALLERY_POOL, data.businessName);
 
   const processSteps = [

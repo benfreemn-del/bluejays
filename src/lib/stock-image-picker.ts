@@ -41,6 +41,12 @@ export function pickGallery(pool: string[], businessName: string, count = 4): st
  * Uses real photos when available, falls back to stock pool.
  * Ensures hero background and hero card are DIFFERENT images.
  */
+/**
+ * Get hero, about, card, and gallery images with full dedup logic.
+ * Deduplicates scraped photos first (removes exact URL duplicates),
+ * then ensures hero, card, and about are ALWAYS different images.
+ * Falls back to stock pools when scraped photos are missing or duplicated.
+ */
 export function getPreviewImages(
   photos: string[] | undefined,
   businessName: string,
@@ -53,12 +59,18 @@ export function getPreviewImages(
   aboutImage: string;
   galleryImages: string[];
 } {
-  const heroImage = photos?.[0] || pickFromPool(heroPool, businessName);
-  const aboutImage = photos?.[1] || pickFromPool(aboutPool, businessName);
-  // Card image uses a DIFFERENT photo than the hero background
-  const heroCardImage = photos?.[1] || photos?.[0] || pickFromPool(aboutPool, businessName, 1);
-  const galleryImages = photos && photos.length > 2
-    ? photos.slice(2, 6)
+  // Deduplicate scraped photos — remove exact URL matches
+  const unique = photos ? [...new Set(photos)] : [];
+
+  const heroImage = unique[0] || pickFromPool(heroPool, businessName);
+  // Card MUST differ from hero — use unique[1] or a different stock
+  const heroCardImage = unique[1] || pickFromPool(aboutPool, businessName, 1);
+  // About MUST differ from both hero and card
+  const aboutImage = unique.length >= 2 && unique[1] !== unique[0]
+    ? unique[1]
+    : unique[2] || pickFromPool(aboutPool, businessName, 2);
+  const galleryImages = unique.length > 2
+    ? unique.slice(2, 6)
     : pickGallery(galleryPool, businessName);
 
   return { heroImage, heroCardImage, aboutImage, galleryImages };
