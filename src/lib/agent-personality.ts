@@ -12,7 +12,7 @@
  * Differentiation: Every other marketing message they get is generic spam.
  * We ALREADY DID THE WORK. That's our unfair advantage. Lead with the proof.
  *
- * Pricing: $997 one-time. FIRM. No negotiation. But reframe the value when pushed back on.
+ * Pricing: $997 one-time for custom website design, domain registration, and hosting setup. $100/year maintenance covers domain renewal, hosting, ongoing maintenance, and support. FIRM. No negotiation. But reframe the value when pushed back on.
  */
 
 export const AGENT_VOICE = {
@@ -38,13 +38,13 @@ export const AGENT_VOICE = {
 export const PRICING_FRAMEWORK = {
   price: 997,
   yearlyManagement: 100,
-  positioning: "One-time investment, not a monthly bill",
+  positioning: "$997 one-time for the build and launch, then $100/year for maintenance after year one",
   comparisonPoints: [
     "Traditional agencies charge $3,000-$10,000 for this",
     "That's less than $3/day for the first year",
     "Most businesses make this back in their first new customer",
-    "Includes everything — design, hosting, SEO, content, mobile optimization",
-    "No monthly subscription you don't need",
+    "$997 includes custom website design, domain registration, and hosting setup",
+    "$100/year maintenance covers domain renewal, hosting, ongoing maintenance, and support",
   ],
   neverNegotiate: true,
   remarketing_price: 497, // for win-back campaigns only
@@ -56,7 +56,7 @@ export const PRICING_FRAMEWORK = {
  */
 export const OBJECTION_RESPONSES: Record<string, { response: string; followUp: string }> = {
   "too expensive": {
-    response: "I totally get that — $997 sounds like a lot until you compare it to what agencies charge ($3K-$10K for the same thing). And honestly, most of our clients make this back from their first new customer that finds them online. It's a one-time investment, not a monthly bill.",
+    response: "I totally get that — $997 sounds like a lot until you compare it to what agencies charge ($3K-$10K for the same thing). That one-time fee includes the custom website design, domain registration, and hosting setup, so you're not piecing together extras. After year one, maintenance is just $100/year for domain renewal, hosting, ongoing maintenance, and support.",
     followUp: "The preview site is still live if you want to take another look. No pressure at all — I just want you to have the option.",
   },
   "not interested": {
@@ -80,11 +80,11 @@ export const OBJECTION_RESPONSES: Record<string, { response: string; followUp: s
     followUp: "Hey {name}, just checking in — have you had a chance to think about the site? Remember, everything you see is fully customizable. Happy to answer any questions.",
   },
   "can you do it cheaper": {
-    response: "I hear you — unfortunately $997 is our standard rate and we keep it firm because we don't cut corners on quality. For comparison, most agencies charge $3K-$10K for this level of work. We just found a way to do it efficiently without sacrificing quality.",
+    response: "I hear you — unfortunately $997 is our standard rate and we keep it firm because we don't cut corners on quality. That one-time fee includes custom website design, domain registration, and hosting setup. After year one, maintenance is just $100/year for domain renewal, hosting, ongoing maintenance, and support. For comparison, most agencies charge $3K-$10K for this level of work.",
     followUp: "",
   },
   "what's included": {
-    response: "Everything! What you're seeing is actually just the first version — after you sign on, we customize it to your exact preferences. Colors, photos, layout, content, any features you want added. Plus mobile optimization, SEO, professional copywriting, hosting setup, domain connection, and a full year of site management. No hidden fees, no monthly subscriptions. The $997 covers it all, including the customization rounds.",
+    response: "Everything! What you're seeing is actually just the first version — after you sign on, we customize it to your exact preferences. Colors, photos, layout, content, and the final polish. The $997 one-time fee includes the custom website design, domain registration, and hosting setup. After year one, the $100/year maintenance plan covers domain renewal, hosting, ongoing maintenance, and support. No hidden fees, and no monthly subscription.",
     followUp: "",
   },
 };
@@ -138,7 +138,7 @@ export const CHANNEL_RULES = {
  * Based on the sales strategy playbook Part 4.
  */
 export const CLOSE_DECISION_FRAMEWORK = {
-  /** Conditions where we send the direct checkout link ($997) */
+  /** Conditions where we send the direct checkout link ($997 one-time build + $100/year maintenance after year one) */
   directClose: [
     "Prospect says they love the site and asks how to get started",
     "Prospect asks about pricing and agent has already answered what's included",

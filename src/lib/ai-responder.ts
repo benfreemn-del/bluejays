@@ -525,7 +525,7 @@ function getMockResponse(prompt: string): string {
       lower.includes("pricey") || lower.includes("$997")) {
     return JSON.stringify({
       shouldReply: true,
-      reply: `I hear you, ${name} — $997 is real money, and I'd never want you to feel pressured into something that doesn't make sense for you.\n\nHere's how I think about it though: most ${category || "local"} businesses tell me they get their first new customer from their website within the first month. At your price point, that probably pays for the whole thing.\n\nAnd unlike agencies that charge $3K-$10K, this is a one-time investment — no monthly fees eating into your bottom line.${personalTouch}\n\nThe preview is still live whenever you want to take another look. Zero pressure from me.`,
+      reply: `I hear you, ${name} — $997 is real money, and I'd never want you to feel pressured into something that doesn't make sense for you.\n\nHere's how I think about it though: that one-time fee includes the custom website design, domain registration, and hosting setup, so you're not piecing together a bunch of extras. Most ${category || "local"} businesses tell me they get their first new customer from their website within the first month, which usually covers it.\n\nAfter year one, maintenance is just $100/year for domain renewal, hosting, ongoing maintenance, and support.${personalTouch}\n\nThe preview is still live whenever you want to take another look. Zero pressure from me.`,
       escalate: false,
       sentiment: "neutral",
       intent: "objection",
@@ -943,7 +943,7 @@ export async function processIncomingMessage(
 
     switch (objectionType) {
       case "too expensive":
-        reply = `${getWarmOpener(name, "empathetic")} $997 is real money, and I'd never want you to feel pressured.\n\nHere's how I think about it though: most ${CATEGORY_CONFIG[prospect.category]?.label || ""} businesses tell me they get their first new customer from their website within the first month. That usually more than covers it.\n\nAnd unlike agencies that charge $3K-$10K, this is a one-time investment — no monthly fees eating into your bottom line.\n\n${personalHook}\n\nThe preview is still live whenever you want to take another look. Zero pressure from me. ${getWarmSignoff(name)}`;
+        reply = `${getWarmOpener(name, "empathetic")} $997 is real money, and I'd never want you to feel pressured.\n\nThat one-time fee includes the custom website design, domain registration, and hosting setup. Most ${CATEGORY_CONFIG[prospect.category]?.label || ""} businesses tell me they get their first new customer from their website within the first month, and that usually more than covers it.\n\nAfter year one, maintenance is just $100/year for domain renewal, hosting, ongoing maintenance, and support.\n\n${personalHook}\n\nThe preview is still live whenever you want to take another look. Zero pressure from me. ${getWarmSignoff(name)}`;
         break;
 
       case "already have a website": {
@@ -961,11 +961,11 @@ export async function processIncomingMessage(
         break;
 
       case "can you do it cheaper":
-        reply = `I wish I could, ${name} — but $997 is our standard rate and we keep it firm because we don't cut corners. For context, most agencies charge $3K-$10K for this level of work. We just found a way to do it efficiently without sacrificing quality.\n\nThe good news? It's a one-time investment. No monthly subscriptions, no hidden fees. And most owners tell me they make it back from their first new online customer.\n\n${personalHook}`;
+        reply = `I wish I could, ${name} — but $997 is our standard rate and we keep it firm because we don't cut corners. That one-time fee includes the custom website design, domain registration, and hosting setup. After year one, maintenance is just $100/year for domain renewal, hosting, ongoing maintenance, and support.\n\nFor context, most agencies charge $3K-$10K for this level of work. We just found a way to do it efficiently without sacrificing quality.\n\n${personalHook}`;
         break;
 
       case "what's included":
-        reply = `Great question! Here's the full breakdown:\n\nWhat you see in the preview is actually just the starting point. After you sign on, we customize everything to your exact preferences — colors, photos, layout, content, any features you want.\n\nThe $997 covers:\n- Custom design + development\n- Mobile optimization\n- SEO setup (so people can actually find you)\n- Professional copywriting\n- Hosting setup + domain connection\n- A full year of site management\n\nNo hidden fees, no monthly subscriptions. ${personalHook}\n\nWant me to go deeper on any of those?`;
+        reply = `Great question! Here's the full breakdown:\n\nWhat you see in the preview is just the starting point. After you sign on, we customize the site to your preferences — colors, photos, layout, and content.\n\nThe $997 one-time fee includes:\n- Custom website design\n- Domain registration\n- Hosting setup\n\nThen after year one, the $100/year maintenance plan covers:\n- Domain renewal\n- Hosting\n- Ongoing maintenance\n- Support\n\nNo hidden fees, and no monthly subscription. ${personalHook}\n\nWant me to go deeper on any of those?`;
         break;
 
       default: {

@@ -6,7 +6,7 @@ import { createCheckoutSession } from "@/lib/stripe";
  * POST /api/checkout/create
  *
  * Creates a Stripe Checkout Session for a prospect who has claimed their site.
- * Includes both the $997 one-time setup fee and $100/year management subscription.
+ * Includes the $997 one-time fee for custom website design, domain registration, and hosting setup, plus the deferred $100/year maintenance subscription for domain renewal, hosting, ongoing maintenance, and support.
  *
  * Request body: { prospectId: string }
  * Response: { url: string } — redirect the client to this Stripe Checkout URL

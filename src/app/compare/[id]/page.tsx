@@ -324,7 +324,7 @@ export default function ComparePage() {
             </svg>
           </a>
           <p className="text-white/30 text-sm mt-4">
-            One-time investment. Includes everything. Live within 48 hours.
+            $997 one-time includes custom website design, domain registration, and hosting setup. After year one, $100/year maintenance covers domain renewal, hosting, ongoing maintenance, and support.
           </p>
 
           <div className="mt-6 pt-6 border-t border-white/10 max-w-md mx-auto">

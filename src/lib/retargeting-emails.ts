@@ -105,8 +105,8 @@ I'll keep this short. I built a custom website for ${biz} a while back, and I've
 But I wanted to ask honestly: is there something specific holding you back? I hear a lot of things from business owners:
 
 - "I already have a website" → Totally fair. The one I built is a modern upgrade, and you can compare them side by side.
-- "$997 is too much" → I get it. But agencies charge $3K-$10K for this. And most owners make it back from their first new online customer.
-- "I don't have time for this" → That's the best part — we handle everything. You just say "go."
+- "$997 is too much" → I get it. But that one-time fee includes custom website design, domain registration, and hosting setup. After year one, maintenance is just $100/year for domain renewal, hosting, ongoing maintenance, and support.
+- "I don't have time for this" → That's the best part — we handle the setup and ongoing maintenance. You just say "go."
 
 If none of those apply and you're just not interested, I respect that 100%. Just reply "pass" and I won't bother you again.
 
@@ -144,7 +144,8 @@ I noticed you took a look at the website I built for ${biz} — thanks for check
 A few things worth knowing:
 - Everything you saw is just the STARTING POINT. Once you're on board, we customize colors, photos, content, layout — whatever you want.
 - It's already mobile-optimized and SEO-ready.
-- We handle hosting, domain setup, and a full year of management.
+- We handle the custom website design, domain registration, and hosting setup.
+- After year one, maintenance is $100/year for domain renewal, hosting, ongoing maintenance, and support.
 
 If you liked what you saw but have questions, I'm right here. Or if you'd rather chat with a real person, here's a link to book a quick call: ${bookingUrl}
 
@@ -167,7 +168,7 @@ Industry data says it's probably 500-2,000+ searches. Now, how many of those peo
 
 The site I built for ${biz} is designed to capture those searches and turn them into phone calls. Here's how it stacks up against what you have now: ${compareUrl}
 
-At $997 one-time (not monthly), most ${category.toLowerCase()} businesses make that back within the first month from new customers who found them online.
+At $997 one-time, you get the custom website design, domain registration, and hosting setup. After year one, maintenance is just $100/year for domain renewal, hosting, ongoing maintenance, and support. Most ${category.toLowerCase()} businesses make that back quickly from new customers who found them online.
 
 Your site is still reserved: ${claimUrl}
 
@@ -186,7 +187,7 @@ ${footer(prospect.id)}`,
 
 This is my last email about the website I built for ${biz}. I know you checked it out, and I hope you liked what you saw.
 
-Here's my honest pitch: for $997 one-time, you get a professional website that would cost $3,000-$10,000 anywhere else. We handle everything — design, hosting, SEO, domain setup, and a full year of updates. You focus on running your business.
+Here's my honest pitch: for $997 one-time, you get a professional website that would cost $3,000-$10,000 anywhere else. That fee includes custom website design, domain registration, and hosting setup. After year one, maintenance is just $100/year for domain renewal, hosting, ongoing maintenance, and support. You focus on running your business.
 
 If the timing isn't right, I totally understand. The preview will stay up for a bit longer if you change your mind.
 

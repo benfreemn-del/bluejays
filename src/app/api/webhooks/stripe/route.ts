@@ -12,7 +12,7 @@ import { logCost, COST_RATES } from "@/lib/cost-logger";
  *
  * Handles:
  * - checkout.session.completed — marks prospect as 'paid', notifies Ben via email,
- *   and creates a deferred $100/year management subscription (1-year trial)
+ *   and creates a deferred $100/year maintenance subscription (1-year trial)
  * - customer.subscription.updated — tracks subscription status changes
  * - customer.subscription.deleted — marks subscription as cancelled
  */
@@ -90,10 +90,10 @@ export async function POST(request: NextRequest) {
           // Send payment confirmation email to Ben
           await notifyOwnerPayment(businessName, session.customer_email || prospect.email || "N/A", session.amount_total);
 
-          // ─── Create deferred $100/year management subscription ───
+          // ─── Create deferred $100/year maintenance subscription ───
           // For both standard ($997) and free ($30) one-time setup payments.
           // We create a subscription with a 1-year trial so the first
-          // $100 charge happens exactly 1 year after the initial purchase.
+          // $100 charge happens exactly 1 year after the initial purchase and covers domain renewal, hosting, ongoing maintenance, and support.
           const isValidSetupPayment =
             session.mode === "payment" &&
             session.customer &&
@@ -115,14 +115,14 @@ export async function POST(request: NextRequest) {
               });
 
               console.log(
-                `[Stripe Webhook] Created deferred management subscription ${mgmtSubscription.id} for ${businessName} (${prospectId}). ` +
+                `[Stripe Webhook] Created deferred maintenance subscription ${mgmtSubscription.id} for ${businessName} (${prospectId}). ` +
                 `First charge: ${new Date(mgmtSubscription.trial_end! * 1000).toISOString()}`
               );
             } catch (subErr) {
               // Log but don't fail the webhook — the $997 payment already succeeded.
               // Ben can manually create the subscription from the Stripe dashboard.
               console.error(
-                `[Stripe Webhook] Failed to create deferred management subscription for ${prospectId}:`,
+                `[Stripe Webhook] Failed to create deferred maintenance subscription for ${prospectId}:`,
                 subErr
               );
             }
@@ -184,11 +184,11 @@ export async function POST(request: NextRequest) {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// DEFERRED MANAGEMENT SUBSCRIPTION
+// DEFERRED MAINTENANCE SUBSCRIPTION
 // ═══════════════════════════════════════════════════════════════
 
 /**
- * Create a $100/year management subscription with a 1-year free trial.
+ * Create a $100/year maintenance subscription with a 1-year free trial.
  *
  * This means the customer pays nothing extra at checkout, and the first
  * $100 charge happens automatically 1 year after their initial purchase.
@@ -235,8 +235,8 @@ async function createDeferredManagementSubscription(
           currency: "usd",
           product_data: {
             name: `Website Management — ${businessName}`,
-            description:
-              "Annual website hosting, domain management, security updates, and site maintenance",
+              description:
+              "Annual domain renewal, hosting, ongoing maintenance, and support for the website",
           },
           unit_amount: 10000, // $100.00
           recurring: {
@@ -293,7 +293,7 @@ async function notifyOwnerPayment(
                 <tr><td style="padding:4px 12px;font-weight:bold;">Time:</td><td style="padding:4px 12px;">${new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" })}</td></tr>
               </table>
               <p style="margin-top:16px;">The prospect has been moved to <strong>paid</strong> status and their automated funnel has been paused.</p>
-              <p>A <strong>$100/year management subscription</strong> has been created with a 1-year free trial (first charge in 12 months).</p>
+              <p>A <strong>$100/year maintenance subscription</strong> has been created with a 1-year free trial (first charge in 12 months). It covers domain renewal, hosting, ongoing maintenance, and support.</p>
               <p>Check the dashboard to begin onboarding.</p>
             `,
           },

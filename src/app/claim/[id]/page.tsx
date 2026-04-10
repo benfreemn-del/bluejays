@@ -397,7 +397,7 @@ export default function ClaimPage() {
             <TrustBadge
               icon={<svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>}
               title="One-Time Payment"
-              subtitle={isFreeTier ? "$30 setup + $100/yr after year one" : "$997 setup + $100/yr after year one"}
+              subtitle={isFreeTier ? "$30 setup + $100/yr after year one" : "$997 one-time + $100/yr after year one"}
             />
             <TrustBadge
               icon={<svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
@@ -424,7 +424,7 @@ export default function ClaimPage() {
           <p className="text-white/40 text-center mb-10">
             {isFreeTier
               ? "Everything you need to get online — included in your setup."
-              : "Here's what agencies charge for each piece \u2014 and what you get for $997."}
+              : "Here's what agencies charge for each piece — and what you get with the $997 one-time fee."}
           </p>
 
           <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
@@ -451,7 +451,7 @@ export default function ClaimPage() {
                 <span className="text-lg font-bold text-green-400">Your price today</span>
                 <span className="text-3xl font-extrabold text-green-400">{displayPrice}</span>
               </div>
-              <p className="text-xs text-white/30 mt-1">One-time setup fee. Includes 1 year of hosting &amp; management. After year one, a $100/year management fee applies.</p>
+              <p className="text-xs text-white/30 mt-1">$997 one-time includes custom website design, domain registration, and hosting setup. After year one, $100/year maintenance covers domain renewal, hosting, ongoing maintenance, and support.</p>
             </div>
           </div>
 
@@ -582,7 +582,7 @@ export default function ClaimPage() {
             />
             <FaqItem
               question="Do I own the website?"
-              answer="Yes, 100%. Once you pay, the website is yours. We handle hosting and management for the first year, but you own all the content and design."
+              answer="Yes, 100%. Once you pay, the website is yours. The $997 one-time fee includes custom website design, domain registration, and hosting setup, and after year one the $100/year maintenance plan keeps your domain renewed, hosting active, and support available. You still own the content and design."
             />
             <FaqItem
               question="What if I already have a website?"
@@ -590,7 +590,7 @@ export default function ClaimPage() {
             />
             <FaqItem
               question="Is there a monthly fee?"
-              answer="No monthly fees for the first year. After year one, it's just $100/year for hosting, security updates, and site management. That's it — no hidden costs."
+              answer="There is no monthly fee. The website is $997 one-time, which includes custom website design, domain registration, and hosting setup. After year one, it's $100/year for maintenance, which covers domain renewal, hosting, ongoing maintenance, and support. That's it — no hidden costs."
             />
             <FaqItem
               question="What if I'm not satisfied?"
@@ -761,7 +761,7 @@ export default function ClaimPage() {
         <div className="max-w-6xl mx-auto text-center text-xs text-white/20">
           <p>BlueJays Web Design — Custom websites for local businesses</p>
           <p className="mt-1">Questions? Email us at bluejaycontactme@gmail.com</p>
-          <p className="mt-2 text-white/15">{isFreeTier ? "$30" : "$997"} one-time setup includes 1 year of website hosting, domain management, and security updates. After the first year, a $100/year management fee is automatically billed to keep your site live and maintained. You may cancel anytime.</p>
+          <p className="mt-2 text-white/15">{isFreeTier ? "$30" : "$997"} {isFreeTier ? "covers domain registration and server setup costs." : "one-time includes custom website design, domain registration, and hosting setup."} After the first year, a $100/year maintenance fee covers domain renewal, hosting, ongoing maintenance, and support. You may cancel anytime.</p>
         </div>
       </footer>
     </div>
@@ -850,10 +850,10 @@ function getNextResponse(step: number, userMessage: string, businessName: string
     return {
       responses: [
         `Awesome, so glad you like it! The site is fully custom — built specifically for ${businessName}.`,
-        `Here's what's included: custom design, mobile optimization, SEO setup, hosting, and a year of site management. We handle everything so you can focus on running your business.`,
+        `Here's what's included: the $997 one-time fee covers custom website design, domain registration, and hosting setup. After year one, maintenance is $100/year for domain renewal, hosting, ongoing maintenance, and support.`,
         isFreeTier
-          ? `The total is just $30 one-time to cover setup costs. After year one, it's $100/year for management. Ready to claim it? Just click the green button!`
-          : `The total is $997 one-time, which includes your first year of hosting and management. After year one, it's just $100/year. Ready to claim it? Just click the green button!`,
+          ? `The total is just $30 one-time to cover setup costs. After year one, maintenance is $100/year. Ready to claim it? Just click the green button!`
+          : `The total is $997 one-time, and that includes custom website design, domain registration, and hosting setup. After year one, maintenance is just $100/year for domain renewal, hosting, ongoing maintenance, and support. Ready to claim it? Just click the green button!`,
       ],
       triggerCheckout: false,
     };
@@ -864,8 +864,8 @@ function getNextResponse(step: number, userMessage: string, businessName: string
       responses: [
         isFreeTier
           ? `Great question! It's just $30 one-time — that covers domain registration and server setup costs.`
-          : `Great question! It's $997 one-time — that covers everything: design, development, content, SEO, hosting setup, and your first year of hosting & management.`,
-        `After year one, there's a $100/year management fee for hosting, security updates, and site maintenance. You can cancel anytime — no contracts.`,
+          : `Great question! It's $997 one-time — that includes custom website design, domain registration, and hosting setup.`,
+        `After year one, there's a $100/year maintenance fee for domain renewal, hosting, ongoing maintenance, and support. You can cancel anytime — no contracts.`,
         ...(isFreeTier ? [] : [`For context, agencies charge $3,000-$10,000+ for this. And you've already seen the actual site we built — no guesswork. Would you like to move forward?`]),
       ],
       triggerCheckout: false,
@@ -904,8 +904,8 @@ function getNextResponse(step: number, userMessage: string, businessName: string
   if (lower.includes("domain") || lower.includes("hosting") || lower.includes("url")) {
     return {
       responses: [
-        `We handle all the technical stuff! If you have a domain, we'll connect it. If not, we'll help you get one.`,
-        `Hosting is included — fast, secure, always online. No extra costs for hosting or SSL certificates.`,
+        `We handle all the technical stuff! The $997 one-time fee includes domain registration if you need one, plus hosting setup. If you already have a domain, we'll connect it for you.`,
+        `Hosting is included in the setup, and after year one the $100/year maintenance plan keeps your hosting active, your domain renewed, and your support covered.`,
       ],
       triggerCheckout: false,
     };

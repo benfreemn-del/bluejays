@@ -144,11 +144,11 @@ export default function OnboardingPage() {
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-green-500 mt-0.5">&#10003;</span>
-                Domain connection and hosting setup
+                Domain registration (or connection) and hosting setup
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-green-500 mt-0.5">&#10003;</span>
-                1 year of site management and security updates
+                Ongoing maintenance is $100/year after year one and covers domain renewal, hosting, ongoing maintenance, and support
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-green-500 mt-0.5">&#10003;</span>
