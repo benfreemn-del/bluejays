@@ -578,9 +578,9 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
       
       {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
       <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15, ${ACCENT}08)` }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${TEAL}15, ${TEAL}08)` }} />
         <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
-          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: ACCENT }}>
+          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: TEAL }}>
             Don&apos;t Miss Out
           </p>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-3">
@@ -592,7 +592,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
           <a
             href={`/claim/${data.id}`}
             className="inline-flex items-center gap-2 min-h-[48px] px-8 py-3 rounded-full text-white font-bold text-base hover:shadow-lg transition-all duration-300"
-            style={{ background: ACCENT }}
+            style={{ background: TEAL }}
           >
             Claim This Website
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">

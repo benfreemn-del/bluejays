@@ -10,28 +10,44 @@ import { sanitizeImageUrl, sanitizeImageUrls, validateImageUrl } from "./image-v
  * Get a clean, short hero heading from the data.
  * Falls back to business name if tagline is too long or contains URLs.
  */
-export function getHeroHeading(data: GeneratedSiteData): string {
-  const tagline = data.tagline || "";
-  const name = data.businessName || "Your Business";
+function toCategoryLabel(category: string | undefined): string {
+  if (!category) return "Professional Services";
+  return category
+    .replace(/-/g, " ")
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+}
 
-  // If tagline contains a URL, domain name, or is too long — just use business name
+function getFallbackHeroHeading(data: GeneratedSiteData): string {
+  const categoryLabel = toCategoryLabel(data.category);
+  return `${categoryLabel} You Can Trust`;
+}
+
+export function getHeroHeading(data: GeneratedSiteData): string {
+  const tagline = (data.tagline || "").replace(/https?:\/\/\S+/g, "").trim();
+  const name = (data.businessName || "Your Business").trim();
+  const normalizedTagline = tagline.toLowerCase();
+  const normalizedName = name.toLowerCase();
+
+  // If tagline contains a URL, domain name, is too long, or repeats the business name,
+  // use a category-based heading so the fixed nav is the only place showing the name.
   if (
     tagline.includes(".com") ||
     tagline.includes(".net") ||
     tagline.includes(".org") ||
-    tagline.includes("http") ||
     tagline.includes("www.") ||
-    tagline.length > 80
+    tagline.length > 80 ||
+    !tagline ||
+    normalizedTagline === normalizedName
   ) {
-    return name;
+    return getFallbackHeroHeading(data);
   }
 
-  // If tagline is the generic default, use business name
-  if (tagline.includes("trusted") && tagline.includes("services for your community")) {
-    return name;
+  // If tagline is the generic default, use a category-based heading instead of the business name.
+  if (normalizedTagline.includes("trusted") && normalizedTagline.includes("services for your community")) {
+    return getFallbackHeroHeading(data);
   }
 
-  return tagline || name;
+  return tagline;
 }
 
 /**
