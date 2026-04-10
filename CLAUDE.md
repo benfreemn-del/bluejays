@@ -38,6 +38,33 @@ Every AI agent, generator, reviewer, and automation path that creates or updates
 - **NEVER reuse the same stock photo across multiple templates or prospects when a unique category-appropriate alternative is available.**
 - **ALL V2 preview templates MUST use the shared stock image picker** at `@/lib/stock-image-picker` for fallback image selection. This utility uses deterministic hashing by business name to ensure different businesses get different stock photos. Templates must: (1) import `pickFromPool` and `pickGallery` from the shared utility, (2) store stock images in `STOCK_HERO_POOL`, `STOCK_ABOUT_POOL`, and `STOCK_GALLERY` arrays (not single constants), (3) use `pickFromPool(pool, data.businessName)` for hero/about fallbacks, (4) use `pickGallery(pool, data.businessName)` for gallery fallbacks. Gallery pools must have at least 8 images to prevent collisions. The picker guarantees zero duplicates within a single preview via Set-based dedup.
 
+### 1.5 ZERO DUPLICATE IMAGE POLICY (ABSOLUTE — NO EXCEPTIONS)
+This policy applies to ALL images everywhere in the system — scraped, stock, generated, hero, about, gallery, card, testimonial, CTA, and any other section.
+
+**Within a single preview (same business):**
+- **NEVER show the same image twice on the same page.** Hero background, hero card, about section, gallery items, testimonial backgrounds, CTA sections — every image slot MUST be a unique URL. If the scraped photo array contains duplicates, deduplicate with `new Set()` before assigning to slots.
+- **Hero background and hero card MUST be different images.** If only one photo exists, use a stock fallback for the card — never show the same photo side by side.
+- **About image MUST differ from hero.** If `photos[1] === photos[0]`, skip to `photos[2]` or a stock fallback.
+- **Gallery images MUST all be unique.** Use `pickGallery()` which has Set-based dedup built in.
+
+**Across previews (different businesses in the same category):**
+- **Different businesses MUST get different stock fallback images.** The `pickFromPool()` function uses business-name hashing to deterministically assign different images to different businesses. NEVER use a single hardcoded `const STOCK_HERO = "url"` — always use `STOCK_HERO_POOL` arrays with `pickFromPool()`.
+- **Stock image pools MUST have at least 8 unique images per category** to ensure adequate variety across businesses.
+
+**Across categories (different template types):**
+- **NEVER share the same Unsplash URL between two different category templates.** A photo used in the electrician template must not appear in the plumber template. Run `bash scripts/validate-images.sh` to check.
+
+**In the generation pipeline:**
+- **The scraper MUST deduplicate photo URLs before saving to prospect data.** Remove exact URL matches AND query-string variants of the same base URL.
+- **The quality gate MUST reject any preview where the same image appears more than once** across hero, about, gallery, or card sections.
+- **The image quality agent MUST check for visual duplicates** — two different URLs that show the same image (e.g., different crop sizes from Google Places) count as duplicates.
+
+**Implementation requirements:**
+- ALL templates must `import { pickFromPool, pickGallery } from "@/lib/stock-image-picker"`
+- ALL templates must deduplicate `data.photos` with `[...new Set(data.photos)]` before using
+- ALL stock arrays must be named `STOCK_*_POOL` (arrays, never single strings)
+- The `getPreviewImages()` helper in `stock-image-picker.ts` handles all of this automatically — use it when possible
+
 ### 2. Minimum Photo Coverage Requirements
 
 | Category group | Hard requirement |
