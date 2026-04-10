@@ -159,42 +159,42 @@ export default function VideosPage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <header className="sticky top-0 z-30 border-b border-border bg-surface/95 backdrop-blur">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
+        <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-3 sm:px-6 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex items-center gap-3">
             <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-electric to-blue-deep" />
             <div>
-              <p className="text-sm text-muted">BlueJays Admin</p>
-              <h1 className="text-lg font-semibold">Personalized Videos</h1>
+              <p className="text-xs uppercase tracking-[0.18em] text-muted">BlueJays</p>
+              <h1 className="text-lg font-semibold sm:text-xl">Videos</h1>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <a href="/dashboard" className="rounded-lg border border-border px-4 py-2 text-sm text-muted transition-colors hover:text-foreground">
+          <div className="flex flex-wrap items-center gap-2">
+            <a href="/dashboard" className="rounded-lg border border-border px-3 py-2 text-sm text-muted transition-colors hover:text-foreground">
               Dashboard
             </a>
             <button
               onClick={handleGenerateAll}
               disabled={batchRunning || loading}
-              className="rounded-lg bg-blue-electric px-4 py-2 text-sm font-medium text-white transition-opacity disabled:cursor-not-allowed disabled:opacity-50"
+              className="rounded-lg bg-blue-electric px-3 py-2 text-sm font-medium text-white transition-opacity disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {batchRunning ? "Generating All..." : "Generate All"}
+              {batchRunning ? "Running..." : "Generate"}
             </button>
           </div>
         </div>
       </header>
 
-      <main className="mx-auto max-w-7xl space-y-8 px-6 py-8">
-        <section className="grid gap-4 md:grid-cols-5">
+      <main className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-6 sm:py-8">
+        <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
           <div className="rounded-2xl border border-border bg-surface p-5">
-            <p className="text-sm text-muted">Total Prospects</p>
+            <p className="text-sm text-muted">Prospects</p>
             <p className="mt-3 text-3xl font-semibold">{stats.total}</p>
           </div>
           <div className="rounded-2xl border border-emerald-500/20 bg-surface p-5">
-            <p className="text-sm text-muted">Videos Ready</p>
+            <p className="text-sm text-muted">Ready</p>
             <p className="mt-3 text-3xl font-semibold text-emerald-300">{stats.ready}</p>
           </div>
           <div className="rounded-2xl border border-amber-500/20 bg-surface p-5">
-            <p className="text-sm text-muted">Generating</p>
+            <p className="text-sm text-muted">Running</p>
             <p className="mt-3 text-3xl font-semibold text-amber-300">{stats.generating}</p>
           </div>
           <div className="rounded-2xl border border-red-500/20 bg-surface p-5">
@@ -210,9 +210,9 @@ export default function VideosPage() {
         <section className="rounded-2xl border border-border bg-surface p-5">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex-1">
-              <h2 className="text-lg font-semibold">Manage outreach videos</h2>
+              <h2 className="text-lg font-semibold">Video queue</h2>
               <p className="mt-1 text-sm text-muted">
-                Generate a narrated site walkthrough for each preview, then reuse the hosted video link in outreach.
+                Generate narrated preview videos and reuse the hosted links in outreach.
               </p>
             </div>
 
@@ -289,34 +289,26 @@ export default function VideosPage() {
                               href={row.generatedSiteUrl}
                               target="_blank"
                               rel="noreferrer"
-                              className="text-sm text-blue-300 underline-offset-4 hover:underline"
+                              className="text-sm font-medium text-blue-300 hover:text-blue-200"
                             >
-                              Open Preview
+                              Open preview
                             </a>
                           ) : (
-                            <span className="text-sm text-muted">No preview yet</span>
+                            <span className="text-sm text-muted">Missing</span>
                           )}
                         </td>
                         <td className="px-6 py-5">
                           {row.videoUrl ? (
-                            <div className="space-y-3">
-                              <video
-                                src={row.videoUrl}
-                                controls
-                                preload="metadata"
-                                className="h-32 w-56 rounded-xl border border-border bg-black object-cover"
-                              />
-                              <a
-                                href={row.videoUrl}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="text-sm text-blue-300 underline-offset-4 hover:underline"
-                              >
-                                Open Hosted Video
-                              </a>
-                            </div>
+                            <a
+                              href={row.videoUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-sm font-medium text-blue-300 hover:text-blue-200"
+                            >
+                              Open video
+                            </a>
                           ) : (
-                            <span className="text-sm text-muted">No video yet</span>
+                            <span className="text-sm text-muted">—</span>
                           )}
                         </td>
                         <td className="px-6 py-5 text-sm text-muted">{formatDuration(row.videoDurationSeconds)}</td>
@@ -324,10 +316,10 @@ export default function VideosPage() {
                         <td className="px-6 py-5">
                           <button
                             onClick={() => handleGenerate(row.prospectId)}
-                            disabled={!row.hasGeneratedSite || isGenerating}
-                            className="rounded-lg border border-blue-electric/30 px-4 py-2 text-sm font-medium text-blue-200 transition-colors hover:border-blue-electric disabled:cursor-not-allowed disabled:opacity-40"
+                            disabled={isGenerating || !row.hasGeneratedSite}
+                            className="rounded-lg border border-blue-electric/30 px-3 py-2 text-sm font-medium text-blue-200 transition-colors hover:border-blue-electric disabled:cursor-not-allowed disabled:opacity-50"
                           >
-                            {isGenerating ? "Generating..." : row.videoUrl ? "Regenerate Video" : "Generate Video"}
+                            {isGenerating ? "Generating..." : "Generate"}
                           </button>
                         </td>
                       </tr>

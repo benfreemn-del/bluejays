@@ -399,11 +399,11 @@ export default function ProspectTable({
       </div>
 
       {selectedIds.length > 0 && (
-        <div className="mb-4 p-4 rounded-xl bg-blue-electric/10 border border-blue-electric/20 flex items-center justify-between">
+        <div className="mb-4 flex flex-col gap-3 rounded-xl border border-blue-electric/20 bg-blue-electric/10 p-4 lg:flex-row lg:items-center lg:justify-between">
           <span className="text-sm font-medium text-blue-electric">
             {selectedIds.length} prospect{selectedIds.length !== 1 ? "s" : ""} selected
           </span>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <button
               onClick={() => sendBulk(["email"])}
               disabled={bulkSending}

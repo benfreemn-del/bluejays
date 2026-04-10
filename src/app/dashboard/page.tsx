@@ -126,46 +126,50 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Top Bar */}
-      <header className="border-b border-border bg-surface sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-electric to-blue-deep" />
-            <h1 className="text-xl font-bold">BlueJays Dashboard</h1>
+      <header className="sticky top-0 z-40 border-b border-border bg-surface/95 backdrop-blur">
+        <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-3 sm:px-6 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex min-w-0 items-center gap-3">
+            <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-electric to-blue-deep" />
+            <div className="min-w-0">
+              <p className="text-xs uppercase tracking-[0.18em] text-muted">BlueJays</p>
+              <h1 className="truncate text-lg font-semibold sm:text-xl">Dashboard</h1>
+            </div>
           </div>
-          <div className="flex items-center gap-3">
-            <a href="/" className="text-sm text-muted hover:text-foreground transition-colors">
-              Portfolio
+
+          <div className="flex flex-wrap items-center gap-2 lg:justify-end">
+            <a href="/" className="rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-background hover:text-foreground">
+              Home
             </a>
-            <a href="/scripts" className="text-sm text-muted hover:text-foreground transition-colors">
-              AI Convos
+            <a href="/scripts" className="rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-background hover:text-foreground">
+              AI
             </a>
-            <a href="/spending" className="text-sm text-muted hover:text-foreground transition-colors">
-              Spending
+            <a href="/spending" className="rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-background hover:text-foreground">
+              Spend
             </a>
-            <a href="/deliverability" className="text-sm text-muted hover:text-foreground transition-colors">
-              Deliverability
+            <a href="/deliverability" className="rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-background hover:text-foreground">
+              Email
             </a>
-            <a href="/analytics" className="text-sm text-muted hover:text-foreground transition-colors">
-              Analytics
+            <a href="/analytics" className="rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-background hover:text-foreground">
+              Stats
             </a>
             <a
               href="/api/call-lists?type=all&format=csv"
-              className="h-9 px-4 rounded-lg bg-surface border border-border text-muted text-sm font-medium flex items-center hover:text-foreground hover:border-blue-electric/40 transition-colors"
+              className="flex h-9 items-center rounded-lg border border-border px-3 text-sm font-medium text-muted transition-colors hover:border-blue-electric/40 hover:text-foreground"
             >
-              All Phones
+              Phones
             </a>
             <a
               href="/api/call-lists?type=priority&format=csv"
-              className="h-9 px-4 rounded-lg bg-surface border border-orange-500/30 text-orange-400 text-sm font-medium flex items-center hover:border-orange-500/60 transition-colors"
+              className="flex h-9 items-center rounded-lg border border-orange-500/30 px-3 text-sm font-medium text-orange-400 transition-colors hover:border-orange-500/60"
             >
-              Priority List
+              Priority
             </a>
             <button
               onClick={handleStartFunnelForSelected}
-              className="h-9 px-4 rounded-lg bg-surface border border-sky-500/30 text-sky-400 text-sm font-medium hover:border-sky-500/60 transition-colors"
+              disabled={!selectedProspect}
+              className="h-9 rounded-lg border border-sky-500/30 px-3 text-sm font-medium text-sky-400 transition-colors hover:border-sky-500/60 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {selectedProspect ? `Start Funnel: ${selectedProspect.businessName}` : "Start Funnel (Select Prospect)"}
+              Funnel
             </button>
             <button
               onClick={async () => {
@@ -176,35 +180,35 @@ export default function DashboardPage() {
                   alert(data.message || data.error);
                 } catch { alert("Error sending test funnel"); }
               }}
-              className="h-9 px-4 rounded-lg bg-surface border border-purple-500/30 text-purple-400 text-sm font-medium hover:border-purple-500/60 transition-colors"
+              className="h-9 rounded-lg border border-purple-500/30 px-3 text-sm font-medium text-purple-400 transition-colors hover:border-purple-500/60"
             >
-              Send Ben Test Funnel
+              Test
             </button>
             <button
               onClick={() => setAddLeadOpen(true)}
-              className="h-9 px-4 rounded-lg bg-surface border border-green-500/30 text-green-400 text-sm font-medium hover:border-green-500/60 transition-colors"
+              className="h-9 rounded-lg border border-green-500/30 px-3 text-sm font-medium text-green-400 transition-colors hover:border-green-500/60"
             >
-              + Add Lead
+              Lead
             </button>
             <button
               onClick={() => setPipelineOpen(true)}
-              className="h-9 px-4 rounded-lg bg-surface border border-sky-500/30 text-sky-400 text-sm font-medium hover:border-sky-500/60 transition-colors"
+              className="h-9 rounded-lg border border-sky-500/30 px-3 text-sm font-medium text-sky-400 transition-colors hover:border-sky-500/60"
             >
               Pipeline
             </button>
             <button
               onClick={() => setScoutOpen(true)}
-              className="h-9 px-4 rounded-lg bg-blue-electric text-white text-sm font-medium hover:bg-blue-deep transition-colors"
+              className="h-9 rounded-lg bg-blue-electric px-3 text-sm font-medium text-white transition-colors hover:bg-blue-deep"
             >
-              + New Scout
+              Scout
             </button>
           </div>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-6 py-8 space-y-8">
+      <main className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-6 sm:py-8">
         {loading ? (
-          <div className="text-center py-20 text-muted">
+          <div className="py-20 text-center text-muted">
             Loading prospects...
           </div>
         ) : (
@@ -215,27 +219,26 @@ export default function DashboardPage() {
               activeFilter={statusFilter}
             />
 
-            {/* View toggle */}
             <div className="flex gap-2">
               <button
                 onClick={() => { setView("table"); fetchProspects(); }}
-                className={`h-9 px-4 rounded-lg text-sm font-medium transition-colors ${
+                className={`h-9 rounded-lg px-4 text-sm font-medium transition-colors ${
                   view === "table"
                     ? "bg-blue-electric text-white"
                     : "bg-surface border border-border text-muted hover:text-foreground"
                 }`}
               >
-                Table View
+                Table
               </button>
               <button
                 onClick={() => setView("map")}
-                className={`h-9 px-4 rounded-lg text-sm font-medium transition-colors ${
+                className={`h-9 rounded-lg px-4 text-sm font-medium transition-colors ${
                   view === "map"
                     ? "bg-blue-electric text-white"
                     : "bg-surface border border-border text-muted hover:text-foreground"
                 }`}
               >
-                Map View
+                Map
               </button>
             </div>
 
@@ -259,7 +262,6 @@ export default function DashboardPage() {
                       TX: "Texas", CA: "California", NY: "New York",
                       FL: "Florida", IL: "Illinois", PA: "Pennsylvania",
                     })[0]?.[1] || state;
-                  // Open scout modal pre-filled for that state
                   void stateName;
                   setScoutOpen(true);
                 }}
@@ -293,80 +295,124 @@ export default function DashboardPage() {
         onUpdateProspect={handleUpdateProspect}
       />
 
-      {/* Add Lead Modal */}
       {addLeadOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setAddLeadOpen(false)} />
-          <div className="relative bg-surface border border-border rounded-2xl p-8 w-full max-w-md shadow-2xl">
-            <h2 className="text-xl font-bold mb-6">Manually Add Lead</h2>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
+          <div className="w-full max-w-md rounded-2xl border border-border bg-surface p-6 shadow-xl">
+            <div className="mb-5 flex items-start justify-between gap-4">
+              <div>
+                <h2 className="text-xl font-semibold">Add Lead</h2>
+                <p className="mt-1 text-sm text-muted">Create a lead manually.</p>
+              </div>
+              <button
+                onClick={() => setAddLeadOpen(false)}
+                className="text-muted transition-colors hover:text-foreground"
+              >
+                ✕
+              </button>
+            </div>
+
             <div className="space-y-4">
               <div>
-                <label className="block text-sm text-muted mb-1">Business Name *</label>
-                <input type="text" value={newLead.businessName} onChange={(e) => setNewLead({ ...newLead, businessName: e.target.value })}
-                  className="w-full h-10 px-3 rounded-lg bg-surface-light border border-border text-foreground text-sm" placeholder="e.g., Bright Smile Dental" />
+                <label className="mb-1 block text-sm text-muted">Business Name</label>
+                <input
+                  value={newLead.businessName}
+                  onChange={(e) => setNewLead({ ...newLead, businessName: e.target.value })}
+                  className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-blue-electric"
+                  placeholder="Acme Dental"
+                />
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
-                  <label className="block text-sm text-muted mb-1">Phone</label>
-                  <input type="tel" value={newLead.phone} onChange={(e) => setNewLead({ ...newLead, phone: e.target.value })}
-                    className="w-full h-10 px-3 rounded-lg bg-surface-light border border-border text-foreground text-sm" placeholder="(206) 555-1234" />
+                  <label className="mb-1 block text-sm text-muted">Phone</label>
+                  <input
+                    value={newLead.phone}
+                    onChange={(e) => setNewLead({ ...newLead, phone: e.target.value })}
+                    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-blue-electric"
+                    placeholder="(555) 555-5555"
+                  />
                 </div>
                 <div>
-                  <label className="block text-sm text-muted mb-1">Email</label>
-                  <input type="email" value={newLead.email} onChange={(e) => setNewLead({ ...newLead, email: e.target.value })}
-                    className="w-full h-10 px-3 rounded-lg bg-surface-light border border-border text-foreground text-sm" placeholder="owner@business.com" />
+                  <label className="mb-1 block text-sm text-muted">Email</label>
+                  <input
+                    value={newLead.email}
+                    onChange={(e) => setNewLead({ ...newLead, email: e.target.value })}
+                    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-blue-electric"
+                    placeholder="owner@example.com"
+                  />
                 </div>
               </div>
               <div>
-                <label className="block text-sm text-muted mb-1">Current Website</label>
-                <input type="url" value={newLead.website} onChange={(e) => setNewLead({ ...newLead, website: e.target.value })}
-                  className="w-full h-10 px-3 rounded-lg bg-surface-light border border-border text-foreground text-sm" placeholder="https://theirsite.com" />
+                <label className="mb-1 block text-sm text-muted">Website</label>
+                <input
+                  value={newLead.website}
+                  onChange={(e) => setNewLead({ ...newLead, website: e.target.value })}
+                  className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-blue-electric"
+                  placeholder="https://example.com"
+                />
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
-                  <label className="block text-sm text-muted mb-1">Category</label>
-                  <select value={newLead.category} onChange={(e) => setNewLead({ ...newLead, category: e.target.value })}
-                    className="w-full h-10 px-3 rounded-lg bg-surface-light border border-border text-foreground text-sm">
+                  <label className="mb-1 block text-sm text-muted">Category</label>
+                  <select
+                    value={newLead.category}
+                    onChange={(e) => setNewLead({ ...newLead, category: e.target.value })}
+                    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-blue-electric"
+                  >
                     {(Object.keys(CATEGORY_CONFIG) as Category[]).map((cat) => (
                       <option key={cat} value={cat}>{CATEGORY_CONFIG[cat].label}</option>
                     ))}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm text-muted mb-1">City</label>
-                  <input type="text" value={newLead.city} onChange={(e) => setNewLead({ ...newLead, city: e.target.value })}
-                    className="w-full h-10 px-3 rounded-lg bg-surface-light border border-border text-foreground text-sm" placeholder="Seattle, WA" />
+                  <label className="mb-1 block text-sm text-muted">City</label>
+                  <input
+                    value={newLead.city}
+                    onChange={(e) => setNewLead({ ...newLead, city: e.target.value })}
+                    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-blue-electric"
+                    placeholder="Seattle, WA"
+                  />
                 </div>
               </div>
             </div>
-            <div className="flex gap-3 mt-6">
-              <button onClick={() => setAddLeadOpen(false)}
-                className="flex-1 h-10 rounded-lg border border-border text-muted text-sm hover:bg-surface-light transition-colors">
+
+            <div className="mt-6 flex items-center justify-end gap-3">
+              <button
+                onClick={() => setAddLeadOpen(false)}
+                className="h-10 rounded-lg border border-border px-4 text-sm text-muted transition-colors hover:text-foreground"
+              >
                 Cancel
               </button>
               <button
-                disabled={addingLead || !newLead.businessName}
                 onClick={async () => {
+                  if (!newLead.businessName.trim()) {
+                    alert("Business name is required");
+                    return;
+                  }
                   setAddingLead(true);
                   try {
-                    const res = await fetch("/api/leads/manual", { credentials: "include",
+                    const res = await fetch("/api/prospects", {
                       method: "POST",
+                      credentials: "include",
                       headers: { "Content-Type": "application/json" },
                       body: JSON.stringify(newLead),
                     });
                     const data = await res.json();
-                    if (data.success) {
-                      setAddLeadOpen(false);
-                      setNewLead({ businessName: "", phone: "", email: "", website: "", category: "dental", city: "Seattle, WA" });
-                      fetchProspects();
-                    } else {
-                      alert(data.error || "Failed to add lead");
+                    if (!res.ok) {
+                      throw new Error(data.error || "Failed to add lead");
                     }
-                  } catch { alert("Error adding lead"); }
-                  finally { setAddingLead(false); }
+                    setAddLeadOpen(false);
+                    setNewLead({ businessName: "", phone: "", email: "", website: "", category: "dental", city: "Seattle, WA" });
+                    fetchProspects();
+                  } catch (error) {
+                    alert(error instanceof Error ? error.message : "Failed to add lead");
+                  } finally {
+                    setAddingLead(false);
+                  }
                 }}
-                className="flex-1 h-10 rounded-lg bg-green-500 text-white text-sm font-medium disabled:opacity-50 hover:bg-green-600 transition-colors">
-                {addingLead ? "Adding..." : "Add & Build Site"}
+                disabled={addingLead}
+                className="h-10 rounded-lg bg-blue-electric px-4 text-sm font-medium text-white transition-colors hover:bg-blue-deep disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {addingLead ? "Adding..." : "Add Lead"}
               </button>
             </div>
           </div>
