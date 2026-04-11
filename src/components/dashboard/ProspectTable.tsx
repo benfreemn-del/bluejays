@@ -646,11 +646,20 @@ export default function ProspectTable({
                       {prospect.status === "qc_failed" && (
                         <button
                           onClick={async () => {
-                            await fetch(`/api/qc/review/${prospect.id}`, { method: "POST", credentials: "include" });
+                            // Immediately move to pending-review so it leaves qc_failed category
+                            await fetch(`/api/prospects/${prospect.id}`, {
+                              method: "PATCH",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({ status: "pending-review", qualityNotes: "Re-QC in progress \u2014 Claude is reviewing..." }),
+                            });
                             onRefresh?.();
+                            // Fire Claude QC pipeline in background
+                            fetch(`/api/qc/review/${prospect.id}`, { method: "POST", credentials: "include" })
+                              .then(() => onRefresh?.())
+                              .catch(() => {});
                           }}
                           className="text-xs px-2.5 py-1.5 rounded-lg bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 transition-colors"
-                          title="Re-run QC check"
+                          title="Re-run QC check via Claude"
                         >
                           Re-QC
                         </button>

@@ -358,7 +358,15 @@ export default function ProspectDetail({
                 <button
                   onClick={async () => {
                     setQcLoading(true);
+                    // Immediately move to pending-review so it leaves the qc_failed list
+                    onStatusChange(prospect.id, "pending-review");
                     try {
+                      await fetch(`/api/prospects/${prospect.id}`, {
+                        method: "PATCH",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ status: "pending-review", qualityNotes: "Re-QC in progress — Claude is reviewing..." }),
+                      });
+                      // Fire the Claude QC pipeline (runs in background on server)
                       const res = await fetch(`/api/qc/review/${prospect.id}`, { method: "POST", credentials: "include" });
                       const data = await res.json();
                       setQcResult(data);
@@ -369,7 +377,7 @@ export default function ProspectDetail({
                   disabled={qcLoading}
                   className="flex-1 h-10 rounded-lg bg-rose-500/20 text-rose-400 text-sm font-medium hover:bg-rose-500/30 transition-colors disabled:opacity-50"
                 >
-                  {qcLoading ? "Running QC..." : "Re-run QC"}
+                  {qcLoading ? "⏳ Processing..." : "Re-run QC"}
                 </button>
                 <a
                   href={prospect.generatedSiteUrl || "#"}
