@@ -58,6 +58,7 @@ export type ProspectStatus =
   | "ready_to_review"   // passed QC gate — ready for Ben's manual approval
   | "qc_failed"         // failed QC gate — needs fixes before approval
   | "approved"
+  | "ready_to_send"    // Ben has manually polished and approved — ready for outreach
   | "changes_pending"
   | "ready_to_finalize"
   | "deployed"

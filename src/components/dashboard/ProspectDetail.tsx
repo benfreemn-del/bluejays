@@ -289,6 +289,32 @@ export default function ProspectDetail({
             </section>
           )}
 
+          {/* Ready to Send Banner — approved sites Ben has polished */}
+          {prospect.status === "approved" && prospect.generatedSiteUrl && (
+            <section className="p-4 rounded-xl bg-sky-500/10 border border-sky-500/30">
+              <h3 className="text-sm font-bold text-sky-400 mb-2">Approved — Mark Ready for Sendoff?</h3>
+              <p className="text-muted text-xs mb-3">
+                You&apos;ve approved this site. Once you&apos;re done polishing, mark it ready to send.
+              </p>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => onStatusChange(prospect.id, "ready_to_send")}
+                  className="flex-1 h-10 rounded-lg bg-sky-500/20 text-sky-400 text-sm font-bold hover:bg-sky-500/30 transition-colors"
+                >
+                  ✓ Ready for Sendoff
+                </button>
+                <a
+                  href={prospect.generatedSiteUrl || "#"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 h-10 rounded-lg bg-blue-electric/20 text-blue-electric text-sm font-medium flex items-center justify-center hover:bg-blue-electric/30 transition-colors"
+                >
+                  Review Site
+                </a>
+              </div>
+            </section>
+          )}
+
           {/* QC Gate Banner — ready_to_review (passed) */}
           {prospect.status === "ready_to_review" && (
             <section className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30">
@@ -538,6 +564,7 @@ export default function ProspectDetail({
                 <option value="ready_to_review">QC Passed</option>
                 <option value="qc_failed">QC Failed</option>
                 <option value="approved">Approved</option>
+                <option value="ready_to_send">Ready to Send</option>
                 <option value="deployed">Deployed</option>
                 <option value="contacted">Contacted</option>
                 <option value="responded">Responded</option>

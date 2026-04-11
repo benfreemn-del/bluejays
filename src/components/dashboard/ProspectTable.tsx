@@ -35,6 +35,7 @@ const allStatuses: ProspectStatus[] = [
   "ready_to_review",
   "qc_failed",
   "approved",
+  "ready_to_send",
   "changes_pending",
   "ready_to_finalize",
   "deployed",
