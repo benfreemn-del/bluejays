@@ -18,6 +18,40 @@ This system is designed to function like a money printer. Every feature should d
 - **Social proof overlays MUST use real data or be removed. NEVER show fake or inflated numbers.**
 - **Personalized proposals MUST be generated before entering the sales funnel, combining all CRM data, scraped info, reviews, and notes.**
 
+## Premium Preview Overhaul Rules (NON-NEGOTIABLE)
+When manually reviewing/upgrading a preview from the dashboard:
+
+### Brand Alignment
+- **ALWAYS extract the business's real brand colors** from their website (use javascript_tool to read computed CSS). Set `accentColor` via the API. Never use template default teal/orange on a business with a completely different color scheme.
+- **Match the template theme to the business vibe.** Family dental/vet/daycare = warm cream light theme. Trades/moving/construction = dark professional theme with boosted glows. Law firms = dark navy premium. Salons = soft pastels.
+- **Use their actual tagline or philosophy** from their website, not generic "Modern X Care" copy.
+
+### Data Enrichment Before Generation
+- **Every business MUST have 6+ services with descriptions** before generation. If the scraper only got names, write descriptions from the website content.
+- **Stats must be real** — years in business, Google rating, review count, awards. Pull from Google Places and their website.
+- **About text must mention the owner/doctor by name**, the city, and what makes them unique. Generic "we provide quality service" copy fails QC.
+
+### Template Theme Rules by Category
+| Category | Theme | Background | Accent Style |
+|----------|-------|-----------|-------------|
+| dental, veterinary, daycare, church | Warm light | `#faf9f6` cream | Soft, friendly |
+| salon, med-spa, florist, photography | Soft light | `#fefefe` white | Elegant, minimal |
+| electrician, plumber, hvac, roofing, construction | Dark professional | `#1a1a1a` charcoal | Bold, high-contrast |
+| moving, junk-removal, towing, tree-service | Dark bold | `#1a1a1a` with amber/orange | Strong, trustworthy |
+| law-firm, accounting, insurance, real-estate | Dark navy | `#0f172a` slate | Premium, authoritative |
+| restaurant, catering | Warm dark | `#1c1917` with warm accents | Appetizing, inviting |
+| fitness, martial-arts | High contrast dark | Pure black with neon accent | Energetic, powerful |
+
+### Category-Specific Features
+- **Dental**: "Accepting New Patients" badge, insurance mention, emergency care callout, smile-related gallery titles
+- **Veterinary**: Pet type icons (dog/cat), "Your Pet's Best Friend" tone, vaccination/wellness focus
+- **Moving**: "Bonded & Insured" badge, free quote CTA, process steps (quote > plan > move > deliver)
+- **Law Firm**: "Free Consultation" CTA, practice area cards, attorney credentials
+- **Restaurant**: Menu section, reservation CTA, food photography gallery
+- **Salon**: "Book Now" with service menu, stylist profiles, before/after gallery
+- **Construction/Trades**: License numbers, "Free Estimate" CTA, project portfolio gallery
+- **Medical/Dental**: Provider credentials (DDS, MD), insurance accepted, patient portal mention
+
 ## Visual QC Rules
 1. **No duplicate images within a site** — compare by Unsplash photo ID, not just exact URL. Same photo with different query params counts as a duplicate.
 2. **Every image URL must be HTTP-verified** (HEAD request, status 200) before saving to Supabase.
