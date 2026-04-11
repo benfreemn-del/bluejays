@@ -123,6 +123,7 @@ export interface ScrapedData {
   email?: string;
   phone?: string;
   address?: string;
+  city?: string;
   services: ServiceItem[];
   testimonials: Testimonial[];
   photos: string[];
@@ -130,6 +131,7 @@ export interface ScrapedData {
   socialLinks?: Record<string, string>;
   about?: string;
   brandColor?: string;
+  brandColorSource?: "official-site" | "logo" | "category-default";
   logoUrl?: string;
 }
 

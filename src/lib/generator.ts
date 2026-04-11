@@ -1,8 +1,17 @@
 import type { Prospect, Category, ScrapedData } from "./types";
 import { CATEGORY_CONFIG } from "./types";
+import { getBestColorForCategory, reviewColorScheme } from "./color-review";
 import { updateProspect, saveScrapedData } from "./store";
 import { reviewSiteQuality } from "./quality-review";
 import { normalizeAddress } from "./address-normalizer";
+import { buildValidatedPhotoSet, type PreparedPhotoAudit } from "./image-validator";
+import {
+  buildAboutFromResearchBrief,
+  buildResearchBrief,
+  buildTaglineFromResearchBrief,
+  lintPlaceholderContent,
+  type ResearchBrief,
+} from "./content-brief";
 
 /** Pick the best business name — reject truncated, "website", "My Site", empty */
 function getCleanBusinessName(scraped: string | undefined, prospect: string): string {
@@ -21,6 +30,7 @@ export interface GeneratedSiteData {
   businessName: string;
   tagline: string;
   accentColor: string;
+  brandColorSource?: "official-site" | "logo" | "category-default";
   heroGradient: string;
   phone: string;
   address: string;
@@ -33,11 +43,8 @@ export interface GeneratedSiteData {
   stats: { value: string; label: string }[];
   themeMode?: "light" | "dark";
   city?: string;
-}
-
-function sanitizePhotoUrls(photos: string[] | undefined): string[] {
-  if (!photos) return [];
-  return photos.map((photo) => photo.trim()).filter(Boolean);
+  imageAudit?: PreparedPhotoAudit;
+  researchBrief?: ResearchBrief;
 }
 
 function generateDefaultTagline(businessName: string, category: Category): string {
@@ -136,13 +143,13 @@ function generateStats(category: Category, reviewCount?: number): { value: strin
   ];
 }
 
-export function generateSiteData(prospect: Prospect): GeneratedSiteData {
+export async function generateSiteData(prospect: Prospect): Promise<GeneratedSiteData> {
   const { category, scrapedData } = prospect;
   const config = CATEGORY_CONFIG[category];
   const sd = ({
-    ...(scrapedData || {} as ScrapedData),
+    ...((scrapedData || {}) as ScrapedData),
     address: normalizeAddress(scrapedData?.address),
-    photos: sanitizePhotoUrls(scrapedData?.photos),
+    photos: (scrapedData?.photos || []).map((photo) => photo.trim()).filter(Boolean),
   }) as ScrapedData;
 
   // CUSTOMIZATION PRIORITY: Always prefer real business data over defaults
@@ -151,8 +158,38 @@ export function generateSiteData(prospect: Prospect): GeneratedSiteData {
   // 3. Use real services/testimonials/about text when available
   // 4. Match their copywriting tone (formal vs casual)
 
-  // Use scraped brand color if available, otherwise category default
-  const accentColor = sd.brandColor || config.accentColor;
+  const businessName = getCleanBusinessName(sd.businessName, prospect.businessName);
+  const researchBrief = buildResearchBrief({ ...prospect, businessName }, sd);
+  const validatedPhotos = await buildValidatedPhotoSet({
+    photos: sd.photos,
+    category,
+    businessName,
+    logoUrl: sd.logoUrl,
+  });
+
+  const generatedTagline = sd.tagline || buildTaglineFromResearchBrief(researchBrief, category);
+  const generatedAbout = sd.about || buildAboutFromResearchBrief(researchBrief, category);
+  const services = sd.services?.length > 0 ? sd.services : getDefaultServices(category);
+  const testimonials = sd.testimonials?.length > 0 ? sd.testimonials : [];
+  const placeholderIssues = lintPlaceholderContent({
+    businessName,
+    tagline: generatedTagline,
+    about: generatedAbout,
+    testimonials,
+    services,
+    city: researchBrief.city || prospect.city,
+  });
+  if (placeholderIssues.length > 0) {
+    console.warn(`  ⚠️ Structured-content lint flagged ${placeholderIssues.length} issue(s) before QC for ${businessName}`);
+  }
+
+  const reviewedBrandColor = sd.brandColor ? reviewColorScheme(sd.brandColor, category) : null;
+  const accentColor = reviewedBrandColor?.passed
+    ? sd.brandColor!
+    : reviewedBrandColor?.suggestion?.accentColor || getBestColorForCategory(category) || config.accentColor;
+  const brandColorSource: GeneratedSiteData["brandColorSource"] = reviewedBrandColor?.passed
+    ? (sd.brandColorSource || "official-site")
+    : "category-default";
   const heroGradient = config.heroGradient;
 
   // Log customization level for quality review
@@ -173,36 +210,50 @@ export function generateSiteData(prospect: Prospect): GeneratedSiteData {
   return {
     id: prospect.id,
     category,
-    businessName: getCleanBusinessName(sd.businessName, prospect.businessName),
-    tagline: sd.tagline || generateDefaultTagline(prospect.businessName, category),
+    businessName,
+    tagline: generatedTagline,
     accentColor,
+    brandColorSource,
     heroGradient,
     phone: sd.phone || prospect.phone || "Call Us Today",
     address: normalizeAddress(sd.address || prospect.address || `${prospect.city}, ${prospect.state}`) || `${prospect.city}, ${prospect.state}`,
-    about: sd.about || generateDefaultAbout(prospect.businessName, category),
-    services: sd.services?.length > 0 ? sd.services : getDefaultServices(category),
-    testimonials: sd.testimonials?.length > 0 ? sd.testimonials : getDefaultTestimonials(category),
-    photos: sanitizePhotoUrls(sd.photos),
+    about: generatedAbout,
+    services,
+    testimonials,
+    photos: validatedPhotos.photos,
+    city: researchBrief.city || prospect.city,
+    imageAudit: validatedPhotos.audit,
     hours: sd.hours,
     socialLinks: sd.socialLinks,
     stats: generateStats(category, prospect.reviewCount),
+    researchBrief,
   };
 }
 
 export async function generatePreview(prospect: Prospect): Promise<string> {
   console.log(`  🏗️ Generating preview for "${prospect.businessName}"...`);
 
-  const siteData = generateSiteData(prospect);
+  const siteData = await generateSiteData(prospect);
 
   // Save the generated data
   await saveScrapedData(prospect.id, siteData);
 
   // ═══ FAILSAFE 1: Automated data quality checks ═══
   const hasRealPhone = siteData.phone !== "Call Us Today" && !!siteData.phone;
-  const hasRealServices = siteData.services.some(s => !isDefaultService(s.name));
+  const hasRealServices = siteData.services.some((s) => !isDefaultService(s.name));
   const hasRealAbout = !siteData.about.includes("trusted name in local") && !siteData.about.includes("committed to delivering exceptional");
   const hasPhotos = siteData.photos.length > 0;
-  const dataChecks = [hasRealPhone, hasRealServices, hasRealAbout, hasPhotos].filter(Boolean).length;
+  const hasMinimumRealPhotos = siteData.imageAudit?.hasMinimumRealPhotos ?? hasPhotos;
+  const placeholderIssues = lintPlaceholderContent({
+    businessName: siteData.businessName,
+    tagline: siteData.tagline,
+    about: siteData.about,
+    testimonials: siteData.testimonials,
+    services: siteData.services,
+    city: siteData.city || prospect.city,
+  });
+  const hasNoPlaceholderContent = placeholderIssues.length === 0;
+  const dataChecks = [hasRealPhone, hasRealServices, hasRealAbout, hasMinimumRealPhotos, hasNoPlaceholderContent].filter(Boolean).length;
 
   // ═══ FAILSAFE 2: Quality review agent (QC gate) ═══
   const qualityReport = reviewSiteQuality(prospect, siteData);
@@ -210,8 +261,8 @@ export async function generatePreview(prospect: Prospect): Promise<string> {
 
   const previewUrl = `/preview/${prospect.id}`;
 
-  // Must pass BOTH failsafes: data checks (3/4) AND quality review (no critical issues, score >= 70)
-  const passesFailsafe1 = dataChecks >= 3;
+  // Must pass BOTH failsafes: data checks (4/5) AND quality review (no critical issues, score >= 70)
+  const passesFailsafe1 = dataChecks >= 4 && hasNoPlaceholderContent;
   const passesFailsafe2 = qualityReport.passed;
   const passesQc = passesFailsafe1 && passesFailsafe2;
 
@@ -222,18 +273,23 @@ export async function generatePreview(prospect: Prospect): Promise<string> {
   // Build quality notes for the prospect record
   const qualityNotes = [
     `Score: ${qualityReport.score}/100 ${qualityReport.passed ? "PASSED" : "FAILED"}`,
-    `Data checks: ${dataChecks}/4 (phone=${hasRealPhone}, services=${hasRealServices}, about=${hasRealAbout}, photos=${hasPhotos})`,
+    `Data checks: ${dataChecks}/5 (phone=${hasRealPhone}, services=${hasRealServices}, about=${hasRealAbout}, photos=${hasMinimumRealPhotos}, placeholders=${hasNoPlaceholderContent})`,
+    siteData.researchBrief ? `Research brief:\n${siteData.researchBrief.summary}` : "",
+    siteData.imageAudit
+      ? `Image audit: checked=${siteData.imageAudit.checkedCount}, real=${siteData.imageAudit.validRealPhotoCount}/${siteData.imageAudit.minimumRequired}, fallbacks=${siteData.imageAudit.fallbackCount}, broken=${siteData.imageAudit.brokenCount}, logos_rejected=${siteData.imageAudit.rejectedLogoCount}, svg_rejected=${siteData.imageAudit.rejectedSvgCount}`
+      : "",
     ...qualityReport.issues.filter(i => i.severity === "critical").map(i => `CRITICAL [${i.section}]: ${i.message}`),
     ...qualityReport.issues.filter(i => i.severity === "warning").map(i => `WARNING [${i.section}]: ${i.message}`),
+    ...placeholderIssues.map((issue) => `${issue.severity.toUpperCase()} [${issue.section}]: ${issue.message}`),
   ].join("\n");
 
-  console.log(`  ── Failsafe 1 (Data): ${dataChecks}/4 checks (phone=${hasRealPhone}, services=${hasRealServices}, about=${hasRealAbout}, photos=${hasPhotos}) → ${passesFailsafe1 ? "PASS" : "FAIL"}`);
+  console.log(`  ── Failsafe 1 (Data): ${dataChecks}/5 checks (phone=${hasRealPhone}, services=${hasRealServices}, about=${hasRealAbout}, photos=${hasMinimumRealPhotos}, placeholders=${hasNoPlaceholderContent}) → ${passesFailsafe1 ? "PASS" : "FAIL"}`);
   console.log(`  ── Failsafe 2 (Quality): score=${qualityReport.score}/100, critical=${criticalIssues} → ${passesFailsafe2 ? "PASS" : "FAIL"}`);
   console.log(`  ── QC Gate: ${passesQc ? "✅ PASSED → ready_to_review" : `❌ FAILED → ${status}`}`);
 
   if (!passesQc) {
     const reasons = [];
-    if (!passesFailsafe1) reasons.push(`data checks ${dataChecks}/4`);
+    if (!passesFailsafe1) reasons.push(`data checks ${dataChecks}/5`);
     if (!passesFailsafe2) reasons.push(`quality score ${qualityReport.score}/100, ${criticalIssues} critical issue(s)`);
     console.log(`  ⚠️ QC FAILED — ${reasons.join(", ")}`);
   }

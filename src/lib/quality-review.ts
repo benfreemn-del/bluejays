@@ -3,11 +3,13 @@ import {
   GALLERY_HEAVY_CATEGORIES,
   getCategoryFallbackImage,
   getDuplicateImageUrls,
+  getMinimumRealPhotoCount,
   sanitizeImageUrls,
   validateImageUrl,
 } from "./image-validator";
 import { CATEGORY_CONFIG } from "./types";
 import type { Category, Prospect } from "./types";
+import { lintPlaceholderContent } from "./content-brief";
 
 export interface QualityIssue {
   severity: "critical" | "warning" | "suggestion";
@@ -22,17 +24,13 @@ export interface QualityReport {
   timestamp: string;
 }
 
-function getMinimumPhotoCount(category: Category): number {
-  return GALLERY_HEAVY_CATEGORIES.has(category) ? 5 : 3;
-}
-
 export function reviewSiteQuality(
   prospect: Prospect,
   siteData: GeneratedSiteData
 ): QualityReport {
   const issues: QualityIssue[] = [];
   const sanitizedPhotos = sanitizeImageUrls(siteData.photos);
-  const minimumPhotoCount = getMinimumPhotoCount(siteData.category);
+  const minimumPhotoCount = getMinimumRealPhotoCount(siteData.category);
   const photoValidations = sanitizedPhotos.map((photo, index) =>
     validateImageUrl(
       photo,
@@ -98,12 +96,56 @@ export function reviewSiteQuality(
     issues.push({ severity: "warning", section: "About", message: "About section is missing or too short. Needs a compelling business story." });
   }
 
+  const placeholderIssues = lintPlaceholderContent({
+    businessName: siteData.businessName,
+    tagline: siteData.tagline,
+    about: siteData.about,
+    testimonials: siteData.testimonials,
+    services: siteData.services,
+    city: siteData.city || prospect.city,
+  });
+  for (const placeholderIssue of placeholderIssues) {
+    issues.push({
+      severity: placeholderIssue.severity,
+      section: `Placeholder ${placeholderIssue.section}`,
+      message: placeholderIssue.message,
+    });
+  }
+
+  if (!siteData.researchBrief || !siteData.researchBrief.actualServices.length || !siteData.researchBrief.serviceAreas.length || !siteData.researchBrief.differentiators.length) {
+    issues.push({
+      severity: "critical",
+      section: "Research Brief",
+      message: "Structured research brief is incomplete. Generation must be driven by real owner/service-area/differentiator/service facts before QC can pass.",
+    });
+  }
+
   // --- Design Checks ---
 
   // Accent color matches category
   const expectedColor = CATEGORY_CONFIG[siteData.category]?.accentColor;
   if (expectedColor && siteData.accentColor !== expectedColor) {
     issues.push({ severity: "suggestion", section: "Design", message: "Accent color doesn't match category default. May be intentional." });
+  }
+
+  if (siteData.brandColorSource === "category-default") {
+    issues.push({
+      severity: "warning",
+      section: "Brand Color",
+      message: `No usable official-site or logo brand color was available, so the site is using the explicit ${siteData.category} category-safe default ${siteData.accentColor}.`,
+    });
+  } else if (siteData.brandColorSource === "official-site" || siteData.brandColorSource === "logo") {
+    issues.push({
+      severity: "suggestion",
+      section: "Brand Color",
+      message: `Accent color ${siteData.accentColor} came from ${siteData.brandColorSource} extraction rather than a category default.`,
+    });
+  } else {
+    issues.push({
+      severity: "warning",
+      section: "Brand Color",
+      message: "Brand-color provenance is missing. QC cannot confirm whether the accent color was extracted or defaulted.",
+    });
   }
 
   // Stats
@@ -121,6 +163,16 @@ export function reviewSiteQuality(
     });
   }
 
+  const imageAudit = siteData.imageAudit;
+
+  if (imageAudit?.brokenCount) {
+    issues.push({
+      severity: "critical",
+      section: "Images",
+      message: `${imageAudit.brokenCount} image URL(s) failed live validation. Broken production images are an automatic QC failure.`,
+    });
+  }
+
   if (sanitizedPhotos.length === 0) {
     issues.push({
       severity: "critical",
@@ -129,11 +181,17 @@ export function reviewSiteQuality(
     });
   } else if (sanitizedPhotos.length < minimumPhotoCount) {
     issues.push({
-      severity: GALLERY_HEAVY_CATEGORIES.has(siteData.category) ? "critical" : "warning",
+      severity: "critical",
       section: "Images",
-      message: GALLERY_HEAVY_CATEGORIES.has(siteData.category)
-        ? `Only ${sanitizedPhotos.length} usable photos. ${siteData.category} sites are gallery-heavy and require at least ${minimumPhotoCount} real photos.`
-        : `Only ${sanitizedPhotos.length} usable photos. Need at least ${minimumPhotoCount} for hero, about, and gallery coverage.`,
+      message: `Only ${sanitizedPhotos.length} assembled photos are available. Need at least ${minimumPhotoCount} total images for hero, about, and gallery coverage.`,
+    });
+  }
+
+  if (imageAudit && !imageAudit.hasMinimumRealPhotos) {
+    issues.push({
+      severity: "critical",
+      section: "Images",
+      message: `Only ${imageAudit.validRealPhotoCount} validated real business photo(s) were available. ${siteData.category} sites require at least ${imageAudit.minimumRequired} real photos before QC can pass, even if fallbacks were inserted.`,
     });
   }
 
@@ -142,7 +200,7 @@ export function reviewSiteQuality(
     issues.push({
       severity: "critical",
       section: "Images",
-      message: `${invalidImages.length} image URL(s) are malformed, missing, or use an invalid protocol. All production images must be valid http/https URLs after trimming.`,
+      message: `${invalidImages.length} image URL(s) are malformed, missing, logos/SVGs, or otherwise invalid. All production images must be valid real-photo http/https assets.`,
     });
   }
 
@@ -220,6 +278,13 @@ export function reviewSiteQuality(
   checkCategorySpecific(siteData.category, siteData, issues);
 
   // --- Score Calculation ---
+  const hasBrokenImageFailure = issues.some(
+    (issue) => issue.section === "Images" && /Broken production images|failed live validation|invalid real-photo/i.test(issue.message)
+  );
+  const hasPlaceholderFailure = issues.some(
+    (issue) => issue.section.startsWith("Placeholder ") || issue.section === "Research Brief"
+  );
+
   let score = 100;
   let suggestionDeductions = 0;
   for (const issue of issues) {
@@ -228,9 +293,11 @@ export function reviewSiteQuality(
     else { suggestionDeductions += 2; } // suggestions are minor (2pts, capped at 15)
   }
   score -= Math.min(suggestionDeductions, 15); // Cap suggestion deductions
+  if (hasBrokenImageFailure) score = Math.min(score, 35);
+  if (hasPlaceholderFailure) score = Math.min(score, 45);
   score = Math.max(0, Math.min(100, score));
 
-  const passed = score >= 70 && issues.filter((i) => i.severity === "critical").length === 0;
+  const passed = !hasBrokenImageFailure && !hasPlaceholderFailure && score >= 70 && issues.filter((i) => i.severity === "critical").length === 0;
 
   return {
     score,

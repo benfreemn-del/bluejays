@@ -19,7 +19,9 @@ import { NextResponse } from "next/server";
 import { getProspect, getScrapedData, saveScrapedData, updateProspect } from "@/lib/store";
 import { reviewSiteQuality, formatQualityReport } from "@/lib/quality-review";
 import { CATEGORY_CONFIG } from "@/lib/types";
+import type { ScrapedData } from "@/lib/types";
 import type { GeneratedSiteData } from "@/lib/generator";
+import { lintPlaceholderContent } from "@/lib/content-brief";
 import {
   researchBusinessWebsite,
   runClaudeQcReview,
@@ -53,9 +55,9 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 function mergeScrapedRecords(
-  existing: Record<string, unknown> | undefined,
-  incoming: Record<string, unknown> | undefined
-): Record<string, unknown> | undefined {
+  existing: Partial<ScrapedData> | undefined,
+  incoming: Partial<ScrapedData> | undefined
+): Partial<ScrapedData> | undefined {
   if (!existing && !incoming) return undefined;
 
   return {
@@ -97,7 +99,7 @@ async function runExtendedQcChecks(
     city: string;
     phone?: string;
     category: string;
-    scrapedData?: Record<string, unknown>;
+    scrapedData?: Partial<ScrapedData>;
   },
   siteData: GeneratedSiteData
 ): Promise<QcCheckResult[]> {
@@ -176,21 +178,62 @@ async function runExtendedQcChecks(
       : `All ${siteData.services.length} services appear to be generic defaults — no real business data scraped`,
   });
 
+  const brief = siteData.researchBrief;
+  const hasStructuredBrief =
+    !!brief &&
+    brief.serviceAreas.length > 0 &&
+    brief.actualServices.length > 0 &&
+    brief.differentiators.length > 0;
+  checks.push({
+    check: "Structured Research Brief",
+    passed: hasStructuredBrief,
+    detail: hasStructuredBrief
+      ? `Research brief includes ${brief?.serviceAreas.length || 0} service area(s), ${brief?.actualServices.length || 0} actual service(s), and ${brief?.differentiators.length || 0} differentiator(s)`
+      : "Structured research brief is missing required real-business facts (service areas, actual services, or differentiators)",
+  });
+
+  const placeholderIssues = lintPlaceholderContent({
+    businessName: siteData.businessName,
+    tagline: siteData.tagline,
+    about: siteData.about,
+    testimonials: siteData.testimonials,
+    services: siteData.services,
+    city: prospect.city,
+  });
+  checks.push({
+    check: "Placeholder Content",
+    passed: placeholderIssues.length === 0,
+    detail:
+      placeholderIssues.length === 0
+        ? "No placeholder or template copy detected in key content sections"
+        : placeholderIssues.map((issue) => `${issue.section}: ${issue.message}`).join(" | "),
+  });
+
   const scrapedBrandColor = prospect.scrapedData?.brandColor as string | undefined;
-  if (scrapedBrandColor) {
+  const scrapedBrandColorSource = prospect.scrapedData?.brandColorSource as
+    | "official-site"
+    | "logo"
+    | "category-default"
+    | undefined;
+  const generatedBrandColorSource = siteData.brandColorSource;
+
+  if (scrapedBrandColor && scrapedBrandColorSource && scrapedBrandColorSource !== "category-default") {
     const colorApplied = siteData.accentColor === scrapedBrandColor;
     checks.push({
       check: "Brand Color",
-      passed: colorApplied,
+      passed: colorApplied && generatedBrandColorSource === scrapedBrandColorSource,
       detail: colorApplied
-        ? `Brand color ${scrapedBrandColor} applied correctly`
-        : `Scraped brand color ${scrapedBrandColor} not applied — using default ${siteData.accentColor}`,
+        ? `Applied extracted ${scrapedBrandColorSource} color ${scrapedBrandColor}`
+        : `Extracted ${scrapedBrandColorSource} color ${scrapedBrandColor} was not applied — generated site used ${siteData.accentColor} from ${generatedBrandColorSource || "unknown source"}`,
     });
   } else {
     checks.push({
       check: "Brand Color",
-      passed: true,
-      detail: "No brand color scraped — using category default (acceptable)",
+      passed: generatedBrandColorSource === "category-default",
+      detail:
+        generatedBrandColorSource === "category-default"
+          ? "No usable brand color was extracted, so a category-safe default was applied explicitly."
+          : `Generated site reports ${generatedBrandColorSource || "unknown"} brand-color source without a matching extracted brand color.`,
     });
   }
 
@@ -239,7 +282,7 @@ async function runExtendedQcChecks(
     checks.push({
       check: "Category Config",
       passed: true,
-      detail: `Using ${categoryConfig.template || "configured"} template family for ${prospect.category}`,
+      detail: `Category configuration loaded for ${prospect.category} with accent ${categoryConfig.accentColor}`,
     });
   }
 
@@ -278,8 +321,8 @@ export async function POST(
     const websiteResearch = await researchBusinessWebsite(prospect.currentWebsite);
 
     const mergedScrapedData = mergeScrapedRecords(
-      prospect.scrapedData as Record<string, unknown> | undefined,
-      websiteResearch?.mergedScrapedData as Record<string, unknown> | undefined
+      prospect.scrapedData,
+      websiteResearch?.mergedScrapedData
     );
 
     if (websiteResearch?.mergedScrapedData) {
@@ -343,7 +386,10 @@ export async function POST(
         !check.passed &&
         (check.check === "Phone Number" ||
           check.check === "Business Name" ||
-          check.check === "Template Category Match")
+          check.check === "Template Category Match" ||
+          check.check === "Placeholder Content" ||
+          check.check === "Structured Research Brief" ||
+          check.check === "Image URLs")
     );
     const automatedScore = Math.max(0, baseReport.score - extendedCritical.length * 5);
     const baseCriticals = baseReport.issues.filter((issue) => issue.severity === "critical").length;

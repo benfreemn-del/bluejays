@@ -28,6 +28,13 @@ const RELEVANT_PATH_HINTS = [
 ];
 
 const MAX_RESEARCH_PAGES = 5;
+const MAX_PROMPT_CHARS = 48000;
+const MAX_RULE_SECTION_CHARS = 8000;
+const MAX_PROSPECT_SECTION_CHARS = 5000;
+const MAX_SITE_DATA_SECTION_CHARS = 12000;
+const MAX_RESEARCH_SUMMARY_CHARS = 12000;
+const MAX_AUTOMATED_QC_NOTES_CHARS = 8000;
+const MAX_PAGE_SNIPPET_CHARS = 700;
 
 interface ClaudeMessageResponse {
   content?: Array<{ type?: string; text?: string }>;
@@ -117,6 +124,84 @@ function cleanString(value: unknown, fallback = ""): string {
 
 function cleanOptionalString(value: unknown): string | undefined {
   return typeof value === "string" && value.trim() ? value.trim() : undefined;
+}
+
+function normalizeWhitespace(value: string): string {
+  return value.replace(/\s+/g, " ").trim();
+}
+
+function compactText(value: string, maxChars: number): string {
+  const normalized = normalizeWhitespace(value);
+  if (normalized.length <= maxChars) return normalized;
+  const sliceLength = Math.max(0, maxChars - 32);
+  return `${normalized.slice(0, sliceLength).trimEnd()} …[truncated]`;
+}
+
+function estimateTokenCount(value: string): number {
+  return Math.ceil(value.length / 4);
+}
+
+function stringifyCompact(value: unknown, maxChars: number): string {
+  return compactText(JSON.stringify(value, null, 2), maxChars);
+}
+
+function buildProspectPromptSummary(prospect: Prospect): string {
+  return [
+    `ID: ${prospect.id}`,
+    `Business: ${prospect.businessName}`,
+    `Category: ${prospect.category}`,
+    `City: ${prospect.city || "n/a"}`,
+    `Address: ${prospect.address || "n/a"}`,
+    `Owner: ${prospect.ownerName || "n/a"}`,
+    `Phone: ${prospect.phone || "n/a"}`,
+    `Email: ${prospect.email || "n/a"}`,
+    `Website: ${prospect.currentWebsite || "n/a"}`,
+    `Theme: ${prospect.selectedTheme || prospect.aiThemeRecommendation || "n/a"}`,
+    `Status: ${prospect.status}`,
+  ].join("\n");
+}
+
+function buildSiteDataPromptSummary(siteData: GeneratedSiteData): string {
+  const lines = [
+    `Business: ${siteData.businessName}`,
+    `Category: ${siteData.category}`,
+    `City: ${siteData.city || "n/a"}`,
+    `Tagline: ${siteData.tagline || "n/a"}`,
+    `Accent color: ${siteData.accentColor}`,
+    `Brand color source: ${siteData.brandColorSource || "unknown"}`,
+    `Theme mode: ${siteData.themeMode}`,
+    `Phone: ${siteData.phone || "n/a"}`,
+    `Address: ${siteData.address || "n/a"}`,
+    `About: ${compactText(siteData.about || "", 1200) || "n/a"}`,
+    `Services: ${(siteData.services || []).slice(0, 8).map((service) => service.name).join(", ") || "n/a"}`,
+    `Testimonials: ${(siteData.testimonials || []).slice(0, 4).map((testimonial) => `${testimonial.name}: ${compactText(testimonial.text, 180)}`).join(" | ") || "n/a"}`,
+    `Photos: ${(siteData.photos || []).length}`,
+    `Stats: ${(siteData.stats || []).slice(0, 4).map((stat) => `${stat.value} ${stat.label}`).join(" | ") || "n/a"}`,
+    `Research brief summary: ${siteData.researchBrief?.summary || "n/a"}`,
+  ];
+  return lines.join("\n");
+}
+
+function buildBudgetedPrompt(sections: Array<{ heading?: string; body: string; maxChars?: number }>): string {
+  const normalizedSections = sections
+    .map((section) => {
+      const body = section.maxChars ? compactText(section.body, section.maxChars) : normalizeWhitespace(section.body);
+      return section.heading ? `${section.heading}\n${body}` : body;
+    })
+    .filter((section) => section.trim().length > 0);
+
+  let prompt = normalizedSections.join("\n\n");
+  if (prompt.length <= MAX_PROMPT_CHARS) return prompt;
+
+  prompt = normalizedSections
+    .map((section) => compactText(section, Math.min(section.length, Math.floor(MAX_PROMPT_CHARS / normalizedSections.length) + 400)))
+    .join("\n\n");
+
+  if (prompt.length > MAX_PROMPT_CHARS) {
+    prompt = compactText(prompt, MAX_PROMPT_CHARS);
+  }
+
+  return prompt;
 }
 
 function normalizeStringArray(value: unknown, fallback: string[] = []): string[] {
@@ -270,6 +355,12 @@ async function callClaude(prompt: string): Promise<{ model: string; responseText
   }
 
   const model = DEFAULT_ANTHROPIC_MODEL;
+  if (prompt.length > MAX_PROMPT_CHARS) {
+    throw new Error(
+      `Claude prompt exceeded hard budget (${estimateTokenCount(prompt)} est. tokens / ${prompt.length} chars).`
+    );
+  }
+
   const response = await fetch(ANTHROPIC_API_URL, {
     method: "POST",
     headers: {
@@ -356,6 +447,7 @@ function mergeScrapedDataEntries(entries: Partial<ScrapedData>[]): Partial<Scrap
     if ((!merged.about || merged.about.length < (entry.about?.length || 0)) && entry.about) merged.about = entry.about;
     if (!merged.hours && entry.hours) merged.hours = entry.hours;
     if (!merged.brandColor && entry.brandColor) merged.brandColor = entry.brandColor;
+    if (!merged.brandColorSource && entry.brandColorSource) merged.brandColorSource = entry.brandColorSource;
     if (!merged.logoUrl && entry.logoUrl) merged.logoUrl = entry.logoUrl;
 
     merged.services = dedupeServices([...(merged.services || []), ...(entry.services || [])]);
@@ -410,7 +502,7 @@ function summarizePage(url: string, html: string): WebsiteResearchPage {
     .text()
     .replace(/\s+/g, " ")
     .trim()
-    .slice(0, 1500);
+    .slice(0, MAX_PAGE_SNIPPET_CHARS);
 
   return {
     url,
@@ -461,6 +553,9 @@ function buildWebsiteResearchSummary(research: WebsiteResearch): string {
   if (research.mergedScrapedData.brandColor) {
     lines.push(`Brand color found: ${research.mergedScrapedData.brandColor}`);
   }
+  if (research.mergedScrapedData.brandColorSource) {
+    lines.push(`Brand color source: ${research.mergedScrapedData.brandColorSource}`);
+  }
   if (research.mergedScrapedData.services?.length) {
     lines.push(`Services found: ${research.mergedScrapedData.services.slice(0, 8).map((service) => service.name).join(", ")}`);
   }
@@ -473,11 +568,14 @@ function buildWebsiteResearchSummary(research: WebsiteResearch): string {
 
   research.pages.forEach((page, index) => {
     lines.push(
-      `Page ${index + 1}: ${page.url}\nTitle: ${page.title || "n/a"}\nHeadings: ${page.headings.join(" | ") || "n/a"}\nSnippet: ${page.snippet}`
+      compactText(
+        `Page ${index + 1}: ${page.url}\nTitle: ${page.title || "n/a"}\nDescription: ${page.description || "n/a"}\nHeadings: ${page.headings.join(" | ") || "n/a"}\nSnippet: ${page.snippet}`,
+        1800
+      )
     );
   });
 
-  return lines.join("\n\n");
+  return compactText(lines.join("\n\n"), MAX_RESEARCH_SUMMARY_CHARS);
 }
 
 export async function researchBusinessWebsite(websiteUrl?: string): Promise<WebsiteResearch | null> {
@@ -549,44 +647,48 @@ function normalizeReturnedSiteData(
         ? returnedSiteData.themeMode
         : existingSiteData.themeMode,
     city: cleanOptionalString(returnedSiteData.city) || existingSiteData.city,
+    researchBrief:
+      isRecord(returnedSiteData.researchBrief) || Array.isArray(returnedSiteData.researchBrief)
+        ? existingSiteData.researchBrief
+        : existingSiteData.researchBrief,
   };
 }
 
 function buildSuperchargePrompt(input: ClaudeSuperchargeInput): string {
   const researchSummary = input.websiteResearch?.summary || "No current-website research was available.";
-  return [
-    "You are Claude acting as BlueJays' premium website supercharge agent.",
-    "Run a DEEP supercharge pass before QC. Your job is to upgrade the generated site data so the preview feels like a custom-built $997 website for this exact business, not a template swap.",
-    "",
-    "Supercharge objectives:",
-    "1. Go deep on the prospect's original business website and use everything available: brand colors, real photos, copy/text, services, pricing, testimonials, tone of voice, team info, hours, specialties.",
-    "2. Upgrade the generated site data to match the real business as closely as possible.",
-    "3. Make the generated site feel custom-built for the business, not a template with the name swapped.",
-    "4. Maintain $997 quality throughout. Every section should feel premium.",
-    "",
-    "Non-negotiable BlueJays rules:",
-    input.claudeRules,
-    "",
-    "Automated QC rules:",
-    input.qcRules,
-    "",
-    "Prospect record:",
-    JSON.stringify(input.prospect, null, 2),
-    "",
-    "Current generated site data (rewrite this object intelligently):",
-    JSON.stringify(input.siteData, null, 2),
-    "",
-    "Original-website research summary:",
-    researchSummary,
-    "",
-    "Important instructions:",
-    "- Prefer real business facts, services, positioning, testimonials, tone, and imagery signals from the original website over generic defaults.",
-    "- Keep the same schema as the provided siteData object.",
-    "- Do not invent facts that are not supported by the original website, prospect record, or current site data.",
-    "- Tighten copy, improve specificity, remove generic filler, and make the site feel premium.",
-    "- Keep image URLs that are already valid if they still make sense; replace weak imagery only when you have a stronger option from the research or existing data.",
-    "- Return ONLY valid JSON with this exact shape: {\"summary\": string, \"siteData\": GeneratedSiteData }.",
-  ].join("\n");
+  const researchBriefSummary = input.siteData.researchBrief?.summary || "No structured research brief was attached to the generated site data.";
+
+  return buildBudgetedPrompt([
+    {
+      body: [
+        "You are Claude acting as BlueJays' premium website supercharge agent.",
+        "Run a DEEP supercharge pass before QC. Your job is to upgrade the generated site data so the preview feels like a custom-built $997 website for this exact business, not a template swap.",
+        "",
+        "Supercharge objectives:",
+        "1. Go deep on the prospect's original business website and use everything available: brand colors, real photos, copy/text, services, pricing, testimonials, tone of voice, team info, hours, specialties.",
+        "2. Upgrade the generated site data to match the real business as closely as possible.",
+        "3. Make the generated site feel custom-built for the business, not a template with the name swapped.",
+        "4. Maintain $997 quality throughout. Every section should feel premium.",
+        "",
+        "Important instructions:",
+        "- Prefer real business facts, services, positioning, testimonials, tone, and imagery signals from the original website over generic defaults.",
+        "- Generate copy from the structured research brief first: owner, service areas, differentiators, and actual services must drive the wording.",
+        "- Keep the same schema as the provided siteData object.",
+        "- Do not invent facts that are not supported by the original website, prospect record, or current site data.",
+        "- Tighten copy, improve specificity, remove generic filler, and make the site feel premium.",
+        "- Placeholder testimonials, generic taglines, and about sections that omit the prospect city are unacceptable.",
+        "- Keep image URLs that are already valid if they still make sense; replace weak imagery only when you have a stronger option from the research or existing data.",
+        "- Return ONLY valid JSON with this exact shape: {\"summary\": string, \"siteData\": GeneratedSiteData }.",
+      ].join("\n"),
+    },
+    { heading: "Non-negotiable BlueJays rules:", body: input.claudeRules, maxChars: MAX_RULE_SECTION_CHARS },
+    { heading: "Automated QC rules:", body: input.qcRules, maxChars: MAX_RULE_SECTION_CHARS },
+    { heading: "Prospect record summary:", body: buildProspectPromptSummary(input.prospect), maxChars: MAX_PROSPECT_SECTION_CHARS },
+    { heading: "Current generated site data summary:", body: buildSiteDataPromptSummary(input.siteData), maxChars: MAX_SITE_DATA_SECTION_CHARS },
+    { heading: "Current generated site data JSON (compressed):", body: stringifyCompact(input.siteData, MAX_SITE_DATA_SECTION_CHARS), maxChars: MAX_SITE_DATA_SECTION_CHARS },
+    { heading: "Structured research brief (treat this as the minimum factual backbone for content decisions):", body: researchBriefSummary, maxChars: 4000 },
+    { heading: "Original-website research summary:", body: researchSummary, maxChars: MAX_RESEARCH_SUMMARY_CHARS },
+  ]);
 }
 
 function normalizeBoolean(value: unknown, fallback = false): boolean {
@@ -600,47 +702,41 @@ function normalizeScore(value: unknown, fallback = 0): number {
 
 function buildClaudeQcPrompt(input: ClaudeQcReviewInput): string {
   const researchSummary = input.websiteResearch?.summary || "No current-website research was available.";
-  return [
-    "You are Claude acting as BlueJays' senior QC reviewer.",
-    "This is NOT just an automated lint pass. Review the prospect holistically and decide whether the generated site feels like a premium $997 product.",
-    "",
-    "Your review responsibilities:",
-    "- Evaluate whether the site data looks custom-built for this business.",
-    "- Check content quality, specificity, trust signals, premium positioning, and brand fit.",
-    "- Use the original website research to judge how well the generated site matches the real business.",
-    "- Identify any premium-quality gaps that automated rules would miss.",
-    "- Contribute detailed QC notes and a quality score.",
-    "",
-    "BlueJays master rules:",
-    input.claudeRules,
-    "",
-    "Automated QC rules:",
-    input.qcRules,
-    "",
-    "Visual QC guide:",
-    input.qcGuide,
-    "",
-    "Prospect record:",
-    JSON.stringify(input.prospect, null, 2),
-    "",
-    "Current generated site data to review:",
-    JSON.stringify(input.siteData, null, 2),
-    "",
-    "Original-website research summary:",
-    researchSummary,
-    "",
-    "Automated QC findings that ran alongside you:",
-    input.automatedQcNotes,
-    "",
-    "Score guidance:",
-    "- 90-100: premium, custom-feeling, outreach-ready.",
-    "- 80-89: strong but still has meaningful polish gaps.",
-    "- 70-79: borderline; usable but not convincingly premium.",
-    "- below 70: not acceptable for a $997 product.",
-    "",
-    "Return ONLY valid JSON with this exact shape:",
-    '{"summary": string, "premiumVerdict": string, "score": number, "passed": boolean, "strengths": string[], "blockers": string[], "notes": string[]}',
-  ].join("\n");
+  const researchBriefSummary = input.siteData.researchBrief?.summary || "No structured research brief was attached to the generated site data.";
+
+  return buildBudgetedPrompt([
+    {
+      body: [
+        "You are Claude acting as BlueJays' senior QC reviewer.",
+        "This is NOT just an automated lint pass. Review the prospect holistically and decide whether the generated site feels like a premium $997 product.",
+        "",
+        "Your review responsibilities:",
+        "- Evaluate whether the site data looks custom-built for this business.",
+        "- Check content quality, specificity, trust signals, premium positioning, and brand fit.",
+        "- Use the original website research to judge how well the generated site matches the real business.",
+        "- Identify any premium-quality gaps that automated rules would miss.",
+        "- Fail the review when content ignores the structured research brief, falls back to generic template copy, uses placeholder testimonials, omits the real city from the about section, or ships with broken images.",
+        "- Contribute detailed QC notes and a quality score.",
+        "",
+        "Score guidance:",
+        "- 90-100: premium, custom-feeling, outreach-ready.",
+        "- 80-89: strong but still has meaningful polish gaps.",
+        "- 70-79: borderline; usable but not convincingly premium.",
+        "- below 70: not acceptable for a $997 product.",
+        "",
+        "Return ONLY valid JSON with this exact shape:",
+        '{"summary": string, "premiumVerdict": string, "score": number, "passed": boolean, "strengths": string[], "blockers": string[], "notes": string[]}',
+      ].join("\n"),
+    },
+    { heading: "BlueJays master rules:", body: input.claudeRules, maxChars: MAX_RULE_SECTION_CHARS },
+    { heading: "Automated QC rules:", body: input.qcRules, maxChars: MAX_RULE_SECTION_CHARS },
+    { heading: "Visual QC guide:", body: input.qcGuide, maxChars: MAX_RULE_SECTION_CHARS },
+    { heading: "Prospect record summary:", body: buildProspectPromptSummary(input.prospect), maxChars: MAX_PROSPECT_SECTION_CHARS },
+    { heading: "Current generated site data summary:", body: buildSiteDataPromptSummary(input.siteData), maxChars: MAX_SITE_DATA_SECTION_CHARS },
+    { heading: "Structured research brief that generation should have followed:", body: researchBriefSummary, maxChars: 4000 },
+    { heading: "Original-website research summary:", body: researchSummary, maxChars: MAX_RESEARCH_SUMMARY_CHARS },
+    { heading: "Automated QC findings that ran alongside you:", body: input.automatedQcNotes, maxChars: MAX_AUTOMATED_QC_NOTES_CHARS },
+  ]);
 }
 
 export async function runClaudeSupercharge(

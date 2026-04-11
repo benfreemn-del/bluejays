@@ -1,6 +1,11 @@
 import type { Category } from "./types";
+import {
+  getCategoryFallbackImage as getSectionFallbackImage,
+  getCompleteCategoryFallbackSet,
+} from "./stock-image-picker";
 
 export type FallbackImageVariant = "hero" | "about" | "gallery";
+export type ImageCandidateSource = "google_places" | "official_site" | "stock_fallback" | "unknown";
 
 export interface ImageValidationIssue {
   code:
@@ -9,10 +14,14 @@ export interface ImageValidationIssue {
     | "invalid_protocol"
     | "malformed_url"
     | "data_uri"
+    | "svg_image"
+    | "broken_url"
+    | "non_image_content"
     | "tiny_dimensions"
     | "blur_parameter"
     | "expired_token"
     | "logo_or_icon"
+    | "logo_shape"
     | "screenshot_pattern";
   severity: "critical" | "warning" | "suggestion";
   message: string;
@@ -26,6 +35,30 @@ export interface ImageValidationResult {
   issues: ImageValidationIssue[];
   shouldUseFallback: boolean;
   fallbackUrl: string;
+  source: ImageCandidateSource;
+  contentType?: string;
+  reachable?: boolean;
+}
+
+export interface PreparedPhotoAudit {
+  checkedCount: number;
+  validRealPhotoCount: number;
+  minimumRequired: number;
+  fallbackCount: number;
+  brokenCount: number;
+  rejectedDataUriCount: number;
+  rejectedSvgCount: number;
+  rejectedLogoCount: number;
+  hasMinimumRealPhotos: boolean;
+}
+
+export interface PreparedPhotoSet {
+  photos: string[];
+  realPhotos: string[];
+  fallbackPhotos: string[];
+  heroImage: string;
+  aboutImage: string;
+  audit: PreparedPhotoAudit;
 }
 
 export const GALLERY_HEAVY_CATEGORIES = new Set<Category>([
@@ -287,6 +320,13 @@ const TINY_DIMENSION_PATTERNS = [
   /=w(\d{1,3})-h(\d{1,3})/i,
 ];
 
+const DIMENSION_PAIR_PATTERNS = [
+  /[?&](?:w|width)=(\d{1,4}).*?[?&](?:h|height)=(\d{1,4})(?:[&#]|$)/i,
+  /[?&](?:h|height)=(\d{1,4}).*?[?&](?:w|width)=(\d{1,4})(?:[&#]|$)/i,
+  /(?:^|[,_/-])(\d{1,4})x(\d{1,4})(?:[,_/-]|$)/i,
+  /=w(\d{1,4})-h(\d{1,4})/i,
+];
+
 const BLUR_PATTERNS = [
   /[?&]blur=\d+/i,
   /blur_\d+/i,
@@ -317,7 +357,15 @@ const LOGO_PATTERNS = [
   /(?:^|[\/_-])(16x16|32x32|48x48|64x64|96x96|128x128|192x192)(?:[\/_.-]|$)/i,
   /(?:google|facebook|yelp|instagram|linkedin|x|twitter|youtube|tiktok|pinterest)\.(?:png|jpe?g|webp|svg)(?:$|[?#])/i,
 ];
+
 const SCREENSHOT_PATTERNS = [/screen\s?shot/i, /screenshot/i, /thumbnail/i, /thumb/i];
+const STOCK_HOST_PATTERNS = [/images\.unsplash\.com/i, /plus\.unsplash\.com/i, /pexels\.com/i, /pixabay\.com/i];
+const GOOGLE_PHOTO_PATTERNS = [
+  /maps\.googleapis\.com/i,
+  /googleusercontent\.com/i,
+  /gstatic\.com/i,
+  /googleapis\.com/i,
+];
 
 function buildUnsplashUrl(photoId: string, variant: FallbackImageVariant): string {
   const { width, height } = VARIANT_DIMENSIONS[variant];
@@ -340,6 +388,52 @@ function extractDimensionHints(url: string): number[] {
   return dimensions;
 }
 
+function extractDimensionPairs(url: string): Array<{ width: number; height: number }> {
+  const pairs: Array<{ width: number; height: number }> = [];
+
+  for (const pattern of DIMENSION_PAIR_PATTERNS) {
+    const match = url.match(pattern);
+    if (!match) continue;
+
+    const first = Number.parseInt(match[1] || "", 10);
+    const second = Number.parseInt(match[2] || "", 10);
+    if (!Number.isFinite(first) || !Number.isFinite(second)) continue;
+
+    const widthFirstPattern = pattern === DIMENSION_PAIR_PATTERNS[1];
+    pairs.push(
+      widthFirstPattern
+        ? { width: second, height: first }
+        : { width: first, height: second }
+    );
+  }
+
+  return pairs;
+}
+
+function detectSource(url: string): ImageCandidateSource {
+  if (GOOGLE_PHOTO_PATTERNS.some((pattern) => pattern.test(url))) return "google_places";
+  if (STOCK_HOST_PATTERNS.some((pattern) => pattern.test(url))) return "stock_fallback";
+  if (isHttpUrl(url)) return "official_site";
+  return "unknown";
+}
+
+function getSourcePriority(source: ImageCandidateSource): number {
+  switch (source) {
+    case "google_places":
+      return 300;
+    case "official_site":
+      return 200;
+    case "stock_fallback":
+      return 50;
+    default:
+      return 0;
+  }
+}
+
+export function getMinimumRealPhotoCount(category: Category): number {
+  return GALLERY_HEAVY_CATEGORIES.has(category) ? 5 : 3;
+}
+
 export function sanitizeImageUrl(url: string | null | undefined): string {
   if (!url) return "";
   return url.replace(/[\u0000-\u001F\u007F]+/g, "").trim();
@@ -358,7 +452,7 @@ export function sanitizeImageUrls(urls: string[] | null | undefined): string[] {
     });
 }
 
-export function isHttpImageUrl(url: string): boolean {
+export function isHttpUrl(url: string): boolean {
   try {
     const parsed = new URL(url);
     return parsed.protocol === "http:" || parsed.protocol === "https:";
@@ -382,6 +476,7 @@ export function validateImageUrl(
   const originalUrl = url || "";
   const sanitizedUrl = sanitizeImageUrl(url);
   const issues: ImageValidationIssue[] = [];
+  const source = detectSource(sanitizedUrl);
 
   if (!sanitizedUrl) {
     issues.push({
@@ -425,12 +520,25 @@ export function validateImageUrl(
         message: "Image URL must use http or https.",
       });
     }
+
+    if (/\.svg(?:$|[?#])/i.test(parsedUrl?.pathname || sanitizedUrl)) {
+      issues.push({
+        code: "svg_image",
+        severity: "critical",
+        message: "SVG assets are typically logos, icons, or placeholders and must not be used as production photos.",
+      });
+    }
   }
 
   if (sanitizedUrl) {
     const dimensions = extractDimensionHints(sanitizedUrl);
+    const dimensionPairs = extractDimensionPairs(sanitizedUrl);
     const hasIconSizedDimensions = dimensions.some((dimension) => dimension > 0 && dimension < 200);
     const hasTinyDimensions = dimensions.some((dimension) => dimension >= 200 && dimension < 400);
+    const hasLogoShape = dimensionPairs.some(({ width, height }) => {
+      const ratio = Math.max(width, height) / Math.max(1, Math.min(width, height));
+      return width > height * 2.6 && ratio >= 2.6 && Math.max(width, height) <= 900;
+    });
 
     if (hasIconSizedDimensions) {
       issues.push({
@@ -445,6 +553,14 @@ export function validateImageUrl(
         code: "tiny_dimensions",
         severity: "warning",
         message: "Image URL includes small width/height metadata that suggests thumbnail-scale output.",
+      });
+    }
+
+    if (hasLogoShape) {
+      issues.push({
+        code: "logo_shape",
+        severity: "critical",
+        message: "Image dimensions strongly suggest a logo-style asset rather than a true business photo.",
       });
     }
 
@@ -481,45 +597,22 @@ export function validateImageUrl(
     }
   }
 
-  let qualityScore = sanitizedUrl ? 70 : 0;
+  let qualityScore = sanitizedUrl ? 68 : 0;
+  qualityScore += getSourcePriority(source) / 15;
 
-  if (sanitizedUrl.includes("maps.googleapis.com") || sanitizedUrl.includes("googleusercontent.com")) {
-    qualityScore += 12;
-  }
-  if (sanitizedUrl.includes("images.unsplash.com")) {
-    qualityScore += 16;
-  }
-  if (sanitizedUrl.includes("res.cloudinary.com")) {
-    qualityScore += 8;
-  }
-  if (sanitizedUrl.includes("wixstatic.com") || sanitizedUrl.includes("parastorage.com")) {
-    qualityScore -= 18;
-  }
-  if (issues.some((issue) => issue.code === "tiny_dimensions")) {
-    qualityScore -= 30;
-  }
-  if (issues.some((issue) => issue.code === "blur_parameter")) {
-    qualityScore -= 18;
-  }
-  if (issues.some((issue) => issue.code === "expired_token")) {
-    qualityScore -= 18;
-  }
-  if (issues.some((issue) => issue.code === "logo_or_icon")) {
-    qualityScore -= 20;
-  }
-  if (issues.some((issue) => issue.code === "screenshot_pattern")) {
-    qualityScore -= 16;
-  }
-  if (issues.some((issue) => issue.severity === "critical")) {
-    qualityScore -= 40;
-  }
+  if (issues.some((issue) => issue.code === "tiny_dimensions")) qualityScore -= 30;
+  if (issues.some((issue) => issue.code === "blur_parameter")) qualityScore -= 18;
+  if (issues.some((issue) => issue.code === "expired_token")) qualityScore -= 18;
+  if (issues.some((issue) => issue.code === "logo_or_icon" || issue.code === "logo_shape")) qualityScore -= 35;
+  if (issues.some((issue) => issue.code === "screenshot_pattern")) qualityScore -= 16;
+  if (issues.some((issue) => issue.severity === "critical")) qualityScore -= 45;
 
   qualityScore = Math.max(0, Math.min(100, qualityScore));
 
   const shouldUseFallback =
     !sanitizedUrl ||
     issues.some((issue) => issue.severity === "critical") ||
-    qualityScore < (variant === "hero" ? 55 : 45);
+    qualityScore < (variant === "hero" ? 60 : variant === "about" ? 50 : 45);
 
   return {
     originalUrl,
@@ -529,6 +622,224 @@ export function validateImageUrl(
     issues,
     shouldUseFallback,
     fallbackUrl: getCategoryFallbackImage(category, variant),
+    source,
+  };
+}
+
+async function fetchImageProbe(url: string): Promise<Response> {
+  const signal = AbortSignal.timeout(4500);
+
+  try {
+    const headResponse = await fetch(url, {
+      method: "HEAD",
+      redirect: "follow",
+      signal,
+      headers: { Accept: "image/*,*/*;q=0.8" },
+    });
+
+    if (headResponse.ok) return headResponse;
+    if (![403, 405, 406].includes(headResponse.status)) return headResponse;
+  } catch {
+    // Fall through to GET range probe.
+  }
+
+  return fetch(url, {
+    method: "GET",
+    redirect: "follow",
+    signal: AbortSignal.timeout(4500),
+    headers: {
+      Accept: "image/*,*/*;q=0.8",
+      Range: "bytes=0-1024",
+    },
+  });
+}
+
+export async function probeImageUrl(
+  url: string | null | undefined,
+  category: Category,
+  variant: FallbackImageVariant = "hero"
+): Promise<ImageValidationResult> {
+  const initial = validateImageUrl(url, category, variant);
+  if (!initial.sanitizedUrl || !initial.isValid) {
+    return initial;
+  }
+
+  const issues = [...initial.issues];
+  let contentType: string | undefined;
+  let reachable = false;
+
+  try {
+    const response = await fetchImageProbe(initial.sanitizedUrl);
+    reachable = response.ok;
+    contentType = response.headers.get("content-type") || undefined;
+
+    if (!response.ok) {
+      issues.push({
+        code: "broken_url",
+        severity: "critical",
+        message: `Image URL returned HTTP ${response.status}. Broken images must never enter the generation pipeline.`,
+      });
+    } else if (!contentType) {
+      issues.push({
+        code: "non_image_content",
+        severity: "warning",
+        message: "Image URL did not return a content type header. Treat with caution.",
+      });
+    } else if (/svg/i.test(contentType)) {
+      issues.push({
+        code: "svg_image",
+        severity: "critical",
+        message: "Image URL resolved to SVG content, which is not acceptable for production hero/about/gallery photos.",
+      });
+    } else if (!contentType.toLowerCase().startsWith("image/")) {
+      issues.push({
+        code: "non_image_content",
+        severity: "critical",
+        message: `Image URL resolved to ${contentType} instead of an image asset.`,
+      });
+    }
+  } catch {
+    issues.push({
+      code: "broken_url",
+      severity: "critical",
+      message: "Image URL could not be reached during validation.",
+    });
+  }
+
+  let qualityScore = initial.qualityScore;
+  if (issues.some((issue) => issue.code === "broken_url")) qualityScore = 0;
+  if (issues.some((issue) => issue.code === "svg_image" || issue.code === "non_image_content")) {
+    qualityScore = Math.min(qualityScore, 10);
+  }
+
+  qualityScore = Math.max(0, Math.min(100, qualityScore));
+
+  return {
+    ...initial,
+    issues,
+    qualityScore,
+    isValid: issues.every((issue) => issue.severity !== "critical"),
+    shouldUseFallback:
+      issues.some((issue) => issue.severity === "critical") ||
+      qualityScore < (variant === "hero" ? 60 : variant === "about" ? 50 : 45),
+    contentType,
+    reachable,
+  };
+}
+
+export async function buildValidatedPhotoSet(options: {
+  photos: string[] | null | undefined;
+  category: Category;
+  businessName: string;
+  logoUrl?: string | null;
+  totalPhotos?: number;
+}): Promise<PreparedPhotoSet> {
+  const { category, businessName, totalPhotos = 12 } = options;
+  const minimumRequired = getMinimumRealPhotoCount(category);
+  const sanitizedCandidates = sanitizeImageUrls(options.photos).filter(
+    (url) => url !== sanitizeImageUrl(options.logoUrl)
+  );
+
+  const validRealPhotos: ImageValidationResult[] = [];
+  let brokenCount = 0;
+  let rejectedDataUriCount = 0;
+  let rejectedSvgCount = 0;
+  let rejectedLogoCount = 0;
+
+  for (const url of sanitizedCandidates.slice(0, 24)) {
+    const probed = await probeImageUrl(url, category, "gallery");
+    const issueCodes = new Set(probed.issues.map((issue) => issue.code));
+
+    if (issueCodes.has("broken_url")) brokenCount += 1;
+    if (issueCodes.has("data_uri")) rejectedDataUriCount += 1;
+    if (issueCodes.has("svg_image")) rejectedSvgCount += 1;
+    if (issueCodes.has("logo_or_icon") || issueCodes.has("logo_shape")) rejectedLogoCount += 1;
+
+    if (!probed.isValid || probed.shouldUseFallback) continue;
+    if (probed.source === "stock_fallback") continue;
+    validRealPhotos.push(probed);
+  }
+
+  validRealPhotos.sort((a, b) => {
+    const sourceDelta = getSourcePriority(b.source) - getSourcePriority(a.source);
+    if (sourceDelta !== 0) return sourceDelta;
+    return b.qualityScore - a.qualityScore;
+  });
+
+  const selectBestForVariant = (
+    candidates: ImageValidationResult[],
+    variant: FallbackImageVariant,
+    used: Set<string>
+  ): ImageValidationResult | null => {
+    for (const candidate of candidates) {
+      if (used.has(candidate.sanitizedUrl)) continue;
+      const variantValidation = validateImageUrl(candidate.sanitizedUrl, category, variant);
+      if (!variantValidation.isValid || variantValidation.shouldUseFallback) continue;
+      used.add(candidate.sanitizedUrl);
+      return candidate;
+    }
+    return null;
+  };
+
+  const used = new Set<string>();
+  const heroReal = selectBestForVariant(validRealPhotos, "hero", used);
+  const aboutReal = selectBestForVariant(validRealPhotos, "about", used);
+  const galleryReal = validRealPhotos
+    .filter((candidate) => !used.has(candidate.sanitizedUrl))
+    .map((candidate) => candidate.sanitizedUrl);
+
+  const realPhotosOrdered = [heroReal?.sanitizedUrl, aboutReal?.sanitizedUrl, ...galleryReal].filter(
+    (value): value is string => Boolean(value)
+  );
+
+  const photos: string[] = [];
+  const fallbackPhotos: string[] = [];
+  const pushUnique = (url: string | undefined, bucket: "real" | "fallback") => {
+    if (!url || photos.includes(url)) return;
+    photos.push(url);
+    if (bucket === "fallback") fallbackPhotos.push(url);
+  };
+
+  pushUnique(
+    heroReal?.sanitizedUrl || getSectionFallbackImage(category, "hero", businessName, 0, photos),
+    heroReal ? "real" : "fallback"
+  );
+  pushUnique(
+    aboutReal?.sanitizedUrl || getSectionFallbackImage(category, "about", businessName, 1, photos),
+    aboutReal ? "real" : "fallback"
+  );
+
+  for (const photo of galleryReal) {
+    pushUnique(photo, "real");
+    if (photos.length >= totalPhotos) break;
+  }
+
+  if (photos.length < totalPhotos) {
+    for (const fallback of getCompleteCategoryFallbackSet(category, businessName)) {
+      pushUnique(fallback, "fallback");
+      if (photos.length >= totalPhotos) break;
+    }
+  }
+
+  const audit: PreparedPhotoAudit = {
+    checkedCount: sanitizedCandidates.length,
+    validRealPhotoCount: realPhotosOrdered.length,
+    minimumRequired,
+    fallbackCount: fallbackPhotos.length,
+    brokenCount,
+    rejectedDataUriCount,
+    rejectedSvgCount,
+    rejectedLogoCount,
+    hasMinimumRealPhotos: realPhotosOrdered.length >= minimumRequired,
+  };
+
+  return {
+    photos,
+    realPhotos: realPhotosOrdered,
+    fallbackPhotos,
+    heroImage: photos[0] || getSectionFallbackImage(category, "hero", businessName),
+    aboutImage: photos[1] || getSectionFallbackImage(category, "about", businessName, 1, photos),
+    audit,
   };
 }
 

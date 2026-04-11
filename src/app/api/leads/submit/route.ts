@@ -7,6 +7,7 @@ import { alertOwner } from "@/lib/alerts";
 import { logCost, COST_RATES } from "@/lib/cost-logger";
 import type { Prospect, Category } from "@/lib/types";
 import { CATEGORY_CONFIG } from "@/lib/types";
+import { canonicalizeCity, normalizeAddress } from "@/lib/address-normalizer";
 
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 const OWNER_EMAIL = "bluejaycontactme@gmail.com";
@@ -157,7 +158,7 @@ export async function POST(request: NextRequest) {
     phone: normalizePhone(phone),
     email: email?.trim() || undefined,
     address: "",
-    city: city?.trim() || "Unknown",
+    city: canonicalizeCity(city?.trim()) || city?.trim() || "Unknown",
     state: state?.trim() || "",
     category: resolvedCategory,
     currentWebsite: website?.trim() || undefined,
@@ -174,6 +175,14 @@ export async function POST(request: NextRequest) {
       const scraped = await scrapeWebsite(website);
       prospect.scrapedData = scraped;
       prospect.status = "scraped";
+
+      if (scraped?.address) {
+        prospect.address = normalizeAddress(scraped.address) || "";
+      }
+      const resolvedCity = canonicalizeCity(scraped?.city, scraped?.address);
+      if (resolvedCity) {
+        prospect.city = resolvedCity;
+      }
 
       // Try to detect state from scraped address data if not provided by form
       if (!prospect.state && scraped?.address) {

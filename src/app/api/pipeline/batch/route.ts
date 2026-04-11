@@ -228,14 +228,25 @@ export async function POST(request: NextRequest) {
             ...existingSD,
             ...data,
             businessName: data.businessName || (existingSD.businessName as string) || prospect.businessName,
-            brandColor: (existingSD.brandColor as string) || data.brandColor,
-            logoUrl: (existingSD.logoUrl as string) || data.logoUrl,
+            brandColor: data.brandColor || (existingSD.brandColor as string),
+            brandColorSource:
+              data.brandColorSource ||
+              (existingSD.brandColorSource as "official-site" | "logo" | "category-default" | undefined),
+            logoUrl: data.logoUrl || (existingSD.logoUrl as string),
           };
 
           const updates: Record<string, unknown> = {
             scrapedData: prospect.scrapedData,
             status: "scraped" as const,
           };
+          if (data.address) {
+            prospect.address = data.address;
+            updates.address = data.address;
+          }
+          if (data.city && data.city !== prospect.city) {
+            prospect.city = data.city;
+            updates.city = data.city;
+          }
           if (data.phone && !prospect.phone) {
             prospect.phone = data.phone;
             updates.phone = data.phone;
@@ -280,7 +291,7 @@ export async function POST(request: NextRequest) {
         batch.results.queued++;
 
         // STEP 4: Claude supercharge + QC (best-effort, non-blocking)
-        let finalStatus = "generated";
+        let finalStatus: "generated" | "ready_to_review" | "qc_failed" = "generated";
         try {
           const projectRoot = process.cwd();
           const [claudeRules, qcRules, qcGuide] = await Promise.all([

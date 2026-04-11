@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import type { Prospect, ScrapedData } from "./types";
 import { supabase, isSupabaseConfigured } from "./supabase";
-import { normalizeAddress } from "./address-normalizer";
+import { canonicalizeCity, normalizeAddress } from "./address-normalizer";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const PROSPECTS_FILE = path.join(DATA_DIR, "prospects.json");
@@ -76,9 +76,12 @@ function sanitizePhotoUrls(photos: unknown): string[] {
 function sanitizeScrapedData(scrapedData: ScrapedData | undefined): ScrapedData | undefined {
   if (!scrapedData) return scrapedData;
 
+  const normalizedAddress = normalizeAddress(scrapedData.address);
+
   return {
     ...scrapedData,
-    address: normalizeAddress(scrapedData.address),
+    address: normalizedAddress,
+    city: canonicalizeCity(scrapedData.city, normalizedAddress),
     photos: sanitizePhotoUrls(scrapedData.photos),
     logoUrl: scrapedData.logoUrl?.trim() || undefined,
   };
@@ -96,12 +99,16 @@ function sanitizeGeneratedSiteData(data: object | null): object | null {
 }
 
 function sanitizeProspect(prospect: Prospect): Prospect {
+  const normalizedAddress = normalizeAddress(prospect.address) || "";
+  const normalizedScrapedData = sanitizeScrapedData(prospect.scrapedData);
+
   return {
     ...prospect,
-    address: normalizeAddress(prospect.address) || "",
+    address: normalizedAddress,
+    city: canonicalizeCity(prospect.city, normalizedAddress || normalizedScrapedData?.address) || prospect.city,
     adminNotes: prospect.adminNotes ?? undefined,
     lastSubmittedAdminNotes: prospect.lastSubmittedAdminNotes ?? undefined,
-    scrapedData: sanitizeScrapedData(prospect.scrapedData),
+    scrapedData: normalizedScrapedData,
   };
 }
 
@@ -319,6 +326,8 @@ export async function updateProspect(
     if (sanitizedUpdates.phone) dbUpdates.phone = sanitizedUpdates.phone;
     if (sanitizedUpdates.email) dbUpdates.email = sanitizedUpdates.email;
     if (sanitizedUpdates.ownerName) dbUpdates.owner_name = sanitizedUpdates.ownerName;
+    if (sanitizedUpdates.address !== undefined) dbUpdates.address = normalizeAddress(sanitizedUpdates.address) || "";
+    if (sanitizedUpdates.city !== undefined) dbUpdates.city = canonicalizeCity(sanitizedUpdates.city, sanitizedUpdates.address) || sanitizedUpdates.city;
     if (sanitizedUpdates.stripeCustomerId) dbUpdates.stripe_customer_id = sanitizedUpdates.stripeCustomerId;
     if (sanitizedUpdates.paidAt) dbUpdates.paid_at = sanitizedUpdates.paidAt;
     if (sanitizedUpdates.subscriptionStatus) dbUpdates.subscription_status = sanitizedUpdates.subscriptionStatus;

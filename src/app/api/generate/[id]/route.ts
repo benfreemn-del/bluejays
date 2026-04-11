@@ -54,16 +54,27 @@ export async function POST(
     if (hasData) {
       const existingSD = (prospect.scrapedData || {}) as Record<string, unknown>;
       prospect.scrapedData = {
-        ...existingSD,  // Keep existing fields (brandColor, logoUrl set manually)
-        ...data,        // Override with fresh extraction
+        ...existingSD,
+        ...data,
         businessName: data.businessName || (existingSD.businessName as string) || prospect.businessName,
-        brandColor: (existingSD.brandColor as string) || data.brandColor,
-        logoUrl: (existingSD.logoUrl as string) || data.logoUrl,
+        brandColor: data.brandColor || (existingSD.brandColor as string),
+        brandColorSource:
+          data.brandColorSource ||
+          (existingSD.brandColorSource as "official-site" | "logo" | "category-default" | undefined),
+        logoUrl: data.logoUrl || (existingSD.logoUrl as string),
       };
       const updates: Record<string, unknown> = {
         scrapedData: prospect.scrapedData,
         status: "scraped" as const,
       };
+      if (data.address) {
+        prospect.address = data.address;
+        updates.address = data.address;
+      }
+      if (data.city && data.city !== prospect.city) {
+        prospect.city = data.city;
+        updates.city = data.city;
+      }
       if (data.phone && !prospect.phone) {
         prospect.phone = data.phone;
         updates.phone = data.phone;

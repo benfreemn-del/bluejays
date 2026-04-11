@@ -64,6 +64,25 @@ function segmentContainsStateCode(segment: string, stateCode: string): boolean {
   return new RegExp(`\\b${stateCode}\\b`, "i").test(segment);
 }
 
+function isLikelyStreetSegment(segment: string): boolean {
+  return /\d/.test(segment) || /\b(?:suite|ste|unit|apt|building|bldg|floor|fl)\b/i.test(segment);
+}
+
+function isPostalStateSegment(segment: string): boolean {
+  return /\b\d{5}(?:-\d{4})?\b/.test(segment) || getStateCodeFromSegment(segment) !== null;
+}
+
+function toTitleCase(value: string): string {
+  return value
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((part) => {
+      if (/^[A-Z]{2,}$/.test(part)) return part;
+      return part.charAt(0).toUpperCase() + part.slice(1).toLowerCase();
+    })
+    .join(" ");
+}
+
 export function normalizeAddress(address?: string | null): string | undefined {
   if (typeof address !== "string") return undefined;
 
@@ -118,4 +137,67 @@ export function normalizeAddress(address?: string | null): string | undefined {
   }
 
   return normalizedSegments.join(", ").replace(/,+$/g, "").trim() || undefined;
+}
+
+export function isCountyLevelValue(value?: string | null): boolean {
+  if (typeof value !== "string") return false;
+  const cleaned = cleanSegment(value);
+  if (!cleaned) return false;
+
+  if (isCountySegment(cleaned)) return true;
+
+  const countyLike = cleaned.match(/^([A-Za-z .'-]+),\s*([A-Z]{2}|[A-Za-z ]+)$/);
+  if (countyLike) {
+    const locality = countyLike[1].trim();
+    if (locality && !/\s/.test(locality) && /^[A-Z]?[a-z]+$/.test(locality)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+export function extractCityFromAddress(address?: string | null): string | undefined {
+  const normalized = normalizeAddress(address);
+  if (!normalized) return undefined;
+
+  const segments = normalized
+    .split(",")
+    .map(cleanSegment)
+    .filter(Boolean);
+
+  if (segments.length < 2) {
+    const inlineMatch = normalized.match(/\b([A-Za-z][A-Za-z .'-]+?)\s*,?\s+([A-Z]{2}|[A-Za-z ]+)\s+\d{5}(?:-\d{4})?$/);
+    const inlineCity = inlineMatch?.[1]?.trim();
+    return inlineCity && !isCountyLevelValue(inlineCity) ? toTitleCase(inlineCity) : undefined;
+  }
+
+  for (let i = segments.length - 1; i >= 0; i -= 1) {
+    const segment = segments[i];
+    if (!isPostalStateSegment(segment)) continue;
+
+    for (let j = i - 1; j >= 0; j -= 1) {
+      const candidate = cleanSegment(segments[j]);
+      if (!candidate) continue;
+      if (isCountyLevelValue(candidate)) continue;
+      if (isLikelyStreetSegment(candidate)) continue;
+      if (isUsCountrySegment(candidate)) continue;
+      return toTitleCase(candidate);
+    }
+  }
+
+  const fallback = segments.find((segment) => !isLikelyStreetSegment(segment) && !isCountyLevelValue(segment));
+  return fallback ? toTitleCase(fallback) : undefined;
+}
+
+export function canonicalizeCity(
+  candidateCity?: string | null,
+  address?: string | null
+): string | undefined {
+  const trimmedCandidate = cleanSegment(candidateCity || "");
+  if (trimmedCandidate && !isCountyLevelValue(trimmedCandidate)) {
+    return toTitleCase(trimmedCandidate);
+  }
+
+  return extractCityFromAddress(address);
 }
