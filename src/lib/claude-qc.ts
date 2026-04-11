@@ -2,10 +2,15 @@ import * as cheerio from "cheerio";
 import type { GeneratedSiteData } from "./generator";
 import { scrapeWebsite } from "./scraper";
 import type { Prospect, ScrapedData, ServiceItem, Testimonial } from "./types";
+import { OpenAI } from "openai";
 
 const ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages";
 const DEFAULT_ANTHROPIC_MODEL =
   process.env.ANTHROPIC_HANDOFF_MODEL || "claude-opus-4-20250514";
+
+// Use cheap OpenAI model for QC & supercharge; reserve Claude Opus for notes/handoff
+const QC_MODEL = process.env.QC_MODEL || "gpt-4.1-mini";
+const USE_OPENAI_FOR_QC = process.env.USE_OPENAI_FOR_QC !== "false"; // default true
 
 const RELEVANT_PATH_HINTS = [
   "about",
@@ -348,19 +353,33 @@ function extractFirstJsonObject(text: string): string {
   throw new Error("Claude response JSON was incomplete");
 }
 
+async function callOpenAI(prompt: string): Promise<{ model: string; responseText: string }> {
+  const client = new OpenAI();
+  const model = QC_MODEL;
+  const response = await client.chat.completions.create({
+    model,
+    max_tokens: 4096,
+    temperature: 0.2,
+    messages: [{ role: "user", content: prompt }],
+  });
+  const responseText = response.choices?.[0]?.message?.content || "";
+  if (!responseText) {
+    throw new Error("OpenAI returned an empty response.");
+  }
+  return { model, responseText };
+}
+
 async function callClaude(prompt: string): Promise<{ model: string; responseText: string }> {
   const apiKey = getAnthropicApiKey();
   if (!apiKey) {
     throw new Error("ANTHROPIC_API_KEY is not configured.");
   }
-
   const model = DEFAULT_ANTHROPIC_MODEL;
   if (prompt.length > MAX_PROMPT_CHARS) {
     throw new Error(
       `Claude prompt exceeded hard budget (${estimateTokenCount(prompt)} est. tokens / ${prompt.length} chars).`
     );
   }
-
   const response = await fetch(ANTHROPIC_API_URL, {
     method: "POST",
     headers: {
@@ -375,19 +394,24 @@ async function callClaude(prompt: string): Promise<{ model: string; responseText
       messages: [{ role: "user", content: prompt }],
     }),
   });
-
   if (!response.ok) {
     const errorText = await response.text().catch(() => "");
     throw new Error(`Anthropic request failed (${response.status}): ${errorText || response.statusText}`);
   }
-
   const data = (await response.json()) as ClaudeMessageResponse;
   const responseText = extractTextFromClaudeResponse(data);
   if (!responseText) {
     throw new Error("Claude returned an empty response.");
   }
-
   return { model, responseText };
+}
+
+// Smart caller: uses OpenAI for QC/supercharge, falls back to Claude if OpenAI not available
+async function callQcModel(prompt: string): Promise<{ model: string; responseText: string }> {
+  if (USE_OPENAI_FOR_QC && process.env.OPENAI_API_KEY) {
+    return callOpenAI(prompt);
+  }
+  return callClaude(prompt);
 }
 
 function dedupePhotos(photos: string[] | undefined): string[] {
@@ -719,10 +743,12 @@ function buildClaudeQcPrompt(input: ClaudeQcReviewInput): string {
         "- Contribute detailed QC notes and a quality score.",
         "",
         "Score guidance:",
-        "- 90-100: premium, custom-feeling, outreach-ready.",
-        "- 80-89: strong but still has meaningful polish gaps.",
-        "- 70-79: borderline; usable but not convincingly premium.",
-        "- below 70: not acceptable for a $997 product.",
+        "- 85-100: premium, custom-feeling, outreach-ready.",
+        "- 70-84: good quality, usable for outreach with minor polish gaps.",
+        "- 50-69: needs improvement; has noticeable issues but structure is there.",
+        "- below 50: not acceptable; major issues with content, images, or branding.",
+        "",
+        "IMPORTANT: Score fairly. A site that has the right city, real business info, working images, and decent copy should score 70+. Do NOT be overly harsh — these are lead-gen previews, not pixel-perfect agency work. Pass threshold is 70.",
         "",
         "Return ONLY valid JSON with this exact shape:",
         '{"summary": string, "premiumVerdict": string, "score": number, "passed": boolean, "strengths": string[], "blockers": string[], "notes": string[]}',
@@ -743,7 +769,7 @@ export async function runClaudeSupercharge(
   input: ClaudeSuperchargeInput
 ): Promise<ClaudeSuperchargeResult> {
   const prompt = buildSuperchargePrompt(input);
-  const { model, responseText } = await callClaude(prompt);
+  const { model, responseText } = await callQcModel(prompt);
   const parsed = JSON.parse(extractFirstJsonObject(responseText)) as ClaudeSuperchargeResponseShape;
 
   return {
@@ -759,7 +785,7 @@ export async function runClaudeQcReview(
   input: ClaudeQcReviewInput
 ): Promise<ClaudeQcReviewResult> {
   const prompt = buildClaudeQcPrompt(input);
-  const { model, responseText } = await callClaude(prompt);
+  const { model, responseText } = await callQcModel(prompt);
   const parsed = JSON.parse(extractFirstJsonObject(responseText)) as ClaudeQcResponseShape;
 
   const summary = cleanString(parsed.summary, "Claude reviewed the site.");
