@@ -84,13 +84,32 @@ function getServiceIcon(serviceName: string) {
 }
 
 /* ───────────────────────── STOCK FALLBACK IMAGES (UNIQUE TO DENTAL) ───────────────────────── */
-const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=1400&q=80"];
-const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=600&q=80"];
+/* Dental-specific stock images — 5 hero, 5 about, 10 gallery (no cross-category overlap) */
+const STOCK_HERO_POOL = [
+  "https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=1400&q=80",   // dental chair modern
+  "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=1400&q=80",   // dentist with patient
+  "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=1400&q=80",   // bright smile closeup
+  "https://images.unsplash.com/photo-1445527815600-7e8fbfae5e2f?w=1400&q=80",   // modern dental office
+  "https://images.unsplash.com/photo-1607613009820-a29f7bb81c04?w=1400&q=80",   // dental tools clean
+];
+const STOCK_ABOUT_POOL = [
+  "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=600&q=80",    // dentist working
+  "https://images.unsplash.com/photo-1598256989800-fe5f95da9787?w=600&q=80",    // dental team
+  "https://images.unsplash.com/photo-1609840114035-3c981b782dfe?w=600&q=80",    // patient smiling
+  "https://images.unsplash.com/photo-1571772996211-2f02c9727629?w=600&q=80",    // dental exam
+  "https://images.unsplash.com/photo-1629909615184-74f495363b67?w=600&q=80",    // modern operatory
+];
 const STOCK_GALLERY = [
-  "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=600&q=80",
-  "https://images.unsplash.com/photo-1598256989800-fe5f95da9787?w=600&q=80",
-  "https://images.unsplash.com/photo-1609840114035-3c981b782dfe?w=800&q=80",
-  "https://images.unsplash.com/photo-1571772996211-2f02c9727629?w=800&q=80",
+  "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=600&q=80",    // smile
+  "https://images.unsplash.com/photo-1598256989800-fe5f95da9787?w=600&q=80",    // team
+  "https://images.unsplash.com/photo-1609840114035-3c981b782dfe?w=600&q=80",    // patient
+  "https://images.unsplash.com/photo-1571772996211-2f02c9727629?w=600&q=80",    // exam
+  "https://images.unsplash.com/photo-1629909615184-74f495363b67?w=600&q=80",    // operatory
+  "https://images.unsplash.com/photo-1445527815600-7e8fbfae5e2f?w=600&q=80",    // office
+  "https://images.unsplash.com/photo-1607613009820-a29f7bb81c04?w=600&q=80",    // tools
+  "https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=600&q=80",    // chair
+  "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=600&q=80",    // dentist
+  "https://images.unsplash.com/photo-1628771065518-0d82f1938462?w=600&q=80",    // whitening
 ];
 
 /* ───────────────────────── FLOATING SPARKLE PARTICLES ───────────────────────── */
@@ -377,10 +396,15 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
 
   const { TEAL, TEAL_GLOW } = getAccent(data.accentColor);
 
-  const heroImage = data.photos?.[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
-  const aboutImage = data.photos?.[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName);
-  const galleryImages = data.photos?.length > 2
-    ? data.photos.slice(2, 6)
+  /* Deduplicate scraped photos — ensure hero, card, and about are NEVER the same */
+  const uniquePhotos = data.photos ? [...new Set(data.photos)] : [];
+  const heroImage = uniquePhotos[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
+  const heroCardImage = uniquePhotos[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 1);
+  const aboutImage = uniquePhotos.length >= 2 && uniquePhotos[1] !== uniquePhotos[0]
+    ? uniquePhotos[1]
+    : uniquePhotos[2] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 2);
+  const galleryImages = uniquePhotos.length > 2
+    ? uniquePhotos.slice(2, 6)
     : pickGallery(STOCK_GALLERY, data.businessName);
 
   const phoneDigits = data.phone.replace(/\D/g, "");
