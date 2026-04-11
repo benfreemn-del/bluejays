@@ -72,6 +72,11 @@ export default function PreviewClientPage({
   }, [loadPreview]);
 
   const selectedTheme = useMemo(() => resolveTheme(initialTheme, prospect), [initialTheme, prospect]);
+  const resolvedVersion = useMemo(() => {
+    // URL param takes priority, then prospect's saved version, then default v2
+    if (version !== "v2") return version; // explicit URL param
+    return prospect?.selectedVersion || version;
+  }, [version, prospect]);
 
   if (isLoading && !siteData) {
     return (
@@ -116,5 +121,5 @@ export default function PreviewClientPage({
     );
   }
 
-  return <PreviewContent id={id} siteData={siteData} selectedTheme={selectedTheme} version={version} />;
+  return <PreviewContent id={id} siteData={siteData} selectedTheme={selectedTheme} version={resolvedVersion} />;
 }

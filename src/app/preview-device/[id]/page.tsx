@@ -71,6 +71,10 @@ export default function PreviewDevicePage() {
 
         const nextProspect = data as Prospect;
         setProspect(nextProspect);
+        // If no version in URL, use the prospect's saved version
+        if (!searchParams.get("version") && nextProspect.selectedVersion) {
+          setVersion(nextProspect.selectedVersion);
+        }
         setNoteDraft((current) => {
           if (current) return current;
           const initialDraft = getInitialDraft(nextProspect);
@@ -215,6 +219,21 @@ export default function PreviewDevicePage() {
     setNotesOpen(false);
   };
 
+  const handleVersionChange = useCallback(async (newVersion: "v1" | "v2") => {
+    setVersion(newVersion);
+    if (!prospect) return;
+    try {
+      await fetch(`/api/prospects/${prospect.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ selectedVersion: newVersion }),
+      });
+      setProspect((prev) => prev ? { ...prev, selectedVersion: newVersion } : prev);
+    } catch (error) {
+      console.error("[preview-device] Failed to persist version", { id: prospect.id, error });
+    }
+  }, [prospect]);
+
   const handleThemeChange = useCallback((theme: "light" | "dark") => {
     if (!mergedProspect) return;
 
@@ -314,7 +333,7 @@ export default function PreviewDevicePage() {
           </button>
           <span className="w-px h-6 bg-white/10 mx-1" />
           <button
-            onClick={() => setVersion("v2")}
+            onClick={() => handleVersionChange("v2")}
             className={`h-9 px-3 rounded-lg text-sm font-medium transition-all ${
               version === "v2"
                 ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40"
@@ -324,7 +343,7 @@ export default function PreviewDevicePage() {
             V2
           </button>
           <button
-            onClick={() => setVersion("v1")}
+            onClick={() => handleVersionChange("v1")}
             className={`h-9 px-3 rounded-lg text-sm font-medium transition-all ${
               version === "v1"
                 ? "bg-orange-500/20 text-orange-400 border border-orange-500/40"

@@ -92,6 +92,7 @@ export interface Prospect {
   stripeCustomerId?: string;
   paidAt?: string;
   selectedTheme?: "light" | "dark";
+  selectedVersion?: "v1" | "v2";
   aiThemeRecommendation?: "light" | "dark";
   subscriptionStatus?: "none" | "active" | "past_due" | "cancelled";
   /** Stripe subscription ID for the $100/year management fee (deferred 1 year) */
