@@ -151,6 +151,7 @@ function dbToProspect(row: Record<string, unknown>): Prospect {
     source: (row.source as "inbound" | "scouted" | undefined) || undefined,
     pricingTier: (row.pricing_tier as "standard" | "free" | undefined) || "standard",
     selectedTheme: (row.selected_theme as "light" | "dark" | undefined) || undefined,
+    selectedVersion: (row.selected_version as "v1" | "v2" | undefined) || undefined,
     aiThemeRecommendation: (row.ai_theme_recommendation as "light" | "dark" | undefined) || undefined,
     qualityScore: row.quality_score as number | undefined,
     qualityNotes: row.quality_notes as string | undefined,
@@ -194,6 +195,7 @@ function prospectToDb(p: Prospect) {
     source: sanitized.source || "scouted",
     pricing_tier: sanitized.pricingTier || "standard",
     selected_theme: sanitized.selectedTheme || null,
+    selected_version: sanitized.selectedVersion || null,
     ai_theme_recommendation: sanitized.aiThemeRecommendation || null,
     quality_score: sanitized.qualityScore || null,
     quality_notes: sanitized.qualityNotes || null,
@@ -324,6 +326,7 @@ export async function updateProspect(
     if (sanitizedUpdates.instagramHandle !== undefined) dbUpdates.instagram_handle = sanitizedUpdates.instagramHandle;
     if (sanitizedUpdates.funnelPaused !== undefined) dbUpdates.funnel_paused = sanitizedUpdates.funnelPaused;
     if (sanitizedUpdates.selectedTheme !== undefined) dbUpdates.selected_theme = sanitizedUpdates.selectedTheme || null;
+    if (sanitizedUpdates.selectedVersion !== undefined) dbUpdates.selected_version = sanitizedUpdates.selectedVersion || null;
     if (sanitizedUpdates.aiThemeRecommendation) dbUpdates.ai_theme_recommendation = sanitizedUpdates.aiThemeRecommendation;
     if (sanitizedUpdates.qualityScore !== undefined) dbUpdates.quality_score = sanitizedUpdates.qualityScore;
     if (sanitizedUpdates.qualityNotes !== undefined) dbUpdates.quality_notes = sanitizedUpdates.qualityNotes;
