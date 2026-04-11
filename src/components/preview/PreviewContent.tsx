@@ -116,17 +116,51 @@ interface PreviewContentProps {
   version?: "v1" | "v2";
 }
 
+function unwrapApprovedProxyUrl(url: string | undefined | null): string {
+  const value = url?.trim();
+  if (!value || !value.includes("/api/image-proxy")) {
+    return value || "";
+  }
+
+  try {
+    const parsed = new URL(value, "https://bluejayportfolio.com");
+    if (parsed.pathname !== "/api/image-proxy") {
+      return value;
+    }
+
+    const target = parsed.searchParams.get("url");
+    if (!target) {
+      return value;
+    }
+
+    const decoded = decodeURIComponent(target).trim();
+    const host = new URL(decoded).hostname;
+    if (host === "images.unsplash.com") {
+      return decoded;
+    }
+
+    return value;
+  } catch {
+    return value;
+  }
+}
+
+function normalizePreviewPhotoUrl(url: string | undefined | null): string {
+  return unwrapApprovedProxyUrl(url);
+}
+
 function getValidatedPreviewPhotos(id: string, siteData: GeneratedSiteData, businessName: string): string[] {
-  const sanitizedPhotos = sanitizeImageUrls(siteData.photos);
+  const sanitizedPhotos = sanitizeImageUrls(siteData.photos).map(normalizePreviewPhotoUrl);
   const { category } = siteData;
   const uniquePhotos: string[] = [];
 
   const pushUnique = (url: string | undefined) => {
-    if (!url || uniquePhotos.includes(url)) return;
-    uniquePhotos.push(url);
+    const normalizedUrl = normalizePreviewPhotoUrl(url);
+    if (!normalizedUrl || uniquePhotos.includes(normalizedUrl)) return;
+    uniquePhotos.push(normalizedUrl);
   };
 
-  const heroCandidate = getHeroImage({ ...siteData, photos: sanitizedPhotos });
+  const heroCandidate = normalizePreviewPhotoUrl(getHeroImage({ ...siteData, photos: sanitizedPhotos }));
   const heroResult = validateImageUrl(heroCandidate, category, "hero");
   pushUnique(
     heroResult.shouldUseFallback
@@ -134,7 +168,7 @@ function getValidatedPreviewPhotos(id: string, siteData: GeneratedSiteData, busi
       : heroResult.sanitizedUrl
   );
 
-  const aboutCandidate = getAboutImage({ ...siteData, photos: sanitizedPhotos });
+  const aboutCandidate = normalizePreviewPhotoUrl(getAboutImage({ ...siteData, photos: sanitizedPhotos }));
   const aboutResult = validateImageUrl(aboutCandidate, category, "about");
   pushUnique(
     aboutResult.shouldUseFallback

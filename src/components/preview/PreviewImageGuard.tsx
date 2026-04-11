@@ -1,7 +1,6 @@
 "use client";
 
 import type { ReactNode, SyntheticEvent } from "react";
-import { proxyImage } from "@/lib/image-proxy";
 import {
   getCategoryFallbackImage,
   type PreviewImageSection,
@@ -112,7 +111,10 @@ export default function PreviewImageGuard({
 
     image.dataset.fallbackAttempt = String(attempt + 1);
     image.dataset.fallbackSection = section;
-    image.src = proxyImage(fallbackSrc, prospectId);
+    image.src = fallbackSrc;
+    if (image.hasAttribute("srcset")) {
+      image.removeAttribute("srcset");
+    }
     if (!image.alt) {
       image.alt = `${businessName} ${section}`;
     }
