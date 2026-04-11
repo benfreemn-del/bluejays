@@ -41,7 +41,7 @@ const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
 
 /* ───────────────────────── COLORS ───────────────────────── */
-const SLATE = "#0f172a";
+const SLATE = "#faf9f6";  /* warm off-white base — friendly, not clinical */
 const DEFAULT_TEAL = "#0d9488";
 const TEAL_LIGHT = "#14b8a6";
 
@@ -230,7 +230,7 @@ function DentalPattern({ opacity = 0.03, accent }: { opacity?: number; accent: s
 /* ───────────────────────── GLASS CARD ───────────────────────── */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
+    <div className={`rounded-2xl border border-slate-200 bg-white/80 backdrop-blur-xl shadow-sm ${className}`}>
       {children}
     </div>
   );
@@ -310,7 +310,7 @@ function ShimmerBorder({ children, className = "", accent }: { children: React.R
         animate={{ rotate: [0, 360] }}
         transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
       />
-      <div className="relative rounded-2xl bg-[#0f172a] z-10">{children}</div>
+      <div className="relative rounded-2xl bg-white z-10">{children}</div>
     </div>
   );
 }
@@ -325,9 +325,9 @@ function AccordionItem({ question, answer, isOpen, onToggle }: {
   return (
     <GlassCard className="overflow-hidden">
       <button onClick={onToggle} className="w-full flex items-center justify-between p-5 md:p-6 text-left group cursor-pointer">
-        <span className="text-lg font-semibold text-white pr-4">{question}</span>
+        <span className="text-lg font-semibold text-slate-900 pr-4">{question}</span>
         <motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={spring}>
-          <CaretDown size={20} className="text-slate-400 shrink-0" />
+          <CaretDown size={20} className="text-slate-500 shrink-0" />
         </motion.div>
       </button>
       <AnimatePresence initial={false}>
@@ -339,7 +339,7 @@ function AccordionItem({ question, answer, isOpen, onToggle }: {
             transition={spring}
             className="overflow-hidden"
           >
-            <p className="px-5 pb-5 md:px-6 md:pb-6 text-slate-400 leading-relaxed">{answer}</p>
+            <p className="px-5 pb-5 md:px-6 md:pb-6 text-slate-500 leading-relaxed">{answer}</p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -362,10 +362,10 @@ function SectionHeader({ badge, title, subtitle, accent }: {
       >
         {badge}
       </span>
-      <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white">{title}</h2>
+      <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-slate-900">{title}</h2>
       <div className="h-0.5 w-16 mx-auto mt-4" style={{ background: `linear-gradient(to right, ${accent}, transparent)` }} />
       {subtitle && (
-        <p className="text-slate-400 mt-4 max-w-2xl text-lg leading-relaxed mx-auto">{subtitle}</p>
+        <p className="text-slate-500 mt-4 max-w-2xl text-lg leading-relaxed mx-auto">{subtitle}</p>
       )}
     </div>
   );
@@ -434,7 +434,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
   return (
     <main
       className="relative min-h-[100dvh] overflow-x-hidden"
-      style={{ background: SLATE, color: "#f1f5f9" }}
+      style={{ background: SLATE, color: "#1c1917" }}
     >
       <FloatingSparkles accent={TEAL} />
 
@@ -444,26 +444,26 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
           <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
             <div className="flex items-center gap-2">
               <Tooth size={24} weight="fill" style={{ color: TEAL }} />
-              <span className="text-lg font-bold tracking-tight text-white">
+              <span className="text-lg font-bold tracking-tight text-slate-900">
                 {data.businessName}
               </span>
             </div>
-            <div className="hidden md:flex items-center gap-8 text-sm text-slate-400">
-              <a href="#services" className="hover:text-white transition-colors">Services</a>
-              <a href="#about" className="hover:text-white transition-colors">About</a>
-              <a href="#gallery" className="hover:text-white transition-colors">Gallery</a>
-              <a href="#contact" className="hover:text-white transition-colors">Contact</a>
+            <div className="hidden md:flex items-center gap-8 text-sm text-slate-500">
+              <a href="#services" className="hover:text-slate-900 transition-colors">Services</a>
+              <a href="#about" className="hover:text-slate-900 transition-colors">About</a>
+              <a href="#gallery" className="hover:text-slate-900 transition-colors">Gallery</a>
+              <a href="#contact" className="hover:text-slate-900 transition-colors">Contact</a>
             </div>
             <div className="flex items-center gap-3">
               <MagneticButton
-                className="px-4 md:px-5 py-2 rounded-full text-sm font-semibold text-white transition-colors cursor-pointer"
+                className="px-4 md:px-5 py-2 rounded-full text-sm font-semibold text-slate-900 transition-colors cursor-pointer"
                 style={{ background: TEAL } as React.CSSProperties}
               >
                 Book Appointment
               </MagneticButton>
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="md:hidden p-2 rounded-lg text-white hover:bg-white/10 transition-colors"
+                className="md:hidden p-2 rounded-lg text-slate-900 hover:bg-white/10 transition-colors"
               >
                 {mobileMenuOpen ? <X size={24} /> : <List size={24} />}
               </button>
@@ -490,7 +490,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
                       key={link.label}
                       href={link.href}
                       onClick={() => setMobileMenuOpen(false)}
-                      className="block px-4 py-3 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-white/5 transition-colors"
+                      className="block px-4 py-3 rounded-lg text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors"
                     >
                       {link.label}
                     </a>
@@ -504,33 +504,31 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
 
       {/* ══════════════════ 2. HERO ══════════════════ */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
-
-        <div className="absolute inset-0">
-          <img src={heroImage} alt={`${data.businessName}`} className="w-full h-full object-cover object-center" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-black/10" />
-          <div className="absolute inset-0 bg-gradient-to-t from-white/80 via-transparent to-transparent" />
+        {/* Clean white-dominant hero with subtle image peek */}
+        <div className="absolute inset-0 bg-gradient-to-br from-white via-white to-slate-50" />
+        <div className="absolute right-0 top-0 w-1/2 h-full hidden lg:block">
+          <img src={heroImage} alt="" className="w-full h-full object-cover" aria-hidden="true" />
+          <div className="absolute inset-0 bg-gradient-to-r from-white via-white/80 to-transparent" />
         </div>
+        <DentalPattern opacity={0.02} accent={TEAL} />
 
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
           <div className="space-y-8">
             <div>
-              <p className="text-sm uppercase tracking-widest mb-4" style={{ color: TEAL }}>
-                <Sparkle size={14} weight="fill" className="inline mr-2" />
-                Modern Dental Care
-              </p>
-              <h1
-                className="text-2xl sm:text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white"
-                style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}
-              >
+              <span className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] px-4 py-2 rounded-full border mb-6" style={{ color: TEAL, borderColor: `${TEAL}33`, background: `${TEAL}0a` }}>
+                <Sparkle size={14} weight="fill" />
+                Award-Winning Dental Care
+              </span>
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl tracking-tight leading-[1.05] font-extrabold text-slate-900">
                 {data.tagline}
               </h1>
             </div>
-            <p className="text-lg text-slate-400 max-w-md leading-relaxed">
-              {data.about.length > 160 ? data.about.slice(0, 160).trim() + "..." : data.about}
+            <p className="text-lg text-slate-500 max-w-lg leading-relaxed">
+              {data.about.length > 180 ? data.about.slice(0, 180).trim() + "..." : data.about}
             </p>
             <div className="flex flex-wrap gap-4">
               <MagneticButton
-                className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer"
+                className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer shadow-lg shadow-teal-500/25"
                 style={{ background: TEAL } as React.CSSProperties}
               >
                 Book Appointment
@@ -538,33 +536,49 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
               </MagneticButton>
               <MagneticButton
                 href={`tel:${phoneDigits}`}
-                className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer"
+                className="px-8 py-4 rounded-full text-base font-semibold text-slate-700 border border-slate-200 bg-white flex items-center gap-2 cursor-pointer shadow-sm hover:shadow-md transition-shadow"
               >
-                <Phone size={18} weight="duotone" />
+                <Phone size={18} weight="duotone" style={{ color: TEAL }} />
                 <PhoneLink phone={data.phone} />
               </MagneticButton>
             </div>
-            <div className="flex flex-wrap gap-6 text-sm text-slate-400">
+            <div className="flex flex-wrap gap-6 text-sm text-slate-500">
               <span className="flex items-center gap-2">
                 <MapPin size={16} weight="duotone" style={{ color: TEAL }} />
                 <MapLink address={data.address} />
               </span>
               <span className="flex items-center gap-2">
-                <CalendarCheck size={16} weight="duotone" style={{ color: TEAL }} />
-                Accepting New Patients
+                <Star size={16} weight="fill" className="text-amber-400" />
+                {data.googleRating || "4.8"} Stars ({data.reviewCount || "100"}+ Reviews)
               </span>
             </div>
           </div>
 
-          <div className="hidden md:flex items-center justify-center">
-            <RotatingTooth accent={TEAL} />
+          <div className="hidden lg:block relative">
+            <div className="relative rounded-3xl overflow-hidden shadow-2xl shadow-slate-900/10 border border-slate-100">
+              <img src={heroCardImage} alt={`${data.businessName} team`} className="w-full h-[520px] object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+              <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between">
+                <div className="flex items-center gap-3 px-4 py-2.5 rounded-full backdrop-blur-md bg-white/90 shadow-lg">
+                  <div className="flex -space-x-1">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} size={14} weight="fill" className="text-amber-400" />
+                    ))}
+                  </div>
+                  <span className="text-sm font-semibold text-slate-800">{data.googleRating || "4.8"} Rating</span>
+                </div>
+                <div className="px-4 py-2.5 rounded-full backdrop-blur-md bg-white/90 shadow-lg">
+                  <span className="text-sm font-semibold text-slate-800">Accepting New Patients</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* ══════════════════ 3. STATS ══════════════════ */}
       <section className="relative z-10 py-16 overflow-hidden border-y" style={{ borderColor: `${TEAL}1a` }}>
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0c1522 0%, #0f172a 100%)" }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, ${TEAL}06 100%)` }} />
         <DentalPattern opacity={0.02} accent={TEAL} />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] rounded-full blur-[180px]" style={{ background: `${TEAL}08` }} />
@@ -578,7 +592,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
                 <div key={stat.label} className="text-center">
                   <div className="flex items-center justify-center gap-2 mb-2">
                     <Icon size={22} weight="fill" style={{ color: TEAL }} />
-                    <span className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white">{stat.value}</span>
+                    <span className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900">{stat.value}</span>
                   </div>
                   <span className="text-slate-500 text-sm font-medium tracking-wide uppercase">{stat.label}</span>
                 </div>
@@ -590,7 +604,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
 
       {/* ══════════════════ 4. SERVICES ══════════════════ */}
       <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1522 50%, #0f172a 100%)" }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, ${TEAL}08 50%, #faf9f6 100%)` }} />
         <DentalPattern accent={TEAL} />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-[10%] right-[5%] w-[500px] h-[500px] rounded-full blur-[160px]" style={{ background: `${TEAL}08` }} />
@@ -627,8 +641,8 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
                       </div>
                       <span className="text-xs font-mono text-slate-600">{String(i + 1).padStart(2, "0")}</span>
                     </div>
-                    <h3 className="text-lg font-bold text-white mb-2">{service.name}</h3>
-                    <p className="text-sm text-slate-400 leading-relaxed">{service.description || ""}</p>
+                    <h3 className="text-lg font-bold text-slate-900 mb-2">{service.name}</h3>
+                    <p className="text-sm text-slate-500 leading-relaxed">{service.description || ""}</p>
                     {service.price && (
                       <p className="text-sm font-semibold mt-3" style={{ color: TEAL }}>{service.price}</p>
                     )}
@@ -642,7 +656,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
 
       {/* ══════════════════ 5. WHY CHOOSE US / ABOUT ══════════════════ */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0b1320 50%, #0f172a 100%)" }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, #f5f0eb 50%, #faf9f6 100%)` }} />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-[20%] left-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${TEAL}06` }} />
         </div>
@@ -650,7 +664,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="relative">
-              <div className="rounded-2xl overflow-hidden border border-white/10">
+              <div className="rounded-2xl overflow-hidden border border-slate-200">
                 <img src={aboutImage} alt={`${data.businessName} office`} className="w-full h-[400px] object-cover" />
               </div>
               <div className="absolute -bottom-4 -right-4 md:bottom-6 md:-right-6">
@@ -667,10 +681,10 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
               >
                 Why Choose Us
               </span>
-              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-6 text-white">
+              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-6 text-slate-900">
                 Your Smile Deserves the Best
               </h2>
-              <p className="text-slate-400 leading-relaxed mb-8">
+              <p className="text-slate-500 leading-relaxed mb-8">
                 {data.about}
               </p>
 
@@ -685,7 +699,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
                     <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: TEAL_GLOW }}>
                       <badge.icon size={20} weight="duotone" style={{ color: TEAL }} />
                     </div>
-                    <span className="text-sm font-semibold text-white">{badge.label}</span>
+                    <span className="text-sm font-semibold text-slate-900">{badge.label}</span>
                   </GlassCard>
                 ))}
               </div>
@@ -696,7 +710,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
 
       {/* ══════════════════ 6. PROCESS ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1522 50%, #0f172a 100%)" }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, ${TEAL}08 50%, #faf9f6 100%)` }} />
         <DentalPattern opacity={0.025} accent={TEAL} />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${TEAL_LIGHT}06` }} />
@@ -718,8 +732,8 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
                   >
                     {step.step}
                   </div>
-                  <h3 className="text-lg font-bold text-white mb-2">{step.title}</h3>
-                  <p className="text-sm text-slate-400 leading-relaxed">{step.desc}</p>
+                  <h3 className="text-lg font-bold text-slate-900 mb-2">{step.title}</h3>
+                  <p className="text-sm text-slate-500 leading-relaxed">{step.desc}</p>
                 </GlassCard>
               </div>
             ))}
@@ -729,7 +743,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
 
       {/* ══════════════════ 7. GALLERY ══════════════════ */}
       <section id="gallery" className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0b1320 50%, #0f172a 100%)" }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, #f5f0eb 50%, #faf9f6 100%)` }} />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-[30%] left-[20%] w-[500px] h-[500px] rounded-full blur-[200px]" style={{ background: `${TEAL}06` }} />
         </div>
@@ -745,7 +759,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
                   <img src={src} alt={titles[i] || `Gallery ${i + 1}`} className="w-full h-64 object-cover transition-transform duration-700 group-hover:scale-105" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-6">
-                    <h3 className="text-lg font-bold text-white mb-1">{titles[i] || `Gallery ${i + 1}`}</h3>
+                    <h3 className="text-lg font-bold text-slate-900 mb-1">{titles[i] || `Gallery ${i + 1}`}</h3>
                   </div>
                 </div>
               );
@@ -756,7 +770,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
 
       {/* ══════════════════ 8. TESTIMONIALS ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1522 50%, #0f172a 100%)" }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, ${TEAL}08 50%, #faf9f6 100%)` }} />
         <DentalPattern opacity={0.02} accent={TEAL} />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-[20%] right-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${TEAL}06` }} />
@@ -773,11 +787,11 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
                     <Star key={j} size={16} weight="fill" style={{ color: TEAL }} />
                   ))}
                 </div>
-                <p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">
+                <p className="text-slate-600 leading-relaxed flex-1 text-sm mb-4">
                   &ldquo;{t.text}&rdquo;
                 </p>
                 <div className="pt-4 border-t border-white/5 flex items-center justify-between">
-                  <span className="text-sm font-semibold text-white">{t.name}</span>
+                  <span className="text-sm font-semibold text-slate-900">{t.name}</span>
                 </div>
               </GlassCard>
             ))}
@@ -791,11 +805,11 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='40' height='40' fill='none'/%3E%3Cpath d='M0 0L40 40M40 0L0 40' stroke='%23000' stroke-width='0.5'/%3E%3C/svg%3E\")" }} />
 
         <div className="max-w-4xl mx-auto px-4 sm:px-6 relative z-10 text-center">
-          <SmileyWink size={48} weight="fill" className="mx-auto mb-6 text-white/80" />
-          <h2 className="text-3xl md:text-5xl font-black tracking-tight text-white mb-4">
+          <SmileyWink size={48} weight="fill" className="mx-auto mb-6 text-slate-900/80" />
+          <h2 className="text-3xl md:text-5xl font-black tracking-tight text-slate-900 mb-4">
             New Patients Welcome
           </h2>
-          <p className="text-lg text-white/80 mb-8 max-w-xl mx-auto">
+          <p className="text-lg text-slate-900/80 mb-8 max-w-xl mx-auto">
             We are accepting new patients of all ages. Schedule your first visit today and experience the {data.businessName} difference.
           </p>
           <PhoneLink
@@ -810,7 +824,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
 
       {/* ══════════════════ 10. SERVICE AREAS ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0b1320 50%, #0f172a 100%)" }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, #f5f0eb 50%, #faf9f6 100%)` }} />
         <DentalPattern opacity={0.02} accent={TEAL} />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-[40%] right-[20%] w-[400px] h-[400px] rounded-full blur-[180px]" style={{ background: `${TEAL_LIGHT}06` }} />
@@ -823,9 +837,9 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
             <GlassCard className="p-8 inline-block">
               <div className="flex items-center gap-3 text-lg">
                 <MapPin size={24} weight="duotone" style={{ color: TEAL }} />
-                <MapLink address={data.address} className="text-white font-semibold" />
+                <MapLink address={data.address} className="text-slate-900 font-semibold" />
               </div>
-              <p className="text-slate-400 text-sm mt-2">Serving families throughout the area</p>
+              <p className="text-slate-500 text-sm mt-2">Serving families throughout the area</p>
             </GlassCard>
           </div>
         </div>
@@ -834,7 +848,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
       {/* ══════════════════ 11. HOURS ══════════════════ */}
       {data.hours && (
         <section className="relative z-10 py-24 md:py-32 overflow-hidden">
-          <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1522 50%, #0f172a 100%)" }} />
+          <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, ${TEAL}08 50%, #faf9f6 100%)` }} />
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute top-[20%] left-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${TEAL}06` }} />
           </div>
@@ -845,7 +859,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
               <ShimmerBorder accent={TEAL}>
                 <div className="p-8">
                   <Clock size={32} weight="duotone" style={{ color: TEAL }} className="mx-auto mb-4" />
-                  <p className="text-slate-300 leading-relaxed whitespace-pre-line text-lg">{data.hours}</p>
+                  <p className="text-slate-600 leading-relaxed whitespace-pre-line text-lg">{data.hours}</p>
                   <p className="text-sm mt-4 font-semibold" style={{ color: TEAL }}>Same-Day Emergency Appointments Available</p>
                 </div>
               </ShimmerBorder>
@@ -862,15 +876,15 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
           <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: TEAL }}>
             Don&apos;t Miss Out
           </p>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-3">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 mb-3">
             Ready to Get Started?
           </h2>
-          <p className="text-slate-400 mb-6 text-sm sm:text-base">
+          <p className="text-slate-500 mb-6 text-sm sm:text-base">
             Limited time — claim your free professional website today before it&apos;s offered to a competitor.
           </p>
           <a
             href={`/claim/${data.id}`}
-            className="inline-flex items-center gap-2 min-h-[48px] px-8 py-3 rounded-full text-white font-bold text-base hover:shadow-lg transition-all duration-300"
+            className="inline-flex items-center gap-2 min-h-[48px] px-8 py-3 rounded-full text-slate-900 font-bold text-base hover:shadow-lg transition-all duration-300"
             style={{ background: TEAL }}
           >
             Claim This Website
@@ -883,7 +897,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
 
       {/* ══════════════════ 12. FAQ ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1522 50%, #0f172a 100%)" }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, ${TEAL}08 50%, #faf9f6 100%)` }} />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-[20%] left-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${TEAL}06` }} />
         </div>
@@ -907,7 +921,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
 
       {/* ══════════════════ 13. CONTACT ══════════════════ */}
       <section id="contact" className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0b1320 50%, #0f172a 100%)" }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, #f5f0eb 50%, #faf9f6 100%)` }} />
         <DentalPattern opacity={0.02} accent={TEAL} />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${TEAL}06` }} />
@@ -922,10 +936,10 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
               >
                 Contact Us
               </span>
-              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-6 text-white">
+              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-6 text-slate-900">
                 Schedule Your Visit
               </h2>
-              <p className="text-slate-400 leading-relaxed mb-8">
+              <p className="text-slate-500 leading-relaxed mb-8">
                 Ready for a brighter, healthier smile? Contact {data.businessName} today to schedule your appointment. We look forward to welcoming you.
               </p>
 
@@ -935,8 +949,8 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
                     <MapPin size={20} weight="duotone" style={{ color: TEAL }} />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-white">Address</p>
-                    <MapLink address={data.address} className="text-sm text-slate-400" />
+                    <p className="text-sm font-semibold text-slate-900">Address</p>
+                    <MapLink address={data.address} className="text-sm text-slate-500" />
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
@@ -944,8 +958,8 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
                     <Phone size={20} weight="duotone" style={{ color: TEAL }} />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-white">Phone</p>
-                    <PhoneLink phone={data.phone} className="text-sm text-slate-400" />
+                    <p className="text-sm font-semibold text-slate-900">Phone</p>
+                    <PhoneLink phone={data.phone} className="text-sm text-slate-500" />
                   </div>
                 </div>
                 {data.hours && (
@@ -954,8 +968,8 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
                       <Clock size={20} weight="duotone" style={{ color: TEAL }} />
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-white">Hours</p>
-                      <p className="text-sm text-slate-400 whitespace-pre-line">{data.hours}</p>
+                      <p className="text-sm font-semibold text-slate-900">Hours</p>
+                      <p className="text-sm text-slate-500 whitespace-pre-line">{data.hours}</p>
                     </div>
                   </div>
                 )}
@@ -963,36 +977,36 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
             </div>
 
             <GlassCard className="p-8">
-              <h3 className="text-xl font-semibold text-white mb-6">Request an Appointment</h3>
+              <h3 className="text-xl font-semibold text-slate-900 mb-6">Request an Appointment</h3>
               <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm text-slate-400 mb-1.5">First Name</label>
-                    <input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="John" />
+                    <label className="block text-sm text-slate-500 mb-1.5">First Name</label>
+                    <input type="text" className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 placeholder-slate-400 focus:outline-none transition-colors text-sm" placeholder="John" />
                   </div>
                   <div>
-                    <label className="block text-sm text-slate-400 mb-1.5">Last Name</label>
-                    <input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="Doe" />
+                    <label className="block text-sm text-slate-500 mb-1.5">Last Name</label>
+                    <input type="text" className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 placeholder-slate-400 focus:outline-none transition-colors text-sm" placeholder="Doe" />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm text-slate-400 mb-1.5">Phone</label>
-                  <input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="(555) 123-4567" />
+                  <label className="block text-sm text-slate-500 mb-1.5">Phone</label>
+                  <input type="tel" className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 placeholder-slate-400 focus:outline-none transition-colors text-sm" placeholder="(555) 123-4567" />
                 </div>
                 <div>
-                  <label className="block text-sm text-slate-400 mb-1.5">Service Needed</label>
-                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none transition-colors text-sm">
-                    <option value="" className="bg-slate-900">Select a service</option>
+                  <label className="block text-sm text-slate-500 mb-1.5">Service Needed</label>
+                  <select className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none transition-colors text-sm">
+                    <option value="" className="bg-white">Select a service</option>
                     {data.services.map((s) => (
-                      <option key={s.name} value={s.name.toLowerCase().replace(/\s+/g, "-")} className="bg-slate-900">
+                      <option key={s.name} value={s.name.toLowerCase().replace(/\s+/g, "-")} className="bg-white">
                         {s.name}
                       </option>
                     ))}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm text-slate-400 mb-1.5">Message</label>
-                  <textarea rows={4} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm resize-none" placeholder="Tell us about your dental needs..." />
+                  <label className="block text-sm text-slate-500 mb-1.5">Message</label>
+                  <textarea rows={4} className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 placeholder-slate-400 focus:outline-none transition-colors text-sm resize-none" placeholder="Tell us about your dental needs..." />
                 </div>
                 <MagneticButton
                   className="w-full py-4 rounded-xl text-base font-semibold text-white flex items-center justify-center gap-2 cursor-pointer"
@@ -1019,8 +1033,8 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
           <ShimmerBorder accent={TEAL}>
             <div className="p-8 md:p-12">
               <ShieldCheck size={48} weight="fill" style={{ color: TEAL }} className="mx-auto mb-4" />
-              <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-4">Our Patient Promise</h2>
-              <p className="text-slate-400 leading-relaxed max-w-2xl mx-auto text-lg">
+              <h2 className="text-2xl md:text-4xl font-extrabold text-slate-900 mb-4">Our Patient Promise</h2>
+              <p className="text-slate-500 leading-relaxed max-w-2xl mx-auto text-lg">
                 At {data.businessName}, your comfort and satisfaction are our top priorities. We stand behind every treatment with our patient satisfaction guarantee and use only the highest quality materials.
               </p>
               <div className="flex flex-wrap justify-center gap-4 mt-8">
@@ -1042,36 +1056,36 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
 
       {/* ══════════════════ 15. FOOTER ══════════════════ */}
       <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0a1018 100%)" }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, #f0ede8 100%)` }} />
         <DentalPattern opacity={0.015} accent={TEAL} />
         <div className="mx-auto max-w-6xl px-4 sm:px-6 relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
             <div>
               <div className="flex items-center gap-2 mb-3">
                 <Tooth size={22} weight="fill" style={{ color: TEAL }} />
-                <span className="text-lg font-bold text-white">{data.businessName}</span>
+                <span className="text-lg font-bold text-slate-900">{data.businessName}</span>
               </div>
               <p className="text-sm text-slate-500 leading-relaxed">
                 {data.about.length > 120 ? data.about.slice(0, 120).trim() + "..." : data.about}
               </p>
             </div>
             <div>
-              <h4 className="text-sm font-semibold text-white mb-3">Quick Links</h4>
+              <h4 className="text-sm font-semibold text-slate-900 mb-3">Quick Links</h4>
               <div className="space-y-2">
                 {["Services", "About", "Gallery", "Contact"].map((link) => (
-                  <a key={link} href={`#${link.toLowerCase()}`} className="block text-sm text-slate-500 hover:text-white transition-colors">
+                  <a key={link} href={`#${link.toLowerCase()}`} className="block text-sm text-slate-500 hover:text-slate-900 transition-colors">
                     {link}
                   </a>
                 ))}
               </div>
             </div>
             <div>
-              <h4 className="text-sm font-semibold text-white mb-3">Contact</h4>
+              <h4 className="text-sm font-semibold text-slate-900 mb-3">Contact</h4>
               <div className="space-y-2 text-sm text-slate-500">
                 <p><PhoneLink phone={data.phone} /></p>
                 <p><MapLink address={data.address} /></p>
                 {data.socialLinks && Object.entries(data.socialLinks).map(([platform, url]) => (
-                  <a key={platform} href={url} target="_blank" rel="noopener noreferrer" className="block hover:text-white transition-colors capitalize">
+                  <a key={platform} href={url} target="_blank" rel="noopener noreferrer" className="block hover:text-slate-900 transition-colors capitalize">
                     {platform}
                   </a>
                 ))}
