@@ -8,6 +8,15 @@
  *   <img src={proxyImage(url, prospectId)} />
  */
 
+function isApprovedDirectImageHost(url: string): boolean {
+  try {
+    const parsed = new URL(url);
+    return parsed.hostname === "images.unsplash.com";
+  } catch {
+    return false;
+  }
+}
+
 export function proxyImage(
   url: string | undefined | null,
   prospectId?: string
@@ -17,6 +26,13 @@ export function proxyImage(
 
   // Don't proxy URLs that are already proxied
   if (cleanUrl.includes("/api/image-proxy")) return cleanUrl;
+
+  // Approved direct-render fallback images should bypass the proxy.
+  // This matches the QC guidance for Unsplash fallbacks and avoids
+  // live-preview breakage when the proxy receives healthy Unsplash URLs.
+  if (isApprovedDirectImageHost(cleanUrl)) {
+    return cleanUrl;
+  }
 
   // Don't proxy local or inline assets
   if (
@@ -32,8 +48,6 @@ export function proxyImage(
     params.set("prospectId", prospectId);
   }
 
-  // Proxy all third-party URLs, including Unsplash, so previews are not
-  // dependent on direct browser fetches from remote CDNs.
   return `/api/image-proxy?${params.toString()}`;
 }
 

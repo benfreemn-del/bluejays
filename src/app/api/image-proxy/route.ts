@@ -59,6 +59,19 @@ export async function GET(request: NextRequest) {
   try {
     fetchUrl = decodeURIComponent(url).trim();
     const isGooglePhoto = fetchUrl.includes("maps.googleapis.com");
+    const isUnsplashImage = (() => {
+      try {
+        return new URL(fetchUrl).hostname === "images.unsplash.com";
+      } catch {
+        return false;
+      }
+    })();
+
+    // Approved Unsplash fallbacks should render directly rather than being
+    // fetched server-side through the proxy, which has been causing 502s.
+    if (isUnsplashImage) {
+      return NextResponse.redirect(fetchUrl, 307);
+    }
 
     // If it's a Google Places photo URL, ensure API key is appended
     if (isGooglePhoto && GOOGLE_API_KEY && !fetchUrl.includes("key=")) {

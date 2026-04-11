@@ -353,8 +353,8 @@ export default function V2GarageDoorPage() {
               "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=600&q=80",
               "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=600&q=80",
               "https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?w=600&q=80",
-              "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=600&q=80",
-              "https://images.unsplash.com/photo-1600573472591-ee6c563aaec3?w=600&q=80",
+              "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&q=80",
+              "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=600&q=80",
               "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=600&q=80",
             ].map((img, i) => (
               <motion.div key={i} variants={fadeUp} className="aspect-[4/3] rounded-xl overflow-hidden">

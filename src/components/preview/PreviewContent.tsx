@@ -45,12 +45,13 @@ import V2ApplianceRepairPreview from "@/components/templates/V2ApplianceRepairPr
 import V2JunkRemovalPreview from "@/components/templates/V2JunkRemovalPreview";
 import V2CarpetCleaningPreview from "@/components/templates/V2CarpetCleaningPreview";
 import V2EventPlanningPreview from "@/components/templates/V2EventPlanningPreview";
+import PreviewImageGuard from "@/components/preview/PreviewImageGuard";
 import { proxyPhotos } from "@/lib/image-proxy";
+import { sanitizeImageUrls, validateImageUrl } from "@/lib/image-validator";
 import {
   getCategoryFallbackImage,
-  sanitizeImageUrls,
-  validateImageUrl,
-} from "@/lib/image-validator";
+  getCompleteCategoryFallbackSet,
+} from "@/lib/stock-image-picker";
 import {
   getAboutImage,
   getHeroHeading,
@@ -115,7 +116,7 @@ interface PreviewContentProps {
   version?: "v1" | "v2";
 }
 
-function getValidatedPreviewPhotos(id: string, siteData: GeneratedSiteData): string[] {
+function getValidatedPreviewPhotos(id: string, siteData: GeneratedSiteData, businessName: string): string[] {
   const sanitizedPhotos = sanitizeImageUrls(siteData.photos);
   const { category } = siteData;
   const uniquePhotos: string[] = [];
@@ -125,28 +126,38 @@ function getValidatedPreviewPhotos(id: string, siteData: GeneratedSiteData): str
     uniquePhotos.push(url);
   };
 
-  const heroResult = validateImageUrl(
-    getHeroImage({ ...siteData, photos: sanitizedPhotos }),
-    category,
-    "hero"
+  const heroCandidate = getHeroImage({ ...siteData, photos: sanitizedPhotos });
+  const heroResult = validateImageUrl(heroCandidate, category, "hero");
+  pushUnique(
+    heroResult.shouldUseFallback
+      ? getCategoryFallbackImage(category, "hero", businessName, 0, uniquePhotos)
+      : heroResult.sanitizedUrl
   );
-  pushUnique(heroResult.shouldUseFallback ? heroResult.fallbackUrl : heroResult.sanitizedUrl);
 
-  const aboutResult = validateImageUrl(
-    getAboutImage({ ...siteData, photos: sanitizedPhotos }),
-    category,
-    "about"
+  const aboutCandidate = getAboutImage({ ...siteData, photos: sanitizedPhotos });
+  const aboutResult = validateImageUrl(aboutCandidate, category, "about");
+  pushUnique(
+    aboutResult.shouldUseFallback
+      ? getCategoryFallbackImage(category, "about", businessName, 1, uniquePhotos)
+      : aboutResult.sanitizedUrl
   );
-  pushUnique(aboutResult.shouldUseFallback ? aboutResult.fallbackUrl : aboutResult.sanitizedUrl);
 
   for (const photo of sanitizedPhotos) {
     const result = validateImageUrl(photo, category, "gallery");
-    pushUnique(result.shouldUseFallback ? result.fallbackUrl : result.sanitizedUrl);
+    if (!result.shouldUseFallback && result.sanitizedUrl) {
+      pushUnique(result.sanitizedUrl);
+    }
   }
 
-  pushUnique(getCategoryFallbackImage(category, "hero"));
-  pushUnique(getCategoryFallbackImage(category, "about"));
-  pushUnique(getCategoryFallbackImage(category, "gallery"));
+  pushUnique(getCategoryFallbackImage(category, "hero-card", businessName, 2, uniquePhotos));
+  pushUnique(getCategoryFallbackImage(category, "services", businessName, 3, uniquePhotos));
+  pushUnique(getCategoryFallbackImage(category, "team", businessName, 4, uniquePhotos));
+  pushUnique(getCategoryFallbackImage(category, "testimonials", businessName, 5, uniquePhotos));
+
+  for (const fallbackUrl of getCompleteCategoryFallbackSet(category, businessName)) {
+    pushUnique(fallbackUrl);
+    if (uniquePhotos.length >= 36) break;
+  }
 
   return proxyPhotos(uniquePhotos, id);
 }
@@ -158,12 +169,13 @@ export default function PreviewContent({
   version = "v2",
 }: PreviewContentProps) {
   const forceV1 = version === "v1";
-  const orderedPhotos = getValidatedPreviewPhotos(id, siteData);
+  const businessName = getNavName(siteData);
+  const orderedPhotos = getValidatedPreviewPhotos(id, siteData, businessName);
 
   const proxiedData: GeneratedSiteData & { themeMode?: "light" | "dark" } = {
     ...siteData,
     id,
-    businessName: getNavName(siteData),
+    businessName,
     tagline: getHeroHeading(siteData),
     about:
       getHeroSubtitle(siteData) !== siteData.about
@@ -179,21 +191,35 @@ export default function PreviewContent({
       const isLightV2Theme = selectedTheme === "light";
 
       return (
-        <div
-          data-theme={selectedTheme}
-          className={isLightV2Theme ? "v2-preview-theme v2-preview-theme--light" : "v2-preview-theme"}
+        <PreviewImageGuard
+          category={proxiedData.category}
+          businessName={businessName}
+          prospectId={id}
+          knownPhotos={orderedPhotos}
         >
-          <div className="v2-preview-root">
-            <V2Renderer data={proxiedData} />
+          <div
+            data-theme={selectedTheme}
+            className={isLightV2Theme ? "v2-preview-theme v2-preview-theme--light" : "v2-preview-theme"}
+          >
+            <div className="v2-preview-root">
+              <V2Renderer data={proxiedData} />
+            </div>
           </div>
-        </div>
+        </PreviewImageGuard>
       );
     }
   }
 
   return (
-    <div data-theme={selectedTheme}>
-      <PreviewRenderer data={proxiedData} />
-    </div>
+    <PreviewImageGuard
+      category={proxiedData.category}
+      businessName={businessName}
+      prospectId={id}
+      knownPhotos={orderedPhotos}
+    >
+      <div data-theme={selectedTheme}>
+        <PreviewRenderer data={proxiedData} />
+      </div>
+    </PreviewImageGuard>
   );
 }

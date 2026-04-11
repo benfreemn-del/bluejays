@@ -394,7 +394,7 @@ const galleryPhotos = [
   { src: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&q=80", alt: "Bar area and cocktails" },
   { src: "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=600&q=80", alt: "Chef plating a dish" },
   { src: "https://images.unsplash.com/photo-1424847651672-bf20a4b0982b?w=600&q=80", alt: "Dessert presentation" },
-  { src: "https://images.unsplash.com/photo-1550966871-3ed3cdb51f3a?w=600&q=80", alt: "Wine cellar selection" },
+  { src: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80", alt: "Curated wine and private dining atmosphere" }
 ];
 
 const testimonials = [
