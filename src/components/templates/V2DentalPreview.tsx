@@ -400,9 +400,10 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
   const uniquePhotos = data.photos ? [...new Set(data.photos)] : [];
   const heroImage = uniquePhotos[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
   const heroCardImage = uniquePhotos[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 1);
-  const aboutImage = uniquePhotos.length >= 2 && uniquePhotos[1] !== uniquePhotos[0]
-    ? uniquePhotos[1]
-    : uniquePhotos[2] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 2);
+  /* About MUST differ from BOTH hero and heroCard */
+  const aboutImage = uniquePhotos[2]
+    || (uniquePhotos[1] && uniquePhotos[1] !== uniquePhotos[0] ? undefined : undefined)
+    || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 3);
   const galleryImages = uniquePhotos.length > 2
     ? uniquePhotos.slice(2, 6)
     : pickGallery(STOCK_GALLERY, data.businessName);
@@ -627,7 +628,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
               return (
                 <div
                   key={service.name}
-                  className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                  className="group relative p-7 rounded-2xl border border-slate-200/60 hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/60"
                 >
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${TEAL}15, transparent 70%)` }} />
                   <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${TEAL}4d, transparent)` }} />
@@ -755,11 +756,11 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
             {galleryImages.map((src, i) => {
               const titles = ["State-of-the-Art Treatment Room", "Comfortable Patient Lounge", "Digital Imaging Suite", "Family-Friendly Reception"];
               return (
-                <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.06] hover:border-opacity-30 transition-all duration-500">
+                <div key={i} className="group relative rounded-2xl overflow-hidden border border-slate-200 hover:shadow-lg transition-all duration-500">
                   <img src={src} alt={titles[i] || `Gallery ${i + 1}`} className="w-full h-64 object-cover transition-transform duration-700 group-hover:scale-105" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-6">
-                    <h3 className="text-lg font-bold text-slate-900 mb-1">{titles[i] || `Gallery ${i + 1}`}</h3>
+                    <h3 className="text-lg font-bold text-white mb-1">{titles[i] || `Gallery ${i + 1}`}</h3>
                   </div>
                 </div>
               );
