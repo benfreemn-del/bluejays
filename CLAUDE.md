@@ -459,3 +459,26 @@ These rules were derived from recurring issues caught across multiple review cyc
 - **The `getPreviewImages()` function in `stock-image-picker.ts` is the SINGLE SOURCE OF TRUTH for image assignment.** All templates MUST use this function rather than manually assigning images from `data.photos`. Manual assignment bypasses the dedup tracking and causes duplicate images.
 - **After any change to stock image pools or the picker logic, re-sample at least 5 live previews** to confirm image diversity improved. Don't just check the code — verify the rendered output.
 - **Image dedup MUST compare by Unsplash photo ID (the segment after `/photo-` in the URL), not just exact URL match.** The same photo with different query params (`?w=800` vs `?w=1600`) is still a duplicate.
+
+
+### 11. QC Instant Fail Gates
+- **The following are INSTANT FAIL conditions. If ANY of these are detected, the site MUST fail QC with a score capped at 49:**
+  1. **Broken Images** — Any image URL that is broken, returns an error, is a data URI, or is an SVG placeholder.
+  2. **Duplicate Images** — Any image appearing more than once anywhere on the site (same URL or same Unsplash photo ID).
+  3. **Wrong/Missing City** — The about section or site content doesn't mention the prospect's actual city.
+  4. **Placeholder Testimonials** — Fake names like "Happy Customer", "John D.", "Sarah M." or clearly generic testimonial text that wasn't pulled from the real business.
+- **These gates are non-negotiable.** A site that triggers any of them is not ready for outreach regardless of how good the rest looks.
+- **QC pass threshold is 70.** Sites scoring 70+ with no instant fail gates triggered are approved for outreach.
+
+### 12. Supercharge Priority Order
+- **When supercharging a site, the AI agent MUST prioritize in this exact order:**
+  1. **QUALITY** — Every section must feel polished, professional, and smooth. No rough edges, no awkward copy, no jarring transitions.
+  2. **SMOOTHNESS** — The overall flow should feel cohesive. Hero → services → about → testimonials → contact should tell a natural story.
+  3. **CUSTOMIZATION** — Pull as much as possible from the real business website and scraped info: brand colors, real photos, actual services, real testimonials, tone of voice, team info, hours, specialties. The site should feel like it was hand-built for THIS business.
+- **The supercharge agent uses gpt-4.1-mini by default** (configurable via QC_MODEL env var). Claude Opus is reserved for the notes/handoff system only, to keep API costs low.
+- **If the supercharge cannot find real data from the business, it should leave the section clean and generic rather than inventing fake details.**
+
+### 13. AI Model Cost Management
+- **QC scoring and supercharge use gpt-4.1-mini (cheap).** Claude Opus is reserved ONLY for the prospect notes/handoff system where nuanced quality matters most.
+- **This is controlled by the USE_OPENAI_FOR_QC env var** (default: true). Set to "false" to revert to Claude for QC if needed.
+- **Batch QC runs should always use the cheap model.** Never run 100+ sites through Claude Opus — that burns through API credits fast.
