@@ -720,7 +720,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
       </section>
 
       {/* ══════════════════ 4. SERVICES ══════════════════ */}
-      <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <section id="services" className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, ${TEAL}08 50%, #faf9f6 100%)` }} />
         <DentalPattern accent={TEAL} />
         <div className="absolute inset-0 pointer-events-none">
@@ -793,7 +793,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
       </section>
 
       {/* ══════════════════ FINANCING / PAYMENT PLANS ══════════════════ */}
-      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, ${TEAL}06 50%, #faf9f6 100%)` }} />
         <DentalPattern opacity={0.02} accent={TEAL} />
         <div className="max-w-5xl mx-auto px-4 sm:px-6 relative z-10">
@@ -840,7 +840,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
       </section>
 
       {/* ══════════════════ 5. WHY CHOOSE US / ABOUT ══════════════════ */}
-      <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <section id="about" className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, #f5f0eb 50%, #faf9f6 100%)` }} />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-[20%] left-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${TEAL}06` }} />
@@ -894,7 +894,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
       </section>
 
       {/* ══════════════════ SMILE TRANSFORMATION BEFORE/AFTER ══════════════════ */}
-      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, ${TEAL}06 50%, #faf9f6 100%)` }} />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 relative z-10">
           <SectionHeader badge="Transformations" title="Smile Makeover Results" subtitle="Drag the slider to see real results from our cosmetic treatments." accent={TEAL} />
@@ -943,7 +943,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
       </section>
 
       {/* ══════════════════ PATIENT COMFORT ══════════════════ */}
-      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #f5f0eb 0%, #faf9f6 50%, #f5f0eb 100%)` }} />
         <DentalPattern opacity={0.02} accent={TEAL} />
         <div className="absolute inset-0 pointer-events-none">
@@ -968,7 +968,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
       </section>
 
       {/* ══════════════════ 6. PROCESS ══════════════════ */}
-      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, ${TEAL}08 50%, #faf9f6 100%)` }} />
         <DentalPattern opacity={0.025} accent={TEAL} />
         <div className="absolute inset-0 pointer-events-none">
@@ -1001,7 +1001,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
       </section>
 
       {/* ══════════════════ DENTAL TECHNOLOGY ══════════════════ */}
-      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, ${TEAL}06 50%, #faf9f6 100%)` }} />
         <DentalPattern opacity={0.02} accent={TEAL} />
         <div className="absolute inset-0 pointer-events-none">
@@ -1024,7 +1024,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
       </section>
 
       {/* ══════════════════ COMPETITOR COMPARISON TABLE ══════════════════ */}
-      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #f5f0eb 0%, #faf9f6 50%, #f5f0eb 100%)` }} />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 relative z-10">
           <SectionHeader badge="Why Us" title={`${data.businessName} vs Average Dental Office`} accent={TEAL} />
@@ -1056,7 +1056,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
       </section>
 
       {/* ══════════════════ VIDEO TOUR PLACEHOLDER ══════════════════ */}
-      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, ${TEAL}06 50%, #faf9f6 100%)` }} />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 relative z-10">
           <SectionHeader badge="Virtual Tour" title="Take a Look Around" subtitle={`See why patients love the ${data.businessName} experience.`} accent={TEAL} />
@@ -1081,7 +1081,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
       </section>
 
       {/* ══════════════════ 7. GALLERY ══════════════════ */}
-      <section id="gallery" className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <section id="gallery" className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, #f5f0eb 50%, #faf9f6 100%)` }} />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-[30%] left-[20%] w-[500px] h-[500px] rounded-full blur-[200px]" style={{ background: `${TEAL}06` }} />
@@ -1108,7 +1108,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
       </section>
 
       {/* ══════════════════ 8. TESTIMONIALS ══════════════════ */}
-      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, ${TEAL}08 50%, #faf9f6 100%)` }} />
         <DentalPattern opacity={0.02} accent={TEAL} />
         <div className="absolute inset-0 pointer-events-none">
@@ -1151,7 +1151,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
       </section>
 
       {/* ══════════════════ CHECKUP QUIZ ══════════════════ */}
-      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #f5f0eb 0%, #faf9f6 50%, #f5f0eb 100%)` }} />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-[30%] left-[20%] w-[400px] h-[400px] rounded-full blur-[180px]" style={{ background: `${TEAL}06` }} />
@@ -1218,7 +1218,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
       </section>
 
       {/* ══════════════════ 10. SERVICE AREAS ══════════════════ */}
-      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, #f5f0eb 50%, #faf9f6 100%)` }} />
         <DentalPattern opacity={0.02} accent={TEAL} />
         <div className="absolute inset-0 pointer-events-none">
@@ -1242,7 +1242,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
 
       {/* ══════════════════ 11. HOURS ══════════════════ */}
       {data.hours && (
-        <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <section className="relative z-10 py-16 md:py-24 overflow-hidden">
           <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, ${TEAL}08 50%, #faf9f6 100%)` }} />
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute top-[20%] left-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${TEAL}06` }} />
@@ -1291,7 +1291,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
       </section>
 
       {/* ══════════════════ 12. FAQ ══════════════════ */}
-      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, ${TEAL}08 50%, #faf9f6 100%)` }} />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-[20%] left-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${TEAL}06` }} />
@@ -1315,7 +1315,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
       </section>
 
       {/* ══════════════════ 13. CONTACT ══════════════════ */}
-      <section id="contact" className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <section id="contact" className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, #f5f0eb 50%, #faf9f6 100%)` }} />
         <DentalPattern opacity={0.02} accent={TEAL} />
         <div className="absolute inset-0 pointer-events-none">
@@ -1418,7 +1418,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
 
       {/* ══════════════════ 14. GUARANTEE / TRUST ══════════════════ */}
       <section className="relative z-10 py-16 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1522 100%)" }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, ${TEAL}06 100%)` }} />
         <DentalPattern opacity={0.015} accent={TEAL} />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full blur-[180px]" style={{ background: `${TEAL}06` }} />
