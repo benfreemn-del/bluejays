@@ -347,29 +347,173 @@ Every V2 preview template MUST include ALL of the following conversion-focused s
 9. **Certifications/Partners Badge Row** — Industry-specific trust signals (GAF for roofing, ADA for dental, BBB, NRCA, state licenses). Horizontal row of pill badges.
 10. **Enhanced Service Area** — Not just a text address. Show coverage radius, response time, and availability status with pulsing indicator.
 
-### Category-Specific Premium Features
-| Category | Unique Required Feature | Description |
-|----------|------------------------|-------------|
-| Roofing | Before/After Image | Real before/after photo at `/images/roofing-before-after.png` — use for ALL roofing sites |
-| Roofing | Insurance Claims Timeline | 4-step visual process ending with "$0 out of pocket" |
-| Roofing | Premium Materials Section | 4 material types with specs and warranty info |
-| Dental | Patient Comfort Section | Sedation, gentle techniques, warm blankets — addresses dental anxiety |
-| Dental | Technology Section | Digital X-rays, lasers, 3D imaging — shows modern equipment |
-| Dental | Before/After Smile Image | Real smile transformation at `/images/dental-before-after.jpg` — use for ALL dental sites |
-| Dental | New Patient Special Banner | "$99 Exam, X-Rays & Cleaning" urgency CTA |
-| Dental | Insurance Accepted Badges | Major insurance logos/names in a badge row |
-| Veterinary | Pet Type Cards | Dog, cat, exotic — what animals they treat |
-| Veterinary | Vaccination Schedule | Visual timeline of recommended pet vaccinations |
-| Moving | Moving Checklist | Interactive checklist for moving day preparation |
-| Moving | Truck Size Calculator | "Studio/1BR/2BR/3BR+ → Recommended truck size" |
-| Salon | Stylist Profiles | Individual stylist cards with specialties |
-| Salon | Before/After Gallery | Hair transformation slider |
-| Law Firm | Case Results Section | Notable case outcomes (anonymized) |
-| Law Firm | Free Consultation CTA | Prominent "Free Case Review" with intake form |
-| Restaurant | Menu Preview Section | Featured dishes with photos and prices |
-| Restaurant | Reservation CTA | "Book a Table" with date/time/party size |
-| Construction/Trades | Project Portfolio | Before/after project cards with scope descriptions |
-| Construction/Trades | License & Bond Display | State license numbers prominently shown |
+### Category-Specific Premium Features (BUILT — reference when building/upgrading any category)
+
+**DENTAL** (warm light theme `#faf9f6`)
+1. New Patient Special Banner — "$99 Exam, X-Rays & Cleaning" urgency CTA
+2. Insurance Accepted Badges — "Most Insurance", "CareCredit", "Payment Plans", "In-House Savings"
+3. Financing/Payment Plans — 3 pricing tiers ($99/$Free/$49mo)
+4. Smile Before/After — real photo at `/images/dental-before-after.png`
+5. Patient Comfort Section — sedation, gentle techniques, warm blankets, no-rush
+6. Dental Technology — Digital X-Rays, Intraoral Cameras, Laser, 3D Imaging
+7. Competitor Comparison — vs average dental office, 7 rows
+8. Video Tour Placeholder — office tour with play button
+9. "When Was Your Last Checkup?" Quiz — green/amber/red with CTA
+10. Google Reviews Header — stars + count above testimonials
+
+**ROOFING** (dark theme `#111827`)
+1. Before/After Image — real photo at `/images/roofing-before-after.jpg`
+2. Insurance Claims Timeline — 4-step: inspect → file → meet adjuster → install ($0 out of pocket)
+3. Premium Materials Section — Architectural Shingles, Standing Seam Metal, Cedar Shake, Composite Tile
+4. Financing Section — $89/$149/$199 monthly payment tiers
+5. Certifications Badge Row — GAF, BBB, Licensed, Manufacturer Warranty, NRCA
+6. Competitor Comparison — vs average movers, 7 rows
+7. Video Placeholder — crew in action
+8. Roof Age Quiz — under 10/10-20/20+ years with recommendations
+9. Emergency Response Card — pulsing "Crews Available Now", under 2 hours
+10. Moving Day Guarantee — on-time, no hidden fees, no damage
+
+**VETERINARY** (warm light theme `#f7faf8`)
+1. Pet Insurance & Payment Badges — pet insurance, payment plans, CareCredit, wellness plans
+2. Wellness Pricing Plans — $65 exam, $149 vaccines, $299 dental
+3. Pet Type Cards — Dogs, Cats, Exotic Pets, Senior Pets with icons
+4. Before/After Pet Grooming — real photo at `/images/vet-before-after.png`
+5. Comfort & Fear-Free Section — gentle handling, calming environment, treat rewards
+6. Competitor Comparison — vs average vet clinic, 7 rows
+7. Video Tour Placeholder — hospital tour
+8. "When Was Your Pet's Last Checkup?" Quiz — green/amber/red
+9. Google Reviews Header — stars + count
+10. New Client Special — $49 First Exam with urgency CTA
+- Hero stock: Australian Shepherd at `/images/vet-hero-dog.png`
+
+**MOVING** (dark theme `#1a1a1a`)
+1. Licensed & Insured Badges — licensed, bonded, BBB, background-checked
+2. Moving Pricing Estimates — $349/$599/$999 tier cards
+3. Truck Size Calculator — Studio/1BR/2BR/3BR/4BR+ to truck size mapping
+4. What We Move Grid — 8 item types (furniture, pianos, antiques, etc.)
+5. Moving Day Checklist — 6-item prep list with ShimmerBorder
+6. Competitor Comparison — vs average movers, 7 rows
+7. Video Placeholder — crew in action
+8. "When Are You Moving?" Quiz — this week/this month/just planning
+9. Google Reviews Header — stars + count
+10. Moving Day Guarantee — on-time, no hidden fees, no damage
+
+**PEST CONTROL** (dark theme `#1a1a1a`)
+1. Licensed & Safe Badges — EPA-approved, pet & child safe, satisfaction guaranteed
+2. Pest Control Pricing — $149 one-time, $99/quarter, $79/month
+3. Common Pests Grid — 8 pest types with icons and descriptions
+4. Treatment Process — 4-step: inspect → plan → treat → guarantee
+5. Eco-Friendly Section — green products, targeted, safe for family
+6. Competitor Comparison — vs average exterminators, 7 rows
+7. Video Placeholder — process showcase
+8. "What Pest?" Quiz — ants/rodents/bed bugs/not sure with urgency levels
+9. Google Reviews Header — stars + count
+10. Pest-Free Guarantee — satisfaction guarantee with ShimmerBorder
+
+**CLEANING** (dark theme `#1a1a1a`)
+1. Trust & Safety Badges — background-checked, bonded, eco-friendly, guaranteed
+2. Cleaning Pricing Plans — $149/$249/$349 tiers
+3. What We Clean Grid — 8 room types with icons
+4. Cleaning Checklist — 10 items included in every clean
+5. Eco-Friendly Section — non-toxic, allergen reduction, green seal
+6. Before/After Transformation — clean kitchen/bathroom showcase
+7. Competitor Comparison — vs average cleaning services, 7 rows
+8. "How Often?" Quiz — weekly/bi-weekly/monthly recommendations
+9. Google Reviews Header — stars + count
+10. Spotless Guarantee — re-clean for free promise
+
+**INTERIOR DESIGN** (warm light theme `#faf9f7`)
+1. Design Style Badges — residential, commercial, full-service, award-winning
+2. Design Packages — $250 consult, $2500 room, $10K+ full home
+3. Design Process Timeline — 5-step vertical (discover → concept → develop → procure → reveal)
+4. Room Types Grid — 8 spaces (living, kitchen, bedroom, bath, office, outdoor, commercial, restaurant)
+5. Design Philosophy — personalized, craftsmanship, timeless, sustainable
+6. Before/After Room Transformation — real photo at `/images/interior-design-before-after.jpg`
+7. Competitor Comparison — vs DIY/big box, 7 rows
+8. "What's Your Style?" Quiz — modern/traditional/boho/contemporary
+9. Google Reviews Header — stars + count
+10. Free Consultation CTA — ShimmerBorder with dual CTAs
+
+**PHOTOGRAPHY** (warm light/gold theme)
+1. Photography Styles Showcase — 6 style badges (portraits, weddings, events, etc.)
+2. Session Pricing Packages — $199/$499/$1500+ with "investment" language
+3. The Experience Timeline — 5-step (consult → scout → shoot → edit → deliver)
+4. Portfolio Highlight Enhancement — session type overlays on gallery images
+5. What Makes Us Different — artistic eye, natural light, fast turnaround, print rights
+6. Investment Guide — 6 deliverables (edited images, gallery, print release, etc.)
+7. Competitor Comparison — vs average photographers, 7 rows
+8. Session Type Quiz — portraits/family/wedding/commercial
+9. Google Reviews Header — stars + count
+10. Limited Availability CTA — seasonal booking with FOMO pulsing indicator
+
+**INSURANCE** (dark navy theme)
+1. Coverage Type Badges — auto, home, business, life, health, umbrella
+2. Insurance Savings — save $500/$800/25% bundle cards
+3. Insurance Process — 4-step reassuring flow
+4. Why Independent Agents Win — shop carriers, personal service, claims advocacy
+5. Carrier Partners Row — Progressive, Safeco, Travelers, Hartford, Nationwide, Liberty Mutual
+6. Competitor Comparison — vs direct/online insurance, 7 rows
+7. Video Placeholder — "Meet Your Agent"
+8. "What Insurance?" Quiz — auto/home/business/life with quote CTA
+9. Google Reviews Header — stars + count
+10. Free Quote CTA — $427 avg savings, ShimmerBorder
+
+**ACCOUNTING** (dark navy/gold theme)
+1. Service Type Badges — tax prep, bookkeeping, payroll, advisory, IRS, planning
+2. Tax Savings — $199/$499/$299mo pricing cards
+3. Tax Process — 4-step with icons
+4. Why Choose a CPA — licensed, IRS rep, year-round, audit protection
+5. Industries We Serve — 8 industry cards
+6. Competitor Comparison — vs DIY tax software, 7 rows
+7. Video Placeholder — "Meet Your CPA"
+8. "What Tax Help?" Quiz — personal/business/bookkeeping/IRS problem
+9. Google Reviews Header — stars + count
+10. Free Consultation CTA — $3,200 avg savings
+
+**CHIROPRACTIC** (warm dark theme)
+1. Treatment Type Badges — adjustments, sports, auto accident, prenatal, pediatric, wellness
+2. New Patient Special — $49 exam/x-rays/first adjustment
+3. Conditions We Treat — 8 conditions (back, neck, headaches, sciatica, sports, auto, posture, joint)
+4. Chiropractic Process — 4-step path to relief
+5. Patient Comfort — gentle techniques, no cracking, same-day relief, family-friendly
+6. Competitor Comparison — vs pain medication, 7 rows
+7. Video Placeholder — "See What a Visit Looks Like"
+8. "Where Does It Hurt?" Quiz — back/neck/headaches/other
+9. Google Reviews Header — stars + count
+10. Pain-Free Guarantee — $49 first visit CTA
+
+**AUTO REPAIR** (dark professional theme)
+1. Service Type Badges — oil, brakes, engine, transmission, diagnostics, A/C
+2. Transparent Pricing — $39.99/$149/$89 cards
+3. What We Service — 8 vehicle types/systems grid
+4. Repair Process — 4-step no-surprises flow
+5. Honesty Guarantee — no unnecessary repairs, free estimates, warranty, show the problem
+6. Competitor Comparison — vs dealership service, 7 rows
+7. Video Placeholder — "See Our Shop"
+8. "What Does Your Car Need?" Quiz — maintenance/sounds wrong/brakes/check engine
+9. Google Reviews Header — stars + count
+10. Warranty CTA — every repair backed
+
+**GENERAL CONTRACTOR** (dark professional theme)
+1. Project Type Badges — kitchen, bathroom, additions, new construction, commercial, outdoor
+2. Project Investment Guide — $15K/$35K/$75K+ project tiers
+3. Build Process — 5-step: consult → design → permits → build → walkthrough
+4. Why Choose Licensed GC — licensed/bonded, permits, subcontractor coordination, warranty
+5. Project Types Grid — 8 project types
+6. Competitor Comparison — vs handyman/unlicensed, 7 rows
+7. Video Placeholder — "Tour Our Projects"
+8. "What's Your Project?" Quiz — kitchen-bath/addition/whole-home/commercial
+9. Google Reviews Header — stars + count
+10. Project Guarantee CTA — on time, on budget, with license number
+
+**CATEGORIES NOT YET UPGRADED** (use the 10 universal features + adapt from similar categories):
+- Salon → adapt from interior design (style-focused) + before/after gallery
+- Law Firm → adapt from insurance (trust-focused) + free consultation + case results
+- Restaurant → unique: menu section, reservation CTA, food gallery
+- Real Estate → unique: listing cards, market stats, home value calculator
+- Electrician/Plumber/HVAC → adapt from auto repair (honest pricing, safety) + same-day service
+- Fitness/Martial Arts → unique: class schedule, free trial, transformation photos
+- All others → use the 10 universal features as baseline
 
 ### Implementation Rules
 - **Use existing shared components** — `GlassCard`, `MagneticButton`, `ShimmerBorder`, `SectionHeader` from within the template
