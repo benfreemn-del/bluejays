@@ -628,7 +628,7 @@ export default function ProspectTable({
                       >
                         <ProspectNotesButton hasPending={hasPendingNotes} />
                       </button>
-                      {(prospect.status === "pending-review" || prospect.status === "ready_to_review") && (
+                      {(prospect.status === "pending-review" || prospect.status === "ready_to_review" || prospect.status === "qc_failed" || prospect.status === "generated") && (
                         <button
                           onClick={async () => {
                             await fetch(`/api/prospects/${prospect.id}`, { credentials: "include",

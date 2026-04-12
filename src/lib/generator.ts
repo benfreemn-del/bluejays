@@ -274,7 +274,8 @@ export async function generatePreview(prospect: Prospect): Promise<string> {
 
   // QC gate: pass → "ready_to_review", fail → "qc_failed"
   // Sites that don't even have a generated URL yet stay as "generated" (not enough data)
-  const status = passesQc ? "ready_to_review" : (dataChecks >= 2 ? "qc_failed" : "generated");
+  // All generated sites get at least "qc_failed" so they're always visible and approvable in the dashboard
+  const status = passesQc ? "ready_to_review" : "qc_failed";
 
   // Build quality notes for the prospect record
   const qualityNotes = [
