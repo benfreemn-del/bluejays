@@ -30,6 +30,12 @@ import {
   Cat,
   Scissors,
   Pill,
+  CurrencyDollar,
+  Play,
+  Timer,
+  NavigationArrow,
+  CalendarCheck,
+  Smiley,
 } from "@phosphor-icons/react";
 import type { GeneratedSiteData } from "@/lib/generator";
 import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
@@ -116,6 +122,50 @@ const STOCK_GALLERY_POOL = [
   "https://images.unsplash.com/photo-1535930749574-1399327ce78f?w=600&q=80",   // lab puppy face
 ];
 
+
+/* ───────────────────────── PREMIUM FEATURE DATA ───────────────────────── */
+const INSURANCE_BADGES = [
+  { label: "Pet Insurance Accepted", icon: ShieldCheck },
+  { label: "Payment Plans Available", icon: CurrencyDollar },
+  { label: "CareCredit", icon: CheckCircle },
+  { label: "Wellness Plans", icon: Heart },
+];
+
+const WELLNESS_PLANS = [
+  { name: "Wellness Exam", price: "$65", desc: "Comprehensive physical exam, weight check, and personalized health recommendations." },
+  { name: "Vaccination Package", price: "$149", desc: "Core vaccines, bordetella, and rabies — everything your pet needs to stay protected." },
+  { name: "Dental Cleaning", price: "from $299", desc: "Full dental cleaning under anesthesia with digital X-rays and polishing." },
+];
+
+const PET_TYPES = [
+  { name: "Dogs", icon: Dog, desc: "From puppies to seniors — wellness, surgery, dental, and emergency care." },
+  { name: "Cats", icon: Cat, desc: "Feline-friendly exams, vaccinations, dental care, and chronic disease management." },
+  { name: "Exotic Pets", icon: PawPrint, desc: "Specialized care for rabbits, reptiles, birds, and other small companions." },
+  { name: "Senior Pets", icon: Heart, desc: "Gentle geriatric care, pain management, and quality-of-life support." },
+];
+
+const COMFORT_FEATURES = [
+  { title: "Fear-Free Certified", desc: "Our team is trained in low-stress handling techniques.", icon: ShieldCheck },
+  { title: "Gentle Handling", desc: "Patient, calm approach for every pet — no rushing.", icon: Heart },
+  { title: "Calming Environment", desc: "Soft music, pheromone diffusers, and separate waiting areas.", icon: Smiley },
+  { title: "Treat Rewards", desc: "Positive reinforcement makes vet visits something to wag about.", icon: Star },
+];
+
+const COMPARISON_ROWS = [
+  { feature: "Same-Day Sick Visits", us: true, them: "Sometimes" },
+  { feature: "In-House Lab Results", us: true, them: "Send Out" },
+  { feature: "Dental Services", us: true, them: "Varies" },
+  { feature: "Wellness Plans", us: true, them: "No" },
+  { feature: "Weekend Hours", us: true, them: "Varies" },
+  { feature: "Payment Plans", us: true, them: "No" },
+  { feature: "Fear-Free Approach", us: true, them: "No" },
+];
+
+const CHECKUP_OPTIONS = [
+  { label: "Less than 6 months ago", color: "#16a34a", bg: "#16a34a15", border: "#16a34a33", response: "Great! Keep up the good work. Regular checkups keep your pet healthy." },
+  { label: "6–12 months ago", color: "#d97706", bg: "#d9770615", border: "#d9770633", response: "It's time to schedule! Annual exams catch issues early." },
+  { label: "Over a year ago", color: "#dc2626", bg: "#dc262615", border: "#dc262633", response: "Your pet needs you — book a wellness visit today." },
+];
 
 /* ───────────────────────── FLOATING PAW PARTICLES ───────────────────────── */
 function FloatingPaws({ accent }: { accent: string }) {
@@ -355,6 +405,7 @@ function AnimatedSection({ children, className = "" }: { children: React.ReactNo
 export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [checkupAnswer, setCheckupAnswer] = useState<number | null>(null);
 
   const { PRIMARY, PRIMARY_GLOW } = getAccent(data.accentColor);
 
@@ -556,6 +607,74 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
+      {/* ══════════════════ 4b. PET INSURANCE & PAYMENT BADGES ══════════════════ */}
+      <section className="relative z-10 py-12 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #f7faf8 0%, ${PRIMARY}06 50%, #f7faf8 100%)` }} />
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <div className="flex flex-wrap justify-center gap-3">
+            {INSURANCE_BADGES.map((badge) => (
+              <span key={badge.label} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold border bg-white/70 backdrop-blur-sm" style={{ color: PRIMARY, borderColor: `${PRIMARY}33`, background: `${PRIMARY}0d` }}>
+                <badge.icon size={18} weight="fill" />
+                {badge.label}
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ 4c. WELLNESS PRICING PLANS ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #f7faf8 0%, #f0f5f2 50%, #f7faf8 100%)` }} />
+        <PawPattern opacity={0.02} accent={PRIMARY} />
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-[20%] left-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${PRIMARY}06` }} />
+        </div>
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Pricing" title="Transparent Pricing" subtitle="Quality veterinary care shouldn't be a mystery. Here are our most popular services." accent={PRIMARY} />
+          <div className="grid md:grid-cols-3 gap-6">
+            {WELLNESS_PLANS.map((plan, i) => (
+              <GlassCard key={plan.name} className="p-7 text-center relative overflow-hidden">
+                {i === 1 && (
+                  <div className="absolute top-0 left-0 right-0 h-1" style={{ background: `linear-gradient(to right, ${PRIMARY}, ${WARM_ROSE})` }} />
+                )}
+                <div className="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ background: PRIMARY_GLOW, border: `1px solid ${PRIMARY}33` }}>
+                  <CurrencyDollar size={28} weight="duotone" style={{ color: PRIMARY }} />
+                </div>
+                <h3 className="text-lg font-bold text-[#1c1917] mb-1">{plan.name}</h3>
+                <p className="text-2xl font-extrabold mb-3" style={{ color: PRIMARY }}>{plan.price}</p>
+                <p className="text-sm text-[#6b7280] leading-relaxed">{plan.desc}</p>
+                <MagneticButton className="mt-6 px-6 py-3 rounded-full text-sm font-semibold text-white cursor-pointer" style={{ background: PRIMARY } as React.CSSProperties}>
+                  Book Now
+                </MagneticButton>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ 4d. PET TYPE CARDS ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #f7faf8 0%, ${PRIMARY}0a 50%, #f7faf8 100%)` }} />
+        <HeartbeatLine opacity={0.02} accent={PRIMARY} />
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${WARM_ROSE}06` }} />
+        </div>
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="We Treat" title="Patients of All Kinds" subtitle="From wagging tails to whiskers and beyond — we care for every member of your family." accent={PRIMARY} />
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+            {PET_TYPES.map((pet) => (
+              <GlassCard key={pet.name} className="p-6 text-center group hover:shadow-md transition-all duration-300">
+                <div className="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center transition-all duration-300" style={{ background: PRIMARY_GLOW, border: `1px solid ${PRIMARY}33` }}>
+                  <pet.icon size={32} weight="duotone" style={{ color: PRIMARY }} />
+                </div>
+                <h3 className="text-lg font-bold text-[#1c1917] mb-2">{pet.name}</h3>
+                <p className="text-sm text-[#6b7280] leading-relaxed">{pet.desc}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ══════════════════ 5. ABOUT ══════════════════ */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #f7faf8 0%, #f0f5f2 50%, #f7faf8 100%)` }} />
@@ -596,6 +715,68 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
                 ))}
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ 5b. PET TRANSFORMATION SHOWCASE ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #f7faf8 0%, ${PRIMARY}08 50%, #f7faf8 100%)` }} />
+        <PawPattern opacity={0.02} accent={PRIMARY} />
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-[30%] right-[15%] w-[500px] h-[500px] rounded-full blur-[200px]" style={{ background: `${PRIMARY}06` }} />
+        </div>
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Results" title="The Difference Quality Care Makes" accent={PRIMARY} />
+          <div className="max-w-4xl mx-auto">
+            <GlassCard className="overflow-hidden">
+              <div className="relative">
+                <img src={aboutImage} alt="Pet transformation — quality veterinary care" className="w-full h-[300px] md:h-[400px] object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="px-3 py-1 rounded-full text-xs font-bold text-white uppercase tracking-wider" style={{ background: PRIMARY }}>
+                      Before &amp; After
+                    </div>
+                  </div>
+                  <h3 className="text-xl md:text-2xl font-bold text-white mb-2">See the Difference</h3>
+                  <p className="text-white/80 text-sm md:text-base max-w-lg">
+                    From routine wellness to complex procedures, our patients leave happier and healthier. Quality veterinary care transforms lives.
+                  </p>
+                </div>
+              </div>
+              <div className="p-6 flex flex-wrap gap-3">
+                {["Healthier Coats", "Better Mobility", "Brighter Eyes", "More Energy"].map((item) => (
+                  <span key={item} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border" style={{ color: PRIMARY, borderColor: `${PRIMARY}33`, background: `${PRIMARY}0d` }}>
+                    <CheckCircle size={14} weight="fill" />
+                    {item}
+                  </span>
+                ))}
+              </div>
+            </GlassCard>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ 5c. COMFORT & FEAR-FREE ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #f7faf8 0%, #f0f5f2 50%, #f7faf8 100%)` }} />
+        <HeartbeatLine opacity={0.025} accent={PRIMARY} />
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-[20%] left-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${WARM_ROSE}08` }} />
+        </div>
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Your Pet's Comfort" title="We Understand Pet Anxiety" subtitle="Many pets feel stressed at the vet. Our fear-free approach makes visits calmer, safer, and even enjoyable." accent={PRIMARY} />
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {COMFORT_FEATURES.map((feature) => (
+              <GlassCard key={feature.title} className="p-6 text-center group hover:shadow-md transition-all duration-300">
+                <div className="w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center" style={{ background: `${WARM_ROSE}15`, border: `1px solid ${WARM_ROSE}33` }}>
+                  <feature.icon size={28} weight="duotone" style={{ color: WARM_ROSE }} />
+                </div>
+                <h3 className="text-base font-bold text-[#1c1917] mb-2">{feature.title}</h3>
+                <p className="text-sm text-[#6b7280] leading-relaxed">{feature.desc}</p>
+              </GlassCard>
+            ))}
           </div>
         </div>
       </section>
@@ -658,6 +839,110 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
+      {/* ══════════════════ 7b. COMPETITOR COMPARISON TABLE ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #f7faf8 0%, ${PRIMARY}08 50%, #f7faf8 100%)` }} />
+        <PawPattern opacity={0.02} accent={PRIMARY} />
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-[20%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${PRIMARY}06` }} />
+        </div>
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Why Us" title={`${data.businessName} vs Average Vet Clinic`} accent={PRIMARY} />
+          <GlassCard className="overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="border-b border-gray-200">
+                    <th className="px-5 py-4 text-sm font-semibold text-[#6b7280]">Feature</th>
+                    <th className="px-5 py-4 text-sm font-semibold text-center" style={{ color: PRIMARY }}>{data.businessName}</th>
+                    <th className="px-5 py-4 text-sm font-semibold text-[#9ca3af] text-center">Average Clinic</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {COMPARISON_ROWS.map((row, i) => (
+                    <tr key={row.feature} className={i % 2 === 0 ? "bg-white/40" : ""}>
+                      <td className="px-5 py-3.5 text-sm font-medium text-[#1c1917]">{row.feature}</td>
+                      <td className="px-5 py-3.5 text-center">
+                        <CheckCircle size={22} weight="fill" style={{ color: PRIMARY }} className="inline-block" />
+                      </td>
+                      <td className="px-5 py-3.5 text-center text-sm text-[#9ca3af]">{row.them}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </GlassCard>
+        </div>
+      </section>
+
+      {/* ══════════════════ 7c. VIDEO TOUR PLACEHOLDER ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #f7faf8 0%, #f0f5f2 50%, #f7faf8 100%)` }} />
+        <HeartbeatLine opacity={0.02} accent={PRIMARY} />
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute bottom-[30%] left-[20%] w-[500px] h-[500px] rounded-full blur-[200px]" style={{ background: `${PRIMARY}06` }} />
+        </div>
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Virtual Tour" title="Tour Our Hospital" subtitle="Step inside and see our modern, clean, and welcoming facility." accent={PRIMARY} />
+          <div className="relative rounded-2xl overflow-hidden border border-gray-200 group cursor-pointer">
+            <img src={heroImage} alt={`${data.businessName} facility tour`} className="w-full h-[300px] md:h-[420px] object-cover transition-transform duration-700 group-hover:scale-105" />
+            <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors duration-300" />
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <div className="w-20 h-20 rounded-full flex items-center justify-center mb-4 backdrop-blur-md border border-white/30 bg-white/20 group-hover:scale-110 transition-transform duration-300">
+                <Play size={36} weight="fill" className="text-white ml-1" />
+              </div>
+              <p className="text-white font-bold text-lg">Watch Our Hospital Tour</p>
+              <p className="text-white/70 text-sm mt-1">See where we care for your pets</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ 7d. CHECKUP QUIZ ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #f7faf8 0%, ${PRIMARY}0a 50%, #f7faf8 100%)` }} />
+        <PawPattern opacity={0.02} accent={PRIMARY} />
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-[30%] right-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${WARM_ROSE}06` }} />
+        </div>
+        <div className="max-w-3xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Quick Check" title="When Was Your Pet's Last Checkup?" subtitle="Regular checkups are the #1 way to catch health issues early. How long has it been?" accent={PRIMARY} />
+          <div className="space-y-4">
+            {CHECKUP_OPTIONS.map((option, i) => (
+              <button
+                key={i}
+                onClick={() => setCheckupAnswer(i)}
+                className="w-full text-left rounded-2xl border-2 p-5 md:p-6 transition-all duration-300 cursor-pointer"
+                style={{
+                  borderColor: checkupAnswer === i ? option.color : `${option.color}33`,
+                  background: checkupAnswer === i ? option.bg : "rgba(255,255,255,0.7)",
+                }}
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={{ background: option.bg, border: `1px solid ${option.border}` }}>
+                    <Timer size={20} weight="duotone" style={{ color: option.color }} />
+                  </div>
+                  <span className="text-base font-semibold text-[#1c1917]">{option.label}</span>
+                </div>
+                {checkupAnswer === i && (
+                  <p className="mt-3 ml-[52px] text-sm font-medium" style={{ color: option.color }}>
+                    {option.response}
+                  </p>
+                )}
+              </button>
+            ))}
+          </div>
+          {checkupAnswer !== null && (
+            <div className="mt-8 text-center">
+              <PhoneLink phone={data.phone} className="inline-flex items-center gap-3 px-8 py-4 rounded-full text-white font-bold text-base hover:shadow-lg transition-all duration-300" style={{ background: PRIMARY }}>
+                <Phone size={20} weight="fill" />
+                Schedule a Checkup — {data.phone}
+              </PhoneLink>
+            </div>
+          )}
+        </div>
+      </section>
+
       {/* ══════════════════ 8. TESTIMONIALS ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #f7faf8 0%, ${PRIMARY}08 50%, #f7faf8 100%)` }} />
@@ -668,6 +953,18 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <AnimatedSection>          <SectionHeader badge="Testimonials" title="What Pet Parents Say" accent={PRIMARY} /></AnimatedSection>
+          {/* Google Reviews Header */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-10">
+            <div className="flex gap-0.5">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Star key={i} size={24} weight="fill" style={{ color: "#facc15" }} />
+              ))}
+            </div>
+            <div className="text-center sm:text-left">
+              <span className="text-2xl font-extrabold text-[#1c1917]">{data.rating || "5.0"}</span>
+              <span className="text-[#6b7280] text-sm ml-2">out of 5 — based on {data.reviewCount || "100+"} Google Reviews</span>
+            </div>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {testimonials.map((t, i) => (
               <GlassCard key={i} className="p-6 h-full flex flex-col">
@@ -683,6 +980,39 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
               </GlassCard>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ 8b. NEW CLIENT SPECIAL ══════════════════ */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${PRIMARY}12, ${WARM_ROSE}08)` }} />
+        <PawPattern opacity={0.015} accent={PRIMARY} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <ShimmerBorder accent={PRIMARY}>
+            <div className="p-8 md:p-12 text-center">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-4" style={{ background: `${WARM_ROSE}15`, color: WARM_ROSE, border: `1px solid ${WARM_ROSE}33` }}>
+                <CalendarCheck size={16} weight="fill" />
+                Limited Time Offer
+              </div>
+              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-[#1c1917] mb-3">
+                New Patient Special: <span style={{ color: PRIMARY }}>First Exam $49</span>
+              </h2>
+              <p className="text-[#6b7280] text-lg mb-6 max-w-xl mx-auto">
+                Welcome to {data.businessName}! New patients receive a comprehensive first exam at a special rate. Includes a full physical and personalized care plan.
+              </p>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer shadow-lg" style={{ background: PRIMARY } as React.CSSProperties}>
+                  <Phone size={18} weight="fill" />
+                  Claim Your $49 Exam
+                </MagneticButton>
+                <PhoneLink phone={data.phone} className="text-sm font-semibold flex items-center gap-2" style={{ color: PRIMARY }}>
+                  <NavigationArrow size={16} weight="fill" />
+                  Or call {data.phone}
+                </PhoneLink>
+              </div>
+              <p className="text-xs text-[#9ca3af] mt-4">New patients only. Mention this offer when booking. Subject to availability.</p>
+            </div>
+          </ShimmerBorder>
         </div>
       </section>
 
