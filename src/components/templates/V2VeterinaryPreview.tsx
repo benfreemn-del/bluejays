@@ -93,11 +93,11 @@ function getServiceIcon(serviceName: string) {
 /* ───────────────────────── STOCK FALLBACK IMAGES ───────────────────────── */
 /* Pool of unique images — pick based on business name hash to avoid duplicates */
 const STOCK_HERO_POOL = [
+  "/images/vet-hero-dog.png",                                                     // Australian Shepherd (Ben's pick)
   "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=1400&q=80",   // golden retriever portrait
   "https://images.unsplash.com/photo-1583337130417-13104dec14a3?w=1400&q=80",   // vet examining dog
   "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=1400&q=80",   // happy dog closeup
   "https://images.unsplash.com/photo-1560807707-8cc77767d783?w=1400&q=80",       // puppy face
-  "https://images.unsplash.com/photo-1537151625747-768eb6cf92b2?w=1400&q=80",   // dog on beach
 ];
 const STOCK_ABOUT_POOL = [
   "https://images.unsplash.com/photo-1629740067905-bd3f515aa739?w=600&q=80",    // vet with pet
@@ -729,21 +729,16 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <SectionHeader badge="Results" title="The Difference Quality Care Makes" accent={PRIMARY} />
           <div className="max-w-4xl mx-auto">
-            <GlassCard className="overflow-hidden">
-              <div className="relative">
-                <img src={aboutImage} alt="Pet transformation — quality veterinary care" className="w-full h-[300px] md:h-[400px] object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="px-3 py-1 rounded-full text-xs font-bold text-white uppercase tracking-wider" style={{ background: PRIMARY }}>
-                      Before &amp; After
-                    </div>
-                  </div>
-                  <h3 className="text-xl md:text-2xl font-bold text-white mb-2">See the Difference</h3>
-                  <p className="text-white/80 text-sm md:text-base max-w-lg">
-                    From routine wellness to complex procedures, our patients leave happier and healthier. Quality veterinary care transforms lives.
-                  </p>
+            <div className="relative rounded-2xl overflow-hidden border border-gray-200 shadow-lg">
+              <img src="/images/vet-before-after.png" alt="Pet grooming transformation before and after" className="w-full h-auto" />
+              <div className="absolute bottom-0 left-0 right-0 flex">
+                <div className="flex-1 py-3 text-center bg-slate-800/80 backdrop-blur-sm border-r border-white/10">
+                  <span className="text-sm font-bold text-white">Before</span>
                 </div>
+                <div className="flex-1 py-3 text-center backdrop-blur-sm" style={{ background: `${PRIMARY}cc` }}>
+                  <span className="text-sm font-bold text-white">After</span>
+                </div>
+              </div>
               </div>
               <div className="p-6 flex flex-wrap gap-3">
                 {["Healthier Coats", "Better Mobility", "Brighter Eyes", "More Energy"].map((item) => (
