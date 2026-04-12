@@ -163,7 +163,7 @@ function StormBackground({ opacity = 0.03, accent }: { opacity?: number; accent:
 
 /* ───────────────────────── GLASS CARD ───────────────────────── */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>;
+  return <div className={`rounded-2xl border border-white/15 bg-white/[0.06] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.08)] ${className}`}>{children}</div>;
 }
 
 /* ───────────────────────── MAGNETIC BUTTON ───────────────────────── */
@@ -433,7 +433,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
       <section className="relative z-10 py-16 overflow-hidden border-y" style={{ borderColor: `${ACCENT}1a` }}>
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f1520 0%, #111827 100%)" }} />
         <RooflinePattern opacity={0.03} />
-        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] rounded-full blur-[180px]" style={{ background: `${ACCENT}08` }} /></div>
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] rounded-full blur-[180px]" style={{ background: `${ACCENT}18` }} /></div>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {data.stats.map((stat, i) => {
@@ -451,12 +451,12 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
       </section>
 
       {/* ══════════════════ 4. SERVICES ══════════════════ */}
-      <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <section id="services" className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${CHARCOAL} 0%, #0f1520 50%, ${CHARCOAL} 100%)` }} />
         <RooflinePattern opacity={0.04} />
         <StormBackground opacity={0.025} accent={ACCENT} />
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-[10%] right-[5%] w-[500px] h-[500px] rounded-full blur-[160px]" style={{ background: `${ACCENT}08` }} />
+          <div className="absolute top-[10%] right-[5%] w-[500px] h-[500px] rounded-full blur-[160px]" style={{ background: `${ACCENT}18` }} />
         </div>
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -488,10 +488,10 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
       </section>
 
       {/* ══════════════════ 5. PROCESS ══════════════════ */}
-      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${CHARCOAL} 0%, #0f1520 50%, ${CHARCOAL} 100%)` }} />
         <RooflinePattern opacity={0.03} />
-        <div className="absolute inset-0 pointer-events-none"><div className="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${DEFAULT_SLATE}06` }} /></div>
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${DEFAULT_SLATE}12` }} /></div>
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <SectionHeader badge="Our Process" title="How We Work" accent={ACCENT} />          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -510,7 +510,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
       </section>
 
       {/* ══════════════════ 6. ABOUT ══════════════════ */}
-      <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <section id="about" className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${CHARCOAL} 0%, #0f1520 50%, ${CHARCOAL} 100%)` }} />
         <StormBackground opacity={0.02} accent={ACCENT} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${ACCENT}06` }} /></div>
@@ -553,7 +553,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
       <section className="relative z-10 py-20 md:py-28 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${CHARCOAL} 0%, #0f1520 50%, ${CHARCOAL} 100%)` }} />
         <RooflinePattern opacity={0.03} />
-        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] right-[15%] w-[500px] h-[500px] rounded-full blur-[200px]" style={{ background: `${ACCENT}08` }} /></div>
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] right-[15%] w-[500px] h-[500px] rounded-full blur-[200px]" style={{ background: `${ACCENT}18` }} /></div>
         <div className="max-w-4xl mx-auto px-6 relative z-10">
           <SectionHeader badge="See The Difference" title="Before & After" subtitle="Drag the slider to compare storm damage versus a professionally installed roof." accent={ACCENT} />
           <BeforeAfterSlider />
@@ -561,7 +561,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
       </section>
 
       {/* ══════════════════ 7. PROJECTS ══════════════════ */}
-      <section id="projects" className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <section id="projects" className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${CHARCOAL} 0%, #0f1520 50%, ${CHARCOAL} 100%)` }} />
         <StormBackground opacity={0.02} accent={ACCENT} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] left-[20%] w-[500px] h-[500px] rounded-full blur-[200px]" style={{ background: `${ACCENT}06` }} /></div>
@@ -587,7 +587,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
       <section className="relative z-10 py-20 md:py-28 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${CHARCOAL} 0%, #0f1520 50%, ${CHARCOAL} 100%)` }} />
         <StormBackground opacity={0.02} accent={ACCENT} />
-        <div className="absolute inset-0 pointer-events-none"><div className="absolute bottom-[20%] left-[10%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${ACCENT}08` }} /></div>
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute bottom-[20%] left-[10%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${ACCENT}18` }} /></div>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <SectionHeader badge="Premium Materials" title="Quality You Can Trust" subtitle="We use only the finest roofing materials backed by industry-leading manufacturer warranties." accent={ACCENT} />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -605,7 +605,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
       </section>
 
       {/* ══════════════════ 8. TESTIMONIALS ══════════════════ */}
-      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${CHARCOAL} 0%, #0f1520 50%, ${CHARCOAL} 100%)` }} />
         <RooflinePattern opacity={0.03} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] right-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${ACCENT}06` }} /></div>
@@ -644,10 +644,10 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
       </section>
 
       {/* ══════════════════ 10. SERVICE AREAS ══════════════════ */}
-      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${CHARCOAL} 0%, #0f1520 50%, ${CHARCOAL} 100%)` }} />
         <RooflinePattern opacity={0.03} />
-        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[40%] right-[20%] w-[400px] h-[400px] rounded-full blur-[180px]" style={{ background: `${DEFAULT_SLATE}06` }} /></div>
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[40%] right-[20%] w-[400px] h-[400px] rounded-full blur-[180px]" style={{ background: `${DEFAULT_SLATE}12` }} /></div>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <SectionHeader badge="Coverage Area" title="Areas We Serve" accent={ACCENT} />          <div className="text-center">
             <GlassCard className="p-8 inline-block">
@@ -660,7 +660,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
 
       {/* ══════════════════ 11. HOURS ══════════════════ */}
       {data.hours && (
-        <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <section className="relative z-10 py-16 md:py-24 overflow-hidden">
           <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${CHARCOAL} 0%, #0f1520 50%, ${CHARCOAL} 100%)` }} />
           <StormBackground opacity={0.02} accent={ACCENT} />
           <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${ACCENT}06` }} /></div>
@@ -681,7 +681,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
       
       {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
       <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15, ${ACCENT}08)` }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15, ${ACCENT}18)` }} />
         <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
           <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: ACCENT }}>
             Don&apos;t Miss Out
@@ -706,7 +706,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
       </section>
 
       {/* ══════════════════ 12. FAQ ══════════════════ */}
-      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${CHARCOAL} 0%, #0f1520 50%, ${CHARCOAL} 100%)` }} />
         <RooflinePattern opacity={0.02} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${ACCENT}06` }} /></div>
@@ -718,7 +718,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
       </section>
 
       {/* ══════════════════ 13. CONTACT ══════════════════ */}
-      <section id="contact" className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <section id="contact" className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${CHARCOAL} 0%, #0f1520 50%, ${CHARCOAL} 100%)` }} />
         <RooflinePattern opacity={0.02} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${ACCENT}06` }} /></div>
