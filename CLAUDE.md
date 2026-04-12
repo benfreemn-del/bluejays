@@ -332,6 +332,53 @@ When Ben asks to build a V2 (or higher) template for a category, ALL of these st
 8. **Re-generate existing prospects** in that category — so they use the new V2 renderer instead of the old generic one
 9. **Save the V2 process to memory** if any new patterns were learned
 
+## Mandatory Premium Features Per V2 Template (NON-NEGOTIABLE)
+Every V2 preview template MUST include ALL of the following conversion-focused sections. These are not optional — they are the minimum bar for a $997 website. Templates missing these features fail QC.
+
+### Universal Features (required on EVERY category)
+1. **Trust Badges on Hero** — 3+ pill badges below CTA buttons (Licensed, X-Star Rated, Free Estimates/Consult). Never ship a hero without social proof.
+2. **Google Reviews Header** — Star rating + review count summary displayed above the testimonials section. Pull from `data.googleRating` and `data.reviewCount`.
+3. **Enhanced Testimonials** — Decorative quote marks, verified badge with CheckCircle icon, star ratings at 18px. Not just plain text in a card.
+4. **Competitor Comparison Table** — "[Business Name] vs. The Competition" with 5-7 rows. Us column = green checkmarks, them column = "Sometimes"/"Varies"/"No". Uses GlassCard wrapper.
+5. **Financing/Payment Section** — 3 pricing tiers showing affordability. Adapt to category (monthly payments for trades, service pricing for professional services).
+6. **Video Testimonial Placeholder** — Play button overlay on a project/office photo. "Watch Our Work" or "Take a Virtual Tour". Even without real video, it signals professionalism.
+7. **Interactive Quiz/Calculator CTA** — Category-specific engagement tool (roof age quiz, last checkup quiz, "what type of service do you need?" selector). 3 options with color-coded recommendations leading to phone CTA.
+8. **Emergency/Urgency Element** — Pulsing indicator with response time or availability. "Crews Available Now", "Same-Day Appointments", "24/7 Emergency Service".
+9. **Certifications/Partners Badge Row** — Industry-specific trust signals (GAF for roofing, ADA for dental, BBB, NRCA, state licenses). Horizontal row of pill badges.
+10. **Enhanced Service Area** — Not just a text address. Show coverage radius, response time, and availability status with pulsing indicator.
+
+### Category-Specific Premium Features
+| Category | Unique Required Feature | Description |
+|----------|------------------------|-------------|
+| Roofing | Before/After Slider | Interactive drag-to-compare storm damage vs new roof |
+| Roofing | Insurance Claims Timeline | 4-step visual process ending with "$0 out of pocket" |
+| Roofing | Premium Materials Section | 4 material types with specs and warranty info |
+| Dental | Patient Comfort Section | Sedation, gentle techniques, warm blankets — addresses dental anxiety |
+| Dental | Technology Section | Digital X-rays, lasers, 3D imaging — shows modern equipment |
+| Dental | Before/After Smile Slider | Smile transformation comparison |
+| Dental | New Patient Special Banner | "$99 Exam, X-Rays & Cleaning" urgency CTA |
+| Dental | Insurance Accepted Badges | Major insurance logos/names in a badge row |
+| Veterinary | Pet Type Cards | Dog, cat, exotic — what animals they treat |
+| Veterinary | Vaccination Schedule | Visual timeline of recommended pet vaccinations |
+| Moving | Moving Checklist | Interactive checklist for moving day preparation |
+| Moving | Truck Size Calculator | "Studio/1BR/2BR/3BR+ → Recommended truck size" |
+| Salon | Stylist Profiles | Individual stylist cards with specialties |
+| Salon | Before/After Gallery | Hair transformation slider |
+| Law Firm | Case Results Section | Notable case outcomes (anonymized) |
+| Law Firm | Free Consultation CTA | Prominent "Free Case Review" with intake form |
+| Restaurant | Menu Preview Section | Featured dishes with photos and prices |
+| Restaurant | Reservation CTA | "Book a Table" with date/time/party size |
+| Construction/Trades | Project Portfolio | Before/after project cards with scope descriptions |
+| Construction/Trades | License & Bond Display | State license numbers prominently shown |
+
+### Implementation Rules
+- **Use existing shared components** — `GlassCard`, `MagneticButton`, `ShimmerBorder`, `SectionHeader` from within the template
+- **Use `@phosphor-icons/react`** for all icons — never emoji, never Font Awesome
+- **Data constants** (comparison rows, materials, insurance steps) go at the top of the file with other constants
+- **Section backgrounds** must match the template theme (light cream for dental/vet, dark charcoal for trades)
+- **Mobile responsive** — all grids collapse to 1-column on mobile, all text readable at 375px
+- **No framer motion `initial={{ opacity: 0 }}`** on any premium feature — content renders immediately
+
 ## Scouting Rules
 - **Only scout categories that have a built template** — don't scout categories we can't generate premium sites for yet.
 - **Current active categories** (have premium templates — all 30 categories have V1, 11 have V2): real-estate, dental, law-firm, landscaping, salon, electrician, plumber, hvac, roofing, auto-repair, chiropractic, fitness, veterinary, photography, cleaning, pest-control, accounting, moving, florist, daycare, insurance, interior-design, tattoo, martial-arts, physical-therapy, tutoring, pool-spa, general-contractor, catering, pet-services, church
