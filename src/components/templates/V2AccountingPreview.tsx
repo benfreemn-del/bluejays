@@ -8,7 +8,7 @@ import { motion, useMotionValue, useSpring, AnimatePresence } from "framer-motio
 import {
   ChartLineUp, Calculator, ShieldCheck, Clock, Phone, MapPin, CaretDown, List, X,
   CurrencyDollar, FileText, Buildings, CheckCircle, ArrowRight, Star, Scales,
-  ChartBar, Handshake, Medal,
+  ChartBar, Handshake, Medal, Play, Receipt, CalendarCheck,
 } from "@phosphor-icons/react";
 import type { GeneratedSiteData } from "@/lib/generator";
 import BluejayLogo from "../BluejayLogo";
@@ -43,6 +43,65 @@ const STOCK_PROJECTS = [
   "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=80",
   "https://images.unsplash.com/photo-1591696205602-2f950c417cb9?w=800&q=80",
   "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&q=80",
+];
+
+/* ───────────────────────── PREMIUM FEATURE DATA ───────────────────────── */
+
+const SERVICE_TYPE_BADGES = [
+  { label: "Tax Preparation", icon: FileText },
+  { label: "Bookkeeping", icon: Calculator },
+  { label: "Payroll", icon: CurrencyDollar },
+  { label: "Business Advisory", icon: ChartLineUp },
+  { label: "IRS Resolution", icon: ShieldCheck },
+  { label: "Financial Planning", icon: ChartBar },
+];
+
+const TAX_SAVINGS_CARDS = [
+  { title: "Individual Returns", price: "from $199", desc: "Personal tax preparation with maximum deduction discovery", icon: FileText },
+  { title: "Business Returns", price: "from $499", desc: "Comprehensive business tax filing with strategic planning", icon: Buildings },
+  { title: "Full-Service Bookkeeping", price: "from $299/mo", desc: "Year-round books management so you stay organized and compliant", icon: Calculator },
+];
+
+const TAX_PROCESS_STEPS = [
+  { step: "01", title: "Free Consultation", desc: "Tell us about your financial situation and goals. No obligation, no pressure.", icon: Phone },
+  { step: "02", title: "Document Collection", desc: "We provide a simple checklist and secure portal to upload your documents.", icon: Receipt },
+  { step: "03", title: "Expert Preparation", desc: "Your dedicated CPA reviews every line for accuracy and maximum deductions.", icon: Calculator },
+  { step: "04", title: "Maximum Refund", desc: "We file your return and ensure you keep every dollar you deserve.", icon: CurrencyDollar },
+];
+
+const CPA_PILLARS = [
+  { title: "Licensed & Certified", desc: "State-licensed CPAs with ongoing education requirements", icon: Medal },
+  { title: "IRS Representation", desc: "We speak directly to the IRS on your behalf if issues arise", icon: ShieldCheck },
+  { title: "Year-Round Support", desc: "Not just tax season — we are available 365 days a year", icon: CalendarCheck },
+  { title: "Audit Protection", desc: "Full audit defense and representation included with every return", icon: Scales },
+];
+
+const INDUSTRIES_SERVED = [
+  { name: "Small Business", icon: Buildings },
+  { name: "Real Estate", icon: ChartLineUp },
+  { name: "Healthcare", icon: ShieldCheck },
+  { name: "Restaurants", icon: Receipt },
+  { name: "Construction", icon: Handshake },
+  { name: "E-Commerce", icon: CurrencyDollar },
+  { name: "Nonprofits", icon: Star },
+  { name: "Freelancers", icon: FileText },
+];
+
+const COMPARISON_ROWS = [
+  { feature: "CPA Review of Every Return", us: true, them: "No" },
+  { feature: "IRS Representation", us: true, them: "Extra Cost" },
+  { feature: "Audit Support & Defense", us: true, them: "No" },
+  { feature: "Business Deductions Found", us: true, them: "Limited" },
+  { feature: "Year-Round Tax Advice", us: true, them: "No" },
+  { feature: "Multi-State Filing", us: true, them: "Extra Cost" },
+  { feature: "Prior Year Amendments", us: true, them: "Extra Cost" },
+];
+
+const TAX_QUIZ_OPTIONS = [
+  { label: "Personal Tax Return", desc: "Simple and stress-free filing", color: "#2563eb", icon: FileText },
+  { label: "Business Taxes", desc: "Maximize every deduction", color: "#059669", icon: Buildings },
+  { label: "Bookkeeping", desc: "Stay organized year-round", color: "#7c3aed", icon: Calculator },
+  { label: "IRS Problem", desc: "We will handle it for you", color: "#dc2626", icon: ShieldCheck },
 ];
 
 function FloatingCharts({ accent }: { accent: string }) {
@@ -155,12 +214,7 @@ export default function V2AccountingPreview({ data }: { data: GeneratedSiteData 
   const aboutImage = uniquePhotos[2] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 2);
   const projectImages = data.photos?.length > 2 ? data.photos.slice(2, 6) : pickGallery(STOCK_PROJECTS, data.businessName);
 
-  const processSteps = [
-    { step: "01", title: "Free Consultation", desc: "We discuss your financial goals, current situation, and how we can help maximize your returns." },
-    { step: "02", title: "Financial Assessment", desc: "Our CPAs review your books, tax history, and financial structures to identify opportunities." },
-    { step: "03", title: "Custom Strategy", desc: "We build a personalized financial plan covering tax optimization, compliance, and growth." },
-    { step: "04", title: "Ongoing Support", desc: "Year-round advisory, quarterly reviews, and proactive tax planning to keep you ahead." },
-  ];
+  const processSteps = TAX_PROCESS_STEPS;
 
   const faqs = [
     { q: `What accounting services does ${data.businessName} offer?`, a: `We provide comprehensive services including ${data.services.slice(0, 3).map(s => s.name).join(", ")}, and more. Schedule a free consultation to discuss your needs.` },
@@ -246,6 +300,21 @@ export default function V2AccountingPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
+      {/* 3.5 SERVICE TYPE BADGES */}
+      <section className="relative z-10 py-12 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #1a1a1a 0%, ${ACCENT}20 50%, #1a1a1a 100%)` }} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="flex flex-wrap justify-center gap-3">
+            {SERVICE_TYPE_BADGES.map((badge) => (
+              <div key={badge.label} className="flex items-center gap-2 px-5 py-2.5 rounded-full border text-sm font-semibold transition-colors hover:bg-white/[0.04]" style={{ borderColor: `${GOLD}33`, color: GOLD, background: `${GOLD}0a` }}>
+                <badge.icon size={18} weight="duotone" />
+                <span>{badge.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* 4. SERVICES */}
       <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #1a1a1a 0%, ${ACCENT}30 50%, #1a1a1a 100%)` }} />
@@ -266,6 +335,31 @@ export default function V2AccountingPreview({ data }: { data: GeneratedSiteData 
               </div>
             ); })}
           </div>
+        </div>
+      </section>
+
+      {/* 4.5 TAX SAVINGS */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #1a1a1a 0%, ${ACCENT}25 50%, #1a1a1a 100%)` }} />
+        <ChartBackground opacity={0.02} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Pricing" title="How Much Could You Save?" subtitle="Transparent pricing with no hidden fees. Every dollar we save you is a dollar back in your pocket." accent={ACCENT} />
+          <div className="grid md:grid-cols-3 gap-6">
+            {TAX_SAVINGS_CARDS.map((card) => (
+              <GlassCard key={card.title} className="p-7 text-center group hover:border-opacity-30 transition-all duration-500 relative overflow-hidden">
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${GOLD}15, transparent 70%)` }} />
+                <div className="relative z-10">
+                  <div className="w-14 h-14 rounded-full mx-auto mb-5 flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${GOLD}22, ${GOLD}0a)`, border: `1px solid ${GOLD}33` }}>
+                    <card.icon size={26} weight="duotone" style={{ color: GOLD }} />
+                  </div>
+                  <h3 className="text-lg font-bold text-white mb-1">{card.title}</h3>
+                  <p className="text-2xl font-extrabold mb-3" style={{ color: GOLD }}>{card.price}</p>
+                  <p className="text-sm text-slate-400 leading-relaxed">{card.desc}</p>
+                </div>
+              </GlassCard>
+            ))}
+          </div>
+          <p className="text-center text-sm text-slate-500 mt-8">Exact pricing depends on complexity. Schedule a free consultation for a custom quote.</p>
         </div>
       </section>
 
@@ -298,14 +392,21 @@ export default function V2AccountingPreview({ data }: { data: GeneratedSiteData 
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #1a1a1a 0%, ${ACCENT}30 50%, #1a1a1a 100%)` }} />
         <GraphPattern opacity={0.025} accent={ACCENT} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <AnimatedSection>          <SectionHeader badge="Our Process" title="How We Work" accent={ACCENT} /></AnimatedSection>
+          <AnimatedSection>          <SectionHeader badge="The Tax Process" title="Simple. Thorough. Maximum Refund." subtitle="Four easy steps to peace of mind and more money in your pocket." accent={ACCENT} /></AnimatedSection>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {processSteps.map((step, i) => (
+            {processSteps.map((step, i) => { const StepIcon = step.icon; return (
               <div key={step.step} className="relative">
                 {i < processSteps.length - 1 && <div className="hidden lg:block absolute top-10 left-[calc(50%+40px)] w-[calc(100%-80px)] h-px" style={{ background: `linear-gradient(to right, ${GOLD}33, ${GOLD}11)` }} />}
-                <GlassCard className="p-6 text-center relative"><div className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center text-2xl font-black" style={{ background: `linear-gradient(135deg, ${GOLD}22, ${GOLD}0a)`, color: GOLD, border: `1px solid ${GOLD}33` }}>{step.step}</div><h3 className="text-lg font-bold text-white mb-2">{step.title}</h3><p className="text-sm text-slate-400 leading-relaxed">{step.desc}</p></GlassCard>
+                <GlassCard className="p-6 text-center relative">
+                  <div className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${GOLD}22, ${GOLD}0a)`, border: `1px solid ${GOLD}33` }}>
+                    <StepIcon size={28} weight="duotone" style={{ color: GOLD }} />
+                  </div>
+                  <span className="text-xs font-mono text-slate-600 mb-2 block">{step.step}</span>
+                  <h3 className="text-lg font-bold text-white mb-2">{step.title}</h3>
+                  <p className="text-sm text-slate-400 leading-relaxed">{step.desc}</p>
+                </GlassCard>
               </div>
-            ))}
+            ); })}
           </div>
         </div>
       </section>
@@ -328,12 +429,153 @@ export default function V2AccountingPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
+      {/* 7.5 WHY CHOOSE A CPA */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #1a1a1a 0%, ${ACCENT}30 50%, #1a1a1a 100%)` }} />
+        <GraphPattern opacity={0.025} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="CPA Advantage" title="Why Choose a CPA?" subtitle="A licensed CPA offers expertise and protection that DIY software simply cannot match." accent={ACCENT} />
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {CPA_PILLARS.map((pillar) => (
+              <GlassCard key={pillar.title} className="p-6 text-center group hover:border-opacity-30 transition-all duration-500 relative overflow-hidden">
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${GOLD}15, transparent 70%)` }} />
+                <div className="relative z-10">
+                  <div className="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${GOLD}22, ${GOLD}0a)`, border: `1px solid ${GOLD}33` }}>
+                    <pillar.icon size={26} weight="duotone" style={{ color: GOLD }} />
+                  </div>
+                  <h3 className="text-base font-bold text-white mb-2">{pillar.title}</h3>
+                  <p className="text-sm text-slate-400 leading-relaxed">{pillar.desc}</p>
+                </div>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 7.6 INDUSTRIES WE SERVE */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #1a1a1a 0%, ${ACCENT}20 50%, #1a1a1a 100%)` }} />
+        <ChartBackground opacity={0.02} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Specializations" title="Industries We Serve" subtitle={`${data.businessName} has deep expertise across a wide range of industries.`} accent={ACCENT} />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {INDUSTRIES_SERVED.map((industry) => (
+              <GlassCard key={industry.name} className="p-5 text-center group hover:border-opacity-30 transition-all duration-500 relative overflow-hidden cursor-default">
+                <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${GOLD}4d, transparent)` }} />
+                <div className="relative z-10">
+                  <div className="w-12 h-12 rounded-xl mx-auto mb-3 flex items-center justify-center" style={{ background: `${GOLD}12`, border: `1px solid ${GOLD}22` }}>
+                    <industry.icon size={22} weight="duotone" style={{ color: GOLD }} />
+                  </div>
+                  <span className="text-sm font-semibold text-white">{industry.name}</span>
+                </div>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 7.7 COMPETITOR COMPARISON TABLE */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #1a1a1a 0%, ${ACCENT}30 50%, #1a1a1a 100%)` }} />
+        <GraphPattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Compare" title={`${data.businessName} vs DIY Tax Software`} subtitle="See why working with a licensed CPA delivers more value than going it alone." accent={ACCENT} />
+          <GlassCard className="overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="border-b border-white/10">
+                    <th className="px-5 py-4 text-sm font-semibold text-slate-400">Feature</th>
+                    <th className="px-5 py-4 text-sm font-semibold text-center" style={{ color: GOLD }}>{data.businessName}</th>
+                    <th className="px-5 py-4 text-sm font-semibold text-slate-500 text-center">DIY Software</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {COMPARISON_ROWS.map((row, i) => (
+                    <tr key={row.feature} className={`border-b border-white/5 ${i % 2 === 0 ? "bg-white/[0.01]" : ""}`}>
+                      <td className="px-5 py-4 text-sm text-slate-300 font-medium">{row.feature}</td>
+                      <td className="px-5 py-4 text-center"><CheckCircle size={22} weight="fill" className="mx-auto" style={{ color: "#22c55e" }} /></td>
+                      <td className="px-5 py-4 text-center text-sm text-slate-500 font-medium">{row.them}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </GlassCard>
+        </div>
+      </section>
+
+      {/* 7.8 VIDEO PLACEHOLDER */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #1a1a1a 0%, ${ACCENT}20 50%, #1a1a1a 100%)` }} />
+        <ChartBackground opacity={0.02} accent={ACCENT} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Get to Know Us" title="Meet Your CPA" subtitle="See the people behind the numbers and learn how we help clients achieve peace of mind." accent={ACCENT} />
+          <div className="relative rounded-2xl overflow-hidden border border-white/10 group cursor-pointer">
+            <img src={aboutImage} alt={`Meet the ${data.businessName} team`} className="w-full h-[300px] md:h-[420px] object-cover transition-transform duration-700 group-hover:scale-105" />
+            <div className="absolute inset-0 bg-black/50 group-hover:bg-black/40 transition-colors duration-300" />
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
+              <div className="w-20 h-20 rounded-full flex items-center justify-center border-2 transition-transform duration-300 group-hover:scale-110" style={{ borderColor: GOLD, background: `${GOLD}33` }}>
+                <Play size={36} weight="fill" style={{ color: GOLD }} />
+              </div>
+              <span className="text-white font-semibold text-lg">Watch Our Story</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 7.9 TAX HELP QUIZ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #1a1a1a 0%, ${ACCENT}30 50%, #1a1a1a 100%)` }} />
+        <GraphPattern opacity={0.025} accent={ACCENT} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Get Started" title="What Tax Help Do You Need?" subtitle="Select your situation and we will match you with the right solution." accent={ACCENT} />
+          <div className="grid md:grid-cols-2 gap-5">
+            {TAX_QUIZ_OPTIONS.map((option) => (
+              <div key={option.label} className="group relative p-6 rounded-2xl border border-white/[0.06] hover:border-opacity-40 transition-all duration-500 overflow-hidden bg-white/[0.02] cursor-pointer">
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${option.color}20, transparent 70%)` }} />
+                <div className="absolute top-0 left-0 right-0 h-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: option.color }} />
+                <div className="relative z-10 flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0" style={{ background: `${option.color}1a`, border: `1px solid ${option.color}33` }}>
+                    <option.icon size={24} weight="duotone" style={{ color: option.color }} />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-lg font-bold text-white mb-1">{option.label}</h3>
+                    <p className="text-sm text-slate-400">{option.desc}</p>
+                  </div>
+                  <ArrowRight size={20} className="text-slate-600 group-hover:text-white transition-colors mt-1 shrink-0" />
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="text-center mt-8">
+            <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-black inline-flex items-center gap-2 cursor-pointer" style={{ background: GOLD } as React.CSSProperties}>
+              Schedule Free Consultation <ArrowRight size={18} weight="bold" />
+            </MagneticButton>
+          </div>
+        </div>
+      </section>
+
       {/* 8. TESTIMONIALS */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #1a1a1a 0%, ${ACCENT}30 50%, #1a1a1a 100%)` }} />
         <GraphPattern opacity={0.02} accent={ACCENT} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <AnimatedSection>          <SectionHeader badge="Testimonials" title="What Our Clients Say" accent={ACCENT} /></AnimatedSection>
+          {/* Google Reviews Header */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-10">
+            <div className="flex gap-1">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Star key={i} size={24} weight="fill" style={{ color: "#facc15" }} />
+              ))}
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-2xl font-extrabold text-white">{data.googleRating || "4.9"}</span>
+              <span className="text-slate-400 text-sm font-medium">out of 5 based on</span>
+              <span className="text-white font-semibold">{data.reviewCount || "100+"}</span>
+              <span className="text-slate-400 text-sm font-medium">Google Reviews</span>
+            </div>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {testimonials.map((t, i) => (
               <GlassCard key={i} className="p-6 h-full flex flex-col"><div className="flex gap-0.5 mb-4">{Array.from({ length: t.rating || 5 }).map((_, j) => <Star key={j} size={16} weight="fill" style={{ color: GOLD }} />)}</div><p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p><div className="pt-4 border-t border-white/5"><span className="text-sm font-semibold text-white">{t.name}</span></div></GlassCard>
@@ -342,15 +584,30 @@ export default function V2AccountingPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* 9. CTA */}
+      {/* 9. FREE CONSULTATION CTA */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT}cc, ${ACCENT})` }} />
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='40' height='40' fill='none'/%3E%3Cpath d='M0 0L40 40M40 0L0 40' stroke='%23000' stroke-width='0.5'/%3E%3C/svg%3E\")" }} />
         <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
-          <CurrencyDollar size={48} weight="fill" className="mx-auto mb-6 text-white/70" />
-          <h2 className="text-3xl md:text-5xl font-black tracking-tight text-white mb-4">Maximize Your Financial Potential</h2>
-          <p className="text-lg text-white/80 mb-8 max-w-xl mx-auto">Stop leaving money on the table. Our CPAs will find every deduction and build a strategy to grow your wealth.</p>
-          <PhoneLink phone={data.phone} className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-black text-white font-bold text-lg hover:bg-black/80 transition-colors"><Phone size={20} weight="fill" />{data.phone}</PhoneLink>
+          <ShimmerBorder accent={GOLD}>
+            <div className="p-8 md:p-12">
+              <CurrencyDollar size={48} weight="fill" className="mx-auto mb-6" style={{ color: GOLD }} />
+              <h2 className="text-3xl md:text-5xl font-black tracking-tight text-white mb-4">Schedule Your Free Tax Consultation</h2>
+              <p className="text-lg text-slate-300 mb-3 max-w-xl mx-auto">Find out what deductions you have been missing. Our CPAs will review your situation and build a strategy to maximize your refund.</p>
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold mb-8" style={{ color: GOLD, background: `${GOLD}15`, border: `1px solid ${GOLD}33` }}>
+                <ChartLineUp size={16} weight="fill" />
+                Average client saves $3,200
+              </div>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-black flex items-center gap-2 cursor-pointer" style={{ background: GOLD } as React.CSSProperties}>
+                  Book Free Consultation <ArrowRight size={18} weight="bold" />
+                </MagneticButton>
+                <PhoneLink phone={data.phone} className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-white/10 text-white font-bold text-base hover:bg-white/15 transition-colors border border-white/10">
+                  <Phone size={20} weight="fill" />{data.phone}
+                </PhoneLink>
+              </div>
+            </div>
+          </ShimmerBorder>
         </div>
       </section>
 
