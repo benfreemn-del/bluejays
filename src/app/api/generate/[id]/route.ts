@@ -49,15 +49,26 @@ export async function POST(
       prospect.currentWebsite,
     );
 
-    // Save scraped data if we got anything useful — MERGE with existing to preserve manual updates
+    // Save scraped data if we got anything useful — SMART MERGE to preserve manual enrichments
+    // Key rule: NEVER overwrite non-empty enriched data with empty scraper results
     const hasData = data.phone || data.services.length > 0 || data.about || data.photos.length > 0;
     if (hasData) {
       const existingSD = (prospect.scrapedData || {}) as Record<string, unknown>;
+      const existingServices = existingSD.services as Array<unknown> | undefined;
+      const existingAbout = existingSD.about as string | undefined;
+      const existingTagline = existingSD.tagline as string | undefined;
+      const existingStats = existingSD.stats as Array<unknown> | undefined;
       prospect.scrapedData = {
         ...existingSD,
         ...data,
+        // Preserve enriched data if scraper returned empty — never overwrite good data with nothing
+        services: data.services?.length > 0 ? data.services : (existingServices?.length ? existingServices : data.services),
+        about: (data.about && data.about.length > 50) ? data.about : (existingAbout && existingAbout.length > 50 ? existingAbout : data.about),
+        tagline: data.tagline || existingTagline || "",
+        stats: (data.stats as Array<unknown>)?.length > 0 ? data.stats : (existingStats?.length ? existingStats : (data.stats || [])),
         businessName: data.businessName || (existingSD.businessName as string) || prospect.businessName,
-        brandColor: data.brandColor || (existingSD.brandColor as string),
+        brandColor: (existingSD.brandColor as string) || data.brandColor,
+        accentColor: (existingSD.accentColor as string) || data.accentColor || (existingSD.brandColor as string) || data.brandColor,
         brandColorSource:
           data.brandColorSource ||
           (existingSD.brandColorSource as "official-site" | "logo" | "category-default" | undefined),
