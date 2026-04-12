@@ -321,8 +321,16 @@ export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
 
   const { GOLD, GOLD_GLOW } = getAccent(data.accentColor);
 
-  const heroImage = data.photos?.[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
-  const aboutImage = data.photos?.[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName);
+  const uniquePhotos = data.photos ? [...new Set(data.photos)] : [];
+
+
+  const heroImage = uniquePhotos[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
+
+
+  const heroCardImage = uniquePhotos[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 1);
+
+
+  const aboutImage = uniquePhotos[2] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 2);
   const galleryImages = data.photos?.length > 2 ? data.photos.slice(2, 6) : pickGallery(STOCK_GALLERY, data.businessName);
 
   const phoneDigits = data.phone.replace(/\D/g, "");
@@ -429,7 +437,7 @@ export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
 
           <div className="hidden md:block relative">
             <div className="relative rounded-2xl overflow-hidden border border-white/10">
-              <img src={heroImage} alt={`${data.businessName} worship`} className="w-full h-[500px] object-cover" />
+              <img src={heroCardImage} alt={`${data.businessName} worship`} className="w-full h-[500px] object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a2e] via-transparent to-transparent" />
               <div className="absolute inset-0 bg-gradient-to-r from-[#1a1a2e]/40 to-transparent" />
               <div className="absolute bottom-6 left-6 flex items-center gap-3">

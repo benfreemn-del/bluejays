@@ -352,8 +352,16 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
 
   const { AMBER, AMBER_GLOW } = getAccent(data.accentColor);
 
-  const heroImage = data.photos?.[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
-  const aboutImage = data.photos?.[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName);
+  const uniquePhotos = data.photos ? [...new Set(data.photos)] : [];
+
+
+  const heroImage = uniquePhotos[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
+
+
+  const heroCardImage = uniquePhotos[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 1);
+
+
+  const aboutImage = uniquePhotos[2] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 2);
   const projectImages = data.photos?.length > 2
     ? data.photos.slice(2, 6)
     : pickGallery(STOCK_PROJECTS, data.businessName);
@@ -517,7 +525,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
           <div className="hidden md:block relative">
             <div className="relative rounded-2xl overflow-hidden border border-white/10">
               <img
-                src={heroImage}
+                src={heroCardImage}
                 alt={`${data.businessName} professional electrician`}
                 className="w-full h-[500px] object-cover"
               />

@@ -145,8 +145,16 @@ export default function V2TattooPreview({ data }: { data: GeneratedSiteData }) {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const { ACCENT, ACCENT_GLOW } = getAccent(data.accentColor);
 
-  const heroImage = data.photos?.[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
-  const aboutImage = data.photos?.[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName);
+  const uniquePhotos = data.photos ? [...new Set(data.photos)] : [];
+
+
+  const heroImage = uniquePhotos[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
+
+
+  const heroCardImage = uniquePhotos[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 1);
+
+
+  const aboutImage = uniquePhotos[2] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 2);
   const galleryImages = data.photos?.length > 2 ? data.photos.slice(2, 8) : pickGallery(STOCK_GALLERY, data.businessName);
 
   const faqs = [
@@ -214,7 +222,7 @@ export default function V2TattooPreview({ data }: { data: GeneratedSiteData }) {
           </div>
           <div className="hidden md:block relative">
             <div className="relative rounded-2xl overflow-hidden border border-white/10">
-              <img src={heroImage} alt={`${data.businessName} tattoo art`} className="w-full h-[500px] object-cover" />
+              <img src={heroCardImage} alt={`${data.businessName} tattoo art`} className="w-full h-[500px] object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent" />
               <div className="absolute bottom-6 left-6"><div className="px-4 py-2 rounded-full backdrop-blur-md bg-black/50 border flex items-center gap-2" style={{ borderColor: `${ACCENT}4d` }}><ShieldCheck size={18} weight="fill" style={{ color: ACCENT }} /><span className="text-sm font-semibold text-white">Health Certified Studio</span></div></div>
             </div>

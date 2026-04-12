@@ -258,8 +258,16 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const { ACCENT, ACCENT_GLOW } = getAccent(data.accentColor);
 
-  const heroImage = data.photos?.[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
-  const aboutImage = data.photos?.[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName);
+  const uniquePhotos = data.photos ? [...new Set(data.photos)] : [];
+
+
+  const heroImage = uniquePhotos[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
+
+
+  const heroCardImage = uniquePhotos[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 1);
+
+
+  const aboutImage = uniquePhotos[2] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 2);
   const projectImages = data.photos?.length > 2 ? data.photos.slice(2, 6) : pickGallery(STOCK_PROJECTS, data.businessName);
 
   const processSteps = [
@@ -359,7 +367,7 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
           </div>
           <div className="hidden md:block relative">
             <div className="relative rounded-2xl overflow-hidden border border-gray-200">
-              <img src={heroImage} alt={`${data.businessName} child care`} className="w-full h-[500px] object-cover" />
+              <img src={heroCardImage} alt={`${data.businessName} child care`} className="w-full h-[500px] object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
               <div className="absolute inset-0 bg-gradient-to-r from-black/40/40 to-transparent" />
               <div className="absolute bottom-6 left-6 flex items-center gap-3">

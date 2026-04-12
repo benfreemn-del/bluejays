@@ -363,8 +363,16 @@ export default function V2InteriorDesignPreview({ data }: { data: GeneratedSiteD
 
   const { PRIMARY, PRIMARY_GLOW } = getAccent(data.accentColor);
 
-  const heroImage = data.photos?.[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
-  const aboutImage = data.photos?.[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName);
+  const uniquePhotos = data.photos ? [...new Set(data.photos)] : [];
+
+
+  const heroImage = uniquePhotos[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
+
+
+  const heroCardImage = uniquePhotos[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 1);
+
+
+  const aboutImage = uniquePhotos[2] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 2);
   const galleryImages = data.photos?.length > 2 ? data.photos.slice(2, 10) : pickGallery(STOCK_GALLERY, data.businessName);
 
   const faqs = [

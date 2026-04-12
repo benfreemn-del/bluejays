@@ -81,8 +81,13 @@ export default function V2PetServicesPreview({ data }: { data: GeneratedSiteData
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const { ACCENT, ACCENT_GLOW } = getAccent(data.accentColor);
-  const heroImage = data.photos?.[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
-  const aboutImage = data.photos?.[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName);
+  const uniquePhotos = data.photos ? [...new Set(data.photos)] : [];
+
+  const heroImage = uniquePhotos[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
+
+  const heroCardImage = uniquePhotos[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 1);
+
+  const aboutImage = uniquePhotos[2] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 2);
   const galleryImages = data.photos?.length > 2 ? data.photos.slice(2, 8) : pickGallery(STOCK_GALLERY, data.businessName);
 
   const faqs = [
@@ -127,7 +132,7 @@ export default function V2PetServicesPreview({ data }: { data: GeneratedSiteData
             </div>
             <div className="flex flex-wrap gap-6 text-sm text-slate-400"><span className="flex items-center gap-2"><MapPin size={16} weight="duotone" style={{ color: ACCENT }} /> <MapLink address={data.address} /></span><span className="flex items-center gap-2"><Clock size={16} weight="duotone" style={{ color: ACCENT }} /> {data.hours || "Open 7 Days"}</span></div>
           </div>
-          <div className="hidden md:block relative"><div className="relative rounded-2xl overflow-hidden border border-white/10"><img src={heroImage} alt={`${data.businessName}`} className="w-full h-[500px] object-cover" /><div className="absolute inset-0 bg-gradient-to-t from-[#0a1015] via-transparent to-transparent" /><div className="absolute bottom-6 left-6"><div className="px-4 py-2 rounded-full backdrop-blur-md bg-black/50 border flex items-center gap-2" style={{ borderColor: `${ACCENT}4d` }}><Heart size={18} weight="fill" style={{ color: ACCENT }} /><span className="text-sm font-semibold text-white">Trusted Pet Care</span></div></div></div></div>
+          <div className="hidden md:block relative"><div className="relative rounded-2xl overflow-hidden border border-white/10"><img src={heroCardImage} alt={`${data.businessName}`} className="w-full h-[500px] object-cover" /><div className="absolute inset-0 bg-gradient-to-t from-[#0a1015] via-transparent to-transparent" /><div className="absolute bottom-6 left-6"><div className="px-4 py-2 rounded-full backdrop-blur-md bg-black/50 border flex items-center gap-2" style={{ borderColor: `${ACCENT}4d` }}><Heart size={18} weight="fill" style={{ color: ACCENT }} /><span className="text-sm font-semibold text-white">Trusted Pet Care</span></div></div></div></div>
         </div>
       </section>
 
