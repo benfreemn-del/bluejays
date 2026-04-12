@@ -149,7 +149,8 @@ export async function generateSiteData(prospect: Prospect): Promise<GeneratedSit
   const sd = ({
     ...((scrapedData || {}) as ScrapedData),
     address: normalizeAddress(scrapedData?.address),
-    photos: (scrapedData?.photos || []).map((photo) => photo.trim()).filter(Boolean),
+    // Deduplicate photos at the source — remove exact URL matches AND strip query params for base-URL dedup
+    photos: [...new Set((scrapedData?.photos || []).map((photo: string) => photo.trim()).filter(Boolean))],
   }) as ScrapedData;
 
   // CUSTOMIZATION PRIORITY: Always prefer real business data over defaults
@@ -169,7 +170,12 @@ export async function generateSiteData(prospect: Prospect): Promise<GeneratedSit
 
   const generatedTagline = sd.tagline || buildTaglineFromResearchBrief(researchBrief, category);
   const generatedAbout = sd.about || buildAboutFromResearchBrief(researchBrief, category);
-  const services = sd.services?.length > 0 ? sd.services : getDefaultServices(category);
+  // Ensure every service has a description — empty descriptions make service cards look unprofessional
+  const rawServices = sd.services?.length > 0 ? sd.services : getDefaultServices(category);
+  const services = rawServices.map((s) => ({
+    ...s,
+    description: s.description || getDefaultServiceDescription(s.name, category),
+  }));
   const testimonials = sd.testimonials?.length > 0 ? sd.testimonials : [];
   const placeholderIssues = lintPlaceholderContent({
     businessName,
@@ -304,6 +310,55 @@ export async function generatePreview(prospect: Prospect): Promise<string> {
 
   console.log(`  📍 Preview at: ${previewUrl}`);
   return previewUrl;
+}
+
+/** Generate a reasonable description for a service that was scraped with name-only */
+function getDefaultServiceDescription(serviceName: string, category: Category): string {
+  const lower = serviceName.toLowerCase();
+  // Category-specific descriptions for common services
+  const categoryDescriptions: Partial<Record<Category, Record<string, string>>> = {
+    dental: {
+      cleaning: "Professional teeth cleaning to remove plaque, tartar, and stains for a healthier smile.",
+      whitening: "Professional teeth whitening treatments to brighten your smile safely and effectively.",
+      implant: "Permanent tooth replacement with natural-looking dental implants.",
+      crown: "Custom dental crowns to restore damaged teeth to full function and appearance.",
+      emergency: "Same-day emergency dental care for toothaches, broken teeth, and urgent needs.",
+      cosmetic: "Smile makeovers including veneers, bonding, and aesthetic enhancements.",
+      pediatric: "Gentle, kid-friendly dental care in a warm and welcoming environment.",
+      root: "Pain-free root canal therapy using modern techniques to save your natural teeth.",
+      filling: "Tooth-colored fillings that blend naturally with your smile.",
+      extraction: "Safe, comfortable tooth extractions with options for replacement.",
+      denture: "Custom-crafted dentures and partials for a natural-looking smile.",
+      orthodon: "Orthodontic treatments including braces and clear aligners for straighter teeth.",
+      exam: "Comprehensive dental exams with digital imaging to catch issues early.",
+    },
+    veterinary: {
+      vaccine: "Core and lifestyle vaccinations to protect your pet from preventable diseases.",
+      surgery: "Advanced surgical procedures performed with the latest techniques and monitoring.",
+      dental: "Professional pet dental cleanings and oral health assessments.",
+      emergency: "Urgent veterinary care for injuries, illness, and after-hours emergencies.",
+      wellness: "Comprehensive wellness exams to keep your pet healthy at every life stage.",
+      groom: "Professional grooming services to keep your pet clean, comfortable, and looking great.",
+    },
+    moving: {
+      residential: "Full-service residential moving with careful handling of all your belongings.",
+      commercial: "Efficient office and commercial relocations to minimize downtime.",
+      packing: "Professional packing services using quality materials to protect your items.",
+      long: "Reliable long-distance moving services with tracking and on-time delivery.",
+      storage: "Secure, climate-controlled storage solutions for short or long-term needs.",
+    },
+  };
+
+  // Try category-specific match
+  const catDescs = categoryDescriptions[category];
+  if (catDescs) {
+    for (const [key, desc] of Object.entries(catDescs)) {
+      if (lower.includes(key)) return desc;
+    }
+  }
+
+  // Generic fallback
+  return `Professional ${serviceName.toLowerCase()} services tailored to your specific needs.`;
 }
 
 function isDefaultService(name: string): boolean {
