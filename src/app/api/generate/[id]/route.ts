@@ -58,9 +58,14 @@ export async function POST(
       const existingAbout = existingSD.about as string | undefined;
       const existingTagline = existingSD.tagline as string | undefined;
       const existingStats = existingSD.stats as Array<unknown> | undefined;
+      const existingPhotos = existingSD.photos as string[] | undefined;
+      // If existing photos include local /images/ paths (manually curated), preserve them
+      const hasManualPhotos = existingPhotos?.some((p: string) => typeof p === "string" && p.startsWith("/images/"));
       prospect.scrapedData = {
         ...existingSD,
         ...data,
+        // Preserve manually curated photos (local /images/ paths) over scraper results
+        photos: hasManualPhotos ? existingPhotos : (data.photos?.length > 0 ? data.photos : (existingPhotos || data.photos)),
         // Preserve enriched data if scraper returned empty — never overwrite good data with nothing
         services: data.services?.length > 0 ? data.services : (existingServices?.length ? existingServices : data.services),
         about: (data.about && data.about.length > 50) ? data.about : (existingAbout && existingAbout.length > 50 ? existingAbout : data.about),
