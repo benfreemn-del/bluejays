@@ -30,6 +30,10 @@ import {
   Users,
   ClipboardText,
   Warehouse,
+  Play,
+  HouseSimple,
+  Blueprint,
+  CalendarCheck,
 } from "@phosphor-icons/react";
 import type { GeneratedSiteData } from "@/lib/generator";
 import BluejayLogo from "../BluejayLogo";
@@ -211,15 +215,9 @@ function SectionHeader({ badge, title, subtitle, accent }: { badge: string; titl
 /* ───────────────────────── ANIMATED SECTION ───────────────────────── */
 function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, x: -50 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
-      transition={{ duration: 0.7, ease: "easeOut" as const }}
-      className={className}
-    >
+    <div className={className}>
       {children}
-    </motion.div>
+    </div>
   );
 }
 
@@ -262,6 +260,67 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
     { name: "Frank T.", text: "Honest, reliable, and skilled. They treat your home like it's their own.", rating: 5 }
   ];
   const testimonials = data.testimonials?.length > 0 ? data.testimonials : fallbackTestimonials;
+
+  /* ───────── FEATURE DATA: Project Type Badges ───────── */
+  const projectTypeBadges = [
+    "Kitchen Remodels", "Bathroom Renovations", "Additions",
+    "New Construction", "Commercial", "Outdoor Living",
+  ];
+
+  /* ───────── FEATURE DATA: Project Investment Guide ───────── */
+  const investmentCards = [
+    { title: "Bathroom Remodel", price: "From $15K", desc: "Complete tear-out and rebuild with premium finishes, modern fixtures, and expert tile work.", icon: Wrench },
+    { title: "Kitchen Renovation", price: "From $35K", desc: "Custom cabinetry, countertops, appliances, and layouts designed for how you actually live.", icon: HouseSimple },
+    { title: "Home Addition", price: "From $75K+", desc: "Expand your living space with a seamless addition — permitted, engineered, and built to last.", icon: Buildings },
+  ];
+
+  /* ───────── FEATURE DATA: Build Process (5-step) ───────── */
+  const buildProcess = [
+    { step: "01", title: "Free Consultation", desc: "We meet on-site, discuss your vision, evaluate the scope, and provide an honest assessment.", icon: Phone },
+    { step: "02", title: "Design & Planning", desc: "Detailed plans, material selections, 3D renderings, and a locked-in budget — no surprises.", icon: Blueprint },
+    { step: "03", title: "Permits & Approvals", desc: "We handle all permit applications, engineering reviews, and municipal approvals.", icon: ClipboardText },
+    { step: "04", title: "Quality Construction", desc: "Expert crews execute with precision. Daily updates, clean job sites, and zero shortcuts.", icon: HardHat },
+    { step: "05", title: "Final Walkthrough", desc: "We walk every inch together. Your project isn't done until you're 100% satisfied.", icon: CalendarCheck },
+  ];
+
+  /* ───────── FEATURE DATA: Why Licensed GC ───────── */
+  const licensedPillars = [
+    { icon: ShieldCheck, title: "Licensed, Bonded & Insured", desc: "Full liability coverage and state licensing protects your investment from day one." },
+    { icon: ClipboardText, title: "Permit Management", desc: "We pull every permit, schedule every inspection, and ensure full code compliance." },
+    { icon: Users, title: "Subcontractor Coordination", desc: "We vet, hire, and manage all trades — electrical, plumbing, HVAC, and more." },
+    { icon: CheckCircle, title: "Warranty Protection", desc: "Comprehensive workmanship warranty on every project. We stand behind our work." },
+  ];
+
+  /* ───────── FEATURE DATA: Project Types Grid ───────── */
+  const projectTypesGrid = [
+    { name: "Kitchen Remodels", icon: Wrench },
+    { name: "Bathroom Renovations", icon: HouseSimple },
+    { name: "Room Additions", icon: House },
+    { name: "Whole Home Remodels", icon: Ruler },
+    { name: "Decks & Patios", icon: Hammer },
+    { name: "ADUs & Guest Houses", icon: Buildings },
+    { name: "Commercial Tenant Improvements", icon: Warehouse },
+    { name: "Structural Repairs", icon: HardHat },
+  ];
+
+  /* ───────── FEATURE DATA: Competitor Comparison ───────── */
+  const comparisonRows = [
+    { label: "Licensed & Bonded", us: true, them: "No / Unknown" },
+    { label: "Permit Management", us: true, them: "Risk" },
+    { label: "Structural Engineering", us: true, them: "No" },
+    { label: "Workmanship Warranty", us: true, them: "Varies" },
+    { label: "Full Insurance Coverage", us: true, them: "Risk" },
+    { label: "Vetted Subcontractors", us: true, them: "No" },
+    { label: "Code Compliance Guarantee", us: true, them: "Risk" },
+  ];
+
+  /* ───────── FEATURE DATA: Project Quiz ───────── */
+  const quizOptions = [
+    { label: "Kitchen or Bath Remodel", tag: "Most Popular", desc: "Update the heart of your home with modern design and premium finishes.", icon: Wrench },
+    { label: "Addition or ADU", tag: "Add Space", desc: "Expand your living area with a permitted, professionally built addition.", icon: Buildings },
+    { label: "Whole Home Renovation", tag: "Transform Everything", desc: "Reimagine your entire home — layout, finishes, systems, and more.", icon: HouseSimple },
+    { label: "Commercial Build-Out", tag: "Business Space", desc: "Professional tenant improvements and commercial construction.", icon: Warehouse },
+  ];
 
   return (
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: BG, color: "#f1f5f9" }}>
@@ -371,6 +430,20 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
         </div>
       </section>
 
+      {/* ══════ 3b. PROJECT TYPE BADGES ══════ */}
+      <section className="relative z-10 py-10 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #12141a 100%)` }} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="flex flex-wrap justify-center gap-3">
+            {projectTypeBadges.map((badge) => (
+              <span key={badge} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold border transition-colors" style={{ color: ACCENT, borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}>
+                <Hammer size={16} weight="duotone" /> {badge}
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ══════ 4. SERVICES ══════ */}
       <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #12141a 50%, ${BG} 100%)` }} />
@@ -399,6 +472,31 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
               );
             })}
           </div>
+        </div>
+      </section>
+
+      {/* ══════ 4b. PROJECT INVESTMENT GUIDE ══════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #12141a 0%, ${BG} 50%, #12141a 100%)` }} />
+        <BlueprintGrid opacity={0.02} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Investment Guide" title="Transparent Project Pricing" subtitle="No hidden fees. No surprises. Know what to expect before you commit." accent={ACCENT} />
+          <div className="grid md:grid-cols-3 gap-6">
+            {investmentCards.map((card) => (
+              <GlassCard key={card.title} className="p-8 text-center relative overflow-hidden group">
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${ACCENT}12, transparent 70%)` }} />
+                <div className="relative z-10">
+                  <div className="w-14 h-14 rounded-2xl mx-auto mb-5 flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${ACCENT}22, ${ACCENT}0a)`, border: `1px solid ${ACCENT}33` }}>
+                    <card.icon size={28} weight="duotone" style={{ color: ACCENT }} />
+                  </div>
+                  <h3 className="text-lg font-bold text-white mb-1">{card.title}</h3>
+                  <p className="text-2xl font-extrabold mb-3" style={{ color: ACCENT }}>{card.price}</p>
+                  <p className="text-sm text-slate-400 leading-relaxed">{card.desc}</p>
+                </div>
+              </GlassCard>
+            ))}
+          </div>
+          <p className="text-center text-slate-500 text-sm mt-6">Every project is unique — contact us for a detailed, no-obligation estimate tailored to your home.</p>
         </div>
       </section>
 
@@ -442,22 +540,66 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
         </div>
       </section>
 
+      {/* ══════ 5b. WHY CHOOSE A LICENSED GC ══════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #12141a 50%, ${BG} 100%)` }} />
+        <ConstructionBeams opacity={0.025} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Licensed Contractor" title="Why Hire a Licensed General Contractor?" subtitle="The difference between a professional operation and a contractor horror story." accent={ACCENT} />
+          <div className="grid md:grid-cols-2 gap-6">
+            {licensedPillars.map((pillar) => (
+              <GlassCard key={pillar.title} className="p-7 flex items-start gap-5 group">
+                <div className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0" style={{ background: `linear-gradient(135deg, ${ACCENT}22, ${ACCENT}0a)`, border: `1px solid ${ACCENT}33` }}>
+                  <pillar.icon size={28} weight="duotone" style={{ color: ACCENT }} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white mb-2">{pillar.title}</h3>
+                  <p className="text-sm text-slate-400 leading-relaxed">{pillar.desc}</p>
+                </div>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ══════ 6. PROCESS ══════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #12141a 50%, ${BG} 100%)` }} />
         <BlueprintGrid opacity={0.025} accent={ACCENT} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <AnimatedSection>          <SectionHeader badge="Our Process" title="How We Build" accent={ACCENT} /></AnimatedSection>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {processSteps.map((step, i) => (
+          <SectionHeader badge="Our Build Process" title="From Vision to Completion" subtitle="A proven 5-step process that keeps your project on time, on budget, and stress-free." accent={ACCENT} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+            {buildProcess.map((step, i) => (
               <div key={step.step} className="relative">
-                {i < processSteps.length - 1 && <div className="hidden lg:block absolute top-10 left-[calc(50%+40px)] w-[calc(100%-80px)] h-px" style={{ background: `linear-gradient(to right, ${ACCENT}33, ${ACCENT}11)` }} />}
-                <GlassCard className="p-6 text-center relative">
-                  <div className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center text-2xl font-black" style={{ background: `linear-gradient(135deg, ${ACCENT}22, ${ACCENT}0a)`, color: ACCENT, border: `1px solid ${ACCENT}33` }}>{step.step}</div>
-                  <h3 className="text-lg font-bold text-white mb-2">{step.title}</h3>
+                {i < buildProcess.length - 1 && <div className="hidden lg:block absolute top-10 left-[calc(50%+40px)] w-[calc(100%-80px)] h-px" style={{ background: `linear-gradient(to right, ${ACCENT}33, ${ACCENT}11)` }} />}
+                <GlassCard className="p-6 text-center relative h-full">
+                  <div className="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${ACCENT}22, ${ACCENT}0a)`, border: `1px solid ${ACCENT}33` }}>
+                    <step.icon size={24} weight="duotone" style={{ color: ACCENT }} />
+                  </div>
+                  <span className="text-xs font-mono mb-2 block" style={{ color: ACCENT }}>Step {step.step}</span>
+                  <h3 className="text-base font-bold text-white mb-2">{step.title}</h3>
                   <p className="text-sm text-slate-400 leading-relaxed">{step.desc}</p>
                 </GlassCard>
               </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════ 6b. PROJECT TYPES WE HANDLE ══════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #12141a 0%, ${BG} 50%, #12141a 100%)` }} />
+        <ConstructionBeams opacity={0.02} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="What We Build" title="Project Types We Handle" subtitle={`From small remodels to ground-up construction, ${data.businessName} has the experience to deliver.`} accent={ACCENT} />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {projectTypesGrid.map((pt) => (
+              <GlassCard key={pt.name} className="p-5 text-center group hover:border-opacity-30 transition-all duration-300">
+                <div className="w-12 h-12 rounded-xl mx-auto mb-3 flex items-center justify-center" style={{ background: ACCENT_GLOW, border: `1px solid ${ACCENT}33` }}>
+                  <pt.icon size={24} weight="duotone" style={{ color: ACCENT }} />
+                </div>
+                <span className="text-sm font-semibold text-white">{pt.name}</span>
+              </GlassCard>
             ))}
           </div>
         </div>
@@ -486,12 +628,80 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
         </div>
       </section>
 
+      {/* ══════ 7b. COMPETITOR COMPARISON TABLE ══════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #12141a 50%, ${BG} 100%)` }} />
+        <BlueprintGrid opacity={0.02} accent={ACCENT} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="The Difference" title={`${data.businessName} vs. Handyman / Unlicensed`} subtitle="Don't risk your biggest investment with an unlicensed contractor." accent={ACCENT} />
+          <GlassCard className="overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm">
+                <thead>
+                  <tr className="border-b border-white/10">
+                    <th className="px-6 py-4 text-slate-400 font-medium">Feature</th>
+                    <th className="px-6 py-4 text-center font-bold text-white">{data.businessName}</th>
+                    <th className="px-6 py-4 text-center font-medium text-slate-400">Unlicensed</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {comparisonRows.map((row, i) => (
+                    <tr key={row.label} className={i < comparisonRows.length - 1 ? "border-b border-white/5" : ""}>
+                      <td className="px-6 py-4 text-slate-300 font-medium">{row.label}</td>
+                      <td className="px-6 py-4 text-center">
+                        <CheckCircle size={22} weight="fill" className="inline-block" style={{ color: ACCENT }} />
+                      </td>
+                      <td className="px-6 py-4 text-center text-red-400 font-medium">{row.them}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </GlassCard>
+        </div>
+      </section>
+
+      {/* ══════ 7c. VIDEO PLACEHOLDER ══════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #12141a 0%, ${BG} 50%, #12141a 100%)` }} />
+        <ConstructionBeams opacity={0.02} accent={ACCENT} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="See Our Work" title="Tour Our Recent Projects" accent={ACCENT} />
+          <div className="relative rounded-2xl overflow-hidden border border-white/10 group cursor-pointer">
+            <img src={projectImages[0]} alt="Project tour" className="w-full h-64 md:h-96 object-cover transition-transform duration-700 group-hover:scale-105" />
+            <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+              <div className="w-20 h-20 rounded-full flex items-center justify-center border-2 transition-transform duration-300 group-hover:scale-110" style={{ background: `${ACCENT}cc`, borderColor: ACCENT }}>
+                <Play size={36} weight="fill" className="text-white ml-1" />
+              </div>
+            </div>
+            <div className="absolute bottom-6 left-6">
+              <p className="text-white font-bold text-lg">Watch Our Craftsmanship in Action</p>
+              <p className="text-slate-300 text-sm">See how {data.businessName} transforms spaces</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ══════ 8. TESTIMONIALS ══════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #12141a 50%, ${BG} 100%)` }} />
         <BlueprintGrid opacity={0.02} accent={ACCENT} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <AnimatedSection>          <SectionHeader badge="Testimonials" title="What Our Clients Say" accent={ACCENT} /></AnimatedSection>
+          <SectionHeader badge="Testimonials" title="What Our Clients Say" accent={ACCENT} />
+          {/* Google Reviews Header */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-10">
+            <div className="flex gap-1">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Star key={i} size={24} weight="fill" style={{ color: "#facc15" }} />
+              ))}
+            </div>
+            <span className="text-white font-bold text-lg">
+              {data.googleRating || "4.9"} Rating
+            </span>
+            <span className="text-slate-400 text-sm">
+              ({data.reviewCount || "100"}+ verified reviews on Google)
+            </span>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {testimonials.map((t, i) => (
               <GlassCard key={i} className="p-6 h-full flex flex-col">
@@ -530,6 +740,35 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
               <path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
             </svg>
           </a>
+        </div>
+      </section>
+
+      {/* ══════ 8b. "WHAT'S YOUR PROJECT?" QUIZ ══════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #10121a 50%, ${BG} 100%)` }} />
+        <BlueprintGrid opacity={0.02} accent={ACCENT} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Get Started" title="What's Your Project?" subtitle="Select your project type for a free, personalized estimate." accent={ACCENT} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            {quizOptions.map((opt) => (
+              <GlassCard key={opt.label} className="p-6 group cursor-pointer hover:border-opacity-30 transition-all duration-300 relative overflow-hidden">
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${ACCENT}12, transparent 70%)` }} />
+                <div className="relative z-10">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: ACCENT_GLOW, border: `1px solid ${ACCENT}33` }}>
+                      <opt.icon size={24} weight="duotone" style={{ color: ACCENT }} />
+                    </div>
+                    <span className="text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full" style={{ color: ACCENT, background: `${ACCENT}0d`, border: `1px solid ${ACCENT}33` }}>{opt.tag}</span>
+                  </div>
+                  <h3 className="text-lg font-bold text-white mb-2">{opt.label}</h3>
+                  <p className="text-sm text-slate-400 leading-relaxed mb-4">{opt.desc}</p>
+                  <span className="inline-flex items-center gap-2 text-sm font-semibold" style={{ color: ACCENT }}>
+                    Get Free Estimate <ArrowRight size={16} weight="bold" />
+                  </span>
+                </div>
+              </GlassCard>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -596,23 +835,32 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
         </div>
       </section>
 
-      {/* ══════ 11. GUARANTEE ══════ */}
+      {/* ══════ 11. PROJECT GUARANTEE CTA ══════ */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #12141a 100%)` }} />
         <BlueprintGrid opacity={0.015} accent={ACCENT} />
         <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
           <ShimmerBorder accent={ACCENT}>
-            <div className="p-8 md:p-12">
-              <ShieldCheck size={48} weight="fill" style={{ color: ACCENT }} className="mx-auto mb-4" />
-              <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-4">Our Guarantee</h2>
-              <p className="text-slate-400 leading-relaxed max-w-2xl mx-auto text-lg">Every project by {data.businessName} is backed by our workmanship warranty. We stand behind every detail.</p>
+            <div className="p-8 md:p-14">
+              <ShieldCheck size={56} weight="fill" style={{ color: ACCENT }} className="mx-auto mb-5" />
+              <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-3">Every Project On Time, On Budget, Guaranteed</h2>
+              <p className="text-slate-400 leading-relaxed max-w-2xl mx-auto text-lg mb-6">
+                {data.businessName} delivers craftsmanship you can count on. From the first consultation to the final walkthrough, your satisfaction is our priority.
+              </p>
+              <MagneticButton className="px-10 py-4 rounded-full text-base font-bold text-white flex items-center gap-2 mx-auto cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
+                Get Your Free Estimate <ArrowRight size={18} weight="bold" />
+              </MagneticButton>
               <div className="flex flex-wrap justify-center gap-4 mt-8">
-                {["Licensed Contractor", "Free Estimates", "Workmanship Warranty", "Satisfaction Guaranteed"].map((item) => (
+                {["Licensed & Bonded", "Free Estimates", "Workmanship Warranty", "On-Time Guarantee", "Satisfaction Guaranteed"].map((item) => (
                   <span key={item} className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border" style={{ color: ACCENT, borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}>
                     <CheckCircle size={16} weight="fill" /> {item}
                   </span>
                 ))}
               </div>
+              <p className="text-slate-500 text-xs mt-6 tracking-wide">
+                <ShieldCheck size={14} weight="fill" className="inline-block mr-1" style={{ color: ACCENT }} />
+                Licensed General Contractor &bull; Fully Bonded &amp; Insured
+              </p>
             </div>
           </ShimmerBorder>
         </div>
