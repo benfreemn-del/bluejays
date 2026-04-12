@@ -27,6 +27,11 @@ import {
   CaretDown,
   X,
   List,
+  Play,
+  Crown,
+  CalendarCheck,
+  MagicWand,
+  Palette,
 } from "@phosphor-icons/react";
 import type { GeneratedSiteData } from "@/lib/generator";
 import BluejayLogo from "../BluejayLogo";
@@ -293,6 +298,66 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
   ];
   const testimonials = data.testimonials?.length > 0 ? data.testimonials : fallbackTestimonials;
 
+  /* ── Service category badges ── */
+  const serviceBadges = [
+    { label: "Haircuts & Styling", icon: Scissors },
+    { label: "Color & Highlights", icon: PaintBrush },
+    { label: "Balayage", icon: Palette },
+    { label: "Extensions", icon: MagicWand },
+    { label: "Bridal", icon: Flower },
+    { label: "Treatments", icon: Sparkle },
+  ];
+
+  /* ── Service menu pricing ── */
+  const serviceMenuItems = [
+    { title: "Haircut & Style", price: "from $55", desc: "Precision cut tailored to your face shape, finished with a professional blowout.", icon: Scissors },
+    { title: "Full Color", price: "from $120", desc: "Rich, vibrant color using premium salon-grade products for lasting results.", icon: PaintBrush },
+    { title: "Balayage", price: "from $200+", desc: "Hand-painted, sun-kissed highlights for a natural, radiant look.", icon: Palette },
+  ];
+
+  /* ── Stylist profiles ── */
+  const stylistProfiles = [
+    { name: "Color Specialist", specialty: "Precision color, balayage, and vivid fashion shades", icon: PaintBrush },
+    { name: "Balayage Expert", specialty: "Natural, hand-painted highlights and dimensional color", icon: Palette },
+    { name: "Bridal & Special Events", specialty: "Elegant updos, bridal styling, and occasion looks", icon: Crown },
+    { name: "Texture & Curly Hair", specialty: "Curl-specific cuts, treatments, and styling techniques", icon: MagicWand },
+  ];
+
+  /* ── Salon experience steps ── */
+  const salonExperience = [
+    { step: "01", title: "Book Your Appointment", desc: "Choose your service and preferred stylist online or by phone.", icon: CalendarCheck },
+    { step: "02", title: "Consultation & Vision", desc: "Share your goals and inspirations. Your stylist crafts the perfect plan.", icon: Heart },
+    { step: "03", title: "The Transformation", desc: "Sit back and relax while our experts bring your vision to life.", icon: MagicWand },
+    { step: "04", title: "Love Your New Look", desc: "Walk out feeling radiant, confident, and absolutely beautiful.", icon: Sparkle },
+  ];
+
+  /* ── Why choose us pillars ── */
+  const whyChooseUs = [
+    { title: "Award-Winning Stylists", desc: "Our team brings years of training and a passion for beauty to every appointment.", icon: Crown },
+    { title: "Premium Products", desc: "We use only the finest professional-grade products for healthy, lasting results.", icon: Sparkle },
+    { title: "Relaxing Atmosphere", desc: "From the moment you arrive, enjoy a calm, luxurious environment designed for you.", icon: Flower },
+    { title: "Complimentary Consultation", desc: "Every visit begins with a personalized consultation to understand your unique style.", icon: Heart },
+  ];
+
+  /* ── Competitor comparison rows ── */
+  const comparisonRows = [
+    { feature: "Personal Consultation", us: true, them: "Rarely" },
+    { feature: "Premium Products", us: true, them: "Generic" },
+    { feature: "Consistent Stylist", us: true, them: "No" },
+    { feature: "Relaxing Environment", us: true, them: "No" },
+    { feature: "Online Booking", us: true, them: "Sometimes" },
+    { feature: "Loyalty Rewards", us: true, them: "No" },
+    { feature: "Custom Color Mixing", us: true, them: "No" },
+  ];
+
+  /* ── Quiz options ── */
+  const quizOptions = [
+    { title: "Haircut & Refresh", desc: "A quick transformation — new cut, fresh style", icon: Scissors, color: ROSE },
+    { title: "Color Change", desc: "Bold or subtle — discover your perfect shade", icon: PaintBrush, color: ROSE_LIGHT },
+    { title: "Special Occasion", desc: "Weddings, events, and unforgettable moments", icon: Crown, color: ROSE },
+    { title: "Hair Repair", desc: "Deep treatments and restoration for healthy hair", icon: Sparkle, color: ROSE_LIGHT },
+  ];
+
   return (
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: DARK, color: "#f1f5f9" }}>
       <FlowingGradient accent={ROSE} />
@@ -402,6 +467,39 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
+      {/* ══════════════════ FEATURE 1: SERVICE CATEGORY BADGES ══════════════════ */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #150810 100%)` }} />
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <div className="flex flex-wrap justify-center gap-3">
+            {serviceBadges.map((badge) => (
+              <div key={badge.label} className="flex items-center gap-2 px-5 py-2.5 rounded-full border text-sm font-medium transition-colors hover:bg-white/5" style={{ color: ROSE, borderColor: `${ROSE}33`, background: `${ROSE}0a` }}>
+                <badge.icon size={16} weight="duotone" />
+                {badge.label}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ FEATURE 9: GOOGLE REVIEWS HEADER ══════════════════ */}
+      {(data.googleRating || data.reviewCount) && (
+        <section className="relative z-10 py-10 overflow-hidden">
+          <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #150810 0%, ${DARK} 100%)` }} />
+          <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+            <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full border" style={{ borderColor: `${ROSE}22`, background: `${ROSE}08` }}>
+              <div className="flex gap-0.5">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Star key={i} size={20} weight="fill" style={{ color: i < Math.round(data.googleRating || 5) ? "#facc15" : "#374151" }} />
+                ))}
+              </div>
+              <span className="text-white font-bold text-lg">{data.googleRating || "5.0"}</span>
+              {data.reviewCount && <span className="text-slate-400 text-sm">({data.reviewCount}+ reviews)</span>}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* ══════════════════ 4. TESTIMONIALS ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #150810 50%, ${DARK} 100%)` }} />
@@ -454,6 +552,49 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
+      {/* ══════════════════ FEATURE 2: SERVICE MENU / PRICING ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #120910 50%, ${DARK} 100%)` }} />
+        <RosePattern opacity={0.02} accent={ROSE} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] left-[20%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${ROSE}06` }} /></div>
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Pricing" title="Service Menu" subtitle="Transparent pricing for our most popular services. Custom quotes available for specialized treatments." accent={ROSE} />
+          <div className="grid md:grid-cols-3 gap-6">
+            {serviceMenuItems.map((item, i) => (
+              <GlassCard key={item.title} className="p-7 text-center group hover:border-opacity-30 transition-all duration-500">
+                <div className="w-14 h-14 rounded-full mx-auto mb-5 flex items-center justify-center" style={{ background: `${ROSE}15`, border: `1px solid ${ROSE}33` }}>
+                  <item.icon size={26} weight="duotone" style={{ color: ROSE }} />
+                </div>
+                <h3 className="text-lg font-bold text-white mb-1">{item.title}</h3>
+                <p className="text-2xl font-extrabold mb-3" style={{ color: ROSE }}>{item.price}</p>
+                <p className="text-sm text-slate-400 leading-relaxed">{item.desc}</p>
+              </GlassCard>
+            ))}
+          </div>
+          <p className="text-center text-slate-500 text-sm mt-8">Prices vary based on hair length, thickness, and desired results. Contact us for a personalized quote.</p>
+        </div>
+      </section>
+
+      {/* ══════════════════ FEATURE 3: STYLIST PROFILES ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #150810 50%, ${DARK} 100%)` }} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] right-[10%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${ROSE_LIGHT}06` }} /></div>
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Our Team" title="Meet Our Stylists" subtitle="Each stylist brings unique expertise and a passion for making you look and feel your best." accent={ROSE} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {stylistProfiles.map((stylist) => (
+              <GlassCard key={stylist.name} className="p-6 text-center group hover:border-opacity-30 transition-all duration-500">
+                <div className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${ROSE}22, ${ROSE}0a)`, border: `1px solid ${ROSE}33` }}>
+                  <stylist.icon size={28} weight="duotone" style={{ color: ROSE }} />
+                </div>
+                <h3 className="text-base font-bold text-white mb-2">{stylist.name}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed">{stylist.specialty}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ══════════════════ 6. ABOUT ══════════════════ */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #120910 50%, ${DARK} 100%)` }} />
@@ -488,19 +629,22 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 7. PROCESS ══════════════════ */}
+      {/* ══════════════════ FEATURE 4: THE SALON EXPERIENCE ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #150810 50%, ${DARK} 100%)` }} />
         <RosePattern opacity={0.025} accent={ROSE} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${ROSE_LIGHT}06` }} /></div>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <AnimatedSection>          <SectionHeader badge="Your Visit" title="The Experience" accent={ROSE} /></AnimatedSection>
+          <SectionHeader badge="Your Journey" title="The Salon Experience" subtitle="From booking to your stunning reveal, every step is designed for your comfort and delight." accent={ROSE} />
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {processSteps.map((step, i) => (
+            {salonExperience.map((step, i) => (
               <div key={step.step} className="relative">
-                {i < processSteps.length - 1 && <div className="hidden lg:block absolute top-10 left-[calc(50%+40px)] w-[calc(100%-80px)] h-px" style={{ background: `linear-gradient(to right, ${ROSE}33, ${ROSE}11)` }} />}
+                {i < salonExperience.length - 1 && <div className="hidden lg:block absolute top-10 left-[calc(50%+40px)] w-[calc(100%-80px)] h-px" style={{ background: `linear-gradient(to right, ${ROSE}33, ${ROSE}11)` }} />}
                 <GlassCard className="p-6 text-center relative">
-                  <div className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center text-2xl font-black" style={{ background: `linear-gradient(135deg, ${ROSE}22, ${ROSE}0a)`, color: ROSE, border: `1px solid ${ROSE}33` }}>{step.step}</div>
+                  <div className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${ROSE}22, ${ROSE}0a)`, border: `1px solid ${ROSE}33` }}>
+                    <step.icon size={28} weight="duotone" style={{ color: ROSE }} />
+                  </div>
+                  <span className="text-xs font-mono mb-2 block" style={{ color: ROSE }}>{step.step}</span>
                   <h3 className="text-lg font-bold text-white mb-2">{step.title}</h3>
                   <p className="text-sm text-slate-400 leading-relaxed">{step.desc}</p>
                 </GlassCard>
@@ -527,6 +671,113 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
                 </div>
               );
             })}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ FEATURE 5: WHY CHOOSE US ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #150810 50%, ${DARK} 100%)` }} />
+        <RosePattern opacity={0.02} accent={ROSE} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${ROSE}06` }} /></div>
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Why Us" title={`Why Choose ${data.businessName}`} subtitle="Experience the difference that dedication, talent, and premium care can make." accent={ROSE} />
+          <div className="grid sm:grid-cols-2 gap-6">
+            {whyChooseUs.map((item) => (
+              <GlassCard key={item.title} className="p-7 flex items-start gap-5 group hover:border-opacity-30 transition-all duration-500">
+                <div className="w-14 h-14 rounded-xl flex items-center justify-center shrink-0" style={{ background: `${ROSE}15`, border: `1px solid ${ROSE}33` }}>
+                  <item.icon size={26} weight="duotone" style={{ color: ROSE }} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white mb-2">{item.title}</h3>
+                  <p className="text-sm text-slate-400 leading-relaxed">{item.desc}</p>
+                </div>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ FEATURE 6: COMPETITOR COMPARISON ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #120910 50%, ${DARK} 100%)` }} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] right-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${ROSE_LIGHT}06` }} /></div>
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Compare" title={`${data.businessName} vs Chain Salons`} accent={ROSE} />
+          <GlassCard className="overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm">
+                <thead>
+                  <tr className="border-b border-white/10">
+                    <th className="px-6 py-4 text-slate-400 font-medium">Feature</th>
+                    <th className="px-6 py-4 text-center font-bold text-white">{data.businessName}</th>
+                    <th className="px-6 py-4 text-center font-medium text-slate-400">Chain Salons</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {comparisonRows.map((row, i) => (
+                    <tr key={row.feature} className={i < comparisonRows.length - 1 ? "border-b border-white/5" : ""}>
+                      <td className="px-6 py-4 text-slate-300 font-medium">{row.feature}</td>
+                      <td className="px-6 py-4 text-center">
+                        {row.us ? <CheckCircle size={22} weight="fill" className="inline" style={{ color: "#22c55e" }} /> : <X size={22} className="inline text-slate-600" />}
+                      </td>
+                      <td className="px-6 py-4 text-center text-slate-500">{row.them}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </GlassCard>
+        </div>
+      </section>
+
+      {/* ══════════════════ FEATURE 7: VIDEO PLACEHOLDER ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #150810 50%, ${DARK} 100%)` }} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Virtual Tour" title="Tour Our Salon" subtitle="Step inside and see what makes our space so special." accent={ROSE} />
+          <div className="relative rounded-2xl overflow-hidden border border-white/10 aspect-video group cursor-pointer">
+            <img src={heroCardImage} alt={`${data.businessName} salon tour`} className="w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors" />
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <div className="w-20 h-20 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300" style={{ background: `${ROSE}cc`, border: `2px solid ${ROSE}` }}>
+                <Play size={36} weight="fill" className="text-white ml-1" />
+              </div>
+              <p className="text-white font-semibold text-lg">Watch Our Salon Tour</p>
+              <p className="text-white/60 text-sm mt-1">See where the magic happens</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ FEATURE 8: SERVICE QUIZ ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #120910 50%, ${DARK} 100%)` }} />
+        <RosePattern opacity={0.02} accent={ROSE} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[40%] left-[20%] w-[400px] h-[400px] rounded-full blur-[180px]" style={{ background: `${ROSE}06` }} /></div>
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Find Your Service" title="What Are You Looking For?" subtitle="Select the service that best fits your needs and we will guide you to the perfect experience." accent={ROSE} />
+          <div className="grid sm:grid-cols-2 gap-6">
+            {quizOptions.map((option) => (
+              <div key={option.title} className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-opacity-30 transition-all duration-500 cursor-pointer overflow-hidden bg-white/[0.02]">
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${option.color}15, transparent 70%)` }} />
+                <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${option.color}4d, transparent)` }} />
+                <div className="relative z-10 flex items-start gap-5">
+                  <div className="w-14 h-14 rounded-xl flex items-center justify-center shrink-0" style={{ background: `${option.color}15`, border: `1px solid ${option.color}33` }}>
+                    <option.icon size={26} weight="duotone" style={{ color: option.color }} />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-white mb-1">{option.title}</h3>
+                    <p className="text-sm text-slate-400 leading-relaxed">{option.desc}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="text-center mt-10">
+            <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer mx-auto" style={{ background: ROSE } as React.CSSProperties}>
+              Book a Consultation <ArrowRight size={18} weight="bold" />
+            </MagneticButton>
           </div>
         </div>
       </section>
@@ -583,9 +834,9 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
       
       {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
       <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15, ${ACCENT}08)` }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ROSE}15, ${ROSE}08)` }} />
         <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
-          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: ACCENT }}>
+          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: ROSE }}>
             Don&apos;t Miss Out
           </p>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-3">
@@ -597,7 +848,7 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
           <a
             href={`/claim/${data.id}`}
             className="inline-flex items-center gap-2 min-h-[48px] px-8 py-3 rounded-full text-white font-bold text-base hover:shadow-lg transition-all duration-300"
-            style={{ background: ACCENT }}
+            style={{ background: ROSE }}
           >
             Claim This Website
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
@@ -654,6 +905,26 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
               </form>
             </GlassCard>
           </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ FEATURE 10: NEW CLIENT SPECIAL CTA ══════════════════ */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #150810 100%)` }} />
+        <RosePattern opacity={0.02} accent={ROSE} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full blur-[180px]" style={{ background: `${ROSE}0a` }} /></div>
+        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+          <ShimmerBorder accent={ROSE}>
+            <div className="p-8 md:p-12">
+              <span className="inline-block text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border" style={{ color: ROSE, borderColor: `${ROSE}33`, background: `${ROSE}0d` }}>Limited Offer</span>
+              <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-4">New Client Special</h2>
+              <p className="text-3xl md:text-5xl font-black mb-4" style={{ color: ROSE }}>First Visit 20% Off</p>
+              <p className="text-slate-400 leading-relaxed max-w-xl mx-auto text-lg mb-8">Experience the {data.businessName} difference. Book your complimentary consultation and enjoy 20% off your first service.</p>
+              <MagneticButton href={`tel:${phoneDigits}`} className="inline-flex items-center gap-3 px-8 py-4 rounded-full text-base font-semibold text-white cursor-pointer" style={{ background: ROSE } as React.CSSProperties}>
+                <CalendarCheck size={20} weight="bold" /> Book Your Consultation
+              </MagneticButton>
+            </div>
+          </ShimmerBorder>
         </div>
       </section>
 
