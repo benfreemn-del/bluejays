@@ -33,6 +33,7 @@ import {
   Hammer,
   Eye,
   Warning,
+  Question,
 } from "@phosphor-icons/react";
 import type { GeneratedSiteData } from "@/lib/generator";
 import BluejayLogo from "../BluejayLogo";
@@ -75,13 +76,39 @@ function getServiceIcon(serviceName: string) {
 }
 
 /* ───────────────────────── STOCK FALLBACK IMAGES ───────────────────────── */
-const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1558036117-15d82a90b9b1?w=1400&q=80"];
-const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=600&q=80"];
+const STOCK_HERO_POOL = [
+  "https://images.unsplash.com/photo-1558036117-15d82a90b9b1?w=1400&q=80",   // aerial view new roof
+  "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1400&q=80", // roofer working
+  "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=1400&q=80", // house exterior
+  "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1400&q=80", // luxury home
+  "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=1400&q=80", // modern home
+];
+const STOCK_ABOUT_POOL = [
+  "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=600&q=80",    // roofing crew
+  "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=600&q=80",  // construction team
+  "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&q=80",  // worker on roof
+  "https://images.unsplash.com/photo-1615799998603-7c6270a45196?w=600&q=80",  // roof shingles
+  "https://images.unsplash.com/photo-1513467535987-fd81bc7d62f8?w=600&q=80",  // blueprint planning
+];
 const STOCK_PROJECTS = [
-  "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=600&q=80",
-  "https://images.unsplash.com/photo-1558036117-15d82a90b9b1?w=600&q=80",
-  "https://images.unsplash.com/photo-1615799998603-7c6270a45196?w=800&q=80",
-  "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=800&q=80",
+  "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=600&q=80",  // house 1
+  "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80",  // house 2
+  "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=600&q=80",  // house 3
+  "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80",  // house 4
+  "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&q=80",  // house 5
+  "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=600&q=80",  // house 6
+  "https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=600&q=80",  // house 7
+  "https://images.unsplash.com/photo-1600573472592-401b489a3cdc?w=600&q=80",  // house 8
+];
+const STOCK_BEFORE = "https://images.unsplash.com/photo-1632149877166-f75d49000351?w=800&q=80";
+const STOCK_AFTER = "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80";
+
+/* ───────────────────────── ROOFING MATERIALS DATA ───────────────────────── */
+const ROOFING_MATERIALS = [
+  { name: "Architectural Shingles", desc: "30-50 year warranty, wind-resistant up to 130mph", icon: House },
+  { name: "Standing Seam Metal", desc: "50+ year lifespan, energy-efficient, fireproof", icon: ShieldCheck },
+  { name: "Cedar Shake", desc: "Natural beauty, excellent insulation, eco-friendly", icon: Certificate },
+  { name: "Composite Tile", desc: "Lightweight, impact-resistant, versatile styles", icon: HardHat },
 ];
 
 /* ───────────────────────── FLOATING RAIN PARTICLES ───────────────────────── */
@@ -172,17 +199,22 @@ function ShimmerBorder({ children, className = "", accent }: { children: React.R
 }
 
 /* ───────────────────────── ACCORDION ───────────────────────── */
-function AccordionItem({ question, answer, isOpen, onToggle }: { question: string; answer: string; isOpen: boolean; onToggle: () => void }) {
+function AccordionItem({ question, answer, isOpen, onToggle, accent }: { question: string; answer: string; isOpen: boolean; onToggle: () => void; accent: string }) {
   return (
     <GlassCard className="overflow-hidden">
       <button onClick={onToggle} className="w-full flex items-center justify-between p-5 md:p-6 text-left group cursor-pointer">
-        <span className="text-lg font-semibold text-white pr-4">{question}</span>
+        <div className="flex items-center gap-4 pr-4">
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: `${accent}15` }}>
+            <Question size={20} weight="bold" style={{ color: accent }} />
+          </div>
+          <span className="text-lg font-semibold text-white">{question}</span>
+        </div>
         <motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={spring}><CaretDown size={20} className="text-slate-400 shrink-0" /></motion.div>
       </button>
       <AnimatePresence initial={false}>
         {isOpen && (
           <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={spring} className="overflow-hidden">
-            <p className="px-5 pb-5 md:px-6 md:pb-6 text-slate-400 leading-relaxed">{answer}</p>
+            <p className="px-5 pb-5 md:px-6 md:pb-6 pl-[4.5rem] text-slate-400 leading-relaxed">{answer}</p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -206,18 +238,57 @@ function SectionHeader({ badge, title, subtitle, accent }: { badge: string; titl
 /* ═══════════════════════════════════════════════════════════════════
    MAIN PREVIEW COMPONENT
    ═══════════════════════════════════════════════════════════════════ */
-/* ───────────────────────── ANIMATED SECTION ───────────────────────── */
-function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+/* ───────────────────────── BEFORE/AFTER SLIDER ───────────────────────── */
+function BeforeAfterSlider() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [sliderPos, setSliderPos] = useState(50);
+  const isDragging = useRef(false);
+
+  const handleMove = useCallback((clientX: number) => {
+    if (!containerRef.current || !isDragging.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const pos = ((clientX - rect.left) / rect.width) * 100;
+    setSliderPos(Math.max(5, Math.min(95, pos)));
+  }, []);
+
+  useEffect(() => {
+    const handleUp = () => { isDragging.current = false; };
+    const handleMoveGlobal = (e: MouseEvent) => handleMove(e.clientX);
+    const handleTouchMove = (e: TouchEvent) => { if (e.touches[0]) handleMove(e.touches[0].clientX); };
+    window.addEventListener("mouseup", handleUp);
+    window.addEventListener("mousemove", handleMoveGlobal);
+    window.addEventListener("touchend", handleUp);
+    window.addEventListener("touchmove", handleTouchMove);
+    return () => {
+      window.removeEventListener("mouseup", handleUp);
+      window.removeEventListener("mousemove", handleMoveGlobal);
+      window.removeEventListener("touchend", handleUp);
+      window.removeEventListener("touchmove", handleTouchMove);
+    };
+  }, [handleMove]);
+
   return (
-    <motion.div
-      initial={{ opacity: 0, x: -50 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
-      transition={{ duration: 0.7, ease: "easeOut" as const }}
-      className={className}
+    <div ref={containerRef} className="relative w-full aspect-[16/10] rounded-2xl overflow-hidden cursor-ew-resize select-none border border-white/10"
+      onMouseDown={() => { isDragging.current = true; }}
+      onTouchStart={() => { isDragging.current = true; }}
     >
-      {children}
-    </motion.div>
+      <div className="absolute inset-0">
+        <img src={STOCK_AFTER} alt="After — new roof" className="w-full h-full object-cover" />
+        <div className="absolute bottom-4 right-4 px-3 py-1.5 rounded-full bg-green-600/80 backdrop-blur-sm text-white text-sm font-bold">After</div>
+      </div>
+      <div className="absolute inset-0" style={{ clipPath: `inset(0 ${100 - sliderPos}% 0 0)` }}>
+        <img src={STOCK_BEFORE} alt="Before — damaged roof" className="w-full h-full object-cover" />
+        <div className="absolute bottom-4 left-4 px-3 py-1.5 rounded-full bg-slate-700/80 backdrop-blur-sm text-white text-sm font-bold">Before</div>
+      </div>
+      <div className="absolute top-0 bottom-0 w-[2px] bg-white/80 z-10" style={{ left: `${sliderPos}%` }}>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center">
+          <div className="flex gap-0.5">
+            <CaretDown size={12} className="text-slate-800 -rotate-90" />
+            <CaretDown size={12} className="text-slate-800 rotate-90" />
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -227,9 +298,12 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
 
   const { ACCENT, ACCENT_GLOW } = getAccent(data.accentColor);
 
-  const heroImage = data.photos?.[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
-  const aboutImage = data.photos?.[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName);
-  const projectImages = data.photos?.length > 2 ? data.photos.slice(2, 6) : pickGallery(STOCK_PROJECTS, data.businessName);
+  /* Deduplicate scraped photos */
+  const uniquePhotos = data.photos ? [...new Set(data.photos)] : [];
+  const heroImage = uniquePhotos[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
+  const heroCardImage = uniquePhotos[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 1);
+  const aboutImage = uniquePhotos[2] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 2);
+  const projectImages = uniquePhotos.length > 2 ? uniquePhotos.slice(2, 6) : pickGallery(STOCK_PROJECTS, data.businessName);
   const phoneDigits = data.phone.replace(/\D/g, "");
 
   const processSteps = [
@@ -305,32 +379,49 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
           <div className="space-y-8">
             <div>
-              <p className="text-sm uppercase tracking-widest mb-4" style={{ color: ACCENT }}>Licensed Roofing Professionals</p>
-              <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}>{data.tagline}</h1>
+              <span className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] px-4 py-2 rounded-full border mb-6" style={{ color: ACCENT, borderColor: `${ACCENT}33`, background: `${ACCENT}15` }}>
+                <ShieldCheck size={14} weight="fill" />
+                Licensed Roofing Professionals
+              </span>
+              <h1 className="text-4xl md:text-6xl lg:text-7xl tracking-tight leading-[0.95] font-black text-white" style={{ textShadow: "0 2px 20px rgba(0,0,0,0.6)" }}>{data.tagline}</h1>
             </div>
-            <p className="text-lg text-slate-400 max-w-md leading-relaxed">{data.about.length > 160 ? data.about.slice(0, 160).trim() + "..." : data.about}</p>
+            <p className="text-lg text-slate-300 max-w-md leading-relaxed">{data.about.length > 160 ? data.about.slice(0, 160).trim() + "..." : data.about}</p>
             <div className="flex flex-wrap gap-4">
-              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
+              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer shadow-lg" style={{ background: ACCENT, boxShadow: `0 8px 30px ${ACCENT}40` } as React.CSSProperties}>
                 Free Roof Inspection <ArrowRight size={18} weight="bold" />
               </MagneticButton>
-              <MagneticButton href={`tel:${phoneDigits}`} className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
+              <MagneticButton href={`tel:${phoneDigits}`} className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/20 bg-white/5 backdrop-blur-sm flex items-center gap-2 cursor-pointer">
                 <Phone size={18} weight="duotone" /> <PhoneLink phone={data.phone} />
               </MagneticButton>
             </div>
+            {/* Trust badges row */}
+            <div className="flex flex-wrap gap-3">
+              {[
+                { icon: ShieldCheck, label: "Licensed & Insured" },
+                { icon: Star, label: `${data.googleRating || "5.0"}-Star Rated` },
+                { icon: CheckCircle, label: "Free Estimates" },
+              ].map((b) => (
+                <span key={b.label} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-white/10 text-white/80 border border-white/10">
+                  <b.icon size={14} weight="fill" style={{ color: ACCENT }} /> {b.label}
+                </span>
+              ))}
+            </div>
             <div className="flex flex-wrap gap-6 text-sm text-slate-400">
               <span className="flex items-center gap-2"><MapPin size={16} weight="duotone" style={{ color: ACCENT }} /> <MapLink address={data.address} /></span>
-              <span className="flex items-center gap-2"><Clock size={16} weight="duotone" style={{ color: ACCENT }} /> Storm Damage? Call Now</span>
             </div>
           </div>
-          <div className="hidden md:block relative">
-            <div className="relative rounded-2xl overflow-hidden border border-white/10">
-              <img src={heroImage} alt={`${data.businessName} roofing`} className="w-full h-[500px] object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#111827] via-transparent to-transparent" />
-              <div className="absolute inset-0 bg-gradient-to-r from-[#111827]/40 to-transparent" />
-              <div className="absolute bottom-6 left-6">
-                <div className="px-4 py-2 rounded-full backdrop-blur-md bg-black/50 border flex items-center gap-2" style={{ borderColor: `${ACCENT}4d` }}>
+          <div className="hidden lg:block relative">
+            <div className="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
+              <img src={heroCardImage} alt={`${data.businessName} roofing`} className="w-full h-[520px] object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+              <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between">
+                <div className="px-4 py-2.5 rounded-full backdrop-blur-md bg-black/50 border flex items-center gap-2" style={{ borderColor: `${ACCENT}4d` }}>
                   <ShieldCheck size={18} weight="fill" style={{ color: ACCENT }} />
                   <span className="text-sm font-semibold text-white">Licensed &amp; Insured</span>
+                </div>
+                <div className="px-4 py-2.5 rounded-full backdrop-blur-md bg-black/50 border border-white/20 flex items-center gap-2">
+                  <div className="flex -space-x-0.5">{[...Array(5)].map((_, i) => <Star key={i} size={12} weight="fill" className="text-amber-400" />)}</div>
+                  <span className="text-sm font-semibold text-white">{data.googleRating || "5.0"}</span>
                 </div>
               </div>
             </div>
@@ -387,6 +478,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
                     <h3 className="text-lg font-bold text-white mb-2">{service.name}</h3>
                     <p className="text-sm text-slate-400 leading-relaxed">{service.description || ""}</p>
                     {service.price && <p className="text-sm font-semibold mt-3" style={{ color: ACCENT }}>{service.price}</p>}
+                    <span className="flex items-center gap-1 text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300 mt-4" style={{ color: ACCENT }}>Learn More <ArrowRight size={14} /></span>
                   </div>
                 </div>
               );
@@ -402,8 +494,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
         <div className="absolute inset-0 pointer-events-none"><div className="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${DEFAULT_SLATE}06` }} /></div>
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <AnimatedSection>          <SectionHeader badge="Our Process" title="How We Work" accent={ACCENT} /></AnimatedSection>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <SectionHeader badge="Our Process" title="How We Work" accent={ACCENT} />          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {processSteps.map((step, i) => (
               <div key={step.step} className="relative">
                 {i < processSteps.length - 1 && <div className="hidden lg:block absolute top-10 left-[calc(50%+40px)] w-[calc(100%-80px)] h-px" style={{ background: `linear-gradient(to right, ${ACCENT}33, ${ACCENT}11)` }} />}
@@ -458,6 +549,17 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
+      {/* ══════════════════ 6B. BEFORE/AFTER ══════════════════ */}
+      <section className="relative z-10 py-20 md:py-28 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${CHARCOAL} 0%, #0f1520 50%, ${CHARCOAL} 100%)` }} />
+        <RooflinePattern opacity={0.03} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] right-[15%] w-[500px] h-[500px] rounded-full blur-[200px]" style={{ background: `${ACCENT}08` }} /></div>
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="See The Difference" title="Before & After" subtitle="Drag the slider to compare storm damage versus a professionally installed roof." accent={ACCENT} />
+          <BeforeAfterSlider />
+        </div>
+      </section>
+
       {/* ══════════════════ 7. PROJECTS ══════════════════ */}
       <section id="projects" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${CHARCOAL} 0%, #0f1520 50%, ${CHARCOAL} 100%)` }} />
@@ -465,8 +567,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] left-[20%] w-[500px] h-[500px] rounded-full blur-[200px]" style={{ background: `${ACCENT}06` }} /></div>
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <AnimatedSection>          <SectionHeader badge="Our Work" title="Recent Projects" accent={ACCENT} /></AnimatedSection>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <SectionHeader badge="Our Work" title="Recent Projects" accent={ACCENT} />          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {projectImages.map((src, i) => {
               const titles = ["Full Roof Replacement", "Storm Damage Repair", "Commercial Roof Installation", "Gutter & Flashing Upgrade"];
               const descs = ["Complete tear-off and architectural shingle installation.", "Emergency storm response and insurance claim support.", "Flat roof installation for a commercial building.", "Premium gutter system with leak-proof flashing."];
@@ -482,6 +583,27 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
+      {/* ══════════════════ 7B. PREMIUM MATERIALS ══════════════════ */}
+      <section className="relative z-10 py-20 md:py-28 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${CHARCOAL} 0%, #0f1520 50%, ${CHARCOAL} 100%)` }} />
+        <StormBackground opacity={0.02} accent={ACCENT} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute bottom-[20%] left-[10%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${ACCENT}08` }} /></div>
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Premium Materials" title="Quality You Can Trust" subtitle="We use only the finest roofing materials backed by industry-leading manufacturer warranties." accent={ACCENT} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {ROOFING_MATERIALS.map((mat) => (
+              <GlassCard key={mat.name} className="p-6 text-center group hover:border-white/20 transition-all duration-300">
+                <div className="w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center" style={{ background: ACCENT_GLOW, border: `1px solid ${ACCENT}33` }}>
+                  <mat.icon size={28} weight="duotone" style={{ color: ACCENT }} />
+                </div>
+                <h3 className="text-base font-bold text-white mb-2">{mat.name}</h3>
+                <p className="text-xs text-slate-400 leading-relaxed">{mat.desc}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ══════════════════ 8. TESTIMONIALS ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${CHARCOAL} 0%, #0f1520 50%, ${CHARCOAL} 100%)` }} />
@@ -489,13 +611,16 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] right-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${ACCENT}06` }} /></div>
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <AnimatedSection>          <SectionHeader badge="Testimonials" title="What Our Clients Say" accent={ACCENT} /></AnimatedSection>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <SectionHeader badge="Testimonials" title="What Our Clients Say" accent={ACCENT} />          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {testimonials.map((t, i) => (
               <GlassCard key={i} className="p-6 h-full flex flex-col">
-                <div className="flex gap-0.5 mb-4">{Array.from({ length: t.rating || 5 }).map((_, j) => <Star key={j} size={16} weight="fill" style={{ color: ACCENT }} />)}</div>
-                <p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p>
-                <div className="pt-4 border-t border-white/5"><span className="text-sm font-semibold text-white">{t.name}</span></div>
+                <span className="text-4xl leading-none font-serif mb-2" style={{ color: ACCENT }}>&ldquo;</span>
+                <div className="flex gap-0.5 mb-4">{Array.from({ length: t.rating || 5 }).map((_, j) => <Star key={j} size={18} weight="fill" style={{ color: ACCENT }} />)}</div>
+                <p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">{t.text}</p>
+                <div className="pt-4 border-t border-white/5 flex items-center justify-between">
+                  <span className="text-sm font-semibold text-white">{t.name}</span>
+                  <span className="flex items-center gap-1 text-xs text-slate-500"><CheckCircle size={14} weight="fill" style={{ color: ACCENT }} /> Verified</span>
+                </div>
               </GlassCard>
             ))}
           </div>
@@ -524,8 +649,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
         <RooflinePattern opacity={0.03} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[40%] right-[20%] w-[400px] h-[400px] rounded-full blur-[180px]" style={{ background: `${DEFAULT_SLATE}06` }} /></div>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <AnimatedSection>          <SectionHeader badge="Coverage Area" title="Areas We Serve" accent={ACCENT} /></AnimatedSection>
-          <div className="text-center">
+          <SectionHeader badge="Coverage Area" title="Areas We Serve" accent={ACCENT} />          <div className="text-center">
             <GlassCard className="p-8 inline-block">
               <div className="flex items-center gap-3 text-lg"><MapPin size={24} weight="duotone" style={{ color: ACCENT }} /><MapLink address={data.address} className="text-white font-semibold" /></div>
               <p className="text-slate-400 text-sm mt-2">&amp; Surrounding Areas</p>
@@ -541,8 +665,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
           <StormBackground opacity={0.02} accent={ACCENT} />
           <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${ACCENT}06` }} /></div>
           <div className="max-w-3xl mx-auto px-6 relative z-10">
-            <AnimatedSection>          <SectionHeader badge="Business Hours" title="When We're Available" accent={ACCENT} /></AnimatedSection>
-            <div className="text-center">
+            <SectionHeader badge="Business Hours" title="When We're Available" accent={ACCENT} />            <div className="text-center">
               <ShimmerBorder accent={ACCENT}>
                 <div className="p-8">
                   <Clock size={32} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-4" />
@@ -588,9 +711,8 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
         <RooflinePattern opacity={0.02} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${ACCENT}06` }} /></div>
         <div className="max-w-3xl mx-auto px-6 relative z-10">
-          <AnimatedSection>          <SectionHeader badge="FAQ" title="Common Questions" accent={ACCENT} /></AnimatedSection>
-          <div className="space-y-3">
-            {faqs.map((faq, i) => <AccordionItem key={i} question={faq.q} answer={faq.a} isOpen={openFaq === i} onToggle={() => setOpenFaq(openFaq === i ? null : i)} />)}
+          <SectionHeader badge="FAQ" title="Common Questions" accent={ACCENT} />          <div className="space-y-3">
+            {faqs.map((faq, i) => <AccordionItem key={i} question={faq.q} answer={faq.a} isOpen={openFaq === i} onToggle={() => setOpenFaq(openFaq === i ? null : i)} accent={ACCENT} />)}
           </div>
         </div>
       </section>
