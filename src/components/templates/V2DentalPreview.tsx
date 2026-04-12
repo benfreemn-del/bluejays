@@ -29,6 +29,14 @@ import {
   CaretDown,
   X,
   List,
+  CurrencyDollar,
+  Play,
+  Timer,
+  NavigationArrow,
+  Eyeglasses,
+  Monitor,
+  Scan,
+  Smiley,
 } from "@phosphor-icons/react";
 import type { GeneratedSiteData } from "@/lib/generator";
 import BluejayLogo from "../BluejayLogo";
@@ -82,6 +90,55 @@ function getServiceIcon(serviceName: string) {
   }
   return Tooth;
 }
+
+/* ───────────────────────── INSURANCE BADGES ───────────────────────── */
+const INSURANCE_BADGES = [
+  { icon: CheckCircle, label: "Most Insurance Accepted" },
+  { icon: CurrencyDollar, label: "Flexible Payment Plans" },
+  { icon: ShieldCheck, label: "CareCredit" },
+  { icon: Heart, label: "In-House Savings Plan" },
+];
+
+/* ───────────────────────── PRICING CARDS ───────────────────────── */
+const PRICING_CARDS = [
+  { title: "Basic Cleaning", price: "$99", desc: "Professional cleaning, exam & polish", featured: false },
+  { title: "Cosmetic Consult", price: "Free", desc: "Explore your smile transformation options", featured: true },
+  { title: "Payment Plans", price: "From $49/mo", desc: "Flexible financing for any treatment", featured: false },
+];
+
+/* ───────────────────────── DENTAL TECHNOLOGY ───────────────────────── */
+const DENTAL_TECH = [
+  { icon: Scan, title: "Digital X-Rays", desc: "Up to 90% less radiation than traditional film" },
+  { icon: Eyeglasses, title: "Intraoral Cameras", desc: "See exactly what we see in real time" },
+  { icon: Sparkle, title: "Laser Dentistry", desc: "Minimally invasive, pain-free treatments" },
+  { icon: Monitor, title: "3D Imaging", desc: "Precise treatment planning with CBCT technology" },
+];
+
+/* ───────────────────────── COMFORT FEATURES ───────────────────────── */
+const COMFORT_FEATURES = [
+  { icon: Smiley, title: "Sedation Options", desc: "Oral and nitrous oxide sedation available for anxious patients" },
+  { icon: Heart, title: "Gentle Techniques", desc: "Our team is trained in the latest comfort-focused methods" },
+  { icon: Monitor, title: "Warm Blankets & TV", desc: "Relax with Netflix, a warm blanket, and noise-canceling headphones" },
+  { icon: Timer, title: "No-Rush Appointments", desc: "We take our time so you never feel hurried through care" },
+];
+
+/* ───────────────────────── COMPARISON ROWS ───────────────────────── */
+const COMPARISON_ROWS = [
+  { feature: "Same-Day Emergency", us: true, them: "Sometimes" },
+  { feature: "Insurance Filing Help", us: true, them: "Varies" },
+  { feature: "Sedation Available", us: true, them: "Sometimes" },
+  { feature: "Evening/Weekend Hours", us: true, them: "Rarely" },
+  { feature: "Digital X-Rays", us: true, them: "Sometimes" },
+  { feature: "Payment Plans", us: true, them: "Varies" },
+  { feature: "New Patient Specials", us: true, them: "Rarely" },
+];
+
+/* ───────────────────────── CHECKUP QUIZ OPTIONS ───────────────────────── */
+const QUIZ_OPTIONS = [
+  { label: "Less than 6 months", color: "#22c55e", bg: "#22c55e15", border: "#22c55e33", response: "Great! Keep up the good work." },
+  { label: "6-12 months ago", color: "#f59e0b", bg: "#f59e0b15", border: "#f59e0b33", response: "Time to schedule your next visit!" },
+  { label: "Over a year ago", color: "#ef4444", bg: "#ef444415", border: "#ef444433", response: "Don\u2019t wait \u2014 book today!" },
+];
 
 /* ───────────────────────── STOCK FALLBACK IMAGES (UNIQUE TO DENTAL) ───────────────────────── */
 /* Dental-specific stock images — 5 hero, 5 about, 10 gallery (no cross-category overlap) */
@@ -393,6 +450,10 @@ function AnimatedSection({ children, className = "" }: { children: React.ReactNo
 export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [quizAnswer, setQuizAnswer] = useState<number | null>(null);
+  const [sliderPos, setSliderPos] = useState(50);
+  const sliderRef = useRef<HTMLDivElement>(null);
+  const isDragging = useRef(false);
 
   const { TEAL, TEAL_GLOW } = getAccent(data.accentColor);
 
@@ -409,6 +470,33 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
     : pickGallery(STOCK_GALLERY, data.businessName);
 
   const phoneDigits = data.phone.replace(/\D/g, "");
+
+  /* Before/After slider handlers */
+  const handleSliderMove = useCallback((clientX: number) => {
+    if (!sliderRef.current || !isDragging.current) return;
+    const rect = sliderRef.current.getBoundingClientRect();
+    const x = Math.max(0, Math.min(clientX - rect.left, rect.width));
+    setSliderPos((x / rect.width) * 100);
+  }, []);
+
+  const handleMouseDown = useCallback(() => { isDragging.current = true; }, []);
+  const handleMouseUp = useCallback(() => { isDragging.current = false; }, []);
+
+  useEffect(() => {
+    const onMove = (e: MouseEvent) => handleSliderMove(e.clientX);
+    const onTouchMove = (e: TouchEvent) => handleSliderMove(e.touches[0].clientX);
+    const onUp = () => { isDragging.current = false; };
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+    window.addEventListener("touchmove", onTouchMove);
+    window.addEventListener("touchend", onUp);
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+      window.removeEventListener("touchmove", onTouchMove);
+      window.removeEventListener("touchend", onUp);
+    };
+  }, [handleSliderMove]);
 
   const processSteps = [
     { step: "01", title: "Book Appointment", desc: "Schedule online or call us. We will find the perfect time for your visit." },
@@ -603,6 +691,34 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
+      {/* ══════════════════ NEW PATIENT SPECIAL BANNER ══════════════════ */}
+      <section className="relative z-10 py-6 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${TEAL}15, ${TEAL}08)` }} />
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 relative z-10">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-4">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style={{ background: `${TEAL}22`, border: `1px solid ${TEAL}33` }}>
+                <Sparkle size={24} weight="fill" style={{ color: TEAL }} />
+              </div>
+              <div>
+                <h3 className="text-lg sm:text-xl font-extrabold text-slate-900">
+                  New Patient Special: Exam, X-Rays &amp; Cleaning — <span style={{ color: TEAL }}>$99</span>
+                </h3>
+                <p className="text-sm text-slate-500">Limited availability this month — schedule now before spots fill up</p>
+              </div>
+            </div>
+            <MagneticButton
+              href={`tel:${phoneDigits}`}
+              className="px-6 py-3 rounded-full text-sm font-bold text-white flex items-center gap-2 cursor-pointer shrink-0 shadow-lg"
+              style={{ background: TEAL } as React.CSSProperties}
+            >
+              <Phone size={16} weight="bold" />
+              Book Now
+            </MagneticButton>
+          </div>
+        </div>
+      </section>
+
       {/* ══════════════════ 4. SERVICES ══════════════════ */}
       <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, ${TEAL}08 50%, #faf9f6 100%)` }} />
@@ -651,6 +767,74 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
                 </div>
               );
             })}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ INSURANCE ACCEPTED ══════════════════ */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, #f5f0eb 50%, #faf9f6 100%)` }} />
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 relative z-10">
+          <div className="text-center mb-10">
+            <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900">Affordable Care for Everyone</h2>
+            <p className="text-slate-500 mt-2">We make it easy to get the dental care you deserve</p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {INSURANCE_BADGES.map((badge) => (
+              <GlassCard key={badge.label} className="p-5 text-center">
+                <div className="w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center" style={{ background: `${TEAL}15`, border: `1px solid ${TEAL}33` }}>
+                  <badge.icon size={24} weight="duotone" style={{ color: TEAL }} />
+                </div>
+                <span className="text-sm font-semibold text-slate-900">{badge.label}</span>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ FINANCING / PAYMENT PLANS ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, ${TEAL}06 50%, #faf9f6 100%)` }} />
+        <DentalPattern opacity={0.02} accent={TEAL} />
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 relative z-10">
+          <SectionHeader badge="Pricing" title="Transparent & Affordable" subtitle="No surprises — just honest pricing and flexible options to fit your budget." accent={TEAL} />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {PRICING_CARDS.map((card) => (
+              <div key={card.title}>
+                {card.featured ? (
+                  <ShimmerBorder accent={TEAL}>
+                    <div className="p-7 text-center">
+                      <span className="inline-block text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full text-white mb-4" style={{ background: TEAL }}>Most Popular</span>
+                      <h3 className="text-xl font-bold text-slate-900 mb-1">{card.title}</h3>
+                      <p className="text-3xl font-extrabold mb-2" style={{ color: TEAL }}>{card.price}</p>
+                      <p className="text-sm text-slate-500">{card.desc}</p>
+                      <MagneticButton
+                        href={`tel:${phoneDigits}`}
+                        className="mt-6 w-full py-3 rounded-full text-sm font-bold text-white flex items-center justify-center gap-2 cursor-pointer"
+                        style={{ background: TEAL } as React.CSSProperties}
+                      >
+                        <Phone size={16} weight="bold" />
+                        Schedule Now
+                      </MagneticButton>
+                    </div>
+                  </ShimmerBorder>
+                ) : (
+                  <GlassCard className="p-7 text-center h-full flex flex-col">
+                    <h3 className="text-xl font-bold text-slate-900 mb-1">{card.title}</h3>
+                    <p className="text-3xl font-extrabold mb-2" style={{ color: TEAL }}>{card.price}</p>
+                    <p className="text-sm text-slate-500 flex-1">{card.desc}</p>
+                    <MagneticButton
+                      href={`tel:${phoneDigits}`}
+                      className="mt-6 w-full py-3 rounded-full text-sm font-bold border flex items-center justify-center gap-2 cursor-pointer"
+                      style={{ color: TEAL, borderColor: `${TEAL}33` } as React.CSSProperties}
+                    >
+                      <Phone size={16} weight="bold" />
+                      Learn More
+                    </MagneticButton>
+                  </GlassCard>
+                )}
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -709,6 +893,80 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
+      {/* ══════════════════ SMILE TRANSFORMATION BEFORE/AFTER ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, ${TEAL}06 50%, #faf9f6 100%)` }} />
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 relative z-10">
+          <SectionHeader badge="Transformations" title="Smile Makeover Results" subtitle="Drag the slider to see real results from our cosmetic treatments." accent={TEAL} />
+          <div
+            ref={sliderRef}
+            className="relative rounded-2xl overflow-hidden border border-slate-200 cursor-ew-resize select-none shadow-lg"
+            style={{ aspectRatio: "16/9" }}
+            onMouseDown={handleMouseDown}
+            onTouchStart={handleMouseDown}
+          >
+            {/* After image (full) */}
+            <img
+              src="https://images.unsplash.com/photo-1581585744272-4be7e1035f10?w=800&q=80"
+              alt="After treatment"
+              className="absolute inset-0 w-full h-full object-cover"
+              draggable={false}
+            />
+            {/* Before image (clipped) */}
+            <div className="absolute inset-0 overflow-hidden" style={{ width: `${sliderPos}%` }}>
+              <img
+                src="https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=800&q=80"
+                alt="Before treatment"
+                className="absolute inset-0 w-full h-full object-cover"
+                style={{ minWidth: sliderRef.current ? `${sliderRef.current.offsetWidth}px` : "100%" }}
+                draggable={false}
+              />
+            </div>
+            {/* Slider line */}
+            <div className="absolute top-0 bottom-0 z-20" style={{ left: `${sliderPos}%`, transform: "translateX(-50%)" }}>
+              <div className="w-0.5 h-full bg-white shadow-lg" />
+              <div
+                className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center"
+              >
+                <NavigationArrow size={18} weight="bold" style={{ color: TEAL, transform: "rotate(-90deg)" }} />
+              </div>
+            </div>
+            {/* Labels */}
+            <div className="absolute top-4 left-4 px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-sm z-10">
+              <span className="text-xs font-bold text-white uppercase tracking-wider">Before</span>
+            </div>
+            <div className="absolute top-4 right-4 px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-sm z-10">
+              <span className="text-xs font-bold text-white uppercase tracking-wider">After</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ PATIENT COMFORT ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #f5f0eb 0%, #faf9f6 50%, #f5f0eb 100%)` }} />
+        <DentalPattern opacity={0.02} accent={TEAL} />
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-[30%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${TEAL}06` }} />
+        </div>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
+          <SectionHeader badge="Your Comfort" title="We Know Dental Anxiety Is Real" subtitle="That's why we've designed every part of your experience around your comfort and peace of mind." accent={TEAL} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {COMFORT_FEATURES.map((feat) => (
+              <GlassCard key={feat.title} className="p-6 flex items-start gap-4">
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0" style={{ background: `${TEAL}15`, border: `1px solid ${TEAL}33` }}>
+                  <feat.icon size={24} weight="duotone" style={{ color: TEAL }} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-slate-900 mb-1">{feat.title}</h3>
+                  <p className="text-sm text-slate-500 leading-relaxed">{feat.desc}</p>
+                </div>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ══════════════════ 6. PROCESS ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, ${TEAL}08 50%, #faf9f6 100%)` }} />
@@ -738,6 +996,86 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
                 </GlassCard>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ DENTAL TECHNOLOGY ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, ${TEAL}06 50%, #faf9f6 100%)` }} />
+        <DentalPattern opacity={0.02} accent={TEAL} />
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute bottom-[20%] left-[15%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${TEAL}06` }} />
+        </div>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
+          <SectionHeader badge="Technology" title="Advanced Dental Technology" subtitle="We invest in the latest technology so you get faster, more comfortable, and more precise care." accent={TEAL} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {DENTAL_TECH.map((tech) => (
+              <GlassCard key={tech.title} className="p-6 text-center group hover:shadow-md transition-all duration-300">
+                <div className="w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center transition-all duration-300" style={{ background: `${TEAL}15`, border: `1px solid ${TEAL}33` }}>
+                  <tech.icon size={28} weight="duotone" style={{ color: TEAL }} />
+                </div>
+                <h3 className="text-lg font-bold text-slate-900 mb-2">{tech.title}</h3>
+                <p className="text-sm text-slate-500 leading-relaxed">{tech.desc}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ COMPETITOR COMPARISON TABLE ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #f5f0eb 0%, #faf9f6 50%, #f5f0eb 100%)` }} />
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 relative z-10">
+          <SectionHeader badge="Why Us" title={`${data.businessName} vs Average Dental Office`} accent={TEAL} />
+          <GlassCard className="overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead>
+                  <tr style={{ background: `${TEAL}0d` }}>
+                    <th className="px-6 py-4 text-sm font-semibold text-slate-900">Feature</th>
+                    <th className="px-6 py-4 text-sm font-semibold text-center" style={{ color: TEAL }}>{data.businessName}</th>
+                    <th className="px-6 py-4 text-sm font-semibold text-slate-400 text-center">Average Office</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {COMPARISON_ROWS.map((row, i) => (
+                    <tr key={row.feature} className={i % 2 === 0 ? "bg-white/40" : "bg-white/20"}>
+                      <td className="px-6 py-4 text-sm text-slate-700 font-medium">{row.feature}</td>
+                      <td className="px-6 py-4 text-center">
+                        <CheckCircle size={22} weight="fill" style={{ color: TEAL }} className="mx-auto" />
+                      </td>
+                      <td className="px-6 py-4 text-center text-sm text-slate-400">{row.them}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </GlassCard>
+        </div>
+      </section>
+
+      {/* ══════════════════ VIDEO TOUR PLACEHOLDER ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, ${TEAL}06 50%, #faf9f6 100%)` }} />
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 relative z-10">
+          <SectionHeader badge="Virtual Tour" title="Take a Look Around" subtitle={`See why patients love the ${data.businessName} experience.`} accent={TEAL} />
+          <div className="relative rounded-2xl overflow-hidden border border-slate-200 shadow-lg group cursor-pointer" style={{ aspectRatio: "16/9" }}>
+            <img
+              src={galleryImages[0] || heroImage}
+              alt={`${data.businessName} office tour`}
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors duration-300" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-20 h-20 rounded-full flex items-center justify-center bg-white/90 shadow-xl group-hover:scale-110 transition-transform duration-300">
+                <Play size={36} weight="fill" style={{ color: TEAL }} className="ml-1" />
+              </div>
+            </div>
+            <div className="absolute bottom-6 left-6">
+              <p className="text-white text-lg font-bold">Virtual Office Tour</p>
+              <p className="text-white/70 text-sm">2 min walkthrough</p>
+            </div>
           </div>
         </div>
       </section>
@@ -778,6 +1116,18 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
         </div>
 
         <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
+          {/* Google Reviews Header */}
+          <div className="text-center mb-4">
+            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border bg-white/80 backdrop-blur-sm shadow-sm" style={{ borderColor: `${TEAL}33` }}>
+              <div className="flex gap-0.5">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} size={18} weight="fill" className="text-amber-400" />
+                ))}
+              </div>
+              <span className="text-sm font-bold text-slate-900">{data.googleRating || "4.9"}</span>
+              <span className="text-sm text-slate-500">from {data.reviewCount || "200"}+ Google Reviews</span>
+            </div>
+          </div>
           <AnimatedSection>          <SectionHeader badge="Testimonials" title="What Our Patients Say" accent={TEAL} /></AnimatedSection>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -797,6 +1147,50 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
               </GlassCard>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ CHECKUP QUIZ ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #f5f0eb 0%, #faf9f6 50%, #f5f0eb 100%)` }} />
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-[30%] left-[20%] w-[400px] h-[400px] rounded-full blur-[180px]" style={{ background: `${TEAL}06` }} />
+        </div>
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
+          <SectionHeader badge="Quick Check" title="When Was Your Last Checkup?" subtitle="Regular dental visits prevent small problems from becoming big ones." accent={TEAL} />
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {QUIZ_OPTIONS.map((opt, i) => (
+              <button
+                key={opt.label}
+                onClick={() => setQuizAnswer(i)}
+                className="p-6 rounded-2xl border-2 text-center transition-all duration-300 cursor-pointer hover:shadow-md"
+                style={{
+                  background: quizAnswer === i ? opt.bg : "rgba(255,255,255,0.8)",
+                  borderColor: quizAnswer === i ? opt.color : "#e2e8f0",
+                }}
+              >
+                <div className="w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center" style={{ background: opt.bg, border: `1px solid ${opt.border}` }}>
+                  <CalendarCheck size={24} weight="duotone" style={{ color: opt.color }} />
+                </div>
+                <p className="text-sm font-bold text-slate-900 mb-1">{opt.label}</p>
+                {quizAnswer === i && (
+                  <p className="text-sm font-semibold mt-2" style={{ color: opt.color }}>{opt.response}</p>
+                )}
+              </button>
+            ))}
+          </div>
+          {quizAnswer !== null && (
+            <div className="mt-8">
+              <MagneticButton
+                href={`tel:${phoneDigits}`}
+                className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-base font-bold text-white cursor-pointer shadow-lg"
+                style={{ background: TEAL } as React.CSSProperties}
+              >
+                <Phone size={18} weight="bold" />
+                Schedule Your Visit Today
+              </MagneticButton>
+            </div>
+          )}
         </div>
       </section>
 
