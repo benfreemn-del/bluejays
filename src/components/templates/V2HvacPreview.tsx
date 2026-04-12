@@ -29,13 +29,6 @@ import {
   Lightning,
   House,
   Medal,
-  CurrencyDollar,
-  Play,
-  Timer,
-  Flame,
-  CalendarCheck,
-  Leaf,
-  Drop,
 } from "@phosphor-icons/react";
 import type { GeneratedSiteData } from "@/lib/generator";
 import BluejayLogo from "../BluejayLogo";
@@ -75,62 +68,6 @@ function getServiceIcon(serviceName: string) {
   }
   return Fan;
 }
-
-/* ───────────────────────── SERVICE TYPE BADGES ───────────────────────── */
-const SERVICE_BADGES = [
-  { label: "Heating", icon: Flame },
-  { label: "Air Conditioning", icon: Snowflake },
-  { label: "Heat Pumps", icon: Thermometer },
-  { label: "Furnaces", icon: Flame },
-  { label: "Ductwork", icon: Wind },
-  { label: "24/7 Emergency", icon: Lightning },
-];
-
-/* ───────────────────────── SEASONAL SAVINGS ───────────────────────── */
-const SEASONAL_DEALS = [
-  { title: "AC Tune-Up", price: "$89", desc: "Keep your cool all summer long", icon: Snowflake, tag: "Spring Special" },
-  { title: "Furnace Inspection", price: "$79", desc: "Stay warm and worry-free this winter", icon: Flame, tag: "Fall Special" },
-  { title: "New System Install", price: "From $4,999", desc: "High-efficiency upgrades with financing", icon: Fan, tag: "Best Value" },
-];
-
-/* ───────────────────────── WHAT WE SERVICE ───────────────────────── */
-const EQUIPMENT_GRID = [
-  { name: "Furnaces", icon: Flame },
-  { name: "Heat Pumps", icon: Thermometer },
-  { name: "Air Conditioners", icon: Snowflake },
-  { name: "Ductless Mini-Splits", icon: Fan },
-  { name: "Thermostats", icon: Timer },
-  { name: "Ductwork", icon: Wind },
-  { name: "Air Quality", icon: Leaf },
-  { name: "Water Heaters", icon: Drop },
-];
-
-/* ───────────────────────── ENERGY SAVINGS FEATURES ───────────────────────── */
-const ENERGY_FEATURES = [
-  { title: "High-Efficiency Systems", desc: "ENERGY STAR rated units that slash utility costs", icon: Lightning },
-  { title: "Smart Thermostat Integration", desc: "WiFi-enabled controls for precision comfort scheduling", icon: Timer },
-  { title: "Duct Sealing & Insulation", desc: "Stop conditioned air from escaping through leaks", icon: Wind },
-  { title: "Rebate & Tax Credit Assistance", desc: "We help you claim every available savings program", icon: CurrencyDollar },
-];
-
-/* ───────────────────────── COMPETITOR COMPARISON ───────────────────────── */
-const COMPARISON_ROWS = [
-  "Licensed & Insured Technicians",
-  "Free In-Home Estimates",
-  "Same-Day Emergency Service",
-  "Manufacturer Warranties",
-  "Flexible Financing Options",
-  "Annual Maintenance Plans",
-  "Local & Family-Owned",
-];
-
-/* ───────────────────────── HVAC QUIZ OPTIONS ───────────────────────── */
-const QUIZ_OPTIONS = [
-  { label: "No Heat / No Cool", desc: "Emergency! Get help now", color: "#ef4444", icon: Lightning },
-  { label: "Maintenance & Tune-Up", desc: "Preventive care for your system", color: "#22c55e", icon: CalendarCheck },
-  { label: "New System", desc: "Time for an upgrade", color: "#3b82f6", icon: Fan },
-  { label: "Air Quality Concern", desc: "Breathe better at home", color: "#a855f7", icon: Leaf },
-];
 
 /* ───────────────────────── STOCK FALLBACK IMAGES ───────────────────────── */
 const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=1400&q=80"];
@@ -286,7 +223,6 @@ function AnimatedSection({ children, className = "" }: { children: React.ReactNo
 export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
-  const [quizSelection, setQuizSelection] = useState<number | null>(null);
 
   const { BLUE, BLUE_GLOW } = getAccent(data.accentColor);
 
@@ -304,10 +240,10 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
   const phoneDigits = data.phone.replace(/\D/g, "");
 
   const processSteps = [
-    { step: "01", title: "Call or Schedule Online", desc: `Reach ${data.businessName} by phone or book online — we respond fast, even on nights and weekends.` },
-    { step: "02", title: "Free In-Home Estimate", desc: "A certified technician visits your home, diagnoses the issue, and provides a transparent, no-obligation quote." },
-    { step: "03", title: "Expert Installation or Repair", desc: "Our licensed team completes the work with precision and minimal disruption to your daily life." },
-    { step: "04", title: "Comfort Guaranteed", desc: "We test everything, walk you through operation, and back every job with industry-leading warranties." },
+    { step: "01", title: "Free Consultation", desc: `Call ${data.businessName} or book online. We discuss your comfort needs, system age, and budget.` },
+    { step: "02", title: "Professional Assessment", desc: "Our certified technician inspects your system, performs diagnostics, and provides a transparent quote." },
+    { step: "03", title: "Expert Service", desc: "We complete the job with precision — from repairs to full system installations — with minimal disruption." },
+    { step: "04", title: "Comfort Guaranteed", desc: "We test everything, walk you through operation, and back our work with industry-leading warranties." },
   ];
 
   const faqs = [
@@ -431,21 +367,6 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 3b. SERVICE TYPE BADGES ══════════════════ */}
-      <section className="relative z-10 py-10 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #0a1020 0%, ${NAVY} 100%)` }} />
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 relative z-10">
-          <div className="flex flex-wrap justify-center gap-3">
-            {SERVICE_BADGES.map((badge) => (
-              <div key={badge.label} className="flex items-center gap-2 px-4 py-2.5 rounded-full border border-white/10 bg-white/[0.03] backdrop-blur-sm">
-                <badge.icon size={18} weight="duotone" style={{ color: BLUE }} />
-                <span className="text-sm font-semibold text-white whitespace-nowrap">{badge.label}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ══════════════════ 4. SERVICES ══════════════════ */}
       <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #0a1020 50%, ${NAVY} 100%)` }} />
@@ -479,52 +400,6 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
                 </div>
               );
             })}
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════════════ 4b. SEASONAL SAVINGS ══════════════════ */}
-      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #0a1020 50%, ${NAVY} 100%)` }} />
-        <VentPattern opacity={0.02} accent={BLUE} />
-        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${ORANGE}06` }} /></div>
-        <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Limited Time" title="Seasonal Savings" subtitle="Take advantage of our seasonal specials — comfort shouldn't break the bank." accent={ORANGE} />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {SEASONAL_DEALS.map((deal, i) => (
-              <GlassCard key={deal.title} className="p-7 relative overflow-hidden group">
-                <div className="absolute top-0 right-0 px-3 py-1 text-xs font-bold uppercase tracking-wide rounded-bl-xl" style={{ background: i === 2 ? ORANGE : `${BLUE}22`, color: i === 2 ? "black" : BLUE }}>{deal.tag}</div>
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5 border" style={{ background: `${ORANGE}15`, borderColor: `${ORANGE}33` }}>
-                  <deal.icon size={24} weight="duotone" style={{ color: ORANGE }} />
-                </div>
-                <h3 className="text-lg font-bold text-white mb-1">{deal.title}</h3>
-                <p className="text-3xl font-black mb-2" style={{ color: ORANGE }}>{deal.price}</p>
-                <p className="text-sm text-slate-400 leading-relaxed">{deal.desc}</p>
-                <MagneticButton className="mt-5 w-full py-3 rounded-xl text-sm font-semibold text-black flex items-center justify-center gap-2 cursor-pointer" style={{ background: ORANGE } as React.CSSProperties}>
-                  Claim This Deal <ArrowRight size={16} weight="bold" />
-                </MagneticButton>
-              </GlassCard>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════════════ 4c. WHAT WE SERVICE ══════════════════ */}
-      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #0a1628 50%, ${NAVY} 100%)` }} />
-        <AirflowWaves opacity={0.025} accent={BLUE} />
-        <div className="absolute inset-0 pointer-events-none"><div className="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] rounded-full blur-[160px]" style={{ background: `${BLUE}08` }} /></div>
-        <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Full Service" title="What We Service" subtitle="From furnaces to water heaters, we handle every piece of your comfort system." accent={BLUE} />
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {EQUIPMENT_GRID.map((item) => (
-              <GlassCard key={item.name} className="p-5 text-center group hover:border-white/20 transition-all duration-300">
-                <div className="w-14 h-14 rounded-2xl mx-auto mb-3 flex items-center justify-center border" style={{ background: `${BLUE}15`, borderColor: `${BLUE}33` }}>
-                  <item.icon size={28} weight="duotone" style={{ color: BLUE }} />
-                </div>
-                <h3 className="text-sm font-bold text-white">{item.name}</h3>
-              </GlassCard>
-            ))}
           </div>
         </div>
       </section>
@@ -592,75 +467,6 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 6b. ENERGY SAVINGS ══════════════════ */}
-      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #0a1020 50%, ${NAVY} 100%)` }} />
-        <VentPattern opacity={0.02} accent={BLUE} />
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-[30%] right-[15%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${BLUE}08` }} />
-          <div className="absolute bottom-[10%] left-[5%] w-[400px] h-[400px] rounded-full blur-[140px]" style={{ background: `${ORANGE}05` }} />
-        </div>
-        <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Efficiency" title="Save Up to 40% on Energy Bills" subtitle="Modern HVAC systems pay for themselves through lower utility costs. We help you maximize every dollar." accent={BLUE} />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {ENERGY_FEATURES.map((feature) => (
-              <GlassCard key={feature.title} className="p-7 flex items-start gap-5 group hover:border-white/20 transition-all duration-300">
-                <div className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 border" style={{ background: `${BLUE}15`, borderColor: `${BLUE}33` }}>
-                  <feature.icon size={28} weight="duotone" style={{ color: BLUE }} />
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-white mb-1">{feature.title}</h3>
-                  <p className="text-sm text-slate-400 leading-relaxed">{feature.desc}</p>
-                </div>
-              </GlassCard>
-            ))}
-          </div>
-          <div className="mt-10 text-center">
-            <ShimmerBorder accent={BLUE} className="inline-block">
-              <div className="px-8 py-5 flex items-center gap-4">
-                <Leaf size={28} weight="duotone" style={{ color: BLUE }} />
-                <div className="text-left">
-                  <p className="text-white font-bold text-lg">Ask About Energy Rebates</p>
-                  <p className="text-slate-400 text-sm">Federal tax credits up to $2,000 on qualifying high-efficiency systems</p>
-                </div>
-              </div>
-            </ShimmerBorder>
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════════════ 6c. COMPETITOR COMPARISON ══════════════════ */}
-      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #0a1628 50%, ${NAVY} 100%)` }} />
-        <AirflowWaves opacity={0.02} accent={BLUE} />
-        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${BLUE}06` }} /></div>
-        <div className="max-w-4xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Why Choose Us" title={`${data.businessName} vs Big Box HVAC`} accent={BLUE} />
-          <GlassCard className="overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left">
-                <thead>
-                  <tr className="border-b border-white/10">
-                    <th className="px-5 py-4 text-sm font-semibold text-slate-400">Feature</th>
-                    <th className="px-5 py-4 text-sm font-semibold text-center" style={{ color: BLUE }}>{data.businessName}</th>
-                    <th className="px-5 py-4 text-sm font-semibold text-slate-500 text-center">Big Box / Chain</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {COMPARISON_ROWS.map((row, i) => (
-                    <tr key={row} className={i < COMPARISON_ROWS.length - 1 ? "border-b border-white/5" : ""}>
-                      <td className="px-5 py-4 text-sm text-white">{row}</td>
-                      <td className="px-5 py-4 text-center"><CheckCircle size={22} weight="fill" style={{ color: "#22c55e" }} /></td>
-                      <td className="px-5 py-4 text-center text-sm text-slate-500">{i < 2 ? "Varies" : i < 5 ? "Extra Cost" : "No"}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </GlassCard>
-        </div>
-      </section>
-
       {/* ══════════════════ 7. PROJECTS ══════════════════ */}
       <section id="projects" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #0a1628 50%, ${NAVY} 100%)` }} />
@@ -685,73 +491,6 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 7b. VIDEO PLACEHOLDER ══════════════════ */}
-      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #0a1020 50%, ${NAVY} 100%)` }} />
-        <VentPattern opacity={0.02} accent={BLUE} />
-        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] left-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${BLUE}06` }} /></div>
-        <div className="max-w-4xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Behind the Scenes" title="Meet Our Team" accent={BLUE} />
-          <div className="relative rounded-2xl overflow-hidden border border-white/10 group cursor-pointer">
-            <img src={projectImages[0] || heroImage} alt="Meet our HVAC team" className="w-full h-[300px] md:h-[400px] object-cover transition-transform duration-700 group-hover:scale-105" />
-            <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-              <div className="w-20 h-20 rounded-full flex items-center justify-center border-2 bg-white/10 backdrop-blur-sm group-hover:scale-110 transition-transform duration-300" style={{ borderColor: BLUE }}>
-                <Play size={36} weight="fill" style={{ color: BLUE }} />
-              </div>
-            </div>
-            <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between">
-              <div>
-                <p className="text-white font-bold text-lg">See How We Work</p>
-                <p className="text-slate-300 text-sm">Watch our team deliver comfort to your home</p>
-              </div>
-              <span className="hidden md:flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-sm text-white border border-white/10">
-                <Clock size={14} /> 2:30
-              </span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════════════ 7c. HVAC NEED QUIZ ══════════════════ */}
-      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #0a1628 50%, ${NAVY} 100%)` }} />
-        <AirflowWaves opacity={0.02} accent={BLUE} />
-        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] right-[10%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${ORANGE}06` }} /></div>
-        <div className="max-w-4xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Get Started" title="What's Your HVAC Need?" subtitle="Select your situation and we'll point you in the right direction." accent={BLUE} />
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {QUIZ_OPTIONS.map((option, i) => (
-              <button
-                key={option.label}
-                onClick={() => setQuizSelection(i)}
-                className="relative p-6 rounded-2xl border text-left transition-all duration-300 cursor-pointer group"
-                style={{
-                  borderColor: quizSelection === i ? option.color : "rgba(255,255,255,0.08)",
-                  background: quizSelection === i ? `${option.color}15` : "rgba(255,255,255,0.02)",
-                }}
-              >
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 border" style={{ background: `${option.color}20`, borderColor: `${option.color}44` }}>
-                    <option.icon size={24} weight="duotone" style={{ color: option.color }} />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-white mb-1">{option.label}</h3>
-                    <p className="text-sm text-slate-400">{option.desc}</p>
-                  </div>
-                </div>
-                {quizSelection === i && (
-                  <div className="mt-4 pt-4 border-t" style={{ borderColor: `${option.color}33` }}>
-                    <MagneticButton href={`tel:${phoneDigits}`} className="w-full py-3 rounded-xl text-sm font-semibold text-white flex items-center justify-center gap-2 cursor-pointer" style={{ background: option.color } as React.CSSProperties}>
-                      <Phone size={16} weight="fill" /> Call Now: {data.phone}
-                    </MagneticButton>
-                  </div>
-                )}
-              </button>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ══════════════════ 8. TESTIMONIALS ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #0a1020 50%, ${NAVY} 100%)` }} />
@@ -760,20 +499,6 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <AnimatedSection>          <SectionHeader badge="Testimonials" title="What Our Clients Say" accent={BLUE} /></AnimatedSection>
-          {/* Google Reviews Header */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-10">
-            <div className="flex items-center gap-1">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <Star key={i} size={24} weight="fill" style={{ color: "#facc15" }} />
-              ))}
-            </div>
-            <div className="text-center sm:text-left">
-              <span className="text-white font-bold text-lg">{data.googleRating || "4.9"}</span>
-              <span className="text-slate-400 text-sm ml-2">out of 5 based on</span>
-              <span className="text-white font-semibold text-sm ml-1">{data.reviewCount || "100"}+ reviews</span>
-            </div>
-            <span className="text-slate-500 text-xs px-3 py-1 rounded-full border border-white/10 bg-white/[0.03]">Google Verified</span>
-          </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {testimonials.map((t, i) => (
               <GlassCard key={i} className="p-6 h-full flex flex-col">
@@ -842,9 +567,9 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
       
       {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
       <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${BLUE}15, ${BLUE}08)` }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15, ${ACCENT}08)` }} />
         <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
-          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: BLUE }}>
+          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: ACCENT }}>
             Don&apos;t Miss Out
           </p>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-3">
@@ -856,7 +581,7 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
           <a
             href={`/claim/${data.id}`}
             className="inline-flex items-center gap-2 min-h-[48px] px-8 py-3 rounded-full text-white font-bold text-base hover:shadow-lg transition-all duration-300"
-            style={{ background: BLUE }}
+            style={{ background: ACCENT }}
           >
             Claim This Website
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
@@ -941,31 +666,19 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 14. COMFORT GUARANTEE CTA ══════════════════ */}
-      <section className="relative z-10 py-20 overflow-hidden">
+      {/* ══════════════════ 14. GUARANTEE ══════════════════ */}
+      <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #0a1020 100%)` }} />
         <VentPattern opacity={0.015} accent={BLUE} />
-        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full blur-[180px]" style={{ background: `${BLUE}08` }} /></div>
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full blur-[180px]" style={{ background: `${BLUE}06` }} /></div>
         <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
           <ShimmerBorder accent={BLUE}>
-            <div className="p-8 md:p-14">
-              <ShieldCheck size={56} weight="fill" style={{ color: BLUE }} className="mx-auto mb-5" />
-              <h2 className="text-2xl md:text-4xl font-black text-white mb-3">100% Satisfaction Guaranteed</h2>
-              <p className="text-xl md:text-2xl font-semibold mb-6" style={{ color: BLUE }}>If You&apos;re Not Comfortable, We&apos;re Not Done</p>
-              <p className="text-slate-400 leading-relaxed max-w-2xl mx-auto text-lg mb-4">Every job by {data.businessName} is backed by our comfort guarantee. We stand behind our work with industry-leading warranties on all HVAC installations and repairs.</p>
-              <p className="text-sm mb-8" style={{ color: ORANGE }}>
-                <CurrencyDollar size={16} weight="bold" className="inline -mt-0.5" /> Flexible financing available — as low as $89/month for a new system
-              </p>
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <MagneticButton href={`tel:${phoneDigits}`} className="px-8 py-4 rounded-full text-base font-bold text-black flex items-center gap-2 cursor-pointer" style={{ background: BLUE } as React.CSSProperties}>
-                  <Phone size={18} weight="fill" /> Call for Free Estimate
-                </MagneticButton>
-                <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
-                  <CalendarCheck size={18} weight="duotone" /> Schedule Online
-                </MagneticButton>
-              </div>
-              <div className="flex flex-wrap justify-center gap-3 mt-8">
-                {["EPA Certified", "Free Estimates", "Satisfaction Guaranteed", "24/7 Emergency", "Financing Available"].map((item) => (
+            <div className="p-8 md:p-12">
+              <ShieldCheck size={48} weight="fill" style={{ color: BLUE }} className="mx-auto mb-4" />
+              <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-4">Our Comfort Guarantee</h2>
+              <p className="text-slate-400 leading-relaxed max-w-2xl mx-auto text-lg">Every job by {data.businessName} is backed by our satisfaction guarantee. We stand behind our work with industry-leading warranties on all HVAC installations and repairs.</p>
+              <div className="flex flex-wrap justify-center gap-4 mt-8">
+                {["EPA Certified", "Free Estimates", "Satisfaction Guaranteed", "24/7 Emergency"].map((item) => (
                   <span key={item} className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border" style={{ color: BLUE, borderColor: `${BLUE}33`, background: `${BLUE}0d` }}>
                     <CheckCircle size={16} weight="fill" /> {item}
                   </span>
