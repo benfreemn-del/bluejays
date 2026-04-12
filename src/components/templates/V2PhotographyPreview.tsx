@@ -29,6 +29,14 @@ import {
   SunHorizon,
   Mountains,
   User,
+  Heart,
+  Sparkle,
+  Eye,
+  SunDim,
+  RocketLaunch,
+  Folder,
+  Printer,
+  Lightning,
 } from "@phosphor-icons/react";
 import type { GeneratedSiteData } from "@/lib/generator";
 import BluejayLogo from "../BluejayLogo";
@@ -94,6 +102,90 @@ const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=600&q=80",
   "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=600&q=80",
   "https://images.unsplash.com/photo-1493246507139-91e8fad9978e?w=800&q=80",
+];
+
+/* ───────────────────────── PHOTOGRAPHY STYLES DATA ───────────────────────── */
+const PHOTOGRAPHY_STYLES = [
+  { label: "Portraits", icon: User },
+  { label: "Weddings", icon: Heart },
+  { label: "Events", icon: VideoCamera },
+  { label: "Commercial", icon: Camera },
+  { label: "Family", icon: SunHorizon },
+  { label: "Headshots", icon: Aperture },
+];
+
+/* ───────────────────────── SESSION PRICING DATA ───────────────────────── */
+const SESSION_PACKAGES = [
+  {
+    name: "Mini Session",
+    price: "From $199",
+    duration: "30 minutes",
+    details: ["10 edited photos", "1 outfit / 1 location", "Online gallery", "Print release included"],
+    featured: false,
+  },
+  {
+    name: "Standard Session",
+    price: "From $499",
+    duration: "1–2 hours",
+    details: ["30+ edited photos", "Multiple outfits & locations", "Online gallery with download", "Full print rights", "Social media crops"],
+    featured: true,
+  },
+  {
+    name: "Full Coverage",
+    price: "From $1,500+",
+    duration: "Half or full day",
+    details: ["Weddings & events", "All-day coverage", "Second shooter available", "Custom album design", "Rush delivery option"],
+    featured: false,
+  },
+];
+
+/* ───────────────────────── SESSION PROCESS STEPS ───────────────────────── */
+const SESSION_PROCESS = [
+  { step: "01", title: "Consultation & Vision", desc: "We discuss your style, mood, and creative direction to plan the perfect session.", icon: Eye },
+  { step: "02", title: "Location Scouting", desc: "We find or recommend the ideal setting — golden hour meadow, urban backdrop, or studio.", icon: MapPin },
+  { step: "03", title: "The Session", desc: "A relaxed, guided experience where we capture authentic moments and stunning compositions.", icon: Camera },
+  { step: "04", title: "Artful Editing", desc: "Each image is carefully retouched and color-graded to match your unique aesthetic.", icon: Sparkle },
+  { step: "05", title: "Gallery Delivery", desc: "Your curated gallery is delivered online — ready to download, share, and print.", icon: Folder },
+];
+
+/* ───────────────────────── GALLERY SESSION TYPES ───────────────────────── */
+const GALLERY_SESSION_TYPES = ["Portrait Session", "Wedding Day", "Family Session", "Editorial", "Engagement", "Event Coverage"];
+
+/* ───────────────────────── WHAT MAKES US DIFFERENT ───────────────────────── */
+const DIFFERENTIATORS = [
+  { title: "Artistic Eye", desc: "Every frame is composed with intention — capturing emotion, light, and story in a single click.", icon: Eye },
+  { title: "Natural Light Specialist", desc: "We chase the golden hour and know how to harness beautiful, soft light in any environment.", icon: SunDim },
+  { title: "Fast Turnaround", desc: "Your gallery is delivered within 2 weeks — because you shouldn't have to wait months for memories.", icon: RocketLaunch },
+  { title: "Full Print Rights", desc: "Every package includes a print release so you can print, share, and display your images freely.", icon: Printer },
+];
+
+/* ───────────────────────── INVESTMENT GUIDE DELIVERABLES ───────────────────────── */
+const INVESTMENT_DELIVERABLES = [
+  { item: "Professionally Edited Images", icon: Image },
+  { item: "Online Gallery with Download", icon: Folder },
+  { item: "Print Release", icon: Printer },
+  { item: "Social Media Crops", icon: Sparkle },
+  { item: "Optional Albums & Prints", icon: FilmStrip },
+  { item: "Rush Delivery Available", icon: Lightning },
+];
+
+/* ───────────────────────── COMPARISON TABLE ROWS ───────────────────────── */
+const COMPARISON_ROWS = [
+  { feature: "Full Print Rights", us: true, them: "Extra Cost" },
+  { feature: "Online Gallery", us: true, them: "Sometimes" },
+  { feature: "Professional Editing", us: true, them: "Varies" },
+  { feature: "Location Flexibility", us: true, them: "Limited" },
+  { feature: "Quick Turnaround", us: true, them: "No" },
+  { feature: "Outfit Change Guidance", us: true, them: "No" },
+  { feature: "Backup Camera Equipment", us: true, them: "Sometimes" },
+];
+
+/* ───────────────────────── SESSION TYPE QUIZ OPTIONS ───────────────────────── */
+const SESSION_QUIZ_OPTIONS = [
+  { type: "Portraits & Headshots", desc: "Perfect for personal branding, LinkedIn, or creative expression.", icon: User, cta: "Book a Portrait Session" },
+  { type: "Family & Kids", desc: "Capture milestones, holidays, and the moments that matter most.", icon: Heart, cta: "Book a Family Session" },
+  { type: "Wedding & Engagement", desc: "Timeless coverage of your love story — from proposal to reception.", icon: SunHorizon, cta: "Book Wedding Coverage" },
+  { type: "Commercial & Product", desc: "Elevate your brand with stunning product, food, or corporate photography.", icon: Camera, cta: "Book a Commercial Shoot" },
 ];
 
 /* ───────────────────────── FLOATING PARTICLES ───────────────────────── */
@@ -446,6 +538,23 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
+      {/* ══════════════════ PHOTOGRAPHY STYLES SHOWCASE ══════════════════ */}
+      <section className="relative z-10 py-16 md:py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #f5f3ef 100%)" }} />
+        <AperturePattern opacity={0.02} accent={PRIMARY} />
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Specialties" title="Photography We Love" subtitle="From intimate portraits to grand celebrations — we bring artistry to every genre." accent={PRIMARY} />
+          <div className="flex flex-wrap justify-center gap-3 md:gap-4">
+            {PHOTOGRAPHY_STYLES.map((s) => (
+              <div key={s.label} className="flex items-center gap-2.5 px-5 py-3 rounded-full border bg-white/70 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-md" style={{ borderColor: `${PRIMARY}33` }}>
+                <s.icon size={20} weight="duotone" style={{ color: PRIMARY }} />
+                <span className="text-sm font-semibold text-[#1c1917]">{s.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ══════════════════ 4. PORTFOLIO GALLERY — PRIMARY SECTION ══════════════════ */}
       <section id="portfolio" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #12100e 50%, #faf9f7 100%)" }} />
@@ -468,6 +577,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 <div className="absolute bottom-0 left-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                  <span className="inline-block text-[10px] font-bold uppercase tracking-wider text-white/90 px-2.5 py-1 rounded-full mb-1.5" style={{ background: `${PRIMARY}cc` }}>{GALLERY_SESSION_TYPES[i % GALLERY_SESSION_TYPES.length]}</span>
                   <div className="flex items-center gap-2">
                     <Camera size={14} weight="fill" style={{ color: PRIMARY }} />
                     <span className="text-xs text-white/80 font-medium">{data.businessName}</span>
@@ -489,6 +599,24 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <AnimatedSection>          <SectionHeader badge="Testimonials" title="Client Love" accent={PRIMARY} /></AnimatedSection>
+
+          {/* Google Reviews Header */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-10">
+            <div className="flex gap-0.5">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Star key={i} size={22} weight="fill" style={{ color: PRIMARY }} />
+              ))}
+            </div>
+            <div className="text-center sm:text-left">
+              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+              <span className="text-lg font-bold text-[#1c1917]">{(data as any).googleRating || "5.0"}</span>
+              <span className="text-[#6b7280] text-sm ml-1.5">out of 5</span>
+              <span className="text-[#9ca3af] text-sm ml-2">·</span>
+              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+              <span className="text-[#6b7280] text-sm ml-2">{(data as any).reviewCount || "50"}+ reviews on Google</span>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {testimonials.map((t, i) => (
               <GlassCard key={i} className="p-6 h-full flex flex-col">
@@ -543,6 +671,53 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
+      {/* ══════════════════ THE EXPERIENCE — SESSION PROCESS ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #12100e 50%, #faf9f7 100%)" }} />
+        <AperturePattern opacity={0.02} accent={PRIMARY} />
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-[30%] left-[10%] w-[500px] h-[500px] rounded-full blur-[200px]" style={{ background: `${PRIMARY}06` }} />
+        </div>
+
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="The Experience" title="Your Session Journey" subtitle="From first conversation to final gallery — every step is designed to feel effortless and exciting." accent={PRIMARY} />
+
+          <div className="relative">
+            {/* Vertical timeline line — desktop only */}
+            <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2" style={{ background: `linear-gradient(to bottom, transparent, ${PRIMARY}33, transparent)` }} />
+
+            <div className="space-y-8 md:space-y-0">
+              {SESSION_PROCESS.map((step, i) => {
+                const isLeft = i % 2 === 0;
+                return (
+                  <div key={step.step} className={`relative md:flex items-center ${isLeft ? "md:flex-row" : "md:flex-row-reverse"} md:gap-8`}>
+                    {/* Content card */}
+                    <div className={`md:w-[calc(50%-2rem)] ${isLeft ? "md:text-right" : "md:text-left"}`}>
+                      <GlassCard className="p-6">
+                        <div className={`flex items-center gap-3 mb-3 ${isLeft ? "md:flex-row-reverse" : ""}`}>
+                          <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: PRIMARY_GLOW }}>
+                            <step.icon size={20} weight="duotone" style={{ color: PRIMARY }} />
+                          </div>
+                          <span className="text-xs font-mono font-bold tracking-wider" style={{ color: PRIMARY }}>STEP {step.step}</span>
+                        </div>
+                        <h3 className="text-lg font-bold text-[#1c1917] mb-1.5">{step.title}</h3>
+                        <p className="text-sm text-[#6b7280] leading-relaxed">{step.desc}</p>
+                      </GlassCard>
+                    </div>
+
+                    {/* Center dot */}
+                    <div className="hidden md:flex w-4 h-4 rounded-full border-2 shrink-0 z-10" style={{ borderColor: PRIMARY, background: `${PRIMARY}33` }} />
+
+                    {/* Spacer for the other side */}
+                    <div className="hidden md:block md:w-[calc(50%-2rem)]" />
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ══════════════════ 7. ABOUT ══════════════════ */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #0f0e0c 50%, #faf9f7 100%)" }} />
@@ -587,6 +762,30 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
+      {/* ══════════════════ WHAT MAKES US DIFFERENT ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #141210 50%, #faf9f7 100%)" }} />
+        <FilmStripBG opacity={0.02} accent={PRIMARY} />
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute bottom-[20%] right-[15%] w-[400px] h-[400px] rounded-full blur-[180px]" style={{ background: `${PRIMARY}06` }} />
+        </div>
+
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Why Us" title="What Sets Us Apart" subtitle={`${data.businessName} delivers more than just photos — we deliver an experience.`} accent={PRIMARY} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {DIFFERENTIATORS.map((d) => (
+              <GlassCard key={d.title} className="p-6 text-center group hover:shadow-md transition-shadow duration-300">
+                <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4 transition-all duration-300" style={{ background: PRIMARY_GLOW }}>
+                  <d.icon size={28} weight="duotone" style={{ color: PRIMARY }} />
+                </div>
+                <h3 className="text-base font-bold text-[#1c1917] mb-2">{d.title}</h3>
+                <p className="text-sm text-[#6b7280] leading-relaxed">{d.desc}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ══════════════════ 8. FEATURED GALLERY ROW ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #12100e 50%, #faf9f7 100%)" }} />
@@ -610,16 +809,178 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 9. BOOKING CTA ══════════════════ */}
+      {/* ══════════════════ SESSION PRICING PACKAGES ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #12100e 50%, #faf9f7 100%)" }} />
+        <AperturePattern opacity={0.02} accent={PRIMARY} />
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-[20%] left-[20%] w-[500px] h-[500px] rounded-full blur-[200px]" style={{ background: `${PRIMARY}06` }} />
+        </div>
+
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Investment" title="Session Packages" subtitle="Beautiful imagery is an investment in memories that last a lifetime." accent={PRIMARY} />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {SESSION_PACKAGES.map((pkg) => (
+              <div key={pkg.name} className="relative">
+                {pkg.featured ? (
+                  <ShimmerBorder accent={PRIMARY}>
+                    <div className="p-7 text-center">
+                      <span className="inline-block text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-4 text-white" style={{ background: PRIMARY }}>Most Popular</span>
+                      <h3 className="text-xl font-bold text-[#1c1917] mb-1">{pkg.name}</h3>
+                      <p className="text-2xl font-extrabold mb-1" style={{ color: PRIMARY }}>{pkg.price}</p>
+                      <p className="text-xs text-[#9ca3af] mb-5">{pkg.duration}</p>
+                      <ul className="space-y-2.5 text-left">
+                        {pkg.details.map((d) => (
+                          <li key={d} className="flex items-center gap-2.5 text-sm text-[#4b5563]">
+                            <CheckCircle size={16} weight="fill" style={{ color: PRIMARY }} className="shrink-0" />
+                            {d}
+                          </li>
+                        ))}
+                      </ul>
+                      <MagneticButton className="w-full mt-6 py-3 rounded-xl text-sm font-semibold text-black cursor-pointer" style={{ background: PRIMARY } as React.CSSProperties}>
+                        Book This Session
+                      </MagneticButton>
+                    </div>
+                  </ShimmerBorder>
+                ) : (
+                  <GlassCard className="p-7 text-center h-full flex flex-col">
+                    <h3 className="text-xl font-bold text-[#1c1917] mb-1">{pkg.name}</h3>
+                    <p className="text-2xl font-extrabold mb-1" style={{ color: PRIMARY }}>{pkg.price}</p>
+                    <p className="text-xs text-[#9ca3af] mb-5">{pkg.duration}</p>
+                    <ul className="space-y-2.5 text-left flex-1">
+                      {pkg.details.map((d) => (
+                        <li key={d} className="flex items-center gap-2.5 text-sm text-[#4b5563]">
+                          <CheckCircle size={16} weight="fill" style={{ color: `${PRIMARY}80` }} className="shrink-0" />
+                          {d}
+                        </li>
+                      ))}
+                    </ul>
+                    <MagneticButton className="w-full mt-6 py-3 rounded-xl text-sm font-semibold border cursor-pointer" style={{ borderColor: `${PRIMARY}33`, color: PRIMARY } as React.CSSProperties}>
+                      Learn More
+                    </MagneticButton>
+                  </GlassCard>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ INVESTMENT GUIDE ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #0f0e0c 50%, #faf9f7 100%)" }} />
+        <FilmStripBG opacity={0.02} accent={PRIMARY} />
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-[30%] right-[10%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${COOL_SLATE}06` }} />
+        </div>
+
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="What You Get" title="Every Session Includes" subtitle="No hidden fees, no surprise costs — just beautiful images and an incredible experience." accent={PRIMARY} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {INVESTMENT_DELIVERABLES.map((d) => (
+              <GlassCard key={d.item} className="p-5 flex items-center gap-4">
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: PRIMARY_GLOW }}>
+                  <d.icon size={20} weight="duotone" style={{ color: PRIMARY }} />
+                </div>
+                <span className="text-sm font-semibold text-[#1c1917]">{d.item}</span>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ COMPETITOR COMPARISON TABLE ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #141210 50%, #faf9f7 100%)" }} />
+        <AperturePattern opacity={0.02} accent={PRIMARY} />
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute bottom-[20%] left-[15%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${PRIMARY}06` }} />
+        </div>
+
+        <div className="max-w-3xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Comparison" title={`${data.businessName} vs Average Photographers`} accent={PRIMARY} />
+          <GlassCard className="overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-gray-100">
+                    <th className="text-left p-4 font-semibold text-[#1c1917]">Feature</th>
+                    <th className="text-center p-4 font-semibold" style={{ color: PRIMARY }}>{data.businessName.length > 15 ? "Us" : data.businessName}</th>
+                    <th className="text-center p-4 font-semibold text-[#9ca3af]">Others</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {COMPARISON_ROWS.map((row, i) => (
+                    <tr key={row.feature} className={i < COMPARISON_ROWS.length - 1 ? "border-b border-gray-50" : ""}>
+                      <td className="p-4 text-[#4b5563]">{row.feature}</td>
+                      <td className="p-4 text-center">
+                        <CheckCircle size={20} weight="fill" style={{ color: PRIMARY }} className="mx-auto" />
+                      </td>
+                      <td className="p-4 text-center text-xs text-[#9ca3af] font-medium">{row.them}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </GlassCard>
+        </div>
+      </section>
+
+      {/* ══════════════════ SESSION TYPE QUIZ ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #12100e 50%, #faf9f7 100%)" }} />
+        <FilmStripBG opacity={0.02} accent={PRIMARY} />
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-[20%] right-[20%] w-[400px] h-[400px] rounded-full blur-[180px]" style={{ background: `${PRIMARY}06` }} />
+        </div>
+
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Find Your Session" title="What Type of Session Are You Looking For?" subtitle="Select the style that best matches your vision — we'll take it from there." accent={PRIMARY} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            {SESSION_QUIZ_OPTIONS.map((opt) => (
+              <GlassCard key={opt.type} className="p-6 group hover:shadow-md transition-all duration-300 cursor-pointer">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300" style={{ background: PRIMARY_GLOW }}>
+                    <opt.icon size={24} weight="duotone" style={{ color: PRIMARY }} />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-base font-bold text-[#1c1917] mb-1">{opt.type}</h3>
+                    <p className="text-sm text-[#6b7280] leading-relaxed mb-3">{opt.desc}</p>
+                    <span className="inline-flex items-center gap-1.5 text-xs font-semibold" style={{ color: PRIMARY }}>
+                      {opt.cta}
+                      <ArrowRight size={14} weight="bold" />
+                    </span>
+                  </div>
+                </div>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ 9. LIMITED AVAILABILITY CTA ══════════════════ */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${PRIMARY}, ${PRIMARY}cc, ${PRIMARY})` }} />
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='40' height='40' fill='none'/%3E%3Cpath d='M0 0L40 40M40 0L0 40' stroke='%23000' stroke-width='0.5'/%3E%3C/svg%3E\")" }} />
 
         <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+          {/* Pulsing availability indicator */}
+          <div className="flex items-center justify-center gap-2 mb-6">
+            <span className="relative flex h-3 w-3">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-black/40" />
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-black/70" />
+            </span>
+            <span className="text-sm font-semibold text-black/70 uppercase tracking-widest">Limited Availability</span>
+          </div>
           <Camera size={48} weight="fill" className="mx-auto mb-6 text-black/70" />
-          <h2 className="text-3xl md:text-5xl font-black tracking-tight text-black mb-4">Ready to Book Your Session?</h2>
-          <p className="text-lg text-black/70 mb-8 max-w-xl mx-auto">
-            Let&apos;s create something beautiful together. {data.businessName} is booking for the upcoming season.
+          <h2 className="text-3xl md:text-5xl font-black tracking-tight text-black mb-4">
+            Now Booking {new Date().getMonth() < 5 ? "Spring & Summer" : new Date().getMonth() < 8 ? "Summer & Fall" : "Fall & Winter"} Sessions
+          </h2>
+          <p className="text-lg text-black/70 mb-3 max-w-xl mx-auto">
+            Limited spots available — {data.businessName} books up fast during peak season.
+          </p>
+          <p className="text-sm text-black/50 mb-8">
+            Secure your date before the calendar fills up.
           </p>
           <PhoneLink phone={data.phone} className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-black text-white font-bold text-lg hover:bg-black/80 transition-colors">
             <Phone size={22} weight="fill" />
