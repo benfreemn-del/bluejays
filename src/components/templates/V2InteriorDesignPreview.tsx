@@ -521,23 +521,8 @@ export default function V2InteriorDesignPreview({ data }: { data: GeneratedSiteD
         <LuxuryLines opacity={0.02} accent={PRIMARY} />
         <div className="max-w-5xl mx-auto px-6 relative z-10">
           <SectionHeader badge="Transformations" title="See the Difference" subtitle={`${data.businessName} turns ordinary rooms into extraordinary spaces.`} accent={PRIMARY} />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <GlassCard className="overflow-hidden">
-              <div className="relative">
-                <img src={galleryImages[0] || BEFORE_AFTER_IMAGE} alt="Room before redesign" className="w-full h-64 md:h-80 object-cover" />
-                <div className="absolute top-4 left-4">
-                  <span className="px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-white/90 text-[#6b7280] backdrop-blur-sm">Before</span>
-                </div>
-              </div>
-            </GlassCard>
-            <GlassCard className="overflow-hidden">
-              <div className="relative">
-                <img src={galleryImages[1] || BEFORE_AFTER_IMAGE} alt="Room after redesign" className="w-full h-64 md:h-80 object-cover" />
-                <div className="absolute top-4 left-4">
-                  <span className="px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider backdrop-blur-sm text-white" style={{ background: `${PRIMARY}e6` }}>After</span>
-                </div>
-              </div>
-            </GlassCard>
+          <div className="relative rounded-2xl overflow-hidden border border-gray-200 shadow-lg">
+            <img src="/images/interior-design-before-after.jpg" alt="Kitchen transformation before and after" className="w-full h-auto" />
           </div>
           <p className="text-center text-[#9ca3af] text-sm mt-6 italic">Every space has untapped potential. Let us reveal yours.</p>
         </div>
