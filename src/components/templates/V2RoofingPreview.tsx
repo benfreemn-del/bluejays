@@ -107,8 +107,8 @@ const STOCK_PROJECTS = [
   "https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=600&q=80",  // house 7
   "https://images.unsplash.com/photo-1600573472592-401b489a3cdc?w=600&q=80",  // house 8
 ];
-const STOCK_BEFORE = "/images/roofing-before-after.png";
-const STOCK_AFTER = "/images/roofing-before-after.png";
+const STOCK_BEFORE = "/images/roofing-before-after.jpg";
+const STOCK_AFTER = "/images/roofing-before-after.jpg";
 
 /* ───────────────────────── ROOFING MATERIALS DATA ───────────────────────── */
 const ROOFING_MATERIALS = [
@@ -583,7 +583,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
         <div className="max-w-4xl mx-auto px-6 relative z-10">
           <SectionHeader badge="See The Difference" title="Before & After" subtitle="Real results from our roofing projects — quality you can see." accent={ACCENT} />
           <div className="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
-            <img src="/images/roofing-before-after.png" alt="Before and after roof replacement" className="w-full h-auto" />
+            <img src="/images/roofing-before-after.jpg" alt="Before and after roof replacement" className="w-full h-auto" />
             <div className="absolute bottom-0 left-0 right-0 flex">
               <div className="flex-1 py-3 text-center bg-slate-800/80 backdrop-blur-sm border-r border-white/10">
                 <span className="text-sm font-bold text-white">Before</span>

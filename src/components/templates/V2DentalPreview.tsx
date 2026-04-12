@@ -899,7 +899,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 relative z-10">
           <SectionHeader badge="Transformations" title="Smile Makeover Results" subtitle="Real results from cosmetic dental treatments — the confidence boost is priceless." accent={TEAL} />
           <div className="relative rounded-2xl overflow-hidden border border-slate-200 shadow-lg">
-            <img src="/images/dental-before-after.jpg" alt="Smile transformation before and after" className="w-full h-auto" />
+            <img src="/images/dental-before-after.png" alt="Smile transformation before and after" className="w-full h-auto" />
             <div className="absolute bottom-0 left-0 right-0 flex">
               <div className="flex-1 py-3 text-center bg-slate-800/80 backdrop-blur-sm border-r border-white/10">
                 <span className="text-sm font-bold text-white">Before</span>
