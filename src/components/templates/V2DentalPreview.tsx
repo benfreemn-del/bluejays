@@ -897,46 +897,16 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
       <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, ${TEAL}06 50%, #faf9f6 100%)` }} />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 relative z-10">
-          <SectionHeader badge="Transformations" title="Smile Makeover Results" subtitle="Drag the slider to see real results from our cosmetic treatments." accent={TEAL} />
-          <div
-            ref={sliderRef}
-            className="relative rounded-2xl overflow-hidden border border-slate-200 cursor-ew-resize select-none shadow-lg"
-            style={{ aspectRatio: "16/9" }}
-            onMouseDown={handleMouseDown}
-            onTouchStart={handleMouseDown}
-          >
-            {/* After image (full) */}
-            <img
-              src="https://images.unsplash.com/photo-1581585744272-4be7e1035f10?w=800&q=80"
-              alt="After treatment"
-              className="absolute inset-0 w-full h-full object-cover"
-              draggable={false}
-            />
-            {/* Before image (clipped) */}
-            <div className="absolute inset-0 overflow-hidden" style={{ width: `${sliderPos}%` }}>
-              <img
-                src="https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=800&q=80"
-                alt="Before treatment"
-                className="absolute inset-0 w-full h-full object-cover"
-                style={{ minWidth: sliderRef.current ? `${sliderRef.current.offsetWidth}px` : "100%" }}
-                draggable={false}
-              />
-            </div>
-            {/* Slider line */}
-            <div className="absolute top-0 bottom-0 z-20" style={{ left: `${sliderPos}%`, transform: "translateX(-50%)" }}>
-              <div className="w-0.5 h-full bg-white shadow-lg" />
-              <div
-                className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center"
-              >
-                <NavigationArrow size={18} weight="bold" style={{ color: TEAL, transform: "rotate(-90deg)" }} />
+          <SectionHeader badge="Transformations" title="Smile Makeover Results" subtitle="Real results from cosmetic dental treatments — the confidence boost is priceless." accent={TEAL} />
+          <div className="relative rounded-2xl overflow-hidden border border-slate-200 shadow-lg">
+            <img src="/images/dental-before-after.jpg" alt="Smile transformation before and after" className="w-full h-auto" />
+            <div className="absolute bottom-0 left-0 right-0 flex">
+              <div className="flex-1 py-3 text-center bg-slate-800/80 backdrop-blur-sm border-r border-white/10">
+                <span className="text-sm font-bold text-white">Before</span>
               </div>
-            </div>
-            {/* Labels */}
-            <div className="absolute top-4 left-4 px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-sm z-10">
-              <span className="text-xs font-bold text-white uppercase tracking-wider">Before</span>
-            </div>
-            <div className="absolute top-4 right-4 px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-sm z-10">
-              <span className="text-xs font-bold text-white uppercase tracking-wider">After</span>
+              <div className="flex-1 py-3 text-center backdrop-blur-sm" style={{ background: `${TEAL}cc` }}>
+                <span className="text-sm font-bold text-white">After</span>
+              </div>
             </div>
           </div>
         </div>

@@ -350,12 +350,12 @@ Every V2 preview template MUST include ALL of the following conversion-focused s
 ### Category-Specific Premium Features
 | Category | Unique Required Feature | Description |
 |----------|------------------------|-------------|
-| Roofing | Before/After Slider | Interactive drag-to-compare storm damage vs new roof |
+| Roofing | Before/After Image | Real before/after photo at `/images/roofing-before-after.png` — use for ALL roofing sites |
 | Roofing | Insurance Claims Timeline | 4-step visual process ending with "$0 out of pocket" |
 | Roofing | Premium Materials Section | 4 material types with specs and warranty info |
 | Dental | Patient Comfort Section | Sedation, gentle techniques, warm blankets — addresses dental anxiety |
 | Dental | Technology Section | Digital X-rays, lasers, 3D imaging — shows modern equipment |
-| Dental | Before/After Smile Slider | Smile transformation comparison |
+| Dental | Before/After Smile Image | Real smile transformation at `/images/dental-before-after.jpg` — use for ALL dental sites |
 | Dental | New Patient Special Banner | "$99 Exam, X-Rays & Cleaning" urgency CTA |
 | Dental | Insurance Accepted Badges | Major insurance logos/names in a badge row |
 | Veterinary | Pet Type Cards | Dog, cat, exotic — what animals they treat |
