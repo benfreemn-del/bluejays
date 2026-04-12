@@ -30,6 +30,15 @@ import {
   Timer,
   Certificate,
   ThumbsUp,
+  Toilet,
+  Funnel,
+  Plug,
+  PlayCircle,
+  SealCheck,
+  CurrencyDollar,
+  Lightning,
+  Trophy,
+  Question,
 } from "@phosphor-icons/react";
 import type { GeneratedSiteData } from "@/lib/generator";
 import BluejayLogo from "../BluejayLogo";
@@ -67,6 +76,70 @@ function getServiceIcon(serviceName: string) {
   }
   return Wrench;
 }
+
+/* ───────────────────────── SERVICE TYPE BADGES ───────────────────────── */
+const SERVICE_TYPE_BADGES = [
+  { label: "Emergency Plumbing", icon: Warning },
+  { label: "Drain Cleaning", icon: Funnel },
+  { label: "Water Heaters", icon: Flame },
+  { label: "Sewer Repair", icon: Pipe },
+  { label: "Repiping", icon: Wrench },
+  { label: "Leak Detection", icon: Drop },
+];
+
+/* ───────────────────────── UPFRONT PRICING ───────────────────────── */
+const PRICING_CARDS = [
+  { service: "Drain Cleaning", price: "from $99", icon: Funnel, desc: "Clogged sink, shower, or main line cleared fast." },
+  { service: "Water Heater Install", price: "from $1,200", icon: Flame, desc: "Tank or tankless — expert installation with warranty." },
+  { service: "Leak Repair", price: "from $149", icon: Drop, desc: "Stop leaks before they cause major damage." },
+];
+
+/* ───────────────────────── WHAT WE FIX ───────────────────────── */
+const WHAT_WE_FIX = [
+  { label: "Clogged Drains", icon: Funnel },
+  { label: "Leaking Pipes", icon: Drop },
+  { label: "Water Heaters", icon: Flame },
+  { label: "Sewer Lines", icon: Pipe },
+  { label: "Toilets & Faucets", icon: Toilet },
+  { label: "Garbage Disposals", icon: Plug },
+  { label: "Gas Lines", icon: Lightning },
+  { label: "Water Filtration", icon: Drop },
+];
+
+/* ───────────────────────── PLUMBING PROCESS ───────────────────────── */
+const PLUMBING_PROCESS_STEPS = [
+  { num: "01", title: "Call 24/7", desc: "Reach us any time, day or night.", icon: Phone },
+  { num: "02", title: "Fast Diagnosis", desc: "Licensed plumber inspects the issue on-site.", icon: Wrench },
+  { num: "03", title: "Upfront Price", desc: "No surprises — you approve the cost before we start.", icon: CurrencyDollar },
+  { num: "04", title: "Problem Solved", desc: "Fixed right the first time, guaranteed.", icon: CheckCircle },
+];
+
+/* ───────────────────────── WHY CHOOSE US PILLARS ───────────────────────── */
+const WHY_CHOOSE_PILLARS = [
+  { title: "Licensed Master Plumber", desc: "Trained, certified, code-compliant.", icon: Certificate },
+  { title: "24/7 Emergency Service", desc: "Burst pipes at 3 AM? We are on the way.", icon: Clock },
+  { title: "Upfront Pricing", desc: "No hidden fees, no surprises, ever.", icon: CurrencyDollar },
+  { title: "Satisfaction Guaranteed", desc: "If you are not happy, we make it right.", icon: Trophy },
+];
+
+/* ───────────────────────── COMPETITOR COMPARISON ───────────────────────── */
+const COMPARISON_ROWS = [
+  { feature: "Licensed & Insured", us: true, them: "Varies" },
+  { feature: "Pulls Permits", us: true, them: "Rarely" },
+  { feature: "Code Compliant Work", us: true, them: "No" },
+  { feature: "Parts & Labor Warranty", us: true, them: "No" },
+  { feature: "24/7 Emergency Service", us: true, them: "No" },
+  { feature: "Camera Inspection", us: true, them: "No" },
+  { feature: "Upfront Pricing", us: true, them: "Sometimes" },
+];
+
+/* ───────────────────────── QUIZ OPTIONS ───────────────────────── */
+const QUIZ_OPTIONS = [
+  { label: "Clogged Drain", note: "Common fix — we clear it fast", icon: Funnel, color: "#22c55e" },
+  { label: "Leak or Burst Pipe", note: "Emergency! Call now", icon: Drop, color: "#ef4444" },
+  { label: "Water Heater Problem", note: "No hot water? We can help", icon: Flame, color: "#f59e0b" },
+  { label: "Sewer / Main Line", note: "Serious — call now", icon: Pipe, color: "#ef4444" },
+];
 
 /* ───────────────────────── STOCK FALLBACK IMAGES ───────────────────────── */
 const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=1400&q=80"];
@@ -358,6 +431,21 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
+      {/* ══════════════════ FEATURE 1: SERVICE TYPE BADGES ══════════════════ */}
+      <section className="relative z-10 py-8 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0c1222 0%, #0f172a 100%)" }} />
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
+          <div className="flex flex-wrap justify-center gap-3">
+            {SERVICE_TYPE_BADGES.map((badge) => (
+              <div key={badge.label} className="flex items-center gap-2 px-4 py-2.5 rounded-full border text-sm font-medium" style={{ color: TEAL, borderColor: `${TEAL}33`, background: `${TEAL}0d` }}>
+                <badge.icon size={16} weight="fill" style={{ color: TEAL }} />
+                {badge.label}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ══════════════════ 3. STATS ══════════════════ */}
       <section className="relative z-10 py-16 overflow-hidden border-y" style={{ borderColor: `${TEAL}1a` }}>
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0c1222 0%, #0f172a 100%)" }} />
@@ -413,6 +501,81 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
                 </div>
               );
             })}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ FEATURE 3: WHAT WE FIX ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1222 50%, #0f172a 100%)" }} />
+        <WaterFlowSVG opacity={0.02} accent={BLUE} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${TEAL}06` }} /></div>
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="What We Fix" title="Common Plumbing Problems" subtitle="From minor drips to major emergencies, we handle it all." accent={TEAL} />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {WHAT_WE_FIX.map((item) => (
+              <GlassCard key={item.label} className="p-5 text-center group hover:border-white/20 transition-all duration-300">
+                <div className="w-12 h-12 rounded-xl mx-auto mb-3 flex items-center justify-center border transition-all duration-300" style={{ background: TEAL_GLOW, borderColor: `${TEAL}33` }}>
+                  <item.icon size={24} weight="duotone" style={{ color: TEAL }} />
+                </div>
+                <p className="text-sm font-semibold text-white">{item.label}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ FEATURE 2: UPFRONT PRICING ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1830 50%, #0f172a 100%)" }} />
+        <PipePattern opacity={0.02} accent={BLUE} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute bottom-[20%] left-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${BLUE}06` }} /></div>
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Transparent Pricing" title="Upfront, Honest Pricing" subtitle="No hidden fees. Know the cost before we start." accent={TEAL} />
+          <div className="grid md:grid-cols-3 gap-6">
+            {PRICING_CARDS.map((card) => (
+              <GlassCard key={card.service} className="p-7 text-center group hover:border-white/20 transition-all duration-300 relative overflow-hidden">
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${TEAL}10, transparent 70%)` }} />
+                <div className="relative z-10">
+                  <div className="w-14 h-14 rounded-xl mx-auto mb-4 flex items-center justify-center border" style={{ background: TEAL_GLOW, borderColor: `${TEAL}33` }}>
+                    <card.icon size={28} weight="duotone" style={{ color: TEAL }} />
+                  </div>
+                  <h3 className="text-lg font-bold text-white mb-1">{card.service}</h3>
+                  <p className="text-2xl font-extrabold mb-3" style={{ color: TEAL }}>{card.price}</p>
+                  <p className="text-sm text-slate-400 leading-relaxed">{card.desc}</p>
+                </div>
+              </GlassCard>
+            ))}
+          </div>
+          <p className="text-center text-xs text-slate-500 mt-6">* Final pricing depends on the scope of work. Free estimates always.</p>
+        </div>
+      </section>
+
+      {/* ══════════════════ FEATURE 4: PLUMBING PROCESS ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1222 50%, #0f172a 100%)" }} />
+        <PipePattern opacity={0.025} accent={BLUE} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[15%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${TEAL}06` }} /></div>
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="How It Works" title="4 Simple Steps" accent={TEAL} />
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {PLUMBING_PROCESS_STEPS.map((step, i) => (
+              <div key={step.num} className="relative">
+                {i < PLUMBING_PROCESS_STEPS.length - 1 && (
+                  <div className="hidden lg:flex absolute top-10 left-[calc(50%+40px)] w-[calc(100%-80px)] items-center">
+                    <div className="h-px flex-1" style={{ background: `linear-gradient(to right, ${TEAL}33, ${TEAL}11)` }} />
+                    <ArrowRight size={14} style={{ color: `${TEAL}44` }} className="shrink-0 -ml-1" />
+                  </div>
+                )}
+                <GlassCard className="p-6 text-center">
+                  <div className="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center border" style={{ background: `linear-gradient(135deg, ${TEAL}22, ${TEAL}0a)`, borderColor: `${TEAL}33` }}>
+                    <step.icon size={24} weight="duotone" style={{ color: TEAL }} />
+                  </div>
+                  <h3 className="text-lg font-bold text-white mb-2">{step.title}</h3>
+                  <p className="text-sm text-slate-400 leading-relaxed">{step.desc}</p>
+                </GlassCard>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -482,6 +645,27 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
+      {/* ══════════════════ FEATURE 5: WHY CHOOSE US ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1222 50%, #0f172a 100%)" }} />
+        <WaterFlowSVG opacity={0.02} accent={BLUE} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute bottom-[30%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${TEAL}08` }} /></div>
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Why Us" title="Why Choose Us" subtitle={`${data.businessName} delivers expert plumbing you can trust.`} accent={TEAL} />
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {WHY_CHOOSE_PILLARS.map((pillar) => (
+              <GlassCard key={pillar.title} className="p-7 text-center group hover:border-white/20 transition-all duration-300">
+                <div className="w-14 h-14 rounded-xl mx-auto mb-4 flex items-center justify-center border transition-all duration-300" style={{ background: TEAL_GLOW, borderColor: `${TEAL}33` }}>
+                  <pillar.icon size={28} weight="duotone" style={{ color: TEAL }} />
+                </div>
+                <h3 className="text-lg font-bold text-white mb-2">{pillar.title}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed">{pillar.desc}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ══════════════════ 7. PROJECTS GALLERY ══════════════════ */}
       <section id="projects" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1830 50%, #0f172a 100%)" }} />
@@ -509,6 +693,94 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
+      {/* ══════════════════ FEATURE 6: COMPETITOR COMPARISON ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1222 50%, #0f172a 100%)" }} />
+        <PipePattern opacity={0.02} accent={BLUE} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[20%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${TEAL}06` }} /></div>
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Compare" title={`${data.businessName} vs. Handyman / DIY`} accent={TEAL} />
+          <GlassCard className="overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-white/10">
+                    <th className="text-left p-4 text-slate-400 font-medium">Feature</th>
+                    <th className="text-center p-4 font-bold text-white">{data.businessName}</th>
+                    <th className="text-center p-4 text-slate-500 font-medium">Handyman / DIY</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {COMPARISON_ROWS.map((row, i) => (
+                    <tr key={row.feature} className={i < COMPARISON_ROWS.length - 1 ? "border-b border-white/5" : ""}>
+                      <td className="p-4 text-slate-300">{row.feature}</td>
+                      <td className="p-4 text-center">
+                        <CheckCircle size={20} weight="fill" className="inline-block" style={{ color: "#22c55e" }} />
+                      </td>
+                      <td className="p-4 text-center text-slate-500">{row.them}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </GlassCard>
+        </div>
+      </section>
+
+      {/* ══════════════════ FEATURE 7: VIDEO PLACEHOLDER ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1830 50%, #0f172a 100%)" }} />
+        <WaterFlowSVG opacity={0.02} accent={BLUE} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] right-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${TEAL}08` }} /></div>
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="See Our Work" title="Watch Us In Action" accent={TEAL} />
+          <div className="relative rounded-2xl overflow-hidden border border-white/10 group cursor-pointer">
+            <img src={projectImages[0] || heroImage} alt="See our plumbing work" className="w-full h-[300px] md:h-[420px] object-cover transition-transform duration-700 group-hover:scale-105" />
+            <div className="absolute inset-0 bg-black/50 flex items-center justify-center transition-all duration-300 group-hover:bg-black/40">
+              <div className="w-20 h-20 rounded-full flex items-center justify-center border-2 transition-transform duration-300 group-hover:scale-110" style={{ borderColor: TEAL, background: `${TEAL}33` }}>
+                <PlayCircle size={48} weight="fill" style={{ color: TEAL }} />
+              </div>
+            </div>
+            <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 to-transparent">
+              <p className="text-white font-bold text-lg">See Our Work</p>
+              <p className="text-slate-300 text-sm">Watch how we solve plumbing problems the right way.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ FEATURE 8: PLUMBING ISSUE QUIZ ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1222 50%, #0f172a 100%)" }} />
+        <PipePattern opacity={0.02} accent={BLUE} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute bottom-[20%] left-[15%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${TEAL}06` }} /></div>
+        <div className="max-w-3xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Quick Help" title="What's Your Plumbing Issue?" subtitle="Select your problem and we will get you the right help." accent={TEAL} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {QUIZ_OPTIONS.map((opt) => (
+              <GlassCard key={opt.label} className="p-6 group hover:border-white/20 transition-all duration-300 cursor-pointer relative overflow-hidden">
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${opt.color}15, transparent 70%)` }} />
+                <div className="relative z-10 flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 border" style={{ background: `${opt.color}15`, borderColor: `${opt.color}33` }}>
+                    <opt.icon size={24} weight="duotone" style={{ color: opt.color }} />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-white mb-1">{opt.label}</h3>
+                    <p className="text-sm" style={{ color: opt.color }}>{opt.note}</p>
+                  </div>
+                </div>
+              </GlassCard>
+            ))}
+          </div>
+          <div className="text-center mt-8">
+            <MagneticButton href={`tel:${phoneDigits}`} className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-base font-semibold text-white cursor-pointer" style={{ background: TEAL } as React.CSSProperties}>
+              <Phone size={20} weight="fill" /> Call Now for Fast Help
+            </MagneticButton>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ FEATURE 9: GOOGLE REVIEWS HEADER ══════════════════ */}
       {/* ══════════════════ 8. TESTIMONIALS ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1222 50%, #0f172a 100%)" }} />
@@ -516,6 +788,14 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] right-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${TEAL}06` }} /></div>
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
+          {/* FEATURE 9: Google Reviews Header */}
+          {(data.googleRating || data.reviewCount) && (
+            <div className="flex items-center justify-center gap-3 mb-6">
+              <div className="flex gap-0.5">{Array.from({ length: 5 }).map((_, i) => <Star key={i} size={22} weight="fill" style={{ color: i < Math.round(data.googleRating || 5) ? "#facc15" : "#334155" }} />)}</div>
+              <span className="text-white font-bold text-lg">{data.googleRating || "5.0"}</span>
+              {data.reviewCount && <span className="text-slate-400 text-sm">({data.reviewCount}+ reviews)</span>}
+            </div>
+          )}
           <AnimatedSection>          <SectionHeader badge="Testimonials" title="What Our Clients Say" accent={TEAL} /></AnimatedSection>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {testimonials.map((t, i) => (
@@ -685,24 +965,28 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 14. GUARANTEE ══════════════════ */}
+      {/* ══════════════════ FEATURE 10: GUARANTEE CTA ══════════════════ */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1222 100%)" }} />
         <PipePattern opacity={0.015} accent={BLUE} />
-        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full blur-[180px]" style={{ background: `${TEAL}06` }} /></div>
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full blur-[180px]" style={{ background: `${TEAL}08` }} /></div>
         <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
           <ShimmerBorder accent={TEAL}>
             <div className="p-8 md:p-12">
-              <ShieldCheck size={48} weight="fill" style={{ color: TEAL }} className="mx-auto mb-4" />
-              <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-4">Our Guarantee</h2>
-              <p className="text-slate-400 leading-relaxed max-w-2xl mx-auto text-lg">Every job by {data.businessName} is backed by our satisfaction guarantee. We stand behind our work with warranties on all plumbing repairs and installations.</p>
-              <div className="flex flex-wrap justify-center gap-4 mt-8">
-                {["Licensed Plumbers", "Free Estimates", "Satisfaction Guaranteed", "24/7 Emergency"].map((item) => (
+              <SealCheck size={56} weight="fill" style={{ color: TEAL }} className="mx-auto mb-4" />
+              <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-4">Every Job Done Right</h2>
+              <p className="text-xl md:text-2xl font-bold mb-4" style={{ color: TEAL }}>Licensed, Insured, Guaranteed</p>
+              <p className="text-slate-400 leading-relaxed max-w-2xl mx-auto text-lg mb-8">Every job by {data.businessName} is backed by our satisfaction guarantee. We stand behind our work with warranties on all plumbing repairs and installations.</p>
+              <div className="flex flex-wrap justify-center gap-4 mb-8">
+                {["Licensed Master Plumber", "Free Estimates", "Satisfaction Guaranteed", "24/7 Emergency"].map((item) => (
                   <span key={item} className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border" style={{ color: TEAL, borderColor: `${TEAL}33`, background: `${TEAL}0d` }}>
                     <CheckCircle size={16} weight="fill" /> {item}
                   </span>
                 ))}
               </div>
+              <MagneticButton href={`tel:${phoneDigits}`} className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-base font-semibold text-white cursor-pointer" style={{ background: TEAL } as React.CSSProperties}>
+                <Phone size={20} weight="fill" /> Call {data.businessName} Today
+              </MagneticButton>
             </div>
           </ShimmerBorder>
         </div>
