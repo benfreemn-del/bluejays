@@ -28,6 +28,11 @@ import {
   ArrowRight,
   Star,
   HandGrabbing,
+  CurrencyDollar,
+  Play,
+  Timer,
+  NavigationArrow,
+  CalendarCheck,
 } from "@phosphor-icons/react";
 import type { GeneratedSiteData } from "@/lib/generator";
 import BluejayLogo from "../BluejayLogo";
@@ -291,6 +296,63 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
     { step: "04", title: "Safe Delivery", desc: "We unload and place everything exactly where you want it in your new space." },
   ];
 
+  /* ── Licensed & Insured Badges ── */
+  const trustBadges = [
+    { icon: ShieldCheck, label: "Licensed & Bonded" },
+    { icon: ShieldCheck, label: "Full Insurance Coverage" },
+    { icon: Star, label: "BBB Accredited" },
+    { icon: CheckCircle, label: "Background-Checked Crews" },
+  ];
+
+  /* ── Moving Pricing Estimates ── */
+  const pricingTiers = [
+    { title: "Studio / 1BR", price: "From $349", desc: "Small moves, apartments, and studios. Includes 2 movers and a truck.", featured: false },
+    { title: "2-3 Bedroom", price: "From $599", desc: "Standard home moves with full packing and furniture protection.", featured: true },
+    { title: "4BR+ / Large", price: "From $999", desc: "Large homes, multi-story, or long-distance relocations.", featured: false },
+  ];
+
+  /* ── Moving Day Checklist ── */
+  const movingChecklist = [
+    "Book 4-6 weeks ahead",
+    "Declutter before packing",
+    "Label all boxes by room",
+    "Disconnect appliances",
+    "Keep an essentials bag",
+    "Walk through your old home",
+  ];
+
+  /* ── Truck Size Calculator ── */
+  const truckSizes = [
+    { size: "Studio / 1BR", truck: "16 ft truck", icon: House, desc: "Perfect for studio apartments and small 1-bedroom moves." },
+    { size: "2 Bedroom", truck: "20 ft truck", icon: House, desc: "Ideal for average 2-bedroom homes and apartments." },
+    { size: "3 Bedroom", truck: "26 ft truck", icon: Buildings, desc: "Fits full 3-bedroom households with furniture and appliances." },
+    { size: "4BR+", truck: "Multiple trucks", icon: Warehouse, desc: "Large homes requiring multiple trips or trucks." },
+  ];
+
+  /* ── What We Move ── */
+  const whatWeMove = [
+    "Furniture", "Electronics", "Pianos", "Antiques",
+    "Fragile Items", "Office Equipment", "Storage Units", "Appliances",
+  ];
+
+  /* ── Competitor Comparison ── */
+  const comparisonRows = [
+    { feature: "Licensed & Insured", us: true, them: "Sometimes" },
+    { feature: "No Hidden Fees", us: true, them: "No" },
+    { feature: "On-Time Guarantee", us: true, them: "No" },
+    { feature: "Furniture Protection", us: true, them: "Sometimes" },
+    { feature: "Free Estimates", us: true, them: "Sometimes" },
+    { feature: "Same-Day Available", us: true, them: "No" },
+    { feature: "Background-Checked", us: true, them: "No" },
+  ];
+
+  /* ── Moving Quiz Options ── */
+  const quizOptions = [
+    { label: "This Week", sublabel: "Rush service available!", color: "#ef4444", icon: Timer },
+    { label: "This Month", sublabel: "Great timing \u2014 book now", color: ACCENT, icon: CalendarCheck },
+    { label: "Just Planning", sublabel: "Get a free quote & lock in your date", color: "#22c55e", icon: NavigationArrow },
+  ];
+
   const faqs = [
     { q: `What moving services does ${data.businessName} offer?`, a: `We provide a full range of professional moving services including ${data.services.slice(0, 3).map(s => s.name).join(", ")}, and more. Get a free quote today.` },
     { q: "How far in advance should I book?", a: "We recommend booking 2-4 weeks ahead. Peak season (summer) may require more notice." },
@@ -455,6 +517,76 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
+      {/* ══════════════════ 4B. LICENSED & INSURED BADGES ══════════════════ */}
+      <section className="relative z-10 py-12 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f0d08 50%, #1a1a1a 100%)" }} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {trustBadges.map((badge) => (
+              <GlassCard key={badge.label} className="p-4 flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: ACCENT_GLOW, border: `1px solid ${ACCENT}33` }}>
+                  <badge.icon size={20} weight="fill" style={{ color: ACCENT }} />
+                </div>
+                <span className="text-sm font-semibold text-white">{badge.label}</span>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ 4C. MOVING PRICING ESTIMATES ══════════════════ */}
+      <section className="relative z-10 py-16 md:py-24 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #1a1005 50%, #1a1a1a 100%)" }} />
+        <WaterDropBackground opacity={0.02} accent={ACCENT} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[15%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${ACCENT}08` }} /></div>
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Pricing" title="Transparent Moving Estimates" subtitle="No hidden fees. Get an accurate quote in minutes." accent={ACCENT} />
+          <div className="grid md:grid-cols-3 gap-6">
+            {pricingTiers.map((tier) => (
+              <div key={tier.title} className={`relative rounded-2xl border p-7 transition-all duration-300 ${tier.featured ? "border-opacity-60 scale-[1.03] shadow-lg" : "border-white/[0.06] bg-white/[0.02]"}`}
+                style={tier.featured ? { borderColor: `${ACCENT}66`, background: `linear-gradient(180deg, ${ACCENT}12, ${ACCENT}04)` } : {}}>
+                {tier.featured && (
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-xs font-bold uppercase tracking-wider px-4 py-1 rounded-full text-white" style={{ background: ACCENT }}>
+                    Most Popular
+                  </span>
+                )}
+                <div className="text-center mb-5">
+                  <CurrencyDollar size={28} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-3" />
+                  <h3 className="text-lg font-bold text-white mb-1">{tier.title}</h3>
+                  <p className="text-2xl md:text-3xl font-extrabold text-white">{tier.price}</p>
+                </div>
+                <p className="text-sm text-slate-400 leading-relaxed text-center mb-6">{tier.desc}</p>
+                <MagneticButton className="w-full py-3 rounded-xl text-sm font-semibold text-white flex items-center justify-center gap-2 cursor-pointer" style={{ background: tier.featured ? ACCENT : `${ACCENT}33` } as React.CSSProperties}>
+                  Get Quote <ArrowRight size={16} weight="bold" />
+                </MagneticButton>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ 4D. TRUCK SIZE CALCULATOR ══════════════════ */}
+      <section className="relative z-10 py-16 md:py-24 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f0d08 50%, #1a1a1a 100%)" }} />
+        <SparklePattern opacity={0.02} accent={ACCENT} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute bottom-[30%] right-[10%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${BROWN}06` }} /></div>
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Truck Calculator" title="What Size Move?" subtitle="Choose the right truck size for your home." accent={ACCENT} />
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+            {truckSizes.map((t) => (
+              <GlassCard key={t.size} className="p-6 text-center group hover:border-white/25 transition-all duration-300">
+                <div className="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${ACCENT}22, ${ACCENT}0a)`, border: `1px solid ${ACCENT}33` }}>
+                  <t.icon size={26} weight="duotone" style={{ color: ACCENT }} />
+                </div>
+                <h3 className="text-base font-bold text-white mb-1">{t.size}</h3>
+                <p className="text-sm font-semibold mb-2" style={{ color: ACCENT }}>{t.truck}</p>
+                <p className="text-xs text-slate-400 leading-relaxed">{t.desc}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ══════════════════ 5. WHY CHOOSE US / ABOUT ══════════════════ */}
       <section id="about" className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #1a1005 50%, #1a1a1a 100%)" }} />
@@ -541,13 +673,84 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
+      {/* ══════════════════ 7B. VIDEO PLACEHOLDER ══════════════════ */}
+      <section className="relative z-10 py-16 md:py-24 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f0d08 50%, #1a1a1a 100%)" }} />
+        <SparklePattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="See Us In Action" title="Watch Our Crew in Action" accent={ACCENT} />
+          <div className="relative rounded-2xl overflow-hidden border border-white/10 group cursor-pointer">
+            <img src={heroCardImage} alt="Watch our moving crew" className="w-full h-64 md:h-96 object-cover transition-transform duration-700 group-hover:scale-105" />
+            <div className="absolute inset-0 bg-black/50 group-hover:bg-black/40 transition-colors duration-300" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-20 h-20 rounded-full flex items-center justify-center border-2 border-white/30 backdrop-blur-sm group-hover:scale-110 transition-transform duration-300" style={{ background: `${ACCENT}cc` }}>
+                <Play size={36} weight="fill" className="text-white ml-1" />
+              </div>
+            </div>
+            <div className="absolute bottom-6 left-6 right-6 text-center">
+              <p className="text-white font-semibold text-lg">See How We Handle Your Belongings</p>
+              <p className="text-slate-300 text-sm mt-1">Professional moving, from start to finish</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ 7C. COMPETITOR COMPARISON TABLE ══════════════════ */}
+      <section className="relative z-10 py-16 md:py-24 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #1a1005 50%, #1a1a1a 100%)" }} />
+        <WaterDropBackground opacity={0.02} accent={ACCENT} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] left-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${ACCENT}06` }} /></div>
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Why Us" title={`${data.businessName} vs Average Movers`} accent={ACCENT} />
+          <GlassCard className="overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-white/10">
+                    <th className="text-left p-4 text-slate-400 font-medium">Feature</th>
+                    <th className="text-center p-4 font-bold text-white" style={{ minWidth: 100 }}>{data.businessName.length > 18 ? "Us" : data.businessName}</th>
+                    <th className="text-center p-4 text-slate-500 font-medium" style={{ minWidth: 100 }}>Others</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {comparisonRows.map((row, i) => (
+                    <tr key={row.feature} className={i % 2 === 0 ? "bg-white/[0.02]" : ""}>
+                      <td className="p-4 text-white font-medium">{row.feature}</td>
+                      <td className="p-4 text-center"><CheckCircle size={22} weight="fill" style={{ color: "#22c55e" }} className="mx-auto" /></td>
+                      <td className="p-4 text-center text-slate-500 text-xs">{row.them}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </GlassCard>
+        </div>
+      </section>
+
+      {/* ══════════════════ 7D. GOOGLE REVIEWS HEADER + TESTIMONIALS ══════════════════ */}
       {/* ══════════════════ 8. TESTIMONIALS ══════════════════ */}
       <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f0d08 50%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] right-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${ACCENT}06` }} /></div>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <AnimatedSection>          <SectionHeader badge="Testimonials" title="What Our Clients Say" accent={ACCENT} /></AnimatedSection>
+          {/* Google Reviews Header */}
+          <div className="text-center mb-6">
+            <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full border border-white/10 bg-white/[0.04] backdrop-blur-sm">
+              <div className="flex gap-0.5">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Star key={i} size={18} weight="fill" style={{ color: ACCENT }} />
+                ))}
+              </div>
+              <span className="text-white font-bold text-sm">
+                {data.googleRating || "5.0"}
+              </span>
+              <span className="text-slate-400 text-sm">
+                ({data.reviewCount || "50"}+ Reviews)
+              </span>
+            </div>
+          </div>
+          <AnimatedSection><SectionHeader badge="Testimonials" title="What Our Clients Say" accent={ACCENT} /></AnimatedSection>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {testimonials.map((t, i) => (
               <GlassCard key={i} className="p-6 h-full flex flex-col">
@@ -577,21 +780,73 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 10. CHECKLIST / WHAT WE CLEAN ══════════════════ */}
+      {/* ══════════════════ 9B. WHEN ARE YOU MOVING? QUIZ ══════════════════ */}
+      <section className="relative z-10 py-16 md:py-24 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f0d08 50%, #1a1a1a 100%)" }} />
+        <SparklePattern opacity={0.02} accent={ACCENT} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] right-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${ACCENT}08` }} /></div>
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Quick Quiz" title="When Are You Moving?" subtitle="Select your timeline and we'll match you with the right service." accent={ACCENT} />
+          <div className="grid md:grid-cols-3 gap-5">
+            {quizOptions.map((opt) => (
+              <div key={opt.label} className="group relative rounded-2xl border border-white/[0.06] p-6 text-center hover:border-opacity-40 transition-all duration-300 cursor-pointer bg-white/[0.02]"
+                style={{ borderColor: `${opt.color}33` }}>
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${opt.color}15, transparent 70%)` }} />
+                <div className="relative z-10">
+                  <div className="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ background: `${opt.color}22`, border: `1px solid ${opt.color}44` }}>
+                    <opt.icon size={26} weight="duotone" style={{ color: opt.color }} />
+                  </div>
+                  <h3 className="text-lg font-bold text-white mb-1">{opt.label}</h3>
+                  <p className="text-sm text-slate-400">{opt.sublabel}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="text-center mt-8">
+            <MagneticButton href={`tel:${data.phone.replace(/\D/g, "")}`} className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-base font-semibold text-white cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
+              <Phone size={20} weight="fill" /> Call Now for Your Free Quote
+            </MagneticButton>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ 10. WHAT WE MOVE (ENHANCED) ══════════════════ */}
       <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #1a1005 50%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[40%] right-[20%] w-[400px] h-[400px] rounded-full blur-[180px]" style={{ background: `${BROWN}06` }} /></div>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <AnimatedSection>          <SectionHeader badge="What We Move" title="Complete Moving Coverage" accent={ACCENT} /></AnimatedSection>
+          <AnimatedSection><SectionHeader badge="What We Move" title="We Handle It All" subtitle="From heavy furniture to delicate antiques, our crews are trained for every item." accent={ACCENT} /></AnimatedSection>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {["Local Moves", "Long Distance", "Office Relocation", "Packing Services", "Storage Solutions", "Piano Moving", "Specialty Items", "Junk Removal"].map((item) => (
-              <GlassCard key={item} className="p-4 flex items-center gap-3">
-                <CheckCircle size={20} weight="fill" style={{ color: ACCENT }} />
-                <span className="text-sm font-medium text-white">{item}</span>
+            {whatWeMove.map((item) => (
+              <GlassCard key={item} className="p-5 text-center group hover:border-white/25 transition-all duration-300">
+                <Package size={24} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-2" />
+                <span className="text-sm font-semibold text-white">{item}</span>
               </GlassCard>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ 10B. MOVING DAY CHECKLIST ══════════════════ */}
+      <section className="relative z-10 py-16 md:py-24 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f0d08 50%, #1a1a1a 100%)" }} />
+        <WaterDropBackground opacity={0.02} accent={ACCENT} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${ACCENT}06` }} /></div>
+        <div className="max-w-3xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Be Prepared" title="Your Moving Day Checklist" subtitle="Follow these tips for a smooth, stress-free move." accent={ACCENT} />
+          <ShimmerBorder accent={ACCENT}>
+            <div className="p-6 md:p-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {movingChecklist.map((item) => (
+                  <div key={item} className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+                    <CheckCircle size={22} weight="fill" style={{ color: ACCENT }} className="shrink-0" />
+                    <span className="text-sm font-medium text-white">{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </ShimmerBorder>
         </div>
       </section>
 
@@ -655,6 +910,31 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
               <path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
             </svg>
           </a>
+        </div>
+      </section>
+
+      {/* ══════════════════ 12B. MOVING DAY GUARANTEE CTA ══════════════════ */}
+      <section className="relative z-10 py-16 md:py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15, ${ACCENT}08)` }} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full blur-[200px]" style={{ background: `${ACCENT}12` }} /></div>
+        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+          <ShieldCheck size={48} weight="fill" style={{ color: ACCENT }} className="mx-auto mb-6" />
+          <h2 className="text-2xl md:text-4xl font-extrabold tracking-tight text-white mb-4">
+            Our Promise: On Time, No Hidden Fees, No Damage — Guaranteed
+          </h2>
+          <p className="text-slate-400 text-lg mb-8 max-w-2xl mx-auto">
+            We stand behind every move. If anything goes wrong, we make it right. That&apos;s the {data.businessName} guarantee.
+          </p>
+          <div className="flex flex-wrap justify-center gap-3 mb-8">
+            {["On-Time Arrival", "No Hidden Fees", "Damage Protection", "Satisfaction Guaranteed"].map((badge) => (
+              <span key={badge} className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold border" style={{ color: ACCENT, borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}>
+                <CheckCircle size={16} weight="fill" /> {badge}
+              </span>
+            ))}
+          </div>
+          <MagneticButton href={`tel:${data.phone.replace(/\D/g, "")}`} className="inline-flex items-center gap-3 px-8 py-4 rounded-full text-base font-semibold text-white cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
+            <Phone size={20} weight="fill" /> Get Your Guaranteed Quote
+          </MagneticButton>
         </div>
       </section>
 
