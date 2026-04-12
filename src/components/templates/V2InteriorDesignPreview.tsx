@@ -30,6 +30,15 @@ import {
   Swatches,
   Blueprint,
   Lightbulb,
+  CurrencyDollar,
+  CalendarCheck,
+  Eye,
+  Bathtub,
+  CookingPot,
+  Desktop,
+  Tree,
+  Storefront,
+  ForkKnife,
 } from "@phosphor-icons/react";
 import type { GeneratedSiteData } from "@/lib/generator";
 import BluejayLogo from "../BluejayLogo";
@@ -97,6 +106,90 @@ const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1615876234886-fd9a39fda97f?w=600&q=80",
   "https://images.unsplash.com/photo-1617806118233-18e1de247200?w=800&q=80",
 ];
+
+/* ───────────────────────── DESIGN STYLE BADGES ───────────────────────── */
+const DESIGN_STYLE_BADGES = [
+  "Residential Design",
+  "Commercial Spaces",
+  "Full-Service",
+  "Award-Winning",
+];
+
+/* ───────────────────────── DESIGN PACKAGES ───────────────────────── */
+const DESIGN_PACKAGES = [
+  {
+    title: "Design Consultation",
+    price: "from $250",
+    description: "A personalized one-on-one session to explore your vision, assess your space, and outline a design direction tailored to your lifestyle.",
+    features: ["60-Minute In-Home Visit", "Style Assessment", "Color Palette Suggestions", "Budget Guidance"],
+    featured: false,
+  },
+  {
+    title: "Room Makeover",
+    price: "from $2,500",
+    description: "A complete transformation of a single room — from concept and sourcing to installation and styling, delivered turnkey.",
+    features: ["Full Concept Design", "Mood Board & 3D Rendering", "Furniture & Decor Sourcing", "Professional Installation", "Two Revision Rounds"],
+    featured: true,
+  },
+  {
+    title: "Full Home Design",
+    price: "from $10,000+",
+    description: "End-to-end design for your entire home. We manage every detail so you can enjoy the journey as much as the result.",
+    features: ["Whole-Home Concept", "Custom Floor Plans", "Trade-Only Pricing Access", "Vendor & Contractor Coordination", "Project Management", "Final Styling & Reveal"],
+    featured: false,
+  },
+];
+
+/* ───────────────────────── DESIGN PROCESS TIMELINE (5-step) ───────────────────────── */
+const DESIGN_TIMELINE = [
+  { step: "01", title: "Discovery Call", desc: "We learn about your vision, lifestyle, and goals for the space.", icon: Phone },
+  { step: "02", title: "Concept & Mood Board", desc: "Curated mood boards, color palettes, and material selections for your approval.", icon: Palette },
+  { step: "03", title: "Design Development", desc: "Detailed floor plans, 3D renderings, and specifications brought to life.", icon: Blueprint },
+  { step: "04", title: "Procurement & Installation", desc: "We source, order, and coordinate delivery of every piece — down to the last throw pillow.", icon: Armchair },
+  { step: "05", title: "Final Reveal", desc: "The moment you walk into your newly designed space for the very first time.", icon: Eye },
+];
+
+/* ───────────────────────── ROOM TYPES ───────────────────────── */
+const ROOM_TYPES = [
+  { name: "Living Rooms", icon: Armchair },
+  { name: "Kitchens", icon: CookingPot },
+  { name: "Bedrooms", icon: Lamp },
+  { name: "Bathrooms", icon: Bathtub },
+  { name: "Home Offices", icon: Desktop },
+  { name: "Outdoor Living", icon: Tree },
+  { name: "Commercial Spaces", icon: Storefront },
+  { name: "Restaurants", icon: ForkKnife },
+];
+
+/* ───────────────────────── DESIGN PHILOSOPHY PILLARS ───────────────────────── */
+const DESIGN_PILLARS = [
+  { title: "Personalized Design", desc: "Every project begins with your unique story — no cookie-cutter solutions, ever.", icon: PaintBrush },
+  { title: "Quality Craftsmanship", desc: "We partner with the finest artisans and craftspeople to ensure lasting beauty.", icon: Ruler },
+  { title: "Timeless Aesthetics", desc: "Designs that transcend trends and feel just as relevant a decade from now.", icon: Palette },
+  { title: "Sustainable Materials", desc: "Thoughtfully sourced materials that honor both beauty and the environment.", icon: Tree },
+];
+
+/* ───────────────────────── COMPETITOR COMPARISON ROWS ───────────────────────── */
+const COMPARISON_ROWS = [
+  "Personalized Design Plan",
+  "Trade-Only Pricing",
+  "Professional Installation",
+  "Color & Material Expertise",
+  "Project Management",
+  "Vendor Coordination",
+  "3D Renderings",
+];
+
+/* ───────────────────────── DESIGN STYLE QUIZ OPTIONS ───────────────────────── */
+const QUIZ_OPTIONS = [
+  { style: "Modern & Minimalist", color: "#2d2d2d", desc: "Clean lines, neutral palettes, and curated simplicity." },
+  { style: "Traditional & Timeless", color: "#8b6f47", desc: "Rich textures, warm woods, and classic elegance." },
+  { style: "Bohemian & Eclectic", color: "#b5651d", desc: "Layered patterns, global influences, and collected charm." },
+  { style: "Contemporary & Bold", color: "#3a5a7c", desc: "Statement pieces, dramatic contrasts, and artistic flair." },
+];
+
+/* ───────────────────────── BEFORE/AFTER STOCK ───────────────────────── */
+const BEFORE_AFTER_IMAGE = "https://images.unsplash.com/photo-1600210491892-03d54c0aaf87?w=800&q=80";
 
 /* ───────────────────────── FLOATING PARTICLES ───────────────────────── */
 function FloatingGoldDust({ accent }: { accent: string }) {
@@ -266,19 +359,13 @@ function AnimatedSection({ children, className = "" }: { children: React.ReactNo
 export default function V2InteriorDesignPreview({ data }: { data: GeneratedSiteData }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [quizSelection, setQuizSelection] = useState<number | null>(null);
 
   const { PRIMARY, PRIMARY_GLOW } = getAccent(data.accentColor);
 
   const heroImage = data.photos?.[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
   const aboutImage = data.photos?.[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName);
   const galleryImages = data.photos?.length > 2 ? data.photos.slice(2, 10) : pickGallery(STOCK_GALLERY, data.businessName);
-
-  const processSteps = [
-    { step: "01", title: "Discovery Call", desc: `We discuss your vision, lifestyle, budget, and timeline to understand your unique needs.` },
-    { step: "02", title: "Concept & Design", desc: `Our designers create mood boards, floor plans, and 3D renderings for your approval.` },
-    { step: "03", title: "Source & Procure", desc: `We handpick furniture, fixtures, and finishes from our exclusive vendor network.` },
-    { step: "04", title: "Installation", desc: `Our team handles every detail of installation and styling for a stunning reveal.` },
-  ];
 
   const faqs = [
     { q: `What design services does ${data.businessName} offer?`, a: `We offer a full spectrum of interior design services including ${data.services.slice(0, 3).map(s => s.name).join(", ")}, and more. Each project is tailored to your personal style and needs.` },
@@ -367,6 +454,21 @@ export default function V2InteriorDesignPreview({ data }: { data: GeneratedSiteD
         </div>
       </section>
 
+      {/* ══════════════════ DESIGN STYLE BADGES ══════════════════ */}
+      <section className="relative z-10 py-6 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #f5f3ef 100%)" }} />
+        <div className="max-w-5xl mx-auto px-4 md:px-6 relative z-10">
+          <div className="flex flex-wrap justify-center gap-3">
+            {DESIGN_STYLE_BADGES.map((badge) => (
+              <span key={badge} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold border backdrop-blur-sm" style={{ color: PRIMARY, borderColor: `${PRIMARY}33`, background: `${PRIMARY}0d` }}>
+                <CheckCircle size={16} weight="fill" style={{ color: PRIMARY }} />
+                {badge}
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ══════════════════ 3. STATS ══════════════════ */}
       <section className="relative z-10 py-16 overflow-hidden border-y" style={{ borderColor: `${PRIMARY}1a` }}>
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #f5f3ef 0%, #faf9f7 100%)" }} />
@@ -405,6 +507,34 @@ export default function V2InteriorDesignPreview({ data }: { data: GeneratedSiteD
         </div>
       </section>
 
+      {/* ══════════════════ BEFORE/AFTER TRANSFORMATION ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #f5f3ef 50%, #faf9f7 100%)" }} />
+        <LuxuryLines opacity={0.02} accent={PRIMARY} />
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Transformations" title="See the Difference" subtitle={`${data.businessName} turns ordinary rooms into extraordinary spaces.`} accent={PRIMARY} />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <GlassCard className="overflow-hidden">
+              <div className="relative">
+                <img src={galleryImages[0] || BEFORE_AFTER_IMAGE} alt="Room before redesign" className="w-full h-64 md:h-80 object-cover" />
+                <div className="absolute top-4 left-4">
+                  <span className="px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-white/90 text-[#6b7280] backdrop-blur-sm">Before</span>
+                </div>
+              </div>
+            </GlassCard>
+            <GlassCard className="overflow-hidden">
+              <div className="relative">
+                <img src={galleryImages[1] || BEFORE_AFTER_IMAGE} alt="Room after redesign" className="w-full h-64 md:h-80 object-cover" />
+                <div className="absolute top-4 left-4">
+                  <span className="px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider backdrop-blur-sm text-white" style={{ background: `${PRIMARY}e6` }}>After</span>
+                </div>
+              </div>
+            </GlassCard>
+          </div>
+          <p className="text-center text-[#9ca3af] text-sm mt-6 italic">Every space has untapped potential. Let us reveal yours.</p>
+        </div>
+      </section>
+
       {/* ══════════════════ 5. SERVICES ══════════════════ */}
       <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #f5f3ef 50%, #faf9f7 100%)" }} />
@@ -434,6 +564,63 @@ export default function V2InteriorDesignPreview({ data }: { data: GeneratedSiteD
                 </div>
               );
             })}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ ROOM TYPES WE DESIGN ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #f5f3ef 50%, #faf9f7 100%)" }} />
+        <ElegantPattern opacity={0.02} accent={PRIMARY} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Spaces" title="Room Types We Design" subtitle="From intimate bedrooms to grand commercial lobbies, we design every type of space." accent={PRIMARY} />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {ROOM_TYPES.map((room) => (
+              <GlassCard key={room.name} className="p-6 text-center group hover:shadow-md transition-all duration-300">
+                <div className="w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center transition-colors duration-300" style={{ background: `${PRIMARY}15`, border: `1px solid ${PRIMARY}22` }}>
+                  <room.icon size={28} weight="duotone" style={{ color: PRIMARY }} />
+                </div>
+                <h3 className="text-sm font-bold text-[#1c1917]">{room.name}</h3>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ DESIGN PACKAGES / PRICING ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #f5f3ef 50%, #faf9f7 100%)" }} />
+        <LuxuryLines opacity={0.025} accent={PRIMARY} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] left-[10%] w-[500px] h-[500px] rounded-full blur-[200px]" style={{ background: `${PRIMARY}06` }} /></div>
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Investment" title="Design Packages" subtitle="Thoughtful tiers to match every scope — from a single room refresh to a complete home transformation." accent={PRIMARY} />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {DESIGN_PACKAGES.map((pkg) => (
+              <div key={pkg.title} className={`relative rounded-2xl border overflow-hidden transition-all duration-300 ${pkg.featured ? "shadow-lg scale-[1.02] md:scale-105" : "hover:shadow-md"}`} style={{ borderColor: pkg.featured ? `${PRIMARY}55` : "rgba(229,231,235,0.6)", background: pkg.featured ? `linear-gradient(180deg, ${PRIMARY}08, white)` : "rgba(255,255,255,0.7)" }}>
+                {pkg.featured && (
+                  <div className="text-center py-2 text-xs font-bold uppercase tracking-widest text-black" style={{ background: PRIMARY }}>Most Popular</div>
+                )}
+                <div className="p-7">
+                  <div className="flex items-center gap-2 mb-1">
+                    <CurrencyDollar size={20} weight="duotone" style={{ color: PRIMARY }} />
+                    <h3 className="text-lg font-bold text-[#1c1917]">{pkg.title}</h3>
+                  </div>
+                  <p className="text-2xl font-extrabold mb-3" style={{ color: PRIMARY }}>{pkg.price}</p>
+                  <p className="text-sm text-[#6b7280] leading-relaxed mb-5">{pkg.description}</p>
+                  <ul className="space-y-2 mb-6">
+                    {pkg.features.map((f) => (
+                      <li key={f} className="flex items-center gap-2 text-sm text-[#4b5563]">
+                        <CheckCircle size={16} weight="fill" style={{ color: PRIMARY }} />
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
+                  <MagneticButton className={`w-full py-3 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 cursor-pointer transition-colors ${pkg.featured ? "text-black" : "text-[#1c1917] border"}`} style={pkg.featured ? { background: PRIMARY } as React.CSSProperties : { borderColor: `${PRIMARY}44`, background: `${PRIMARY}0d` } as React.CSSProperties}>
+                    Get Started <ArrowRight size={16} weight="bold" />
+                  </MagneticButton>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -471,6 +658,29 @@ export default function V2InteriorDesignPreview({ data }: { data: GeneratedSiteD
         </div>
       </section>
 
+      {/* ══════════════════ DESIGN PHILOSOPHY ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #f5f3ef 50%, #faf9f7 100%)" }} />
+        <ElegantPattern opacity={0.02} accent={PRIMARY} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute bottom-[10%] right-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${CREAM}08` }} /></div>
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Philosophy" title="Your Vision, Our Expertise" subtitle="Four guiding principles that define how we approach every project." accent={PRIMARY} />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {DESIGN_PILLARS.map((pillar, i) => (
+              <GlassCard key={pillar.title} className="p-6 text-center group hover:shadow-md transition-all duration-300 relative overflow-hidden">
+                <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${PRIMARY}4d, transparent)` }} />
+                <div className="w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${PRIMARY}22, ${PRIMARY}0a)`, border: `1px solid ${PRIMARY}33` }}>
+                  <pillar.icon size={26} weight="duotone" style={{ color: PRIMARY }} />
+                </div>
+                <span className="text-xs font-mono text-[#9ca3af] mb-2 block">{String(i + 1).padStart(2, "0")}</span>
+                <h3 className="text-base font-bold text-[#1c1917] mb-2">{pillar.title}</h3>
+                <p className="text-sm text-[#6b7280] leading-relaxed">{pillar.desc}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ══════════════════ 7. PROCESS ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #f5f3ef 50%, #faf9f7 100%)" }} />
@@ -478,18 +688,28 @@ export default function V2InteriorDesignPreview({ data }: { data: GeneratedSiteD
         <div className="absolute inset-0 pointer-events-none"><div className="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${CREAM}06` }} /></div>
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <AnimatedSection>          <SectionHeader badge="Our Process" title="From Vision to Reality" accent={PRIMARY} /></AnimatedSection>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {processSteps.map((step, i) => (
-              <div key={step.step} className="relative">
-                {i < processSteps.length - 1 && <div className="hidden lg:block absolute top-10 left-[calc(50%+40px)] w-[calc(100%-80px)] h-px" style={{ background: `linear-gradient(to right, ${PRIMARY}33, ${PRIMARY}11)` }} />}
-                <GlassCard className="p-6 text-center relative">
-                  <div className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center text-2xl font-black" style={{ background: `linear-gradient(135deg, ${PRIMARY}22, ${PRIMARY}0a)`, color: PRIMARY, border: `1px solid ${PRIMARY}33` }}>{step.step}</div>
-                  <h3 className="text-lg font-bold text-[#1c1917] mb-2">{step.title}</h3>
-                  <p className="text-sm text-[#6b7280] leading-relaxed">{step.desc}</p>
-                </GlassCard>
-              </div>
-            ))}
+          <SectionHeader badge="Our Process" title="From Vision to Reality" subtitle="A refined five-step journey that turns inspiration into a beautifully realized space." accent={PRIMARY} />
+          <div className="space-y-6 max-w-3xl mx-auto">
+            {DESIGN_TIMELINE.map((step, i) => {
+              const StepIcon = step.icon;
+              return (
+                <div key={step.step} className="flex gap-5 items-start">
+                  <div className="flex flex-col items-center shrink-0">
+                    <div className="w-14 h-14 rounded-2xl flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${PRIMARY}22, ${PRIMARY}0a)`, border: `1px solid ${PRIMARY}33` }}>
+                      <StepIcon size={24} weight="duotone" style={{ color: PRIMARY }} />
+                    </div>
+                    {i < DESIGN_TIMELINE.length - 1 && <div className="w-px flex-1 min-h-[24px] mt-2" style={{ background: `linear-gradient(to bottom, ${PRIMARY}33, ${PRIMARY}0a)` }} />}
+                  </div>
+                  <GlassCard className="p-5 flex-1">
+                    <div className="flex items-center gap-3 mb-1">
+                      <span className="text-xs font-mono font-bold" style={{ color: PRIMARY }}>{step.step}</span>
+                      <h3 className="text-base font-bold text-[#1c1917]">{step.title}</h3>
+                    </div>
+                    <p className="text-sm text-[#6b7280] leading-relaxed">{step.desc}</p>
+                  </GlassCard>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -501,7 +721,18 @@ export default function V2InteriorDesignPreview({ data }: { data: GeneratedSiteD
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] right-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${PRIMARY}06` }} /></div>
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <AnimatedSection>          <SectionHeader badge="Testimonials" title="Client Experiences" accent={PRIMARY} /></AnimatedSection>
+          <SectionHeader badge="Testimonials" title="Client Experiences" accent={PRIMARY} />
+          {/* Google Reviews Header */}
+          <div className="flex flex-col items-center gap-2 mb-10">
+            <div className="flex items-center gap-1.5">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Star key={i} size={24} weight="fill" style={{ color: PRIMARY }} />
+              ))}
+            </div>
+            <p className="text-sm text-[#6b7280]">
+              <span className="font-bold text-[#1c1917]">{data.googleRating || "5.0"}</span> average rating from <span className="font-bold text-[#1c1917]">{data.reviewCount || "50+"}</span> Google reviews
+            </p>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {testimonials.map((t, i) => (
               <GlassCard key={i} className="p-6 h-full flex flex-col">
@@ -511,6 +742,37 @@ export default function V2InteriorDesignPreview({ data }: { data: GeneratedSiteD
               </GlassCard>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ COMPETITOR COMPARISON ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #f5f3ef 50%, #faf9f7 100%)" }} />
+        <LuxuryLines opacity={0.02} accent={PRIMARY} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Why Us" title={`${data.businessName} vs. DIY / Big Box`} subtitle="Professional interior design delivers what no showroom floor model ever could." accent={PRIMARY} />
+          <GlassCard className="overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-gray-100">
+                    <th className="text-left p-4 md:p-5 text-[#6b7280] font-medium">Feature</th>
+                    <th className="text-center p-4 md:p-5 font-bold text-[#1c1917] min-w-[120px]">{data.businessName}</th>
+                    <th className="text-center p-4 md:p-5 text-[#9ca3af] font-medium min-w-[120px]">DIY / Big Box</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {COMPARISON_ROWS.map((row, i) => (
+                    <tr key={row} className={i < COMPARISON_ROWS.length - 1 ? "border-b border-gray-50" : ""}>
+                      <td className="p-4 md:p-5 text-[#4b5563] font-medium">{row}</td>
+                      <td className="p-4 md:p-5 text-center"><CheckCircle size={22} weight="fill" style={{ color: PRIMARY }} /></td>
+                      <td className="p-4 md:p-5 text-center text-[#d1d5db] text-xs font-medium">No / DIY</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </GlassCard>
         </div>
       </section>
 
@@ -596,6 +858,48 @@ export default function V2InteriorDesignPreview({ data }: { data: GeneratedSiteD
         </div>
       </section>
 
+      {/* ══════════════════ DESIGN STYLE QUIZ ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #f5f3ef 50%, #faf9f7 100%)" }} />
+        <ElegantPattern opacity={0.02} accent={PRIMARY} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[20%] w-[400px] h-[400px] rounded-full blur-[180px]" style={{ background: `${PRIMARY}06` }} /></div>
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Discover" title="What's Your Design Style?" subtitle="Select the aesthetic that resonates most with you and we'll tailor our consultation to match." accent={PRIMARY} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+            {QUIZ_OPTIONS.map((opt, i) => (
+              <button
+                key={opt.style}
+                onClick={() => setQuizSelection(i)}
+                className={`text-left p-5 rounded-2xl border transition-all duration-300 cursor-pointer group ${quizSelection === i ? "shadow-md" : "hover:shadow-sm"}`}
+                style={{
+                  borderColor: quizSelection === i ? `${PRIMARY}66` : "rgba(229,231,235,0.6)",
+                  background: quizSelection === i ? `${PRIMARY}0d` : "rgba(255,255,255,0.7)",
+                }}
+              >
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-8 h-8 rounded-lg shrink-0" style={{ background: opt.color }} />
+                  <h3 className="text-sm font-bold text-[#1c1917]">{opt.style}</h3>
+                </div>
+                <p className="text-xs text-[#6b7280] leading-relaxed">{opt.desc}</p>
+                {quizSelection === i && (
+                  <div className="mt-3 flex items-center gap-1.5 text-xs font-semibold" style={{ color: PRIMARY }}>
+                    <CheckCircle size={14} weight="fill" /> Selected
+                  </div>
+                )}
+              </button>
+            ))}
+          </div>
+          {quizSelection !== null && (
+            <div className="text-center">
+              <p className="text-sm text-[#6b7280] mb-4">Great taste! Let us build a {QUIZ_OPTIONS[quizSelection].style.toLowerCase()} vision just for you.</p>
+              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-black inline-flex items-center gap-2 cursor-pointer" style={{ background: PRIMARY } as React.CSSProperties}>
+                <CalendarCheck size={18} weight="bold" /> Book Your Consultation
+              </MagneticButton>
+            </div>
+          )}
+        </div>
+      </section>
+
       {/* ══════════════════ 13. CONTACT ══════════════════ */}
       <section id="contact" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #f5f3ef 50%, #faf9f7 100%)" }} />
@@ -651,6 +955,30 @@ export default function V2InteriorDesignPreview({ data }: { data: GeneratedSiteD
                 {["Personalized Design", "Premium Materials", "On-Time Delivery", "Client Satisfaction"].map((item) => (
                   <span key={item} className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border" style={{ color: PRIMARY, borderColor: `${PRIMARY}33`, background: `${PRIMARY}0d` }}><CheckCircle size={16} weight="fill" />{item}</span>
                 ))}
+              </div>
+            </div>
+          </ShimmerBorder>
+        </div>
+      </section>
+
+      {/* ══════════════════ COMPLIMENTARY CONSULTATION CTA ══════════════════ */}
+      <section className="relative z-10 py-20 md:py-28 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #f5f3ef 0%, #faf9f7 100%)" }} />
+        <ElegantPattern opacity={0.02} accent={PRIMARY} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <ShimmerBorder accent={PRIMARY}>
+            <div className="p-8 md:p-14 text-center">
+              <CalendarCheck size={44} weight="fill" style={{ color: PRIMARY }} className="mx-auto mb-5" />
+              <h2 className="text-2xl md:text-4xl font-extrabold tracking-tight text-[#1c1917] mb-3">Book Your Free Design Consultation</h2>
+              <p className="text-[#6b7280] leading-relaxed max-w-xl mx-auto text-lg mb-8">Let&apos;s transform your space. Share your vision with {data.businessName} and receive a complimentary design roadmap tailored to your home or office.</p>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <MagneticButton href={`tel:${data.phone.replace(/\D/g, "")}`} className="px-8 py-4 rounded-full text-base font-semibold text-black inline-flex items-center gap-2 cursor-pointer" style={{ background: PRIMARY } as React.CSSProperties}>
+                  <Phone size={20} weight="fill" /> <PhoneLink phone={data.phone} />
+                </MagneticButton>
+                <span className="text-sm text-[#9ca3af]">or</span>
+                <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-[#1c1917] border inline-flex items-center gap-2 cursor-pointer" style={{ borderColor: `${PRIMARY}44` } as React.CSSProperties} href="#contact">
+                  <ArrowRight size={18} weight="bold" /> Fill Out Our Form
+                </MagneticButton>
               </div>
             </div>
           </ShimmerBorder>
