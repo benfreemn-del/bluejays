@@ -29,6 +29,14 @@ import {
   Lightning,
   House,
   Medal,
+  Fire,
+  Drop,
+  Leaf,
+  Play,
+  Gauge,
+  Plug,
+  Percent,
+  Trophy,
 } from "@phosphor-icons/react";
 import type { GeneratedSiteData } from "@/lib/generator";
 import BluejayLogo from "../BluejayLogo";
@@ -77,6 +85,57 @@ const STOCK_PROJECTS = [
   "https://images.unsplash.com/photo-1558002038-1055907df827?w=600&q=80",
   "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=800&q=80",
   "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=800&q=80",
+];
+
+/* ───────────────────────── PREMIUM FEATURE DATA ───────────────────────── */
+const SERVICE_TYPE_BADGES = [
+  { label: "Heating", icon: Fire },
+  { label: "Air Conditioning", icon: Snowflake },
+  { label: "Heat Pumps", icon: Gauge },
+  { label: "Furnaces", icon: Thermometer },
+  { label: "Ductwork", icon: Wind },
+  { label: "24/7 Emergency", icon: Lightning },
+];
+
+const SEASONAL_SAVINGS = [
+  { title: "AC Tune-Up", price: "$89", desc: "Complete cooling system inspection, cleaning, and performance check.", icon: Snowflake },
+  { title: "Furnace Inspection", price: "$79", desc: "Full heating system diagnostic, safety check, and efficiency tune-up.", icon: Fire },
+  { title: "New System", price: "From $4,999", desc: "High-efficiency HVAC installation with manufacturer warranty included.", icon: Fan },
+];
+
+const EQUIPMENT_TYPES = [
+  { name: "Central AC", icon: Snowflake },
+  { name: "Furnaces", icon: Fire },
+  { name: "Heat Pumps", icon: Gauge },
+  { name: "Ductless Mini-Splits", icon: Wind },
+  { name: "Boilers", icon: Drop },
+  { name: "Thermostats", icon: Thermometer },
+  { name: "Air Handlers", icon: Fan },
+  { name: "Ductwork", icon: Plug },
+];
+
+const ENERGY_FEATURES = [
+  { title: "High-Efficiency Systems", desc: "ENERGY STAR rated equipment that uses up to 40% less energy.", icon: Leaf },
+  { title: "Smart Thermostats", desc: "Programmable controls that optimize heating and cooling schedules.", icon: Thermometer },
+  { title: "Duct Sealing", desc: "Eliminate air leaks that waste up to 30% of conditioned air.", icon: Wind },
+  { title: "Regular Maintenance", desc: "Preventive care keeps your system running at peak efficiency.", icon: Wrench },
+];
+
+const COMPETITOR_ROWS = [
+  { feature: "Licensed & Insured", us: true, them: "Varies" },
+  { feature: "24/7 Emergency Service", us: true, them: "No" },
+  { feature: "Free Estimates", us: true, them: "Sometimes" },
+  { feature: "Transparent Pricing", us: true, them: "Hidden Fees" },
+  { feature: "Manufacturer Warranties", us: true, them: "Limited" },
+  { feature: "EPA Certified Techs", us: true, them: "Varies" },
+  { feature: "Same-Day Service", us: true, them: "No" },
+];
+
+const QUIZ_OPTIONS = [
+  { label: "No Heat or AC", desc: "My system stopped working completely", color: "#ef4444", icon: Fire },
+  { label: "Maintenance", desc: "Time for a seasonal tune-up or inspection", color: "#f59e0b", icon: Wrench },
+  { label: "New System", desc: "Looking to upgrade or replace my HVAC", color: "#22c55e", icon: Fan },
+  { label: "Air Quality", desc: "Concerned about indoor air quality or allergies", color: "#3b82f6", icon: Leaf },
 ];
 
 /* ───────────────────────── FLOATING PARTICLES ───────────────────────── */
@@ -367,6 +426,21 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
+      {/* ══════════════════ FEATURE 1: SERVICE TYPE BADGES ══════════════════ */}
+      <section className="relative z-10 py-12 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #0a1020 0%, ${NAVY} 100%)` }} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="flex flex-wrap justify-center gap-3">
+            {SERVICE_TYPE_BADGES.map((badge) => (
+              <div key={badge.label} className="flex items-center gap-2 px-5 py-2.5 rounded-full border text-sm font-semibold" style={{ color: BLUE, borderColor: `${BLUE}33`, background: `${BLUE}0d` }}>
+                <badge.icon size={18} weight="duotone" />
+                {badge.label}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ══════════════════ 4. SERVICES ══════════════════ */}
       <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #0a1020 50%, ${NAVY} 100%)` }} />
@@ -404,6 +478,53 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
+      {/* ══════════════════ FEATURE 2: SEASONAL SAVINGS ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #0a1020 50%, ${NAVY} 100%)` }} />
+        <AirflowWaves opacity={0.02} accent={BLUE} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${ORANGE}06` }} /></div>
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Special Offers" title="Seasonal Savings" subtitle="Take advantage of our limited-time HVAC specials and keep your system running efficiently." accent={ORANGE} />
+          <div className="grid md:grid-cols-3 gap-6">
+            {SEASONAL_SAVINGS.map((deal) => (
+              <ShimmerBorder key={deal.title} accent={ORANGE}>
+                <div className="p-7 text-center">
+                  <div className="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ background: `${ORANGE}22`, border: `1px solid ${ORANGE}33` }}>
+                    <deal.icon size={28} weight="duotone" style={{ color: ORANGE }} />
+                  </div>
+                  <h3 className="text-lg font-bold text-white mb-1">{deal.title}</h3>
+                  <p className="text-3xl font-black mb-3" style={{ color: ORANGE }}>{deal.price}</p>
+                  <p className="text-sm text-slate-400 leading-relaxed">{deal.desc}</p>
+                  <MagneticButton className="mt-5 px-6 py-2.5 rounded-full text-sm font-semibold text-black cursor-pointer" style={{ background: ORANGE } as React.CSSProperties}>
+                    Book Now <ArrowRight size={14} weight="bold" className="inline ml-1" />
+                  </MagneticButton>
+                </div>
+              </ShimmerBorder>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ FEATURE 3: WHAT WE SERVICE ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #0a1628 50%, ${NAVY} 100%)` }} />
+        <VentPattern opacity={0.025} accent={BLUE} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute bottom-[20%] left-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${BLUE}08` }} /></div>
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Equipment" title="What We Service" subtitle="Our certified technicians are trained on all major HVAC brands and equipment types." accent={BLUE} />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {EQUIPMENT_TYPES.map((item) => (
+              <GlassCard key={item.name} className="p-5 text-center group hover:border-opacity-30 transition-all duration-500">
+                <div className="w-12 h-12 rounded-xl mx-auto mb-3 flex items-center justify-center border" style={{ background: BLUE_GLOW, borderColor: `${BLUE}33` }}>
+                  <item.icon size={24} weight="duotone" style={{ color: BLUE }} />
+                </div>
+                <p className="text-sm font-semibold text-white">{item.name}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ══════════════════ 5. PROCESS ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #0a1020 50%, ${NAVY} 100%)` }} />
@@ -423,6 +544,35 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
                 </GlassCard>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ FEATURE 5: ENERGY SAVINGS ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #0a1628 50%, ${NAVY} 100%)` }} />
+        <AirflowWaves opacity={0.02} accent={BLUE} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${BLUE}08` }} /></div>
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Efficiency" title="Save Up to 40% on Energy Bills" subtitle="Upgrading your HVAC system and sealing your ducts can dramatically reduce your monthly energy costs." accent={BLUE} />
+          <div className="grid md:grid-cols-2 gap-6">
+            {ENERGY_FEATURES.map((item) => (
+              <GlassCard key={item.title} className="p-6 flex items-start gap-5">
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 border" style={{ background: BLUE_GLOW, borderColor: `${BLUE}33` }}>
+                  <item.icon size={24} weight="duotone" style={{ color: BLUE }} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white mb-1">{item.title}</h3>
+                  <p className="text-sm text-slate-400 leading-relaxed">{item.desc}</p>
+                </div>
+              </GlassCard>
+            ))}
+          </div>
+          <div className="mt-10 text-center">
+            <GlassCard className="inline-flex items-center gap-3 px-6 py-4">
+              <Percent size={24} weight="duotone" style={{ color: ORANGE }} />
+              <span className="text-white font-semibold">Average homeowners save $1,200/year with a high-efficiency HVAC upgrade</span>
+            </GlassCard>
           </div>
         </div>
       </section>
@@ -467,6 +617,30 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
+      {/* ══════════════════ FEATURE 6: COMPETITOR COMPARISON ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #0a1020 50%, ${NAVY} 100%)` }} />
+        <VentPattern opacity={0.02} accent={BLUE} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] right-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${BLUE}06` }} /></div>
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Why Us" title={`${data.businessName} vs. The Competition`} accent={BLUE} />
+          <GlassCard className="overflow-hidden">
+            <div className="grid grid-cols-3 text-center text-sm font-bold uppercase tracking-wider py-4 px-6 border-b border-white/10">
+              <span className="text-slate-400 text-left">Feature</span>
+              <span style={{ color: BLUE }}>{data.businessName}</span>
+              <span className="text-slate-500">Big Box HVAC</span>
+            </div>
+            {COMPETITOR_ROWS.map((row, i) => (
+              <div key={row.feature} className={`grid grid-cols-3 text-center py-4 px-6 text-sm ${i < COMPETITOR_ROWS.length - 1 ? "border-b border-white/5" : ""}`}>
+                <span className="text-slate-300 text-left font-medium">{row.feature}</span>
+                <span><CheckCircle size={20} weight="fill" className="inline" style={{ color: "#22c55e" }} /></span>
+                <span className="text-slate-500">{row.them}</span>
+              </div>
+            ))}
+          </GlassCard>
+        </div>
+      </section>
+
       {/* ══════════════════ 7. PROJECTS ══════════════════ */}
       <section id="projects" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #0a1628 50%, ${NAVY} 100%)` }} />
@@ -491,6 +665,28 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
+      {/* ══════════════════ FEATURE 7: VIDEO PLACEHOLDER ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #0a1020 50%, ${NAVY} 100%)` }} />
+        <VentPattern opacity={0.02} accent={BLUE} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] left-[20%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${BLUE}06` }} /></div>
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Our Team" title="Meet Our Team" subtitle={`See why families and businesses trust ${data.businessName} with their comfort.`} accent={BLUE} />
+          <div className="relative rounded-2xl overflow-hidden border border-white/10 group cursor-pointer">
+            <img src={projectImages[0] || heroImage} alt={`${data.businessName} team video`} className="w-full h-[300px] md:h-[400px] object-cover" />
+            <div className="absolute inset-0 bg-black/50 group-hover:bg-black/40 transition-colors duration-300" />
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <div className="w-20 h-20 rounded-full flex items-center justify-center border-2 mb-4 group-hover:scale-110 transition-transform duration-300" style={{ background: `${BLUE}33`, borderColor: BLUE }}>
+                <Play size={36} weight="fill" style={{ color: BLUE }} />
+              </div>
+              <p className="text-white font-bold text-lg">Watch Our Story</p>
+              <p className="text-slate-400 text-sm mt-1">2 minute video</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ FEATURE 9: GOOGLE REVIEWS HEADER ══════════════════ */}
       {/* ══════════════════ 8. TESTIMONIALS ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #0a1020 50%, ${NAVY} 100%)` }} />
@@ -499,6 +695,20 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <AnimatedSection>          <SectionHeader badge="Testimonials" title="What Our Clients Say" accent={BLUE} /></AnimatedSection>
+          {/* Google Reviews Header */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-10">
+            <div className="flex gap-1">
+              {Array.from({ length: 5 }).map((_, i) => <Star key={i} size={24} weight="fill" style={{ color: "#facc15" }} />)}
+            </div>
+            <div className="text-center sm:text-left">
+              <span className="text-white font-bold text-lg">{data.googleRating || "4.9"}</span>
+              <span className="text-slate-400 text-sm ml-2">out of 5 based on</span>
+              <span className="font-semibold text-white text-sm ml-1">{data.reviewCount || "100+"}  reviews</span>
+            </div>
+            <div className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold" style={{ background: `${BLUE}15`, color: BLUE }}>
+              <Trophy size={14} weight="fill" /> Google Verified
+            </div>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {testimonials.map((t, i) => (
               <GlassCard key={i} className="p-6 h-full flex flex-col">
@@ -567,9 +777,9 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
       
       {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
       <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15, ${ACCENT}08)` }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${BLUE}15, ${BLUE}08)` }} />
         <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
-          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: ACCENT }}>
+          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: BLUE }}>
             Don&apos;t Miss Out
           </p>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-3">
@@ -581,13 +791,46 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
           <a
             href={`/claim/${data.id}`}
             className="inline-flex items-center gap-2 min-h-[48px] px-8 py-3 rounded-full text-white font-bold text-base hover:shadow-lg transition-all duration-300"
-            style={{ background: ACCENT }}
+            style={{ background: BLUE }}
           >
             Claim This Website
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
               <path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
             </svg>
           </a>
+        </div>
+      </section>
+
+      {/* ══════════════════ FEATURE 8: HVAC NEED QUIZ ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #0a1020 50%, ${NAVY} 100%)` }} />
+        <VentPattern opacity={0.025} accent={BLUE} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] right-[20%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${BLUE}06` }} /></div>
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Get Started" title="What Does Your Home Need?" subtitle="Select the option that best describes your situation and we will guide you to the right solution." accent={BLUE} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {QUIZ_OPTIONS.map((option) => (
+              <GlassCard key={option.label} className="p-6 group hover:border-opacity-30 transition-all duration-500 cursor-pointer">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0" style={{ background: `${option.color}22`, border: `1px solid ${option.color}44` }}>
+                    <option.icon size={24} weight="duotone" style={{ color: option.color }} />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-white mb-1">{option.label}</h3>
+                    <p className="text-sm text-slate-400 leading-relaxed">{option.desc}</p>
+                  </div>
+                </div>
+                <div className="mt-4 flex items-center gap-2 text-sm font-semibold" style={{ color: option.color }}>
+                  Get Help Now <ArrowRight size={14} weight="bold" />
+                </div>
+              </GlassCard>
+            ))}
+          </div>
+          <div className="mt-8 text-center">
+            <MagneticButton href={`tel:${phoneDigits}`} className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-base font-semibold text-black cursor-pointer" style={{ background: BLUE } as React.CSSProperties}>
+              <Phone size={18} weight="duotone" /> Call Now for Immediate Help
+            </MagneticButton>
+          </div>
         </div>
       </section>
 
