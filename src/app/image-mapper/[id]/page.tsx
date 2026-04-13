@@ -593,6 +593,7 @@ export default function ImageMapDetailPage() {
                           if (url) handleDrop(img.position, url);
                           setDragOverPosition(null);
                         }}
+                      >
                         {/* Main row */}
                         <div className="px-5 py-3 grid grid-cols-[40px_80px_1fr_32px_80px_120px] gap-3 items-center hover:bg-white/[0.02] transition-colors">
                           {/* Position number */}
