@@ -655,6 +655,29 @@ All 10 premium features per category are **hardcoded directly into each V2 templ
 - Testimonials: Alternating left/right layout
 - Layout lesson: Diagonal clip-path hero feels industrial/modern, license numbers build trade credibility
 
+**#5 Plumber — Emerald City Plumbing** (1,449 lines)
+- Theme: Dark teal `#0f172a` with teal `#0d9488` + deep blue `#1e40af`
+- Hero: Overlapping card layout — glass card with animated ripple border overlaps hero photo. Water drop SVG drip animation on left edge. 24/7 emergency pulsing badge.
+- Unique: Water ripple animated border (conic-gradient rotation), floating water drop particles, "Honest Plumber Promise" (show problem first, can't fix = free), horizontal drag-scroll testimonials
+- Testimonials: Horizontal drag-scroll (unique from all previous — carousel, masonry, editorial, alternating)
+- Layout lesson: Overlapping card hero creates depth. "Honest promise" sections directly address trade industry trust fears. Each showcase should use a DIFFERENT testimonial layout.
+
+### Testimonial Layout Registry (never repeat within portfolio)
+1. Real Estate → auto-rotating carousel with dot navigation
+2. Dental → staggered masonry grid
+3. Law Firm → dark editorial, one-at-a-time with navigation
+4. Electrician → alternating left/right cards
+5. Plumber → horizontal drag-scroll
+6. Available for future: vertical timeline, video testimonial grid, quote-only minimal, card stack, split-screen (photo left + quote right)
+
+### Hero Layout Registry (never repeat within portfolio)
+1. Real Estate → centered text + interactive search bar
+2. Dental → warm light split (text left, photo right)
+3. Law Firm → full-width billboard + case results ticker
+4. Electrician → diagonal clip-path split + lightning SVG
+5. Plumber → overlapping card with ripple border + water drop SVG
+6. Available for future: full-bleed video bg, asymmetric grid (text overlapping image), scroll-driven parallax reveal, split-screen 50/50 with counter, floating cards over gradient, isometric/3D perspective
+
 ### Portfolio Showcase Design Principles (learned from Beast Mode builds)
 - **NO two showcase sites should share the same hero layout.** If real estate has centered text + search bar, dental should have split layout, law firm should have full-bleed video bg, etc.
 - **Every showcase needs 2-3 INTERACTIVE features** unique to that industry. Static content = template. Interactive content = custom build.
