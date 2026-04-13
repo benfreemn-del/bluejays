@@ -625,6 +625,36 @@ All 10 premium features per category are **hardcoded directly into each V2 templ
   - **Skin Quiz** — "What's Your Skin Concern?" interactive quiz like the buying/selling quiz. Acne/Aging/Pigmentation/Texture → recommended treatment → booking CTA.
   - **Provider Spotlight** — like Sarah Chen agent spotlight. Medical director with credentials, board certifications, years of experience. Trust is critical for medical procedures.
 
+### Beast Mode Showcase Registry (built — reference for future category builds)
+
+**#1 Real Estate — Puget Sound Realty** (1,432 lines)
+- Theme: Dark luxury, gold `#b8860b` on `#09090b`
+- Hero: Centered text + interactive property search bar (location/price/beds dropdowns)
+- Unique: Mortgage calculator (3 sliders, live math), neighborhood spotlight with local data, draggable property gallery
+- Testimonials: Auto-rotating carousel with dot navigation
+- Layout lesson: Centered hero + interactive tool = modern premium
+
+**#2 Dental — Emerald City Dental** (1,092 lines)
+- Theme: Warm cream `#faf9f6`, teal `#0d9488`
+- Hero: Split layout — text left, real smile photo right on light bg
+- Unique: Before/after slider with real `/images/dental-before-after.png`, insurance carrier badges, "When was your last checkup?" quiz
+- Testimonials: Staggered masonry grid (NOT carousel — different from RE)
+- Layout lesson: Light theme proves range, insurance badges are huge for healthcare trust
+
+**#3 Law Firm — Pacific Law Group** (1,151 lines)
+- Theme: Dark navy `#0f172a`, emerald `#059669` + gold `#ca8a04`
+- Hero: Full-width billboard — massive centered typography, Scale of Justice SVG watermark, case results ticker scrolling
+- Unique: Case results ticker ($4.2M | $1.8M | Dismissed), practice area deep-dive accordions, 3 attorney profiles, "Arrested? Call Now" emergency banner
+- Testimonials: Dark editorial, one-at-a-time with navigation
+- Layout lesson: Bold typography + scrolling ticker = authority and power
+
+**#4 Electrician — Cascade Electric Co.** (1,195 lines)
+- Theme: Dark charcoal `#1a1a1a`, amber `#f59e0b` + blue `#3b82f6`
+- Hero: Diagonal split with clip-path, lightning bolt SVG path-draw animation, pulsing 60-min emergency badge
+- Unique: Emergency response pulsing strip, license number displayed 4 places, upfront transparent pricing, circuit board SVG background
+- Testimonials: Alternating left/right layout
+- Layout lesson: Diagonal clip-path hero feels industrial/modern, license numbers build trade credibility
+
 ### Portfolio Showcase Design Principles (learned from Beast Mode builds)
 - **NO two showcase sites should share the same hero layout.** If real estate has centered text + search bar, dental should have split layout, law firm should have full-bleed video bg, etc.
 - **Every showcase needs 2-3 INTERACTIVE features** unique to that industry. Static content = template. Interactive content = custom build.

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getProspect, updateProspect } from "@/lib/store";
-import * as cheerio from "cheerio";
+import { saveScrapedData, getScrapedData } from "@/lib/store";
 import { suggestFilename, guessImageLocation } from "@/lib/image-mapper-store";
 import type { ImageSlot, ImageMapping } from "@/lib/image-mapper-store";
 
@@ -16,106 +16,71 @@ export async function POST(
     return NextResponse.json({ error: "Prospect not found" }, { status: 404 });
   }
 
-  const url = prospect.currentWebsite;
-  if (!url) {
-    return NextResponse.json({ error: "No website URL for this prospect" }, { status: 400 });
-  }
+  const category = prospect.category || "general";
+  const sd = (prospect.scrapedData || {}) as Record<string, unknown>;
 
-  try {
-    // Fetch the website HTML
-    const response = await fetch(url, {
-      headers: { "User-Agent": "Mozilla/5.0 (compatible; BlueJaysBot/1.0)" },
-      signal: AbortSignal.timeout(15000),
-    });
-    const html = await response.text();
-    const $ = cheerio.load(html);
-    const baseUrl = new URL(url).origin;
+  // Get the photos that are CURRENTLY used on our preview site
+  // These come from scrapedData.photos — the generator uses these for the preview
+  const previewPhotos = (sd.photos as string[]) || [];
 
-    // Extract all images
-    const imageUrls: string[] = [];
-    const seen = new Set<string>();
+  // Get ALL scraped photos from the original website + Google Places
+  // These are potential replacements
+  const allScrapedPhotos = [...previewPhotos]; // Start with what we have
 
-    // 1. <img> tags
-    $("img").each((_, el) => {
-      const src = $(el).attr("src") || $(el).attr("data-src") || $(el).attr("data-lazy-src");
-      if (!src) return;
-      const fullUrl = src.startsWith("http") ? src : src.startsWith("//") ? `https:${src}` : `${baseUrl}${src.startsWith("/") ? "" : "/"}${src}`;
-      // Filter out tiny icons, SVGs, data URIs, tracking pixels
-      const width = parseInt($(el).attr("width") || "999");
-      const height = parseInt($(el).attr("height") || "999");
-      if (width < 50 || height < 50) return;
-      if (src.includes(".svg") || src.startsWith("data:") || src.includes("1x1") || src.includes("pixel")) return;
-      if (!seen.has(fullUrl)) {
-        seen.add(fullUrl);
-        imageUrls.push(fullUrl);
-      }
-    });
+  // Also try to get any additional photos from Google Places that aren't in the preview
+  // These become available as replacements in the right panel
+  const unusedPhotos: string[] = [];
 
-    // 2. CSS background-image (inline styles)
-    $("[style]").each((_, el) => {
-      const style = $(el).attr("style") || "";
-      const match = style.match(/background-image:\s*url\(["']?([^"')]+)["']?\)/);
-      if (match && match[1]) {
-        const src = match[1];
-        const fullUrl = src.startsWith("http") ? src : `${baseUrl}${src.startsWith("/") ? "" : "/"}${src}`;
-        if (!src.includes(".svg") && !src.startsWith("data:") && !seen.has(fullUrl)) {
-          seen.add(fullUrl);
-          imageUrls.push(fullUrl);
-        }
-      }
-    });
+  // Filter preview photos — remove data URIs, SVGs, tiny icons
+  const cleanPreviewPhotos = previewPhotos.filter((url) => {
+    if (!url) return false;
+    if (url.startsWith("data:image/svg") || url.startsWith("data:image/gif")) return false;
+    if (url.includes(".svg") && !url.includes("unsplash")) return false;
+    if (url.includes("1x1") || url.includes("pixel") || url.includes("spacer")) return false;
+    return true;
+  });
 
-    // If no images found from HTML, fall back to existing scraped photos
-    if (imageUrls.length === 0) {
-      const existingPhotos = (prospect.scrapedData as Record<string, unknown>)?.photos as string[] || [];
-      existingPhotos.forEach((p) => {
-        if (!seen.has(p)) {
-          seen.add(p);
-          imageUrls.push(p);
-        }
-      });
-    }
+  // Deduplicate
+  const seen = new Set<string>();
+  const uniquePreviewPhotos = cleanPreviewPhotos.filter((url) => {
+    if (seen.has(url)) return false;
+    seen.add(url);
+    return true;
+  });
 
-    // Cap at 30
-    const capped = imageUrls.slice(0, 30);
-    const category = prospect.category || "general";
+  // Cap at 30
+  const capped = uniquePreviewPhotos.slice(0, 30);
 
-    // Build image slots
-    const images: ImageSlot[] = capped.map((imgUrl, i) => ({
-      position: i + 1,
-      originalUrl: imgUrl,
-      location: guessImageLocation(i + 1, capped.length),
-      suggestedFilename: suggestFilename(category, i + 1),
-      status: "needs-replacement" as const,
-      replacementUrl: null,
-      notes: "",
-    }));
+  // Build image slots for the LEFT panel (photos on our preview site)
+  const images: ImageSlot[] = capped.map((imgUrl, i) => ({
+    position: i + 1,
+    originalUrl: imgUrl,
+    location: guessImageLocation(i + 1, capped.length),
+    suggestedFilename: suggestFilename(category, i + 1),
+    status: "needs-replacement" as const,
+    replacementUrl: null,
+    notes: "",
+  }));
 
-    // Save to prospect
-    const mapping: ImageMapping = {
-      prospectId: id,
-      businessName: prospect.businessName,
-      category,
-      websiteUrl: url,
-      images,
-      selectionStatus: "in-progress",
-      lastUpdated: new Date().toISOString(),
-    };
+  // Save mapping to prospect
+  const mapping: ImageMapping = {
+    prospectId: id,
+    businessName: prospect.businessName,
+    category,
+    websiteUrl: prospect.currentWebsite || "",
+    images,
+    selectionStatus: "in-progress",
+    lastUpdated: new Date().toISOString(),
+  };
 
-    // Store inside scrapedData so it persists in Supabase
-    const existingSD = (prospect.scrapedData || {}) as Record<string, unknown>;
-    await updateProspect(id, {
-      scrapedData: { ...existingSD, imageMapping: mapping } as typeof prospect.scrapedData,
-    });
+  // Store inside scrapedData so it persists in Supabase
+  await updateProspect(id, {
+    scrapedData: { ...sd, imageMapping: mapping } as typeof prospect.scrapedData,
+  });
 
-    return NextResponse.json({
-      message: `Scanned ${images.length} images from ${prospect.businessName}`,
-      mapping,
-    });
-  } catch (error) {
-    return NextResponse.json(
-      { error: `Failed to scan: ${error instanceof Error ? error.message : "Unknown error"}` },
-      { status: 500 }
-    );
-  }
+  return NextResponse.json({
+    message: `Found ${images.length} images on preview for ${prospect.businessName}`,
+    mapping,
+    unusedPhotos, // Available for the right panel
+  });
 }
