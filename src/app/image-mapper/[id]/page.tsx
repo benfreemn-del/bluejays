@@ -357,6 +357,38 @@ export default function ImageMapDetailPage() {
     e.target.value = "";
   };
 
+  /* ─── Load saved fallbacks for this category ─── */
+  useEffect(() => {
+    if (!category) return;
+    fetch(`/api/image-mapper/fallbacks?category=${category}`, { credentials: "include" })
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.fallbacks && data.fallbacks.length > 0) {
+          setCategoryFallbacks((prev) =>
+            prev.map((slot, i) => ({
+              ...slot,
+              url: data.fallbacks[i]?.url || slot.url,
+            }))
+          );
+        }
+      })
+      .catch(() => {});
+  }, [category]);
+
+  /* ─── Save fallbacks to API when they change ─── */
+  const saveFallbacks = useCallback(
+    (slots: FallbackSlot[]) => {
+      if (!category) return;
+      fetch("/api/image-mapper/fallbacks", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ category, slots }),
+      }).catch(() => {});
+    },
+    [category]
+  );
+
   /* ─── Fallback Slot Upload ─── */
   const handleFallbackUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -364,11 +396,13 @@ export default function ImageMapDetailPage() {
     const file = files[0];
     const reader = new FileReader();
     reader.onload = () => {
-      setCategoryFallbacks((prev) =>
-        prev.map((slot, i) =>
+      setCategoryFallbacks((prev) => {
+        const updated = prev.map((slot, i) =>
           i === activeFallbackSlot ? { ...slot, url: reader.result as string } : slot
-        )
-      );
+        );
+        saveFallbacks(updated);
+        return updated;
+      });
       setActiveFallbackSlot(null);
     };
     reader.readAsDataURL(file);
