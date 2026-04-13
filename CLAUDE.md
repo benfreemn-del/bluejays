@@ -716,6 +716,54 @@ All 10 premium features per category are **hardcoded directly into each V2 templ
 - Unique: Tabbed sample menu (Appetizers/Mains/Desserts), event type cards, dietary accommodation badges, seasonal ingredient highlights, package pricing per person, chef spotlight with culinary credentials
 - Layout lesson: Tabbed menu = restaurant sophistication. Per-person pricing is how catering is actually sold.
 
+**#15 Pet Services — Happy Tails Pet Care** (2,231 lines)
+- Theme: Warm cream `#faf8f5` with teal `#0d9488` + coral `#f97066`
+- Hero: Animated card stack (3 fanned pet cards with hover-rotate)
+- Unique: Pet type selector with tabbed interface, daily report card mock, safety badges (background checked, bonded, first aid), pricing per visit type
+- Layout lesson: Card stack hero is playful/fun. Daily report card shows transparency.
+
+**#16 Physical Therapy — Summit PT & Rehab** (1,094 lines)
+- Theme: Warm cream `#faf9f6` with deep blue `#1e40af` + orange `#ea580c`
+- Hero: Kinetic typography — "MOVE" outlines + "BETTER" slides in with spring
+- Unique: Recovery timeline (3 phases), body map quiz (6 areas), insurance checker with carrier badges, conditions treated grid
+- Layout lesson: Kinetic typography hero = dynamic/health-forward. Body map quiz is highly engaging.
+
+**#17 Tutoring — Bright Minds Tutoring** (1,181 lines)
+- Theme: White `#ffffff` with purple `#7c3aed` + yellow `#eab308`
+- Hero: Typewriter text reveal — "Understanding" types letter-by-letter, "Clicks." springs in
+- Unique: Grade level selector (interactive tabs), subject grid, success stories with score improvements (SAT 1180→1420), parent resources section
+- Layout lesson: Typewriter hero = smart/modern. Specific score improvements are hugely convincing for education.
+
+**#18 Med Spa — Radiance Med Spa** (1,222 lines)
+- Theme: Dark `#0a0a0a` with blush `#f9a8d4` + gold `#d4a853`
+- Hero: Morphing SVG blob with blush-to-gold gradient behind centered text
+- Unique: Treatment menu with 4 filterable categories, skin concern quiz, membership tiers (Gold/Platinum), products we use badges, before/after transformations
+- Layout lesson: Morphing blob = luxury beauty brand. Filterable treatment menu shows sophistication.
+
+**#19 Appliance Repair — ProFix Appliance Repair** (1,094 lines)
+- Theme: Dark `#111111` with orange `#f97316` + steel blue `#64748b`
+- Hero: Cycling counter stats (15,000+ / 98% / 4.9 / 15 Years) with dot indicators
+- Unique: 8 appliance services, 8 brands we service grid, appliance lifespan guide, common issues education section
+- Layout lesson: Cycling counter hero = impressive stats without being static. Brand logos build trust for appliance work.
+
+**#20 Junk Removal — CleanSlate Junk Removal** (1,162 lines)
+- Theme: Dark `#111827` with green `#22c55e` + amber `#f59e0b`
+- Hero: Before/after split wipe — cluttered garage wipes to reveal clean space
+- Unique: Eco commitment (60% donated/30% recycled/10% landfill visual bars), truck-size pricing ($149/$249/$399), "What Needs to Go?" quiz, Why Not DIY section
+- Layout lesson: Before/after wipe is satisfying to watch. Eco stats differentiate from competitors.
+
+**#21 Carpet Cleaning — FreshStart Carpet Cleaning** (1,107 lines)
+- Theme: Dark `#0f172a` with cyan `#06b6d4` + white
+- Hero: Gradient text reveal — "FRESH START" fills from clean-white to dirty-brown, clean side expands on scroll
+- Unique: Per-room pricing ($99/1, $179/3, $349/house), 24-hour dry guarantee, eco products section, carpet health facts, how-often-to-clean guide
+- Layout lesson: Gradient text reveal is visually clever. Room-based pricing is how carpet cleaning is sold.
+
+**#22 Event Planning — Elevate Events** (1,189 lines)
+- Theme: Dark elegant `#0a0a0a` with gold `#d4a853` — the most luxurious
+- Hero: Animated CSS bokeh/gala lights (6 shifting gradients + floating blur circles)
+- Unique: 6 event types, venue partnerships (6 Seattle venues), day-of timeline, 100+ vendor network, limited availability ("24 events/year"), per-event pricing ($5K/$15K/$30K+)
+- Layout lesson: Bokeh hero = walking into a gala. Limited availability creates exclusivity.
+
 ### Testimonial Layout Registry (never repeat within portfolio)
 1. Real Estate → auto-rotating carousel with dot navigation
 2. Dental → staggered masonry grid
@@ -731,7 +779,15 @@ All 10 premium features per category are **hardcoded directly into each V2 templ
 12. Vet → pet-named cards with paw print icons
 13. GC → neighborhood-tagged cards
 14. Catering → event-type tagged testimonials
-15. Available for future: video grid, animated typing effect, polaroid stack
+15. Pet Services → pet-named cards with daily report style
+16. Physical Therapy → body-map tagged reviews with recovery timelines
+17. Tutoring → staggered columns with score improvement badges
+18. Med Spa → auto-rotating carousel with treatment tags
+19. Appliance Repair → brand-tagged review cards
+20. Junk Removal → masonry with eco-impact badges
+21. Carpet Cleaning → masonry with room-type tags
+22. Event Planning → auto-rotating carousel with gold accents (grand finale)
+ALL 22 TESTIMONIAL LAYOUTS ARE NOW USED. For future showcases, invent new ones.
 
 ### Hero Layout Registry (never repeat within portfolio)
 1. Real Estate → centered text + interactive search bar
@@ -748,7 +804,15 @@ All 10 premium features per category are **hardcoded directly into each V2 templ
 12. Vet → scroll-driven parallax pet photo collage (5 overlapping pets)
 13. GC → isometric/3D perspective tilt on construction photo
 14. Catering → split-screen with food photography (photo left, dark text right, copper divider)
-15. Available for future: typewriter text reveal, morphing shape bg, kinetic typography, video loop bg
+15. Pet Services → animated card stack (3 fanned cards with hover-rotate)
+16. Physical Therapy → kinetic typography ("MOVE BETTER" spring animation)
+17. Tutoring → typewriter text reveal (letter-by-letter typing)
+18. Med Spa → morphing SVG blob with gradient fill
+19. Appliance Repair → cycling counter stats (numbers rotate with indicators)
+20. Junk Removal → before/after split wipe (CSS clip-path animation)
+21. Carpet Cleaning → gradient text reveal (clean-to-dirty fill expands on scroll)
+22. Event Planning → animated CSS bokeh/gala lights (THE GRAND FINALE)
+ALL 22 HERO PATTERNS ARE NOW USED. For future showcases, invent new ones.
 
 ### Portfolio Showcase Design Principles (learned from Beast Mode builds)
 - **NO two showcase sites should share the same hero layout.** If real estate has centered text + search bar, dental should have split layout, law firm should have full-bleed video bg, etc.
