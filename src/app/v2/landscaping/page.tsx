@@ -240,9 +240,9 @@ const projects = [
   { title: "Japanese Zen Garden", location: "Capitol Hill", scope: "Stone paths, koi pond, bamboo fencing, moss beds", image: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=600&q=80" },
   { title: "Modern Patio", location: "Bellevue", scope: "600 sq ft paver patio, fire pit, built-in seating", image: "https://images.unsplash.com/photo-1600573472592-401b489a3cdc?w=600&q=80" },
   { title: "Native Plant Restoration", location: "Magnolia", scope: "Full yard native conversion, pollinator garden, rain garden", image: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&q=80" },
-  { title: "Outdoor Kitchen", location: "Mercer Island", scope: "Built-in grill, bar counter, pergola, landscape lighting", image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80" },
+  { title: "Outdoor Kitchen", location: "Mercer Island", scope: "Built-in grill, bar counter, pergola, landscape lighting", image: "/images/landscaping-outdoor-grill.png" },
   { title: "Rain Garden", location: "Fremont", scope: "Bioswale, native plantings, permeable pavers, downspout capture", image: "https://images.unsplash.com/photo-1558904541-efa843a96f01?w=600&q=80" },
-  { title: "Fire Pit Lounge", location: "Kirkland", scope: "Natural stone fire pit, curved seating wall, accent lighting", image: "https://images.unsplash.com/photo-1592150621744-aca64f48394a?w=600&q=80" },
+  { title: "Fire Pit Lounge", location: "Kirkland", scope: "Natural stone fire pit, curved seating wall, accent lighting", image: "/images/landscaping-fire-pit.png" },
 ];
 
 const seasonalData = [
@@ -290,7 +290,7 @@ const faqs = [
 const heroCards = [
   { src: "https://images.unsplash.com/photo-1584738766473-61c083514bf4?w=600&q=80", alt: "Lush garden pathway" },
   { src: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80", alt: "Stone patio with furniture" },
-  { src: "https://images.unsplash.com/photo-1598902108854-d1446413b51f?w=600&q=80", alt: "Elegant water feature" },
+  { src: "https://images.unsplash.com/photo-1558904541-efa843a96f01?w=600&q=80", alt: "Beautiful garden design" },
 ];
 
 /* ═══════════════════════════════════════════════════════════════
@@ -517,7 +517,7 @@ export default function V2LandscapingPage() {
             </GlassCard>
             <GlassCard className="overflow-hidden">
               <div className="relative aspect-[4/3]">
-                <img src="https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?w=800&q=80" alt="Landscape transformation — after Cascade treatment" className="w-full h-full object-cover" />
+                <img src="/images/landscaping-before-after.png" alt="Landscape transformation — before and after" className="w-full h-full object-cover" />
                 <div className="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider text-white backdrop-blur-sm" style={{ background: `${PRIMARY}cc` }}>After</div>
               </div>
             </GlassCard>
@@ -607,7 +607,7 @@ export default function V2LandscapingPage() {
         <div className="mx-auto max-w-7xl px-4 md:px-6 relative">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="relative rounded-2xl overflow-hidden aspect-[4/3]">
-              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80" alt="Diego Herrera — Cascade Landscapes founder" className="w-full h-full object-cover object-top" />
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80" alt="Diego Herrera — Cascade Landscapes founder" className="w-full h-full object-cover object-center" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
               <div className="absolute bottom-6 left-6 right-6">
                 <GlassCard className="px-5 py-3 flex items-center gap-3">
