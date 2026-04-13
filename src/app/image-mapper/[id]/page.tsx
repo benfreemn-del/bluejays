@@ -358,34 +358,27 @@ export default function ImageMapDetailPage() {
     e.target.value = "";
   };
 
-  /* ─── Load saved fallbacks for this category ─── */
+  /* ─── Load saved fallbacks from localStorage ─── */
   useEffect(() => {
     if (!category) return;
-    fetch(`/api/image-mapper/fallbacks?category=${category}`, { credentials: "include" })
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.fallbacks && data.fallbacks.length > 0) {
-          setCategoryFallbacks((prev) =>
-            prev.map((slot, i) => ({
-              ...slot,
-              url: data.fallbacks[i]?.url || slot.url,
-            }))
-          );
+    try {
+      const saved = localStorage.getItem(`bluejays-fallbacks-${category}`);
+      if (saved) {
+        const parsed = JSON.parse(saved) as FallbackSlot[];
+        if (parsed.length > 0) {
+          setCategoryFallbacks(parsed);
         }
-      })
-      .catch(() => {});
+      }
+    } catch { /* ignore */ }
   }, [category]);
 
-  /* ─── Save fallbacks to API when they change ─── */
+  /* ─── Save fallbacks to localStorage immediately ─── */
   const saveFallbacks = useCallback(
     (slots: FallbackSlot[]) => {
       if (!category) return;
-      fetch("/api/image-mapper/fallbacks", {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ category, slots }),
-      }).catch(() => {});
+      try {
+        localStorage.setItem(`bluejays-fallbacks-${category}`, JSON.stringify(slots));
+      } catch { /* ignore */ }
     },
     [category]
   );
