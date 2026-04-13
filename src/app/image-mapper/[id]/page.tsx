@@ -513,21 +513,31 @@ export default function ImageMapDetailPage() {
               <button
                 onClick={async () => {
                   if (!mapping) return;
-                  // Force all images to "keep-original"
                   const updated = mapping.images.map((img) => ({
                     ...img,
                     status: "keep-original" as const,
                   }));
-                  const newMapping = { ...mapping, images: updated, selectionStatus: "completed" as const };
-                  setMapping(newMapping);
-                  // Save each image individually to ensure persistence
-                  for (const img of updated) {
-                    await fetch(`/api/image-mapper/save/${id}`, {
-                      method: "POST",
-                      credentials: "include",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({ imageUpdate: { position: img.position, status: "keep-original" } }),
-                    });
+                  setMapping({ ...mapping, images: updated, selectionStatus: "completed" });
+                  // Save directly to prospect scrapedData via prospects API
+                  const res = await fetch(`/api/prospects/${id}`, {
+                    method: "PATCH",
+                    credentials: "include",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      scrapedData: {
+                        imageMapping: {
+                          ...mapping,
+                          images: updated,
+                          selectionStatus: "completed",
+                          lastUpdated: new Date().toISOString(),
+                        },
+                      },
+                    }),
+                  });
+                  if (res.ok) {
+                    alert("Images marked as complete!");
+                  } else {
+                    alert("Save failed — try again");
                   }
                 }}
                 className="px-4 py-2 rounded-lg bg-green-600 hover:bg-green-500 text-white text-sm font-semibold transition-colors"
