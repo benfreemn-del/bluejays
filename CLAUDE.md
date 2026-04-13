@@ -347,6 +347,17 @@ Every V2 preview template MUST include ALL of the following conversion-focused s
 9. **Certifications/Partners Badge Row** — Industry-specific trust signals (GAF for roofing, ADA for dental, BBB, NRCA, state licenses). Horizontal row of pill badges.
 10. **Enhanced Service Area** — Not just a text address. Show coverage radius, response time, and availability status with pulsing indicator.
 
+### How Premium Features Work (IMPORTANT — NO API CALLS)
+All 10 premium features per category are **hardcoded directly into each V2 template component** as static React JSX. They render instantly with zero external API calls. The pricing cards, comparison tables, quizzes, before/after sections, Google review headers, etc. are all pre-built into the template and simply render with the business's dynamic data (`data.businessName`, `data.phone`, `data.googleRating`, etc.).
+
+**When a new site is generated:**
+1. The pipeline scrapes the business website + Google Places (this is the only slow step)
+2. The generator creates a `GeneratedSiteData` object with the scraped info
+3. The V2 template renders instantly with all 10 premium features — no API, no AI, no waiting
+4. The preview is immediately available
+
+**When building a NEW V2 template for a category**, include all 10 universal features + the category-specific features listed below. They go directly into the `.tsx` file as JSX — not as API calls or external data.
+
 ### Category-Specific Premium Features (BUILT — reference when building/upgrading any category)
 
 **DENTAL** (warm light theme `#faf9f6`)
