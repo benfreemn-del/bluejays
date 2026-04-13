@@ -28,13 +28,14 @@ export default function DashboardStats({
   const paid = active.filter((p) => p.status === "paid").length;
   const qcPassed = active.filter((p) => p.status === "ready_to_review").length;
   const qcFailed = active.filter((p) => p.status === "qc_failed").length;
+  const approved = active.filter((p) => p.status === "approved").length;
 
   const stats = [
     { label: "Prospects", value: total, color: "text-blue-electric", filter: "" },
     { label: "Processing", value: processing, color: "text-cyan-400", filter: "scouted" },
-    { label: "Ready", value: generated, color: "text-yellow-400", filter: "pending-review" },
     { label: "QC Pass", value: qcPassed, color: "text-emerald-400", filter: "ready_to_review" },
     { label: "QC Fail", value: qcFailed, color: "text-rose-400", filter: "qc_failed" },
+    { label: "Approved", value: approved, color: "text-green-500", filter: "approved" },
     { label: "Contacted", value: contacted, color: "text-orange-400", filter: "contacted" },
     { label: "Replied", value: responded, color: "text-green-400", filter: "responded" },
     { label: "Paid", value: paid, color: "text-amber-400", filter: "paid" },
