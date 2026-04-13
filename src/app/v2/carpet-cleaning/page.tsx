@@ -222,12 +222,12 @@ const cleaningChecklist = [
 ];
 
 const galleryImages = [
-  "https://images.unsplash.com/photo-1600121848594-d8644e57abab?w=600&q=80",
-  "https://images.unsplash.com/photo-1567016432779-1fee74a5f39b?w=600&q=80",
-  "https://images.unsplash.com/photo-1540574163024-5884b0b5b529?w=600&q=80",
-  "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80",
-  "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=600&q=80",
-  "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&q=80",
+  "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=600&q=80",
+  "https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=600&q=80",
+  "https://images.unsplash.com/photo-1600573472592-401b489a3cdc?w=600&q=80",
+  "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=600&q=80",
+  "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&q=80",
+  "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80",
 ];
 
 const howOftenOptions = [
@@ -729,7 +729,7 @@ export default function V2CarpetCleaningPage() {
         {/* ═══════════════ 13. ABOUT — DAN & LISA ═══════════════ */}
         <SectionReveal id="about" className="py-20 grid md:grid-cols-2 gap-12 items-center">
           <div className="relative rounded-2xl overflow-hidden aspect-[4/3]">
-            <img src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=700&q=80" alt="FreshStart team at work" className="w-full h-full object-cover" />
+            <img src="https://images.unsplash.com/photo-1543269865-cbf427effbad?w=700&q=80" alt="Dan and Lisa Kowalski — FreshStart founders" className="w-full h-full object-cover object-center" />
             <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${BG}, transparent 50%)` }} />
             <div className="absolute bottom-4 left-4"><span className="px-3 py-1 rounded-full text-xs font-bold text-white" style={{ background: ACCENT }}>Family-Owned Since 2012</span></div>
           </div>

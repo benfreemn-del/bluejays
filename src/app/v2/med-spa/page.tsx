@@ -263,9 +263,9 @@ const testimonials = [
 ];
 
 const beforeAfterData = [
-  { before: "https://images.unsplash.com/photo-1616683693504-3ea7e9ad6fec?w=600&q=80", after: "https://images.unsplash.com/photo-1509967419530-da38b4704bc6?w=600&q=80", label: "Skin Rejuvenation", desc: "6 sessions of microneedling + chemical peels" },
-  { before: "https://images.unsplash.com/photo-1594824476967-48c8b964ac31?w=600&q=80", after: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=600&q=80", label: "Facial Contouring", desc: "Juvederm cheek + jawline filler" },
-  { before: "https://images.unsplash.com/photo-1595959183082-7b570b7e1e6b?w=600&q=80", after: "https://images.unsplash.com/photo-1519699047748-de8e457a634e?w=600&q=80", label: "Anti-Aging Treatment", desc: "Botox + laser resurfacing protocol" },
+  { image: "/images/medspa-before-after-1.png", label: "Skin Rejuvenation", desc: "6 sessions of microneedling + chemical peels" },
+  { image: "/images/medspa-before-after-2.png", label: "Facial Contouring", desc: "Juvederm cheek + jawline filler" },
+  { image: "/images/medspa-before-after-3.png", label: "Anti-Aging Treatment", desc: "Botox + laser resurfacing protocol" },
 ];
 
 const comparisonRows = [
@@ -315,11 +315,11 @@ const pricingTiers = [
 
 const galleryImages = [
   "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=600&q=80",
-  "https://images.unsplash.com/photo-1616394584738-63467862dc64?w=600&q=80",
-  "https://images.unsplash.com/photo-1515377905703-c4788e51af15?w=600&q=80",
-  "https://images.unsplash.com/photo-1556228852-6d45a7d8b182?w=600&q=80",
-  "https://images.unsplash.com/photo-1620916566398-39f114723584?w=600&q=80",
-  "https://images.unsplash.com/photo-1596755389378-c31d21fd1273?w=600&q=80",
+  "https://images.unsplash.com/photo-1552693673-1bf958298935?w=600&q=80",
+  "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=600&q=80",
+  "https://images.unsplash.com/photo-1540555700478-4be289fbec6d?w=600&q=80",
+  "https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?w=600&q=80",
+  "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=600&q=80",
 ];
 
 /* ═══════════════════════════════════════════════════════════════
@@ -530,15 +530,8 @@ export default function V2MedSpaPage() {
             {beforeAfterData.map((item, i) => (
               <motion.div key={i} variants={fadeUp}>
                 <GlassCard className="overflow-hidden">
-                  <div className="grid grid-cols-2 gap-0">
-                    <div className="relative aspect-[4/5]">
-                      <img src={item.before} alt={`Before ${item.label}`} className="w-full h-full object-cover" />
-                      <span className="absolute top-2 left-2 px-2 py-0.5 rounded text-xs font-bold bg-black/70 text-white">BEFORE</span>
-                    </div>
-                    <div className="relative aspect-[4/5]">
-                      <img src={item.after} alt={`After ${item.label}`} className="w-full h-full object-cover" />
-                      <span className="absolute top-2 right-2 px-2 py-0.5 rounded text-xs font-bold text-white" style={{ background: BLUSH }}> AFTER</span>
-                    </div>
+                  <div className="relative">
+                    <img src={item.image} alt={`${item.label} before and after`} className="w-full h-auto" />
                   </div>
                   <div className="p-4 text-center">
                     <h3 className="text-sm font-semibold text-white mb-1">{item.label}</h3>
