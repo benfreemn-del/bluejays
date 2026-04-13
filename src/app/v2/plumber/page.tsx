@@ -1,7 +1,6 @@
 "use client";
 
-/* eslint-disable @next/next/no-img-element -- These static marketing and preview components intentionally use plain img tags to preserve existing markup and visual behavior during lint-only cleanup. */
-/* eslint-disable react-hooks/purity -- Decorative particle values are intentionally randomized for static visual effects in these marketing pages and previews; this preserves existing appearance without changing business logic. */
+/* eslint-disable @next/next/no-img-element */
 
 import { useState, useRef, useCallback, useEffect } from "react";
 import {
@@ -31,13 +30,23 @@ import {
   List,
   Timer,
   Certificate,
-  Hammer,
   PhoneCall,
   MagnifyingGlass,
   ThumbsUp,
   CurrencyDollar,
   Envelope,
   ChatCircleDots,
+  Play,
+  Users,
+  XCircle,
+  Gauge,
+  FirstAid,
+  HandCoins,
+  Broom,
+  SealCheck,
+  GasPump,
+  Funnel,
+  Toilet,
 } from "@phosphor-icons/react";
 
 /* ───────────────────────── SPRING CONFIG ───────────────────────── */
@@ -62,21 +71,63 @@ const TEAL_LIGHT = "#14b8a6";
 const SLATE = "#0f172a";
 const BLUE_GLOW = "rgba(30, 64, 175, 0.15)";
 const TEAL_GLOW = "rgba(13, 148, 136, 0.15)";
+const RED_EMERGENCY = "#ef4444";
+
+/* ───────────────────────── WATER DROP DRIP ANIMATION ───────────────────────── */
+function WaterDropDrip() {
+  return (
+    <div className="absolute left-6 md:left-12 top-0 bottom-0 pointer-events-none z-20 hidden lg:block">
+      <svg width="24" height="100%" viewBox="0 0 24 800" preserveAspectRatio="xMidYMin slice" className="h-full">
+        <defs>
+          <linearGradient id="dripGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={TEAL} stopOpacity="0" />
+            <stop offset="30%" stopColor={TEAL} stopOpacity="0.3" />
+            <stop offset="100%" stopColor={TEAL} stopOpacity="0" />
+          </linearGradient>
+        </defs>
+        <line x1="12" y1="0" x2="12" y2="800" stroke={TEAL} strokeWidth="1" opacity="0.08" />
+        <motion.g
+          animate={{ y: ["-100", "900"] }}
+          transition={{ duration: 6, repeat: Infinity, ease: "linear", delay: 0 }}
+        >
+          <ellipse cx="12" cy="0" rx="6" ry="9" fill={TEAL} opacity="0.35" />
+          <ellipse cx="12" cy="-2" rx="3" ry="4" fill={TEAL_LIGHT} opacity="0.5" />
+        </motion.g>
+        <motion.g
+          animate={{ y: ["-100", "900"] }}
+          transition={{ duration: 6, repeat: Infinity, ease: "linear", delay: 3 }}
+        >
+          <ellipse cx="12" cy="0" rx="5" ry="7" fill={TEAL} opacity="0.25" />
+          <ellipse cx="12" cy="-2" rx="2.5" ry="3.5" fill={TEAL_LIGHT} opacity="0.4" />
+        </motion.g>
+      </svg>
+    </div>
+  );
+}
 
 /* ───────────────────────── FLOATING WATER DROPS ───────────────────────── */
 function FloatingWaterDrops() {
-  const particles = Array.from({ length: 20 }, (_, i) => ({
-    id: i,
-    x: Math.random() * 100,
-    delay: Math.random() * 10,
-    duration: 7 + Math.random() * 7,
-    size: 3 + Math.random() * 5,
-    opacity: 0.1 + Math.random() * 0.25,
-  }));
+  const drops = [
+    { id: 0, x: 5, delay: 0, dur: 9, size: 4, op: 0.15 },
+    { id: 1, x: 12, delay: 2, dur: 11, size: 3, op: 0.1 },
+    { id: 2, x: 22, delay: 4, dur: 8, size: 5, op: 0.12 },
+    { id: 3, x: 35, delay: 1, dur: 10, size: 3, op: 0.14 },
+    { id: 4, x: 48, delay: 6, dur: 9, size: 4, op: 0.1 },
+    { id: 5, x: 55, delay: 3, dur: 12, size: 6, op: 0.13 },
+    { id: 6, x: 65, delay: 5, dur: 8, size: 3, op: 0.15 },
+    { id: 7, x: 72, delay: 0.5, dur: 10, size: 5, op: 0.11 },
+    { id: 8, x: 80, delay: 7, dur: 9, size: 4, op: 0.12 },
+    { id: 9, x: 88, delay: 2.5, dur: 11, size: 3, op: 0.14 },
+    { id: 10, x: 93, delay: 4.5, dur: 8, size: 5, op: 0.1 },
+    { id: 11, x: 17, delay: 8, dur: 10, size: 4, op: 0.13 },
+    { id: 12, x: 42, delay: 1.5, dur: 7, size: 3, op: 0.15 },
+    { id: 13, x: 60, delay: 6.5, dur: 9, size: 6, op: 0.11 },
+    { id: 14, x: 97, delay: 3.5, dur: 12, size: 4, op: 0.12 },
+  ];
 
   return (
     <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden hidden md:block">
-      {particles.map((p) => (
+      {drops.map((p) => (
         <motion.div
           key={p.id}
           className="absolute"
@@ -90,12 +141,12 @@ function FloatingWaterDrops() {
           }}
           animate={{
             y: ["-10vh", "110vh"],
-            opacity: [0, p.opacity, p.opacity, 0],
+            opacity: [0, p.op, p.op, 0],
           }}
           transition={{
-            y: { duration: p.duration, repeat: Infinity, delay: p.delay, ease: "linear" },
+            y: { duration: p.dur, repeat: Infinity, delay: p.delay, ease: "linear" },
             opacity: {
-              duration: p.duration,
+              duration: p.dur,
               repeat: Infinity,
               delay: p.delay,
               times: [0, 0.1, 0.9, 1],
@@ -110,13 +161,7 @@ function FloatingWaterDrops() {
 /* ───────────────────────── WRENCH + DROP SVG ───────────────────────── */
 function WrenchDropIcon({ size = 28 }: { size?: number }) {
   return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 32 32"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M8 24l12-12a6 6 0 00-8.49-8.49L8 7v4H4l-3.5 3.51A6 6 0 008 24z"
         stroke={TEAL}
@@ -186,17 +231,9 @@ function SectionReveal({
 }
 
 /* ───────────────────────── GLASS CARD ───────────────────────── */
-function GlassCard({
-  children,
-  className = "",
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
+function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div
-      className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}
-    >
+    <div className={`rounded-2xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
       {children}
     </div>
   );
@@ -273,6 +310,25 @@ function ShimmerBorder({ children, className = "" }: { children: React.ReactNode
   );
 }
 
+/* ───────────────────────── RIPPLE BORDER CARD ───────────────────────── */
+function RippleBorderCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return (
+    <div className={`relative rounded-2xl p-[2px] overflow-hidden ${className}`}>
+      <motion.div
+        className="absolute inset-0 rounded-2xl"
+        style={{
+          background: `conic-gradient(from 0deg, ${TEAL}44, ${DEEP_BLUE}66, ${TEAL}22, transparent, ${TEAL}44, ${DEEP_BLUE}44, ${TEAL}66, transparent)`,
+          willChange: "transform",
+        }}
+        animate={{ rotate: [0, 360] }}
+        transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+      />
+      <div className="absolute inset-[2px] rounded-2xl" style={{ background: "rgba(15,23,42,0.97)" }} />
+      <div className="relative z-10">{children}</div>
+    </div>
+  );
+}
+
 /* ───────────────────────── ACCORDION ITEM ───────────────────────── */
 function AccordionItem({
   question,
@@ -315,50 +371,6 @@ function AccordionItem({
   );
 }
 
-/* ───────────────────────── WATER WAVE SVG BG ───────────────────────── */
-function WaterWaveBackground() {
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
-      <motion.svg
-        viewBox="0 0 1440 320"
-        className="absolute bottom-0 w-full"
-        preserveAspectRatio="none"
-      >
-        <motion.path
-          fill={DEEP_BLUE}
-          fillOpacity="0.4"
-          animate={{
-            d: [
-              "M0,224L48,213.3C96,203,192,181,288,186.7C384,192,480,224,576,229.3C672,235,768,213,864,197.3C960,181,1056,171,1152,181.3C1248,192,1344,224,1392,240L1440,256L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z",
-              "M0,256L48,240C96,224,192,192,288,192C384,192,480,224,576,234.7C672,245,768,235,864,218.7C960,203,1056,181,1152,186.7C1248,192,1344,224,1392,240L1440,256L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z",
-              "M0,224L48,213.3C96,203,192,181,288,186.7C384,192,480,224,576,229.3C672,235,768,213,864,197.3C960,181,1056,171,1152,181.3C1248,192,1344,224,1392,240L1440,256L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z",
-            ],
-          }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-        />
-      </motion.svg>
-      <motion.svg
-        viewBox="0 0 1440 320"
-        className="absolute bottom-0 w-full"
-        preserveAspectRatio="none"
-      >
-        <motion.path
-          fill={TEAL}
-          fillOpacity="0.2"
-          animate={{
-            d: [
-              "M0,288L48,272C96,256,192,224,288,218.7C384,213,480,235,576,245.3C672,256,768,256,864,240C960,224,1056,192,1152,186.7C1248,181,1344,203,1392,213.3L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z",
-              "M0,256L48,261.3C96,267,192,277,288,272C384,267,480,245,576,234.7C672,224,768,224,864,234.7C960,245,1056,267,1152,261.3C1248,256,1344,224,1392,208L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z",
-              "M0,288L48,272C96,256,192,224,288,218.7C384,213,480,235,576,245.3C672,256,768,256,864,240C960,224,1056,192,1152,186.7C1248,181,1344,203,1392,213.3L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z",
-            ],
-          }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-        />
-      </motion.svg>
-    </div>
-  );
-}
-
 /* ───────────────────────── PIPE GRID BG PATTERN ───────────────────────── */
 function PipeGridPattern() {
   return (
@@ -380,121 +392,109 @@ function PipeGridPattern() {
   );
 }
 
+/* ───────────────────────── WATER WAVE BG ───────────────────────── */
+function WaterWaveBackground() {
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
+      <motion.svg viewBox="0 0 1440 320" className="absolute bottom-0 w-full" preserveAspectRatio="none">
+        <motion.path
+          fill={DEEP_BLUE}
+          fillOpacity="0.4"
+          animate={{
+            d: [
+              "M0,224L48,213.3C96,203,192,181,288,186.7C384,192,480,224,576,229.3C672,235,768,213,864,197.3C960,181,1056,171,1152,181.3C1248,192,1344,224,1392,240L1440,256L1440,320L0,320Z",
+              "M0,256L48,240C96,224,192,192,288,192C384,192,480,224,576,234.7C672,245,768,235,864,218.7C960,203,1056,181,1152,186.7C1248,192,1344,224,1392,240L1440,256L1440,320L0,320Z",
+              "M0,224L48,213.3C96,203,192,181,288,186.7C384,192,480,224,576,229.3C672,235,768,213,864,197.3C960,181,1056,171,1152,181.3C1248,192,1344,224,1392,240L1440,256L1440,320L0,320Z",
+            ],
+          }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+        />
+      </motion.svg>
+    </div>
+  );
+}
+
 /* ───────────────────────── DATA ───────────────────────── */
-const services = [
-  {
-    title: "Emergency Plumbing",
-    description: "Burst pipes, major leaks, and flooding handled fast. Our emergency crew is on call 24/7 to protect your home from water damage.",
-    icon: Drop,
-    number: "01",
-  },
-  {
-    title: "Drain Cleaning",
-    description: "Stubborn clogs eliminated with hydro-jetting and camera inspections. We clear kitchen, bathroom, and main sewer lines.",
-    icon: Wrench,
-    number: "02",
-  },
-  {
-    title: "Water Heater",
-    description: "Tankless and traditional water heater installation, repair, and maintenance. Energy-efficient upgrades that cut your utility bills.",
-    icon: Flame,
-    number: "03",
-  },
-  {
-    title: "Bathroom Remodel",
-    description: "Full bathroom renovations from fixtures to tile. We handle plumbing rough-in, shower installs, and luxury upgrades.",
-    icon: Bathtub,
-    number: "04",
-  },
-  {
-    title: "Pipe Repair",
-    description: "Trenchless pipe repair and repiping for aging systems. We fix leaks, corrosion, and low water pressure without tearing up your yard.",
-    icon: Pipe,
-    number: "05",
-  },
-  {
-    title: "Sewer Line",
-    description: "Sewer line inspection, cleaning, and replacement. Video camera diagnostics to find the problem before we dig.",
-    icon: Warning,
-    number: "06",
-  },
+const SERVICES = [
+  { title: "Emergency Plumbing", desc: "Burst pipes, flooding, and major leaks handled 24/7. Our emergency crew arrives within 60 minutes to protect your home.", icon: Warning, number: "01" },
+  { title: "Drain Cleaning", desc: "Stubborn clogs eliminated with hydro-jetting and camera inspections. Kitchen, bathroom, and main sewer lines cleared fast.", icon: Funnel, number: "02" },
+  { title: "Water Heater Install", desc: "Tankless and traditional water heater installation and repair. Energy-efficient upgrades that slash your utility bills.", icon: Flame, number: "03" },
+  { title: "Sewer Line Repair", desc: "Video camera diagnostics and trenchless repair technology. We fix sewer problems without tearing up your yard.", icon: Pipe, number: "04" },
+  { title: "Repiping", desc: "Complete copper and PEX repiping for aging homes. Upgrade corroded pipes and restore strong, clean water flow throughout.", icon: Wrench, number: "05" },
+  { title: "Leak Detection", desc: "Advanced electronic and thermal leak detection finds hidden leaks behind walls, under slabs, and in crawl spaces.", icon: MagnifyingGlass, number: "06" },
+  { title: "Toilet & Faucet Repair", desc: "Running toilets, dripping faucets, and fixture upgrades. Fast repairs that stop wasting water and money.", icon: Drop, number: "07" },
+  { title: "Gas Line Service", desc: "Licensed gas line installation, repair, and leak testing. Safety-first approach for furnaces, stoves, and outdoor grills.", icon: GasPump, number: "08" },
 ];
 
-const stats = [
-  { value: "30", label: "Minute Emergency Response", suffix: "min", icon: Timer },
-  { value: "25", label: "Years Licensed & Insured", suffix: "+", icon: Certificate },
-  { value: "15,000", label: "Jobs Completed", suffix: "+", icon: Hammer },
-  { value: "4.9", label: "Average Customer Rating", suffix: "/5", icon: Star },
+const COMMON_ISSUES = [
+  { title: "Clogged Drains", icon: Funnel },
+  { title: "Leaking Pipes", icon: Drop },
+  { title: "No Hot Water", icon: Flame },
+  { title: "Running Toilets", icon: Toilet },
+  { title: "Low Water Pressure", icon: Gauge },
+  { title: "Sewer Backup", icon: Warning },
+  { title: "Dripping Faucets", icon: Bathtub },
+  { title: "Gas Leaks", icon: GasPump },
 ];
 
-const testimonials = [
-  {
-    name: "Robert M.",
-    text: "Burst pipe at 2 AM and they were at our door in under 30 minutes. Fixed everything, cleaned up, and the price was exactly what they quoted. Absolutely the best plumber we have ever used.",
-    rating: 5,
-  },
-  {
-    name: "Jennifer K.",
-    text: "Had them do a complete bathroom remodel. The attention to detail was incredible. Every pipe, every fitting, perfect. They treated our home like it was their own.",
-    rating: 5,
-  },
-  {
-    name: "Carlos D.",
-    text: "After three other plumbers could not find our leak, Emerald City used camera inspection and found it in minutes. Honest pricing, no upselling, just great work. Highly recommend.",
-    rating: 5,
-  },
+const QUIZ_OPTIONS = [
+  { label: "Clogged Drain", color: "#22c55e", severity: "Common Fix", recommendation: "Most drain clogs are resolved same-day with our hydro-jetting service. Book a $99 drain cleaning.", cta: "Book Drain Cleaning" },
+  { label: "Leak or Burst Pipe", color: RED_EMERGENCY, severity: "Emergency!", recommendation: "Water damage gets worse every minute. Call now for our 60-minute emergency response.", cta: "Call Now (206) 555-0893" },
+  { label: "Water Heater Problem", color: "#f59e0b", severity: "No Hot Water?", recommendation: "Could be a simple thermostat fix or time for a new unit. We diagnose before we quote.", cta: "Schedule Diagnosis" },
+  { label: "Sewer / Main Line", color: RED_EMERGENCY, severity: "Serious", recommendation: "Sewer backups need immediate camera inspection. We use trenchless repair to minimize disruption.", cta: "Get Camera Inspection" },
 ];
 
-const processSteps = [
-  { step: "01", title: "Call Us", description: "Reach us 24/7 by phone or online. We will ask a few questions to understand your issue.", icon: PhoneCall },
-  { step: "02", title: "We Arrive Fast", description: "A licensed plumber arrives at your door promptly with a fully-stocked truck ready to work.", icon: Timer },
-  { step: "03", title: "Diagnose", description: "We inspect, use camera diagnostics if needed, and explain the problem before any work starts.", icon: MagnifyingGlass },
-  { step: "04", title: "Fix It Right", description: "We complete the repair with quality parts and leave your home clean. Backed by our satisfaction guarantee.", icon: ThumbsUp },
+const COMPARISON_ROWS = [
+  { feature: "Licensed Master Plumber", us: true, them: "Varies" },
+  { feature: "24/7 Emergency Response", us: true, them: "No" },
+  { feature: "Upfront Flat-Rate Pricing", us: true, them: "Sometimes" },
+  { feature: "Same-Day Service", us: true, them: "Varies" },
+  { feature: "Clean Up After Every Job", us: true, them: "No" },
+  { feature: "1-Year Labor Warranty", us: true, them: "No" },
+  { feature: "Camera Diagnostics Included", us: true, them: "Extra Charge" },
 ];
 
-const faqData = [
-  {
-    question: "Do you offer 24/7 emergency plumbing services?",
-    answer: "Yes. Our emergency team is available 24 hours a day, 7 days a week, including holidays. We typically arrive within 30 minutes for emergency calls in our service area.",
-  },
-  {
-    question: "How much does a typical plumbing repair cost?",
-    answer: "We provide upfront, flat-rate pricing before any work begins. Common repairs range from $150 to $500 depending on the issue. We never charge hidden fees or surprise you with a bigger bill.",
-  },
-  {
-    question: "Are your plumbers licensed and insured?",
-    answer: "Absolutely. Every technician on our team is fully licensed, bonded, and insured. We carry comprehensive liability coverage to protect your home and our team.",
-  },
-  {
-    question: "Do you offer warranties on your work?",
-    answer: "Yes. All our repairs come with a 1-year labor warranty and we honor all manufacturer warranties on parts. Water heater installations include an extended 5-year warranty.",
-  },
+const TESTIMONIALS = [
+  { name: "Patrick O.", text: "Ryan found the leak in 10 minutes that two other plumbers missed for weeks. Saved us thousands in potential water damage. Absolutely the best diagnostic plumber in Seattle.", rating: 5 },
+  { name: "The Nguyen Family", text: "Water heater died on Christmas Eve. Ryan had a new one installed by 9am Christmas Day. That kind of dedication is rare. We are customers for life.", rating: 5 },
+  { name: "Carol & Jim S.", text: "Repiped our entire 1940s house. Zero damage to the walls. The crew was professional, clean, and finished ahead of schedule. Incredible craftsmanship.", rating: 5 },
+  { name: "Aisha M.", text: "Called at 2am for a burst pipe. Ryan was there in 35 minutes. Saved our kitchen from serious flooding. Could not be more grateful for the fast response.", rating: 5 },
+  { name: "Dave T.", text: "Fair pricing, fast work, and he actually cleaned up after himself. That NEVER happens with plumbers. Ryan has earned a customer for life.", rating: 5 },
 ];
 
-const pricingItems = [
-  { service: "Drain Cleaning", range: "$99 - $250" },
-  { service: "Water Heater Repair", range: "$150 - $500" },
-  { service: "Pipe Leak Repair", range: "$175 - $450" },
-  { service: "Toilet Repair/Replace", range: "$150 - $400" },
-  { service: "Faucet Installation", range: "$125 - $300" },
-  { service: "Sewer Line Camera Inspection", range: "$200 - $500" },
+const SERVICE_AREAS = [
+  "Capitol Hill", "Ballard", "Fremont", "Beacon Hill",
+  "Columbia City", "Wallingford", "Green Lake", "Rainier Valley",
 ];
 
-const galleryImages = [
-  { src: "https://images.unsplash.com/photo-1585704032915-c3400ca199e7?w=600&q=80", alt: "Modern bathroom remodel with walk-in shower" },
-  { src: "https://images.unsplash.com/photo-1581858726788-75bc0f6a952d?w=600&q=80", alt: "Copper pipe installation work" },
-  { src: "https://images.unsplash.com/photo-1581858726788-75bc0f6a952d?w=600&q=80", alt: "Luxury bathroom renovation" },
-  { src: "https://images.unsplash.com/photo-1585704032915-c3400ca199e7?w=600&q=80", alt: "Kitchen sink plumbing installation" },
-  { src: "https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=600&q=80", alt: "New tankless water heater installed" },
-  { src: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=600&q=80", alt: "Complete residential plumbing project" },
-];
+const HERO_IMG = "https://images.unsplash.com/photo-1607472586893-edb57bdc0e39?w=900&q=80";
+const ABOUT_IMG = "https://images.unsplash.com/photo-1621460249485-4e4f92c9de5d?w=700&q=80";
 
 /* ═══════════════════════════════════════════════════════════════════
    MAIN PAGE
    ═══════════════════════════════════════════════════════════════════ */
 export default function V2PlumberPage() {
-  const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [quizSelected, setQuizSelected] = useState<number | null>(null);
+  const testimonialRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+
+  /* Testimonial drag scroll */
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!testimonialRef.current) return;
+    setIsDragging(true);
+    setStartX(e.pageX - testimonialRef.current.offsetLeft);
+    setScrollLeft(testimonialRef.current.scrollLeft);
+  };
+  const handleMouseUp = () => setIsDragging(false);
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || !testimonialRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - testimonialRef.current.offsetLeft;
+    testimonialRef.current.scrollLeft = scrollLeft - (x - startX) * 1.5;
+  };
 
   return (
     <main
@@ -502,8 +502,9 @@ export default function V2PlumberPage() {
       style={{ background: SLATE, color: "#f1f5f9" }}
     >
       <FloatingWaterDrops />
+      <WaterDropDrip />
 
-      {/* ─── 1. NAV ─── */}
+      {/* ────────────────────────── NAV ────────────────────────── */}
       <motion.nav
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -521,17 +522,18 @@ export default function V2PlumberPage() {
             <div className="hidden md:flex items-center gap-8 text-sm text-slate-400">
               <a href="#services" className="hover:text-white transition-colors">Services</a>
               <a href="#about" className="hover:text-white transition-colors">About</a>
-              <a href="#emergency" className="hover:text-white transition-colors">Emergency</a>
+              <a href="#pricing" className="hover:text-white transition-colors">Pricing</a>
+              <a href="#reviews" className="hover:text-white transition-colors">Reviews</a>
               <a href="#contact" className="hover:text-white transition-colors">Contact</a>
             </div>
             <div className="flex items-center gap-3">
               <MagneticButton
-                className="px-4 md:px-5 py-2 rounded-full text-sm font-semibold text-white transition-colors cursor-pointer"
+                className="px-4 md:px-5 py-2 rounded-full text-sm font-semibold text-white cursor-pointer"
                 style={{ background: TEAL } as React.CSSProperties}
               >
                 <span className="flex items-center gap-2">
                   <Phone size={16} weight="bold" />
-                  Call Now
+                  (206) 555-0893
                 </span>
               </MagneticButton>
               <button
@@ -543,7 +545,6 @@ export default function V2PlumberPage() {
             </div>
           </GlassCard>
 
-          {/* Mobile Menu */}
           <AnimatePresence>
             {mobileMenuOpen && (
               <motion.div
@@ -557,7 +558,8 @@ export default function V2PlumberPage() {
                   {[
                     { label: "Services", href: "#services" },
                     { label: "About", href: "#about" },
-                    { label: "Emergency", href: "#emergency" },
+                    { label: "Pricing", href: "#pricing" },
+                    { label: "Reviews", href: "#reviews" },
                     { label: "Contact", href: "#contact" },
                   ].map((link) => (
                     <a
@@ -576,225 +578,155 @@ export default function V2PlumberPage() {
         </div>
       </motion.nav>
 
-      {/* ─── 2. HERO ─── */}
-      <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
-        {/* Water flow SVG wave patterns */}
-        <div className="absolute inset-0 pointer-events-none">
-          <motion.svg
-            viewBox="0 0 1440 400"
-            className="absolute bottom-0 w-full opacity-15"
-            preserveAspectRatio="none"
-          >
-            <motion.path
-              fill={DEEP_BLUE}
-              animate={{
-                d: [
-                  "M0,300L60,285C120,270,240,240,360,235C480,230,600,250,720,265C840,280,960,290,1080,275C1200,260,1320,220,1380,200L1440,180L1440,400L0,400Z",
-                  "M0,270L60,280C120,290,240,270,360,255C480,240,600,260,720,275C840,290,960,280,1080,260C1200,240,1320,250,1380,260L1440,270L1440,400L0,400Z",
-                  "M0,300L60,285C120,270,240,240,360,235C480,230,600,250,720,265C840,280,960,290,1080,275C1200,260,1320,220,1380,200L1440,180L1440,400L0,400Z",
-                ],
-              }}
-              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-            />
-          </motion.svg>
-          <motion.svg
-            viewBox="0 0 1440 400"
-            className="absolute bottom-0 w-full opacity-10"
-            preserveAspectRatio="none"
-          >
-            <motion.path
-              fill={TEAL}
-              animate={{
-                d: [
-                  "M0,320L60,310C120,300,240,280,360,270C480,260,600,280,720,290C840,300,960,310,1080,295C1200,280,1320,260,1380,250L1440,240L1440,400L0,400Z",
-                  "M0,290L60,300C120,310,240,300,360,285C480,270,600,275,720,285C840,295,960,305,1080,290C1200,275,1320,270,1380,275L1440,280L1440,400L0,400Z",
-                  "M0,320L60,310C120,300,240,280,360,270C480,260,600,280,720,290C840,300,960,310,1080,295C1200,280,1320,260,1380,250L1440,240L1440,400L0,400Z",
-                ],
-              }}
-              transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-            />
-          </motion.svg>
-        </div>
-
-        {/* Deep blue gradient overlay */}
+      {/* ────────────────────────── 1. HERO — OVERLAPPING CARD ────────────────────────── */}
+      <section className="relative min-h-[100dvh] flex items-center pt-28 pb-16 z-10 overflow-hidden">
+        {/* Background gradients */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
-            background: `radial-gradient(ellipse at 30% 20%, rgba(30, 64, 175, 0.2) 0%, transparent 60%),
-                          radial-gradient(ellipse at 70% 80%, rgba(13, 148, 136, 0.1) 0%, transparent 50%)`,
+            background: `radial-gradient(ellipse at 20% 30%, rgba(30, 64, 175, 0.2) 0%, transparent 60%),
+                          radial-gradient(ellipse at 80% 70%, rgba(13, 148, 136, 0.1) 0%, transparent 50%)`,
           }}
         />
 
-        <div className="relative mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-4 items-center">
-          <div className="space-y-8">
-            <div>
-              <motion.p
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ ...spring, delay: 0.1 }}
-                className="text-sm uppercase tracking-widest mb-4"
-                style={{ color: TEAL }}
-              >
-                Licensed &amp; Insured Since 2001
-              </motion.p>
-              <h1
-                className="text-4xl md:text-7xl tracking-tighter leading-none font-bold text-white"
-                style={{ textShadow: "0 2px 20px rgba(0,0,0,0.6)" }}
-              >
-                <WordReveal text="Fast. Reliable. Done Right." />
-              </h1>
-            </div>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ ...spring, delay: 0.6 }}
-              className="text-lg text-slate-400 max-w-md leading-relaxed"
-            >
-              From emergency repairs to full bathroom remodels, Emerald City
-              Plumbing delivers expert service with upfront pricing and a
-              satisfaction guarantee on every job.
-            </motion.p>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ ...spring, delay: 0.8 }}
-              className="flex flex-wrap gap-4"
-            >
-              <MagneticButton
-                className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer"
-                style={{ background: TEAL } as React.CSSProperties}
-              >
-                Get a Free Estimate
-                <ArrowRight size={18} weight="bold" />
-              </MagneticButton>
-              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
-                <Phone size={18} weight="duotone" />
-                (555) 847-3200
-              </MagneticButton>
-            </motion.div>
+        <div className="relative mx-auto max-w-7xl px-4 md:px-6 w-full">
+          <div className="relative flex flex-col lg:flex-row items-center lg:items-stretch gap-8 lg:gap-0">
+            {/* Glass Card — overlaps the image on desktop */}
+            <div className="relative z-20 lg:w-[48%] lg:mr-[-8%]">
+              <RippleBorderCard className="h-full">
+                <div className="p-8 md:p-10 lg:p-12 space-y-6">
+                  <motion.p
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ ...spring, delay: 0.1 }}
+                    className="text-sm uppercase tracking-widest"
+                    style={{ color: TEAL }}
+                  >
+                    Seattle&apos;s Most Trusted Plumber Since 2004
+                  </motion.p>
 
+                  <h1 className="text-4xl md:text-6xl tracking-tighter leading-[1.05] font-bold text-white">
+                    <WordReveal text="Expert Plumbing, Honest Pricing." />
+                  </h1>
+
+                  <motion.p
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ ...spring, delay: 0.6 }}
+                    className="text-lg text-slate-400 leading-relaxed max-w-md"
+                  >
+                    Master plumber Ryan Kowalski and his crew deliver fast, reliable
+                    plumbing with upfront pricing and a satisfaction guarantee on every job.
+                  </motion.p>
+
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ ...spring, delay: 0.8 }}
+                    className="flex flex-wrap gap-4"
+                  >
+                    <MagneticButton
+                      className="px-7 py-3.5 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer"
+                      style={{ background: TEAL } as React.CSSProperties}
+                    >
+                      Free Estimate
+                      <ArrowRight size={18} weight="bold" />
+                    </MagneticButton>
+                    <MagneticButton className="px-7 py-3.5 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
+                      <Phone size={18} weight="duotone" />
+                      Call Now
+                    </MagneticButton>
+                  </motion.div>
+
+                  {/* Badges below CTAs */}
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ ...spring, delay: 1.0 }}
+                    className="flex flex-wrap gap-3 pt-2"
+                  >
+                    {/* Emergency pulsing badge */}
+                    <span className="relative flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold text-white" style={{ background: "rgba(239,68,68,0.2)", border: "1px solid rgba(239,68,68,0.4)" }}>
+                      <span className="relative flex h-2.5 w-2.5">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
+                        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500" />
+                      </span>
+                      24/7 Emergency
+                    </span>
+                    <span className="flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold text-white" style={{ background: TEAL_GLOW, border: `1px solid ${TEAL}44` }}>
+                      <Clock size={14} weight="bold" style={{ color: TEAL }} />
+                      Same-Day Service
+                    </span>
+                  </motion.div>
+                </div>
+              </RippleBorderCard>
+            </div>
+
+            {/* Hero Image — 60% width on desktop, behind the card overlap */}
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ ...spring, delay: 1 }}
-              className="flex flex-wrap gap-6 text-sm text-slate-400"
+              initial={{ opacity: 0, x: 40 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ ...spring, delay: 0.3 }}
+              className="relative z-10 lg:w-[60%] rounded-2xl overflow-hidden"
+              style={{ minHeight: 400 }}
             >
-              <span className="flex items-center gap-2">
-                <MapPin size={16} weight="duotone" style={{ color: TEAL }} />
-                Seattle, WA &amp; Surrounding Areas
-              </span>
-              <span className="flex items-center gap-2">
-                <Clock size={16} weight="duotone" style={{ color: TEAL }} />
-                24/7 Emergency Service
-              </span>
+              <img
+                src={HERO_IMG}
+                alt="Professional plumber working on modern residential plumbing installation"
+                className="w-full h-full object-cover rounded-2xl"
+                style={{ minHeight: 400, maxHeight: 560 }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-[#0f172a]/60 rounded-2xl" />
             </motion.div>
           </div>
-
-          {/* Right: animated pipe/wrench SVG */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ ...spring, delay: 0.3 }}
-            className="hidden md:flex items-center justify-center lg:justify-end"
-          >
-            <div className="relative flex items-center justify-center">
-              <motion.div
-                className="absolute inset-0 rounded-full"
-                style={{
-                  background: `radial-gradient(circle, ${BLUE_GLOW} 0%, transparent 70%)`,
-                  filter: "blur(40px)",
-                  willChange: "transform",
-                }}
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              />
-              <motion.svg
-                viewBox="0 0 200 200"
-                className="relative z-10 w-48 h-48 md:w-72 md:h-72"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                {/* Wrench */}
-                <motion.path
-                  d="M60 140L120 80C125 75 128 68 128 60C128 44 115 31 99 31C91 31 84 34 79 40L40 100"
-                  stroke={TEAL}
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  fill="none"
-                  initial={{ pathLength: 0, opacity: 0 }}
-                  animate={{ pathLength: 1, opacity: 1 }}
-                  transition={{ duration: 2, ease: "easeInOut" }}
-                />
-                <motion.path
-                  d="M40 100L30 125C28 131 30 138 35 142L58 165C62 170 69 172 75 170L100 160L60 140Z"
-                  stroke={TEAL}
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  fill="none"
-                  initial={{ pathLength: 0, opacity: 0 }}
-                  animate={{ pathLength: 1, opacity: 1 }}
-                  transition={{ duration: 2, delay: 0.5, ease: "easeInOut" }}
-                />
-                {/* Water drop */}
-                <motion.path
-                  d="M150 90C150 90 135 115 135 130C135 138 138 145 143 150C148 155 155 158 162 155C169 152 174 146 175 139C176 130 168 115 155 95C153 92 151 90 150 90Z"
-                  stroke={DEEP_BLUE}
-                  strokeWidth="2.5"
-                  fill={`${DEEP_BLUE}33`}
-                  initial={{ pathLength: 0, opacity: 0 }}
-                  animate={{ pathLength: 1, opacity: 1 }}
-                  transition={{ duration: 2, delay: 1, ease: "easeInOut" }}
-                />
-                {/* Sparkle accents */}
-                <motion.circle
-                  cx="160"
-                  cy="75"
-                  r="3"
-                  fill={TEAL_LIGHT}
-                  animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.3, 0.8] }}
-                  transition={{ duration: 2.5, repeat: Infinity }}
-                />
-                <motion.circle
-                  cx="75"
-                  cy="50"
-                  r="2"
-                  fill={TEAL_LIGHT}
-                  animate={{ opacity: [0.2, 0.9, 0.2], scale: [0.6, 1.2, 0.6] }}
-                  transition={{ duration: 3, repeat: Infinity, delay: 0.8 }}
-                />
-              </motion.svg>
-            </div>
-          </motion.div>
         </div>
       </section>
 
-      {/* ─── 3. STATS ─── */}
-      <SectionReveal className="relative z-10 pb-8">
-        <PipeGridPattern />
-        <div className="relative mx-auto max-w-7xl px-4 md:px-6">
-          <GlassCard className="p-6 md:p-8">
+      {/* ────────────────────────── 2. EMERGENCY STRIP ────────────────────────── */}
+      <SectionReveal className="relative z-10">
+        <div
+          className="py-4 text-center relative overflow-hidden"
+          style={{ background: `linear-gradient(90deg, ${DEEP_BLUE}, ${TEAL})` }}
+        >
+          <motion.div
+            className="absolute inset-0"
+            style={{ background: `linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent)` }}
+            animate={{ x: ["-100%", "100%"] }}
+            transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+          />
+          <p className="relative z-10 text-white font-bold text-sm md:text-base tracking-wide flex items-center justify-center gap-3 flex-wrap px-4">
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75" />
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-white" />
+            </span>
+            Burst Pipe? Flooding? We&apos;re There in 60 Minutes &mdash;
+            <a href="tel:2065550893" className="underline underline-offset-2 font-extrabold">(206) 555-0893</a>
+          </p>
+        </div>
+      </SectionReveal>
+
+      {/* ────────────────────────── 3. TRUST BAR ────────────────────────── */}
+      <SectionReveal className="relative z-10 py-8">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <GlassCard className="p-5 md:p-6">
             <motion.div
-              className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8"
+              className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 text-sm md:text-base"
               variants={stagger}
               initial="hidden"
               whileInView="show"
               viewport={{ once: true, margin: "-50px" }}
             >
-              {stats.map((stat, i) => (
-                <motion.div key={i} variants={fadeUp} className="text-center">
-                  <div
-                    className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3"
-                    style={{ background: BLUE_GLOW }}
-                  >
-                    <stat.icon size={24} weight="duotone" style={{ color: TEAL }} />
-                  </div>
-                  <p className="text-2xl md:text-3xl font-bold text-white tracking-tight">
-                    {stat.value}
-                    <span style={{ color: TEAL }}>{stat.suffix}</span>
-                  </p>
-                  <p className="text-xs md:text-sm text-slate-400 mt-1">{stat.label}</p>
+              {[
+                { icon: Certificate, label: "Master Plumber" },
+                { icon: Clock, label: "20 Years Experience" },
+                { icon: ThumbsUp, label: "3,000+ Jobs" },
+                { icon: SealCheck, label: "WA #EMERACPL847DK" },
+                { icon: Star, label: "4.9 Stars" },
+              ].map((item, i) => (
+                <motion.div key={i} variants={fadeUp} className="flex items-center gap-2 text-slate-300">
+                  <item.icon size={20} weight="duotone" style={{ color: TEAL }} />
+                  <span className="font-medium">{item.label}</span>
+                  {i < 4 && <span className="hidden md:inline text-slate-600 ml-4">|</span>}
                 </motion.div>
               ))}
             </motion.div>
@@ -802,7 +734,7 @@ export default function V2PlumberPage() {
         </div>
       </SectionReveal>
 
-      {/* ─── 4. SERVICES ─── */}
+      {/* ────────────────────────── 4. SERVICES — OFFSET GRID ────────────────────────── */}
       <SectionReveal id="services" className="relative z-10 py-16 md:py-24">
         <PipeGridPattern />
         <div className="relative mx-auto max-w-7xl px-4 md:px-6">
@@ -816,42 +748,29 @@ export default function V2PlumberPage() {
           </div>
 
           <motion.div
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
             variants={stagger}
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, margin: "-50px" }}
           >
-            {services.map((svc, i) => (
-              <motion.div key={i} variants={fadeUp}>
-                <motion.div
-                  whileHover={{ scale: 1.03 }}
-                  transition={springGentle}
-                  style={{ willChange: "transform" }}
-                >
+            {SERVICES.map((svc, i) => (
+              <motion.div
+                key={i}
+                variants={fadeUp}
+                className={i % 2 === 1 ? "lg:mt-8" : ""}
+              >
+                <motion.div whileHover={{ scale: 1.03, y: -4 }} transition={springGentle} style={{ willChange: "transform" }}>
                   <GlassCard className="p-6 h-full relative overflow-hidden group">
-                    {/* Number watermark */}
-                    <span
-                      className="absolute top-3 right-4 text-6xl font-black opacity-[0.04] tracking-tighter"
-                      style={{ color: TEAL_LIGHT }}
-                    >
+                    <span className="absolute top-3 right-4 text-5xl font-black opacity-[0.04] tracking-tighter" style={{ color: TEAL_LIGHT }}>
                       {svc.number}
                     </span>
-                    <div
-                      className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
-                      style={{ background: BLUE_GLOW }}
-                    >
+                    <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: BLUE_GLOW }}>
                       <svc.icon size={24} weight="duotone" style={{ color: TEAL }} />
                     </div>
                     <h3 className="text-lg font-semibold text-white mb-2">{svc.title}</h3>
-                    <p className="text-sm text-slate-400 leading-relaxed">
-                      {svc.description}
-                    </p>
-                    {/* Bottom accent line on hover */}
-                    <div
-                      className="absolute bottom-0 left-0 right-0 h-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                      style={{ background: `linear-gradient(90deg, ${DEEP_BLUE}, ${TEAL})` }}
-                    />
+                    <p className="text-sm text-slate-400 leading-relaxed">{svc.desc}</p>
+                    <div className="absolute bottom-0 left-0 right-0 h-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ background: `linear-gradient(90deg, ${DEEP_BLUE}, ${TEAL})` }} />
                   </GlassCard>
                 </motion.div>
               </motion.div>
@@ -860,125 +779,69 @@ export default function V2PlumberPage() {
         </div>
       </SectionReveal>
 
-      {/* ─── 5. EMERGENCY BANNER ─── */}
-      <SectionReveal id="emergency" className="relative z-10 py-12 md:py-16">
-        <div className="mx-auto max-w-5xl px-4 md:px-6">
-          <ShimmerBorder>
-            <div
-              className="p-8 md:p-12 text-center relative overflow-hidden"
-              style={{
-                background: `radial-gradient(ellipse at center, rgba(30, 64, 175, 0.15) 0%, transparent 70%)`,
-              }}
-            >
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={spring}
-              >
-                <motion.div
-                  animate={{ scale: [1, 1.1, 1] }}
-                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                  className="inline-block mb-4"
-                >
-                  <Warning size={48} weight="duotone" style={{ color: TEAL }} />
-                </motion.div>
-                <h2 className="text-3xl md:text-5xl tracking-tighter leading-none font-bold text-white mb-4">
-                  24/7 Emergency Service
-                </h2>
-                <p className="text-slate-400 text-lg mb-6 max-w-xl mx-auto">
-                  Burst pipe? Flooding? Gas leak smell? Do not wait. Our emergency
-                  team responds fast, day or night, weekends and holidays.
-                </p>
-                <p
-                  className="text-4xl md:text-5xl font-bold tracking-tight mb-6"
-                  style={{ color: TEAL }}
-                >
-                  (555) 847-3200
-                </p>
-                <MagneticButton
-                  className="px-10 py-4 rounded-full text-base font-semibold text-white inline-flex items-center gap-2 cursor-pointer"
-                  style={{ background: DEEP_BLUE } as React.CSSProperties}
-                >
-                  <Phone size={20} weight="bold" />
-                  Call Emergency Line
-                </MagneticButton>
-              </motion.div>
-            </div>
-          </ShimmerBorder>
-        </div>
-      </SectionReveal>
-
-      {/* ─── 6. WHY CHOOSE US ─── */}
-      <SectionReveal id="about" className="relative z-10 py-16 md:py-24 overflow-hidden">
+      {/* ────────────────────────── 5. UPFRONT PRICING ────────────────────────── */}
+      <SectionReveal id="pricing" className="relative z-10 py-16 md:py-24">
         <WaterWaveBackground />
-        <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Trust badges grid */}
-            <motion.div
-              className="grid grid-cols-2 gap-4"
-              variants={stagger}
-              initial="hidden"
-              whileInView="show"
-              viewport={{ once: true }}
-            >
-              {[
-                { icon: ShieldCheck, label: "Licensed & Bonded", desc: "Full coverage protection" },
-                { icon: Timer, label: "30-Min Response", desc: "Emergency arrivals guaranteed" },
-                { icon: CurrencyDollar, label: "Upfront Pricing", desc: "No surprises, ever" },
-                { icon: CheckCircle, label: "Satisfaction Guarantee", desc: "100% money-back promise" },
-              ].map((item, i) => (
-                <motion.div key={i} variants={fadeUp}>
-                  <GlassCard className="p-5 text-center">
-                    <item.icon
-                      size={28}
-                      weight="duotone"
-                      style={{ color: TEAL }}
-                      className="mx-auto mb-2"
-                    />
-                    <p className="text-sm font-semibold text-white">{item.label}</p>
-                    <p className="text-xs text-slate-400 mt-1">{item.desc}</p>
-                  </GlassCard>
-                </motion.div>
-              ))}
-            </motion.div>
-
-            <div>
-              <p className="text-sm uppercase tracking-widest mb-3" style={{ color: TEAL }}>
-                Why Choose Us
-              </p>
-              <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white mb-6">
-                <WordReveal text="Trusted by Homeowners for 25 Years" />
-              </h2>
-              <p className="text-slate-400 leading-relaxed max-w-md mb-6">
-                We built our reputation on showing up on time, doing the job right
-                the first time, and charging a fair price. Every technician on our
-                team is background-checked, licensed, and committed to leaving your
-                home better than we found it.
-              </p>
-              <div className="space-y-3">
-                {["Background-checked technicians", "Clean, uniformed, shoe-covered", "Written estimates before work begins", "Drug-free workplace policy"].map((item, i) => (
-                  <div key={i} className="flex items-center gap-3 text-sm text-slate-300">
-                    <CheckCircle size={18} weight="duotone" style={{ color: TEAL }} />
-                    <span>{item}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
+        <div className="relative mx-auto max-w-7xl px-4 md:px-6">
+          <div className="text-center mb-14">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: TEAL }}>Transparent Pricing</p>
+            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white">
+              <WordReveal text="No Surprises. Ever." />
+            </h2>
           </div>
+
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto"
+            variants={stagger}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-50px" }}
+          >
+            {[
+              { service: "Drain Cleaning", price: "$99", note: "Most clogs cleared same-day", icon: Funnel },
+              { service: "Water Heater Install", price: "$1,200", note: "Tankless & traditional, fully permitted", icon: Flame, featured: true },
+              { service: "Leak Repair", price: "$149", note: "Find it, fix it, guarantee it", icon: Drop },
+            ].map((item, i) => (
+              <motion.div key={i} variants={fadeUp}>
+                {item.featured ? (
+                  <ShimmerBorder>
+                    <div className="p-8 text-center space-y-4">
+                      <div className="w-14 h-14 rounded-xl flex items-center justify-center mx-auto" style={{ background: TEAL_GLOW }}>
+                        <item.icon size={28} weight="duotone" style={{ color: TEAL }} />
+                      </div>
+                      <h3 className="text-lg font-semibold text-white">{item.service}</h3>
+                      <p className="text-4xl font-bold text-white">from <span style={{ color: TEAL }}>{item.price}</span></p>
+                      <p className="text-sm text-slate-400">{item.note}</p>
+                    </div>
+                  </ShimmerBorder>
+                ) : (
+                  <GlassCard className="p-8 text-center space-y-4 h-full">
+                    <div className="w-14 h-14 rounded-xl flex items-center justify-center mx-auto" style={{ background: BLUE_GLOW }}>
+                      <item.icon size={28} weight="duotone" style={{ color: TEAL }} />
+                    </div>
+                    <h3 className="text-lg font-semibold text-white">{item.service}</h3>
+                    <p className="text-4xl font-bold text-white">from <span style={{ color: TEAL }}>{item.price}</span></p>
+                    <p className="text-sm text-slate-400">{item.note}</p>
+                  </GlassCard>
+                )}
+              </motion.div>
+            ))}
+          </motion.div>
+
+          <p className="text-center text-slate-500 text-sm mt-8">
+            All pricing is upfront and flat-rate. You approve the price before we start work.
+          </p>
         </div>
       </SectionReveal>
 
-      {/* ─── 7. PROCESS ─── */}
+      {/* ────────────────────────── 6. HONEST PLUMBER PROMISE ────────────────────────── */}
       <SectionReveal className="relative z-10 py-16 md:py-24">
         <PipeGridPattern />
         <div className="relative mx-auto max-w-7xl px-4 md:px-6">
-          <div className="text-center mb-16">
-            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: TEAL }}>
-              How It Works
-            </p>
+          <div className="text-center mb-14">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: TEAL }}>Our Guarantee</p>
             <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white">
-              <WordReveal text="Simple 4-Step Process" />
+              <WordReveal text="The Honest Plumber Promise" />
             </h2>
           </div>
 
@@ -989,28 +852,19 @@ export default function V2PlumberPage() {
             whileInView="show"
             viewport={{ once: true, margin: "-50px" }}
           >
-            {processSteps.map((step, i) => (
+            {[
+              { title: "We Show You the Problem First", desc: "Camera inspection footage so you see exactly what we see. No guesswork, no trust-me pricing.", icon: MagnifyingGlass },
+              { title: "Upfront Pricing Before We Start", desc: "You approve a flat-rate price before any wrench turns. The price on the invoice matches the price we quoted.", icon: CurrencyDollar },
+              { title: "Clean Up After Every Job", desc: "We lay down drop cloths, wear boot covers, and leave your home cleaner than we found it. Every time.", icon: Broom },
+              { title: "Can't Fix It? You Don't Pay", desc: "If we cannot solve the problem, you owe us nothing. That is our satisfaction guarantee, no asterisks.", icon: ShieldCheck },
+            ].map((item, i) => (
               <motion.div key={i} variants={fadeUp}>
-                <GlassCard className="p-6 text-center relative h-full">
-                  <span
-                    className="absolute top-3 right-4 text-5xl font-black opacity-[0.05] tracking-tighter"
-                    style={{ color: TEAL_LIGHT }}
-                  >
-                    {step.step}
-                  </span>
-                  <div
-                    className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4"
-                    style={{ background: BLUE_GLOW }}
-                  >
-                    <step.icon size={28} weight="duotone" style={{ color: TEAL }} />
+                <GlassCard className="p-6 h-full text-center space-y-4">
+                  <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto" style={{ background: TEAL_GLOW }}>
+                    <item.icon size={28} weight="duotone" style={{ color: TEAL }} />
                   </div>
-                  <h3 className="text-lg font-semibold text-white mb-2">{step.title}</h3>
-                  <p className="text-sm text-slate-400 leading-relaxed">{step.description}</p>
-                  {i < processSteps.length - 1 && (
-                    <div className="hidden lg:block absolute -right-3 top-1/2 -translate-y-1/2 z-20">
-                      <ArrowRight size={20} style={{ color: TEAL }} className="opacity-40" />
-                    </div>
-                  )}
+                  <h3 className="text-lg font-semibold text-white">{item.title}</h3>
+                  <p className="text-sm text-slate-400 leading-relaxed">{item.desc}</p>
                 </GlassCard>
               </motion.div>
             ))}
@@ -1018,44 +872,101 @@ export default function V2PlumberPage() {
         </div>
       </SectionReveal>
 
-      {/* ─── 8. GALLERY ─── */}
-      <SectionReveal className="relative z-10 py-16 md:py-24">
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: `radial-gradient(ellipse at 50% 50%, rgba(30, 64, 175, 0.08) 0%, transparent 60%)`,
-          }}
-        />
+      {/* ────────────────────────── 7. MEET RYAN ────────────────────────── */}
+      <SectionReveal id="about" className="relative z-10 py-16 md:py-24">
+        <WaterWaveBackground />
         <div className="relative mx-auto max-w-7xl px-4 md:px-6">
-          <div className="text-center mb-16">
-            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: TEAL }}>
-              Our Work
-            </p>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Photo */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={spring}
+              className="relative"
+            >
+              <div className="rounded-2xl overflow-hidden">
+                <img
+                  src={ABOUT_IMG}
+                  alt="Ryan Kowalski, Master Plumber and owner of Emerald City Plumbing"
+                  className="w-full h-auto rounded-2xl object-cover object-top"
+                  style={{ maxHeight: 500 }}
+                />
+              </div>
+              {/* License badge overlay */}
+              <div className="absolute bottom-4 left-4 right-4 md:left-6 md:bottom-6 md:right-auto">
+                <GlassCard className="px-4 py-3 flex items-center gap-3">
+                  <Certificate size={24} weight="duotone" style={{ color: TEAL }} />
+                  <div>
+                    <p className="text-xs text-slate-400">WA License</p>
+                    <p className="text-sm font-bold text-white">#EMERACPL847DK</p>
+                  </div>
+                </GlassCard>
+              </div>
+            </motion.div>
+
+            {/* Text */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={spring}
+              className="space-y-6"
+            >
+              <p className="text-sm uppercase tracking-widest" style={{ color: TEAL }}>Meet the Owner</p>
+              <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white">
+                Ryan Kowalski
+              </h2>
+              <p className="text-slate-400 leading-relaxed text-lg">
+                Ryan started as a plumbing apprentice at 18, earning his journeyman license by
+                22 and his Master Plumber certification by 25. After working for some of
+                Seattle&apos;s largest plumbing companies, he founded Emerald City Plumbing in 2004
+                with one truck and a simple promise: honest work at fair prices.
+              </p>
+              <p className="text-slate-400 leading-relaxed">
+                Twenty years and over 3,000 jobs later, that promise has not changed. Ryan still
+                personally oversees every major project and answers his phone 24/7 for emergencies.
+                When he is not under a sink, he coaches his daughter&apos;s soccer team in Beacon Hill.
+              </p>
+              <div className="flex flex-wrap gap-3 pt-2">
+                {["Master Plumber", "20 Years", "3,000+ Jobs", "WA Licensed"].map((badge) => (
+                  <span key={badge} className="px-4 py-2 rounded-full text-xs font-semibold text-white" style={{ background: TEAL_GLOW, border: `1px solid ${TEAL}33` }}>
+                    {badge}
+                  </span>
+                ))}
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ────────────────────────── 8. WHAT WE FIX ────────────────────────── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <PipeGridPattern />
+        <div className="relative mx-auto max-w-7xl px-4 md:px-6">
+          <div className="text-center mb-14">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: TEAL }}>Common Problems</p>
             <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white">
-              <WordReveal text="Recent Projects" />
+              <WordReveal text="What We Fix" />
             </h2>
           </div>
 
           <motion.div
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+            className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6"
             variants={stagger}
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, margin: "-50px" }}
           >
-            {galleryImages.map((img, i) => (
+            {COMMON_ISSUES.map((issue, i) => (
               <motion.div key={i} variants={fadeUp}>
-                <motion.div
-                  whileHover={{ scale: 1.03 }}
-                  transition={springGentle}
-                  className="rounded-2xl overflow-hidden border border-white/10"
-                  style={{ willChange: "transform" }}
-                >
-                  <img
-                    src={img.src}
-                    alt={img.alt}
-                    className="w-full aspect-[4/3] object-cover"
-                  />
+                <motion.div whileHover={{ scale: 1.05, y: -4 }} transition={springGentle} style={{ willChange: "transform" }}>
+                  <GlassCard className="p-5 md:p-6 text-center space-y-3 cursor-pointer group">
+                    <div className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto group-hover:scale-110 transition-transform" style={{ background: BLUE_GLOW }}>
+                      <issue.icon size={24} weight="duotone" style={{ color: TEAL }} />
+                    </div>
+                    <p className="text-sm md:text-base font-semibold text-white">{issue.title}</p>
+                  </GlassCard>
                 </motion.div>
               </motion.div>
             ))}
@@ -1063,222 +974,474 @@ export default function V2PlumberPage() {
         </div>
       </SectionReveal>
 
-      {/* ─── 9. TESTIMONIALS ─── */}
+      {/* ────────────────────────── 9. DIAGNOSTIC QUIZ ────────────────────────── */}
       <SectionReveal className="relative z-10 py-16 md:py-24">
-        <PipeGridPattern />
-        <div className="relative mx-auto max-w-7xl px-4 md:px-6">
-          <div className="text-center mb-16">
-            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: TEAL }}>
-              Customer Reviews
-            </p>
-            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white">
-              <WordReveal text="What Homeowners Say" />
+        <WaterWaveBackground />
+        <div className="relative mx-auto max-w-4xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: TEAL }}>Quick Diagnostic</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white">
+              <WordReveal text="What's Your Plumbing Issue?" />
             </h2>
           </div>
 
           <motion.div
-            className="grid grid-cols-1 md:grid-cols-3 gap-6"
+            className="grid grid-cols-1 sm:grid-cols-2 gap-4"
             variants={stagger}
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, margin: "-50px" }}
           >
-            {testimonials.map((t, i) => (
+            {QUIZ_OPTIONS.map((opt, i) => (
               <motion.div key={i} variants={fadeUp}>
-                <GlassCard className="p-6 h-full flex flex-col">
-                  <Quotes size={28} weight="fill" style={{ color: TEAL }} className="mb-3 opacity-50" />
-                  <p className="text-slate-300 leading-relaxed flex-1 text-sm">
-                    {t.text}
-                  </p>
-                  <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
-                    <span className="text-sm font-semibold text-white">{t.name}</span>
-                    <div className="flex gap-0.5">
-                      {Array.from({ length: t.rating }).map((_, j) => (
-                        <Star key={j} size={12} weight="fill" style={{ color: TEAL }} />
-                      ))}
+                <motion.button
+                  onClick={() => setQuizSelected(i)}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="w-full text-left cursor-pointer"
+                >
+                  <GlassCard className={`p-6 h-full transition-all ${quizSelected === i ? "ring-2" : ""}`} >
+                    <div className="flex items-start gap-4" style={quizSelected === i ? { } : {}}>
+                      <div
+                        className="w-3 h-3 rounded-full mt-1.5 shrink-0"
+                        style={{ background: opt.color, boxShadow: `0 0 12px ${opt.color}66` }}
+                      />
+                      <div>
+                        <p className="text-lg font-semibold text-white">{opt.label}</p>
+                        <p className="text-xs font-bold mt-1" style={{ color: opt.color }}>{opt.severity}</p>
+                      </div>
                     </div>
+                  </GlassCard>
+                </motion.button>
+              </motion.div>
+            ))}
+          </motion.div>
+
+          <AnimatePresence>
+            {quizSelected !== null && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 20 }}
+                transition={spring}
+                className="mt-8"
+              >
+                <ShimmerBorder>
+                  <div className="p-8 text-center space-y-4">
+                    <p className="text-lg text-slate-300 leading-relaxed">
+                      {QUIZ_OPTIONS[quizSelected].recommendation}
+                    </p>
+                    <MagneticButton
+                      className="px-8 py-3.5 rounded-full text-base font-semibold text-white cursor-pointer"
+                      style={{ background: QUIZ_OPTIONS[quizSelected].color } as React.CSSProperties}
+                    >
+                      {QUIZ_OPTIONS[quizSelected].cta}
+                    </MagneticButton>
+                  </div>
+                </ShimmerBorder>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </SectionReveal>
+
+      {/* ────────────────────────── 10. COMPETITOR COMPARISON ────────────────────────── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <PipeGridPattern />
+        <div className="relative mx-auto max-w-4xl px-4 md:px-6">
+          <div className="text-center mb-14">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: TEAL }}>Why Choose Us</p>
+            <h2 className="text-3xl md:text-5xl tracking-tighter leading-none font-bold text-white">
+              <WordReveal text="Emerald City vs. Handyman Plumbing" />
+            </h2>
+          </div>
+
+          <GlassCard className="overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[500px]">
+                <thead>
+                  <tr className="border-b border-white/10">
+                    <th className="text-left p-4 md:p-5 text-sm text-slate-400 font-medium">Feature</th>
+                    <th className="p-4 md:p-5 text-sm font-bold text-center" style={{ color: TEAL }}>Emerald City</th>
+                    <th className="p-4 md:p-5 text-sm text-slate-500 text-center font-medium">Others</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {COMPARISON_ROWS.map((row, i) => (
+                    <tr key={i} className={i < COMPARISON_ROWS.length - 1 ? "border-b border-white/5" : ""}>
+                      <td className="p-4 md:p-5 text-sm text-slate-300">{row.feature}</td>
+                      <td className="p-4 md:p-5 text-center">
+                        <CheckCircle size={22} weight="fill" style={{ color: TEAL }} className="mx-auto" />
+                      </td>
+                      <td className="p-4 md:p-5 text-center text-sm text-slate-500">{row.them}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </GlassCard>
+        </div>
+      </SectionReveal>
+
+      {/* ────────────────────────── 11. TESTIMONIALS — HORIZONTAL SCROLL ────────────────────────── */}
+      <SectionReveal id="reviews" className="relative z-10 py-16 md:py-24">
+        <WaterWaveBackground />
+        <div className="relative mx-auto max-w-7xl px-4 md:px-6">
+          <div className="text-center mb-4">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: TEAL }}>Customer Reviews</p>
+            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white mb-4">
+              <WordReveal text="What Seattle Says" />
+            </h2>
+            {/* Google Reviews Header */}
+            <div className="flex items-center justify-center gap-2 mb-10">
+              <div className="flex">
+                {[1, 2, 3, 4, 5].map((s) => (
+                  <Star key={s} size={20} weight="fill" style={{ color: "#facc15" }} />
+                ))}
+              </div>
+              <span className="text-slate-300 text-sm font-medium">4.9 / 5.0 &middot; 380+ Reviews</span>
+            </div>
+          </div>
+
+          {/* Horizontal scroll container */}
+          <div
+            ref={testimonialRef}
+            onMouseDown={handleMouseDown}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+            onMouseMove={handleMouseMove}
+            className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide cursor-grab active:cursor-grabbing select-none"
+            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+          >
+            {TESTIMONIALS.map((t, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ ...spring, delay: i * 0.1 }}
+                className="flex-none w-[340px] md:w-[380px]"
+              >
+                <GlassCard className="p-6 md:p-8 h-full space-y-4">
+                  <Quotes size={32} weight="fill" style={{ color: TEAL }} className="opacity-30" />
+                  <div className="flex gap-0.5 mb-2">
+                    {Array.from({ length: t.rating }).map((_, s) => (
+                      <Star key={s} size={16} weight="fill" style={{ color: "#facc15" }} />
+                    ))}
+                  </div>
+                  <p className="text-slate-300 leading-relaxed text-sm">&ldquo;{t.text}&rdquo;</p>
+                  <div className="flex items-center gap-2 pt-2">
+                    <CheckCircle size={16} weight="fill" style={{ color: TEAL }} />
+                    <p className="text-sm font-semibold text-white">{t.name}</p>
+                    <span className="text-xs text-slate-500">Verified</span>
                   </div>
                 </GlassCard>
               </motion.div>
             ))}
-          </motion.div>
-        </div>
-      </SectionReveal>
-
-      {/* ─── 10. PRICING TRANSPARENCY ─── */}
-      <SectionReveal className="relative z-10 py-16 md:py-24">
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: `radial-gradient(ellipse at 70% 30%, rgba(13, 148, 136, 0.08) 0%, transparent 60%)`,
-          }}
-        />
-        <div className="relative mx-auto max-w-7xl px-4 md:px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-            <div>
-              <p className="text-sm uppercase tracking-widest mb-3" style={{ color: TEAL }}>
-                Transparent Pricing
-              </p>
-              <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white mb-6">
-                <WordReveal text="No Hidden Fees. Ever." />
-              </h2>
-              <p className="text-slate-400 leading-relaxed max-w-md mb-6">
-                We believe in honest, upfront pricing. Before we start any work,
-                you will receive a written estimate with the total cost. If the job
-                changes scope, we discuss it with you first. The price we quote is
-                the price you pay.
-              </p>
-              <div className="flex items-center gap-3 text-sm text-slate-400">
-                <CurrencyDollar size={18} weight="duotone" style={{ color: TEAL }} />
-                <span>Free estimates on all non-emergency services</span>
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              {pricingItems.map((item, i) => (
-                <GlassCard key={i} className="flex items-center justify-between p-4 md:p-5">
-                  <span className="text-sm font-medium text-white">{item.service}</span>
-                  <span className="text-sm font-bold" style={{ color: TEAL }}>
-                    {item.range}
-                  </span>
-                </GlassCard>
-              ))}
-              <p className="text-xs text-slate-500 mt-3 text-center">
-                * Prices are estimates. Final pricing provided after inspection.
-              </p>
-            </div>
           </div>
+
+          <p className="text-center text-slate-500 text-xs mt-4">Drag to scroll &rarr;</p>
         </div>
       </SectionReveal>
 
-      {/* ─── 11. FAQ ─── */}
+      {/* ────────────────────────── 12. FINANCING ────────────────────────── */}
+      <SectionReveal className="relative z-10 py-12 md:py-16">
+        <div className="mx-auto max-w-4xl px-4 md:px-6">
+          <ShimmerBorder>
+            <div className="p-8 md:p-12 text-center space-y-4" style={{ background: `radial-gradient(ellipse at center, ${BLUE_GLOW} 0%, transparent 70%)` }}>
+              <HandCoins size={48} weight="duotone" style={{ color: TEAL }} className="mx-auto" />
+              <h2 className="text-3xl md:text-4xl tracking-tighter font-bold text-white">
+                Big Job? No Problem.
+              </h2>
+              <p className="text-xl text-slate-300">
+                0% financing for 12 months on water heater installs, repiping, and sewer line replacement.
+              </p>
+              <p className="text-slate-500 text-sm">Subject to credit approval. Ask about our payment plans.</p>
+              <MagneticButton
+                className="px-8 py-3.5 rounded-full text-base font-semibold text-white cursor-pointer mt-2"
+                style={{ background: TEAL } as React.CSSProperties}
+              >
+                Learn About Financing
+              </MagneticButton>
+            </div>
+          </ShimmerBorder>
+        </div>
+      </SectionReveal>
+
+      {/* ────────────────────────── 13. VIDEO PLACEHOLDER ────────────────────────── */}
       <SectionReveal className="relative z-10 py-16 md:py-24">
         <PipeGridPattern />
-        <div className="relative mx-auto max-w-3xl px-4 md:px-6">
-          <div className="text-center mb-16">
-            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: TEAL }}>
-              Common Questions
-            </p>
-            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white">
-              <WordReveal text="Frequently Asked" />
+        <div className="relative mx-auto max-w-5xl px-4 md:px-6">
+          <div className="text-center mb-10">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: TEAL }}>See Our Work</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white">
+              <WordReveal text="Quality You Can See" />
             </h2>
           </div>
 
           <motion.div
-            className="space-y-3"
+            whileHover={{ scale: 1.01 }}
+            transition={springGentle}
+            className="relative rounded-2xl overflow-hidden cursor-pointer group"
+            style={{ aspectRatio: "16/9" }}
+          >
+            <img
+              src="https://images.unsplash.com/photo-1585704032915-c3400ca199e7?w=1200&q=80"
+              alt="Professional plumbing work in progress"
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors flex items-center justify-center">
+              <motion.div
+                className="w-20 h-20 rounded-full flex items-center justify-center"
+                style={{ background: `${TEAL}cc` }}
+                whileHover={{ scale: 1.1 }}
+                animate={{ boxShadow: [`0 0 0 0px ${TEAL}44`, `0 0 0 20px ${TEAL}00`] }}
+                transition={{ boxShadow: { duration: 1.5, repeat: Infinity } }}
+              >
+                <Play size={32} weight="fill" className="text-white ml-1" />
+              </motion.div>
+            </div>
+          </motion.div>
+        </div>
+      </SectionReveal>
+
+      {/* ────────────────────────── 14. SERVICE AREAS ────────────────────────── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <WaterWaveBackground />
+        <div className="relative mx-auto max-w-7xl px-4 md:px-6">
+          <div className="text-center mb-14">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: TEAL }}>Where We Work</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white">
+              <WordReveal text="Serving Greater Seattle" />
+            </h2>
+          </div>
+
+          <motion.div
+            className="grid grid-cols-2 md:grid-cols-4 gap-4"
             variants={stagger}
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, margin: "-50px" }}
           >
-            {faqData.map((item, i) => (
+            {SERVICE_AREAS.map((area, i) => (
               <motion.div key={i} variants={fadeUp}>
-                <AccordionItem
-                  question={item.question}
-                  answer={item.answer}
-                  isOpen={openFaq === i}
-                  onToggle={() => setOpenFaq(openFaq === i ? null : i)}
-                />
+                <GlassCard className="p-4 md:p-5 text-center group hover:border-white/20 transition-colors">
+                  <MapPin size={20} weight="duotone" style={{ color: TEAL }} className="mx-auto mb-2" />
+                  <p className="text-sm font-medium text-white">{area}</p>
+                </GlassCard>
               </motion.div>
             ))}
           </motion.div>
+
+          <div className="text-center mt-8">
+            <p className="text-slate-400 text-sm">
+              Plus Shoreline, Lake City, Tukwila, Renton, Burien, and surrounding King County communities.
+            </p>
+            {/* Pulsing availability indicator */}
+            <div className="flex items-center justify-center gap-2 mt-4">
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ background: TEAL }} />
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5" style={{ background: TEAL }} />
+              </span>
+              <span className="text-sm font-medium" style={{ color: TEAL }}>Crews Available Now</span>
+            </div>
+          </div>
         </div>
       </SectionReveal>
 
-      {/* ─── 12. CONTACT ─── */}
+      {/* ────────────────────────── 15. CONTACT ────────────────────────── */}
       <SectionReveal id="contact" className="relative z-10 py-16 md:py-24">
-        <WaterWaveBackground />
-        <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <PipeGridPattern />
+        <div className="relative mx-auto max-w-7xl px-4 md:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            {/* Form */}
             <div>
-              <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white mb-6">
-                <WordReveal text="Ready to Fix It Right?" />
+              <p className="text-sm uppercase tracking-widest mb-3" style={{ color: TEAL }}>Get in Touch</p>
+              <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white mb-8">
+                Request a Free Estimate
               </h2>
-              <p className="text-slate-400 leading-relaxed max-w-md mb-8">
-                Whether it is a dripping faucet or a plumbing emergency, we are
-                here for you. Call us anytime or send a message and we will get
-                back to you within the hour.
-              </p>
-              <div className="flex flex-wrap gap-4">
+
+              <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div>
+                    <label className="block text-sm text-slate-400 mb-2">Full Name</label>
+                    <input
+                      type="text"
+                      className="w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-teal-500/50 transition-colors"
+                      placeholder="John Smith"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-slate-400 mb-2">Phone Number</label>
+                    <input
+                      type="tel"
+                      className="w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-teal-500/50 transition-colors"
+                      placeholder="(206) 555-1234"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm text-slate-400 mb-2">Email</label>
+                  <input
+                    type="email"
+                    className="w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-teal-500/50 transition-colors"
+                    placeholder="john@example.com"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm text-slate-400 mb-2">Service Needed</label>
+                  <select className="w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/10 text-white focus:outline-none focus:border-teal-500/50 transition-colors">
+                    <option value="">Select a service...</option>
+                    <option value="emergency">Emergency Plumbing</option>
+                    <option value="drain">Drain Cleaning</option>
+                    <option value="water-heater">Water Heater</option>
+                    <option value="sewer">Sewer Line</option>
+                    <option value="repiping">Repiping</option>
+                    <option value="leak">Leak Detection</option>
+                    <option value="fixture">Toilet / Faucet</option>
+                    <option value="gas">Gas Line</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm text-slate-400 mb-2">Describe the Issue</label>
+                  <textarea
+                    rows={4}
+                    className="w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-teal-500/50 transition-colors resize-none"
+                    placeholder="Tell us about the problem..."
+                  />
+                </div>
                 <MagneticButton
-                  className="px-10 py-4 rounded-full text-base font-semibold text-white inline-flex items-center gap-2 cursor-pointer"
+                  className="w-full py-4 rounded-xl text-base font-semibold text-white cursor-pointer"
                   style={{ background: TEAL } as React.CSSProperties}
                 >
-                  <Phone size={20} weight="duotone" />
-                  Call Now
+                  Send Request
                 </MagneticButton>
-                <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
-                  <Envelope size={18} weight="duotone" />
-                  Email Us
-                </MagneticButton>
-              </div>
+              </form>
             </div>
 
-            <GlassCard className="p-8">
-              <h3 className="text-xl font-semibold text-white mb-6">Get in Touch</h3>
-              <div className="space-y-4">
-                {/* Emergency hotline prominent */}
-                <div
-                  className="flex items-start gap-4 p-4 rounded-xl"
-                  style={{ background: `rgba(30, 64, 175, 0.1)`, border: `1px solid rgba(30, 64, 175, 0.2)` }}
-                >
-                  <Warning size={22} weight="duotone" style={{ color: TEAL }} className="mt-0.5 shrink-0" />
-                  <div>
-                    <p className="text-sm font-bold" style={{ color: TEAL }}>Emergency Hotline</p>
-                    <p className="text-lg font-bold text-white">(555) 847-3200</p>
-                    <p className="text-xs text-slate-400">Available 24/7 including holidays</p>
+            {/* Office Info */}
+            <div className="space-y-8">
+              {/* Emergency CTA */}
+              <ShimmerBorder>
+                <div className="p-6 md:p-8 text-center space-y-3" style={{ background: `radial-gradient(ellipse at center, rgba(239,68,68,0.1) 0%, transparent 70%)` }}>
+                  <Warning size={36} weight="duotone" style={{ color: RED_EMERGENCY }} />
+                  <h3 className="text-xl font-bold text-white">Plumbing Emergency?</h3>
+                  <p className="text-slate-400 text-sm">Skip the form. Call now for immediate help.</p>
+                  <a href="tel:2065550893" className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-lg font-bold text-white" style={{ background: RED_EMERGENCY }}>
+                    <Phone size={20} weight="bold" />
+                    (206) 555-0893
+                  </a>
+                </div>
+              </ShimmerBorder>
+
+              {/* Office details */}
+              <GlassCard className="p-6 md:p-8 space-y-5">
+                <h3 className="text-xl font-bold text-white">Office Info</h3>
+                <div className="space-y-4">
+                  <div className="flex items-start gap-3">
+                    <MapPin size={20} weight="duotone" style={{ color: TEAL }} className="mt-0.5 shrink-0" />
+                    <div>
+                      <p className="text-sm text-slate-400">Address</p>
+                      <a href="https://maps.google.com/?q=5612+Rainier+Ave+S+Seattle+WA+98118" target="_blank" rel="noopener noreferrer" className="text-white hover:underline">
+                        5612 Rainier Ave S, Seattle, WA 98118
+                      </a>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Phone size={20} weight="duotone" style={{ color: TEAL }} className="mt-0.5 shrink-0" />
+                    <div>
+                      <p className="text-sm text-slate-400">Phone</p>
+                      <a href="tel:2065550893" className="text-white hover:underline">(206) 555-0893</a>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Envelope size={20} weight="duotone" style={{ color: TEAL }} className="mt-0.5 shrink-0" />
+                    <div>
+                      <p className="text-sm text-slate-400">Email</p>
+                      <a href="mailto:help@emeraldcityplumbing.com" className="text-white hover:underline">help@emeraldcityplumbing.com</a>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Clock size={20} weight="duotone" style={{ color: TEAL }} className="mt-0.5 shrink-0" />
+                    <div>
+                      <p className="text-sm text-slate-400">Hours</p>
+                      <p className="text-white">Mon-Sat 7am-7pm &middot; 24/7 Emergency</p>
+                    </div>
                   </div>
                 </div>
-                <div className="flex items-start gap-4">
-                  <MapPin size={20} weight="duotone" style={{ color: TEAL }} className="mt-0.5 shrink-0" />
-                  <div>
-                    <p className="text-sm font-semibold text-white">Location</p>
-                    <p className="text-sm text-slate-400">
-                      4521 Rainier Ave S<br />Seattle, WA 98118
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4">
-                  <Phone size={20} weight="duotone" style={{ color: TEAL }} className="mt-0.5 shrink-0" />
-                  <div>
-                    <p className="text-sm font-semibold text-white">Office</p>
-                    <p className="text-sm text-slate-400">(555) 847-3200</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4">
-                  <Envelope size={20} weight="duotone" style={{ color: TEAL }} className="mt-0.5 shrink-0" />
-                  <div>
-                    <p className="text-sm font-semibold text-white">Email</p>
-                    <p className="text-sm text-slate-400">info@emeraldcityplumbing.com</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4">
-                  <Clock size={20} weight="duotone" style={{ color: TEAL }} className="mt-0.5 shrink-0" />
-                  <div>
-                    <p className="text-sm font-semibold text-white">Hours</p>
-                    <p className="text-sm text-slate-400">
-                      Monday - Friday: 7:00 AM - 7:00 PM<br />
-                      Saturday: 8:00 AM - 4:00 PM<br />
-                      Emergency: 24/7
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </GlassCard>
+              </GlassCard>
+
+              {/* Certifications */}
+              <GlassCard className="p-5 flex flex-wrap items-center justify-center gap-3">
+                {["Master Plumber", "Licensed & Bonded", "Insured", "BBB A+", "WA State License"].map((cert) => (
+                  <span key={cert} className="px-3 py-1.5 rounded-full text-xs font-semibold text-slate-300 border border-white/10 bg-white/[0.03]">
+                    {cert}
+                  </span>
+                ))}
+              </GlassCard>
+            </div>
           </div>
         </div>
       </SectionReveal>
 
-      {/* ─── 13. FOOTER ─── */}
-      <footer className="relative z-10 border-t border-white/5 py-8" style={{ background: `linear-gradient(to top, rgba(15, 23, 42, 1), rgba(15, 23, 42, 0.95))` }}>
-        <div className="mx-auto max-w-7xl px-4 md:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2 text-sm text-slate-500">
-            <WrenchDropIcon size={18} />
-            <span>Emerald City Plumbing &copy; {new Date().getFullYear()}</span>
+      {/* ────────────────────────── 16. FOOTER ────────────────────────── */}
+      <footer className="relative z-10 border-t border-white/[0.06] py-12">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+            {/* Brand */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <WrenchDropIcon size={24} />
+                <span className="text-lg font-bold text-white">Emerald City Plumbing</span>
+              </div>
+              <p className="text-sm text-slate-400 leading-relaxed">
+                Seattle&apos;s most trusted plumber since 2004. Licensed, bonded, and insured.
+                WA #EMERACPL847DK.
+              </p>
+            </div>
+
+            {/* Quick Links */}
+            <div>
+              <h4 className="text-sm font-semibold text-white mb-4">Services</h4>
+              <div className="grid grid-cols-2 gap-2">
+                {SERVICES.slice(0, 6).map((svc) => (
+                  <a key={svc.title} href="#services" className="text-sm text-slate-400 hover:text-white transition-colors">
+                    {svc.title}
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            {/* Contact */}
+            <div>
+              <h4 className="text-sm font-semibold text-white mb-4">Contact</h4>
+              <div className="space-y-2 text-sm text-slate-400">
+                <a href="tel:2065550893" className="block hover:text-white transition-colors">(206) 555-0893</a>
+                <a href="mailto:help@emeraldcityplumbing.com" className="block hover:text-white transition-colors">help@emeraldcityplumbing.com</a>
+                <p>5612 Rainier Ave S, Seattle, WA 98118</p>
+                <p>Mon-Sat 7am-7pm &middot; 24/7 Emergency</p>
+              </div>
+            </div>
           </div>
-          <p className="text-xs text-slate-600">
-            Created by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" style={{textDecoration:"underline"}}>bluejayportfolio.com</a>
-          </p>
+
+          <div className="border-t border-white/[0.06] pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+            <p className="text-sm text-slate-500">
+              &copy; {new Date().getFullYear()} Emerald City Plumbing. All rights reserved. WA License #EMERACPL847DK.
+            </p>
+            <p className="text-sm text-slate-500">
+              Created by{" "}
+              <a
+                href="https://bluejayportfolio.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-white transition-colors"
+                style={{ color: TEAL }}
+              >
+                bluejayportfolio.com
+              </a>
+            </p>
+          </div>
         </div>
       </footer>
     </main>
