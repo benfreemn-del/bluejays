@@ -764,6 +764,60 @@ All 10 premium features per category are **hardcoded directly into each V2 templ
 - Unique: 6 event types, venue partnerships (6 Seattle venues), day-of timeline, 100+ vendor network, limited availability ("24 events/year"), per-event pricing ($5K/$15K/$30K+)
 - Layout lesson: Bokeh hero = walking into a gala. Limited availability creates exclusivity.
 
+**#23 Accounting — Evergreen Tax & Advisory** (1,163 lines)
+- Theme: Dark navy `#0f172a` with emerald `#059669` + gold `#ca8a04`
+- Hero: Dashboard layout with animated financial metric cards
+- Unique: Tax savings calculator, filing deadline countdown, document checklist tracker
+- Layout lesson: Dashboard hero = trust through data visualization
+
+**#24 Chiropractic — Align Chiropractic** (1,253 lines)
+- Theme: Dark teal `#0c1a1a` with teal `#0f766e` + amber `#d97706`
+- Hero: Spine alignment reveal (vertebrae animate from misaligned to aligned, healing pulse)
+- Unique: "Where Does It Hurt?" body map quiz, spinal health self-assessment, comparison table (chiro vs medication), pain journey testimonials
+- Layout lesson: Body map quiz is highly engaging for healthcare. Pain scale bars in testimonials = proof.
+
+**#25 Cleaning — Crystal Clean Co.** (1,070 lines)
+- Theme: Dark blue `#0a1520` with sky blue `#0284c7` + mint `#34d399`
+- Hero: Rotating room cards (Kitchen/Bath/Living/Bed auto-cycle with task checklists)
+- Unique: Instant estimate calculator (sliders + add-ons), eco commitment progress bars, 200% satisfaction guarantee, 3-tier pricing
+- Layout lesson: Room cards = tangible preview of service. Live calculator = instant engagement.
+
+**#26 HVAC — Summit Heating & Air** (1,574 lines)
+- Theme: Dark navy `#0c1222` with blue `#0ea5e9` + orange `#f97316`
+- Hero: Comfort gauge (animated thermostat SVG, needle 50°F→72°F comfort zone)
+- Unique: Diagnostic quiz (5 symptoms → urgency), energy savings calculator, seasonal maintenance calendar, 3 maintenance tiers
+- Layout lesson: Thermostat gauge = immediate industry recognition. Season-tagged reviews build year-round trust.
+
+**#27 Insurance — Puget Sound Insurance Group** (1,282 lines)
+- Theme: Dark navy `#0f172a` with blue `#1d4ed8` + emerald `#059669` + gold `#ca8a04`
+- Hero: Shield protection layers (concentric rings expand, each labeled with coverage type)
+- Unique: Coverage quiz, bundle savings calculator, "Are You Covered?" gap checker, independent agent comparison
+- Layout lesson: Shield rings = visual safety. Coverage-grouped testimonial tabs keep reviews relevant.
+
+**#28 Interior Design — Cascadia Interiors** (1,595 lines)
+- Theme: Warm light `#faf9f6` with gold `#b8860b` + sage `#6b7f5e` (LIGHT THEME)
+- Hero: Mood board collage (6 floating design swatches with tilt hover)
+- Unique: Style quiz (Modern/Traditional/Bohemian/etc), budget estimator per room, color palette explorer
+- Layout lesson: Light theme proves range from dark. Mood board hero = designer DNA. Georgia serif = luxury.
+
+**#29 Moving — Cascade Movers** (1,259 lines)
+- Theme: Dark `#111111` with orange `#f97316` + brown `#92400e`
+- Hero: Moving truck journey (animated SVG truck on winding road, progress dots)
+- Unique: Cost estimator (size+distance+add-ons), moving countdown with milestone tasks, truck size quiz
+- Layout lesson: Journey visualization = emotionally resonant. Milestone countdown = practical value.
+
+**#30 Pest Control — Evergreen Pest Solutions** (1,228 lines)
+- Theme: Dark `#111827` with orange `#ea580c` + red `#ef4444` + green `#22c55e`
+- Hero: Pest threat radar (rotating SVG sweep, pest dots eliminated)
+- Unique: Pest identifier (8 types with danger levels), treatment estimator, seasonal pest calendar
+- Layout lesson: Radar hero = protection/security feeling. Emergency strip with pulsing dot = urgency.
+
+**#31 Photography — Cascade Lens Photography** (1,201 lines)
+- Theme: Warm light `#faf9f7` with gold `#ca8a04` + cool slate `#64748b` (LIGHT THEME)
+- Hero: Camera shutter reveal (6 SVG blades retract iris-style)
+- Unique: Session builder (type+duration+add-ons), photography style quiz, gallery filter with categories
+- Layout lesson: Shutter hero = photographer DNA. Polaroid-framed testimonials = on-brand. Light theme balances dark ones.
+
 ### Testimonial Layout Registry (never repeat within portfolio)
 1. Real Estate → auto-rotating carousel with dot navigation
 2. Dental → staggered masonry grid
@@ -787,7 +841,16 @@ All 10 premium features per category are **hardcoded directly into each V2 templ
 20. Junk Removal → masonry with eco-impact badges
 21. Carpet Cleaning → masonry with room-type tags
 22. Event Planning → auto-rotating carousel with gold accents (grand finale)
-ALL 22 TESTIMONIAL LAYOUTS ARE NOW USED. For future showcases, invent new ones.
+23. Accounting → metric cards with revenue/tax impact numbers
+24. Chiropractic → pain journey cards (before/after pain scale bars with % improvement)
+25. Cleaning → checklist-style reviews (rooms cleaned as tagged badges per review)
+26. HVAC → season-tagged reviews (Summer AC/Winter Furnace with dollar savings badges)
+27. Insurance → coverage-grouped tabs (Auto/Home/Life tabs with claim savings)
+28. Interior Design → room transformation cards (mini color palettes + budget ranges)
+29. Moving → move summary cards (origin→destination neighborhoods, move type, time)
+30. Pest Control → pest type + urgency cards (pest icon, urgency badge, response time)
+31. Photography → photo session recap cards (session type, photos delivered, turnaround, polaroid frame)
+ALL 31 TESTIMONIAL LAYOUTS ARE NOW USED. For future showcases, invent new ones.
 
 ### Hero Layout Registry (never repeat within portfolio)
 1. Real Estate → centered text + interactive search bar
@@ -812,7 +875,16 @@ ALL 22 TESTIMONIAL LAYOUTS ARE NOW USED. For future showcases, invent new ones.
 20. Junk Removal → before/after split wipe (CSS clip-path animation)
 21. Carpet Cleaning → gradient text reveal (clean-to-dirty fill expands on scroll)
 22. Event Planning → animated CSS bokeh/gala lights (THE GRAND FINALE)
-ALL 22 HERO PATTERNS ARE NOW USED. For future showcases, invent new ones.
+23. Accounting → dashboard hero with animated financial charts
+24. Chiropractic → spine alignment reveal (vertebrae animate from misaligned → aligned, healing pulse travels)
+25. Cleaning → rotating room cards (Kitchen/Bath/Living/Bed auto-cycle with task checklists)
+26. HVAC → comfort gauge (animated circular thermostat SVG, needle sweeps 50°F→95°F→settles at 72°F)
+27. Insurance → shield protection layers (concentric rings expand, each labeled with coverage type)
+28. Interior Design → mood board collage (6 floating design swatches with tilt hover effects)
+29. Moving → moving truck journey (animated SVG truck on winding road, progress dots light up)
+30. Pest Control → pest threat radar (rotating radar sweep, pest dots flash red + get eliminated)
+31. Photography → camera shutter reveal (6 SVG shutter blades retract iris-style revealing text)
+ALL 31 HERO PATTERNS ARE NOW USED. For future showcases, invent new ones.
 
 ### Lessons Learned — Speed & Quality Checklist (follow this every time)
 
@@ -857,6 +929,13 @@ ALL 22 HERO PATTERNS ARE NOW USED. For future showcases, invent new ones.
 - **Trust bar immediately below hero.** Don't make visitors scroll to find credibility signals. Numbers + badges right after the hero.
 - **Light vs dark themes prove range.** Showing BOTH warm light (dental) and dark luxury (real estate) in the portfolio proves we don't just do one look. Alternate themes across showcases.
 - **Staggered masonry testimonials feel organic** vs carousel feeling automated. Use masonry for warm/friendly categories, carousel for premium/luxury.
+- **Every interactive feature should feel like a mini-app.** Calculators with live updating prices, quizzes with progress bars and scored results, and filtering galleries with smooth AnimatePresence — these differentiate from static templates.
+- **Animated SVG heroes are the most memorable.** Spine alignment, radar sweeps, comfort gauges, camera shutters, moving trucks — SVG heroes that tell the industry's story visually outperform photo-based heroes.
+- **Light themes (Interior Design, Photography) prove design range.** At least 2-3 light-themed showcases among the 31 shows prospects we don't just do "dark mode everything."
+- **Industry-specific data in testimonials > generic star reviews.** Pain scales for chiro, rooms cleaned for cleaning, season tags for HVAC, pest types for pest control, move details for moving — these make reviews feel real and specific.
+- **Comparison tables sell the decision.** Chiro vs medication, independent vs captive agent, professional vs DIY, our company vs competitors — these help visitors decide, not just browse.
+- **Parallel agent builds at 5-10x speed.** Delegating showcase builds to sub-agents while tracking from main context cuts total time dramatically. Always verify braces balance after agent writes.
+- **Pre-flight checklist before every showcase: (1) check template color variables, (2) check hero/testimonial registries for unused patterns, (3) plan 2-3 interactive features, (4) verify braces after write, (5) confirm no build errors.**
 - **Insurance/carrier badges are HUGE trust signals** for healthcare categories. People's first question: "do you take my insurance?" Show this prominently.
 - **Before/after with REAL photos** (not stock) are 10x more convincing. Use Ben's real before/after images where available (`/images/dental-before-after.png`, `/images/roofing-before-after.jpg`, `/images/vet-before-after.png`, `/images/interior-design-before-after.jpg`).
 - **Comfort/anxiety sections sell healthcare categories.** "We know dental anxiety is real" / "fear-free veterinary" / "gentle physical therapy" directly addresses the #1 objection.

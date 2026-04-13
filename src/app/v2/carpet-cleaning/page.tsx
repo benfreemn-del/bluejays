@@ -180,10 +180,7 @@ const quizOptions = [
   { label: "Tile, Grout & Hard Floors", icon: Bathtub, color: "#34d399", recommendation: "Our high-pressure steam system restores tile and grout to like-new condition. Perfect for kitchens, bathrooms, and entryways." },
 ];
 
-const beforeAfterData = [
-  { before: "https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=600&q=80", after: "https://images.unsplash.com/photo-1616627781431-d508090f8801?w=600&q=80", label: "Living Room Deep Clean" },
-  { before: "https://images.unsplash.com/photo-1615875617133-22a7952a3924?w=600&q=80", after: "https://images.unsplash.com/photo-1595896123483-175037c191b6?w=600&q=80", label: "Pet Stain Removal" },
-];
+const beforeAfterImage = "/images/carpet-before-after.png";
 
 const ecoProducts = [
   { title: "Non-Toxic Formula", description: "Free from harsh chemicals, completely safe for children, pets, and anyone with sensitivities.", icon: Leaf },
@@ -275,7 +272,7 @@ export default function V2CarpetCleaningPage() {
   const [openFAQ, setOpenFAQ] = useState<number | null>(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [quizChoice, setQuizChoice] = useState<number | null>(null);
-  const [activeBA, setActiveBA] = useState(0);
+
 
   const scrollTo = (id: string) => {
     const el = document.getElementById(id);
@@ -526,22 +523,11 @@ export default function V2CarpetCleaningPage() {
         <SectionReveal id="results" className="py-20">
           <h2 className="text-4xl font-bold text-center text-white mb-3">See the <span style={{ color: ACCENT }}>Difference</span></h2>
           <p className="text-lg text-center max-w-2xl mx-auto text-slate-300 mb-12">Real results from real Seattle homes cleaned by the FreshStart team.</p>
-          <div className="flex justify-center gap-4 mb-8">
-            {beforeAfterData.map((item, i) => (
-              <button key={i} onClick={() => setActiveBA(i)} className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${activeBA === i ? "text-white" : "text-slate-400 bg-white/5 border border-white/10"}`} style={activeBA === i ? { background: ACCENT } : {}}>
-                {item.label}
-              </button>
-            ))}
-          </div>
-          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-            <div className="relative rounded-2xl overflow-hidden aspect-[4/3]">
-              <img src={beforeAfterData[activeBA].before} alt="Before cleaning" className="w-full h-full object-cover" />
-              <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-red-500/80 text-white text-xs font-bold backdrop-blur-sm">BEFORE</div>
+          <div className="max-w-4xl mx-auto">
+            <div className="relative rounded-2xl overflow-hidden">
+              <img src={beforeAfterImage} alt="Carpet cleaning before and after" className="w-full h-auto object-cover" />
             </div>
-            <div className="relative rounded-2xl overflow-hidden aspect-[4/3]">
-              <img src={beforeAfterData[activeBA].after} alt="After cleaning" className="w-full h-full object-cover" />
-              <div className="absolute top-4 left-4 px-3 py-1 rounded-full text-white text-xs font-bold backdrop-blur-sm" style={{ background: `${ACCENT}cc` }}>AFTER</div>
-            </div>
+            <p className="text-center text-sm text-slate-400 mt-4">Living room deep clean — stains removed, fibers restored, fresh and bright.</p>
           </div>
         </SectionReveal>
 
@@ -777,7 +763,7 @@ export default function V2CarpetCleaningPage() {
         {/* ═══════════════ VIDEO PLACEHOLDER ═══════════════ */}
         <SectionReveal className="py-20">
           <div className="relative rounded-3xl overflow-hidden aspect-video max-w-4xl mx-auto">
-            <img src="https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=1200&q=80" alt="Professional carpet cleaning" className="w-full h-full object-cover" />
+            <img src="https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?w=1200&q=80" alt="Professional carpet cleaning" className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
               <motion.div className="w-20 h-20 rounded-full flex items-center justify-center cursor-pointer" style={{ background: ACCENT }} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="white"><polygon points="8,5 19,12 8,19" /></svg>
