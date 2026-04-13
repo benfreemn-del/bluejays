@@ -1,7 +1,7 @@
 export const metadata = {
-  title: "[V2] Academic Success Starts Here | Premium Tutoring Template",
+  title: "Bright Minds Tutoring | Where Understanding Clicks — K-12, SAT/ACT, College Prep",
   description:
-    "V2 premium animated tutoring template with academic blue + bright green design.",
+    "V2 premium tutoring showcase — typewriter hero, royal purple + yellow, 17+ sections, Dr. Rachel Torres, Seattle University District.",
 };
 
 export default function V2TutoringLayout({
