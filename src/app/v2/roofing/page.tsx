@@ -1,7 +1,7 @@
 "use client";
 
-/* eslint-disable @next/next/no-img-element -- These static marketing and preview components intentionally use plain img tags to preserve existing markup and visual behavior during lint-only cleanup. */
-/* eslint-disable react-hooks/purity -- Decorative particle values are intentionally randomized for static visual effects in these marketing pages and previews; this preserves existing appearance without changing business logic. */
+/* eslint-disable @next/next/no-img-element -- Static marketing showcase uses plain img tags intentionally. */
+/* eslint-disable react-hooks/purity -- Decorative particle values randomized for static visual effects. */
 
 import { useState, useRef, useCallback, useEffect } from "react";
 import {
@@ -19,31 +19,38 @@ import {
   MapPin,
   Clock,
   ArrowRight,
-  CaretDown,
   CheckCircle,
   Quotes,
   X,
   List,
-  Wrench,
   Lightning,
-  HardHat,
   Drop,
   MagnifyingGlass,
   Buildings,
   Certificate,
-  Handshake,
-  ClipboardText,
   Hammer,
   Eye,
   Warning,
-  Question,
+  Play,
+  Envelope,
+  Shield,
+  Trophy,
+  Users,
 } from "@phosphor-icons/react";
 
-/* ───────────────────────── SPRING CONFIG ───────────────────────── */
-const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
-const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
-const springGentle = { type: "spring" as const, stiffness: 60, damping: 18 };
-
+/* ═══════════════════════════════════════════════════════════════════
+   SPRING & ANIMATION CONFIG
+   ═══════════════════════════════════════════════════════════════════ */
+const spring = {
+  type: "spring" as const,
+  stiffness: 100,
+  damping: 20,
+};
+const springFast = {
+  type: "spring" as const,
+  stiffness: 200,
+  damping: 25,
+};
 const stagger = {
   hidden: {},
   show: {
@@ -56,15 +63,226 @@ const fadeUp = {
   show: { opacity: 1, y: 0, transition: spring },
 };
 
-/* ───────────────────────── COLORS ───────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════
+   COLOR PALETTE
+   ═══════════════════════════════════════════════════════════════════ */
 const CHARCOAL = "#111827";
+const CHARCOAL_DEEP = "#0a0f1a";
 const SLATE_BLUE = "#475569";
 const BRICK = "#dc2626";
 const BRICK_LIGHT = "#ef4444";
 const BRICK_GLOW = "rgba(220, 38, 38, 0.15)";
-const SLATE_GLOW = "rgba(71, 85, 105, 0.2)";
+const GOLD = "#ca8a04";
+const GOLD_GLOW = "rgba(202, 138, 4, 0.15)";
 
-/* ───────────────────────── FLOATING RAIN PARTICLES ───────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════
+   DATA CONSTANTS
+   ═══════════════════════════════════════════════════════════════════ */
+const SERVICES = [
+  {
+    title: "Roof Replacement",
+    description:
+      "Complete tear-off and replacement with premium architectural shingles, metal, or tile. We handle permits, cleanup, and final inspection — zero hassle guaranteed.",
+    icon: House,
+  },
+  {
+    title: "Storm Damage Repair",
+    description:
+      "Emergency response for hail, wind, and fallen debris damage. We document everything and work directly with your insurance from day one.",
+    icon: Lightning,
+  },
+  {
+    title: "Commercial Roofing",
+    description:
+      "Flat roofs, TPO, EPDM, and modified bitumen systems for warehouses, offices, and retail. Minimal downtime, maximum protection for your business.",
+    icon: Buildings,
+  },
+  {
+    title: "Gutter Systems",
+    description:
+      "Seamless aluminum gutters, gutter guards, and downspout systems engineered to channel water away from your foundation year-round.",
+    icon: Drop,
+  },
+  {
+    title: "Roof Inspections",
+    description:
+      "Comprehensive 21-point inspection with drone photography and detailed digital reports. Know your roof's condition before small issues become emergencies.",
+    icon: MagnifyingGlass,
+  },
+  {
+    title: "Emergency Repairs",
+    description:
+      "Active leak? Missing shingles after a storm? Our 24/7 emergency crew is on-site within 2 hours, day or night, rain or shine.",
+    icon: Warning,
+  },
+];
+
+const INSURANCE_STEPS = [
+  {
+    step: "1",
+    title: "Free Inspection",
+    description: "We document every inch of damage with photos, measurements, and drone footage for your claim file.",
+  },
+  {
+    step: "2",
+    title: "File Claim",
+    description: "We compile and submit all documentation to your insurance provider with a detailed scope of work.",
+  },
+  {
+    step: "3",
+    title: "Meet Adjuster",
+    description: "We meet your adjuster on-site and walk them through every detail to ensure full coverage.",
+  },
+  {
+    step: "4",
+    title: "New Roof — $0 Out of Pocket",
+    description: "Your roof restored to new. We handle everything so you pay nothing beyond your deductible.",
+  },
+];
+
+const MATERIALS = [
+  {
+    name: "Architectural Shingles",
+    warranty: "30-50 Year Warranty",
+    description:
+      "Premium dimensional shingles with enhanced wind resistance and rich, layered aesthetics. The most popular choice for Pacific Northwest homes.",
+    icon: House,
+  },
+  {
+    name: "Standing Seam Metal",
+    warranty: "50+ Year Warranty",
+    description:
+      "Interlocking metal panels with concealed fasteners. Energy efficient, fire resistant, and virtually maintenance-free for decades.",
+    icon: Shield,
+  },
+  {
+    name: "Cedar Shake",
+    warranty: "Eco-Friendly",
+    description:
+      "Hand-split natural wood shakes delivering timeless beauty, excellent insulation, and authentic Pacific Northwest character.",
+    icon: Hammer,
+  },
+  {
+    name: "Composite Tile",
+    warranty: "Impact-Resistant",
+    description:
+      "Engineered for extreme Pacific Northwest weather. Class 4 impact rating with the elegant look of natural slate at a fraction of the weight.",
+    icon: ShieldCheck,
+  },
+];
+
+const TESTIMONIALS = [
+  {
+    name: "The Hendersons",
+    text: "Jake's crew replaced our entire roof in one day. ONE DAY. We couldn't believe how fast and clean they were. Not a single nail left in the yard.",
+    rating: 5,
+  },
+  {
+    name: "Patricia R.",
+    text: "Insurance tried to lowball us. Summit fought and got us $18K more than the initial offer. They handled everything — we barely had to lift a finger.",
+    rating: 5,
+  },
+  {
+    name: "Mike & Lisa T.",
+    text: "Three quotes. Summit was the middle price but the only one with a 50-year warranty. That told us everything we needed to know about their confidence.",
+    rating: 5,
+  },
+  {
+    name: "Steven K.",
+    text: "They fixed a leak 2 other roofers couldn't find. Problem solved in an hour. Incredible diagnostic skill — wish I'd called them first.",
+    rating: 5,
+  },
+  {
+    name: "Greg M.",
+    text: "Commercial flat roof for our warehouse. Professional, fast, zero leaks since installation. Highly recommend Summit for business owners.",
+    rating: 5,
+  },
+];
+
+const COMPARISON_ROWS = [
+  { feature: "Licensed & Bonded", us: true, them: "Sometimes" },
+  { feature: "GAF Master Elite Certified", us: true, them: "No" },
+  { feature: "50-Year Warranty Available", us: true, them: "No" },
+  { feature: "Insurance Claim Assistance", us: true, them: "Varies" },
+  { feature: "Drone Inspections", us: true, them: "No" },
+  { feature: "Same-Day Emergency Response", us: true, them: "Varies" },
+  { feature: "Transparent Upfront Pricing", us: true, them: "Sometimes" },
+];
+
+const SERVICE_AREAS = [
+  "Seattle",
+  "Bellevue",
+  "Kirkland",
+  "Redmond",
+  "Bothell",
+  "Shoreline",
+  "Lynnwood",
+  "Edmonds",
+];
+
+const FINANCING_PLANS = [
+  {
+    price: "$89",
+    period: "/mo",
+    title: "Roof Repair",
+    features: [
+      "Minor leak repairs",
+      "Shingle replacement",
+      "Flashing fixes",
+    ],
+    featured: false,
+  },
+  {
+    price: "$149",
+    period: "/mo",
+    title: "Full Reroof",
+    features: [
+      "Complete tear-off & replace",
+      "Premium materials included",
+      "50-year warranty",
+    ],
+    featured: true,
+  },
+  {
+    price: "$199",
+    period: "/mo",
+    title: "Premium Upgrade",
+    features: [
+      "Metal or tile roofing",
+      "Custom gutter systems",
+      "Lifetime warranty",
+    ],
+    featured: false,
+  },
+];
+
+const QUIZ_OPTIONS = [
+  {
+    label: "Under 10 Years",
+    color: "#22c55e",
+    shortLabel: "<10",
+    recommendation:
+      "Your roof is likely in good shape. Schedule a free inspection to catch small issues before they grow into costly repairs. Preventive maintenance now can add years to your roof.",
+  },
+  {
+    label: "10-20 Years",
+    color: "#f59e0b",
+    shortLabel: "10+",
+    recommendation:
+      "Time for a professional inspection. Many Seattle roofs in this age range need targeted repairs or maintenance to extend their lifespan through our rainy winters.",
+  },
+  {
+    label: "20+ Years",
+    color: "#ef4444",
+    shortLabel: "20+",
+    recommendation:
+      "Your roof is likely approaching end of life. A free inspection will tell you exactly where you stand and whether replacement is needed before leaks start causing interior damage.",
+  },
+];
+
+/* ═══════════════════════════════════════════════════════════════════
+   FLOATING RAIN PARTICLES
+   ═══════════════════════════════════════════════════════════════════ */
 function FloatingParticles() {
   const particles = Array.from({ length: 30 }, (_, i) => ({
     id: i,
@@ -112,7 +330,9 @@ function FloatingParticles() {
   );
 }
 
-/* ───────────────────────── ROOFLINE SVG PATTERN ───────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════
+   ROOFLINE SVG PATTERN
+   ═══════════════════════════════════════════════════════════════════ */
 function RooflinePattern() {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-[0.06]">
@@ -122,7 +342,6 @@ function RooflinePattern() {
         preserveAspectRatio="none"
         fill="none"
       >
-        {/* Row of rooflines */}
         <path
           d="M0,350 L80,280 L160,350 L240,260 L320,350 L400,270 L480,350 L560,250 L640,350 L720,280 L800,350 L880,260 L960,350 L1040,270 L1120,350 L1200,250 L1280,350 L1360,280 L1440,350"
           stroke={SLATE_BLUE}
@@ -133,7 +352,6 @@ function RooflinePattern() {
           stroke={SLATE_BLUE}
           strokeWidth="1.5"
         />
-        {/* Chimney accents */}
         <rect x="70" y="260" width="20" height="30" stroke={BRICK} strokeWidth="1" />
         <rect x="390" y="250" width="20" height="30" stroke={BRICK} strokeWidth="1" />
         <rect x="710" y="260" width="20" height="30" stroke={BRICK} strokeWidth="1" />
@@ -144,44 +362,19 @@ function RooflinePattern() {
   );
 }
 
-/* ───────────────────────── WORD REVEAL ───────────────────────── */
-function WordReveal({
-  text,
-  className = "",
-}: {
-  text: string;
-  className?: string;
-}) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-50px" });
-  const words = text.split(" ");
-
-  return (
-    <motion.span
-      ref={ref}
-      className={`inline-flex flex-wrap gap-x-3 ${className}`}
-      variants={stagger}
-      initial="hidden"
-      animate={isInView ? "show" : "hidden"}
-    >
-      {words.map((word, i) => (
-        <motion.span key={i} variants={fadeUp} className="inline-block">
-          {word}
-        </motion.span>
-      ))}
-    </motion.span>
-  );
-}
-
-/* ───────────────────────── SECTION REVEAL ───────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════
+   SECTION REVEAL
+   ═══════════════════════════════════════════════════════════════════ */
 function SectionReveal({
   children,
   className = "",
   id,
+  style,
 }: {
   children: React.ReactNode;
   className?: string;
   id?: string;
+  style?: React.CSSProperties;
 }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
@@ -191,6 +384,7 @@ function SectionReveal({
       ref={ref}
       id={id}
       className={className}
+      style={style}
       initial={{ opacity: 0, y: 50 }}
       animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
       transition={spring}
@@ -200,7 +394,9 @@ function SectionReveal({
   );
 }
 
-/* ───────────────────────── GLASS CARD ───────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════
+   GLASS CARD
+   ═══════════════════════════════════════════════════════════════════ */
 function GlassCard({
   children,
   className = "",
@@ -217,7 +413,9 @@ function GlassCard({
   );
 }
 
-/* ───────────────────────── MAGNETIC BUTTON ───────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════
+   MAGNETIC BUTTON
+   ═══════════════════════════════════════════════════════════════════ */
 function MagneticButton({
   children,
   className = "",
@@ -271,7 +469,9 @@ function MagneticButton({
   );
 }
 
-/* ───────────────────────── SHIMMER BORDER ───────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════
+   SHIMMER BORDER
+   ═══════════════════════════════════════════════════════════════════ */
 function ShimmerBorder({
   children,
   className = "",
@@ -292,1335 +492,1479 @@ function ShimmerBorder({
         animate={{ rotate: [0, 360] }}
         transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
       />
-      <div className="relative rounded-2xl bg-gray-900 z-10">{children}</div>
+      <div className="relative rounded-2xl bg-gray-900 z-10">
+        {children}
+      </div>
     </div>
   );
 }
 
-/* ───────────────────────── ACCORDION ITEM ───────────────────────── */
-function AccordionItem({
-  title,
-  description,
-  isOpen,
-  onToggle,
+/* ═══════════════════════════════════════════════════════════════════
+   COUNTER ANIMATION
+   ═══════════════════════════════════════════════════════════════════ */
+function AnimatedCounter({
+  target,
+  suffix = "",
 }: {
-  title: string;
-  description: string;
-  isOpen: boolean;
-  onToggle: () => void;
+  target: number;
+  suffix?: string;
 }) {
-  return (
-    <GlassCard className="overflow-hidden">
-      <button
-        onClick={onToggle}
-        className="w-full flex items-center justify-between p-5 md:p-6 text-left group cursor-pointer"
-      >
-        <div className="flex items-center gap-4">
-          <div
-            className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
-            style={{ background: BRICK_GLOW }}
-          >
-            <Question size={20} weight="duotone" style={{ color: BRICK }} />
-          </div>
-          <span className="text-lg font-semibold text-white">{title}</span>
-        </div>
-        <motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={spring}>
-          <CaretDown size={20} className="text-slate-400" />
-        </motion.div>
-      </button>
-      <AnimatePresence initial={false}>
-        {isOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={spring}
-            className="overflow-hidden"
-          >
-            <p className="px-5 pb-5 md:px-6 md:pb-6 text-slate-400 leading-relaxed pl-[4.5rem]">
-              {description}
-            </p>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </GlassCard>
-  );
-}
-
-/* ───────────────────────── BEFORE/AFTER SLIDER ───────────────────────── */
-function BeforeAfterSlider() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [sliderPos, setSliderPos] = useState(50);
-  const isDragging = useRef(false);
-
-  const handleMove = useCallback((clientX: number) => {
-    if (!containerRef.current || !isDragging.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    const pos = ((clientX - rect.left) / rect.width) * 100;
-    setSliderPos(Math.max(5, Math.min(95, pos)));
-  }, []);
-
-  const handleMouseDown = useCallback(() => {
-    isDragging.current = true;
-  }, []);
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true });
+  const [count, setCount] = useState(0);
 
   useEffect(() => {
-    const handleUp = () => {
-      isDragging.current = false;
-    };
-    const handleMoveGlobal = (e: MouseEvent) => handleMove(e.clientX);
-    const handleTouchMove = (e: TouchEvent) => {
-      if (e.touches[0]) handleMove(e.touches[0].clientX);
-    };
-    window.addEventListener("mouseup", handleUp);
-    window.addEventListener("mousemove", handleMoveGlobal);
-    window.addEventListener("touchend", handleUp);
-    window.addEventListener("touchmove", handleTouchMove);
-    return () => {
-      window.removeEventListener("mouseup", handleUp);
-      window.removeEventListener("mousemove", handleMoveGlobal);
-      window.removeEventListener("touchend", handleUp);
-      window.removeEventListener("touchmove", handleTouchMove);
-    };
-  }, [handleMove]);
+    if (!isInView) return;
+    let start = 0;
+    const end = target;
+    const duration = 2000;
+    const stepTime = 16;
+    const steps = duration / stepTime;
+    const increment = end / steps;
+    const timer = setInterval(() => {
+      start += increment;
+      if (start >= end) {
+        setCount(end);
+        clearInterval(timer);
+      } else {
+        setCount(Math.floor(start));
+      }
+    }, stepTime);
+    return () => clearInterval(timer);
+  }, [isInView, target]);
 
   return (
-    <div
-      ref={containerRef}
-      className="relative w-full aspect-[16/10] rounded-2xl overflow-hidden cursor-ew-resize select-none"
-      onMouseDown={handleMouseDown}
-      onTouchStart={handleMouseDown}
-    >
-      {/* "After" side — beautiful new roof */}
-      <div className="absolute inset-0">
-        <img
-          src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80"
-          alt="After — pristine new roof installation"
-          className="w-full h-full object-cover object-center"
-        />
-        <div className="absolute bottom-4 right-4 px-3 py-1.5 rounded-full bg-red-600/80 backdrop-blur-sm text-white text-sm font-bold">
-          After
-        </div>
-      </div>
-      {/* "Before" side — damaged roof */}
-      <div
-        className="absolute inset-0"
-        style={{ clipPath: `inset(0 ${100 - sliderPos}% 0 0)` }}
-      >
-        <img
-          src="https://images.unsplash.com/photo-1632149877166-f75d49000351?w=800&q=80"
-          alt="Before — roof needing replacement"
-          className="w-full h-full object-cover object-center"
-        />
-        <div className="absolute bottom-4 left-4 px-3 py-1.5 rounded-full bg-slate-700/80 backdrop-blur-sm text-white text-sm font-bold">
-          Before
-        </div>
-      </div>
-      {/* Slider line */}
-      <div
-        className="absolute top-0 bottom-0 w-[2px] bg-white/80 z-10"
-        style={{ left: `${sliderPos}%` }}
-      >
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center">
-          <div className="flex gap-0.5">
-            <CaretDown size={12} className="text-slate-800 -rotate-90" />
-            <CaretDown size={12} className="text-slate-800 rotate-90" />
-          </div>
-        </div>
-      </div>
-    </div>
+    <span ref={ref}>
+      {count.toLocaleString()}
+      {suffix}
+    </span>
   );
 }
 
-/* ───────────────────────── SERVICES DATA ───────────────────────── */
-const services = [
-  {
-    title: "Roof Replacement",
-    description:
-      "Complete tear-off and replacement with premium architectural shingles, metal roofing, or tile. We handle everything from permits to final inspection with zero hassle.",
-    icon: House,
-  },
-  {
-    title: "Roof Repair",
-    description:
-      "Fast, reliable repairs for leaks, missing shingles, flashing damage, and general wear. We diagnose the root cause and fix it right the first time.",
-    icon: Wrench,
-  },
-  {
-    title: "Storm Damage",
-    description:
-      "Emergency response for hail, wind, and storm damage. We work directly with your insurance company to maximize your claim and restore your roof fast.",
-    icon: Lightning,
-  },
-  {
-    title: "Gutter Installation",
-    description:
-      "Seamless aluminum gutters, gutter guards, and downspout systems engineered to protect your home from water damage year-round.",
-    icon: Drop,
-  },
-  {
-    title: "Inspections",
-    description:
-      "Comprehensive 21-point roof inspections with detailed reports and drone photography. Know exactly what condition your roof is in before issues become emergencies.",
-    icon: MagnifyingGlass,
-  },
-  {
-    title: "Commercial Roofing",
-    description:
-      "Flat roofs, TPO, EPDM, and modified bitumen systems for commercial properties. Minimized downtime and warranties that protect your business investment.",
-    icon: Buildings,
-  },
-];
-
-/* ───────────────────────── TESTIMONIALS DATA ───────────────────────── */
-const testimonials = [
-  {
-    name: "Robert M.",
-    text: "Summit replaced our entire roof after a major hailstorm. They handled the insurance claim, showed up on time, and the new roof looks incredible. True professionals from start to finish.",
-    rating: 5,
-  },
-  {
-    name: "Jennifer P.",
-    text: "We got quotes from five different roofers and Summit was the most thorough. Their inspection report was incredibly detailed. The crew was clean, efficient, and respectful of our property.",
-    rating: 5,
-  },
-  {
-    name: "Mark & Susan T.",
-    text: "After our old roofer ghosted us mid-job, Summit came in and made everything right. They stand behind their work with a real warranty. Cannot recommend them enough.",
-    rating: 5,
-  },
-];
-
-/* ───────────────────────── MATERIALS DATA ───────────────────────── */
-const materials = [
-  {
-    name: "Architectural Shingles",
-    description:
-      "Premium dimensional shingles with enhanced wind resistance and a rich, layered look. 30-50 year lifespan.",
-    image:
-      "https://images.unsplash.com/photo-1575517111478-7f6afd0973db?w=400&q=80",
-  },
-  {
-    name: "Standing Seam Metal",
-    description:
-      "Sleek, modern metal roofing with interlocking panels. Energy efficient, fire resistant, and built to last 50+ years.",
-    image:
-      "https://images.unsplash.com/photo-1558036117-15d82a90b9b1?w=400&q=80",
-  },
-  {
-    name: "Cedar Shake",
-    description:
-      "Natural wood shakes delivering timeless beauty and excellent insulation. Hand-split for an authentic rustic aesthetic.",
-    image:
-      "https://images.unsplash.com/photo-1575517111478-7f6afd0973db?w=400&q=80",
-  },
-  {
-    name: "Slate & Tile",
-    description:
-      "The gold standard of roofing. Natural slate and clay tiles that can last over 100 years with proper installation.",
-    image:
-      "https://images.unsplash.com/photo-1600047509358-9dc75507daeb?w=400&q=80",
-  },
-];
-
-/* ───────────────────────── FAQ DATA ───────────────────────── */
-const faqs = [
-  {
-    title: "How long does a typical roof replacement take?",
-    description:
-      "Most residential roof replacements are completed in 1-3 days depending on the size and complexity. We always provide a clear timeline before work begins and communicate any changes immediately.",
-  },
-  {
-    title: "Do you work with insurance companies?",
-    description:
-      "Absolutely. We have extensive experience working with all major insurance providers. Our team will document the damage, meet with your adjuster, and help ensure your claim covers the full scope of work.",
-  },
-  {
-    title: "What warranty do you offer?",
-    description:
-      "We provide a 10-year workmanship warranty on all installations in addition to manufacturer warranties that range from 25 to 50 years depending on the material. Your investment is fully protected.",
-  },
-  {
-    title: "How do I know if my roof needs replacement or just repair?",
-    description:
-      "Our free 21-point inspection will tell you exactly. We check age, granule loss, flashing condition, ventilation, decking integrity, and more. We will always recommend repair if it is the smarter long-term option.",
-  },
-];
+/* ═══════════════════════════════════════════════════════════════════
+   SECTION HEADER COMPONENT
+   ═══════════════════════════════════════════════════════════════════ */
+function SectionHeader({
+  label,
+  title,
+  subtitle,
+  labelColor = BRICK,
+}: {
+  label: string;
+  title: string;
+  subtitle?: string;
+  labelColor?: string;
+}) {
+  return (
+    <div className="text-center mb-14">
+      <span
+        className="text-xs font-semibold uppercase tracking-[0.2em] mb-3 block"
+        style={{ color: labelColor }}
+      >
+        {label}
+      </span>
+      <h2 className="text-3xl md:text-4xl font-black tracking-tight">
+        {title}
+      </h2>
+      {subtitle && (
+        <p className="text-slate-400 mt-3 max-w-xl mx-auto leading-relaxed">
+          {subtitle}
+        </p>
+      )}
+    </div>
+  );
+}
 
 /* ═══════════════════════════════════════════════════════════════════
    MAIN PAGE COMPONENT
    ═══════════════════════════════════════════════════════════════════ */
-export default function V2RoofingPage() {
-  const [openFaq, setOpenFaq] = useState<number | null>(0);
+export default function RoofingShowcase() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [quizAnswer, setQuizAnswer] = useState<number | null>(null);
+  const [formData, setFormData] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    message: "",
+  });
+
+  const scrollTo = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    setMobileMenuOpen(false);
+  };
 
   return (
-    <main
-      className="relative min-h-[100dvh] overflow-x-hidden"
-      style={{ background: CHARCOAL, color: "#f1f5f9" }}
+    <div
+      className="relative min-h-screen text-white overflow-x-hidden"
+      style={{ background: CHARCOAL }}
     >
       <FloatingParticles />
 
-      {/* ─── 1. NAV ─── */}
-      <motion.nav
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={spring}
-        className="fixed top-0 left-0 right-0 z-50"
-      >
-        <div className="mx-auto max-w-7xl px-4 md:px-6 py-4">
-          <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
-            <div className="flex items-center gap-2">
-              <House size={24} weight="duotone" style={{ color: BRICK }} />
-              <span className="text-lg font-bold tracking-tight text-white">
-                Summit Roofing NW
+      {/* ═══════════════════ NAVIGATION ═══════════════════ */}
+      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-gray-900/80 border-b border-white/5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+          <div className="flex items-center gap-2">
+            <div
+              className="w-8 h-8 rounded-lg flex items-center justify-center"
+              style={{ background: BRICK }}
+            >
+              <House size={18} weight="fill" className="text-white" />
+            </div>
+            <span className="text-lg font-bold tracking-tight">
+              Summit Roofing NW
+            </span>
+          </div>
+
+          {/* Desktop links */}
+          <div className="hidden md:flex items-center gap-6 text-sm text-slate-300">
+            {["Services", "Materials", "Reviews", "Contact"].map((item) => (
+              <button
+                key={item}
+                onClick={() => scrollTo(item.toLowerCase())}
+                className="hover:text-white transition-colors cursor-pointer"
+              >
+                {item}
+              </button>
+            ))}
+            <MagneticButton
+              className="px-4 py-2 rounded-xl text-white font-semibold text-sm cursor-pointer"
+              style={{ background: BRICK }}
+              onClick={() => scrollTo("contact")}
+            >
+              Free Estimate
+            </MagneticButton>
+          </div>
+
+          {/* Mobile hamburger */}
+          <button
+            className="md:hidden text-white cursor-pointer"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            {mobileMenuOpen ? <X size={24} /> : <List size={24} />}
+          </button>
+        </div>
+
+        {/* Mobile menu */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={spring}
+              className="md:hidden overflow-hidden bg-gray-900/95 border-t border-white/5"
+            >
+              <div className="px-4 py-4 flex flex-col gap-3">
+                {["Services", "Materials", "Reviews", "Contact"].map(
+                  (item) => (
+                    <button
+                      key={item}
+                      onClick={() => scrollTo(item.toLowerCase())}
+                      className="text-left text-slate-300 hover:text-white py-2 cursor-pointer"
+                    >
+                      {item}
+                    </button>
+                  )
+                )}
+                <button
+                  onClick={() => scrollTo("contact")}
+                  className="mt-2 px-4 py-3 rounded-xl text-white font-semibold text-center cursor-pointer"
+                  style={{ background: BRICK }}
+                >
+                  Free Estimate
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </nav>
+
+      {/* ═══════════════════ SECTION 1 — SPLIT-SCREEN HERO ═══════════════════ */}
+      <section className="relative pt-16 min-h-screen flex">
+        <RooflinePattern />
+
+        {/* Left Half — Content */}
+        <div className="relative z-10 w-full lg:w-1/2 flex flex-col justify-center px-6 sm:px-10 lg:px-16 py-24 lg:py-0">
+          <motion.div
+            initial={{ opacity: 0, x: -40 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ ...spring, delay: 0.2 }}
+          >
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/[0.04] mb-6">
+              <ShieldCheck
+                size={16}
+                weight="fill"
+                style={{ color: BRICK }}
+              />
+              <span className="text-xs font-medium text-slate-300">
+                GAF Master Elite Contractor
               </span>
             </div>
-            <div className="hidden md:flex items-center gap-8 text-sm text-slate-400">
-              <a
-                href="#services"
-                className="hover:text-white transition-colors"
-              >
-                Services
-              </a>
-              <a href="#about" className="hover:text-white transition-colors">
-                About
-              </a>
-              <a href="#gallery" className="hover:text-white transition-colors">
-                Gallery
-              </a>
-              <a href="#contact" className="hover:text-white transition-colors">
-                Contact
-              </a>
-            </div>
-            <div className="flex items-center gap-3">
-              <MagneticButton
-                className="px-4 md:px-5 py-2 rounded-full text-sm font-semibold text-white transition-colors"
-                style={{ background: BRICK } as React.CSSProperties}
-              >
-                Free Inspection
-              </MagneticButton>
-              <button
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="md:hidden p-2 rounded-lg text-white hover:bg-white/10 transition-colors"
-              >
-                {mobileMenuOpen ? <X size={24} /> : <List size={24} />}
-              </button>
-            </div>
-          </GlassCard>
 
-          {/* Mobile Menu */}
-          <AnimatePresence>
-            {mobileMenuOpen && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-                className="md:hidden mt-2 overflow-hidden"
-              >
-                <GlassCard className="flex flex-col gap-1 px-4 py-4">
-                  {[
-                    { label: "Services", href: "#services" },
-                    { label: "About", href: "#about" },
-                    { label: "Gallery", href: "#gallery" },
-                    { label: "Contact", href: "#contact" },
-                  ].map((link) => (
-                    <a
-                      key={link.label}
-                      href={link.href}
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="block px-4 py-3 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-white/5 transition-colors"
-                    >
-                      {link.label}
-                    </a>
-                  ))}
-                </GlassCard>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </motion.nav>
-
-      {/* ─── 2. HERO ─── */}
-      <section className="relative min-h-[100dvh] flex items-center pt-24 z-10">
-        {/* Dark sky gradient background */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background: `linear-gradient(180deg, #0a0f1a 0%, ${CHARCOAL} 50%, #1a1f2e 100%)`,
-          }}
-        />
-        {/* Storm cloud overlay */}
-        <div
-          className="absolute inset-0 opacity-30"
-          style={{
-            background:
-              "radial-gradient(ellipse at 30% 20%, rgba(71,85,105,0.4) 0%, transparent 60%), radial-gradient(ellipse at 70% 30%, rgba(71,85,105,0.3) 0%, transparent 50%)",
-          }}
-        />
-        <RooflinePattern />
-        {/* Red glow accent */}
-        <div
-          className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[300px] rounded-full blur-[120px] opacity-20"
-          style={{ background: BRICK }}
-        />
-        <div className="relative mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-4 items-center">
-          <div className="space-y-8">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ ...spring, delay: 0.2 }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-red-500/20 bg-red-500/10 text-red-400 text-sm font-medium"
-            >
-              <ShieldCheck size={16} weight="fill" />
-              Licensed &bull; Bonded &bull; Insured
-            </motion.div>
-
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold leading-[1.08] tracking-tight">
-              <WordReveal text="Protecting What Matters Most" />
+            {/* Heading */}
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.1] mb-6">
+              Seattle&apos;s Roof.{" "}
+              <span style={{ color: BRICK }}>Built to Last.</span>
             </h1>
 
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.6 }}
-              className="text-lg md:text-xl text-slate-400 max-w-lg"
-            >
-              Pacific Northwest&apos;s most trusted roofing contractor. From
-              emergency storm repairs to full roof replacements, we deliver
-              quality that stands the test of time.
-            </motion.p>
+            {/* Subtext */}
+            <p className="text-lg text-slate-400 max-w-lg mb-8 leading-relaxed">
+              25 years protecting Pacific Northwest homes. From storm damage
+              emergencies to complete replacements, Summit Roofing NW delivers
+              craftsmanship you can trust — backed by a warranty that proves it.
+            </p>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ ...spring, delay: 0.8 }}
-              className="flex flex-col sm:flex-row gap-4"
-            >
+            {/* Stats Counter Row */}
+            <div className="flex flex-wrap gap-8 mb-10">
+              <div className="text-center">
+                <div
+                  className="text-2xl sm:text-3xl font-black"
+                  style={{ color: BRICK }}
+                >
+                  <AnimatedCounter target={25} suffix=" Years" />
+                </div>
+                <div className="text-xs text-slate-500 mt-1">
+                  Experience
+                </div>
+              </div>
+              <div className="text-center">
+                <div
+                  className="text-2xl sm:text-3xl font-black"
+                  style={{ color: BRICK }}
+                >
+                  <AnimatedCounter target={1200} suffix="+" />
+                </div>
+                <div className="text-xs text-slate-500 mt-1">
+                  Roofs Completed
+                </div>
+              </div>
+              <div className="text-center">
+                <div
+                  className="text-2xl sm:text-3xl font-black"
+                  style={{ color: BRICK }}
+                >
+                  GAF
+                </div>
+                <div className="text-xs text-slate-500 mt-1">
+                  Master Elite
+                </div>
+              </div>
+            </div>
+
+            {/* CTA Buttons */}
+            <div className="flex flex-wrap gap-4">
               <MagneticButton
-                className="px-8 py-4 rounded-full text-base font-bold text-white flex items-center justify-center gap-2"
-                style={{ background: BRICK } as React.CSSProperties}
+                className="px-6 py-3.5 rounded-xl text-white font-bold text-base cursor-pointer flex items-center gap-2"
+                style={{ background: BRICK }}
+                onClick={() => scrollTo("contact")}
               >
                 Get Free Estimate
                 <ArrowRight size={18} weight="bold" />
               </MagneticButton>
               <MagneticButton
-                className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/20 flex items-center justify-center gap-2 hover:bg-white/5 transition-colors"
+                className="px-6 py-3.5 rounded-xl font-bold text-base cursor-pointer border border-white/20 text-white hover:bg-white/5 flex items-center gap-2"
+                onClick={() => scrollTo("services")}
               >
-                <Phone size={18} />
-                (253) 555-ROOF
+                <Phone size={18} weight="fill" />
+                (206) 555-0734
               </MagneticButton>
-            </motion.div>
-          </div>
+            </div>
+          </motion.div>
+        </div>
 
-          {/* Hero visual — animated house/roof SVG */}
+        {/* Vertical Divider */}
+        <div className="hidden lg:block absolute left-1/2 top-16 bottom-0 w-px bg-gradient-to-b from-transparent via-white/10 to-transparent z-20" />
+
+        {/* Right Half — Before/After Image */}
+        <div className="hidden lg:block w-1/2 relative">
           <motion.div
-            className="relative flex items-center justify-center"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
             transition={{ ...spring, delay: 0.4 }}
+            className="absolute inset-0"
           >
-            <motion.div
-              className="absolute inset-0 rounded-full"
-              style={{
-                background: `radial-gradient(circle, ${BRICK_GLOW} 0%, transparent 70%)`,
-                filter: "blur(40px)",
-                willChange: "transform",
-              }}
-              animate={{ scale: [1, 1.15, 1] }}
-              transition={{
-                duration: 3,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
+            <img
+              src="/images/roofing-before-after.jpg"
+              alt="Summit Roofing NW — professional roof installation"
+              className="w-full h-full object-cover"
             />
-            <svg
-              viewBox="0 0 200 180"
-              className="relative z-10 w-64 h-56 md:w-80 md:h-72"
-              fill="none"
-            >
-              {/* Roof outline */}
-              <motion.path
-                d="M100 20 L180 90 L170 90 L170 160 L30 160 L30 90 L20 90 Z"
-                stroke={SLATE_BLUE}
-                strokeWidth="2"
-                fill="none"
-                initial={{ pathLength: 0, opacity: 0 }}
-                animate={{ pathLength: 1, opacity: 1 }}
-                transition={{ duration: 2, ease: "easeInOut" }}
-              />
-              {/* Roof shingles */}
-              <motion.path
-                d="M100 20 L180 90 L20 90 Z"
-                fill={BRICK}
-                fillOpacity="0.15"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 1.5, duration: 1 }}
-              />
-              {/* Chimney */}
-              <motion.rect
-                x="140"
-                y="35"
-                width="20"
-                height="40"
-                stroke={SLATE_BLUE}
-                strokeWidth="1.5"
-                fill="none"
-                initial={{ pathLength: 0 }}
-                animate={{ pathLength: 1 }}
-                transition={{ delay: 1, duration: 1 }}
-              />
-              {/* Door */}
-              <motion.rect
-                x="85"
-                y="115"
-                width="30"
-                height="45"
-                rx="2"
-                stroke={SLATE_BLUE}
-                strokeWidth="1.5"
-                fill="none"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 0.6 }}
-                transition={{ delay: 1.8, duration: 0.8 }}
-              />
-              {/* Windows */}
-              <motion.rect
-                x="50"
-                y="105"
-                width="22"
-                height="22"
-                rx="2"
-                stroke={SLATE_BLUE}
-                strokeWidth="1.5"
-                fill={SLATE_GLOW}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 2, duration: 0.8 }}
-              />
-              <motion.rect
-                x="128"
-                y="105"
-                width="22"
-                height="22"
-                rx="2"
-                stroke={SLATE_BLUE}
-                strokeWidth="1.5"
-                fill={SLATE_GLOW}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 2.2, duration: 0.8 }}
-              />
-              {/* Shield check on roof */}
-              <motion.circle
-                cx="100"
-                cy="65"
-                r="12"
-                fill={BRICK}
-                fillOpacity="0.3"
-                stroke={BRICK}
-                strokeWidth="1"
-                animate={{ opacity: [0.3, 0.7, 0.3] }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-              />
-              <motion.path
-                d="M95 65 L99 69 L106 61"
-                stroke="white"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                initial={{ pathLength: 0 }}
-                animate={{ pathLength: 1 }}
-                transition={{ delay: 2.5, duration: 0.6 }}
-              />
-            </svg>
+            <div className="absolute inset-0 bg-gradient-to-r from-gray-900/50 to-transparent" />
+            <div className="absolute bottom-8 right-8 flex gap-3">
+              <span className="px-4 py-2 rounded-full bg-slate-800/80 backdrop-blur-sm text-white text-sm font-bold">
+                Before
+              </span>
+              <span
+                className="px-4 py-2 rounded-full backdrop-blur-sm text-white text-sm font-bold"
+                style={{ background: `${BRICK}cc` }}
+              >
+                After
+              </span>
+            </div>
           </motion.div>
         </div>
       </section>
 
-      {/* ─── 3. STATS ─── */}
-      <SectionReveal className="relative z-10 py-20">
-        <div
-          className="absolute inset-0"
-          style={{
-            background: `linear-gradient(180deg, ${CHARCOAL} 0%, #1a1f2e 100%)`,
-          }}
-        />
-        <div className="absolute inset-0 opacity-5">
-          <div
-            className="w-full h-full"
-            style={{
-              backgroundImage: `repeating-linear-gradient(90deg, ${SLATE_BLUE} 0px, ${SLATE_BLUE} 1px, transparent 1px, transparent 80px), repeating-linear-gradient(0deg, ${SLATE_BLUE} 0px, ${SLATE_BLUE} 1px, transparent 1px, transparent 80px)`,
-            }}
-          />
-        </div>
-        <div className="relative mx-auto max-w-7xl px-4 md:px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-            {[
-              { value: "25+", label: "Years in Business" },
-              { value: "4,800+", label: "Roofs Completed" },
-              { value: "10", label: "Warranty Years" },
-              { value: "4.9", label: "Customer Rating" },
-            ].map((stat, i) => (
+      {/* ═══════════════════ SECTION 2 — EMERGENCY STRIP ═══════════════════ */}
+      <SectionReveal className="relative z-10">
+        <div className="py-4" style={{ background: BRICK }}>
+          <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 text-white">
+            <div className="flex items-center gap-3">
               <motion.div
-                key={stat.label}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ ...spring, delay: i * 0.1 }}
-                className="text-center"
+                className="w-3 h-3 rounded-full bg-white"
+                animate={{
+                  scale: [1, 1.4, 1],
+                  opacity: [1, 0.5, 1],
+                }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+              />
+              <span className="font-bold text-sm sm:text-base">
+                Storm Damage? We&apos;re On-Site in 2 Hours
+              </span>
+            </div>
+            <a
+              href="tel:2065550734"
+              className="flex items-center gap-2 font-black text-lg hover:underline"
+            >
+              <Phone size={20} weight="fill" />
+              (206) 555-0734
+            </a>
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ═══════════════════ SECTION 3 — TRUST BAR ═══════════════════ */}
+      <SectionReveal
+        className="relative z-10 py-8 border-b border-white/5"
+        style={{ background: "rgba(17,24,39,0.95)" }}
+      >
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex flex-wrap items-center justify-center gap-4 md:gap-8">
+            {[
+              { icon: Clock, text: "25 Years" },
+              { icon: Certificate, text: "GAF Master Elite" },
+              { icon: House, text: "1,200+ Roofs" },
+              { icon: ShieldCheck, text: "WA #SUMMIRN892PZ" },
+              { icon: Trophy, text: "A+ BBB Rating" },
+            ].map((item) => (
+              <div
+                key={item.text}
+                className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/[0.03]"
               >
-                <ShimmerBorder>
-                  <div className="p-6 md:p-8">
-                    <div
-                      className="text-3xl md:text-4xl font-extrabold mb-2"
-                      style={{ color: BRICK }}
-                    >
-                      {stat.value}
-                    </div>
-                    <div className="text-sm text-slate-400">{stat.label}</div>
-                  </div>
-                </ShimmerBorder>
-              </motion.div>
+                <item.icon
+                  size={16}
+                  weight="duotone"
+                  style={{ color: BRICK }}
+                />
+                <span className="text-sm font-medium text-slate-300">
+                  {item.text}
+                </span>
+              </div>
             ))}
           </div>
         </div>
       </SectionReveal>
 
-      {/* ─── 4. SERVICES ─── */}
-      <SectionReveal id="services" className="relative z-10 py-24">
-        <div
-          className="absolute inset-0"
-          style={{
-            background: `linear-gradient(180deg, #1a1f2e 0%, ${CHARCOAL} 100%)`,
-          }}
-        />
-        {/* Diagonal shingle pattern */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-[0.03]">
-          <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <pattern
-                id="shingles"
-                width="60"
-                height="30"
-                patternUnits="userSpaceOnUse"
-              >
-                <path
-                  d="M0,15 Q15,0 30,15 Q45,30 60,15"
-                  fill="none"
-                  stroke={SLATE_BLUE}
-                  strokeWidth="1"
-                />
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#shingles)" />
-          </svg>
-        </div>
-        <div className="relative mx-auto max-w-7xl px-4 md:px-6">
-          <div className="text-center mb-16">
-            <motion.span
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              className="inline-block text-sm font-semibold tracking-widest uppercase mb-4"
-              style={{ color: BRICK }}
-            >
-              Our Services
-            </motion.span>
-            <h2 className="text-3xl md:text-5xl font-extrabold">
-              <WordReveal text="Complete Roofing Solutions" />
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {services.map((service, i) => {
-              const Icon = service.icon;
-              return (
-                <motion.div
-                  key={service.title}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ ...spring, delay: i * 0.08 }}
-                  whileHover={{ scale: 1.03 }}
-                  style={{ willChange: "transform" }}
-                >
-                  <GlassCard className="p-6 md:p-8 h-full group">
-                    <div
-                      className="w-14 h-14 rounded-2xl flex items-center justify-center mb-5 transition-colors"
-                      style={{ background: BRICK_GLOW }}
-                    >
-                      <Icon
-                        size={28}
-                        weight="duotone"
-                        style={{ color: BRICK }}
-                      />
-                    </div>
-                    <h3 className="text-xl font-bold text-white mb-3">
-                      {service.title}
-                    </h3>
-                    <p className="text-slate-400 leading-relaxed text-sm">
-                      {service.description}
-                    </p>
-                  </GlassCard>
-                </motion.div>
-              );
-            })}
-          </div>
-        </div>
-      </SectionReveal>
-
-      {/* ─── 5. BEFORE/AFTER ─── */}
-      <SectionReveal id="gallery" className="relative z-10 py-24">
-        <div
-          className="absolute inset-0"
-          style={{
-            background: `linear-gradient(180deg, ${CHARCOAL} 0%, #0f1420 50%, ${CHARCOAL} 100%)`,
-          }}
-        />
-        <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full blur-[150px] opacity-10"
-          style={{ background: BRICK }}
-        />
-        <div className="relative mx-auto max-w-4xl px-4 md:px-6">
-          <div className="text-center mb-12">
-            <motion.span
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              className="inline-block text-sm font-semibold tracking-widest uppercase mb-4"
-              style={{ color: BRICK }}
-            >
-              Our Work
-            </motion.span>
-            <h2 className="text-3xl md:text-5xl font-extrabold">
-              <WordReveal text="See the Difference" />
-            </h2>
-            <p className="mt-4 text-slate-400 max-w-lg mx-auto">
-              Drag the slider to compare our roof transformations. Real
-              projects, real results.
-            </p>
-          </div>
-          <BeforeAfterSlider />
-        </div>
-      </SectionReveal>
-
-      {/* ─── 6. WHY CHOOSE US ─── */}
-      <SectionReveal id="about" className="relative z-10 py-24">
-        <div
-          className="absolute inset-0"
-          style={{
-            background: `linear-gradient(180deg, #0f1420 0%, #1a1f2e 100%)`,
-          }}
-        />
-        <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-[0.04]">
-          <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <pattern
-                id="dots"
-                width="30"
-                height="30"
-                patternUnits="userSpaceOnUse"
-              >
-                <circle cx="15" cy="15" r="1.5" fill={SLATE_BLUE} />
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#dots)" />
-          </svg>
-        </div>
-        <div className="relative mx-auto max-w-7xl px-4 md:px-6">
-          <div className="text-center mb-16">
-            <motion.span
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              className="inline-block text-sm font-semibold tracking-widest uppercase mb-4"
-              style={{ color: BRICK }}
-            >
-              Why Summit
-            </motion.span>
-            <h2 className="text-3xl md:text-5xl font-extrabold">
-              <WordReveal text="Built on Trust" />
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              {
-                icon: Certificate,
-                title: "Licensed",
-                desc: "Fully licensed general contractor with active bonding in WA, OR, and ID.",
-              },
-              {
-                icon: ShieldCheck,
-                title: "Insured",
-                desc: "Full liability and workers comp coverage protects you and your property.",
-              },
-              {
-                icon: Handshake,
-                title: "Warranty",
-                desc: "10-year workmanship warranty plus manufacturer-backed material warranties.",
-              },
-              {
-                icon: MapPin,
-                title: "Local",
-                desc: "Family-owned and operated in the Pacific Northwest for over 25 years.",
-              },
-            ].map((badge, i) => {
-              const Icon = badge.icon;
-              return (
-                <motion.div
-                  key={badge.title}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ ...spring, delay: i * 0.1 }}
-                  whileHover={{ scale: 1.04 }}
-                  style={{ willChange: "transform" }}
-                >
-                  <GlassCard className="p-6 text-center h-full">
-                    <div
-                      className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center"
-                      style={{ background: BRICK_GLOW }}
-                    >
-                      <Icon
-                        size={32}
-                        weight="duotone"
-                        style={{ color: BRICK }}
-                      />
-                    </div>
-                    <h3 className="text-lg font-bold text-white mb-2">
-                      {badge.title}
-                    </h3>
-                    <p className="text-sm text-slate-400">{badge.desc}</p>
-                  </GlassCard>
-                </motion.div>
-              );
-            })}
-          </div>
-        </div>
-      </SectionReveal>
-
-      {/* ─── 7. PROCESS ─── */}
-      <SectionReveal className="relative z-10 py-24">
-        <div
-          className="absolute inset-0"
-          style={{
-            background: `linear-gradient(180deg, #1a1f2e 0%, ${CHARCOAL} 100%)`,
-          }}
-        />
-        {/* Subtle grid */}
-        <div className="absolute inset-0 opacity-[0.03]">
-          <div
-            className="w-full h-full"
-            style={{
-              backgroundImage: `repeating-linear-gradient(90deg, ${SLATE_BLUE} 0px, ${SLATE_BLUE} 1px, transparent 1px, transparent 60px), repeating-linear-gradient(0deg, ${SLATE_BLUE} 0px, ${SLATE_BLUE} 1px, transparent 1px, transparent 60px)`,
-            }}
+      {/* ═══════════════════ SECTION 4 — SERVICES ═══════════════════ */}
+      <SectionReveal
+        id="services"
+        className="relative z-10 py-20 md:py-28"
+      >
+        <RooflinePattern />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <SectionHeader
+            label="What We Do"
+            title="Roofing Services"
+            subtitle="From emergency repairs to full commercial installations, we handle it all with precision and care."
           />
-        </div>
-        <div className="relative mx-auto max-w-7xl px-4 md:px-6">
-          <div className="text-center mb-16">
-            <motion.span
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              className="inline-block text-sm font-semibold tracking-widest uppercase mb-4"
-              style={{ color: BRICK }}
-            >
-              How It Works
-            </motion.span>
-            <h2 className="text-3xl md:text-5xl font-extrabold">
-              <WordReveal text="Our Simple Process" />
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-4">
-            {[
-              {
-                step: "01",
-                icon: MagnifyingGlass,
-                title: "Free Inspection",
-                desc: "We send a certified inspector to evaluate your roof with drone photography and a detailed 21-point assessment.",
-              },
-              {
-                step: "02",
-                icon: ClipboardText,
-                title: "Detailed Quote",
-                desc: "You receive a transparent, itemized quote with material options, timeline, and zero hidden fees.",
-              },
-              {
-                step: "03",
-                icon: Hammer,
-                title: "Expert Installation",
-                desc: "Our trained crews install your new roof with precision, keeping your property clean and secure throughout.",
-              },
-              {
-                step: "04",
-                icon: Eye,
-                title: "Final Walkthrough",
-                desc: "We walk the project with you, ensure everything is perfect, and activate your warranty protection.",
-              },
-            ].map((item, i) => {
-              const Icon = item.icon;
-              return (
-                <motion.div
-                  key={item.step}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ ...spring, delay: i * 0.12 }}
-                >
-                  <GlassCard className="p-6 md:p-8 h-full relative overflow-hidden">
+          <motion.div
+            className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+            variants={stagger}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true }}
+          >
+            {SERVICES.map((svc, i) => (
+              <motion.div key={svc.title} variants={fadeUp}>
+                <GlassCard className="p-6 h-full hover:border-red-500/20 transition-colors group">
+                  <div className="flex items-start gap-4">
                     <div
-                      className="absolute top-4 right-4 text-5xl font-black opacity-[0.06]"
-                      style={{ color: BRICK }}
-                    >
-                      {item.step}
-                    </div>
-                    <div
-                      className="w-12 h-12 rounded-xl flex items-center justify-center mb-5"
+                      className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-colors"
                       style={{ background: BRICK_GLOW }}
                     >
-                      <Icon
+                      <svc.icon
                         size={24}
                         weight="duotone"
                         style={{ color: BRICK }}
                       />
                     </div>
-                    <h3 className="text-lg font-bold text-white mb-2">
-                      {item.title}
-                    </h3>
-                    <p className="text-sm text-slate-400 leading-relaxed">
-                      {item.desc}
-                    </p>
-                    {i < 3 && (
-                      <div className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-20">
-                        <ArrowRight
-                          size={20}
-                          weight="bold"
-                          style={{ color: SLATE_BLUE }}
-                        />
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span
+                          className="text-xs font-bold px-2 py-0.5 rounded-md"
+                          style={{
+                            background: BRICK_GLOW,
+                            color: BRICK_LIGHT,
+                          }}
+                        >
+                          0{i + 1}
+                        </span>
+                        <h3 className="font-bold text-white text-lg">
+                          {svc.title}
+                        </h3>
                       </div>
-                    )}
-                  </GlassCard>
-                </motion.div>
-              );
-            })}
-          </div>
-        </div>
-      </SectionReveal>
-
-      {/* ─── 8. TESTIMONIALS ─── */}
-      <SectionReveal id="testimonials" className="relative z-10 py-24">
-        <div
-          className="absolute inset-0"
-          style={{
-            background: `linear-gradient(180deg, ${CHARCOAL} 0%, #0f1420 100%)`,
-          }}
-        />
-        <div
-          className="absolute top-0 left-1/4 w-[400px] h-[400px] rounded-full blur-[120px] opacity-10"
-          style={{ background: SLATE_BLUE }}
-        />
-        <div className="relative mx-auto max-w-7xl px-4 md:px-6">
-          <div className="text-center mb-16">
-            <motion.span
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              className="inline-block text-sm font-semibold tracking-widest uppercase mb-4"
-              style={{ color: BRICK }}
-            >
-              Testimonials
-            </motion.span>
-            <h2 className="text-3xl md:text-5xl font-extrabold">
-              <WordReveal text="What Our Clients Say" />
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {testimonials.map((t, i) => (
-              <motion.div
-                key={t.name}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ ...spring, delay: i * 0.1 }}
-                whileHover={{ scale: 1.03 }}
-                style={{ willChange: "transform" }}
-              >
-                <GlassCard className="p-6 md:p-8 h-full flex flex-col">
-                  <Quotes
-                    size={32}
-                    weight="fill"
-                    className="mb-4 opacity-30"
-                    style={{ color: BRICK }}
-                  />
-                  <p className="text-slate-300 leading-relaxed flex-1 text-sm">
-                    &ldquo;{t.text}&rdquo;
-                  </p>
-                  <div className="mt-6 pt-4 border-t border-white/5 flex items-center justify-between">
-                    <span className="font-semibold text-white">{t.name}</span>
-                    <div className="flex gap-0.5">
-                      {Array.from({ length: t.rating }).map((_, j) => (
-                        <Star
-                          key={j}
-                          size={14}
-                          weight="fill"
-                          style={{ color: "#facc15" }}
-                        />
-                      ))}
+                      <p className="text-sm text-slate-400 leading-relaxed mt-1">
+                        {svc.description}
+                      </p>
                     </div>
                   </div>
                 </GlassCard>
               </motion.div>
             ))}
-          </div>
-        </div>
-      </SectionReveal>
-
-      {/* ─── 9. EMERGENCY CTA ─── */}
-      <SectionReveal className="relative z-10 py-20">
-        <div
-          className="absolute inset-0"
-          style={{
-            background: `linear-gradient(135deg, #1a0000 0%, ${CHARCOAL} 40%, #1a0000 100%)`,
-          }}
-        />
-        <div
-          className="absolute inset-0 opacity-20"
-          style={{
-            background: `radial-gradient(ellipse at center, ${BRICK_GLOW} 0%, transparent 70%)`,
-          }}
-        />
-        <div className="relative mx-auto max-w-4xl px-4 md:px-6 text-center">
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            whileInView={{ scale: 1, opacity: 1 }}
-            viewport={{ once: true }}
-            transition={spring}
-          >
-            <div
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border mb-8 text-sm font-semibold"
-              style={{
-                borderColor: "rgba(220, 38, 38, 0.3)",
-                background: "rgba(220, 38, 38, 0.1)",
-                color: BRICK_LIGHT,
-              }}
-            >
-              <Warning size={18} weight="fill" />
-              24/7 Emergency Response
-            </div>
-            <h2 className="text-3xl md:text-5xl font-extrabold mb-6">
-              <WordReveal text="Storm Damage? We Respond Fast" />
-            </h2>
-            <p className="text-lg text-slate-400 mb-10 max-w-2xl mx-auto">
-              Hail, wind, fallen trees — we have seen it all. Our emergency
-              response team is ready around the clock. Call now for immediate
-              assistance and free damage assessment.
-            </p>
-            <MagneticButton
-              className="px-10 py-5 rounded-full text-lg font-bold text-white flex items-center gap-3 mx-auto"
-              style={{ background: BRICK } as React.CSSProperties}
-            >
-              <Phone size={22} weight="fill" />
-              Call (253) 555-ROOF Now
-            </MagneticButton>
           </motion.div>
         </div>
       </SectionReveal>
 
-      {/* ─── 10. MATERIALS ─── */}
-      <SectionReveal className="relative z-10 py-24">
-        <div
-          className="absolute inset-0"
-          style={{
-            background: `linear-gradient(180deg, ${CHARCOAL} 0%, #1a1f2e 100%)`,
-          }}
-        />
-        <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-[0.03]">
-          <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <pattern
-                id="cross"
-                width="40"
-                height="40"
-                patternUnits="userSpaceOnUse"
-              >
-                <path
-                  d="M20,16 L20,24 M16,20 L24,20"
-                  stroke={SLATE_BLUE}
-                  strokeWidth="1"
-                />
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#cross)" />
-          </svg>
-        </div>
-        <div className="relative mx-auto max-w-7xl px-4 md:px-6">
-          <div className="text-center mb-16">
-            <motion.span
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              className="inline-block text-sm font-semibold tracking-widest uppercase mb-4"
-              style={{ color: BRICK }}
-            >
-              Premium Materials
-            </motion.span>
-            <h2 className="text-3xl md:text-5xl font-extrabold">
-              <WordReveal text="Quality You Can Trust" />
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {materials.map((m, i) => (
+      {/* ═══════════════════ SECTION 5 — INSURANCE CLAIMS PROCESS ═══════════════════ */}
+      <SectionReveal
+        className="relative z-10 py-20 md:py-28"
+        style={{
+          background:
+            "linear-gradient(180deg, rgba(17,24,39,1) 0%, rgba(30,30,30,1) 100%)",
+        }}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <SectionHeader
+            label="Insurance Made Easy"
+            title="We Handle Your Insurance Claim"
+            subtitle="From inspection to installation. You pay nothing out of pocket beyond your deductible."
+            labelColor={GOLD}
+          />
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 relative">
+            {/* Connecting line */}
+            <div
+              className="hidden lg:block absolute top-14 left-[12.5%] right-[12.5%] h-px"
+              style={{
+                background: `linear-gradient(90deg, ${GOLD}33, ${GOLD}, ${GOLD}33)`,
+              }}
+            />
+            {INSURANCE_STEPS.map((step) => (
               <motion.div
-                key={m.name}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                key={step.step}
+                variants={fadeUp}
+                initial="hidden"
+                whileInView="show"
                 viewport={{ once: true }}
-                transition={{ ...spring, delay: i * 0.1 }}
-                whileHover={{ scale: 1.03 }}
-                style={{ willChange: "transform" }}
               >
-                <GlassCard className="overflow-hidden h-full">
-                  <div className="h-40 overflow-hidden">
-                    <img
-                      src={m.image}
-                      alt={m.name}
-                      className="w-full h-full object-cover object-center transition-transform duration-500 hover:scale-110"
+                <div className="text-center relative">
+                  <div
+                    className="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center font-black text-xl text-white relative z-10"
+                    style={{
+                      background: `linear-gradient(135deg, ${GOLD}, ${GOLD}cc)`,
+                      boxShadow: `0 0 30px ${GOLD}33`,
+                    }}
+                  >
+                    {step.step}
+                  </div>
+                  <h3 className="font-bold text-white text-lg mb-2">
+                    {step.title}
+                  </h3>
+                  <p className="text-sm text-slate-400 leading-relaxed">
+                    {step.description}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="text-center mt-12">
+            <ShimmerBorder className="inline-block">
+              <div className="px-8 py-4 flex items-center gap-3">
+                <Shield
+                  size={24}
+                  weight="fill"
+                  style={{ color: GOLD }}
+                />
+                <span className="text-white font-bold">
+                  Your Insurance Claim Handled Start to Finish
+                </span>
+              </div>
+            </ShimmerBorder>
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ═══════════════════ SECTION 6 — PREMIUM MATERIALS ═══════════════════ */}
+      <SectionReveal
+        id="materials"
+        className="relative z-10 py-20 md:py-28"
+      >
+        <RooflinePattern />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <SectionHeader
+            label="Built to Last"
+            title="Premium Materials"
+            subtitle="We only install materials we'd put on our own homes. Every option backed by manufacturer and workmanship warranties."
+          />
+          <motion.div
+            className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6"
+            variants={stagger}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true }}
+          >
+            {MATERIALS.map((mat) => (
+              <motion.div key={mat.name} variants={fadeUp}>
+                <GlassCard className="p-6 h-full text-center hover:border-red-500/20 transition-colors">
+                  <div
+                    className="w-14 h-14 rounded-xl mx-auto mb-4 flex items-center justify-center"
+                    style={{ background: BRICK_GLOW }}
+                  >
+                    <mat.icon
+                      size={28}
+                      weight="duotone"
+                      style={{ color: BRICK }}
                     />
                   </div>
-                  <div className="p-5">
-                    <h3 className="text-lg font-bold text-white mb-2">
-                      {m.name}
-                    </h3>
-                    <p className="text-sm text-slate-400 leading-relaxed">
-                      {m.description}
-                    </p>
-                  </div>
+                  <h3 className="font-bold text-white text-lg mb-1">
+                    {mat.name}
+                  </h3>
+                  <span
+                    className="text-xs font-semibold px-3 py-1 rounded-full inline-block mb-3"
+                    style={{ background: GOLD_GLOW, color: GOLD }}
+                  >
+                    {mat.warranty}
+                  </span>
+                  <p className="text-sm text-slate-400 leading-relaxed">
+                    {mat.description}
+                  </p>
                 </GlassCard>
               </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </SectionReveal>
 
-      {/* ─── 11. FAQ ─── */}
-      <SectionReveal className="relative z-10 py-24">
-        <div
-          className="absolute inset-0"
-          style={{
-            background: `linear-gradient(180deg, #1a1f2e 0%, ${CHARCOAL} 100%)`,
-          }}
-        />
-        <div
-          className="absolute bottom-0 right-0 w-[400px] h-[400px] rounded-full blur-[120px] opacity-10"
-          style={{ background: SLATE_BLUE }}
-        />
-        <div className="relative mx-auto max-w-3xl px-4 md:px-6">
-          <div className="text-center mb-16">
-            <motion.span
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              className="inline-block text-sm font-semibold tracking-widest uppercase mb-4"
-              style={{ color: BRICK }}
-            >
-              FAQ
-            </motion.span>
-            <h2 className="text-3xl md:text-5xl font-extrabold">
-              <WordReveal text="Common Questions" />
-            </h2>
-          </div>
-          <div className="space-y-4">
-            {faqs.map((faq, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ ...spring, delay: i * 0.08 }}
+      {/* ═══════════════════ SECTION 7 — BEFORE / AFTER ═══════════════════ */}
+      <SectionReveal
+        className="relative z-10 py-20 md:py-28"
+        style={{
+          background:
+            "linear-gradient(180deg, rgba(17,24,39,1) 0%, rgba(20,20,30,1) 100%)",
+        }}
+      >
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <SectionHeader
+            label="Real Results"
+            title="Before & After"
+            subtitle="See the transformation. Every project documented from start to finish."
+          />
+          <GlassCard className="overflow-hidden">
+            <div className="relative w-full aspect-[16/10]">
+              <img
+                src="/images/roofing-before-after.jpg"
+                alt="Summit Roofing NW before and after roof replacement"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+              <div className="absolute bottom-4 left-4 px-4 py-2 rounded-full bg-slate-800/80 backdrop-blur-sm text-white text-sm font-bold">
+                Before
+              </div>
+              <div
+                className="absolute bottom-4 right-4 px-4 py-2 rounded-full backdrop-blur-sm text-white text-sm font-bold"
+                style={{ background: `${BRICK}cc` }}
               >
-                <AccordionItem
-                  title={faq.title}
-                  description={faq.description}
-                  isOpen={openFaq === i}
-                  onToggle={() => setOpenFaq(openFaq === i ? null : i)}
-                />
-              </motion.div>
-            ))}
-          </div>
+                After
+              </div>
+            </div>
+          </GlassCard>
+          <p className="text-center text-sm text-slate-500 mt-4">
+            Complete tear-off and replacement with architectural shingles — Seattle, WA
+          </p>
         </div>
       </SectionReveal>
 
-      {/* ─── 12. CONTACT ─── */}
-      <SectionReveal id="contact" className="relative z-10 py-24">
-        <div
-          className="absolute inset-0"
-          style={{
-            background: `linear-gradient(180deg, ${CHARCOAL} 0%, #0f1420 100%)`,
-          }}
-        />
-        <div
-          className="absolute top-1/2 left-1/4 w-[300px] h-[300px] rounded-full blur-[100px] opacity-10"
-          style={{ background: BRICK }}
-        />
-        <div className="relative mx-auto max-w-7xl px-4 md:px-6">
-          <div className="text-center mb-16">
-            <motion.span
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              className="inline-block text-sm font-semibold tracking-widest uppercase mb-4"
-              style={{ color: BRICK }}
-            >
-              Get In Touch
-            </motion.span>
-            <h2 className="text-3xl md:text-5xl font-extrabold">
-              <WordReveal text="Ready to Get Started?" />
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Contact Info */}
-            <div className="space-y-6">
-              <GlassCard className="p-6">
-                <div className="flex items-start gap-4">
-                  <div
-                    className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
-                    style={{ background: BRICK_GLOW }}
+      {/* ═══════════════════ SECTION 8 — MEET JAKE MORRISON ═══════════════════ */}
+      <SectionReveal className="relative z-10 py-20 md:py-28">
+        <RooflinePattern />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Text side */}
+            <div>
+              <span
+                className="text-xs font-semibold uppercase tracking-[0.2em] mb-3 block"
+                style={{ color: BRICK }}
+              >
+                Owner Spotlight
+              </span>
+              <h2 className="text-3xl md:text-4xl font-black mb-6">
+                Meet Jake Morrison
+              </h2>
+              <p className="text-slate-400 leading-relaxed mb-4">
+                Started swinging a hammer at 16. Now leads a crew of 12
+                across the greater Seattle area. Jake built Summit Roofing NW
+                on a simple promise: treat every roof like it&apos;s your own
+                home.
+              </p>
+              <p className="text-slate-400 leading-relaxed mb-6">
+                With 25 years of hands-on experience and GAF Master Elite
+                certification, Jake personally oversees every project from
+                initial inspection to final walkthrough. No shortcuts, no
+                excuses, no subcontractors you&apos;ve never met — just
+                honest craftsmanship from a crew that takes pride in their
+                work.
+              </p>
+              <div className="flex flex-wrap gap-3 mb-6">
+                {[
+                  "GAF Master Elite",
+                  "A+ BBB",
+                  "WA #SUMMIRN892PZ",
+                  "25 Years Experience",
+                ].map((badge) => (
+                  <span
+                    key={badge}
+                    className="px-3 py-1.5 rounded-full text-xs font-semibold border border-white/10 bg-white/[0.04] text-slate-300"
                   >
-                    <Phone
-                      size={24}
-                      weight="duotone"
+                    <CheckCircle
+                      size={12}
+                      weight="fill"
+                      className="inline mr-1"
                       style={{ color: BRICK }}
                     />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-white mb-1">
-                      Call Us
-                    </h3>
-                    <p className="text-slate-400">(253) 555-ROOF</p>
-                    <p className="text-sm text-slate-500 mt-1">
-                      Available 24/7 for emergencies
-                    </p>
-                  </div>
+                    {badge}
+                  </span>
+                ))}
+              </div>
+              <MagneticButton
+                className="px-6 py-3 rounded-xl text-white font-bold cursor-pointer flex items-center gap-2"
+                style={{ background: BRICK }}
+                onClick={() => scrollTo("contact")}
+              >
+                <Phone size={18} weight="fill" />
+                Talk to Jake Directly
+              </MagneticButton>
+            </div>
+
+            {/* Card side */}
+            <div className="flex justify-center">
+              <GlassCard className="p-8 text-center max-w-sm w-full">
+                <div
+                  className="w-24 h-24 rounded-full mx-auto mb-4 flex items-center justify-center text-3xl font-black text-white"
+                  style={{
+                    background: `linear-gradient(135deg, ${BRICK}, ${BRICK_LIGHT})`,
+                  }}
+                >
+                  JM
                 </div>
-              </GlassCard>
-              <GlassCard className="p-6">
-                <div className="flex items-start gap-4">
-                  <div
-                    className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
-                    style={{ background: BRICK_GLOW }}
-                  >
-                    <MapPin
-                      size={24}
-                      weight="duotone"
-                      style={{ color: BRICK }}
+                <h3 className="text-xl font-bold text-white mb-1">
+                  Jake Morrison
+                </h3>
+                <p className="text-sm text-slate-400 mb-5">
+                  Owner &amp; Master Roofer
+                </p>
+                <div className="space-y-3 text-sm text-slate-400">
+                  <div className="flex items-center justify-center gap-2">
+                    <Certificate
+                      size={16}
+                      style={{ color: GOLD }}
                     />
+                    <span>GAF Master Elite Certified</span>
                   </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-white mb-1">
-                      Visit Us
-                    </h3>
-                    <p className="text-slate-400">
-                      4521 Pacific Ave, Suite 200
-                    </p>
-                    <p className="text-slate-400">Tacoma, WA 98402</p>
-                  </div>
-                </div>
-              </GlassCard>
-              <GlassCard className="p-6">
-                <div className="flex items-start gap-4">
-                  <div
-                    className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
-                    style={{ background: BRICK_GLOW }}
-                  >
-                    <Clock
-                      size={24}
-                      weight="duotone"
-                      style={{ color: BRICK }}
+                  <div className="flex items-center justify-center gap-2">
+                    <ShieldCheck
+                      size={16}
+                      style={{ color: GOLD }}
                     />
+                    <span>WA License #SUMMIRN892PZ</span>
                   </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-white mb-1">Hours</h3>
-                    <p className="text-slate-400">Mon - Fri: 7:00am - 6:00pm</p>
-                    <p className="text-slate-400">Sat: 8:00am - 2:00pm</p>
-                    <p className="text-sm text-slate-500 mt-1">
-                      Emergency services available 24/7
-                    </p>
+                  <div className="flex items-center justify-center gap-2">
+                    <Trophy size={16} style={{ color: GOLD }} />
+                    <span>A+ BBB Rating</span>
+                  </div>
+                  <div className="flex items-center justify-center gap-2">
+                    <Users size={16} style={{ color: GOLD }} />
+                    <span>Crew of 12 Professionals</span>
                   </div>
                 </div>
               </GlassCard>
             </div>
-            {/* Contact Form */}
-            <GlassCard className="p-6 md:p-8">
-              <h3 className="text-xl font-bold text-white mb-6">
-                Request Your Free Inspection
-              </h3>
-              <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <input
-                    type="text"
-                    placeholder="Full Name"
-                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-red-500/50 transition-colors"
-                  />
-                  <input
-                    type="tel"
-                    placeholder="Phone Number"
-                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-red-500/50 transition-colors"
-                  />
-                </div>
-                <input
-                  type="email"
-                  placeholder="Email Address"
-                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-red-500/50 transition-colors"
-                />
-                <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-slate-500 focus:outline-none focus:border-red-500/50 transition-colors">
-                  <option value="">Select Service Needed</option>
-                  <option value="replacement">Roof Replacement</option>
-                  <option value="repair">Roof Repair</option>
-                  <option value="storm">Storm Damage</option>
-                  <option value="gutters">Gutter Installation</option>
-                  <option value="inspection">Inspection</option>
-                  <option value="commercial">Commercial Roofing</option>
-                </select>
-                <textarea
-                  placeholder="Tell us about your project..."
-                  rows={4}
-                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-red-500/50 transition-colors resize-none"
-                />
-                <MagneticButton
-                  className="w-full px-6 py-4 rounded-xl text-base font-bold text-white flex items-center justify-center gap-2"
-                  style={{ background: BRICK } as React.CSSProperties}
-                >
-                  Schedule Free Inspection
-                  <ArrowRight size={18} weight="bold" />
-                </MagneticButton>
-              </form>
-            </GlassCard>
           </div>
         </div>
       </SectionReveal>
 
-      {/* ─── 13. FOOTER ─── */}
-      <footer className="relative z-10 border-t border-white/5 py-8">
-        <div
-          className="absolute inset-0"
-          style={{ background: `linear-gradient(180deg, #0f1420 0%, #0a0d14 100%)` }}
-        />
-        <div className="relative mx-auto max-w-7xl px-4 md:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2 text-sm text-slate-500">
-            <House size={16} weight="duotone" style={{ color: BRICK }} />
-            <span>Summit Roofing NW &copy; {new Date().getFullYear()}</span>
+      {/* ═══════════════════ SECTION 9 — FINANCING ═══════════════════ */}
+      <SectionReveal
+        className="relative z-10 py-20 md:py-28"
+        style={{
+          background:
+            "linear-gradient(180deg, rgba(17,24,39,1) 0%, rgba(30,30,30,1) 100%)",
+        }}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <SectionHeader
+            label="Flexible Payments"
+            title="Financing Available"
+            subtitle="0% interest available on qualifying projects. Protect your home today, pay over time."
+            labelColor={GOLD}
+          />
+          <div className="grid sm:grid-cols-3 gap-6 max-w-4xl mx-auto">
+            {FINANCING_PLANS.map((plan) => (
+              <div key={plan.title}>
+                {plan.featured ? (
+                  <ShimmerBorder>
+                    <div className="p-6 text-center relative">
+                      <span
+                        className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-xs font-bold text-white"
+                        style={{ background: GOLD }}
+                      >
+                        Most Popular
+                      </span>
+                      <h3 className="text-lg font-bold text-white mt-3 mb-2">
+                        {plan.title}
+                      </h3>
+                      <div className="mb-4">
+                        <span
+                          className="text-4xl font-black"
+                          style={{ color: GOLD }}
+                        >
+                          {plan.price}
+                        </span>
+                        <span className="text-slate-400 text-sm">
+                          {plan.period}
+                        </span>
+                      </div>
+                      <ul className="space-y-2 mb-6">
+                        {plan.features.map((f) => (
+                          <li
+                            key={f}
+                            className="text-sm text-slate-300 flex items-center gap-2"
+                          >
+                            <CheckCircle
+                              size={16}
+                              weight="fill"
+                              style={{ color: GOLD }}
+                            />
+                            {f}
+                          </li>
+                        ))}
+                      </ul>
+                      <button
+                        className="w-full py-3 rounded-xl font-bold text-white cursor-pointer"
+                        style={{ background: GOLD }}
+                      >
+                        Get Started
+                      </button>
+                    </div>
+                  </ShimmerBorder>
+                ) : (
+                  <GlassCard className="p-6 text-center h-full">
+                    <h3 className="text-lg font-bold text-white mb-2">
+                      {plan.title}
+                    </h3>
+                    <div className="mb-4">
+                      <span className="text-4xl font-black text-white">
+                        {plan.price}
+                      </span>
+                      <span className="text-slate-400 text-sm">
+                        {plan.period}
+                      </span>
+                    </div>
+                    <ul className="space-y-2 mb-6">
+                      {plan.features.map((f) => (
+                        <li
+                          key={f}
+                          className="text-sm text-slate-400 flex items-center gap-2"
+                        >
+                          <CheckCircle
+                            size={16}
+                            weight="fill"
+                            className="text-slate-500"
+                          />
+                          {f}
+                        </li>
+                      ))}
+                    </ul>
+                    <button className="w-full py-3 rounded-xl font-bold text-white border border-white/20 hover:bg-white/5 cursor-pointer">
+                      Learn More
+                    </button>
+                  </GlassCard>
+                )}
+              </div>
+            ))}
           </div>
-          <p className="text-xs text-slate-600">
-            Created by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" style={{textDecoration:"underline"}}>bluejayportfolio.com</a>
-          </p>
+        </div>
+      </SectionReveal>
+
+      {/* ═══════════════════ SECTION 10 — TESTIMONIALS (CARD STACK) ═══════════════════ */}
+      <SectionReveal
+        id="reviews"
+        className="relative z-10 py-20 md:py-28"
+      >
+        <RooflinePattern />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <SectionHeader
+            label="Trusted by Homeowners"
+            title="What Seattle Says About Us"
+          />
+
+          {/* Google rating header */}
+          <div className="flex items-center justify-center gap-2 mb-10 -mt-6">
+            <div className="flex gap-0.5">
+              {[...Array(5)].map((_, i) => (
+                <Star
+                  key={i}
+                  size={22}
+                  weight="fill"
+                  className="text-yellow-400"
+                />
+              ))}
+            </div>
+            <span className="text-slate-400 text-sm font-medium ml-1">
+              4.9 / 5.0 from 200+ reviews
+            </span>
+          </div>
+
+          {/* Card Stack Layout — staggered cards with slight rotation */}
+          <motion.div
+            className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+            variants={stagger}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true }}
+          >
+            {TESTIMONIALS.map((t, i) => (
+              <motion.div
+                key={t.name}
+                variants={fadeUp}
+                style={{
+                  transform:
+                    i % 2 === 1 ? "translateY(16px)" : undefined,
+                  rotate: i % 3 === 0 ? -0.5 : i % 3 === 1 ? 0.5 : 0,
+                }}
+              >
+                <GlassCard
+                  className="p-6 h-full relative hover:border-red-500/20 transition-all hover:-translate-y-1"
+                  style={{
+                    boxShadow: `0 ${4 + i * 2}px ${20 + i * 4}px rgba(0,0,0,0.3)`,
+                  }}
+                >
+                  <Quotes
+                    size={32}
+                    weight="fill"
+                    className="mb-3 opacity-20"
+                    style={{ color: BRICK }}
+                  />
+                  <p className="text-slate-300 leading-relaxed mb-5 italic">
+                    &ldquo;{t.text}&rdquo;
+                  </p>
+                  <div className="flex items-center gap-3 pt-4 border-t border-white/5">
+                    <div
+                      className="w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0"
+                      style={{
+                        background: `linear-gradient(135deg, ${BRICK}, ${BRICK_LIGHT})`,
+                      }}
+                    >
+                      {t.name.charAt(0)}
+                    </div>
+                    <div>
+                      <div className="font-semibold text-white text-sm flex items-center gap-1.5">
+                        {t.name}
+                        <CheckCircle
+                          size={14}
+                          weight="fill"
+                          className="text-green-400"
+                        />
+                      </div>
+                      <div className="flex gap-0.5 mt-0.5">
+                        {[...Array(t.rating)].map((_, j) => (
+                          <Star
+                            key={j}
+                            size={12}
+                            weight="fill"
+                            className="text-yellow-400"
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </GlassCard>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </SectionReveal>
+
+      {/* ═══════════════════ SECTION 11 — ROOF AGE QUIZ ═══════════════════ */}
+      <SectionReveal
+        className="relative z-10 py-20 md:py-28"
+        style={{
+          background:
+            "linear-gradient(180deg, rgba(17,24,39,1) 0%, rgba(20,20,30,1) 100%)",
+        }}
+      >
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <SectionHeader
+            label="Quick Assessment"
+            title="How Old Is Your Roof?"
+            subtitle="Select your roof's age to see our recommendation for your situation."
+          />
+          <div className="grid sm:grid-cols-3 gap-4 mb-8">
+            {QUIZ_OPTIONS.map((option, i) => (
+              <button
+                key={option.label}
+                onClick={() => setQuizAnswer(i)}
+                className={`p-6 rounded-2xl border-2 text-center cursor-pointer transition-all duration-300 ${
+                  quizAnswer === i
+                    ? "scale-[1.03]"
+                    : "hover:scale-[1.02]"
+                }`}
+                style={{
+                  borderColor:
+                    quizAnswer === i
+                      ? option.color
+                      : "rgba(255,255,255,0.1)",
+                  background:
+                    quizAnswer === i
+                      ? `${option.color}15`
+                      : "rgba(255,255,255,0.03)",
+                }}
+              >
+                <div
+                  className="w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center font-bold text-white text-sm"
+                  style={{ background: option.color }}
+                >
+                  {option.shortLabel}
+                </div>
+                <span className="font-semibold text-white text-sm block">
+                  {option.label}
+                </span>
+                <span
+                  className="text-xs mt-1 block"
+                  style={{
+                    color:
+                      quizAnswer === i ? option.color : "transparent",
+                  }}
+                >
+                  Selected
+                </span>
+              </button>
+            ))}
+          </div>
+
+          <AnimatePresence>
+            {quizAnswer !== null && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={spring}
+              >
+                <GlassCard className="p-6 text-left">
+                  <div className="flex items-start gap-4">
+                    <div
+                      className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
+                      style={{
+                        background: QUIZ_OPTIONS[quizAnswer].color,
+                      }}
+                    >
+                      <Eye
+                        size={20}
+                        weight="fill"
+                        className="text-white"
+                      />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-white mb-2">
+                        Our Recommendation
+                      </h4>
+                      <p className="text-slate-300 leading-relaxed mb-4">
+                        {QUIZ_OPTIONS[quizAnswer].recommendation}
+                      </p>
+                      <MagneticButton
+                        className="px-6 py-3 rounded-xl text-white font-bold cursor-pointer flex items-center gap-2"
+                        style={{ background: BRICK }}
+                        onClick={() => scrollTo("contact")}
+                      >
+                        Schedule Free Inspection
+                        <ArrowRight size={16} weight="bold" />
+                      </MagneticButton>
+                    </div>
+                  </div>
+                </GlassCard>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </SectionReveal>
+
+      {/* ═══════════════════ SECTION 12 — COMPETITOR COMPARISON ═══════════════════ */}
+      <SectionReveal className="relative z-10 py-20 md:py-28">
+        <RooflinePattern />
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <SectionHeader
+            label="The Difference"
+            title="Summit vs Average Roofers"
+            subtitle="See why homeowners across Seattle choose Summit Roofing NW over the competition."
+          />
+          <GlassCard className="overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="border-b border-white/10">
+                    <th className="px-6 py-4 text-sm font-semibold text-slate-400">
+                      Feature
+                    </th>
+                    <th
+                      className="px-6 py-4 text-sm font-bold text-center"
+                      style={{ color: BRICK }}
+                    >
+                      Summit Roofing NW
+                    </th>
+                    <th className="px-6 py-4 text-sm font-semibold text-slate-500 text-center">
+                      Average Roofer
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {COMPARISON_ROWS.map((row, i) => (
+                    <tr
+                      key={row.feature}
+                      className={
+                        i < COMPARISON_ROWS.length - 1
+                          ? "border-b border-white/5"
+                          : ""
+                      }
+                    >
+                      <td className="px-6 py-4 text-sm text-slate-300">
+                        {row.feature}
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        <CheckCircle
+                          size={22}
+                          weight="fill"
+                          className="text-green-400 mx-auto"
+                        />
+                      </td>
+                      <td className="px-6 py-4 text-center text-sm text-slate-500">
+                        {row.them}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </GlassCard>
+        </div>
+      </SectionReveal>
+
+      {/* ═══════════════════ SECTION 13 — VIDEO PLACEHOLDER ═══════════════════ */}
+      <SectionReveal
+        className="relative z-10 py-20 md:py-28"
+        style={{
+          background:
+            "linear-gradient(180deg, rgba(17,24,39,1) 0%, rgba(30,30,30,1) 100%)",
+        }}
+      >
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <SectionHeader
+            label="See Us Work"
+            title="Watch Our Crew in Action"
+            subtitle="Full project walkthrough — from tear-off to final inspection."
+          />
+          <GlassCard className="aspect-video relative overflow-hidden group cursor-pointer">
+            <div className="absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
+              <RooflinePattern />
+              <motion.div
+                className="w-20 h-20 rounded-full flex items-center justify-center relative z-10"
+                style={{
+                  background: BRICK,
+                  boxShadow: `0 0 40px ${BRICK}44`,
+                }}
+                whileHover={{ scale: 1.1 }}
+                transition={spring}
+              >
+                <Play
+                  size={36}
+                  weight="fill"
+                  className="text-white ml-1"
+                />
+              </motion.div>
+            </div>
+            <div className="absolute bottom-6 left-6 right-6 text-center">
+              <span className="text-sm text-slate-400">
+                Coming soon — full project documentary
+              </span>
+            </div>
+          </GlassCard>
+        </div>
+      </SectionReveal>
+
+      {/* ═══════════════════ SECTION 14 — SERVICE AREAS ═══════════════════ */}
+      <SectionReveal className="relative z-10 py-20 md:py-28">
+        <RooflinePattern />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <SectionHeader
+            label="Coverage Area"
+            title="Serving Greater Seattle"
+            subtitle="Fast response times across the entire Puget Sound region."
+          />
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-3xl mx-auto">
+            {SERVICE_AREAS.map((city) => (
+              <GlassCard
+                key={city}
+                className="p-4 text-center hover:border-red-500/20 transition-colors"
+              >
+                <MapPin
+                  size={18}
+                  weight="fill"
+                  className="mx-auto mb-2"
+                  style={{ color: BRICK }}
+                />
+                <span className="text-sm font-semibold text-white">
+                  {city}
+                </span>
+              </GlassCard>
+            ))}
+          </div>
+
+          {/* Availability indicator */}
+          <div className="text-center mt-10">
+            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-white/10 bg-white/[0.03]">
+              <motion.div
+                className="w-2.5 h-2.5 rounded-full bg-green-400"
+                animate={{
+                  scale: [1, 1.3, 1],
+                  opacity: [1, 0.6, 1],
+                }}
+                transition={{ duration: 2, repeat: Infinity }}
+              />
+              <span className="text-sm text-slate-300 font-medium">
+                Crews Available Now — Under 2hr Response Time
+              </span>
+            </div>
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ═══════════════════ SECTION 15 — CONTACT ═══════════════════ */}
+      <SectionReveal
+        id="contact"
+        className="relative z-10 py-20 md:py-28"
+        style={{
+          background:
+            "linear-gradient(180deg, rgba(17,24,39,1) 0%, rgba(10,10,20,1) 100%)",
+        }}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <SectionHeader
+            label="Get in Touch"
+            title="Request Your Free Estimate"
+            subtitle="Fill out the form and we'll get back to you within 2 hours during business hours."
+          />
+
+          <div className="grid lg:grid-cols-2 gap-10 max-w-5xl mx-auto">
+            {/* Contact Form */}
+            <GlassCard className="p-6 md:p-8">
+              <form
+                onSubmit={(e) => e.preventDefault()}
+                className="space-y-5"
+              >
+                <div>
+                  <label className="text-sm font-semibold text-slate-300 mb-1.5 block">
+                    Full Name
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Your name"
+                    value={formData.name}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
+                    className="w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/10 text-white placeholder:text-slate-600 focus:outline-none focus:border-red-500/50 transition-colors"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-semibold text-slate-300 mb-1.5 block">
+                    Phone
+                  </label>
+                  <input
+                    type="tel"
+                    placeholder="(206) 555-0000"
+                    value={formData.phone}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        phone: e.target.value,
+                      })
+                    }
+                    className="w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/10 text-white placeholder:text-slate-600 focus:outline-none focus:border-red-500/50 transition-colors"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-semibold text-slate-300 mb-1.5 block">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    placeholder="you@email.com"
+                    value={formData.email}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        email: e.target.value,
+                      })
+                    }
+                    className="w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/10 text-white placeholder:text-slate-600 focus:outline-none focus:border-red-500/50 transition-colors"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-semibold text-slate-300 mb-1.5 block">
+                    Tell Us About Your Roof
+                  </label>
+                  <textarea
+                    placeholder="Describe the issue, your roof's age, or what service you need..."
+                    value={formData.message}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        message: e.target.value,
+                      })
+                    }
+                    rows={4}
+                    className="w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/10 text-white placeholder:text-slate-600 focus:outline-none focus:border-red-500/50 transition-colors resize-none"
+                  />
+                </div>
+                <MagneticButton
+                  className="w-full py-4 rounded-xl text-white font-bold text-base cursor-pointer flex items-center justify-center gap-2"
+                  style={{ background: BRICK }}
+                >
+                  Request Free Estimate
+                  <ArrowRight size={18} weight="bold" />
+                </MagneticButton>
+              </form>
+            </GlassCard>
+
+            {/* Info + Emergency CTA */}
+            <div className="space-y-6">
+              {/* Office info card */}
+              <GlassCard className="p-6">
+                <h3 className="text-lg font-bold text-white mb-5">
+                  Office Information
+                </h3>
+                <div className="space-y-4">
+                  <a
+                    href="tel:2065550734"
+                    className="flex items-center gap-3 text-slate-300 hover:text-white transition-colors"
+                  >
+                    <Phone
+                      size={20}
+                      weight="fill"
+                      style={{ color: BRICK }}
+                    />
+                    <span>(206) 555-0734</span>
+                  </a>
+                  <a
+                    href="mailto:info@summitrooofingnw.com"
+                    className="flex items-center gap-3 text-slate-300 hover:text-white transition-colors"
+                  >
+                    <Envelope
+                      size={20}
+                      weight="fill"
+                      style={{ color: BRICK }}
+                    />
+                    <span>info@summitrooofingnw.com</span>
+                  </a>
+                  <a
+                    href="https://maps.google.com/?q=7340+35th+Ave+NE+Seattle+WA+98115"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 text-slate-300 hover:text-white transition-colors"
+                  >
+                    <MapPin
+                      size={20}
+                      weight="fill"
+                      style={{ color: BRICK }}
+                    />
+                    <span>7340 35th Ave NE, Seattle, WA 98115</span>
+                  </a>
+                  <div className="flex items-center gap-3 text-slate-300">
+                    <Clock
+                      size={20}
+                      weight="fill"
+                      style={{ color: BRICK }}
+                    />
+                    <span>
+                      Mon-Sat 7am-6pm | Emergency 24/7
+                    </span>
+                  </div>
+                </div>
+              </GlassCard>
+
+              {/* Emergency CTA */}
+              <ShimmerBorder>
+                <div className="p-6 text-center">
+                  <div className="flex items-center justify-center gap-2 mb-3">
+                    <motion.div
+                      className="w-3 h-3 rounded-full"
+                      style={{ background: BRICK }}
+                      animate={{
+                        scale: [1, 1.4, 1],
+                        opacity: [1, 0.5, 1],
+                      }}
+                      transition={{
+                        duration: 1,
+                        repeat: Infinity,
+                      }}
+                    />
+                    <span
+                      className="text-xs font-semibold uppercase tracking-widest"
+                      style={{ color: BRICK }}
+                    >
+                      Storm Emergency?
+                    </span>
+                  </div>
+                  <h3 className="text-xl font-black text-white mb-2">
+                    Skip the Form
+                  </h3>
+                  <p className="text-sm text-slate-400 mb-4">
+                    Active leak or storm damage? Call now for immediate
+                    same-day response from our emergency crew.
+                  </p>
+                  <a
+                    href="tel:2065550734"
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-white font-bold cursor-pointer"
+                    style={{ background: BRICK }}
+                  >
+                    <Phone size={20} weight="fill" />
+                    Call (206) 555-0734 Now
+                  </a>
+                </div>
+              </ShimmerBorder>
+
+              {/* License badge */}
+              <GlassCard className="p-5">
+                <div className="flex items-center gap-3">
+                  <ShieldCheck
+                    size={20}
+                    weight="fill"
+                    style={{ color: GOLD }}
+                  />
+                  <span className="text-sm text-slate-300">
+                    Licensed, Bonded &amp; Insured — WA #SUMMIRN892PZ
+                  </span>
+                </div>
+              </GlassCard>
+            </div>
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ═══════════════════ SECTION 16 — FOOTER ═══════════════════ */}
+      <footer
+        className="relative z-10 py-12 border-t border-white/5"
+        style={{ background: CHARCOAL_DEEP }}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
+            {/* Brand column */}
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <div
+                  className="w-8 h-8 rounded-lg flex items-center justify-center"
+                  style={{ background: BRICK }}
+                >
+                  <House
+                    size={18}
+                    weight="fill"
+                    className="text-white"
+                  />
+                </div>
+                <span className="text-lg font-bold">
+                  Summit Roofing NW
+                </span>
+              </div>
+              <p className="text-sm text-slate-500 leading-relaxed">
+                Seattle&apos;s trusted roofing contractor for 25 years.
+                GAF Master Elite Certified. Every roof built to last.
+              </p>
+            </div>
+
+            {/* Services column */}
+            <div>
+              <h4 className="font-semibold text-white mb-3 text-sm">
+                Services
+              </h4>
+              <ul className="space-y-2 text-sm text-slate-500">
+                {SERVICES.map((s) => (
+                  <li key={s.title}>{s.title}</li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Contact column */}
+            <div>
+              <h4 className="font-semibold text-white mb-3 text-sm">
+                Contact
+              </h4>
+              <ul className="space-y-2 text-sm text-slate-500">
+                <li>
+                  <a href="tel:2065550734" className="hover:text-slate-300 transition-colors">
+                    (206) 555-0734
+                  </a>
+                </li>
+                <li>
+                  <a href="mailto:info@summitrooofingnw.com" className="hover:text-slate-300 transition-colors">
+                    info@summitrooofingnw.com
+                  </a>
+                </li>
+                <li>7340 35th Ave NE</li>
+                <li>Seattle, WA 98115</li>
+              </ul>
+            </div>
+
+            {/* Certifications column */}
+            <div>
+              <h4 className="font-semibold text-white mb-3 text-sm">
+                Certifications
+              </h4>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  "GAF Master Elite",
+                  "A+ BBB",
+                  "Licensed & Bonded",
+                  "50-Year Warranty",
+                  "WA #SUMMIRN892PZ",
+                ].map((cert) => (
+                  <span
+                    key={cert}
+                    className="px-2 py-1 rounded-md text-xs border border-white/10 bg-white/[0.03] text-slate-400"
+                  >
+                    {cert}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom bar */}
+          <div className="pt-6 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p className="text-xs text-slate-600">
+              WA License #SUMMIRN892PZ | GAF Master Elite Contractor
+            </p>
+            <p className="text-xs text-slate-600">
+              Created by{" "}
+              <a
+                href="https://bluejayportfolio.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-slate-400 transition-colors underline"
+              >
+                bluejayportfolio.com
+              </a>
+            </p>
+          </div>
         </div>
       </footer>
-    </main>
+    </div>
   );
 }
