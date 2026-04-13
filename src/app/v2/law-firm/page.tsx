@@ -15,194 +15,243 @@ import {
   Gavel,
   ShieldCheck,
   Briefcase,
-  Buildings,
   Handshake,
   Phone,
   EnvelopeSimple,
   MapPin,
   ArrowRight,
   Star,
-  CaretLeft,
-  CaretRight,
+  CaretDown,
   Trophy,
   Users,
   Clock,
   Certificate,
   X,
   List,
+  Quotes,
+  Play,
+  CheckCircle,
+  XCircle,
+  Translate,
+  Siren,
+  House,
+  Heartbeat,
+  Cube,
 } from "@phosphor-icons/react";
 
-/* ─── spring config ─── */
+/* ─── colors ─── */
+const EMERALD = "#059669";
+const EMERALD_LIGHT = "#10b981";
+const GOLD = "#ca8a04";
+const NAVY = "#0f172a";
+const NAVY_LIGHT = "#1e293b";
+
+/* ─── spring configs ─── */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
 
-/* ─── stagger container ─── */
+/* ─── stagger ─── */
 const stagger = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.05 } },
+  show: { transition: { staggerChildren: 0.06 } },
 };
 const fadeUp = {
   hidden: { opacity: 0, y: 40 },
   show: { opacity: 1, y: 0, transition: spring },
 };
 
-/* ─── floating document particle ─── */
-function FloatingDoc({ delay, x, size }: { delay: number; x: number; size: number }) {
-  return (
-    <motion.div
-      className="absolute pointer-events-none"
-      style={{ left: `${x}%`, top: "-5%" }}
-      animate={{
-        y: ["0vh", "110vh"],
-        rotate: [0, 360],
-        opacity: [0, 0.15, 0.15, 0],
-      }}
-      transition={{
-        duration: 18 + delay * 3,
-        repeat: Infinity,
-        delay,
-        ease: "linear",
-      }}
-    >
-      <svg
-        width={size}
-        height={size * 1.3}
-        viewBox="0 0 40 52"
-        fill="none"
-        className="text-emerald-400/20"
-      >
-        <rect x="2" y="2" width="36" height="48" rx="3" stroke="currentColor" strokeWidth="1.5" />
-        <line x1="10" y1="14" x2="30" y2="14" stroke="currentColor" strokeWidth="1" />
-        <line x1="10" y1="20" x2="26" y2="20" stroke="currentColor" strokeWidth="1" />
-        <line x1="10" y1="26" x2="28" y2="26" stroke="currentColor" strokeWidth="1" />
-        <line x1="10" y1="32" x2="22" y2="32" stroke="currentColor" strokeWidth="1" />
-        <path d="M26 2 L36 12 L26 12 Z" stroke="currentColor" strokeWidth="1" fill="currentColor" fillOpacity="0.3" />
-      </svg>
-    </motion.div>
-  );
-}
+/* ─── case results ticker data ─── */
+const TICKER_ITEMS = [
+  "$4.2M Auto Accident",
+  "$1.8M Medical Malpractice",
+  "$890K Workplace Injury",
+  "Charges Dismissed — DUI",
+  "$2.1M Truck Collision",
+  "$340K Insurance Dispute",
+  "Not Guilty — Assault",
+  "$1.5M Slip & Fall",
+  "$620K Wrongful Termination",
+  "Case Dismissed — Drug Charges",
+];
 
-/* ─── animated scale of justice ─── */
-function ScaleOfJustice() {
-  const EMERALD = "#059669";
-  const EMERALD_LIGHT = "#10b981";
-  const GOLD_ACCENT = "#ca8a04";
+/* ─── practice areas with accordion details ─── */
+const PRACTICE_AREAS = [
+  {
+    icon: ShieldCheck,
+    title: "Personal Injury",
+    desc: "Aggressive representation for accident victims across Washington.",
+    details: "We handle auto accidents, truck collisions, motorcycle crashes, slip and falls, dog bites, and premises liability. Our team works with medical experts, accident reconstructionists, and economists to build maximum-value cases.",
+    cases: ["Auto & Truck Accidents", "Slip & Fall", "Medical Malpractice", "Workplace Injuries", "Product Liability"],
+  },
+  {
+    icon: Gavel,
+    title: "Criminal Defense",
+    desc: "Former prosecutors who know how the other side thinks.",
+    details: "From misdemeanors to serious felonies, our criminal defense team leverages prosecutorial experience to dismantle the state's case. We handle DUI/DWI, drug offenses, assault, theft, white collar crimes, and federal charges.",
+    cases: ["DUI / DWI", "Drug Offenses", "Assault & Domestic Violence", "Theft & Fraud", "Federal Charges"],
+  },
+  {
+    icon: Handshake,
+    title: "Family Law",
+    desc: "Protecting what matters most — your family.",
+    details: "We guide clients through divorce, child custody, child support modifications, adoption, prenuptial agreements, and domestic violence protection orders with compassion and strategic precision.",
+    cases: ["Divorce & Separation", "Child Custody", "Child Support", "Adoption", "Protection Orders"],
+  },
+  {
+    icon: Translate,
+    title: "Immigration",
+    desc: "Multilingual team helping families build their American dream.",
+    details: "Elena Vasquez and our immigration team handle family-based visas, employment visas, DACA renewals, naturalization, asylum claims, and deportation defense. Fluent in English and Spanish.",
+    cases: ["Family-Based Visas", "Employment Visas", "DACA & Dreamers", "Naturalization", "Deportation Defense"],
+  },
+  {
+    icon: Briefcase,
+    title: "Employment Law",
+    desc: "Fighting for workers' rights and fair treatment.",
+    details: "We represent employees in wrongful termination, workplace discrimination, sexual harassment, wage theft, whistleblower retaliation, and FMLA violations. No one should fear losing their livelihood for standing up.",
+    cases: ["Wrongful Termination", "Workplace Discrimination", "Sexual Harassment", "Wage & Hour Claims", "Whistleblower Protection"],
+  },
+  {
+    icon: Certificate,
+    title: "Estate Planning",
+    desc: "Secure your legacy and protect your family's future.",
+    details: "Our estate planning attorneys draft wills, revocable and irrevocable trusts, powers of attorney, healthcare directives, and handle probate administration. We make complex planning accessible.",
+    cases: ["Wills & Trusts", "Power of Attorney", "Probate Administration", "Asset Protection", "Healthcare Directives"],
+  },
+];
+
+/* ─── case results showcase ─── */
+const CASE_RESULTS = [
+  { amount: "$4.2M", type: "Auto Accident", location: "Bellevue, WA", desc: "Multi-vehicle collision on I-405. Client suffered spinal injuries requiring two surgeries." },
+  { amount: "$1.8M", type: "Medical Malpractice", location: "Seattle, WA", desc: "Misdiagnosed stroke led to permanent disability. Hospital settled before trial." },
+  { amount: "$890K", type: "Workplace Injury", location: "Tacoma, WA", desc: "Construction site fall due to safety violations. Full compensation plus lost wages." },
+  { amount: "Dismissed", type: "Felony DUI", location: "King County, WA", desc: "Breathalyzer calibration challenged. All charges dismissed at preliminary hearing." },
+];
+
+/* ─── attorneys ─── */
+const ATTORNEYS = [
+  {
+    name: "James Callahan, Esq.",
+    role: "Managing Partner",
+    specialty: "Personal Injury & Criminal Defense",
+    years: "22 Years Experience",
+    bio: "Former King County prosecutor turned fierce plaintiff's advocate. James has recovered over $35M for injured clients and secured dismissals in over 200 criminal cases. Avvo 10.0 Superb rating.",
+    credentials: ["Avvo 10.0 Superb", "Former KC Prosecutor", "Super Lawyers 2019-2025", "WSBA Member"],
+    img: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=600&q=80",
+  },
+  {
+    name: "Elena Vasquez, Esq.",
+    role: "Partner",
+    specialty: "Immigration & Family Law",
+    years: "14 Years Experience",
+    bio: "Elena has guided over 500 families through the immigration system. Fluent in Spanish, she brings cultural sensitivity and legal precision to every case. Recognized by the AILA for outstanding advocacy.",
+    credentials: ["500+ Visa Cases", "Fluent Spanish", "AILA Member", "Family Law Specialist"],
+    img: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=600&q=80",
+  },
+  {
+    name: "David Okafor, Esq.",
+    role: "Partner",
+    specialty: "Criminal Defense",
+    years: "16 Years Experience",
+    bio: "A former public defender with over 150 jury trials, David is a courtroom veteran who thrives under pressure. He has secured not-guilty verdicts in high-profile felony cases across Washington State.",
+    credentials: ["150+ Jury Trials", "Former Public Defender", "National Trial Lawyers Top 100", "Fluent Yoruba"],
+    img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80",
+  },
+];
+
+/* ─── testimonials ─── */
+const TESTIMONIALS = [
+  { text: "James got me $340K when the insurance company offered $45K. He refused to back down and took it all the way to mediation. Changed my life.", name: "Roberto M.", type: "Personal Injury Client" },
+  { text: "Elena saved my family. My mother's green card was approved after 3 years of waiting and two other attorneys failing us. We are forever grateful.", name: "Maria L.", type: "Immigration Client" },
+  { text: "David walked into that courtroom and dismantled the prosecution's case piece by piece. Not guilty on all counts. The man is a genius.", name: "Kevin T.", type: "Criminal Defense Client" },
+  { text: "After my accident, I couldn't work for 8 months. Pacific Law Group fought for every dollar and got me a settlement that covered everything and then some.", name: "Sandra K.", type: "Personal Injury Client" },
+  { text: "They took my case when two other firms turned me away. $1.2M settlement. I tell everyone — call Pacific Law Group first.", name: "Anthony W.", type: "Personal Injury Client" },
+];
+
+/* ─── comparison rows ─── */
+const COMPARISON_ROWS = [
+  { feature: "Free Initial Consultation", us: true, them: "Varies" },
+  { feature: "No Fee Unless We Win (PI)", us: true, them: "Often hourly" },
+  { feature: "Former Prosecutor on Staff", us: true, them: "Rarely" },
+  { feature: "24/7 Attorney Availability", us: true, them: "Business hours" },
+  { feature: "Multilingual Team", us: true, them: "Limited" },
+  { feature: "Dedicated Case Manager", us: true, them: "Rotational staff" },
+  { feature: "Courtroom Trial Experience", us: true, them: "Settle-focused" },
+];
+
+/* ─── awards ─── */
+const AWARDS = ["Avvo 10.0 Superb", "Super Lawyers", "WSBA Member", "KCBA", "National Trial Lawyers Top 100", "BBB A+ Rated"];
+
+/* ═══ COMPONENTS ═══ */
+
+/* ─── animated scale of justice (hero watermark) ─── */
+function ScaleOfJusticeWatermark() {
   const tilt = useMotionValue(0);
-  const smoothTilt = useSpring(tilt, { stiffness: 40, damping: 12 });
+  const smoothTilt = useSpring(tilt, { stiffness: 30, damping: 10 });
 
   useEffect(() => {
     let dir = 1;
     const interval = setInterval(() => {
-      tilt.set(dir * 8);
+      tilt.set(dir * 6);
       dir *= -1;
-    }, 3000);
+    }, 3500);
     return () => clearInterval(interval);
   }, [tilt]);
 
   return (
-    <div className="relative w-full max-w-md mx-auto aspect-square flex items-center justify-center">
-      {/* Pulsing glow behind */}
-      <motion.div
-        className="absolute inset-0 rounded-full"
-        style={{ background: "radial-gradient(circle, rgba(5,150,105,0.12) 0%, transparent 70%)", filter: "blur(40px)" }}
-        animate={{ scale: [1, 1.2, 1], opacity: [0.6, 1, 0.6] }}
-        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <svg viewBox="0 0 300 300" className="relative z-10 w-full h-full" fill="none">
+    <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden">
+      <svg viewBox="0 0 300 300" className="w-[500px] h-[500px] md:w-[700px] md:h-[700px] opacity-[0.04]" fill="none">
         {/* Outer glow rings */}
-        <motion.circle cx="150" cy="150" r="140" stroke={EMERALD} strokeWidth="0.5" opacity={0.1}
+        <motion.circle cx="150" cy="150" r="140" stroke={EMERALD_LIGHT} strokeWidth="0.5"
           animate={{ r: [138, 142, 138] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} />
-        <motion.circle cx="150" cy="150" r="130" stroke={EMERALD} strokeWidth="0.3" opacity={0.06}
-          animate={{ r: [128, 132, 128] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }} />
 
         {/* Ornate base pedestal */}
-        <motion.path d="M110 268 L120 258 L180 258 L190 268 Z" fill={`${EMERALD}22`} stroke={EMERALD} strokeWidth="2"
-          initial={{ opacity: 0, scaleX: 0 }} animate={{ opacity: 1, scaleX: 1 }}
-          transition={{ ...spring, delay: 0.4 }} />
-        <motion.rect x="125" y="256" width="50" height="4" rx="2" fill={`${EMERALD}30`}
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} />
-        <rect x="130" y="253" width="40" height="3" rx="1.5" fill={`${EMERALD}15`} />
+        <path d="M110 268 L120 258 L180 258 L190 268 Z" fill={EMERALD_LIGHT} stroke={EMERALD_LIGHT} strokeWidth="2" />
+        <rect x="125" y="256" width="50" height="4" rx="2" fill={EMERALD_LIGHT} />
 
-        {/* Pillar with gradient fill */}
-        <motion.rect
-          x="145" y="100" width="10" height="156" rx="5"
-          fill={`${EMERALD}22`} stroke={EMERALD} strokeWidth="1.5"
-          initial={{ opacity: 0, scaleY: 0 }} animate={{ opacity: 1, scaleY: 1 }}
-          transition={{ ...spring, delay: 0.3 }}
-          style={{ transformOrigin: "150px 256px" }}
-        />
-        {/* Pillar inner highlight */}
-        <rect x="148" y="105" width="4" height="148" rx="2" fill={`${EMERALD}0d`} />
+        {/* Pillar */}
+        <rect x="145" y="100" width="10" height="156" rx="5" fill={EMERALD_LIGHT} stroke={EMERALD_LIGHT} strokeWidth="1.5" />
 
-        {/* Beam with detail */}
+        {/* Beam with tilt */}
         <motion.g style={{ rotate: smoothTilt, transformOrigin: "150px 100px" }}>
-          <rect x="45" y="95" width="210" height="10" rx="5" fill={`${EMERALD}22`} stroke={EMERALD} strokeWidth="1.5" />
-          <rect x="50" y="97" width="200" height="4" rx="2" fill={`${EMERALD}0d`} />
+          <rect x="45" y="95" width="210" height="10" rx="5" fill={EMERALD_LIGHT} stroke={EMERALD_LIGHT} strokeWidth="1.5" />
 
           {/* Left chain links */}
-          <motion.circle cx="70" cy="115" r="4" stroke={EMERALD_LIGHT} strokeWidth="1.2" fill="none" opacity={0.5}
-            initial={{ opacity: 0 }} animate={{ opacity: 0.5 }} transition={{ delay: 0.8 }} />
-          <motion.circle cx="70" cy="125" r="4" stroke={EMERALD_LIGHT} strokeWidth="1.2" fill="none" opacity={0.5}
-            initial={{ opacity: 0 }} animate={{ opacity: 0.5 }} transition={{ delay: 0.9 }} />
-          <motion.circle cx="70" cy="135" r="4" stroke={EMERALD_LIGHT} strokeWidth="1.2" fill="none" opacity={0.5}
-            initial={{ opacity: 0 }} animate={{ opacity: 0.5 }} transition={{ delay: 1.0 }} />
-          {/* Left pan — detailed */}
-          <line x1="70" y1="105" x2="42" y2="155" stroke={EMERALD} strokeWidth="1.5" />
-          <line x1="70" y1="105" x2="98" y2="155" stroke={EMERALD} strokeWidth="1.5" />
-          <path d="M32 155 Q70 180 108 155" stroke={EMERALD} strokeWidth="2.5"
-            fill={`${EMERALD}18`} />
-          <path d="M42 155 Q70 170 98 155" fill={`${EMERALD}0d`} />
+          <circle cx="70" cy="115" r="4" stroke={EMERALD_LIGHT} strokeWidth="1.2" fill="none" />
+          <circle cx="70" cy="125" r="4" stroke={EMERALD_LIGHT} strokeWidth="1.2" fill="none" />
+          <circle cx="70" cy="135" r="4" stroke={EMERALD_LIGHT} strokeWidth="1.2" fill="none" />
+          {/* Left pan */}
+          <line x1="70" y1="105" x2="42" y2="155" stroke={EMERALD_LIGHT} strokeWidth="1.5" />
+          <line x1="70" y1="105" x2="98" y2="155" stroke={EMERALD_LIGHT} strokeWidth="1.5" />
+          <path d="M32 155 Q70 180 108 155" stroke={EMERALD_LIGHT} strokeWidth="2.5" fill={EMERALD_LIGHT} fillOpacity={0.3} />
 
           {/* Right chain links */}
-          <motion.circle cx="230" cy="115" r="4" stroke={EMERALD_LIGHT} strokeWidth="1.2" fill="none" opacity={0.5}
-            initial={{ opacity: 0 }} animate={{ opacity: 0.5 }} transition={{ delay: 0.8 }} />
-          <motion.circle cx="230" cy="125" r="4" stroke={EMERALD_LIGHT} strokeWidth="1.2" fill="none" opacity={0.5}
-            initial={{ opacity: 0 }} animate={{ opacity: 0.5 }} transition={{ delay: 0.9 }} />
-          <motion.circle cx="230" cy="135" r="4" stroke={EMERALD_LIGHT} strokeWidth="1.2" fill="none" opacity={0.5}
-            initial={{ opacity: 0 }} animate={{ opacity: 0.5 }} transition={{ delay: 1.0 }} />
-          {/* Right pan — detailed */}
-          <line x1="230" y1="105" x2="202" y2="155" stroke={EMERALD} strokeWidth="1.5" />
-          <line x1="230" y1="105" x2="258" y2="155" stroke={EMERALD} strokeWidth="2" />
-          <path d="M192 155 Q230 180 268 155" stroke={EMERALD} strokeWidth="2.5"
-            fill={`${EMERALD}18`} />
-          <path d="M202 155 Q230 170 258 155" fill={`${EMERALD}0d`} />
+          <circle cx="230" cy="115" r="4" stroke={EMERALD_LIGHT} strokeWidth="1.2" fill="none" />
+          <circle cx="230" cy="125" r="4" stroke={EMERALD_LIGHT} strokeWidth="1.2" fill="none" />
+          <circle cx="230" cy="135" r="4" stroke={EMERALD_LIGHT} strokeWidth="1.2" fill="none" />
+          {/* Right pan */}
+          <line x1="230" y1="105" x2="202" y2="155" stroke={EMERALD_LIGHT} strokeWidth="1.5" />
+          <line x1="230" y1="105" x2="258" y2="155" stroke={EMERALD_LIGHT} strokeWidth="2" />
+          <path d="M192 155 Q230 180 268 155" stroke={EMERALD_LIGHT} strokeWidth="2.5" fill={EMERALD_LIGHT} fillOpacity={0.3} />
         </motion.g>
 
-        {/* Top ornament — detailed */}
-        <motion.circle cx="150" cy="88" r="16" fill={`${EMERALD}22`} stroke={EMERALD} strokeWidth="2.5"
-          initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ ...spring, delay: 0.7 }} />
-        <circle cx="150" cy="86" r="8" fill={`${EMERALD}15`} />
+        {/* Top ornament */}
+        <circle cx="150" cy="88" r="16" fill={EMERALD_LIGHT} stroke={EMERALD_LIGHT} strokeWidth="2.5" />
         <motion.circle cx="150" cy="88" r="4" fill={EMERALD_LIGHT}
           animate={{ opacity: [0.4, 0.9, 0.4], scale: [0.9, 1.1, 0.9] }}
           transition={{ duration: 3, repeat: Infinity }} />
-
-        {/* Justice glow pulse */}
-        <motion.circle cx="150" cy="88" r="22" fill={`${EMERALD}08`}
+        <motion.circle cx="150" cy="88" r="22" fill={EMERALD_LIGHT}
           animate={{ r: [20, 28, 20], opacity: [0.1, 0.3, 0.1] }}
           transition={{ duration: 2.5, repeat: Infinity }} />
-
-        {/* Sparkle accents */}
-        <motion.circle cx="270" cy="55" r="3" fill={EMERALD_LIGHT}
-          animate={{ opacity: [0.2, 1, 0.2], scale: [0.7, 1.3, 0.7] }}
-          transition={{ duration: 2.5, repeat: Infinity }} />
-        <motion.circle cx="25" cy="70" r="2" fill={GOLD_ACCENT}
-          animate={{ opacity: [0.1, 0.8, 0.1], scale: [0.5, 1.2, 0.5] }}
-          transition={{ duration: 3, repeat: Infinity, delay: 0.8 }} />
-        <motion.circle cx="275" cy="200" r="2.5" fill={EMERALD_LIGHT}
-          animate={{ opacity: [0.15, 0.7, 0.15] }}
-          transition={{ duration: 2, repeat: Infinity, delay: 1.2 }} />
-        <motion.circle cx="20" cy="220" r="2" fill={GOLD_ACCENT}
-          animate={{ opacity: [0.1, 0.6, 0.1] }}
-          transition={{ duration: 2.5, repeat: Infinity, delay: 0.4 }} />
       </svg>
     </div>
   );
 }
 
 /* ─── counter ─── */
-function Counter({ end, label, suffix = "" }: { end: number; label: string; suffix?: string }) {
+function Counter({ end, label, suffix = "", prefix = "" }: { end: number; label: string; suffix?: string; prefix?: string }) {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-100px" });
+  const inView = useInView(ref, { once: true, margin: "-80px" });
   const [count, setCount] = useState(0);
 
   useEffect(() => {
@@ -211,41 +260,28 @@ function Counter({ end, label, suffix = "" }: { end: number; label: string; suff
     const step = Math.max(1, Math.floor(end / 60));
     const timer = setInterval(() => {
       start += step;
-      if (start >= end) {
-        setCount(end);
-        clearInterval(timer);
-      } else {
-        setCount(start);
-      }
+      if (start >= end) { setCount(end); clearInterval(timer); } else { setCount(start); }
     }, 25);
     return () => clearInterval(timer);
   }, [inView, end]);
 
   return (
     <div ref={ref} className="text-center">
-      <div className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-emerald-400">
-        {count.toLocaleString()}
-        {suffix}
+      <div className="text-3xl md:text-5xl tracking-tighter leading-none font-bold text-white">
+        {prefix}{count.toLocaleString()}{suffix}
       </div>
-      <div className="mt-2 text-sm uppercase tracking-widest text-slate-400">{label}</div>
+      <div className="mt-2 text-xs md:text-sm uppercase tracking-widest text-slate-400">{label}</div>
     </div>
   );
 }
 
 /* ─── magnetic button ─── */
-function MagneticButton({
-  children,
-  className = "",
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
+function MagneticButton({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   const ref = useRef<HTMLButtonElement>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   const sx = useSpring(x, springFast);
   const sy = useSpring(y, springFast);
-
   const isTouchDevice = typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches;
 
   const handleMouse = useCallback(
@@ -264,113 +300,125 @@ function MagneticButton({
       ref={ref}
       style={{ x: sx, y: sy }}
       onMouseMove={handleMouse}
-      onMouseLeave={() => {
-        x.set(0);
-        y.set(0);
-      }}
+      onMouseLeave={() => { x.set(0); y.set(0); }}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.97 }}
       className={`relative overflow-hidden group ${className}`}
     >
       {children}
-      <motion.div
-        className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"
-      />
+      <motion.div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
     </motion.button>
   );
 }
 
-/* ─── services ─── */
-const services = [
-  { icon: Gavel, title: "Criminal Defense", desc: "Aggressive defense strategies for all criminal charges." },
-  { icon: Briefcase, title: "Corporate Law", desc: "Business formation, contracts, and compliance." },
-  { icon: ShieldCheck, title: "Personal Injury", desc: "Maximum compensation for your injuries." },
-  { icon: Buildings, title: "Real Estate", desc: "Property transactions, disputes, and zoning." },
-  { icon: Handshake, title: "Family Law", desc: "Divorce, custody, and mediation services." },
-  { icon: Certificate, title: "Estate Planning", desc: "Wills, trusts, and asset protection." },
-];
+/* ─── glass card wrapper ─── */
+function GlassCard({ children, className = "", hover = true }: { children: React.ReactNode; className?: string; hover?: boolean }) {
+  return (
+    <motion.div
+      whileHover={hover ? { y: -4 } : undefined}
+      transition={spring}
+      className={`rounded-2xl border border-white/[0.08] bg-white/[0.03] backdrop-blur-md shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)] ${className}`}
+    >
+      {children}
+    </motion.div>
+  );
+}
 
-/* ─── testimonials ─── */
-const testimonials = [
-  {
-    name: "Sarah Mitchell",
-    role: "Personal Injury Client",
-    text: "They fought relentlessly for my case and secured a settlement that changed my life. Professional, compassionate, and incredibly skilled.",
-    rating: 5,
-  },
-  {
-    name: "David Chen",
-    role: "Corporate Client",
-    text: "Our business relies on their counsel for every major decision. Their expertise in corporate law is unmatched in this region.",
-    rating: 5,
-  },
-  {
-    name: "Maria Rodriguez",
-    role: "Family Law Client",
-    text: "During the most difficult time of my life, they provided clarity, empathy, and a winning strategy. Truly grateful.",
-    rating: 5,
-  },
-];
+/* ─── section header ─── */
+function SectionHeader({ label, title, accent }: { label: string; title: string; accent: string }) {
+  return (
+    <motion.div
+      variants={stagger}
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true, margin: "-80px" }}
+      className="mb-12 md:mb-16"
+    >
+      <motion.p variants={fadeUp} className="text-sm font-semibold uppercase tracking-widest" style={{ color: EMERALD }}>
+        {label}
+      </motion.p>
+      <motion.h2 variants={fadeUp} className="mt-3 text-3xl md:text-5xl lg:text-6xl tracking-tighter leading-none font-bold">
+        {title} <span style={{ color: EMERALD }}>{accent}</span>
+      </motion.h2>
+    </motion.div>
+  );
+}
+
+/* ─── infinite ticker ─── */
+function InfiniteTicker({ items, speed = 30, goldText = false }: { items: string[]; speed?: number; goldText?: boolean }) {
+  const doubled = [...items, ...items];
+  return (
+    <div className="overflow-hidden relative">
+      <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-[#0f172a] to-transparent z-10" />
+      <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-[#0f172a] to-transparent z-10" />
+      <motion.div
+        className="flex gap-8 whitespace-nowrap"
+        animate={{ x: ["0%", "-50%"] }}
+        transition={{ duration: speed, repeat: Infinity, ease: "linear" }}
+      >
+        {doubled.map((item, i) => (
+          <span key={i} className={`text-lg md:text-xl font-bold tracking-tight ${goldText ? "text-yellow-500" : "text-emerald-400/70"}`}>
+            {item}
+            <span className="mx-6 text-slate-700">|</span>
+          </span>
+        ))}
+      </motion.div>
+    </div>
+  );
+}
 
 /* ═══════ MAIN PAGE ═══════ */
 export default function V2LawFirmPage() {
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
-  const heroParallax = useTransform(scrollYProgress, [0, 1], [0, -120]);
-  const carouselRef = useRef<HTMLDivElement>(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(true);
+  const heroParallax = useTransform(scrollYProgress, [0, 1], [0, -80]);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [openAccordion, setOpenAccordion] = useState<number | null>(null);
+  const [activeTestimonial, setActiveTestimonial] = useState(0);
+  const [quizSelected, setQuizSelected] = useState<number | null>(null);
 
-  const checkScroll = useCallback(() => {
-    const el = carouselRef.current;
-    if (!el) return;
-    setCanScrollLeft(el.scrollLeft > 10);
-    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 10);
+  /* auto-rotate testimonials */
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveTestimonial((prev) => (prev + 1) % TESTIMONIALS.length);
+    }, 6000);
+    return () => clearInterval(timer);
   }, []);
 
-  const scroll = useCallback((dir: number) => {
-    carouselRef.current?.scrollBy({ left: dir * 360, behavior: "smooth" });
-    setTimeout(checkScroll, 400);
-  }, [checkScroll]);
-
-  /* floating docs */
-  const docs = Array.from({ length: 8 }, (_, i) => ({
-    delay: i * 2.2,
-    x: 5 + i * 12,
-    size: 20 + (i % 3) * 10,
-  }));
+  const NAV_LINKS = [
+    { label: "Practice Areas", href: "#practice-areas" },
+    { label: "Results", href: "#results" },
+    { label: "Attorneys", href: "#attorneys" },
+    { label: "Testimonials", href: "#testimonials" },
+    { label: "Contact", href: "#contact" },
+  ];
 
   return (
     <div className="min-h-[100dvh] bg-[#0f172a] text-slate-100 overflow-x-hidden">
-      {/* ── floating documents — hidden on mobile for performance ── */}
-      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden hidden md:block">
-        {docs.map((d, i) => (
-          <FloatingDoc key={i} {...d} />
-        ))}
-      </div>
 
       {/* ══════ NAV ══════ */}
       <motion.nav
         initial={{ y: -40, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={spring}
-        className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-[#0f172a]/70 border-b border-white/5"
+        className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-[#0f172a]/80 border-b border-white/5"
       >
         <div className="max-w-7xl mx-auto flex items-center justify-between px-4 md:px-6 py-4">
           <div className="flex items-center gap-3">
             <Scales size={28} weight="duotone" className="text-emerald-400" />
-            <span className="text-xl font-bold tracking-tight">Carter & Associates</span>
+            <span className="text-xl font-bold tracking-tight">Pacific Law Group</span>
           </div>
           <div className="hidden md:flex items-center gap-8 text-sm text-slate-400">
-            <a href="#services" className="hover:text-white transition-colors">Services</a>
-            <a href="#why-us" className="hover:text-white transition-colors">Why Us</a>
-            <a href="#testimonials" className="hover:text-white transition-colors">Testimonials</a>
-            <a href="#contact" className="hover:text-white transition-colors">Contact</a>
+            {NAV_LINKS.map((link) => (
+              <a key={link.label} href={link.href} className="hover:text-white transition-colors">{link.label}</a>
+            ))}
           </div>
           <div className="flex items-center gap-3">
+            <a href="tel:2065550312" className="hidden sm:flex items-center gap-2 text-sm text-emerald-400 font-medium hover:text-emerald-300 transition-colors">
+              <Phone size={16} weight="bold" /> (206) 555-0312
+            </a>
             <MagneticButton className="px-5 py-2.5 bg-emerald-600 text-white text-sm font-semibold rounded-lg">
-              <span className="relative z-10">Free Consultation</span>
+              <span className="relative z-10">Free Case Review</span>
             </MagneticButton>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -392,12 +440,7 @@ export default function V2LawFirmPage() {
               className="md:hidden overflow-hidden border-t border-white/5"
             >
               <div className="flex flex-col gap-1 px-4 py-4 bg-[#0f172a]/95 backdrop-blur-xl">
-                {[
-                  { label: "Services", href: "#services" },
-                  { label: "Why Us", href: "#why-us" },
-                  { label: "Testimonials", href: "#testimonials" },
-                  { label: "Contact", href: "#contact" },
-                ].map((link) => (
+                {NAV_LINKS.map((link) => (
                   <a
                     key={link.label}
                     href={link.href}
@@ -407,297 +450,519 @@ export default function V2LawFirmPage() {
                     {link.label}
                   </a>
                 ))}
+                <a href="tel:2065550312" className="block px-4 py-3 rounded-lg text-sm text-emerald-400 font-medium">
+                  <Phone size={16} weight="bold" className="inline mr-2" /> (206) 555-0312
+                </a>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
       </motion.nav>
 
-      {/* ══════ HERO ══════ */}
-      <section ref={heroRef} className="relative min-h-[100dvh] z-10">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0f172a] via-[#0f172a] to-emerald-950/30" />
+      {/* ══════ 1. HERO — FULL-WIDTH DARK BILLBOARD ══════ */}
+      <section ref={heroRef} className="relative min-h-[100dvh] z-10 flex items-center justify-center overflow-hidden">
+        {/* Background gradient */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0f172a] via-[#0c1220] to-[#0f172a]" />
+        {/* Subtle radial glow behind text */}
+        <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse 60% 50% at 50% 45%, rgba(5,150,105,0.06) 0%, transparent 70%)" }} />
+
+        {/* Scale of Justice SVG watermark */}
+        <ScaleOfJusticeWatermark />
+
         <motion.div
           style={{ y: heroParallax }}
-          className="relative z-10 grid grid-cols-1 lg:grid-cols-2 min-h-[100dvh] max-w-7xl mx-auto px-4 md:px-6"
+          className="relative z-10 text-center max-w-5xl mx-auto px-4 md:px-6 py-32"
         >
-          {/* left — typography */}
-          <div className="flex flex-col justify-center py-24 lg:py-0">
-            <motion.div
-              variants={stagger}
-              initial="hidden"
-              animate="show"
-              className="space-y-2"
-            >
-              {["Justice.", "Delivered."].map((word, i) => (
-                <motion.div key={word} variants={fadeUp}>
-                  <span
-                    className={`block text-4xl md:text-7xl lg:text-8xl tracking-tighter leading-none font-bold ${
-                      i === 1 ? "text-emerald-400" : "text-white"
-                    }`}
-                    style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}
-                  >
-                    {word}
-                  </span>
-                </motion.div>
-              ))}
+          {/* Bold typography entrance */}
+          <motion.div variants={stagger} initial="hidden" animate="show" className="space-y-2 md:space-y-4">
+            <motion.div variants={fadeUp}>
+              <span className="block text-5xl sm:text-7xl md:text-8xl lg:text-9xl tracking-tighter leading-[0.9] font-black text-white" style={{ textShadow: "0 4px 20px rgba(0,0,0,0.5)" }}>
+                Fierce Advocacy.
+              </span>
             </motion.div>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ ...spring, delay: 0.5 }}
-              className="mt-8 text-lg text-slate-400 max-w-md leading-relaxed"
-            >
-              Over two decades of relentless advocacy. We do not just practice law
-              — we redefine outcomes for families, businesses, and individuals.
-            </motion.p>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ ...spring, delay: 0.7 }}
-              className="mt-8 flex flex-wrap gap-4"
-            >
-              <MagneticButton className="px-8 py-4 bg-emerald-600 text-white font-semibold rounded-xl">
-                <span className="relative z-10 flex items-center gap-2">
-                  Free Consultation <ArrowRight weight="bold" size={18} />
-                </span>
-              </MagneticButton>
-              <MagneticButton className="px-8 py-4 border border-slate-600 text-slate-300 rounded-xl hover:border-emerald-500/50 transition-colors">
-                <span className="relative z-10 flex items-center gap-2">
-                  <Phone weight="bold" size={18} /> (555) 234-5678
-                </span>
-              </MagneticButton>
+            <motion.div variants={fadeUp}>
+              <span className="block text-5xl sm:text-7xl md:text-8xl lg:text-9xl tracking-tighter leading-[0.9] font-black" style={{ color: EMERALD, textShadow: `0 4px 20px ${EMERALD}40` }}>
+                Proven Results.
+              </span>
             </motion.div>
-          </div>
+          </motion.div>
 
-          {/* right — scale of justice — hidden on mobile */}
-          <div className="hidden md:flex items-center justify-center">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ ...spring, delay: 0.3 }}
-              className="w-full max-w-lg"
-            >
-              <ScaleOfJustice />
-            </motion.div>
-          </div>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ ...spring, delay: 0.5 }}
+            className="mt-8 text-lg md:text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed"
+          >
+            22 years of relentless advocacy. Former prosecutors. Over $47 million recovered for clients across Washington State.
+          </motion.p>
+
+          {/* Case results ticker in hero */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.8 }}
+            className="mt-10 py-4 border-y border-white/5"
+          >
+            <InfiniteTicker items={TICKER_ITEMS} speed={35} goldText />
+          </motion.div>
+
+          {/* CTAs */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ ...spring, delay: 1 }}
+            className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4"
+          >
+            <MagneticButton className="px-10 py-5 bg-emerald-600 text-white font-bold rounded-xl text-lg">
+              <span className="relative z-10 flex items-center gap-2">
+                Free Case Review <ArrowRight weight="bold" size={20} />
+              </span>
+            </MagneticButton>
+            <a href="tel:2065550312">
+              <MagneticButton className="px-10 py-5 border-2 border-slate-600 text-white rounded-xl hover:border-emerald-500/50 transition-colors text-lg">
+                <span className="relative z-10 flex items-center gap-2">
+                  <Phone weight="bold" size={20} /> (206) 555-0312
+                </span>
+              </MagneticButton>
+            </a>
+          </motion.div>
         </motion.div>
 
         {/* bottom gradient fade */}
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#0f172a] to-transparent z-20" />
       </section>
 
-      {/* ══════ CASE RESULTS COUNTERS ══════ */}
-      <section className="relative z-10 py-16 md:py-24">
+      {/* ══════ 2. TRUST BAR ══════ */}
+      <section className="relative z-10 py-10 md:py-14">
         <div className="max-w-6xl mx-auto px-4 md:px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-12">
-            <Counter end={2500} label="Cases Won" suffix="+" />
-            <Counter end={98} label="Success Rate" suffix="%" />
-            <Counter end={150} label="Million Recovered" suffix="M" />
-            <Counter end={25} label="Years of Experience" suffix="+" />
-          </div>
-        </div>
-        {/* decorative line */}
-        <div className="mt-16 max-w-6xl mx-auto px-4 md:px-6">
-          <div className="h-px bg-gradient-to-r from-transparent via-emerald-500/30 to-transparent" />
-        </div>
-      </section>
-
-      {/* ══════ SERVICES CAROUSEL ══════ */}
-      <section className="relative z-10 py-16 md:py-24">
-        <div className="max-w-7xl mx-auto px-4 md:px-6">
-          <motion.div
-            variants={stagger}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, margin: "-100px" }}
-          >
-            <motion.p variants={fadeUp} className="text-emerald-400 text-sm font-semibold uppercase tracking-widest">
-              Our Practice Areas
-            </motion.p>
-            <motion.h2 variants={fadeUp} className="mt-3 text-4xl md:text-6xl tracking-tighter leading-none font-bold">
-              How We <span className="text-emerald-400">Fight</span> for You
-            </motion.h2>
-          </motion.div>
-
-          {/* carousel controls */}
-          <div className="flex justify-end gap-2 mt-8 mb-6">
-            <button
-              onClick={() => scroll(-1)}
-              disabled={!canScrollLeft}
-              className="p-3 rounded-xl border border-slate-700 text-slate-400 hover:text-emerald-400 hover:border-emerald-500/50 disabled:opacity-30 transition-all"
-            >
-              <CaretLeft size={20} weight="bold" />
-            </button>
-            <button
-              onClick={() => scroll(1)}
-              disabled={!canScrollRight}
-              className="p-3 rounded-xl border border-slate-700 text-slate-400 hover:text-emerald-400 hover:border-emerald-500/50 disabled:opacity-30 transition-all"
-            >
-              <CaretRight size={20} weight="bold" />
-            </button>
-          </div>
-
-          {/* carousel */}
-          <div
-            ref={carouselRef}
-            onScroll={checkScroll}
-            className="flex gap-6 overflow-x-auto scrollbar-hide pb-4 snap-x snap-mandatory"
-            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-          >
-            {services.map((svc, i) => (
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-6 md:gap-4">
+            {[
+              { value: "22", label: "Years Experience", suffix: "+" },
+              { value: "500", label: "Cases Won", suffix: "+" },
+              { value: "47", label: "Million Recovered", prefix: "$", suffix: "M+" },
+              { value: "Former", label: "Prosecutor", isText: true },
+              { value: "10.0", label: "Avvo Rating", isText: true },
+            ].map((item, i) => (
               <motion.div
-                key={svc.title}
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ ...spring, delay: i * 0.04 }}
-                className="flex-shrink-0 w-72 md:w-80 snap-start"
-              >
-                <motion.div
-                  whileHover={{ y: -6, scale: 1.02 }}
-                  transition={spring}
-                  className="h-full p-8 rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)] hover:border-emerald-500/30 transition-colors"
-                >
-                  <div className="w-14 h-14 rounded-xl bg-emerald-500/10 flex items-center justify-center mb-6">
-                    <svc.icon size={28} weight="duotone" className="text-emerald-400" />
-                  </div>
-                  <h3 className="text-xl font-bold mb-3">{svc.title}</h3>
-                  <p className="text-slate-400 leading-relaxed text-sm">{svc.desc}</p>
-                  <motion.div
-                    className="mt-6 flex items-center gap-2 text-emerald-400 text-sm font-medium cursor-pointer"
-                    whileHover={{ x: 4 }}
-                    transition={spring}
-                  >
-                    Learn More <ArrowRight size={16} weight="bold" />
-                  </motion.div>
-                </motion.div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ══════ WHY CHOOSE US ══════ */}
-      <section className="relative z-10 py-16 md:py-24">
-        <div className="max-w-7xl mx-auto px-4 md:px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            {/* left — glass card */}
-            <motion.div
-              initial={{ opacity: 0, x: -60 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={spring}
-              className="relative"
-            >
-              <div className="p-10 rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-md shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)]">
-                <Scales size={48} weight="duotone" className="text-emerald-400 mb-6" />
-                <h3 className="text-3xl md:text-4xl tracking-tighter leading-none font-bold mb-4">
-                  Why Clients <span className="text-emerald-400">Trust</span> Us
-                </h3>
-                <p className="text-slate-400 leading-relaxed mb-8">
-                  We combine legal brilliance with genuine care for every client.
-                  Our track record speaks for itself.
-                </p>
-                <div className="space-y-4">
-                  {[
-                    { icon: Trophy, text: "Award-winning trial attorneys" },
-                    { icon: Users, text: "Dedicated team for every case" },
-                    { icon: Clock, text: "24/7 client availability" },
-                    { icon: ShieldCheck, text: "No fees unless we win" },
-                  ].map((item, i) => (
-                    <motion.div
-                      key={item.text}
-                      initial={{ opacity: 0, x: -20 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ ...spring, delay: 0.2 + i * 0.1 }}
-                      className="flex items-center gap-4"
-                    >
-                      <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
-                        <item.icon size={20} weight="duotone" className="text-emerald-400" />
-                      </div>
-                      <span className="text-slate-200">{item.text}</span>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-              {/* decorative glow */}
-              <div className="absolute -bottom-8 -right-8 w-64 h-64 bg-emerald-500/5 rounded-full blur-3xl" />
-            </motion.div>
-
-            {/* right — big quote */}
-            <motion.div
-              initial={{ opacity: 0, x: 60 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={spring}
-              className="space-y-8"
-            >
-              <div className="text-6xl text-emerald-500/30 font-serif leading-none">&ldquo;</div>
-              <p className="text-2xl md:text-3xl tracking-tight leading-snug text-slate-200 font-light">
-                The measure of a great law firm is not just
-                in cases won, but in lives changed.
-              </p>
-              <div>
-                <p className="text-emerald-400 font-semibold">James Carter</p>
-                <p className="text-slate-500 text-sm">Founding Partner</p>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* ══════ TESTIMONIALS ══════ */}
-      <section className="relative z-10 py-16 md:py-24 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 md:px-6">
-          <motion.div
-            variants={stagger}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, margin: "-100px" }}
-            className="mb-16"
-          >
-            <motion.p variants={fadeUp} className="text-emerald-400 text-sm font-semibold uppercase tracking-widest">
-              Testimonials
-            </motion.p>
-            <motion.h2 variants={fadeUp} className="mt-3 text-4xl md:text-6xl tracking-tighter leading-none font-bold">
-              Client <span className="text-emerald-400">Stories</span>
-            </motion.h2>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonials.map((t, i) => (
-              <motion.div
-                key={t.name}
-                initial={{ opacity: 0, y: 60 }}
+                key={item.label}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ ...spring, delay: i * 0.05 }}
+                className="text-center"
               >
-                <motion.div
-                  whileHover={{ y: -4 }}
-                  transition={spring}
-                  className="h-full p-8 rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)]"
-                >
-                  <div className="flex gap-1 mb-6">
-                    {Array.from({ length: t.rating }).map((_, s) => (
-                      <Star key={s} size={18} weight="fill" className="text-emerald-400" />
-                    ))}
+                {item.isText ? (
+                  <div className="text-3xl md:text-4xl tracking-tighter leading-none font-bold text-white">{item.value}</div>
+                ) : (
+                  <Counter end={parseInt(item.value)} label="" prefix={item.prefix || ""} suffix={item.suffix || ""} />
+                )}
+                <div className="mt-1 text-xs uppercase tracking-widest text-slate-500">{item.label}</div>
+              </motion.div>
+            ))}
+          </div>
+          <div className="mt-10 h-px bg-gradient-to-r from-transparent via-emerald-500/30 to-transparent" />
+        </div>
+      </section>
+
+      {/* ══════ 3. CASE RESULTS SHOWCASE ══════ */}
+      <section id="results" className="relative z-10 py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-4 md:px-6">
+          <SectionHeader label="Case Results" title="Record of" accent="Victories" />
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {CASE_RESULTS.map((result, i) => (
+              <motion.div
+                key={result.type}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ ...spring, delay: i * 0.08 }}
+              >
+                <GlassCard className="p-8 h-full relative overflow-hidden">
+                  {/* Gold accent bar */}
+                  <div className="absolute top-0 left-0 right-0 h-1" style={{ background: `linear-gradient(90deg, ${GOLD}, ${EMERALD})` }} />
+                  <div className="text-3xl md:text-4xl font-black tracking-tighter" style={{ color: result.amount === "Dismissed" ? EMERALD : GOLD }}>
+                    {result.amount}
                   </div>
-                  <p className="text-slate-300 leading-relaxed mb-6">&ldquo;{t.text}&rdquo;</p>
-                  <div className="pt-4 border-t border-white/5">
-                    <p className="font-semibold text-white">{t.name}</p>
-                    <p className="text-sm text-slate-500">{t.role}</p>
-                  </div>
-                </motion.div>
+                  <div className="mt-2 text-white font-bold text-lg">{result.type}</div>
+                  <div className="mt-1 text-xs text-emerald-400/70 uppercase tracking-wider">{result.location}</div>
+                  <p className="mt-4 text-sm text-slate-400 leading-relaxed">{result.desc}</p>
+                </GlassCard>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ══════ CONTACT ══════ */}
+      {/* ══════ 4. PRACTICE AREAS WITH DEEP ACCORDIONS ══════ */}
+      <section id="practice-areas" className="relative z-10 py-16 md:py-24">
+        {/* subtle bg pattern */}
+        <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)", backgroundSize: "40px 40px" }} />
+
+        <div className="max-w-7xl mx-auto px-4 md:px-6 relative">
+          <SectionHeader label="Practice Areas" title="How We" accent="Fight for You" />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {PRACTICE_AREAS.map((area, i) => {
+              const isOpen = openAccordion === i;
+              return (
+                <motion.div
+                  key={area.title}
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ ...spring, delay: i * 0.06 }}
+                >
+                  <GlassCard className="p-8 h-full hover:border-emerald-500/20 transition-colors" hover={false}>
+                    <div className="w-14 h-14 rounded-xl bg-emerald-500/10 flex items-center justify-center mb-5">
+                      <area.icon size={28} weight="duotone" className="text-emerald-400" />
+                    </div>
+                    <h3 className="text-xl font-bold mb-2">{area.title}</h3>
+                    <p className="text-sm text-slate-400 leading-relaxed">{area.desc}</p>
+
+                    {/* Accordion toggle */}
+                    <button
+                      onClick={() => setOpenAccordion(isOpen ? null : i)}
+                      className="mt-4 flex items-center gap-2 text-emerald-400 text-sm font-medium hover:text-emerald-300 transition-colors"
+                    >
+                      {isOpen ? "Show Less" : "Learn More"}
+                      <motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={spring}>
+                        <CaretDown size={16} weight="bold" />
+                      </motion.div>
+                    </button>
+
+                    {/* Accordion content */}
+                    <AnimatePresence>
+                      {isOpen && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.3 }}
+                          className="overflow-hidden"
+                        >
+                          <div className="pt-4 mt-4 border-t border-white/5">
+                            <p className="text-sm text-slate-300 leading-relaxed mb-4">{area.details}</p>
+                            <div className="space-y-2 mb-5">
+                              {area.cases.map((c) => (
+                                <div key={c} className="flex items-center gap-2 text-sm text-slate-400">
+                                  <CheckCircle size={14} weight="fill" className="text-emerald-400 flex-shrink-0" />
+                                  {c}
+                                </div>
+                              ))}
+                            </div>
+                            <MagneticButton className="w-full px-4 py-3 bg-emerald-600/20 border border-emerald-500/30 text-emerald-400 text-sm font-semibold rounded-lg">
+                              <span className="relative z-10">Free Case Review</span>
+                            </MagneticButton>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </GlassCard>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════ 5. WHY PACIFIC LAW GROUP ══════ */}
       <section className="relative z-10 py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-4 md:px-6">
+          <SectionHeader label="Why Choose Us" title="The Pacific Law" accent="Advantage" />
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { icon: ShieldCheck, title: "No Fee Unless We Win", desc: "Personal injury cases are 100% contingency. You pay nothing unless we recover money for you." },
+              { icon: Clock, title: "24/7 Availability", desc: "Legal emergencies don't wait for business hours. Our attorneys are available around the clock." },
+              { icon: Gavel, title: "Former Prosecutor", desc: "James Callahan spent years as a King County prosecutor. He knows exactly how the other side builds a case." },
+              { icon: Translate, title: "Multilingual Team", desc: "We serve our diverse community in English, Spanish, and Yoruba. Everyone deserves access to justice." },
+            ].map((item, i) => (
+              <motion.div
+                key={item.title}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ ...spring, delay: i * 0.08 }}
+              >
+                <GlassCard className="p-8 h-full text-center">
+                  <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 flex items-center justify-center mx-auto mb-5">
+                    <item.icon size={32} weight="duotone" className="text-emerald-400" />
+                  </div>
+                  <h3 className="text-lg font-bold mb-3">{item.title}</h3>
+                  <p className="text-sm text-slate-400 leading-relaxed">{item.desc}</p>
+                </GlassCard>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════ 6. ATTORNEY PROFILES ══════ */}
+      <section id="attorneys" className="relative z-10 py-16 md:py-24">
+        {/* emerald glow */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-emerald-500/[0.03] rounded-full blur-[100px] pointer-events-none" />
+
+        <div className="max-w-7xl mx-auto px-4 md:px-6 relative">
+          <SectionHeader label="Our Attorneys" title="Meet the" accent="Team" />
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {ATTORNEYS.map((attorney, i) => (
+              <motion.div
+                key={attorney.name}
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ ...spring, delay: i * 0.1 }}
+                style={{ marginTop: i === 1 ? "2rem" : "0" }}
+              >
+                <GlassCard className="overflow-hidden">
+                  <div className="relative h-72 overflow-hidden">
+                    <img
+                      src={attorney.img}
+                      alt={attorney.name}
+                      className="w-full h-full object-cover object-top"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-transparent to-transparent" />
+                    <div className="absolute bottom-4 left-4 right-4">
+                      <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-emerald-600/80 text-white backdrop-blur-sm">
+                        {attorney.years}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="p-6">
+                    <h3 className="text-xl font-bold">{attorney.name}</h3>
+                    <p className="text-emerald-400 text-sm font-medium">{attorney.role} — {attorney.specialty}</p>
+                    <p className="mt-3 text-sm text-slate-400 leading-relaxed">{attorney.bio}</p>
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      {attorney.credentials.map((cred) => (
+                        <span key={cred} className="px-2 py-1 text-xs rounded-md bg-white/5 border border-white/10 text-slate-300">
+                          {cred}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </GlassCard>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════ 7. CASE RESULTS TICKER — FULL WIDTH ══════ */}
+      <section className="relative z-10 py-10 md:py-14 overflow-hidden border-y border-white/5">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(90deg, transparent, rgba(202,138,4,0.03), transparent)" }} />
+        <InfiniteTicker
+          items={["$4.2M", "$1.8M", "$890K", "Dismissed", "$2.1M", "$340K", "Not Guilty", "$1.5M", "$620K", "Dismissed"]}
+          speed={25}
+          goldText
+        />
+      </section>
+
+      {/* ══════ 8. TESTIMONIALS — DARK EDITORIAL ══════ */}
+      <section id="testimonials" className="relative z-10 py-16 md:py-24">
+        <div className="max-w-4xl mx-auto px-4 md:px-6">
+          <SectionHeader label="Client Stories" title="Words From" accent="Our Clients" />
+
+          <div className="relative">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTestimonial}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.4 }}
+              >
+                <GlassCard className="p-10 md:p-14">
+                  <Quotes size={48} weight="fill" className="text-emerald-500/20 mb-6" />
+                  <p className="text-xl md:text-2xl text-slate-200 leading-relaxed font-light">
+                    &ldquo;{TESTIMONIALS[activeTestimonial].text}&rdquo;
+                  </p>
+                  <div className="mt-8 flex items-center gap-4">
+                    <div className="flex gap-1">
+                      {Array.from({ length: 5 }).map((_, s) => (
+                        <Star key={s} size={18} weight="fill" className="text-yellow-500" />
+                      ))}
+                    </div>
+                    <div className="h-4 w-px bg-white/10" />
+                    <div>
+                      <span className="font-semibold text-white">{TESTIMONIALS[activeTestimonial].name}</span>
+                      <span className="ml-2 text-sm text-slate-500">{TESTIMONIALS[activeTestimonial].type}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1 mt-2">
+                    <CheckCircle size={14} weight="fill" className="text-emerald-400" />
+                    <span className="text-xs text-slate-500">Verified Client</span>
+                  </div>
+                </GlassCard>
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Navigation dots */}
+            <div className="flex items-center justify-center gap-3 mt-8">
+              {TESTIMONIALS.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setActiveTestimonial(i)}
+                  className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                    i === activeTestimonial ? "bg-emerald-400 w-8" : "bg-slate-600 hover:bg-slate-500"
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════ 9. FREE CASE REVIEW QUIZ ══════ */}
+      <section className="relative z-10 py-16 md:py-24">
+        <div className="max-w-4xl mx-auto px-4 md:px-6">
+          <SectionHeader label="Get Started" title="What Best Describes" accent="Your Situation?" />
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {[
+              { icon: Heartbeat, title: "Injured in an Accident", response: "You may be entitled to compensation. Let us fight for you.", color: EMERALD },
+              { icon: Siren, title: "Facing Criminal Charges", response: "Time is critical. Call now for immediate defense strategy.", color: "#ef4444" },
+              { icon: House, title: "Family / Immigration Matter", response: "We speak your language. Compassionate, experienced counsel.", color: GOLD },
+              { icon: Cube, title: "Other Legal Issue", response: "Let's talk. Free consultation, no obligation, 100% confidential.", color: "#8b5cf6" },
+            ].map((option, i) => {
+              const isSelected = quizSelected === i;
+              return (
+                <motion.button
+                  key={option.title}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ ...spring, delay: i * 0.06 }}
+                  onClick={() => setQuizSelected(isSelected ? null : i)}
+                  className="text-left w-full"
+                >
+                  <GlassCard
+                    hover={false}
+                    className={`p-6 transition-all duration-300 cursor-pointer ${isSelected ? "border-emerald-500/40 bg-emerald-500/[0.06]" : "hover:border-white/15"}`}
+                  >
+                    <div className="flex items-start gap-4">
+                      <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
+                        style={{ background: `${option.color}15` }}>
+                        <option.icon size={24} weight="duotone" style={{ color: option.color }} />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-white">{option.title}</h4>
+                        <AnimatePresence>
+                          {isSelected && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: "auto", opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.25 }}
+                            >
+                              <p className="mt-2 text-sm text-emerald-400">{option.response}</p>
+                              <div className="mt-3 flex items-center gap-2 text-sm font-medium" style={{ color: option.color }}>
+                                Call Now: (206) 555-0312 <ArrowRight size={14} weight="bold" />
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    </div>
+                  </GlassCard>
+                </motion.button>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════ 10. COMPETITOR COMPARISON ══════ */}
+      <section className="relative z-10 py-16 md:py-24">
+        <div className="max-w-4xl mx-auto px-4 md:px-6">
+          <SectionHeader label="Compare" title="Pacific Law Group vs" accent="Large Corporate Firms" />
+
+          <GlassCard className="overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-white/10">
+                    <th className="text-left p-4 md:p-5 text-slate-400 font-medium">Feature</th>
+                    <th className="p-4 md:p-5 text-center font-bold text-emerald-400">Pacific Law Group</th>
+                    <th className="p-4 md:p-5 text-center font-medium text-slate-500">Large Firms</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {COMPARISON_ROWS.map((row, i) => (
+                    <tr key={row.feature} className={`border-b border-white/5 ${i % 2 === 0 ? "bg-white/[0.01]" : ""}`}>
+                      <td className="p-4 md:p-5 text-slate-300">{row.feature}</td>
+                      <td className="p-4 md:p-5 text-center">
+                        <CheckCircle size={22} weight="fill" className="text-emerald-400 mx-auto" />
+                      </td>
+                      <td className="p-4 md:p-5 text-center text-slate-500 text-xs">{row.them}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </GlassCard>
+        </div>
+      </section>
+
+      {/* ══════ 11. VIDEO PLACEHOLDER ══════ */}
+      <section className="relative z-10 py-16 md:py-24">
+        <div className="max-w-5xl mx-auto px-4 md:px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={spring}
+          >
+            <GlassCard className="relative overflow-hidden aspect-video cursor-pointer group">
+              <img
+                src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=1200&q=80"
+                alt="Pacific Law Group office"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-[#0f172a]/60 group-hover:bg-[#0f172a]/50 transition-colors" />
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <motion.div
+                  whileHover={{ scale: 1.1 }}
+                  className="w-20 h-20 rounded-full bg-emerald-600 flex items-center justify-center shadow-xl shadow-emerald-600/20"
+                >
+                  <Play size={36} weight="fill" className="text-white ml-1" />
+                </motion.div>
+                <p className="mt-4 text-lg font-bold text-white">Hear From Our Clients</p>
+                <p className="text-sm text-slate-400">Watch real stories of justice served</p>
+              </div>
+            </GlassCard>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ══════ 12. AWARDS & CREDENTIALS ══════ */}
+      <section className="relative z-10 py-12 md:py-16">
+        <div className="max-w-6xl mx-auto px-4 md:px-6">
+          <div className="text-center mb-10">
+            <p className="text-sm font-semibold uppercase tracking-widest text-emerald-400">Awards & Credentials</p>
+          </div>
+          <div className="flex flex-wrap items-center justify-center gap-4">
+            {AWARDS.map((award, i) => (
+              <motion.div
+                key={award}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ ...spring, delay: i * 0.05 }}
+              >
+                <div className="flex items-center gap-2 px-5 py-3 rounded-full border border-white/10 bg-white/[0.03] text-sm text-slate-300">
+                  <Trophy size={16} weight="fill" style={{ color: GOLD }} />
+                  {award}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════ 13. CONTACT SECTION ══════ */}
+      <section id="contact" className="relative z-10 py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 md:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16">
             {/* left */}
@@ -707,28 +972,29 @@ export default function V2LawFirmPage() {
               viewport={{ once: true }}
               transition={spring}
             >
-              <p className="text-emerald-400 text-sm font-semibold uppercase tracking-widest">
-                Get In Touch
-              </p>
-              <h2 className="mt-3 text-4xl md:text-6xl tracking-tighter leading-none font-bold">
-                Your Fight <span className="text-emerald-400">Starts Here</span>
+              <p className="text-sm font-semibold uppercase tracking-widest" style={{ color: EMERALD }}>Get In Touch</p>
+              <h2 className="mt-3 text-3xl md:text-5xl tracking-tighter leading-none font-bold">
+                Your Fight <span style={{ color: EMERALD }}>Starts Here</span>
               </h2>
               <p className="mt-6 text-slate-400 max-w-md leading-relaxed">
-                Schedule a free consultation. We will review your case, explain
-                your options, and build a strategy to win.
+                Schedule your free case review today. We will examine the facts, explain your legal options, and build a winning strategy.
               </p>
-              <div className="mt-10 space-y-6">
+              <div className="mt-8 p-4 rounded-xl border border-emerald-500/20 bg-emerald-500/[0.04] inline-flex items-center gap-3">
+                <ShieldCheck size={20} weight="fill" className="text-emerald-400" />
+                <span className="text-sm text-slate-300">Confidential. No obligation. Available 24/7.</span>
+              </div>
+              <div className="mt-10 space-y-5">
                 {[
-                  { icon: Phone, text: "(555) 234-5678" },
-                  { icon: EnvelopeSimple, text: "intake@carterlaw.com" },
-                  { icon: MapPin, text: "120 Justice Blvd, Suite 400" },
+                  { icon: Phone, text: "(206) 555-0312", href: "tel:2065550312" },
+                  { icon: EnvelopeSimple, text: "consult@pacificlawgroup.com", href: "mailto:consult@pacificlawgroup.com" },
+                  { icon: MapPin, text: "701 5th Avenue, Suite 3200, Seattle, WA 98104", href: "https://maps.google.com/?q=701+5th+Avenue+Suite+3200+Seattle+WA+98104" },
                 ].map((item) => (
-                  <div key={item.text} className="flex items-center gap-4 text-slate-300">
-                    <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
+                  <a key={item.text} href={item.href} target={item.href.startsWith("http") ? "_blank" : undefined} rel="noopener noreferrer" className="flex items-center gap-4 text-slate-300 hover:text-white transition-colors group">
+                    <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center flex-shrink-0 group-hover:bg-emerald-500/20 transition-colors">
                       <item.icon size={22} weight="duotone" className="text-emerald-400" />
                     </div>
-                    <span>{item.text}</span>
-                  </div>
+                    <span className="text-sm md:text-base">{item.text}</span>
+                  </a>
                 ))}
               </div>
             </motion.div>
@@ -740,17 +1006,15 @@ export default function V2LawFirmPage() {
               viewport={{ once: true }}
               transition={spring}
             >
-              <div className="p-8 md:p-10 rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-md shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)]">
+              <GlassCard className="p-8 md:p-10">
                 <div className="space-y-5">
                   {[
-                    { label: "Full Name", type: "text", placeholder: "John Smith" },
-                    { label: "Email", type: "email", placeholder: "john@example.com" },
-                    { label: "Phone", type: "tel", placeholder: "(555) 000-0000" },
+                    { label: "Full Name", type: "text", placeholder: "James Smith" },
+                    { label: "Email", type: "email", placeholder: "james@example.com" },
+                    { label: "Phone", type: "tel", placeholder: "(206) 555-0000" },
                   ].map((field) => (
                     <div key={field.label}>
-                      <label className="block text-sm font-medium text-slate-300 mb-2">
-                        {field.label}
-                      </label>
+                      <label className="block text-sm font-medium text-slate-300 mb-2">{field.label}</label>
                       <input
                         type={field.type}
                         placeholder={field.placeholder}
@@ -759,40 +1023,127 @@ export default function V2LawFirmPage() {
                     </div>
                   ))}
                   <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">
-                      Describe Your Case
-                    </label>
+                    <label className="block text-sm font-medium text-slate-300 mb-2">Case Type</label>
+                    <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-slate-300 focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/30 outline-none transition-all appearance-none">
+                      <option value="">Select case type...</option>
+                      <option value="pi">Personal Injury</option>
+                      <option value="criminal">Criminal Defense</option>
+                      <option value="family">Family Law</option>
+                      <option value="immigration">Immigration</option>
+                      <option value="employment">Employment Law</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-300 mb-2">Briefly Describe Your Situation</label>
                     <textarea
                       rows={4}
-                      placeholder="Brief description of your legal matter..."
+                      placeholder="Tell us what happened..."
                       className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-slate-600 focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/30 outline-none transition-all resize-none"
                     />
                   </div>
-                  <MagneticButton className="w-full px-8 py-4 bg-emerald-600 text-white font-semibold rounded-xl">
+                  <MagneticButton className="w-full px-8 py-4 bg-emerald-600 text-white font-bold rounded-xl">
                     <span className="relative z-10 flex items-center justify-center gap-2">
-                      Request Free Consultation <ArrowRight weight="bold" size={18} />
+                      Request Free Case Review <ArrowRight weight="bold" size={18} />
                     </span>
                   </MagneticButton>
                 </div>
-              </div>
+              </GlassCard>
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* ══════ FOOTER ══════ */}
-      <footer className="relative z-10 py-12 border-t border-white/5">
-        <div className="max-w-7xl mx-auto px-4 md:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <Scales size={24} weight="duotone" className="text-emerald-400" />
-            <span className="font-bold text-lg tracking-tight">Carter & Associates</span>
-          </div>
-          <p className="text-sm text-slate-500">
-            &copy; {new Date().getFullYear()} Carter & Associates. All rights reserved.
-          </p>
+      {/* ══════ 14. EMERGENCY BANNER ══════ */}
+      <section className="relative z-10 py-6 md:py-8" style={{ background: `linear-gradient(90deg, #7f1d1d, ${NAVY_LIGHT}, #7f1d1d)` }}>
+        <div className="max-w-7xl mx-auto px-4 md:px-6">
+          <a href="tel:2065550312" className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6">
+            {/* Pulsing indicator */}
+            <div className="flex items-center gap-2">
+              <span className="relative flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+              </span>
+              <span className="text-red-300 font-bold text-sm uppercase tracking-wider">Arrested?</span>
+            </div>
+            <span className="text-white font-black text-xl md:text-2xl tracking-tight">
+              Call Now — (206) 555-0312
+            </span>
+            <span className="text-red-300/70 text-sm font-medium">Available 24/7</span>
+          </a>
         </div>
-        <div className="border-t border-white/5 mt-8 pt-4 text-center">
-          <p className="text-xs text-slate-600">Created by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" style={{textDecoration:"underline"}}>bluejayportfolio.com</a></p>
+      </section>
+
+      {/* ══════ 15. FOOTER ══════ */}
+      <footer className="relative z-10 py-16 border-t border-white/5">
+        <div className="max-w-7xl mx-auto px-4 md:px-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-8">
+            {/* Logo & info */}
+            <div className="md:col-span-1">
+              <div className="flex items-center gap-3 mb-4">
+                <Scales size={28} weight="duotone" className="text-emerald-400" />
+                <span className="text-xl font-bold tracking-tight">Pacific Law Group</span>
+              </div>
+              <p className="text-sm text-slate-500 leading-relaxed">
+                Fierce Advocacy. Proven Results. Serving clients across Washington State for over 22 years.
+              </p>
+              <p className="mt-4 text-xs text-slate-600">Licensed in Washington State</p>
+            </div>
+
+            {/* Practice Areas */}
+            <div>
+              <h4 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4">Practice Areas</h4>
+              <ul className="space-y-2">
+                {PRACTICE_AREAS.map((area) => (
+                  <li key={area.title}>
+                    <a href="#practice-areas" className="text-sm text-slate-500 hover:text-emerald-400 transition-colors">{area.title}</a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Quick Links */}
+            <div>
+              <h4 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4">Quick Links</h4>
+              <ul className="space-y-2">
+                {["Case Results", "Our Attorneys", "Testimonials", "Free Case Review", "Contact Us"].map((link) => (
+                  <li key={link}>
+                    <a href="#contact" className="text-sm text-slate-500 hover:text-emerald-400 transition-colors">{link}</a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Contact */}
+            <div>
+              <h4 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4">Contact</h4>
+              <div className="space-y-3 text-sm text-slate-500">
+                <a href="tel:2065550312" className="flex items-center gap-2 hover:text-emerald-400 transition-colors">
+                  <Phone size={14} weight="bold" /> (206) 555-0312
+                </a>
+                <a href="mailto:consult@pacificlawgroup.com" className="flex items-center gap-2 hover:text-emerald-400 transition-colors">
+                  <EnvelopeSimple size={14} weight="bold" /> consult@pacificlawgroup.com
+                </a>
+                <a href="https://maps.google.com/?q=701+5th+Avenue+Suite+3200+Seattle+WA+98104" target="_blank" rel="noopener noreferrer" className="flex items-start gap-2 hover:text-emerald-400 transition-colors">
+                  <MapPin size={14} weight="bold" className="mt-0.5 flex-shrink-0" />
+                  <span>701 5th Avenue, Suite 3200<br />Seattle, WA 98104</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom bar */}
+          <div className="mt-12 pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4">
+            <p className="text-xs text-slate-600">
+              &copy; {new Date().getFullYear()} Pacific Law Group. All rights reserved.
+            </p>
+            <p className="text-xs text-slate-600">
+              Created by{" "}
+              <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" className="underline hover:text-slate-400 transition-colors">
+                bluejayportfolio.com
+              </a>
+            </p>
+          </div>
         </div>
       </footer>
     </div>
