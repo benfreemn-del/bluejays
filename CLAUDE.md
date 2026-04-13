@@ -506,14 +506,103 @@ Every V2 preview template MUST include ALL of the following conversion-focused s
 9. Google Reviews Header — stars + count
 10. Project Guarantee CTA — on time, on budget, with license number
 
-**CATEGORIES NOT YET UPGRADED** (use the 10 universal features + adapt from similar categories):
-- Salon → adapt from interior design (style-focused) + before/after gallery
-- Law Firm → adapt from insurance (trust-focused) + free consultation + case results
+**HVAC** (dark professional theme, uses `BLUE` variable — NOT ACCENT)
+1. Service Type Badges — heating, AC, heat pumps, furnaces, ductwork, 24/7
+2. Seasonal Savings — $89/$79/$4999 pricing cards
+3. What We Service — 8 equipment types grid
+4. HVAC Process — 4-step comfort flow
+5. Energy Savings — save 40%, smart thermostats, $2K tax credits
+6. Competitor Comparison — vs big box HVAC, 7 rows
+7. Video Placeholder — "Meet Our Team"
+8. HVAC Need Quiz — no heat/maintenance/new system/air quality
+9. Google Reviews Header — stars + count
+10. Comfort Guarantee — satisfaction guaranteed, financing available
+
+**ELECTRICIAN** (dark professional theme)
+1. Service Type Badges — residential, commercial, panels, EV, generators, 24/7
+2. Upfront Pricing — $99/$1800/$799 cards
+3. What We Handle — 8 capabilities grid
+4. Electrical Process — 4-step safety flow
+5. Safety First — licensed, code-compliant, background-checked, warranty
+6. Competitor Comparison — vs handyman electrical, 7 rows
+7. Video Placeholder — "See Our Work"
+8. Electrical Quiz — outlet/panel/new install/emergency
+9. Google Reviews Header — stars + count
+10. Safety Guarantee — free inspection, license number
+
+**PLUMBER** (dark professional theme, uses `TEAL` variable)
+1. Service Type Badges — emergency, drain, water heaters, sewer, repiping, leak
+2. Upfront Pricing — $99/$1200/$149 cards
+3. What We Fix — 8 items grid
+4. Plumbing Process — 4-step no-surprises
+5. Why Choose Us — licensed, 24/7, upfront, guaranteed
+6. Competitor Comparison — vs handyman/DIY, 7 rows
+7. Video Placeholder — "See Our Work"
+8. Plumbing Issue Quiz — drain/leak/water heater/sewer
+9. Google Reviews Header — stars + count
+10. Guarantee CTA — licensed, insured, guaranteed
+
+**SALON** (elegant theme, uses `ROSE` variable — NOT ACCENT)
+1. Service Category Badges — haircuts, color, balayage, extensions, bridal, treatments
+2. Service Menu — $55/$120/$200+ pricing cards
+3. Stylist Profiles — 4 specialty cards
+4. Salon Experience — 4-step elegant journey
+5. Why Choose Us — award-winning, premium products, relaxing, consultation
+6. Competitor Comparison — vs chain salons, 7 rows
+7. Video Placeholder — "Tour Our Salon"
+8. Service Quiz — haircut/color/occasion/repair
+9. Google Reviews Header — stars + count
+10. New Client Special — 20% off first visit
+
+**LANDSCAPING** (earthy theme, uses `PRIMARY` variable)
+1. Service Type Badges — lawn care, design, hardscaping, irrigation, tree, cleanup
+2. Service Pricing — $45/visit, $2500+, $8000+ cards
+3. What We Do — 8 services grid
+4. Process — 4-step with icons
+5. Why Choose Us — licensed, custom, sustainable, guaranteed
+6. Competitor Comparison — vs mow-and-go, 7 rows
+7. Video Placeholder — "See Our Transformations"
+8. Yard Need Quiz — lawn care/makeover/hardscaping/cleanup
+9. Google Reviews Header — stars + count
+10. Free Consultation CTA — transform your outdoor space
+
+**LAW FIRM** (dark navy premium, uses `EMERALD` variable — NOT PRIMARY)
+1. Practice Area Badges — PI, family, criminal, employment, immigration, business
+2. Case Results — $2.5M recovered, custody won, charges dismissed
+3. Legal Process — 4-step with icons
+4. Why Choose Our Firm — no fee unless win, 24/7, track record, personal
+5. Practice Areas Grid — 8 areas
+6. Competitor Comparison — vs large corporate firms, 7 rows
+7. Video Placeholder — "Meet Your Attorney"
+8. Legal Help Quiz — accident/family/criminal/business
+9. Google Reviews Header — stars + count
+10. Free Consultation CTA — ShimmerBorder with trust badges
+
+**REAL ESTATE** (dark premium, uses `GOLD` variable — NOT PRIMARY)
+1. Service Type Badges — buying, selling, investing, first-time, luxury, relocation
+2. Market Stats — days on market, homes sold, avg price
+3. Buying/Selling Process — 5-step journey
+4. Why Choose This Agent — local expert, track record, full-service, negotiation
+5. Areas We Serve — 8 neighborhoods grid
+6. Competitor Comparison — vs online brokers, 7 rows
+7. Video Placeholder — "See Our Featured Listings"
+8. Buying or Selling Quiz — buy/sell/explore/invest
+9. Google Reviews Header — stars + count
+10. Free Home Valuation CTA — "What's Your Home Worth?"
+
+**CATEGORIES NOT YET BUILT** (use the 10 universal features + adapt from similar):
 - Restaurant → unique: menu section, reservation CTA, food gallery
-- Real Estate → unique: listing cards, market stats, home value calculator
-- Electrician/Plumber/HVAC → adapt from auto repair (honest pricing, safety) + same-day service
 - Fitness/Martial Arts → unique: class schedule, free trial, transformation photos
 - All others → use the 10 universal features as baseline
+
+**CRITICAL BUILD NOTE — COLOR VARIABLE NAMES:**
+Each template uses a DIFFERENT color variable name. Using the wrong one crashes the entire Vercel build. Always read the file first and check:
+- Dental: `TEAL` | Roofing: `ACCENT` | Vet: `PRIMARY` | Moving: `ACCENT`
+- Pest Control: `ACCENT` | Cleaning: `ACCENT` | Interior Design: `PRIMARY`
+- Photography: `GOLD` | Insurance: `ACCENT` | Accounting: `ACCENT`
+- Chiropractic: `PRIMARY` | Auto Repair: `ACCENT` | GC: `ACCENT`
+- HVAC: `BLUE` | Electrician: `ACCENT` | Plumber: `TEAL`
+- Salon: `ROSE` | Landscaping: `PRIMARY` | Law Firm: `EMERALD` | Real Estate: `GOLD`
 
 ### Implementation Rules
 - **Use existing shared components** — `GlassCard`, `MagneticButton`, `ShimmerBorder`, `SectionHeader` from within the template
