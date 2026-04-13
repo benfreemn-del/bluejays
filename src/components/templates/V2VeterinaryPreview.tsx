@@ -739,16 +739,15 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
                   <span className="text-sm font-bold text-white">After</span>
                 </div>
               </div>
-              </div>
-              <div className="p-6 flex flex-wrap gap-3">
-                {["Healthier Coats", "Better Mobility", "Brighter Eyes", "More Energy"].map((item) => (
-                  <span key={item} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border" style={{ color: PRIMARY, borderColor: `${PRIMARY}33`, background: `${PRIMARY}0d` }}>
-                    <CheckCircle size={14} weight="fill" />
-                    {item}
-                  </span>
-                ))}
-              </div>
-            </GlassCard>
+            </div>
+            <div className="p-6 flex flex-wrap gap-3">
+              {["Healthier Coats", "Better Mobility", "Brighter Eyes", "More Energy"].map((item) => (
+                <span key={item} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border" style={{ color: PRIMARY, borderColor: `${PRIMARY}33`, background: `${PRIMARY}0d` }}>
+                  <CheckCircle size={14} weight="fill" />
+                  {item}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
       </section>
