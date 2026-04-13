@@ -1572,8 +1572,9 @@ export default function RoofingShowcase() {
             subtitle="Full project walkthrough — from tear-off to final inspection."
           />
           <GlassCard className="aspect-video relative overflow-hidden group cursor-pointer">
-            <div className="absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
-              <RooflinePattern />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=80" alt="Roofing project" className="absolute inset-0 w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors" />
               <motion.div
                 className="w-20 h-20 rounded-full flex items-center justify-center relative z-10"
                 style={{
