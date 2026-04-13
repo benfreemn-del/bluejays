@@ -65,6 +65,17 @@ export async function POST(
       }
     });
 
+    // If no images found from HTML, fall back to existing scraped photos
+    if (imageUrls.length === 0) {
+      const existingPhotos = (prospect.scrapedData as Record<string, unknown>)?.photos as string[] || [];
+      existingPhotos.forEach((p) => {
+        if (!seen.has(p)) {
+          seen.add(p);
+          imageUrls.push(p);
+        }
+      });
+    }
+
     // Cap at 30
     const capped = imageUrls.slice(0, 30);
     const category = prospect.category || "general";

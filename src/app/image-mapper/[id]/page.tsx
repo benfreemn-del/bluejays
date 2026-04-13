@@ -509,6 +509,28 @@ export default function ImageMapDetailPage() {
                 "Scan Website"
               )}
             </button>
+            {mapping && mapping.selectionStatus !== "completed" && (
+              <button
+                onClick={async () => {
+                  if (!mapping) return;
+                  // Force all images to "keep-original"
+                  const updated = mapping.images.map((img) => ({
+                    ...img,
+                    status: img.status === "needs-replacement" ? "keep-original" as const : img.status,
+                  }));
+                  setMapping({ ...mapping, images: updated, selectionStatus: "completed" });
+                  await fetch(`/api/image-mapper/save/${id}`, {
+                    method: "POST",
+                    credentials: "include",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ images: updated }),
+                  });
+                }}
+                className="px-4 py-2 rounded-lg bg-green-600 hover:bg-green-500 text-white text-sm font-semibold transition-colors"
+              >
+                Force Complete ✓
+              </button>
+            )}
           </div>
         </div>
       </header>
