@@ -516,15 +516,19 @@ export default function ImageMapDetailPage() {
                   // Force all images to "keep-original"
                   const updated = mapping.images.map((img) => ({
                     ...img,
-                    status: img.status === "needs-replacement" ? "keep-original" as const : img.status,
+                    status: "keep-original" as const,
                   }));
-                  setMapping({ ...mapping, images: updated, selectionStatus: "completed" });
-                  await fetch(`/api/image-mapper/save/${id}`, {
-                    method: "POST",
-                    credentials: "include",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ images: updated }),
-                  });
+                  const newMapping = { ...mapping, images: updated, selectionStatus: "completed" as const };
+                  setMapping(newMapping);
+                  // Save each image individually to ensure persistence
+                  for (const img of updated) {
+                    await fetch(`/api/image-mapper/save/${id}`, {
+                      method: "POST",
+                      credentials: "include",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ imageUpdate: { position: img.position, status: "keep-original" } }),
+                    });
+                  }
                 }}
                 className="px-4 py-2 rounded-lg bg-green-600 hover:bg-green-500 text-white text-sm font-semibold transition-colors"
               >
