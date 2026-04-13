@@ -416,7 +416,7 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
                 <Sparkle size={14} weight="fill" className="inline mr-2" />
                 Premium Beauty Studio
               </p>
-              <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}>
+              <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 20px rgba(0,0,0,0.8), 0 4px 40px rgba(0,0,0,0.5)" }}>
                 {data.tagline}
               </h1>
             </div>

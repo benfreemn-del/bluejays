@@ -362,7 +362,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
           <div className="max-w-2xl space-y-8">
             <div>
               <p className="text-sm font-semibold tracking-[0.3em] uppercase mb-6" style={{ color: GOLD }}>{data.businessName}</p>
-              <h1 className="text-3xl md:text-6xl lg:text-7xl font-black tracking-tighter leading-none text-white" style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}>
+              <h1 className="text-3xl md:text-6xl lg:text-7xl font-black tracking-tighter leading-none text-white" style={{ textShadow: "0 2px 20px rgba(0,0,0,0.8), 0 4px 40px rgba(0,0,0,0.5)" }}>
                 {data.tagline}
               </h1>
               <div className="h-px w-24 mt-6" style={{ backgroundColor: GOLD }} />
