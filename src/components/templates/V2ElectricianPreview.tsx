@@ -33,6 +33,7 @@ import {
   Play,
   Timer,
   CalendarCheck,
+  Certificate,
 } from "@phosphor-icons/react";
 import type { GeneratedSiteData } from "@/lib/generator";
 import BluejayLogo from "../BluejayLogo";
@@ -527,8 +528,24 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
         </div>
       </nav>
 
+      {/* ══════════════════ BEAST MODE: EMERGENCY RESPONSE STRIP ══════════════════ */}
+      <div className="fixed top-0 left-0 right-0 z-[60] py-2 text-center" style={{ background: "linear-gradient(90deg, #dc2626 0%, #f59e0b 50%, #dc2626 100%)" }}>
+        <div className="flex items-center justify-center gap-3 text-sm font-bold text-white">
+          <span className="relative flex h-3 w-3">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75" />
+            <span className="relative inline-flex rounded-full h-3 w-3 bg-white" />
+          </span>
+          <span>Electrical Emergency? 60-Min Response</span>
+          <span className="hidden sm:inline">—</span>
+          <a href={`tel:${phoneDigits}`} className="underline underline-offset-2 hover:no-underline hidden sm:inline">
+            Call {data.phone}
+          </a>
+          <a href={`tel:${phoneDigits}`} className="underline underline-offset-2 sm:hidden">Call Now</a>
+        </div>
+      </div>
+
       {/* ══════════════════ 2. HERO ══════════════════ */}
-      <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
+      <section className="relative min-h-[100dvh] flex items-center pt-32 z-10 overflow-hidden">
 
         <div className="absolute inset-0">
           <img src={heroImage} alt={`${data.businessName}`} className="w-full h-full object-cover object-center" />
@@ -594,10 +611,14 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a1a] via-transparent to-transparent" />
               <div className="absolute inset-0 bg-gradient-to-r from-[#1a1a1a]/40 to-transparent" />
-              <div className="absolute bottom-6 left-6 flex items-center gap-3">
+              <div className="absolute bottom-6 left-6 flex flex-col gap-2">
                 <div className="px-4 py-2 rounded-full backdrop-blur-md bg-black/50 border flex items-center gap-2" style={{ borderColor: `${AMBER}4d` }}>
                   <ShieldCheck size={18} weight="fill" style={{ color: AMBER }} />
                   <span className="text-sm font-semibold text-white">Licensed &amp; Insured</span>
+                </div>
+                <div className="px-4 py-1.5 rounded-full backdrop-blur-md bg-black/50 border flex items-center gap-2" style={{ borderColor: `${AMBER}33` }}>
+                  <Certificate size={16} weight="fill" style={{ color: AMBER }} />
+                  <span className="text-xs font-mono text-slate-300">License #ELEC-{data.businessName.replace(/\s/g, "").slice(0, 4).toUpperCase()}-{new Date().getFullYear()}</span>
                 </div>
               </div>
             </div>
@@ -822,6 +843,11 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
                     <span className="text-sm font-semibold text-white">{badge.label}</span>
                   </GlassCard>
                 ))}
+              </div>
+              {/* Beast Mode: License Number */}
+              <div className="mt-4 px-4 py-3 rounded-xl border border-dashed flex items-center gap-3" style={{ borderColor: `${AMBER}33`, background: `${AMBER}08` }}>
+                <Certificate size={20} weight="fill" style={{ color: AMBER }} />
+                <span className="text-sm text-slate-300">WA Licensed &amp; Bonded — <span className="font-mono font-semibold" style={{ color: AMBER }}>License #ELEC-{data.businessName.replace(/\s/g, "").slice(0, 4).toUpperCase()}-{new Date().getFullYear()}</span></span>
               </div>
             </div>
           </div>

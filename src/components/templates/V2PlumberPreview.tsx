@@ -385,8 +385,24 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </nav>
 
+      {/* ══════════════════ BEAST MODE: EMERGENCY RESPONSE STRIP ══════════════════ */}
+      <div className="fixed top-0 left-0 right-0 z-[60] py-2 text-center" style={{ background: `linear-gradient(90deg, ${TEAL} 0%, #0f766e 50%, ${TEAL} 100%)` }}>
+        <div className="flex items-center justify-center gap-3 text-sm font-bold text-white">
+          <span className="relative flex h-3 w-3">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75" />
+            <span className="relative inline-flex rounded-full h-3 w-3 bg-white" />
+          </span>
+          <span>Burst Pipe? We&apos;re There in 60 Minutes</span>
+          <span className="hidden sm:inline">—</span>
+          <a href={`tel:${phoneDigits}`} className="underline underline-offset-2 hover:no-underline hidden sm:inline">
+            Call {data.phone}
+          </a>
+          <a href={`tel:${phoneDigits}`} className="underline underline-offset-2 sm:hidden">Call Now</a>
+        </div>
+      </div>
+
       {/* ══════════════════ 2. HERO ══════════════════ */}
-      <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
+      <section className="relative min-h-[100dvh] flex items-center pt-32 z-10 overflow-hidden">
 
         <div className="absolute inset-0">
           <img src={heroImage} alt={`${data.businessName}`} className="w-full h-full object-cover object-center" />
@@ -660,6 +676,32 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
                 </div>
                 <h3 className="text-lg font-bold text-white mb-2">{pillar.title}</h3>
                 <p className="text-sm text-slate-400 leading-relaxed">{pillar.desc}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ BEAST MODE: HONEST PLUMBER PROMISE ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0a1020 50%, #0f172a 100%)" }} />
+        <PipePattern opacity={0.02} accent={BLUE} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] left-[20%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${TEAL}08` }} /></div>
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Our Promise" title="The Honest Plumber Promise" subtitle={`${data.businessName} believes you deserve a plumber you can trust — every single time.`} accent={TEAL} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { title: "We Show You the Problem", desc: "Before we touch a wrench, we show you exactly what is wrong — no mystery, no guesswork.", icon: Wrench },
+              { title: "Upfront Pricing", desc: "You get the full cost before work begins. No surprise charges, no hidden fees. Ever.", icon: CurrencyDollar },
+              { title: "Clean Up After Every Job", desc: "We treat your home like our own. Drop cloths down, mess cleaned up, shoes off.", icon: ThumbsUp },
+              { title: "Can't Fix It = You Don't Pay", desc: "If we cannot solve your plumbing problem, you owe us nothing. That is our guarantee.", icon: SealCheck },
+            ].map((promise) => (
+              <GlassCard key={promise.title} className="p-7 text-center group hover:border-white/20 transition-all duration-500">
+                <div className="w-14 h-14 rounded-xl mx-auto mb-4 flex items-center justify-center border" style={{ background: `${TEAL}15`, borderColor: `${TEAL}33` }}>
+                  <promise.icon size={28} weight="duotone" style={{ color: TEAL }} />
+                </div>
+                <h3 className="text-base font-bold text-white mb-2">{promise.title}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed">{promise.desc}</p>
               </GlassCard>
             ))}
           </div>

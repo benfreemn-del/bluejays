@@ -478,6 +478,33 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
+      {/* ══════════════════ BEAST MODE: NEIGHBORHOOD SPOTLIGHT ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #09090b 0%, #070707 50%, #09090b 100%)" }} />
+        <LuxuryPattern opacity={0.025} accent={GOLD} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${GOLD}08` }} /></div>
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Neighborhoods" title={`Explore ${data.city || "Local"} Neighborhoods`} subtitle="Find the perfect community that fits your lifestyle, budget, and vision for the future." accent={GOLD} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { name: "Downtown", avgPrice: "$550K–$850K", vibe: "Walkable urban living with restaurants, nightlife, and culture at your doorstep.", icon: Buildings },
+              { name: "Suburbs", avgPrice: "$400K–$650K", vibe: "Quiet streets, top-rated schools, and spacious lots perfect for growing families.", icon: House },
+              { name: "Waterfront", avgPrice: "$750K–$1.2M", vibe: "Stunning views, premium finishes, and resort-style living year-round.", icon: Key },
+              { name: "Family-Friendly", avgPrice: "$350K–$550K", vibe: "Parks, playgrounds, and community events — designed for families that thrive together.", icon: Handshake },
+            ].map((hood) => (
+              <GlassCard key={hood.name} className="p-7 group hover:border-white/10 transition-all duration-500">
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 border" style={{ background: `${GOLD}15`, borderColor: `${GOLD}33` }}>
+                  <hood.icon size={24} weight="duotone" style={{ color: GOLD }} />
+                </div>
+                <h3 className="text-lg font-bold text-white mb-1">{hood.name}</h3>
+                <p className="text-sm font-semibold mb-3" style={{ color: GOLD }}>{hood.avgPrice}</p>
+                <p className="text-sm text-zinc-400 leading-relaxed">{hood.vibe}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ══════════════════ 5. ABOUT ══════════════════ */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #09090b 0%, #070707 50%, #09090b 100%)" }} />

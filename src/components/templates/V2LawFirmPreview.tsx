@@ -308,6 +308,7 @@ function AnimatedSection({ children, className = "" }: { children: React.ReactNo
 export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [openPracticeArea, setOpenPracticeArea] = useState<number | null>(0);
 
   const { EMERALD, EMERALD_GLOW } = getAccent(data.accentColor);
 
@@ -527,6 +528,31 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
+      {/* ══════════════════ BEAST MODE: CASE RESULTS TICKER ══════════════════ */}
+      <section className="relative z-10 py-6 overflow-hidden" style={{ background: "#0a0f1a" }}>
+        <div className="absolute inset-0 pointer-events-none" style={{ background: `linear-gradient(90deg, #0a0f1a 0%, transparent 10%, transparent 90%, #0a0f1a 100%)` }} />
+        <div className="relative">
+          <div className="flex whitespace-nowrap" style={{ animation: "tickerScroll 20s linear infinite" }}>
+            {[...Array(3)].map((_, rep) => (
+              <div key={rep} className="flex items-center shrink-0">
+                {["$2.5M", "$890K", "Dismissed", "$1.2M", "Not Guilty", "$340K", "$4.7M", "Acquitted", "$680K"].map((result, i) => (
+                  <span key={`${rep}-${i}`} className="flex items-center mx-6">
+                    <span className="text-lg md:text-xl font-black tracking-tight" style={{ color: GOLD }}>{result}</span>
+                    <span className="mx-6 text-slate-600">|</span>
+                  </span>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+        <style>{`
+          @keyframes tickerScroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-33.33%); }
+          }
+        `}</style>
+      </section>
+
       {/* ══════════════════ 4. SERVICES ══════════════════ */}
       <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1522 50%, #0f172a 100%)" }} />
@@ -562,25 +588,41 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ PRACTICE AREAS GRID ══════════════════ */}
+      {/* ══════════════════ BEAST MODE: PRACTICE AREA ACCORDIONS ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0b1320 50%, #0f172a 100%)" }} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute bottom-[10%] left-[5%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${GOLD}06` }} /></div>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <SectionHeader badge="Full-Service Firm" title="Practice Areas We Handle" subtitle="Comprehensive legal representation across all major areas of law." accent={EMERALD} />
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {practiceAreas.map((area) => (
-              <GlassCard key={area.name} className="p-5 group hover:border-opacity-30 transition-all duration-500 cursor-pointer">
-                <div className="relative">
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-2xl" style={{ background: `radial-gradient(circle at 50% 0%, ${EMERALD}15, transparent 70%)` }} />
-                  <div className="relative z-10 text-center">
-                    <div className="w-12 h-12 rounded-xl mx-auto mb-3 flex items-center justify-center border" style={{ background: EMERALD_GLOW, borderColor: `${EMERALD}33` }}>
-                      <area.icon size={24} weight="duotone" style={{ color: EMERALD }} />
-                    </div>
-                    <h3 className="text-sm font-bold text-white mb-1">{area.name}</h3>
-                    <p className="text-xs text-slate-500 leading-relaxed hidden md:block">{area.desc}</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {practiceAreas.map((area, i) => (
+              <GlassCard key={area.name} className="overflow-hidden transition-all duration-500">
+                <button
+                  onClick={() => setOpenPracticeArea(openPracticeArea === i ? null : i)}
+                  className="w-full flex items-center gap-4 p-6 text-left cursor-pointer"
+                >
+                  <div className="w-12 h-12 rounded-xl shrink-0 flex items-center justify-center border" style={{ background: EMERALD_GLOW, borderColor: `${EMERALD}33` }}>
+                    <area.icon size={24} weight="duotone" style={{ color: EMERALD }} />
                   </div>
-                </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-base font-bold text-white">{area.name}</h3>
+                    <p className="text-xs text-slate-500 truncate">{area.desc}</p>
+                  </div>
+                  <CaretDown size={20} className={`text-slate-400 shrink-0 transition-transform duration-300 ${openPracticeArea === i ? "rotate-180" : ""}`} />
+                </button>
+                <AnimatePresence>
+                  {openPracticeArea === i && (
+                    <motion.div initial={{ height: 0 }} animate={{ height: "auto" }} exit={{ height: 0 }} transition={spring} className="overflow-hidden">
+                      <div className="px-6 pb-6 border-t border-white/5 pt-4">
+                        <p className="text-sm text-slate-400 leading-relaxed mb-4">{area.desc}</p>
+                        <MagneticButton className="px-5 py-2.5 rounded-lg text-sm font-semibold text-white border flex items-center gap-2 cursor-pointer" style={{ borderColor: `${EMERALD}4d`, background: `${EMERALD}15` }}>
+                          <Phone size={16} weight="bold" style={{ color: EMERALD }} />
+                          <span style={{ color: EMERALD }}>Free Case Review</span>
+                        </MagneticButton>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </GlassCard>
             ))}
           </div>
