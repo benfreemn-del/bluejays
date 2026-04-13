@@ -220,7 +220,7 @@ const petTypes = [
   { name: "Dogs", description: "From playful puppies to senior companions, we provide breed-specific care tailored to your dog's unique needs.", icon: Dog, img: "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=500&q=80" },
   { name: "Cats", description: "Feline-friendly handling with separate waiting areas and exam rooms. We speak cat and we make sure they know it.", icon: Cat, img: "https://images.unsplash.com/photo-1574158622682-e40e69881006?w=500&q=80" },
   { name: "Exotic Pets", description: "Rabbits, birds, reptiles, guinea pigs, and more. Specialized husbandry advice and medical care for your unique companion.", icon: Bird, img: "https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?w=500&q=80" },
-  { name: "Senior Pets", description: "Geriatric wellness programs, arthritis management, and cognitive health monitoring for pets in their golden years.", icon: Heartbeat, img: "https://images.unsplash.com/photo-1560807707-8cc77767d783?w=500&q=80" },
+  { name: "Senior Pets", description: "Geriatric wellness programs, arthritis management, and cognitive health monitoring for pets in their golden years.", icon: Heartbeat, img: "https://images.unsplash.com/photo-1534361960057-19889db9621e?w=500&q=80" },
 ];
 
 const fearFreeFeatures = [
@@ -455,7 +455,7 @@ export default function V2VeterinaryPage() {
               <motion.div key={i} variants={fadeUp} whileHover={{ y: -6 }} transition={springFast}>
                 <GlassCard className="overflow-hidden h-full">
                   <div className="aspect-[4/3] overflow-hidden relative">
-                    <img src={pet.img} alt={pet.name} className="w-full h-full object-cover object-top" />
+                    <img src={pet.img} alt={pet.name} className="w-full h-full object-cover object-center" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                     <div className="absolute bottom-3 left-3">
                       <div className="flex items-center gap-2 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1.5">

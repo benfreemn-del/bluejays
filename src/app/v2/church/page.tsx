@@ -277,7 +277,7 @@ export default function ChurchShowcase() {
               A Place to{" "}
               <span style={{ color: AMBER }}>Belong</span>
             </h1>
-            <p className="text-lg md:text-xl max-w-2xl mx-auto mb-8 leading-relaxed" style={{ color: BODY }}>
+            <p className="text-lg md:text-xl max-w-2xl mx-auto mb-8 leading-relaxed" style={{ color: DARK, textShadow: "0 1px 8px rgba(255,255,255,0.8), 0 0 20px rgba(255,255,255,0.5)" }}>
               A diverse, multigenerational community in the heart of Ballard, Seattle.
               Everyone is welcome here.
             </p>
