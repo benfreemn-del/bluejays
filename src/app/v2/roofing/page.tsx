@@ -785,8 +785,8 @@ export default function RoofingShowcase() {
             className="absolute inset-0"
           >
             <img
-              src="/images/roofing-before-after.jpg"
-              alt="Summit Roofing NW — professional roof installation"
+              src="/images/roofing-hero.png"
+              alt="Summit Roofing NW — professional roofer at work"
               className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-gray-900/50 to-transparent" />

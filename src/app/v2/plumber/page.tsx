@@ -468,7 +468,7 @@ const SERVICE_AREAS = [
 ];
 
 const HERO_IMG = "https://images.unsplash.com/photo-1607472586893-edb57bdc0e39?w=900&q=80";
-const ABOUT_IMG = "https://images.unsplash.com/photo-1621460249485-4e4f92c9de5d?w=700&q=80";
+const ABOUT_IMG = "/images/plumber-owner.jpg";
 
 /* ═══════════════════════════════════════════════════════════════════
    MAIN PAGE
