@@ -1,7 +1,7 @@
 export const metadata = {
-  title: "[V2] Build It Right | Premium General Contractor Template",
+  title: "Summit Builders NW | Licensed General Contractor — Seattle, WA",
   description:
-    "V2 premium animated general contractor template with construction-themed animations and steel-gray design.",
+    "V2 premium general contractor showcase for Summit Builders NW. 22 years building Seattle's future. Licensed WA #SUMMIBW891PZ.",
 };
 
 export default function V2GeneralContractorLayout({
