@@ -26,7 +26,7 @@ const THEME_LIBRARY: Record<string, { url: string; name: string }[]> = {
     { url: "https://images.unsplash.com/photo-1628009368231-7bb7cfcb0def?w=400&q=80", name: "vet-dog" },
     { url: "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=400&q=80", name: "happy-dogs" },
     { url: "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400&q=80", name: "golden-retriever" },
-    { url: "https://images.unsplash.com/photo-1583337130417-13219ce250d3?w=400&q=80", name: "cat-face" },
+    { url: "https://images.unsplash.com/photo-1574158622682-e40e69881006?w=400&q=80", name: "cat-face" },
     { url: "https://images.unsplash.com/photo-1559715541-d4fc97b8d6dd?w=400&q=80", name: "vet-exam" },
     { url: "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=400&q=80", name: "puppy" },
   ],

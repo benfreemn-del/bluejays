@@ -14,7 +14,6 @@ export async function POST(
   }
 
   const body = await request.json();
-  // Read imageMapping from scrapedData where it's persisted
   const sd = (prospect.scrapedData || {}) as Record<string, unknown>;
   const mapping = sd.imageMapping as ImageMapping | undefined;
   if (!mapping) {
@@ -39,10 +38,29 @@ export async function POST(
     mapping.lastUpdated = new Date().toISOString();
   }
 
-  // Save back inside scrapedData so it persists in Supabase
+  // Build updated photos array from mappings — this updates the LIVE preview
+  const existingPhotos = (sd.photos as string[]) || [];
+  const updatedPhotos = [...existingPhotos];
+  for (const img of mapping.images) {
+    if (img.status === "replaced" && img.replacementUrl) {
+      // Replace the photo at the corresponding position (0-indexed)
+      const idx = img.position - 1;
+      if (idx < updatedPhotos.length) {
+        updatedPhotos[idx] = img.replacementUrl;
+      } else {
+        updatedPhotos.push(img.replacementUrl);
+      }
+    }
+  }
+
+  // Save mapping + updated photos back to scrapedData
   await updateProspect(id, {
-    scrapedData: { ...sd, imageMapping: mapping } as typeof prospect.scrapedData,
+    scrapedData: {
+      ...sd,
+      imageMapping: mapping,
+      photos: updatedPhotos,
+    } as typeof prospect.scrapedData,
   });
 
-  return NextResponse.json({ message: "Saved", mapping });
+  return NextResponse.json({ message: "Saved", mapping, photosUpdated: true });
 }
