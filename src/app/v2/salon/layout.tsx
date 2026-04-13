@@ -1,7 +1,7 @@
 export const metadata = {
-  title: "[V2] Luxe Studio | Premium Salon Template",
+  title: "[V2] Velvet Hair Studio | Premium Salon Template",
   description:
-    "V2 premium animated salon template with morphing blobs, letter reveals, and editorial layouts.",
+    "V2 premium salon showcase — asymmetric editorial hero, rose gold accents, stylist profiles, and boutique luxury design.",
 };
 
 export default function V2SalonLayout({
