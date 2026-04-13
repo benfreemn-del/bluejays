@@ -632,6 +632,57 @@ All 10 premium features per category are **hardcoded directly into each V2 templ
 - **Auto-rotating elements add life** without requiring user interaction. Testimonial carousels, stat counters, and subtle animations make the page feel alive.
 - **Centered hero + search/calculator = modern.** Left-aligned hero + side image = 2020. The hero layout is the first thing prospects see — it must feel current.
 - **Trust bar immediately below hero.** Don't make visitors scroll to find credibility signals. Numbers + badges right after the hero.
+- **Light vs dark themes prove range.** Showing BOTH warm light (dental) and dark luxury (real estate) in the portfolio proves we don't just do one look. Alternate themes across showcases.
+- **Staggered masonry testimonials feel organic** vs carousel feeling automated. Use masonry for warm/friendly categories, carousel for premium/luxury.
+- **Insurance/carrier badges are HUGE trust signals** for healthcare categories. People's first question: "do you take my insurance?" Show this prominently.
+- **Before/after with REAL photos** (not stock) are 10x more convincing. Use Ben's real before/after images where available (`/images/dental-before-after.png`, `/images/roofing-before-after.jpg`, `/images/vet-before-after.png`, `/images/interior-design-before-after.jpg`).
+- **Comfort/anxiety sections sell healthcare categories.** "We know dental anxiety is real" / "fear-free veterinary" / "gentle physical therapy" directly addresses the #1 objection.
+
+### Theme Pairing Guide (for generated sites AND showcases)
+When building sites, match theme to industry vibe:
+
+| Theme | Background | When to use | Categories |
+|-------|-----------|-------------|-----------|
+| **Warm Light** | `#faf9f6` cream | Friendly, approachable, family | Dental, Vet, Daycare, Church, Tutoring, PT |
+| **Dark Luxury** | `#09090b` near-black | Premium, high-end, aspirational | Real Estate, Law Firm, Med Spa, Photography |
+| **Dark Professional** | `#111827`/`#1a1a1a` | Trades, reliability, trust | Roofing, HVAC, Electrician, Plumber, Auto, GC, Moving |
+| **Soft Elegant** | `#fefefe` white | Creative, stylish, visual | Salon, Interior Design, Event Planning, Florist |
+| **Bold Energy** | `#0a0a0a` pure black | Power, intensity, motivation | Fitness, Martial Arts, Tattoo |
+| **Warm Dark** | `#1c1917` charcoal | Inviting, cozy, appetite | Restaurant, Catering |
+
+### Cross-Category Feature Patterns (apply learnings across similar industries)
+
+**Healthcare family** (dental, vet, chiropractic, PT, med spa):
+- Patient/pet comfort section addressing anxiety — MANDATORY
+- Insurance/payment badges — show carrier names prominently
+- Before/after with real photos when available
+- Provider spotlight with credentials (DDS, DC, DVM, MD)
+- "When was your last visit?" interactive quiz
+- New patient/client special banner with pricing
+
+**Trades family** (roofing, HVAC, electrician, plumber, auto, GC):
+- Honesty/transparency guarantee section — MANDATORY (people fear getting ripped off)
+- Upfront pricing cards — show actual price ranges
+- License/bond/insurance display — show actual numbers
+- "What do you need?" diagnostic quiz
+- Emergency service pulsing indicator
+- Competitor comparison vs DIY/handyman/dealership
+
+**Professional services** (law, insurance, accounting, real estate):
+- Case results/savings with specific dollar amounts
+- Interactive calculators (mortgage, tax savings, settlement estimator)
+- Credential badges and professional associations
+- "What help do you need?" intake quiz
+- Free consultation CTA with urgency
+- Agent/attorney spotlight with full bio
+
+**Lifestyle/beauty** (salon, med spa, photography, fitness, interior design):
+- Style/type quiz ("What's your style?" / "What service?")
+- Portfolio/gallery as the hero feature — visuals sell
+- Stylist/trainer/designer profiles
+- Pricing menu with tiers
+- Before/after transformation showcase
+- "Now Booking" limited availability CTA
 
 **CATEGORIES NOT YET BUILT** (use the 10 universal features + adapt from similar):
 - Restaurant → unique: menu section with categories, reservation CTA, food gallery, chef spotlight
