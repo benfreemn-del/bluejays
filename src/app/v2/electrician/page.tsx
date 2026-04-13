@@ -111,7 +111,7 @@ const PROJECTS = [
     title: "Commercial Rewire",
     location: "Fremont Brewery",
     desc: "Full 3-phase 400A service upgrade for new brewing equipment. Zero downtime — phased installation over 3 weekends.",
-    img: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=800&q=80",
+    img: "https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=800&q=80",
   },
   {
     title: "Smart Home System",
