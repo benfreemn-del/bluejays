@@ -588,6 +588,10 @@ All 10 premium features per category are **hardcoded directly into each V2 templ
 8. Legal Help Quiz — accident/family/criminal/business
 9. Google Reviews Header — stars + count
 10. Free Consultation CTA — ShimmerBorder with trust badges
+- **BEAST MODE UPGRADE (learned from Real Estate):**
+  - **Case Results Ticker** — animated counter showing "$X Million Recovered" with live counting animation (like mortgage calculator but for settlements). Specific dollar amounts in testimonials ("won $340K settlement") are 10x more convincing than generic praise.
+  - **Practice Area Deep-Dive Accordions** — expandable cards for each practice area with detailed descriptions, common case types, and "Free Case Review" CTA per area. Interactive content keeps visitors on page longer.
+  - **Consultation Scheduler** — interactive form with case type dropdown, urgency selector, preferred contact method. More sophisticated than a basic contact form.
 
 **REAL ESTATE** (dark premium, uses `GOLD` variable — NOT PRIMARY)
 1. Service Type Badges — buying, selling, investing, first-time, luxury, relocation
@@ -600,10 +604,44 @@ All 10 premium features per category are **hardcoded directly into each V2 templ
 8. Buying or Selling Quiz — buy/sell/explore/invest
 9. Google Reviews Header — stars + count
 10. Free Home Valuation CTA — "What's Your Home Worth?"
+- **BEAST MODE FEATURES (built in showcase, apply to generated sites too):**
+  - **Property Search Bar** — interactive hero search with location/price/beds dropdowns. Centered hero layout (NOT left-aligned) breaks template pattern.
+  - **Mortgage Calculator** — 3 range sliders (price/down payment/rate) with LIVE monthly payment calculation. Interactive features keep prospects engaged.
+  - **Neighborhood Spotlight** — 4 cards with real local data (avg price, walk score, school rating). Shows local expertise.
+  - **Auto-rotating Testimonial Carousel** — 5 reviews that rotate every 5 seconds with dot navigation. Specific dollar amounts in reviews ("negotiated $47K off") are more convincing than generic praise.
+  - **Trust Bar** — horizontal stats strip immediately below hero. Numbers sell.
+
+**FITNESS / MARTIAL ARTS** (high contrast dark theme)
+- **BEAST MODE UPGRADE (learned from Real Estate):**
+  - **Class Schedule Grid** — interactive weekly schedule like the property search bar. Filter by class type (HIIT, Yoga, Strength, Boxing). Interactive engagement keeps visitors exploring.
+  - **Membership Tier Comparison** — 3 pricing cards like mortgage calculator tiers. Basic/Premium/Unlimited with feature checkmarks and "Start Free Trial" CTAs.
+  - **Transformation Gallery** — before/after carousel like the testimonial carousel. Auto-rotating success stories with specific results ("Lost 47 lbs in 6 months").
+  - **BMI/Fitness Calculator** — interactive like the mortgage calculator. Enter height/weight, get result with recommended program. Interactive tools = longer time on page.
+
+**MED SPA** (elegant dark/light theme)
+- **BEAST MODE UPGRADE (learned from Real Estate):**
+  - **Treatment Menu with Pricing** — interactive cards like property cards. Filter by category (Face, Body, Skin, Injectables). Each shows treatment name, duration, price range, and "Book Now".
+  - **Before/After Slider** — interactive drag comparison for treatments (like smile slider for dental). Real results sell med spa services.
+  - **Skin Quiz** — "What's Your Skin Concern?" interactive quiz like the buying/selling quiz. Acne/Aging/Pigmentation/Texture → recommended treatment → booking CTA.
+  - **Provider Spotlight** — like Sarah Chen agent spotlight. Medical director with credentials, board certifications, years of experience. Trust is critical for medical procedures.
+
+### Portfolio Showcase Design Principles (learned from Beast Mode builds)
+- **NO two showcase sites should share the same hero layout.** If real estate has centered text + search bar, dental should have split layout, law firm should have full-bleed video bg, etc.
+- **Every showcase needs 2-3 INTERACTIVE features** unique to that industry. Static content = template. Interactive content = custom build.
+- **Specific numbers > generic praise.** "$47K negotiated off" beats "great negotiator". "Lost 47 lbs" beats "amazing results". "98% satisfaction" beats "highly rated".
+- **Auto-rotating elements add life** without requiring user interaction. Testimonial carousels, stat counters, and subtle animations make the page feel alive.
+- **Centered hero + search/calculator = modern.** Left-aligned hero + side image = 2020. The hero layout is the first thing prospects see — it must feel current.
+- **Trust bar immediately below hero.** Don't make visitors scroll to find credibility signals. Numbers + badges right after the hero.
 
 **CATEGORIES NOT YET BUILT** (use the 10 universal features + adapt from similar):
-- Restaurant → unique: menu section, reservation CTA, food gallery
-- Fitness/Martial Arts → unique: class schedule, free trial, transformation photos
+- Restaurant → unique: menu section with categories, reservation CTA, food gallery, chef spotlight
+- Catering → unique: event type cards, menu packages, dietary options filter
+- Pet Services → unique: pet type cards, boarding calendar, grooming packages
+- Physical Therapy → unique: condition cards, recovery timeline, insurance checker
+- Tutoring → unique: subject grid, tutor profiles, scheduling calendar
+- Church → unique: service times, sermon archive, community events calendar
+- Tattoo → unique: style gallery, artist profiles, booking with deposit
+- Towing → unique: coverage map, response time, vehicle type selector
 - All others → use the 10 universal features as baseline
 
 **CRITICAL BUILD NOTE — COLOR VARIABLE NAMES:**
