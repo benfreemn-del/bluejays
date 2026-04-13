@@ -219,8 +219,9 @@ export default function ImageMapDetailPage() {
         return;
       }
       setProspect(data);
-      if (data.imageMapping) {
-        setMapping(data.imageMapping as ImageMapping);
+      const imgMapping = data.imageMapping || data.scrapedData?.imageMapping;
+      if (imgMapping) {
+        setMapping(imgMapping as ImageMapping);
       }
     } catch {
       router.push("/image-mapper");

@@ -14,7 +14,9 @@ export async function POST(
   }
 
   const body = await request.json();
-  const mapping = (prospect as Record<string, unknown>).imageMapping as ImageMapping | undefined;
+  // Read imageMapping from scrapedData where it's persisted
+  const sd = (prospect.scrapedData || {}) as Record<string, unknown>;
+  const mapping = sd.imageMapping as ImageMapping | undefined;
   if (!mapping) {
     return NextResponse.json({ error: "No image mapping found. Scan first." }, { status: 400 });
   }
@@ -37,7 +39,10 @@ export async function POST(
     mapping.lastUpdated = new Date().toISOString();
   }
 
-  await updateProspect(id, { imageMapping: mapping });
+  // Save back inside scrapedData so it persists in Supabase
+  await updateProspect(id, {
+    scrapedData: { ...sd, imageMapping: mapping } as typeof prospect.scrapedData,
+  });
 
   return NextResponse.json({ message: "Saved", mapping });
 }

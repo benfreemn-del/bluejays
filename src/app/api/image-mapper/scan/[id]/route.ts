@@ -91,7 +91,11 @@ export async function POST(
       lastUpdated: new Date().toISOString(),
     };
 
-    await updateProspect(id, { imageMapping: mapping });
+    // Store inside scrapedData so it persists in Supabase
+    const existingSD = (prospect.scrapedData || {}) as Record<string, unknown>;
+    await updateProspect(id, {
+      scrapedData: { ...existingSD, imageMapping: mapping } as typeof prospect.scrapedData,
+    });
 
     return NextResponse.json({
       message: `Scanned ${images.length} images from ${prospect.businessName}`,

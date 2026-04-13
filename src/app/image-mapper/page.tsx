@@ -90,13 +90,15 @@ export default function ImageMapperLeadsPage() {
               </thead>
               <tbody>
                 {filtered.map((p) => {
+                  const imgMap = (p as Record<string, unknown>).imageMapping || (p.scrapedData as Record<string, unknown>)?.imageMapping;
+                  const im = imgMap as { images?: { status: string }[]; selectionStatus?: string } | undefined;
                   const imageCount =
-                    p.imageMapping?.images?.length ||
+                    im?.images?.length ||
                     p.scrapedData?.photos?.length ||
                     0;
-                  const mappingStatus = p.imageMapping?.selectionStatus;
+                  const mappingStatus = im?.selectionStatus;
                   const replaced =
-                    p.imageMapping?.images?.filter(
+                    im?.images?.filter(
                       (i) => i.status === "replaced" || i.status === "keep-original"
                     ).length || 0;
 
@@ -144,7 +146,7 @@ export default function ImageMapperLeadsPage() {
                           </span>
                         ) : mappingStatus === "in-progress" ? (
                           <span className="text-xs px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-400 font-semibold">
-                            In Progress ({replaced}/{p.imageMapping?.images?.length || 0})
+                            In Progress ({replaced}/{im?.images?.length || 0})
                           </span>
                         ) : (
                           <span className="text-xs px-2.5 py-1 rounded-full bg-white/5 text-white/30">
