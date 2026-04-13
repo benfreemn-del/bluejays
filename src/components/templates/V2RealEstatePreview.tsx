@@ -31,6 +31,13 @@ import {
   Clock,
   X,
   List,
+  Handshake,
+  Play,
+  Key,
+  MagnifyingGlass,
+  Target,
+  Trophy,
+  Scales,
 } from "@phosphor-icons/react";
 import type { GeneratedSiteData } from "@/lib/generator";
 import BluejayLogo from "../BluejayLogo";
@@ -243,10 +250,47 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
   const phoneDigits = data.phone.replace(/\D/g, "");
 
   const processSteps = [
-    { step: "01", title: "Consultation", desc: "We discuss your goals, timeline, and preferences to create a personalized strategy." },
-    { step: "02", title: "Property Search", desc: "Our team curates a selection of properties that match your exact criteria." },
-    { step: "03", title: "Expert Negotiation", desc: "We negotiate aggressively on your behalf to secure the best possible terms." },
-    { step: "04", title: "Closing", desc: "We handle every detail through closing, ensuring a smooth and stress-free experience." },
+    { step: "01", title: "Consultation", desc: "We sit down to understand your goals, timeline, budget, and dream home vision." },
+    { step: "02", title: "Search & Listing Strategy", desc: "Whether buying or selling, we craft a targeted plan to position you for success." },
+    { step: "03", title: "Tours & Showings", desc: "We schedule and attend every showing, providing expert insight on each property." },
+    { step: "04", title: "Negotiate & Close", desc: "We negotiate aggressively on your behalf and manage every detail through closing." },
+    { step: "05", title: "Welcome Home / Sold!", desc: "Keys in hand or sold sign in the yard — we celebrate your success together." },
+  ];
+
+  const serviceTypeBadges = ["Buying", "Selling", "Investing", "First-Time Buyers", "Luxury Homes", "Relocation"];
+
+  const marketStats = [
+    { label: "Average Days on Market", value: "12", icon: Calendar },
+    { label: "Homes Sold This Year", value: "50+", icon: Key },
+    { label: "Average Sale Price", value: "$650K", icon: CurrencyDollar },
+  ];
+
+  const whyChoosePillars = [
+    { title: "Local Market Expert", desc: "Deep knowledge of every neighborhood, school district, and market trend in the area.", icon: MagnifyingGlass },
+    { title: "Proven Track Record", desc: "Hundreds of successful transactions and a reputation built on results, not promises.", icon: Trophy },
+    { title: "Full-Service Support", desc: "From your first showing to closing day and beyond — we handle every detail.", icon: Handshake },
+    { title: "Negotiation Skills", desc: "We fight for every dollar, ensuring you get the best possible price on your biggest investment.", icon: Scales },
+  ];
+
+  const areasWeServe = [
+    "Downtown", "Westside", "North Hills", "Lakefront", "Midtown", "Eastview", "Southgate", "Old Town"
+  ];
+
+  const comparisonRows = [
+    { feature: "Local Market Knowledge", us: true, them: "Limited" },
+    { feature: "Full Negotiation Support", us: true, them: "DIY" },
+    { feature: "Staging & Prep Advice", us: true, them: "No" },
+    { feature: "Inspection Guidance", us: true, them: "No" },
+    { feature: "Contract & Legal Review", us: true, them: "Basic" },
+    { feature: "After-Close Support", us: true, them: "No" },
+    { feature: "Personal Availability", us: true, them: "Call Center" },
+  ];
+
+  const quizOptions = [
+    { label: "Ready to Buy", desc: "Let us find your dream home in the perfect neighborhood.", icon: House, color: `${GOLD}` },
+    { label: "Ready to Sell", desc: "Maximize your sale price with our proven listing strategy.", icon: CurrencyDollar, color: `${GOLD}` },
+    { label: "Just Exploring", desc: "Get a free market analysis — no pressure, just answers.", icon: MagnifyingGlass, color: `${GOLD}` },
+    { label: "Investing", desc: "Discover high-ROI opportunities in today's market.", icon: ChartLineUp, color: `${GOLD}` },
   ];
 
   const faqs = [
@@ -363,6 +407,44 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
+      {/* ══════════════════ FEATURE 1: SERVICE TYPE BADGES ══════════════════ */}
+      <section className="relative z-10 py-12 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #09090b 0%, #070707 100%)" }} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="flex flex-wrap justify-center gap-3">
+            {serviceTypeBadges.map((badge) => (
+              <span key={badge} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold border transition-all duration-300 hover:scale-105" style={{ color: GOLD, borderColor: `${GOLD}33`, background: `${GOLD}0d` }}>
+                <House size={16} weight="fill" style={{ color: GOLD }} />
+                {badge}
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ FEATURE 2: MARKET STATS ══════════════════ */}
+      <section className="relative z-10 py-20 md:py-24 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #070707 0%, #09090b 50%, #070707 100%)" }} />
+        <LuxuryPattern opacity={0.02} accent={GOLD} />
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Market Insight" title="Local Market Expertise" subtitle={`${data.businessName} delivers results backed by real data and deep local knowledge.`} accent={GOLD} />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {marketStats.map((stat) => {
+              const Icon = stat.icon;
+              return (
+                <GlassCard key={stat.label} className="p-8 text-center group hover:border-white/10 transition-all duration-500">
+                  <div className="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ background: `${GOLD}15`, border: `1px solid ${GOLD}33` }}>
+                    <Icon size={28} weight="duotone" style={{ color: GOLD }} />
+                  </div>
+                  <p className="text-3xl md:text-4xl font-black tracking-tighter mb-2" style={{ color: GOLD }}>{stat.value}</p>
+                  <p className="text-zinc-400 text-sm font-medium uppercase tracking-wide">{stat.label}</p>
+                </GlassCard>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
       {/* ══════════════════ 4. SERVICES ══════════════════ */}
       <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #09090b 0%, #070707 50%, #09090b 100%)" }} />
@@ -435,19 +517,47 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 6. PROCESS ══════════════════ */}
+      {/* ══════════════════ FEATURE 4: WHY CHOOSE THIS AGENT ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #09090b 0%, #070707 50%, #09090b 100%)" }} />
+        <LuxuryPattern opacity={0.025} accent={GOLD} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] right-[10%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${GOLD}06` }} /></div>
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Why Us" title="Your Trusted Partner" subtitle="Buying or selling your biggest investment deserves more than an average agent." accent={GOLD} />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {whyChoosePillars.map((pillar) => {
+              const Icon = pillar.icon;
+              return (
+                <GlassCard key={pillar.title} className="p-7 group hover:border-white/10 transition-all duration-500">
+                  <div className="flex items-start gap-5">
+                    <div className="w-14 h-14 rounded-xl flex items-center justify-center shrink-0" style={{ background: `${GOLD}15`, border: `1px solid ${GOLD}33` }}>
+                      <Icon size={28} weight="duotone" style={{ color: GOLD }} />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-white mb-2">{pillar.title}</h3>
+                      <p className="text-sm text-zinc-400 leading-relaxed">{pillar.desc}</p>
+                    </div>
+                  </div>
+                </GlassCard>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ 6. PROCESS (5-step) ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #09090b 0%, #070707 50%, #09090b 100%)" }} />
         <LuxuryPattern opacity={0.025} accent={GOLD} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <AnimatedSection>          <SectionHeader badge="Our Process" title="How We Work for You" accent={GOLD} /></AnimatedSection>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
             {processSteps.map((step, i) => (
               <div key={step.step} className="relative">
                 {i < processSteps.length - 1 && <div className="hidden lg:block absolute top-10 left-[calc(50%+40px)] w-[calc(100%-80px)] h-px" style={{ background: `linear-gradient(to right, ${GOLD}33, ${GOLD}11)` }} />}
-                <GlassCard className="p-6 text-center relative">
-                  <div className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center text-2xl font-black" style={{ background: `linear-gradient(135deg, ${GOLD}22, ${GOLD}0a)`, color: GOLD, border: `1px solid ${GOLD}33` }}>{step.step}</div>
-                  <h3 className="text-lg font-bold text-white mb-2">{step.title}</h3>
+                <GlassCard className="p-6 text-center relative h-full">
+                  <div className="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center text-xl font-black" style={{ background: `linear-gradient(135deg, ${GOLD}22, ${GOLD}0a)`, color: GOLD, border: `1px solid ${GOLD}33` }}>{step.step}</div>
+                  <h3 className="text-base font-bold text-white mb-2">{step.title}</h3>
                   <p className="text-sm text-zinc-400 leading-relaxed">{step.desc}</p>
                 </GlassCard>
               </div>
@@ -478,18 +588,136 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
+      {/* ══════════════════ FEATURE 5: AREAS WE SERVE ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #09090b 0%, #070707 50%, #09090b 100%)" }} />
+        <LuxuryPattern opacity={0.02} accent={GOLD} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Coverage" title="Areas We Serve" subtitle={`${data.businessName} knows every neighborhood, every street, every opportunity.`} accent={GOLD} />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {areasWeServe.map((area) => (
+              <GlassCard key={area} className="p-5 text-center group hover:border-white/10 transition-all duration-300">
+                <MapPin size={22} weight="duotone" style={{ color: GOLD }} className="mx-auto mb-2" />
+                <p className="text-white font-semibold text-sm">{area}</p>
+                <p className="text-zinc-500 text-xs mt-1">& surrounding areas</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ FEATURE 6: COMPETITOR COMPARISON ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #070707 0%, #09090b 50%, #070707 100%)" }} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Compare" title={`${data.businessName} vs. Online Brokers`} subtitle="See the difference a dedicated local agent makes on your biggest investment." accent={GOLD} />
+          <GlassCard className="overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-white/10">
+                    <th className="text-left px-6 py-4 text-zinc-400 font-medium">Feature</th>
+                    <th className="text-center px-6 py-4 font-bold" style={{ color: GOLD }}>{data.businessName}</th>
+                    <th className="text-center px-6 py-4 text-zinc-500 font-medium">Discount Brokers</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {comparisonRows.map((row, i) => (
+                    <tr key={row.feature} className={i % 2 === 0 ? "bg-white/[0.02]" : ""}>
+                      <td className="px-6 py-4 text-zinc-300">{row.feature}</td>
+                      <td className="px-6 py-4 text-center">
+                        <CheckCircle size={20} weight="fill" className="mx-auto" style={{ color: GOLD }} />
+                      </td>
+                      <td className="px-6 py-4 text-center text-zinc-500">{row.them}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </GlassCard>
+        </div>
+      </section>
+
+      {/* ══════════════════ FEATURE 7: VIDEO PLACEHOLDER ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #09090b 0%, #070707 50%, #09090b 100%)" }} />
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Virtual Tour" title="See Our Featured Listings" accent={GOLD} />
+          <div className="relative rounded-2xl overflow-hidden border border-white/[0.08] aspect-video group cursor-pointer">
+            <img src={galleryImages[0] || heroImage} alt="Featured listings tour" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <div className="absolute inset-0 bg-black/50 group-hover:bg-black/40 transition-colors duration-300" />
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <div className="w-20 h-20 rounded-full flex items-center justify-center border-2 mb-4 transition-all duration-300 group-hover:scale-110" style={{ borderColor: GOLD, background: `${GOLD}22` }}>
+                <Play size={36} weight="fill" style={{ color: GOLD }} />
+              </div>
+              <p className="text-white text-lg font-bold">Watch the Virtual Tour</p>
+              <p className="text-zinc-400 text-sm mt-1">Explore our listings from the comfort of your home</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ FEATURE 8: BUYING OR SELLING QUIZ ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #070707 0%, #09090b 50%, #070707 100%)" }} />
+        <LuxuryPattern opacity={0.025} accent={GOLD} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Get Started" title="Buying or Selling?" subtitle="Tell us where you are in your journey and we'll guide you from here." accent={GOLD} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {quizOptions.map((option) => {
+              const Icon = option.icon;
+              return (
+                <GlassCard key={option.label} className="p-6 group hover:border-white/10 transition-all duration-300 cursor-pointer">
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0" style={{ background: `${GOLD}15`, border: `1px solid ${GOLD}33` }}>
+                      <Icon size={24} weight="duotone" style={{ color: GOLD }} />
+                    </div>
+                    <div>
+                      <h3 className="text-base font-bold text-white mb-1">{option.label}</h3>
+                      <p className="text-sm text-zinc-400 leading-relaxed">{option.desc}</p>
+                    </div>
+                  </div>
+                </GlassCard>
+              );
+            })}
+          </div>
+          <div className="text-center mt-8">
+            <MagneticButton className="px-8 py-4 rounded-xl text-base font-bold text-black flex items-center gap-2 mx-auto cursor-pointer" style={{ background: GOLD } as React.CSSProperties}>
+              <Phone size={18} weight="bold" /> Call to Discuss Your Options
+            </MagneticButton>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ FEATURE 9: GOOGLE REVIEWS HEADER ══════════════════ */}
       {/* ══════════════════ 8. TESTIMONIALS ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #09090b 0%, #070707 50%, #09090b 100%)" }} />
         <LuxuryPattern opacity={0.02} accent={GOLD} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
+          {/* FEATURE 9: Google Reviews Header */}
+          <div className="text-center mb-6">
+            <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full border" style={{ borderColor: `${GOLD}33`, background: `${GOLD}0d` }}>
+              <div className="flex gap-0.5">
+                {Array.from({ length: 5 }).map((_, i) => <Star key={i} size={18} weight="fill" style={{ color: GOLD }} />)}
+              </div>
+              <span className="text-white font-bold text-sm">{data.googleRating || "5.0"}</span>
+              <span className="text-zinc-400 text-sm">({data.reviewCount || "50"}+ Reviews on Google)</span>
+            </div>
+          </div>
           <AnimatedSection>          <SectionHeader badge="Testimonials" title="Client Success Stories" accent={GOLD} /></AnimatedSection>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {testimonials.map((t, i) => (
               <GlassCard key={i} className="p-6 h-full flex flex-col">
-                <div className="flex gap-0.5 mb-4">{Array.from({ length: t.rating || 5 }).map((_, j) => <Star key={j} size={16} weight="fill" style={{ color: GOLD }} />)}</div>
+                <div className="flex gap-0.5 mb-4">{Array.from({ length: t.rating || 5 }).map((_, j) => <Star key={j} size={18} weight="fill" style={{ color: GOLD }} />)}</div>
                 <p className="text-zinc-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p>
-                <div className="pt-4 border-t border-white/5"><span className="text-sm font-semibold text-white">{t.name}</span></div>
+                <div className="pt-4 border-t border-white/5">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-semibold text-white">{t.name}</span>
+                    <CheckCircle size={14} weight="fill" style={{ color: GOLD }} />
+                    <span className="text-xs text-zinc-500">Verified</span>
+                  </div>
+                </div>
               </GlassCard>
             ))}
           </div>
@@ -534,9 +762,9 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
       
       {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
       <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${PRIMARY}15, ${PRIMARY}08)` }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${GOLD}15, ${GOLD}08)` }} />
         <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
-          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: PRIMARY }}>
+          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: GOLD }}>
             Don&apos;t Miss Out
           </p>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-3">
@@ -548,7 +776,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
           <a
             href={`/claim/${data.id}`}
             className="inline-flex items-center gap-2 min-h-[48px] px-8 py-3 rounded-full text-white font-bold text-base hover:shadow-lg transition-all duration-300"
-            style={{ background: PRIMARY }}
+            style={{ background: GOLD }}
           >
             Claim This Website
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
@@ -603,6 +831,34 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
               </form>
             </GlassCard>
           </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ FEATURE 10: FREE HOME VALUATION CTA ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #09090b 0%, #070707 50%, #09090b 100%)" }} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[30%] w-[600px] h-[400px] rounded-full blur-[200px]" style={{ background: `${GOLD}08` }} /></div>
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <ShimmerBorder accent={GOLD}>
+            <div className="p-8 md:p-14 text-center">
+              <div className="w-16 h-16 rounded-full mx-auto mb-6 flex items-center justify-center" style={{ background: `${GOLD}15`, border: `1px solid ${GOLD}33` }}>
+                <House size={32} weight="duotone" style={{ color: GOLD }} />
+              </div>
+              <p className="text-xs font-bold uppercase tracking-[0.25em] mb-4" style={{ color: GOLD }}>Free Market Analysis</p>
+              <h2 className="text-3xl md:text-5xl font-black tracking-tighter text-white mb-4">What&apos;s Your Home Worth?</h2>
+              <p className="text-zinc-400 text-lg leading-relaxed max-w-xl mx-auto mb-8">
+                Your home is your biggest investment. Get a complimentary, no-obligation market analysis from {data.businessName} and discover your property&apos;s true value in today&apos;s market.
+              </p>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <MagneticButton className="px-8 py-4 rounded-xl text-base font-bold text-black flex items-center gap-2 cursor-pointer" style={{ background: GOLD } as React.CSSProperties}>
+                  <Target size={18} weight="bold" /> Get My Free Valuation
+                </MagneticButton>
+                <MagneticButton href={`tel:${phoneDigits}`} className="px-8 py-4 rounded-xl text-base font-bold text-zinc-300 border border-white/10 flex items-center gap-2 cursor-pointer hover:border-white/20 transition-colors">
+                  <Phone size={18} weight="bold" /> <PhoneLink phone={data.phone} />
+                </MagneticButton>
+              </div>
+            </div>
+          </ShimmerBorder>
         </div>
       </section>
 
