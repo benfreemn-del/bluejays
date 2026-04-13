@@ -153,6 +153,9 @@ export default function DashboardPage() {
             <a href="/analytics" className="rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-background hover:text-foreground">
               Stats
             </a>
+            <Link href="/image-mapper" className="rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-background hover:text-foreground">
+              Images
+            </Link>
             <a
               href="/api/call-lists?type=all&format=csv"
               className="flex h-9 items-center rounded-lg border border-border px-3 text-sm font-medium text-muted transition-colors hover:border-blue-electric/40 hover:text-foreground"
