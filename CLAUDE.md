@@ -662,13 +662,76 @@ All 10 premium features per category are **hardcoded directly into each V2 templ
 - Testimonials: Horizontal drag-scroll (unique from all previous — carousel, masonry, editorial, alternating)
 - Layout lesson: Overlapping card hero creates depth. "Honest promise" sections directly address trade industry trust fears. Each showcase should use a DIFFERENT testimonial layout.
 
+**#6 Fitness — Iron & Oak Fitness** (1,203 lines)
+- Theme: Pure black `#0a0a0a` with neon lime `#84cc16`
+- Hero: Full-bleed photo + outlined "STRONGER" text (photo shows through letters, Nike-style)
+- Unique: Interactive class schedule grid, membership tier toggle (monthly/annual), BMI calculator with program recommendation, transformation gallery with specific results
+- Layout lesson: Outlined text hero feels like a premium athletic brand. Monthly/annual toggle adds interactivity.
+
+**#7 Roofing — Summit Roofing NW** (1,970 lines)
+- Theme: Dark charcoal `#111827` with brick red `#dc2626` + gold `#ca8a04`
+- Hero: 50/50 split-screen (text left, real before/after photo right)
+- Unique: Insurance claims 4-step timeline, premium materials with warranty specs, roof age quiz, real `/images/roofing-hero.png`, rain particles
+- Layout lesson: Card stack testimonials create visual interest. Real before/after photos 10x more convincing.
+
+**#8 Auto Repair — Pacific Auto Works** (1,374 lines)
+- Theme: Dark `#111111` with red `#dc2626` + silver `#94a3b8`
+- Hero: Scroll-driven parallax reveal (car image reveals as you scroll, text stays sticky)
+- Unique: Vehicle types grid (domestic/import/european/diesel/hybrid), "Honest Mechanic Guarantee", specific dollar savings in testimonials ("saved me $2,400"), racing flag checker service cards
+- Layout lesson: Scroll-driven parallax feels cinematic/automotive. Specific dollar savings in reviews are 10x more convincing.
+
+**#9 Salon — Velvet Hair Studio** (1,053 lines)
+- Theme: Warm cream `#faf8f5` with rose gold `#b76e79`
+- Hero: Asymmetric editorial photo grid (3 overlapping photos like a fashion magazine)
+- Unique: Stylist profiles with individual specialties, "What's Your Hair Vibe?" quiz, Pinterest masonry gallery, products badge row (Olaplex, Kerastase), elegant serif typography
+- Layout lesson: Editorial mood board hero feels like Vogue. Quote-only minimal testimonials feel more luxurious than cards.
+
+**#10 Landscaping — Cascade Landscapes** (1,196 lines)
+- Theme: Dark forest `#0f1a0f` with green `#16a34a` + earth brown `#a3845b`
+- Hero: Floating 3D cards over gradient (hover tilt perspective)
+- Unique: Seasonal services calendar (Spring/Summer/Fall/Winter), eco-friendly/sustainability section, project portfolio with PNW neighborhood names, leaf SVG patterns
+- Layout lesson: 3D tilt cards create depth. Seasonal calendar shows year-round value.
+
+**#11 Church — Grace Community Church** (992 lines)
+- Theme: Warm cream `#faf9f6` with amber `#d97706`
+- Hero: Warm full-bleed community photo + golden overlay (Hillsong-style)
+- Unique: Service times cards, "I'm New Here" first-timer section, upcoming events calendar, sermon archive with play buttons, community impact counters, give/donate section
+- Layout lesson: Golden overlay = warmth/welcome. "I'm New Here" section directly addresses first-timer anxiety.
+
+**#12 Vet — Northshore Vet Clinic** (935 lines)
+- Theme: Warm green-cream `#f7faf8` with forest green `#16a34a` + rose `#e11d48`
+- Hero: Scroll-driven parallax pet photo collage (5 overlapping pets at different scroll speeds)
+- Unique: Pet types grid, fear-free section, wellness plan pricing tiers, pet-named testimonials (Bailey, Mochi, Spike), real `/images/vet-hero-dog.png` + `/images/vet-before-after.png`
+- Layout lesson: Pet photo collage = instant emotional connection. Mentioning pets BY NAME in testimonials adds authenticity.
+
+**#13 GC — Summit Builders NW** (1,137 lines)
+- Theme: Dark `#1a2030` with amber `#d97706`
+- Hero: Isometric/3D perspective tilt on construction photo
+- Unique: Project investment guide ($15K/$35K/$75K+), 5-step vertical alternating build timeline, blueprint SVG grid pattern, construction beam decorations
+- Layout lesson: 3D perspective tilt adds depth. Blueprint patterns = construction DNA.
+
+**#14 Catering — Ember & Oak Catering** (1,200 lines)
+- Theme: Warm dark `#1c1917` with copper `#c2703e`
+- Hero: Split-screen with food photography (photo left, dark text right, copper divider)
+- Unique: Tabbed sample menu (Appetizers/Mains/Desserts), event type cards, dietary accommodation badges, seasonal ingredient highlights, package pricing per person, chef spotlight with culinary credentials
+- Layout lesson: Tabbed menu = restaurant sophistication. Per-person pricing is how catering is actually sold.
+
 ### Testimonial Layout Registry (never repeat within portfolio)
 1. Real Estate → auto-rotating carousel with dot navigation
 2. Dental → staggered masonry grid
 3. Law Firm → dark editorial, one-at-a-time with navigation
 4. Electrician → alternating left/right cards
 5. Plumber → horizontal drag-scroll
-6. Available for future: vertical timeline, video testimonial grid, quote-only minimal, card stack, split-screen (photo left + quote right)
+6. Fitness → vertical timeline
+7. Roofing → card stack (overlapping/fanned)
+8. Auto Repair → split-screen (photo left + quote right, alternating)
+9. Salon → quote-only minimal (large italic serif, no cards)
+10. Landscaping → photo cards (project photo + quote overlay)
+11. Church → story cards with photo backgrounds, mobile carousel
+12. Vet → pet-named cards with paw print icons
+13. GC → neighborhood-tagged cards
+14. Catering → event-type tagged testimonials
+15. Available for future: video grid, animated typing effect, polaroid stack
 
 ### Hero Layout Registry (never repeat within portfolio)
 1. Real Estate → centered text + interactive search bar
@@ -676,7 +739,16 @@ All 10 premium features per category are **hardcoded directly into each V2 templ
 3. Law Firm → full-width billboard + case results ticker
 4. Electrician → diagonal clip-path split + lightning SVG
 5. Plumber → overlapping card with ripple border + water drop SVG
-6. Available for future: full-bleed video bg, asymmetric grid (text overlapping image), scroll-driven parallax reveal, split-screen 50/50 with counter, floating cards over gradient, isometric/3D perspective
+6. Fitness → full-bleed photo + outlined "STRONGER" text (photo through letters)
+7. Roofing → 50/50 split-screen (text left, before/after photo right)
+8. Auto Repair → scroll-driven parallax reveal (car image reveals as you scroll)
+9. Salon → asymmetric editorial photo grid (3 overlapping photos like mood board)
+10. Landscaping → floating 3D cards over gradient (hover tilt perspective)
+11. Church → warm full-bleed community photo + golden overlay
+12. Vet → scroll-driven parallax pet photo collage (5 overlapping pets)
+13. GC → isometric/3D perspective tilt on construction photo
+14. Catering → split-screen with food photography (photo left, dark text right, copper divider)
+15. Available for future: typewriter text reveal, morphing shape bg, kinetic typography, video loop bg
 
 ### Portfolio Showcase Design Principles (learned from Beast Mode builds)
 - **NO two showcase sites should share the same hero layout.** If real estate has centered text + search bar, dental should have split layout, law firm should have full-bleed video bg, etc.
