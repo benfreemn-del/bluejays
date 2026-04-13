@@ -188,18 +188,27 @@ export function buildTaglineFromResearchBrief(brief: ResearchBrief, category: Ca
 }
 
 export function buildAboutFromResearchBrief(brief: ResearchBrief, category: Category): string {
-  const ownerClause = brief.ownerName ? `${brief.businessName} is led by ${brief.ownerName}` : `${brief.businessName} is a ${getCategoryLabel(category)} business`;
-  const areaClause = brief.serviceAreas.length
-    ? `serving ${joinList(brief.serviceAreas.slice(0, 2), brief.city || "the surrounding area")}`
-    : "serving local clients";
+  const ownerClause = brief.ownerName
+    ? `Led by ${brief.ownerName}, ${brief.businessName}`
+    : `${brief.businessName}`;
+  // Filter out street addresses from service areas — only use city/neighborhood names
+  const cleanAreas = brief.serviceAreas
+    .filter((a) => !/\d{3,}/.test(a) && !/suite|unit|ste|#/i.test(a) && a.length < 40)
+    .slice(0, 2);
+  const cityName = (brief.city || "").replace(/,\s*\w{2}$/, "").trim(); // "Seattle, WA" → "Seattle"
+  const areaClause = cleanAreas.length
+    ? `proudly serves ${joinList(cleanAreas, cityName || "the local community")}`
+    : cityName
+      ? `proudly serves the ${cityName} community`
+      : "proudly serves the local community";
   const servicesClause = brief.actualServices.length
-    ? `The team focuses on ${joinList(brief.actualServices.slice(0, 4), getCategoryLabel(category))}.`
-    : `The team focuses on dependable ${getCategoryLabel(category)} work tailored to each client.`;
+    ? `Our team specializes in ${joinList(brief.actualServices.slice(0, 4), getCategoryLabel(category))}.`
+    : `We provide professional ${getCategoryLabel(category)} services tailored to each client.`;
   const differentiatorClause = brief.differentiators.length
-    ? `Clients choose them for ${joinList(brief.differentiators.slice(0, 2).map((entry) => entry.toLowerCase()), "their strong reputation")}.`
-    : "Their positioning is grounded in the real business details gathered during research rather than template filler.";
+    ? `Clients choose us for ${joinList(brief.differentiators.slice(0, 2).map((entry) => entry.toLowerCase()), "our strong reputation")}.`
+    : "";
 
-  return `${ownerClause}, ${areaClause}. ${servicesClause} ${differentiatorClause}`;
+  return `${ownerClause} ${areaClause}. ${servicesClause}${differentiatorClause ? " " + differentiatorClause : ""}`;
 }
 
 export function lintPlaceholderContent(input: {
