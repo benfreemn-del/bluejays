@@ -611,6 +611,7 @@ Each template uses a DIFFERENT color variable name. Using the wrong one crashes 
 - **Section backgrounds** must match the template theme (light cream for dental/vet, dark charcoal for trades)
 - **Mobile responsive** — all grids collapse to 1-column on mobile, all text readable at 375px
 - **No framer motion `initial={{ opacity: 0 }}`** on any premium feature — content renders immediately
+- **NEVER truncate hero text with "..."** — The about text on the hero must be a COMPLETE sentence. Don't slice at 160 chars and add "...". A hero that says "We proudly serve Maple Valley a..." looks broken. Either show a full 1-2 sentence excerpt or write a dedicated hero subtitle. Use `.slice(0, text.indexOf('.', 80) + 1)` to cut at the nearest sentence boundary instead of a hard character limit.
 
 ## Scouting Rules
 - **Only scout categories that have a built template** — don't scout categories we can't generate premium sites for yet.

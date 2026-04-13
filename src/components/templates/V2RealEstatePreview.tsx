@@ -368,7 +368,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
               <div className="h-px w-24 mt-6" style={{ backgroundColor: GOLD }} />
             </div>
             <p className="text-lg text-zinc-400 leading-relaxed max-w-lg">
-              {data.about.length > 160 ? data.about.slice(0, 160).trim() + "..." : data.about}
+              {(() => { const t = data.about; if (t.length <= 180) return t; const dot = t.indexOf('.', 80); return dot > 0 && dot < 220 ? t.slice(0, dot + 1) : t.slice(0, 180).trim() + '...'; })()}
             </p>
             <div className="flex flex-wrap gap-4">
               <MagneticButton className="px-8 py-4 rounded-xl text-base font-bold text-black flex items-center gap-2 cursor-pointer" style={{ background: GOLD } as React.CSSProperties}>

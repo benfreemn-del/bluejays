@@ -348,7 +348,7 @@ export default function V2FitnessPreview({ data }: { data: GeneratedSiteData }) 
               <div className="h-1 w-24 rounded-full mt-4" style={{ backgroundColor: RED }} />
             </div>
             <p className="text-lg text-zinc-400 max-w-md leading-relaxed">
-              {data.about.length > 160 ? data.about.slice(0, 160).trim() + "..." : data.about}
+              {(() => { const t = data.about; if (t.length <= 180) return t; const dot = t.indexOf('.', 80); return dot > 0 && dot < 220 ? t.slice(0, dot + 1) : t.slice(0, 180).trim() + '...'; })()}
             </p>
             <div className="flex flex-wrap gap-4">
               <MagneticButton className="relative px-8 py-4 rounded-xl text-base font-bold text-white flex items-center gap-2 cursor-pointer overflow-hidden" style={{ background: RED } as React.CSSProperties}>

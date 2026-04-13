@@ -411,7 +411,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
               </span>
               <h1 className="text-4xl md:text-6xl lg:text-7xl tracking-tight leading-[0.95] font-black text-white" style={{ textShadow: "0 2px 20px rgba(0,0,0,0.6)" }}>{data.tagline}</h1>
             </div>
-            <p className="text-lg text-slate-300 max-w-md leading-relaxed">{data.about.length > 160 ? data.about.slice(0, 160).trim() + "..." : data.about}</p>
+            <p className="text-lg text-slate-300 max-w-md leading-relaxed">{(() => { const t = data.about; if (t.length <= 180) return t; const dot = t.indexOf('.', 80); return dot > 0 && dot < 220 ? t.slice(0, dot + 1) : t.slice(0, 180).trim() + '...'; })()}</p>
             <div className="flex flex-wrap gap-4">
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer shadow-lg" style={{ background: ACCENT, boxShadow: `0 8px 30px ${ACCENT}40` } as React.CSSProperties}>
                 Free Roof Inspection <ArrowRight size={18} weight="bold" />

@@ -445,7 +445,7 @@ export default function V2InteriorDesignPreview({ data }: { data: GeneratedSiteD
               <p className="text-sm uppercase tracking-widest mb-4" style={{ color: PRIMARY }}>Luxury Interior Design</p>
               <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 20px rgba(0,0,0,0.7)" }}>{data.tagline}</h1>
             </div>
-            <p className="text-lg text-white/70 max-w-md leading-relaxed">{data.about.length > 160 ? data.about.slice(0, 160).trim() + "..." : data.about}</p>
+            <p className="text-lg text-white/70 max-w-md leading-relaxed">{(() => { const t = data.about; if (t.length <= 180) return t; const dot = t.indexOf('.', 80); return dot > 0 && dot < 220 ? t.slice(0, dot + 1) : t.slice(0, 180).trim() + '...'; })()}</p>
             <div className="flex flex-wrap gap-4">
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-black flex items-center gap-2 cursor-pointer" style={{ background: PRIMARY } as React.CSSProperties}>
                 View Our Work <ArrowRight size={18} weight="bold" />
