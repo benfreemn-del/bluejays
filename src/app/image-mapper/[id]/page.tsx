@@ -176,6 +176,12 @@ function proxyUrl(url: string) {
   return `/api/image-proxy?url=${encodeURIComponent(url)}`;
 }
 
+/* ─── Category Fallback Slot type ─── */
+interface FallbackSlot {
+  label: string;
+  url: string | null;
+}
+
 /* ─── Component ─── */
 export default function ImageMapDetailPage() {
   const params = useParams();
@@ -187,11 +193,16 @@ export default function ImageMapDetailPage() {
   const [mapping, setMapping] = useState<ImageMapping | null>(null);
   const [loading, setLoading] = useState(true);
   const [scanning, setScanning] = useState(false);
-  const [selectedPosition, setSelectedPosition] = useState<number | null>(null);
-  const [rightTab, setRightTab] = useState<"library" | "upload">("library");
+  const [rightTab, setRightTab] = useState<"library" | "upload" | "fallbacks">("library");
   const [uploadedImages, setUploadedImages] = useState<{ url: string; name: string }[]>([]);
   const [savingNote, setSavingNote] = useState<number | null>(null);
+  const [dragOverPosition, setDragOverPosition] = useState<number | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [previewMode, setPreviewMode] = useState<"desktop" | "mobile">("desktop");
+  const [categoryFallbacks, setCategoryFallbacks] = useState<FallbackSlot[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const fallbackInputRef = useRef<HTMLInputElement>(null);
+  const [activeFallbackSlot, setActiveFallbackSlot] = useState<number | null>(null);
 
   /* ─── Load Data ─── */
   const loadData = useCallback(async () => {
@@ -222,6 +233,19 @@ export default function ImageMapDetailPage() {
     loadData();
   }, [loadData]);
 
+  /* ─── Initialize category fallback slots ─── */
+  const category = mapping?.category || prospect?.category || "general";
+  useEffect(() => {
+    if (category) {
+      setCategoryFallbacks(
+        Array.from({ length: 8 }, (_, i) => ({
+          label: `${category}-theme-pics-${i + 1}`,
+          url: null,
+        }))
+      );
+    }
+  }, [category]);
+
   /* ─── Scan Website ─── */
   const scanWebsite = async () => {
     setScanning(true);
@@ -251,7 +275,6 @@ export default function ImageMapDetailPage() {
         credentials: "include",
         body: JSON.stringify({ imageUpdate: { position, notes } }),
       });
-      // update local state
       setMapping((prev) => {
         if (!prev) return prev;
         return {
@@ -292,9 +315,11 @@ export default function ImageMapDetailPage() {
     }
   };
 
-  /* ─── Assign Replacement ─── */
-  const assignReplacement = async (replacementUrl: string) => {
-    if (!selectedPosition || !mapping) return;
+  /* ─── Drag & Drop: Save replacement on drop ─── */
+  const handleDrop = async (position: number, replacementUrl: string) => {
+    if (!mapping) return;
+    setDragOverPosition(null);
+    setIsDragging(false);
     try {
       const res = await fetch(`/api/image-mapper/save/${id}`, {
         method: "POST",
@@ -302,7 +327,7 @@ export default function ImageMapDetailPage() {
         credentials: "include",
         body: JSON.stringify({
           imageUpdate: {
-            position: selectedPosition,
+            position,
             replacementUrl,
             status: "replaced",
           },
@@ -311,11 +336,11 @@ export default function ImageMapDetailPage() {
       const data = await res.json();
       if (data.mapping) setMapping(data.mapping);
     } catch (err) {
-      console.error("Assign failed:", err);
+      console.error("Drop assign failed:", err);
     }
   };
 
-  /* ─── File Upload ─── */
+  /* ─── File Upload (for Upload tab) ─── */
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
@@ -332,15 +357,45 @@ export default function ImageMapDetailPage() {
     e.target.value = "";
   };
 
+  /* ─── Fallback Slot Upload ─── */
+  const handleFallbackUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0 || activeFallbackSlot === null) return;
+    const file = files[0];
+    const reader = new FileReader();
+    reader.onload = () => {
+      setCategoryFallbacks((prev) =>
+        prev.map((slot, i) =>
+          i === activeFallbackSlot ? { ...slot, url: reader.result as string } : slot
+        )
+      );
+      setActiveFallbackSlot(null);
+    };
+    reader.readAsDataURL(file);
+    e.target.value = "";
+  };
+
   /* ─── Progress ─── */
-  const mappedCount = mapping?.images.filter(
-    (img) => img.status === "replaced" || img.status === "keep-original"
-  ).length ?? 0;
+  const mappedCount =
+    mapping?.images.filter(
+      (img) => img.status === "replaced" || img.status === "keep-original"
+    ).length ?? 0;
   const totalCount = mapping?.images.length ?? 0;
 
   /* ─── Library images for category ─── */
-  const category = mapping?.category || prospect?.category || "general";
   const libraryImages = THEME_LIBRARY[category] || THEME_LIBRARY["dental"] || [];
+
+  /* ─── Drag event helpers for source images ─── */
+  const onDragStartHandler = (e: React.DragEvent, imageUrl: string) => {
+    e.dataTransfer.setData("text/plain", imageUrl);
+    e.dataTransfer.effectAllowed = "copy";
+    setIsDragging(true);
+  };
+
+  const onDragEndHandler = () => {
+    setIsDragging(false);
+    setDragOverPosition(null);
+  };
 
   /* ─── Loading State ─── */
   if (loading) {
@@ -357,15 +412,32 @@ export default function ImageMapDetailPage() {
   /* ─── Main Render ─── */
   return (
     <div className="min-h-screen bg-[#0a0f1a] text-white">
+      {/* Hidden file inputs */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        multiple
+        className="hidden"
+        onChange={handleFileUpload}
+      />
+      <input
+        ref={fallbackInputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={handleFallbackUpload}
+      />
+
       {/* ─── Header ─── */}
       <header className="sticky top-0 z-50 bg-[#0a0f1a]/90 backdrop-blur-md border-b border-white/10">
-        <div className="max-w-[1600px] mx-auto px-6 py-4 flex items-center justify-between gap-4">
+        <div className="max-w-[1800px] mx-auto px-6 py-4 flex items-center justify-between gap-4">
           <div className="flex items-center gap-4 min-w-0">
             <button
               onClick={() => router.push("/image-mapper")}
               className="shrink-0 px-3 py-1.5 text-sm rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
             >
-              &larr; Back to Leads
+              &larr; Back
             </button>
             <div className="min-w-0">
               <h1 className="text-lg font-semibold truncate">
@@ -385,17 +457,14 @@ export default function ImageMapDetailPage() {
           </div>
 
           <div className="flex items-center gap-3 shrink-0">
-            {/* Progress */}
             {mapping && (
               <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-sm">
                 <div className="w-2 h-2 rounded-full bg-emerald-400" />
                 <span>
-                  {mappedCount} of {totalCount} mapped
+                  {mappedCount}/{totalCount} mapped
                 </span>
               </div>
             )}
-
-            {/* Scan Button */}
             <button
               onClick={scanWebsite}
               disabled={scanning}
@@ -407,7 +476,7 @@ export default function ImageMapDetailPage() {
                   Scanning...
                 </span>
               ) : mapping ? (
-                "Re-scan Website"
+                "Re-scan"
               ) : (
                 "Scan Website"
               )}
@@ -438,291 +507,374 @@ export default function ImageMapDetailPage() {
         </div>
       )}
 
-      {/* ─── Two-Panel Layout ─── */}
+      {/* ─── Main Layout: Left (Image List) | Right (Library + Preview) ─── */}
       {mapping && (
-        <div className="max-w-[1600px] mx-auto px-6 py-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* ─── LEFT PANEL: Their Images ─── */}
-            <div className="bg-white/5 border border-white/10 rounded-xl overflow-hidden">
-              <div className="px-5 py-4 border-b border-white/10">
-                <h2 className="text-base font-semibold flex items-center gap-2">
-                  <svg className="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                  Their Images
-                  <span className="text-xs text-white/40 font-normal ml-auto">
-                    {totalCount} found
-                  </span>
-                </h2>
-              </div>
+        <div className="max-w-[1800px] mx-auto px-6 py-6">
+          <div className="flex gap-6" style={{ minHeight: "calc(100vh - 120px)" }}>
 
-              <div className="p-4 space-y-3 max-h-[calc(100vh-200px)] overflow-y-auto">
-                {mapping.images.map((img) => {
-                  const sc = statusColor(img.status);
-                  const isSelected = selectedPosition === img.position;
-
-                  return (
-                    <div
-                      key={img.position}
-                      onClick={() => setSelectedPosition(img.position)}
-                      className={`
-                        rounded-xl border p-3 cursor-pointer transition-all
-                        ${isSelected
-                          ? "border-blue-500 ring-2 ring-blue-500/30 bg-blue-500/5"
-                          : "border-white/10 hover:border-white/20 bg-white/[0.02]"
-                        }
-                      `}
-                    >
-                      <div className="flex gap-3">
-                        {/* Position # */}
-                        <div className="w-8 h-8 shrink-0 rounded-lg bg-white/10 flex items-center justify-center text-sm font-bold">
-                          {img.position}
-                        </div>
-
-                        {/* Thumbnail */}
-                        <div className="relative w-24 h-18 shrink-0 rounded-lg overflow-hidden bg-white/5">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                            src={proxyUrl(img.originalUrl)}
-                            alt={`Position ${img.position}`}
-                            className="w-full h-full object-cover"
-                            loading="lazy"
-                          />
-                          {img.status === "replaced" && (
-                            <div className="absolute inset-0 bg-emerald-500/20 flex items-center justify-center">
-                              <svg className="w-6 h-6 text-emerald-400" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
-                              </svg>
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Info */}
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-start justify-between gap-2">
-                            <div>
-                              <p className="text-xs text-white/50">{img.location}</p>
-                              <p className="text-xs text-white/30 truncate">{img.suggestedFilename}</p>
-                            </div>
-                            <span className={`shrink-0 text-[10px] px-2 py-0.5 rounded-full font-medium ${sc.bg} ${sc.text}`}>
-                              {sc.label}
-                            </span>
-                          </div>
-
-                          {/* Actions */}
-                          <div className="flex items-center gap-2 mt-2">
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                toggleKeepOriginal(img.position);
-                              }}
-                              className={`text-[10px] px-2 py-0.5 rounded border transition-colors ${
-                                img.status === "keep-original"
-                                  ? "border-blue-500 text-blue-400 bg-blue-500/10"
-                                  : "border-white/10 text-white/40 hover:border-white/20"
-                              }`}
-                            >
-                              {img.status === "keep-original" ? "Keeping" : "Keep Original"}
-                            </button>
-                            {img.replacementUrl && (
-                              <div className="flex items-center gap-1">
-                                <span className="text-[10px] text-emerald-400">Mapped to:</span>
-                                <div className="w-6 h-6 rounded overflow-hidden border border-emerald-500/30">
-                                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                                  <img
-                                    src={img.replacementUrl.startsWith("data:") ? img.replacementUrl : proxyUrl(img.replacementUrl)}
-                                    alt="Replacement"
-                                    className="w-full h-full object-cover"
-                                  />
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Notes */}
-                      {isSelected && (
-                        <div className="mt-3 pt-3 border-t border-white/5">
-                          <textarea
-                            defaultValue={img.notes}
-                            onBlur={(e) => saveNote(img.position, e.target.value)}
-                            placeholder="Add notes about this image..."
-                            rows={2}
-                            className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-xs text-white placeholder:text-white/30 resize-none focus:outline-none focus:border-blue-500/50"
-                          />
-                          {savingNote === img.position && (
-                            <p className="text-[10px] text-blue-400 mt-1">Saving...</p>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* ─── RIGHT PANEL: Our Replacements ─── */}
-            <div className="bg-white/5 border border-white/10 rounded-xl overflow-hidden">
-              <div className="px-5 py-4 border-b border-white/10">
-                <div className="flex items-center justify-between">
+            {/* ════════════════════════════════════════════════ */}
+            {/* LEFT PANEL: Numbered Image List with Drop Targets */}
+            {/* ════════════════════════════════════════════════ */}
+            <div className="flex-1 min-w-0">
+              <div className="bg-white/[0.03] border border-white/10 rounded-xl overflow-hidden">
+                <div className="px-5 py-4 border-b border-white/10 flex items-center justify-between">
                   <h2 className="text-base font-semibold flex items-center gap-2">
-                    <svg className="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    <svg className="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
-                    Our Replacements
+                    Image Mapping
                   </h2>
-
-                  {/* Tab Switcher */}
-                  <div className="flex rounded-lg bg-white/5 border border-white/10 p-0.5">
-                    <button
-                      onClick={() => setRightTab("library")}
-                      className={`px-3 py-1 text-xs rounded-md transition-colors ${
-                        rightTab === "library"
-                          ? "bg-white/10 text-white"
-                          : "text-white/40 hover:text-white/60"
-                      }`}
-                    >
-                      Theme Library
-                    </button>
-                    <button
-                      onClick={() => setRightTab("upload")}
-                      className={`px-3 py-1 text-xs rounded-md transition-colors ${
-                        rightTab === "upload"
-                          ? "bg-white/10 text-white"
-                          : "text-white/40 hover:text-white/60"
-                      }`}
-                    >
-                      Upload
-                    </button>
-                  </div>
+                  <span className="text-xs text-white/40">{totalCount} images found</span>
                 </div>
 
-                {/* Selection hint */}
-                {!selectedPosition && (
-                  <p className="text-xs text-amber-400/80 mt-2">
-                    Select an image on the left panel first, then click a replacement here.
-                  </p>
-                )}
-                {selectedPosition && (
-                  <p className="text-xs text-blue-400 mt-2">
-                    Replacing image #{selectedPosition}. Click any image below to assign it.
-                  </p>
-                )}
-              </div>
+                {/* Column headers */}
+                <div className="px-5 py-2 border-b border-white/5 grid grid-cols-[40px_80px_1fr_32px_80px_120px] gap-3 items-center text-[10px] uppercase tracking-wider text-white/30 font-medium">
+                  <span>#</span>
+                  <span>Their Image</span>
+                  <span>Location</span>
+                  <span></span>
+                  <span>Replacement</span>
+                  <span>Status</span>
+                </div>
 
-              <div className="p-4 max-h-[calc(100vh-200px)] overflow-y-auto">
-                {/* Tab: Theme Library */}
-                {rightTab === "library" && (
-                  <div>
-                    <p className="text-xs text-white/40 mb-3 capitalize">
-                      Category: {category.replace("-", " ")}
-                    </p>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                      {libraryImages.map((img, idx) => (
-                        <button
-                          key={idx}
-                          onClick={() => assignReplacement(img.url)}
-                          disabled={!selectedPosition}
-                          className={`
-                            group relative rounded-xl overflow-hidden border transition-all aspect-[4/3]
-                            ${selectedPosition
-                              ? "border-white/10 hover:border-emerald-500 hover:ring-2 hover:ring-emerald-500/30 cursor-pointer"
-                              : "border-white/5 opacity-50 cursor-not-allowed"
-                            }
-                          `}
-                        >
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                            src={img.url}
-                            alt={img.name}
-                            className="w-full h-full object-cover"
-                            loading="lazy"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-2">
-                            <span className="text-[10px] text-white font-medium">{img.name}</span>
+                <div className="max-h-[calc(100vh-260px)] overflow-y-auto">
+                  {mapping.images.map((img) => {
+                    const sc = statusColor(img.status);
+                    const isDropTarget = dragOverPosition === img.position;
+
+                    return (
+                      <div key={img.position} className="border-b border-white/5 last:border-b-0">
+                        {/* Main row */}
+                        <div className="px-5 py-3 grid grid-cols-[40px_80px_1fr_32px_80px_120px] gap-3 items-center hover:bg-white/[0.02] transition-colors">
+                          {/* Position number */}
+                          <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-sm font-bold text-white/70">
+                            {img.position}
                           </div>
-                          {selectedPosition && (
-                            <div className="absolute inset-0 bg-emerald-500/0 group-hover:bg-emerald-500/10 transition-colors flex items-center justify-center">
-                              <svg className="w-8 h-8 text-emerald-400 opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-lg" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-                              </svg>
-                            </div>
-                          )}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
 
-                {/* Tab: Upload */}
-                {rightTab === "upload" && (
-                  <div>
-                    {/* Upload Zone */}
-                    <div
-                      onClick={() => fileInputRef.current?.click()}
-                      className="border-2 border-dashed border-white/10 rounded-xl p-8 flex flex-col items-center justify-center cursor-pointer hover:border-white/20 hover:bg-white/[0.02] transition-colors mb-4"
-                    >
-                      <svg className="w-10 h-10 text-white/20 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                      </svg>
-                      <p className="text-sm text-white/40">Click to upload images</p>
-                      <p className="text-xs text-white/20 mt-1">PNG, JPG, WebP</p>
-                      <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept="image/*"
-                        multiple
-                        onChange={handleFileUpload}
-                        className="hidden"
-                      />
-                    </div>
-
-                    {/* Uploaded Images Grid */}
-                    {uploadedImages.length > 0 && (
-                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                        {uploadedImages.map((img, idx) => (
-                          <button
-                            key={idx}
-                            onClick={() => assignReplacement(img.url)}
-                            disabled={!selectedPosition}
-                            className={`
-                              group relative rounded-xl overflow-hidden border transition-all aspect-[4/3]
-                              ${selectedPosition
-                                ? "border-white/10 hover:border-emerald-500 hover:ring-2 hover:ring-emerald-500/30 cursor-pointer"
-                                : "border-white/5 opacity-50 cursor-not-allowed"
-                              }
-                            `}
-                          >
+                          {/* Their image thumbnail */}
+                          <div className="relative w-16 h-12 rounded-lg overflow-hidden bg-white/5 border border-white/10">
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
-                              src={img.url}
-                              alt={img.name}
+                              src={proxyUrl(img.originalUrl)}
+                              alt={`Position ${img.position}`}
                               className="w-full h-full object-cover"
                               loading="lazy"
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-2">
-                              <span className="text-[10px] text-white font-medium truncate">{img.name}</span>
-                            </div>
-                            {selectedPosition && (
-                              <div className="absolute inset-0 bg-emerald-500/0 group-hover:bg-emerald-500/10 transition-colors flex items-center justify-center">
-                                <svg className="w-8 h-8 text-emerald-400 opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-lg" fill="currentColor" viewBox="0 0 24 24">
-                                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-                                </svg>
-                              </div>
+                          </div>
+
+                          {/* Location info */}
+                          <div className="min-w-0">
+                            <p className="text-xs text-white/60 truncate">{img.location}</p>
+                            <p className="text-[10px] text-white/30 truncate">{img.suggestedFilename}</p>
+                          </div>
+
+                          {/* Arrow */}
+                          <div className="flex items-center justify-center text-white/20">
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                            </svg>
+                          </div>
+
+                          {/* DROP TARGET: Replacement slot */}
+                          <div
+                            onDragOver={(e) => {
+                              e.preventDefault();
+                              e.dataTransfer.dropEffect = "copy";
+                              setDragOverPosition(img.position);
+                            }}
+                            onDragLeave={() => setDragOverPosition(null)}
+                            onDrop={(e) => {
+                              e.preventDefault();
+                              const url = e.dataTransfer.getData("text/plain");
+                              if (url) handleDrop(img.position, url);
+                            }}
+                            className={`
+                              w-16 h-12 rounded-lg overflow-hidden transition-all
+                              ${img.replacementUrl
+                                ? "border border-emerald-500/30"
+                                : isDropTarget
+                                  ? "border-2 border-dashed border-blue-400 bg-blue-400/10"
+                                  : isDragging
+                                    ? "border-2 border-dashed border-white/30 bg-white/[0.02]"
+                                    : "border border-dashed border-white/20"
+                              }
+                              ${!img.replacementUrl ? "flex items-center justify-center" : ""}
+                            `}
+                          >
+                            {img.replacementUrl ? (
+                              /* eslint-disable-next-line @next/next/no-img-element */
+                              <img
+                                src={img.replacementUrl.startsWith("data:") ? img.replacementUrl : proxyUrl(img.replacementUrl)}
+                                alt="Replacement"
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <span className="text-[8px] text-white/30 text-center leading-tight px-1">
+                                {isDropTarget ? "Drop!" : "Drop here"}
+                              </span>
                             )}
-                          </button>
+                          </div>
+
+                          {/* Status + actions */}
+                          <div className="flex items-center gap-2">
+                            <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium whitespace-nowrap ${sc.bg} ${sc.text}`}>
+                              {sc.label}
+                            </span>
+                            <button
+                              onClick={() => toggleKeepOriginal(img.position)}
+                              className={`text-[10px] px-1.5 py-0.5 rounded border transition-colors shrink-0 ${
+                                img.status === "keep-original"
+                                  ? "border-blue-500 text-blue-400 bg-blue-500/10"
+                                  : "border-white/10 text-white/30 hover:border-white/20"
+                              }`}
+                              title={img.status === "keep-original" ? "Undo keep" : "Keep original"}
+                            >
+                              {img.status === "keep-original" ? "Kept" : "Keep"}
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Expandable notes (click row to toggle) */}
+                        {img.notes && (
+                          <div className="px-5 pb-3">
+                            <textarea
+                              defaultValue={img.notes}
+                              onBlur={(e) => saveNote(img.position, e.target.value)}
+                              placeholder="Add notes..."
+                              rows={1}
+                              className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-[11px] text-white placeholder:text-white/30 resize-none focus:outline-none focus:border-blue-500/50"
+                            />
+                            {savingNote === img.position && (
+                              <p className="text-[10px] text-blue-400 mt-0.5">Saving...</p>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            {/* ════════════════════════════════════════════════ */}
+            {/* RIGHT PANEL: Library + Preview */}
+            {/* ════════════════════════════════════════════════ */}
+            <div className="w-[420px] shrink-0 flex flex-col gap-6">
+
+              {/* ─── Replacement Library ─── */}
+              <div className="bg-white/[0.03] border border-white/10 rounded-xl overflow-hidden flex-1 min-h-0 flex flex-col">
+                <div className="px-5 py-4 border-b border-white/10">
+                  <div className="flex items-center justify-between mb-3">
+                    <h2 className="text-base font-semibold flex items-center gap-2">
+                      <svg className="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                      </svg>
+                      Replacement Library
+                    </h2>
+                  </div>
+
+                  {/* Tab switcher */}
+                  <div className="flex rounded-lg bg-white/5 border border-white/10 p-0.5">
+                    {(["library", "upload", "fallbacks"] as const).map((tab) => (
+                      <button
+                        key={tab}
+                        onClick={() => setRightTab(tab)}
+                        className={`flex-1 px-3 py-1.5 text-xs rounded-md transition-colors capitalize ${
+                          rightTab === tab
+                            ? "bg-white/10 text-white font-medium"
+                            : "text-white/40 hover:text-white/60"
+                        }`}
+                      >
+                        {tab === "library" ? "Theme Library" : tab === "upload" ? "Upload" : "Fallbacks"}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Tab content */}
+                <div className="flex-1 overflow-y-auto p-4">
+                  {/* ─── Theme Library Tab ─── */}
+                  {rightTab === "library" && (
+                    <div>
+                      <p className="text-[11px] text-white/40 mb-3">
+                        Drag any image below onto a slot on the left to assign it as a replacement.
+                      </p>
+                      <div className="grid grid-cols-3 gap-2">
+                        {libraryImages.map((libImg) => (
+                          <div
+                            key={libImg.name}
+                            draggable
+                            onDragStart={(e) => onDragStartHandler(e, libImg.url)}
+                            onDragEnd={onDragEndHandler}
+                            className="group relative aspect-[4/3] rounded-lg overflow-hidden bg-white/5 border border-white/10 cursor-grab active:cursor-grabbing hover:border-white/30 transition-all hover:scale-[1.02]"
+                          >
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={libImg.url}
+                              alt={libImg.name}
+                              className="w-full h-full object-cover"
+                              loading="lazy"
+                            />
+                            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-1.5">
+                              <p className="text-[9px] text-white/80 truncate">{libImg.name}</p>
+                            </div>
+                            {/* Drag hint */}
+                            <div className="absolute inset-0 bg-blue-500/0 group-hover:bg-blue-500/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+                              <span className="text-[10px] font-medium text-white bg-black/50 px-2 py-0.5 rounded">
+                                Drag me
+                              </span>
+                            </div>
+                          </div>
                         ))}
                       </div>
-                    )}
+                    </div>
+                  )}
 
-                    {uploadedImages.length === 0 && (
-                      <p className="text-xs text-white/30 text-center py-4">
-                        No custom images uploaded yet.
+                  {/* ─── Upload Tab ─── */}
+                  {rightTab === "upload" && (
+                    <div>
+                      <button
+                        onClick={() => fileInputRef.current?.click()}
+                        className="w-full mb-4 px-4 py-3 rounded-xl border-2 border-dashed border-white/20 hover:border-blue-400 hover:bg-blue-400/5 transition-colors text-sm text-white/50 hover:text-blue-400"
+                      >
+                        + Upload Images
+                      </button>
+
+                      {uploadedImages.length === 0 ? (
+                        <p className="text-center text-xs text-white/30 py-8">
+                          No custom images uploaded yet. Click above to add some.
+                        </p>
+                      ) : (
+                        <div className="grid grid-cols-3 gap-2">
+                          {uploadedImages.map((uImg, i) => (
+                            <div
+                              key={`${uImg.name}-${i}`}
+                              draggable
+                              onDragStart={(e) => onDragStartHandler(e, uImg.url)}
+                              onDragEnd={onDragEndHandler}
+                              className="group relative aspect-[4/3] rounded-lg overflow-hidden bg-white/5 border border-white/10 cursor-grab active:cursor-grabbing hover:border-white/30 transition-all hover:scale-[1.02]"
+                            >
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img
+                                src={uImg.url}
+                                alt={uImg.name}
+                                className="w-full h-full object-cover"
+                              />
+                              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-1.5">
+                                <p className="text-[9px] text-white/80 truncate">{uImg.name}</p>
+                              </div>
+                              <div className="absolute inset-0 bg-blue-500/0 group-hover:bg-blue-500/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+                                <span className="text-[10px] font-medium text-white bg-black/50 px-2 py-0.5 rounded">
+                                  Drag me
+                                </span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* ─── Category Fallbacks Tab ─── */}
+                  {rightTab === "fallbacks" && (
+                    <div>
+                      <p className="text-[11px] text-white/40 mb-3">
+                        Upload category-specific fallback images. Each slot becomes draggable once filled.
                       </p>
-                    )}
+                      <div className="grid grid-cols-2 gap-3">
+                        {categoryFallbacks.map((slot, i) => (
+                          <div key={slot.label} className="flex flex-col gap-1.5">
+                            <span className="text-[10px] text-white/40 font-mono truncate">{slot.label}</span>
+                            {slot.url ? (
+                              <div
+                                draggable
+                                onDragStart={(e) => onDragStartHandler(e, slot.url!)}
+                                onDragEnd={onDragEndHandler}
+                                className="relative aspect-[4/3] rounded-lg overflow-hidden bg-white/5 border border-white/10 cursor-grab active:cursor-grabbing hover:border-white/30 transition-all"
+                              >
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img
+                                  src={slot.url}
+                                  alt={slot.label}
+                                  className="w-full h-full object-cover"
+                                />
+                                <button
+                                  onClick={() =>
+                                    setCategoryFallbacks((prev) =>
+                                      prev.map((s, idx) => (idx === i ? { ...s, url: null } : s))
+                                    )
+                                  }
+                                  className="absolute top-1 right-1 w-5 h-5 rounded-full bg-red-500/80 flex items-center justify-center text-white text-[10px] hover:bg-red-500"
+                                >
+                                  x
+                                </button>
+                              </div>
+                            ) : (
+                              <button
+                                onClick={() => {
+                                  setActiveFallbackSlot(i);
+                                  fallbackInputRef.current?.click();
+                                }}
+                                className="aspect-[4/3] rounded-lg border-2 border-dashed border-white/15 hover:border-blue-400 hover:bg-blue-400/5 transition-colors flex items-center justify-center"
+                              >
+                                <span className="text-[10px] text-white/30">+ Upload</span>
+                              </button>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* ─── Preview Iframe ─── */}
+              <div className="bg-white/[0.03] border border-white/10 rounded-xl overflow-hidden">
+                <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between">
+                  <h3 className="text-sm font-semibold text-white/70">Live Preview</h3>
+                  <div className="flex rounded-lg bg-white/5 border border-white/10 p-0.5">
+                    <button
+                      onClick={() => setPreviewMode("desktop")}
+                      className={`px-2.5 py-1 text-[10px] rounded-md transition-colors ${
+                        previewMode === "desktop"
+                          ? "bg-white/10 text-white"
+                          : "text-white/40 hover:text-white/60"
+                      }`}
+                    >
+                      Desktop
+                    </button>
+                    <button
+                      onClick={() => setPreviewMode("mobile")}
+                      className={`px-2.5 py-1 text-[10px] rounded-md transition-colors ${
+                        previewMode === "mobile"
+                          ? "bg-white/10 text-white"
+                          : "text-white/40 hover:text-white/60"
+                      }`}
+                    >
+                      Mobile
+                    </button>
                   </div>
-                )}
+                </div>
+                <div className="bg-black rounded-b-xl overflow-hidden" style={{ height: 300 }}>
+                  <div
+                    style={
+                      previewMode === "mobile"
+                        ? {
+                            width: 375,
+                            height: 600,
+                            transform: "scale(0.5)",
+                            transformOrigin: "top left",
+                          }
+                        : { width: "100%", height: "100%" }
+                    }
+                  >
+                    <iframe
+                      src={`/preview/${id}`}
+                      className="w-full h-full border-0"
+                      title="Site Preview"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
