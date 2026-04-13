@@ -543,7 +543,21 @@ export default function ImageMapDetailPage() {
                     const isDropTarget = dragOverPosition === img.position;
 
                     return (
-                      <div key={img.position} className="border-b border-white/5 last:border-b-0">
+                      <div
+                        key={img.position}
+                        className={`border-b border-white/5 last:border-b-0 transition-colors ${dragOverPosition === img.position ? "bg-blue-400/5" : ""}`}
+                        onDragOver={(e) => {
+                          e.preventDefault();
+                          e.dataTransfer.dropEffect = "copy";
+                          setDragOverPosition(img.position);
+                        }}
+                        onDragLeave={() => setDragOverPosition(null)}
+                        onDrop={(e) => {
+                          e.preventDefault();
+                          const url = e.dataTransfer.getData("text/plain");
+                          if (url) handleDrop(img.position, url);
+                          setDragOverPosition(null);
+                        }}
                         {/* Main row */}
                         <div className="px-5 py-3 grid grid-cols-[40px_80px_1fr_32px_80px_120px] gap-3 items-center hover:bg-white/[0.02] transition-colors">
                           {/* Position number */}
@@ -575,30 +589,36 @@ export default function ImageMapDetailPage() {
                             </svg>
                           </div>
 
-                          {/* DROP TARGET: Replacement slot */}
+                          {/* DROP TARGET: Replacement slot — BIG target area */}
                           <div
                             onDragOver={(e) => {
                               e.preventDefault();
+                              e.stopPropagation();
                               e.dataTransfer.dropEffect = "copy";
                               setDragOverPosition(img.position);
                             }}
-                            onDragLeave={() => setDragOverPosition(null)}
+                            onDragLeave={(e) => {
+                              e.stopPropagation();
+                              setDragOverPosition(null);
+                            }}
                             onDrop={(e) => {
                               e.preventDefault();
+                              e.stopPropagation();
                               const url = e.dataTransfer.getData("text/plain");
                               if (url) handleDrop(img.position, url);
+                              setDragOverPosition(null);
                             }}
                             className={`
-                              w-16 h-12 rounded-lg overflow-hidden transition-all
+                              w-24 h-16 rounded-lg overflow-hidden transition-all cursor-pointer
                               ${img.replacementUrl
-                                ? "border border-emerald-500/30"
+                                ? "border-2 border-emerald-500/50"
                                 : isDropTarget
-                                  ? "border-2 border-dashed border-blue-400 bg-blue-400/10"
+                                  ? "border-2 border-dashed border-blue-400 bg-blue-400/20 scale-110"
                                   : isDragging
-                                    ? "border-2 border-dashed border-white/30 bg-white/[0.02]"
-                                    : "border border-dashed border-white/20"
+                                    ? "border-2 border-dashed border-white/40 bg-white/[0.05]"
+                                    : "border-2 border-dashed border-white/20"
                               }
-                              ${!img.replacementUrl ? "flex items-center justify-center" : ""}
+                              flex items-center justify-center
                             `}
                           >
                             {img.replacementUrl ? (
@@ -609,8 +629,8 @@ export default function ImageMapDetailPage() {
                                 className="w-full h-full object-cover"
                               />
                             ) : (
-                              <span className="text-[8px] text-white/30 text-center leading-tight px-1">
-                                {isDropTarget ? "Drop!" : "Drop here"}
+                              <span className="text-[10px] text-white/40 text-center leading-tight px-2 font-medium">
+                                {isDropTarget ? "Drop here!" : "Drop image"}
                               </span>
                             )}
                           </div>
@@ -855,17 +875,22 @@ export default function ImageMapDetailPage() {
                     </button>
                   </div>
                 </div>
-                <div className="bg-black rounded-b-xl overflow-hidden" style={{ height: 300 }}>
+                <div className="bg-black rounded-b-xl overflow-hidden relative" style={{ height: 350 }}>
                   <div
                     style={
                       previewMode === "mobile"
                         ? {
                             width: 375,
-                            height: 600,
-                            transform: "scale(0.5)",
+                            height: 700,
+                            transform: "scale(0.45)",
                             transformOrigin: "top left",
                           }
-                        : { width: "100%", height: "100%" }
+                        : {
+                            width: 1280,
+                            height: 700,
+                            transform: "scale(0.32)",
+                            transformOrigin: "top left",
+                          }
                     }
                   >
                     <iframe
