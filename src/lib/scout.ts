@@ -27,6 +27,8 @@ async function scoutWithGoogle(options: ScoutOptions): Promise<{ prospects: Pros
   // Step 1: Text Search to find businesses (use pageToken for next batch if provided)
   let searchUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(query)}&key=${GOOGLE_API_KEY}`;
   if (pageToken) {
+    // Google requires a short delay before next_page_token is valid
+    await new Promise((r) => setTimeout(r, 2500));
     searchUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?pagetoken=${pageToken}&key=${GOOGLE_API_KEY}`;
   }
   const searchResponse = await fetch(searchUrl);
@@ -39,6 +41,11 @@ async function scoutWithGoogle(options: ScoutOptions): Promise<{ prospects: Pros
     costUsd: COST_RATES.google_places_search,
     metadata: { query, city, category },
   });
+
+  // ZERO_RESULTS is valid — means no more businesses in this area/category
+  if (searchData.status === "ZERO_RESULTS") {
+    return { prospects: [], nextPageToken: undefined };
+  }
 
   if (searchData.status !== "OK") {
     throw new Error(`Google Places API error: ${searchData.status} - ${searchData.error_message || "Unknown error"}`);

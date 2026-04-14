@@ -184,34 +184,32 @@ export default function MapView({ prospects, onStateClick }: MapViewProps) {
       });
       const data = await res.json();
 
-      // Save next page token for this county+category combo
+      // Save next page token OR mark category as done for this county
       if (data.nextPageToken) {
         setPageTokens(prev => ({ ...prev, [tokenKey]: data.nextPageToken }));
       } else {
-        // No more pages — mark as exhausted if 0 results
-        if (data.prospects.length === 0) {
-          const newExhausted = [...(exhaustedCategories[scoutCounty] || []), scoutCategory];
-          setExhaustedCategories(prev => ({
-            ...prev,
-            [scoutCounty]: newExhausted,
-          }));
-          setPageTokens(prev => { const n = { ...prev }; delete n[tokenKey]; return n; });
-          // Auto-select the next available category
-          const remaining = (Object.keys(CATEGORY_CONFIG) as Category[]).filter(cat => !newExhausted.includes(cat));
-          if (remaining.length > 0) {
-            setScoutCategory(remaining[0]);
-          }
-        }
+        // No more pages from Google — this category is done for this county
+        setPageTokens(prev => { const n = { ...prev }; delete n[tokenKey]; return n; });
       }
 
-      // Generate sites for new prospects
-      for (const p of data.prospects) {
-        await fetch(`/api/generate/${p.id}`, { method: "POST" });
-      }
-
+      // If 0 new results (all dupes or truly exhausted), remove from dropdown + auto-switch
       if (data.prospects.length === 0) {
-        setScoutResult(`No new ${scoutCategory} businesses found in ${scoutCounty}. Try another category.`);
+        const newExhausted = [...(exhaustedCategories[scoutCounty] || []), scoutCategory];
+        setExhaustedCategories(prev => ({
+          ...prev,
+          [scoutCounty]: newExhausted,
+        }));
+        const remaining = (Object.keys(CATEGORY_CONFIG) as Category[]).filter(cat => !newExhausted.includes(cat));
+        if (remaining.length > 0) {
+          setScoutCategory(remaining[0]);
+        }
+        const catLabel = CATEGORY_CONFIG[scoutCategory]?.label || scoutCategory;
+        setScoutResult(`No new ${catLabel} businesses found in ${scoutCounty}. Switched to next category.`);
       } else {
+        // Generate sites for new prospects
+        for (const p of data.prospects) {
+          await fetch(`/api/generate/${p.id}`, { method: "POST" });
+        }
         setScoutResult(`Found ${data.prospects.length} new businesses in ${scoutCounty}! Switch to Table View to manage them.`);
       }
     } catch (err) {
