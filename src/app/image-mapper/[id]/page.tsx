@@ -1169,7 +1169,7 @@ export default function ImageMapDetailPage() {
                           >
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
-                              src={libImg.url}
+                              src={proxyUrl(libImg.url)}
                               alt={libImg.name}
                               className="w-full h-full object-cover"
                               loading="lazy"
