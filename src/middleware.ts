@@ -1,8 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createHash } from "crypto";
 
 const ADMIN_PASSWORD = (process.env.ADMIN_PASSWORD || "").trim();
-if (!ADMIN_PASSWORD) console.warn("[SECURITY] ADMIN_PASSWORD not set — all protected routes will return 401");
+
+// Pre-compute session token using Web Crypto (Edge-compatible)
+// This replaces Node.js crypto.createHash which doesn't work in Edge Runtime
+let SESSION_TOKEN_CACHE: string | null = null;
+async function getSessionToken(): Promise<string> {
+  if (SESSION_TOKEN_CACHE) return SESSION_TOKEN_CACHE;
+  if (!ADMIN_PASSWORD) return "";
+  const encoder = new TextEncoder();
+  const data = encoder.encode(ADMIN_PASSWORD + "bluejays-session-salt");
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  SESSION_TOKEN_CACHE = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+  return SESSION_TOKEN_CACHE;
+}
 
 // Protected routes that require login
 const PROTECTED_PATHS = [
@@ -85,7 +97,7 @@ const PUBLIC_API_PATHS = [
   "/api/voicemail/twiml",  // Twilio TwiML endpoint
 ];
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Always allow public API paths (webhooks, inbound handlers)
@@ -99,7 +111,7 @@ export function middleware(request: NextRequest) {
 
   // Check auth cookie (signed session token, not raw password)
   const authCookie = request.cookies.get("bluejays_auth")?.value;
-  const expectedToken = createHash("sha256").update(ADMIN_PASSWORD + "bluejays-session-salt").digest("hex");
+  const expectedToken = await getSessionToken();
   if (authCookie === expectedToken) return NextResponse.next();
 
   // Check Authorization header (for API calls)
