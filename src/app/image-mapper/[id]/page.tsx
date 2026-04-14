@@ -628,7 +628,7 @@ export default function ImageMapDetailPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ imageUpdate: { position, notes } }),
+        body: JSON.stringify({ expectedVersion: mapping?.lastUpdated, imageUpdate: { position, notes } }),
       });
       setMapping((prev) => {
         if (!prev) return prev;
@@ -654,6 +654,7 @@ export default function ImageMapDetailPage() {
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({
+          expectedVersion: mapping.lastUpdated,
           imageUpdate: {
             position,
             status: newStatus,
@@ -661,6 +662,7 @@ export default function ImageMapDetailPage() {
           },
         }),
       });
+      if (res.status === 409) { alert("Conflict — mapping was modified by another session. Refreshing..."); window.location.reload(); return; }
       const data = await res.json();
       if (data.mapping) setMapping(data.mapping);
       setIframeKey((k) => k + 1);
@@ -678,6 +680,7 @@ export default function ImageMapDetailPage() {
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({
+          expectedVersion: mapping.lastUpdated,
           imageUpdate: {
             position,
             replacementUrl: null,
@@ -685,6 +688,7 @@ export default function ImageMapDetailPage() {
           },
         }),
       });
+      if (res.status === 409) { alert("Conflict — mapping was modified by another session. Refreshing..."); window.location.reload(); return; }
       const data = await res.json();
       if (data.mapping) setMapping(data.mapping);
       setIframeKey((k) => k + 1);
@@ -704,6 +708,7 @@ export default function ImageMapDetailPage() {
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({
+          expectedVersion: mapping.lastUpdated,
           imageUpdate: {
             position,
             replacementUrl,
@@ -711,6 +716,7 @@ export default function ImageMapDetailPage() {
           },
         }),
       });
+      if (res.status === 409) { alert("Conflict — mapping was modified by another session. Refreshing..."); window.location.reload(); return; }
       const data = await res.json();
       if (data.mapping) setMapping(data.mapping);
       // Refresh the preview iframe so it picks up the new image
@@ -1199,6 +1205,7 @@ export default function ImageMapDetailPage() {
                         + Upload Images
                       </button>
 
+                      <p className="text-[10px] text-white/30 mt-2">Images are saved permanently when you drag them to a slot on the left.</p>
                       {uploadedImages.length === 0 ? (
                         <p className="text-center text-xs text-white/30 py-8">
                           No custom images uploaded yet. Click above to add some.

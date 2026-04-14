@@ -20,6 +20,14 @@ export async function POST(
     return NextResponse.json({ error: "No image mapping found. Scan first." }, { status: 400 });
   }
 
+  // Optimistic concurrency check
+  if (body.expectedVersion && mapping.lastUpdated !== body.expectedVersion) {
+    return NextResponse.json(
+      { error: "Conflict — mapping was modified by another session. Refresh to see latest." },
+      { status: 409 }
+    );
+  }
+
   // Update specific image slot
   if (body.imageUpdate) {
     const { position, ...updates } = body.imageUpdate;

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createHash } from "crypto";
 import { checkSessionCookie } from "@/lib/auth";
 import { rateLimit } from "@/lib/rate-limit";
 
@@ -15,8 +16,9 @@ export async function POST(request: NextRequest) {
   const { password } = body;
 
   if (password === ADMIN_PASSWORD) {
+    const sessionToken = createHash("sha256").update(ADMIN_PASSWORD + "bluejays-session-salt").digest("hex");
     const response = NextResponse.json({ success: true });
-    response.cookies.set("bluejays_auth", ADMIN_PASSWORD, {
+    response.cookies.set("bluejays_auth", sessionToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",

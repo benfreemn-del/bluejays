@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createHash } from "crypto";
 
 const ADMIN_PASSWORD = (process.env.ADMIN_PASSWORD || "").trim();
 if (!ADMIN_PASSWORD) console.warn("[SECURITY] ADMIN_PASSWORD not set — all protected routes will return 401");
@@ -96,9 +97,10 @@ export function middleware(request: NextRequest) {
   const isProtected = PROTECTED_PATHS.some((p) => pathname.startsWith(p));
   if (!isProtected) return NextResponse.next();
 
-  // Check auth cookie
+  // Check auth cookie (signed session token, not raw password)
   const authCookie = request.cookies.get("bluejays_auth")?.value;
-  if (authCookie === ADMIN_PASSWORD) return NextResponse.next();
+  const expectedToken = createHash("sha256").update(ADMIN_PASSWORD + "bluejays-session-salt").digest("hex");
+  if (authCookie === expectedToken) return NextResponse.next();
 
   // Check Authorization header (for API calls)
   const authHeader = request.headers.get("authorization");
