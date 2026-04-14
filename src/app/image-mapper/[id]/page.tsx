@@ -274,7 +274,6 @@ export default function ImageMapDetailPage() {
   const [scanning, setScanning] = useState(false);
   const [rightTab, setRightTab] = useState<"library" | "upload" | "fallbacks">("library");
   const [uploadedImages, setUploadedImages] = useState<{ url: string; name: string }[]>([]);
-  const [savingNote, setSavingNote] = useState<number | null>(null);
   const [dragOverPosition, setDragOverPosition] = useState<number | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [previewMode, setPreviewMode] = useState<"desktop" | "mobile">("desktop");
@@ -347,9 +346,8 @@ export default function ImageMapDetailPage() {
     }
   };
 
-  /* ─── Save Note ─── */
+  /* ─── Save Note (silent autosave) ─── */
   const saveNote = async (position: number, notes: string) => {
-    setSavingNote(position);
     try {
       await fetch(`/api/image-mapper/save/${id}`, {
         method: "POST",
@@ -366,9 +364,7 @@ export default function ImageMapDetailPage() {
           ),
         };
       });
-    } finally {
-      setSavingNote(null);
-    }
+    } catch { /* silent */ }
   };
 
   /* ─── Toggle Keep Original ─── */
@@ -822,21 +818,16 @@ export default function ImageMapDetailPage() {
                           )}
                         </div>
 
-                        {/* Expandable notes (click row to toggle) */}
-                        {img.notes && (
-                          <div className="px-5 pb-3">
-                            <textarea
-                              defaultValue={img.notes}
-                              onBlur={(e) => saveNote(img.position, e.target.value)}
-                              placeholder="Add notes..."
-                              rows={1}
-                              className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-[11px] text-white placeholder:text-white/30 resize-none focus:outline-none focus:border-blue-500/50"
-                            />
-                            {savingNote === img.position && (
-                              <p className="text-[10px] text-blue-400 mt-0.5">Saving...</p>
-                            )}
-                          </div>
-                        )}
+                        {/* Notes — always visible, autosaves silently */}
+                        <div className="px-4 pb-3">
+                          <input
+                            type="text"
+                            defaultValue={img.notes || ""}
+                            onBlur={(e) => { if (e.target.value !== (img.notes || "")) saveNote(img.position, e.target.value); }}
+                            placeholder="Notes..."
+                            className="w-full bg-transparent border-0 border-b border-white/5 px-0 py-1 text-[11px] text-white/50 placeholder:text-white/20 focus:outline-none focus:border-white/20 focus:text-white/70"
+                          />
+                        </div>
                       </div>
                     );
                   })}

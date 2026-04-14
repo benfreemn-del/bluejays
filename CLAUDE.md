@@ -963,6 +963,14 @@ ALL 31 HERO PATTERNS ARE NOW USED. For future showcases, invent new ones.
 - **Before/after with REAL photos** (not stock) are 10x more convincing. Use Ben's real before/after images where available (`/images/dental-before-after.png`, `/images/roofing-before-after.jpg`, `/images/vet-before-after.png`, `/images/interior-design-before-after.jpg`).
 - **Comfort/anxiety sections sell healthcare categories.** "We know dental anxiety is real" / "fear-free veterinary" / "gentle physical therapy" directly addresses the #1 objection.
 
+### Continuous Improvement Rule (MANDATORY after every site build)
+After working on ANY website (generating, enriching, reviewing, or fixing a prospect site), you MUST:
+1. **Identify what made this site better or more premium** — new section layout, better copy pattern, improved image placement, stronger CTA, smarter service card design, etc.
+2. **Apply that improvement to the V2 template** for that category if it's not already there — this ensures ALL future sites in that category automatically get the upgrade
+3. **Check if the improvement applies to other categories too** — if a dental site got a great "comfort/anxiety" section, check if chiropractic, PT, and med-spa templates should get the same pattern
+4. **Update CLAUDE.md** if it's a new design principle or pattern worth preserving
+5. **Never improve a single site without improving the template** — one-off fixes are wasted work. Template improvements compound across every future prospect.
+
 ### Hero Text Visibility Rules (NON-NEGOTIABLE)
 - **Every hero with a background image MUST have bg-black/70 or stronger overlay.** The weak gradient `from-black/60 via-black/30 to-black/10` is BANNED — it leaves the right side of the hero nearly transparent on desktop and the entire hero unreadable on mobile.
 - **NEVER use `from-white/80` gradient on a dark-text hero.** This fights the dark overlay and makes text invisible. Use `from-black/40 via-transparent to-black/20` instead.
