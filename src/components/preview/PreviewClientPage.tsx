@@ -5,6 +5,63 @@ import type { GeneratedSiteData } from "@/lib/generator";
 import type { Prospect } from "@/lib/types";
 import PreviewContent from "@/components/preview/PreviewContent";
 
+/* ── Device Toggle Bar (visible to prospects) ── */
+function DeviceToggleBar({ id, device, onToggle }: { id: string; device: "desktop" | "mobile"; onToggle: (d: "desktop" | "mobile") => void }) {
+  const [copied, setCopied] = useState<string | null>(null);
+  const baseUrl = typeof window !== "undefined" ? `${window.location.origin}/preview/${id}` : `/preview/${id}`;
+
+  const copyLink = (d: string) => {
+    const url = `${baseUrl}?device=${d}`;
+    navigator.clipboard.writeText(url).then(() => {
+      setCopied(d);
+      setTimeout(() => setCopied(null), 2000);
+    });
+  };
+
+  return (
+    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999] flex items-center gap-2 px-3 py-2 rounded-full border border-white/15 bg-black/80 backdrop-blur-xl shadow-2xl">
+      {/* Desktop button */}
+      <button
+        onClick={() => onToggle("desktop")}
+        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${device === "desktop" ? "bg-white text-black" : "text-white/60 hover:text-white"}`}
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" /><line x1="8" y1="21" x2="16" y2="21" /><line x1="12" y1="17" x2="12" y2="21" /></svg>
+        Desktop
+      </button>
+
+      {/* Mobile button */}
+      <button
+        onClick={() => onToggle("mobile")}
+        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${device === "mobile" ? "bg-white text-black" : "text-white/60 hover:text-white"}`}
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" /><line x1="12" y1="18" x2="12" y2="18" /></svg>
+        Mobile
+      </button>
+
+      {/* Divider */}
+      <div className="w-px h-5 bg-white/15" />
+
+      {/* Copy link buttons */}
+      <button
+        onClick={() => copyLink("desktop")}
+        className="flex items-center gap-1 px-2 py-1.5 rounded-full text-[10px] font-medium text-white/40 hover:text-white/70 transition-colors"
+        title="Copy desktop link"
+      >
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" /></svg>
+        {copied === "desktop" ? "Copied!" : "Desktop link"}
+      </button>
+      <button
+        onClick={() => copyLink("mobile")}
+        className="flex items-center gap-1 px-2 py-1.5 rounded-full text-[10px] font-medium text-white/40 hover:text-white/70 transition-colors"
+        title="Copy mobile link"
+      >
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" /></svg>
+        {copied === "mobile" ? "Copied!" : "Mobile link"}
+      </button>
+    </div>
+  );
+}
+
 interface PreviewClientPageProps {
   id: string;
   version?: "v1" | "v2";
@@ -27,6 +84,13 @@ export default function PreviewClientPage({
   const [prospect, setProspect] = useState<Prospect | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [device, setDevice] = useState<"desktop" | "mobile">(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      return params.get("device") === "mobile" ? "mobile" : "desktop";
+    }
+    return "desktop";
+  });
 
   const loadPreview = useCallback(async () => {
     setIsLoading(true);
@@ -121,5 +185,28 @@ export default function PreviewClientPage({
     );
   }
 
-  return <PreviewContent id={id} siteData={siteData} selectedTheme={selectedTheme} version={resolvedVersion} />;
+  return (
+    <>
+      {device === "mobile" ? (
+        <div className="min-h-screen bg-[#111] flex items-start justify-center pt-8 pb-24">
+          <div className="relative rounded-[2.5rem] border-[6px] border-white/20 bg-black overflow-hidden shadow-2xl" style={{ width: 390, maxHeight: "85vh" }}>
+            {/* Notch */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[120px] h-[28px] bg-black rounded-b-2xl z-50" />
+            <div className="overflow-y-auto" style={{ height: "85vh" }}>
+              <div style={{ width: 378 }}>
+                <PreviewContent id={id} siteData={siteData} selectedTheme={selectedTheme} version={resolvedVersion} />
+              </div>
+            </div>
+            {/* Home indicator */}
+            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-[134px] h-[5px] bg-white/30 rounded-full z-50" />
+          </div>
+        </div>
+      ) : (
+        <div className="pb-20">
+          <PreviewContent id={id} siteData={siteData} selectedTheme={selectedTheme} version={resolvedVersion} />
+        </div>
+      )}
+      <DeviceToggleBar id={id} device={device} onToggle={setDevice} />
+    </>
+  );
 }
