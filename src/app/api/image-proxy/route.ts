@@ -23,6 +23,14 @@ const ALLOWED_DOMAINS = [
   "lh5.googleusercontent.com",
   "lh6.googleusercontent.com",
   "streetviewpixels-pa.googleapis.com",
+  // Common business website CDNs (for scraped prospect photos)
+  "static.wixstatic.com",
+  "img1.wsimg.com",
+  "images.squarespace-cdn.com",
+  "cdn.shopify.com",
+  "scontent.cdninstagram.com",
+  "graph.facebook.com",
+  "s3.amazonaws.com",
 ];
 
 /** Block private/internal IP ranges to prevent SSRF */

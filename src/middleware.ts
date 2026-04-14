@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const ADMIN_PASSWORD = (process.env.ADMIN_PASSWORD || "bluejay2026").trim();
+const ADMIN_PASSWORD = (process.env.ADMIN_PASSWORD || "").trim();
+if (!ADMIN_PASSWORD) console.warn("[SECURITY] ADMIN_PASSWORD not set — all protected routes will return 401");
 
 // Protected routes that require login
 const PROTECTED_PATHS = [
