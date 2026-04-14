@@ -202,6 +202,8 @@ export default function ImageMapDetailPage() {
   const [categoryFallbacks, setCategoryFallbacks] = useState<FallbackSlot[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const fallbackInputRef = useRef<HTMLInputElement>(null);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [iframeKey, setIframeKey] = useState(0);
   const [activeFallbackSlot, setActiveFallbackSlot] = useState<number | null>(null);
 
   /* ─── Load Data ─── */
@@ -311,6 +313,7 @@ export default function ImageMapDetailPage() {
       });
       const data = await res.json();
       if (data.mapping) setMapping(data.mapping);
+      setIframeKey((k) => k + 1);
     } catch (err) {
       console.error("Toggle failed:", err);
     }
@@ -336,6 +339,8 @@ export default function ImageMapDetailPage() {
       });
       const data = await res.json();
       if (data.mapping) setMapping(data.mapping);
+      // Refresh the preview iframe so it picks up the new image
+      setIframeKey((k) => k + 1);
     } catch (err) {
       console.error("Drop assign failed:", err);
     }
@@ -630,15 +635,21 @@ export default function ImageMapDetailPage() {
                             {img.position}
                           </div>
 
-                          {/* Their image thumbnail */}
+                          {/* Current image on preview (shows replacement if assigned, original otherwise) */}
                           <div className="relative w-16 h-12 rounded-lg overflow-hidden bg-white/5 border border-white/10">
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
-                              src={proxyUrl(img.originalUrl)}
+                              src={img.replacementUrl
+                                ? (img.replacementUrl.startsWith("data:") ? img.replacementUrl : proxyUrl(img.replacementUrl))
+                                : proxyUrl(img.originalUrl)
+                              }
                               alt={`Position ${img.position}`}
                               className="w-full h-full object-cover"
                               loading="lazy"
                             />
+                            {img.replacementUrl && (
+                              <div className="absolute top-0 right-0 w-3 h-3 bg-emerald-500 rounded-bl-md" title="Replaced" />
+                            )}
                           </div>
 
                           {/* Location info */}
@@ -959,7 +970,9 @@ export default function ImageMapDetailPage() {
                     }
                   >
                     <iframe
-                      src={`/preview/${id}`}
+                      key={iframeKey}
+                      ref={iframeRef}
+                      src={`/preview/${id}?_t=${iframeKey}`}
                       className="w-full h-full border-0"
                       title="Site Preview"
                     />
