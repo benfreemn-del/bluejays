@@ -237,6 +237,28 @@ const THEME_LIBRARY: Record<string, { url: string; name: string }[]> = {
     { url: "https://images.unsplash.com/photo-1603712725038-e9334ae8f39f?w=800&q=80", name: "pro-equipment" },
     { url: "https://images.unsplash.com/photo-1549637642-90187f64f420?w=800&q=80", name: "fresh-floor" },
   ],
+  "physical-therapy": [
+    { url: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=800&q=80", name: "therapy-session" },
+    { url: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&q=80", name: "stretching" },
+    { url: "https://images.unsplash.com/photo-1552508744-1696d4464960?w=800&q=80", name: "exercise-ball" },
+    { url: "https://images.unsplash.com/photo-1517581177682-a085bb7ffb15?w=800&q=80", name: "rehab-clinic" },
+    { url: "https://images.unsplash.com/photo-1575052814086-f385e2e2ad1b?w=800&q=80", name: "pt-equipment" },
+    { url: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&q=80", name: "yoga-stretch" },
+    { url: "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=800&q=80", name: "recovery" },
+    { url: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800&q=80", name: "weights" },
+    { url: "https://images.unsplash.com/photo-1573497620053-ea5300f94f21?w=800&q=80", name: "consultation" },
+  ],
+  fitness: [
+    { url: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=80", name: "gym-floor" },
+    { url: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80", name: "lifting" },
+    { url: "https://images.unsplash.com/photo-1540497077202-7c8a3999166f?w=800&q=80", name: "group-class" },
+    { url: "https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=800&q=80", name: "training" },
+    { url: "https://images.unsplash.com/photo-1549060279-7e168fcee0c2?w=800&q=80", name: "cardio" },
+    { url: "https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=800&q=80", name: "crossfit" },
+    { url: "https://images.unsplash.com/photo-1518310383802-640c2de311b2?w=800&q=80", name: "personal-trainer" },
+    { url: "https://images.unsplash.com/photo-1576678927484-cc907957088c?w=800&q=80", name: "dumbbells" },
+    { url: "https://images.unsplash.com/photo-1593079831268-3381b0db4a77?w=800&q=80", name: "gym-interior" },
+  ],
 };
 
 /* ─── Helpers ─── */
@@ -514,8 +536,13 @@ export default function ImageMapDetailPage() {
     ).length ?? 0;
   const totalCount = mapping?.images.length ?? 0;
 
-  /* ─── Library images for category ─── */
-  const libraryImages = THEME_LIBRARY[category] || THEME_LIBRARY["dental"] || [];
+  /* ─── Library images for category (normalize to lowercase, try variations) ─── */
+  const normalizedCategory = (category || "").toLowerCase().trim();
+  const libraryImages = THEME_LIBRARY[normalizedCategory]
+    || THEME_LIBRARY[normalizedCategory.replace(/s$/, "")] // "plumbing" → try "plumbing" then strip trailing s
+    || THEME_LIBRARY[normalizedCategory.replace(/ing$/, "er")] // "plumbing" → "plumber"
+    || THEME_LIBRARY["dental"]
+    || [];
 
   /* ─── Drag event helpers for source images ─── */
   const onDragStartHandler = (e: React.DragEvent, imageUrl: string) => {
