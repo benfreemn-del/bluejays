@@ -963,7 +963,7 @@ export default function HVACShowcase() {
             <div>
               <GlassCard className="overflow-hidden" hover={false}>
                 <img
-                  src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=800&auto=format&fit=crop"
+                  src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800&auto=format&fit=crop"
                   alt={`${OWNER} - Owner of ${BUSINESS}`}
                   className="w-full h-80 object-cover object-top"
                 />

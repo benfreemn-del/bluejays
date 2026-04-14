@@ -90,8 +90,8 @@ const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1621905251189-08b45d
 const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=600&q=80"];
 const STOCK_PROJECTS = [
   "https://images.unsplash.com/photo-1545259741-2ea3ebf61fa3?w=600&q=80",
-  "https://images.unsplash.com/photo-1555664424-778a1e5e1b48?w=600&q=80",
-  "https://images.unsplash.com/photo-1555664424-778a1e5e1b48?w=800&q=80",
+  "https://images.unsplash.com/photo-1558449028-b53a39d100fc?w=600&q=80",
+  "https://images.unsplash.com/photo-1565608087341-404b25492fee?w=800&q=80",
   "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?w=800&q=80",
 ];
 

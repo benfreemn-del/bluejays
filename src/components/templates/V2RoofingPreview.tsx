@@ -91,11 +91,11 @@ const STOCK_HERO_POOL = [
   "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=1400&q=80", // modern home
 ];
 const STOCK_ABOUT_POOL = [
-  "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=600&q=80",    // roofing crew
-  "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=600&q=80",  // construction team
-  "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&q=80",  // worker on roof
-  "https://images.unsplash.com/photo-1615799998603-7c6270a45196?w=600&q=80",  // roof shingles
-  "https://images.unsplash.com/photo-1513467535987-fd81bc7d62f8?w=600&q=80",  // blueprint planning
+  "https://images.unsplash.com/photo-1632759145351-1d592919f522?w=800&q=80",  // roofing crew on roof
+  "https://images.unsplash.com/photo-1605117882932-f9e32b03fea9?w=800&q=80",  // roof shingles being installed
+  "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80",  // worker on roof
+  "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=800&q=80",  // completed roof
+  "https://images.unsplash.com/photo-1513467535987-fd81bc7d62f8?w=800&q=80",  // blueprint planning
 ];
 const STOCK_PROJECTS = [
   "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=600&q=80",  // house 1

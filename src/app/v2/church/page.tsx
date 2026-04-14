@@ -757,7 +757,7 @@ export default function ChurchShowcase() {
               {/* Map placeholder */}
               <div className="relative aspect-[4/3] lg:aspect-auto overflow-hidden" style={{ background: "#e7e5e4", minHeight: 320 }}>
                 <img
-                  src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=800&q=80"
+                  src="https://images.unsplash.com/photo-1470004914212-05527e49370b?w=800&q=80"
                   alt="Ballard, Seattle aerial view"
                   className="w-full h-full object-cover"
                 />

@@ -37,7 +37,7 @@ const SERVICE_ICON_MAP: Record<string, any> = {
 };
 function getServiceIcon(n: string) { const l = n.toLowerCase(); for (const [k, I] of Object.entries(SERVICE_ICON_MAP)) { if (l.includes(k)) return I; } return PenNib; }
 
-const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1562259929-b4e1fd3aef09?w=1400&q=80"];
+const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?w=1400&q=80"];
 const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1562962230-16e4623d36e6?w=600&q=80"];
 const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1562962230-16e4623d36e6?w=600&q=80",

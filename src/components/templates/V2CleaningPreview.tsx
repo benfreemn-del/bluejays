@@ -86,8 +86,8 @@ const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1628177142898-93e36
 const STOCK_PROJECTS = [
   "https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?w=600&q=80",
   "https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?w=600&q=80",
-  "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80",
-  "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80",
+  "https://images.unsplash.com/photo-1563453392212-326f5e854473?w=800&q=80",
+  "https://images.unsplash.com/photo-1528740561666-dc2479dc08ab?w=800&q=80",
 ];
 
 /* ───────────────────────── TRUST & SAFETY BADGES DATA ───────────────────────── */

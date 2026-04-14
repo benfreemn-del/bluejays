@@ -511,7 +511,7 @@ export default function V2LandscapingPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <GlassCard className="overflow-hidden">
               <div className="relative aspect-[4/3]">
-                <img src="/images/interior-design-before-after.jpg" alt="Landscape transformation — before state" className="w-full h-full object-cover" style={{ objectPosition: "left center" }} />
+                <img src="https://images.unsplash.com/photo-1558904541-efa843a96f01?w=800&q=80" alt="Landscape transformation — before state" className="w-full h-full object-cover" style={{ objectPosition: "left center" }} />
                 <div className="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-red-500/80 text-white backdrop-blur-sm">Before</div>
               </div>
             </GlassCard>

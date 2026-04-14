@@ -105,13 +105,13 @@ const PEST_QUIZ_OPTIONS = [
   { label: "Not Sure", urgency: "Free Inspection", color: "#3b82f6", desc: "We'll identify it and create a plan." },
 ];
 
-const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=1400&q=80"];
-const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=600&q=80"];
+const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1587293852726-70cdb56c2866?w=1400&q=80","https://images.unsplash.com/photo-1632571401005-458e9d244591?w=1400&q=80"];
+const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1560185893-a55cbc8c57e8?w=800&q=80","https://images.unsplash.com/photo-1604014237800-1c9102c219da?w=800&q=80"];
 const STOCK_PROJECTS = [
-  "https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=600&q=80",
-  "https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=600&q=80",
-  "https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=800&q=80",
-  "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80",
+  "https://images.unsplash.com/photo-1583947581924-860bda6a26df?w=600&q=80",
+  "https://images.unsplash.com/photo-1507838153414-b4b713384a76?w=600&q=80",
+  "https://images.unsplash.com/photo-1590856029826-c7a73142bbf1?w=800&q=80",
+  "https://images.unsplash.com/photo-1621619856624-42fd193a0661?w=800&q=80",
 ];
 
 function FloatingBugs({ accent }: { accent: string }) {

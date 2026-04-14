@@ -106,9 +106,9 @@ const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1591857177580-dc82b
 const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1558904541-efa843a96f01?w=600&q=80",
   "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&q=80",
-  "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&q=80",
+  "https://images.unsplash.com/photo-1572025442646-866d16c84a54?w=600&q=80",
   "https://images.unsplash.com/photo-1558904541-efa843a96f01?w=800&q=80",
-  "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800&q=80",
+  "https://images.unsplash.com/photo-1459411552884-841db9b3cc2a?w=800&q=80",
   "https://images.unsplash.com/photo-1560749003-f4b1e17e2dff?w=600&q=80",
   "https://images.unsplash.com/photo-1588880331179-bc9b93a8cb5e?w=600&q=80",
   "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=800&q=80",

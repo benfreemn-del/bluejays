@@ -27,13 +27,13 @@ const SERVICE_ICON_MAP: Record<string, any> = {
 };
 function getServiceIcon(serviceName: string) { const lower = serviceName.toLowerCase(); for (const [key, Icon] of Object.entries(SERVICE_ICON_MAP)) { if (lower.includes(key)) return Icon; } return Wall; }
 
-const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1584395630827-860eee694d7b?w=1400&q=80"];
-const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=600&q=80"];
+const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1599427303058-f04cbcf4756f?w=1400&q=80","https://images.unsplash.com/photo-1516455590571-18256e5bb9ff?w=1400&q=80"];
+const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1560184897-ae75f418493e?w=800&q=80","https://images.unsplash.com/photo-1519710164239-da123dc03ef4?w=800&q=80"];
 const STOCK_GALLERY = [
-  "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&q=80",
-  "https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=600&q=80",
-  "https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=600&q=80",
-  "https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=600&q=80",
+  "https://images.unsplash.com/photo-1598228723793-52759bba239c?w=600&q=80",
+  "https://images.unsplash.com/photo-1600607687644-c7171b42498f?w=600&q=80",
+  "https://images.unsplash.com/photo-1534237710431-e2fc698436d0?w=600&q=80",
+  "https://images.unsplash.com/photo-1526367790999-0150786686a2?w=600&q=80",
 ];
 
 function FloatingParticles({ accent }: { accent: string }) {

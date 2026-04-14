@@ -297,7 +297,7 @@ const MAGAZINE_FEATURES = [
 // ─── MOOD BOARD SWATCH DATA ────────────────────────────────────────────────
 const MOOD_SWATCHES = [
   { type: "circle", size: 140, color: "#d4a853", label: "Brushed Gold", x: 8, y: 15, rotation: -5, img: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=300&h=300&fit=crop" },
-  { type: "rect", width: 180, height: 120, color: "#6b7f5e", label: "Sage Linen", x: 55, y: 5, rotation: 3, img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop" },
+  { type: "rect", width: 180, height: 120, color: "#6b7f5e", label: "Sage Linen", x: 55, y: 5, rotation: 3, img: "https://images.unsplash.com/photo-1528459105426-b9548367069b?w=400&h=300&fit=crop" },
   { type: "square", size: 120, color: "#f5f0e8", label: "Warm Ivory", x: 30, y: 55, rotation: -8, img: "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=300&h=300&fit=crop" },
   { type: "rect", width: 160, height: 100, color: "#1a1a1a", label: "Charcoal Velvet", x: 65, y: 50, rotation: 5, img: "https://images.unsplash.com/photo-1615873968403-89e068629265?w=400&h=300&fit=crop" },
   { type: "circle", size: 100, color: "#b8860b", label: "Amber Marble", x: 10, y: 70, rotation: 12, img: "https://images.unsplash.com/photo-1600585152220-90363fe7e115?w=300&h=300&fit=crop" },

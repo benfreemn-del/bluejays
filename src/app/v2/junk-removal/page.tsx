@@ -301,7 +301,7 @@ export default function V2JunkRemovalPage() {
         {/* BEFORE side — cluttered garage */}
         <div className="absolute inset-0 z-0">
           <img
-            src="https://images.unsplash.com/photo-1484154218962-a197022b5858?w=1600&q=80"
+            src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=1600&q=80"
             alt="Cluttered garage before cleanup"
             className="w-full h-full object-cover"
           />
@@ -316,7 +316,7 @@ export default function V2JunkRemovalPage() {
           transition={{ duration: 1.6, delay: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
           <img
-            src="https://images.unsplash.com/photo-1558036117-15d82a90b9b1?w=1600&q=80"
+            src="https://images.unsplash.com/photo-1530587191325-3db32d826c18?w=1600&q=80"
             alt="Clean empty garage after cleanup"
             className="w-full h-full object-cover"
           />
@@ -807,7 +807,7 @@ export default function V2JunkRemovalPage() {
         <div className="mx-auto max-w-4xl px-4 md:px-6">
           <div className="relative aspect-video rounded-2xl overflow-hidden group cursor-pointer">
             <img
-              src="https://images.unsplash.com/photo-1600585152220-90363fe7e115?w=1200&q=80"
+              src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1200&q=80"
               alt="CleanSlate crew at work"
               className="w-full h-full object-cover"
             />
@@ -839,7 +839,7 @@ export default function V2JunkRemovalPage() {
           <motion.div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
             {[
               { src: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80", label: "Garage Cleanout — Ballard" },
-              { src: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80", label: "Estate Cleanout — Capitol Hill" },
+              { src: "https://images.unsplash.com/photo-1590247813693-5541d1c609fd?w=600&q=80", label: "Estate Cleanout — Capitol Hill" },
               { src: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=600&q=80", label: "Office Furniture Removal — SoDo" },
               { src: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80", label: "Renovation Debris — Fremont" },
               { src: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=600&q=80", label: "Appliance Haul — Green Lake" },
