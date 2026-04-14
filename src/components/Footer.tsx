@@ -32,7 +32,7 @@ export default function Footer() {
             <ul className="space-y-3">
               {[
                 { label: "Portfolio", href: "/" },
-                { label: "Templates", href: "/templates" },
+                { label: "Templates", href: "/#portfolio" },
                 { label: "Privacy Policy", href: "/privacy" },
                 { label: "Terms of Service", href: "/terms" },
                 { label: "Contact", href: "mailto:bluejaycontactme@gmail.com" },

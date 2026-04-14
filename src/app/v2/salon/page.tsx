@@ -62,10 +62,12 @@ function SpringButton({
   children,
   className = "",
   onClick,
+  style: externalStyle,
 }: {
   children: React.ReactNode;
   className?: string;
   onClick?: () => void;
+  style?: React.CSSProperties;
 }) {
   const ref = useRef<HTMLButtonElement>(null);
   const x = useMotionValue(0);
@@ -88,7 +90,7 @@ function SpringButton({
   return (
     <motion.button
       ref={ref}
-      style={{ x: sx, y: sy }}
+      style={{ x: sx, y: sy, ...externalStyle }}
       onMouseMove={handleMouse}
       onMouseLeave={() => { x.set(0); y.set(0); }}
       whileHover={{ scale: 1.04 }}
