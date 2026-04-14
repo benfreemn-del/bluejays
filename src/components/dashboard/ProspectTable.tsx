@@ -454,14 +454,29 @@ export default function ProspectTable({
             <button
               onClick={async () => {
                 setBulkSending(true);
+                setBulkResult("");
+                const failures: string[] = [];
                 for (const pid of selectedIds) {
-                  await fetch(`/api/prospects/${pid}`, { credentials: "include",
-                    method: "PATCH",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ status: "approved" }),
-                  });
+                  try {
+                    const res = await fetch(`/api/prospects/${pid}`, { credentials: "include",
+                      method: "PATCH",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ status: "approved" }),
+                    });
+                    if (!res.ok) {
+                      const errData = await res.json().catch(() => ({}));
+                      failures.push(`${pid}: ${(errData as Record<string, string>).error || res.statusText}`);
+                    }
+                  } catch (err) {
+                    failures.push(`${pid}: ${err instanceof Error ? err.message : "Network error"}`);
+                  }
                 }
-                setBulkResult(`${selectedIds.length} leads approved ✓`);
+                const successCount = selectedIds.length - failures.length;
+                if (failures.length > 0) {
+                  setBulkResult(`${successCount} approved, ${failures.length} failed: ${failures.join("; ")}`);
+                } else {
+                  setBulkResult(`${selectedIds.length} leads approved`);
+                }
                 setSelectedIds([]);
                 onRefresh?.();
                 setBulkSending(false);

@@ -56,6 +56,7 @@ export default function ClaimPage() {
   const [showChat, setShowChat] = useState(false);
   const [triggers, setTriggers] = useState<EngagementTriggers | undefined>(undefined);
   const [roiJobValue, setRoiJobValue] = useState(500);
+  const [notFound, setNotFound] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const paymentCancelled = searchParams.get("payment") === "cancelled";
@@ -63,9 +64,13 @@ export default function ClaimPage() {
   useEffect(() => {
     // Fetch prospect data
     fetch(`/api/prospects/${prospectId}`)
-      .then((r) => r.json())
+      .then((r) => {
+        if (!r.ok) { setNotFound(true); return null; }
+        return r.json();
+      })
       .then((data) => {
-        if (data.error) return;
+        if (!data) return;
+        if (data.error) { setNotFound(true); return; }
         setInfo({
           businessName: data.businessName,
           category: data.category,
@@ -141,10 +146,11 @@ export default function ClaimPage() {
     ]);
 
     try {
+      const plan = new URLSearchParams(window.location.search).get("plan");
       const res = await fetch("/api/checkout/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prospectId }),
+        body: JSON.stringify({ prospectId, plan: plan || "full" }),
       });
       const data = await res.json();
 
@@ -208,6 +214,28 @@ export default function ClaimPage() {
   ];
 
   const totalValue = "$8,000";
+
+  if (notFound) {
+    return (
+      <div className="min-h-screen bg-[#050a14] text-white flex items-center justify-center">
+        <div className="text-center max-w-md px-6">
+          <div className="w-16 h-16 rounded-full bg-red-500/20 flex items-center justify-center mx-auto mb-6">
+            <span className="text-3xl">404</span>
+          </div>
+          <h1 className="text-2xl font-bold mb-3">Website Not Found</h1>
+          <p className="text-white/50 mb-6">
+            This preview link is no longer available or the website has already been claimed. If you think this is an error, please contact us.
+          </p>
+          <a
+            href="https://bluejayportfolio.com"
+            className="inline-block h-10 px-6 leading-10 rounded-full bg-sky-500 text-white text-sm font-medium hover:bg-sky-400 transition-colors"
+          >
+            Visit BlueJays Portfolio
+          </a>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#050a14] text-white">

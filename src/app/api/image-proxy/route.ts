@@ -15,6 +15,31 @@ import { logCost, COST_RATES } from "@/lib/cost-logger";
 
 const GOOGLE_API_KEY = process.env.GOOGLE_PLACES_API_KEY;
 
+const ALLOWED_DOMAINS = [
+  "images.unsplash.com",
+  "maps.googleapis.com",
+  "lh3.googleusercontent.com",
+  "lh4.googleusercontent.com",
+  "lh5.googleusercontent.com",
+  "lh6.googleusercontent.com",
+  "streetviewpixels-pa.googleapis.com",
+];
+
+/** Block private/internal IP ranges to prevent SSRF */
+function isPrivateHostname(hostname: string): boolean {
+  if (hostname === "localhost" || hostname === "127.0.0.1" || hostname === "0.0.0.0") return true;
+  // IPv4 private ranges
+  const parts = hostname.split(".").map(Number);
+  if (parts.length === 4 && parts.every((n) => !isNaN(n))) {
+    if (parts[0] === 10) return true; // 10.x.x.x
+    if (parts[0] === 172 && parts[1] >= 16 && parts[1] <= 31) return true; // 172.16-31.x.x
+    if (parts[0] === 192 && parts[1] === 168) return true; // 192.168.x.x
+    if (parts[0] === 169 && parts[1] === 254) return true; // 169.254.x.x (link-local)
+    if (parts[0] === 127) return true; // 127.x.x.x
+  }
+  return false;
+}
+
 async function logImageProxyFailure(params: {
   prospectId?: string;
   url: string;
@@ -58,6 +83,23 @@ export async function GET(request: NextRequest) {
 
   try {
     fetchUrl = decodeURIComponent(url).trim();
+
+    // SSRF protection: validate hostname against allowlist and block private IPs
+    let parsedHostname: string;
+    try {
+      parsedHostname = new URL(fetchUrl).hostname;
+    } catch {
+      return NextResponse.json({ error: "Invalid URL" }, { status: 400 });
+    }
+
+    if (isPrivateHostname(parsedHostname)) {
+      return NextResponse.json({ error: "Forbidden: private IP addresses are not allowed" }, { status: 403 });
+    }
+
+    if (!ALLOWED_DOMAINS.includes(parsedHostname)) {
+      return NextResponse.json({ error: "Forbidden: domain not in allowlist" }, { status: 403 });
+    }
+
     const isGooglePhoto = fetchUrl.includes("maps.googleapis.com");
     const isUnsplashImage = (() => {
       try {
