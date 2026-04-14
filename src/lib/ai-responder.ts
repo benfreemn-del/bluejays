@@ -238,7 +238,7 @@ function getPersonalHook(prospect: Prospect): string {
   if (prospect.city) {
     return `I designed it specifically for ${CATEGORY_CONFIG[prospect.category]?.label || prospect.category} businesses in the ${prospect.city} area.`;
   }
-  return `I put a lot of thought into making it feel authentic to ${prospect.businessName}.`;
+  return `I built the site around what makes ${prospect.businessName} unique — it's not a cookie-cutter template.`;
 }
 
 /**
@@ -542,7 +542,7 @@ function getMockResponse(prompt: string): string {
     const compareUrl = `${CHECKOUT_BASE_URL}/compare/{prospectId}`;
     return JSON.stringify({
       shouldReply: true,
-      reply: `Oh nice — yeah, I actually found your current site, that's how I discovered ${businessName} in the first place! We actually designed yours as an upgrade to your current site. We kept your branding and made the experience more modern and mobile-friendly.\n\nYou can compare them side by side on the claim page: ${compareUrl}\n\nHonestly, even if you stick with your current site, the comparison might give you some ideas for improvements. No strings attached.`,
+      reply: `Oh nice — yeah, I actually found your current site, that's how I discovered ${businessName} in the first place! We actually designed yours as an upgrade to your current site. We kept your branding and made the experience more modern and mobile-friendly.\n\nYou can compare them side by side on the claim page: ${compareUrl}\n\nHonestly, even if you stick with your current site, the comparison might give you some ideas for improvements. Would you be open to taking a quick look at the two side by side?`,
       escalate: false,
       sentiment: "neutral",
       intent: "objection",
@@ -690,7 +690,7 @@ function getMockResponse(prompt: string): string {
   // Generic question with warmth and personality
   return JSON.stringify({
     shouldReply: true,
-    reply: `Hey ${name}, thanks for getting back to me! Always good to hear from the people behind the businesses I work with.\n\nThe website I built for ${businessName} is fully custom — not a template or a cookie-cutter thing. It's mobile-friendly, loads fast, and is designed to actually bring in new customers (not just look pretty).${personalTouch}\n\nBy the way, you can see more examples of sites we've built for ${category || "local"} businesses here: https://bluejayportfolio.com/v2/${category || "portfolio"}\n\nIs there something specific you're wondering about? I'm an open book — ask me anything about the site, the process, pricing, whatever's on your mind.`,
+    reply: `Hey ${name}, thanks for getting back to me! I've been following what ${businessName} is doing and I'm genuinely impressed with how you've built the business.\n\nThe website I put together for ${businessName} is fully custom — mobile-friendly, loads fast, and designed to actually bring in new customers from Google searches.${personalTouch}\n\nBy the way, you can see more examples of sites we've built for ${category || "local"} businesses here: https://bluejayportfolio.com/v2/${category || "portfolio"}\n\nWhat's the biggest challenge you're running into right now when it comes to getting new customers online?`,
     escalate: false,
     sentiment: "neutral",
     intent: "question",
@@ -757,12 +757,17 @@ CONVERSATIONAL STYLE RULES (CRITICAL):
 - VARY your openers — never start with "Thanks for reaching out" or "Great question" twice
 - Use the prospect's first name naturally, not in every sentence
 - Show genuine curiosity about their business — ask follow-up questions
-- When handling objections, VALIDATE first ("I totally get that"), then reframe
+- EMOTIONAL VALIDATION FIRST — Before answering ANY objection, validate their concern in 1 sentence. Then reframe. Example: "That's a completely fair concern, and I hear you." THEN give your response.
 - Use contractions (I'm, you're, don't, won't) — formal language kills trust
 - Keep paragraphs short — 2-3 sentences max. This is a conversation, not an essay
 - Add a personal touch: reference their Google rating, services, or location when relevant
-- End with an open door, not a hard close. "Here if you need anything" > "Click here to buy"
+- ALWAYS END WITH A QUESTION — End every response with a genuine question that moves the conversation forward. Not "let me know what you think" but something specific like "What's the #1 way new customers find you right now?" or "Is there a specific feature you'd want on your site?"
 - If they seem cold or stalled, use a curiosity hook to re-engage rather than repeating the pitch
+- URGENCY SIGNALS — When appropriate, mention: the preview stays live for 30 days, other businesses in their area have already claimed theirs, and a payment plan of 3x$349 is available
+- NEVER SAY these phrases: "just following up", "no strings attached", "take a look and let me know what you think", "I put a lot of thought into it". These are generic and kill trust.
+- DATA-AWARE RESPONSES — If the prospect has a high Google rating (4.5+), mention it as a compliment. If they have 100+ reviews, call it out. Use their actual scraped data to make the response feel researched.
+- PAYMENT PLAN IN EVERY PRICE DISCUSSION — Always mention 3 payments of $349 when price comes up. Don't wait for them to ask about it.
+- CLOSING SIGNALS — If prospect says "how do I get started", "what's next", "I'm interested", "let's do it", "sign me up", "ready to go" — send the checkout link IMMEDIATELY. Do not ask more questions. They are ready to buy.
 
 PERSONAL CONTEXT TO REFERENCE:
 ${personalContext.length > 0 ? personalContext.map(c => `- ${c}`).join("\n") : "- No specific data available — keep it general but genuine"}
@@ -836,14 +841,19 @@ Analyze their message and respond as JSON with these exact fields:
 11. "closeAction" (string): "checkout", "calendar", or "none" — which close action to take based on the decision framework.
 
 CRITICAL RULES:
-- ALWAYS validate before reframing objections ("I totally get that..." / "That makes sense...")
+- ALWAYS validate emotionally before reframing objections ("I totally get that..." / "That makes sense..." / "That's a fair concern..."). One sentence of empathy, THEN your response.
 - For objections, use the playbook as inspiration but make it CONVERSATIONAL — don't copy-paste
 - For "already have a website", emphasize that we designed theirs as a direct upgrade to their current site, kept their branding, and made it more modern and mobile-friendly. Include the compare URL: ${compareUrl}
-- For price objections, mention the payment plan option: 3 payments of $349
+- For price objections, ALWAYS mention the payment plan: 3 payments of $349. Lead with ROI ("how much is one new customer worth?"), then offer the plan.
 - For "who are you" or "is this legit" questions, mention that BlueJays is a web design studio that builds premium websites for local businesses, link to bluejayportfolio.com, mention we've built sites for 30+ industries, and that their site was custom-designed specifically for their business
 - For interested prospects and question intents, include the portfolio link to show more examples: https://bluejayportfolio.com/v2/${prospect.category}
 - For interested prospects in high-value categories, push calendar booking
 - For interested prospects in direct-close categories, push checkout link
+- CLOSING SIGNALS: If the prospect says "how do I get started", "what's next", "I'm interested", "let's do it", "sign me up", "ready to go", "take my money" — send the checkout link IMMEDIATELY at ${checkoutUrl}. Do NOT ask more questions. They are ready.
+- ALWAYS end every response with a genuine question that moves the conversation forward
+- If the prospect has a Google rating of 4.5+ or 100+ reviews, compliment it specifically — "Your ${prospect.googleRating} stars across ${prospect.reviewCount || 0} reviews says a lot about how you run your business"
+- NEVER say: "just following up", "no strings attached", "take a look and let me know what you think", "I put a lot of thought into it"
+- When appropriate, mention urgency: "Your preview stays live for 30 days" or "A few other ${categoryLabel} businesses in your area have already claimed theirs"
 - ALWAYS pause the funnel when a prospect replies (pauseFunnel: true)
 - Map intent to CRM status using the INTENT-TO-STATUS MAPPING above
 - VARY your language — if this were a real text conversation, you wouldn't use the same phrases twice
@@ -953,7 +963,7 @@ export async function processIncomingMessage(
 
       case "already have a website": {
         const compareUrl = `${CHECKOUT_BASE_URL}/compare/${prospect.id}`;
-        reply = `Oh nice — yeah, I actually found your current site, that's how I discovered ${prospect.businessName}! We actually designed yours as an upgrade to your current site. We kept your branding and made the experience more modern and mobile-friendly.\n\nYou can compare them side by side on the claim page: ${compareUrl}\n\nEven if you stick with your current site, the comparison might give you some ideas. No strings attached.`;
+        reply = `Oh nice — yeah, I actually found your current site, that's how I discovered ${prospect.businessName}! We actually designed yours as an upgrade to your current site. We kept your branding and made the experience more modern and mobile-friendly.\n\nYou can compare them side by side on the claim page: ${compareUrl}\n\nEven if you stick with your current site, the comparison might give you some ideas. What's one thing you wish your current site did better?`;
         break;
       }
 

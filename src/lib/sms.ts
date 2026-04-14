@@ -320,19 +320,20 @@ function buildVideoSuffix(videoUrl?: string): string {
 export function getInitialSms(prospect: Prospect, previewUrl: string, videoUrl?: string): string {
   const name = prospect.ownerName?.split(" ")[0] || "there";
   const categoryLabel = CATEGORY_CONFIG[prospect.category]?.label || prospect.category;
-  return `Hey ${name}! This is BlueJays. We built a free custom website for ${prospect.businessName} — check it out: ${previewUrl}${buildVideoSuffix(videoUrl)}\nSee more ${categoryLabel.toLowerCase()} sites we've built: bluejayportfolio.com/v2/${prospect.category}\nLet us know what you think! Reply STOP to opt out.`;
+  return `Hey ${name}! Built a free website for ${prospect.businessName} — check it out: ${previewUrl}${buildVideoSuffix(videoUrl)} More ${categoryLabel.toLowerCase()} examples: bluejayportfolio.com/v2/${prospect.category} Reply STOP to opt out`;
 }
 
 export function getFollowUpSms1(prospect: Prospect, previewUrl: string, videoUrl?: string): string {
   const name = prospect.ownerName?.split(" ")[0] || "there";
-  return `Hi ${name}, just following up on the website we built for ${prospect.businessName}. Have you had a chance to look? ${previewUrl}${buildVideoSuffix(videoUrl)} Reply STOP to opt out.`;
+  return `${name}, what did you think of your new site? Still live at ${previewUrl}${buildVideoSuffix(videoUrl)} Reply STOP to opt out`;
 }
 
 export function getFollowUpSms2(prospect: Prospect, previewUrl: string, videoUrl?: string): string {
   const name = prospect.ownerName?.split(" ")[0] || "there";
-  return `Last message from us ${name} — your free ${prospect.businessName} website is still live at ${previewUrl}.${buildVideoSuffix(videoUrl)} Claim it before we move on! No pressure either way. Reply STOP to opt out.`;
+  return `${name} — your ${prospect.businessName} website goes offline in 2 weeks. Claim it: ${previewUrl}${buildVideoSuffix(videoUrl)} Reply STOP to opt out`;
 }
 
 export function getPostVoicemailSms(prospect: Prospect, previewUrl: string, videoUrl?: string): string {
-  return `Hey! This is BlueJays — I just left you a quick voicemail about the website we built for ${prospect.businessName}. Here's the preview: ${previewUrl}.${buildVideoSuffix(videoUrl)} Reply STOP to opt out.`;
+  const name = prospect.ownerName?.split(" ")[0] || "there";
+  return `Hey ${name}, just left you a voicemail about the site we built for ${prospect.businessName}: ${previewUrl}${buildVideoSuffix(videoUrl)} Reply STOP to opt out`;
 }

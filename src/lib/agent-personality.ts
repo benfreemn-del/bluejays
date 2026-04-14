@@ -38,54 +38,88 @@ export const AGENT_VOICE = {
 export const PRICING_FRAMEWORK = {
   price: 997,
   yearlyManagement: 100,
-  positioning: "$997 one-time for the build and launch, then $100/year for maintenance after year one",
+  paymentPlan: { installments: 3, amount: 349 },
+  positioning: "$997 one-time, done — design, domain, and hosting included. Then $100/year for maintenance after year one.",
   comparisonPoints: [
     "Traditional agencies charge $3,000-$10,000 for this",
     "That's less than $3/day for the first year",
     "Most businesses make this back in their first new customer",
-    "$997 includes custom website design, domain registration, and hosting setup",
+    "$997 one-time includes custom website design, domain registration, and hosting setup",
     "$100/year maintenance covers domain renewal, hosting, ongoing maintenance, and support",
+    "Payment plan available: 3 payments of $349",
   ],
   neverNegotiate: true,
   remarketing_price: 497, // for win-back campaigns only
+  urgencyOptions: [
+    "Your preview stays live for 30 days",
+    "2 other businesses in your area claimed theirs this week",
+    "We only take on a handful of {category} clients per month",
+  ],
 };
 
 /**
  * Objection Handling Framework
- * Style: Reframe the value, never argue, always leave the door open
+ * Style: Reframe the value, never argue, always leave the door open.
+ * Rules: 2 sentences max for SMS, 3 for email. Vary openers. End with a re-engaging question.
+ * Payment plan: 3 payments of $349 — mention on every price-related objection.
+ * Portfolio: https://bluejayportfolio.com/v2/{category}
  */
 export const OBJECTION_RESPONSES: Record<string, { response: string; followUp: string }> = {
   "too expensive": {
-    response: "I totally get that — $997 sounds like a lot until you compare it to what agencies charge ($3K-$10K for the same thing). That one-time fee includes the custom website design, domain registration, and hosting setup, so you're not piecing together extras. After year one, maintenance is just $100/year for domain renewal, hosting, ongoing maintenance, and support.",
-    followUp: "The preview site is still live if you want to take another look. No pressure at all — I just want you to have the option.",
+    response: "$997 one-time, done — that includes design, domain, and hosting, versus $3K-$10K at an agency. We also offer 3 payments of $349 if that's easier.",
+    followUp: "How much is one new customer worth to {businessName}? Most businesses make the $997 back from their first lead off the new site.",
   },
   "not interested": {
-    response: "No worries at all! I appreciate you being straight with me. The site I built is yours to look at anytime if you change your mind. I wish you and {businessName} all the best!",
+    response: "Appreciate you being straight with me — no hard feelings at all. The site I built is yours to look at anytime if anything changes. Wishing {businessName} all the best!",
     followUp: "", // Don't follow up if they explicitly say no
   },
   "already have a website": {
-    response: "That's great! I actually saw your current site — it's how I found you. The one I built is more of a modern upgrade. Take a look at the two side by side and see what you think. No obligation either way.",
-    followUp: "Here's a side-by-side comparison: {compareUrl}",
+    response: "I actually designed yours as an upgrade to your current site — same branding, just more modern and mobile-friendly. Compare them side by side on the claim page and see which one you'd rather send customers to.",
+    followUp: "Have you had a chance to look at both side by side? Here's the direct comparison: {compareUrl}",
   },
   "have a developer": {
-    response: "Nice, having a dev is valuable. I'm not trying to replace them — just thought you'd want to see what's possible with a fresh perspective. The preview is free either way. Maybe show it to your developer for ideas?",
-    followUp: "",
+    response: "That's solid — not trying to step on anyone's toes. The preview is free either way, and it might give your dev some fresh ideas for the next update.",
+    followUp: "Did your developer get a chance to look at the preview? Would love to hear what they think.",
   },
   "need to think about it": {
-    response: "Absolutely, take your time! And just so you know — what you're seeing is just the first version. Once you're on board, we customize everything to your exact preferences. Colors, photos, layout, content — whatever you want changed, we make it happen. The preview is just the starting point.",
-    followUp: "Hey {name}, just checking in — have you had a chance to think about the site? Remember, everything you see is fully customizable. Happy to answer any questions.",
+    response: "Of course — what you're seeing is just version one, and we customize everything after purchase. Your preview stays live for 30 days.",
+    followUp: "What's the main thing you're weighing? Happy to answer specifics so you're not guessing.",
   },
   "bad timing": {
-    response: "Absolutely, take your time! And just so you know — what you're seeing is just the first version. Once you're on board, we customize everything to your exact preferences. Colors, photos, layout, content — whatever you want changed, we make it happen. The preview is just the starting point.",
-    followUp: "Hey {name}, just checking in — have you had a chance to think about the site? Remember, everything you see is fully customizable. Happy to answer any questions.",
+    response: "Totally fair — when would be a better time to revisit this? Your preview stays live for 30 days so there's no rush.",
+    followUp: "Hey {name}, just circling back — is now a better time to take another look at the site we built for {businessName}?",
   },
   "can you do it cheaper": {
-    response: "I hear you — unfortunately $997 is our standard rate and we keep it firm because we don't cut corners on quality. That one-time fee includes custom website design, domain registration, and hosting setup. After year one, maintenance is just $100/year for domain renewal, hosting, ongoing maintenance, and support. For comparison, most agencies charge $3K-$10K for this level of work.",
-    followUp: "",
+    response: "$997 is firm because we don't cut corners — design, domain, and hosting are all included. That said, we do offer 3 payments of $349 if spreading it out helps.",
+    followUp: "Would the payment plan make it easier to move forward? Most businesses recoup the cost from their first new customer.",
   },
   "what's included": {
-    response: "Everything! What you're seeing is actually just the first version — after you sign on, we customize it to your exact preferences. Colors, photos, layout, content, and the final polish. The $997 one-time fee includes the custom website design, domain registration, and hosting setup. After year one, the $100/year maintenance plan covers domain renewal, hosting, ongoing maintenance, and support. No hidden fees, and no monthly subscription.",
-    followUp: "",
+    response: "The $997 one-time fee covers custom website design, domain registration, and hosting setup. After year one, $100/year handles domain renewal, hosting, maintenance, and support — and what you're seeing now is just version one. We customize everything to your preferences after purchase.",
+    followUp: "Any specific features you're looking for? Everything on the preview is fully customizable.",
+  },
+  "show me your work": {
+    response: "Absolutely — check out our full portfolio at bluejayportfolio.com. We've built sites for 30+ industries, and yours was custom-designed specifically for {businessName}.",
+    followUp: "Did you get a chance to browse the portfolio? Here's the direct link for your industry: https://bluejayportfolio.com/v2/{category}",
+  },
+  "is this legit": {
+    response: "Great question — BlueJays is a web design studio that builds premium websites for local businesses. See our full portfolio at bluejayportfolio.com, and the site we built for {businessName} is already live at your preview link.",
+    followUp: "Want me to send over a few examples of other {category} businesses we've built for? Happy to show the work.",
+  },
+  "can i pay monthly": {
+    response: "We offer 3 payments of $349 — that gets you the full site with design, domain, and hosting included. After year one, maintenance is just $100/year.",
+    followUp: "Would the 3-payment option work for you? I can send the checkout link set up that way.",
+  },
+  "need to talk to partner": {
+    response: "Makes total sense — big decisions deserve a second opinion. Your preview stays live for 30 days, so there's time, but 2 other businesses in your area claimed theirs this week.",
+    followUp: "Were you and your partner able to take a look together? Happy to hop on a quick call if either of you has questions.",
+  },
+  "can you redesign my current site": {
+    response: "That's actually exactly what we did — the preview is a modern rebuild of your current site with your branding, services, and content. After purchase we customize further based on your feedback.",
+    followUp: "What would you want changed from what you see in the preview? Everything is adjustable — colors, photos, layout, content.",
+  },
+  "preview doesnt look good": {
+    response: "Fair feedback — the preview is version one, built from what we could find online. After purchase, we do a full customization round with your real photos, exact colors, and whatever layout changes you want.",
+    followUp: "What specifically would you want different? We adjust colors, photos, layout, and copy — your feedback shapes the final product.",
   },
 };
 
@@ -102,6 +136,15 @@ export const CONSERVATIVE_FUNNEL = [
   { day: 21, channels: ["email"] as const, label: "Social Proof", description: "\"X businesses in your area upgraded this month\"" },
   { day: 30, channels: ["email"] as const, label: "Final Check-In", description: "\"Just wanted to make sure you saw this\" — easy out" },
 ];
+
+/**
+ * Voicemail Scripts — Ben's pre-recorded drops
+ * Keep under 30 seconds. Mention business name. End with a reason to check the text.
+ */
+export const VOICEMAIL_SCRIPTS = {
+  day2: `Hey {name}, this is Ben from BlueJays. I sent over a website I custom-built for {businessName} — just wanted to make sure you saw it. Take a look at the link I texted you and let me know what you think. No pressure at all, talk soon.`,
+  day18: `Hey {name}, Ben again from BlueJays. Just checking if you got a chance to look at the site I built for {businessName}. Your preview is still live, but it won't be up forever — if you have any questions just shoot me a text back. Hope business is going well!`,
+};
 
 /**
  * Anti-Spam Rules

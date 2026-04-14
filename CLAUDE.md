@@ -319,11 +319,33 @@ When generating, reviewing, or improving any prospect's preview site, agents MUS
 7. **Stock photo disclaimer** — the preview page shows a banner: "Preview — images and content will be customized with your real business photos after purchase." This sets expectations so prospects don't think stock photos are the final product.
 8. **Claim page must show** — ROI calculator, DIY comparison table, payment plan option, post-purchase timeline, satisfaction guarantee. These are all on the claim page and should be referenced in sales conversations.
 
+**Banned phrases (NEVER use in any outreach or response):**
+- "just following up" — filler, say something specific instead
+- "no strings attached" — sounds defensive, just say "free"
+- "take a look and let me know what you think" — generic, ask a specific question instead
+- "I put a lot of thought into it" — self-focused, show don't tell
+- "unfortunately" before pricing — never apologize for the price
+- "No hidden fees" — defensive framing, use "$997 one-time, done" instead
+
+**Urgency language (use naturally, not in every message):**
+- "Your preview stays live for 30 days"
+- "A few other [category] businesses in your area claimed theirs recently"
+- "We take on limited clients each month"
+
+**Copy principles:**
+- Lead with THEIR data (Google rating, review count, top service, city)
+- End every response with a QUESTION that moves the conversation forward
+- Validate the concern BEFORE reframing the objection
+- Short > long. 2 sentences beats 5 every time for SMS/text
+- Vary openers — never start two messages the same way
+
 **Never do:**
 - Send outreach without a preview link AND a portfolio link
 - Ignore price objections — always mention the payment plan
 - Let a prospect think stock photos are the final product
 - Promise features that don't exist yet
+- Say "this is my last email" and then send another one
+- Assume why they didn't respond ("I know you've been busy")
 
 ### Boss/Orchestrator Agent Rules
 A pipeline orchestrator agent manages the flow and enforces rules:

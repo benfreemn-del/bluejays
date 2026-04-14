@@ -37,26 +37,27 @@ export function getPitchEmail(
     prospect.ownerName?.split(" ")[0] || prospect.businessName;
   const category = CATEGORY_CONFIG[prospect.category].label;
   const hasWebsite = !!prospect.currentWebsite;
+  const city = prospect.city || prospect.address?.split(",")[0] || "";
 
-  const subject = `${prospect.businessName} — I built you a new website (take a look)`;
+  const subject = `${name}, I made something for ${prospect.businessName}`;
+
+  const discoveryLine = hasWebsite
+    ? `I found ${prospect.businessName} while searching for top-rated ${category.toLowerCase()} businesses${city ? ` in ${city}` : ""} — your reviews stood out.`
+    : `I was looking for ${category.toLowerCase()} businesses${city ? ` in ${city}` : ""} and came across ${prospect.businessName} — but noticed you don't have a website yet.`;
 
   const body = `Hi ${name},
 
-I came across ${prospect.businessName} and was impressed by what you've built${hasWebsite ? "" : " — but I noticed you don't have a website yet"}.
+${discoveryLine}
 
-${hasWebsite ? `I took a look at your current site and thought I could do something special for you.` : `In today's market, ${category.toLowerCase()} businesses without a strong web presence are leaving money on the table.`}
+I went ahead and built you a custom website — completely free, no strings attached. We've done this for 200+ local businesses across 30+ industries, and I wanted to do the same for ${prospect.businessName}.
 
-So I went ahead and built you a brand new website — completely free, no strings attached. Here it is:
-
-${previewUrl}
+See your site: ${previewUrl}
 ${buildVideoBlock(videoUrl)}
-It's modern, mobile-friendly, and designed specifically for ${category.toLowerCase()} businesses like yours. Take 30 seconds to check it out.
+See more ${category.toLowerCase()} sites we've built: https://bluejayportfolio.com/v2/${prospect.category}
 
-See what we've built for other ${category.toLowerCase()} businesses: https://bluejayportfolio.com/v2/${prospect.category}
+If you want it live on your own domain, we can do that within 48 hours — $997 one-time (or 3 payments of $349).
 
-If you love it, we can have it live on your own domain within 48 hours. If not, no hard feelings at all.
-
-Either way, I'd love to hear what you think.
+Would love to hear what you think.
 
 Best,
 The BlueJays Team
@@ -75,16 +76,16 @@ export function getFollowUp1(
     prospect.ownerName?.split(" ")[0] || prospect.businessName;
 
   return {
-    subject: `Quick follow-up — did you see your new site, ${name}?`,
+    subject: `${name} — quick question about your new site`,
     body: `Hi ${name},
 
-Just wanted to make sure you had a chance to check out the website I built for ${prospect.businessName}:
+What did you think of the website I built for ${prospect.businessName}?
 
 ${previewUrl}
 ${buildVideoBlock(videoUrl)}
-I put a lot of thought into making it perfect for your business. It's fully responsive, fast-loading, and ready to go live whenever you are.
+Over 80% of people who search for a local business online visit within 24 hours. A site like this pays for itself fast.
 
-Would love to hear your thoughts — even a quick "looks good" or "not interested" helps me out!
+A quick "love it" or "not for me" works — either way, I appreciate your time.
 
 Best,
 The BlueJays Team
@@ -100,18 +101,19 @@ export function getFollowUp2(
 ): EmailTemplate {
   const name =
     prospect.ownerName?.split(" ")[0] || prospect.businessName;
+  const category = CATEGORY_CONFIG[prospect.category].label;
 
   return {
-    subject: `I actually looked at your current site, ${name}`,
+    subject: `I looked at your current site, ${name} — here's the side-by-side`,
     body: `Hi ${name},
 
-We actually looked at your current website and designed yours as a direct upgrade — same branding, better experience. Compare them side by side: ${previewUrl}
+We designed your new site as a direct upgrade to your current one — same branding, better experience. Compare them side by side: ${previewUrl}
 ${buildVideoBlock(videoUrl)}
-Everything is already built and ready to go. We kept what works about your current site and made the experience more modern, faster, and mobile-friendly.
+Your preview stays live for 30 days, then we move on to the next business. If you want it, it's $997 one-time (or 3 payments of $349) and we'll have it on your domain within 48 hours.
 
-If you're curious what we've done for other ${CATEGORY_CONFIG[prospect.category].label.toLowerCase()} businesses, check out our portfolio: https://bluejayportfolio.com/v2/${prospect.category}
+See what we've built for other ${category.toLowerCase()} businesses: https://bluejayportfolio.com/v2/${prospect.category}
 
-Either way, I'd love to hear what you think — even a quick "not for me" is totally fine.
+Worth a look, or not your thing?
 
 Best,
 The BlueJays Team

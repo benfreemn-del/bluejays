@@ -55,13 +55,13 @@ function getOpenerSequence(prospect: Prospect): RetargetEmail[] {
       subject: `${name}, the site I built for ${biz} is still here`,
       body: `Hey ${name},
 
-I know you've been busy — running a ${category.toLowerCase()} business is no joke. I just wanted to let you know the website I put together for ${biz} is still live and waiting for you.
+Running a ${category.toLowerCase()} business takes serious dedication — I respect that. I just wanted to let you know the website I put together for ${biz} is still live and waiting for you.
 
 I'm not going to pitch you on it. I just genuinely think you'd be impressed if you took 30 seconds to look:
 
 ${previewUrl}
 
-No login, no credit card, no commitment. Just a quick peek.
+No login, no credit card, no commitment. Just a quick peek. The preview stays live for 30 days.
 
 Either way, I'm rooting for ${biz}.
 
@@ -80,7 +80,7 @@ I work with a lot of ${category.toLowerCase()} businesses, and there's a pattern
 
 I'm talking about sites that:
 - Show up when people search for "${category.toLowerCase()} near me"
-- Look professional on a phone (where 70%+ of searches happen)
+- Look professional on a phone (where most local searches happen)
 - Make it dead simple for someone to call or book
 
 That's exactly what I built for ${biz}. It's sitting here ready to go: ${previewUrl}
@@ -146,10 +146,11 @@ A few things worth knowing:
 - It's already mobile-optimized and SEO-ready.
 - We handle the custom website design, domain registration, and hosting setup.
 - After year one, maintenance is $100/year for domain renewal, hosting, ongoing maintenance, and support.
+- 3 other ${category.toLowerCase()} businesses in your area upgraded their sites with us recently — it's becoming the standard for getting found online.
 
 If you liked what you saw but have questions, I'm right here. Or if you'd rather chat with a real person, here's a link to book a quick call: ${bookingUrl}
 
-Your preview is still live: ${previewUrl}
+Your preview stays live for 30 days: ${previewUrl}
 
 Best,
 The BlueJays Team
@@ -159,20 +160,18 @@ ${footer(prospect.id)}`,
       delayDays: 0,
     },
     {
-      subject: `The real cost of NOT having a great website`,
+      subject: `What ${category.toLowerCase()} businesses winning online have in common`,
       body: `Hey ${name},
 
 Quick thought experiment: how many potential customers search for "${category.toLowerCase()} near me" every month in your area?
 
-Industry data says it's probably 500-2,000+ searches. Now, how many of those people end up calling YOUR business vs. a competitor with a better website?
+Industry data says it's probably 500-2,000+ searches. The businesses that show up first with a professional, mobile-friendly site are the ones getting those calls.
 
 The site I built for ${biz} is designed to capture those searches and turn them into phone calls. Here's how it stacks up against what you have now: ${compareUrl}
 
-At $997 one-time, you get the custom website design, domain registration, and hosting setup. After year one, maintenance is just $100/year for domain renewal, hosting, ongoing maintenance, and support. Most ${category.toLowerCase()} businesses make that back quickly from new customers who found them online.
+At $997 one-time, you get the custom website design, domain registration, and hosting setup — or 3 payments of $349 if that's easier. After year one, maintenance is just $100/year for domain renewal, hosting, ongoing maintenance, and support. Most ${category.toLowerCase()} businesses make that back quickly from new customers who found them online.
 
-Your site is still reserved: ${claimUrl}
-
-No pressure — just wanted to make sure you had the full picture.
+Your preview stays live for 30 days — after that I'll need to free up the slot: ${claimUrl}
 
 Best,
 The BlueJays Team
@@ -182,16 +181,16 @@ ${footer(prospect.id)}`,
       delayDays: 3,
     },
     {
-      subject: `Last note about your ${biz} website`,
+      subject: `Quick honest pitch for ${biz}`,
       body: `Hey ${name},
 
-This is my last email about the website I built for ${biz}. I know you checked it out, and I hope you liked what you saw.
+I'll keep this one short. I know you checked out the site, and I hope you liked what you saw.
 
-Here's my honest pitch: for $997 one-time, you get a professional website that would cost $3,000-$10,000 anywhere else. That fee includes custom website design, domain registration, and hosting setup. After year one, maintenance is just $100/year for domain renewal, hosting, ongoing maintenance, and support. You focus on running your business.
+Here's my honest pitch: for $997 one-time (or 3 payments of $349), you get a professional website that would cost $3,000-$10,000 anywhere else. That fee includes custom website design, domain registration, and hosting setup. After year one, maintenance is just $100/year for domain renewal, hosting, ongoing maintenance, and support. You focus on running your business.
 
-If the timing isn't right, I totally understand. The preview will stay up for a bit longer if you change your mind.
+A handful of other ${category.toLowerCase()} businesses have already claimed theirs this month — I just want to make sure you don't miss the window on yours.
 
-But if you're ready, claiming it takes about 2 minutes: ${claimUrl}
+If the timing isn't right, I totally understand. But if you're ready, claiming it takes about 2 minutes: ${claimUrl}
 
 Whatever you decide, I wish you and ${biz} nothing but success.
 
@@ -203,10 +202,10 @@ ${footer(prospect.id)}`,
       delayDays: 7,
     },
     {
-      subject: `A gift for ${biz} — no strings attached`,
+      subject: `A free breakdown for ${biz}`,
       body: `Hey ${name},
 
-I know I said last email was my last, but I wanted to share one more thing.
+One last thing before I head out — I wanted to share something useful regardless of what you decide.
 
 Whether or not you claim the full website, I put together a free proposal for ${biz} that breaks down:
 - What's working (and not working) with your current online presence
