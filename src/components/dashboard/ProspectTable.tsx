@@ -458,6 +458,26 @@ export default function ProspectTable({
                   await fetch(`/api/prospects/${pid}`, { credentials: "include",
                     method: "PATCH",
                     headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ status: "approved" }),
+                  });
+                }
+                setBulkResult(`${selectedIds.length} leads approved ✓`);
+                setSelectedIds([]);
+                onRefresh?.();
+                setBulkSending(false);
+              }}
+              disabled={bulkSending}
+              className="h-9 px-4 rounded-lg bg-emerald-500/20 text-emerald-400 text-sm font-bold hover:bg-emerald-500/30 transition-colors disabled:opacity-50 border border-emerald-500/30"
+            >
+              {bulkSending ? "Approving..." : "✅ Approve"}
+            </button>
+            <button
+              onClick={async () => {
+                setBulkSending(true);
+                for (const pid of selectedIds) {
+                  await fetch(`/api/prospects/${pid}`, { credentials: "include",
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ status: "dismissed" }),
                   });
                 }

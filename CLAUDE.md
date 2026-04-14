@@ -285,6 +285,15 @@ The image review agent MUST:
 - **Log findings** — for each prospect, log: X images checked, Y passed, Z replaced, logo status, overall verdict PASS/FAIL.
 - **Periodic full scan** — when doing bulk enrichment/regeneration across categories, run a full scan of ALL showcase pages AND ALL template stock pools for broken URLs. Unsplash deletions happen silently and can break dozens of sites at once.
 
+### Portfolio Showcase Reference Rule (ALL AGENTS MUST FOLLOW)
+When generating, reviewing, or improving any prospect's preview site, agents MUST reference the portfolio showcase for that category as the quality benchmark:
+- **Portfolio showcases live at `/v2/[category]`** — these are the polished, beast-mode examples of what each category should look like
+- **Before generating a site**, open the showcase for that category and compare: does the generated site match the showcase's quality level?
+- **The showcase IS the gold standard** — if the generated preview doesn't match the showcase's feature set, polish, and visual quality, it's not ready
+- **All 31 categories have showcases** — real-estate, dental, law-firm, electrician, plumber, hvac, roofing, auto-repair, salon, landscaping, church, veterinary, general-contractor, catering, pet-services, physical-therapy, tutoring, med-spa, appliance-repair, junk-removal, carpet-cleaning, event-planning, accounting, chiropractic, cleaning, insurance, interior-design, moving, pest-control, photography, fitness
+- **When in doubt, screenshot the showcase AND the generated site side-by-side** and verify they're at the same level
+- **Portfolio URL pattern**: `https://bluejayportfolio.com/v2/[category]` (live) or `http://localhost:3000/v2/[category]` (dev)
+
 ### Boss/Orchestrator Agent Rules
 A pipeline orchestrator agent manages the flow and enforces rules:
 - **Monitors all prospect statuses** — if something is in "pending-review" that shouldn't be, it demotes it back to "generated"
