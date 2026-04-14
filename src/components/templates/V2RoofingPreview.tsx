@@ -107,8 +107,6 @@ const STOCK_PROJECTS = [
   "https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=600&q=80",  // roof installation
   "https://images.unsplash.com/photo-1600573472592-401b489a3cdc?w=600&q=80",  // house 8
 ];
-const STOCK_BEFORE = "/images/roofing-before-after.jpg";
-const STOCK_AFTER = "/images/roofing-before-after.jpg";
 
 /* ───────────────────────── ROOFING MATERIALS DATA ───────────────────────── */
 const ROOFING_MATERIALS = [
@@ -264,60 +262,6 @@ function SectionHeader({ badge, title, subtitle, accent }: { badge: string; titl
 /* ═══════════════════════════════════════════════════════════════════
    MAIN PREVIEW COMPONENT
    ═══════════════════════════════════════════════════════════════════ */
-/* ───────────────────────── BEFORE/AFTER SLIDER ───────────────────────── */
-function BeforeAfterSlider() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [sliderPos, setSliderPos] = useState(50);
-  const isDragging = useRef(false);
-
-  const handleMove = useCallback((clientX: number) => {
-    if (!containerRef.current || !isDragging.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    const pos = ((clientX - rect.left) / rect.width) * 100;
-    setSliderPos(Math.max(5, Math.min(95, pos)));
-  }, []);
-
-  useEffect(() => {
-    const handleUp = () => { isDragging.current = false; };
-    const handleMoveGlobal = (e: MouseEvent) => handleMove(e.clientX);
-    const handleTouchMove = (e: TouchEvent) => { if (e.touches[0]) handleMove(e.touches[0].clientX); };
-    window.addEventListener("mouseup", handleUp);
-    window.addEventListener("mousemove", handleMoveGlobal);
-    window.addEventListener("touchend", handleUp);
-    window.addEventListener("touchmove", handleTouchMove);
-    return () => {
-      window.removeEventListener("mouseup", handleUp);
-      window.removeEventListener("mousemove", handleMoveGlobal);
-      window.removeEventListener("touchend", handleUp);
-      window.removeEventListener("touchmove", handleTouchMove);
-    };
-  }, [handleMove]);
-
-  return (
-    <div ref={containerRef} className="relative w-full aspect-[16/10] rounded-2xl overflow-hidden cursor-ew-resize select-none border border-white/10"
-      onMouseDown={() => { isDragging.current = true; }}
-      onTouchStart={() => { isDragging.current = true; }}
-    >
-      <div className="absolute inset-0">
-        <img src={STOCK_AFTER} alt="After — new roof" className="w-full h-full object-cover" />
-        <div className="absolute bottom-4 right-4 px-3 py-1.5 rounded-full bg-green-600/80 backdrop-blur-sm text-white text-sm font-bold">After</div>
-      </div>
-      <div className="absolute inset-0" style={{ clipPath: `inset(0 ${100 - sliderPos}% 0 0)` }}>
-        <img src={STOCK_BEFORE} alt="Before — damaged roof" className="w-full h-full object-cover" />
-        <div className="absolute bottom-4 left-4 px-3 py-1.5 rounded-full bg-slate-700/80 backdrop-blur-sm text-white text-sm font-bold">Before</div>
-      </div>
-      <div className="absolute top-0 bottom-0 w-[2px] bg-white/80 z-10" style={{ left: `${sliderPos}%` }}>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center">
-          <div className="flex gap-0.5">
-            <CaretDown size={12} className="text-slate-800 -rotate-90" />
-            <CaretDown size={12} className="text-slate-800 rotate-90" />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);

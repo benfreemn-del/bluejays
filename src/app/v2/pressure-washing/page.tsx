@@ -305,64 +305,6 @@ function AccordionItem({
   );
 }
 
-/* ───────────────────────── BEFORE/AFTER SLIDER ───────────────────────── */
-function BeforeAfterSlider({ beforeImg, afterImg, beforeLabel = "Before", afterLabel = "After" }: { beforeImg: string; afterImg: string; beforeLabel?: string; afterLabel?: string }) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [sliderPos, setSliderPos] = useState(50);
-  const isDragging = useRef(false);
-
-  const handleMove = useCallback((clientX: number) => {
-    if (!containerRef.current || !isDragging.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    const pos = ((clientX - rect.left) / rect.width) * 100;
-    setSliderPos(Math.max(5, Math.min(95, pos)));
-  }, []);
-
-  const handleMouseDown = useCallback(() => { isDragging.current = true; }, []);
-
-  useEffect(() => {
-    const handleUp = () => { isDragging.current = false; };
-    const handleMoveGlobal = (e: MouseEvent) => handleMove(e.clientX);
-    const handleTouchMove = (e: TouchEvent) => { if (e.touches[0]) handleMove(e.touches[0].clientX); };
-    window.addEventListener("mouseup", handleUp);
-    window.addEventListener("mousemove", handleMoveGlobal);
-    window.addEventListener("touchend", handleUp);
-    window.addEventListener("touchmove", handleTouchMove);
-    return () => {
-      window.removeEventListener("mouseup", handleUp);
-      window.removeEventListener("mousemove", handleMoveGlobal);
-      window.removeEventListener("touchend", handleUp);
-      window.removeEventListener("touchmove", handleTouchMove);
-    };
-  }, [handleMove]);
-
-  return (
-    <div
-      ref={containerRef}
-      className="relative w-full aspect-[16/10] rounded-2xl overflow-hidden cursor-ew-resize select-none"
-      onMouseDown={handleMouseDown}
-      onTouchStart={handleMouseDown}
-    >
-      <div className="absolute inset-0">
-        <img src={afterImg} alt={afterLabel} className="w-full h-full object-cover object-center" />
-        <div className="absolute bottom-4 right-4 px-3 py-1.5 rounded-full backdrop-blur-sm text-white text-sm font-bold" style={{ background: `${ACCENT}cc` }}>{afterLabel}</div>
-      </div>
-      <div className="absolute inset-0" style={{ clipPath: `inset(0 ${100 - sliderPos}% 0 0)` }}>
-        <img src={beforeImg} alt={beforeLabel} className="w-full h-full object-cover object-center" />
-        <div className="absolute bottom-4 left-4 px-3 py-1.5 rounded-full bg-slate-700/80 backdrop-blur-sm text-white text-sm font-bold">{beforeLabel}</div>
-      </div>
-      <div className="absolute top-0 bottom-0 w-[2px] bg-white/80 z-10" style={{ left: `${sliderPos}%` }}>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center">
-          <div className="flex gap-0.5">
-            <CaretDown size={12} className="text-slate-800 -rotate-90" />
-            <CaretDown size={12} className="text-slate-800 rotate-90" />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 /* ───────────────────────── WAVE BG ───────────────────────── */
 function WaveBackground() {
   return (

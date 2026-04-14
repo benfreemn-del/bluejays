@@ -311,48 +311,6 @@ function AccordionItem({ title, description, isOpen, onToggle }: { title: string
   );
 }
 
-/* ───────────────────────── BEFORE/AFTER SLIDER ───────────────────────── */
-function BeforeAfterSlider({ beforeSrc, afterSrc, beforeAlt, afterAlt }: { beforeSrc: string; afterSrc: string; beforeAlt: string; afterAlt: string }) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [sliderPos, setSliderPos] = useState(50);
-  const isDragging = useRef(false);
-
-  const handleMove = useCallback((clientX: number) => {
-    if (!containerRef.current || !isDragging.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    setSliderPos(Math.max(5, Math.min(95, ((clientX - rect.left) / rect.width) * 100)));
-  }, []);
-
-  useEffect(() => {
-    const up = () => { isDragging.current = false; };
-    const mm = (e: MouseEvent) => handleMove(e.clientX);
-    const tm = (e: TouchEvent) => { if (e.touches[0]) handleMove(e.touches[0].clientX); };
-    window.addEventListener("mouseup", up);
-    window.addEventListener("mousemove", mm);
-    window.addEventListener("touchend", up);
-    window.addEventListener("touchmove", tm);
-    return () => { window.removeEventListener("mouseup", up); window.removeEventListener("mousemove", mm); window.removeEventListener("touchend", up); window.removeEventListener("touchmove", tm); };
-  }, [handleMove]);
-
-  return (
-    <div ref={containerRef} className="relative w-full aspect-[16/10] rounded-2xl overflow-hidden cursor-ew-resize select-none" onMouseDown={() => { isDragging.current = true; }} onTouchStart={() => { isDragging.current = true; }}>
-      <div className="absolute inset-0">
-        <img src={afterSrc} alt={afterAlt} className="w-full h-full object-cover object-center" />
-        <div className="absolute bottom-4 right-4 px-3 py-1.5 rounded-full backdrop-blur-sm text-white text-sm font-bold" style={{ background: "rgba(139,92,246,0.8)" }}>After</div>
-      </div>
-      <div className="absolute inset-0" style={{ clipPath: `inset(0 ${100 - sliderPos}% 0 0)` }}>
-        <img src={beforeSrc} alt={beforeAlt} className="w-full h-full object-cover object-center" />
-        <div className="absolute bottom-4 left-4 px-3 py-1.5 rounded-full bg-slate-700/80 backdrop-blur-sm text-white text-sm font-bold">Before</div>
-      </div>
-      <div className="absolute top-0 bottom-0 w-[2px] bg-white/80 z-10" style={{ left: `${sliderPos}%` }}>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center">
-          <div className="flex gap-0.5"><CaretDown size={12} className="text-slate-800 -rotate-90" /><CaretDown size={12} className="text-slate-800 rotate-90" /></div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 /* ───────────────────────── DATA ───────────────────────── */
 const services = [
   { title: "Interior Painting", description: "Walls, ceilings, trim, and accent walls with premium zero-VOC paints. Flawless prep, clean edges, and furniture protection included.", icon: House },

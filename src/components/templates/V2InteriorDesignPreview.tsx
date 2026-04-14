@@ -188,9 +188,6 @@ const QUIZ_OPTIONS = [
   { style: "Contemporary & Bold", color: "#3a5a7c", desc: "Statement pieces, dramatic contrasts, and artistic flair." },
 ];
 
-/* ───────────────────────── BEFORE/AFTER STOCK ───────────────────────── */
-const BEFORE_AFTER_IMAGE = "https://images.unsplash.com/photo-1600210491892-03d54c0aaf87?w=800&q=80";
-
 /* ───────────────────────── FLOATING PARTICLES ───────────────────────── */
 function FloatingGoldDust({ accent }: { accent: string }) {
   const particles = Array.from({ length: 16 }, (_, i) => ({

@@ -993,6 +993,38 @@ After working on ANY website (generating, enriching, reviewing, or fixing a pros
 4. **Update CLAUDE.md** if it's a new design principle or pattern worth preserving
 5. **Never improve a single site without improving the template** — one-off fixes are wasted work. Template improvements compound across every future prospect.
 
+### Before/After Image Rules (NON-NEGOTIABLE)
+**Before/after images are NEVER scraped.** They always use our own placeholder images from `/public/images/` until the client buys and provides real photos. This is a hard rule.
+
+**Available before/after images (local, in `/public/images/`):**
+- `dental-before-after.png` — smile transformation (broken → fixed)
+- `roofing-before-after.jpg` — roof transformation (damaged → repaired)
+- `vet-before-after.png` — pet grooming transformation
+- `carpet-before-after.png` — carpet stain removal
+- `interior-design-before-after.jpg` — kitchen renovation
+- `landscaping-before-after.png` — yard transformation
+- `medspa-before-after-1.png` — skin rejuvenation
+- `medspa-before-after-2.png` — facial contouring
+- `medspa-before-after-3.png` — anti-aging treatment
+
+**Rules for before/after sections:**
+1. **NEVER use scraped photos (data.photos) for before/after.** Scraped photos are random Google Places images — they're not before/after pairs. Only use `/images/` local files or curated Unsplash pairs.
+2. **Combined images (single file with before+after side by side) are fine** — they render as one image with labels. This is the simplest approach.
+3. **Slider effects need TWO separate image files** — one for the "before" state, one for the "after" state. Both must be contextually correct (e.g., dental: cracked teeth → perfect smile, NOT two random photos).
+4. **Context must match the category exactly:**
+   - Dental: damaged/stained smile → bright healthy smile
+   - Roofing: damaged/old roof → new installed roof
+   - Landscaping: overgrown/bare yard → manicured landscape
+   - Carpet: stained/dirty carpet → clean fresh carpet
+   - Painting: peeling/faded paint → fresh painted surface
+   - Pressure washing: grimy driveway/deck → sparkling clean
+   - Med spa: skin concerns → treated/rejuvenated skin
+   - Junk removal: cluttered space → clean empty space
+5. **If a category doesn't have a local before/after image yet, DON'T fake it.** Label the section "Our Results" or "Recent Transformations" instead of "Before & After". Only call it before/after when you have a real transformation pair.
+6. **After a client buys, their real before/after photos replace our placeholders** via the image mapper tool. The template uses the same image slot — we just swap the file.
+7. **Categories that SHOULD have before/after:** dental, roofing, veterinary, carpet-cleaning, med-spa, landscaping, interior-design, junk-removal, painting, pressure-washing, cleaning, auto-repair, salon (hair transformations)
+8. **Categories that should NOT have before/after:** law-firm, accounting, insurance, real-estate, photography, church, daycare, tutoring, restaurant
+
 ### Hero Text Visibility Rules (NON-NEGOTIABLE)
 - **Every hero with a background image MUST have bg-black/70 or stronger overlay.** The weak gradient `from-black/60 via-black/30 to-black/10` is BANNED — it leaves the right side of the hero nearly transparent on desktop and the entire hero unreadable on mobile.
 - **NEVER use `from-white/80` gradient on a dark-text hero.** This fights the dark overlay and makes text invisible. Use `from-black/40 via-transparent to-black/20` instead.

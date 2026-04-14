@@ -508,19 +508,10 @@ export default function V2LandscapingPage() {
               <WordReveal text="Before & After" />
             </h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <GlassCard className="overflow-hidden">
-              <div className="relative aspect-[4/3]">
-                <img src="https://images.unsplash.com/photo-1558904541-efa843a96f01?w=800&q=80" alt="Landscape transformation — before state" className="w-full h-full object-cover" style={{ objectPosition: "left center" }} />
-                <div className="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-red-500/80 text-white backdrop-blur-sm">Before</div>
-              </div>
-            </GlassCard>
-            <GlassCard className="overflow-hidden">
-              <div className="relative aspect-[4/3]">
-                <img src="/images/landscaping-before-after.png" alt="Landscape transformation — before and after" className="w-full h-full object-cover" />
-                <div className="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider text-white backdrop-blur-sm" style={{ background: `${PRIMARY}cc` }}>After</div>
-              </div>
-            </GlassCard>
+          <div className="max-w-4xl mx-auto">
+            <div className="relative rounded-2xl overflow-hidden">
+              <img src="/images/landscaping-before-after.png" alt="Landscape transformation before and after" className="w-full h-auto object-cover" />
+            </div>
           </div>
           <p className="text-center text-slate-500 text-sm mt-6">Complete yard transformation — new patio, plantings, lighting, and irrigation.</p>
         </div>

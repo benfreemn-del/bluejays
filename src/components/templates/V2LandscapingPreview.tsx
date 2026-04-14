@@ -113,11 +113,6 @@ const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1588880331179-bc9b93a8cb5e?w=600&q=80",
   "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=800&q=80",
 ];
-/* Before/After pairs for showcase */
-const STOCK_BEFORE_AFTER = [
-  { before: "https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?w=600&q=80", after: "https://images.unsplash.com/photo-1558904541-efa843a96f01?w=600&q=80" },
-  { before: "https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=600&q=80", after: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&q=80" },
-];
 
 /* ───────────────────────── FLOATING LEAF PARTICLES ───────────────────────── */
 function FloatingLeaves({ accent }: { accent: string }) {
@@ -481,21 +476,13 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[10%] w-[500px] h-[500px] rounded-full blur-[200px]" style={{ background: `${PRIMARY}06` }} /></div>
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Our Work" title="Recent Transformations" subtitle={`See the quality of work ${data.businessName} delivers for our clients.`} accent={PRIMARY} />
+          <SectionHeader badge="Our Work" title="Before & After" subtitle={`See the quality of work ${data.businessName} delivers for our clients.`} accent={PRIMARY} />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {STOCK_GALLERY.slice(0, 4).map((src, i) => {
-              const titles = ["Front Yard Makeover", "Backyard Patio", "Garden Redesign", "Full Property Refresh"];
-              return (
-                <div key={i} className="group relative rounded-xl overflow-hidden border border-white/[0.06] hover:border-opacity-30 transition-all duration-500">
-                  <img src={src} alt={titles[i]} className="w-full h-48 object-cover transition-transform duration-700 group-hover:scale-105" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  <div className="absolute bottom-0 left-0 right-0 p-3 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                    <p className="text-sm text-white font-medium">{titles[i]}</p>
-                  </div>
-                </div>
-              );
-            })}
+          <div className="max-w-4xl mx-auto">
+            <div className="relative rounded-2xl overflow-hidden border border-white/[0.06]">
+              <img src="/images/landscaping-before-after.png" alt="Landscape transformation before and after" className="w-full h-auto object-cover" />
+            </div>
+            <p className="text-center text-sm text-slate-400 mt-4">Complete yard transformation — new patio, plantings, lighting, and irrigation.</p>
           </div>
         </div>
       </section>

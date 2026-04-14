@@ -708,20 +708,20 @@ export default function V2CleaningPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
-      {/* ══════════════════ BEFORE/AFTER TRANSFORMATION ══════════════════ */}
+      {/* ══════════════════ OUR RESULTS ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f172a 50%, #1a1a1a 100%)" }} />
         <WaterDropBackground opacity={0.02} accent={ACCENT} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] left-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${ACCENT}06` }} /></div>
         <div className="max-w-5xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="The Transformation" title="See the Sparkle" subtitle={`Every cleaning from ${data.businessName} delivers a visible transformation you can feel the moment you walk in.`} accent={ACCENT} />
+          <SectionHeader badge="Our Results" title="See the Sparkle" subtitle={`Every cleaning from ${data.businessName} delivers a visible transformation you can feel the moment you walk in.`} accent={ACCENT} />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <GlassCard className="overflow-hidden">
               <div className="relative">
                 <img src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=600&q=80" alt="Sparkling clean kitchen" className="w-full h-64 object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#141414] via-transparent to-transparent" />
                 <div className="absolute bottom-4 left-4">
-                  <span className="px-3 py-1 rounded-full text-xs font-bold text-white" style={{ background: ACCENT }}>After Our Clean</span>
+                  <span className="px-3 py-1 rounded-full text-xs font-bold text-white" style={{ background: ACCENT }}>Our Results</span>
                 </div>
               </div>
               <div className="p-5">
@@ -734,7 +734,7 @@ export default function V2CleaningPreview({ data }: { data: GeneratedSiteData })
                 <img src="https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=600&q=80" alt="Spotless bathroom" className="w-full h-64 object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#141414] via-transparent to-transparent" />
                 <div className="absolute bottom-4 left-4">
-                  <span className="px-3 py-1 rounded-full text-xs font-bold text-white" style={{ background: ACCENT }}>After Our Clean</span>
+                  <span className="px-3 py-1 rounded-full text-xs font-bold text-white" style={{ background: ACCENT }}>Our Results</span>
                 </div>
               </div>
               <div className="p-5">
