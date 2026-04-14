@@ -67,11 +67,7 @@ export async function GET(request: NextRequest) {
       }
     })();
 
-    // Approved Unsplash fallbacks should render directly rather than being
-    // fetched server-side through the proxy, which has been causing 502s.
-    if (isUnsplashImage) {
-      return NextResponse.redirect(fetchUrl, 307);
-    }
+    // Proxy Unsplash images through our server (direct loads can fail on some deployments)
 
     // If it's a Google Places photo URL, ensure API key is appended
     if (isGooglePhoto && GOOGLE_API_KEY && !fetchUrl.includes("key=")) {
