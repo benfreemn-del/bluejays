@@ -1464,7 +1464,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
               <span>{data.businessName} &copy; {new Date().getFullYear()}</span>
             </div>
             <div className="flex items-center gap-2 text-xs text-slate-600">
-              <span>Created by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" style={{textDecoration:"underline"}}>bluejayportfolio.com</a></span>
+              <span className="flex items-center gap-1.5"><BluejayLogo size={14} className="text-sky-500" /> Created by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" style={{textDecoration:"underline"}}>bluejayportfolio.com</a></span>
             </div>
           </div>
         </div>

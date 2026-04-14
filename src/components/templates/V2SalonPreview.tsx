@@ -410,7 +410,7 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
         </div>
 
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
-          <div className="space-y-8">
+          <div className="space-y-8 rounded-2xl bg-black/50 backdrop-blur-md p-6 md:p-8 border border-white/5">
             <div>
               <p className="text-sm uppercase tracking-widest mb-4" style={{ color: ROSE }}>
                 <Sparkle size={14} weight="fill" className="inline mr-2" />
@@ -420,7 +420,7 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
                 {data.tagline}
               </h1>
             </div>
-            <p className="text-lg text-white/80 max-w-md leading-relaxed" style={{ textShadow: "0 1px 8px rgba(0,0,0,0.6)" }}>
+            <p className="text-lg text-white/80 max-w-md leading-relaxed">
               {(() => { const t = data.about; if (t.length <= 180) return t; const dot = t.indexOf('.', 80); return dot > 0 && dot < 220 ? t.slice(0, dot + 1) : t.slice(0, 180).trim() + '...'; })()}
             </p>
             <div className="flex flex-wrap gap-4">
@@ -431,7 +431,7 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
                 <Phone size={18} weight="duotone" /> <PhoneLink phone={data.phone} />
               </MagneticButton>
             </div>
-            <div className="flex flex-wrap gap-6 text-sm text-slate-400">
+            <div className="flex flex-wrap gap-6 text-sm text-white/60">
               <span className="flex items-center gap-2"><MapPin size={16} weight="duotone" style={{ color: ROSE }} /><MapLink address={data.address} /></span>
               <span className="flex items-center gap-2"><CalendarBlank size={16} weight="duotone" style={{ color: ROSE }} />Online Booking Available</span>
             </div>

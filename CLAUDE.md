@@ -290,9 +290,18 @@ When generating, reviewing, or improving any prospect's preview site, agents MUS
 - **Portfolio showcases live at `/v2/[category]`** — these are the polished, beast-mode examples of what each category should look like
 - **Before generating a site**, open the showcase for that category and compare: does the generated site match the showcase's quality level?
 - **The showcase IS the gold standard** — if the generated preview doesn't match the showcase's feature set, polish, and visual quality, it's not ready
-- **All 31 categories have showcases** — real-estate, dental, law-firm, electrician, plumber, hvac, roofing, auto-repair, salon, landscaping, church, veterinary, general-contractor, catering, pet-services, physical-therapy, tutoring, med-spa, appliance-repair, junk-removal, carpet-cleaning, event-planning, accounting, chiropractic, cleaning, insurance, interior-design, moving, pest-control, photography, fitness
+- **Always provide the specific showcase link** when referencing quality. For a dental prospect, link to `https://bluejayportfolio.com/v2/dental`. For a roofing prospect, link to `https://bluejayportfolio.com/v2/roofing`. Always use the exact category slug.
 - **When in doubt, screenshot the showcase AND the generated site side-by-side** and verify they're at the same level
 - **Portfolio URL pattern**: `https://bluejayportfolio.com/v2/[category]` (live) or `http://localhost:3000/v2/[category]` (dev)
+
+### BlueJay Bird Logo in Footer (NON-NEGOTIABLE — ALL TEMPLATES AND SHOWCASES)
+- **Every V2 preview template MUST render the BluejayLogo component in the footer** next to "Created by bluejayportfolio.com"
+- **Every portfolio showcase page MUST have the inline bird SVG** in the footer credit line
+- **The bird icon appears BEFORE the text** "Created by bluejayportfolio.com" with `flex items-center gap-1.5` alignment
+- **Templates use**: `<BluejayLogo size={14} className="text-sky-500" />` (imported from `@/components/BluejayLogo`)
+- **Showcases use**: inline SVG `<svg width="14" height="14" viewBox="0 0 32 32" ...>` with `className="text-sky-500"`
+- **Position**: bottom footer, right-aligned or centered credit line — same position on every site
+- **If you create a new template or showcase**, the bird logo MUST be in the footer. No exceptions.
 
 ### Boss/Orchestrator Agent Rules
 A pipeline orchestrator agent manages the flow and enforces rules:
