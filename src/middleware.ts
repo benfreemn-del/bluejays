@@ -73,6 +73,7 @@ const PROTECTED_PATHS = [
   "/api/replies/process",
   "/api/email-deliverability",
   "/api/email-tracking",
+  "/api/auto-scout",
   "/funnel-tracker",
 ];
 

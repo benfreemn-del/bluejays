@@ -26,6 +26,38 @@ export default function DashboardPage() {
   const [newLead, setNewLead] = useState({ businessName: "", phone: "", email: "", website: "", category: "dental", city: "Seattle, WA" });
   const [addingLead, setAddingLead] = useState(false);
   const [pipelineOpen, setPipelineOpen] = useState(false);
+  const [autoScoutOpen, setAutoScoutOpen] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [autoScoutData, setAutoScoutData] = useState<any>(null);
+  const [autoScoutRunning, setAutoScoutRunning] = useState(false);
+  const [autoScoutMsg, setAutoScoutMsg] = useState("");
+
+  const loadAutoScout = useCallback(async () => {
+    try {
+      const res = await fetch("/api/auto-scout", { credentials: "include" });
+      if (res.ok) setAutoScoutData(await res.json());
+    } catch { /* ignore */ }
+  }, []);
+
+  useEffect(() => { if (autoScoutOpen) loadAutoScout(); }, [autoScoutOpen, loadAutoScout]);
+
+  const toggleAutoScout = async (enabled: boolean) => {
+    await fetch("/api/auto-scout", { method: "PATCH", credentials: "include", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ enabled }) });
+    loadAutoScout();
+  };
+
+  const runAutoScout = async () => {
+    setAutoScoutRunning(true);
+    setAutoScoutMsg("Running auto-scout...");
+    try {
+      const res = await fetch("/api/auto-scout", { method: "POST", credentials: "include" });
+      const data = await res.json();
+      setAutoScoutMsg(`Done: ${data.leadsFound || 0} leads found. ${data.stoppedReason || ""}`);
+      loadAutoScout();
+      fetchProspects();
+    } catch { setAutoScoutMsg("Error running auto-scout"); }
+    setAutoScoutRunning(false);
+  };
 
   const fetchProspects = useCallback(async () => {
     try {
@@ -198,6 +230,12 @@ export default function DashboardPage() {
               Lead
             </button>
             <button
+              onClick={() => setAutoScoutOpen(!autoScoutOpen)}
+              className={`h-9 rounded-lg border px-3 text-sm font-medium transition-colors ${autoScoutData?.config?.enabled ? "border-emerald-500/50 text-emerald-400 bg-emerald-500/10" : "border-amber-500/30 text-amber-400"}`}
+            >
+              Auto-Scout {autoScoutData?.config?.enabled ? "●" : "○"}
+            </button>
+            <button
               onClick={() => setScoutOpen(true)}
               className="h-9 rounded-lg bg-blue-electric px-3 text-sm font-medium text-white transition-colors hover:bg-blue-deep"
             >
@@ -206,6 +244,58 @@ export default function DashboardPage() {
           </div>
         </div>
       </header>
+
+      {/* Auto-Scout Panel */}
+      {autoScoutOpen && (
+        <div className="border-b border-border bg-surface/95 backdrop-blur">
+          <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-semibold text-foreground">Auto-Scout</h3>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => toggleAutoScout(!autoScoutData?.config?.enabled)}
+                  className={`relative w-12 h-6 rounded-full transition-colors cursor-pointer ${autoScoutData?.config?.enabled ? "bg-emerald-500" : "bg-white/20"}`}
+                >
+                  <div className={`absolute top-0.5 w-5 h-5 rounded-full bg-white transition-transform ${autoScoutData?.config?.enabled ? "translate-x-6" : "translate-x-0.5"}`} />
+                </button>
+                <span className="text-xs text-muted">{autoScoutData?.config?.enabled ? "Active" : "Paused"}</span>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-4">
+              <div className="rounded-lg border border-border bg-background p-3">
+                <p className="text-xs text-muted">State</p>
+                <p className="text-lg font-bold text-foreground">{autoScoutData?.config?.state || "WA"}</p>
+              </div>
+              <div className="rounded-lg border border-border bg-background p-3">
+                <p className="text-xs text-muted">Counties Done</p>
+                <p className="text-lg font-bold text-foreground">{autoScoutData?.progress?.countiesDone || 0}/{autoScoutData?.progress?.countiesTotal || 39}</p>
+              </div>
+              <div className="rounded-lg border border-border bg-background p-3">
+                <p className="text-xs text-muted">Today</p>
+                <p className="text-lg font-bold text-foreground">{autoScoutData?.progress?.todayLeads || 0}/{autoScoutData?.config?.dailyLimit || 100}</p>
+              </div>
+              <div className="rounded-lg border border-border bg-background p-3">
+                <p className="text-xs text-muted">Total Leads</p>
+                <p className="text-lg font-bold text-foreground">{autoScoutData?.progress?.totalLeads || 0}</p>
+              </div>
+              <div className="rounded-lg border border-border bg-background p-3">
+                <p className="text-xs text-muted">Last Run</p>
+                <p className="text-sm font-medium text-foreground truncate">{autoScoutData?.progress?.lastRunAt ? new Date(autoScoutData.progress.lastRunAt).toLocaleString() : "Never"}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={runAutoScout}
+                disabled={autoScoutRunning}
+                className="h-9 px-4 rounded-lg bg-blue-electric text-white text-sm font-medium disabled:opacity-50 cursor-pointer"
+              >
+                {autoScoutRunning ? "Running..." : "Run Now"}
+              </button>
+              {autoScoutMsg && <p className="text-xs text-muted">{autoScoutMsg}</p>}
+            </div>
+          </div>
+        </div>
+      )}
 
       <main className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-6 sm:py-8">
         {loading ? (

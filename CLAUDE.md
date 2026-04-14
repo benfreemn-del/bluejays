@@ -347,6 +347,32 @@ When generating, reviewing, or improving any prospect's preview site, agents MUS
 - Say "this is my last email" and then send another one
 - Assume why they didn't respond ("I know you've been busy")
 
+### Auto-Scout System
+Automated lead generation that scouts county-by-county, category-by-category.
+
+**How it works:**
+- Configurable via dashboard panel (Auto-Scout button in header)
+- Starts DISABLED — Ben must enable it manually
+- Scouts all 46 categories in a county before moving to the next
+- Counties ordered by population (largest first = more businesses)
+- Daily limit (default 100 leads/day) prevents runaway costs
+- Tracks progress in Supabase `auto_scout_progress` table — never re-scouts same county+category
+- Generates preview sites automatically for each new prospect found
+
+**Files:**
+- `src/lib/auto-scout.ts` — core engine (runAutoScout, getNextCounty, progress tracking)
+- `src/app/api/auto-scout/route.ts` — GET status, POST run, PATCH config
+- `src/app/api/auto-scout/config/route.ts` — GET/PATCH config
+
+**Cost:** ~$2/day at 100 leads (Google Places: $0.032/search + $0.017/detail)
+
+**Rules:**
+- NEVER enable auto-scout without Ben's explicit approval
+- ALWAYS check daily limit before continuing a run
+- Log every scout combo to prevent re-scouting
+- If Google Places returns ZERO_RESULTS, mark that county+category as done
+- Respect the 2.5-second delay before using next_page_token
+
 ### Boss/Orchestrator Agent Rules
 A pipeline orchestrator agent manages the flow and enforces rules:
 - **Monitors all prospect statuses** — if something is in "pending-review" that shouldn't be, it demotes it back to "generated"

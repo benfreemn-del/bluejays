@@ -122,7 +122,7 @@ function scoutWithMockData(options: ScoutOptions): Prospect[] {
 }
 
 // Categories that have premium templates built — only scout these
-const ACTIVE_CATEGORIES: Category[] = [
+export const ACTIVE_CATEGORIES: Category[] = [
   "real-estate", "dental", "law-firm", "landscaping", "salon",
   "electrician", "plumber", "hvac", "roofing", "auto-repair",
   "chiropractic", "fitness", "veterinary", "photography",
