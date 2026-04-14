@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getProspect, updateProspect } from "@/lib/store";
+import { getProspect, updateProspect, getScrapedData, saveScrapedData } from "@/lib/store";
 import type { ImageMapping } from "@/lib/image-mapper-store";
 import { calculateStatus } from "@/lib/image-mapper-store";
 
@@ -53,7 +53,7 @@ export async function POST(
     }
   }
 
-  // Save mapping + updated photos back to scrapedData
+  // Save mapping + updated photos back to prospect's scrapedData
   await updateProspect(id, {
     scrapedData: {
       ...sd,
@@ -61,6 +61,20 @@ export async function POST(
       photos: updatedPhotos,
     } as typeof prospect.scrapedData,
   });
+
+  // ALSO update the generated_sites table — this is what the preview actually reads from
+  try {
+    const generatedSite = await getScrapedData(id) as Record<string, unknown> | null;
+    if (generatedSite) {
+      await saveScrapedData(id, {
+        ...generatedSite,
+        photos: updatedPhotos,
+      });
+    }
+  } catch (err) {
+    console.error("[image-mapper/save] Failed to update generated_sites:", err);
+    // Don't fail the whole request — prospect data is already saved
+  }
 
   return NextResponse.json({ message: "Saved", mapping, photosUpdated: true });
 }
