@@ -326,8 +326,8 @@ const dayOfTimeline = [
 ];
 
 const teamMembers = [
-  { name: "Sophia Park", title: "Co-Founder & Lead Planner", bio: "15 years in luxury events. Former Four Seasons events director. CSEP certified with a passion for creating breathtaking celebrations.", image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80" },
-  { name: "James Park", title: "Co-Founder & Creative Director", bio: "Former Four Seasons events team. CMP certified with expertise in venue design, lighting architecture, and immersive guest experiences.", image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80" },
+  { name: "Sophia Park", title: "Co-Founder & Lead Planner", bio: "15 years in luxury events. Former Four Seasons events director. CSEP certified with a passion for creating breathtaking celebrations.", image: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&q=80" },
+  { name: "James Park", title: "Co-Founder & Creative Director", bio: "Former Four Seasons events team. CMP certified with expertise in venue design, lighting architecture, and immersive guest experiences.", image: "https://images.unsplash.com/photo-1595152772835-219674b2a8a6?w=400&q=80" },
 ];
 
 const vendorCategories = [

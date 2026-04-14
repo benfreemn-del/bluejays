@@ -607,7 +607,7 @@ export default function V2LandscapingPage() {
         <div className="mx-auto max-w-7xl px-4 md:px-6 relative">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="relative rounded-2xl overflow-hidden aspect-[4/3]">
-              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80" alt="Diego Herrera — Cascade Landscapes founder" className="w-full h-full object-cover object-center" />
+              <img src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=800&q=80" alt="Diego Herrera — Cascade Landscapes founder" className="w-full h-full object-cover object-center" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
               <div className="absolute bottom-6 left-6 right-6">
                 <GlassCard className="px-5 py-3 flex items-center gap-3">

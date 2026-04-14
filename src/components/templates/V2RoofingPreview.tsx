@@ -101,10 +101,10 @@ const STOCK_PROJECTS = [
   "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=600&q=80",  // house 1
   "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80",  // house 2
   "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=600&q=80",  // house 3
-  "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80",  // house 4
-  "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&q=80",  // house 5
-  "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=600&q=80",  // house 6
-  "https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=600&q=80",  // house 7
+  "https://images.unsplash.com/photo-1625766763788-95dcce9bf5ac?w=600&q=80",  // roofing crew
+  "https://images.unsplash.com/photo-1635424710928-0544e8512eae?w=600&q=80",  // roof shingles close-up
+  "https://images.unsplash.com/photo-1562040506-a9b32cb51b94?w=600&q=80",  // completed roof
+  "https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=600&q=80",  // roof installation
   "https://images.unsplash.com/photo-1600573472592-401b489a3cdc?w=600&q=80",  // house 8
 ];
 const STOCK_BEFORE = "/images/roofing-before-after.jpg";

@@ -859,7 +859,7 @@ export default function V2RealEstatePage() {
             >
               <div className="relative rounded-2xl overflow-hidden aspect-[3/4]">
                 <img
-                  src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=600&h=800&fit=crop"
+                  src="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=600&h=800&fit=crop"
                   alt="Sarah Chen, Lead Agent"
                   className="w-full h-full object-cover object-top"
                 />

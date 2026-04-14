@@ -220,11 +220,11 @@ const cleaningChecklist = [
 
 const galleryImages = [
   "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=600&q=80",
-  "https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=600&q=80",
-  "https://images.unsplash.com/photo-1600573472592-401b489a3cdc?w=600&q=80",
-  "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=600&q=80",
-  "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&q=80",
-  "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80",
+  "https://images.unsplash.com/photo-1628260412297-a3377e45006f?w=600&q=80",
+  "https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?w=600&q=80",
+  "https://images.unsplash.com/photo-1632823469850-2f77dd9c7f93?w=600&q=80",
+  "https://images.unsplash.com/photo-1560185127-6ed189bf02f4?w=600&q=80",
+  "https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?w=600&q=80",
 ];
 
 const howOftenOptions = [
@@ -715,7 +715,7 @@ export default function V2CarpetCleaningPage() {
         {/* ═══════════════ 13. ABOUT — DAN & LISA ═══════════════ */}
         <SectionReveal id="about" className="py-20 grid md:grid-cols-2 gap-12 items-center">
           <div className="relative rounded-2xl overflow-hidden aspect-[4/3]">
-            <img src="https://images.unsplash.com/photo-1600880292089-90a7e086ee0c?w=700&q=80" alt="Dan and Lisa Kowalski — FreshStart founders" className="w-full h-full object-cover object-center" />
+            <img src="https://images.unsplash.com/photo-1616627451515-cbc80e5ece35?w=700&q=80" alt="Dan and Lisa Kowalski — FreshStart founders" className="w-full h-full object-cover object-center" />
             <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${BG}, transparent 50%)` }} />
             <div className="absolute bottom-4 left-4"><span className="px-3 py-1 rounded-full text-xs font-bold text-white" style={{ background: ACCENT }}>Family-Owned Since 2012</span></div>
           </div>

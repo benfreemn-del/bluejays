@@ -415,7 +415,7 @@ export default function V2PhysicalTherapyShowcase() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="relative">
               <div className="rounded-2xl overflow-hidden border border-slate-200 shadow-lg">
-                <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=700&q=80" alt="Dr. Amanda Chen, DPT" className="w-full h-[480px] object-cover object-top" />
+                <img src="https://images.unsplash.com/photo-1586297135537-94bc9ba060aa?w=700&q=80" alt="Dr. Amanda Chen, DPT" className="w-full h-[480px] object-cover object-top" />
               </div>
               <div className="absolute -bottom-4 -right-4 md:bottom-6 md:-right-6">
                 <div className="px-5 py-3 rounded-xl shadow-lg border border-white text-white font-bold text-sm" style={{ background: BLUE }}>
@@ -817,9 +817,9 @@ export default function V2PhysicalTherapyShowcase() {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { label: "Treatment Room", img: "https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=400&q=80" },
+              { label: "Treatment Room", img: "https://images.unsplash.com/photo-1517581177682-a085bb7ffb15?w=400&q=80" },
               { label: "Exercise Area", img: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&q=80" },
-              { label: "Aquatic Therapy", img: "https://images.unsplash.com/photo-1575429198097-0414ec08e8cd?w=400&q=80" },
+              { label: "Aquatic Therapy", img: "https://images.unsplash.com/photo-1575052814086-f385e2e2ad1b?w=400&q=80" },
               { label: "Reception", img: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=400&q=80" },
             ].map((room) => (
               <div key={room.label} className="relative rounded-xl overflow-hidden group">

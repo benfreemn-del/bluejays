@@ -155,7 +155,7 @@ const ATTORNEYS = [
     years: "16 Years Experience",
     bio: "A former public defender with over 150 jury trials, David is a courtroom veteran who thrives under pressure. He has secured not-guilty verdicts in high-profile felony cases across Washington State.",
     credentials: ["150+ Jury Trials", "Former Public Defender", "National Trial Lawyers Top 100", "Fluent Yoruba"],
-    img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80",
+    img: "https://images.unsplash.com/photo-1618077360395-f3068be8e001?w=600&q=80",
   },
 ];
 

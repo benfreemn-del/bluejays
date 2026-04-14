@@ -641,7 +641,7 @@ export default function InteriorDesignShowcase() {
           >
             <div className="relative">
               <img
-                src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=600&h=750&fit=crop&crop=top"
+                src="https://images.unsplash.com/photo-1548142813-c348350df52b?w=600&h=750&fit=crop&crop=top"
                 alt="Elena Vasquez, Principal Designer"
                 className="rounded-2xl shadow-xl w-full object-cover object-top"
                 style={{ maxHeight: 500 }}

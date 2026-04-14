@@ -549,7 +549,7 @@ export default function V2MedSpaPage() {
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <motion.div className="aspect-[3/4] rounded-2xl overflow-hidden relative" initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={spring}>
-              <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=800&q=80" alt="Dr. Priya Kaur, MD" className="w-full h-full object-cover object-top" />
+              <img src="https://images.unsplash.com/photo-1551601651-2a8555f1a136?w=800&q=80" alt="Dr. Priya Kaur, MD" className="w-full h-full object-cover object-top" />
               <div className="absolute bottom-0 left-0 right-0 p-6" style={{ background: `linear-gradient(to top, ${BG}, transparent)` }}>
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold" style={{ background: GOLD_GLOW, color: GOLD, border: `1px solid ${GOLD}30` }}>
                   <Stethoscope size={12} weight="fill" /> Board-Certified Dermatologist
@@ -772,7 +772,7 @@ export default function V2MedSpaPage() {
       <SectionReveal className="relative z-10 py-16 md:py-24" style={{ background: `linear-gradient(180deg, transparent 0%, ${BG_CARD} 15%, ${BG_CARD} 85%, transparent 100%)` } as React.CSSProperties}>
         <div className="mx-auto max-w-5xl px-4 md:px-6">
           <div className="relative rounded-2xl overflow-hidden aspect-video group cursor-pointer">
-            <img src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=1200&q=80" alt="Radiance Med Spa treatment room" className="w-full h-full object-cover" />
+            <img src="https://images.unsplash.com/photo-1495837174058-628aafc7d610?w=1200&q=80" alt="Radiance Med Spa treatment room" className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors flex items-center justify-center">
               <motion.div
                 className="w-20 h-20 rounded-full flex items-center justify-center"

@@ -83,28 +83,28 @@ function getServiceIcon(serviceName: string) {
 /* ───────────────────────── STOCK FALLBACK IMAGES ───────────────────────── */
 /* Moving-relevant stock photos — movers, trucks, boxes, packing */
 const STOCK_HERO_POOL = [
-  "https://images.unsplash.com/photo-1600518464441-9154a4dea21b?w=1400&q=80",   // person carrying box
-  "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=1400&q=80",       // moving boxes stacked
-  "https://images.unsplash.com/photo-1603796846097-bee99e4a601f?w=1400&q=80",     // packed boxes in room
-  "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=1400&q=80",     // couple moving boxes
-  "https://images.unsplash.com/photo-1600585152220-90363fe7e115?w=1400&q=80",     // bright room with boxes
+  "https://images.unsplash.com/photo-1581573950452-5a438c5f390f?w=1400&q=80",    // family unpacking in new home
+  "https://images.unsplash.com/photo-1614359835514-92f8ba196357?w=1400&q=80",    // movers loading furniture onto truck
+  "https://images.unsplash.com/photo-1624137527136-66e631bdaa0e?w=1400&q=80",    // stacked cardboard boxes against wall
+  "https://images.unsplash.com/photo-1601467995997-ac1ae9a8fff4?w=1400&q=80",    // white unbranded moving truck
+  "https://images.unsplash.com/photo-1580709839515-54b8991e2813?w=1400&q=80",    // person carrying bins through doorway
 ];
 const STOCK_ABOUT_POOL = [
-  "https://images.unsplash.com/photo-1600880292089-90a7e086ee0c?w=600&q=80",      // people packing
-  "https://images.unsplash.com/photo-1556761175-4b46a572b786?w=600&q=80",         // moving team
-  "https://images.unsplash.com/photo-1527689368864-3a821dbccc34?w=600&q=80",      // apartment packing
-  "https://images.unsplash.com/photo-1586105251261-72a756497a11?w=600&q=80",      // loading truck
-  "https://images.unsplash.com/photo-1600566752355-35792bedcfea?w=600&q=80",      // movers working
+  "https://images.unsplash.com/photo-1663625318264-695d2d04f11a?w=800&q=80",     // moving boxes by apartment window
+  "https://images.unsplash.com/photo-1577705998148-6da4f3963bc8?w=800&q=80",     // single cardboard box on floor
+  "https://images.unsplash.com/photo-1600725935160-f67ee4f6084a?w=800&q=80",     // packed boxes stacked in room
+  "https://images.unsplash.com/photo-1586781383963-8e66f88077ec?w=800&q=80",     // boxes being loaded from truck
+  "https://images.unsplash.com/photo-1624137308703-e1da1ca881df?w=800&q=80",     // moving boxes styled with flowers
 ];
 const STOCK_PROJECTS = [
-  "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=600&q=80",         // stacked boxes
-  "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=600&q=80",      // couple with boxes
-  "https://images.unsplash.com/photo-1600585152220-90363fe7e115?w=600&q=80",      // room with boxes
-  "https://images.unsplash.com/photo-1556761175-4b46a572b786?w=600&q=80",         // moving team
-  "https://images.unsplash.com/photo-1527689368864-3a821dbccc34?w=600&q=80",      // apartment move
-  "https://images.unsplash.com/photo-1586105251261-72a756497a11?w=600&q=80",      // truck loading
-  "https://images.unsplash.com/photo-1600566752355-35792bedcfea?w=600&q=80",      // movers at work
-  "https://images.unsplash.com/photo-1600518464441-9154a4dea21b?w=600&q=80",      // carrying boxes
+  "https://images.unsplash.com/photo-1624137527136-66e631bdaa0e?w=600&q=80",     // stacked cardboard boxes
+  "https://images.unsplash.com/photo-1580709839515-54b8991e2813?w=600&q=80",     // person carrying moving bins
+  "https://images.unsplash.com/photo-1601467995997-ac1ae9a8fff4?w=600&q=80",     // moving truck parked
+  "https://images.unsplash.com/photo-1663625318264-695d2d04f11a?w=600&q=80",     // boxes by apartment window
+  "https://images.unsplash.com/photo-1614359835514-92f8ba196357?w=600&q=80",     // movers loading furniture
+  "https://images.unsplash.com/photo-1577705998148-6da4f3963bc8?w=600&q=80",     // cardboard box on floor
+  "https://images.unsplash.com/photo-1600725935160-f67ee4f6084a?w=600&q=80",     // packed boxes in room
+  "https://images.unsplash.com/photo-1581573950452-5a438c5f390f?w=600&q=80",     // family settling into new home
 ];
 
 /* ───────────────────────── FLOATING SPARKLE PARTICLES ───────────────────────── */

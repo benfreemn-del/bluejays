@@ -156,7 +156,7 @@ const stylists = [
   { name: "Ava Laurent", role: "Owner & Color Specialist", years: "14 years", specialty: "Vidal Sassoon trained. Celebrity colorist known for dimensional brunettes and lived-in blondes.", photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=500&q=80" },
   { name: "Marcus Chen", role: "Precision Cut Specialist", years: "9 years", specialty: "Master of clean fades, textured bobs, and architectural cuts. Trained in Tokyo.", photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&q=80" },
   { name: "Sofia Rivera", role: "Bridal & Events Lead", years: "11 years", specialty: "Over 300 weddings styled. Expert in updos, braids, and vintage Hollywood waves.", photo: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=500&q=80" },
-  { name: "Jess Kim", role: "Extensions & Texture Specialist", years: "7 years", specialty: "Certified Great Lengths and Bellami pro. Specializes in curly, coily, and natural hair.", photo: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=500&q=80" },
+  { name: "Jess Kim", role: "Extensions & Texture Specialist", years: "7 years", specialty: "Certified Great Lengths and Bellami pro. Specializes in curly, coily, and natural hair.", photo: "https://images.unsplash.com/photo-1601412436009-d964bd02edbc?w=500&q=80" },
 ];
 
 /* ─── velvet experience steps ─── */

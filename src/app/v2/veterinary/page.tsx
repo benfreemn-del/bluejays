@@ -548,7 +548,7 @@ export default function V2VeterinaryPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="relative">
               <div className="rounded-2xl overflow-hidden aspect-[3/4] max-w-md mx-auto lg:mx-0 shadow-xl">
-                <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=600&q=80" alt="Dr. Lisa Nakamura, DVM" className="w-full h-full object-cover object-top" />
+                <img src="https://images.unsplash.com/photo-1609505848912-b7c3b8b4beda?w=600&q=80" alt="Dr. Lisa Nakamura, DVM" className="w-full h-full object-cover object-top" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                 <div className="absolute bottom-6 left-6 right-6">
                   <GlassCard className="px-4 py-3 inline-flex items-center gap-3">
@@ -772,7 +772,7 @@ export default function V2VeterinaryPage() {
       <SectionReveal className="relative z-10 py-16 md:py-24">
         <div className="mx-auto max-w-5xl px-4 md:px-6">
           <div className="relative rounded-2xl overflow-hidden aspect-video shadow-xl cursor-pointer group">
-            <img src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=1200&q=80" alt="Tour Northshore Vet Clinic" className="w-full h-full object-cover" />
+            <img src="https://images.unsplash.com/photo-1597764690523-15bea4c581c9?w=1200&q=80" alt="Tour Northshore Vet Clinic" className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors flex items-center justify-center">
               <motion.div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-xl" whileHover={{ scale: 1.1 }} transition={springFast}>
                 <Play size={36} weight="fill" style={{ color: GREEN }} className="ml-1" />
