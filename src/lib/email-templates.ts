@@ -52,6 +52,8 @@ ${previewUrl}
 ${buildVideoBlock(videoUrl)}
 It's modern, mobile-friendly, and designed specifically for ${category.toLowerCase()} businesses like yours. Take 30 seconds to check it out.
 
+See what we've built for other ${category.toLowerCase()} businesses: https://bluejayportfolio.com/v2/${prospect.category}
+
 If you love it, we can have it live on your own domain within 48 hours. If not, no hard feelings at all.
 
 Either way, I'd love to hear what you think.
@@ -100,16 +102,16 @@ export function getFollowUp2(
     prospect.ownerName?.split(" ")[0] || prospect.businessName;
 
   return {
-    subject: `A quick thought about ${prospect.businessName}'s online presence`,
+    subject: `I actually looked at your current site, ${name}`,
     body: `Hi ${name},
 
-I was doing some research on local businesses in your area and wanted to share a quick thought. Did you know that having a modern, fast-loading website can significantly increase the number of customers who reach out to you?
-
-Many businesses with great services lose out on potential clients simply because their online presence doesn't reflect the quality of their work. That's exactly why I built this custom website for ${prospect.businessName}:
-
-${previewUrl}
+We actually looked at your current website and designed yours as a direct upgrade — same branding, better experience. Compare them side by side: ${previewUrl}
 ${buildVideoBlock(videoUrl)}
-I thought you'd find this interesting, and I'd love to help you get it set up if you're ready to take your online presence to the next level. Take a look when you have a moment, and let me know what you think.
+Everything is already built and ready to go. We kept what works about your current site and made the experience more modern, faster, and mobile-friendly.
+
+If you're curious what we've done for other ${CATEGORY_CONFIG[prospect.category].label.toLowerCase()} businesses, check out our portfolio: https://bluejayportfolio.com/v2/${prospect.category}
+
+Either way, I'd love to hear what you think — even a quick "not for me" is totally fine.
 
 Best,
 The BlueJays Team

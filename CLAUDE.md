@@ -303,6 +303,28 @@ When generating, reviewing, or improving any prospect's preview site, agents MUS
 - **Position**: bottom footer, right-aligned or centered credit line — same position on every site
 - **If you create a new template or showcase**, the bird logo MUST be in the footer. No exceptions.
 
+### Sales & Outreach Rules (ALL AGENTS — NON-NEGOTIABLE)
+
+**Every outreach message (email, SMS, AI response) MUST include:**
+1. **Portfolio category link** — `https://bluejayportfolio.com/v2/[category]` — so prospects can see polished examples in their industry. Never send a preview link without also showing the portfolio.
+2. **Payment plan mention for price objections** — "We also offer 3 payments of $349 if that's easier." This exists in the checkout system and must be mentioned whenever price resistance is detected.
+
+**Objection handling — agents must know these responses:**
+3. **"I already have a website"** → "We actually designed yours as an upgrade to your current site — we kept your branding and made the experience more modern and mobile-friendly. Compare them side by side on the claim page."
+4. **"Who are you / is this legit?"** → "BlueJays is a web design studio that builds premium websites for local businesses. See our portfolio at bluejayportfolio.com — we've built sites for 30+ industries. Yours was custom-designed specifically for [businessName]."
+5. **"Why not Wix/Squarespace?"** → Reference the comparison table on the claim page. Key points: we build it FOR you (they don't), 48-hour turnaround vs weeks, no monthly fees vs $16-45/mo forever, SEO + mobile included.
+6. **"$997 is too much"** → ROI angle: "How much is one new customer worth to your business? At $997, you need just [X] new clients to pay for the entire site." Plus payment plan option.
+
+**Preview page rules:**
+7. **Stock photo disclaimer** — the preview page shows a banner: "Preview — images and content will be customized with your real business photos after purchase." This sets expectations so prospects don't think stock photos are the final product.
+8. **Claim page must show** — ROI calculator, DIY comparison table, payment plan option, post-purchase timeline, satisfaction guarantee. These are all on the claim page and should be referenced in sales conversations.
+
+**Never do:**
+- Send outreach without a preview link AND a portfolio link
+- Ignore price objections — always mention the payment plan
+- Let a prospect think stock photos are the final product
+- Promise features that don't exist yet
+
 ### Boss/Orchestrator Agent Rules
 A pipeline orchestrator agent manages the flow and enforces rules:
 - **Monitors all prospect statuses** — if something is in "pending-review" that shouldn't be, it demotes it back to "generated"

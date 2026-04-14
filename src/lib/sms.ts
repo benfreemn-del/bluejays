@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
 import type { Prospect, SmsMethod, SmsProvider } from "./types";
+import { CATEGORY_CONFIG } from "./types";
 import { supabase, isSupabaseConfigured } from "./supabase";
 import { logCost, COST_RATES } from "./cost-logger";
 import { getVonagePhoneNumber, isVonageConfigured, sendViaVonage } from "./vonage-sms";
@@ -318,7 +319,8 @@ function buildVideoSuffix(videoUrl?: string): string {
 
 export function getInitialSms(prospect: Prospect, previewUrl: string, videoUrl?: string): string {
   const name = prospect.ownerName?.split(" ")[0] || "there";
-  return `Hey ${name}! This is BlueJays. We built a free custom website for ${prospect.businessName} — check it out: ${previewUrl}${buildVideoSuffix(videoUrl)} Let us know what you think! Reply STOP to opt out.`;
+  const categoryLabel = CATEGORY_CONFIG[prospect.category]?.label || prospect.category;
+  return `Hey ${name}! This is BlueJays. We built a free custom website for ${prospect.businessName} — check it out: ${previewUrl}${buildVideoSuffix(videoUrl)}\nSee more ${categoryLabel.toLowerCase()} sites we've built: bluejayportfolio.com/v2/${prospect.category}\nLet us know what you think! Reply STOP to opt out.`;
 }
 
 export function getFollowUpSms1(prospect: Prospect, previewUrl: string, videoUrl?: string): string {

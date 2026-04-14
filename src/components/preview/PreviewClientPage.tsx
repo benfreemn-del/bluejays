@@ -187,6 +187,10 @@ export default function PreviewClientPage({
 
   return (
     <>
+      {/* Preview disclaimer banner */}
+      <div className="bg-[#0a1520] border-b border-white/10 px-4 py-2 text-center text-xs text-white/50">
+        Preview — images and content will be customized with your real business photos after purchase
+      </div>
       {device === "mobile" ? (
         <div className="min-h-screen bg-[#111] flex items-start justify-center pt-4 pb-24">
           <div className="relative border border-white/10 bg-black overflow-hidden shadow-2xl" style={{ width: 390, maxHeight: "90vh" }}>

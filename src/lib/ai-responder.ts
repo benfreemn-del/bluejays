@@ -525,7 +525,7 @@ function getMockResponse(prompt: string): string {
       lower.includes("pricey") || lower.includes("$997")) {
     return JSON.stringify({
       shouldReply: true,
-      reply: `I hear you, ${name} — $997 is real money, and I'd never want you to feel pressured into something that doesn't make sense for you.\n\nHere's how I think about it though: that one-time fee includes the custom website design, domain registration, and hosting setup, so you're not piecing together a bunch of extras. Most ${category || "local"} businesses tell me they get their first new customer from their website within the first month, which usually covers it.\n\nAfter year one, maintenance is just $100/year for domain renewal, hosting, ongoing maintenance, and support.${personalTouch}\n\nThe preview is still live whenever you want to take another look. Zero pressure from me.`,
+      reply: `I hear you, ${name} — $997 is real money, and I'd never want you to feel pressured into something that doesn't make sense for you.\n\nHere's how I think about it though: that one-time fee includes the custom website design, domain registration, and hosting setup, so you're not piecing together a bunch of extras. Most ${category || "local"} businesses tell me they get their first new customer from their website within the first month, which usually covers it.\n\nWe also offer a payment plan — 3 payments of $349 if that's easier.\n\nAfter year one, maintenance is just $100/year for domain renewal, hosting, ongoing maintenance, and support.${personalTouch}\n\nThe preview is still live whenever you want to take another look. Zero pressure from me.`,
       escalate: false,
       sentiment: "neutral",
       intent: "objection",
@@ -542,7 +542,7 @@ function getMockResponse(prompt: string): string {
     const compareUrl = `${CHECKOUT_BASE_URL}/compare/{prospectId}`;
     return JSON.stringify({
       shouldReply: true,
-      reply: `Oh nice — yeah, I actually found your current site, that's how I discovered ${businessName} in the first place! I'm not trying to trash what you have. I just thought you might be curious to see a fresh take on it.\n\nI put together a side-by-side comparison so you can see them next to each other: ${compareUrl}\n\nHonestly, even if you stick with your current site, the comparison might give you some ideas for improvements. No strings attached.`,
+      reply: `Oh nice — yeah, I actually found your current site, that's how I discovered ${businessName} in the first place! We actually designed yours as an upgrade to your current site. We kept your branding and made the experience more modern and mobile-friendly.\n\nYou can compare them side by side on the claim page: ${compareUrl}\n\nHonestly, even if you stick with your current site, the comparison might give you some ideas for improvements. No strings attached.`,
       escalate: false,
       sentiment: "neutral",
       intent: "objection",
@@ -597,7 +597,7 @@ function getMockResponse(prompt: string): string {
     if (closeAction === "checkout") {
       return JSON.stringify({
         shouldReply: true,
-        reply: `${name}, that's awesome! Really glad you like what I put together for ${businessName}.${personalTouch}\n\nHere's the next step — it's super simple: ${CHECKOUT_BASE_URL}/claim/{prospectId}\n\nTakes about 2 minutes. Once you're in, I'll send you a quick form where you can tell me any changes you want — colors, photos, content, layout — and I'll make it happen before we go live.\n\nAny questions at all, just reply here. I'm around!`,
+        reply: `${name}, that's awesome! Really glad you like what I put together for ${businessName}.${personalTouch}\n\nBy the way, you can see more examples of sites we've built for ${category || "local"} businesses here: https://bluejayportfolio.com/v2/${category || "portfolio"}\n\nHere's the next step — it's super simple: ${CHECKOUT_BASE_URL}/claim/{prospectId}\n\nTakes about 2 minutes. Once you're in, I'll send you a quick form where you can tell me any changes you want — colors, photos, content, layout — and I'll make it happen before we go live.\n\nAny questions at all, just reply here. I'm around!`,
         escalate: true,
         escalateReason: "Prospect is interested — ready to close",
         escalateUrgency: "immediate",
@@ -610,7 +610,7 @@ function getMockResponse(prompt: string): string {
     } else {
       return JSON.stringify({
         shouldReply: true,
-        reply: `Really appreciate the interest, ${name}! There's actually a lot we can do beyond what's in the preview — it's just the starting point.\n\nRather than try to explain everything over text, would you be up for a quick 10-minute call with Ben? He's the founder and can walk you through the whole process, answer any questions, and talk about what's possible for ${businessName}.\n\nHere's his calendar — pick whatever time works: ${CALENDAR_LINK}\n\nNo pressure at all. Just thought it'd be easier than going back and forth here.`,
+        reply: `Really appreciate the interest, ${name}! There's actually a lot we can do beyond what's in the preview — it's just the starting point.\n\nBy the way, you can see more examples of sites we've built for ${category || "local"} businesses here: https://bluejayportfolio.com/v2/${category || "portfolio"}\n\nRather than try to explain everything over text, would you be up for a quick 10-minute call with Ben? He's the founder and can walk you through the whole process, answer any questions, and talk about what's possible for ${businessName}.\n\nHere's his calendar — pick whatever time works: ${CALENDAR_LINK}\n\nNo pressure at all. Just thought it'd be easier than going back and forth here.`,
         escalate: true,
         escalateReason: "High-value prospect interested — calendar booking recommended",
         escalateUrgency: "immediate",
@@ -662,7 +662,7 @@ function getMockResponse(prompt: string): string {
       lower.includes("is this a") || lower.includes("too good to be true")) {
     return JSON.stringify({
       shouldReply: true,
-      reply: `Ha — I get that question more than you'd think, and honestly? I'd be skeptical too. There's so much junk out there.\n\nHere's the deal: I'm Ben, I run BlueJays, and I genuinely built a custom website for ${businessName}. It's live right now — no login, no credit card, nothing. Just a URL you can open and look at.\n\nWhy? Because I've found that the best way to earn someone's trust is to do the work first. If you like it, great. If not, you got a free website preview and I got the practice. Win-win.\n\nThe site is real. I'm real. And there's zero obligation to do anything with it.`,
+      reply: `Ha — I get that question more than you'd think, and honestly? I'd be skeptical too. There's so much junk out there.\n\nBlueJays is a web design studio that builds premium websites for local businesses. You can see our full portfolio at bluejayportfolio.com — we've built sites for over 30 different industries. Your site was custom-designed specifically for ${businessName}.\n\nWhy do we build it first? Because I've found that the best way to earn someone's trust is to do the work first. If you like it, great. If not, you got a free website preview and I got the practice. Win-win.\n\nThe site is real. I'm real. And there's zero obligation to do anything with it.`,
       escalate: false,
       sentiment: "neutral",
       intent: "question",
@@ -677,7 +677,7 @@ function getMockResponse(prompt: string): string {
       lower.includes("how did you get my") || lower.includes("where did you")) {
     return JSON.stringify({
       shouldReply: true,
-      reply: `Great question! I'm Ben from BlueJays — we're a small web design studio. I found ${businessName} through a Google search for ${category || "local businesses"} in your area.\n\nI was impressed by what I saw, so I went ahead and built a custom website as a way of introducing myself. Think of it like a portfolio piece that happens to be built for YOUR business.\n\nYour contact info is publicly listed on Google Business, which is how I reached out. If you'd prefer I didn't contact you again, just say the word and I'll remove you immediately. No hard feelings.`,
+      reply: `Great question! BlueJays is a web design studio that builds premium websites for local businesses. You can see our full portfolio at bluejayportfolio.com — we've built sites for over 30 different industries. Your site was custom-designed specifically for ${businessName}.\n\nI found ${businessName} through a Google search for ${category || "local businesses"} in your area. Your contact info is publicly listed on Google Business, which is how I reached out.\n\nIf you'd prefer I didn't contact you again, just say the word and I'll remove you immediately. No hard feelings.`,
       escalate: false,
       sentiment: "neutral",
       intent: "question",
@@ -690,7 +690,7 @@ function getMockResponse(prompt: string): string {
   // Generic question with warmth and personality
   return JSON.stringify({
     shouldReply: true,
-    reply: `Hey ${name}, thanks for getting back to me! Always good to hear from the people behind the businesses I work with.\n\nThe website I built for ${businessName} is fully custom — not a template or a cookie-cutter thing. It's mobile-friendly, loads fast, and is designed to actually bring in new customers (not just look pretty).${personalTouch}\n\nIs there something specific you're wondering about? I'm an open book — ask me anything about the site, the process, pricing, whatever's on your mind.`,
+    reply: `Hey ${name}, thanks for getting back to me! Always good to hear from the people behind the businesses I work with.\n\nThe website I built for ${businessName} is fully custom — not a template or a cookie-cutter thing. It's mobile-friendly, loads fast, and is designed to actually bring in new customers (not just look pretty).${personalTouch}\n\nBy the way, you can see more examples of sites we've built for ${category || "local"} businesses here: https://bluejayportfolio.com/v2/${category || "portfolio"}\n\nIs there something specific you're wondering about? I'm an open book — ask me anything about the site, the process, pricing, whatever's on your mind.`,
     escalate: false,
     sentiment: "neutral",
     intent: "question",
@@ -772,6 +772,7 @@ PRICING:
 - Annual management: $${PRICING_FRAMEWORK.yearlyManagement}/year
 - Positioning: ${PRICING_FRAMEWORK.positioning}
 - Comparison: ${PRICING_FRAMEWORK.comparisonPoints.join("; ")}
+- Payment plan available: 3 payments of $349
 - NEVER negotiate on price
 
 OBJECTION PLAYBOOK (use these as INSPIRATION, not word-for-word scripts — make them conversational):
@@ -782,6 +783,7 @@ ${closeHint}
 - Checkout URL: ${checkoutUrl}
 - Calendar URL: ${CALENDAR_LINK}
 - Compare URL: ${compareUrl}
+- Portfolio URL: https://bluejayportfolio.com/v2/${prospect.category}
 Direct close conditions: ${CLOSE_DECISION_FRAMEWORK.directClose.join("; ")}
 Calendar booking conditions: ${CLOSE_DECISION_FRAMEWORK.calendarBooking.join("; ")}
 
@@ -836,7 +838,10 @@ Analyze their message and respond as JSON with these exact fields:
 CRITICAL RULES:
 - ALWAYS validate before reframing objections ("I totally get that..." / "That makes sense...")
 - For objections, use the playbook as inspiration but make it CONVERSATIONAL — don't copy-paste
-- For "already have a website", include the compare URL: ${compareUrl}
+- For "already have a website", emphasize that we designed theirs as a direct upgrade to their current site, kept their branding, and made it more modern and mobile-friendly. Include the compare URL: ${compareUrl}
+- For price objections, mention the payment plan option: 3 payments of $349
+- For "who are you" or "is this legit" questions, mention that BlueJays is a web design studio that builds premium websites for local businesses, link to bluejayportfolio.com, mention we've built sites for 30+ industries, and that their site was custom-designed specifically for their business
+- For interested prospects and question intents, include the portfolio link to show more examples: https://bluejayportfolio.com/v2/${prospect.category}
 - For interested prospects in high-value categories, push calendar booking
 - For interested prospects in direct-close categories, push checkout link
 - ALWAYS pause the funnel when a prospect replies (pauseFunnel: true)
@@ -943,12 +948,12 @@ export async function processIncomingMessage(
 
     switch (objectionType) {
       case "too expensive":
-        reply = `${getWarmOpener(name, "empathetic")} $997 is real money, and I'd never want you to feel pressured.\n\nThat one-time fee includes the custom website design, domain registration, and hosting setup. Most ${CATEGORY_CONFIG[prospect.category]?.label || ""} businesses tell me they get their first new customer from their website within the first month, and that usually more than covers it.\n\nAfter year one, maintenance is just $100/year for domain renewal, hosting, ongoing maintenance, and support.\n\n${personalHook}\n\nThe preview is still live whenever you want to take another look. Zero pressure from me. ${getWarmSignoff(name)}`;
+        reply = `${getWarmOpener(name, "empathetic")} $997 is real money, and I'd never want you to feel pressured.\n\nThat one-time fee includes the custom website design, domain registration, and hosting setup. Most ${CATEGORY_CONFIG[prospect.category]?.label || ""} businesses tell me they get their first new customer from their website within the first month, and that usually more than covers it.\n\nWe also offer a payment plan — 3 payments of $349 if that's easier.\n\nAfter year one, maintenance is just $100/year for domain renewal, hosting, ongoing maintenance, and support.\n\n${personalHook}\n\nThe preview is still live whenever you want to take another look. Zero pressure from me. ${getWarmSignoff(name)}`;
         break;
 
       case "already have a website": {
         const compareUrl = `${CHECKOUT_BASE_URL}/compare/${prospect.id}`;
-        reply = `Oh nice — yeah, I actually found your current site, that's how I discovered ${prospect.businessName}! I'm not trying to trash what you have. I just thought you might be curious to see a fresh take.\n\nI put together a side-by-side comparison: ${compareUrl}\n\nEven if you stick with your current site, the comparison might give you some ideas. No strings attached.`;
+        reply = `Oh nice — yeah, I actually found your current site, that's how I discovered ${prospect.businessName}! We actually designed yours as an upgrade to your current site. We kept your branding and made the experience more modern and mobile-friendly.\n\nYou can compare them side by side on the claim page: ${compareUrl}\n\nEven if you stick with your current site, the comparison might give you some ideas. No strings attached.`;
         break;
       }
 
@@ -961,7 +966,7 @@ export async function processIncomingMessage(
         break;
 
       case "can you do it cheaper":
-        reply = `I wish I could, ${name} — but $997 is our standard rate and we keep it firm because we don't cut corners. That one-time fee includes the custom website design, domain registration, and hosting setup. After year one, maintenance is just $100/year for domain renewal, hosting, ongoing maintenance, and support.\n\nFor context, most agencies charge $3K-$10K for this level of work. We just found a way to do it efficiently without sacrificing quality.\n\n${personalHook}`;
+        reply = `I wish I could, ${name} — but $997 is our standard rate and we keep it firm because we don't cut corners. That one-time fee includes the custom website design, domain registration, and hosting setup. After year one, maintenance is just $100/year for domain renewal, hosting, ongoing maintenance, and support.\n\nThat said, we do offer a payment plan — 3 payments of $349 if that's easier on the budget.\n\nFor context, most agencies charge $3K-$10K for this level of work. We just found a way to do it efficiently without sacrificing quality.\n\n${personalHook}`;
         break;
 
       case "what's included":

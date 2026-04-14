@@ -55,6 +55,7 @@ export default function ClaimPage() {
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [showChat, setShowChat] = useState(false);
   const [triggers, setTriggers] = useState<EngagementTriggers | undefined>(undefined);
+  const [roiJobValue, setRoiJobValue] = useState(500);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const paymentCancelled = searchParams.get("payment") === "cancelled";
@@ -271,7 +272,7 @@ export default function ClaimPage() {
               : `A premium, mobile-optimized website designed specifically for your ${categoryLabel} business — ready to go live in 48 hours.`}
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-2">
             <button
               onClick={redirectToCheckout}
               disabled={isRedirecting}
@@ -294,6 +295,21 @@ export default function ClaimPage() {
               </a>
             )}
           </div>
+          {!isFreeTier && (
+            <p className="text-center text-sm text-white/50 mb-6">
+              Or{" "}
+              <button
+                onClick={() => {
+                  const url = new URL(window.location.href);
+                  url.searchParams.set("plan", "installment");
+                  window.location.href = url.toString();
+                }}
+                className="underline hover:text-white/70 transition-colors"
+              >
+                3 easy payments of $349
+              </button>
+            </p>
+          )}
 
           {/* Money-Back Guarantee Badge */}
           <div className="inline-flex items-center gap-2 bg-green-500/10 border border-green-500/20 rounded-full px-5 py-2">
@@ -367,6 +383,9 @@ export default function ClaimPage() {
                   </div>
                 )}
               </div>
+              <p className="text-xs text-white/30 mt-2 text-center">
+                Preview images shown — we customize with your real business photos after purchase
+              </p>
             </div>
           </div>
 
@@ -464,9 +483,141 @@ export default function ClaimPage() {
             >
               {isRedirecting ? "Redirecting..." : `Claim Your Website \u2014 ${displayPrice}`}
             </button>
+            {!isFreeTier && (
+              <p className="text-center text-sm text-white/50 mt-2">
+                Or{" "}
+                <button
+                  onClick={() => {
+                    const url = new URL(window.location.href);
+                    url.searchParams.set("plan", "installment");
+                    window.location.href = url.toString();
+                  }}
+                  className="underline hover:text-white/70 transition-colors"
+                >
+                  3 easy payments of $349
+                </button>
+              </p>
+            )}
           </div>
         </div>
       </section>
+
+      {/* ═══════════════════════════════════════════════════════════ */}
+      {/* ROI CALCULATOR */}
+      {/* ═══════════════════════════════════════════════════════════ */}
+      {!isFreeTier && (
+        <section className="py-12 px-6">
+          <div className="max-w-3xl mx-auto">
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
+              <h3 className="text-xl font-bold text-center mb-2">
+                See How Fast It <span className="text-green-400">Pays for Itself</span>
+              </h3>
+              <p className="text-white/40 text-sm text-center mb-6">
+                Your website works 24/7 bringing in new customers
+              </p>
+
+              <div className="flex flex-col sm:flex-row items-center gap-6">
+                <div className="flex-1 w-full">
+                  <label className="text-sm text-white/60 mb-2 block">
+                    What&apos;s your average job/sale worth?
+                  </label>
+                  <div className="relative">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 text-lg">$</span>
+                    <input
+                      type="number"
+                      value={roiJobValue}
+                      onChange={(e) => setRoiJobValue(Math.max(1, Number(e.target.value) || 1))}
+                      className="w-full h-12 pl-8 pr-4 rounded-xl bg-white/5 border border-white/10 text-white text-lg placeholder:text-white/25 focus:border-green-500/50 focus:outline-none transition-colors"
+                      min={1}
+                    />
+                  </div>
+                </div>
+
+                <div className="flex-1 w-full bg-green-500/10 border border-green-500/20 rounded-xl p-5 text-center">
+                  <p className="text-green-400 text-2xl font-extrabold mb-1">
+                    {Math.ceil(997 / roiJobValue)} new customer{Math.ceil(997 / roiJobValue) !== 1 ? "s" : ""}
+                  </p>
+                  <p className="text-white/50 text-sm">
+                    At $997, you need just <span className="text-green-400 font-bold">{Math.ceil(997 / roiJobValue)}</span> new customer{Math.ceil(997 / roiJobValue) !== 1 ? "s" : ""} to pay for your entire website
+                  </p>
+                </div>
+              </div>
+
+              <p className="text-white/30 text-xs text-center mt-4 flex items-center justify-center gap-1.5">
+                <svg className="w-3.5 h-3.5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                Most of our clients see their first website lead within 2 weeks
+              </p>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ═══════════════════════════════════════════════════════════ */}
+      {/* WHY NOT DIY? — Comparison Table */}
+      {/* ═══════════════════════════════════════════════════════════ */}
+      {!isFreeTier && (
+        <section className="py-12 px-6">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-2xl font-bold text-center mb-2">
+              Why <span className="text-sky-400">BlueJays</span>?
+            </h2>
+            <p className="text-white/40 text-center text-sm mb-8">
+              See how we compare to other options
+            </p>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-white/10">
+                    <th className="text-left py-3 px-4 text-white/50 font-medium">Feature</th>
+                    <th className="text-center py-3 px-4 text-green-400 font-bold">BlueJays</th>
+                    <th className="text-center py-3 px-4 text-white/50 font-medium">Wix / Squarespace</th>
+                    <th className="text-center py-3 px-4 text-white/50 font-medium">Hiring an Agency</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { feature: "Price", bj: "$997 one-time", wix: "$16-45/mo forever", agency: "$5,000-15,000" },
+                    { feature: "Ready in", bj: "48 hours", wix: "Weeks (you build it)", agency: "4-8 weeks" },
+                    { feature: "Custom design", bjCheck: true, wixX: true, agencyCheck: true, bj: "Built for you", wix: "Template you customize", agency: "Custom" },
+                    { feature: "Mobile optimized", bjCheck: true, wixMaybe: true, agencyCheck: true, bj: "Included", wix: "Depends on template", agency: "Usually" },
+                    { feature: "SEO built in", bjCheck: true, wixX: true, agencyCheck: true, bj: "Included", wix: "Extra plugins needed", agency: "Usually extra" },
+                    { feature: "Professional copy", bjCheck: true, wixX: true, agencyCheck: true, bj: "Written for you", wix: "You write it", agency: "Usually extra" },
+                    { feature: "Ongoing cost", bj: "$0/month", wix: "$16-45/month", agency: "$100-500/month" },
+                    { feature: "You do the work", bjX: true, wixYou: true, agencyX: true, bj: "We handle everything", wix: "All on you", agency: "They handle it" },
+                  ].map((row, i) => (
+                    <tr key={i} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                      <td className="py-3 px-4 text-white/70 font-medium">{row.feature}</td>
+                      <td className="py-3 px-4 text-center">
+                        <div className="flex flex-col items-center gap-0.5">
+                          {row.bjCheck && <span className="text-green-400 text-base">&#10003;</span>}
+                          {row.bjX && <span className="text-green-400 text-base">&#10007;</span>}
+                          <span className="text-green-400 text-xs font-medium">{row.bj}</span>
+                        </div>
+                      </td>
+                      <td className="py-3 px-4 text-center">
+                        <div className="flex flex-col items-center gap-0.5">
+                          {row.wixX && <span className="text-red-400 text-base">&#10007;</span>}
+                          {row.wixYou && <span className="text-red-400 text-base">&#10003;</span>}
+                          {row.wixMaybe && <span className="text-amber-400 text-base">~</span>}
+                          <span className="text-white/40 text-xs">{row.wix}</span>
+                        </div>
+                      </td>
+                      <td className="py-3 px-4 text-center">
+                        <div className="flex flex-col items-center gap-0.5">
+                          {row.agencyCheck && <span className="text-white/40 text-base">&#10003;</span>}
+                          {row.agencyX && <span className="text-white/40 text-base">&#10007;</span>}
+                          <span className="text-white/40 text-xs">{row.agency}</span>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ═══════════════════════════════════════════════════════════ */}
       {/* MONEY-BACK GUARANTEE — Detailed */}
@@ -480,10 +631,10 @@ export default function ClaimPage() {
               </svg>
             </div>
             <h3 className="text-xl font-bold text-green-400 mb-3">
-              100% Satisfaction Guarantee
+              100% Satisfaction or We Rebuild It Free
             </h3>
             <p className="text-white/60 text-sm leading-relaxed max-w-xl mx-auto mb-4">
-              We&apos;re confident you&apos;ll love your new website. But if for any reason you&apos;re not completely satisfied after we deliver the final version, we&apos;ll refund your money — no questions asked, no hoops to jump through.
+              If you&apos;re not completely happy with your website, we&apos;ll redesign it at no extra charge. No questions asked.
             </p>
             <p className="text-white/40 text-xs">
               That&apos;s how sure we are that this website will help {info?.businessName || "your business"} grow.
@@ -565,6 +716,45 @@ export default function ClaimPage() {
               title="Your Site Goes Live"
               description="Within 48 hours, your new website is live and ready to bring in customers."
             />
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════════════ */}
+      {/* POST-PURCHASE TIMELINE */}
+      {/* ═══════════════════════════════════════════════════════════ */}
+      <section className="py-16 px-6">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-2xl font-bold text-center mb-2">
+            What to <span className="text-sky-400">Expect</span> After Purchase
+          </h2>
+          <p className="text-white/40 text-center text-sm mb-10">
+            From purchase to live website in just 7 days
+          </p>
+
+          <div className="relative">
+            {/* Vertical line */}
+            <div className="absolute left-6 top-0 bottom-0 w-px bg-gradient-to-b from-green-500/50 via-sky-500/50 to-sky-500/20" />
+
+            <div className="space-y-8">
+              {[
+                { day: "Day 1", title: "You Purchase", description: "Instant access to your preview site. Your website is officially reserved and in our build queue.", color: "from-green-500 to-emerald-600" },
+                { day: "Day 2", title: "Onboarding Form", description: "Tell us your preferences, upload your real business photos, and share any changes you want.", color: "from-sky-500 to-blue-600" },
+                { day: "Day 3-5", title: "We Customize", description: "Our team adds your real photos, applies your brand colors, and refines all the copy to match your voice.", color: "from-sky-500 to-blue-600" },
+                { day: "Day 7", title: "Go Live", description: "Your website is connected to your domain and ready for customers. Start getting leads immediately.", color: "from-green-500 to-emerald-600" },
+              ].map((step, i) => (
+                <div key={i} className="flex gap-5 items-start">
+                  <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${step.color} flex items-center justify-center shrink-0 relative z-10 shadow-lg`}>
+                    <span className="text-white font-bold text-sm">{i + 1}</span>
+                  </div>
+                  <div className="pt-1">
+                    <span className="text-xs text-sky-400 font-bold uppercase tracking-wider">{step.day}</span>
+                    <h3 className="font-bold text-white mt-0.5 mb-1">{step.title}</h3>
+                    <p className="text-white/40 text-sm leading-relaxed">{step.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -739,6 +929,21 @@ export default function ClaimPage() {
           >
             {isRedirecting ? "Redirecting..." : `Claim Your Website \u2014 ${displayPrice}`}
           </button>
+          {!isFreeTier && (
+            <p className="text-center text-sm text-white/50 mt-2">
+              Or{" "}
+              <button
+                onClick={() => {
+                  const url = new URL(window.location.href);
+                  url.searchParams.set("plan", "installment");
+                  window.location.href = url.toString();
+                }}
+                className="underline hover:text-white/70 transition-colors"
+              >
+                3 easy payments of $349
+              </button>
+            </p>
+          )}
           <div className="flex items-center justify-center gap-6 mt-6 text-xs text-white/30">
             <span className="flex items-center gap-1">
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path d="M5 13l4 4L19 7" /></svg>
