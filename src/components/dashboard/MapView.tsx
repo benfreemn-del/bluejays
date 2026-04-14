@@ -190,11 +190,17 @@ export default function MapView({ prospects, onStateClick }: MapViewProps) {
       } else {
         // No more pages — mark as exhausted if 0 results
         if (data.prospects.length === 0) {
+          const newExhausted = [...(exhaustedCategories[scoutCounty] || []), scoutCategory];
           setExhaustedCategories(prev => ({
             ...prev,
-            [scoutCounty]: [...(prev[scoutCounty] || []), scoutCategory],
+            [scoutCounty]: newExhausted,
           }));
           setPageTokens(prev => { const n = { ...prev }; delete n[tokenKey]; return n; });
+          // Auto-select the next available category
+          const remaining = (Object.keys(CATEGORY_CONFIG) as Category[]).filter(cat => !newExhausted.includes(cat));
+          if (remaining.length > 0) {
+            setScoutCategory(remaining[0]);
+          }
         }
       }
 
@@ -208,8 +214,9 @@ export default function MapView({ prospects, onStateClick }: MapViewProps) {
       } else {
         setScoutResult(`Found ${data.prospects.length} new businesses in ${scoutCounty}! Switch to Table View to manage them.`);
       }
-    } catch {
-      setScoutResult("Error running scout.");
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Unknown error";
+      setScoutResult(`Error scouting: ${msg}. Try again.`);
     } finally {
       setScouting(false);
     }
