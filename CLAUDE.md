@@ -270,15 +270,20 @@ Before ANY preview is shown to Ben, a quality agent MUST check:
 - **Claim banner text** — must show the actual business name, not "website" or placeholder.
 - **These checks run on EVERY generated preview before status promotion.**
 
-### Failsafe 4: Image Quality Review Agent (MANDATORY before showing to Ben)
-Before ANY preview is shown to Ben (marked "pending-review"), an image review agent MUST:
-- **Check every image loads** — visit each URL in data.photos, verify HTTP 200. Replace broken ones with stock.
+### Failsafe 4: Image Review on EVERY Generation (MANDATORY — NO EXCEPTIONS)
+**EVERY time a website is generated or regenerated**, an image review MUST run. This is not optional. This is not "before showing to Ben" — it runs on EVERY generation, period.
+
+The image review agent MUST:
+- **HTTP-verify every image URL** — curl each URL in data.photos, hero pools, gallery pools, and any hardcoded Unsplash URLs. Verify HTTP 200. Replace any non-200 with a working alternative.
+- **Check stock image pools in templates** — Unsplash photos get deleted over time. When running bulk operations, scan ALL V2 template stock pools for 404s and replace immediately.
+- **Check /images/ local paths** — verify every `/images/xxx.png` reference has a matching file in `public/images/`.
 - **Check image centering** — hero images must be properly centered/cropped. If an image shows mostly blank space, a wall, or an off-center subject, flag it for replacement.
-- **Check for duplicates** — no two prospects in the same category should share any of the same photos (Google Place photos have unique URLs, but stock fallbacks can collide).
+- **Check for duplicates** — no two prospects in the same category should share any of the same photos.
 - **Check image quality** — reject blurry, tiny (<200px), dark, or poorly composed photos. A bad real photo is worse than a good stock photo.
-- **Check logo rendering** — if logoUrl exists, verify it loads and would display correctly in the nav (not broken, not too large, not a full-page image being used as a logo).
-- **This agent runs AFTER generation, BEFORE status promotion** — it's the last check before Ben sees the preview.
+- **Check logo rendering** — if logoUrl exists, verify it loads and would display correctly in the nav.
+- **This agent runs AFTER generation, BEFORE status promotion** — it's the last check before the preview is considered valid.
 - **Log findings** — for each prospect, log: X images checked, Y passed, Z replaced, logo status, overall verdict PASS/FAIL.
+- **Periodic full scan** — when doing bulk enrichment/regeneration across categories, run a full scan of ALL showcase pages AND ALL template stock pools for broken URLs. Unsplash deletions happen silently and can break dozens of sites at once.
 
 ### Boss/Orchestrator Agent Rules
 A pipeline orchestrator agent manages the flow and enforces rules:

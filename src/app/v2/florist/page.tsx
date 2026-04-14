@@ -461,7 +461,7 @@ export default function V2FloristPage() {
             </div>
           </div>
           <div className="relative rounded-2xl overflow-hidden aspect-[4/3]">
-            <img src="https://images.unsplash.com/photo-1490750967868-88aa4f44baee?w=800&q=80" alt="Florist crafting a beautiful arrangement" className="w-full h-full object-cover" />
+            <img src="https://images.unsplash.com/photo-1563241527-3004b7be0ffd?w=800&q=80" alt="Florist crafting a beautiful arrangement" className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
           </div>
         </div>

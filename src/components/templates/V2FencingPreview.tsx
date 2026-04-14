@@ -30,7 +30,7 @@ function getServiceIcon(serviceName: string) { const lower = serviceName.toLower
 const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1584395630827-860eee694d7b?w=1400&q=80"];
 const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=600&q=80"];
 const STOCK_GALLERY = [
-  "https://images.unsplash.com/photo-1592767449601-baba tried-6be3-48ea-aff5-fce37db0e4b0?w=600&q=80",
+  "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&q=80",
   "https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=600&q=80",
   "https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=600&q=80",
   "https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=600&q=80",

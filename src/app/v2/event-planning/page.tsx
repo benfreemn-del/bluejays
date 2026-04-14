@@ -274,7 +274,7 @@ const venues = [
   { name: "Chihuly Garden", type: "Art Museum", capacity: "300 guests", image: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=500&q=80" },
   { name: "The Edgewater", type: "Waterfront Hotel", capacity: "250 guests", image: "https://images.unsplash.com/photo-1478147427282-58a87a120781?w=500&q=80" },
   { name: "Olympic Rooftop", type: "Rooftop Terrace", capacity: "150 guests", image: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=500&q=80" },
-  { name: "Sodo Park", type: "Industrial Chic", capacity: "400 guests", image: "https://images.unsplash.com/photo-1532635026-18321593957c?w=500&q=80" },
+  { name: "Sodo Park", type: "Industrial Chic", capacity: "400 guests", image: "https://images.unsplash.com/photo-1505236858219-8359eb29e329?w=500&q=80" },
   { name: "The Ruins", type: "Garden Estate", capacity: "200 guests", image: "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=500&q=80" },
 ];
 
@@ -288,8 +288,8 @@ const portfolioImages = [
   { src: "https://images.unsplash.com/photo-1527529482837-4698179dc6ce?w=700&q=80", label: "Waterfront Wedding" },
   { src: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=700&q=80", label: "Corporate Gala" },
   { src: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=700&q=80", label: "Charity Benefit" },
-  { src: "https://images.unsplash.com/photo-1542665093386-917b6a22b4a7?w=700&q=80", label: "Garden Party" },
-  { src: "https://images.unsplash.com/photo-1470753937643-360eb21927a2?w=700&q=80", label: "Product Launch" },
+  { src: "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=700&q=80", label: "Garden Party" },
+  { src: "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=700&q=80", label: "Product Launch" },
   { src: "https://images.unsplash.com/photo-1551818255-e6e10975bc17?w=700&q=80", label: "Milestone Celebration" },
 ];
 

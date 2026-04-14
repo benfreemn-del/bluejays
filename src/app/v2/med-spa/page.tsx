@@ -317,7 +317,7 @@ const galleryImages = [
   "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=600&q=80",
   "https://images.unsplash.com/photo-1552693673-1bf958298935?w=600&q=80",
   "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=600&q=80",
-  "https://images.unsplash.com/photo-1540555700478-4be289fbec6d?w=600&q=80",
+  "https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?w=600&q=80",
   "https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?w=600&q=80",
   "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=600&q=80",
 ];
@@ -933,7 +933,7 @@ export default function V2MedSpaPage() {
               </motion.div>
             </div>
             <motion.div className="aspect-square rounded-2xl overflow-hidden" initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={spring}>
-              <img src="https://images.unsplash.com/photo-1540555700478-4be289fbec6d?w=800&q=80" alt="Luxury treatment room at Radiance Med Spa" className="w-full h-full object-cover" />
+              <img src="https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?w=800&q=80" alt="Luxury treatment room at Radiance Med Spa" className="w-full h-full object-cover" />
             </motion.div>
           </div>
         </div>

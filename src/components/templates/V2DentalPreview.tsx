@@ -146,7 +146,7 @@ const STOCK_HERO_POOL = [
   "https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=1400&q=80",   // dental chair modern
   "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=1400&q=80",   // dentist with patient
   "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=1400&q=80",   // bright smile closeup
-  "https://images.unsplash.com/photo-1445527815600-7e8fbfae5e2f?w=1400&q=80",   // modern dental office
+  "https://images.unsplash.com/photo-1609840114035-3c981b782dfe?w=1400&q=80",   // patient smiling
   "https://images.unsplash.com/photo-1607613009820-a29f7bb81c04?w=1400&q=80",   // dental tools clean
 ];
 const STOCK_ABOUT_POOL = [
@@ -162,7 +162,7 @@ const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1609840114035-3c981b782dfe?w=600&q=80",    // patient
   "https://images.unsplash.com/photo-1571772996211-2f02c9727629?w=600&q=80",    // exam
   "https://images.unsplash.com/photo-1629909615184-74f495363b67?w=600&q=80",    // operatory
-  "https://images.unsplash.com/photo-1445527815600-7e8fbfae5e2f?w=600&q=80",    // office
+  "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=600&q=80",    // bright smile
   "https://images.unsplash.com/photo-1607613009820-a29f7bb81c04?w=600&q=80",    // tools
   "https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=600&q=80",    // chair
   "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=600&q=80",    // dentist

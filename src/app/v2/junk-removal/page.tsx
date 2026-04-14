@@ -301,7 +301,7 @@ export default function V2JunkRemovalPage() {
         {/* BEFORE side — cluttered garage */}
         <div className="absolute inset-0 z-0">
           <img
-            src="https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=1600&q=80"
+            src="https://images.unsplash.com/photo-1484154218962-a197022b5858?w=1600&q=80"
             alt="Cluttered garage before cleanup"
             className="w-full h-full object-cover"
           />

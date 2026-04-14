@@ -254,8 +254,8 @@ const seasonalData = [
 
 const testimonials = [
   { name: "The Watsons", text: "Diego turned our mud pit into a Japanese garden. The neighbors stop to take photos every time they walk by.", image: "https://images.unsplash.com/photo-1588880331179-bc9b93a8cb5e?w=400&q=80" },
-  { name: "Jen & Mike R.", text: "Our backyard is now the reason we don't go on vacation. Why leave paradise?", image: "https://images.unsplash.com/photo-1564429238961-bf8ee932849b?w=400&q=80" },
-  { name: "Dr. Sarah Kim", text: "The native plant rain garden handles all our runoff AND looks beautiful year-round.", image: "https://images.unsplash.com/photo-1509813685-e7f0506c7a5a?w=400&q=80" },
+  { name: "Jen & Mike R.", text: "Our backyard is now the reason we don't go on vacation. Why leave paradise?", image: "https://images.unsplash.com/photo-1558904541-efa843a96f01?w=400&q=80" },
+  { name: "Dr. Sarah Kim", text: "The native plant rain garden handles all our runoff AND looks beautiful year-round.", image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400&q=80" },
   { name: "The Andersons", text: "From bare dirt to outdoor kitchen with dining for 12. Diego is a magician.", image: "https://images.unsplash.com/photo-1523301343968-6a6ebf63c672?w=400&q=80" },
   { name: "Paul T.", text: "We hired 3 landscapers before Diego. He's the only one who actually DESIGNED something.", image: "https://images.unsplash.com/photo-1560749003-f4b1e17e2dff?w=400&q=80" },
 ];

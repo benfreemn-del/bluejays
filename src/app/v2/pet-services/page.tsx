@@ -284,7 +284,7 @@ const petTypes = [
     name: "Small Animals",
     desc: "Rabbits, hamsters, guinea pigs, and ferrets — we know the special handling, diet, and habitat needs that keep each species happy and healthy.",
     icon: Fish,
-    img: "https://images.unsplash.com/photo-1535241749838-299277c6fc1e?w=600&q=80",
+    img: "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=600&q=80",
     features: ["Species-specific diets", "Habitat cleaning", "Gentle handling", "Exercise supervision"],
   },
   {
@@ -358,7 +358,7 @@ const galleryImages = [
     alt: "Cat napping in sunshine",
   },
   {
-    src: "https://images.unsplash.com/photo-1587015990127-424b954b3729?w=600&q=80",
+    src: "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&q=80",
     alt: "Puppy bath time grooming",
   },
   {
@@ -366,7 +366,7 @@ const galleryImages = [
     alt: "Fluffy white dog smiling",
   },
   {
-    src: "https://images.unsplash.com/photo-1583337130417-13571fc172b8?w=600&q=80",
+    src: "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600&q=80",
     alt: "Two dogs playing together",
   },
   {
@@ -374,7 +374,7 @@ const galleryImages = [
     alt: "Dog with bandana outdoors",
   },
   {
-    src: "https://images.unsplash.com/photo-1518882460395-1f8eda203d82?w=600&q=80",
+    src: "https://images.unsplash.com/photo-1596492784531-6e6eb5ea9993?w=600&q=80",
     alt: "Sleeping kitten on blanket",
   },
 ];
@@ -504,7 +504,7 @@ const heroCards = [
     accent: CORAL,
   },
   {
-    img: "https://images.unsplash.com/photo-1609792872023-ff67f9b0ae5c?w=600&q=80",
+    img: "https://images.unsplash.com/photo-1560807707-8cc77767d783?w=600&q=80",
     label: "Small Pets",
     accent: AMBER,
   },

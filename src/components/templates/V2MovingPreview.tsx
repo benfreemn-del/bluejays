@@ -84,7 +84,7 @@ function getServiceIcon(serviceName: string) {
 /* Moving-relevant stock photos — movers, trucks, boxes, packing */
 const STOCK_HERO_POOL = [
   "https://images.unsplash.com/photo-1600518464441-9154a4dea21b?w=1400&q=80",   // person carrying box
-  "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=1400&q=80",       // moving boxes stacked
+  "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=1400&q=80",       // moving boxes stacked
   "https://images.unsplash.com/photo-1603796846097-bee99e4a601f?w=1400&q=80",     // packed boxes in room
   "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=1400&q=80",     // couple moving boxes
   "https://images.unsplash.com/photo-1600585152220-90363fe7e115?w=1400&q=80",     // bright room with boxes
@@ -97,7 +97,7 @@ const STOCK_ABOUT_POOL = [
   "https://images.unsplash.com/photo-1600566752355-35792bedcfea?w=600&q=80",      // movers working
 ];
 const STOCK_PROJECTS = [
-  "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=600&q=80",         // stacked boxes
+  "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=600&q=80",         // stacked boxes
   "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=600&q=80",      // couple with boxes
   "https://images.unsplash.com/photo-1600585152220-90363fe7e115?w=600&q=80",      // room with boxes
   "https://images.unsplash.com/photo-1556761175-4b46a572b786?w=600&q=80",         // moving team

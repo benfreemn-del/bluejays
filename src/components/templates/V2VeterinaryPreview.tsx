@@ -95,16 +95,16 @@ function getServiceIcon(serviceName: string) {
 const STOCK_HERO_POOL = [
   "/images/vet-hero-dog.png",                                                     // Australian Shepherd (Ben's pick)
   "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=1400&q=80",   // golden retriever portrait
-  "https://images.unsplash.com/photo-1583337130417-13104dec14a3?w=1400&q=80",   // vet examining dog
+  "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=1400&q=80",   // dogs running together
   "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=1400&q=80",   // happy dog closeup
   "https://images.unsplash.com/photo-1560807707-8cc77767d783?w=1400&q=80",       // puppy face
 ];
 const STOCK_ABOUT_POOL = [
   "https://images.unsplash.com/photo-1629740067905-bd3f515aa739?w=600&q=80",    // vet with pet
-  "https://images.unsplash.com/photo-1612531386530-97d5822c0d6f?w=600&q=80",    // vet clinic interior
+  "https://images.unsplash.com/photo-1596492784531-6e6eb5ea9993?w=600&q=80",    // vet with pet
   "https://images.unsplash.com/photo-1576201836106-db1758fd1c97?w=600&q=80",    // dog at vet
   "https://images.unsplash.com/photo-1548767797-d8c844163c4c?w=600&q=80",       // cat portrait
-  "https://images.unsplash.com/photo-1450778869180-e77e3ec1c771?w=600&q=80",    // vet holding puppy
+  "https://images.unsplash.com/photo-1623387641168-d9803ddd3f35?w=600&q=80",    // vet holding puppy
 ];
 /* 12 unique vet-relevant gallery images — enough to pick 4 without collisions */
 const STOCK_GALLERY_POOL = [
@@ -118,7 +118,7 @@ const STOCK_GALLERY_POOL = [
   "https://images.unsplash.com/photo-1592194996308-7b43878e84a6?w=600&q=80",   // cat closeup
   "https://images.unsplash.com/photo-1601758003122-53c40e686a19?w=600&q=80",   // corgi puppy
   "https://images.unsplash.com/photo-1576201836106-db1758fd1c97?w=600&q=80",   // dog at vet visit
-  "https://images.unsplash.com/photo-1511382686815-a9a670c26849?w=600&q=80",   // cat with vet
+  "https://images.unsplash.com/photo-1628009368231-7bb7cfcb0def?w=600&q=80",   // cat with vet
   "https://images.unsplash.com/photo-1535930749574-1399327ce78f?w=600&q=80",   // lab puppy face
 ];
 
