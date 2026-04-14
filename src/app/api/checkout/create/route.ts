@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { rateLimit } from "@/lib/rate-limit";
 import { getProspect, updateProspect } from "@/lib/store";
 import { createCheckoutSession } from "@/lib/stripe";
 
@@ -12,6 +13,12 @@ import { createCheckoutSession } from "@/lib/stripe";
  * Response: { url: string } — redirect the client to this Stripe Checkout URL
  */
 export async function POST(request: NextRequest) {
+  const ip = request.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
+  const { allowed } = rateLimit(`checkout:${ip}`, 10, 60 * 60 * 1000);
+  if (!allowed) {
+    return NextResponse.json({ error: "Too many checkout attempts. Please try again later." }, { status: 429 });
+  }
+
   try {
     const body = await request.json();
     const { prospectId, plan } = body;

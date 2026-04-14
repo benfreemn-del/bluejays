@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { rateLimit } from "@/lib/rate-limit";
 import { v4 as uuidv4 } from "uuid";
 import { addProspect } from "@/lib/store";
 import { generatePreview } from "@/lib/generator";
@@ -124,6 +125,12 @@ async function notifyOwnerSms(lead: { businessName: string; phone: string; categ
 // Scrapes their info, generates a preview site, notifies owner
 
 export async function POST(request: NextRequest) {
+  const ip = request.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
+  const { allowed } = rateLimit(`lead-submit:${ip}`, 5, 60 * 60 * 1000);
+  if (!allowed) {
+    return NextResponse.json({ error: "Too many submissions. Please try again later." }, { status: 429 });
+  }
+
   const body = await request.json();
   const { businessName, ownerName, phone, email, website, category, city, state } = body;
 

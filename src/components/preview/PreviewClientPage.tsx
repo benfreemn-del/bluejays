@@ -12,10 +12,17 @@ function DeviceToggleBar({ id, device, onToggle }: { id: string; device: "deskto
 
   const copyLink = (d: string) => {
     const url = `${baseUrl}?device=${d}`;
-    navigator.clipboard.writeText(url).then(() => {
-      setCopied(d);
-      setTimeout(() => setCopied(null), 2000);
-    });
+    try {
+      navigator.clipboard.writeText(url).then(() => {
+        setCopied(d);
+        setTimeout(() => setCopied(null), 2000);
+      }).catch(() => {
+        // Fallback for non-secure contexts
+        prompt("Copy this link:", url);
+      });
+    } catch {
+      prompt("Copy this link:", url);
+    }
   };
 
   return (
@@ -44,7 +51,7 @@ function DeviceToggleBar({ id, device, onToggle }: { id: string; device: "deskto
       {/* Copy link buttons */}
       <button
         onClick={() => copyLink("desktop")}
-        className="flex items-center gap-1 px-2 py-1.5 rounded-full text-[10px] font-medium text-white/40 hover:text-white/70 transition-colors"
+        className="hidden sm:flex items-center gap-1 px-2 py-1.5 rounded-full text-[10px] font-medium text-white/40 hover:text-white/70 transition-colors"
         title="Copy desktop link"
       >
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" /></svg>
@@ -52,7 +59,7 @@ function DeviceToggleBar({ id, device, onToggle }: { id: string; device: "deskto
       </button>
       <button
         onClick={() => copyLink("mobile")}
-        className="flex items-center gap-1 px-2 py-1.5 rounded-full text-[10px] font-medium text-white/40 hover:text-white/70 transition-colors"
+        className="hidden sm:flex items-center gap-1 px-2 py-1.5 rounded-full text-[10px] font-medium text-white/40 hover:text-white/70 transition-colors"
         title="Copy mobile link"
       >
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" /></svg>
@@ -193,9 +200,9 @@ export default function PreviewClientPage({
       </div>
       {device === "mobile" ? (
         <div className="min-h-screen bg-[#111] flex items-start justify-center pt-4 pb-24">
-          <div className="relative border border-white/10 bg-black overflow-hidden shadow-2xl" style={{ width: 390, maxHeight: "90vh" }}>
+          <div className="relative border border-white/10 bg-black overflow-hidden shadow-2xl" style={{ width: "min(390px, calc(100vw - 32px))", maxHeight: "90vh" }}>
             <div className="overflow-y-auto" style={{ height: "90vh" }}>
-              <div style={{ width: 390 }}>
+              <div style={{ width: "min(390px, calc(100vw - 32px))" }}>
                 <PreviewContent id={id} siteData={siteData} selectedTheme={selectedTheme} version={resolvedVersion} />
               </div>
             </div>

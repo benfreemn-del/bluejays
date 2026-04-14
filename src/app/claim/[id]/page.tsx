@@ -593,7 +593,9 @@ export default function ClaimPage() {
               See how we compare to other options
             </p>
 
-            <div className="overflow-x-auto">
+            <div className="relative overflow-x-auto">
+              {/* Scroll hint gradient on mobile */}
+              <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-[#0a0f1a] to-transparent sm:hidden z-10" />
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-white/10">
