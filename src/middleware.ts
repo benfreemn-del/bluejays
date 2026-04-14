@@ -5,6 +5,7 @@ const ADMIN_PASSWORD = (process.env.ADMIN_PASSWORD || "bluejay2026").trim();
 // Protected routes that require login
 const PROTECTED_PATHS = [
   "/dashboard",
+  "/funnel-tracker",
   "/scripts",
   "/lead",
   "/preview-device",

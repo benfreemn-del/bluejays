@@ -147,6 +147,9 @@ export default function DashboardPage() {
             <a href="/spending" className="rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-background hover:text-foreground">
               Spend
             </a>
+            <Link href="/funnel-tracker" className="rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-background hover:text-foreground">
+              Funnel
+            </Link>
             <a href="/deliverability" className="rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-background hover:text-foreground">
               Email
             </a>
