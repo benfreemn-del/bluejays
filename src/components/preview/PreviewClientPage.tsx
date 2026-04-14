@@ -188,17 +188,13 @@ export default function PreviewClientPage({
   return (
     <>
       {device === "mobile" ? (
-        <div className="min-h-screen bg-[#111] flex items-start justify-center pt-8 pb-24">
-          <div className="relative rounded-[2.5rem] border-[6px] border-white/20 bg-black overflow-hidden shadow-2xl" style={{ width: 390, maxHeight: "85vh" }}>
-            {/* Notch */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[120px] h-[28px] bg-black rounded-b-2xl z-50" />
-            <div className="overflow-y-auto" style={{ height: "85vh" }}>
-              <div style={{ width: 378 }}>
+        <div className="min-h-screen bg-[#111] flex items-start justify-center pt-4 pb-24">
+          <div className="relative border border-white/10 bg-black overflow-hidden shadow-2xl" style={{ width: 390, maxHeight: "90vh" }}>
+            <div className="overflow-y-auto" style={{ height: "90vh" }}>
+              <div style={{ width: 390 }}>
                 <PreviewContent id={id} siteData={siteData} selectedTheme={selectedTheme} version={resolvedVersion} />
               </div>
             </div>
-            {/* Home indicator */}
-            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-[134px] h-[5px] bg-white/30 rounded-full z-50" />
           </div>
         </div>
       ) : (
