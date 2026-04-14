@@ -654,7 +654,7 @@ export default function ElectricianV2Showcase() {
             >
               <div className="rounded-2xl overflow-hidden border border-white/[0.08]">
                 <img
-                  src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=700&q=80"
+                  src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=700&q=80"
                   alt="Mike Torres — Master Electrician"
                   className="w-full aspect-[4/5] object-cover object-top"
                 />
