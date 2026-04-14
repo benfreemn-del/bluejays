@@ -61,8 +61,10 @@ export default function MapView({ prospects, onStateClick }: MapViewProps) {
   const [scoutResult, setScoutResult] = useState("");
 
   // Keep scoutCategory in sync — if current selection is exhausted, pick the first available
-  const availableCategories = (Object.keys(CATEGORY_CONFIG) as Category[]).filter(
-    cat => !(exhaustedCategories[scoutCounty] || []).includes(cat)
+  const exhaustedForCounty = exhaustedCategories[scoutCounty] || [];
+  const availableCategories = useMemo(
+    () => (Object.keys(CATEGORY_CONFIG) as Category[]).filter(cat => !exhaustedForCounty.includes(cat)),
+    [exhaustedForCounty]
   );
   useEffect(() => {
     if (availableCategories.length > 0 && !availableCategories.includes(scoutCategory)) {
