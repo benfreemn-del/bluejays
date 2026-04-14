@@ -154,6 +154,12 @@ export interface ScoutOptions {
   state?: string;
   category: Category;
   limit?: number;
+  pageToken?: string;
+}
+
+export interface ScoutResult {
+  prospects: Prospect[];
+  nextPageToken?: string;
 }
 
 export interface PipelineResult {

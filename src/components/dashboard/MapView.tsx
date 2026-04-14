@@ -161,21 +161,53 @@ export default function MapView({ prospects, onStateClick }: MapViewProps) {
     }
   };
 
+  // Track exhausted categories per county + pagination tokens
+  const [exhaustedCategories, setExhaustedCategories] = useState<Record<string, string[]>>({});
+  const [pageTokens, setPageTokens] = useState<Record<string, string>>({});
+
   const handleCountyScout = async () => {
     if (!scoutCounty) return;
     setScouting(true);
     setScoutResult("");
     try {
+      const tokenKey = `${scoutCounty}-${scoutCategory}`;
+      const existingToken = pageTokens[tokenKey];
       const res = await fetch("/api/scout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ city: `${scoutCounty}, ${selectedState}`, category: scoutCategory, limit: 5 }),
+        body: JSON.stringify({
+          city: `${scoutCounty}, ${selectedState}`,
+          category: scoutCategory,
+          limit: 5,
+          pageToken: existingToken || undefined,
+        }),
       });
       const data = await res.json();
+
+      // Save next page token for this county+category combo
+      if (data.nextPageToken) {
+        setPageTokens(prev => ({ ...prev, [tokenKey]: data.nextPageToken }));
+      } else {
+        // No more pages — mark as exhausted if 0 results
+        if (data.prospects.length === 0) {
+          setExhaustedCategories(prev => ({
+            ...prev,
+            [scoutCounty]: [...(prev[scoutCounty] || []), scoutCategory],
+          }));
+          setPageTokens(prev => { const n = { ...prev }; delete n[tokenKey]; return n; });
+        }
+      }
+
+      // Generate sites for new prospects
       for (const p of data.prospects) {
         await fetch(`/api/generate/${p.id}`, { method: "POST" });
       }
-      setScoutResult(`Found ${data.prospects.length} businesses in ${scoutCounty}! Switch to Table View to manage them.`);
+
+      if (data.prospects.length === 0) {
+        setScoutResult(`No new ${scoutCategory} businesses found in ${scoutCounty}. Try another category.`);
+      } else {
+        setScoutResult(`Found ${data.prospects.length} new businesses in ${scoutCounty}! Switch to Table View to manage them.`);
+      }
     } catch {
       setScoutResult("Error running scout.");
     } finally {
@@ -312,9 +344,11 @@ export default function MapView({ prospects, onStateClick }: MapViewProps) {
                     onChange={(e) => setScoutCategory(e.target.value as Category)}
                     className="w-full h-10 px-3 rounded-lg bg-surface border border-border text-foreground text-sm"
                   >
-                    {(Object.keys(CATEGORY_CONFIG) as Category[]).map((cat) => (
-                      <option key={cat} value={cat}>{CATEGORY_CONFIG[cat].label}</option>
-                    ))}
+                    {(Object.keys(CATEGORY_CONFIG) as Category[])
+                      .filter(cat => !(exhaustedCategories[scoutCounty] || []).includes(cat))
+                      .map((cat) => (
+                        <option key={cat} value={cat}>{CATEGORY_CONFIG[cat].label}</option>
+                      ))}
                   </select>
                 </div>
                 <button

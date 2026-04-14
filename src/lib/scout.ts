@@ -15,8 +15,8 @@ import {
 
 const GOOGLE_API_KEY = process.env.GOOGLE_PLACES_API_KEY;
 
-async function scoutWithGoogle(options: ScoutOptions): Promise<Prospect[]> {
-  const { city, state, category, limit = 10 } = options;
+async function scoutWithGoogle(options: ScoutOptions): Promise<{ prospects: Prospect[]; nextPageToken?: string }> {
+  const { city, state, category, limit = 10, pageToken } = options;
 
   // Use smart queries for better search coverage
   const smartQueries = getSmartQueries(category, 2);
@@ -24,8 +24,11 @@ async function scoutWithGoogle(options: ScoutOptions): Promise<Prospect[]> {
   const query = `${primaryQuery} in ${city}${state ? `, ${state}` : ""}`;
   console.log(`  [Scout Optimizer] Using smart query: "${query}" (${smartQueries.length} variants available)`);
 
-  // Step 1: Text Search to find businesses
-  const searchUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(query)}&key=${GOOGLE_API_KEY}`;
+  // Step 1: Text Search to find businesses (use pageToken for next batch if provided)
+  let searchUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(query)}&key=${GOOGLE_API_KEY}`;
+  if (pageToken) {
+    searchUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?pagetoken=${pageToken}&key=${GOOGLE_API_KEY}`;
+  }
   const searchResponse = await fetch(searchUrl);
   const searchData = await searchResponse.json();
 
@@ -95,7 +98,7 @@ async function scoutWithGoogle(options: ScoutOptions): Promise<Prospect[]> {
     });
   }
 
-  return prospects;
+  return { prospects, nextPageToken: searchData.next_page_token };
 }
 
 function scoutWithMockData(options: ScoutOptions): Prospect[] {
@@ -126,12 +129,12 @@ const ACTIVE_CATEGORIES: Category[] = [
   "med-spa", "appliance-repair", "junk-removal", "carpet-cleaning", "event-planning",
 ];
 
-export async function scout(options: ScoutOptions): Promise<Prospect[]> {
+export async function scout(options: ScoutOptions): Promise<{ prospects: Prospect[]; nextPageToken?: string }> {
   // Only scout categories with built templates
   if (!ACTIVE_CATEGORIES.includes(options.category)) {
     console.log(`\n⚠️ Category "${options.category}" doesn't have a premium template yet. Skipping.`);
     console.log(`  Active categories: ${ACTIVE_CATEGORIES.join(", ")}`);
-    return [];
+    return { prospects: [] };
   }
 
   console.log(
@@ -139,10 +142,13 @@ export async function scout(options: ScoutOptions): Promise<Prospect[]> {
   );
 
   let prospects: Prospect[];
+  let nextPageToken: string | undefined;
 
   if (GOOGLE_API_KEY) {
     console.log("  Using Google Places API");
-    prospects = await scoutWithGoogle(options);
+    const result = await scoutWithGoogle(options);
+    prospects = result.prospects;
+    nextPageToken = result.nextPageToken;
   } else {
     console.log("  Using mock data (set GOOGLE_PLACES_API_KEY for real results)");
     prospects = scoutWithMockData(options);
@@ -240,5 +246,5 @@ export async function scout(options: ScoutOptions): Promise<Prospect[]> {
   });
 
   console.log(`  Final: ${scoredResults.length} prospects after quality filtering\n`);
-  return scoredResults;
+  return { prospects: scoredResults, nextPageToken };
 }
