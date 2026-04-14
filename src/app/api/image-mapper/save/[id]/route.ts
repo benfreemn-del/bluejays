@@ -38,20 +38,14 @@ export async function POST(
     mapping.lastUpdated = new Date().toISOString();
   }
 
-  // Build updated photos array from mappings — this updates the LIVE preview
-  const existingPhotos = (sd.photos as string[]) || [];
-  const updatedPhotos = [...existingPhotos];
-  for (const img of mapping.images) {
+  // Build updated photos array using the ORIGINAL urls as the base,
+  // then apply replacements on top. This preserves correct ordering.
+  const updatedPhotos: string[] = mapping.images.map((img) => {
     if (img.status === "replaced" && img.replacementUrl) {
-      // Replace the photo at the corresponding position (0-indexed)
-      const idx = img.position - 1;
-      if (idx < updatedPhotos.length) {
-        updatedPhotos[idx] = img.replacementUrl;
-      } else {
-        updatedPhotos.push(img.replacementUrl);
-      }
+      return img.replacementUrl;
     }
-  }
+    return img.originalUrl;
+  });
 
   // Save mapping + updated photos back to prospect's scrapedData
   await updateProspect(id, {
@@ -73,7 +67,6 @@ export async function POST(
     }
   } catch (err) {
     console.error("[image-mapper/save] Failed to update generated_sites:", err);
-    // Don't fail the whole request — prospect data is already saved
   }
 
   return NextResponse.json({ message: "Saved", mapping, photosUpdated: true });

@@ -319,6 +319,30 @@ export default function ImageMapDetailPage() {
     }
   };
 
+  /* ─── Undo: Revert a slot back to original ─── */
+  const handleUndo = async (position: number) => {
+    if (!mapping) return;
+    try {
+      const res = await fetch(`/api/image-mapper/save/${id}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          imageUpdate: {
+            position,
+            replacementUrl: null,
+            status: "needs-replacement",
+          },
+        }),
+      });
+      const data = await res.json();
+      if (data.mapping) setMapping(data.mapping);
+      setIframeKey((k) => k + 1);
+    } catch (err) {
+      console.error("Undo failed:", err);
+    }
+  };
+
   /* ─── Drag & Drop: Save replacement on drop ─── */
   const handleDrop = async (position: number, replacementUrl: string) => {
     if (!mapping) return;
@@ -694,17 +718,29 @@ export default function ImageMapDetailPage() {
                             </p>
                           </div>
 
-                          {/* Keep button */}
-                          <button
-                            onClick={() => toggleKeepOriginal(img.position)}
-                            className={`text-xs px-3 py-1.5 rounded-lg border transition-colors shrink-0 cursor-pointer ${
-                              img.status === "keep-original"
-                                ? "border-blue-500 text-blue-400 bg-blue-500/10"
-                                : "border-white/10 text-white/40 hover:border-white/20 hover:text-white/60"
-                            }`}
-                          >
-                            {img.status === "keep-original" ? "Kept ✓" : "Keep"}
-                          </button>
+                          {/* Undo button — only when replaced */}
+                          {img.status === "replaced" && (
+                            <button
+                              onClick={() => handleUndo(img.position)}
+                              className="text-xs px-3 py-1.5 rounded-lg border border-amber-500/30 text-amber-400 bg-amber-500/10 hover:bg-amber-500/20 transition-colors shrink-0 cursor-pointer"
+                              title="Undo — revert to original image"
+                            >
+                              Undo
+                            </button>
+                          )}
+                          {/* Keep button — only when not replaced */}
+                          {img.status !== "replaced" && (
+                            <button
+                              onClick={() => toggleKeepOriginal(img.position)}
+                              className={`text-xs px-3 py-1.5 rounded-lg border transition-colors shrink-0 cursor-pointer ${
+                                img.status === "keep-original"
+                                  ? "border-blue-500 text-blue-400 bg-blue-500/10"
+                                  : "border-white/10 text-white/40 hover:border-white/20 hover:text-white/60"
+                              }`}
+                            >
+                              {img.status === "keep-original" ? "Kept ✓" : "Keep"}
+                            </button>
+                          )}
                         </div>
 
                         {/* Expandable notes (click row to toggle) */}
