@@ -81,12 +81,21 @@ export default function ProspectTable({
     Record<string, { state: "idle" | "sending" | "success" | "error"; message: string }>
   >({});
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const PAGE_SIZE = 100;
+
   const filtered = prospects.filter((p) => {
     if (categoryFilter && p.category !== categoryFilter) return false;
     if (statusFilter && p.status !== statusFilter) return false;
     if (!statusFilter && p.status === "dismissed") return false;
     return true;
   });
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const paginatedFiltered = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+  // Reset to page 1 when filters change
+  useEffect(() => { setCurrentPage(1); }, [categoryFilter, statusFilter]);
 
   const isSelected = (id: string) => selectedIds.includes(id);
 
@@ -559,7 +568,7 @@ export default function ProspectTable({
             </tr>
           </thead>
           <tbody>
-            {filtered.map((prospect) => {
+            {paginatedFiltered.map((prospect) => {
               const mergedProspect = getMergedProspect(prospect);
               const hasPendingNotes = hasPendingAdminUpdates(mergedProspect);
 
@@ -779,6 +788,62 @@ export default function ProspectTable({
         </table>
       </div>
 
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between px-4 py-3 border-t border-border">
+          <p className="text-sm text-muted">
+            Showing {((currentPage - 1) * PAGE_SIZE) + 1}–{Math.min(currentPage * PAGE_SIZE, filtered.length)} of {filtered.length}
+          </p>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => setCurrentPage(1)}
+              disabled={currentPage === 1}
+              className="px-2 py-1 text-xs rounded border border-border text-muted hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed"
+            >
+              ««
+            </button>
+            <button
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="px-2 py-1 text-xs rounded border border-border text-muted hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed"
+            >
+              ‹ Prev
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1)
+              .filter(p => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 2)
+              .map((page, idx, arr) => (
+                <span key={page} className="flex items-center">
+                  {idx > 0 && arr[idx - 1] !== page - 1 && <span className="px-1 text-muted">…</span>}
+                  <button
+                    onClick={() => setCurrentPage(page)}
+                    className={`px-2.5 py-1 text-xs rounded border transition-colors ${
+                      page === currentPage
+                        ? "bg-blue-electric text-white border-blue-electric"
+                        : "border-border text-muted hover:text-foreground"
+                    }`}
+                  >
+                    {page}
+                  </button>
+                </span>
+              ))}
+            <button
+              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              className="px-2 py-1 text-xs rounded border border-border text-muted hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed"
+            >
+              Next ›
+            </button>
+            <button
+              onClick={() => setCurrentPage(totalPages)}
+              disabled={currentPage === totalPages}
+              className="px-2 py-1 text-xs rounded border border-border text-muted hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed"
+            >
+              »»
+            </button>
+          </div>
+        </div>
+      )}
 
       <ProspectNotesDrawer
         prospect={openNotesMerged}
