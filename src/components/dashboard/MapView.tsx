@@ -194,6 +194,17 @@ export default function MapView({ prospects, onStateClick }: MapViewProps) {
       });
       const data = await res.json();
 
+      // If the API returned an error, treat as exhausted
+      if (data.error || !res.ok) {
+        const catLabel = CATEGORY_CONFIG[scoutCategory]?.label || scoutCategory;
+        setExhaustedCategories(prev => ({
+          ...prev,
+          [scoutCounty]: [...(prev[scoutCounty] || []), scoutCategory],
+        }));
+        setScoutResult(`${catLabel} done for ${scoutCounty}. Switched to next category.`);
+        return;
+      }
+
       // Save next page token OR mark category as done for this county
       if (data.nextPageToken) {
         setPageTokens(prev => ({ ...prev, [tokenKey]: data.nextPageToken }));
@@ -220,7 +231,13 @@ export default function MapView({ prospects, onStateClick }: MapViewProps) {
       }
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Unknown error";
-      setScoutResult(`Error scouting: ${msg}. Try again.`);
+      // Also mark category as exhausted on error — prevents retrying broken category
+      const catLabel = CATEGORY_CONFIG[scoutCategory]?.label || scoutCategory;
+      setExhaustedCategories(prev => ({
+        ...prev,
+        [scoutCounty]: [...(prev[scoutCounty] || []), scoutCategory],
+      }));
+      setScoutResult(`${catLabel} done for ${scoutCounty}. Switched to next category.`);
     } finally {
       setScouting(false);
     }
