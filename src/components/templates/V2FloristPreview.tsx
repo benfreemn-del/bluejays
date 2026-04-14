@@ -219,6 +219,8 @@ export default function V2FloristPreview({ data }: { data: GeneratedSiteData }) 
     { q: "Do you offer wedding consultations?", a: "Yes, we offer complimentary wedding consultations to discuss your vision, color palette, and floral needs for your special day." },
     { q: "How do I care for my flowers?", a: "Trim stems at an angle, change water every 2 days, keep away from direct sunlight and heat sources. We include care instructions with every delivery." },
     { q: "Do you deliver to hospitals and funeral homes?", a: "Yes, we deliver to all local hospitals, funeral homes, churches, and event venues." },
+    { q: "What is your delivery area?", a: `${data.businessName} delivers throughout ${data.address?.split(",")[0] || "our local area"} and surrounding neighborhoods. Contact us for delivery to specific locations.` },
+    { q: "Do you offer flower subscriptions?", a: "Yes! Our weekly and bi-weekly subscription service delivers fresh seasonal arrangements right to your door or office. A perfect way to keep your space blooming." },
   ];
 
   const fallbackTestimonials = [
@@ -621,6 +623,30 @@ export default function V2FloristPreview({ data }: { data: GeneratedSiteData }) 
               </div>
             </GlassCard>
           </div>
+          <div className="flex flex-wrap justify-center gap-2 mt-6">
+            {(data.serviceAreas || [data.address?.split(",")[0] || "Local Area"]).map((area: string) => (
+              <span key={area} className="px-4 py-2 rounded-full text-xs font-medium border" style={{ color: ACCENT, borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}>
+                {area}
+              </span>
+            ))}
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto mt-6">
+            <GlassCard className="p-4 text-center">
+              <Truck size={20} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-2" />
+              <p className="text-sm font-semibold" style={{ color: ACCENT }}>Same-Day Delivery</p>
+              <p className="text-xs text-gray-500">Order before noon</p>
+            </GlassCard>
+            <GlassCard className="p-4 text-center">
+              <Gift size={20} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-2" />
+              <p className="text-sm font-semibold" style={{ color: ACCENT }}>Gift Wrapping</p>
+              <p className="text-xs text-gray-500">Complimentary with orders</p>
+            </GlassCard>
+            <GlassCard className="p-4 text-center">
+              <MapPin size={20} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-2" />
+              <p className="text-sm font-semibold" style={{ color: ACCENT }}>Wide Coverage</p>
+              <p className="text-xs text-gray-500">25-mile delivery radius</p>
+            </GlassCard>
+          </div>
         </div>
       </section>
 
@@ -645,6 +671,157 @@ export default function V2FloristPreview({ data }: { data: GeneratedSiteData }) 
           </div>
         </section>
       )}
+
+      {/* 16a-2. WHY CHOOSE US */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #f8f0ee 50%, ${BG} 100%)` }} />
+        <VineBackground opacity={0.02} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Our Difference" title="Why Choose Us" accent={ACCENT} />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { icon: Flower, title: "Hand-Crafted", desc: "Every arrangement is designed by hand with meticulous attention to detail." },
+              { icon: Truck, title: "Same-Day Delivery", desc: "Order before noon for same-day delivery throughout our service area." },
+              { icon: Heart, title: "Fresh Guaranteed", desc: "We source the freshest blooms and guarantee their beauty for days." },
+              { icon: Palette, title: "Custom Designs", desc: "Tell us your vision and we will create something uniquely beautiful." },
+            ].map((item) => (
+              <GlassCard key={item.title} className="p-6 text-center">
+                <div className="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ background: `${ACCENT}15`, border: `1px solid ${ACCENT}22` }}>
+                  <item.icon size={28} weight="duotone" style={{ color: ACCENT }} />
+                </div>
+                <h3 className="text-base font-bold mb-2" style={{ color: ACCENT }}>{item.title}</h3>
+                <p className="text-sm text-gray-500 leading-relaxed">{item.desc}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 16a-3. FLOWER MEANINGS GUIDE */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #faf0ef 50%, ${BG} 100%)` }} />
+        <PetalPattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Meanings" title="The Language of Flowers" subtitle="Every bloom carries a message. Let us help you say it with flowers." accent={ACCENT} />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[
+              { flower: "Roses", meaning: "Love, passion, and devotion. Red for romance, white for purity, pink for gratitude." },
+              { flower: "Peonies", meaning: "Prosperity, good fortune, and a happy marriage. A wedding favorite." },
+              { flower: "Sunflowers", meaning: "Adoration, loyalty, and longevity. Brightens any room instantly." },
+              { flower: "Lilies", meaning: "Purity, rebirth, and remembrance. Elegant for sympathy and celebration." },
+              { flower: "Tulips", meaning: "Perfect love and new beginnings. A spring classic in every color." },
+              { flower: "Hydrangeas", meaning: "Heartfelt gratitude and understanding. Stunning in large arrangements." },
+            ].map((item) => (
+              <GlassCard key={item.flower} className="p-5">
+                <h4 className="text-base font-bold mb-2" style={{ color: ACCENT }}>{item.flower}</h4>
+                <p className="text-sm text-gray-500 leading-relaxed">{item.meaning}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 16b. ARRANGEMENT GALLERY */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #faf0ef 50%, ${BG} 100%)` }} />
+        <PetalPattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Portfolio" title="Our Arrangements" subtitle="Browse our recent floral designs for weddings, events, and everyday beauty." accent={ACCENT} />
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {galleryImages.slice(0, 6).map((img, i) => {
+              const labels = ["Bridal Bouquet", "Centerpiece Design", "Garden Party", "Sympathy Wreath", "Event Arch", "Weekly Subscription"];
+              const styles = ["Romantic", "Modern", "Rustic", "Classic", "Bohemian", "Seasonal"];
+              return (
+                <div key={i} className="group relative aspect-square rounded-2xl overflow-hidden border border-black/5 shadow-sm">
+                  <img src={img} alt={labels[i]} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
+                    <span className="text-xs font-bold uppercase tracking-wider text-white/70 mb-1">{styles[i]}</span>
+                    <span className="text-sm font-semibold text-white">{labels[i]}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* 16c. FLOWER CARE TIPS */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #f8f0ee 50%, ${BG} 100%)` }} />
+        <VineBackground opacity={0.02} accent={ACCENT} />
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Care" title="Flower Care Tips" subtitle="Keep your arrangements fresh and beautiful with these expert tips." accent={ACCENT} />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {[
+              { title: "Trim Stems Daily", desc: "Cut stems at a 45-degree angle under running water to maximize water absorption and extend vase life by days.", icon: Leaf },
+              { title: "Change Water Often", desc: "Replace vase water every 2-3 days and add fresh flower food. Clean vases prevent bacterial growth that shortens bloom life.", icon: Heart },
+              { title: "Keep Cool", desc: "Display arrangements away from direct sunlight, heat vents, and fruit bowls. Ethylene gas from fruit accelerates wilting.", icon: Sparkle },
+              { title: "Remove Wilted Blooms", desc: "As individual flowers fade, remove them promptly. Decaying flowers release bacteria that affect fresh ones nearby.", icon: Flower },
+            ].map((tip) => (
+              <GlassCard key={tip.title} className="p-6 flex gap-4 items-start">
+                <div className="w-12 h-12 rounded-full shrink-0 flex items-center justify-center" style={{ background: `${ACCENT}15`, border: `1px solid ${ACCENT}22` }}>
+                  <tip.icon size={24} weight="duotone" style={{ color: ACCENT }} />
+                </div>
+                <div>
+                  <h4 className="text-base font-bold mb-1" style={{ color: ACCENT }}>{tip.title}</h4>
+                  <p className="text-sm text-gray-500 leading-relaxed">{tip.desc}</p>
+                </div>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 16d. WEDDING PACKAGE DETAIL */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #faf0ef 50%, ${BG} 100%)` }} />
+        <PetalPattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Weddings" title="Wedding Floral Packages" subtitle="From intimate elopements to grand celebrations, we design florals that tell your love story." accent={ACCENT} />
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              { name: "Intimate", price: "$800+", desc: "Perfect for elopements and micro-weddings", features: ["Bridal bouquet", "Groom boutonniere", "2 attendant bouquets", "Ceremony arch florals"] },
+              { name: "Classic", price: "$2,500+", desc: "Full floral design for your celebration", features: ["Bridal party florals", "Ceremony design", "6 centerpieces", "Head table garland", "Flower girl petals"], popular: true },
+              { name: "Grand", price: "$5,000+", desc: "Luxurious floral experience for your special day", features: ["Everything in Classic", "Aisle markers", "12+ centerpieces", "Cake florals", "Lounge decor", "Floral installation"] },
+            ].map((pkg) => (
+              <GlassCard key={pkg.name} className={`p-6 ${pkg.popular ? "ring-1" : ""}`} style={pkg.popular ? { borderColor: ACCENT } : undefined}>
+                {pkg.popular && <div className="text-center mb-3"><span className="px-3 py-1 rounded-full text-xs font-bold text-white" style={{ background: ACCENT }}>Most Popular</span></div>}
+                <h3 className="text-lg font-bold mb-1" style={{ color: ACCENT }}>{pkg.name}</h3>
+                <div className="text-3xl font-extrabold mb-2" style={{ color: ACCENT }}>{pkg.price}</div>
+                <p className="text-sm text-gray-500 mb-4">{pkg.desc}</p>
+                <ul className="space-y-2">
+                  {pkg.features.map((f) => (
+                    <li key={f} className="flex items-center gap-2 text-sm text-gray-600">
+                      <CheckCircle size={14} weight="fill" style={{ color: ACCENT }} /> {f}
+                    </li>
+                  ))}
+                </ul>
+              </GlassCard>
+            ))}
+          </div>
+          <p className="text-center text-xs text-gray-400 mt-6">
+            Complimentary consultation included. Custom quotes available for unique venue designs.
+          </p>
+        </div>
+      </section>
+
+      {/* 16e. MID-PAGE CTA */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: ACCENT }} />
+        <div className="absolute inset-0 bg-black/10" />
+        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+          <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">Beautiful Flowers for Every Occasion</h2>
+          <p className="text-white/80 text-lg mb-8 max-w-2xl mx-auto">Same-day delivery available. Order a stunning bouquet or schedule a wedding consultation today.</p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <PhoneLink phone={data.phone} className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-white text-sm font-bold" style={{ color: ACCENT }}>
+              <Phone size={18} weight="fill" /> Order Now
+            </PhoneLink>
+            <a href="#contact" className="inline-flex items-center gap-2 px-8 py-4 rounded-full border-2 border-white text-white text-sm font-bold hover:bg-white/10 transition-colors">
+              Wedding Consult <ArrowRight size={18} weight="bold" />
+            </a>
+          </div>
+        </div>
+      </section>
 
       {/* 17. FAQ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
@@ -743,7 +920,10 @@ export default function V2FloristPreview({ data }: { data: GeneratedSiteData }) 
             <h2 className="text-2xl md:text-4xl font-extrabold tracking-tight text-[#1c1917]">Why Customers Choose Us</h2>
           </div>
           <div className="flex flex-wrap justify-center gap-3">
-            {["Certified Master Florist", "Locally Owned", "Eco-Friendly Packaging", "Satisfaction Guaranteed", "FTD Member", "Same-Day Available"].map((badge) => (
+            {[
+              "Certified Master Florist", "Locally Owned", "Eco-Friendly Packaging",
+              "Satisfaction Guaranteed", "FTD Member", "Same-Day Available",
+            ].map((badge) => (
               <div key={badge} className="inline-flex items-center gap-2 px-5 py-3 rounded-full border border-gray-200 bg-white/60 backdrop-blur-sm text-sm font-medium text-[#1c1917]">
                 <CheckCircle size={18} weight="duotone" style={{ color: ACCENT }} />
                 {badge}
@@ -782,7 +962,12 @@ export default function V2FloristPreview({ data }: { data: GeneratedSiteData }) 
           <ShimmerBorder accent={ACCENT}><div className="p-8 md:p-12">
             <Flower size={48} weight="fill" style={{ color: ACCENT }} className="mx-auto mb-4" />
             <h2 className="text-2xl md:text-4xl font-extrabold text-[#1c1917] mb-4">Our Freshness Guarantee</h2>
-            <p className="text-[#6b7280] leading-relaxed max-w-2xl mx-auto text-lg">Every arrangement from {data.businessName} is guaranteed fresh for 7 days. If you are not completely satisfied, we will replace it free of charge.</p>
+            <p className="text-[#6b7280] leading-relaxed max-w-2xl mx-auto text-lg mb-2">Every arrangement from {data.businessName} is guaranteed fresh for 7 days. If you are not completely satisfied, we will replace it free of charge.</p>
+            <p className="text-gray-400 text-sm max-w-xl mx-auto">
+              We stand behind every stem, every petal, and every design.
+              Our commitment to quality is what sets us apart from grocery store bouquets.
+              Experience the difference of a professional florist who cares about every detail.
+            </p>
             <div className="flex flex-wrap justify-center gap-4 mt-8">
               {["7-Day Fresh Guarantee", "Free Replacement", "Same-Day Delivery", "Handcrafted Daily"].map((item) => (
                 <span key={item} className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border" style={{ color: ACCENT, borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}><CheckCircle size={16} weight="fill" /> {item}</span>

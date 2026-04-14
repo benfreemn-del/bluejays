@@ -855,6 +855,152 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
       {/* ─── GUARANTEE ─── */}
       <section className="relative z-10 py-16 overflow-hidden"><div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1a0a 100%)" }} /><div className="max-w-4xl mx-auto px-6 relative z-10 text-center"><ShimmerBorder accent={ACCENT}><div className="p-8 md:p-12"><ShieldCheck size={48} weight="fill" style={{ color: ACCENT }} className="mx-auto mb-4" /><h2 className="text-2xl md:text-4xl font-extrabold text-white mb-4">Our Property Protection Guarantee</h2><p className="text-slate-400 leading-relaxed max-w-2xl mx-auto text-lg">{data.businessName} guarantees your property is left clean and undamaged. Full liability insurance and workers comp on every job.</p><div className="flex flex-wrap justify-center gap-4 mt-8">{["Certified Arborist", "Fully Insured", "Free Estimates", "Property Protection"].map((item) => <span key={item} className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border" style={{ color: ACCENT, borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}><CheckCircle size={16} weight="fill" /> {item}</span>)}</div></div></ShimmerBorder></div></section>
 
+      {/* ─── TREE SPECIES GUIDE ─── */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a1a0a 0%, #1a1a1a 50%, #0a1a0a 100%)" }} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <Leaf size={40} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-3" />
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Common Tree Species We Service</h2>
+            <p className="text-slate-400 mt-3 max-w-xl mx-auto">Our certified arborists are experienced with all tree varieties in your area.</p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              { name: "Oak", trait: "Large canopy, deep roots, prone to gall wasps" },
+              { name: "Pine", trait: "Needle drop, pitch buildup, susceptible to bark beetles" },
+              { name: "Maple", trait: "Dense shade, surface roots, fall color management" },
+              { name: "Cedar", trait: "Evergreen, wind-resistant, cedar apple rust" },
+              { name: "Birch", trait: "Peeling bark, shallow roots, bronze birch borer" },
+              { name: "Elm", trait: "Vase-shaped, Dutch elm disease prevention" },
+              { name: "Ash", trait: "Emerald ash borer monitoring, structural pruning" },
+              { name: "Fir", trait: "Tall growth, needle cast treatment, crown thinning" },
+            ].map((t) => (
+              <div key={t.name} className="rounded-2xl border border-white/10 p-5 text-center" style={{ background: "rgba(255,255,255,0.03)" }}>
+                <Tree size={24} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-2" />
+                <h3 className="text-sm font-bold text-white mb-1">{t.name}</h3>
+                <p className="text-xs text-slate-500 leading-relaxed">{t.trait}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── SEASONAL CARE ─── */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1a0a 100%)" }} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <Certificate size={40} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-3" />
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Seasonal Tree Care Calendar</h2>
+            <div className="w-16 h-1 mx-auto mt-3 rounded-full" style={{ background: ACCENT }} />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              { season: "Spring", tasks: "Inspect for winter damage, fertilize, apply pest preventatives, plant new trees" },
+              { season: "Summer", tasks: "Deep watering during droughts, monitor for disease, structural pruning, mulching" },
+              { season: "Autumn", tasks: "Fall cleanup, hazard assessment, crown reduction before storms, cabling weak limbs" },
+              { season: "Winter", tasks: "Storm damage response, dormant pruning, remove deadwood, plan spring planting" },
+            ].map((s) => (
+              <div key={s.season} className="rounded-2xl border border-white/10 p-6" style={{ background: "rgba(255,255,255,0.03)" }}>
+                <h3 className="text-lg font-bold text-white mb-2" style={{ color: ACCENT }}>{s.season}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed">{s.tasks}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── STORM DAMAGE CTA ─── */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15 0%, #1a1a1a 50%, ${ACCENT}08 100%)` }} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+          <Warning size={44} weight="fill" style={{ color: ACCENT }} className="mx-auto mb-4" />
+          <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">Storm Damage? We&apos;re Here Fast</h2>
+          <p className="text-slate-400 max-w-2xl mx-auto mb-6 text-lg">
+            When severe weather strikes, {data.businessName} provides emergency tree removal and storm cleanup. We respond quickly to fallen trees blocking roads, driveways, and structures.
+          </p>
+          <div className="flex flex-wrap justify-center gap-4 mb-8">
+            {["24/7 Emergency Response", "Insurance Claims Help", "Crane Services", "Debris Hauling"].map((item) => (
+              <span key={item} className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border" style={{ color: ACCENT, borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}>
+                <CheckCircle size={16} weight="fill" /> {item}
+              </span>
+            ))}
+          </div>
+          <a href={`tel:${data.phone}`} className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-white font-bold text-lg transition-transform hover:scale-105" style={{ background: ACCENT }}>
+            <Phone size={20} weight="fill" /> Emergency Tree Service
+          </a>
+        </div>
+      </section>
+
+      {/* ─── WHY CHOOSE US ─── */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a1a0a 0%, #1a1a1a 100%)" }} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Why Choose <span style={{ color: ACCENT }}>{data.businessName}</span></h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              {
+                title: "Certified Arborists",
+                desc: "ISA-certified arborists who understand tree biology, health, and proper pruning techniques",
+              },
+              {
+                title: "Full Insurance",
+                desc: "Comprehensive liability and workers compensation coverage on every single job",
+              },
+              {
+                title: "Clean Removal",
+                desc: "We leave your property cleaner than we found it — all debris hauled and stumps ground",
+              },
+              {
+                title: "Free Estimates",
+                desc: "Detailed written estimates with no obligation. We explain every recommendation.",
+              },
+            ].map((card) => (
+              <div key={card.title} className="rounded-2xl border border-white/10 p-6 text-center" style={{ background: "rgba(255,255,255,0.03)" }}>
+                <CheckCircle size={28} weight="fill" style={{ color: ACCENT }} className="mx-auto mb-3" />
+                <h3 className="text-lg font-bold text-white mb-2">{card.title}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed">{card.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── CERTIFICATIONS ROW ─── */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1a0a 100%)" }} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-8">
+            <SealCheck size={36} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-3" />
+            <h2 className="text-2xl md:text-3xl font-extrabold text-white">Industry Certifications</h2>
+            <p className="text-slate-400 mt-2 max-w-lg mx-auto">
+              {data.businessName} maintains the highest professional standards and industry certifications.
+            </p>
+          </div>
+          <div className="flex flex-wrap justify-center gap-6">
+            {[
+              "ISA Certified",
+              "Fully Insured",
+              "BBB Accredited",
+              "Licensed & Bonded",
+              "TCIA Member",
+              "Free Estimates",
+            ].map((badge) => (
+              <div
+                key={badge}
+                className="flex items-center gap-2 px-5 py-3 rounded-full border border-white/10"
+                style={{ background: "rgba(255,255,255,0.03)" }}
+              >
+                <SealCheck size={18} weight="fill" style={{ color: ACCENT }} />
+                <span className="text-sm font-medium text-white">{badge}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ─── FOOTER ─── */}
       <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden"><div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111 100%)" }} /><div className="mx-auto max-w-6xl px-6 relative z-10"><div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8"><div><div className="flex items-center gap-2 mb-3"><Tree size={22} weight="fill" style={{ color: ACCENT }} /><span className="text-lg font-bold text-white">{data.businessName}</span></div><p className="text-sm text-slate-500 leading-relaxed">{data.about.length > 120 ? data.about.slice(0, 120).trim() + "..." : data.about}</p></div><div><h4 className="text-sm font-semibold text-white mb-3">Quick Links</h4><div className="space-y-2">{["Services", "About", "Tree Health", "Contact"].map((l) => <a key={l} href={`#${l.toLowerCase().replace(" ", "-")}`} className="block text-sm text-slate-500 hover:text-white transition-colors">{l}</a>)}</div></div><div><h4 className="text-sm font-semibold text-white mb-3">Contact</h4><div className="space-y-2 text-sm text-slate-500"><p><PhoneLink phone={data.phone} /></p><p><MapLink address={data.address} /></p>{data.socialLinks && Object.entries(data.socialLinks).map(([p, url]) => <a key={p} href={url} target="_blank" rel="noopener noreferrer" className="block hover:text-white transition-colors capitalize">{p}</a>)}</div></div></div><div className="border-t border-white/5 pt-6 flex flex-col md:flex-row items-center justify-between gap-4"><div className="flex items-center gap-2 text-sm text-slate-500"><Tree size={14} weight="fill" style={{ color: ACCENT }} /><span>{data.businessName} &copy; {new Date().getFullYear()}</span></div><div className="flex items-center gap-2 text-xs text-slate-600"><BluejayLogo className="w-4 h-4" /><span>Created by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "underline" }}>bluejayportfolio.com</a></span></div></div></div></footer>
 

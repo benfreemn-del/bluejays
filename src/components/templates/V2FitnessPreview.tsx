@@ -300,6 +300,10 @@ export default function V2FitnessPreview({ data }: { data: GeneratedSiteData }) 
     { q: "Do you offer personal training?", a: "Yes, we have certified personal trainers available for one-on-one sessions tailored to your specific goals and fitness level." },
     { q: "Is there a free trial?", a: `Absolutely. ${data.businessName} offers a complimentary first visit so you can experience our facility, equipment, and community before committing.` },
     { q: "What are the membership options?", a: "We offer flexible membership plans including monthly, quarterly, and annual options. Contact us for current pricing and any special promotions." },
+    { q: "Do I need to be in shape to start?", a: "Not at all! Our programs are designed for all fitness levels, from complete beginners to advanced athletes. Every workout can be scaled to your ability." },
+    { q: "What should I bring to my first class?", a: "Wear comfortable workout clothes and athletic shoes. Bring a water bottle and a towel. We provide everything else you need." },
+    { q: "Are there group classes included?", a: `Yes! All ${data.businessName} memberships include unlimited access to group fitness classes. Our schedule features over 30 classes per week across all disciplines.` },
+    { q: "Do you offer nutrition coaching?", a: "We offer nutrition coaching as an add-on to any membership. Our certified coaches create personalized meal plans and provide accountability check-ins." },
   ];
 
   /* Fallback testimonials */
@@ -738,6 +742,170 @@ export default function V2FitnessPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
+      {/* ══════════════════ 11b. CLASS SCHEDULE GRID ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #080808 50%, #0a0a0a 100%)" }} />
+        <FitnessPattern opacity={0.02} accent={RED} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Schedule" title="Weekly Class Schedule" subtitle="Find the perfect class for your fitness level and goals." accent={RED} />
+          <GlassCard className="overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-white/10">
+                    <th className="text-left p-4 font-semibold text-white">Time</th>
+                    {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
+                      <th key={day} className="text-center p-4 font-semibold text-white">{day}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { time: "6:00 AM", classes: ["HIIT", "Yoga", "HIIT", "Yoga", "HIIT", "Bootcamp"] },
+                    { time: "8:00 AM", classes: ["Strength", "Spin", "Strength", "Spin", "Strength", "Yoga"] },
+                    { time: "12:00 PM", classes: ["Yoga", "Boxing", "Yoga", "Boxing", "Yoga", "Open Gym"] },
+                    { time: "5:30 PM", classes: ["CrossFit", "HIIT", "CrossFit", "HIIT", "CrossFit", "—"] },
+                    { time: "7:00 PM", classes: ["Boxing", "Strength", "Boxing", "Strength", "Open Gym", "—"] },
+                  ].map((row) => (
+                    <tr key={row.time} className="border-b border-white/5 hover:bg-white/[0.02]">
+                      <td className="p-4 font-medium text-white whitespace-nowrap">{row.time}</td>
+                      {row.classes.map((cls, i) => (
+                        <td key={i} className="text-center p-4">
+                          <span className={`text-xs font-medium px-2 py-1 rounded-full ${cls === "—" ? "text-slate-600" : ""}`}
+                            style={cls !== "—" ? { color: RED, background: `${RED}15` } : undefined}>
+                            {cls}
+                          </span>
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </GlassCard>
+          <p className="text-center text-xs text-slate-500 mt-4">Schedule subject to change. Drop-in classes available. Members get priority booking.</p>
+        </div>
+      </section>
+
+      {/* ══════════════════ 11c. TRANSFORMATION GALLERY ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #0c0808 50%, #0a0a0a 100%)" }} />
+        <FitnessPattern opacity={0.02} accent={RED} />
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Results" title="Member Transformations" subtitle="Real results from real members who committed to their fitness journey." accent={RED} />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              { name: "Jake M.", result: "Lost 47 lbs in 6 months", program: "HIIT + Nutrition Coaching", quote: "The trainers here changed my life. I feel like a completely different person." },
+              { name: "Amanda R.", result: "Gained 15 lbs muscle", program: "Strength Training", quote: "Finally found a gym that takes female strength training seriously." },
+              { name: "David L.", result: "Ran first marathon", program: "Cardio + Endurance", quote: "Went from couch potato to marathon finisher in under a year." },
+            ].map((story) => (
+              <GlassCard key={story.name} className="p-6">
+                <div className="text-2xl font-extrabold mb-2" style={{ color: RED }}>{story.result}</div>
+                <p className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">{story.program}</p>
+                <p className="text-sm text-slate-400 italic mb-4">&ldquo;{story.quote}&rdquo;</p>
+                <p className="text-sm font-bold text-white">— {story.name}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ 11d. EQUIPMENT & AMENITIES ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #080808 50%, #0a0a0a 100%)" }} />
+        <FitnessPattern opacity={0.02} accent={RED} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Facility" title="Equipment & Amenities" accent={RED} />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { icon: Barbell, title: "Free Weights", desc: "Full rack of dumbbells, barbells, and kettlebells" },
+              { icon: PersonSimpleRun, title: "Cardio Zone", desc: "Treadmills, bikes, rowers, and stair climbers" },
+              { icon: Lightning, title: "Functional Area", desc: "TRX, battle ropes, sleds, and plyometrics" },
+              { icon: Fire, title: "Boxing Ring", desc: "Heavy bags, speed bags, and ring training" },
+              { icon: Heartbeat, title: "Recovery Zone", desc: "Foam rollers, stretch area, and massage guns" },
+              { icon: Users, title: "Group Studios", desc: "Two dedicated studios for classes and training" },
+              { icon: ShieldCheck, title: "Locker Rooms", desc: "Clean facilities with showers and lockers" },
+              { icon: Medal, title: "Pro Shop", desc: "Supplements, gear, and recovery products" },
+            ].map((item) => (
+              <GlassCard key={item.title} className="p-5 text-center">
+                <div className="w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center" style={{ background: `${RED}15`, border: `1px solid ${RED}22` }}>
+                  <item.icon size={22} weight="duotone" style={{ color: RED }} />
+                </div>
+                <h4 className="text-sm font-bold text-white mb-1">{item.title}</h4>
+                <p className="text-xs text-slate-400 leading-relaxed">{item.desc}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ 11e. NUTRITION & RECOVERY ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #0c0808 50%, #0a0a0a 100%)" }} />
+        <FitnessPattern opacity={0.02} accent={RED} />
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Recovery" title="Nutrition & Recovery" subtitle="Training is only half the battle. We help you recover smarter and fuel properly." accent={RED} />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {[
+              { title: "Personalized Meal Plans", desc: "Custom nutrition programs designed around your goals, preferences, and dietary needs. Updated monthly as you progress.", icon: Fire },
+              { title: "Recovery Protocols", desc: "Foam rolling, stretching, and mobility work built into every session. Recovery is where results happen.", icon: Heartbeat },
+              { title: "Supplement Guidance", desc: "Evidence-based recommendations for protein, creatine, and recovery supplements. No gimmicks, just science.", icon: ShieldCheck },
+              { title: "Body Composition", desc: "Regular body composition scans to track muscle gain, fat loss, and overall progress beyond the scale.", icon: Star },
+            ].map((item) => (
+              <GlassCard key={item.title} className="p-6 flex gap-4 items-start">
+                <div className="w-12 h-12 rounded-full shrink-0 flex items-center justify-center" style={{ background: `${RED}15`, border: `1px solid ${RED}22` }}>
+                  <item.icon size={24} weight="duotone" style={{ color: RED }} />
+                </div>
+                <div>
+                  <h4 className="text-base font-bold text-white mb-1">{item.title}</h4>
+                  <p className="text-sm text-slate-400 leading-relaxed">{item.desc}</p>
+                </div>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ 11f. WHY CHOOSE US ══════════════════ */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #080808 100%)" }} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Difference" title="Why Members Choose Us" accent={RED} />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { icon: Medal, title: "Certified Trainers", desc: "NASM, ACE, and CSCS certified professionals" },
+              { icon: Lightning, title: "24/7 Access", desc: "Train on your schedule with keycard entry" },
+              { icon: Users, title: "Community", desc: "Supportive members who become friends" },
+              { icon: Timer, title: "30-Min Classes", desc: "Efficient workouts for busy professionals" },
+            ].map((item) => (
+              <GlassCard key={item.title} className="p-5 text-center">
+                <item.icon size={28} weight="duotone" style={{ color: RED }} className="mx-auto mb-3" />
+                <h4 className="text-sm font-bold text-white mb-1">{item.title}</h4>
+                <p className="text-xs text-slate-400">{item.desc}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ 11g. MID-PAGE CTA ══════════════════ */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: RED }} />
+        <div className="absolute inset-0 bg-black/30" />
+        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+          <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">Start Your Transformation Today</h2>
+          <p className="text-white/80 text-lg mb-8 max-w-2xl mx-auto">Your first class is free. No contracts, no pressure. Just results.</p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <PhoneLink phone={data.phone} className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-white text-sm font-bold" style={{ color: RED }}>
+              <Phone size={18} weight="fill" /> Start Free Trial
+            </PhoneLink>
+            <a href="#contact" className="inline-flex items-center gap-2 px-8 py-4 rounded-full border-2 border-white text-white text-sm font-bold hover:bg-white/10 transition-colors">
+              View Schedule <ArrowRight size={18} weight="bold" />
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* ══════════════════ 12. FAQ ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #080808 50%, #0a0a0a 100%)" }} />
@@ -794,9 +962,17 @@ export default function V2FitnessPreview({ data }: { data: GeneratedSiteData }) 
             <div className="p-8 md:p-12">
               <ShieldCheck size={48} weight="fill" style={{ color: RED }} className="mx-auto mb-4" />
               <h2 className="text-2xl md:text-4xl font-black text-white mb-4">Our Guarantee</h2>
-              <p className="text-zinc-400 leading-relaxed max-w-2xl mx-auto text-lg">At {data.businessName}, we are committed to your transformation. Expert trainers, world-class equipment, and a community that pushes you to be your best.</p>
-              <div className="flex flex-wrap justify-center gap-4 mt-8">
-                {["Free Trial", "No Contracts", "Expert Trainers", "Results Guaranteed"].map((item) => (
+              <p className="text-zinc-400 leading-relaxed max-w-2xl mx-auto text-lg mb-2">At {data.businessName}, we are committed to your transformation. Expert trainers, world-class equipment, and a community that pushes you to be your best.</p>
+              <p className="text-zinc-500 text-sm max-w-xl mx-auto mb-6">
+                We invest in the best equipment, hire only certified trainers,
+                and maintain the cleanest facility in town. Your fitness journey
+                deserves nothing less than excellence. Come see the difference.
+              </p>
+              <div className="flex flex-wrap justify-center gap-4 mt-4">
+                {[
+                  "Free Trial", "No Contracts", "Expert Trainers",
+                  "Results Guaranteed", "Open 7 Days", "All Levels Welcome",
+                ].map((item) => (
                   <span key={item} className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border" style={{ color: RED, borderColor: `${RED}33`, background: `${RED}0d` }}><CheckCircle size={16} weight="fill" />{item}</span>
                 ))}
               </div>

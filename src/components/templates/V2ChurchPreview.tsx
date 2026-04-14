@@ -864,6 +864,101 @@ export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
+      {/* ══════════════════ COMMUNITY OUTREACH ══════════════════ */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #111128 50%, ${NAVY} 100%)` }} />
+        <CrossPattern opacity={0.012} accent={GOLD} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <Handshake size={40} weight="duotone" style={{ color: GOLD }} className="mx-auto mb-3" />
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Community Outreach</h2>
+            <p className="text-slate-400 mt-3 max-w-xl mx-auto">Making a difference in our neighborhood through faith, service, and love.</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {[
+              { title: "Food Pantry", desc: "Weekly food distribution serving families in need throughout our community every Saturday morning." },
+              { title: "Youth Mentorship", desc: "One-on-one mentoring program pairing teens with caring adult volunteers from our congregation." },
+              { title: "Mission Trips", desc: "Annual domestic and international mission trips building homes, schools, and community centers." },
+              { title: "Senior Visits", desc: "Volunteers visit homebound seniors weekly to provide companionship, prayer, and practical help." },
+              { title: "Back-to-School Drive", desc: "Annual supply drive providing backpacks, school supplies, and clothing to local students." },
+              { title: "Community Meals", desc: "Monthly free community dinners open to everyone — no membership required, all are welcome." },
+            ].map((item) => (
+              <div key={item.title} className="rounded-2xl border border-white/10 p-6" style={{ background: "rgba(255,255,255,0.03)" }}>
+                <Heart size={24} weight="fill" style={{ color: GOLD }} className="mb-3" />
+                <h3 className="text-lg font-bold text-white mb-2">{item.title}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ SMALL GROUPS ══════════════════ */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #111128 0%, ${NAVY} 100%)` }} />
+        <CrossPattern opacity={0.01} accent={GOLD} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <UsersThree size={40} weight="duotone" style={{ color: GOLD }} className="mx-auto mb-3" />
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Small Groups</h2>
+            <p className="text-slate-400 mt-3 max-w-xl mx-auto">Life is better in community. Join a small group and grow in faith alongside others.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {[
+              { group: "Men's Fellowship", day: "Tuesdays, 7:00 PM", desc: "Bible study, accountability, and brotherhood for men of all ages." },
+              { group: "Women's Circle", day: "Wednesdays, 10:00 AM", desc: "Encouragement, prayer, and Scripture study for women." },
+              { group: "Young Adults", day: "Thursdays, 7:30 PM", desc: "Community for ages 18-30 with worship, discussion, and social events." },
+              { group: "Marriage Enrichment", day: "Fridays, 6:30 PM", desc: "Strengthening marriages through faith-based tools and shared experiences." },
+            ].map((g) => (
+              <div key={g.group} className="flex items-start gap-4 rounded-2xl border border-white/10 p-5" style={{ background: "rgba(255,255,255,0.03)" }}>
+                <Cross size={28} weight="duotone" style={{ color: GOLD }} className="shrink-0 mt-1" />
+                <div>
+                  <h3 className="text-lg font-bold text-white">{g.group}</h3>
+                  <p className="text-sm font-semibold mb-1" style={{ color: GOLD }}>{g.day}</p>
+                  <p className="text-sm text-slate-400 leading-relaxed">{g.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${GOLD}15 0%, ${NAVY} 50%, ${GOLD}08 100%)` }} />
+        <CrossPattern opacity={0.02} accent={GOLD} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+          <HandsPraying size={44} weight="fill" style={{ color: GOLD }} className="mx-auto mb-4" />
+          <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">You Belong Here</h2>
+          <p className="text-slate-400 max-w-2xl mx-auto mb-8 text-lg leading-relaxed">
+            Whether you&apos;ve been part of a church your whole life or you&apos;re just exploring, {data.businessName} welcomes you with open arms. Come as you are.
+          </p>
+          <a href={`tel:${data.phone}`} className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-white font-bold text-lg transition-transform hover:scale-105" style={{ background: GOLD }}>
+            <Phone size={20} weight="fill" /> Plan Your Visit
+          </a>
+        </div>
+      </section>
+
+      {/* ══════════════════ SERMON ARCHIVE ══════════════════ */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #111128 100%)` }} />
+        <CrossPattern opacity={0.01} accent={GOLD} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+          <BookOpen size={40} weight="duotone" style={{ color: GOLD }} className="mx-auto mb-4" />
+          <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">Missed a Sunday?</h2>
+          <p className="text-slate-400 max-w-2xl mx-auto mb-6 text-lg leading-relaxed">
+            Catch up on recent messages from our pastors. Our sermon archive is available so you can revisit teachings, share them with friends, and stay connected to the Word throughout the week.
+          </p>
+          <div className="flex flex-wrap justify-center gap-4">
+            {["Sunday Messages", "Bible Study Series", "Guest Speakers", "Special Events"].map((item) => (
+              <span key={item} className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border" style={{ color: GOLD, borderColor: `${GOLD}33`, background: `${GOLD}0d` }}>
+                <MusicNotes size={16} weight="fill" /> {item}
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ══════════════════ 15. FOOTER ══════════════════ */}
       <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #111128 100%)` }} />

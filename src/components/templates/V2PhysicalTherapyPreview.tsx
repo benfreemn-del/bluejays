@@ -73,6 +73,10 @@ export default function V2PhysicalTherapyPreview({ data }: { data: GeneratedSite
     { q: "Do I need a referral?", a: "In most states, you can see a physical therapist through Direct Access without a referral. Some insurance plans may require one — we can help you check." },
     { q: "How long are sessions?", a: "Initial evaluations are 60 minutes. Follow-up sessions are 45-60 minutes of one-on-one care." },
     { q: "What insurance do you accept?", a: `${data.businessName} is in-network with most major insurance providers. Contact us to verify your coverage.` },
+    { q: "How many sessions will I need?", a: "Treatment plans vary based on your condition, but most patients see significant improvement within 6-12 sessions. We set clear goals and track progress at every visit." },
+    { q: "What should I wear to my appointment?", a: "Wear comfortable, loose-fitting clothing that allows easy movement. Athletic wear works great. We provide any specialized equipment needed." },
+    { q: "Do you treat post-surgical patients?", a: "Absolutely. Post-surgical rehabilitation is one of our specialties. We work closely with your surgeon to follow their protocols and accelerate your recovery safely." },
+    { q: "Can I do exercises at home between visits?", a: `Yes! ${data.businessName} provides a customized home exercise program with detailed instructions and video guides to supplement your in-clinic treatment.` },
   ];
 
   const fallbackTestimonials = [{ name: "Richard H.", text: "After knee surgery, they got me back to running in three months. Incredible therapists.", rating: 5 }, { name: "Paula M.", text: "My chronic shoulder pain is finally gone. They created a personalized plan that actually worked.", rating: 5 }, { name: "Edward T.", text: "Patient, knowledgeable, and genuinely invested in my recovery. Best PT experience ever.", rating: 5 }];
@@ -650,6 +654,181 @@ export default function V2PhysicalTherapyPreview({ data }: { data: GeneratedSite
                 </span>
               </div>
             </GlassCard>
+          </div>
+        </div>
+      </section>
+
+      {/* WHY CHOOSE US */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0d1222 50%, ${BG} 100%)` }} />
+        <WavePattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Difference" title="Why Choose Our Clinic" accent={ACCENT} />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { icon: Certificate, title: "Board Certified", desc: "Licensed physical therapists with advanced specialization certifications." },
+              { icon: HandHeart, title: "One-on-One Care", desc: "Full attention every session. No rotating between patients." },
+              { icon: Clock, title: "Flexible Hours", desc: "Early morning and evening appointments to fit your schedule." },
+              { icon: ShieldCheck, title: "Direct Access", desc: "No referral needed in most cases. Start treatment sooner." },
+            ].map((item) => (
+              <GlassCard key={item.title} className="p-6 text-center">
+                <div className="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ background: `${ACCENT}15`, border: `1px solid ${ACCENT}22` }}>
+                  <item.icon size={28} weight="duotone" style={{ color: ACCENT }} />
+                </div>
+                <h3 className="text-base font-bold text-white mb-2">{item.title}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed">{item.desc}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* HOME EXERCISE PROGRAM */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0c1220 50%, ${BG} 100%)` }} />
+        <WavePattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Home Program" title="Your Recovery Continues at Home" subtitle="Every patient receives a personalized home exercise program to accelerate results between visits." accent={ACCENT} />
+          <GlassCard className="p-8">
+            <div className="grid md:grid-cols-2 gap-8">
+              <div>
+                <h3 className="text-xl font-bold text-white mb-4">What You Receive</h3>
+                <ul className="space-y-3">
+                  {[
+                    "Customized exercise program tailored to your condition",
+                    "Video demonstrations for proper form and technique",
+                    "Progressive difficulty as you improve",
+                    "Pain management strategies for home use",
+                    "Ergonomic recommendations for work and daily life",
+                    "Regular program updates based on your progress",
+                  ].map((item) => (
+                    <li key={item} className="flex items-start gap-2 text-sm text-slate-400">
+                      <CheckCircle size={16} weight="fill" className="mt-0.5 shrink-0" style={{ color: ACCENT }} />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-white mb-4">Recovery Tips</h3>
+                <ul className="space-y-3">
+                  {[
+                    "Consistency beats intensity — do your exercises daily",
+                    "Use ice for 15-20 minutes after exercises if needed",
+                    "Stay hydrated and get adequate sleep for healing",
+                    "Track your pain levels to share with your therapist",
+                    "Avoid pushing through sharp pain — listen to your body",
+                    "Celebrate small wins — every improvement counts",
+                  ].map((item) => (
+                    <li key={item} className="flex items-start gap-2 text-sm text-slate-400">
+                      <Star size={16} weight="duotone" className="mt-0.5 shrink-0" style={{ color: GREEN }} />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </GlassCard>
+        </div>
+      </section>
+
+      {/* CONDITION GUIDE */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0c1220 50%, ${BG} 100%)` }} />
+        <WavePattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Conditions" title="Conditions We Treat" subtitle="From acute injuries to chronic pain, we develop personalized treatment plans for every condition." accent={ACCENT} />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              { condition: "Back & Spine Pain", desc: "Herniated discs, sciatica, spinal stenosis, and chronic lower back issues", icon: Heartbeat },
+              { condition: "Sports Injuries", desc: "ACL tears, rotator cuff, sprains, strains, and concussion recovery", icon: PersonSimpleRun },
+              { condition: "Post-Surgical Rehab", desc: "Joint replacement, spinal fusion, arthroscopy, and reconstructive surgery", icon: FirstAidKit },
+              { condition: "Neck & Shoulder", desc: "Whiplash, frozen shoulder, impingement, and cervical disc problems", icon: Brain },
+              { condition: "Joint Pain", desc: "Arthritis, bursitis, tendinitis, and degenerative joint conditions", icon: Barbell },
+              { condition: "Balance & Falls", desc: "Vestibular rehab, fall prevention, and gait training for seniors", icon: Users },
+              { condition: "Hand & Wrist", desc: "Carpal tunnel, trigger finger, fracture recovery, and repetitive strain", icon: HandHeart },
+              { condition: "Chronic Pain", desc: "Fibromyalgia, chronic fatigue, complex regional pain syndrome", icon: ShieldCheck },
+            ].map((item) => (
+              <GlassCard key={item.condition} className="p-5">
+                <div className="w-10 h-10 rounded-full mb-3 flex items-center justify-center" style={{ background: `${ACCENT}15`, border: `1px solid ${ACCENT}22` }}>
+                  <item.icon size={20} weight="duotone" style={{ color: ACCENT }} />
+                </div>
+                <h4 className="text-sm font-bold text-white mb-1">{item.condition}</h4>
+                <p className="text-xs text-slate-400 leading-relaxed">{item.desc}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* EQUIPMENT SECTION */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0d1222 50%, ${BG} 100%)` }} />
+        <WavePattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Facility" title="Our Treatment Equipment" subtitle="State-of-the-art equipment for faster, more effective rehabilitation." accent={ACCENT} />
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {[
+              { title: "Therapeutic Ultrasound", desc: "Deep tissue heating to reduce inflammation and accelerate healing" },
+              { title: "Electrical Stimulation", desc: "TENS and NMES for pain management and muscle re-education" },
+              { title: "Aquatic Therapy Pool", desc: "Warm water therapy reduces joint stress during recovery exercises" },
+              { title: "Anti-Gravity Treadmill", desc: "AlterG unweighting allows pain-free walking and running rehab" },
+              { title: "Dry Needling", desc: "Trigger point release for chronic muscle pain and tension" },
+              { title: "Exercise Gym", desc: "Full rehabilitation gym with strength and flexibility equipment" },
+            ].map((item) => (
+              <GlassCard key={item.title} className="p-5 text-center">
+                <h4 className="text-sm font-bold text-white mb-2">{item.title}</h4>
+                <p className="text-xs text-slate-400 leading-relaxed">{item.desc}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* RECOVERY STORIES */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0c1220 50%, ${BG} 100%)` }} />
+        <WavePattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Outcomes" title="Recovery Success Stories" subtitle="Real patients, real results. Every journey is unique, but the destination is the same: a better quality of life." accent={ACCENT} />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              { patient: "Former Marathon Runner", condition: "ACL Reconstruction", result: "Back to running in 6 months", timeline: "24 sessions over 6 months" },
+              { patient: "Office Professional", condition: "Chronic Lower Back Pain", result: "Pain-free after 3 months", timeline: "12 sessions over 3 months" },
+              { patient: "Retired Teacher", condition: "Total Knee Replacement", result: "Walking without assistance in 8 weeks", timeline: "16 sessions over 2 months" },
+            ].map((story) => (
+              <GlassCard key={story.patient} className="p-6">
+                <div className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: ACCENT }}>{story.condition}</div>
+                <h4 className="text-lg font-bold text-white mb-2">{story.result}</h4>
+                <p className="text-sm text-slate-400 mb-3">{story.patient}</p>
+                <div className="flex items-center gap-2 text-xs text-slate-500 pt-3 border-t border-white/5">
+                  <Clock size={14} weight="duotone" style={{ color: ACCENT }} />
+                  <span>{story.timeline}</span>
+                </div>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* MID-PAGE CTA */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: ACCENT }} />
+        <div className="absolute inset-0 bg-black/20" />
+        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+          <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">
+            Start Moving Better Today
+          </h2>
+          <p className="text-white/80 text-lg mb-8 max-w-2xl mx-auto">
+            No referral needed in most cases. Schedule your evaluation and take the first step toward recovery.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <PhoneLink phone={data.phone} className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-white text-sm font-bold" style={{ color: ACCENT }}>
+              <Phone size={18} weight="fill" /> Schedule Evaluation
+            </PhoneLink>
+            <a href="#contact" className="inline-flex items-center gap-2 px-8 py-4 rounded-full border-2 border-white text-white text-sm font-bold hover:bg-white/10 transition-colors">
+              Learn More <ArrowRight size={18} weight="bold" />
+            </a>
           </div>
         </div>
       </section>

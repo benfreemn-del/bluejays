@@ -801,6 +801,178 @@ export default function V2RestaurantPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
+      {/* ══════════════════ CHEF SPOTLIGHT ══════════════════ */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #141010 0%, #1a1a1a 50%, #141010 100%)" }} />
+        <DiningPattern opacity={0.012} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <CookingPot size={40} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-3" />
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Meet Our Kitchen</h2>
+            <div className="w-16 h-1 mx-auto mt-3 rounded-full" style={{ background: ACCENT }} />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="rounded-2xl border border-white/10 p-6" style={{ background: "rgba(255,255,255,0.03)" }}>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ background: `${ACCENT}1a` }}>
+                  <Fire size={24} weight="fill" style={{ color: ACCENT }} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white">Head Chef</h3>
+                  <p className="text-sm text-slate-400">Culinary Excellence</p>
+                </div>
+              </div>
+              <p className="text-slate-400 leading-relaxed">Our head chef brings years of passion and expertise to every plate, crafting dishes that celebrate tradition while embracing innovation. Every ingredient is hand-selected for quality.</p>
+            </div>
+            <div className="rounded-2xl border border-white/10 p-6" style={{ background: "rgba(255,255,255,0.03)" }}>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ background: `${ACCENT}1a` }}>
+                  <Leaf size={24} weight="fill" style={{ color: ACCENT }} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white">Farm-to-Table</h3>
+                  <p className="text-sm text-slate-400">Local Sourcing</p>
+                </div>
+              </div>
+              <p className="text-slate-400 leading-relaxed">We partner with local farms and artisan producers to bring the freshest seasonal ingredients to your table. Our menu evolves with the seasons to guarantee peak flavor in every bite.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ SEASONAL SPECIALS ══════════════════ */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f0d08 100%)" }} />
+        <DiningPattern opacity={0.01} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <Coffee size={40} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-3" />
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Seasonal Specials</h2>
+            <p className="text-slate-400 mt-3 max-w-xl mx-auto">Our menu rotates with the seasons, featuring limited-time dishes crafted with the freshest ingredients available.</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              { season: "Spring", icon: Leaf, desc: "Light, fresh dishes with garden herbs and crisp vegetables" },
+              { season: "Summer", icon: Fire, desc: "Grilled specialties with vibrant sauces and seasonal fruits" },
+              { season: "Autumn", icon: CookingPot, desc: "Hearty comfort dishes with roasted root vegetables" },
+              { season: "Winter", icon: Coffee, desc: "Rich, warming plates with slow-braised meats and broths" },
+            ].map((s) => (
+              <div key={s.season} className="text-center rounded-2xl border border-white/10 p-6" style={{ background: "rgba(255,255,255,0.03)" }}>
+                <s.icon size={32} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-3" />
+                <h3 className="text-lg font-bold text-white mb-2">{s.season}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed">{s.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ RESERVATION & MID-PAGE CTA ══════════════════ */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15 0%, #1a1a1a 50%, ${ACCENT}08 100%)` }} />
+        <DiningPattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+          <ForkKnife size={44} weight="fill" style={{ color: ACCENT }} className="mx-auto mb-4" />
+          <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">Reserve Your Table Tonight</h2>
+          <p className="text-slate-400 max-w-2xl mx-auto mb-6 text-lg leading-relaxed">
+            Whether it&apos;s an intimate dinner for two or a celebration with friends, {data.businessName} is ready to make your evening unforgettable. Walk-ins are welcome, but reservations guarantee your preferred seating.
+          </p>
+          <div className="flex flex-wrap justify-center gap-4 mb-8">
+            {["Online Reservations", "Private Dining", "Special Events", "Catering Available"].map((item) => (
+              <span key={item} className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border" style={{ color: ACCENT, borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}>
+                <CheckCircle size={16} weight="fill" /> {item}
+              </span>
+            ))}
+          </div>
+          <a href={`tel:${data.phone}`} className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-white font-bold text-lg transition-transform hover:scale-105" style={{ background: ACCENT }}>
+            <Phone size={20} weight="fill" /> Call to Reserve
+          </a>
+        </div>
+      </section>
+
+      {/* ══════════════════ WHY CHOOSE US ══════════════════ */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f0d08 0%, #1a1a1a 100%)" }} />
+        <DiningPattern opacity={0.012} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Why Diners Choose <span style={{ color: ACCENT }}>{data.businessName}</span></h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              { title: "Scratch Kitchen", desc: "Every dish prepared fresh from scratch daily — no shortcuts, no frozen ingredients" },
+              { title: "Local Ingredients", desc: "We source from local farms and markets for the freshest seasonal flavors" },
+              { title: "Warm Hospitality", desc: "Our team treats every guest like family from the moment you walk in" },
+              { title: "Memorable Experiences", desc: "From anniversary dinners to casual nights out, we make every visit special" },
+            ].map((card) => (
+              <div key={card.title} className="rounded-2xl border border-white/10 p-6 text-center" style={{ background: "rgba(255,255,255,0.03)" }}>
+                <CheckCircle size={28} weight="fill" style={{ color: ACCENT }} className="mx-auto mb-3" />
+                <h3 className="text-lg font-bold text-white mb-2">{card.title}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed">{card.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ HOURS & DINING INFO ══════════════════ */}
+      {data.hours && (
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #141010 0%, #1a1a1a 100%)" }} />
+        <DiningPattern opacity={0.01} accent={ACCENT} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+          <ShimmerBorder accent={ACCENT}>
+            <div className="p-8">
+              <Clock size={36} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-4" />
+              <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-4">Hours & Dining Info</h2>
+              <p className="text-slate-400 leading-relaxed whitespace-pre-line text-lg mb-6">{data.hours}</p>
+              <div className="flex flex-wrap justify-center gap-4">
+                {["Dine-In", "Takeout", "Private Events", "Full Bar"].map((item) => (
+                  <span key={item} className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border" style={{ color: ACCENT, borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}>
+                    <ForkKnife size={14} weight="fill" /> {item}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </ShimmerBorder>
+        </div>
+      </section>
+      )}
+
+      {/* ══════════════════ ENHANCED CERTIFICATIONS ══════════════════ */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #141010 100%)" }} />
+        <DiningPattern opacity={0.012} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-10">
+            <ShieldCheck size={36} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-3" />
+            <h2 className="text-2xl md:text-3xl font-extrabold text-white">Recognized & Trusted</h2>
+            <p className="text-slate-400 mt-2 max-w-lg mx-auto">
+              {data.businessName} is proud to be recognized by industry organizations and local publications.
+            </p>
+          </div>
+          <div className="flex flex-wrap justify-center gap-6">
+            {[
+              "Health Dept. A Rating",
+              "ServSafe Certified",
+              "Wine Spectator Award",
+              "Local Best Of Winner",
+              "Farm-to-Table Certified",
+              "Zagat Recommended",
+            ].map((badge) => (
+              <div
+                key={badge}
+                className="flex items-center gap-2 px-5 py-3 rounded-full border border-white/10"
+                style={{ background: "rgba(255,255,255,0.03)" }}
+              >
+                <ShieldCheck size={18} weight="fill" style={{ color: ACCENT }} />
+                <span className="text-sm font-medium text-white">{badge}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ══════════════════ 15. FOOTER ══════════════════ */}
       <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111 100%)" }} />

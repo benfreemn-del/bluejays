@@ -181,6 +181,8 @@ export default function V2FencingPreview({ data }: { data: GeneratedSiteData }) 
     { q: "Do you offer fence repair services?", a: `Yes! ${data.businessName} handles all types of fence repairs including post replacement, panel repair, gate adjustments, and storm damage restoration.` },
     { q: "What warranty do you offer?", a: "We provide a workmanship warranty on every installation, plus manufacturer warranties on materials. Specific coverage varies by material type — ask us for details." },
     { q: "Can you remove my old fence?", a: "Absolutely. Old fence removal and disposal is included in most installation quotes. We handle everything from start to finish." },
+    { q: "How do I maintain my fence?", a: "Wood fences benefit from staining or sealing every 2-3 years. Vinyl fences just need occasional washing. We provide a detailed maintenance guide with every installation." },
+    { q: "Do you install gates and hardware?", a: `Yes, ${data.businessName} installs single gates, double gates, sliding gates, and automatic gate openers. We match your gate style to your fence perfectly.` },
   ];
 
   const fallbackTestimonials = [
@@ -528,10 +530,37 @@ export default function V2FencingPreview({ data }: { data: GeneratedSiteData }) 
         <WoodGrainPattern opacity={0.02} accent={ACCENT} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <SectionHeader badge="Service Area" title="Areas We Serve" accent={ACCENT} />
-          <div className="text-center">
+          <div className="text-center mb-8">
             <GlassCard className="p-8 inline-block">
               <div className="flex items-center gap-3 text-lg"><MapPin size={24} weight="duotone" style={{ color: ACCENT }} /><MapLink address={data.address} className="text-white font-semibold" /></div>
-              <p className="text-slate-400 text-sm mt-2">&amp; Surrounding Areas</p>
+              <div className="flex items-center gap-2 mt-3 justify-center">
+                <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="text-sm text-emerald-400 font-medium">Scheduling Installations Now</span>
+              </div>
+            </GlassCard>
+          </div>
+          <div className="flex flex-wrap justify-center gap-2 mb-6">
+            {(data.serviceAreas || [data.address?.split(",")[0] || "Local Area"]).map((area: string) => (
+              <span key={area} className="px-4 py-2 rounded-full text-xs font-medium border" style={{ color: ACCENT, borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}>
+                {area}
+              </span>
+            ))}
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
+            <GlassCard className="p-4 text-center">
+              <Hammer size={20} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-2" />
+              <p className="text-sm font-semibold text-white">Free On-Site Estimate</p>
+              <p className="text-xs text-slate-500">We come to you</p>
+            </GlassCard>
+            <GlassCard className="p-4 text-center">
+              <Timer size={20} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-2" />
+              <p className="text-sm font-semibold text-white">Quick Turnaround</p>
+              <p className="text-xs text-slate-500">Most installs in 1-3 days</p>
+            </GlassCard>
+            <GlassCard className="p-4 text-center">
+              <ShieldCheck size={20} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-2" />
+              <p className="text-sm font-semibold text-white">Permit Handling</p>
+              <p className="text-xs text-slate-500">We do the paperwork</p>
             </GlassCard>
           </div>
         </div>
@@ -580,6 +609,161 @@ export default function V2FencingPreview({ data }: { data: GeneratedSiteData }) 
             <PhoneLink phone={data.phone} className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-white font-semibold" style={{ background: ACCENT }}>
               <Phone size={20} weight="fill" /> Call for Free Estimate
             </PhoneLink>
+          </div>
+        </div>
+      </section>
+
+      {/* 16b. PROJECT GALLERY */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #141210 50%, #1a1a1a 100%)" }} />
+        <WoodGrainPattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Portfolio" title="Recent Projects" subtitle="Browse some of our recent fence installations across the area." accent={ACCENT} />
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {galleryImages.slice(0, 6).map((img, i) => {
+              const labels = ["Privacy Fence", "Cedar Picket", "Vinyl Ranch Rail", "Iron Gate", "Chain Link Commercial", "Custom Wood Design"];
+              const types = ["Residential", "Residential", "Agricultural", "Commercial", "Commercial", "Custom"];
+              return (
+                <div key={i} className="group relative aspect-[4/3] rounded-2xl overflow-hidden border border-white/5">
+                  <img src={img} alt={labels[i]} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
+                    <span className="text-xs font-bold uppercase tracking-wider mb-1" style={{ color: ACCENT }}>{types[i]}</span>
+                    <span className="text-sm font-semibold text-white">{labels[i]}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* 16c. MATERIAL DETAIL SECTION */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #110f0c 50%, #1a1a1a 100%)" }} />
+        <WallPostBackground opacity={0.02} accent={ACCENT} />
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Materials" title="Fence Materials Guide" subtitle="Choose the right material for your needs, budget, and aesthetic." accent={ACCENT} />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {[
+              { material: "Western Red Cedar", lifespan: "15-20 years", pros: "Natural beauty, insect resistant, weathers gracefully", price: "$$", icon: TreeStructure },
+              { material: "Vinyl / PVC", lifespan: "20-30 years", pros: "Zero maintenance, never rots, multiple colors", price: "$$$", icon: Wall },
+              { material: "Pressure-Treated Pine", lifespan: "10-15 years", pros: "Most affordable wood option, paintable, stainable", price: "$", icon: Hammer },
+              { material: "Ornamental Iron", lifespan: "30+ years", pros: "Maximum security, elegant look, minimal maintenance", price: "$$$$", icon: ShieldCheck },
+              { material: "Chain Link", lifespan: "15-20 years", pros: "Most economical, durable, quick installation", price: "$", icon: Buildings },
+              { material: "Composite", lifespan: "25+ years", pros: "Wood look without maintenance, eco-friendly, fade-resistant", price: "$$$", icon: HouseLine },
+            ].map((item) => (
+              <GlassCard key={item.material} className="p-6 flex gap-4 items-start">
+                <div className="w-12 h-12 rounded-full shrink-0 flex items-center justify-center" style={{ background: `${ACCENT}15`, border: `1px solid ${ACCENT}22` }}>
+                  <item.icon size={24} weight="duotone" style={{ color: ACCENT }} />
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between mb-1">
+                    <h4 className="text-base font-bold text-white">{item.material}</h4>
+                    <span className="text-xs font-bold" style={{ color: ACCENT }}>{item.price}</span>
+                  </div>
+                  <p className="text-xs text-slate-500 mb-1">Lifespan: {item.lifespan}</p>
+                  <p className="text-sm text-slate-400 leading-relaxed">{item.pros}</p>
+                </div>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 16d. PERMIT INFO */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #141210 50%, #1a1a1a 100%)" }} />
+        <WoodGrainPattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Permits" title="Permit & Regulation Guide" subtitle="We handle the paperwork so you do not have to." accent={ACCENT} />
+          <GlassCard className="p-8">
+            <div className="grid md:grid-cols-2 gap-8">
+              <div>
+                <h3 className="text-xl font-bold text-white mb-4">What We Handle</h3>
+                <ul className="space-y-3">
+                  {[
+                    "Permit applications and filing",
+                    "Property line surveys and verification",
+                    "HOA approval coordination",
+                    "Utility line location (call before you dig)",
+                    "Local code compliance review",
+                    "Setback and height regulation research",
+                  ].map((item) => (
+                    <li key={item} className="flex items-start gap-2 text-sm text-slate-400">
+                      <CheckCircle size={16} weight="fill" className="mt-0.5 shrink-0" style={{ color: ACCENT }} />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-white mb-4">Common Regulations</h3>
+                <ul className="space-y-3">
+                  {[
+                    "Front yard fences: typically max 4 feet",
+                    "Backyard fences: typically max 6 feet",
+                    "Corner lots may have sight-line restrictions",
+                    "Pool fences must meet safety codes",
+                    "Some neighborhoods require HOA approval",
+                    "Permits typically take 1-2 weeks to process",
+                  ].map((item) => (
+                    <li key={item} className="flex items-start gap-2 text-sm text-slate-400">
+                      <Ruler size={16} weight="duotone" className="mt-0.5 shrink-0" style={{ color: ACCENT }} />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </GlassCard>
+        </div>
+      </section>
+
+      {/* 16e. FENCE MAINTENANCE GUIDE */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #110f0c 50%, #1a1a1a 100%)" }} />
+        <WallPostBackground opacity={0.02} accent={ACCENT} />
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Maintenance" title="Fence Care Guide" subtitle="Protect your investment and keep your fence looking great for years." accent={ACCENT} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              { season: "Spring", tasks: ["Inspect for winter damage", "Tighten loose hardware", "Power wash surfaces", "Apply stain or sealant"] },
+              { season: "Summer", tasks: ["Check for insect damage", "Trim vegetation away", "Oil gate hinges", "Touch up paint or stain"] },
+              { season: "Fall", tasks: ["Clear debris from fence line", "Check post stability", "Prepare for winter storms", "Seal any cracks"] },
+              { season: "Winter", tasks: ["Remove heavy snow loads", "Check for ice damage", "Inspect after storms", "Plan spring maintenance"] },
+            ].map((s) => (
+              <GlassCard key={s.season} className="p-5">
+                <h4 className="text-lg font-bold text-white mb-3">{s.season}</h4>
+                <ul className="space-y-2">
+                  {s.tasks.map((task) => (
+                    <li key={task} className="flex items-start gap-2 text-sm text-slate-400">
+                      <CheckCircle size={14} weight="fill" className="mt-0.5 shrink-0" style={{ color: ACCENT }} />
+                      <span>{task}</span>
+                    </li>
+                  ))}
+                </ul>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 16f. MID-PAGE CTA */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: ACCENT }} />
+        <div className="absolute inset-0 bg-black/30" />
+        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+          <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">Ready for Your New Fence?</h2>
+          <p className="text-white/80 text-lg mb-8 max-w-2xl mx-auto">
+            Get a free on-site estimate with materials recommendations and permit guidance. No obligation.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <PhoneLink phone={data.phone} className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-white text-sm font-bold" style={{ color: ACCENT }}>
+              <Phone size={18} weight="fill" /> Get Free Estimate
+            </PhoneLink>
+            <a href="#contact" className="inline-flex items-center gap-2 px-8 py-4 rounded-full border-2 border-white text-white text-sm font-bold hover:bg-white/10 transition-colors">
+              Contact Us <ArrowRight size={18} weight="bold" />
+            </a>
           </div>
         </div>
       </section>

@@ -204,6 +204,9 @@ export default function V2PetServicesPreview({ data }: { data: GeneratedSiteData
     { q: "Do you accept cats and other pets?", a: `Yes! While we specialize in dogs, ${data.businessName} also cares for cats, rabbits, guinea pigs, and other small pets in separate, calm environments.` },
     { q: "What if my pet has special needs?", a: "We create customized care plans for every pet, including those with medical conditions, anxiety, or special dietary needs. Just let us know during booking." },
     { q: "How do I receive daily updates?", a: "Every pet parent receives a detailed daily report card via text or app, including photos, activity logs, meal tracking, and behavior notes." },
+    { q: "What are your hours of operation?", a: data.hours ? `Our hours are: ${data.hours}. Early drop-off and late pickup options available.` : "Please call for our current hours. We offer flexible drop-off and pickup times." },
+    { q: "Do you offer overnight boarding?", a: `Yes! ${data.businessName} provides overnight boarding with comfortable sleeping areas, evening walks, and bedtime routines. Webcam access available for pet parents.` },
+    { q: "Is there a trial visit available?", a: "Absolutely! We offer a free meet and greet session so your pet can explore our facility and get comfortable with our team before their first official visit." },
   ];
 
   const fallbackTestimonials = [
@@ -676,6 +679,28 @@ export default function V2PetServicesPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
+      {/* ─── 16a-2. HOURS & AVAILABILITY ─── */}
+      {data.hours && (
+        <section className="relative z-10 py-20 overflow-hidden">
+          <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0c1218 50%, ${BG} 100%)` }} />
+          <PawPattern opacity={0.02} accent={ACCENT} />
+          <div className="max-w-3xl mx-auto px-6 relative z-10">
+            <SectionHeader badge="Hours" title="When We Are Open" accent={ACCENT} />
+            <GlassCard className="p-8 text-center">
+              <Clock size={32} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-4" />
+              <p className="text-slate-300 leading-relaxed whitespace-pre-line text-lg mb-4">{data.hours}</p>
+              <div className="flex flex-wrap justify-center gap-3">
+                {["Early Drop-Off", "Late Pickup", "Holiday Boarding", "Weekend Hours"].map((item) => (
+                  <span key={item} className="px-3 py-1.5 rounded-full text-xs font-medium border" style={{ color: ACCENT, borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}>
+                    {item}
+                  </span>
+                ))}
+              </div>
+            </GlassCard>
+          </div>
+        </section>
+      )}
+
       {/* ─── 16b. MID-PAGE CTA ─── */}
       <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15, ${ACCENT}08)` }} />
@@ -687,6 +712,171 @@ export default function V2PetServicesPreview({ data }: { data: GeneratedSiteData
             Claim This Website
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4"><path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
           </a>
+        </div>
+      </section>
+
+      {/* ─── 16c. FACILITY AMENITIES ─── */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0d1218 50%, ${BG} 100%)` }} />
+        <PawPattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Facility" title="Our Pet Paradise" subtitle="State-of-the-art amenities designed for your pet's comfort and safety." accent={ACCENT} />
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {[
+              { title: "Indoor Play Areas", desc: "Climate-controlled zones with soft flooring and toys", icon: Dog },
+              { title: "Outdoor Yards", desc: "Secure fenced yards with shade structures and water stations", icon: Sun },
+              { title: "Grooming Station", desc: "Professional grooming with premium pet-safe products", icon: Scissors },
+              { title: "Nap Rooms", desc: "Quiet rest areas with cozy beds and calming music", icon: Heart },
+              { title: "Splash Pool", desc: "Supervised water play for water-loving breeds", icon: PawPrint },
+              { title: "Webcam Access", desc: "Watch your pet play live from anywhere on your phone", icon: Star },
+            ].map((item) => (
+              <GlassCard key={item.title} className="p-5 text-center">
+                <div className="w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center" style={{ background: `${ACCENT}15`, border: `1px solid ${ACCENT}22` }}>
+                  <item.icon size={22} weight="duotone" style={{ color: ACCENT }} />
+                </div>
+                <h4 className="text-sm font-bold text-white mb-1">{item.title}</h4>
+                <p className="text-xs text-slate-400 leading-relaxed">{item.desc}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── 16d. PET TRAINING TIPS ─── */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0c1218 50%, ${BG} 100%)` }} />
+        <PawPattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Tips" title="Pet Care Tips" subtitle="Expert advice from our team to keep your pet happy and healthy." accent={ACCENT} />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {[
+              { icon: Dog, title: "Socialization Matters", desc: "Introduce your pet to new environments, people, and animals early. Positive social experiences reduce anxiety and improve behavior in group settings." },
+              { icon: Heart, title: "Consistent Routine", desc: "Pets thrive on routine. Keep feeding, walking, and bedtime schedules consistent to reduce stress and build trust with your furry friend." },
+              { icon: FirstAid, title: "Regular Health Checks", desc: "Annual vet visits catch health issues early. Keep vaccinations current and watch for changes in appetite, energy, or behavior." },
+              { icon: PawPrint, title: "Mental Stimulation", desc: "Puzzle toys, training sessions, and interactive play prevent boredom and destructive behavior. A tired pet is a happy pet." },
+              { icon: Sun, title: "Exercise Daily", desc: "Every dog needs daily exercise matched to their breed and age. Even senior pets benefit from gentle walks and light play sessions." },
+              { icon: HandHeart, title: "Positive Reinforcement", desc: "Reward good behavior with treats and praise. Positive training methods build a stronger bond and produce longer-lasting results." },
+            ].map((tip) => (
+              <GlassCard key={tip.title} className="p-6 flex gap-4 items-start">
+                <div className="w-12 h-12 rounded-full shrink-0 flex items-center justify-center" style={{ background: `${ACCENT}15`, border: `1px solid ${ACCENT}22` }}>
+                  <tip.icon size={24} weight="duotone" style={{ color: ACCENT }} />
+                </div>
+                <div>
+                  <h4 className="text-base font-bold text-white mb-1">{tip.title}</h4>
+                  <p className="text-sm text-slate-400 leading-relaxed">{tip.desc}</p>
+                </div>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── 16d. SEASONAL PET CARE CALENDAR ─── */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0d1218 50%, ${BG} 100%)` }} />
+        <PawPattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Seasonal" title="Year-Round Pet Care" subtitle="Every season brings unique needs for your pet. Here is what to keep in mind." accent={ACCENT} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              { season: "Spring", color: "#22c55e", items: ["Flea & tick prevention", "Allergy awareness", "Update vaccinations", "Spring grooming"] },
+              { season: "Summer", color: "#f59e0b", items: ["Hydration & shade", "Paw pad protection", "Swimming safety", "Heat stroke awareness"] },
+              { season: "Fall", color: "#f97316", items: ["Coat conditioning", "Indoor exercise plans", "Holiday safety tips", "Weight management"] },
+              { season: "Winter", color: "#3b82f6", items: ["Cold weather gear", "Antifreeze safety", "Indoor enrichment", "Joint care for seniors"] },
+            ].map((s) => (
+              <GlassCard key={s.season} className="p-6">
+                <div className="w-10 h-10 rounded-full mb-4 flex items-center justify-center" style={{ background: `${s.color}20`, border: `1px solid ${s.color}33` }}>
+                  <CalendarBlank size={20} weight="duotone" style={{ color: s.color }} />
+                </div>
+                <h4 className="text-lg font-bold text-white mb-3">{s.season}</h4>
+                <ul className="space-y-2">
+                  {s.items.map((item) => (
+                    <li key={item} className="flex items-start gap-2 text-sm text-slate-400">
+                      <CheckCircle size={14} weight="fill" className="mt-0.5 shrink-0" style={{ color: s.color }} />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── 16e. WHY CHOOSE US ─── */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0c1218 50%, ${BG} 100%)` }} />
+        <PawPattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Our Promise" title="Why Pet Parents Choose Us" accent={ACCENT} />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { icon: ShieldCheck, title: "Background Checked", desc: "Every team member passes comprehensive background checks and training." },
+              { icon: FirstAid, title: "Pet First Aid", desc: "Staff certified in pet CPR and first aid for emergencies." },
+              { icon: SealCheck, title: "Bonded & Insured", desc: "Full liability coverage for your peace of mind." },
+              { icon: Heart, title: "Cage-Free Play", desc: "Open play areas supervised by trained handlers at all times." },
+            ].map((item) => (
+              <GlassCard key={item.title} className="p-6 text-center">
+                <div className="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ background: `${ACCENT}15`, border: `1px solid ${ACCENT}22` }}>
+                  <item.icon size={28} weight="duotone" style={{ color: ACCENT }} />
+                </div>
+                <h3 className="text-base font-bold text-white mb-2">{item.title}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed">{item.desc}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── 16f. BOARDING PACKAGES ─── */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0c1218 50%, ${BG} 100%)` }} />
+        <PawPattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Packages" title="Boarding & Care Packages" subtitle="Flexible options for every pet and every schedule." accent={ACCENT} />
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              { name: "Day Care", price: "$35/day", desc: "Full day of supervised play, socialization, and rest", features: ["8am-6pm", "Group play sessions", "Lunch included", "Daily report card"] },
+              { name: "Overnight", price: "$55/night", desc: "Comfortable overnight stay with evening walks and bedtime routine", features: ["24-hour care", "Evening walk", "Cozy sleeping area", "Breakfast & dinner"], popular: true },
+              { name: "Extended Stay", price: "$45/night", desc: "5+ night stays at a discounted rate with all premium amenities", features: ["Discounted rate", "All amenities", "Webcam access", "Weekly grooming"] },
+            ].map((pkg) => (
+              <GlassCard key={pkg.name} className={`p-6 ${pkg.popular ? "ring-1" : ""}`} style={pkg.popular ? { borderColor: ACCENT } : undefined}>
+                {pkg.popular && <div className="text-center mb-3"><span className="px-3 py-1 rounded-full text-xs font-bold text-white" style={{ background: ACCENT }}>Most Popular</span></div>}
+                <h3 className="text-lg font-bold text-white mb-1">{pkg.name}</h3>
+                <div className="text-3xl font-extrabold mb-2" style={{ color: ACCENT }}>{pkg.price}</div>
+                <p className="text-sm text-slate-400 mb-4">{pkg.desc}</p>
+                <ul className="space-y-2">
+                  {pkg.features.map((f) => (
+                    <li key={f} className="flex items-center gap-2 text-sm text-slate-300">
+                      <CheckCircle size={14} weight="fill" style={{ color: ACCENT }} /> {f}
+                    </li>
+                  ))}
+                </ul>
+              </GlassCard>
+            ))}
+          </div>
+          <p className="text-center text-xs text-slate-500 mt-6">All prices are per pet. Multi-pet discounts available. Meet and greet required for first-time visitors.</p>
+          <p className="text-center text-xs text-slate-600 mt-2">
+            Holiday and peak season rates may apply. Ask about our loyalty rewards program for frequent visitors.
+          </p>
+        </div>
+      </section>
+
+      {/* ─── 16g. MID-PAGE CTA ─── */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: ACCENT }} />
+        <div className="absolute inset-0 bg-black/20" />
+        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+          <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">Your Pet Deserves the Best Care</h2>
+          <p className="text-white/80 text-lg mb-8 max-w-2xl mx-auto">Book a meet and greet today. We will get to know your pet and create a customized care plan just for them.</p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <PhoneLink phone={data.phone} className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-white text-sm font-bold" style={{ color: ACCENT }}>
+              <Phone size={18} weight="fill" /> Call Now
+            </PhoneLink>
+            <a href="#contact" className="inline-flex items-center gap-2 px-8 py-4 rounded-full border-2 border-white text-white text-sm font-bold hover:bg-white/10 transition-colors">
+              Book a Visit <ArrowRight size={18} weight="bold" />
+            </a>
+          </div>
         </div>
       </section>
 
@@ -757,9 +947,13 @@ export default function V2PetServicesPreview({ data }: { data: GeneratedSiteData
             <div className="p-8 md:p-12">
               <Heart size={48} weight="fill" style={{ color: ACCENT }} className="mx-auto mb-4" />
               <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-4">Our Happy Pet Guarantee</h2>
-              <p className="text-slate-400 leading-relaxed max-w-2xl mx-auto text-lg">{data.businessName} guarantees a safe, fun, and loving experience for every pet. If your pet isn&apos;t happy, we&apos;ll make it right.</p>
+              <p className="text-slate-400 leading-relaxed max-w-2xl mx-auto text-lg mb-2">{data.businessName} guarantees a safe, fun, and loving experience for every pet. If your pet is not happy, we will make it right.</p>
+              <p className="text-slate-500 text-sm max-w-xl mx-auto">
+                Every member of our team is background-checked, pet first aid certified,
+                and genuinely passionate about animal care. Your pet is family to us.
+              </p>
               <div className="flex flex-wrap justify-center gap-4 mt-8">
-                {["Certified Staff", "Pet First Aid", "Photo Updates", "Satisfaction Guaranteed"].map((item) => (
+                {["Certified Staff", "Pet First Aid", "Photo Updates", "Satisfaction Guaranteed", "Bonded & Insured", "Cage-Free Play", "Clean Facility"].map((item) => (
                   <span key={item} className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border" style={{ color: ACCENT, borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}>
                     <CheckCircle size={16} weight="fill" /> {item}
                   </span>

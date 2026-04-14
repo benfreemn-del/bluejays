@@ -788,6 +788,173 @@ export default function V2MedSpaPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
+      {/* ─── PRODUCT SHOWCASE ─── */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0d0d0d 100%)` }} />
+        <SpaWavePattern opacity={0.012} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <Crown size={40} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-3" />
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Premium Products We Trust</h2>
+            <p className="text-slate-400 mt-3 max-w-xl mx-auto">We only use medical-grade, FDA-approved products from industry-leading brands to ensure your safety and results.</p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {["Allergan", "Galderma", "SkinMedica", "Obagi", "ZO Skin Health", "Revance", "SkinCeuticals", "Merz"].map((brand) => (
+              <div key={brand} className="rounded-2xl border border-white/10 p-5 text-center" style={{ background: "rgba(255,255,255,0.03)" }}>
+                <Certificate size={28} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-2" />
+                <span className="text-white font-semibold text-sm">{brand}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── SKINCARE TIPS ─── */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #0d0d0d 0%, ${BG} 100%)` }} />
+        <SpaWavePattern opacity={0.01} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <Flower size={40} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-3" />
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Expert Skincare Tips</h2>
+            <div className="w-16 h-1 mx-auto mt-3 rounded-full" style={{ background: ACCENT }} />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              { title: "Daily SPF Protection", desc: "Wear broad-spectrum SPF 30+ every day, rain or shine. UV damage is the #1 cause of premature aging and pigmentation." },
+              { title: "Retinol at Night", desc: "Incorporate a medical-grade retinol into your evening routine to stimulate collagen production and accelerate cell turnover." },
+              { title: "Hydrate from Within", desc: "Drink at least 8 glasses of water daily and use a hyaluronic acid serum to lock in moisture for plump, glowing skin." },
+            ].map((tip) => (
+              <div key={tip.title} className="rounded-2xl border border-white/10 p-6" style={{ background: "rgba(255,255,255,0.03)" }}>
+                <Sparkle size={24} weight="fill" style={{ color: ACCENT }} className="mb-3" />
+                <h3 className="text-lg font-bold text-white mb-2">{tip.title}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed">{tip.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── MEMBERSHIP BENEFITS ─── */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0d0d0d 100%)` }} />
+        <SpaWavePattern opacity={0.015} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <HandHeart size={40} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-3" />
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Membership Benefits</h2>
+            <p className="text-slate-400 mt-3 max-w-xl mx-auto">Join our VIP membership for exclusive savings and priority booking on all treatments.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              { tier: "Gold", price: "$99/mo", perks: ["10% off all treatments", "Monthly facial included", "Priority booking", "Birthday treatment free"] },
+              { tier: "Platinum", price: "$199/mo", perks: ["20% off all treatments", "Monthly facial + peel", "Same-day appointments", "Complimentary consultations", "Product discounts"] },
+              { tier: "Diamond", price: "$349/mo", perks: ["30% off all treatments", "Monthly premium treatment", "VIP lounge access", "Exclusive events", "Annual skin analysis", "Friend referral bonuses"] },
+            ].map((plan) => (
+              <div key={plan.tier} className="rounded-2xl border border-white/10 p-6 text-center" style={{ background: "rgba(255,255,255,0.03)" }}>
+                <h3 className="text-xl font-bold text-white mb-1">{plan.tier}</h3>
+                <p className="text-2xl font-extrabold mb-4" style={{ color: ACCENT }}>{plan.price}</p>
+                <ul className="space-y-2 text-left">
+                  {plan.perks.map((p) => (
+                    <li key={p} className="flex items-start gap-2 text-sm text-slate-400">
+                      <CheckCircle size={16} weight="fill" style={{ color: ACCENT }} className="mt-0.5 shrink-0" />
+                      <span>{p}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── MID-PAGE CTA ─── */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15 0%, ${BG} 50%, ${ACCENT}08 100%)` }} />
+        <SpaWavePattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+          <Sparkle size={44} weight="fill" style={{ color: ACCENT }} className="mx-auto mb-4" />
+          <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">Your Glow-Up Starts Here</h2>
+          <p className="text-slate-400 max-w-2xl mx-auto mb-8 text-lg leading-relaxed">
+            Book a complimentary consultation with our expert team at {data.businessName}. We&apos;ll create a personalized treatment plan tailored to your unique skin goals.
+          </p>
+          <a href={`tel:${data.phone}`} className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-white font-bold text-lg transition-transform hover:scale-105" style={{ background: ACCENT }}>
+            <Phone size={20} weight="fill" /> Book Your Consultation
+          </a>
+        </div>
+      </section>
+
+      {/* ─── ENHANCED CERTIFICATIONS ─── */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0d0d0d 100%)` }} />
+        <SpaWavePattern opacity={0.01} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-10">
+            <Certificate size={36} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-3" />
+            <h2 className="text-2xl md:text-3xl font-extrabold text-white">Our Credentials</h2>
+            <p className="text-slate-400 mt-2 max-w-lg mx-auto">
+              Your safety and satisfaction are our top priorities. {data.businessName} maintains the highest medical standards in the industry.
+            </p>
+          </div>
+          <div className="flex flex-wrap justify-center gap-6">
+            {[
+              "Board Certified Providers",
+              "FDA-Approved Treatments",
+              "HIPAA Compliant",
+              "Medical Director Oversight",
+              "Sterile Technique Certified",
+              "Continuing Education Required",
+            ].map((badge) => (
+              <div
+                key={badge}
+                className="flex items-center gap-2 px-5 py-3 rounded-full border border-white/10"
+                style={{ background: "rgba(255,255,255,0.03)" }}
+              >
+                <Certificate size={18} weight="fill" style={{ color: ACCENT }} />
+                <span className="text-sm font-medium text-white">{badge}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── WHY CHOOSE US ─── */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #0d0d0d 0%, ${BG} 100%)` }} />
+        <SpaWavePattern opacity={0.012} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Why Choose <span style={{ color: ACCENT }}>{data.businessName}</span></h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              {
+                title: "Medical Expertise",
+                desc: "Treatments administered by board-certified providers with extensive aesthetic training",
+              },
+              {
+                title: "Premium Products Only",
+                desc: "We exclusively use FDA-approved, medical-grade products from leading manufacturers",
+              },
+              {
+                title: "Personalized Plans",
+                desc: "Every treatment plan is customized to your unique skin type, goals, and lifestyle",
+              },
+              {
+                title: "Natural-Looking Results",
+                desc: "We enhance your natural beauty — our goal is results that look refreshed, never overdone",
+              },
+            ].map((card) => (
+              <div key={card.title} className="rounded-2xl border border-white/10 p-6 text-center" style={{ background: "rgba(255,255,255,0.03)" }}>
+                <CheckCircle size={28} weight="fill" style={{ color: ACCENT }} className="mx-auto mb-3" />
+                <h3 className="text-lg font-bold text-white mb-2">{card.title}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed">{card.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ─── 21. FOOTER ─── */}
       <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #060606 100%)` }} />

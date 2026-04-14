@@ -807,6 +807,152 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
+      {/* ─── COVERAGE & FLEET ─── */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111 50%, #1a1a1a 100%)" }} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <Path size={40} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-3" />
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Coverage Area & Fleet</h2>
+            <p className="text-slate-400 mt-3 max-w-xl mx-auto">{data.businessName} covers a wide service area with a modern fleet ready to handle any situation.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="rounded-2xl border border-white/10 p-6" style={{ background: "rgba(255,255,255,0.03)" }}>
+              <MapPin size={28} weight="fill" style={{ color: ACCENT }} className="mb-3" />
+              <h3 className="text-xl font-bold text-white mb-3">Service Area</h3>
+              <p className="text-slate-400 leading-relaxed mb-4">We provide towing and roadside assistance throughout the greater metro area and surrounding communities. Our dispatchers know every road, highway, and back street.</p>
+              <div className="flex flex-wrap gap-2">
+                {["Metro Area", "Highways", "Rural Roads", "Parking Garages"].map((area) => (
+                  <span key={area} className="px-3 py-1 rounded-full text-xs font-medium border" style={{ color: ACCENT, borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}>{area}</span>
+                ))}
+              </div>
+            </div>
+            <div className="rounded-2xl border border-white/10 p-6" style={{ background: "rgba(255,255,255,0.03)" }}>
+              <Truck size={28} weight="fill" style={{ color: ACCENT }} className="mb-3" />
+              <h3 className="text-xl font-bold text-white mb-3">Our Fleet</h3>
+              <ul className="space-y-3">
+                {[
+                  { name: "Flatbed Carriers", desc: "For luxury, AWD, and damaged vehicles" },
+                  { name: "Wheel-Lift Trucks", desc: "Quick hookup for standard tows" },
+                  { name: "Heavy-Duty Wreckers", desc: "Commercial trucks, buses, and RVs" },
+                  { name: "Service Vehicles", desc: "Jump starts, lockouts, and tire changes" },
+                ].map((v) => (
+                  <li key={v.name} className="flex items-start gap-3">
+                    <CheckCircle size={18} weight="fill" style={{ color: ACCENT }} className="mt-0.5 shrink-0" />
+                    <div><span className="text-white font-semibold text-sm">{v.name}</span><p className="text-xs text-slate-500">{v.desc}</p></div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── INSURANCE & AAA ─── */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #111 0%, #1a1a1a 100%)" }} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <ShieldCheck size={40} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-3" />
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Insurance & Roadside Programs</h2>
+            <p className="text-slate-400 mt-3 max-w-xl mx-auto">We work directly with major insurance providers and roadside assistance programs to simplify your experience.</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              { title: "AAA Approved", desc: "Official AAA-contracted provider for your area" },
+              { title: "Insurance Direct", desc: "We bill your insurance directly — less hassle for you" },
+              { title: "Police Rotations", desc: "Trusted by local law enforcement for accident recovery" },
+              { title: "Motor Club Partner", desc: "Accepted by all major motor club programs" },
+            ].map((card) => (
+              <div key={card.title} className="rounded-2xl border border-white/10 p-5 text-center" style={{ background: "rgba(255,255,255,0.03)" }}>
+                <SealCheck size={28} weight="fill" style={{ color: ACCENT }} className="mx-auto mb-2" />
+                <h3 className="text-sm font-bold text-white mb-1">{card.title}</h3>
+                <p className="text-xs text-slate-500 leading-relaxed">{card.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── MID-PAGE CTA ─── */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15 0%, #1a1a1a 50%, ${ACCENT}08 100%)` }} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+          <Siren size={44} weight="fill" style={{ color: ACCENT }} className="mx-auto mb-4" />
+          <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">Stranded? We&apos;re On Our Way</h2>
+          <p className="text-slate-400 max-w-2xl mx-auto mb-6 text-lg">
+            {data.businessName} dispatches the nearest available truck the moment you call. Average response time under 30 minutes.
+          </p>
+          <div className="flex flex-wrap justify-center gap-4 mb-8">
+            {["24/7 Dispatch", "GPS Tracking", "ETA Updates", "No Hidden Fees"].map((item) => (
+              <span key={item} className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border" style={{ color: ACCENT, borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}>
+                <CheckCircle size={16} weight="fill" /> {item}
+              </span>
+            ))}
+          </div>
+          <a href={`tel:${data.phone}`} className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-white font-bold text-lg transition-transform hover:scale-105" style={{ background: ACCENT }}>
+            <Phone size={20} weight="fill" /> Call Now for Help
+          </a>
+        </div>
+      </section>
+
+      {/* ─── WHY CHOOSE US ─── */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #111 0%, #1a1a1a 100%)" }} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Why Choose <span style={{ color: ACCENT }}>{data.businessName}</span></h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              { title: "Fast Response", desc: "Average arrival time under 30 minutes. GPS-dispatched trucks get to you quickly." },
+              { title: "Fair Pricing", desc: "Upfront quotes with no surprise fees. The price we quote is the price you pay." },
+              { title: "Fully Insured", desc: "Complete liability coverage protects your vehicle from hookup to drop-off." },
+              { title: "24/7 Availability", desc: "Breakdowns don't wait for business hours. Neither do we. Call anytime." },
+            ].map((card) => (
+              <div key={card.title} className="rounded-2xl border border-white/10 p-6 text-center" style={{ background: "rgba(255,255,255,0.03)" }}>
+                <CheckCircle size={28} weight="fill" style={{ color: ACCENT }} className="mx-auto mb-3" />
+                <h3 className="text-lg font-bold text-white mb-2">{card.title}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed">{card.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── ENHANCED CERTS ─── */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111 100%)" }} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-8">
+            <SealCheck size={36} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-3" />
+            <h2 className="text-2xl md:text-3xl font-extrabold text-white">Certifications & Trust</h2>
+            <p className="text-slate-400 mt-2 max-w-lg mx-auto">
+              {data.businessName} meets and exceeds all industry standards for safety, professionalism, and reliability.
+            </p>
+          </div>
+          <div className="flex flex-wrap justify-center gap-6">
+            {[
+              "Licensed & Bonded",
+              "DOT Compliant",
+              "AAA Approved",
+              "BBB Accredited",
+              "State Certified",
+              "Fully Insured",
+            ].map((badge) => (
+              <div
+                key={badge}
+                className="flex items-center gap-2 px-5 py-3 rounded-full border border-white/10"
+                style={{ background: "rgba(255,255,255,0.03)" }}
+              >
+                <SealCheck size={18} weight="fill" style={{ color: ACCENT }} />
+                <span className="text-sm font-medium text-white">{badge}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ─── FOOTER ─── */}
       <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111 100%)" }} />

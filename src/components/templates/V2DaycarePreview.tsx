@@ -843,6 +843,141 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
+      {/* ══════════════════ DAILY SCHEDULE ══════════════════ */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9ff 0%, #f5f0ff 50%, #faf9ff 100%)" }} />
+        <SparklePattern opacity={0.012} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <Clock size={40} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-3" />
+            <h2 className="text-3xl md:text-4xl font-extrabold" style={{ color: "#1e1b4b" }}>A Day at {data.businessName}</h2>
+            <p className="text-slate-500 mt-3 max-w-xl mx-auto">Our structured daily schedule balances learning, play, meals, and rest for every age group.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {[
+              { time: "7:00 – 8:30 AM", activity: "Arrival & Free Play", desc: "Warm welcome, breakfast snack, and free exploration in learning centers" },
+              { time: "8:30 – 10:00 AM", activity: "Circle Time & Lessons", desc: "Group activities, songs, calendar, weather, letter and number of the day" },
+              { time: "10:00 – 11:00 AM", activity: "Outdoor Play", desc: "Supervised playground time, gross motor activities, nature walks" },
+              { time: "11:00 – 12:00 PM", activity: "Lunch & Story Time", desc: "Nutritious lunch followed by read-aloud and quiet activities" },
+              { time: "12:00 – 2:00 PM", activity: "Nap / Quiet Time", desc: "Restful nap for younger children, quiet reading and puzzles for older" },
+              { time: "2:00 – 4:00 PM", activity: "Enrichment & Art", desc: "STEM projects, art, music, Spanish, and hands-on learning" },
+              { time: "4:00 – 5:30 PM", activity: "Snack & Free Play", desc: "Afternoon snack, outdoor play, and parent pickup" },
+              { time: "5:30 – 6:00 PM", activity: "Extended Care", desc: "Calm activities, cleanup, and late pickup available" },
+            ].map((s) => (
+              <div key={s.time} className="flex items-start gap-4 rounded-2xl border border-purple-100 p-4" style={{ background: "rgba(255,255,255,0.7)" }}>
+                <span className="text-xs font-mono font-semibold shrink-0 w-28 pt-0.5" style={{ color: ACCENT }}>{s.time}</span>
+                <div>
+                  <h3 className="text-sm font-bold" style={{ color: "#1e1b4b" }}>{s.activity}</h3>
+                  <p className="text-xs text-slate-500">{s.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ CURRICULUM DETAIL ══════════════════ */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #f5f0ff 0%, #faf9ff 100%)" }} />
+        <SparklePattern opacity={0.01} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <GraduationCap size={40} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-3" />
+            <h2 className="text-3xl md:text-4xl font-extrabold" style={{ color: "#1e1b4b" }}>Our Curriculum</h2>
+            <div className="w-16 h-1 mx-auto mt-3 rounded-full" style={{ background: ACCENT }} />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {[
+              { area: "Language & Literacy", desc: "Phonics, vocabulary building, storytelling, and early reading skills" },
+              { area: "Math & Logic", desc: "Counting, patterns, shapes, sorting, and basic problem-solving" },
+              { area: "Science & Discovery", desc: "Nature exploration, simple experiments, cause-and-effect learning" },
+              { area: "Art & Creativity", desc: "Painting, drawing, sculpting, music, and dramatic play" },
+              { area: "Social-Emotional", desc: "Sharing, empathy, conflict resolution, and self-regulation skills" },
+              { area: "Physical Development", desc: "Gross motor play, fine motor activities, yoga, and movement" },
+            ].map((c) => (
+              <div key={c.area} className="rounded-2xl border border-purple-100 p-6" style={{ background: "rgba(255,255,255,0.7)" }}>
+                <Smiley size={24} weight="duotone" style={{ color: ACCENT }} className="mb-3" />
+                <h3 className="text-lg font-bold mb-2" style={{ color: "#1e1b4b" }}>{c.area}</h3>
+                <p className="text-sm text-slate-500 leading-relaxed">{c.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ PARENT COMMUNICATION ══════════════════ */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15 0%, #faf9ff 50%, ${ACCENT}08 100%)` }} />
+        <SparklePattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+          <HandHeart size={44} weight="fill" style={{ color: ACCENT }} className="mx-auto mb-4" />
+          <h2 className="text-3xl md:text-4xl font-extrabold mb-4" style={{ color: "#1e1b4b" }}>Stay Connected Every Day</h2>
+          <p className="text-slate-500 max-w-2xl mx-auto mb-6 text-lg leading-relaxed">
+            We believe parents should never feel out of the loop. {data.businessName} provides daily updates, photos, and milestone tracking so you always know how your child&apos;s day went.
+          </p>
+          <div className="flex flex-wrap justify-center gap-4 mb-8">
+            {["Daily Photo Updates", "Activity Reports", "Milestone Tracking", "Parent App Access", "Teacher Conferences"].map((item) => (
+              <span key={item} className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border" style={{ color: ACCENT, borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}>
+                <CheckCircle size={16} weight="fill" /> {item}
+              </span>
+            ))}
+          </div>
+          <a href={`tel:${data.phone}`} className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-white font-bold text-lg transition-transform hover:scale-105" style={{ background: ACCENT }}>
+            <Phone size={20} weight="fill" /> Schedule a Tour
+          </a>
+        </div>
+      </section>
+
+      {/* ══════════════════ WHY CHOOSE US ══════════════════ */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #f5f0ff 0%, #faf9ff 100%)" }} />
+        <SparklePattern opacity={0.01} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-extrabold" style={{ color: "#1e1b4b" }}>Why Families Choose <span style={{ color: ACCENT }}>{data.businessName}</span></h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              { title: "Licensed & Inspected", desc: "Fully licensed facility exceeding all state safety and health requirements" },
+              { title: "Low Ratios", desc: "Small class sizes ensure your child receives personalized attention and care" },
+              { title: "Experienced Teachers", desc: "Early childhood education certified staff with years of classroom experience" },
+              { title: "Nutritious Meals", desc: "Fresh, healthy meals and snacks prepared daily meeting dietary guidelines" },
+            ].map((card) => (
+              <div key={card.title} className="rounded-2xl border border-purple-100 p-6 text-center" style={{ background: "rgba(255,255,255,0.7)" }}>
+                <CheckCircle size={28} weight="fill" style={{ color: ACCENT }} className="mx-auto mb-3" />
+                <h3 className="text-lg font-bold mb-2" style={{ color: "#1e1b4b" }}>{card.title}</h3>
+                <p className="text-sm text-slate-500 leading-relaxed">{card.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ CERTIFICATIONS ROW ══════════════════ */}
+      <section className="relative z-10 py-12 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9ff 0%, #f5f0ff 100%)" }} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="flex flex-wrap justify-center gap-6">
+            {[
+              "State Licensed",
+              "CPR & First Aid Certified",
+              "Background Checked Staff",
+              "NAEYC Standards",
+              "Health Inspected",
+            ].map((badge) => (
+              <div
+                key={badge}
+                className="flex items-center gap-2 px-5 py-3 rounded-full border border-purple-100"
+                style={{ background: "rgba(255,255,255,0.7)" }}
+              >
+                <ShieldCheck size={18} weight="fill" style={{ color: ACCENT }} />
+                <span className="text-sm font-medium" style={{ color: "#1e1b4b" }}>{badge}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ══════════════════ 15. FOOTER ══════════════════ */}
       <footer className="relative z-10 border-t border-gray-100 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9ff 0%, #f5f0ff 100%)" }} />

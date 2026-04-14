@@ -221,6 +221,10 @@ export default function V2AccountingPreview({ data }: { data: GeneratedSiteData 
     { q: "How can you save me money on taxes?", a: `Our CPAs at ${data.businessName} use proactive tax planning strategies to identify every legal deduction and credit available to you. Most clients save significantly more than our fees.` },
     { q: "Do you work with small businesses?", a: "Absolutely! We specialize in serving small and medium businesses as well as individuals. Our scalable services grow with your business needs." },
     { q: "Is my financial data secure?", a: "Yes. We use bank-level encryption and follow strict data security protocols. All your financial information is protected with the highest industry standards." },
+    { q: "When is the best time to start tax planning?", a: "The best time is now! While most people wait until January, proactive year-round tax planning gives us the most flexibility to minimize your liability." },
+    { q: "Can you represent me in an IRS audit?", a: `Absolutely. ${data.businessName} provides full audit representation. Our CPAs handle all IRS correspondence and meetings on your behalf.` },
+    { q: "Do you offer bookkeeping services?", a: "Yes, we offer both monthly and quarterly bookkeeping packages. We reconcile accounts, manage payroll, and keep your books audit-ready year-round." },
+    { q: "What are your fees?", a: "Our fees vary based on the complexity of your needs. We offer transparent pricing with no hidden charges. Schedule a free consultation for a custom quote." },
   ];
 
   /* Fallback testimonials */
@@ -737,6 +741,173 @@ export default function V2AccountingPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
+      {/* 11c-2. WHY CHOOSE US */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #1a1a1a 0%, ${ACCENT}10 50%, #1a1a1a 100%)` }} />
+        <ChartBackground opacity={0.02} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Our Advantage" title="Why Clients Choose Us" accent={ACCENT} />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { icon: Scales, title: "Licensed CPAs", desc: "State-licensed Certified Public Accountants with years of experience." },
+              { icon: ShieldCheck, title: "IRS Representation", desc: "We handle audits, notices, and negotiations on your behalf." },
+              { icon: Handshake, title: "Year-Round Support", desc: "Not just at tax time. We are your financial partner every month." },
+              { icon: Medal, title: "Proactive Planning", desc: "We find savings before tax season, not after the deadline." },
+            ].map((item) => (
+              <GlassCard key={item.title} className="p-6 text-center">
+                <div className="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ background: `${ACCENT}15`, border: `1px solid ${ACCENT}22` }}>
+                  <item.icon size={28} weight="duotone" style={{ color: ACCENT }} />
+                </div>
+                <h3 className="text-base font-bold text-white mb-2">{item.title}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed">{item.desc}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 11d. TAX TIPS SECTION */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #1a1a1a 0%, ${ACCENT}15 50%, #1a1a1a 100%)` }} />
+        <GraphPattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Tax Tips" title="Smart Tax Strategies" subtitle="Expert advice to help you minimize your tax burden and maximize savings." accent={ACCENT} />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {[
+              { title: "Maximize Deductions", desc: "Track every business expense throughout the year. Home office, mileage, equipment, and professional development are commonly missed deductions worth thousands.", icon: Calculator },
+              { title: "Quarterly Estimated Taxes", desc: "Self-employed? Pay quarterly to avoid penalties. We calculate your estimated payments so you are never surprised at tax time.", icon: CalendarCheck },
+              { title: "Retirement Contributions", desc: "Maximize contributions to SEP-IRA, Solo 401(k), or traditional IRA accounts. These reduce taxable income while building your future.", icon: CurrencyDollar },
+              { title: "Entity Structure Review", desc: "Is your business structured optimally? The difference between an LLC and S-Corp can mean thousands in self-employment tax savings.", icon: Buildings },
+              { title: "Year-End Tax Planning", desc: "Start planning in October, not April. Accelerating deductions or deferring income can significantly impact your annual tax liability.", icon: ChartLineUp },
+              { title: "Record Keeping", desc: "Maintain organized records year-round. Digital copies of receipts, bank statements, and invoices make tax preparation faster and cheaper.", icon: Receipt },
+            ].map((tip) => (
+              <GlassCard key={tip.title} className="p-6 flex gap-4 items-start">
+                <div className="w-12 h-12 rounded-full shrink-0 flex items-center justify-center" style={{ background: `${ACCENT}15`, border: `1px solid ${ACCENT}22` }}>
+                  <tip.icon size={24} weight="duotone" style={{ color: ACCENT }} />
+                </div>
+                <div>
+                  <h4 className="text-base font-bold text-white mb-1">{tip.title}</h4>
+                  <p className="text-sm text-slate-400 leading-relaxed">{tip.desc}</p>
+                </div>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 11e. DOCUMENT CHECKLIST EXPANDED */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #1a1a1a 0%, ${ACCENT}10 50%, #1a1a1a 100%)` }} />
+        <ChartBackground opacity={0.02} accent={ACCENT} />
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Preparation" title="Tax Season Checklist" subtitle="Gather these documents before your appointment to ensure a smooth and thorough filing." accent={ACCENT} />
+          <div className="grid md:grid-cols-2 gap-8">
+            <GlassCard className="p-8">
+              <h3 className="text-xl font-bold text-white mb-4">Personal Tax Documents</h3>
+              <ul className="space-y-3">
+                {["W-2s from all employers", "1099s (freelance, interest, dividends)", "Social Security numbers for all dependents", "Previous year tax return", "Health insurance forms (1095-A/B/C)", "Mortgage interest statement (1098)", "Property tax records", "Charitable donation receipts"].map((item) => (
+                  <li key={item} className="flex items-start gap-2 text-sm text-slate-400">
+                    <CheckCircle size={16} weight="fill" className="mt-0.5 shrink-0" style={{ color: ACCENT }} />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </GlassCard>
+            <GlassCard className="p-8">
+              <h3 className="text-xl font-bold text-white mb-4">Business Tax Documents</h3>
+              <ul className="space-y-3">
+                {["Profit & loss statement", "Balance sheet", "Business expense receipts", "Vehicle mileage log", "Home office measurements", "1099-NEC forms issued", "Payroll records and W-2s issued", "Equipment purchase receipts"].map((item) => (
+                  <li key={item} className="flex items-start gap-2 text-sm text-slate-400">
+                    <CheckCircle size={16} weight="fill" className="mt-0.5 shrink-0" style={{ color: GOLD }} />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </GlassCard>
+          </div>
+        </div>
+      </section>
+
+      {/* 11f. INDUSTRY EXPERTISE EXPANDED */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #1a1a1a 0%, ${ACCENT}15 50%, #1a1a1a 100%)` }} />
+        <GraphPattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader
+            badge="Expertise"
+            title="Industries We Specialize In"
+            subtitle="Deep industry knowledge means better tax strategies and compliance for your specific business."
+            accent={ACCENT}
+          />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { title: "Healthcare", desc: "Medical practices, dental offices, and wellness providers" },
+              { title: "Real Estate", desc: "Investors, agents, property managers, and developers" },
+              { title: "Construction", desc: "Contractors, subcontractors, and trades businesses" },
+              { title: "Restaurants", desc: "Food service, catering, and hospitality businesses" },
+              { title: "E-Commerce", desc: "Online retailers, dropshipping, and digital products" },
+              { title: "Professional Services", desc: "Law firms, consultants, and marketing agencies" },
+              { title: "Non-Profits", desc: "501(c)(3) organizations and charitable foundations" },
+              { title: "Startups", desc: "New ventures, tech companies, and venture-backed firms" },
+            ].map((item) => (
+              <GlassCard key={item.title} className="p-5 text-center">
+                <h4 className="text-sm font-bold text-white mb-1">{item.title}</h4>
+                <p className="text-xs text-slate-400 leading-relaxed">{item.desc}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 11g. TAX DEADLINE CALENDAR */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #1a1a1a 0%, ${ACCENT}10 50%, #1a1a1a 100%)` }} />
+        <GraphPattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Deadlines" title="Important Tax Deadlines" subtitle="Never miss a filing date. We track all deadlines and send reminders proactively." accent={ACCENT} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              { date: "Jan 15", title: "Q4 Estimated Tax", desc: "Fourth quarter estimated tax payment due for prior year" },
+              { date: "Apr 15", title: "Tax Day", desc: "Individual and business tax returns due (or extension filed)" },
+              { date: "Jun 15", title: "Q2 Estimated Tax", desc: "Second quarter estimated tax payment due for current year" },
+              { date: "Oct 15", title: "Extended Returns", desc: "Final deadline for returns filed with extension" },
+            ].map((item) => (
+              <GlassCard key={item.date} className="p-5 text-center">
+                <div className="text-2xl font-extrabold mb-2" style={{ color: GOLD }}>{item.date}</div>
+                <h4 className="text-sm font-bold text-white mb-1">{item.title}</h4>
+                <p className="text-xs text-slate-400 leading-relaxed">{item.desc}</p>
+              </GlassCard>
+            ))}
+          </div>
+          <p className="text-center text-xs text-slate-500 mt-6">
+            We handle all deadline tracking and send reminders well in advance. Never worry about a missed filing date again.
+          </p>
+        </div>
+      </section>
+
+      {/* 11h. MID-PAGE CTA */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: ACCENT }} />
+        <div className="absolute inset-0 bg-black/20" />
+        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+          <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">
+            Stop Overpaying on Taxes
+          </h2>
+          <p className="text-white/80 text-lg mb-8 max-w-2xl mx-auto">
+            Schedule your free consultation and discover how much you could be saving.
+            Most clients save $3,200+ in their first year working with us.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <PhoneLink phone={data.phone} className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-white text-sm font-bold" style={{ color: ACCENT }}>
+              <Phone size={18} weight="fill" /> Free Consultation
+            </PhoneLink>
+            <a href="#contact" className="inline-flex items-center gap-2 px-8 py-4 rounded-full border-2 border-white text-white text-sm font-bold hover:bg-white/10 transition-colors">
+              Get Started <ArrowRight size={18} weight="bold" />
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* 12. FAQ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #1a1a1a 0%, ${ACCENT}20 50%, #1a1a1a 100%)` }} />
@@ -755,9 +926,17 @@ export default function V2AccountingPreview({ data }: { data: GeneratedSiteData 
           <ShimmerBorder accent={ACCENT}><div className="p-8 md:p-12">
             <ShieldCheck size={48} weight="fill" style={{ color: GOLD }} className="mx-auto mb-4" />
             <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-4">Our Accuracy Guarantee</h2>
-            <p className="text-slate-400 leading-relaxed max-w-2xl mx-auto text-lg">Every return and financial statement from {data.businessName} is backed by our 100% accuracy guarantee. We pay penalties for any errors we make.</p>
-            <div className="flex flex-wrap justify-center gap-4 mt-8">
-              {["CPA Certified", "Free Consultation", "Accuracy Guaranteed", "Year-Round Support"].map((item) => (
+            <p className="text-slate-400 leading-relaxed max-w-2xl mx-auto text-lg mb-2">Every return and financial statement from {data.businessName} is backed by our 100% accuracy guarantee. We pay penalties for any errors we make.</p>
+            <p className="text-slate-500 text-sm max-w-xl mx-auto mb-6">
+              We invest in continuous professional education, use the latest tax software,
+              and perform multi-level quality reviews on every return before filing.
+              Your peace of mind is our top priority.
+            </p>
+            <div className="flex flex-wrap justify-center gap-4 mt-4">
+              {[
+                "CPA Certified", "Free Consultation", "Accuracy Guaranteed",
+                "Year-Round Support", "Audit Protection", "Penalty-Free Promise",
+              ].map((item) => (
                 <span key={item} className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border" style={{ color: GOLD, borderColor: `${GOLD}33`, background: `${GOLD}0d` }}><CheckCircle size={16} weight="fill" />{item}</span>
               ))}
             </div>

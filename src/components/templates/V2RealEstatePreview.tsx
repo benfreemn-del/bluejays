@@ -908,6 +908,78 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
+      {/* ══════════════════ MARKET STATS ══════════════════ */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #09090b 0%, #0d0d0d 50%, #09090b 100%)" }} />
+        <LuxuryPattern opacity={0.015} accent={GOLD} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <ChartLineUp size={40} weight="duotone" style={{ color: GOLD }} className="mx-auto mb-3" />
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Local Market Insights</h2>
+            <p className="text-zinc-400 mt-3 max-w-xl mx-auto">Stay informed with the latest real estate trends in your area.</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              { stat: "12", label: "Avg. Days on Market", note: "Homes are selling fast" },
+              { stat: "$585K", label: "Median Home Price", note: "Up 4.2% year-over-year" },
+              { stat: "97%", label: "List-to-Sale Ratio", note: "Sellers get near asking" },
+              { stat: "2.1", label: "Months of Inventory", note: "Strong seller's market" },
+            ].map((m) => (
+              <div key={m.label} className="rounded-2xl border border-white/10 p-6 text-center" style={{ background: "rgba(255,255,255,0.03)" }}>
+                <p className="text-3xl font-extrabold mb-1" style={{ color: GOLD }}>{m.stat}</p>
+                <p className="text-sm text-white font-semibold">{m.label}</p>
+                <p className="text-xs text-zinc-500 mt-1">{m.note}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ NEIGHBORHOOD GUIDE ══════════════════ */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0d0d0d 0%, #09090b 100%)" }} />
+        <LuxuryPattern opacity={0.01} accent={GOLD} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <MapPin size={40} weight="duotone" style={{ color: GOLD }} className="mx-auto mb-3" />
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Neighborhood Spotlight</h2>
+            <div className="w-16 h-1 mx-auto mt-3 rounded-full" style={{ background: GOLD }} />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {[
+              { area: "Downtown Core", highlights: "Walk score 95+, restaurants, nightlife, transit access, luxury condos" },
+              { area: "Waterfront District", highlights: "Stunning views, parks, bike trails, upscale dining, marina access" },
+              { area: "Family Suburbs", highlights: "Top-rated schools, large lots, community parks, quiet streets" },
+              { area: "Historic Quarter", highlights: "Charming character homes, tree-lined streets, boutique shopping, cafes" },
+            ].map((n) => (
+              <div key={n.area} className="flex items-start gap-4 rounded-2xl border border-white/10 p-6" style={{ background: "rgba(255,255,255,0.03)" }}>
+                <House size={28} weight="duotone" style={{ color: GOLD }} className="shrink-0 mt-1" />
+                <div>
+                  <h3 className="text-lg font-bold text-white">{n.area}</h3>
+                  <p className="text-sm text-zinc-400 leading-relaxed mt-1">{n.highlights}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${GOLD}15 0%, #09090b 50%, ${GOLD}08 100%)` }} />
+        <LuxuryPattern opacity={0.02} accent={GOLD} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+          <Key size={44} weight="fill" style={{ color: GOLD }} className="mx-auto mb-4" />
+          <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">Your Dream Home Awaits</h2>
+          <p className="text-zinc-400 max-w-2xl mx-auto mb-8 text-lg">
+            Whether you&apos;re buying your first home or selling a luxury property, {data.businessName} provides expert guidance every step of the way.
+          </p>
+          <a href={`tel:${data.phone}`} className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-white font-bold text-lg transition-transform hover:scale-105" style={{ background: GOLD }}>
+            <Phone size={20} weight="fill" /> Schedule a Consultation
+          </a>
+        </div>
+      </section>
+
       {/* ══════════════════ 15. FOOTER ══════════════════ */}
       <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #09090b 0%, #060606 100%)" }} />

@@ -238,6 +238,8 @@ export default function V2CateringPreview({ data }: { data: GeneratedSiteData })
     { q: "Can we schedule a tasting?", a: `Yes! Contact ${data.businessName} to arrange a tasting session. We want every dish to be perfect for your event.` },
     { q: "What is included in the service?", a: "Depending on your package, service includes menu planning, food preparation, service staff, setup, tableware, linens, and full cleanup." },
     { q: "Do you provide bar service?", a: "Yes, we offer full bar packages including signature cocktails, wine pairings, and non-alcoholic craft beverages." },
+    { q: "What is the minimum guest count?", a: "We cater events from intimate dinners of 10 guests to grand celebrations of 500+. No event is too small or too large for our team." },
+    { q: "Do you provide rentals and decor?", a: "We offer comprehensive rental packages including table linens, centerpieces, tableware, and decor setup. Ask about our full-service event design." },
   ];
 
   const fallbackTestimonials = [
@@ -656,6 +658,190 @@ export default function V2CateringPreview({ data }: { data: GeneratedSiteData })
             <PhoneLink phone={data.phone} className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-white font-semibold text-base" style={{ background: ACCENT }}>
               <Phone size={20} weight="fill" /> Call to Discuss Your Event
             </PhoneLink>
+          </div>
+        </div>
+      </section>
+
+      {/* 16a-2. TASTING EXPERIENCE */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #f8f3ee 50%, ${BG} 100%)` }} />
+        <ElegantPattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Experience" title="Book a Private Tasting" subtitle="Before your event, experience our cuisine firsthand with a personalized tasting session." accent={ACCENT} />
+          <GlassCard className="p-8">
+            <div className="grid md:grid-cols-3 gap-6 text-center">
+              <div>
+                <div className="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ background: `${ACCENT}15`, border: `1px solid ${ACCENT}22` }}>
+                  <Wine size={24} weight="duotone" style={{ color: ACCENT }} />
+                </div>
+                <h4 className="text-base font-bold mb-2" style={{ color: ACCENT }}>Wine Pairing</h4>
+                <p className="text-sm text-gray-500">Expert sommelier-curated pairings for every course.</p>
+              </div>
+              <div>
+                <div className="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ background: `${ACCENT}15`, border: `1px solid ${ACCENT}22` }}>
+                  <CookingPot size={24} weight="duotone" style={{ color: ACCENT }} />
+                </div>
+                <h4 className="text-base font-bold mb-2" style={{ color: ACCENT }}>Custom Menu</h4>
+                <p className="text-sm text-gray-500">Tailor every dish to your event theme and preferences.</p>
+              </div>
+              <div>
+                <div className="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ background: `${ACCENT}15`, border: `1px solid ${ACCENT}22` }}>
+                  <Scroll size={24} weight="duotone" style={{ color: ACCENT }} />
+                </div>
+                <h4 className="text-base font-bold mb-2" style={{ color: ACCENT }}>Full Proposal</h4>
+                <p className="text-sm text-gray-500">
+                  Receive a detailed proposal with pricing
+                  after your tasting session.
+                </p>
+              </div>
+            </div>
+            <div className="text-center mt-8 pt-6 border-t border-gray-200">
+              <PhoneLink phone={data.phone} className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-white font-semibold" style={{ background: ACCENT }}>
+                <Phone size={18} weight="fill" /> Schedule Your Tasting
+              </PhoneLink>
+            </div>
+          </GlassCard>
+        </div>
+      </section>
+
+      {/* 16b. EVENT GALLERY SHOWCASE */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #f5efe8 50%, ${BG} 100%)` }} />
+        <ElegantPattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Events" title="Event Gallery" subtitle="A taste of the memorable events we have had the honor of catering." accent={ACCENT} />
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {galleryImages.slice(0, 6).map((img, i) => {
+              const eventLabels = ["Wedding Reception", "Corporate Gala", "Birthday Celebration", "Anniversary Dinner", "Holiday Party", "Private Tasting"];
+              const guestCounts = ["200 Guests", "150 Guests", "80 Guests", "50 Guests", "120 Guests", "30 Guests"];
+              return (
+                <div key={i} className="group relative aspect-[4/3] rounded-2xl overflow-hidden border border-black/5 shadow-sm">
+                  <img src={img} alt={eventLabels[i] || "Event"} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
+                    <span className="text-xs font-bold uppercase tracking-wider text-white/70 mb-1">{guestCounts[i]}</span>
+                    <span className="text-sm font-semibold text-white">{eventLabels[i]}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* 16c. SEASONAL MENU HIGHLIGHTS */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #f8f3ee 50%, ${BG} 100%)` }} />
+        <ElegantPattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Seasonal" title="Seasonal Menu Highlights" subtitle="Our menus change with the seasons to showcase the freshest local ingredients." accent={ACCENT} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              { season: "Spring", color: "#22c55e", dishes: ["Herb-Crusted Lamb", "Asparagus Risotto", "Strawberry Pavlova", "Garden Pea Soup"] },
+              { season: "Summer", color: "#f59e0b", dishes: ["Grilled Lobster Tail", "Heirloom Tomato Salad", "Peach Cobbler", "Watermelon Gazpacho"] },
+              { season: "Fall", color: "#f97316", dishes: ["Braised Short Ribs", "Butternut Squash Ravioli", "Apple Tarte Tatin", "Wild Mushroom Bisque"] },
+              { season: "Winter", color: "#3b82f6", dishes: ["Filet Mignon Wellington", "Truffle Mac & Cheese", "Chocolate Fondant", "French Onion Soup"] },
+            ].map((s) => (
+              <GlassCard key={s.season} className="p-6">
+                <div className="w-10 h-10 rounded-full mb-4 flex items-center justify-center" style={{ background: `${s.color}15`, border: `1px solid ${s.color}33` }}>
+                  <CalendarCheck size={20} weight="duotone" style={{ color: s.color }} />
+                </div>
+                <h4 className="text-lg font-bold mb-3" style={{ color: ACCENT }}>{s.season}</h4>
+                <ul className="space-y-2">
+                  {s.dishes.map((dish) => (
+                    <li key={dish} className="flex items-center gap-2 text-sm text-gray-600">
+                      <ForkKnife size={14} weight="duotone" style={{ color: s.color }} />
+                      <span>{dish}</span>
+                    </li>
+                  ))}
+                </ul>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 16d. KITCHEN TOUR / VIDEO SECTION */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #f5efe8 50%, ${BG} 100%)` }} />
+        <ElegantPattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Behind the Scenes" title="Our Kitchen & Process" subtitle="From farm-fresh sourcing to plating perfection, see how we craft your event." accent={ACCENT} />
+          <GlassCard className="p-8">
+            <div className="grid md:grid-cols-2 gap-8">
+              <div>
+                <h3 className="text-xl font-bold mb-4" style={{ color: ACCENT }}>What Sets Our Kitchen Apart</h3>
+                <ul className="space-y-3">
+                  {[
+                    "Locally sourced, seasonal ingredients",
+                    "Executive chef with 15+ years experience",
+                    "Made from scratch — no pre-packaged shortcuts",
+                    "Commercial kitchen with health department A-rating",
+                    "Sustainable packaging and waste-reduction practices",
+                    "Custom menu development for every event",
+                  ].map((item) => (
+                    <li key={item} className="flex items-start gap-2 text-sm text-gray-600">
+                      <CheckCircle size={16} weight="fill" className="mt-0.5 shrink-0" style={{ color: ACCENT }} />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="flex flex-col gap-4">
+                <GlassCard className="p-4 text-center flex-1 flex flex-col items-center justify-center">
+                  <Fire size={32} weight="duotone" style={{ color: ACCENT }} className="mb-3" />
+                  <h4 className="text-base font-bold" style={{ color: ACCENT }}>Fresh Daily</h4>
+                  <p className="text-xs text-gray-500 mt-1">Everything prepared day-of for peak flavor</p>
+                </GlassCard>
+                <GlassCard className="p-4 text-center flex-1 flex flex-col items-center justify-center">
+                  <Leaf size={32} weight="duotone" style={{ color: ACCENT }} className="mb-3" />
+                  <h4 className="text-base font-bold" style={{ color: ACCENT }}>Farm to Table</h4>
+                  <p className="text-xs text-gray-500 mt-1">Partnerships with local farms and producers</p>
+                </GlassCard>
+              </div>
+            </div>
+          </GlassCard>
+        </div>
+      </section>
+
+      {/* 16e. WHY CHOOSE US */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #f8f3ee 50%, ${BG} 100%)` }} />
+        <ElegantPattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Why Us" title="Why Choose Our Catering" accent={ACCENT} />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { icon: Trophy, title: "Award-Winning", desc: "Recognized by local culinary publications for excellence." },
+              { icon: Users, title: "Full-Service Staff", desc: "Professional servers, bartenders, and event coordinators." },
+              { icon: Leaf, title: "Dietary Inclusive", desc: "Vegan, gluten-free, kosher, halal — we accommodate all needs." },
+              { icon: Timer, title: "On-Time Delivery", desc: "Military precision timing so your event runs flawlessly." },
+            ].map((item) => (
+              <GlassCard key={item.title} className="p-6 text-center">
+                <div className="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ background: `${ACCENT}15`, border: `1px solid ${ACCENT}22` }}>
+                  <item.icon size={28} weight="duotone" style={{ color: ACCENT }} />
+                </div>
+                <h3 className="text-base font-bold mb-2" style={{ color: ACCENT }}>{item.title}</h3>
+                <p className="text-sm text-gray-500 leading-relaxed">{item.desc}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 16f. MID-PAGE CTA */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: ACCENT }} />
+        <div className="absolute inset-0 bg-black/10" />
+        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+          <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">Let Us Cater Your Next Event</h2>
+          <p className="text-white/80 text-lg mb-8 max-w-2xl mx-auto">From intimate dinners to grand celebrations, we create unforgettable culinary experiences. Get your free consultation today.</p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <PhoneLink phone={data.phone} className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-white text-sm font-bold" style={{ color: ACCENT }}>
+              <Phone size={18} weight="fill" /> Call Now
+            </PhoneLink>
+            <a href="#contact" className="inline-flex items-center gap-2 px-8 py-4 rounded-full border-2 border-white text-white text-sm font-bold hover:bg-white/10 transition-colors">
+              Request a Quote <ArrowRight size={18} weight="bold" />
+            </a>
           </div>
         </div>
       </section>

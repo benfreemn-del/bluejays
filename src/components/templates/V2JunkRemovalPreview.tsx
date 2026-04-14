@@ -894,6 +894,71 @@ export default function V2JunkRemovalPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
+      {/* ── ITEMS WE TAKE EXPANDED ── */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #111827 0%, #0f172a 50%, #111827 100%)" }} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <Package size={40} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-3" />
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">What We Take</h2>
+            <p className="text-slate-400 mt-3 max-w-xl mx-auto">If you can point to it, we can haul it. Here&apos;s just a sample of what we remove daily.</p>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            {[
+              "Old Furniture", "Mattresses", "Appliances", "Electronics",
+              "Construction Debris", "Yard Waste", "Hot Tubs", "Pianos",
+              "Exercise Equipment", "Office Furniture", "Carpeting", "Tires",
+              "Sheds & Playsets", "Fencing", "Concrete & Brick", "Storage Units",
+            ].map((item) => (
+              <div key={item} className="flex items-center gap-2 rounded-xl border border-white/10 px-4 py-3" style={{ background: "rgba(255,255,255,0.03)" }}>
+                <CheckCircle size={16} weight="fill" style={{ color: ACCENT }} className="shrink-0" />
+                <span className="text-sm text-white">{item}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── ECO STATS ── */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #111827 100%)" }} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <Recycle size={40} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-3" />
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Our Eco Commitment</h2>
+            <div className="w-16 h-1 mx-auto mt-3 rounded-full" style={{ background: ACCENT }} />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+            {[
+              { pct: "60%", label: "Donated", desc: "Usable items donated to local charities, shelters, and families in need" },
+              { pct: "30%", label: "Recycled", desc: "Metals, electronics, wood, and recyclable materials processed responsibly" },
+              { pct: "10%", label: "Landfill", desc: "Only what can't be donated or recycled goes to the landfill — our last resort" },
+            ].map((e) => (
+              <div key={e.label} className="rounded-2xl border border-white/10 p-6 text-center" style={{ background: "rgba(255,255,255,0.03)" }}>
+                <p className="text-4xl font-extrabold mb-1" style={{ color: ACCENT }}>{e.pct}</p>
+                <p className="text-lg font-bold text-white mb-2">{e.label}</p>
+                <p className="text-sm text-slate-400 leading-relaxed">{e.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── MID-PAGE CTA ── */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15 0%, #111827 50%, ${ACCENT}08 100%)` }} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+          <Truck size={44} weight="fill" style={{ color: ACCENT }} className="mx-auto mb-4" />
+          <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">Ready to Reclaim Your Space?</h2>
+          <p className="text-slate-400 max-w-2xl mx-auto mb-8 text-lg">
+            {data.businessName} makes junk removal simple. Point at what goes, we handle the rest. Same-day service available.
+          </p>
+          <a href={`tel:${data.phone}`} className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-white font-bold text-lg transition-transform hover:scale-105" style={{ background: ACCENT }}>
+            <Phone size={20} weight="fill" /> Get a Free Quote
+          </a>
+        </div>
+      </section>
+
       {/* ── FOOTER ── */}
       <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111 100%)" }} />

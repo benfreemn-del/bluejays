@@ -841,6 +841,134 @@ export default function V2MartialArtsPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
+      {/* ══════════════════ BELT PROGRESSION ══════════════════ */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111 50%, #1a1a1a 100%)" }} />
+        <SparklePattern opacity={0.01} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <Medal size={40} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-3" />
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Belt Progression System</h2>
+            <p className="text-slate-400 mt-3 max-w-xl mx-auto">Our structured ranking system ensures every student advances with clear goals and measurable achievements.</p>
+          </div>
+          <div className="flex flex-wrap justify-center gap-4">
+            {[
+              { belt: "White", color: "#f1f5f9", desc: "Fundamentals & basics" },
+              { belt: "Yellow", color: "#facc15", desc: "Core techniques" },
+              { belt: "Orange", color: "#f97316", desc: "Combination skills" },
+              { belt: "Green", color: "#22c55e", desc: "Intermediate forms" },
+              { belt: "Blue", color: "#3b82f6", desc: "Advanced techniques" },
+              { belt: "Purple", color: "#a855f7", desc: "Competition ready" },
+              { belt: "Brown", color: "#92400e", desc: "Expert level" },
+              { belt: "Black", color: "#1e1e1e", desc: "Mastery achieved" },
+            ].map((b) => (
+              <div key={b.belt} className="rounded-2xl border border-white/10 p-4 text-center w-28" style={{ background: "rgba(255,255,255,0.03)" }}>
+                <div className="w-full h-3 rounded-full mb-2" style={{ background: b.color, border: b.belt === "Black" ? "1px solid #444" : "none" }} />
+                <h3 className="text-sm font-bold text-white">{b.belt}</h3>
+                <p className="text-[10px] text-slate-500">{b.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ CLASS SCHEDULE ══════════════════ */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #111 0%, #1a1a1a 100%)" }} />
+        <SparklePattern opacity={0.012} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <Clock size={40} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-3" />
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Weekly Class Schedule</h2>
+            <div className="w-16 h-1 mx-auto mt-3 rounded-full" style={{ background: ACCENT }} />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {[
+              { day: "Mon / Wed / Fri", classes: [{ time: "4:00 PM", name: "Kids Beginners (5-8)" }, { time: "5:00 PM", name: "Youth Intermediate (9-14)" }, { time: "6:30 PM", name: "Adult All Levels" }, { time: "7:30 PM", name: "Sparring / Competition Prep" }] },
+              { day: "Tue / Thu / Sat", classes: [{ time: "9:00 AM", name: "Morning Cardio Kickboxing" }, { time: "4:30 PM", name: "Kids Advanced (9-14)" }, { time: "5:30 PM", name: "Adult Jiu-Jitsu / Grappling" }, { time: "7:00 PM", name: "Black Belt Club" }] },
+            ].map((d) => (
+              <div key={d.day} className="rounded-2xl border border-white/10 p-6" style={{ background: "rgba(255,255,255,0.03)" }}>
+                <h3 className="text-lg font-bold text-white mb-4" style={{ color: ACCENT }}>{d.day}</h3>
+                <div className="space-y-3">
+                  {d.classes.map((c) => (
+                    <div key={c.time} className="flex items-center gap-3">
+                      <span className="text-sm font-mono text-slate-500 w-20 shrink-0">{c.time}</span>
+                      <span className="text-sm text-white">{c.name}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ COMPETITION RESULTS ══════════════════ */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111 100%)" }} />
+        <SparklePattern opacity={0.01} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <Fire size={40} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-3" />
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Competition Achievements</h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              { stat: "200+", label: "Tournament Medals" },
+              { stat: "45+", label: "State Champions" },
+              { stat: "12", label: "National Qualifiers" },
+              { stat: "98%", label: "Student Retention Rate" },
+            ].map((s) => (
+              <div key={s.label} className="rounded-2xl border border-white/10 p-6 text-center" style={{ background: "rgba(255,255,255,0.03)" }}>
+                <p className="text-3xl font-extrabold mb-1" style={{ color: ACCENT }}>{s.stat}</p>
+                <p className="text-sm text-slate-400">{s.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15 0%, #1a1a1a 50%, ${ACCENT}08 100%)` }} />
+        <SparklePattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+          <Lightning size={44} weight="fill" style={{ color: ACCENT }} className="mx-auto mb-4" />
+          <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">Start Your Martial Arts Journey</h2>
+          <p className="text-slate-400 max-w-2xl mx-auto mb-6 text-lg">
+            Try a free class at {data.businessName}. No experience needed — our instructors will guide you through every technique at your own pace.
+          </p>
+          <a href={`tel:${data.phone}`} className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-white font-bold text-lg transition-transform hover:scale-105" style={{ background: ACCENT }}>
+            <Phone size={20} weight="fill" /> Claim Free Trial Class
+          </a>
+        </div>
+      </section>
+
+      {/* ══════════════════ WHY CHOOSE US ══════════════════ */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #111 0%, #1a1a1a 100%)" }} />
+        <SparklePattern opacity={0.01} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Why Train at <span style={{ color: ACCENT }}>{data.businessName}</span></h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              { title: "Expert Instructors", desc: "Black belt instructors with decades of competition and teaching experience" },
+              { title: "All Ages Welcome", desc: "Programs for kids as young as 4 through adult advanced practitioners" },
+              { title: "Character Building", desc: "Discipline, respect, and confidence developed through structured training" },
+              { title: "Competition Ready", desc: "Tournament prep and competitive team for students who want to test their skills" },
+            ].map((card) => (
+              <div key={card.title} className="rounded-2xl border border-white/10 p-6 text-center" style={{ background: "rgba(255,255,255,0.03)" }}>
+                <CheckCircle size={28} weight="fill" style={{ color: ACCENT }} className="mx-auto mb-3" />
+                <h3 className="text-lg font-bold text-white mb-2">{card.title}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed">{card.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ══════════════════ 15. FOOTER ══════════════════ */}
       <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111 100%)" }} />

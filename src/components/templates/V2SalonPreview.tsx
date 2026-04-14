@@ -949,6 +949,48 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
+      {/* ══════════════════ HAIR CARE TIPS ══════════════════ */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #0f0710 50%, ${DARK} 100%)` }} />
+        <RosePattern opacity={0.01} accent={ROSE} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <MagicWand size={40} weight="duotone" style={{ color: ROSE }} className="mx-auto mb-3" />
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Hair Care Tips from Our Stylists</h2>
+            <div className="w-16 h-1 mx-auto mt-3 rounded-full" style={{ background: ROSE }} />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              { tip: "Wash Smarter, Not More", desc: "Washing your hair every day strips natural oils. 2-3 times per week with sulfate-free shampoo keeps color vibrant and hair healthy." },
+              { tip: "Heat Protection Always", desc: "Never use hot tools without a heat protectant spray. One application can prevent split ends and breakage that takes months to repair." },
+              { tip: "Deep Condition Weekly", desc: "A weekly hair mask or deep conditioner restores moisture, adds shine, and keeps your color-treated hair looking salon-fresh longer." },
+            ].map((t) => (
+              <div key={t.tip} className="rounded-2xl border border-white/10 p-6" style={{ background: "rgba(255,255,255,0.03)" }}>
+                <Sparkle size={24} weight="fill" style={{ color: ROSE }} className="mb-3" />
+                <h3 className="text-lg font-bold text-white mb-2">{t.tip}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed">{t.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ROSE}15 0%, ${DARK} 50%, ${ROSE}08 100%)` }} />
+        <RosePattern opacity={0.02} accent={ROSE} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+          <Scissors size={44} weight="fill" style={{ color: ROSE }} className="mx-auto mb-4" />
+          <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">Your Best Hair Day Awaits</h2>
+          <p className="text-slate-400 max-w-2xl mx-auto mb-8 text-lg">
+            Book your appointment at {data.businessName} and experience the difference that premium products and expert stylists make.
+          </p>
+          <a href={`tel:${data.phone}`} className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-white font-bold text-lg transition-transform hover:scale-105" style={{ background: ROSE }}>
+            <Phone size={20} weight="fill" /> Book Your Appointment
+          </a>
+        </div>
+      </section>
+
       {/* ══════════════════ 15. FOOTER ══════════════════ */}
       <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #0f0710 100%)` }} />

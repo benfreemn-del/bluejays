@@ -769,6 +769,157 @@ export default function V2TutoringPreview({ data }: { data: GeneratedSiteData })
       {/* GUARANTEE */}
       <section className="relative z-10 py-16 overflow-hidden"><div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0c1220 100%)` }} /><div className="max-w-4xl mx-auto px-6 relative z-10 text-center"><ShimmerBorder accent={ACCENT}><div className="p-8 md:p-12"><ShieldCheck size={48} weight="fill" style={{ color: ACCENT }} className="mx-auto mb-4" /><h2 className="text-2xl md:text-4xl font-extrabold text-white mb-4">Our Grade Improvement Guarantee</h2><p className="text-slate-400 leading-relaxed max-w-2xl mx-auto text-lg">{data.businessName} guarantees measurable academic improvement through personalized, expert tutoring.</p><div className="flex flex-wrap justify-center gap-4 mt-8">{["Certified Tutors", "Free Assessment", "Grade Guarantee", "Flexible Scheduling"].map((item) => <span key={item} className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border" style={{ color: ACCENT, borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}><CheckCircle size={16} weight="fill" /> {item}</span>)}</div></div></ShimmerBorder></div></section>
 
+      {/* CURRICULUM DETAIL */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0c1220 50%, ${BG} 100%)` }} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <BookOpen size={40} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-3" />
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Curriculum & Subjects</h2>
+            <p className="text-slate-400 mt-3 max-w-xl mx-auto">Our tutors follow proven curricula aligned with state standards and school district requirements.</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {[
+              { subject: "Mathematics", icon: MathOperations, topics: "Algebra, Geometry, Calculus, Statistics, Pre-Calc" },
+              { subject: "Science", icon: Atom, topics: "Biology, Chemistry, Physics, Environmental Science" },
+              { subject: "English & Writing", icon: BookOpen, topics: "Essay Writing, Grammar, Literature, SAT Prep" },
+              { subject: "Foreign Languages", icon: Translate, topics: "Spanish, French, Mandarin, ESL/ELL Support" },
+              { subject: "Computer Science", icon: Code, topics: "Python, Java, AP CS, Web Development" },
+              { subject: "Test Preparation", icon: GraduationCap, topics: "SAT, ACT, GRE, GMAT, AP Exams" },
+            ].map((s) => (
+              <div key={s.subject} className="rounded-2xl border border-white/10 p-6" style={{ background: "rgba(255,255,255,0.03)" }}>
+                <s.icon size={28} weight="duotone" style={{ color: ACCENT }} className="mb-3" />
+                <h3 className="text-lg font-bold text-white mb-2">{s.subject}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed">{s.topics}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* PARENT RESOURCES */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #0c1220 0%, ${BG} 100%)` }} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <Users size={40} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-3" />
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Parent Resources</h2>
+            <p className="text-slate-400 mt-3 max-w-xl mx-auto">We keep parents informed and involved every step of the way.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {[
+              { title: "Progress Reports", desc: "Receive detailed session summaries after every tutoring session with specific feedback on strengths and areas for improvement." },
+              { title: "Parent-Tutor Conferences", desc: "Schedule regular check-ins with your child's tutor to discuss goals, progress, and strategies for continued growth." },
+              { title: "Homework Support Guides", desc: "Access our curated library of study guides, practice worksheets, and test prep materials tailored to your child's grade level." },
+              { title: "College Planning Resources", desc: "For high schoolers, get guidance on college applications, scholarship essays, and standardized test timelines." },
+            ].map((r) => (
+              <div key={r.title} className="rounded-2xl border border-white/10 p-6" style={{ background: "rgba(255,255,255,0.03)" }}>
+                <CheckCircle size={24} weight="fill" style={{ color: ACCENT }} className="mb-3" />
+                <h3 className="text-lg font-bold text-white mb-2">{r.title}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed">{r.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* STUDY TIPS */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0c1220 100%)` }} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <Brain size={40} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-3" />
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Study Tips from Our Tutors</h2>
+            <div className="w-16 h-1 mx-auto mt-3 rounded-full" style={{ background: ACCENT }} />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              { tip: "Active Recall", desc: "Test yourself instead of re-reading notes. Practice retrieval builds stronger memory pathways." },
+              { tip: "Spaced Repetition", desc: "Review material at increasing intervals. Short daily sessions beat marathon cramming every time." },
+              { tip: "Teach Someone Else", desc: "Explaining a concept to someone else is the best way to identify gaps in your understanding." },
+              { tip: "Eliminate Distractions", desc: "Put your phone in another room. Even having it face-down on the desk reduces focus by 20%." },
+            ].map((t) => (
+              <div key={t.tip} className="rounded-2xl border border-white/10 p-5 text-center" style={{ background: "rgba(255,255,255,0.03)" }}>
+                <h3 className="text-sm font-bold text-white mb-2">{t.tip}</h3>
+                <p className="text-xs text-slate-400 leading-relaxed">{t.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* MID-PAGE CTA */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15 0%, ${BG} 50%, ${ACCENT}08 100%)` }} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+          <GraduationCap size={44} weight="fill" style={{ color: ACCENT }} className="mx-auto mb-4" />
+          <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">Ready to See Grades Improve?</h2>
+          <p className="text-slate-400 max-w-2xl mx-auto mb-8 text-lg leading-relaxed">
+            Start with a free academic assessment. Our team at {data.businessName} will identify your child&apos;s strengths and create a personalized learning plan.
+          </p>
+          <a href={`tel:${data.phone}`} className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-white font-bold text-lg transition-transform hover:scale-105" style={{ background: ACCENT }}>
+            <Phone size={20} weight="fill" /> Schedule Free Assessment
+          </a>
+        </div>
+      </section>
+
+      {/* WHY CHOOSE US */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0c1220 100%)` }} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Why Families Choose <span style={{ color: ACCENT }}>{data.businessName}</span></h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              { title: "Expert Tutors", desc: "All tutors hold advanced degrees and pass rigorous screening before joining our team" },
+              { title: "Personalized Plans", desc: "Every student gets a custom learning plan based on diagnostic assessment results" },
+              { title: "Flexible Scheduling", desc: "In-person or online sessions available 7 days a week to fit your family's schedule" },
+              { title: "Proven Results", desc: "Students average 1.5 letter grade improvement within the first 3 months of tutoring" },
+            ].map((card) => (
+              <div key={card.title} className="rounded-2xl border border-white/10 p-6 text-center" style={{ background: "rgba(255,255,255,0.03)" }}>
+                <CheckCircle size={28} weight="fill" style={{ color: ACCENT }} className="mx-auto mb-3" />
+                <h3 className="text-lg font-bold text-white mb-2">{card.title}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed">{card.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CERTIFICATIONS */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #0c1220 0%, ${BG} 100%)` }} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-8">
+            <ShieldCheck size={36} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-3" />
+            <h2 className="text-2xl md:text-3xl font-extrabold text-white">Our Qualifications</h2>
+            <p className="text-slate-400 mt-2 max-w-lg mx-auto">
+              Every tutor at {data.businessName} is vetted, credentialed, and committed to student success.
+            </p>
+          </div>
+          <div className="flex flex-wrap justify-center gap-6">
+            {[
+              "State Certified",
+              "Background Checked",
+              "Subject Matter Experts",
+              "SAT/ACT Specialists",
+              "Free Assessment",
+              "Satisfaction Guaranteed",
+            ].map((badge) => (
+              <div
+                key={badge}
+                className="flex items-center gap-2 px-5 py-3 rounded-full border border-white/10"
+                style={{ background: "rgba(255,255,255,0.03)" }}
+              >
+                <ShieldCheck size={18} weight="fill" style={{ color: ACCENT }} />
+                <span className="text-sm font-medium text-white">{badge}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* FOOTER */}
       <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden">
         <div

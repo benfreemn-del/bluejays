@@ -263,6 +263,10 @@ export default function V2PestControlPreview({ data }: { data: GeneratedSiteData
     { q: "Are your treatments safe for kids and pets?", a: `Absolutely. ${data.businessName} uses EPA-approved products that are safe for families and pets while remaining lethal to pests. We also offer green treatment options.` },
     { q: "How fast can you respond?", a: "We offer same-day and next-day service for most pest emergencies. Our emergency team is available 24/7 for urgent infestations." },
     { q: "Do you offer a guarantee?", a: "Yes! All our treatments come with a satisfaction guarantee. If pests return between scheduled visits, we re-treat at no additional cost." },
+    { q: "How often should I have pest control service?", a: "We recommend quarterly treatments for year-round protection. Monthly service is available for severe infestations or high-risk areas." },
+    { q: "Do I need to leave during treatment?", a: "For most treatments, you can stay home. For fumigation or heavy treatments, we will advise if temporary relocation is needed. We always prioritize your safety." },
+    { q: "What is Integrated Pest Management?", a: "IPM combines prevention, monitoring, and targeted treatment to minimize chemical use while maximizing pest control effectiveness. It is our primary approach." },
+    { q: "Do you treat commercial properties?", a: `Yes! ${data.businessName} provides commercial pest control for restaurants, offices, warehouses, and retail spaces. We offer discreet service and flexible scheduling.` },
   ];
 
   /* Fallback testimonials */
@@ -703,6 +707,151 @@ export default function V2PestControlPreview({ data }: { data: GeneratedSiteData
         </section>
       )}
 
+      {/* 12b. PEST IDENTIFICATION GUIDE */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #1a1208 50%, #1a1a1a 100%)" }} />
+        <ShieldPattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Identify" title="Common Pest Guide" subtitle="Recognize the signs of an infestation early. Here are the most common pests we treat." accent={ACCENT} />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              { pest: "Ants", signs: "Trails along walls, small dirt mounds, food debris accumulation", danger: "Low", season: "Spring/Summer" },
+              { pest: "Termites", signs: "Hollow wood, mud tubes, discarded wings, sagging floors", danger: "High", season: "Year-Round" },
+              { pest: "Rodents", signs: "Droppings, gnaw marks, nesting materials, scratching sounds at night", danger: "High", season: "Fall/Winter" },
+              { pest: "Cockroaches", signs: "Musty odor, droppings, egg casings, nighttime sightings", danger: "Medium", season: "Year-Round" },
+              { pest: "Bed Bugs", signs: "Bite marks in rows, blood spots on sheets, tiny dark spots", danger: "Medium", season: "Year-Round" },
+              { pest: "Spiders", signs: "Webs in corners, egg sacs, increased sightings", danger: "Low", season: "Fall" },
+              { pest: "Wasps", signs: "Paper nests under eaves, aggressive behavior near food", danger: "Medium", season: "Summer" },
+              { pest: "Mosquitoes", signs: "Standing water, itchy bites, buzzing at dusk", danger: "Medium", season: "Summer" },
+            ].map((item) => (
+              <GlassCard key={item.pest} className="p-5">
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="text-base font-bold text-white">{item.pest}</h4>
+                  <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${item.danger === "High" ? "bg-red-500/20 text-red-400" : item.danger === "Medium" ? "bg-amber-500/20 text-amber-400" : "bg-green-500/20 text-green-400"}`}>
+                    {item.danger} Risk
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 mb-2">Peak: {item.season}</p>
+                <p className="text-sm text-slate-400 leading-relaxed">{item.signs}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 12c. SEASONAL PEST CALENDAR */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #14120a 50%, #1a1a1a 100%)" }} />
+        <BugBackground opacity={0.02} accent={ACCENT} />
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Seasonal" title="Year-Round Protection Plan" subtitle="Different seasons bring different pests. We stay ahead of them all." accent={ACCENT} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              { season: "Spring", color: "#22c55e", pests: ["Ants awaken", "Termite swarms", "Wasp nest building", "Spider emergence"] },
+              { season: "Summer", color: "#f59e0b", pests: ["Mosquito peak", "Flea & tick season", "Wasp aggression", "Fly infestations"] },
+              { season: "Fall", color: "#f97316", pests: ["Rodent entry", "Spider migration", "Stink bugs seek shelter", "Ladybug clusters"] },
+              { season: "Winter", color: "#3b82f6", pests: ["Mice in walls", "Cockroach hiding", "Bed bug dormancy", "Overwintering pests"] },
+            ].map((s) => (
+              <GlassCard key={s.season} className="p-5">
+                <h4 className="text-lg font-bold text-white mb-3" style={{ borderBottom: `2px solid ${s.color}`, paddingBottom: "8px" }}>{s.season}</h4>
+                <ul className="space-y-2">
+                  {s.pests.map((pest) => (
+                    <li key={pest} className="flex items-start gap-2 text-sm text-slate-400">
+                      <CheckCircle size={14} weight="fill" className="mt-0.5 shrink-0" style={{ color: s.color }} />
+                      <span>{pest}</span>
+                    </li>
+                  ))}
+                </ul>
+              </GlassCard>
+            ))}
+          </div>
+          <p className="text-center text-sm text-slate-500 mt-8">Our quarterly treatment plans adapt to seasonal pest patterns, keeping your home protected year-round.</p>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 max-w-3xl mx-auto">
+            {[
+              { label: "Quarterly Plans", value: "From $99/quarter" },
+              { label: "One-Time Treatments", value: "From $149" },
+              { label: "Monthly Service", value: "From $79/month" },
+              { label: "Emergency Calls", value: "Same-day response" },
+            ].map((item) => (
+              <GlassCard key={item.label} className="p-3 text-center">
+                <p className="text-xs text-slate-500">{item.label}</p>
+                <p className="text-sm font-bold" style={{ color: ACCENT }}>{item.value}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 12d. ECO-FRIENDLY METHODS EXPANDED */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #1a1208 50%, #1a1a1a 100%)" }} />
+        <ShieldPattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Green" title="Eco-Friendly Methods" subtitle="Effective pest control that is safe for your family, pets, and the environment." accent={ACCENT} />
+          <GlassCard className="p-8">
+            <div className="grid md:grid-cols-2 gap-8">
+              <div>
+                <h3 className="text-xl font-bold text-white mb-4">Our Approach</h3>
+                <ul className="space-y-3">
+                  {[
+                    "EPA-registered products only",
+                    "Targeted application minimizes chemical use",
+                    "Integrated Pest Management (IPM) strategies",
+                    "Baiting systems over broad spraying",
+                    "Pet and child safe formulations",
+                    "Exclusion and prevention first",
+                  ].map((item) => (
+                    <li key={item} className="flex items-start gap-2 text-sm text-slate-400">
+                      <CheckCircle size={16} weight="fill" className="mt-0.5 shrink-0" style={{ color: "#22c55e" }} />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-white mb-4">Prevention Tips</h3>
+                <ul className="space-y-3">
+                  {[
+                    "Seal cracks and gaps around doors and windows",
+                    "Keep food stored in airtight containers",
+                    "Eliminate standing water sources",
+                    "Keep landscaping trimmed away from the house",
+                    "Store firewood at least 20 feet from home",
+                    "Fix leaky pipes and faucets promptly",
+                  ].map((item) => (
+                    <li key={item} className="flex items-start gap-2 text-sm text-slate-400">
+                      <ShieldCheck size={16} weight="duotone" className="mt-0.5 shrink-0" style={{ color: ACCENT }} />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </GlassCard>
+        </div>
+      </section>
+
+      {/* 12e. MID-PAGE CTA */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: ACCENT }} />
+        <div className="absolute inset-0 bg-black/30" />
+        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+          <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">Take Back Your Home</h2>
+          <p className="text-white/80 text-lg mb-8 max-w-2xl mx-auto">
+            Free inspection and same-day treatment available.
+            We guarantee results or we come back for free.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <PhoneLink phone={data.phone} className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-white text-sm font-bold" style={{ color: ACCENT }}>
+              <Phone size={18} weight="fill" /> Free Inspection
+            </PhoneLink>
+            <a href="#contact" className="inline-flex items-center gap-2 px-8 py-4 rounded-full border-2 border-white text-white text-sm font-bold hover:bg-white/10 transition-colors">
+              Get a Quote <ArrowRight size={18} weight="bold" />
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* 13. FAQ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #1a1208 50%, #1a1a1a 100%)" }} />
@@ -743,7 +892,30 @@ export default function V2PestControlPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* 13c. PEST-FREE GUARANTEE CTA */}
+      {/* 13c. WHY CHOOSE US */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #1a1208 50%, #1a1a1a 100%)" }} />
+        <ShieldPattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Why Us" title="Why Homeowners Trust Us" accent={ACCENT} />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { icon: ShieldCheck, title: "Licensed & Insured", desc: "Fully licensed, bonded, and insured for your protection." },
+              { icon: Clock, title: "Same-Day Service", desc: "Emergency pest problems cannot wait. We respond fast." },
+              { icon: Star, title: "Satisfaction Guarantee", desc: "Pests return? So do we. Free of charge. Period." },
+              { icon: Users, title: "Family-Owned", desc: "We treat your home like our own. Local and accountable." },
+            ].map((item) => (
+              <GlassCard key={item.title} className="p-5 text-center">
+                <item.icon size={28} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-3" />
+                <h4 className="text-sm font-bold text-white mb-1">{item.title}</h4>
+                <p className="text-xs text-slate-400">{item.desc}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 13d. PEST-FREE GUARANTEE CTA */}
       <section className="relative z-10 py-20 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #150e04 50%, #1a1a1a 100%)" }} />
         <BugBackground opacity={0.02} accent={ACCENT} />

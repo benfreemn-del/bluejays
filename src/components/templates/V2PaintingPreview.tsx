@@ -230,6 +230,9 @@ export default function V2PaintingPreview({ data }: { data: GeneratedSiteData })
     { q: "How long does a typical painting project take?", a: "Most residential rooms take 1-2 days. Full house interiors typically take 3-5 days. Exteriors vary by size but usually 3-7 days. We provide a timeline with every estimate." },
     { q: "Are your painters licensed and insured?", a: `Absolutely. ${data.businessName} is fully licensed, bonded, and insured. Our team consists of experienced professionals who take pride in every project.` },
     { q: "What brands of paint do you use?", a: "We use premium brands including Sherwin-Williams, Benjamin Moore, and PPG. We can also accommodate specific brand requests. Premium paint means better coverage and longer-lasting results." },
+    { q: "Do you move furniture?", a: "Yes, we carefully move and cover all furniture and fixtures before painting. Everything is returned to its original position when we finish." },
+    { q: "Can you paint over wallpaper?", a: "We recommend removing wallpaper for the best results. Our team handles wallpaper removal, wall repair, and priming before applying fresh paint." },
+    { q: "Do you offer exterior pressure washing?", a: "Yes, exterior projects include thorough pressure washing and surface preparation. Clean surfaces are essential for paint adhesion and longevity." },
   ];
 
   const fallbackTestimonials = [
@@ -700,6 +703,30 @@ export default function V2PaintingPreview({ data }: { data: GeneratedSiteData })
               </div>
             </GlassCard>
           </div>
+          <div className="flex flex-wrap justify-center gap-2 mt-6">
+            {(data.serviceAreas || [data.address?.split(",")[0] || "Local Area"]).map((area: string) => (
+              <span key={area} className="px-4 py-2 rounded-full text-xs font-medium border" style={{ color: ACCENT, borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}>
+                {area}
+              </span>
+            ))}
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto mt-6">
+            <GlassCard className="p-4 text-center">
+              <PaintBrush size={20} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-2" />
+              <p className="text-sm font-semibold text-white">Interior Painting</p>
+              <p className="text-xs text-slate-500">Rooms, trim, and ceilings</p>
+            </GlassCard>
+            <GlassCard className="p-4 text-center">
+              <HouseLine size={20} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-2" />
+              <p className="text-sm font-semibold text-white">Exterior Painting</p>
+              <p className="text-xs text-slate-500">Siding, trim, and decks</p>
+            </GlassCard>
+            <GlassCard className="p-4 text-center">
+              <Buildings size={20} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-2" />
+              <p className="text-sm font-semibold text-white">Commercial</p>
+              <p className="text-xs text-slate-500">Offices and retail spaces</p>
+            </GlassCard>
+          </div>
         </div>
       </section>
 
@@ -722,6 +749,141 @@ export default function V2PaintingPreview({ data }: { data: GeneratedSiteData })
           </div>
         </section>
       )}
+
+      {/* ─── 17a-2. DETAILED PREP PROCESS ─── */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #1a0f14 50%, #1a1a1a 100%)" }} />
+        <PaintDripBackground opacity={0.02} accent={ACCENT} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Our Process" title="How We Deliver Perfect Results" subtitle="Great painting starts with meticulous preparation. Here is our 5-step process." accent={ACCENT} />
+          <div className="space-y-4">
+            {[
+              { step: "01", title: "Free Consultation", desc: "We visit your property, discuss your vision, review colors, and provide a detailed written estimate with no hidden costs." },
+              { step: "02", title: "Surface Preparation", desc: "Scraping, sanding, patching holes, caulking gaps, and priming bare surfaces. This is the most critical step for lasting results." },
+              { step: "03", title: "Protection Setup", desc: "We cover floors, furniture, fixtures, and landscaping with professional drop cloths and plastic sheeting. Nothing gets damaged." },
+              { step: "04", title: "Expert Application", desc: "Two coats of premium paint applied with brushes, rollers, or spray depending on the surface. Clean edges and consistent coverage guaranteed." },
+              { step: "05", title: "Final Walkthrough", desc: "We do a detailed walkthrough with you to ensure every surface meets our high standards. Touch-ups are completed on the spot." },
+            ].map((item) => (
+              <GlassCard key={item.step} className="p-6 flex gap-4 items-start">
+                <div className="w-12 h-10 rounded-lg shrink-0 flex items-center justify-center text-sm font-bold" style={{ background: `${ACCENT}15`, color: ACCENT, border: `1px solid ${ACCENT}22` }}>
+                  {item.step}
+                </div>
+                <div>
+                  <h4 className="text-base font-bold text-white mb-1">{item.title}</h4>
+                  <p className="text-sm text-slate-400 leading-relaxed">{item.desc}</p>
+                </div>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── 17b. COLOR CONSULTATION GALLERY ─── */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #140f1a 50%, #1a1a1a 100%)" }} />
+        <SplatterPattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader
+            badge="Portfolio"
+            title="Recent Projects"
+            subtitle="Browse our latest residential and commercial painting projects."
+            accent={ACCENT}
+          />
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {galleryImages.slice(0, 6).map((img, i) => {
+              const labels = ["Kitchen Refresh", "Exterior Repaint", "Accent Wall Design", "Cabinet Refinish", "Commercial Office", "Deck Staining"];
+              const types = ["Interior", "Exterior", "Interior", "Specialty", "Commercial", "Exterior"];
+              return (
+                <div key={i} className="group relative aspect-[4/3] rounded-2xl overflow-hidden border border-white/5">
+                  <img src={img} alt={labels[i]} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
+                    <span className="text-xs font-bold uppercase tracking-wider mb-1" style={{ color: ACCENT }}>{types[i]}</span>
+                    <span className="text-sm font-semibold text-white">{labels[i]}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── 17c. PAINT SELECTION GUIDE ─── */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #1a0f14 50%, #1a1a1a 100%)" }} />
+        <PaintDripBackground opacity={0.02} accent={ACCENT} />
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <SectionHeader
+            badge="Guide"
+            title="Paint Selection Guide"
+            subtitle="Choosing the right paint makes all the difference. We help you select the perfect product."
+            accent={ACCENT}
+          />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {[
+              { title: "Interior Finishes", desc: "Flat for ceilings, eggshell for living spaces, satin for kitchens and baths, semi-gloss for trim and doors. Each finish serves a purpose.", icon: HouseLine },
+              { title: "Exterior Paints", desc: "100% acrylic latex for durability against weather. UV-resistant formulas prevent fading. Proper primer is essential for long-lasting results.", icon: Buildings },
+              { title: "Color Psychology", desc: "Blues create calm, greens inspire freshness, warm tones feel inviting. We help you choose colors that match your space and mood.", icon: Swatches },
+              { title: "Eco-Friendly Options", desc: "Low-VOC and zero-VOC paints are better for indoor air quality. We carry premium eco-friendly lines from all major brands.", icon: Drop },
+            ].map((item) => (
+              <GlassCard key={item.title} className="p-6 flex gap-4 items-start">
+                <div className="w-12 h-12 rounded-full shrink-0 flex items-center justify-center" style={{ background: `${ACCENT}15`, border: `1px solid ${ACCENT}22` }}>
+                  <item.icon size={24} weight="duotone" style={{ color: ACCENT }} />
+                </div>
+                <div>
+                  <h4 className="text-base font-bold text-white mb-1">{item.title}</h4>
+                  <p className="text-sm text-slate-400 leading-relaxed">{item.desc}</p>
+                </div>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── 17d. WHY CHOOSE US ─── */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #140f1a 50%, #1a1a1a 100%)" }} />
+        <SplatterPattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Our Edge" title="Why Choose Our Painters" accent={ACCENT} />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { icon: ShieldCheck, title: "Licensed & Insured", desc: "Full liability coverage and worker's compensation for your protection." },
+              { icon: Eye, title: "Detailed Prep Work", desc: "We spend more time prepping than painting. That is why our work lasts." },
+              { icon: Palette, title: "Free Color Consult", desc: "Not sure on colors? Our design team helps you choose the perfect palette." },
+              { icon: Star, title: "Clean & Respectful", desc: "We protect your furniture, floors, and landscaping. Leave it cleaner than we found it." },
+            ].map((item) => (
+              <GlassCard key={item.title} className="p-6 text-center">
+                <div className="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ background: `${ACCENT}15`, border: `1px solid ${ACCENT}22` }}>
+                  <item.icon size={28} weight="duotone" style={{ color: ACCENT }} />
+                </div>
+                <h3 className="text-base font-bold text-white mb-2">{item.title}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed">{item.desc}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── 17e. MID-PAGE CTA ─── */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: ACCENT }} />
+        <div className="absolute inset-0 bg-black/30" />
+        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+          <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">Ready to Transform Your Space?</h2>
+          <p className="text-white/80 text-lg mb-8 max-w-2xl mx-auto">
+            Free color consultation and estimate. We will help you pick the perfect colors
+            and provide a detailed quote with no hidden fees.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <PhoneLink phone={data.phone} className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-white text-sm font-bold" style={{ color: ACCENT }}>
+              <Phone size={18} weight="fill" /> Free Estimate
+            </PhoneLink>
+            <a href="#contact" className="inline-flex items-center gap-2 px-8 py-4 rounded-full border-2 border-white text-white text-sm font-bold hover:bg-white/10 transition-colors">
+              Get Started <ArrowRight size={18} weight="bold" />
+            </a>
+          </div>
+        </div>
+      </section>
 
       {/* ─── 18. FAQ ─── */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
@@ -780,9 +942,17 @@ export default function V2PaintingPreview({ data }: { data: GeneratedSiteData })
             <div className="p-8 md:p-12">
               <ShieldCheck size={48} weight="fill" style={{ color: ACCENT }} className="mx-auto mb-4" />
               <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-4">Our Quality Guarantee</h2>
-              <p className="text-slate-400 leading-relaxed max-w-2xl mx-auto text-lg">Every project by {data.businessName} is backed by our satisfaction guarantee. We use premium paints, proper preparation, and meticulous technique to deliver results that last.</p>
-              <div className="flex flex-wrap justify-center gap-4 mt-8">
-                {["Premium Paints", "Clean Edges", "No Hidden Fees", "Satisfaction Guaranteed"].map((item) => (
+              <p className="text-slate-400 leading-relaxed max-w-2xl mx-auto text-lg mb-2">Every project by {data.businessName} is backed by our satisfaction guarantee. We use premium paints, proper preparation, and meticulous technique to deliver results that last.</p>
+              <p className="text-slate-500 text-sm max-w-xl mx-auto mb-6">
+                We stand behind every brushstroke. If you are not completely satisfied with
+                any aspect of our work, we will return to make it right at no additional cost.
+                That is the confidence that comes from hiring true professionals.
+              </p>
+              <div className="flex flex-wrap justify-center gap-4 mt-4">
+                {[
+                  "Premium Paints", "Clean Edges", "No Hidden Fees",
+                  "Satisfaction Guaranteed", "Detailed Prep", "Full Warranty",
+                ].map((item) => (
                   <span key={item} className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border" style={{ color: ACCENT, borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}>
                     <CheckCircle size={16} weight="fill" /> {item}
                   </span>

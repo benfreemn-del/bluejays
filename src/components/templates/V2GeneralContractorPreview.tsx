@@ -866,6 +866,104 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
         </div>
       </section>
 
+      {/* ══════ PROJECT GALLERY EXPANDED ══════ */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #141c28 50%, ${BG} 100%)` }} />
+        <BlueprintGrid opacity={0.01} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <HouseSimple size={40} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-3" />
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Project Types We Excel At</h2>
+            <p className="text-slate-400 mt-3 max-w-xl mx-auto">From kitchen remodels to ground-up construction, we deliver every project on time and on budget.</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              { type: "Kitchen Remodels", desc: "Custom cabinetry, countertops, backsplash, and layout redesign" },
+              { type: "Bathroom Renovations", desc: "Walk-in showers, tile work, vanities, and plumbing upgrades" },
+              { type: "Room Additions", desc: "Seamless extensions that match your home's existing architecture" },
+              { type: "Whole-Home Remodels", desc: "Complete interior transformations from floor plan to finishes" },
+              { type: "Outdoor Living", desc: "Decks, patios, pergolas, outdoor kitchens, and hardscaping" },
+              { type: "New Construction", desc: "Custom homes built from the ground up to your specifications" },
+              { type: "Commercial Build-Outs", desc: "Office spaces, retail stores, restaurants, and tenant improvements" },
+              { type: "ADU & Garage Conversions", desc: "Accessory dwelling units and garage-to-living-space conversions" },
+            ].map((p) => (
+              <div key={p.type} className="rounded-2xl border border-white/10 p-5 text-center" style={{ background: "rgba(255,255,255,0.03)" }}>
+                <Hammer size={24} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-2" />
+                <h3 className="text-sm font-bold text-white mb-1">{p.type}</h3>
+                <p className="text-xs text-slate-500 leading-relaxed">{p.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════ WARRANTY SECTION ══════ */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #141c28 0%, ${BG} 100%)` }} />
+        <BlueprintGrid opacity={0.012} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <ShieldCheck size={40} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-3" />
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Our Warranty & Guarantees</h2>
+            <div className="w-16 h-1 mx-auto mt-3 rounded-full" style={{ background: ACCENT }} />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              { title: "Workmanship Warranty", desc: "Every project backed by our comprehensive workmanship warranty. If something isn't right, we come back and fix it — no questions asked." },
+              { title: "Material Guarantees", desc: "We only use premium materials from trusted manufacturers. All materials carry the manufacturer's full warranty and we handle any claims for you." },
+              { title: "On-Time Completion", desc: "We commit to a completion date in writing. If we miss our deadline through any fault of our own, we'll make it right with a project discount." },
+            ].map((w) => (
+              <div key={w.title} className="rounded-2xl border border-white/10 p-6" style={{ background: "rgba(255,255,255,0.03)" }}>
+                <CheckCircle size={24} weight="fill" style={{ color: ACCENT }} className="mb-3" />
+                <h3 className="text-lg font-bold text-white mb-2">{w.title}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed">{w.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════ MID-PAGE CTA ══════ */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15 0%, ${BG} 50%, ${ACCENT}08 100%)` }} />
+        <BlueprintGrid opacity={0.02} accent={ACCENT} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+          <Hammer size={44} weight="fill" style={{ color: ACCENT }} className="mx-auto mb-4" />
+          <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">Let&apos;s Build Something Great</h2>
+          <p className="text-slate-400 max-w-2xl mx-auto mb-8 text-lg">
+            {data.businessName} offers free consultations and transparent estimates. Tell us about your project and we&apos;ll create a detailed plan and timeline.
+          </p>
+          <a href={`tel:${data.phone}`} className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-white font-bold text-lg transition-transform hover:scale-105" style={{ background: ACCENT }}>
+            <Phone size={20} weight="fill" /> Get a Free Estimate
+          </a>
+        </div>
+      </section>
+
+      {/* ══════ WHY CHOOSE US ══════ */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #141c28 100%)` }} />
+        <BlueprintGrid opacity={0.01} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Why Choose <span style={{ color: ACCENT }}>{data.businessName}</span></h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              { title: "Licensed & Bonded", desc: "Fully licensed general contractor with comprehensive bonding and liability insurance" },
+              { title: "Permit Handling", desc: "We pull all permits and manage inspections so you never have to visit city hall" },
+              { title: "Transparent Bids", desc: "Detailed line-item estimates with no hidden costs. You see exactly where every dollar goes" },
+              { title: "Clean Job Sites", desc: "Daily cleanup and professional job site management. Your home stays livable during construction" },
+            ].map((card) => (
+              <div key={card.title} className="rounded-2xl border border-white/10 p-6 text-center" style={{ background: "rgba(255,255,255,0.03)" }}>
+                <CheckCircle size={28} weight="fill" style={{ color: ACCENT }} className="mx-auto mb-3" />
+                <h3 className="text-lg font-bold text-white mb-2">{card.title}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed">{card.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ══════ 12. FOOTER ══════ */}
       <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #141c28 100%)` }} />

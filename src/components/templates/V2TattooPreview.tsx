@@ -162,6 +162,10 @@ export default function V2TattooPreview({ data }: { data: GeneratedSiteData }) {
     { q: "How do I prepare for my tattoo appointment?", a: "Stay hydrated, eat well before your session, avoid alcohol for 24 hours prior, and wear comfortable clothing. We'll provide full aftercare instructions." },
     { q: "Do you do cover-ups?", a: `Yes! Our artists at ${data.businessName} are experienced in cover-up work. We can transform old or unwanted tattoos into beautiful new pieces.` },
     { q: "How much does a tattoo cost?", a: "Pricing varies based on size, detail, placement, and time required. We offer free consultations to provide accurate quotes for your specific design." },
+    { q: "Does getting a tattoo hurt?", a: "Pain levels vary depending on placement and your personal tolerance. Areas over bone or thin skin tend to be more sensitive. Our artists work at a comfortable pace and can take breaks as needed." },
+    { q: "How long does a tattoo take to heal?", a: "Initial surface healing takes 2-3 weeks. Full healing of deeper skin layers takes about 4-6 weeks. Follow our aftercare guide closely for the best results." },
+    { q: "Can I bring my own design?", a: `Absolutely! Bring reference images, sketches, or ideas and our artists at ${data.businessName} will work with you to refine it into a tattoo-ready design during your consultation.` },
+    { q: "What is your minimum age requirement?", a: "You must be 18 years or older with valid government-issued photo ID. We do not tattoo minors, even with parental consent." },
   ];
 
   /* Fallback testimonials */
@@ -503,7 +507,31 @@ export default function V2TattooPreview({ data }: { data: GeneratedSiteData }) {
         <InkSplatterPattern opacity={0.02} accent={ACCENT} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <AnimatedSection>          <SectionHeader badge="Location" title="Visit Our Studio" accent={ACCENT} /></AnimatedSection>
-          <div className="text-center"><GlassCard className="p-8 inline-block"><div className="flex items-center gap-3 text-lg"><MapPin size={24} weight="duotone" style={{ color: ACCENT }} /><MapLink address={data.address} className="text-white font-semibold" /></div><p className="text-slate-400 text-sm mt-2">Walk-ins Welcome</p></GlassCard></div>
+          <div className="text-center mb-8"><GlassCard className="p-8 inline-block"><div className="flex items-center gap-3 text-lg"><MapPin size={24} weight="duotone" style={{ color: ACCENT }} /><MapLink address={data.address} className="text-white font-semibold" /></div><div className="flex items-center gap-2 mt-3 justify-center"><div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" /><span className="text-sm text-emerald-400 font-medium">Walk-ins Welcome</span></div></GlassCard></div>
+          <div className="flex flex-wrap justify-center gap-2 mb-6">
+            {(data.serviceAreas || [data.address?.split(",")[0] || "Local Area"]).map((area: string) => (
+              <span key={area} className="px-4 py-2 rounded-full text-xs font-medium border" style={{ color: ACCENT, borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}>
+                {area}
+              </span>
+            ))}
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
+            <GlassCard className="p-4 text-center">
+              <MapPin size={20} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-2" />
+              <p className="text-sm font-semibold text-white">Central Location</p>
+              <p className="text-xs text-slate-500">Easy parking available</p>
+            </GlassCard>
+            <GlassCard className="p-4 text-center">
+              <Star size={20} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-2" />
+              <p className="text-sm font-semibold text-white">Clean & Private</p>
+              <p className="text-xs text-slate-500">Individual artist stations</p>
+            </GlassCard>
+            <GlassCard className="p-4 text-center">
+              <ShieldCheck size={20} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-2" />
+              <p className="text-sm font-semibold text-white">Health Inspected</p>
+              <p className="text-xs text-slate-500">Licensed and certified</p>
+            </GlassCard>
+          </div>
         </div>
       </section>
 
@@ -618,6 +646,117 @@ export default function V2TattooPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
+      {/* 12b. ARTIST PORTFOLIO GALLERY */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #0f0505 50%, #0a0a0a 100%)" }} />
+        <InkDripBackground opacity={0.02} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Portfolio" title="Artist Portfolio" subtitle="Browse recent work from our talented team of tattoo artists." accent={ACCENT} />
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {galleryImages.slice(0, 6).map((img, i) => {
+              const labels = ["Neo-Traditional Rose", "Geometric Mandala", "Black & Grey Portrait", "Fine Line Botanical", "Japanese Sleeve Detail", "Watercolor Abstract"];
+              const artists = ["Lead Artist", "Guest Artist", "Senior Artist", "Apprentice", "Lead Artist", "Guest Artist"];
+              return (
+                <div key={i} className="group relative aspect-square rounded-2xl overflow-hidden border border-white/5">
+                  <img src={img} alt={labels[i] || "Tattoo work"} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
+                    <span className="text-xs font-bold uppercase tracking-wider mb-1" style={{ color: ACCENT }}>{artists[i] || "Artist"}</span>
+                    <span className="text-sm font-semibold text-white">{labels[i] || "Custom Piece"}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <div className="text-center mt-8">
+            <p className="text-sm text-slate-500">Follow us on Instagram for daily uploads of fresh ink.</p>
+            {data.socialLinks?.instagram && (
+              <a href={data.socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 mt-3 px-6 py-3 rounded-full text-sm font-semibold border transition-colors hover:bg-white/5" style={{ color: ACCENT, borderColor: `${ACCENT}33` }}>
+                <InstagramLogo size={18} weight="fill" /> View Our Instagram
+              </a>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* 12c. TATTOO STYLE GUIDE */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #1a0505 50%, #0a0a0a 100%)" }} />
+        <InkSplatterPattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Styles" title="Tattoo Style Guide" subtitle="Not sure which style suits you? Here is a breakdown of what we specialize in." accent={ACCENT} />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {[
+              { style: "Traditional / Old School", desc: "Bold outlines, vibrant colors, and iconic imagery like anchors, roses, and eagles. Timeless designs that age well.", icon: Flame },
+              { style: "Neo-Traditional", desc: "Modern take on traditional with more intricate detail, wider color palettes, and artistic flair. Eye-catching and expressive.", icon: Palette },
+              { style: "Black & Grey Realism", desc: "Photorealistic portraits and scenes using only black ink in varying shades. Perfect for memorial pieces and fine detail.", icon: Heart },
+              { style: "Fine Line / Minimalist", desc: "Delicate single-needle work with thin lines and minimal shading. Elegant and subtle — ideal for first tattoos.", icon: PenNib },
+              { style: "Japanese / Irezumi", desc: "Large-scale work featuring koi, dragons, waves, and cherry blossoms. Rich in symbolism and flows with body contours.", icon: Skull },
+              { style: "Geometric & Dotwork", desc: "Precise patterns built from shapes and dots. Mandalas, sacred geometry, and abstract compositions with stunning symmetry.", icon: Drop },
+            ].map((item) => (
+              <GlassCard key={item.style} className="p-6 flex gap-4 items-start">
+                <div className="w-12 h-12 rounded-full shrink-0 flex items-center justify-center" style={{ background: `${ACCENT}15`, border: `1px solid ${ACCENT}22` }}>
+                  <item.icon size={24} weight="duotone" style={{ color: ACCENT }} />
+                </div>
+                <div>
+                  <h4 className="text-base font-bold text-white mb-1">{item.style}</h4>
+                  <p className="text-sm text-slate-400 leading-relaxed">{item.desc}</p>
+                </div>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 12d. AFTERCARE GUIDE */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #0f0505 50%, #0a0a0a 100%)" }} />
+        <InkDripBackground opacity={0.02} accent={ACCENT} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Aftercare" title="Tattoo Aftercare Guide" subtitle="Proper healing is just as important as great artistry. Follow these steps for the best results." accent={ACCENT} />
+          <div className="space-y-4">
+            {[
+              { step: "Day 1-3", title: "Initial Healing", desc: "Keep the bandage on for 2-4 hours. Gently wash with lukewarm water and fragrance-free soap. Pat dry and apply a thin layer of recommended ointment." },
+              { step: "Day 4-14", title: "Peeling & Itching", desc: "Your tattoo will start to peel and flake — this is normal. Do not pick or scratch. Continue moisturizing 2-3 times daily with unscented lotion." },
+              { step: "Week 3-4", title: "Final Healing", desc: "The outer layers are healed but deeper skin is still recovering. Avoid direct sunlight and swimming. Keep moisturizing and stay patient." },
+              { step: "Month 2+", title: "Long-Term Care", desc: "Your tattoo is fully healed. Apply SPF 30+ sunscreen to protect colors from fading. Moisturize regularly to keep the ink looking crisp." },
+              { step: "Touch-Up", title: "Free Touch-Up Session", desc: "All tattoos from our studio include a complimentary touch-up within 6 months. If any lines or colors need refreshing, we have got you covered." },
+            ].map((item, i) => (
+              <GlassCard key={i} className="p-6 flex gap-4 items-start">
+                <div className="w-16 h-10 rounded-lg shrink-0 flex items-center justify-center text-xs font-bold" style={{ background: `${ACCENT}15`, color: ACCENT, border: `1px solid ${ACCENT}22` }}>
+                  {item.step}
+                </div>
+                <div>
+                  <h4 className="text-base font-bold text-white mb-1">{item.title}</h4>
+                  <p className="text-sm text-slate-400 leading-relaxed">{item.desc}</p>
+                </div>
+              </GlassCard>
+            ))}
+          </div>
+          <div className="text-center mt-8">
+            <p className="text-sm text-slate-500">Questions about healing? Call us anytime — we are here to help throughout your entire healing journey.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* 12e. MID-PAGE CTA BANNER */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: ACCENT }} />
+        <div className="absolute inset-0 bg-black/30" />
+        <InkSplatterPattern opacity={0.06} accent="#000000" />
+        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+          <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">Ready to Get Inked?</h2>
+          <p className="text-white/80 text-lg mb-8 max-w-2xl mx-auto">Book your free consultation today and let our artists bring your vision to life. Walk-ins welcome when available.</p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <PhoneLink phone={data.phone} className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-white text-sm font-bold" style={{ color: ACCENT }}>
+              <Phone size={18} weight="fill" /> Call Now
+            </PhoneLink>
+            <a href="#contact" className="inline-flex items-center gap-2 px-8 py-4 rounded-full border-2 border-white text-white text-sm font-bold hover:bg-white/10 transition-colors">
+              Book Online <ArrowRight size={18} weight="bold" />
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* 13. FAQ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #1a0505 50%, #0a0a0a 100%)" }} />
@@ -715,6 +854,58 @@ export default function V2TattooPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
+      {/* 14a-2. STUDIO HOURS & INK SAFETY */}
+      {data.hours && (
+        <section className="relative z-10 py-20 overflow-hidden">
+          <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #0f0505 50%, #0a0a0a 100%)" }} />
+          <InkSplatterPattern opacity={0.02} accent={ACCENT} />
+          <div className="max-w-5xl mx-auto px-6 relative z-10">
+            <div className="grid md:grid-cols-2 gap-8">
+              <GlassCard className="p-8">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: `${ACCENT}15`, border: `1px solid ${ACCENT}22` }}>
+                    <Clock size={20} weight="duotone" style={{ color: ACCENT }} />
+                  </div>
+                  <h3 className="text-xl font-bold text-white">Studio Hours</h3>
+                </div>
+                <div className="space-y-3 text-sm">
+                  <p className="text-slate-400 whitespace-pre-line">{data.hours}</p>
+                </div>
+                <div className="mt-6 pt-4 border-t border-white/5">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                    <span className="text-sm text-emerald-400 font-medium">Walk-ins welcome when available</span>
+                  </div>
+                </div>
+              </GlassCard>
+              <GlassCard className="p-8">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: `${ACCENT}15`, border: `1px solid ${ACCENT}22` }}>
+                    <ShieldCheck size={20} weight="duotone" style={{ color: ACCENT }} />
+                  </div>
+                  <h3 className="text-xl font-bold text-white">Ink & Safety Standards</h3>
+                </div>
+                <ul className="space-y-3">
+                  {[
+                    "FDA-approved, vegan-friendly inks",
+                    "Hospital-grade autoclave sterilization",
+                    "Single-use needles and disposable equipment",
+                    "Licensed and health department inspected",
+                    "Artist-to-client glove changes between stations",
+                    "OSHA-compliant bloodborne pathogen protocols",
+                  ].map((item) => (
+                    <li key={item} className="flex items-start gap-2 text-sm text-slate-400">
+                      <CheckCircle size={16} weight="fill" className="mt-0.5 shrink-0" style={{ color: ACCENT }} />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </GlassCard>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* 14b. GUARANTEE */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #050505 100%)" }} />
@@ -770,7 +961,13 @@ export default function V2TattooPreview({ data }: { data: GeneratedSiteData }) {
               </div>
             </div>
             <div className="text-center mt-8 pt-6 border-t border-white/5">
-              <p className="text-sm text-slate-500 mb-4">Walk-ins welcome when availability allows. Consultations are always free.</p>
+              <p className="text-sm text-slate-500 mb-2">Walk-ins welcome when availability allows. Consultations are always free.</p>
+              <p className="text-xs text-slate-600 mb-4">Must be 18+ with valid ID. Please arrive 15 minutes early for your first appointment.</p>
+              <div className="flex flex-wrap justify-center gap-3 mb-4">
+                {["Cash", "Venmo", "Zelle", "Credit Cards"].map((m) => (
+                  <span key={m} className="text-xs text-slate-500 px-3 py-1 rounded-full border border-white/5">{m}</span>
+                ))}
+              </div>
               <PhoneLink phone={data.phone} className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-white font-semibold" style={{ background: ACCENT }}>
                 <Phone size={20} weight="fill" /> Book Now
               </PhoneLink>

@@ -841,6 +841,145 @@ export default function V2PoolSpaPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
+      {/* ══════════════════ MAINTENANCE CALENDAR ══════════════════ */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111 50%, #1a1a1a 100%)" }} />
+        <SparklePattern opacity={0.01} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <Clock size={40} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-3" />
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Seasonal Maintenance Calendar</h2>
+            <p className="text-slate-400 mt-3 max-w-xl mx-auto">Keep your pool and spa in pristine condition year-round with our seasonal care guide.</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              { season: "Spring", tasks: "Open pool, balance chemicals, inspect equipment, clean filters, check heater" },
+              { season: "Summer", tasks: "Weekly testing, skimming, vacuuming, backwashing, algae prevention" },
+              { season: "Autumn", tasks: "Reduce chemical usage, remove debris, lower water level, winterize equipment" },
+              { season: "Winter", tasks: "Cover maintenance, periodic checks, anti-freeze protection, spa upkeep" },
+            ].map((s) => (
+              <div key={s.season} className="rounded-2xl border border-white/10 p-6" style={{ background: "rgba(255,255,255,0.03)" }}>
+                <h3 className="text-lg font-bold mb-2" style={{ color: ACCENT }}>{s.season}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed">{s.tasks}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ EQUIPMENT BRANDS ══════════════════ */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #111 0%, #1a1a1a 100%)" }} />
+        <SparklePattern opacity={0.012} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <Wrench size={40} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-3" />
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Equipment We Trust</h2>
+            <p className="text-slate-400 mt-3 max-w-xl mx-auto">We install and service leading pool and spa brands for lasting performance.</p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {["Pentair", "Hayward", "Jandy", "Zodiac", "Polaris", "Raypak", "Sta-Rite", "Jacuzzi"].map((brand) => (
+              <div key={brand} className="rounded-2xl border border-white/10 p-5 text-center" style={{ background: "rgba(255,255,255,0.03)" }}>
+                <ShieldCheck size={24} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-2" />
+                <span className="text-white font-semibold text-sm">{brand}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ WATER CHEMISTRY GUIDE ══════════════════ */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111 100%)" }} />
+        <SparklePattern opacity={0.01} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <Drop size={40} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-3" />
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Water Chemistry Guide</h2>
+            <div className="w-16 h-1 mx-auto mt-3 rounded-full" style={{ background: ACCENT }} />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              { param: "pH Level", range: "7.2 – 7.6", desc: "Keeps water comfortable and prevents equipment corrosion. Test twice a week." },
+              { param: "Free Chlorine", range: "1 – 3 ppm", desc: "Sanitizes water and eliminates bacteria. Adjust after heavy use or rain." },
+              { param: "Total Alkalinity", range: "80 – 120 ppm", desc: "Buffers pH fluctuations. Test weekly and adjust with baking soda or muriatic acid." },
+            ].map((c) => (
+              <div key={c.param} className="rounded-2xl border border-white/10 p-6" style={{ background: "rgba(255,255,255,0.03)" }}>
+                <h3 className="text-lg font-bold text-white mb-1">{c.param}</h3>
+                <p className="text-sm font-semibold mb-2" style={{ color: ACCENT }}>Ideal: {c.range}</p>
+                <p className="text-sm text-slate-400 leading-relaxed">{c.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15 0%, #1a1a1a 50%, ${ACCENT}08 100%)` }} />
+        <SparklePattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+          <WaveSine size={44} weight="fill" style={{ color: ACCENT }} className="mx-auto mb-4" />
+          <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">Ready for Crystal-Clear Water?</h2>
+          <p className="text-slate-400 max-w-2xl mx-auto mb-8 text-lg">
+            Let {data.businessName} handle the chemistry, equipment, and maintenance so you can simply enjoy your pool and spa.
+          </p>
+          <a href={`tel:${data.phone}`} className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-white font-bold text-lg transition-transform hover:scale-105" style={{ background: ACCENT }}>
+            <Phone size={20} weight="fill" /> Schedule Pool Service
+          </a>
+        </div>
+      </section>
+
+      {/* ══════════════════ WHY CHOOSE US ══════════════════ */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #111 0%, #1a1a1a 100%)" }} />
+        <SparklePattern opacity={0.01} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Why Choose <span style={{ color: ACCENT }}>{data.businessName}</span></h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              { title: "Certified Technicians", desc: "Factory-trained and certified pool professionals with years of hands-on experience" },
+              { title: "All Brands Serviced", desc: "We work on every major pool and spa brand — no need to call multiple companies" },
+              { title: "Transparent Pricing", desc: "Upfront quotes with no hidden fees. You approve the price before we start any work" },
+              { title: "Satisfaction Guaranteed", desc: "If your water isn't crystal clear, we come back and make it right — guaranteed" },
+            ].map((card) => (
+              <div key={card.title} className="rounded-2xl border border-white/10 p-6 text-center" style={{ background: "rgba(255,255,255,0.03)" }}>
+                <CheckCircle size={28} weight="fill" style={{ color: ACCENT }} className="mx-auto mb-3" />
+                <h3 className="text-lg font-bold text-white mb-2">{card.title}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed">{card.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ CERTIFICATIONS ROW ══════════════════ */}
+      <section className="relative z-10 py-12 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #111 0%, #1a1a1a 100%)" }} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="flex flex-wrap justify-center gap-6">
+            {[
+              "NSPF Certified",
+              "Licensed & Insured",
+              "EPA Compliant",
+              "Manufacturer Authorized",
+              "BBB Accredited",
+            ].map((badge) => (
+              <div
+                key={badge}
+                className="flex items-center gap-2 px-5 py-3 rounded-full border border-white/10"
+                style={{ background: "rgba(255,255,255,0.03)" }}
+              >
+                <ShieldCheck size={18} weight="fill" style={{ color: ACCENT }} />
+                <span className="text-sm font-medium text-white">{badge}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ══════════════════ 15. FOOTER ══════════════════ */}
       <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111 100%)" }} />

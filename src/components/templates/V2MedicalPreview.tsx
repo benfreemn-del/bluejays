@@ -217,6 +217,10 @@ export default function V2MedicalPreview({ data }: { data: GeneratedSiteData }) 
     { q: "Do you accept insurance?", a: "Yes, we accept most major insurance plans. Please contact our office to verify your specific coverage before your visit." },
     { q: "How do I schedule an appointment?", a: `You can schedule an appointment by calling us directly or booking online through our website. ${data.businessName} offers same-day appointments for urgent needs.` },
     { q: "Are you accepting new patients?", a: `Absolutely! ${data.businessName} is currently accepting new patients of all ages. We look forward to becoming your trusted healthcare partner.` },
+    { q: "Do you offer telehealth appointments?", a: "Yes, we offer secure HIPAA-compliant video visits for many types of appointments including follow-ups, medication management, and minor illness consultations." },
+    { q: "What should I bring to my first visit?", a: "Please bring your insurance card, photo ID, a list of current medications, and any relevant medical records. Arrive 15 minutes early to complete paperwork." },
+    { q: "Do you offer same-day appointments?", a: `Yes, ${data.businessName} reserves slots for same-day and urgent care needs. Call us in the morning for the best availability.` },
+    { q: "What are your office hours?", a: data.hours ? `Our current hours are: ${data.hours}. We recommend calling ahead for holiday schedule changes.` : "Please call our office for current hours and availability." },
   ];
 
   /* Fallback testimonials */
@@ -576,7 +580,31 @@ export default function V2MedicalPreview({ data }: { data: GeneratedSiteData }) 
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[40%] right-[20%] w-[400px] h-[400px] rounded-full blur-[180px]" style={{ background: `${MINT}06` }} /></div>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <AnimatedSection>          <SectionHeader badge="Location" title="Visit Our Office" accent={ACCENT} /></AnimatedSection>
-          <div className="text-center"><GlassCard className="p-8 inline-block"><div className="flex items-center gap-3 text-lg"><MapPin size={24} weight="duotone" style={{ color: ACCENT }} /><MapLink address={data.address} className="text-white font-semibold" /></div><p className="text-slate-400 text-sm mt-2">Serving the community &amp; surrounding areas</p></GlassCard></div>
+          <div className="text-center mb-8"><GlassCard className="p-8 inline-block"><div className="flex items-center gap-3 text-lg"><MapPin size={24} weight="duotone" style={{ color: ACCENT }} /><MapLink address={data.address} className="text-white font-semibold" /></div><div className="flex items-center gap-2 mt-3 justify-center"><div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" /><span className="text-sm text-emerald-400 font-medium">Accepting New Patients</span></div></GlassCard></div>
+          <div className="flex flex-wrap justify-center gap-2 mb-6">
+            {(data.serviceAreas || [data.address?.split(",")[0] || "Local Area"]).map((area: string) => (
+              <span key={area} className="px-4 py-2 rounded-full text-xs font-medium border" style={{ color: ACCENT, borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}>
+                {area}
+              </span>
+            ))}
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
+            <GlassCard className="p-4 text-center">
+              <MapPin size={20} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-2" />
+              <p className="text-sm font-semibold text-white">Convenient Location</p>
+              <p className="text-xs text-slate-500">Free parking available</p>
+            </GlassCard>
+            <GlassCard className="p-4 text-center">
+              <Clock size={20} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-2" />
+              <p className="text-sm font-semibold text-white">Minimal Wait Times</p>
+              <p className="text-xs text-slate-500">We respect your schedule</p>
+            </GlassCard>
+            <GlassCard className="p-4 text-center">
+              <FirstAid size={20} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-2" />
+              <p className="text-sm font-semibold text-white">Walk-Ins Welcome</p>
+              <p className="text-xs text-slate-500">Same-day availability</p>
+            </GlassCard>
+          </div>
         </div>
       </section>
 
@@ -698,6 +726,168 @@ export default function V2MedicalPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
+      {/* 11f. WHY CHOOSE US */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0c1214 50%, #1a1a1a 100%)" }} />
+        <PulseLineBackground opacity={0.02} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Our Difference" title="Why Choose Us" accent={ACCENT} />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { icon: Heartbeat, title: "Patient-Centered", desc: "Your health goals drive every decision we make. We listen first, treat second." },
+              { icon: Stethoscope, title: "Board Certified", desc: "Our providers hold the highest certifications and pursue ongoing education." },
+              { icon: Clock, title: "Same-Day Visits", desc: "Urgent needs cannot wait. We keep slots open for same-day appointments." },
+              { icon: ShieldCheck, title: "All Ages Welcome", desc: "From pediatric to geriatric care, we serve every member of your family." },
+            ].map((item) => (
+              <GlassCard key={item.title} className="p-6 text-center">
+                <div className="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ background: `${ACCENT}15`, border: `1px solid ${ACCENT}22` }}>
+                  <item.icon size={28} weight="duotone" style={{ color: ACCENT }} />
+                </div>
+                <h3 className="text-base font-bold text-white mb-2">{item.title}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed">{item.desc}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 11g. PATIENT RESOURCES */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f1517 50%, #1a1a1a 100%)" }} />
+        <MedicalCrossPattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Resources" title="Patient Resources" subtitle="We believe informed patients make the best health decisions." accent={ACCENT} />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              { title: "New Patient Forms", desc: "Download and complete your paperwork before your visit to save time and get started faster.", icon: FirstAid },
+              { title: "Insurance & Billing", desc: "We accept most major insurance plans and offer transparent billing with no surprises. Payment plans available.", icon: ShieldCheck },
+              { title: "Prescription Refills", desc: "Request prescription refills easily through our patient portal or by calling our office during business hours.", icon: Pill },
+              { title: "Lab Results", desc: "Access your lab results securely through our online patient portal. We will notify you when results are ready.", icon: Thermometer },
+              { title: "Referral Requests", desc: "Need to see a specialist? We coordinate referrals and help you find the right provider for your needs.", icon: Users },
+              { title: "Health Education", desc: "Browse our library of patient education materials covering prevention, wellness, and chronic condition management.", icon: Stethoscope },
+            ].map((item) => (
+              <GlassCard key={item.title} className="p-6">
+                <div className="w-12 h-12 rounded-xl mb-4 flex items-center justify-center" style={{ background: `${ACCENT}15`, border: `1px solid ${ACCENT}22` }}>
+                  <item.icon size={24} weight="duotone" style={{ color: ACCENT }} />
+                </div>
+                <h4 className="text-base font-bold text-white mb-2">{item.title}</h4>
+                <p className="text-sm text-slate-400 leading-relaxed">{item.desc}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 11g. INSURANCE DETAIL */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0c1214 50%, #1a1a1a 100%)" }} />
+        <PulseLineBackground opacity={0.02} accent={ACCENT} />
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Coverage" title="Insurance & Payment Options" subtitle="We work with you to make healthcare affordable and accessible." accent={ACCENT} />
+          <div className="grid md:grid-cols-2 gap-8">
+            <GlassCard className="p-8">
+              <h3 className="text-xl font-bold text-white mb-4">Accepted Insurance Plans</h3>
+              <div className="flex flex-wrap gap-2 mb-6">
+                {["Blue Cross", "Aetna", "Cigna", "United", "Medicare", "Medicaid", "Humana", "Kaiser"].map((plan) => (
+                  <span key={plan} className="px-3 py-1.5 rounded-full text-xs font-medium border" style={{ color: ACCENT, borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}>
+                    {plan}
+                  </span>
+                ))}
+              </div>
+              <p className="text-sm text-slate-400 leading-relaxed">Do not see your plan? Contact us to verify your coverage. We accept most major insurance carriers and will help with claims processing.</p>
+            </GlassCard>
+            <GlassCard className="p-8">
+              <h3 className="text-xl font-bold text-white mb-4">Payment Options</h3>
+              <ul className="space-y-3">
+                {[
+                  "Cash, check, and all major credit cards",
+                  "Flexible payment plans for larger procedures",
+                  "CareCredit and medical financing accepted",
+                  "Sliding scale fees for qualifying patients",
+                  "No surprise billing — transparent cost estimates",
+                  "Insurance claim filing assistance included",
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-2 text-sm text-slate-400">
+                    <CheckCircle size={16} weight="fill" className="mt-0.5 shrink-0" style={{ color: ACCENT }} />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </GlassCard>
+          </div>
+        </div>
+      </section>
+
+      {/* 11h. TELEHEALTH DETAIL */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f1517 50%, #1a1a1a 100%)" }} />
+        <MedicalCrossPattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Virtual Care" title="Telehealth Services" subtitle="Get the care you need from the comfort of your home." accent={ACCENT} />
+          <GlassCard className="p-8">
+            <div className="grid md:grid-cols-2 gap-8">
+              <div>
+                <h3 className="text-xl font-bold text-white mb-4">How Telehealth Works</h3>
+                <div className="space-y-4">
+                  {[
+                    { step: "1", title: "Schedule Online", desc: "Book your virtual visit through our portal or call the office." },
+                    { step: "2", title: "Connect Securely", desc: "Join your appointment via our HIPAA-compliant video platform." },
+                    { step: "3", title: "Get Treated", desc: "Your provider examines, diagnoses, and prescribes as needed." },
+                    { step: "4", title: "Follow Up", desc: "Receive visit notes and follow-up instructions electronically." },
+                  ].map((item) => (
+                    <div key={item.step} className="flex items-start gap-3">
+                      <div className="w-8 h-8 rounded-full shrink-0 flex items-center justify-center text-xs font-bold text-white" style={{ background: ACCENT }}>{item.step}</div>
+                      <div>
+                        <h4 className="text-sm font-bold text-white">{item.title}</h4>
+                        <p className="text-xs text-slate-400">{item.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-white mb-4">Available Virtually</h3>
+                <ul className="space-y-3">
+                  {[
+                    "Follow-up appointments and check-ins",
+                    "Medication management and refills",
+                    "Cold, flu, and allergy treatment",
+                    "Skin concerns and rash evaluation",
+                    "Mental health and counseling sessions",
+                    "Chronic disease management",
+                    "Lab result reviews and consultations",
+                    "Specialist referral discussions",
+                  ].map((item) => (
+                    <li key={item} className="flex items-start gap-2 text-sm text-slate-400">
+                      <CheckCircle size={16} weight="fill" className="mt-0.5 shrink-0" style={{ color: ACCENT }} />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </GlassCard>
+        </div>
+      </section>
+
+      {/* 11i. MID-PAGE CTA BANNER */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: ACCENT }} />
+        <div className="absolute inset-0 bg-black/20" />
+        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+          <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">Your Health Cannot Wait</h2>
+          <p className="text-white/80 text-lg mb-8 max-w-2xl mx-auto">Same-day appointments available. New patients welcome. Call now or book online.</p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <PhoneLink phone={data.phone} className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-white text-sm font-bold" style={{ color: ACCENT }}>
+              <Phone size={18} weight="fill" /> Call Now
+            </PhoneLink>
+            <a href="#contact" className="inline-flex items-center gap-2 px-8 py-4 rounded-full border-2 border-white text-white text-sm font-bold hover:bg-white/10 transition-colors">
+              Book Online <ArrowRight size={18} weight="bold" />
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* 12. FAQ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f1517 50%, #1a1a1a 100%)" }} />
@@ -753,7 +943,7 @@ export default function V2MedicalPreview({ data }: { data: GeneratedSiteData }) 
             <span className="inline-block text-xs font-bold uppercase tracking-[0.25em] mb-3 px-4 py-1.5 rounded-full border" style={{ color: ACCENT, borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}>Credentials</span>
             <h2 className="text-2xl md:text-4xl font-extrabold tracking-tight text-white">Board-Certified Providers</h2>
           </div>
-          <div className="flex flex-wrap justify-center gap-3">
+          <div className="flex flex-wrap justify-center gap-3 mb-6">
             {["Board Certified", "AMA Member", "State Licensed", "HIPAA Compliant", "Continuing Education", "Patient Safety Certified"].map((badge) => (
               <div key={badge} className="inline-flex items-center gap-2 px-5 py-3 rounded-full border border-white/10 bg-white/[0.03] backdrop-blur-sm text-sm font-medium text-white">
                 <ShieldCheck size={18} weight="duotone" style={{ color: ACCENT }} />
@@ -761,6 +951,11 @@ export default function V2MedicalPreview({ data }: { data: GeneratedSiteData }) 
               </div>
             ))}
           </div>
+          <p className="text-center text-sm text-slate-500 max-w-2xl mx-auto">
+            Our providers maintain the highest standards of medical education and patient care.
+            All physicians complete rigorous continuing education requirements annually.
+            We are proud to serve our community with compassionate, evidence-based medicine.
+          </p>
         </div>
       </section>
 

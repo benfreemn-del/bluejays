@@ -932,6 +932,60 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
+      {/* ══════════════════ ENERGY EFFICIENCY TIPS ══════════════════ */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #080e1a 50%, ${NAVY} 100%)` }} />
+        <VentPattern opacity={0.01} accent={BLUE} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <Leaf size={40} weight="duotone" style={{ color: BLUE }} className="mx-auto mb-3" />
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Energy Efficiency Tips</h2>
+            <p className="text-slate-400 mt-3 max-w-xl mx-auto">Simple steps to lower your energy bills and keep your home comfortable year-round.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {[
+              { tip: "Change Filters Monthly", desc: "A dirty filter makes your system work harder, increasing energy usage by up to 15%. Check monthly and replace every 1-3 months." },
+              { tip: "Seal Ductwork", desc: "Leaky ducts can waste 20-30% of heated or cooled air. Professional duct sealing pays for itself within one season." },
+              { tip: "Programmable Thermostat", desc: "Set it and save. Dropping temperature 7-10 degrees for 8 hours daily can cut heating bills by 10% annually." },
+              { tip: "Annual Tune-Ups", desc: "Professional maintenance keeps your system at peak efficiency and catches small problems before they become expensive repairs." },
+              { tip: "Upgrade Insulation", desc: "Proper attic and wall insulation keeps conditioned air where it belongs — inside your home." },
+              { tip: "Heat Pump Upgrade", desc: "Modern heat pumps are 300% efficient compared to traditional furnaces. Federal tax credits up to $2,000 available." },
+            ].map((t) => (
+              <div key={t.tip} className="flex items-start gap-4 rounded-2xl border border-white/10 p-5" style={{ background: "rgba(255,255,255,0.03)" }}>
+                <CheckCircle size={22} weight="fill" style={{ color: BLUE }} className="shrink-0 mt-0.5" />
+                <div>
+                  <h3 className="text-sm font-bold text-white mb-1">{t.tip}</h3>
+                  <p className="text-xs text-slate-400 leading-relaxed">{t.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ SEASONAL CHECKLIST ══════════════════ */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${BLUE}15 0%, ${NAVY} 50%, ${BLUE}08 100%)` }} />
+        <VentPattern opacity={0.02} accent={BLUE} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+          <Thermometer size={44} weight="fill" style={{ color: BLUE }} className="mx-auto mb-4" />
+          <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">Seasonal HVAC Checklist</h2>
+          <p className="text-slate-400 max-w-2xl mx-auto mb-6 text-lg">
+            Don&apos;t wait for a breakdown. {data.businessName} recommends scheduling maintenance twice a year — once in spring for cooling and once in fall for heating.
+          </p>
+          <div className="flex flex-wrap justify-center gap-4 mb-8">
+            {["Spring AC Tune-Up", "Fall Furnace Inspection", "Filter Replacement", "Duct Cleaning", "Thermostat Calibration"].map((item) => (
+              <span key={item} className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border" style={{ color: BLUE, borderColor: `${BLUE}33`, background: `${BLUE}0d` }}>
+                <CheckCircle size={16} weight="fill" /> {item}
+              </span>
+            ))}
+          </div>
+          <a href={`tel:${data.phone}`} className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-white font-bold text-lg transition-transform hover:scale-105" style={{ background: BLUE }}>
+            <Phone size={20} weight="fill" /> Schedule Maintenance
+          </a>
+        </div>
+      </section>
+
       {/* ══════════════════ 15. FOOTER ══════════════════ */}
       <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #080e1a 100%)` }} />
