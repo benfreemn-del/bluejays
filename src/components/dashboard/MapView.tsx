@@ -59,6 +59,8 @@ export default function MapView({ prospects, onStateClick }: MapViewProps) {
   const [scoutCategory, setScoutCategory] = useState<Category>("dental");
   const [scouting, setScouting] = useState(false);
   const [scoutResult, setScoutResult] = useState("");
+  const [exhaustedCategories, setExhaustedCategories] = useState<Record<string, string[]>>({});
+  const [pageTokens, setPageTokens] = useState<Record<string, string>>({});
 
   // Available categories for current county (filter out exhausted ones)
   const availableCategories = (Object.keys(CATEGORY_CONFIG) as Category[]).filter(
@@ -165,10 +167,6 @@ export default function MapView({ prospects, onStateClick }: MapViewProps) {
         .catch(() => {});
     }
   };
-
-  // Track exhausted categories per county + pagination tokens
-  const [exhaustedCategories, setExhaustedCategories] = useState<Record<string, string[]>>({});
-  const [pageTokens, setPageTokens] = useState<Record<string, string>>({});
 
   const handleCountyScout = async () => {
     if (!scoutCounty) return;
