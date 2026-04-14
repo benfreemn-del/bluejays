@@ -61,16 +61,17 @@ export default function MapView({ prospects, onStateClick }: MapViewProps) {
   const [scoutResult, setScoutResult] = useState("");
 
   // Keep scoutCategory in sync — if current selection is exhausted, pick the first available
-  const exhaustedForCounty = exhaustedCategories[scoutCounty] || [];
-  const availableCategories = useMemo(
-    () => (Object.keys(CATEGORY_CONFIG) as Category[]).filter(cat => !exhaustedForCounty.includes(cat)),
-    [exhaustedForCounty]
-  );
+  const availableCategories = useMemo(() => {
+    const exhausted = exhaustedCategories[scoutCounty] || [];
+    return (Object.keys(CATEGORY_CONFIG) as Category[]).filter(cat => !exhausted.includes(cat));
+  }, [exhaustedCategories, scoutCounty]);
+
   useEffect(() => {
     if (availableCategories.length > 0 && !availableCategories.includes(scoutCategory)) {
       setScoutCategory(availableCategories[0]);
     }
-  }, [availableCategories, scoutCategory]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [availableCategories]);
 
   // Group prospects by state
   const stateData = useMemo<Record<string, { count: number }>>(() => {
