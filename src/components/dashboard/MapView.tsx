@@ -60,6 +60,16 @@ export default function MapView({ prospects, onStateClick }: MapViewProps) {
   const [scouting, setScouting] = useState(false);
   const [scoutResult, setScoutResult] = useState("");
 
+  // Keep scoutCategory in sync — if current selection is exhausted, pick the first available
+  const availableCategories = (Object.keys(CATEGORY_CONFIG) as Category[]).filter(
+    cat => !(exhaustedCategories[scoutCounty] || []).includes(cat)
+  );
+  useEffect(() => {
+    if (availableCategories.length > 0 && !availableCategories.includes(scoutCategory)) {
+      setScoutCategory(availableCategories[0]);
+    }
+  }, [availableCategories, scoutCategory]);
+
   // Group prospects by state
   const stateData = useMemo<Record<string, { count: number }>>(() => {
     const grouped: Record<string, { count: number }> = {};
@@ -192,19 +202,15 @@ export default function MapView({ prospects, onStateClick }: MapViewProps) {
         setPageTokens(prev => { const n = { ...prev }; delete n[tokenKey]; return n; });
       }
 
-      // If 0 new results (all dupes or truly exhausted), remove from dropdown + auto-switch
+      // If 0 new results (all dupes or truly exhausted), remove from dropdown
+      // useEffect will auto-switch scoutCategory to the next available one
       if (data.prospects.length === 0) {
-        const newExhausted = [...(exhaustedCategories[scoutCounty] || []), scoutCategory];
+        const catLabel = CATEGORY_CONFIG[scoutCategory]?.label || scoutCategory;
         setExhaustedCategories(prev => ({
           ...prev,
-          [scoutCounty]: newExhausted,
+          [scoutCounty]: [...(prev[scoutCounty] || []), scoutCategory],
         }));
-        const remaining = (Object.keys(CATEGORY_CONFIG) as Category[]).filter(cat => !newExhausted.includes(cat));
-        if (remaining.length > 0) {
-          setScoutCategory(remaining[0]);
-        }
-        const catLabel = CATEGORY_CONFIG[scoutCategory]?.label || scoutCategory;
-        setScoutResult(`No new ${catLabel} businesses found in ${scoutCounty}. Switched to next category.`);
+        setScoutResult(`No new ${catLabel} businesses in ${scoutCounty}. Switched to next category.`);
       } else {
         // Generate sites for new prospects
         for (const p of data.prospects) {
@@ -349,11 +355,9 @@ export default function MapView({ prospects, onStateClick }: MapViewProps) {
                     onChange={(e) => setScoutCategory(e.target.value as Category)}
                     className="w-full h-10 px-3 rounded-lg bg-surface border border-border text-foreground text-sm"
                   >
-                    {(Object.keys(CATEGORY_CONFIG) as Category[])
-                      .filter(cat => !(exhaustedCategories[scoutCounty] || []).includes(cat))
-                      .map((cat) => (
-                        <option key={cat} value={cat}>{CATEGORY_CONFIG[cat].label}</option>
-                      ))}
+                    {availableCategories.map((cat) => (
+                      <option key={cat} value={cat}>{CATEGORY_CONFIG[cat].label}</option>
+                    ))}
                   </select>
                 </div>
                 <button
