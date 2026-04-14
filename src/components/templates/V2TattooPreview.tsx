@@ -236,9 +236,19 @@ export default function V2TattooPreview({ data }: { data: GeneratedSiteData }) {
         <InkSplatterPattern opacity={0.02} accent={ACCENT} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {data.stats.map((stat, i) => { const icons = [PenNib, Star, Clock, Heart]; const Icon = icons[i % icons.length]; return (
-              <div key={stat.label} className="text-center"><div className="flex items-center justify-center gap-2 mb-2"><Icon size={22} weight="fill" style={{ color: ACCENT }} /><span className="text-3xl md:text-4xl font-extrabold text-white">{stat.value}</span></div><span className="text-slate-500 text-sm font-medium tracking-wide uppercase">{stat.label}</span></div>
-            ); })}
+            {data.stats.map((stat, i) => {
+              const icons = [PenNib, Star, Clock, Heart];
+              const Icon = icons[i % icons.length];
+              return (
+                <div key={stat.label} className="text-center">
+                  <div className="flex items-center justify-center gap-2 mb-2">
+                    <Icon size={22} weight="fill" style={{ color: ACCENT }} />
+                    <span className="text-3xl md:text-4xl font-extrabold text-white">{stat.value}</span>
+                  </div>
+                  <span className="text-slate-500 text-sm font-medium tracking-wide uppercase">{stat.label}</span>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -328,15 +338,128 @@ export default function V2TattooPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
+      {/* 7b. ARTIST PROFILES */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #1a0505 50%, #0a0a0a 100%)" }} />
+        <InkSplatterPattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Our Team" title="Meet the Artists" accent={ACCENT} />
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              { name: "Lead Artist", specialty: "Realism & Portraits", exp: "10+ Years", styles: ["Black & Grey", "Color Realism", "Cover-Ups"] },
+              { name: "Senior Artist", specialty: "Traditional & Neo-Trad", exp: "8+ Years", styles: ["American Trad", "Neo-Traditional", "Bold Lines"] },
+              { name: "Specialist", specialty: "Fine Line & Minimalist", exp: "5+ Years", styles: ["Fine Line", "Geometric", "Script"] },
+            ].map((artist) => (
+              <GlassCard key={artist.name} className="p-6">
+                <div className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ background: `${ACCENT}15`, border: `1px solid ${ACCENT}33` }}>
+                  <PenNib size={28} weight="duotone" style={{ color: ACCENT }} />
+                </div>
+                <h3 className="text-lg font-bold text-white text-center mb-1">{artist.name}</h3>
+                <p className="text-sm text-center mb-1" style={{ color: ACCENT }}>{artist.specialty}</p>
+                <p className="text-xs text-center text-slate-500 mb-4">{artist.exp} Experience</p>
+                <div className="flex flex-wrap gap-2 justify-center">
+                  {artist.styles.map((s) => (
+                    <span key={s} className="text-xs px-3 py-1 rounded-full border border-white/10 text-slate-300">{s}</span>
+                  ))}
+                </div>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 7c. AFTERCARE GUIDE */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #0f0505 50%, #0a0a0a 100%)" }} />
+        <InkDripBackground opacity={0.02} accent={ACCENT} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Aftercare" title="Taking Care of Your New Tattoo" subtitle="Proper aftercare ensures your tattoo heals beautifully and lasts a lifetime." accent={ACCENT} />
+          <div className="grid sm:grid-cols-2 gap-6">
+            {[
+              { title: "First 24 Hours", desc: "Keep the bandage on for 2-4 hours. Wash gently with lukewarm water and fragrance-free soap." },
+              { title: "Days 2-14", desc: "Apply a thin layer of unscented moisturizer 2-3 times daily. Do not pick or scratch." },
+              { title: "Weeks 2-4", desc: "Continue moisturizing. Avoid swimming, hot tubs, and direct sunlight on the tattoo." },
+              { title: "Long-Term", desc: "Always apply sunscreen over healed tattoos. Moisturize regularly to keep colors vibrant." },
+            ].map((step, i) => (
+              <GlassCard key={step.title} className="p-6">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold" style={{ background: `${ACCENT}22`, color: ACCENT, border: `1px solid ${ACCENT}33` }}>{i + 1}</div>
+                  <h4 className="text-base font-bold text-white">{step.title}</h4>
+                </div>
+                <p className="text-sm text-slate-400 leading-relaxed">{step.desc}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 7d. PRICING */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #1a0505 50%, #0a0a0a 100%)" }} />
+        <InkSplatterPattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Investment" title="Tattoo Pricing" subtitle="Pricing depends on size, detail, and placement. All tattoos start with a free consultation." accent={ACCENT} />
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              { name: "Small", price: "$100+", desc: "Wrist, ankle, finger — simple designs under 2 inches", features: ["Single Session", "Simple Design", "Quick Heal", "Includes Touch-Up"] },
+              { name: "Medium", price: "$250+", desc: "Forearm, shoulder, calf — detailed work 3-6 inches", features: ["1-2 Sessions", "Custom Design", "Full Color Available", "Includes Touch-Up"], popular: true },
+              { name: "Large", price: "$500+", desc: "Sleeve, back, chest — complex large-scale pieces", features: ["Multiple Sessions", "Full Custom Art", "Complex Detail", "Priority Booking"] },
+            ].map((tier) => (
+              <GlassCard key={tier.name} className={`p-8 ${tier.popular ? "ring-1" : ""}`} style={tier.popular ? { borderColor: ACCENT } : undefined}>
+                {tier.popular && <div className="text-center mb-4"><span className="px-4 py-1 rounded-full text-xs font-bold text-white" style={{ background: ACCENT }}>Most Popular</span></div>}
+                <h3 className="text-xl font-bold text-white mb-1">{tier.name}</h3>
+                <div className="flex items-baseline gap-1 mb-2">
+                  <span className="text-4xl font-extrabold" style={{ color: ACCENT }}>{tier.price}</span>
+                </div>
+                <p className="text-sm text-slate-400 mb-6">{tier.desc}</p>
+                <ul className="space-y-3 mb-8">
+                  {tier.features.map((f) => (
+                    <li key={f} className="flex items-center gap-2 text-sm text-slate-300">
+                      <CheckCircle size={16} weight="fill" style={{ color: ACCENT }} /> {f}
+                    </li>
+                  ))}
+                </ul>
+                <MagneticButton className={`w-full py-3 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 cursor-pointer ${tier.popular ? "text-white" : "text-white border border-white/10"}`} style={tier.popular ? { background: ACCENT } as React.CSSProperties : undefined}>
+                  Book Consult <ArrowRight size={16} weight="bold" />
+                </MagneticButton>
+              </GlassCard>
+            ))}
+          </div>
+          <p className="text-center text-xs text-slate-500 mt-6">$50 deposit required at booking, applied to final price. Custom quotes for complex work.</p>
+        </div>
+      </section>
+
       {/* 8. TESTIMONIALS */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #1a0505 50%, #0a0a0a 100%)" }} />
         <InkSplatterPattern opacity={0.02} accent={ACCENT} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <AnimatedSection>          <SectionHeader badge="Reviews" title="Client Experiences" accent={ACCENT} /></AnimatedSection>
+          {(data.googleRating || data.reviewCount) && (
+            <div className="text-center mb-8">
+              <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full border border-white/10 bg-white/5 backdrop-blur-sm">
+                <div className="flex gap-0.5">{Array.from({ length: 5 }).map((_, i) => <Star key={i} size={18} weight="fill" style={{ color: ACCENT }} />)}</div>
+                <span className="text-lg font-bold text-white">{data.googleRating || "5.0"}</span>
+                {data.reviewCount && <span className="text-sm text-slate-400">({data.reviewCount} reviews)</span>}
+              </div>
+            </div>
+          )}
+          <AnimatedSection><SectionHeader badge="Reviews" title="Client Experiences" accent={ACCENT} /></AnimatedSection>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {testimonials.map((t, i) => (
-              <GlassCard key={i} className="p-6 h-full flex flex-col"><div className="flex gap-0.5 mb-4">{Array.from({ length: t.rating || 5 }).map((_, j) => <Star key={j} size={16} weight="fill" style={{ color: ACCENT }} />)}</div><p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p><div className="pt-4 border-t border-white/5"><span className="text-sm font-semibold text-white">{t.name}</span></div></GlassCard>
+              <GlassCard key={i} className="p-6 h-full flex flex-col">
+                <div className="text-4xl mb-3" style={{ color: `${ACCENT}33` }}>&ldquo;</div>
+                <div className="flex gap-0.5 mb-4">
+                  {Array.from({ length: t.rating || 5 }).map((_, j) => (
+                    <Star key={j} size={16} weight="fill" style={{ color: ACCENT }} />
+                  ))}
+                </div>
+                <p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">{t.text}</p>
+                <div className="pt-4 border-t border-white/5 flex items-center gap-2">
+                  <CheckCircle size={14} weight="fill" style={{ color: ACCENT }} />
+                  <span className="text-sm font-semibold text-white">{t.name}</span>
+                  <span className="text-xs text-slate-500">Verified Client</span>
+                </div>
+              </GlassCard>
             ))}
           </div>
         </div>
@@ -396,6 +519,105 @@ export default function V2TattooPreview({ data }: { data: GeneratedSiteData }) {
         </section>
       )}
 
+      {/* 12b. COMPETITOR COMPARISON */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #0f0505 50%, #0a0a0a 100%)" }} />
+        <InkSplatterPattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Why Us" title={`${data.businessName} vs. Average Studios`} accent={ACCENT} />
+          <GlassCard className="overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-white/10">
+                    <th className="text-left p-4 font-semibold text-white">Feature</th>
+                    <th className="text-center p-4 font-semibold" style={{ color: ACCENT }}>{data.businessName}</th>
+                    <th className="text-center p-4 font-semibold text-slate-500">Others</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { feature: "Custom-Designed Art", us: true, them: "Flash Only" },
+                    { feature: "Sterile Single-Use Equipment", us: true, them: "Varies" },
+                    { feature: "Free Touch-Up Included", us: true, them: "Extra Cost" },
+                    { feature: "Private Consultation", us: true, them: "No" },
+                    { feature: "All Styles Available", us: true, them: "Limited" },
+                    { feature: "Detailed Aftercare Kit", us: true, them: "Basic" },
+                    { feature: "Portfolio Review Available", us: true, them: "No" },
+                  ].map((row, i) => (
+                    <tr key={row.feature} className={i % 2 === 0 ? "bg-white/[0.02]" : ""}>
+                      <td className="p-4 text-slate-300 font-medium">{row.feature}</td>
+                      <td className="p-4 text-center"><CheckCircle size={20} weight="fill" style={{ color: ACCENT }} className="mx-auto" /></td>
+                      <td className="p-4 text-center text-slate-500">{row.them}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </GlassCard>
+        </div>
+      </section>
+
+      {/* 12c. VIDEO PLACEHOLDER */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #141010 100%)" }} />
+        <InkDripBackground opacity={0.015} accent={ACCENT} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+          <div className="text-center mb-8">
+            <span className="inline-block text-xs font-bold uppercase tracking-[0.25em] mb-3 px-4 py-1.5 rounded-full border" style={{ color: ACCENT, borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}>Watch</span>
+            <h2 className="text-2xl md:text-4xl font-extrabold tracking-tight text-white">See Our Artists at Work</h2>
+          </div>
+          <div className="relative rounded-2xl overflow-hidden border border-white/10 aspect-video flex items-center justify-center" style={{ background: "rgba(0,0,0,0.3)" }}>
+            <div className="w-20 h-20 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center border border-white/20 cursor-pointer hover:bg-white/20 transition-colors">
+              <div className="w-0 h-0 border-l-[18px] border-l-white border-t-[12px] border-t-transparent border-b-[12px] border-b-transparent ml-1.5" />
+            </div>
+            <p className="absolute bottom-6 text-white/40 text-sm font-medium">Watch the Tattooing Process</p>
+          </div>
+        </div>
+      </section>
+
+      {/* 12d. SAFETY CERTIFICATIONS */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #141010 0%, #0a0a0a 100%)" }} />
+        <InkSplatterPattern opacity={0.015} accent={ACCENT} />
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-10">
+            <span className="inline-block text-xs font-bold uppercase tracking-[0.25em] mb-3 px-4 py-1.5 rounded-full border" style={{ color: ACCENT, borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}>Safety</span>
+            <h2 className="text-2xl md:text-4xl font-extrabold tracking-tight text-white">Your Safety Is Non-Negotiable</h2>
+          </div>
+          <div className="flex flex-wrap justify-center gap-3">
+            {["Health Department Licensed", "Single-Use Needles", "Hospital-Grade Sterilization", "Bloodborne Pathogen Certified", "FDA-Approved Inks", "First Aid Trained"].map((badge) => (
+              <div key={badge} className="inline-flex items-center gap-2 px-5 py-3 rounded-full border border-white/10 bg-white/[0.03] backdrop-blur-sm text-sm font-medium text-white">
+                <ShieldCheck size={18} weight="duotone" style={{ color: ACCENT }} />
+                {badge}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 12e. URGENCY */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #141010 100%)" }} />
+        <InkDripBackground opacity={0.015} accent={ACCENT} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+          <GlassCard className="p-8">
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <div className="relative">
+                <div className="w-3 h-3 rounded-full" style={{ background: ACCENT }} />
+                <div className="absolute inset-0 w-3 h-3 rounded-full animate-ping" style={{ background: ACCENT, opacity: 0.4 }} />
+              </div>
+              <span className="text-sm font-bold uppercase tracking-wider" style={{ color: ACCENT }}>Now Booking</span>
+            </div>
+            <h3 className="text-2xl font-bold text-white mb-2">Limited Availability This Month</h3>
+            <p className="text-slate-400 mb-6">Our artists book up fast. Secure your consultation and session time now before spots fill up.</p>
+            <PhoneLink phone={data.phone} className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-white font-semibold" style={{ background: ACCENT }}>
+              <Phone size={20} weight="fill" /> Book Your Session
+            </PhoneLink>
+          </GlassCard>
+        </div>
+      </section>
+
       {/* 13. FAQ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #1a0505 50%, #0a0a0a 100%)" }} />
@@ -403,6 +625,60 @@ export default function V2TattooPreview({ data }: { data: GeneratedSiteData }) {
         <div className="max-w-3xl mx-auto px-6 relative z-10">
           <AnimatedSection>          <SectionHeader badge="FAQ" title="Common Questions" accent={ACCENT} /></AnimatedSection>
           <div className="space-y-3">{faqs.map((faq, i) => <AccordionItem key={i} question={faq.q} answer={faq.a} isOpen={openFaq === i} onToggle={() => setOpenFaq(openFaq === i ? null : i)} />)}</div>
+        </div>
+      </section>
+
+      {/* 13b. TATTOO QUIZ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #1a0505 50%, #0a0a0a 100%)" }} />
+        <InkSplatterPattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-3xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Get Started" title="What Kind of Tattoo?" subtitle="Tell us about your idea and we will match you with the right artist." accent={ACCENT} />
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {[
+              { label: "First Tattoo", color: "#10b981", rec: "We specialize in making first-timers comfortable. Book a free consultation." },
+              { label: "Add to Collection", color: ACCENT, rec: "Expanding your art? Our artists love creating pieces that complement your existing work." },
+              { label: "Cover-Up or Fix", color: "#f59e0b", rec: "Transform old or unwanted tattoos into stunning new artwork." },
+            ].map((opt) => (
+              <GlassCard key={opt.label} className="p-6 text-center hover:border-white/20 transition-all cursor-pointer">
+                <div className="w-12 h-12 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ background: `${opt.color}15`, border: `1px solid ${opt.color}33` }}>
+                  <PenNib size={22} weight="duotone" style={{ color: opt.color }} />
+                </div>
+                <h4 className="text-sm font-bold text-white mb-2">{opt.label}</h4>
+                <p className="text-xs text-slate-400 leading-relaxed">{opt.rec}</p>
+              </GlassCard>
+            ))}
+          </div>
+          <div className="text-center mt-8">
+            <PhoneLink phone={data.phone} className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-white font-semibold" style={{ background: ACCENT }}>
+              <Phone size={20} weight="fill" /> Book Free Consultation
+            </PhoneLink>
+          </div>
+        </div>
+      </section>
+
+      {/* 13c. WHAT WE OFFER GRID */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #0f0505 50%, #0a0a0a 100%)" }} />
+        <InkDripBackground opacity={0.02} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Studio" title="What Sets Us Apart" accent={ACCENT} />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { icon: ShieldCheck, title: "Sterile Studio", desc: "Hospital-grade sterilization and single-use equipment" },
+              { icon: Palette, title: "Custom Art Only", desc: "Every design is created specifically for you" },
+              { icon: Star, title: "Award-Winning", desc: "Recognized artists with competition awards" },
+              { icon: Heart, title: "Free Touch-Ups", desc: "All tattoos include a complimentary touch-up session" },
+            ].map((item) => (
+              <GlassCard key={item.title} className="p-6 text-center">
+                <div className="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ background: `${ACCENT}15`, border: `1px solid ${ACCENT}22` }}>
+                  <item.icon size={28} weight="duotone" style={{ color: ACCENT }} />
+                </div>
+                <h3 className="text-base font-bold text-white mb-2">{item.title}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed">{item.desc}</p>
+              </GlassCard>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -436,6 +712,70 @@ export default function V2TattooPreview({ data }: { data: GeneratedSiteData }) {
               </form>
             </GlassCard>
           </div>
+        </div>
+      </section>
+
+      {/* 14b. GUARANTEE */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #050505 100%)" }} />
+        <InkSplatterPattern opacity={0.015} accent={ACCENT} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+          <ShimmerBorder accent={ACCENT}>
+            <div className="p-8 md:p-12">
+              <ShieldCheck size={48} weight="fill" style={{ color: ACCENT }} className="mx-auto mb-4" />
+              <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-4">Our Studio Promise</h2>
+              <p className="text-slate-400 leading-relaxed max-w-2xl mx-auto text-lg">
+                {data.businessName} is committed to delivering exceptional tattoo art in a safe, sterile, and welcoming environment. Every piece includes a complimentary touch-up session.
+              </p>
+              <div className="flex flex-wrap justify-center gap-4 mt-8">
+                {["Custom Art Only", "Free Touch-Ups", "Sterile Environment", "Licensed Artists", "FDA-Approved Inks"].map((item) => (
+                  <span key={item} className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border" style={{ color: ACCENT, borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}>
+                    <CheckCircle size={16} weight="fill" /> {item}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </ShimmerBorder>
+        </div>
+      </section>
+
+      {/* 14c. BOOKING INFO */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #050505 0%, #0a0a0a 50%, #050505 100%)" }} />
+        <InkDripBackground opacity={0.02} accent={ACCENT} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Booking" title="How to Book Your Session" accent={ACCENT} />
+          <GlassCard className="p-8">
+            <div className="grid md:grid-cols-3 gap-8">
+              <div className="text-center">
+                <div className="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ background: `${ACCENT}15`, border: `1px solid ${ACCENT}33` }}>
+                  <Phone size={24} weight="duotone" style={{ color: ACCENT }} />
+                </div>
+                <h4 className="text-base font-bold text-white mb-2">1. Contact Us</h4>
+                <p className="text-sm text-slate-400">Call, text, or DM us with your tattoo idea and preferred date.</p>
+              </div>
+              <div className="text-center">
+                <div className="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ background: `${ACCENT}15`, border: `1px solid ${ACCENT}33` }}>
+                  <PenNib size={24} weight="duotone" style={{ color: ACCENT }} />
+                </div>
+                <h4 className="text-base font-bold text-white mb-2">2. Design Review</h4>
+                <p className="text-sm text-slate-400">Your artist creates a custom design. We refine until it is perfect.</p>
+              </div>
+              <div className="text-center">
+                <div className="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ background: `${ACCENT}15`, border: `1px solid ${ACCENT}33` }}>
+                  <CheckCircle size={24} weight="duotone" style={{ color: ACCENT }} />
+                </div>
+                <h4 className="text-base font-bold text-white mb-2">3. Secure Your Spot</h4>
+                <p className="text-sm text-slate-400">A $50 non-refundable deposit holds your session. Applied to final price.</p>
+              </div>
+            </div>
+            <div className="text-center mt-8 pt-6 border-t border-white/5">
+              <p className="text-sm text-slate-500 mb-4">Walk-ins welcome when availability allows. Consultations are always free.</p>
+              <PhoneLink phone={data.phone} className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-white font-semibold" style={{ background: ACCENT }}>
+                <Phone size={20} weight="fill" /> Book Now
+              </PhoneLink>
+            </div>
+          </GlassCard>
         </div>
       </section>
 

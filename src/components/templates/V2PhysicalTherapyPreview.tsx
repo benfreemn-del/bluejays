@@ -83,29 +83,181 @@ export default function V2PhysicalTherapyPreview({ data }: { data: GeneratedSite
       <FloatingSparks accent={ACCENT} />
 
       {/* NAV */}
-      <nav className="fixed top-0 left-0 right-0 z-50"><div className="mx-auto max-w-7xl px-4 md:px-6 py-4"><GlassCard className="flex items-center justify-between px-4 md:px-6 py-3"><div className="flex items-center gap-2"><Heartbeat size={24} weight="fill" style={{ color: ACCENT }} /><span className="text-lg font-bold tracking-tight text-white">{data.businessName}</span></div><div className="hidden md:flex items-center gap-8 text-sm text-slate-400"><a href="#services" className="hover:text-white transition-colors">Services</a><a href="#about" className="hover:text-white transition-colors">About</a><a href="#conditions" className="hover:text-white transition-colors">Conditions</a><a href="#contact" className="hover:text-white transition-colors">Contact</a></div><div className="flex items-center gap-3"><MagneticButton className="px-4 md:px-5 py-2 rounded-full text-sm font-semibold text-white transition-colors cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>Book Now</MagneticButton><button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden p-2 rounded-lg text-white hover:bg-white/10 transition-colors">{mobileMenuOpen ? <X size={24} /> : <List size={24} />}</button></div></GlassCard>
-        <AnimatePresence>{mobileMenuOpen && <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="md:hidden mt-2 overflow-hidden"><GlassCard className="flex flex-col gap-1 px-4 py-4">{["Services", "About", "Conditions", "Contact"].map((l) => <a key={l} href={`#${l.toLowerCase()}`} onClick={() => setMobileMenuOpen(false)} className="block px-4 py-3 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-white/5 transition-colors">{l}</a>)}</GlassCard></motion.div>}</AnimatePresence>
-      </div></nav>
+      <nav className="fixed top-0 left-0 right-0 z-50">
+        <div className="mx-auto max-w-7xl px-4 md:px-6 py-4">
+          <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
+            <div className="flex items-center gap-2">
+              <Heartbeat size={24} weight="fill" style={{ color: ACCENT }} />
+              <span className="text-lg font-bold tracking-tight text-white">
+                {data.businessName}
+              </span>
+            </div>
+            <div className="hidden md:flex items-center gap-8 text-sm text-slate-400">
+              <a href="#services" className="hover:text-white transition-colors">Services</a>
+              <a href="#about" className="hover:text-white transition-colors">About</a>
+              <a href="#conditions" className="hover:text-white transition-colors">Conditions</a>
+              <a href="#contact" className="hover:text-white transition-colors">Contact</a>
+            </div>
+            <div className="flex items-center gap-3">
+              <MagneticButton
+                className="px-4 md:px-5 py-2 rounded-full text-sm font-semibold text-white transition-colors cursor-pointer"
+                style={{ background: ACCENT } as React.CSSProperties}
+              >
+                Book Now
+              </MagneticButton>
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="md:hidden p-2 rounded-lg text-white hover:bg-white/10 transition-colors"
+              >
+                {mobileMenuOpen ? <X size={24} /> : <List size={24} />}
+              </button>
+            </div>
+          </GlassCard>
+          <AnimatePresence>
+            {mobileMenuOpen && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                className="md:hidden mt-2 overflow-hidden"
+              >
+                <GlassCard className="flex flex-col gap-1 px-4 py-4">
+                  {["Services", "About", "Conditions", "Contact"].map((l) => (
+                    <a
+                      key={l}
+                      href={`#${l.toLowerCase()}`}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="block px-4 py-3 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-white/5 transition-colors"
+                    >
+                      {l}
+                    </a>
+                  ))}
+                </GlassCard>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </nav>
 
       {/* HERO */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
-
         <div className="absolute inset-0">
-          <img src={heroImage} alt={`${data.businessName}`} className="w-full h-full object-cover object-center" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/20" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+          <img
+            src={heroImage}
+            alt={data.businessName}
+            className="w-full h-full object-cover object-center"
+          />
+          <div className="absolute inset-0 bg-black/70" />
         </div>
+        <WavePattern opacity={0.04} accent={ACCENT} />
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
           <div className="space-y-8">
-            <div><p className="text-sm uppercase tracking-widest mb-4" style={{ color: GREEN }}>Evidence-Based Physical Therapy</p><h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 20px rgba(0,0,0,0.8), 0 4px 40px rgba(0,0,0,0.5)" }}>{data.tagline}</h1></div>
-            <p className="text-lg text-slate-400 max-w-md leading-relaxed">{(() => { const t = data.about; if (t.length <= 180) return t; const dot = t.indexOf('.', 80); return dot > 0 && dot < 220 ? t.slice(0, dot + 1) : t.slice(0, 180).trim() + '...'; })()}</p>
-            <div className="flex flex-wrap gap-4">
-              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>Schedule Evaluation <ArrowRight size={18} weight="bold" /></MagneticButton>
-              <MagneticButton href={`tel:${data.phone.replace(/\D/g, "")}`} className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer"><Phone size={18} weight="duotone" /> <PhoneLink phone={data.phone} /></MagneticButton>
+            <div>
+              <p className="text-sm uppercase tracking-widest mb-4" style={{ color: GREEN }}>
+                Evidence-Based Physical Therapy
+              </p>
+              <h1
+                className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white"
+                style={{
+                  textShadow: "0 2px 20px rgba(0,0,0,0.8), 0 4px 40px rgba(0,0,0,0.5)",
+                }}
+              >
+                {data.tagline}
+              </h1>
             </div>
-            <div className="flex flex-wrap gap-6 text-sm text-slate-400"><span className="flex items-center gap-2"><MapPin size={16} weight="duotone" style={{ color: ACCENT }} /> <MapLink address={data.address} /></span><span className="flex items-center gap-2"><Clock size={16} weight="duotone" style={{ color: ACCENT }} /> {data.hours || "Mon-Fri 7AM-7PM"}</span></div>
+            <p
+              className="text-lg text-white/80 max-w-md leading-relaxed"
+              style={{ textShadow: "0 1px 8px rgba(0,0,0,0.6)" }}
+            >
+              {(() => {
+                const t = data.about;
+                if (t.length <= 180) return t;
+                const dot = t.indexOf(".", 80);
+                return dot > 0 && dot < 220
+                  ? t.slice(0, dot + 1)
+                  : t.slice(0, 180).trim() + "...";
+              })()}
+            </p>
+            {/* Trust badges */}
+            <div className="flex flex-wrap gap-3">
+              {[
+                "Board Certified",
+                `${data.googleRating || "5.0"}-Star Rated`,
+                "Direct Access",
+              ].map((badge) => (
+                <span
+                  key={badge}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border backdrop-blur-md"
+                  style={{
+                    color: ACCENT,
+                    borderColor: `${ACCENT}4d`,
+                    background: "rgba(0,0,0,0.4)",
+                  }}
+                >
+                  <CheckCircle size={14} weight="fill" /> {badge}
+                </span>
+              ))}
+            </div>
+            <div className="flex flex-wrap gap-4">
+              <MagneticButton
+                className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer"
+                style={{ background: ACCENT } as React.CSSProperties}
+              >
+                Schedule Evaluation <ArrowRight size={18} weight="bold" />
+              </MagneticButton>
+              <MagneticButton
+                href={`tel:${data.phone.replace(/\D/g, "")}`}
+                className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer"
+              >
+                <Phone size={18} weight="duotone" /> <PhoneLink phone={data.phone} />
+              </MagneticButton>
+            </div>
+            <div className="flex flex-wrap gap-6 text-sm text-slate-400">
+              <span className="flex items-center gap-2">
+                <MapPin size={16} weight="duotone" style={{ color: ACCENT }} />
+                <MapLink address={data.address} />
+              </span>
+              <span className="flex items-center gap-2">
+                <Clock size={16} weight="duotone" style={{ color: ACCENT }} />
+                {data.hours || "Mon-Fri 7AM-7PM"}
+              </span>
+            </div>
+            {/* Availability badge */}
+            <div
+              className="inline-flex items-center gap-3 px-5 py-3 rounded-xl border"
+              style={{ borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}
+            >
+              <motion.div
+                className="w-3 h-3 rounded-full"
+                style={{ background: "#22c55e" }}
+                animate={{ scale: [1, 1.3, 1], opacity: [1, 0.5, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              />
+              <div>
+                <p className="text-sm font-bold text-white">Same-Day Appointments</p>
+                <p className="text-xs text-slate-400">No referral needed in most states</p>
+              </div>
+            </div>
           </div>
-          <div className="hidden md:block relative"><div className="relative rounded-2xl overflow-hidden border border-white/10"><img src={heroCardImage} alt={data.businessName} className="w-full h-[500px] object-cover" /><div className="absolute inset-0 bg-gradient-to-t from-[#0a0f1a] via-transparent to-transparent" /><div className="absolute bottom-6 left-6"><div className="px-4 py-2 rounded-full backdrop-blur-md bg-black/50 border flex items-center gap-2" style={{ borderColor: `${ACCENT}4d` }}><Certificate size={18} weight="fill" style={{ color: ACCENT }} /><span className="text-sm font-semibold text-white">Board Certified</span></div></div></div></div>
+          <div className="hidden md:block relative">
+            <div className="relative rounded-2xl overflow-hidden border border-white/10">
+              <img
+                src={heroCardImage}
+                alt={data.businessName}
+                className="w-full h-[500px] object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0a0f1a] via-transparent to-transparent" />
+              <div className="absolute bottom-6 left-6">
+                <div
+                  className="px-4 py-2 rounded-full backdrop-blur-md bg-black/50 border flex items-center gap-2"
+                  style={{ borderColor: `${ACCENT}4d` }}
+                >
+                  <Certificate size={18} weight="fill" style={{ color: ACCENT }} />
+                  <span className="text-sm font-semibold text-white">Board Certified</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -149,12 +301,356 @@ export default function V2PhysicalTherapyPreview({ data }: { data: GeneratedSite
         </div>
       </section>
 
-      {/* TESTIMONIALS */}
+      {/* RECOVERY TIMELINE */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0d1220 50%, ${BG} 100%)` }} />
+        <div
+          className="absolute inset-0"
+          style={{ background: `linear-gradient(180deg, ${BG} 0%, #0d1220 50%, ${BG} 100%)` }}
+        />
+        <WavePattern opacity={0.02} accent={ACCENT} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <AnimatedSection><SectionHeader badge="Testimonials" title="Patient Success Stories" accent={ACCENT} /></AnimatedSection>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">{testimonials.map((t, i) => <GlassCard key={i} className="p-6 h-full flex flex-col"><div className="flex gap-0.5 mb-4">{Array.from({ length: t.rating || 5 }).map((_, j) => <Star key={j} size={16} weight="fill" style={{ color: GREEN }} />)}</div><p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p><div className="pt-4 border-t border-white/5"><span className="text-sm font-semibold text-white">{t.name}</span></div></GlassCard>)}</div>
+          <AnimatedSection>
+            <SectionHeader
+              badge="Recovery"
+              title="Your Path to Recovery"
+              subtitle="A structured approach to getting you back to full function."
+              accent={ACCENT}
+            />
+          </AnimatedSection>
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              {
+                phase: "Phase 1",
+                title: "Pain Relief",
+                weeks: "Weeks 1-2",
+                desc: "Reduce pain and inflammation. Restore basic range of motion through gentle manual therapy and modalities.",
+                color: "#ef4444",
+              },
+              {
+                phase: "Phase 2",
+                title: "Strengthening",
+                weeks: "Weeks 3-6",
+                desc: "Progressive exercises to rebuild strength, stability, and confidence in movement.",
+                color: "#f59e0b",
+              },
+              {
+                phase: "Phase 3",
+                title: "Return to Activity",
+                weeks: "Weeks 6-12",
+                desc: "Sport-specific or activity-specific training to get you back to doing what you love.",
+                color: "#22c55e",
+              },
+            ].map((phase) => (
+              <GlassCard key={phase.phase} className="p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <span
+                    className="text-xs font-bold px-3 py-1 rounded-full"
+                    style={{
+                      color: phase.color,
+                      background: `${phase.color}1a`,
+                      border: `1px solid ${phase.color}33`,
+                    }}
+                  >
+                    {phase.phase}
+                  </span>
+                  <span className="text-xs text-slate-500">{phase.weeks}</span>
+                </div>
+                <h3 className="text-lg font-bold text-white mb-2">{phase.title}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed">{phase.desc}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* BODY AREA QUIZ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div
+          className="absolute inset-0"
+          style={{ background: `linear-gradient(180deg, ${BG} 0%, #0c1220 50%, ${BG} 100%)` }}
+        />
+        <div className="max-w-3xl mx-auto px-6 relative z-10">
+          <AnimatedSection>
+            <SectionHeader badge="Quick Assessment" title="Where Does It Hurt?" accent={ACCENT} />
+          </AnimatedSection>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {[
+              { area: "Back & Spine", rec: "Spinal mobilization, core strengthening, posture correction" },
+              { area: "Neck & Shoulders", rec: "Manual therapy, ergonomic guidance, strengthening" },
+              { area: "Knee & Hip", rec: "Joint mobilization, balance training, targeted exercises" },
+              { area: "Ankle & Foot", rec: "Gait analysis, stability training, proprioception work" },
+              { area: "Hand & Wrist", rec: "Fine motor rehab, splinting guidance, grip strengthening" },
+              { area: "Post-Surgery", rec: "Protocol-based rehab, scar tissue management, range restoration" },
+            ].map((item) => (
+              <GlassCard
+                key={item.area}
+                className="p-5 cursor-pointer hover:border-white/20 transition-all duration-300"
+              >
+                <Heartbeat size={24} weight="duotone" style={{ color: ACCENT }} className="mb-3" />
+                <h4 className="text-sm font-bold text-white mb-1">{item.area}</h4>
+                <p className="text-xs text-slate-500">{item.rec}</p>
+              </GlassCard>
+            ))}
+          </div>
+          <div className="mt-8 text-center">
+            <MagneticButton
+              href={`tel:${data.phone.replace(/\D/g, "")}`}
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-base font-semibold text-white cursor-pointer"
+              style={{ background: ACCENT } as React.CSSProperties}
+            >
+              <Phone size={18} weight="fill" /> Schedule Your Evaluation
+            </MagneticButton>
+          </div>
+        </div>
+      </section>
+
+      {/* PRICING */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div
+          className="absolute inset-0"
+          style={{ background: `linear-gradient(180deg, ${BG} 0%, #0d1220 50%, ${BG} 100%)` }}
+        />
+        <WavePattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <AnimatedSection>
+            <SectionHeader
+              badge="Pricing"
+              title="Session Options"
+              subtitle="Most insurance accepted. Self-pay options available."
+              accent={ACCENT}
+            />
+          </AnimatedSection>
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              { name: "Initial Evaluation", price: "$150", desc: "60-minute comprehensive assessment and treatment plan" },
+              { name: "Follow-Up Session", price: "$95", desc: "45-60 minutes of one-on-one care", popular: true },
+              { name: "Wellness Package", price: "$399", desc: "5 sessions with progress tracking and home program" },
+            ].map((tier) => (
+              <GlassCard
+                key={tier.name}
+                className={`p-8 text-center ${tier.popular ? "ring-2 ring-offset-2 ring-offset-[#0a0f1a]" : ""}`}
+              >
+                {tier.popular && (
+                  <span
+                    className="inline-block text-xs font-bold uppercase tracking-wider mb-4 px-3 py-1 rounded-full text-white"
+                    style={{ background: ACCENT }}
+                  >
+                    Most Common
+                  </span>
+                )}
+                <h3 className="text-lg font-bold text-white mb-2">{tier.name}</h3>
+                <p className="text-4xl font-black mb-2" style={{ color: ACCENT }}>
+                  {tier.price}
+                </p>
+                <p className="text-sm text-slate-400 mb-6">{tier.desc}</p>
+                <MagneticButton
+                  className="w-full py-3 rounded-full text-sm font-semibold text-white cursor-pointer"
+                  style={{ background: tier.popular ? ACCENT : `${ACCENT}33` } as React.CSSProperties}
+                >
+                  Book Now
+                </MagneticButton>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* INSURANCE BADGES */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div
+          className="absolute inset-0"
+          style={{ background: `linear-gradient(180deg, ${BG} 0%, #0c1220 50%, ${BG} 100%)` }}
+        />
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <AnimatedSection>
+            <SectionHeader badge="Insurance" title="Insurance We Accept" accent={ACCENT} />
+          </AnimatedSection>
+          <div className="flex flex-wrap justify-center gap-4">
+            {[
+              "Blue Cross Blue Shield",
+              "Aetna",
+              "UnitedHealthcare",
+              "Cigna",
+              "Medicare",
+              "Workers Comp",
+              "Auto Accident",
+              "Self-Pay Welcome",
+            ].map((ins) => (
+              <span
+                key={ins}
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium border"
+                style={{ color: ACCENT, borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}
+              >
+                <ShieldCheck size={16} weight="fill" /> {ins}
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* COMPARISON TABLE */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div
+          className="absolute inset-0"
+          style={{ background: `linear-gradient(180deg, ${BG} 0%, #0c1220 50%, ${BG} 100%)` }}
+        />
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <AnimatedSection>
+            <SectionHeader
+              badge="Compare"
+              title={`${data.businessName} vs. The Alternatives`}
+              accent={ACCENT}
+            />
+          </AnimatedSection>
+          <GlassCard className="overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-white/10">
+                    <th className="text-left p-4 text-slate-400 font-medium">Feature</th>
+                    <th className="text-center p-4 font-bold text-white">{data.businessName}</th>
+                    <th className="text-center p-4 text-slate-400 font-medium">Others</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { feature: "1-on-1 Care Every Session", them: "Shared Attention" },
+                    { feature: "Board Certified Therapists", them: "Varies" },
+                    { feature: "Direct Access (No Referral)", them: "Referral Required" },
+                    { feature: "60-Minute Evaluations", them: "30 Minutes" },
+                    { feature: "Customized Home Programs", them: "Generic Handouts" },
+                    { feature: "Same-Day Appointments", them: "2-Week Wait" },
+                    { feature: "Progress Reports to Physician", them: "On Request Only" },
+                  ].map((row, i) => (
+                    <tr key={row.feature} className={i < 6 ? "border-b border-white/5" : ""}>
+                      <td className="p-4 text-slate-300">{row.feature}</td>
+                      <td className="p-4 text-center">
+                        <CheckCircle
+                          size={20}
+                          weight="fill"
+                          style={{ color: "#22c55e" }}
+                          className="mx-auto"
+                        />
+                      </td>
+                      <td className="p-4 text-center text-slate-500">{row.them}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </GlassCard>
+        </div>
+      </section>
+
+      {/* VIDEO PLACEHOLDER */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div
+          className="absolute inset-0"
+          style={{ background: `linear-gradient(180deg, ${BG} 0%, #0d1220 50%, ${BG} 100%)` }}
+        />
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <AnimatedSection>
+            <SectionHeader badge="Inside Our Clinic" title="Take a Virtual Tour" accent={ACCENT} />
+          </AnimatedSection>
+          <div className="relative rounded-2xl overflow-hidden border border-white/10 group cursor-pointer">
+            <img
+              src={heroImage}
+              alt="Virtual tour"
+              className="w-full h-[400px] object-cover"
+            />
+            <div className="absolute inset-0 bg-black/60 flex items-center justify-center group-hover:bg-black/50 transition-colors">
+              <div
+                className="w-20 h-20 rounded-full flex items-center justify-center"
+                style={{ background: `${ACCENT}cc` }}
+              >
+                <Heartbeat size={40} weight="fill" className="text-white" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* GOOGLE REVIEWS + TESTIMONIALS */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div
+          className="absolute inset-0"
+          style={{ background: `linear-gradient(180deg, ${BG} 0%, #0d1220 50%, ${BG} 100%)` }}
+        />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <AnimatedSection>
+            <SectionHeader badge="Testimonials" title="Patient Success Stories" accent={ACCENT} />
+          </AnimatedSection>
+          {/* Google reviews summary */}
+          <div className="text-center mb-12">
+            <div
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border"
+              style={{ borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}
+            >
+              <div className="flex gap-0.5">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Star key={i} size={18} weight="fill" style={{ color: GREEN }} />
+                ))}
+              </div>
+              <span className="text-white font-bold">{data.googleRating || "5.0"}</span>
+              <span className="text-slate-400 text-sm">
+                ({data.reviewCount || "50"}+ reviews)
+              </span>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {testimonials.map((t, i) => (
+              <GlassCard key={i} className="p-6 h-full flex flex-col">
+                <div className="flex gap-0.5 mb-4">
+                  {Array.from({ length: t.rating || 5 }).map((_, j) => (
+                    <Star key={j} size={16} weight="fill" style={{ color: GREEN }} />
+                  ))}
+                </div>
+                <p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">
+                  &ldquo;{t.text}&rdquo;
+                </p>
+                <div className="pt-4 border-t border-white/5 flex items-center gap-2">
+                  <CheckCircle size={16} weight="fill" style={{ color: "#22c55e" }} />
+                  <span className="text-sm font-semibold text-white">{t.name}</span>
+                  <span className="text-xs text-slate-500">Verified</span>
+                </div>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* SERVICE AREA */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div
+          className="absolute inset-0"
+          style={{ background: `linear-gradient(180deg, ${BG} 0%, #0c1220 50%, ${BG} 100%)` }}
+        />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <AnimatedSection>
+            <SectionHeader badge="Location" title="Convenient Location" accent={ACCENT} />
+          </AnimatedSection>
+          <div className="text-center">
+            <GlassCard className="p-8 inline-block">
+              <div className="flex items-center gap-3 text-lg mb-3">
+                <MapPin size={24} weight="duotone" style={{ color: ACCENT }} />
+                <MapLink address={data.address} className="text-white font-semibold" />
+              </div>
+              <p className="text-slate-400 text-sm mb-4">
+                {data.hours || "Mon-Fri 7AM-7PM"}
+              </p>
+              <div className="flex items-center justify-center gap-2">
+                <motion.div
+                  className="w-2.5 h-2.5 rounded-full"
+                  style={{ background: "#22c55e" }}
+                  animate={{ scale: [1, 1.3, 1], opacity: [1, 0.6, 1] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                />
+                <span className="text-sm font-semibold" style={{ color: "#22c55e" }}>
+                  Same-Day Appointments Available
+                </span>
+              </div>
+            </GlassCard>
+          </div>
         </div>
       </section>
 
@@ -173,23 +669,153 @@ export default function V2PhysicalTherapyPreview({ data }: { data: GeneratedSite
 
       {/* CONTACT */}
       <section id="contact" className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0d1220 50%, ${BG} 100%)` }} />
+        <div
+          className="absolute inset-0"
+          style={{ background: `linear-gradient(180deg, ${BG} 0%, #0d1220 50%, ${BG} 100%)` }}
+        />
         <WavePattern opacity={0.02} accent={ACCENT} />
-        <div className="max-w-6xl mx-auto px-6 relative z-10"><div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-          <div><span className="inline-block text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border" style={{ color: ACCENT, borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}>Contact Us</span><h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-6 text-white">Schedule Your Evaluation</h2><p className="text-slate-400 leading-relaxed mb-8">Contact {data.businessName} to take the first step toward recovery.</p>
-            <div className="space-y-5">
-              <div className="flex items-start gap-4"><div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: ACCENT_GLOW }}><MapPin size={20} weight="duotone" style={{ color: ACCENT }} /></div><div><p className="text-sm font-semibold text-white">Address</p><MapLink address={data.address} className="text-sm text-slate-400" /></div></div>
-              <div className="flex items-start gap-4"><div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: ACCENT_GLOW }}><Phone size={20} weight="duotone" style={{ color: ACCENT }} /></div><div><p className="text-sm font-semibold text-white">Phone</p><PhoneLink phone={data.phone} className="text-sm text-slate-400" /></div></div>
-              {data.hours && <div className="flex items-start gap-4"><div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: ACCENT_GLOW }}><Clock size={20} weight="duotone" style={{ color: ACCENT }} /></div><div><p className="text-sm font-semibold text-white">Hours</p><p className="text-sm text-slate-400 whitespace-pre-line">{data.hours}</p></div></div>}
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+            <div>
+              <span
+                className="inline-block text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border"
+                style={{ color: ACCENT, borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}
+              >
+                Contact Us
+              </span>
+              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-6 text-white">
+                Schedule Your Evaluation
+              </h2>
+              <p className="text-slate-400 leading-relaxed mb-8">
+                Contact {data.businessName} to take the first step toward recovery.
+              </p>
+              <div className="space-y-5">
+                <div className="flex items-start gap-4">
+                  <div
+                    className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+                    style={{ background: ACCENT_GLOW }}
+                  >
+                    <MapPin size={20} weight="duotone" style={{ color: ACCENT }} />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-white">Address</p>
+                    <MapLink address={data.address} className="text-sm text-slate-400" />
+                  </div>
+                </div>
+                <div className="flex items-start gap-4">
+                  <div
+                    className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+                    style={{ background: ACCENT_GLOW }}
+                  >
+                    <Phone size={20} weight="duotone" style={{ color: ACCENT }} />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-white">Phone</p>
+                    <PhoneLink phone={data.phone} className="text-sm text-slate-400" />
+                  </div>
+                </div>
+                {data.hours && (
+                  <div className="flex items-start gap-4">
+                    <div
+                      className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+                      style={{ background: ACCENT_GLOW }}
+                    >
+                      <Clock size={20} weight="duotone" style={{ color: ACCENT }} />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-white">Hours</p>
+                      <p className="text-sm text-slate-400 whitespace-pre-line">{data.hours}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
+            <GlassCard className="p-8">
+              <h3 className="text-xl font-semibold text-white mb-6">Request an Appointment</h3>
+              <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm text-slate-400 mb-1.5">First Name</label>
+                    <input
+                      type="text"
+                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm"
+                      placeholder="John"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-slate-400 mb-1.5">Last Name</label>
+                    <input
+                      type="text"
+                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm"
+                      placeholder="Doe"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm text-slate-400 mb-1.5">Phone</label>
+                  <input
+                    type="tel"
+                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm"
+                    placeholder="(555) 123-4567"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm text-slate-400 mb-1.5">Condition</label>
+                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none text-sm">
+                    <option value="" className="bg-neutral-900">Select condition</option>
+                    {data.services.map((s) => (
+                      <option key={s.name} value={s.name.toLowerCase()} className="bg-neutral-900">
+                        {s.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm text-slate-400 mb-1.5">Additional Details</label>
+                  <textarea
+                    rows={3}
+                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm resize-none"
+                    placeholder="Tell us about your condition or injury..."
+                  />
+                </div>
+                <MagneticButton
+                  className="w-full py-4 rounded-xl text-base font-semibold text-white flex items-center justify-center gap-2 cursor-pointer"
+                  style={{ background: ACCENT } as React.CSSProperties}
+                >
+                  Request Appointment <ArrowRight size={18} weight="bold" />
+                </MagneticButton>
+              </form>
+            </GlassCard>
           </div>
-          <GlassCard className="p-8"><h3 className="text-xl font-semibold text-white mb-6">Request an Appointment</h3><form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4"><div><label className="block text-sm text-slate-400 mb-1.5">First Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="John" /></div><div><label className="block text-sm text-slate-400 mb-1.5">Last Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="Doe" /></div></div>
-            <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
-            <div><label className="block text-sm text-slate-400 mb-1.5">Condition</label><select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none text-sm"><option value="" className="bg-neutral-900">Select condition</option>{data.services.map((s) => <option key={s.name} value={s.name.toLowerCase()} className="bg-neutral-900">{s.name}</option>)}</select></div>
-            <MagneticButton className="w-full py-4 rounded-xl text-base font-semibold text-white flex items-center justify-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>Request Appointment <ArrowRight size={18} weight="bold" /></MagneticButton>
-          </form></GlassCard>
-        </div></div>
+        </div>
+      </section>
+
+      {/* CERTIFICATIONS */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div
+          className="absolute inset-0"
+          style={{ background: `linear-gradient(180deg, ${BG} 0%, #0c1220 50%, ${BG} 100%)` }}
+        />
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <div className="flex flex-wrap justify-center gap-4">
+            {[
+              "Board Certified",
+              "Direct Access",
+              "One-on-One Care",
+              "Most Insurance Accepted",
+              "Same-Day Available",
+              "Evidence-Based",
+            ].map((cert) => (
+              <span
+                key={cert}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border"
+                style={{ color: ACCENT, borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}
+              >
+                <CheckCircle size={16} weight="fill" /> {cert}
+              </span>
+            ))}
+          </div>
+        </div>
       </section>
 
       {/* GUARANTEE */}

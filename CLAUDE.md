@@ -1007,6 +1007,19 @@ ALL 31 HERO PATTERNS ARE NOW USED. For future showcases, invent new ones.
 - **Before/after with REAL photos** (not stock) are 10x more convincing. Use Ben's real before/after images where available (`/images/dental-before-after.png`, `/images/roofing-before-after.jpg`, `/images/vet-before-after.png`, `/images/interior-design-before-after.jpg`).
 - **Comfort/anxiety sections sell healthcare categories.** "We know dental anxiety is real" / "fear-free veterinary" / "gentle physical therapy" directly addresses the #1 objection.
 
+### Minimum Template Quality Standards (NON-NEGOTIABLE)
+Every V2 preview template MUST meet these minimums before being considered production-ready:
+- **800+ lines minimum** — anything under 800 lines is a stub, not a template
+- **15+ sections minimum**: Nav, Hero, Stats, Services, About, Process, Pricing (3 tiers), Comparison Table, Testimonials (with Google Reviews header), FAQ, Contact Form, Service Area, CTA Banner, Video Placeholder, Footer
+- **1+ interactive feature**: quiz, calculator, filter tabs, or accordion — static content only = template, not premium
+- **Category-specific features**: every template must have 2-3 features unique to that industry (dental: insurance badges + smile quiz, electrician: emergency strip + license display, etc.)
+- **All 10 universal premium features present**: trust badges, Google Reviews header, enhanced testimonials, comparison table, pricing tiers, video placeholder, interactive quiz/calculator, urgency element, certifications row, service area
+- **bg-black/70 hero overlay** (or appropriate for light themes)
+- **BluejayLogo in footer** — imported and rendered
+- **No `initial={{ opacity: 0 }}`** on any element (banned on preview templates)
+- **Stock image pools** using `pickFromPool()`/`pickGallery()` — no single hardcoded URLs
+- **Template audit grades**: A = 1000+ lines, B = 800-999 lines. No Grade C (under 800) allowed in production.
+
 ### Continuous Improvement Rule (MANDATORY after every site build)
 After working on ANY website (generating, enriching, reviewing, or fixing a prospect site), you MUST:
 1. **Identify what made this site better or more premium** — new section layout, better copy pattern, improved image placement, stronger CTA, smarter service card design, etc.

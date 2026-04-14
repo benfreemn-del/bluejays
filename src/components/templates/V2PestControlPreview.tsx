@@ -652,13 +652,42 @@ export default function V2PestControlPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* 11. SERVICE AREAS */}
+      {/* 11. SERVICE AREAS (Enhanced) */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #1a1208 50%, #1a1a1a 100%)" }} />
         <ShieldPattern opacity={0.02} accent={ACCENT} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <AnimatedSection>          <SectionHeader badge="Coverage Area" title="Areas We Serve" accent={ACCENT} /></AnimatedSection>
-          <div className="text-center"><GlassCard className="p-8 inline-block"><div className="flex items-center gap-3 text-lg"><MapPin size={24} weight="duotone" style={{ color: ACCENT }} /><MapLink address={data.address} className="text-white font-semibold" /></div><p className="text-slate-400 text-sm mt-2">&amp; Surrounding Areas</p></GlassCard></div>
+          <AnimatedSection><SectionHeader badge="Coverage Area" title="Areas We Serve" accent={ACCENT} /></AnimatedSection>
+          <div className="text-center mb-8"><GlassCard className="p-8 inline-block"><div className="flex items-center gap-3 text-lg"><MapPin size={24} weight="duotone" style={{ color: ACCENT }} /><MapLink address={data.address} className="text-white font-semibold" /></div><p className="text-slate-400 text-sm mt-2">&amp; Surrounding Areas</p></GlassCard></div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-3xl mx-auto">
+            {["Downtown", "Midtown", "Westside", "Eastside", "North End", "South End", "Suburbs", "Metro Area"].map((area) => (
+              <div key={area} className="flex items-center gap-2 px-4 py-3 rounded-xl border border-white/5 bg-white/[0.03]">
+                <CheckCircle size={14} weight="fill" style={{ color: ACCENT }} />
+                <span className="text-sm text-slate-300">{area}</span>
+              </div>
+            ))}
+          </div>
+          <div className="flex items-center justify-center gap-4 mt-8">
+            <div className="relative">
+              <div className="w-2.5 h-2.5 rounded-full animate-ping absolute" style={{ background: "#22c55e" }} />
+              <div className="w-2.5 h-2.5 rounded-full relative" style={{ background: "#22c55e" }} />
+            </div>
+            <span className="text-sm text-slate-400">Same-day service available in all coverage areas</span>
+          </div>
+        </div>
+      </section>
+
+      {/* 11b. CERTIFICATIONS ROW */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #1a1208 100%)" }} />
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <div className="flex flex-wrap justify-center gap-4">
+            {["EPA Registered", "State Licensed", "Pet & Child Safe", "BBB A+ Rated", "QualityPro Certified", "NPMA Member"].map((cert) => (
+              <span key={cert} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium border" style={{ color: ACCENT, borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}>
+                <ShieldCheck size={16} weight="fill" />{cert}
+              </span>
+            ))}
+          </div>
         </div>
       </section>
 

@@ -611,13 +611,65 @@ export default function V2AccountingPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* 10. SERVICE AREAS */}
+      {/* 10. TAX DEADLINE URGENCY */}
+      <section className="relative z-10 py-12 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, #7f1d1d 0%, #991b1b 50%, #7f1d1d 100%)` }} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="flex items-center gap-4">
+              <div className="relative">
+                <div className="w-3 h-3 rounded-full bg-red-400 animate-ping absolute" />
+                <div className="w-3 h-3 rounded-full bg-red-400 relative" />
+              </div>
+              <div>
+                <p className="text-white font-bold text-lg">Tax Deadline Approaching</p>
+                <p className="text-red-200 text-sm">Don&apos;t wait until the last minute. File early and maximize your refund.</p>
+              </div>
+            </div>
+            <PhoneLink phone={data.phone} className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white text-red-900 font-bold text-sm hover:bg-red-50 transition-colors whitespace-nowrap">
+              <Phone size={18} weight="bold" /> File Now &mdash; Beat the Rush
+            </PhoneLink>
+          </div>
+        </div>
+      </section>
+
+      {/* 10b. CERTIFICATIONS ROW */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #1a1a1a 0%, ${ACCENT}15 50%, #1a1a1a 100%)` }} />
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <p className="text-center text-xs font-bold uppercase tracking-widest mb-6" style={{ color: GOLD }}>Certifications &amp; Affiliations</p>
+          <div className="flex flex-wrap justify-center gap-4">
+            {["Licensed CPA", "QuickBooks ProAdvisor", "IRS Enrolled Agent", "AICPA Member", "BBB A+ Rated", "State Board Certified"].map((cert) => (
+              <span key={cert} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium border" style={{ color: GOLD, borderColor: `${GOLD}33`, background: `${GOLD}0d` }}>
+                <ShieldCheck size={16} weight="fill" />{cert}
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 10c. SERVICE AREAS (Enhanced) */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #1a1a1a 0%, ${ACCENT}20 50%, #1a1a1a 100%)` }} />
         <GraphPattern opacity={0.02} accent={ACCENT} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <AnimatedSection>          <SectionHeader badge="Coverage Area" title="Areas We Serve" accent={ACCENT} /></AnimatedSection>
-          <div className="text-center"><GlassCard className="p-8 inline-block"><div className="flex items-center gap-3 text-lg"><MapPin size={24} weight="duotone" style={{ color: GOLD }} /><MapLink address={data.address} className="text-white font-semibold" /></div><p className="text-slate-400 text-sm mt-2">&amp; Surrounding Areas</p></GlassCard></div>
+          <AnimatedSection><SectionHeader badge="Coverage Area" title="Areas We Serve" accent={ACCENT} /></AnimatedSection>
+          <div className="text-center mb-8"><GlassCard className="p-8 inline-block"><div className="flex items-center gap-3 text-lg"><MapPin size={24} weight="duotone" style={{ color: GOLD }} /><MapLink address={data.address} className="text-white font-semibold" /></div><p className="text-slate-400 text-sm mt-2">&amp; Surrounding Areas</p></GlassCard></div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-3xl mx-auto">
+            {["Downtown", "Midtown", "Westside", "Eastside", "North End", "South End", "Suburbs", "Metro Area"].map((area) => (
+              <div key={area} className="flex items-center gap-2 px-4 py-3 rounded-xl border border-white/5 bg-white/[0.03]">
+                <CheckCircle size={14} weight="fill" style={{ color: GOLD }} />
+                <span className="text-sm text-slate-300">{area}</span>
+              </div>
+            ))}
+          </div>
+          <div className="flex items-center justify-center gap-4 mt-8">
+            <div className="relative">
+              <div className="w-2.5 h-2.5 rounded-full animate-ping absolute" style={{ background: "#22c55e" }} />
+              <div className="w-2.5 h-2.5 rounded-full relative" style={{ background: "#22c55e" }} />
+            </div>
+            <span className="text-sm text-slate-400">Virtual appointments available &mdash; we serve clients nationwide</span>
+          </div>
         </div>
       </section>
 
@@ -632,6 +684,58 @@ export default function V2AccountingPreview({ data }: { data: GeneratedSiteData 
           </div>
         </section>
       )}
+
+      {/* 11b. DOCUMENT CHECKLIST */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #1a1a1a 0%, ${ACCENT}25 50%, #1a1a1a 100%)` }} />
+        <ChartBackground opacity={0.02} accent={ACCENT} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <AnimatedSection><SectionHeader badge="Get Ready" title="Tax Document Checklist" subtitle="Have these ready for your appointment so we can maximize every deduction." accent={ACCENT} /></AnimatedSection>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              "W-2s from all employers",
+              "1099 forms (freelance, investment, interest)",
+              "Mortgage interest statement (1098)",
+              "Property tax records",
+              "Charitable donation receipts",
+              "Business expense records",
+              "Health insurance forms (1095)",
+              "Previous year tax return",
+            ].map((item) => (
+              <div key={item} className="flex items-center gap-3 px-5 py-4 rounded-xl border border-white/5 bg-white/[0.03]">
+                <CheckCircle size={18} weight="fill" style={{ color: GOLD }} />
+                <span className="text-sm text-slate-300">{item}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* MID-PAGE CTA */}
+      <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15, ${ACCENT}08)` }} />
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
+          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: ACCENT }}>
+            Don&apos;t Miss Out
+          </p>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-3">
+            Ready to Get Started?
+          </h2>
+          <p className="text-slate-400 mb-6 text-sm sm:text-base">
+            Limited time &mdash; claim your free professional website today before it&apos;s offered to a competitor.
+          </p>
+          <a
+            href={`/claim/${data.id}`}
+            className="inline-flex items-center gap-2 min-h-[48px] px-8 py-3 rounded-full text-white font-bold text-base hover:shadow-lg transition-all duration-300"
+            style={{ background: ACCENT }}
+          >
+            Claim This Website
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
+              <path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </svg>
+          </a>
+        </div>
+      </section>
 
       {/* 12. FAQ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">

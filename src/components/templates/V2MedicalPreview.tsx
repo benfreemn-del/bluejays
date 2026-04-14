@@ -325,6 +325,61 @@ export default function V2MedicalPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
+      {/* 4b. INSURANCE ACCEPTED BADGES */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #141414 0%, #1a1a1a 100%)" }} />
+        <MedicalCrossPattern opacity={0.015} accent={ACCENT} />
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-10">
+            <span className="inline-block text-xs font-bold uppercase tracking-[0.25em] mb-3 px-4 py-1.5 rounded-full border" style={{ color: ACCENT, borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}>Insurance</span>
+            <h2 className="text-2xl md:text-4xl font-extrabold tracking-tight text-white">Insurance We Accept</h2>
+          </div>
+          <div className="flex flex-wrap justify-center gap-3">
+            {["Most Major Insurance", "Medicare", "Medicaid", "Blue Cross", "Aetna", "Cigna", "United Healthcare", "Humana", "Payment Plans Available"].map((badge) => (
+              <div key={badge} className="inline-flex items-center gap-2 px-5 py-3 rounded-full border border-white/10 bg-white/[0.03] backdrop-blur-sm text-sm font-medium text-white">
+                <ShieldCheck size={18} weight="duotone" style={{ color: ACCENT }} />
+                {badge}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 4c. TELEHEALTH & PATIENT PORTAL */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f1517 50%, #1a1a1a 100%)" }} />
+        <PulseLineBackground opacity={0.02} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Convenience" title="Modern Healthcare Access" accent={ACCENT} />
+          <div className="grid md:grid-cols-2 gap-6">
+            <GlassCard className="p-8">
+              <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-5" style={{ background: ACCENT_GLOW, border: `1px solid ${ACCENT}33` }}>
+                <Stethoscope size={28} weight="duotone" style={{ color: ACCENT }} />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-3">Telehealth Available</h3>
+              <p className="text-slate-400 leading-relaxed mb-4">See your doctor from the comfort of home. Virtual visits available for follow-ups, consultations, and minor health concerns.</p>
+              <div className="flex flex-wrap gap-2">
+                {["Video Visits", "Secure Platform", "Prescription Refills", "Follow-Up Care"].map((f) => (
+                  <span key={f} className="text-xs px-3 py-1.5 rounded-full border border-white/10 text-slate-300">{f}</span>
+                ))}
+              </div>
+            </GlassCard>
+            <GlassCard className="p-8">
+              <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-5" style={{ background: `${MINT}26`, border: `1px solid ${MINT}33` }}>
+                <UserCircle size={28} weight="duotone" style={{ color: MINT }} />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-3">Patient Portal</h3>
+              <p className="text-slate-400 leading-relaxed mb-4">Access your medical records, lab results, and appointment scheduling online 24/7 through our secure patient portal.</p>
+              <div className="flex flex-wrap gap-2">
+                {["View Records", "Book Online", "Message Providers", "Pay Bills"].map((f) => (
+                  <span key={f} className="text-xs px-3 py-1.5 rounded-full border border-white/10 text-slate-300">{f}</span>
+                ))}
+              </div>
+            </GlassCard>
+          </div>
+        </div>
+      </section>
+
       {/* 5. ABOUT */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0c1214 50%, #1a1a1a 100%)" }} />
@@ -393,9 +448,111 @@ export default function V2MedicalPreview({ data }: { data: GeneratedSiteData }) 
         <MedicalCrossPattern opacity={0.02} accent={ACCENT} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] right-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${ACCENT}06` }} /></div>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <AnimatedSection>          <SectionHeader badge="Patient Reviews" title="What Our Patients Say" accent={ACCENT} /></AnimatedSection>
+          {(data.googleRating || data.reviewCount) && (
+            <div className="text-center mb-8">
+              <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full border border-white/10 bg-white/5 backdrop-blur-sm">
+                <div className="flex gap-0.5">{Array.from({ length: 5 }).map((_, i) => <Star key={i} size={18} weight="fill" style={{ color: ACCENT }} />)}</div>
+                <span className="text-lg font-bold text-white">{data.googleRating || "5.0"}</span>
+                {data.reviewCount && <span className="text-sm text-slate-400">({data.reviewCount} reviews)</span>}
+              </div>
+            </div>
+          )}
+          <AnimatedSection><SectionHeader badge="Patient Reviews" title="What Our Patients Say" accent={ACCENT} /></AnimatedSection>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {testimonials.map((t, i) => (<GlassCard key={i} className="p-6 h-full flex flex-col"><div className="flex gap-0.5 mb-4">{Array.from({ length: t.rating || 5 }).map((_, j) => <Star key={j} size={16} weight="fill" style={{ color: ACCENT }} />)}</div><p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p><div className="pt-4 border-t border-white/5 flex items-center justify-between"><span className="text-sm font-semibold text-white">{t.name}</span></div></GlassCard>))}
+          </div>
+        </div>
+      </section>
+
+      {/* 8b. SPECIALTIES GRID */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0c1214 50%, #1a1a1a 100%)" }} />
+        <MedicalCrossPattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Specialties" title="Areas of Expertise" accent={ACCENT} />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { icon: FirstAid, label: "Primary Care" },
+              { icon: Heartbeat, label: "Cardiology" },
+              { icon: Users, label: "Family Medicine" },
+              { icon: UserCircle, label: "Pediatrics" },
+              { icon: Syringe, label: "Vaccinations" },
+              { icon: Stethoscope, label: "Physicals" },
+              { icon: Pill, label: "Prescriptions" },
+              { icon: Thermometer, label: "Urgent Care" },
+            ].map((item) => (
+              <GlassCard key={item.label} className="p-5 text-center">
+                <div className="w-10 h-10 rounded-full mx-auto mb-3 flex items-center justify-center" style={{ background: `${ACCENT}15`, border: `1px solid ${ACCENT}22` }}>
+                  <item.icon size={20} weight="duotone" style={{ color: ACCENT }} />
+                </div>
+                <span className="text-sm font-semibold text-white">{item.label}</span>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 8c. PRICING / NEW PATIENT */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f1517 50%, #1a1a1a 100%)" }} />
+        <PulseLineBackground opacity={0.02} accent={ACCENT} />
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Pricing" title="Transparent Healthcare" subtitle="We believe in upfront pricing. No surprise bills." accent={ACCENT} />
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              { name: "New Patient Visit", price: "$150", desc: "Comprehensive exam, health history review, personalized care plan", features: ["Full Physical Exam", "Lab Work Review", "Health Assessment", "Care Plan Creation"] },
+              { name: "Follow-Up Visit", price: "$95", desc: "Review results, adjust treatments, ongoing health management", features: ["Progress Review", "Treatment Adjustment", "Prescription Refills", "Health Coaching"], popular: true },
+              { name: "Telehealth Visit", price: "$75", desc: "Virtual consultation for follow-ups and minor health concerns", features: ["Video Consultation", "Prescription Refills", "Lab Orders", "Secure Messaging"] },
+            ].map((tier) => (
+              <GlassCard key={tier.name} className={`p-8 ${tier.popular ? "ring-1" : ""}`} style={tier.popular ? { borderColor: ACCENT } : undefined}>
+                {tier.popular && <div className="text-center mb-4"><span className="px-4 py-1 rounded-full text-xs font-bold text-white" style={{ background: ACCENT }}>Most Common</span></div>}
+                <h3 className="text-xl font-bold text-white mb-1">{tier.name}</h3>
+                <div className="flex items-baseline gap-1 mb-2">
+                  <span className="text-4xl font-extrabold" style={{ color: ACCENT }}>{tier.price}</span>
+                </div>
+                <p className="text-sm text-slate-400 mb-6">{tier.desc}</p>
+                <ul className="space-y-3 mb-8">
+                  {tier.features.map((f) => (
+                    <li key={f} className="flex items-center gap-2 text-sm text-slate-300">
+                      <CheckCircle size={16} weight="fill" style={{ color: ACCENT }} /> {f}
+                    </li>
+                  ))}
+                </ul>
+                <MagneticButton className={`w-full py-3 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 cursor-pointer ${tier.popular ? "text-white" : "text-white border border-white/10"}`} style={tier.popular ? { background: ACCENT } as React.CSSProperties : undefined}>
+                  Book Now <ArrowRight size={16} weight="bold" />
+                </MagneticButton>
+              </GlassCard>
+            ))}
+          </div>
+          <p className="text-center text-xs text-slate-500 mt-6">Most insurance plans accepted. Self-pay rates shown above. Payment plans available.</p>
+        </div>
+      </section>
+
+      {/* 8d. HEALTH QUIZ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0c1214 50%, #1a1a1a 100%)" }} />
+        <MedicalCrossPattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-3xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Get Started" title="When Was Your Last Checkup?" subtitle="Regular checkups prevent bigger health issues down the road." accent={ACCENT} />
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {[
+              { label: "Less Than a Year", color: "#10b981", rec: "Great! Keep up with annual wellness visits." },
+              { label: "1-3 Years Ago", color: "#f59e0b", rec: "Time for a checkup. Schedule your visit today." },
+              { label: "3+ Years / Never", color: "#ef4444", rec: "Don't wait. Book a comprehensive exam now." },
+            ].map((opt) => (
+              <GlassCard key={opt.label} className="p-6 text-center hover:border-white/20 transition-all cursor-pointer">
+                <div className="w-12 h-12 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ background: `${opt.color}15`, border: `1px solid ${opt.color}33` }}>
+                  <Heartbeat size={22} weight="duotone" style={{ color: opt.color }} />
+                </div>
+                <h4 className="text-sm font-bold text-white mb-2">{opt.label}</h4>
+                <p className="text-xs text-slate-400 leading-relaxed">{opt.rec}</p>
+              </GlassCard>
+            ))}
+          </div>
+          <div className="text-center mt-8">
+            <PhoneLink phone={data.phone} className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-white font-semibold" style={{ background: ACCENT }}>
+              <Phone size={20} weight="fill" /> Schedule Your Checkup
+            </PhoneLink>
           </div>
         </div>
       </section>
@@ -435,6 +592,111 @@ export default function V2MedicalPreview({ data }: { data: GeneratedSiteData }) 
           </div>
         </section>
       )}
+
+      {/* 11b. NEW PATIENT PROCESS */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0c1214 50%, #1a1a1a 100%)" }} />
+        <MedicalCrossPattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="New Patients" title="Welcome to Our Practice" subtitle="We make your first visit easy and comfortable." accent={ACCENT} />
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { step: "01", title: "Call or Book Online", desc: "Schedule your first appointment by phone or through our patient portal." },
+              { step: "02", title: "Complete Paperwork", desc: "Fill out forms online before your visit to save time." },
+              { step: "03", title: "Meet Your Provider", desc: "Your doctor will review your history and discuss your health goals." },
+              { step: "04", title: "Begin Your Care", desc: "Receive a personalized care plan tailored to your needs." },
+            ].map((step, i) => (
+              <div key={step.step} className="relative">
+                {i < 3 && <div className="hidden lg:block absolute top-10 left-[calc(50%+40px)] w-[calc(100%-80px)] h-px" style={{ background: `linear-gradient(to right, ${ACCENT}33, ${ACCENT}11)` }} />}
+                <GlassCard className="p-6 text-center">
+                  <div className="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center text-xl font-black" style={{ background: `linear-gradient(135deg, ${ACCENT}22, ${ACCENT}0a)`, color: ACCENT, border: `1px solid ${ACCENT}33` }}>{step.step}</div>
+                  <h3 className="text-base font-bold text-white mb-2">{step.title}</h3>
+                  <p className="text-sm text-slate-400 leading-relaxed">{step.desc}</p>
+                </GlassCard>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 11c. COMPETITOR COMPARISON */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f1517 50%, #1a1a1a 100%)" }} />
+        <PulseLineBackground opacity={0.02} accent={ACCENT} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Why Us" title={`${data.businessName} vs. Average Practice`} accent={ACCENT} />
+          <GlassCard className="overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-white/10">
+                    <th className="text-left p-4 font-semibold text-white">Feature</th>
+                    <th className="text-center p-4 font-semibold" style={{ color: ACCENT }}>{data.businessName}</th>
+                    <th className="text-center p-4 font-semibold text-slate-500">Others</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { feature: "Same-Day Appointments", us: true, them: "1-2 Weeks" },
+                    { feature: "Telehealth Available", us: true, them: "No" },
+                    { feature: "Patient Portal", us: true, them: "Limited" },
+                    { feature: "Evening Hours", us: true, them: "No" },
+                    { feature: "Most Insurance Accepted", us: true, them: "Select Plans" },
+                    { feature: "Board-Certified Providers", us: true, them: "Varies" },
+                    { feature: "New Patients Welcome", us: true, them: "Waitlist" },
+                  ].map((row, i) => (
+                    <tr key={row.feature} className={i % 2 === 0 ? "bg-white/[0.02]" : ""}>
+                      <td className="p-4 text-slate-300 font-medium">{row.feature}</td>
+                      <td className="p-4 text-center"><CheckCircle size={20} weight="fill" style={{ color: ACCENT }} className="mx-auto" /></td>
+                      <td className="p-4 text-center text-slate-500">{row.them}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </GlassCard>
+        </div>
+      </section>
+
+      {/* 11d. VIDEO PLACEHOLDER */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #141414 100%)" }} />
+        <MedicalCrossPattern opacity={0.015} accent={ACCENT} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+          <div className="text-center mb-8">
+            <span className="inline-block text-xs font-bold uppercase tracking-[0.25em] mb-3 px-4 py-1.5 rounded-full border" style={{ color: ACCENT, borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}>Tour</span>
+            <h2 className="text-2xl md:text-4xl font-extrabold tracking-tight text-white">Take a Virtual Tour</h2>
+          </div>
+          <div className="relative rounded-2xl overflow-hidden border border-white/10 aspect-video flex items-center justify-center" style={{ background: "rgba(0,0,0,0.3)" }}>
+            <div className="w-20 h-20 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center border border-white/20 cursor-pointer hover:bg-white/20 transition-colors">
+              <div className="w-0 h-0 border-l-[18px] border-l-white border-t-[12px] border-t-transparent border-b-[12px] border-b-transparent ml-1.5" />
+            </div>
+            <p className="absolute bottom-6 text-white/40 text-sm font-medium">Tour Our Modern Facility</p>
+          </div>
+        </div>
+      </section>
+
+      {/* 11e. URGENCY */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #141414 0%, #1a1a1a 100%)" }} />
+        <PulseLineBackground opacity={0.015} accent={ACCENT} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+          <GlassCard className="p-8">
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <div className="relative">
+                <div className="w-3 h-3 rounded-full" style={{ background: "#10b981" }} />
+                <div className="absolute inset-0 w-3 h-3 rounded-full animate-ping" style={{ background: "#10b981", opacity: 0.4 }} />
+              </div>
+              <span className="text-sm font-bold uppercase tracking-wider" style={{ color: "#10b981" }}>Accepting New Patients</span>
+            </div>
+            <h3 className="text-2xl font-bold text-white mb-2">Same-Day Appointments Available</h3>
+            <p className="text-slate-400 mb-6">Do not wait weeks to see a doctor. {data.businessName} offers same-day and next-day appointments for new and existing patients.</p>
+            <PhoneLink phone={data.phone} className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-white font-semibold" style={{ background: ACCENT }}>
+              <Phone size={20} weight="fill" /> Schedule Today
+            </PhoneLink>
+          </GlassCard>
+        </div>
+      </section>
 
       {/* 12. FAQ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
@@ -478,6 +740,26 @@ export default function V2MedicalPreview({ data }: { data: GeneratedSiteData }) 
                 <MagneticButton className="w-full py-4 rounded-xl text-base font-semibold text-white flex items-center justify-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>Request Appointment <ArrowRight size={18} weight="bold" /></MagneticButton>
               </form>
             </GlassCard>
+          </div>
+        </div>
+      </section>
+
+      {/* 13b. CERTIFICATIONS */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f1517 100%)" }} />
+        <MedicalCrossPattern opacity={0.015} accent={ACCENT} />
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-10">
+            <span className="inline-block text-xs font-bold uppercase tracking-[0.25em] mb-3 px-4 py-1.5 rounded-full border" style={{ color: ACCENT, borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}>Credentials</span>
+            <h2 className="text-2xl md:text-4xl font-extrabold tracking-tight text-white">Board-Certified Providers</h2>
+          </div>
+          <div className="flex flex-wrap justify-center gap-3">
+            {["Board Certified", "AMA Member", "State Licensed", "HIPAA Compliant", "Continuing Education", "Patient Safety Certified"].map((badge) => (
+              <div key={badge} className="inline-flex items-center gap-2 px-5 py-3 rounded-full border border-white/10 bg-white/[0.03] backdrop-blur-sm text-sm font-medium text-white">
+                <ShieldCheck size={18} weight="duotone" style={{ color: ACCENT }} />
+                {badge}
+              </div>
+            ))}
           </div>
         </div>
       </section>

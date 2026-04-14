@@ -252,9 +252,33 @@ function AnimatedSection({ children, className = "" }: { children: React.ReactNo
   );
 }
 
+const COMPARISON_ROWS = [
+  { feature: "Certified Black Belt Instructors", us: true, them: "Varies" },
+  { feature: "Free Trial Class", us: true, them: "No" },
+  { feature: "Kids & Adult Programs", us: true, them: "Limited" },
+  { feature: "Belt Progression System", us: true, them: "No" },
+  { feature: "Competition Training", us: true, them: "Extra Cost" },
+  { feature: "Self-Defense Focus", us: true, them: "Sometimes" },
+  { feature: "Flexible Class Schedule", us: true, them: "Limited" },
+];
+
+const MA_PRICING_TIERS = [
+  { title: "Beginner", price: "$79", period: "/month", features: ["2 classes per week", "Basic techniques", "Belt testing included", "Uniform provided"], featured: false },
+  { title: "Unlimited", price: "$129", period: "/month", features: ["Unlimited classes", "All disciplines", "Competition prep", "Belt testing included", "Guest passes"], featured: true },
+  { title: "Family", price: "$199", period: "/month", features: ["Up to 4 family members", "All programs", "Priority scheduling", "Private lessons monthly", "Belt testing included"], featured: false },
+];
+
+const MA_QUIZ_OPTIONS = [
+  { label: "Self-Defense", desc: "Learn to protect yourself and build confidence.", color: "#22c55e" },
+  { label: "Fitness & Conditioning", desc: "Full-body martial arts workouts for peak performance.", color: "#3b82f6" },
+  { label: "Competition", desc: "Train for tournaments and competitive martial arts.", color: "#f59e0b" },
+  { label: "Kids Program", desc: "Discipline, respect, and confidence for children.", color: "#a855f7" },
+];
+
 export default function V2MartialArtsPreview({ data }: { data: GeneratedSiteData }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [quizAnswer, setQuizAnswer] = useState<number | null>(null);
   const { ACCENT, ACCENT_GLOW } = getAccent(data.accentColor);
 
   const uniquePhotos = data.photos ? [...new Set(data.photos)] : [];
@@ -526,13 +550,115 @@ export default function V2MartialArtsPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 8. TESTIMONIALS ══════════════════ */}
+      {/* ══════════════════ 8. COMPARISON TABLE ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f0808 50%, #1a1a1a 100%)" }} />
+        <SparklePattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <AnimatedSection><SectionHeader badge="Compare" title={`${data.businessName} vs. Other Schools`} accent={ACCENT} /></AnimatedSection>
+          <GlassCard className="overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead><tr className="border-b border-white/10"><th className="px-6 py-4 text-sm font-semibold text-slate-400">Feature</th><th className="px-6 py-4 text-sm font-semibold text-center" style={{ color: ACCENT }}>{data.businessName}</th><th className="px-6 py-4 text-sm font-semibold text-center text-slate-500">Other Schools</th></tr></thead>
+                <tbody>
+                  {COMPARISON_ROWS.map((row, i) => (
+                    <tr key={i} className="border-b border-white/5">
+                      <td className="px-6 py-4 text-sm text-slate-300">{row.feature}</td>
+                      <td className="px-6 py-4 text-center"><CheckCircle size={20} weight="fill" className="inline" style={{ color: "#22c55e" }} /></td>
+                      <td className="px-6 py-4 text-center text-sm text-slate-500">{row.them}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </GlassCard>
+        </div>
+      </section>
+
+      {/* ══════════════════ 8b. PRICING TIERS ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #1a0505 50%, #1a1a1a 100%)" }} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <AnimatedSection><SectionHeader badge="Membership" title="Training Plans" subtitle="Flexible plans for individuals and families. No long-term contracts." accent={ACCENT} /></AnimatedSection>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {MA_PRICING_TIERS.map((tier) => (
+              <GlassCard key={tier.title} className={`p-8 h-full flex flex-col ${tier.featured ? "ring-2" : ""}`} style={tier.featured ? { borderColor: ACCENT, boxShadow: `0 0 30px ${ACCENT}22` } as React.CSSProperties : undefined}>
+                {tier.featured && <span className="inline-block self-start text-xs font-bold uppercase tracking-widest mb-4 px-3 py-1 rounded-full text-white" style={{ background: ACCENT }}>Most Popular</span>}
+                <h3 className="text-xl font-bold text-white mb-1">{tier.title}</h3>
+                <div className="flex items-baseline gap-1 mb-4"><span className="text-4xl font-black text-white">{tier.price}</span><span className="text-slate-500 text-sm">{tier.period}</span></div>
+                <ul className="space-y-3 flex-1 mb-6">{tier.features.map((f) => <li key={f} className="flex items-center gap-2 text-sm text-slate-300"><CheckCircle size={16} weight="fill" style={{ color: ACCENT }} />{f}</li>)}</ul>
+                <PhoneLink phone={data.phone} className="block w-full py-3 rounded-xl text-center font-bold text-sm transition-all" style={tier.featured ? { background: ACCENT, color: "#fff" } : { background: `${ACCENT}15`, color: ACCENT }}>Get Started</PhoneLink>
+              </GlassCard>
+            ))}
+          </div>
+          <p className="text-center text-sm text-slate-500 mt-8">Exact pricing may vary. Call for current rates and promotions.</p>
+        </div>
+      </section>
+
+      {/* ══════════════════ 8c. TRAINING QUIZ ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f0808 50%, #1a1a1a 100%)" }} />
+        <SparklePattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-3xl mx-auto px-6 relative z-10">
+          <AnimatedSection><SectionHeader badge="Find Your Path" title="What Is Your Goal?" accent={ACCENT} /></AnimatedSection>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {MA_QUIZ_OPTIONS.map((opt, i) => (
+              <button key={opt.label} onClick={() => setQuizAnswer(i)} className="text-left cursor-pointer">
+                <GlassCard className={`p-6 h-full transition-all duration-300 ${quizAnswer === i ? "ring-2" : ""}`} style={quizAnswer === i ? { borderColor: opt.color, boxShadow: `0 0 20px ${opt.color}22` } as React.CSSProperties : undefined}>
+                  <h4 className="text-lg font-bold text-white mb-1">{opt.label}</h4>
+                  <p className="text-sm text-slate-400">{opt.desc}</p>
+                  {quizAnswer === i && (
+                    <div className="mt-4 pt-4 border-t border-white/10">
+                      <PhoneLink phone={data.phone} className="inline-flex items-center gap-2 text-sm font-bold" style={{ color: opt.color }}><Phone size={16} weight="bold" /> Book Free Trial <ArrowRight size={14} /></PhoneLink>
+                    </div>
+                  )}
+                </GlassCard>
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ 8d. VIDEO PLACEHOLDER ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #1a0505 50%, #1a1a1a 100%)" }} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <AnimatedSection><SectionHeader badge="See Us Train" title="Watch Our Classes" accent={ACCENT} /></AnimatedSection>
+          <div className="relative rounded-2xl overflow-hidden border border-white/10 aspect-video">
+            <img src={uniquePhotos[3] || pickFromPool(STOCK_PROJECTS, data.businessName, 3)} alt={`${data.businessName} training`} className="w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+              <div className="w-20 h-20 rounded-full flex items-center justify-center cursor-pointer hover:scale-110 transition-transform" style={{ background: `${ACCENT}cc` }}><svg viewBox="0 0 24 24" fill="white" className="w-8 h-8 ml-1"><polygon points="5,3 19,12 5,21" /></svg></div>
+            </div>
+            <div className="absolute bottom-4 left-4 text-sm text-white/70">Tour {data.businessName} and see our training in action</div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ 8e. CERTIFICATIONS ══════════════════ */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f0808 100%)" }} />
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <div className="flex flex-wrap justify-center gap-4">
+            {["Black Belt Instructors", "USA Martial Arts Certified", "CPR/First Aid Trained", "Background Checked", "Insured & Bonded", "Youth Safety Certified"].map((cert) => (
+              <span key={cert} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium border" style={{ color: ACCENT, borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}><ShieldCheck size={16} weight="fill" />{cert}</span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ 9. TESTIMONIALS (with Google Reviews) ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f0808 50%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] right-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${ACCENT}06` }} /></div>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <AnimatedSection>          <SectionHeader badge="Testimonials" title="What Our Clients Say" accent={ACCENT} /></AnimatedSection>
+          {/* Google Reviews Header */}
+          <div className="flex flex-col items-center gap-2 mb-8">
+            <div className="flex items-center gap-1">{Array.from({ length: 5 }).map((_, i) => <Star key={i} size={22} weight="fill" style={{ color: "#facc15" }} />)}</div>
+            <p className="text-white font-bold text-lg">{data.googleRating || "4.9"} out of 5</p>
+            <span className="text-slate-400 text-sm">based on {data.reviewCount || "100+"} Google reviews</span>
+          </div>
+          <AnimatedSection><SectionHeader badge="Testimonials" title="What Our Students Say" accent={ACCENT} /></AnimatedSection>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {testimonials.map((t, i) => (
               <GlassCard key={i} className="p-6 h-full flex flex-col">
@@ -547,7 +673,7 @@ export default function V2MartialArtsPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 9. FRESH HOME CTA ══════════════════ */}
+      {/* ══════════════════ 10. FRESH HOME CTA ══════════════════ */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT}cc, ${ACCENT})` }} />
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='40' height='40' fill='none'/%3E%3Cpath d='M0 0L40 40M40 0L0 40' stroke='%23000' stroke-width='0.5'/%3E%3C/svg%3E\")" }} />

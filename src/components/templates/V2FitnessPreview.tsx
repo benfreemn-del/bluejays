@@ -245,9 +245,33 @@ function AnimatedSection({ children, className = "" }: { children: React.ReactNo
   );
 }
 
+const COMPARISON_ROWS = [
+  { feature: "Certified Personal Trainers", us: true, them: "Varies" },
+  { feature: "Free Trial Available", us: true, them: "No" },
+  { feature: "Custom Workout Plans", us: true, them: "Extra Cost" },
+  { feature: "Nutrition Guidance", us: true, them: "No" },
+  { feature: "Flexible Membership Plans", us: true, them: "Annual Lock-in" },
+  { feature: "Group Classes Included", us: true, them: "Extra Cost" },
+  { feature: "Open Early & Late Hours", us: true, them: "Limited" },
+];
+
+const PRICING_TIERS = [
+  { title: "Basic", price: "$29", period: "/month", features: ["Full gym access", "Locker room", "Free WiFi", "Basic equipment"], featured: false },
+  { title: "Premium", price: "$59", period: "/month", features: ["Everything in Basic", "All group classes", "Personal training intro", "Nutrition consult", "Guest passes"], featured: true },
+  { title: "Elite", price: "$99", period: "/month", features: ["Everything in Premium", "Unlimited PT sessions", "Recovery zone access", "Priority booking", "Meal planning"], featured: false },
+];
+
+const FITNESS_QUIZ_OPTIONS = [
+  { label: "Lose Weight", desc: "Burn fat, build lean muscle, and feel great.", color: "#22c55e" },
+  { label: "Build Muscle", desc: "Strength training programs for all levels.", color: "#3b82f6" },
+  { label: "Improve Endurance", desc: "Cardio, HIIT, and conditioning classes.", color: "#f59e0b" },
+  { label: "Just Stay Active", desc: "Flexible workouts that fit your lifestyle.", color: "#a855f7" },
+];
+
 export default function V2FitnessPreview({ data }: { data: GeneratedSiteData }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [quizAnswer, setQuizAnswer] = useState<number | null>(null);
 
   const { RED, RED_GLOW } = getAccent(data.accentColor);
 
@@ -511,12 +535,135 @@ export default function V2FitnessPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 8. TESTIMONIALS ══════════════════ */}
+      {/* ══════════════════ 8. COMPARISON TABLE ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #080808 50%, #0a0a0a 100%)" }} />
+        <FitnessPattern opacity={0.02} accent={RED} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <AnimatedSection><SectionHeader badge="Compare" title={`${data.businessName} vs. The Competition`} accent={RED} /></AnimatedSection>
+          <GlassCard className="overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="border-b border-white/10">
+                    <th className="px-6 py-4 text-sm font-semibold text-zinc-400">Feature</th>
+                    <th className="px-6 py-4 text-sm font-semibold text-center" style={{ color: RED }}>{data.businessName}</th>
+                    <th className="px-6 py-4 text-sm font-semibold text-center text-zinc-500">Other Gyms</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {COMPARISON_ROWS.map((row, i) => (
+                    <tr key={i} className="border-b border-white/5">
+                      <td className="px-6 py-4 text-sm text-zinc-300">{row.feature}</td>
+                      <td className="px-6 py-4 text-center">{row.us ? <CheckCircle size={20} weight="fill" className="inline" style={{ color: "#22c55e" }} /> : <span className="text-zinc-500 text-sm">{String(row.them)}</span>}</td>
+                      <td className="px-6 py-4 text-center text-sm text-zinc-500">{row.them}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </GlassCard>
+        </div>
+      </section>
+
+      {/* ══════════════════ 8b. PRICING TIERS ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #080808 0%, #0a0a0a 50%, #080808 100%)" }} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <AnimatedSection><SectionHeader badge="Membership" title="Find Your Plan" subtitle="Flexible plans designed for every fitness level. No long-term contracts." accent={RED} /></AnimatedSection>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {PRICING_TIERS.map((tier) => (
+              <GlassCard key={tier.title} className={`p-8 h-full flex flex-col ${tier.featured ? "ring-2" : ""}`} style={tier.featured ? { borderColor: RED, boxShadow: `0 0 30px ${RED}22` } as React.CSSProperties : undefined}>
+                {tier.featured && <span className="inline-block self-start text-xs font-bold uppercase tracking-widest mb-4 px-3 py-1 rounded-full text-white" style={{ background: RED }}>Most Popular</span>}
+                <h3 className="text-xl font-bold text-white mb-1">{tier.title}</h3>
+                <div className="flex items-baseline gap-1 mb-4">
+                  <span className="text-4xl font-black text-white">{tier.price}</span>
+                  <span className="text-zinc-500 text-sm">{tier.period}</span>
+                </div>
+                <ul className="space-y-3 flex-1 mb-6">
+                  {tier.features.map((f) => (
+                    <li key={f} className="flex items-center gap-2 text-sm text-zinc-300"><CheckCircle size={16} weight="fill" style={{ color: RED }} />{f}</li>
+                  ))}
+                </ul>
+                <PhoneLink phone={data.phone} className="block w-full py-3 rounded-xl text-center font-bold text-sm transition-all" style={tier.featured ? { background: RED, color: "#fff" } : { background: `${RED}15`, color: RED }}>
+                  Get Started
+                </PhoneLink>
+              </GlassCard>
+            ))}
+          </div>
+          <p className="text-center text-sm text-zinc-500 mt-8">Exact pricing may vary. Call for current rates and promotions.</p>
+        </div>
+      </section>
+
+      {/* ══════════════════ 8c. FITNESS QUIZ ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #080808 50%, #0a0a0a 100%)" }} />
+        <FitnessPattern opacity={0.02} accent={RED} />
+        <div className="max-w-3xl mx-auto px-6 relative z-10">
+          <AnimatedSection><SectionHeader badge="Find Your Fit" title="What Is Your Fitness Goal?" accent={RED} /></AnimatedSection>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {FITNESS_QUIZ_OPTIONS.map((opt, i) => (
+              <button key={opt.label} onClick={() => setQuizAnswer(i)} className="text-left cursor-pointer">
+                <GlassCard className={`p-6 h-full transition-all duration-300 ${quizAnswer === i ? "ring-2" : ""}`} style={quizAnswer === i ? { borderColor: opt.color, boxShadow: `0 0 20px ${opt.color}22` } as React.CSSProperties : undefined}>
+                  <h4 className="text-lg font-bold text-white mb-1">{opt.label}</h4>
+                  <p className="text-sm text-zinc-400">{opt.desc}</p>
+                  {quizAnswer === i && (
+                    <div className="mt-4 pt-4 border-t border-white/10">
+                      <PhoneLink phone={data.phone} className="inline-flex items-center gap-2 text-sm font-bold" style={{ color: opt.color }}>
+                        <Phone size={16} weight="bold" /> Book a Free Consultation <ArrowRight size={14} />
+                      </PhoneLink>
+                    </div>
+                  )}
+                </GlassCard>
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ 8d. VIDEO PLACEHOLDER ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #080808 0%, #0a0a0a 50%, #080808 100%)" }} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <AnimatedSection><SectionHeader badge="Virtual Tour" title="See Our Facility" accent={RED} /></AnimatedSection>
+          <div className="relative rounded-2xl overflow-hidden border border-white/10 aspect-video">
+            <img src={uniquePhotos[3] || pickFromPool(STOCK_GALLERY, data.businessName, 3)} alt={`${data.businessName} facility`} className="w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+              <div className="w-20 h-20 rounded-full flex items-center justify-center cursor-pointer hover:scale-110 transition-transform" style={{ background: `${RED}cc` }}>
+                <svg viewBox="0 0 24 24" fill="white" className="w-8 h-8 ml-1"><polygon points="5,3 19,12 5,21" /></svg>
+              </div>
+            </div>
+            <div className="absolute bottom-4 left-4 text-sm text-white/70">Take a virtual tour of {data.businessName}</div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ 8e. CERTIFICATIONS ROW ══════════════════ */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #080808 100%)" }} />
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <div className="flex flex-wrap justify-center gap-4">
+            {["NASM Certified", "ACE Accredited", "CrossFit Affiliate", "CPR/AED Certified", "Nutrition Certified", "BBB A+ Rated"].map((cert) => (
+              <span key={cert} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium border" style={{ color: RED, borderColor: `${RED}33`, background: `${RED}0d` }}>
+                <ShieldCheck size={16} weight="fill" />{cert}
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ 9. TESTIMONIALS ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #080808 50%, #0a0a0a 100%)" }} />
         <FitnessPattern opacity={0.02} accent={RED} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <AnimatedSection>          <SectionHeader badge="Results" title="Member Success Stories" accent={RED} /></AnimatedSection>
+          {/* Google Reviews Header */}
+          <div className="flex flex-col items-center gap-2 mb-8">
+            <div className="flex items-center gap-1">{Array.from({ length: 5 }).map((_, i) => <Star key={i} size={22} weight="fill" style={{ color: "#facc15" }} />)}</div>
+            <p className="text-white font-bold text-lg">{data.googleRating || "4.9"} out of 5</p>
+            <span className="text-zinc-400 text-sm">based on {data.reviewCount || "100+"} Google reviews</span>
+          </div>
+          <AnimatedSection><SectionHeader badge="Results" title="Member Success Stories" accent={RED} /></AnimatedSection>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {testimonials.map((t, i) => (
               <GlassCard key={i} className="p-6 h-full flex flex-col">
@@ -567,9 +714,9 @@ export default function V2FitnessPreview({ data }: { data: GeneratedSiteData }) 
       
       {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
       <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15, ${ACCENT}08)` }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${RED}15, ${RED}08)` }} />
         <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
-          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: ACCENT }}>
+          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: RED }}>
             Don&apos;t Miss Out
           </p>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-3">
@@ -581,7 +728,7 @@ export default function V2FitnessPreview({ data }: { data: GeneratedSiteData }) 
           <a
             href={`/claim/${data.id}`}
             className="inline-flex items-center gap-2 min-h-[48px] px-8 py-3 rounded-full text-white font-bold text-base hover:shadow-lg transition-all duration-300"
-            style={{ background: ACCENT }}
+            style={{ background: RED }}
           >
             Claim This Website
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
