@@ -628,44 +628,14 @@ export default function ImageMapDetailPage() {
                           setDragOverPosition(null);
                         }}
                       >
-                        {/* Main row */}
-                        <div className="px-5 py-3 grid grid-cols-[40px_80px_1fr_32px_80px_120px] gap-3 items-center hover:bg-white/[0.02] transition-colors">
+                        {/* Main row — single image that IS the drop target */}
+                        <div className="px-4 py-3 flex items-center gap-4 hover:bg-white/[0.02] transition-colors">
                           {/* Position number */}
-                          <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-sm font-bold text-white/70">
+                          <div className="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-xs font-bold text-white/60 shrink-0">
                             {img.position}
                           </div>
 
-                          {/* Current image on preview (shows replacement if assigned, original otherwise) */}
-                          <div className="relative w-16 h-12 rounded-lg overflow-hidden bg-white/5 border border-white/10">
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img
-                              src={img.replacementUrl
-                                ? (img.replacementUrl.startsWith("data:") ? img.replacementUrl : proxyUrl(img.replacementUrl))
-                                : proxyUrl(img.originalUrl)
-                              }
-                              alt={`Position ${img.position}`}
-                              className="w-full h-full object-cover"
-                              loading="lazy"
-                            />
-                            {img.replacementUrl && (
-                              <div className="absolute top-0 right-0 w-3 h-3 bg-emerald-500 rounded-bl-md" title="Replaced" />
-                            )}
-                          </div>
-
-                          {/* Location info */}
-                          <div className="min-w-0">
-                            <p className="text-xs text-white/60 truncate">{img.location}</p>
-                            <p className="text-[10px] text-white/30 truncate">{img.suggestedFilename}</p>
-                          </div>
-
-                          {/* Arrow */}
-                          <div className="flex items-center justify-center text-white/20">
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                            </svg>
-                          </div>
-
-                          {/* DROP TARGET: Replacement slot — BIG target area */}
+                          {/* THE image — drop here to replace it inline */}
                           <div
                             onDragOver={(e) => {
                               e.preventDefault();
@@ -684,50 +654,57 @@ export default function ImageMapDetailPage() {
                               if (url) handleDrop(img.position, url);
                               setDragOverPosition(null);
                             }}
-                            className={`
-                              w-24 h-16 rounded-lg overflow-hidden transition-all cursor-pointer
-                              ${img.replacementUrl
-                                ? "border-2 border-emerald-500/50"
-                                : isDropTarget
-                                  ? "border-2 border-dashed border-blue-400 bg-blue-400/20 scale-110"
-                                  : isDragging
-                                    ? "border-2 border-dashed border-white/40 bg-white/[0.05]"
-                                    : "border-2 border-dashed border-white/20"
-                              }
-                              flex items-center justify-center
-                            `}
+                            className={`relative w-28 h-20 rounded-lg overflow-hidden shrink-0 transition-all ${
+                              isDropTarget
+                                ? "ring-2 ring-blue-400 ring-offset-2 ring-offset-[#0a1520] scale-105"
+                                : isDragging
+                                  ? "ring-1 ring-dashed ring-white/30"
+                                  : img.status === "replaced"
+                                    ? "ring-2 ring-emerald-500/50"
+                                    : "ring-1 ring-white/10"
+                            }`}
                           >
-                            {img.replacementUrl ? (
-                              /* eslint-disable-next-line @next/next/no-img-element */
-                              <img
-                                src={img.replacementUrl.startsWith("data:") ? img.replacementUrl : proxyUrl(img.replacementUrl)}
-                                alt="Replacement"
-                                className="w-full h-full object-cover"
-                              />
-                            ) : (
-                              <span className="text-[10px] text-white/40 text-center leading-tight px-2 font-medium">
-                                {isDropTarget ? "Drop here!" : "Drop image"}
-                              </span>
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={(() => {
+                                const url = img.replacementUrl || img.originalUrl;
+                                return url.startsWith("data:") ? url : proxyUrl(url);
+                              })()}
+                              alt={`${img.location}`}
+                              className="w-full h-full object-cover"
+                              loading="lazy"
+                            />
+                            {isDropTarget && (
+                              <div className="absolute inset-0 bg-blue-500/30 flex items-center justify-center">
+                                <span className="text-xs font-bold text-white drop-shadow-md">Drop here</span>
+                              </div>
+                            )}
+                            {img.status === "replaced" && !isDropTarget && (
+                              <div className="absolute top-1 right-1 w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center">
+                                <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                              </div>
                             )}
                           </div>
 
-                          {/* Status + actions */}
-                          <div className="flex items-center gap-2">
-                            <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium whitespace-nowrap ${sc.bg} ${sc.text}`}>
-                              {sc.label}
-                            </span>
-                            <button
-                              onClick={() => toggleKeepOriginal(img.position)}
-                              className={`text-[10px] px-1.5 py-0.5 rounded border transition-colors shrink-0 ${
-                                img.status === "keep-original"
-                                  ? "border-blue-500 text-blue-400 bg-blue-500/10"
-                                  : "border-white/10 text-white/30 hover:border-white/20"
-                              }`}
-                              title={img.status === "keep-original" ? "Undo keep" : "Keep original"}
-                            >
-                              {img.status === "keep-original" ? "Kept" : "Keep"}
-                            </button>
+                          {/* Location label */}
+                          <div className="min-w-0 flex-1">
+                            <p className="text-sm text-white/70 truncate">{img.location}</p>
+                            <p className="text-[10px] text-white/30 truncate">
+                              {img.status === "replaced" ? "Swapped ✓" : img.status === "keep-original" ? "Keeping original" : "Drag image here to replace"}
+                            </p>
                           </div>
+
+                          {/* Keep button */}
+                          <button
+                            onClick={() => toggleKeepOriginal(img.position)}
+                            className={`text-xs px-3 py-1.5 rounded-lg border transition-colors shrink-0 cursor-pointer ${
+                              img.status === "keep-original"
+                                ? "border-blue-500 text-blue-400 bg-blue-500/10"
+                                : "border-white/10 text-white/40 hover:border-white/20 hover:text-white/60"
+                            }`}
+                          >
+                            {img.status === "keep-original" ? "Kept ✓" : "Keep"}
+                          </button>
                         </div>
 
                         {/* Expandable notes (click row to toggle) */}
