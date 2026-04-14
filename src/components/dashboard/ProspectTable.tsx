@@ -764,22 +764,6 @@ export default function ProspectTable({
         </table>
       </div>
 
-      <button
-        onClick={submitAllNotes}
-        disabled={submitAllLoading || pendingCount === 0}
-        className={`fixed bottom-6 right-6 z-30 inline-flex items-center gap-3 rounded-full px-5 py-3 shadow-2xl border transition-all ${
-          pendingCount > 0
-            ? "bg-blue-electric text-white border-blue-electric hover:scale-[1.02]"
-            : "bg-surface-light text-muted border-border"
-        } disabled:cursor-not-allowed disabled:hover:scale-100`}
-      >
-        <span className="text-sm font-semibold">
-          {submitAllLoading ? "Submitting..." : "Submit All Notes"}
-        </span>
-        <span className={`inline-flex min-w-7 h-7 items-center justify-center rounded-full text-xs font-bold ${pendingCount > 0 ? "bg-white text-blue-electric" : "bg-border text-muted"}`}>
-          {pendingCount}
-        </span>
-      </button>
 
       <ProspectNotesDrawer
         prospect={openNotesMerged}

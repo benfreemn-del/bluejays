@@ -165,7 +165,7 @@ export default function ProspectNotesDrawer({
               className="min-h-[220px] w-full rounded-xl border border-border bg-slate-950/70 px-4 py-3 text-sm text-foreground outline-none focus:border-blue-electric resize-y"
             />
             <p className="mt-3 text-xs text-muted leading-5">
-              Notes are stored immediately so you can close this panel and return later. Use “Submit All Notes” when you are ready to move every changed site into the revision queue.
+              Notes save automatically. Close this panel and come back anytime — your notes will be here.
             </p>
 
             <div className="mt-4 space-y-3 rounded-xl border border-border/80 bg-slate-950/60 p-3">

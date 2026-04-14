@@ -195,12 +195,6 @@ export default function DashboardPage() {
               Lead
             </button>
             <button
-              onClick={() => setPipelineOpen(true)}
-              className="h-9 rounded-lg border border-sky-500/30 px-3 text-sm font-medium text-sky-400 transition-colors hover:border-sky-500/60"
-            >
-              Pipeline
-            </button>
-            <button
               onClick={() => setScoutOpen(true)}
               className="h-9 rounded-lg bg-blue-electric px-3 text-sm font-medium text-white transition-colors hover:bg-blue-deep"
             >
