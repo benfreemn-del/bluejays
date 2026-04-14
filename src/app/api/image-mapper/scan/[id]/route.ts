@@ -19,16 +19,21 @@ export async function POST(
   const category = prospect.category || "general";
   const sd = (prospect.scrapedData || {}) as Record<string, unknown>;
 
-  // Get the photos that are CURRENTLY used on our preview site
-  // These come from scrapedData.photos — the generator uses these for the preview
-  const previewPhotos = (sd.photos as string[]) || [];
+  // Get the photos that are CURRENTLY used on the LIVE preview site
+  // The preview reads from generated_sites table, so we must check there first
+  let previewPhotos: string[] = [];
+  try {
+    const generatedSite = await getScrapedData(id) as Record<string, unknown> | null;
+    if (generatedSite && Array.isArray(generatedSite.photos) && generatedSite.photos.length > 0) {
+      previewPhotos = generatedSite.photos as string[];
+    }
+  } catch { /* fall through to prospect data */ }
 
-  // Get ALL scraped photos from the original website + Google Places
-  // These are potential replacements
-  const allScrapedPhotos = [...previewPhotos]; // Start with what we have
+  // Fallback to prospect scrapedData.photos if generated_sites has nothing
+  if (previewPhotos.length === 0) {
+    previewPhotos = (sd.photos as string[]) || [];
+  }
 
-  // Also try to get any additional photos from Google Places that aren't in the preview
-  // These become available as replacements in the right panel
   const unusedPhotos: string[] = [];
 
   // Filter preview photos — remove data URIs, SVGs, tiny icons
