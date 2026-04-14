@@ -61,7 +61,7 @@ export async function POST(
       ...sd,
       imageMapping: mapping,
       photos: updatedPhotos,
-    } as typeof prospect.scrapedData,
+    } as unknown as typeof prospect.scrapedData,
   });
 
   // ALSO update the generated_sites table — this is what the preview actually reads from

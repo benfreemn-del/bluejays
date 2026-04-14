@@ -39,10 +39,6 @@ export default function LeadPage() {
   const [simOpen, setSimOpen] = useState(false);
 
   useEffect(() => {
-    loadData();
-  }, [loadData]);
-
-  useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [timeline]);
 
@@ -130,6 +126,10 @@ export default function LeadPage() {
       setLoading(false);
     }
   }, [id, router]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   const addNote = async () => {
     if (!noteInput.trim()) return;

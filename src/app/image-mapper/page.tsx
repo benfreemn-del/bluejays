@@ -90,7 +90,7 @@ export default function ImageMapperLeadsPage() {
               </thead>
               <tbody>
                 {filtered.map((p) => {
-                  const imgMap = (p as Record<string, unknown>).imageMapping || (p.scrapedData as Record<string, unknown>)?.imageMapping;
+                  const imgMap = (p as unknown as Record<string, unknown>).imageMapping || (p.scrapedData as unknown as Record<string, unknown>)?.imageMapping;
                   const im = imgMap as { images?: { status: string }[]; selectionStatus?: string } | undefined;
                   const imageCount =
                     im?.images?.length ||

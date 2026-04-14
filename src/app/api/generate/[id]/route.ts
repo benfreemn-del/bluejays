@@ -61,11 +61,11 @@ export async function POST(
       const existingPhotos = existingSD.photos as string[] | undefined;
       // If existing photos include local /images/ paths (manually curated), preserve them
       const hasManualPhotos = existingPhotos?.some((p: string) => typeof p === "string" && p.startsWith("/images/"));
-      prospect.scrapedData = {
+      prospect.scrapedData = ({
         ...existingSD,
         ...data,
         // Preserve manually curated photos (local /images/ paths) over scraper results
-        photos: hasManualPhotos ? existingPhotos : (data.photos?.length > 0 ? data.photos : (existingPhotos || data.photos)),
+        photos: hasManualPhotos ? (existingPhotos || []) : (data.photos?.length > 0 ? data.photos : (existingPhotos || data.photos || [])),
         // Preserve enriched data if scraper returned empty — never overwrite good data with nothing
         services: data.services?.length > 0 ? data.services : (existingServices?.length ? existingServices : data.services),
         about: (data.about && data.about.length > 50) ? data.about : (existingAbout && existingAbout.length > 50 ? existingAbout : data.about),
@@ -78,7 +78,8 @@ export async function POST(
           data.brandColorSource ||
           (existingSD.brandColorSource as "official-site" | "logo" | "category-default" | undefined),
         logoUrl: data.logoUrl || (existingSD.logoUrl as string),
-      };
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      }) as any;
       const updates: Record<string, unknown> = {
         scrapedData: prospect.scrapedData,
         status: "scraped" as const,

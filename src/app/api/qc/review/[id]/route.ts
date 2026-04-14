@@ -327,7 +327,7 @@ export async function POST(
 
     if (websiteResearch?.mergedScrapedData) {
       await updateProspect(id, {
-        scrapedData: mergedScrapedData,
+        scrapedData: mergedScrapedData as ScrapedData,
         phone: prospect.phone || (websiteResearch.mergedScrapedData.phone as string | undefined),
         email: prospect.email || (websiteResearch.mergedScrapedData.email as string | undefined),
       });
@@ -338,7 +338,7 @@ export async function POST(
         ...prospect,
         phone: prospect.phone || (websiteResearch?.mergedScrapedData.phone as string | undefined),
         email: prospect.email || (websiteResearch?.mergedScrapedData.email as string | undefined),
-        scrapedData: mergedScrapedData,
+        scrapedData: mergedScrapedData as ScrapedData,
       },
       siteData,
       websiteResearch,
@@ -351,7 +351,7 @@ export async function POST(
     const qcProspect = {
       ...prospect,
       phone: prospect.phone || superchargeResult.siteData.phone || (websiteResearch?.mergedScrapedData.phone as string | undefined),
-      scrapedData: mergedScrapedData,
+      scrapedData: mergedScrapedData as ScrapedData,
     };
 
     const baseReport = reviewSiteQuality(qcProspect, superchargeResult.siteData);
@@ -361,7 +361,7 @@ export async function POST(
         city: prospect.city,
         phone: qcProspect.phone,
         category: prospect.category,
-        scrapedData: mergedScrapedData,
+        scrapedData: mergedScrapedData as ScrapedData,
       },
       superchargeResult.siteData
     );

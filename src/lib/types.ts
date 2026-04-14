@@ -134,6 +134,12 @@ export interface ScrapedData {
   brandColor?: string;
   brandColorSource?: "official-site" | "logo" | "category-default";
   logoUrl?: string;
+  googleRating?: number;
+  reviewCount?: number;
+  accentColor?: string;
+  // Allow additional dynamic fields from scrapers/enrichment
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
 }
 
 export interface ServiceItem {

@@ -157,11 +157,12 @@ export async function POST(request: NextRequest) {
         const remaining = targetCount - allScoutedProspects.length;
         const limit = Math.min(perCategoryLimit, remaining);
 
-        const prospects = await scout({
+        const scoutResult = await scout({
           city: location,
           category,
           limit,
         });
+        const prospects = scoutResult.prospects;
 
         // Log scouting cost
         const scoutCost = prospects.length * COST_RATES.google_places_search;

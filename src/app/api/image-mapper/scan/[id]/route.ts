@@ -80,7 +80,7 @@ export async function POST(
 
   // Store inside scrapedData so it persists in Supabase
   await updateProspect(id, {
-    scrapedData: { ...sd, imageMapping: mapping } as typeof prospect.scrapedData,
+    scrapedData: { ...sd, imageMapping: mapping } as unknown as typeof prospect.scrapedData,
   });
 
   return NextResponse.json({

@@ -43,8 +43,13 @@ export interface GeneratedSiteData {
   stats: { value: string; label: string }[];
   themeMode?: "light" | "dark";
   city?: string;
+  googleRating?: number;
+  reviewCount?: number;
+  logoUrl?: string;
   imageAudit?: PreparedPhotoAudit;
   researchBrief?: ResearchBrief;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
 }
 
 function generateDefaultTagline(businessName: string, category: Category): string {
