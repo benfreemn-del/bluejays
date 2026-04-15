@@ -545,6 +545,8 @@ export default function ImageMapDetailPage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [prospect, setProspect] = useState<any>(null);
   const [mapping, setMapping] = useState<ImageMapping | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [allProspects, setAllProspects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [scanning, setScanning] = useState(false);
   const [rightTab, setRightTab] = useState<"library" | "upload" | "fallbacks">("library");
@@ -587,7 +589,16 @@ export default function ImageMapDetailPage() {
 
   useEffect(() => {
     loadData();
+    // Load all prospects for next/prev navigation
+    fetch("/api/prospects?limit=500", { credentials: "include" })
+      .then(r => r.json())
+      .then(data => { if (data.prospects) setAllProspects(data.prospects.filter((p: { status: string }) => p.status !== "dismissed")); })
+      .catch(() => {});
   }, [loadData]);
+
+  const currentIndex = allProspects.findIndex(p => p.id === id);
+  const nextProspect = currentIndex >= 0 && currentIndex < allProspects.length - 1 ? allProspects[currentIndex + 1] : null;
+  const prevProspect = currentIndex > 0 ? allProspects[currentIndex - 1] : null;
 
   /* ─── Initialize category fallback slots ─── */
   const category = mapping?.category || prospect?.category || "general";
@@ -857,10 +868,31 @@ export default function ImageMapDetailPage() {
             >
               &larr; Back
             </button>
+            {prevProspect && (
+              <button
+                onClick={() => router.push(`/image-mapper/${prevProspect.id}`)}
+                className="shrink-0 px-3 py-1.5 text-sm rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
+              >
+                ‹ Prev
+              </button>
+            )}
+            {nextProspect && (
+              <button
+                onClick={() => router.push(`/image-mapper/${nextProspect.id}`)}
+                className="shrink-0 px-3 py-1.5 text-sm rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors font-medium"
+              >
+                Next →
+              </button>
+            )}
             <div className="min-w-0">
-              <h1 className="text-lg font-semibold truncate">
-                {prospect?.businessName || "Unknown Business"}
-              </h1>
+              <div className="flex items-center gap-2">
+                <h1 className="text-lg font-semibold truncate">
+                  {prospect?.businessName || "Unknown Business"}
+                </h1>
+                {allProspects.length > 0 && currentIndex >= 0 && (
+                  <span className="text-xs text-white/30 shrink-0">{currentIndex + 1}/{allProspects.length}</span>
+                )}
+              </div>
               {mapping?.websiteUrl && (
                 <a
                   href={mapping.websiteUrl}
