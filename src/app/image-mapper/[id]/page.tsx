@@ -549,7 +549,8 @@ export default function ImageMapDetailPage() {
   const [allProspects, setAllProspects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [scanning, setScanning] = useState(false);
-  const [rightTab, setRightTab] = useState<"library" | "upload" | "fallbacks">("library");
+  const [rightTab, setRightTab] = useState<"library" | "upload" | "fallbacks" | "typography">("library");
+  const [selectedFont, setSelectedFont] = useState(0);
   const [uploadedImages, setUploadedImages] = useState<{ url: string; name: string }[]>([]);
   const [dragOverPosition, setDragOverPosition] = useState<number | null>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -1172,17 +1173,17 @@ export default function ImageMapDetailPage() {
 
                   {/* Tab switcher */}
                   <div className="flex rounded-lg bg-white/5 border border-white/10 p-0.5">
-                    {(["library", "upload", "fallbacks"] as const).map((tab) => (
+                    {(["library", "upload", "fallbacks", "typography"] as const).map((tab) => (
                       <button
                         key={tab}
                         onClick={() => setRightTab(tab)}
-                        className={`flex-1 px-3 py-1.5 text-xs rounded-md transition-colors capitalize ${
+                        className={`flex-1 px-2 py-1.5 text-[10px] rounded-md transition-colors ${
                           rightTab === tab
                             ? "bg-white/10 text-white font-medium"
                             : "text-white/40 hover:text-white/60"
                         }`}
                       >
-                        {tab === "library" ? "Theme Library" : tab === "upload" ? "Upload" : "Fallbacks"}
+                        {tab === "library" ? "Images" : tab === "upload" ? "Upload" : tab === "fallbacks" ? "Fallbacks" : "Fonts"}
                       </button>
                     ))}
                   </div>
@@ -1321,6 +1322,42 @@ export default function ImageMapDetailPage() {
                           </div>
                         ))}
                       </div>
+                    </div>
+                  )}
+
+                  {/* ─── Typography Tab ─── */}
+                  {rightTab === "typography" && (
+                    <div>
+                      <p className="text-[11px] text-white/40 mb-4">
+                        Choose a typography style for this site. Click to apply.
+                      </p>
+                      <div className="grid grid-cols-3 gap-3">
+                        {(() => {
+                          const { getFontOptions } = require("@/lib/typography");
+                          const options = getFontOptions(category);
+                          return options.map((opt: { heading: string; body: string; label: string }, i: number) => (
+                            <button
+                              key={i}
+                              onClick={() => setSelectedFont(i)}
+                              className={`p-4 rounded-xl border text-center transition-all cursor-pointer ${
+                                selectedFont === i
+                                  ? "border-blue-500 bg-blue-500/10 ring-1 ring-blue-500/30"
+                                  : "border-white/10 bg-white/[0.03] hover:border-white/20"
+                              }`}
+                            >
+                              <div className="w-10 h-10 mx-auto mb-2 rounded-lg bg-white/5 flex items-center justify-center">
+                                <span className="text-lg font-bold text-white/70" style={{ fontFamily: `'${opt.heading}', serif` }}>Aa</span>
+                              </div>
+                              <p className="text-xs font-medium text-white mb-0.5">{opt.label}</p>
+                              <p className="text-[9px] text-white/30">{opt.heading}</p>
+                              <p className="text-[9px] text-white/20">+ {opt.body}</p>
+                            </button>
+                          ));
+                        })()}
+                      </div>
+                      <p className="text-[10px] text-white/20 mt-4 text-center">
+                        Typography is applied automatically based on category. Override here if needed.
+                      </p>
                     </div>
                   )}
                 </div>

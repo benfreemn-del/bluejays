@@ -131,3 +131,78 @@ export function getFontStyles(category: string): { heading: React.CSSProperties;
     body: { fontFamily: `'${body}', sans-serif` },
   };
 }
+
+/**
+ * Industry-grouped font options for the typography picker.
+ * Each category maps to its industry group which has 3 options.
+ */
+const INDUSTRY_FONT_OPTIONS: Record<string, { heading: string; body: string; label: string }[]> = {
+  "warm-friendly": [
+    { heading: "DM Serif Display", body: "DM Sans", label: "Warm Modern" },
+    { heading: "Playfair Display", body: "Lato", label: "Classic Elegant" },
+    { heading: "Libre Baskerville", body: "Source Sans Pro", label: "Traditional" },
+  ],
+  "classic-trust": [
+    { heading: "Merriweather", body: "Lato", label: "Academic" },
+    { heading: "EB Garamond", body: "Source Sans Pro", label: "Formal" },
+    { heading: "Crimson Pro", body: "Inter", label: "Modern Pro" },
+  ],
+  "luxury-elegant": [
+    { heading: "Cormorant Garamond", body: "Raleway", label: "High Fashion" },
+    { heading: "Playfair Display", body: "Raleway", label: "Editorial" },
+    { heading: "DM Serif Display", body: "DM Sans", label: "Soft Luxury" },
+  ],
+  "bold-energy": [
+    { heading: "Bebas Neue", body: "Open Sans", label: "Impact" },
+    { heading: "Oswald", body: "Nunito Sans", label: "Strong" },
+    { heading: "Archivo Black", body: "Archivo", label: "Industrial" },
+  ],
+  "tech-modern": [
+    { heading: "Space Grotesk", body: "Inter", label: "Tech Clean" },
+    { heading: "Plus Jakarta Sans", body: "Outfit", label: "Startup" },
+    { heading: "Syne", body: "Manrope", label: "Future" },
+  ],
+  "industrial-trade": [
+    { heading: "Barlow Condensed", body: "Barlow", label: "Sturdy" },
+    { heading: "Oswald", body: "Nunito Sans", label: "Bold" },
+    { heading: "Space Grotesk", body: "Inter", label: "Modern Trade" },
+  ],
+  "clean-modern": [
+    { heading: "Poppins", body: "Poppins", label: "Clean" },
+    { heading: "Jost", body: "Inter", label: "Minimal" },
+    { heading: "Work Sans", body: "Work Sans", label: "Functional" },
+  ],
+  "outdoor-nature": [
+    { heading: "Raleway", body: "Lato", label: "Airy" },
+    { heading: "Josefin Sans", body: "Josefin Sans", label: "Organic" },
+    { heading: "Nunito", body: "Lato", label: "Friendly" },
+  ],
+};
+
+const CATEGORY_TO_GROUP: Record<string, string> = {
+  dental: "warm-friendly", veterinary: "warm-friendly", restaurant: "warm-friendly",
+  "real-estate": "warm-friendly", catering: "warm-friendly", chiropractic: "warm-friendly",
+  church: "classic-trust", tutoring: "classic-trust", "physical-therapy": "classic-trust",
+  "law-firm": "classic-trust", accounting: "classic-trust", insurance: "classic-trust",
+  medical: "classic-trust",
+  "med-spa": "luxury-elegant", salon: "luxury-elegant", "interior-design": "luxury-elegant",
+  "event-planning": "luxury-elegant", florist: "luxury-elegant", photography: "luxury-elegant",
+  fitness: "bold-energy", "martial-arts": "bold-energy", tattoo: "bold-energy", towing: "bold-energy",
+  electrician: "tech-modern", plumber: "tech-modern", hvac: "tech-modern",
+  "pest-control": "tech-modern", "garage-door": "tech-modern", locksmith: "tech-modern",
+  "appliance-repair": "tech-modern",
+  roofing: "industrial-trade", "auto-repair": "industrial-trade", "general-contractor": "industrial-trade",
+  "pressure-washing": "industrial-trade", moving: "industrial-trade", "junk-removal": "industrial-trade",
+  "tree-service": "industrial-trade", fencing: "industrial-trade", construction: "industrial-trade",
+  cleaning: "clean-modern", "carpet-cleaning": "clean-modern",
+  landscaping: "outdoor-nature", painting: "outdoor-nature", "pool-spa": "outdoor-nature",
+  daycare: "outdoor-nature", "pet-services": "outdoor-nature",
+};
+
+/**
+ * Get the 3 typography options for a category's industry group.
+ */
+export function getFontOptions(category: string): { heading: string; body: string; label: string }[] {
+  const group = CATEGORY_TO_GROUP[category] || "tech-modern";
+  return INDUSTRY_FONT_OPTIONS[group] || INDUSTRY_FONT_OPTIONS["tech-modern"];
+}
