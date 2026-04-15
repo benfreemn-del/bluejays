@@ -86,6 +86,31 @@ export async function POST(request: NextRequest) {
         }
       }
 
+      // Update prospect status on opens and clicks
+      if (event.event === "open" || event.event === "click") {
+        try {
+          const prospect = await getProspectByEmail(event.email);
+          if (prospect) {
+            const { updateProspect } = await import("@/lib/store");
+            // Only upgrade status, never downgrade
+            const statusPriority: Record<string, number> = {
+              scouted: 1, scraped: 2, generated: 3, "pending-review": 4,
+              "ready_to_review": 5, approved: 6, contacted: 7,
+              email_opened: 8, link_clicked: 9, engaged: 10,
+              interested: 11, responded: 12, claimed: 13, paid: 14,
+            };
+            const currentPriority = statusPriority[prospect.status] || 0;
+            const newStatus = event.event === "click" ? "link_clicked" : "email_opened";
+            const newPriority = statusPriority[newStatus] || 0;
+
+            if (newPriority > currentPriority) {
+              await updateProspect(prospect.id, { status: newStatus as never });
+              console.log(`  ✅ ${prospect.businessName}: ${prospect.status} → ${newStatus}`);
+            }
+          }
+        } catch { /* don't break webhook */ }
+      }
+
       // Track delivered emails for warm-up monitoring
       if (event.event === "delivered") {
         try {

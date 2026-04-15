@@ -63,6 +63,7 @@ export type ProspectStatus =
   | "ready_to_finalize"
   | "deployed"
   | "contacted"
+  | "email_opened"
   | "engaged"
   | "link_clicked"
   | "responded"
