@@ -1113,6 +1113,71 @@ When building sites, match theme to industry vibe:
 | **Dark Professional** | `#111827`/`#1a1a1a` | Trades, reliability, trust | Roofing, HVAC, Electrician, Plumber, Auto, GC, Moving |
 | **Soft Elegant** | `#fefefe` white | Creative, stylish, visual | Salon, Interior Design, Event Planning, Florist |
 | **Bold Energy** | `#0a0a0a` pure black | Power, intensity, motivation | Fitness, Martial Arts, Tattoo |
+
+### Typography Pairing Guide (NON-NEGOTIABLE for all generated sites + showcases)
+Every site MUST use the correct Google Fonts pairing for its category. Heading font is for h1/h2/h3 tags + nav branding. Body font is for paragraphs, descriptions, and UI text.
+
+**How to implement:** Add this to the template's `<head>` or layout:
+```html
+<link href="https://fonts.googleapis.com/css2?family={HeadingFont}:wght@400;600;700;800&family={BodyFont}:wght@300;400;500;600&display=swap" rel="stylesheet" />
+```
+Then set `font-family` via Tailwind or inline styles on headings and body.
+
+| Category | Heading Font | Body Font | Why |
+|----------|-------------|-----------|-----|
+| **dental** | DM Serif Display | DM Sans | Warm serif says "we care" without being stuffy — modern enough for young families |
+| **veterinary** | DM Serif Display | DM Sans | Same warmth as dental — pet owners respond to approachable, friendly type |
+| **daycare** | Nunito | Lato | Rounded, soft, playful — feels safe and kid-friendly |
+| **church** | Merriweather | Lato | Classic serif conveys tradition and trust without being cold |
+| **tutoring** | Merriweather | Open Sans | Academic authority with clean readability for parents |
+| **physical-therapy** | Merriweather | Lato | Medical credibility with warmth — not clinical, not casual |
+| **law-firm** | EB Garamond | Source Sans Pro | Traditional serif = authority and gravitas, body stays clean |
+| **accounting** | Crimson Pro | Inter | Professional serif for trust, modern sans for data-heavy content |
+| **insurance** | Libre Baskerville | Open Sans | Established, trustworthy serif paired with friendly body text |
+| **real-estate** | DM Serif Display | DM Sans | Luxury-adjacent but not pretentious — works for $300K and $3M listings |
+| **med-spa** | Cormorant Garamond | Jost | Elegant thin serif = beauty/luxury, geometric body = clinical precision |
+| **salon** | Cormorant Garamond | Raleway | Fashion-forward serif with airy geometric body — feels like Vogue |
+| **interior-design** | Cormorant Garamond | Montserrat | Refined taste meets clean modern — editorial design magazine feel |
+| **photography** | Playfair Display | Raleway | Editorial serif for portfolio gravitas, light body for image-first layouts |
+| **florist** | Playfair Display | Raleway | Romantic serif pairs perfectly with floral/botanical aesthetics |
+| **event-planning** | Cormorant Garamond | Raleway | High-end elegance for weddings and galas |
+| **fitness** | Bebas Neue | Open Sans | Bold condensed impact for energy, clean body for readability |
+| **martial-arts** | Oswald | Nunito Sans | Strong condensed heading with friendly body — discipline + approachability |
+| **tattoo** | Archivo Black | Archivo | Heavy bold heading with matching body — industrial edge, no frills |
+| **electrician** | Space Grotesk | Inter | Technical modern feel — smart, capable, current |
+| **plumber** | Space Grotesk | Inter | Same tech-forward feel — trades should look modern, not dated |
+| **hvac** | Space Grotesk | Inter | Consistent with electrical/plumbing — modern trades branding |
+| **roofing** | Barlow Condensed | Barlow | Sturdy condensed heading = construction strength, clean body |
+| **auto-repair** | Barlow Condensed | Barlow | Automotive industry standard — strong, mechanical, trustworthy |
+| **general-contractor** | Barlow Condensed | Barlow | Construction authority — matches roofing/auto for trade consistency |
+| **landscaping** | Raleway | Lato | Light, airy heading for outdoor/nature feel, friendly body |
+| **cleaning** | Poppins | Poppins | Clean, rounded, modern — literally looks "clean" |
+| **carpet-cleaning** | Poppins | Poppins | Same clean feel as general cleaning — brand consistency |
+| **pressure-washing** | Barlow Condensed | Barlow | Power/industrial feel matching other trade categories |
+| **pest-control** | Space Grotesk | Inter | Technical/scientific credibility for pest treatment |
+| **moving** | Barlow Condensed | Barlow | Strong, capable heading for heavy-lifting industry |
+| **junk-removal** | Barlow Condensed | Barlow | Same industrial strength as moving — consistent trades feel |
+| **tree-service** | Barlow Condensed | Barlow | Outdoor trades — matches landscaping-adjacent categories |
+| **painting** | Raleway | Lato | Creative/artistic heading for visual transformation business |
+| **fencing** | Barlow Condensed | Barlow | Construction trade — matches GC, roofing |
+| **garage-door** | Space Grotesk | Inter | Technical service — matches electrician/plumber |
+| **locksmith** | Space Grotesk | Inter | Security/technical — modern and trustworthy |
+| **towing** | Oswald | Nunito Sans | Bold urgency heading for emergency service |
+| **construction** | Barlow Condensed | Barlow | Core construction trade font |
+| **catering** | Playfair Display | Lato | Food industry elegance — upscale but readable for menus |
+| **restaurant** | DM Serif Display | DM Sans | Warm, inviting serif for dining — not too formal |
+| **pet-services** | Nunito | Nunito Sans | Soft, rounded, playful — pet owners love friendly type |
+| **pool-spa** | Raleway | Lato | Resort/relaxation feel — light and breezy |
+| **medical** | Libre Baskerville | Open Sans | Clinical authority with accessible body text |
+| **appliance-repair** | Space Grotesk | Inter | Technical service matching other repair categories |
+
+**Rules:**
+- ALWAYS use the pairing from this table. No exceptions, no improvising.
+- Both fonts must be loaded from Google Fonts in the template
+- Heading font: h1, h2, h3, nav logo text, CTA buttons
+- Body font: paragraphs, descriptions, form labels, footer text, stat labels
+- Font weights: headings use 600-800, body uses 300-500
+- It's fine if multiple categories use the same pairing — consistency within industry clusters is intentional
 | **Warm Dark** | `#1c1917` charcoal | Inviting, cozy, appetite | Restaurant, Catering |
 
 ### Cross-Category Feature Patterns (apply learnings across similar industries)

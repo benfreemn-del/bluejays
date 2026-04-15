@@ -1,3 +1,4 @@
+import { getFontPairing } from "@/lib/typography";
 import PreviewRenderer from "@/components/templates/PreviewRenderer";
 import V2ElectricianPreview from "@/components/templates/V2ElectricianPreview";
 import V2DentalPreview from "@/components/templates/V2DentalPreview";
@@ -224,6 +225,8 @@ export default function PreviewContent({
     if (V2Renderer) {
       const isLightV2Theme = selectedTheme === "light";
 
+      const fonts = getFontPairing(proxiedData.category);
+
       return (
         <PreviewImageGuard
           category={proxiedData.category}
@@ -231,10 +234,24 @@ export default function PreviewContent({
           prospectId={id}
           knownPhotos={orderedPhotos}
         >
+          {/* Google Fonts for this category */}
+          {/* eslint-disable-next-line @next/next/no-page-custom-font */}
+          <link href={fonts.googleUrl} rel="stylesheet" />
           <div
             data-theme={selectedTheme}
             className={isLightV2Theme ? "v2-preview-theme v2-preview-theme--light" : "v2-preview-theme"}
+            style={{ fontFamily: `'${fonts.body}', sans-serif` }}
           >
+            <style>{`
+              .v2-preview-root h1, .v2-preview-root h2, .v2-preview-root h3,
+              .v2-preview-root [class*="font-bold"], .v2-preview-root [class*="font-semibold"],
+              .v2-preview-root [class*="font-black"] {
+                font-family: '${fonts.heading}', serif !important;
+              }
+              .v2-preview-root {
+                font-family: '${fonts.body}', sans-serif;
+              }
+            `}</style>
             <div className="v2-preview-root">
               <V2Renderer data={proxiedData} />
             </div>
