@@ -55,7 +55,7 @@ export async function POST() {
     }
 
     // Send SMS if channel includes it
-    if (nextStep.channels.includes("sms") && prospect.phone && prospect.generatedSiteUrl) {
+    if (nextStep.channels.includes("sms") && prospect.phone && prospect.generatedSiteUrl && prospect.outreachChannel !== "email-only") {
       try {
         const previewUrl = `${BASE_URL}${prospect.generatedSiteUrl}`;
         const videoUrl = await getProspectVideoUrl(prospect.id);

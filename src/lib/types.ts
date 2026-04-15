@@ -114,6 +114,10 @@ export interface Prospect {
   adminNotesSubmittedAt?: string;
   lastSubmittedAdminNotes?: string;
   lastSubmittedTheme?: "light" | "dark";
+  /** Outreach channel: "email-only" for pre-SMS launch, "full" for email+sms+voicemail */
+  outreachChannel?: "email-only" | "full";
+  /** Needs SMS follow-up when phone number is verified */
+  needsSmsFollowup?: boolean;
   createdAt: string;
   updatedAt: string;
 }

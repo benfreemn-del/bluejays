@@ -440,13 +440,14 @@ export default function ProspectTable({
                 setBulkSending(true);
                 setBulkResult("");
                 try {
+                  const emailOnly = confirm("Email-only mode? (OK = email only, Cancel = full funnel with SMS)");
                   const res = await fetch("/api/funnel/enroll", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ prospectIds: selectedIds }),
+                    body: JSON.stringify({ prospectIds: selectedIds, emailOnly }),
                   });
                   const data = await res.json();
-                  setBulkResult(data.message);
+                  setBulkResult(data.message + (emailOnly ? " (email-only — SMS queued for later)" : ""));
                   setSelectedIds([]);
                   onRefresh?.();
                 } catch {
