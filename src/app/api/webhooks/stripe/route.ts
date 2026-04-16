@@ -90,6 +90,12 @@ export async function POST(request: NextRequest) {
           // Send payment confirmation email to Ben
           await notifyOwnerPayment(businessName, session.customer_email || prospect.email || "N/A", session.amount_total);
 
+          // Send welcome email to the client
+          const clientEmail = session.customer_email || prospect.email;
+          if (clientEmail) {
+            await sendClientWelcomeEmail(clientEmail, prospect.businessName, prospect.id);
+          }
+
           // ─── Create deferred $100/year maintenance subscription ───
           // For both standard ($997) and free ($30) one-time setup payments.
           // We create a subscription with a 1-year trial so the first
@@ -310,5 +316,100 @@ async function notifyOwnerPayment(
     });
   } catch (err) {
     console.error("[Stripe Webhook] Failed to send payment notification:", err);
+  }
+}
+
+/**
+ * Send a welcome email to the client after successful payment.
+ * Sets expectations: 48-hour timeline, what Ben needs, and next steps.
+ */
+async function sendClientWelcomeEmail(
+  clientEmail: string,
+  businessName: string,
+  prospectId: string
+) {
+  if (!SENDGRID_API_KEY) return;
+
+  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com";
+  const previewUrl = `${BASE_URL}/preview/${prospectId}`;
+
+  try {
+    await fetch("https://api.sendgrid.com/v3/mail/send", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${SENDGRID_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        personalizations: [{ to: [{ email: clientEmail }] }],
+        from: { email: FROM_EMAIL, name: "Ben @ BlueJays" },
+        subject: `Your ${businessName} site is being built — here's what happens next`,
+        content: [
+          {
+            type: "text/plain",
+            value: `Payment confirmed — thank you for trusting BlueJays with ${businessName}!
+
+Here's what happens now:
+
+━━━━━━━━━━━━━━━━━━━━
+TIMELINE
+━━━━━━━━━━━━━━━━━━━━
+• Today: I review your purchase and begin customizing your site
+• Within 24 hours: I'll reach out via email with any questions about your branding, photos, or content preferences
+• Within 48 hours: Your site goes live at your new domain
+
+━━━━━━━━━━━━━━━━━━━━
+TO SPEED THINGS UP
+━━━━━━━━━━━━━━━━━━━━
+If you have any of the following, reply to this email and attach them:
+  • Your logo (PNG or SVG preferred)
+  • Any photos of your business, team, or work
+  • Your preferred brand colors (if you have hex codes)
+  • Any specific copy, taglines, or "about us" text you'd like used
+  • Any pages or sections you want added or changed
+
+If you don't send anything, no problem — I'll use what I already have from your existing web presence.
+
+━━━━━━━━━━━━━━━━━━━━
+YOUR CURRENT PREVIEW
+━━━━━━━━━━━━━━━━━━━━
+${previewUrl}
+
+This is the starting point. The final version will be customized with your real photos, your exact branding, and your specific services.
+
+━━━━━━━━━━━━━━━━━━━━
+WHAT'S INCLUDED
+━━━━━━━━━━━━━━━━━━━━
+✓ Custom website design and build
+✓ Domain registration (your business name .com)
+✓ Hosting setup — no monthly fees, ever
+✓ Mobile-optimized and fast
+✓ One round of revisions included
+
+After the first year, we bill $100/year for domain renewal, hosting, ongoing maintenance, and support. You'll get an email reminder before any charge.
+
+━━━━━━━━━━━━━━━━━━━━
+QUESTIONS?
+━━━━━━━━━━━━━━━━━━━━
+Just reply to this email. I personally handle every site — you're not dealing with a support ticket or a bot.
+
+Talk soon,
+Ben @ BlueJays
+bluejaycontactme@gmail.com
+`,
+          },
+        ],
+      }),
+    });
+    console.log(`[Stripe Webhook] Welcome email sent to ${clientEmail}`);
+
+    await logCost({
+      service: "sendgrid_email",
+      action: "client_welcome_email",
+      costUsd: COST_RATES.sendgrid_email,
+      metadata: { businessName, clientEmail, type: "client_welcome" },
+    });
+  } catch (err) {
+    console.error("[Stripe Webhook] Failed to send client welcome email:", err);
   }
 }

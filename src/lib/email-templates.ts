@@ -1,10 +1,25 @@
 import type { Prospect } from "./types";
 import { CATEGORY_CONFIG } from "./types";
 
+/**
+ * Deterministic A/B variant assignment — same prospect always gets the same variant.
+ * Uses a simple hash of the prospect ID so Ben can compare results per-variant in analytics.
+ * Variant "A" ≈ 50% of prospects, variant "B" ≈ 50%.
+ */
+export function getSubjectVariant(prospectId: string): "A" | "B" {
+  let hash = 0;
+  for (let i = 0; i < prospectId.length; i++) {
+    hash = (hash * 31 + prospectId.charCodeAt(i)) >>> 0;
+  }
+  return hash % 2 === 0 ? "A" : "B";
+}
+
 export interface EmailTemplate {
   subject: string;
   body: string;
   sequence: number;
+  /** A/B subject line variant — undefined for follow-up emails (only set on initial pitch) */
+  subjectVariant?: "A" | "B";
 }
 
 /**
@@ -39,7 +54,12 @@ export function getPitchEmail(
   const hasWebsite = !!prospect.currentWebsite;
   const city = prospect.city || prospect.address?.split(",")[0] || "";
 
-  const subject = `${name}, I made something for ${prospect.businessName}`;
+  // A/B test: variant A is curiosity-driven, variant B is direct/value-driven
+  const variant = getSubjectVariant(prospect.id);
+  const subject =
+    variant === "A"
+      ? `${name}, I made something for ${prospect.businessName}`
+      : `New website ready for ${prospect.businessName} — take a look`;
 
   const discoveryLine = hasWebsite
     ? `I found ${prospect.businessName} while searching for top-rated ${category.toLowerCase()} businesses${city ? ` in ${city}` : ""} — your reviews stood out.`
@@ -63,7 +83,7 @@ Want to see it in action? Book a quick 15-min walkthrough — I'll show you ever
 bluejaycontactme@gmail.com
 ${EMAIL_FOOTER.replace("{{baseUrl}}", process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com").replace("{{prospectId}}", prospect.id)}`;
 
-  return { subject, body, sequence: 1 };
+  return { subject, body, sequence: 1, subjectVariant: variant };
 }
 
 export function getFollowUp1(

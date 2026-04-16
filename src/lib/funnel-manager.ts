@@ -479,7 +479,10 @@ export async function enrollInFunnel(prospectId: string): Promise<{ success: boo
   filtered.push(enrollment);
   await saveEnrollmentsAsync(filtered);
 
-  await updateProspect(prospectId, { status: "contacted" });
+  // Set contactedAt on first outreach only — used for 30-day preview expiry
+  const existingProspect = await getProspect(prospectId);
+  const contactedAtPatch = existingProspect?.contactedAt ? {} : { contactedAt: new Date().toISOString() };
+  await updateProspect(prospectId, { status: "contacted", ...contactedAtPatch });
 
   const outcome = results.success
     ? `${results.emailSent ? "Email" : "SMS"}${results.deliveredChannel && results.voicemailSent ? " + voicemail" : ""} delivered.`

@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { enrollInFunnel } from "@/lib/funnel-manager";
+import { verifyEmail } from "@/lib/email-verifier";
+import { getProspect } from "@/lib/store";
 
 // POST: Enroll one or many prospects into the auto-funnel
 // Body: { prospectIds: string[] }
@@ -14,6 +16,16 @@ export async function POST(request: NextRequest) {
   const results: { id: string; success: boolean; message: string }[] = [];
 
   for (const id of prospectIds) {
+    // Verify email before enrolling — skip invalid addresses to protect sender reputation
+    const prospect = await getProspect(id);
+    if (prospect?.email) {
+      const verification = await verifyEmail(prospect.email);
+      if (!verification.valid) {
+        results.push({ id, success: false, message: `email verification failed: ${verification.reason}` });
+        continue;
+      }
+    }
+
     // Tag as email-only if SMS isn't available yet
     if (emailOnly) {
       const { updateProspect } = await import("@/lib/store");

@@ -119,6 +119,8 @@ export interface Prospect {
   outreachChannel?: "email-only" | "full";
   /** Needs SMS follow-up when phone number is verified */
   needsSmsFollowup?: boolean;
+  /** ISO timestamp of when first outreach was sent — used for 30-day preview expiry */
+  contactedAt?: string;
   createdAt: string;
   updatedAt: string;
 }
