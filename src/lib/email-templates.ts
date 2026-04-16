@@ -55,9 +55,9 @@ See your site: ${previewUrl}
 ${buildVideoBlock(videoUrl)}
 See more ${category.toLowerCase()} sites we've built: https://bluejayportfolio.com/v2/${prospect.category}
 
-If you want it live on your own domain, we can do that within 48 hours — $997 one-time (or 3 payments of $349).
+If you want to see it in action, I'd love to walk you through it on a quick 15-minute call: https://calendly.com/bluejaycontactme/website-walkthrough
 
-Would love to hear what you think.
+No pressure — just a walkthrough of the site and how we'd customize it for you.
 
 Best,
 The BlueJays Team
@@ -109,11 +109,9 @@ export function getFollowUp2(
 
 We designed your new site as a direct upgrade to your current one — same branding, better experience. Compare them side by side: ${previewUrl}
 ${buildVideoBlock(videoUrl)}
-Your preview stays live for 30 days, then we move on to the next business. If you want it, it's $997 one-time (or 3 payments of $349) and we'll have it on your domain within 48 hours.
+Your preview stays live for 30 days. Want to walk through it together? Book a quick 15-min call and I'll show you everything live: https://calendly.com/bluejaycontactme/website-walkthrough
 
 See what we've built for other ${category.toLowerCase()} businesses: https://bluejayportfolio.com/v2/${prospect.category}
-
-Worth a look, or not your thing?
 
 Best,
 The BlueJays Team

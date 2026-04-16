@@ -212,7 +212,7 @@ export const CLOSE_DECISION_FRAMEWORK = {
   ],
 
   /** Calendar/booking link — agent should include this in interested responses */
-  bookingUrl: "https://calendly.com/bluejays", // TODO: update with real Calendly link
+  bookingUrl: "https://calendly.com/bluejaycontactme/website-walkthrough",
 
   /** All categories push for call — no exceptions */
   allCategoriesPushCall: true,

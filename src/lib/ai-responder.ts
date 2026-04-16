@@ -33,7 +33,7 @@ import {
 import { logCost, COST_RATES } from "./cost-logger";
 
 const CLAUDE_API_KEY = process.env.CLAUDE_API_KEY;
-const CALENDAR_LINK = process.env.CALENDAR_LINK || "https://calendly.com/bluejays";
+const CALENDAR_LINK = process.env.CALENDAR_LINK || "https://calendly.com/bluejaycontactme/website-walkthrough";
 const CHECKOUT_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
 export type IntentType =

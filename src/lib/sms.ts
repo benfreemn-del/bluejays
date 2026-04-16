@@ -325,12 +325,12 @@ export function getInitialSms(prospect: Prospect, previewUrl: string, videoUrl?:
 
 export function getFollowUpSms1(prospect: Prospect, previewUrl: string, videoUrl?: string): string {
   const name = prospect.ownerName?.split(" ")[0] || "there";
-  return `${name}, what did you think of your new site? Still live at ${previewUrl}${buildVideoSuffix(videoUrl)} Reply STOP to opt out`;
+  return `${name}, what did you think of your new site? Want to walk through it on a quick call? calendly.com/bluejaycontactme/website-walkthrough Reply STOP to opt out`;
 }
 
 export function getFollowUpSms2(prospect: Prospect, previewUrl: string, videoUrl?: string): string {
   const name = prospect.ownerName?.split(" ")[0] || "there";
-  return `${name} — your ${prospect.businessName} website goes offline in 2 weeks. Claim it: ${previewUrl}${buildVideoSuffix(videoUrl)} Reply STOP to opt out`;
+  return `${name} — your ${prospect.businessName} site goes offline in 2 weeks. Book a quick walkthrough before it's gone: calendly.com/bluejaycontactme/website-walkthrough Reply STOP to opt out`;
 }
 
 export function getPostVoicemailSms(prospect: Prospect, previewUrl: string, videoUrl?: string): string {

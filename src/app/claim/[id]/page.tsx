@@ -322,6 +322,17 @@ export default function ClaimPage() {
                 Preview First
               </a>
             )}
+            <a
+              href="https://calendly.com/bluejaycontactme/website-walkthrough"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-blue-500/30 text-blue-400 hover:bg-blue-500/10 transition-colors text-sm font-medium"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              Book a Free 15-Min Walkthrough
+            </a>
           </div>
           {!isFreeTier && (
             <p className="text-center text-sm text-white/50 mb-6">
