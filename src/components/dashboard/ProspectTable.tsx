@@ -503,6 +503,26 @@ export default function ProspectTable({
                   await fetch(`/api/prospects/${pid}`, { credentials: "include",
                     method: "PATCH",
                     headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ imagesApproved: true }),
+                  });
+                }
+                setBulkResult(`${selectedIds.length} leads marked images approved 📷`);
+                setSelectedIds([]);
+                onRefresh?.();
+                setBulkSending(false);
+              }}
+              disabled={bulkSending}
+              className="h-9 px-4 rounded-lg bg-purple-500/20 text-purple-400 text-sm font-medium hover:bg-purple-500/30 transition-colors disabled:opacity-50 border border-purple-500/30"
+            >
+              📷 Images Done
+            </button>
+            <button
+              onClick={async () => {
+                setBulkSending(true);
+                for (const pid of selectedIds) {
+                  await fetch(`/api/prospects/${pid}`, { credentials: "include",
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ status: "dismissed" }),
                   });
                 }
