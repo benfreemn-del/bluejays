@@ -225,7 +225,15 @@ export default function PreviewContent({
     if (V2Renderer) {
       const isLightV2Theme = selectedTheme === "light";
 
-      const fonts = getFontPairing(proxiedData.category);
+      // Check for font override in site data
+      const fontOverride = (proxiedData as Record<string, unknown>).fontOverride as { heading: string; body: string } | undefined;
+      const fonts = fontOverride
+        ? {
+            heading: fontOverride.heading,
+            body: fontOverride.body,
+            googleUrl: `https://fonts.googleapis.com/css2?family=${fontOverride.heading.replace(/ /g, "+")}:wght@400;600;700;800&family=${fontOverride.body.replace(/ /g, "+")}:wght@300;400;500;600&display=swap`,
+          }
+        : getFontPairing(proxiedData.category);
 
       return (
         <PreviewImageGuard

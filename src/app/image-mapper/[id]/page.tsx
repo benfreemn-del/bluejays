@@ -1336,7 +1336,25 @@ export default function ImageMapDetailPage() {
                         {getFontOptions(category).map((opt, i) => (
                             <button
                               key={i}
-                              onClick={() => setSelectedFont(i)}
+                              onClick={async () => {
+                                setSelectedFont(i);
+                                // Save font override to prospect
+                                try {
+                                  await fetch(`/api/prospects/${id}`, {
+                                    method: "PATCH",
+                                    headers: { "Content-Type": "application/json" },
+                                    credentials: "include",
+                                    body: JSON.stringify({
+                                      scrapedData: {
+                                        ...(prospect?.scrapedData || {}),
+                                        fontOverride: { heading: opt.heading, body: opt.body },
+                                      },
+                                    }),
+                                  });
+                                  // Refresh preview
+                                  setIframeKey(k => k + 1);
+                                } catch { /* silent */ }
+                              }}
                               className={`p-4 rounded-xl border text-center transition-all cursor-pointer ${
                                 selectedFont === i
                                   ? "border-blue-500 bg-blue-500/10 ring-1 ring-blue-500/30"
