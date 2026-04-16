@@ -406,6 +406,22 @@ export default function ProspectTable({
             <span className="text-blue-electric ml-2">({selectedIds.length} selected)</span>
           )}
         </span>
+        <button
+          onClick={() => {
+            const imagesDoneIds = filtered
+              .filter(p => {
+                const sd = p.scrapedData as Record<string, unknown> | undefined;
+                const mapping = sd?.imageMapping as { selectionStatus?: string } | undefined;
+                return mapping?.selectionStatus === "completed";
+              })
+              .map(p => p.id);
+            setSelectedIds(imagesDoneIds);
+          }}
+          className="h-10 px-3 rounded-lg bg-white/5 border border-white/10 text-sm text-muted hover:text-foreground hover:border-white/20 transition-colors flex items-center gap-1.5 cursor-pointer"
+          title="Select all leads with completed images"
+        >
+          📷 Select Images Done
+        </button>
       </div>
 
       {selectedIds.length > 0 && (
@@ -587,34 +603,12 @@ export default function ProspectTable({
                   }`}
                 >
                   <td className="p-3" onClick={(e) => e.stopPropagation()}>
-                    <div className="flex items-center gap-1.5">
-                      <input
-                        type="checkbox"
-                        checked={isSelected(prospect.id)}
-                        onChange={() => toggleSelect(prospect.id)}
-                        className="rounded"
-                      />
-                      <button
-                        onClick={async () => {
-                          const current = !!(prospect as Record<string, unknown>).imagesApproved;
-                          await fetch(`/api/prospects/${prospect.id}`, {
-                            method: "PATCH",
-                            headers: { "Content-Type": "application/json" },
-                            credentials: "include",
-                            body: JSON.stringify({ imagesApproved: !current }),
-                          });
-                          onRefresh?.();
-                        }}
-                        className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] transition-all cursor-pointer ${
-                          (prospect as Record<string, unknown>).imagesApproved
-                            ? "bg-green-500/30 text-green-400 border border-green-500/50"
-                            : "bg-white/5 text-white/30 border border-white/10 hover:border-white/30"
-                        }`}
-                        title={(prospect as Record<string, unknown>).imagesApproved ? "Images approved ✓" : "Mark images approved"}
-                      >
-                        📷
-                      </button>
-                    </div>
+                    <input
+                      type="checkbox"
+                      checked={isSelected(prospect.id)}
+                      onChange={() => toggleSelect(prospect.id)}
+                      className="rounded"
+                    />
                   </td>
                   <td className="p-3 cursor-pointer" onClick={() => router.push(`/lead/${prospect.id}`)}>
                     <div className="flex items-center gap-2">
