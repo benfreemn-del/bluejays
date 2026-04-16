@@ -332,6 +332,7 @@ async function sendClientWelcomeEmail(
 
   const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com";
   const previewUrl = `${BASE_URL}/preview/${prospectId}`;
+  const onboardingUrl = `${BASE_URL}/onboarding/${prospectId}`;
 
   try {
     await fetch("https://api.sendgrid.com/v3/mail/send", {
@@ -359,16 +360,14 @@ TIMELINE
 • Within 48 hours: Your site goes live at your new domain
 
 ━━━━━━━━━━━━━━━━━━━━
-TO SPEED THINGS UP
+FILL OUT YOUR ONBOARDING FORM
 ━━━━━━━━━━━━━━━━━━━━
-If you have any of the following, reply to this email and attach them:
-  • Your logo (PNG or SVG preferred)
-  • Any photos of your business, team, or work
-  • Your preferred brand colors (if you have hex codes)
-  • Any specific copy, taglines, or "about us" text you'd like used
-  • Any pages or sections you want added or changed
+Takes 3 minutes. Tells me everything I need to make your site perfect:
 
-If you don't send anything, no problem — I'll use what I already have from your existing web presence.
+${onboardingUrl}
+
+You can share your logo, brand colors, photos, taglines, and any specific requests.
+If you skip it, no worries — I'll use what I already have from your existing web presence.
 
 ━━━━━━━━━━━━━━━━━━━━
 YOUR CURRENT PREVIEW

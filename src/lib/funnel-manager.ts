@@ -49,10 +49,10 @@ export interface FunnelStep {
 export const FUNNEL_STEPS: FunnelStep[] = [
   { day: 0, channels: ["email", "sms"], label: "Initial Pitch" },
   { day: 2, channels: ["voicemail"], label: "Voicemail Drop" },
-  { day: 5, channels: ["email"], label: "Gentle Follow-Up" },
+  { day: 5, channels: ["email", "sms"], label: "Gentle Follow-Up" },
   { day: 12, channels: ["email", "sms"], label: "Value Reframe" },
   { day: 18, channels: ["voicemail"], label: "Follow-Up VM" },
-  { day: 21, channels: ["email"], label: "Social Proof" },
+  { day: 21, channels: ["email", "sms"], label: "Social Proof" },
   { day: 30, channels: ["email"], label: "Final Check-In" },
 ];
 
