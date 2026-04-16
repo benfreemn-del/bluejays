@@ -109,17 +109,26 @@ async function getAiResponse(prompt: string, prospectId?: string): Promise<strin
 
   // Try Claude first, then fall back to OpenAI-compatible
   if (CLAUDE_API_KEY) {
+    // Split prompt into system (cacheable) and user (dynamic) parts
+    // The system prompt (agent personality, objection scripts, rules) is identical
+    // across all prospects — caching saves ~90% on input tokens
+    const systemPromptEnd = prompt.indexOf("PROSPECT CONTEXT:");
+    const systemPart = systemPromptEnd > 0 ? prompt.substring(0, systemPromptEnd).trim() : "";
+    const userPart = systemPromptEnd > 0 ? prompt.substring(systemPromptEnd).trim() : prompt;
+
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
         "x-api-key": CLAUDE_API_KEY,
         "anthropic-version": "2023-06-01",
+        "anthropic-beta": "prompt-caching-2024-07-31",
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
         model: "claude-sonnet-4-20250514",
-        max_tokens: 1024,
-        messages: [{ role: "user", content: prompt }],
+        max_tokens: 512, // Sales responses should be short — 2-3 sentences
+        system: systemPart ? [{ type: "text", text: systemPart, cache_control: { type: "ephemeral" } }] : undefined,
+        messages: [{ role: "user", content: userPart }],
       }),
     });
 
@@ -146,7 +155,7 @@ async function getAiResponse(prompt: string, prospectId?: string): Promise<strin
   const completion = await client.chat.completions.create({
     model: "gpt-4.1-mini",
     messages: [{ role: "user", content: prompt }],
-    max_tokens: 1024,
+    max_tokens: 512,
   });
 
   // Log AI cost — GPT-4.1-mini: ~$0.40/1M input + $1.60/1M output, ~$0.003 per short response

@@ -5,6 +5,40 @@
 ## Core Philosophy
 This system is designed to function like a money printer. Every feature should drive toward one goal: scout businesses, build them premium websites, sell those websites at $997, and automate as much of the pipeline as possible. Efficiency = profit.
 
+## AI Cost Optimization Rules (MANDATORY)
+Every AI API call must follow these rules to minimize cost:
+
+**Prompt Caching (90% savings on repeated context):**
+- The sales agent system prompt, objection scripts, and personality framework are IDENTICAL across all prospects. These MUST be sent as cached system prompts using `anthropic-beta: prompt-caching-2024-07-31` header and `cache_control: { type: "ephemeral" }` on the system message.
+- The QC scoring rubric, supercharge instructions, and template rules are static context — cache them.
+- Any prompt section that's the same across 5+ calls should be cached.
+- Cache read cost: $0.30/MTok vs $3/MTok uncached = **90% savings**.
+
+**Model Selection (use the cheapest model that works):**
+- **Sales agent responses** (inbound replies): Claude Sonnet 4 ($3/$15 per MTok) — needs quality for customer-facing
+- **QC scoring**: GPT-4.1-mini ($0.40/$1.60 per MTok) — structured output, cheaper is fine
+- **Site supercharge**: GPT-4.1-mini — bulk data enrichment, doesn't need premium
+- **Intent classification**: GPT-4.1-mini — simple classification task
+- **NEVER use Claude Opus for automated pipeline tasks** — reserve for manual/complex work only
+
+**Token Limits (don't waste tokens):**
+- Sales agent responses: max_tokens=512 (responses should be SHORT — 2-3 sentences)
+- QC scoring: max_tokens=1024
+- Supercharge: max_tokens=2048
+- Intent classification: max_tokens=256
+- NEVER set max_tokens higher than needed — you pay for output tokens
+
+**Batch API (50% discount for non-urgent):**
+- Auto-scout site generation can use batch API — these aren't time-sensitive
+- QC scoring for bulk runs can be batched
+- Retargeting email personalization can be batched overnight
+- Real-time responses (sales agent) must stay synchronous
+
+**Cost Tracking:**
+- Every AI call MUST log cost via `logCost()` with service, model, and token count
+- Review `/spending` dashboard weekly for cost trends
+- If AI costs exceed $5/day, audit which calls are most expensive and optimize
+
 ## Quality Rules (NON-NEGOTIABLE)
 - **Every website must match OPS quality level** — the Olympic Protective Services site is the minimum quality bar. Numbered service cards, SVG icons (never emojis), section headers with accent words, decorative underlines, grid patterns, glow effects, rich hover states, industry-specific SVG patterns, and unique personality per category.
 - **Every section must have a background** — no plain dark/flat sections. Use glows, patterns, gradients, or industry-specific SVG silhouettes. Every. Single. Section.
