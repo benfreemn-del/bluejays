@@ -680,11 +680,21 @@ export default function RoofingShowcase() {
       </nav>
 
       {/* ═══════════════════ SECTION 1 — SPLIT-SCREEN HERO ═══════════════════ */}
-      <section className="relative pt-16 min-h-screen flex">
+      <section className="relative pt-16 min-h-screen flex overflow-hidden">
         <RooflinePattern />
 
+        {/* Hero image — background on mobile, right half on desktop */}
+        <div className="absolute inset-0 lg:relative lg:w-1/2 lg:order-2">
+          <img
+            src="/images/roofing-hero.png"
+            alt="Summit Roofing NW — professional roofer at work"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-black/70 lg:bg-gradient-to-r lg:from-gray-900/50 lg:to-transparent" />
+        </div>
+
         {/* Left Half — Content */}
-        <div className="relative z-10 w-full lg:w-1/2 flex flex-col justify-center px-6 sm:px-10 lg:px-16 py-24 lg:py-0">
+        <div className="relative z-10 w-full lg:w-1/2 lg:order-1 flex flex-col justify-center px-6 sm:px-10 lg:px-16 py-24 lg:py-0">
           <motion.div
             initial={{ opacity: 0, x: -40 }}
             animate={{ opacity: 1, x: 0 }}
@@ -775,34 +785,6 @@ export default function RoofingShowcase() {
 
         {/* Vertical Divider */}
         <div className="hidden lg:block absolute left-1/2 top-16 bottom-0 w-px bg-gradient-to-b from-transparent via-white/10 to-transparent z-20" />
-
-        {/* Right Half — Before/After Image */}
-        <div className="hidden lg:block w-1/2 relative">
-          <motion.div
-            initial={{ opacity: 0, x: 40 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ ...spring, delay: 0.4 }}
-            className="absolute inset-0"
-          >
-            <img
-              src="/images/roofing-hero.png"
-              alt="Summit Roofing NW — professional roofer at work"
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-gray-900/50 to-transparent" />
-            <div className="absolute bottom-8 right-8 flex gap-3">
-              <span className="px-4 py-2 rounded-full bg-slate-800/80 backdrop-blur-sm text-white text-sm font-bold">
-                Before
-              </span>
-              <span
-                className="px-4 py-2 rounded-full backdrop-blur-sm text-white text-sm font-bold"
-                style={{ background: `${BRICK}cc` }}
-              >
-                After
-              </span>
-            </div>
-          </motion.div>
-        </div>
       </section>
 
       {/* ═══════════════════ SECTION 2 — EMERGENCY STRIP ═══════════════════ */}
@@ -1084,6 +1066,57 @@ export default function RoofingShowcase() {
         </div>
       </SectionReveal>
 
+      {/* ═══════════════════ SECTION 7.5 — PROJECT GALLERY ═══════════════════ */}
+      <SectionReveal className="relative z-10 py-20 md:py-28">
+        <RooflinePattern />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <SectionHeader
+            label="Our Work"
+            title="Recent Projects"
+            subtitle="From shingle replacements to full commercial installations across the greater Seattle area."
+          />
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              {
+                src: "https://images.unsplash.com/photo-1632759145351-1d592919f522?w=600&h=500&fit=crop&q=80",
+                label: "Roof Inspection",
+              },
+              {
+                src: "https://images.unsplash.com/photo-1643509867448-57001e0c333d?w=600&h=500&fit=crop&q=80",
+                label: "Shingle Installation",
+              },
+              {
+                src: "https://images.unsplash.com/photo-1631639324100-2ed305cb32a4?w=600&h=500&fit=crop&q=80",
+                label: "New Construction",
+              },
+              {
+                src: "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=600&h=500&fit=crop&q=80",
+                label: "Completed Project",
+              },
+            ].map((project) => (
+              <GlassCard
+                key={project.label}
+                className="overflow-hidden group"
+              >
+                <div className="relative aspect-[4/3]">
+                  <img
+                    src={project.src}
+                    alt={`${project.label} — Summit Roofing NW`}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+                  <div className="absolute bottom-3 left-3 right-3">
+                    <span className="text-sm font-bold text-white">
+                      {project.label}
+                    </span>
+                  </div>
+                </div>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </SectionReveal>
+
       {/* ═══════════════════ SECTION 8 — MEET JAKE MORRISON ═══════════════════ */}
       <SectionReveal className="relative z-10 py-20 md:py-28">
         <RooflinePattern />
@@ -1148,14 +1181,11 @@ export default function RoofingShowcase() {
             {/* Card side */}
             <div className="flex justify-center">
               <GlassCard className="p-8 text-center max-w-sm w-full">
-                <div
-                  className="w-24 h-24 rounded-full mx-auto mb-4 flex items-center justify-center text-3xl font-black text-white"
-                  style={{
-                    background: `linear-gradient(135deg, ${BRICK}, ${BRICK_LIGHT})`,
-                  }}
-                >
-                  JM
-                </div>
+                <img
+                  src="https://images.unsplash.com/photo-1627591637320-fcfe8c34b62d?w=400&h=400&fit=crop&crop=faces&q=80"
+                  alt="Jake Morrison — roofing team leader"
+                  className="w-24 h-24 rounded-full mx-auto mb-4 object-cover object-top"
+                />
                 <h3 className="text-xl font-bold text-white mb-1">
                   Jake Morrison
                 </h3>
@@ -1573,7 +1603,7 @@ export default function RoofingShowcase() {
           />
           <GlassCard className="aspect-video relative overflow-hidden group cursor-pointer">
             <div className="absolute inset-0 flex items-center justify-center">
-              <img src="https://images.unsplash.com/photo-1632759145351-1d592919f522?w=1200&q=80" alt="Roofing project" className="absolute inset-0 w-full h-full object-cover" />
+              <img src="https://images.unsplash.com/photo-1643509867448-57001e0c333d?w=1200&q=80" alt="Summit Roofing NW shingle installation in progress" className="absolute inset-0 w-full h-full object-cover" />
               <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors" />
               <motion.div
                 className="w-20 h-20 rounded-full flex items-center justify-center relative z-10"
