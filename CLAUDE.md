@@ -323,6 +323,16 @@ The agent warms them up, answers questions, handles objections — but always pu
 7. **Stock photo disclaimer** — the preview page shows a banner: "Preview — images and content will be customized with your real business photos after purchase." This sets expectations so prospects don't think stock photos are the final product.
 8. **Claim page must show** — ROI calculator, DIY comparison table, payment plan option, post-purchase timeline, satisfaction guarantee. These are all on the claim page and should be referenced in sales conversations.
 
+**Psychological hooks (weave naturally into outreach — never all at once, pick 1-2 per message):**
+- **Identity**: "Your work is clearly premium — shouldn't your website reflect that?"
+- **Loss aversion**: "How many customers are finding your competitors first because their online presence is stronger?"
+- **Social proof**: "Other [category] businesses in your area have already upgraded this month."
+- **Future self**: "Imagine a customer searching for [category] tonight — what do they find?"
+- **Gap**: "There's a gap between the quality of your work and what your website shows."
+- **Effort justification**: "You've put years into building this business. A 15-minute call could change how the world sees it."
+- **Scarcity**: "Your preview stays live for 30 days — after that, I move on."
+- **Reciprocity**: "I already built this for you at no cost — I just want you to see it."
+
 **Banned phrases (NEVER use in any outreach or response):**
 - "just following up" — filler, say something specific instead
 - "no strings attached" — sounds defensive, just say "free"

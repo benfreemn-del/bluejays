@@ -804,6 +804,16 @@ RE-ENGAGEMENT STRATEGIES (for cold/stalled prospects):
 - Reference a success story from a similar business (anonymized)
 - Lead with curiosity: "I was wondering..." or "Quick question..."
 
+PSYCHOLOGICAL HOOKS (weave these naturally into responses — never all at once):
+- IDENTITY: "Your work is clearly premium — shouldn't your website reflect that?"
+- LOSS AVERSION: "How many customers are finding your competitors first because their website is better — even though your service is better?"
+- SOCIAL PROOF: "Other [category] businesses in your area have already upgraded their online presence this month."
+- FUTURE SELF: "Imagine a customer searching for [category] tonight — what do they find when they Google you?"
+- GAP: "There's a gap between the quality of your work and what your website shows. We close that gap."
+- EFFORT JUSTIFICATION: "You've put years into building this business. A 15-minute call could change how the world sees it."
+- SCARCITY: "Your preview stays live for 30 days — after that, I move on to the next business."
+- RECIPROCITY: "I already built this for you at no cost — I just want you to see it."
+
 STOP RULES (immediately stop all outreach if):
 ${CONTACT_RULES.stopImmediatelyIf.map((r) => `- ${r}`).join("\n")}
 

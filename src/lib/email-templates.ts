@@ -49,18 +49,17 @@ export function getPitchEmail(
 
 ${discoveryLine}
 
-I went ahead and built you a custom website — completely free, no strings attached. We've done this for 200+ local businesses across 30+ industries, and I wanted to do the same for ${prospect.businessName}.
+I thought to myself — this business clearly does great work. But does their website reflect that? So I built one that does.
 
 See your site: ${previewUrl}
 ${buildVideoBlock(videoUrl)}
+Your customers are searching for ${category.toLowerCase()} services online right now. When they find you, what do they see? A site like this makes sure their first impression matches the quality of your work.
+
 See more ${category.toLowerCase()} sites we've built: https://bluejayportfolio.com/v2/${prospect.category}
 
-If you want to see it in action, I'd love to walk you through it on a quick 15-minute call: https://calendly.com/bluejaycontactme/website-walkthrough
+Want to see it in action? Book a quick 15-min walkthrough — I'll show you everything live: https://calendly.com/bluejaycontactme/website-walkthrough
 
-No pressure — just a walkthrough of the site and how we'd customize it for you.
-
-Best,
-The BlueJays Team
+— Ben @ BlueJays
 bluejaycontactme@gmail.com
 ${EMAIL_FOOTER.replace("{{baseUrl}}", process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com").replace("{{prospectId}}", prospect.id)}`;
 
@@ -79,16 +78,17 @@ export function getFollowUp1(
     subject: `${name} — quick question about your new site`,
     body: `Hi ${name},
 
-What did you think of the website I built for ${prospect.businessName}?
+Quick thought — every day without a strong website, ${prospect.businessName} is invisible to customers who are actively searching for what you do.
 
-${previewUrl}
+I built this for you: ${previewUrl}
 ${buildVideoBlock(videoUrl)}
-Over 80% of people who search for a local business online visit within 24 hours. A site like this pays for itself fast.
+Think about it: when someone Googles "${prospect.category.replace("-", " ")}" in your area, they find your competitors first. A site like this changes that — it puts you front and center.
 
-A quick "love it" or "not for me" works — either way, I appreciate your time.
+How many customers are you losing to businesses with better websites but worse service? Probably more than you think.
 
-Best,
-The BlueJays Team
+15 minutes and I'll show you exactly how this works: https://calendly.com/bluejaycontactme/website-walkthrough
+
+— Ben
 ${EMAIL_FOOTER.replace("{{baseUrl}}", process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com").replace("{{prospectId}}", prospect.id)}`,
     sequence: 2,
   };
@@ -107,14 +107,19 @@ export function getFollowUp2(
     subject: `I looked at your current site, ${name} — here's the side-by-side`,
     body: `Hi ${name},
 
-We designed your new site as a direct upgrade to your current one — same branding, better experience. Compare them side by side: ${previewUrl}
+I'll be honest — I built this site for ${prospect.businessName} because I genuinely believe your work deserves to be seen. And right now, it's not getting the attention it should online.
+
+Compare for yourself: ${previewUrl}
 ${buildVideoBlock(videoUrl)}
-Your preview stays live for 30 days. Want to walk through it together? Book a quick 15-min call and I'll show you everything live: https://calendly.com/bluejaycontactme/website-walkthrough
+Your competitors in the ${category.toLowerCase()} space are investing in their online presence. The businesses that win aren't always the best at what they do — they're the best at being found.
+
+You're clearly great at what you do. Let's make sure your website tells that story.
+
+This preview stays live for 30 days, then I move on. If you want to chat about it, pick a time: https://calendly.com/bluejaycontactme/website-walkthrough
 
 See what we've built for other ${category.toLowerCase()} businesses: https://bluejayportfolio.com/v2/${prospect.category}
 
-Best,
-The BlueJays Team
+— Ben
 ${EMAIL_FOOTER.replace("{{baseUrl}}", process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com").replace("{{prospectId}}", prospect.id)}`,
     sequence: 3,
   };
