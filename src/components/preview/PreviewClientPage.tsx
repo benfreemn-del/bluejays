@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import type { GeneratedSiteData } from "@/lib/generator";
 import type { Prospect } from "@/lib/types";
 import PreviewContent from "@/components/preview/PreviewContent";
+import PreviewVideoButton from "@/components/preview/PreviewVideoButton";
 
 /* ── Device Toggle Bar (visible to prospects) ── */
 function DeviceToggleBar({ id, device, onToggle }: { id: string; device: "desktop" | "mobile"; onToggle: (d: "desktop" | "mobile") => void }) {
@@ -214,6 +215,7 @@ export default function PreviewClientPage({
         </div>
       )}
       <DeviceToggleBar id={id} device={device} onToggle={setDevice} />
+      <PreviewVideoButton prospectId={id} />
     </>
   );
 }

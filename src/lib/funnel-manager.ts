@@ -155,15 +155,25 @@ function isStopStatus(status: string): boolean {
   return FUNNEL_STOP_STATUSES.includes(status);
 }
 
-function getEmailTemplate(prospect: Prospect, stepIndex: number, previewUrl: string) {
+async function getEmailTemplate(prospect: Prospect, stepIndex: number, previewUrl: string) {
+  // Fetch the AI-generated TTS walkthrough video URL (if ready) so every
+  // email in the funnel can embed it. Failures here should never block outreach.
+  let videoUrl: string | undefined;
+  try {
+    const { getProspectVideoUrl } = await import("./video-generator");
+    videoUrl = await getProspectVideoUrl(prospect.id);
+  } catch {
+    videoUrl = undefined;
+  }
+
   if (stepIndex === 0) {
-    return getPitchEmail(prospect, previewUrl);
+    return getPitchEmail(prospect, previewUrl, videoUrl);
   }
   if (stepIndex === 2) {
-    return getFollowUp1(prospect, previewUrl);
+    return getFollowUp1(prospect, previewUrl, videoUrl);
   }
   if (stepIndex === 3) {
-    return getFollowUp2(prospect, previewUrl);
+    return getFollowUp2(prospect, previewUrl, videoUrl);
   }
 
   const smart = generateSmartFollowUp(prospect);
@@ -216,7 +226,7 @@ async function getNextSmsSequence(prospectId: string): Promise<number> {
 
 async function buildStepPayload(prospect: Prospect, stepIndex: number, previewUrl: string): Promise<FunnelDeliveryPayload | undefined> {
   const step = FUNNEL_STEPS[stepIndex];
-  const emailTemplate = step.channels.includes("email") ? getEmailTemplate(prospect, stepIndex, previewUrl) : undefined;
+  const emailTemplate = step.channels.includes("email") ? await getEmailTemplate(prospect, stepIndex, previewUrl) : undefined;
   const smsBody = step.channels.includes("sms") ? getFallbackSmsBody(prospect, stepIndex, previewUrl) : undefined;
 
   const email: EmailDeliveryPayload | undefined = emailTemplate && prospect.email
@@ -457,6 +467,22 @@ export async function enrollInFunnel(prospectId: string): Promise<{ success: boo
   }
 
   await generatePersonalizedProposal(prospectId);
+
+  // Fire off TTS video generation in the background (non-blocking) so the
+  // walkthrough video is ready for later follow-up emails. We don't await —
+  // if it's not ready by the time step 0 sends, later steps will pick it up
+  // via getProspectVideoUrl() in getEmailTemplate().
+  try {
+    const { getProspectVideoUrl, generateProspectVideo } = await import("./video-generator");
+    const existing = await getProspectVideoUrl(prospectId);
+    if (!existing) {
+      void generateProspectVideo(prospectId).catch((err) => {
+        console.error(`[funnel] auto video generation failed for ${prospectId}:`, err);
+      });
+    }
+  } catch (err) {
+    console.error(`[funnel] could not queue video generation for ${prospectId}:`, err);
+  }
 
   const results = await sendFunnelStep(prospect, 0);
   if (!results.success && !results.queuedForRetry) {
