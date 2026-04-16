@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import type { ImageSlot, ImageMapping } from "@/lib/image-mapper-store";
+import { getFontOptions } from "@/lib/typography";
 
 /* ─── Theme Library: 9 unique high-quality fallback images per category ─── */
 const THEME_LIBRARY: Record<string, { url: string; name: string }[]> = {
@@ -1332,10 +1333,7 @@ export default function ImageMapDetailPage() {
                         Choose a typography style for this site. Click to apply.
                       </p>
                       <div className="grid grid-cols-3 gap-3">
-                        {(() => {
-                          const { getFontOptions } = require("@/lib/typography");
-                          const options = getFontOptions(category);
-                          return options.map((opt: { heading: string; body: string; label: string }, i: number) => (
+                        {getFontOptions(category).map((opt, i) => (
                             <button
                               key={i}
                               onClick={() => setSelectedFont(i)}
@@ -1352,8 +1350,7 @@ export default function ImageMapDetailPage() {
                               <p className="text-[9px] text-white/30">{opt.heading}</p>
                               <p className="text-[9px] text-white/20">+ {opt.body}</p>
                             </button>
-                          ));
-                        })()}
+                        ))}
                       </div>
                       <p className="text-[10px] text-white/20 mt-4 text-center">
                         Typography is applied automatically based on category. Override here if needed.
