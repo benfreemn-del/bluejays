@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { runDailyFunnel } from "@/lib/funnel-manager";
 import { runAutoResumeCheck } from "@/lib/followup-scheduler";
+import { sendDailyDigest } from "@/lib/alerts";
+import { getWarmingStatus } from "@/lib/domain-warming";
+import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 
 // POST: Run the funnel processor — handles due retries first, then next due steps
 // Also runs the follow-up scheduler auto-resume check
@@ -34,6 +37,50 @@ export async function POST() {
   console.log(
     `\n[Funnel] Complete: ${result.sent.length} delivered, ${result.queued.length} queued, ${result.paused.length} paused\n`
   );
+
+  // Step 3: Send Ben the daily digest SMS with plan status
+  try {
+    const warming = await getWarmingStatus();
+
+    let activeEnrollments: number | undefined;
+    let approvedNotEnrolled: number | undefined;
+    let pipelineProcessing: number | undefined;
+    let prospectsPaid: number | undefined;
+
+    if (isSupabaseConfigured()) {
+      const [{ data: enrollRows }, { data: statusRows }] = await Promise.all([
+        supabase.from("funnel_enrollments").select("prospect_id,paused,completed_at").limit(10000),
+        supabase.from("prospects").select("id,status").limit(10000),
+      ]);
+
+      const enrolledIds = new Set((enrollRows || []).map((r) => r.prospect_id));
+      activeEnrollments = (enrollRows || []).filter((r) => !r.paused && !r.completed_at).length;
+      approvedNotEnrolled = (statusRows || []).filter(
+        (r) => r.status === "approved" && !enrolledIds.has(r.id)
+      ).length;
+      pipelineProcessing = (statusRows || []).filter((r) => r.status === "generated").length;
+
+      const today = new Date().toISOString().slice(0, 10);
+      prospectsPaid = (statusRows || []).filter((r) => r.status === "paid").length;
+      void today;
+    }
+
+    await sendDailyDigest({
+      sentToday: result.sent.length,
+      queuedToday: result.queued.length,
+      pausedToday: result.paused.length,
+      repliesToday: autoResumeResult.resumed.length,
+      warmingEnabled: warming.enabled,
+      warmingDay: warming.warmingDay,
+      warmingLimit: warming.limitToday,
+      activeEnrollments,
+      approvedNotEnrolled,
+      pipelineProcessing,
+      prospectsPaid,
+    });
+  } catch (digestErr) {
+    console.error("[Funnel] Daily digest failed:", digestErr);
+  }
 
   return NextResponse.json({
     message: `Funnel run: ${result.sent.length} delivered, ${result.queued.length} queued, ${result.paused.length} paused. Auto-resumed: ${autoResumeResult.resumed.length}.`,

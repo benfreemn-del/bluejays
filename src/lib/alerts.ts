@@ -153,3 +153,72 @@ export async function alertEscalation(prospect: Prospect, reason: string, urgenc
     timestamp: new Date().toISOString(),
   });
 }
+
+/**
+ * Daily digest — fires after the daily funnel cron completes.
+ * Gives Ben a quick plan-status SMS: warmup day, sends today, funnel state,
+ * pipeline counts, and countdown to the May 1, 2026 full launch.
+ */
+export interface DigestStats {
+  sentToday: number;
+  queuedToday: number;
+  pausedToday: number;
+  repliesToday: number;
+  warmingDay?: number;
+  warmingLimit?: number;
+  warmingEnabled?: boolean;
+  activeEnrollments?: number;
+  approvedNotEnrolled?: number;
+  pipelineProcessing?: number;
+  prospectsPaid?: number;
+  errorSummary?: string;
+}
+
+const LAUNCH_DATE_ISO = "2026-05-01T00:00:00Z";
+
+function daysUntilLaunch(): number {
+  const launch = new Date(LAUNCH_DATE_ISO).getTime();
+  const diffMs = launch - Date.now();
+  return Math.max(0, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
+}
+
+export async function sendDailyDigest(stats: DigestStats): Promise<void> {
+  const days = daysUntilLaunch();
+  const launchLine =
+    days === 0
+      ? "🚀 LAUNCH DAY — full send (email + SMS + voicemail) is live."
+      : `📅 ${days} day${days === 1 ? "" : "s"} until May 1 full launch (email + SMS + voicemail).`;
+
+  const warmupLine =
+    stats.warmingEnabled && stats.warmingDay && stats.warmingLimit
+      ? `🌡️ Warmup: Day ${stats.warmingDay}/14 — cap ${stats.warmingLimit}/day`
+      : "🌡️ Warmup: not active";
+
+  const funnelLine = `📬 Today: ${stats.sentToday} sent · ${stats.queuedToday} queued · ${stats.pausedToday} paused${
+    stats.repliesToday ? ` · ${stats.repliesToday} replies 💬` : ""
+  }`;
+
+  const pipelineParts: string[] = [];
+  if (stats.activeEnrollments !== undefined) pipelineParts.push(`${stats.activeEnrollments} active`);
+  if (stats.approvedNotEnrolled !== undefined) pipelineParts.push(`${stats.approvedNotEnrolled} ready to enroll`);
+  if (stats.pipelineProcessing !== undefined) pipelineParts.push(`${stats.pipelineProcessing} generating`);
+  const pipelineLine = pipelineParts.length ? `🏗️ Pipeline: ${pipelineParts.join(" · ")}` : "";
+
+  const paidLine = stats.prospectsPaid ? `💰 ${stats.prospectsPaid} paid today!` : "";
+  const errorLine = stats.errorSummary ? `⚠️ ${stats.errorSummary}` : "";
+
+  const body = [
+    `🌅 BlueJays Daily — ${new Date().toISOString().slice(0, 10)}`,
+    warmupLine,
+    funnelLine,
+    pipelineLine,
+    paidLine,
+    launchLine,
+    errorLine,
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  console.log(`\n${"=".repeat(50)}\n${body}\n${"=".repeat(50)}\n`);
+  await sendOwnerSms(body);
+}
