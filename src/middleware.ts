@@ -27,7 +27,6 @@ const PROTECTED_PATHS = [
   "/spending",
   "/analytics",
   "/videos",
-  "/v2",
   "/api/scout",
   "/api/prospects",
   "/api/email",
