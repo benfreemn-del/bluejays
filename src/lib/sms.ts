@@ -320,7 +320,7 @@ function buildVideoSuffix(videoUrl?: string): string {
 export function getInitialSms(prospect: Prospect, previewUrl: string, videoUrl?: string): string {
   const name = prospect.ownerName?.split(" ")[0] || "there";
   const categoryLabel = CATEGORY_CONFIG[prospect.category]?.label || prospect.category;
-  return `Hey ${name}! Built a free website for ${prospect.businessName} — check it out: ${previewUrl}${buildVideoSuffix(videoUrl)} More ${categoryLabel.toLowerCase()} examples: bluejayportfolio.com/v2/${prospect.category} Reply STOP to opt out`;
+  return `Hey ${name}! Built a free website for ${prospect.businessName} — check it out: ${previewUrl}${buildVideoSuffix(videoUrl)} Want a quick 15-min walkthrough? Book here: calendly.com/bluejaycontactme/website-walkthrough More ${categoryLabel.toLowerCase()} examples: bluejayportfolio.com/v2/${prospect.category} Reply STOP to opt out`;
 }
 
 export function getFollowUpSms1(prospect: Prospect, previewUrl: string, videoUrl?: string): string {
