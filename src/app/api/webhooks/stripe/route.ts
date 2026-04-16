@@ -96,6 +96,31 @@ export async function POST(request: NextRequest) {
             await sendClientWelcomeEmail(clientEmail, prospect.businessName, prospect.id);
           }
 
+          // ─── Referral credit ───
+          // If this prospect was referred by an existing client, increment that
+          // client's referralCount. Each successful referral earns them $50 off
+          // their next $100/yr renewal.
+          if (prospect.referredBy) {
+            try {
+              const { getAllProspects: _getAllProspects } = await import("@/lib/store");
+              const allProspects = await _getAllProspects();
+              const referrer = allProspects.find(
+                (p) => p.referralCode === prospect.referredBy
+              );
+              if (referrer) {
+                await updateProspect(referrer.id, {
+                  referralCount: (referrer.referralCount || 0) + 1,
+                });
+                await sendOwnerAlert(
+                  `🎉 Referral credit! ${referrer.businessName} referred ${businessName} — they now have ${(referrer.referralCount || 0) + 1} referral(s). Credit $50 off their next renewal.`
+                ).catch(() => {});
+                console.log(`[Stripe Webhook] Referral credited to ${referrer.businessName} (${referrer.id})`);
+              }
+            } catch (refErr) {
+              console.error("[Stripe Webhook] Referral credit failed:", refErr);
+            }
+          }
+
           // ─── Create deferred $100/year maintenance subscription ───
           // For both standard ($997) and free ($30) one-time setup payments.
           // We create a subscription with a 1-year trial so the first

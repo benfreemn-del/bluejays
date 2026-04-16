@@ -1,10 +1,23 @@
-export const metadata = {
-  title: "[V2] Petals & Bloom | Premium Florist Template",
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Florist Website Design | Live Example — BlueJays",
   description:
-    "V2 premium animated florist template with floating petal particles, gallery showcase, and romantic micro-interactions.",
+    "See a premium floral design and flower shop website in action. BlueJays builds custom florist websites starting at $997 — custom design, domain, and hosting included. 48-hour launch.",
+  keywords: "florist website design, flower shop website, floral design website, flower delivery website",
+  openGraph: {
+    title: "Florist Website Design | Live Example — BlueJays",
+    description: "See a premium floral design and flower shop website in action. BlueJays builds custom florist websites starting at $997 — custom design, domain, and hosting included. 48-hour launch.",
+    url: "https://bluejayportfolio.com/v2/florist",
+    siteName: "BlueJays Web Design Portfolio",
+    type: "website",
+  },
+  alternates: {
+    canonical: "https://bluejayportfolio.com/v2/florist",
+  },
 };
 
-export default function V2FloristLayout({
+export default function FloristV2Layout({
   children,
 }: {
   children: React.ReactNode;

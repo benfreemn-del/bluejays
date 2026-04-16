@@ -121,6 +121,18 @@ export interface Prospect {
   needsSmsFollowup?: boolean;
   /** ISO timestamp of when first outreach was sent — used for 30-day preview expiry */
   contactedAt?: string;
+  /** Unique referral code generated at payment — shared with client in day-30 email */
+  referralCode?: string;
+  /** Prospect ID of the client who referred this prospect */
+  referredBy?: string;
+  /** ISO timestamp of when referral invite email was sent to this client */
+  referralSentAt?: string;
+  /** How many successful referrals this client has made (each earns $50 off next renewal) */
+  referralCount?: number;
+  /** ISO timestamp when handoff email was sent after site delivery */
+  handoffSentAt?: string;
+  /** ISO timestamp when last monthly report email was sent to client */
+  lastReportSentAt?: string;
   createdAt: string;
   updatedAt: string;
 }

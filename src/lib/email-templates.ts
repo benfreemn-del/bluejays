@@ -144,3 +144,160 @@ ${EMAIL_FOOTER.replace("{{baseUrl}}", process.env.NEXT_PUBLIC_BASE_URL || "https
     sequence: 3,
   };
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Post-purchase lifecycle emails
+// ─────────────────────────────────────────────────────────────────────────────
+
+const BASE = process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com";
+
+/**
+ * Day-30 referral invite — sent to paid clients 30 days after payment.
+ * Includes a unique referral link; referred businesses get tracked back to this client.
+ * Referrer gets $50 off their next $100/yr renewal for each successful referral.
+ */
+export function getReferralEmail(
+  prospect: Prospect,
+  referralCode: string,
+): EmailTemplate {
+  const name = prospect.ownerName?.split(" ")[0] || prospect.businessName;
+  const category = CATEGORY_CONFIG[prospect.category].label;
+  const referralUrl = `${BASE}?ref=${referralCode}`;
+
+  return {
+    subject: `${name} — a thank-you + something for your network`,
+    body: `Hi ${name},
+
+It's been about a month since ${prospect.businessName} went live — I hope customers are already finding you online!
+
+I wanted to reach out with a quick thank-you, and a little offer:
+
+If you know any other local business owners who could use a premium website, send them your personal link:
+
+${referralUrl}
+
+Every business that claims a site through your link earns you $50 off your next annual renewal. No limit — the more you refer, the more you save.
+
+Most of our best clients come from referrals because you're already vouching for the work. A roofing company, a dentist, an auto shop — if they have a business, they need a site.
+
+Thanks again for trusting us with ${prospect.businessName}'s online presence.
+
+— Ben @ BlueJays
+bluejaycontactme@gmail.com
+
+P.S. See what we've built for other ${category.toLowerCase()} businesses and all other industries at ${BASE}.`,
+    sequence: 0,
+  };
+}
+
+/**
+ * Formal site handoff email — sent when Ben marks the site as delivered.
+ * Covers domain credentials, $100/yr plan, how to request changes, and contact info.
+ */
+export function getHandoffEmail(
+  prospect: Prospect,
+  liveUrl: string,
+): EmailTemplate {
+  const name = prospect.ownerName?.split(" ")[0] || prospect.businessName;
+
+  return {
+    subject: `🎉 ${prospect.businessName} is live — here's everything you need`,
+    body: `Hi ${name},
+
+Your website is live! Here's your complete handoff document — save this email, it has everything you need.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+YOUR LIVE SITE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${liveUrl}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+WHAT'S COVERED — $100/YEAR
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Your annual maintenance plan renews automatically each year and covers:
+  ✓ Domain renewal (so you never lose your domain)
+  ✓ Hosting fees (your site stays online, always)
+  ✓ Ongoing maintenance and security updates
+  ✓ Support — email us any time at bluejaycontactme@gmail.com
+  ✓ Minor content updates on request (hours, phone, services)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+HOW TO REQUEST CHANGES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Email bluejaycontactme@gmail.com with:
+  • What you want changed
+  • New text, photos, or info to use
+  • "CHANGE REQUEST" in the subject line
+
+Most updates are turned around within 48 hours.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+HOW TO SEND US MATERIALS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+New photos, your logo, a refreshed bio — just email them to bluejaycontactme@gmail.com.
+Or upload anytime at: ${BASE}/onboarding/${prospect.id}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CONTACT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Ben @ BlueJays
+bluejaycontactme@gmail.com
+${BASE}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Congratulations, ${name}. Your work deserves to be found — and now it will be.
+
+— Ben`,
+    sequence: 0,
+  };
+}
+
+/**
+ * Monthly performance report — sent to paid clients once a month.
+ * Shows proxy metrics since we don't have GA integration yet; prompts client renewal awareness.
+ */
+export function getMonthlyReportEmail(
+  prospect: Prospect,
+  liveUrl: string,
+  monthName: string,
+  daysLive: number,
+): EmailTemplate {
+  const name = prospect.ownerName?.split(" ")[0] || prospect.businessName;
+  const renewalReminder =
+    daysLive >= 335
+      ? `\n⚠️  Your annual plan renews soon. We'll send a reminder before any charge — nothing changes on your end.\n`
+      : "";
+
+  return {
+    subject: `${prospect.businessName} — your ${monthName} website update`,
+    body: `Hi ${name},
+
+Quick monthly check-in on ${prospect.businessName}'s website.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+YOUR SITE (${daysLive} days live)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${liveUrl}
+${renewalReminder}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TIPS TO GET MORE FROM YOUR SITE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  📌 Add your website URL to your Google Business Profile — this is the #1 traffic driver
+  📱 Put your website URL in your Instagram bio and Facebook "About" section
+  🌟 Ask happy customers to leave a Google review and mention your website
+  📇 Add the URL to your business cards, invoices, and email signature
+  📸 Send us new photos anytime — fresh content keeps Google happy
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+NEED ANYTHING CHANGED?
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+New hours, updated services, a team photo — just reply to this email and we'll update it within 48 hours. It's included in your plan.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+— Ben @ BlueJays
+bluejaycontactme@gmail.com`,
+    sequence: 0,
+  };
+}
