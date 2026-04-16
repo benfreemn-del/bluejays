@@ -724,14 +724,8 @@ function buildPrompt(prospect: Prospect, message: IncomingMessage): string {
     .map(([key, val]) => `  "${key}":\n    Response: "${val.response}"\n    Follow-up: "${val.followUp || 'none'}"`)
     .join("\n\n");
 
-  // Determine close action hint
-  const isHighValue = CLOSE_DECISION_FRAMEWORK.highValueCategories.includes(prospect.category);
-  const isDirectClose = CLOSE_DECISION_FRAMEWORK.directCloseCategories.includes(prospect.category);
-  const closeHint = isHighValue
-    ? "This is a HIGH-VALUE category — lean toward calendar booking unless they explicitly ask to buy."
-    : isDirectClose
-    ? "This is a DIRECT-CLOSE category — send checkout link when they show interest."
-    : "Standard category — use checkout for clear interest, calendar for questions/hesitation.";
+  // Close action: ALWAYS push for a call/Zoom with Ben
+  const closeHint = `ULTIMATE GOAL: Schedule a Zoom/phone call with Ben. The agent's job is to WARM THEM UP and get them on the calendar — NOT to close the sale via text/email. Frame the call as: "Quick 15-minute walkthrough — I'll show you the site live, walk through customization, and answer any questions. No pressure." Only send checkout link if they literally say "I want to buy right now." Booking link: ${CLOSE_DECISION_FRAMEWORK.bookingUrl}`;
 
   // Personal context for richer responses
   const personalContext: string[] = [];
@@ -783,14 +777,20 @@ PRICING:
 OBJECTION PLAYBOOK (use these as INSPIRATION, not word-for-word scripts — make them conversational):
 ${objectionRef}
 
-DECISION FRAMEWORK — CHECKOUT vs CALENDAR:
+DECISION FRAMEWORK — ALWAYS PUSH FOR A CALL:
 ${closeHint}
-- Checkout URL: ${checkoutUrl}
-- Calendar URL: ${CALENDAR_LINK}
+
+YOUR #1 GOAL: Get them on a Zoom/phone call with Ben. NOT to close via text.
+- Booking URL: ${CLOSE_DECISION_FRAMEWORK.bookingUrl}
+- Checkout URL (ONLY if they literally say "I want to buy now"): ${checkoutUrl}
 - Compare URL: ${compareUrl}
 - Portfolio URL: https://bluejayportfolio.com/v2/${prospect.category}
-Direct close conditions: ${CLOSE_DECISION_FRAMEWORK.directClose.join("; ")}
-Calendar booking conditions: ${CLOSE_DECISION_FRAMEWORK.calendarBooking.join("; ")}
+
+HOW TO PUSH THE CALL:
+- After answering any question: "Want to hop on a quick 15-min call so I can show you everything live?"
+- After addressing an objection: "Might be easier to walk through this on a call — here's my calendar: ${CLOSE_DECISION_FRAMEWORK.bookingUrl}"
+- When they show interest: "Let's set up a quick Zoom — I'll walk you through the site and we can customize it together"
+- NEVER push checkout link unless they explicitly ask to pay
 
 ESCALATION RULES:
 Immediate escalation: ${ESCALATION_RULES.immediate.join("; ")}

@@ -305,9 +305,13 @@ When generating, reviewing, or improving any prospect's preview site, agents MUS
 
 ### Sales & Outreach Rules (ALL AGENTS — NON-NEGOTIABLE)
 
+**The #1 goal of ALL outreach and AI responses is to SCHEDULE A ZOOM/PHONE CALL WITH BEN.**
+The agent warms them up, answers questions, handles objections — but always pushes for a call. Ben closes on the call, not through text/email. Only send checkout link if prospect literally says "I want to buy right now."
+
 **Every outreach message (email, SMS, AI response) MUST include:**
 1. **Portfolio category link** — `https://bluejayportfolio.com/v2/[category]` — so prospects can see polished examples in their industry. Never send a preview link without also showing the portfolio.
-2. **Payment plan mention for price objections** — "We also offer 3 payments of $349 if that's easier." This exists in the checkout system and must be mentioned whenever price resistance is detected.
+2. **Calendar/booking link** — always offer to schedule a quick 15-minute walkthrough call. Frame it as "no pressure, I'll show you the site live and answer any questions."
+3. **Payment plan mention for price objections** — "We also offer 3 payments of $349 if that's easier." This exists in the checkout system and must be mentioned whenever price resistance is detected.
 
 **Objection handling — agents must know these responses:**
 3. **"I already have a website"** → "We actually designed yours as an upgrade to your current site — we kept your branding and made the experience more modern and mobile-friendly. Compare them side by side on the claim page."

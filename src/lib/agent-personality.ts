@@ -177,35 +177,45 @@ export const CHANNEL_RULES = {
 };
 
 /**
- * Decision Framework: When to push checkout link vs calendar booking.
- * Based on the sales strategy playbook Part 4.
+ * Decision Framework: ALWAYS push for a Zoom/call with Ben.
+ * The ultimate goal of every conversation is scheduling a call where
+ * Ben walks them through the vision, plan, and closes the sale live.
+ *
+ * The agent's job is to warm them up and get them on the calendar — NOT to close.
  */
 export const CLOSE_DECISION_FRAMEWORK = {
-  /** Conditions where we send the direct checkout link ($997 one-time build + $100/year maintenance after year one) */
-  directClose: [
-    "Prospect says they love the site and asks how to get started",
-    "Prospect asks about pricing and agent has already answered what's included",
-    "Prospect has viewed the preview multiple times and is asking follow-up questions",
-    "Prospect is a lower-revenue-tier business (cleaning, locksmith, etc.)",
+  /** The ONE goal: schedule a call with Ben */
+  primaryGoal: "Schedule a Zoom/phone call with Ben to walk through the site, discuss customization, and close",
+
+  /** When to push the calendar link */
+  pushCalendar: [
+    "Any time prospect shows interest — even mild curiosity",
+    "After answering a question — 'Want to hop on a quick call so I can show you in real time?'",
+    "After addressing an objection — 'Might be easier to chat about this on a call?'",
+    "When prospect asks about pricing — 'Let me walk you through everything on a quick Zoom'",
+    "When prospect asks how to get started — 'Let's set up a quick call and I'll handle everything'",
+    "When prospect says they love it — 'Awesome! Let's hop on a call and I'll walk you through next steps'",
   ],
-  /** Conditions where we push for a calendar booking with Ben */
-  calendarBooking: [
-    "Prospect asks about custom features, integrations, or anything outside standard template",
-    "Prospect is a higher-revenue business (dental, law firm, medical) where trust matters more",
-    "Prospect has expressed interest but has lingering hesitation text isn't resolving",
-    "Prospect has asked the same question twice and agent's answer hasn't moved them forward",
-    "Prospect's intent is classified as unknown by the AI responder",
+
+  /** How to frame the call */
+  callFraming: [
+    "It's a quick 15-minute walkthrough — no pressure, no commitment",
+    "I'll show you the site live, walk through customization options, and answer any questions",
+    "Most business owners find it helpful to see everything in action before deciding",
+    "We can go through your specific needs and I'll show you exactly what the finished site will look like",
   ],
-  /** High-value categories that should lean toward calendar booking */
-  highValueCategories: [
-    "dental", "law-firm", "medical", "chiropractic", "real-estate",
-    "accounting", "insurance", "veterinary", "physical-therapy",
-  ] as string[],
-  /** Lower-value categories that can go direct close */
-  directCloseCategories: [
-    "cleaning", "locksmith", "pressure-washing", "pest-control",
-    "moving", "fencing", "tree-service", "garage-door",
-  ] as string[],
+
+  /** ONLY send checkout link if prospect explicitly says 'I want to buy right now' */
+  directCloseOnly: [
+    "Prospect literally says 'I want to buy', 'take my money', 'let's do it', 'send me the link'",
+    "Prospect has already been on a call with Ben and is following up to pay",
+  ],
+
+  /** Calendar/booking link — agent should include this in interested responses */
+  bookingUrl: "https://calendly.com/bluejays", // TODO: update with real Calendly link
+
+  /** All categories push for call — no exceptions */
+  allCategoriesPushCall: true,
 };
 
 /**
