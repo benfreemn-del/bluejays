@@ -47,6 +47,7 @@ export function getPitchEmail(
   prospect: Prospect,
   previewUrl: string,
   videoUrl?: string,
+  proposalUrl?: string,
 ): EmailTemplate {
   const name =
     prospect.ownerName?.split(" ")[0] || prospect.businessName;
@@ -65,6 +66,10 @@ export function getPitchEmail(
     ? `I found ${prospect.businessName} while searching for top-rated ${category.toLowerCase()} businesses${city ? ` in ${city}` : ""} — your reviews stood out.`
     : `I was looking for ${category.toLowerCase()} businesses${city ? ` in ${city}` : ""} and came across ${prospect.businessName} — but noticed you don't have a website yet.`;
 
+  const proposalBlock = proposalUrl
+    ? `\nI also put together a short personalized analysis — specific to your business, with an ROI breakdown and a side-by-side comparison against agency pricing:\n${proposalUrl}\n`
+    : "";
+
   const body = `Hi ${name},
 
 ${discoveryLine}
@@ -72,7 +77,7 @@ ${discoveryLine}
 I thought to myself — this business clearly does great work. But does their website reflect that? So I built one that does.
 
 See your site: ${previewUrl}
-${buildVideoBlock(videoUrl)}
+${buildVideoBlock(videoUrl)}${proposalBlock}
 Your customers are searching for ${category.toLowerCase()} services online right now. When they find you, what do they see? A site like this makes sure their first impression matches the quality of your work.
 
 See more ${category.toLowerCase()} sites we've built: https://bluejayportfolio.com/v2/${prospect.category}

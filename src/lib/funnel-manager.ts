@@ -9,6 +9,7 @@ import { alertOwner } from "./alerts";
 import { dropVoicemail } from "./voicemail";
 import { supabase, isSupabaseConfigured } from "./supabase";
 import { generatePersonalizedProposal } from "./proposal-generator";
+import { getProspectVideoUrl } from "./video-generator";
 import {
   attemptFunnelDelivery,
   cancelFunnelRetry,
@@ -155,9 +156,14 @@ function isStopStatus(status: string): boolean {
   return FUNNEL_STOP_STATUSES.includes(status);
 }
 
-function getEmailTemplate(prospect: Prospect, stepIndex: number, previewUrl: string) {
+async function getEmailTemplate(prospect: Prospect, stepIndex: number, previewUrl: string) {
   if (stepIndex === 0) {
-    return getPitchEmail(prospect, previewUrl);
+    // Fetch video URL and proposal URL to include in the initial pitch
+    const [videoUrl] = await Promise.all([
+      getProspectVideoUrl(prospect.id).catch(() => undefined),
+    ]);
+    const proposalUrl = `${BASE_URL}/proposal/${prospect.id}`;
+    return getPitchEmail(prospect, previewUrl, videoUrl, proposalUrl);
   }
   if (stepIndex === 2) {
     return getFollowUp1(prospect, previewUrl);
@@ -216,7 +222,7 @@ async function getNextSmsSequence(prospectId: string): Promise<number> {
 
 async function buildStepPayload(prospect: Prospect, stepIndex: number, previewUrl: string): Promise<FunnelDeliveryPayload | undefined> {
   const step = FUNNEL_STEPS[stepIndex];
-  const emailTemplate = step.channels.includes("email") ? getEmailTemplate(prospect, stepIndex, previewUrl) : undefined;
+  const emailTemplate = step.channels.includes("email") ? await getEmailTemplate(prospect, stepIndex, previewUrl) : undefined;
   const smsBody = step.channels.includes("sms") ? getFallbackSmsBody(prospect, stepIndex, previewUrl) : undefined;
 
   const email: EmailDeliveryPayload | undefined = emailTemplate && prospect.email
@@ -457,6 +463,17 @@ export async function enrollInFunnel(prospectId: string): Promise<{ success: boo
   }
 
   await generatePersonalizedProposal(prospectId);
+
+  // Fire-and-forget video generation — generates a personalized screen-record walkthrough
+  // stored in Supabase; URL is included in the pitch email once ready.
+  // We intentionally don't await this so enrollment isn't blocked.
+  if (isSupabaseConfigured()) {
+    import("./video-generator").then(({ generateProspectVideo }) => {
+      generateProspectVideo(prospectId).catch((err) => {
+        console.warn(`[Funnel] Video generation failed for ${prospectId}:`, err);
+      });
+    });
+  }
 
   const results = await sendFunnelStep(prospect, 0);
   if (!results.success && !results.queuedForRetry) {
