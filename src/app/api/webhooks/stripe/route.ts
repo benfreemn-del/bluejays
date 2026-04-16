@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { constructWebhookEvent, getStripe } from "@/lib/stripe";
 import { getProspect, updateProspect } from "@/lib/store";
-import { alertProspectPaid } from "@/lib/alerts";
+import { alertProspectPaid, sendOwnerAlert } from "@/lib/alerts";
 import { logCost, COST_RATES } from "@/lib/cost-logger";
 
 /**
@@ -172,6 +172,45 @@ export async function POST(request: NextRequest) {
           await updateProspect(prospectId, { subscriptionStatus: "cancelled" });
           console.log(`[Stripe Webhook] Subscription cancelled for ${prospectId}`);
         }
+        break;
+      }
+
+      case "checkout.session.expired": {
+        // Prospect started checkout but didn't complete payment
+        const session = event.data.object as {
+          id: string;
+          metadata?: { prospectId?: string; businessName?: string };
+          customer_email?: string;
+        };
+
+        const prospectId = session.metadata?.prospectId;
+        const businessName = session.metadata?.businessName || "Unknown";
+
+        if (!prospectId) break;
+
+        const prospect = await getProspect(prospectId);
+        if (!prospect || prospect.status === "paid") break; // already paid, ignore
+
+        console.log(`[Stripe Webhook] Abandoned checkout for ${businessName} (${prospectId})`);
+
+        // Alert Ben — warm lead who was close to buying
+        const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com";
+        const claimUrl = `${BASE_URL}/claim/${prospectId}`;
+        await sendOwnerAlert(
+          `🛒 Abandoned checkout: ${businessName}\n` +
+          `They opened the payment page but didn't finish.\n` +
+          `📞 ${prospect.phone || "No phone"}\n` +
+          `📧 ${session.customer_email || prospect.email || "No email"}\n` +
+          `🔗 Their checkout: ${claimUrl}\n` +
+          `📋 ${BASE_URL}/dashboard`
+        ).catch(() => {});
+
+        // Send recovery email to the prospect
+        const clientEmail = session.customer_email || prospect.email;
+        if (clientEmail && SENDGRID_API_KEY) {
+          await sendAbandonedCheckoutEmail(clientEmail, prospect.businessName, prospectId).catch(() => {});
+        }
+
         break;
       }
 
@@ -411,4 +450,58 @@ bluejaycontactme@gmail.com
   } catch (err) {
     console.error("[Stripe Webhook] Failed to send client welcome email:", err);
   }
+}
+
+/**
+ * Send a recovery email when a prospect starts checkout but doesn't complete.
+ * Warm lead — they were close. Keep it short and remove friction.
+ */
+async function sendAbandonedCheckoutEmail(
+  clientEmail: string,
+  businessName: string,
+  prospectId: string
+) {
+  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com";
+  const claimUrl = `${BASE_URL}/claim/${prospectId}`;
+
+  await fetch("https://api.sendgrid.com/v3/mail/send", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${SENDGRID_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      personalizations: [{ to: [{ email: clientEmail }] }],
+      from: { email: FROM_EMAIL, name: "Ben @ BlueJays" },
+      subject: `Did something go wrong with your ${businessName} site?`,
+      content: [{
+        type: "text/plain",
+        value: `Hey — I noticed you started the checkout for your ${businessName} website but it looks like something may have interrupted it.
+
+No worries if you changed your mind — zero pressure. But if it was a technical issue or a question popped up, I'm here.
+
+Your site is still reserved and ready to go live:
+${claimUrl}
+
+A few things that sometimes cause hiccups:
+- Card declined: try a different card or use the 3-payment plan ($349 × 3)
+- Questions about what's included: just reply and I'll answer directly
+- Timing: the link above stays active — come back whenever works
+
+If you're still in, just click the link above and you'll be taken right back to where you left off.
+
+— Ben @ BlueJays
+bluejaycontactme@gmail.com`,
+      }],
+    }),
+  });
+
+  console.log(`[Stripe Webhook] Abandoned checkout recovery email sent to ${clientEmail}`);
+
+  await logCost({
+    service: "sendgrid_email",
+    action: "abandoned_checkout_recovery",
+    costUsd: COST_RATES.sendgrid_email,
+    metadata: { businessName, clientEmail, type: "abandoned_checkout" },
+  });
 }
