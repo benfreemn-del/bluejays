@@ -44,11 +44,18 @@ export async function POST() {
       step: nextStep.label,
     };
 
-    // Send email if channel includes it
+    // Send email if channel includes it — respect domain warming limits
     if (nextStep.channels.includes("email") && prospect.email && prospect.generatedSiteUrl) {
       try {
-        await sendPitchEmail(prospect);
-        result.email = "sent";
+        const { canSendEmail, recordEmailSent } = await import("@/lib/domain-warming");
+        const { canSend, remaining, limit } = await canSendEmail();
+        if (!canSend) {
+          result.email = `skipped: daily warming limit reached (${limit}/day)`;
+        } else {
+          await sendPitchEmail(prospect);
+          await recordEmailSent();
+          result.email = `sent (${remaining - 1} remaining today)`;
+        }
       } catch (err) {
         result.email = `failed: ${(err as Error).message}`;
       }

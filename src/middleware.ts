@@ -73,6 +73,7 @@ const PROTECTED_PATHS = [
   "/api/email-deliverability",
   "/api/email-tracking",
   "/api/auto-scout",
+  "/api/warming",
   "/funnel-tracker",
 ];
 
