@@ -305,9 +305,16 @@ const MOOD_SWATCHES = [
 ];
 
 // ─── HELPER COMPONENTS ──────────────────────────────────────────────────────
-function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+function GlassCard({ children, className = "", style, id, onClick, href }: { children: React.ReactNode; className?: string; style?: React.CSSProperties; id?: string; onClick?: () => void; href?: string }) {
+  if (href) {
+    return (
+      <a href={href} id={id} onClick={onClick} className={`backdrop-blur-md bg-black/[0.03] border border-black/[0.06] rounded-2xl ${className}`} style={style}>
+        {children}
+      </a>
+    );
+  }
   return (
-    <div className={`backdrop-blur-md bg-black/[0.03] border border-black/[0.06] rounded-2xl ${className}`}>
+    <div id={id} onClick={onClick} className={`backdrop-blur-md bg-black/[0.03] border border-black/[0.06] rounded-2xl ${className}`} style={style}>
       {children}
     </div>
   );

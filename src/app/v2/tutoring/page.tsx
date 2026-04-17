@@ -26,11 +26,11 @@ const fadeUp = { hidden: { opacity: 0, y: 30 }, show: { opacity: 1, y: 0, transi
 
 /* ───────────────────────── REUSABLE COMPONENTS ───────────────────────── */
 
-function SectionReveal({ children, className = "", id }: { children: React.ReactNode; className?: string; id?: string }) {
+function SectionReveal({ children, className = "", id, style }: { children: React.ReactNode; className?: string; id?: string; style?: React.CSSProperties }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
   return (
-    <motion.section ref={ref} id={id} className={className}
+    <motion.section ref={ref} id={id} className={className} style={style}
       initial={{ opacity: 0, y: 50 }} animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
       transition={spring}>{children}</motion.section>
   );
@@ -257,7 +257,7 @@ export default function V2TutoringShowcase() {
           <div className="mb-4">
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-none" style={{ color: DARK }}>
               {typedText}
-              <motion.span animate={{ opacity: [1, 0] }} transition={{ duration: 0.6, repeat: Infinity, ease: "steps(1)" }}
+              <motion.span animate={{ opacity: [1, 0] }} transition={{ duration: 0.6, repeat: Infinity, ease: "linear" }}
                 className="inline-block w-[3px] h-[0.85em] ml-1 align-baseline rounded-sm" style={{ background: PURPLE }} />
             </h1>
           </div>
@@ -772,7 +772,7 @@ export default function V2TutoringShowcase() {
                     <p className="text-sm font-bold" style={{ color: DARK }}>{t.name}</p>
                     <p className="text-xs text-slate-400">{t.role}</p>
                   </div>
-                  <CheckCircle size={14} weight="fill" style={{ color: PURPLE }} className="ml-auto" title="Verified Review" />
+                  <CheckCircle size={14} weight="fill" style={{ color: PURPLE }} className="ml-auto" aria-label="Verified Review" />
                 </div>
               </div>
             ))}

@@ -93,14 +93,17 @@ function WoodGrainPattern({ opacity = 0.03 }: { opacity?: number }) {
 }
 
 /* ───────────────── UTILITY COMPONENTS ───────────────── */
-function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <div className={`rounded-2xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-xl ${className}`}>{children}</div>;
+function GlassCard({ children, className = "", style, id, onClick, href }: { children: React.ReactNode; className?: string; style?: React.CSSProperties; id?: string; onClick?: () => void; href?: string }) {
+  if (href) {
+    return <a href={href} id={id} onClick={onClick} className={`rounded-2xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-xl ${className}`} style={style}>{children}</a>;
+  }
+  return <div id={id} onClick={onClick} className={`rounded-2xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-xl ${className}`} style={style}>{children}</div>;
 }
 
-function SectionReveal({ children, className = "", id }: { children: React.ReactNode; className?: string; id?: string }) {
+function SectionReveal({ children, className = "", id, style }: { children: React.ReactNode; className?: string; id?: string; style?: React.CSSProperties }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
-  return <motion.section ref={ref} id={id} className={className} initial={{ opacity: 0, y: 50 }} animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }} transition={spring}>{children}</motion.section>;
+  return <motion.section ref={ref} id={id} className={className} style={style} initial={{ opacity: 0, y: 50 }} animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }} transition={spring}>{children}</motion.section>;
 }
 
 function WordReveal({ text, className = "" }: { text: string; className?: string }) {

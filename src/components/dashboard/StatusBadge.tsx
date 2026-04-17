@@ -66,6 +66,11 @@ const statusConfig: Record<
     bg: "bg-teal-900/50",
     text: "text-teal-300",
   },
+  email_opened: {
+    label: "Email Opened",
+    bg: "bg-indigo-900/50",
+    text: "text-indigo-300",
+  },
   responded: {
     label: "Responded",
     bg: "bg-green-900/50",

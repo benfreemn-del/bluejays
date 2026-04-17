@@ -186,7 +186,7 @@ function StormBackground({ opacity = 0.03, accent }: { opacity?: number; accent:
 }
 
 /* ───────────────────────── GLASS CARD ───────────────────────── */
-function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+function GlassCard({ children, className = "", style }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) {
   return <div className={`rounded-2xl border border-white/15 bg-white/[0.06] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.08)] ${className}`}>{children}</div>;
 }
 

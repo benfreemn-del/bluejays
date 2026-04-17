@@ -112,7 +112,7 @@ const COMPARISON_ROWS = [
 const INSURANCE_CARRIERS = ["Delta Dental", "Cigna", "Aetna", "MetLife", "Premera"];
 
 /* ───────────────────────── SECTION REVEAL ───────────────────────── */
-function SectionReveal({ children, className = "", id }: { children: React.ReactNode; className?: string; id?: string }) {
+function SectionReveal({ children, className = "", id, style }: { children: React.ReactNode; className?: string; id?: string; style?: React.CSSProperties }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
 
@@ -121,6 +121,7 @@ function SectionReveal({ children, className = "", id }: { children: React.React
       ref={ref}
       id={id}
       className={className}
+      style={style}
       initial={{ opacity: 0, y: 40 }}
       animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
       transition={spring}

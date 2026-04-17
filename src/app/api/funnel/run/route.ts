@@ -73,6 +73,14 @@ export async function POST() {
       warmingEnabled: warming.enabled,
       warmingDay: warming.warmingDay,
       warmingLimit: warming.limitToday,
+      // Pass both sender domains so the digest shows parallel warming state
+      domains: warming.domains?.map((d) => ({
+        domain: d.domain,
+        enabled: d.enabled,
+        warmingDay: d.warmingDay,
+        limitToday: d.limitToday,
+        sentToday: d.sentToday,
+      })),
       activeEnrollments,
       approvedNotEnrolled,
       pipelineProcessing,

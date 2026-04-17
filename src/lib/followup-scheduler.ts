@@ -125,11 +125,11 @@ export function saveConfig(config: Partial<FollowUpConfig>): FollowUpConfig {
   }
   // Also persist to Supabase if available
   if (isSupabaseConfigured()) {
-    supabase
-      .from("system_config")
-      .upsert({ key: "followup_scheduler", value: updated }, { onConflict: "key" })
-      .then(() => {})
-      .catch(() => {});
+    Promise.resolve(
+      supabase
+        .from("system_config")
+        .upsert({ key: "followup_scheduler", value: updated }, { onConflict: "key" })
+    ).catch(() => {});
   }
   return updated;
 }
@@ -180,22 +180,22 @@ export function trackAiResponse(
 
   // Also persist to Supabase
   if (isSupabaseConfigured()) {
-    supabase
-      .from("followup_trackers")
-      .upsert(
-        {
-          prospect_id: prospectId,
-          business_name: businessName,
-          ai_responded_at: now,
-          prospect_replied_at: now,
-          channel,
-          status: "waiting",
-          auto_resumed: false,
-        },
-        { onConflict: "prospect_id" }
-      )
-      .then(() => {})
-      .catch(() => {});
+    Promise.resolve(
+      supabase
+        .from("followup_trackers")
+        .upsert(
+          {
+            prospect_id: prospectId,
+            business_name: businessName,
+            ai_responded_at: now,
+            prospect_replied_at: now,
+            channel,
+            status: "waiting",
+            auto_resumed: false,
+          },
+          { onConflict: "prospect_id" }
+        )
+    ).catch(() => {});
   }
 }
 

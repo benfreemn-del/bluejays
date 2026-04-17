@@ -1,3 +1,4 @@
+import type { GeneratedSiteData } from "@/lib/generator";
 import { getFontPairing } from "@/lib/typography";
 import PreviewRenderer from "@/components/templates/PreviewRenderer";
 import V2ElectricianPreview from "@/components/templates/V2ElectricianPreview";

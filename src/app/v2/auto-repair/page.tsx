@@ -149,10 +149,12 @@ function SectionReveal({
   children,
   className = "",
   id,
+  style,
 }: {
   children: React.ReactNode;
   className?: string;
   id?: string;
+  style?: React.CSSProperties;
 }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
@@ -162,6 +164,7 @@ function SectionReveal({
       ref={ref}
       id={id}
       className={className}
+      style={style}
       initial={{ opacity: 0, y: 50 }}
       animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
       transition={spring}
@@ -175,13 +178,37 @@ function SectionReveal({
 function GlassCard({
   children,
   className = "",
+  style,
+  id,
+  onClick,
+  href,
 }: {
   children: React.ReactNode;
   className?: string;
+  style?: React.CSSProperties;
+  id?: string;
+  onClick?: () => void;
+  href?: string;
 }) {
+  if (href) {
+    return (
+      <a
+        href={href}
+        id={id}
+        onClick={onClick}
+        className={`rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.06)] ${className}`}
+        style={style}
+      >
+        {children}
+      </a>
+    );
+  }
   return (
     <div
+      id={id}
+      onClick={onClick}
       className={`rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.06)] ${className}`}
+      style={style}
     >
       {children}
     </div>

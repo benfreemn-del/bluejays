@@ -25,6 +25,7 @@ import {
   CheckCircle,
   ArrowRight,
   Star,
+  Users,
   Skull,
   Leaf,
   Shield,

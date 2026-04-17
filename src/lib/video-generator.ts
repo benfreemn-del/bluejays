@@ -278,7 +278,7 @@ async function synthesizeNarration(script: string, outputPath: string) {
   const speech = await client.audio.speech.create({
     model: TARGET_TTS_MODEL,
     voice: TARGET_VOICE,
-    format: "mp3",
+    response_format: "mp3",
     input: script,
   });
 

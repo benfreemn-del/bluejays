@@ -159,6 +159,14 @@ export async function alertEscalation(prospect: Prospect, reason: string, urgenc
  * Gives Ben a quick plan-status SMS: warmup day, sends today, funnel state,
  * pipeline counts, and countdown to the May 1, 2026 full launch.
  */
+export interface DigestDomainStatus {
+  domain: string;
+  enabled: boolean;
+  warmingDay: number;
+  limitToday: number;
+  sentToday: number;
+}
+
 export interface DigestStats {
   sentToday: number;
   queuedToday: number;
@@ -167,6 +175,8 @@ export interface DigestStats {
   warmingDay?: number;
   warmingLimit?: number;
   warmingEnabled?: boolean;
+  /** Per-domain status for parallel warming (primary + backup). */
+  domains?: DigestDomainStatus[];
   activeEnrollments?: number;
   approvedNotEnrolled?: number;
   pipelineProcessing?: number;
@@ -189,10 +199,22 @@ export async function sendDailyDigest(stats: DigestStats): Promise<void> {
       ? "🚀 LAUNCH DAY — full send (email + SMS + voicemail) is live."
       : `📅 ${days} day${days === 1 ? "" : "s"} until May 1 full launch (email + SMS + voicemail).`;
 
-  const warmupLine =
-    stats.warmingEnabled && stats.warmingDay && stats.warmingLimit
-      ? `🌡️ Warmup: Day ${stats.warmingDay}/14 — cap ${stats.warmingLimit}/day`
-      : "🌡️ Warmup: not active";
+  let warmupLine: string;
+  if (stats.domains && stats.domains.length > 0) {
+    // Parallel warming view — show both sender domains and combined daily cap
+    const parts = stats.domains.map((d) => {
+      if (!d.enabled) return `${d.domain} off`;
+      return `${d.domain} D${d.warmingDay}/14 ${d.sentToday}/${d.limitToday}`;
+    });
+    const combinedCap = stats.domains
+      .filter((d) => d.enabled)
+      .reduce((sum, d) => sum + d.limitToday, 0);
+    warmupLine = `🌡️ ${parts.join(" · ")} → ${combinedCap}/day combined`;
+  } else if (stats.warmingEnabled && stats.warmingDay && stats.warmingLimit) {
+    warmupLine = `🌡️ Warmup: Day ${stats.warmingDay}/14 — cap ${stats.warmingLimit}/day`;
+  } else {
+    warmupLine = "🌡️ Warmup: not active";
+  }
 
   const funnelLine = `📬 Today: ${stats.sentToday} sent · ${stats.queuedToday} queued · ${stats.pausedToday} paused${
     stats.repliesToday ? ` · ${stats.repliesToday} replies 💬` : ""

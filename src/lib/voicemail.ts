@@ -190,7 +190,7 @@ export function generatePersonalizedScript(
 ): string {
   const name = ctx.ownerName?.split(" ")[0] || "";
   const greeting = name ? `Hey ${name}` : "Hey there";
-  const categoryLabel = CATEGORY_CONFIG[ctx.category]?.label || ctx.category?.replace(/-/g, " ") || "business";
+  const categoryLabel = (CATEGORY_CONFIG as Record<string, { label: string; accentColor: string; heroGradient: string } | undefined>)[ctx.category]?.label || ctx.category?.replace(/-/g, " ") || "business";
 
   switch (scriptType) {
     case "initial":

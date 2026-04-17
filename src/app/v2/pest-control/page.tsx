@@ -163,10 +163,10 @@ function FloatingParticles() {
 }
 
 /* ───────────────────────── UTILITY COMPONENTS ───────────────────────── */
-function SectionReveal({ children, className = "", id }: { children: React.ReactNode; className?: string; id?: string }) {
+function SectionReveal({ children, className = "", id, style }: { children: React.ReactNode; className?: string; id?: string; style?: React.CSSProperties }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
-  return <motion.section ref={ref} id={id} className={className} initial={{ opacity: 0, y: 50 }} animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }} transition={spring}>{children}</motion.section>;
+  return <motion.section ref={ref} id={id} className={className} style={style} initial={{ opacity: 0, y: 50 }} animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }} transition={spring}>{children}</motion.section>;
 }
 
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {

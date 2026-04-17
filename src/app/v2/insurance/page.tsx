@@ -208,9 +208,17 @@ function SectionReveal({ children, className = "", id }: { children: React.React
   );
 }
 
-function GlassCard({ children, className = "", glow }: { children: React.ReactNode; className?: string; glow?: string }) {
+function GlassCard({ children, className = "", glow, style, id, onClick, href }: { children: React.ReactNode; className?: string; glow?: string; style?: React.CSSProperties; id?: string; onClick?: () => void; href?: string }) {
+  const mergedStyle: React.CSSProperties = { ...(glow ? { boxShadow: `0 0 40px ${glow}` } : {}), ...(style ?? {}) };
+  if (href) {
+    return (
+      <a href={href} id={id} onClick={onClick} className={`relative rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md ${className}`} style={mergedStyle}>
+        {children}
+      </a>
+    );
+  }
   return (
-    <div className={`relative rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md ${className}`} style={glow ? { boxShadow: `0 0 40px ${glow}` } : {}}>
+    <div id={id} onClick={onClick} className={`relative rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md ${className}`} style={mergedStyle}>
       {children}
     </div>
   );
@@ -230,7 +238,7 @@ function ShimmerBorder({ children, className = "" }: { children: React.ReactNode
   );
 }
 
-function MagneticButton({ children, className = "", onClick, href }: { children: React.ReactNode; className?: string; onClick?: () => void; href?: string }) {
+function MagneticButton({ children, className = "", onClick, href, style }: { children: React.ReactNode; className?: string; onClick?: () => void; href?: string; style?: React.CSSProperties }) {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   const sx = useSpring(x, springFast);
@@ -248,7 +256,7 @@ function MagneticButton({ children, className = "", onClick, href }: { children:
       onClick={onClick}
       onMouseMove={handleMouse}
       onMouseLeave={reset}
-      style={{ x: sx, y: sy }}
+      style={{ x: sx, y: sy, ...(style ?? {}) }}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.97 }}
       className={`inline-flex items-center gap-2 font-semibold transition-shadow ${className}`}

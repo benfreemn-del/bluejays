@@ -216,6 +216,32 @@ export const CLOSE_DECISION_FRAMEWORK = {
 
   /** All categories push for call — no exceptions */
   allCategoriesPushCall: true,
+
+  /** High-value categories lean toward calendar booking for relationship building */
+  highValueCategories: [
+    "med-spa",
+    "law-firm",
+    "real-estate",
+    "accounting",
+    "insurance",
+    "dental",
+    "chiropractic",
+    "interior-design",
+    "photography",
+    "event-planning",
+  ] as string[],
+
+  /** Lower-value categories can go direct close when interest is explicit */
+  directCloseCategories: [
+    "cleaning",
+    "carpet-cleaning",
+    "pressure-washing",
+    "junk-removal",
+    "lawn-care",
+    "pest-control",
+    "moving",
+    "towing",
+  ] as string[],
 };
 
 /**

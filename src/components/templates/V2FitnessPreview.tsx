@@ -155,9 +155,9 @@ function FitnessPattern({ opacity = 0.03, accent }: { opacity?: number; accent: 
 }
 
 /* ───────────────────────── GLASS CARD ───────────────────────── */
-function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+function GlassCard({ children, className = "", style }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) {
   return (
-    <div className={`rounded-2xl border border-white/[0.06] bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)] ${className}`}>
+    <div className={`rounded-2xl border border-white/[0.06] bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)] ${className}`} style={style}>
       {children}
     </div>
   );

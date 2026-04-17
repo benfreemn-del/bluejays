@@ -613,7 +613,7 @@ export default function ProspectTable({
                   <td className="p-3 cursor-pointer" onClick={() => router.push(`/lead/${prospect.id}`)}>
                     <div className="flex items-center gap-2">
                       <p className="font-medium text-blue-electric hover:underline">{prospect.businessName}</p>
-                      {(prospect.scrapedData as Record<string, unknown>)?.imageMapping && (prospect.scrapedData as Record<string, unknown> & { imageMapping?: { selectionStatus?: string } })?.imageMapping?.selectionStatus === "completed" && (
+                      {((prospect.scrapedData as { imageMapping?: { selectionStatus?: string } } | undefined)?.imageMapping?.selectionStatus === "completed") && (
                         <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-green-500/20 text-green-400 font-bold" title="Images completed">📷</span>
                       )}
                       {prospect.pricingTier === "free" && (

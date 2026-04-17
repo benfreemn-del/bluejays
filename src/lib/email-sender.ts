@@ -3,11 +3,22 @@ import path from "path";
 import { v4 as uuidv4 } from "uuid";
 import { supabase, isSupabaseConfigured } from "./supabase";
 import { logCost, COST_RATES } from "./cost-logger";
-import { canSendEmail, recordEmailSent, isEmailBounced, getSendingDomain } from "./email-deliverability";
+import { isEmailBounced } from "./email-deliverability";
+import { pickSendingDomain, recordEmailSent } from "./domain-warming";
 
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
-// Hardcoded — this must match the verified sender identity in SendGrid
-const FROM_EMAIL = "bluejaycontactme@gmail.com";
+
+/**
+ * Per-domain SendGrid sender identity. Each must be registered + verified in
+ * SendGrid (Single Sender Verification or Domain Authentication + identity).
+ * Primary domain falls back to the legacy gmail sender until DNS fully verifies.
+ */
+const SENDERS: Record<string, { email: string; name: string }> = {
+  "bluejayportfolio.com": { email: "bluejaycontactme@gmail.com", name: "BlueJays" },
+  "bluejaywebs.com": { email: "ben@bluejaywebs.com", name: "Ben @ BlueJays" },
+};
+const FALLBACK_SENDER = SENDERS["bluejayportfolio.com"];
+
 const EMAILS_DIR = path.join(process.cwd(), "data", "emails");
 
 export interface SentEmail {
@@ -31,7 +42,8 @@ function ensureEmailDir() {
 async function sendViaSendGrid(
   to: string,
   subject: string,
-  body: string
+  body: string,
+  from: { email: string; name: string },
 ): Promise<boolean> {
   const response = await fetch("https://api.sendgrid.com/v3/mail/send", {
     method: "POST",
@@ -41,7 +53,7 @@ async function sendViaSendGrid(
     },
     body: JSON.stringify({
       personalizations: [{ to: [{ email: to }] }],
-      from: { email: FROM_EMAIL, name: "BlueJays" },
+      from,
       subject,
       content: [{ type: "text/plain", value: body }],
     }),
@@ -107,19 +119,19 @@ export async function sendEmail(
     throw new Error(`Email ${to} has hard-bounced and was removed`);
   }
 
-  // Check warm-up daily limit
-  const sendingDomain = getSendingDomain();
-  const warmupCheck = canSendEmail(sendingDomain);
-  if (!warmupCheck.allowed) {
-    console.log(`  [Deliverability] Daily warm-up limit reached (${warmupCheck.limit}). Deferring send.`);
-    throw new Error(`Daily warm-up limit reached (${warmupCheck.limit} emails). Try again tomorrow.`);
+  // PARALLEL WARMING: pick whichever domain has capacity today (primary or backup).
+  const { domain: sendingDomain, capacity } = await pickSendingDomain();
+  if (!capacity.canSend) {
+    console.log(`  [Deliverability] All sender domains capped for today (primary+backup both at limit).`);
+    throw new Error(`Daily warm-up limit reached across all sender domains. Try again tomorrow.`);
   }
+  const fromSender = SENDERS[sendingDomain] || FALLBACK_SENDER;
 
   const email: SentEmail = {
     id: uuidv4(),
     prospectId,
     to,
-    from: FROM_EMAIL,
+    from: fromSender.email,
     subject,
     body,
     sequence,
@@ -133,7 +145,7 @@ export async function sendEmail(
     const cleanSubject = subject.replace(/[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu, "").trim();
     // Strip non-ASCII from body to avoid encoding issues
     const cleanBody = body.replace(/[^\x00-\x7F]/g, "").trim();
-    const success = await sendViaSendGrid(to, cleanSubject || subject, cleanBody || body);
+    const success = await sendViaSendGrid(to, cleanSubject || subject, cleanBody || body, fromSender);
     if (!success) {
       throw new Error(`SendGrid API failed`);
     }
@@ -153,9 +165,9 @@ export async function sendEmail(
   // Always log for history
   await logEmailToFile(email);
 
-  // Track send for warm-up monitoring
+  // Track send against the domain we actually used (parallel warming)
   try {
-    recordEmailSent(sendingDomain);
+    await recordEmailSent(sendingDomain);
   } catch {
     // Non-critical — don't block sending
   }

@@ -25,11 +25,11 @@ const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.08 } } };
 const fadeUp = { hidden: { opacity: 0, y: 30 }, show: { opacity: 1, y: 0, transition: spring } };
 
 /* ─── UTILITY COMPONENTS ─── */
-function SectionReveal({ children, className = "", id }: { children: React.ReactNode; className?: string; id?: string }) {
+function SectionReveal({ children, className = "", id, style }: { children: React.ReactNode; className?: string; id?: string; style?: React.CSSProperties }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
   return (
-    <motion.section ref={ref} id={id} className={className} initial={{ opacity: 0, y: 50 }} animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }} transition={spring}>
+    <motion.section ref={ref} id={id} className={className} style={style} initial={{ opacity: 0, y: 50 }} animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }} transition={spring}>
       {children}
     </motion.section>
   );
@@ -651,7 +651,7 @@ export default function V2PhysicalTherapyShowcase() {
               { title: "Follow-Up Visit", price: "$125", desc: "45-60 minutes of one-on-one therapy including manual techniques, exercise progression, and home program updates.", badge: "Most Common", popular: true },
               { title: "Insurance Billed", price: "$0*", desc: "We accept most major insurance and bill directly. Your out-of-pocket cost depends on your plan. Call to verify.", badge: "Preferred", popular: false },
             ].map((pkg) => (
-              <Card key={pkg.title} className={`p-7 relative overflow-hidden ${pkg.popular ? "ring-2" : ""}`} style={pkg.popular ? { ringColor: BLUE } : {}}>
+              <Card key={pkg.title} className={`p-7 relative overflow-hidden ${pkg.popular ? "ring-2" : ""}`} style={pkg.popular ? ({ ["--tw-ring-color" as unknown as string]: BLUE } as React.CSSProperties) : {}}>
                 {pkg.popular && <div className="absolute top-0 right-0 px-4 py-1 text-xs font-bold text-white rounded-bl-xl" style={{ background: BLUE }}>Most Common</div>}
                 <span className="inline-block text-xs font-bold uppercase tracking-widest mb-3 px-3 py-1 rounded-full" style={{ color: ORANGE, background: `${ORANGE}10` }}>{pkg.badge}</span>
                 <h3 className="text-xl font-bold mb-1" style={{ color: DARK_TEXT }}>{pkg.title}</h3>
