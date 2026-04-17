@@ -68,7 +68,7 @@ const STOCK_HERO_POOL = [
   "https://images.unsplash.com/photo-1448375240586-882707db888b?w=1400&q=80",
 ];
 const STOCK_ABOUT_POOL = [
-  "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&q=80",
+  "https://images.unsplash.com/photo-1567337710282-00832b415979?w=600&q=80",
   "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=600&q=80",
 ];
 const STOCK_GALLERY = [

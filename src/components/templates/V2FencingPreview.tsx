@@ -34,10 +34,10 @@ const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1600607687644-c7171b42498f?w=600&q=80",
   "https://images.unsplash.com/photo-1534237710431-e2fc698436d0?w=600&q=80",
   "https://images.unsplash.com/photo-1526367790999-0150786686a2?w=600&q=80",
-  "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=600&q=80",
-  "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=600&q=80",
-  "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600&q=80",
-  "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=600&q=80",
+  "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?w=600&q=80",
+  "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600&q=80",
+  "https://images.unsplash.com/photo-1515263487990-61b07816b324?w=600&q=80",
+  "https://images.unsplash.com/photo-1542621334-a254cf47733d?w=600&q=80",
 ];
 
 function FloatingParticles({ accent }: { accent: string }) {

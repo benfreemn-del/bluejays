@@ -25,7 +25,7 @@ const ICON_MAP: Record<string, any> = { groom: Scissors, board: Heart, daycare: 
 function getServiceIcon(n: string) { const l = n.toLowerCase(); for (const [k, I] of Object.entries(ICON_MAP)) { if (l.includes(k)) return I; } return PawPrint; }
 
 const STOCK_HERO_POOL = [
-  "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=1400&q=80",
+  "https://images.unsplash.com/photo-1558788353-f76d92427f16?w=1400&q=80",
   "https://images.unsplash.com/photo-1544568100-847a948585b9?w=1400&q=80",
 ];
 const STOCK_ABOUT_POOL = [
@@ -35,12 +35,12 @@ const STOCK_ABOUT_POOL = [
 const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=600&q=80",
   "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1?w=600&q=80",
-  "https://images.unsplash.com/photo-1596492784531-6e6eb5ea9993?w=600&q=80",
-  "https://images.unsplash.com/photo-1560807707-8cc77767d783?w=600&q=80",
+  "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=600&q=80",
+  "https://images.unsplash.com/photo-1568572933382-74d440642117?w=600&q=80",
   "https://images.unsplash.com/photo-1544568100-847a948585b9?w=600&q=80",
-  "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600&q=80",
-  "https://images.unsplash.com/photo-1574158622682-e40e69881006?w=600&q=80",
-  "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&q=80",
+  "https://images.unsplash.com/photo-1519098901909-b1553a1190af?w=600&q=80",
+  "https://images.unsplash.com/photo-1596854372407-baba7fef6e51?w=600&q=80",
+  "https://images.unsplash.com/photo-1558788353-f76d92427f16?w=600&q=80",
 ];
 
 /* ─── Decorative helpers ─── */

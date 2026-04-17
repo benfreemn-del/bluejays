@@ -90,14 +90,16 @@ function getServiceIcon(serviceName: string) {
 
 /* ───────────────────────── STOCK FALLBACK IMAGES ───────────────────────── */
 const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1400&q=80"];
-const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80"];
+const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1559339352-11d035aa65de?w=600&q=80"];
 const STOCK_GALLERY = [
-  "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=80",
-  "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=600&q=80",
-  "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&q=80",
-  "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=600&q=80",
+  "https://images.unsplash.com/photo-1551028150-64b9f398f678?w=600&q=80",
+  "https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?w=600&q=80",
+  "https://images.unsplash.com/photo-1559847844-5315695dadae?w=600&q=80",
+  "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&q=80",
+  "https://images.unsplash.com/photo-1526318896980-cf78c088247c?w=600&q=80",
   "https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?w=600&q=80",
   "https://images.unsplash.com/photo-1551218808-94e220e084d2?w=600&q=80",
+  "https://images.unsplash.com/photo-1578916171728-46686eac8d58?w=600&q=80",
 ];
 
 /* ───────────────────────── FLOATING FOOD PARTICLES ───────────────────────── */

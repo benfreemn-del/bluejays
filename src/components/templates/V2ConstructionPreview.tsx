@@ -88,22 +88,22 @@ function getServiceIcon(serviceName: string) {
 
 /* ───────────────────────── STOCK FALLBACK IMAGES ───────────────────────── */
 const STOCK_HERO_POOL = [
-  "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1400&q=80",
+  "https://images.unsplash.com/photo-1522770179533-24471fcdba45?w=1400&q=80",
   "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1400&q=80",
 ];
 const STOCK_ABOUT_POOL = [
-  "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=600&q=80",
-  "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=600&q=80",
-];
-const STOCK_GALLERY = [
-  "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=600&q=80",
-  "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=600&q=80",
-  "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&q=80",
-  "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=600&q=80",
-  "https://images.unsplash.com/photo-1590725140246-20acdee442be?w=600&q=80",
   "https://images.unsplash.com/photo-1517581177682-a085bb7ffb15?w=600&q=80",
   "https://images.unsplash.com/photo-1531834685032-c34bf0d84c77?w=600&q=80",
-  "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=600&q=80",
+];
+const STOCK_GALLERY = [
+  "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=600&q=80",
+  "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=600&q=80",
+  "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=600&q=80",
+  "https://images.unsplash.com/photo-1522770179533-24471fcdba45?w=600&q=80",
+  "https://images.unsplash.com/photo-1517581177682-a085bb7ffb15?w=600&q=80",
+  "https://images.unsplash.com/photo-1531834685032-c34bf0d84c77?w=600&q=80",
+  "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600&q=80",
+  "https://images.unsplash.com/photo-1520975916090-3105956dac38?w=600&q=80",
 ];
 
 /* ───────────────────────── TRUST BADGES ───────────────────────── */

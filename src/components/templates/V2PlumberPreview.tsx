@@ -147,8 +147,8 @@ const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1581092795360-fd1ca
 const STOCK_PROJECTS = [
   "https://images.unsplash.com/photo-1585704032915-c3400ca199e7?w=600&q=80",
   "https://images.unsplash.com/photo-1607472586893-edb57bdc0e39?w=600&q=80",
-  "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=800&q=80",
-  "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=800&q=80",
+  "https://images.unsplash.com/photo-1542013936693-884638332954?w=600&q=80",
+  "https://images.unsplash.com/photo-1583907659441-addbe699e921?w=600&q=80",
 ];
 
 /* ───────────────────────── FLOATING WATER DROPS ───────────────────────── */

@@ -146,12 +146,16 @@ const QUIZ_OPTIONS = [
 ];
 
 /* ───────────────────────── STOCK FALLBACK IMAGES ───────────────────────── */
-const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=1400&q=80"];
-const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=600&q=80"];
+const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1609220136736-443140cffec6?w=1400&q=80"];
+const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1537202108838-e7072bad1927?w=600&q=80"];
 const STOCK_GALLERY = [
-  "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=600&q=80",
+  "https://images.unsplash.com/photo-1537202108838-e7072bad1927?w=600&q=80",
   "https://images.unsplash.com/photo-1598257006458-087169a1f08d?w=600&q=80",
-  "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&q=80",
+  "https://images.unsplash.com/photo-1519824145371-296894a0daa9?w=600&q=80",
+  "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=600&q=80",
+  "https://images.unsplash.com/photo-1576502200916-3808e07386a5?w=600&q=80",
+  "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?w=600&q=80",
+  "https://images.unsplash.com/photo-1518291344630-4857135fb581?w=600&q=80",
   "https://images.unsplash.com/photo-1559757175-5700dde675bc?w=800&q=80",
 ];
 

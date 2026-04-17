@@ -86,26 +86,24 @@ function getServiceIcon(serviceName: string) {
 const STOCK_HERO_POOL = [
   "https://images.unsplash.com/photo-1558036117-15d82a90b9b1?w=1400&q=80",   // aerial view new roof
   "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1400&q=80", // roofer working
-  "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=1400&q=80", // house exterior
-  "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1400&q=80", // luxury home
-  "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=1400&q=80", // modern home
+  "https://images.unsplash.com/photo-1605117882932-f9e32b03fea9?w=1400&q=80", // roof shingles being installed
+  "https://images.unsplash.com/photo-1632759145351-1d592919f522?w=1400&q=80", // roofing crew on roof
+  "https://images.unsplash.com/photo-1625766763788-95dcce9bf5ac?w=1400&q=80", // roofing crew
 ];
 const STOCK_ABOUT_POOL = [
-  "https://images.unsplash.com/photo-1632759145351-1d592919f522?w=800&q=80",  // roofing crew on roof
-  "https://images.unsplash.com/photo-1605117882932-f9e32b03fea9?w=800&q=80",  // roof shingles being installed
-  "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80",  // worker on roof
+  "https://images.unsplash.com/photo-1635424710928-0544e8512eae?w=800&q=80",  // roof shingles close-up
   "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=800&q=80",  // completed roof
   "https://images.unsplash.com/photo-1513467535987-fd81bc7d62f8?w=800&q=80",  // blueprint planning
 ];
 const STOCK_PROJECTS = [
-  "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=600&q=80",  // house 1
-  "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80",  // house 2
-  "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=600&q=80",  // house 3
-  "https://images.unsplash.com/photo-1625766763788-95dcce9bf5ac?w=600&q=80",  // roofing crew
-  "https://images.unsplash.com/photo-1635424710928-0544e8512eae?w=600&q=80",  // roof shingles close-up
-  "https://images.unsplash.com/photo-1562040506-a9b32cb51b94?w=600&q=80",  // completed roof
+  "https://images.unsplash.com/photo-1562040506-a9b32cb51b94?w=600&q=80",  // completed roof 1
   "https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=600&q=80",  // roof installation
-  "https://images.unsplash.com/photo-1600573472592-401b489a3cdc?w=600&q=80",  // house 8
+  "https://images.unsplash.com/photo-1600573472592-401b489a3cdc?w=600&q=80",  // shingled roof
+  "https://images.unsplash.com/photo-1593810450967-f9c42742e326?w=600&q=80",  // metal roof
+  "https://images.unsplash.com/photo-1540518614846-7eded433c457?w=600&q=80",  // shingles detail
+  "https://images.unsplash.com/photo-1525909002-1b05e0c869d8?w=600&q=80",  // roof line
+  "https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=600&q=80",  // close shingles
+  "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=600&q=80",  // residential roofing
 ];
 
 /* ───────────────────────── ROOFING MATERIALS DATA ───────────────────────── */

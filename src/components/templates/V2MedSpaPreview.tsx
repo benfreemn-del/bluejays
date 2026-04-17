@@ -35,7 +35,7 @@ const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1515377905703-c4788e51af15?w=600&q=80",
   "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=600&q=80",
   "https://images.unsplash.com/photo-1519823551278-64ac92734fb1?w=600&q=80",
-  "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?w=600&q=80",
+  "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=600&q=80",
   "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=600&q=80",
   "https://images.unsplash.com/photo-1552693673-1bf958298935?w=600&q=80",
   "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=600&q=80",

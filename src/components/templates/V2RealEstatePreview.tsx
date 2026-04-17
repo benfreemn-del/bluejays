@@ -91,7 +91,7 @@ const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1560250097-0b93528c
 const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80",
   "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=600&q=80",
-  "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&q=80",
+  "https://images.unsplash.com/photo-1605276373954-0c4a0dac5b12?w=800&q=80",
   "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80",
 ];
 

@@ -37,17 +37,17 @@ const STOCK_HERO_POOL = [
   "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=1400&q=80",
 ];
 const STOCK_ABOUT_POOL = [
-  "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=600&q=80",
   "https://images.unsplash.com/photo-1562259929-b4e1fd3aef09?w=600&q=80",
+  "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=600&q=80",
 ];
 const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1595814433015-e6f5ce69614e?w=600&q=80",
   "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=600&q=80",
-  "https://images.unsplash.com/photo-1525909002-1b05e0c869d8?w=600&q=80",
-  "https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=600&q=80",
-  "https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=600&q=80",
+  "https://images.unsplash.com/photo-1562771379-eafdca7a02f8?w=600&q=80",
+  "https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?w=600&q=80",
+  "https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=600&q=80",
   "https://images.unsplash.com/photo-1560448075-bb485b067938?w=600&q=80",
-  "https://images.unsplash.com/photo-1562259929-b4e1fd3aef09?w=600&q=80",
+  "https://images.unsplash.com/photo-1530268729831-4b0b9e170218?w=600&q=80",
   "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=600&q=80",
 ];
 

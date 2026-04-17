@@ -75,13 +75,17 @@ function getServiceIcon(serviceName: string) {
 }
 
 /* ───────────────── STOCK IMAGES ───────────────── */
-const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=1400&q=80"];
+const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1503594384566-461fe158e797?w=1400&q=80"];
 const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=600&q=80"];
 const STOCK_PROJECTS = [
-  "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=600&q=80",
-  "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=600&q=80",
-  "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=600&q=80",
-  "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=600&q=80",
+  "https://images.unsplash.com/photo-1567521464027-f127ff144326?w=600&q=80",
+  "https://images.unsplash.com/photo-1565538810643-b5bdb714032a?w=600&q=80",
+  "https://images.unsplash.com/photo-1581858726788-75bc0f6a952d?w=600&q=80",
+  "https://images.unsplash.com/photo-1592928302636-c83cf1e1c887?w=600&q=80",
+  "https://images.unsplash.com/photo-1590725140246-20acdee442be?w=600&q=80",
+  "https://images.unsplash.com/photo-1503594384566-461fe158e797?w=600&q=80",
+  "https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=600&q=80",
+  "https://images.unsplash.com/photo-1581093588401-fbb62a02f120?w=600&q=80",
 ];
 
 /* ───────────────── PARTICLES ───────────────── */

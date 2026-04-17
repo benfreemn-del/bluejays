@@ -94,7 +94,7 @@ function getServiceIcon(serviceName: string) {
 const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1471341971476-ae15ff5dd4ea?w=1400&q=80"];
 const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1554048612-b6a482bc67e5?w=600&q=80"];
 const STOCK_GALLERY = [
-  "https://images.unsplash.com/photo-1519741497674-611481863552?w=600&q=80",
+  "https://images.unsplash.com/photo-1554080353-a576cf803bda?w=600&q=80",
   "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80",
   "https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=600&q=80",
   "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&q=80",

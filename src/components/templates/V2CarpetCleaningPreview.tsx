@@ -85,22 +85,22 @@ function getServiceIcon(serviceName: string) {
 
 /* ───────────────────────── STOCK FALLBACK IMAGES ───────────────────────── */
 const STOCK_HERO_POOL = [
-  "https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?w=1400&q=80",
-  "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=1400&q=80",
+  "https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?w=1400&q=80",
+  "https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?w=1400&q=80",
 ];
 const STOCK_ABOUT_POOL = [
-  "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=600&q=80",
-  "https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?w=600&q=80",
+  "https://images.unsplash.com/photo-1560440021-33f9b867899d?w=600&q=80",
+  "https://images.unsplash.com/photo-1604187351574-c75ca79f5807?w=600&q=80",
 ];
 const STOCK_GALLERY = [
-  "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=600&q=80",
-  "https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?w=600&q=80",
-  "https://images.unsplash.com/photo-1563453392212-326f5e854473?w=600&q=80",
-  "https://images.unsplash.com/photo-1528740561666-dc2479dc08ab?w=600&q=80",
-  "https://images.unsplash.com/photo-1556909114-44e3e70034e2?w=600&q=80",
-  "https://images.unsplash.com/photo-1584568694244-14fbdf83bd30?w=600&q=80",
-  "https://images.unsplash.com/photo-1585515320310-259814833e62?w=600&q=80",
-  "https://images.unsplash.com/photo-1574269909862-7e1d70bb8078?w=600&q=80",
+  "https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?w=600&q=80",
+  "https://images.unsplash.com/photo-1604335399105-a0c585fd81a1?w=600&q=80",
+  "https://images.unsplash.com/photo-1604328698692-f76ea9498e76?w=600&q=80",
+  "https://images.unsplash.com/photo-1586788224331-947f68671cf1?w=600&q=80",
+  "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=600&q=80",
+  "https://images.unsplash.com/photo-1603712725038-e9334ae8f39f?w=600&q=80",
+  "https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=600&q=80",
+  "https://images.unsplash.com/photo-1585421514284-efb74c2b69ba?w=600&q=80",
 ];
 
 /* ───────────────────────── TRUST BADGES ───────────────────────── */
