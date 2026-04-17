@@ -704,7 +704,7 @@ export default function V2GarageDoorPreview({
   return (
     <main
       className="relative min-h-[100dvh] overflow-x-hidden"
-      style={{ background: CHARCOAL, color: "#f1f5f9" }}
+      style={{ fontFamily: "Inter, system-ui, sans-serif", background: CHARCOAL, color: "#f1f5f9" }}
     >
       <FloatingParticles accent={ACCENT} />
 

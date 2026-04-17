@@ -142,7 +142,7 @@ function SectionHeader({ badge, title, subtitle, accent }: { badge: string; titl
 
 function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <motion.div initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: "-80px" }} transition={{ duration: 0.7, ease: "easeOut" as const }} className={className}>
+    <motion.div initial={{ opacity: 1, x: 50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: "-80px" }} transition={{ duration: 0.7, ease: "easeOut" as const }} className={className}>
       {children}
     </motion.div>
   );
@@ -228,7 +228,7 @@ export default function V2MedSpaPreview({ data }: { data: GeneratedSiteData }) {
   const testimonials = data.testimonials?.length > 0 ? data.testimonials : fallbackTestimonials;
 
   return (
-    <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: BG, color: "#f1f5f9" }}>
+    <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ fontFamily: "Jost, system-ui, sans-serif", background: BG, color: "#f1f5f9" }}>
       <FloatingParticles accent={ACCENT} />
 
       {/* ─── 1. NAV ─── */}

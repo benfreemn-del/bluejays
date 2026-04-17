@@ -149,7 +149,7 @@ function AccordionItem({ question, answer, isOpen, onToggle }: { question: strin
 function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <motion.div
-      initial={{ opacity: 0, x: 50 }}
+      initial={{ opacity: 1, x: 50 }}
       whileInView={{ opacity: 1, x: 0 }}
       viewport={{ once: true, margin: "-80px" }}
       transition={{ duration: 0.7, ease: "easeOut" as const }}
@@ -257,7 +257,7 @@ export default function V2CateringPreview({ data }: { data: GeneratedSiteData })
   ];
 
   return (
-    <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: BG, color: "#1c1917" }}>
+    <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ fontFamily: "Lato, system-ui, sans-serif", background: BG, color: "#1c1917" }}>
       <FloatingSparks accent={ACCENT} />
 
       {/* 1. NAV */}

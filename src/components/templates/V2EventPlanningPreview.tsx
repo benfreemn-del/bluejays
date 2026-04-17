@@ -40,6 +40,7 @@ import type { GeneratedSiteData } from "@/lib/generator";
 import BluejayLogo from "../BluejayLogo";
 import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
+import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
 
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
@@ -89,15 +90,31 @@ function getServiceIcon(n: string) {
   return Champagne;
 }
 
-const STOCK_HERO =
-  "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=1400&q=80";
-const STOCK_ABOUT =
-  "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=600&q=80";
+/* ───────────────────────── STOCK FALLBACK IMAGES (UNIQUE TO EVENT PLANNING) ───────────────────────── */
+const STOCK_HERO_POOL = [
+  "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=1400&q=80",   // wedding reception venue
+  "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=1400&q=80",   // elegant wedding setup
+  "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=1400&q=80",   // gala table setting
+  "https://images.unsplash.com/photo-1530023367847-a683933f4172?w=1400&q=80",   // event with flowers
+  "https://images.unsplash.com/photo-1478146896981-b80fe463b330?w=1400&q=80",   // string lights banquet
+];
+const STOCK_ABOUT_POOL = [
+  "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=600&q=80",    // event decor
+  "https://images.unsplash.com/photo-1530023367847-a683933f4172?w=600&q=80",    // flowers
+  "https://images.unsplash.com/photo-1478146896981-b80fe463b330?w=600&q=80",    // string lights
+  "https://images.unsplash.com/photo-1519741497674-611481863552?w=600&q=80",    // wedding arch
+  "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=600&q=80",    // table settings
+];
 const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=600&q=80",
   "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=600&q=80",
   "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=600&q=80",
-  "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=600&q=80",
+  "https://images.unsplash.com/photo-1530023367847-a683933f4172?w=600&q=80",
+  "https://images.unsplash.com/photo-1478146896981-b80fe463b330?w=600&q=80",
+  "https://images.unsplash.com/photo-1519741497674-611481863552?w=600&q=80",
+  "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=600&q=80",
+  "https://images.unsplash.com/photo-1470753937643-efeb931202a9?w=600&q=80",
+  "https://images.unsplash.com/photo-1520854221256-17451cc331bf?w=600&q=80",
 ];
 
 /* ── decorative backgrounds ── */
@@ -582,11 +599,13 @@ export default function V2EventPlanningPreview({
   const [quizAnswer, setQuizAnswer] = useState<number | null>(null);
   const { ACCENT, ACCENT_GLOW } = getAccent(data.accentColor);
   const uniquePhotos = data.photos ? [...new Set(data.photos)] : [];
-  const heroImage = uniquePhotos[0] || STOCK_HERO;
-  const heroCardImage = uniquePhotos[1] || STOCK_ABOUT;
-  const aboutImage = uniquePhotos[2] || STOCK_ABOUT;
+  const heroImage = uniquePhotos[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
+  const heroCardImage = uniquePhotos[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 1);
+  const aboutImage = uniquePhotos[2] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 3);
   const galleryImages =
-    data.photos?.length > 2 ? data.photos.slice(2, 6) : STOCK_GALLERY;
+    data.photos && data.photos.length > 2
+      ? data.photos.slice(2, 6)
+      : pickGallery(STOCK_GALLERY, data.businessName);
   const phoneDigits = data.phone.replace(/\D/g, "");
 
   const processSteps = [
@@ -680,7 +699,7 @@ export default function V2EventPlanningPreview({
   return (
     <main
       className="relative min-h-[100dvh] overflow-x-hidden"
-      style={{ background: CHARCOAL, color: "#f1f5f9" }}
+      style={{ fontFamily: "Raleway, system-ui, sans-serif", background: CHARCOAL, color: "#f1f5f9" }}
     >
       <FloatingParticles accent={ACCENT} />
 

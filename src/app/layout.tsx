@@ -52,6 +52,38 @@ export const metadata: Metadata = {
   },
 };
 
+// Google Fonts URL for all category typography pairings (see CLAUDE.md Typography Pairing Guide)
+const GOOGLE_FONTS_URL =
+  "https://fonts.googleapis.com/css2?" +
+  [
+    "family=DM+Serif+Display:wght@400;700",
+    "family=DM+Sans:wght@300;400;500;600;700",
+    "family=Nunito:wght@300;400;500;600;700;800",
+    "family=Lato:wght@300;400;700;900",
+    "family=Merriweather:wght@300;400;700;900",
+    "family=Open+Sans:wght@300;400;500;600;700",
+    "family=EB+Garamond:wght@400;500;600;700;800",
+    "family=Source+Sans+3:wght@300;400;600;700",
+    "family=Crimson+Pro:wght@400;500;600;700",
+    "family=Inter:wght@300;400;500;600;700",
+    "family=Libre+Baskerville:wght@400;700",
+    "family=Cormorant+Garamond:wght@400;500;600;700",
+    "family=Jost:wght@300;400;500;600;700",
+    "family=Raleway:wght@300;400;500;600;700",
+    "family=Montserrat:wght@300;400;500;600;700;800",
+    "family=Playfair+Display:wght@400;600;700;800",
+    "family=Bebas+Neue",
+    "family=Oswald:wght@400;500;600;700",
+    "family=Nunito+Sans:wght@300;400;600;700",
+    "family=Archivo+Black",
+    "family=Archivo:wght@400;500;600;700",
+    "family=Space+Grotesk:wght@400;500;600;700",
+    "family=Barlow+Condensed:wght@400;500;600;700;800",
+    "family=Barlow:wght@300;400;500;600;700",
+    "family=Poppins:wght@300;400;500;600;700",
+  ].join("&") +
+  "&display=swap";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -62,6 +94,11 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} antialiased`}
     >
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="stylesheet" href={GOOGLE_FONTS_URL} />
+      </head>
       <body>{children}</body>
     </html>
   );

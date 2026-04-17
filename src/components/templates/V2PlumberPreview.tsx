@@ -292,7 +292,7 @@ function SectionHeader({ badge, title, subtitle, accent }: { badge: string; titl
 function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <motion.div
-      initial={{ opacity: 0, x: -50 }}
+      initial={{ opacity: 1, x: -50 }}
       whileInView={{ opacity: 1, x: 0 }}
       viewport={{ once: true, margin: "-80px" }}
       transition={{ duration: 0.7, ease: "easeOut" as const }}
@@ -345,7 +345,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
   const testimonials = data.testimonials?.length > 0 ? data.testimonials : fallbackTestimonials;
 
   return (
-    <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: SLATE, color: "#f1f5f9" }}>
+    <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ fontFamily: "Inter, system-ui, sans-serif", background: SLATE, color: "#f1f5f9" }}>
       <FloatingWaterDrops />
 
       {/* ══════════════════ 1. NAV ══════════════════ */}

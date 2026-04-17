@@ -321,7 +321,7 @@ export default function V2LocksmithPreview({ data }: { data: GeneratedSiteData }
   ];
 
   return (
-    <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: CHARCOAL, color: "#f1f5f9" }}>
+    <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ fontFamily: "Inter, system-ui, sans-serif", background: CHARCOAL, color: "#f1f5f9" }}>
       <FloatingParticles accent={ACCENT} />
 
       {/* ── NAV ── */}

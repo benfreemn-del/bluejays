@@ -35,6 +35,7 @@ import {
   Certificate,
   CheckCircle,
   Wall,
+  SealCheck,
 } from "@phosphor-icons/react";
 
 /* ───────────────────────── SPRING CONFIG ───────────────────────── */
@@ -287,6 +288,12 @@ export default function V2ConstructionPage() {
                 <Phone size={18} weight="duotone" /> (555) 742-BUILD
               </MagneticButton>
             </motion.div>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ ...spring, delay: 0.95 }} className="flex flex-wrap gap-3">
+              <span className="px-4 py-2 rounded-full text-xs font-semibold text-white flex items-center gap-2" style={{ background: "rgba(255,255,255,0.05)", border: `1px solid ${ACCENT}40` }}><ShieldCheck size={14} weight="duotone" style={{ color: ACCENT }} />Licensed &amp; Bonded</span>
+              <span className="px-4 py-2 rounded-full text-xs font-semibold text-white flex items-center gap-2" style={{ background: "rgba(255,255,255,0.05)", border: `1px solid ${ACCENT_LIGHT}40` }}><Star size={14} weight="fill" style={{ color: ACCENT_LIGHT }} />4.9-Star Rated</span>
+              <span className="px-4 py-2 rounded-full text-xs font-semibold text-white flex items-center gap-2" style={{ background: "rgba(255,255,255,0.05)", border: `1px solid ${ACCENT}40` }}><CheckCircle size={14} weight="duotone" style={{ color: ACCENT }} />Free Estimates</span>
+              <span className="px-4 py-2 rounded-full text-xs font-semibold text-white flex items-center gap-2" style={{ background: "rgba(255,255,255,0.05)", border: `1px solid ${ACCENT_LIGHT}40` }}><Certificate size={14} weight="duotone" style={{ color: ACCENT_LIGHT }} />License #CCB-217840</span>
+            </motion.div>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ ...spring, delay: 1 }} className="flex flex-wrap gap-6 text-sm text-slate-400">
               <span className="flex items-center gap-2"><MapPin size={16} weight="duotone" style={{ color: ACCENT }} />Metro &amp; Surrounding Counties</span>
               <span className="flex items-center gap-2"><Clock size={16} weight="duotone" style={{ color: ACCENT }} />Mon-Fri 7am-5pm</span>
@@ -452,6 +459,121 @@ export default function V2ConstructionPage() {
         </div>
       </SectionReveal>
 
+      {/* ─── PROJECT INVESTMENT GUIDE ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="absolute inset-0 pointer-events-none" style={{ background: `radial-gradient(ellipse 60% 40% at 50% 50%, ${ACCENT_GLOW} 0%, transparent 70%)` }} />
+        <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6">
+          <div className="text-center mb-16">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ACCENT }}>Budget Planning</p>
+            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white"><WordReveal text="Project Investment Guide" /></h2>
+            <p className="text-slate-400 mt-4 max-w-2xl mx-auto">Every build is unique — but these investment tiers help you plan. Final quotes after a free on-site consultation and scope walkthrough.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              { name: "Renovation", price: "$15K+", desc: "Bathroom remodels, kitchen updates, basement finish, or single-room scope.", features: ["Full design + permit package", "Licensed trades coordinated", "6–8 week typical timeline", "Fixture + finish selections", "1-year workmanship warranty"], highlight: false },
+              { name: "Addition", price: "$35K+", desc: "Second story, primary suite, garage conversion, or full kitchen-down-to-studs.", features: ["Architectural drawings included", "Structural engineering stamped", "10–16 week typical timeline", "All permits handled", "2-year workmanship warranty"], highlight: true },
+              { name: "New Build", price: "$75K+", desc: "Custom homes, ADUs, and ground-up commercial projects with full project management.", features: ["Lot prep + foundation + framing", "Dedicated project manager", "6–12 month timeline", "Transparent cost-plus billing", "5-year warranty + 10-year structural"], highlight: false },
+            ].map((tier, i) => (
+              <div key={i} className={`relative rounded-2xl ${tier.highlight ? 'p-[2px]' : ''}`} style={tier.highlight ? { background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT_LIGHT})` } : {}}>
+                {tier.highlight && <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-white" style={{ background: ACCENT }}>Most Popular</div>}
+                <GlassCard className="p-6 h-full">
+                  <h3 className="text-xl font-bold text-white">{tier.name}</h3>
+                  <p className="text-xs text-slate-400 mt-1">{tier.desc}</p>
+                  <div className="mt-6 flex items-end gap-1">
+                    <span className="text-5xl font-black text-white">{tier.price}</span>
+                  </div>
+                  <ul className="mt-6 space-y-3">
+                    {tier.features.map((f, j) => (
+                      <li key={j} className="flex items-start gap-2 text-sm text-slate-300">
+                        <CheckCircle size={18} weight="fill" style={{ color: tier.highlight ? ACCENT_LIGHT : ACCENT }} className="shrink-0 mt-0.5" />
+                        <span>{f}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <button className="mt-6 w-full px-6 py-3 rounded-full text-sm font-semibold text-white" style={{ background: tier.highlight ? ACCENT : "rgba(255,255,255,0.05)", border: tier.highlight ? "none" : "1px solid rgba(255,255,255,0.1)" }}>Get An Estimate</button>
+                </GlassCard>
+              </div>
+            ))}
+          </div>
+          <p className="text-center text-xs text-slate-500 mt-8">Financing through partner lenders available for qualifying projects — 0% interest for the first 12 months.</p>
+        </div>
+      </SectionReveal>
+
+      {/* ─── 5-STEP BUILD TIMELINE ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <div className="text-center mb-16">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ACCENT }}>Our Process</p>
+            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white"><WordReveal text="5 Steps, Built Right" /></h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+            {[
+              { step: "01", title: "Free Consult", desc: "Walk-through of your space, scope goals, and budget. No fees, no pressure." },
+              { step: "02", title: "Design & Bid", desc: "Detailed drawings, material choices, and a line-item written quote." },
+              { step: "03", title: "Permits & Prep", desc: "We pull every required permit and schedule inspections so you do not have to." },
+              { step: "04", title: "Build Phase", desc: "Licensed trades executing with weekly photo updates and clear milestones." },
+              { step: "05", title: "Final Walkthrough", desc: "Punch list, warranty docs, and a handoff package with all paperwork." },
+            ].map((p, i) => (
+              <GlassCard key={i} className="p-5 h-full relative overflow-hidden">
+                <div className="absolute top-3 right-3 text-5xl font-black opacity-5 text-white">{p.step}</div>
+                <div className="relative w-10 h-10 rounded-xl flex items-center justify-center mb-3" style={{ background: ACCENT_GLOW }}>
+                  <span className="text-sm font-black" style={{ color: ACCENT }}>{p.step}</span>
+                </div>
+                <h3 className="relative text-base font-bold text-white mb-2">{p.title}</h3>
+                <p className="relative text-xs text-slate-400 leading-relaxed">{p.desc}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── EMERGENCY STRIP ─── */}
+      <SectionReveal className="relative z-10 py-8">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <GlassCard className="p-6 md:p-8 flex flex-col md:flex-row items-center gap-6">
+            <div className="relative shrink-0">
+              <motion.div className="absolute inset-0 rounded-full" style={{ background: ACCENT_LIGHT }} animate={{ scale: [1, 1.6, 1], opacity: [0.5, 0, 0.5] }} transition={{ duration: 2, repeat: Infinity }} />
+              <div className="relative w-4 h-4 rounded-full" style={{ background: ACCENT_LIGHT }} />
+            </div>
+            <div className="flex-1 text-center md:text-left">
+              <p className="text-xs uppercase tracking-widest mb-1" style={{ color: ACCENT_LIGHT }}>Booking Spring Projects Now</p>
+              <h3 className="text-2xl md:text-3xl font-bold text-white">Crews Available Within 4 Weeks</h3>
+              <p className="text-sm text-slate-400 mt-2">Build calendars are filling for the season. Lock your project in with a free on-site estimate this week.</p>
+            </div>
+            <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 shrink-0 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
+              <CalendarCheck size={18} weight="duotone" /> Schedule Estimate
+            </MagneticButton>
+          </GlassCard>
+        </div>
+      </SectionReveal>
+
+      {/* ─── GOOGLE REVIEWS HEADER ─── */}
+      <SectionReveal className="relative z-10 py-8">
+        <div className="mx-auto max-w-4xl px-4 md:px-6">
+          <GlassCard className="px-6 py-5 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8">
+            <div className="flex items-center gap-3">
+              <svg width="32" height="32" viewBox="0 0 48 48">
+                <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z" />
+                <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z" />
+                <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z" />
+                <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z" />
+              </svg>
+              <div className="text-left">
+                <p className="text-sm text-slate-400">Google Reviews</p>
+                <p className="text-lg font-bold text-white">Verified Homeowner Ratings</p>
+              </div>
+            </div>
+            <div className="hidden sm:block w-px h-12 bg-white/10" />
+            <div className="text-center">
+              <div className="flex items-center justify-center gap-1 mb-1">
+                {[0,1,2,3,4].map((i) => (<Star key={i} size={20} weight="fill" style={{ color: ACCENT_LIGHT }} />))}
+              </div>
+              <p className="text-sm text-slate-400"><span className="text-white font-bold">4.9</span> out of 5 &bull; <span className="text-white font-bold">214</span> reviews</p>
+            </div>
+          </GlassCard>
+        </div>
+      </SectionReveal>
+
       {/* ─── 7. TESTIMONIALS ─── */}
       <SectionReveal id="testimonials" className="relative z-10 py-16 md:py-24">
         <div className="mx-auto max-w-7xl px-4 md:px-6">
@@ -464,17 +586,184 @@ export default function V2ConstructionPage() {
           <motion.div className="grid grid-cols-1 md:grid-cols-3 gap-6" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
             {testimonials.map((t, i) => (
               <motion.div key={i} variants={fadeUp}>
-                <GlassCard className="p-6 h-full flex flex-col">
-                  <Quotes size={28} weight="fill" style={{ color: ACCENT }} className="mb-3 opacity-50" />
+                <GlassCard className="p-6 h-full flex flex-col relative overflow-hidden">
+                  <Quotes size={60} weight="fill" style={{ color: ACCENT }} className="absolute -top-2 -right-2 opacity-10" />
+                  <Quotes size={28} weight="fill" style={{ color: ACCENT }} className="mb-3 opacity-60" />
                   <p className="text-slate-300 leading-relaxed flex-1 text-sm">{t.text}</p>
                   <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
-                    <span className="text-sm font-semibold text-white">{t.name}</span>
-                    <div className="flex gap-0.5">{Array.from({ length: t.rating }).map((_, j) => (<Star key={j} size={12} weight="fill" style={{ color: ACCENT }} />))}</div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-semibold text-white">{t.name}</span>
+                      <CheckCircle size={14} weight="fill" style={{ color: ACCENT }} />
+                      <span className="text-[10px] text-slate-400 uppercase tracking-wider">Verified</span>
+                    </div>
+                    <div className="flex gap-0.5">{Array.from({ length: t.rating }).map((_, j) => (<Star key={j} size={18} weight="fill" style={{ color: ACCENT_LIGHT }} />))}</div>
                   </div>
                 </GlassCard>
               </motion.div>
             ))}
           </motion.div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── PROJECT QUIZ ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="absolute inset-0 pointer-events-none" style={{ background: `radial-gradient(ellipse 50% 60% at 20% 50%, ${ACCENT_GLOW} 0%, transparent 70%)` }} />
+        <div className="relative z-10 mx-auto max-w-5xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ACCENT }}>Let's Scope It</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white"><WordReveal text="What's Your Project?" /></h2>
+            <p className="text-slate-400 mt-4 max-w-2xl mx-auto">Pick the closest match and we'll route you to the right project manager.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {[
+              { color: "#22c55e", label: "Single Room", detail: "Kitchen, bath, basement, or single-room renovation — usually under 90 days.", rec: "Renovation Team", icon: House },
+              { color: ACCENT_LIGHT, label: "Major Addition", detail: "Second story, primary suite, full gut, or whole-house remodel with permits.", rec: "Addition Team + Architect", icon: Hammer },
+              { color: ACCENT, label: "New Build", detail: "Custom home, ADU, or ground-up commercial. 6–12 month timeline.", rec: "Custom Build Division", icon: Buildings },
+            ].map((opt, i) => (
+              <GlassCard key={i} className="p-6 h-full flex flex-col items-start relative overflow-hidden group cursor-pointer">
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ background: `radial-gradient(circle at 50% 0%, ${opt.color}22, transparent 60%)` }} />
+                <div className="relative w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: `${opt.color}22` }}>
+                  <opt.icon size={22} weight="duotone" style={{ color: opt.color }} />
+                </div>
+                <p className="relative text-xs uppercase tracking-widest font-bold" style={{ color: opt.color }}>{opt.label}</p>
+                <p className="relative text-sm text-slate-300 mt-2 leading-relaxed flex-1">{opt.detail}</p>
+                <div className="relative mt-6 pt-4 border-t border-white/10 w-full">
+                  <p className="text-[10px] uppercase tracking-widest text-slate-400 mb-1">Route to</p>
+                  <p className="text-sm font-semibold text-white">{opt.rec}</p>
+                </div>
+              </GlassCard>
+            ))}
+          </div>
+          <div className="text-center mt-8">
+            <MagneticButton className="px-10 py-4 rounded-full text-base font-semibold text-white inline-flex items-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
+              <Phone size={18} weight="duotone" /> Call The Office
+            </MagneticButton>
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── VIDEO PLACEHOLDER ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-6xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ACCENT }}>On The Jobsite</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white"><WordReveal text="Tour A Recent Build" /></h2>
+          </div>
+          <div className="relative rounded-2xl overflow-hidden aspect-video group cursor-pointer">
+            <img src="https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=1600&q=80" alt="Construction crew at job site" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <motion.div className="w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center shadow-2xl" style={{ background: ACCENT }} animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}>
+                <svg width="28" height="32" viewBox="0 0 24 28" fill="white" className="ml-1">
+                  <path d="M0 0L24 14L0 28Z" />
+                </svg>
+              </motion.div>
+            </div>
+            <div className="absolute bottom-6 left-6 right-6">
+              <p className="text-xs uppercase tracking-widest" style={{ color: ACCENT_LIGHT }}>Foundation To Finish &bull; 4:10</p>
+              <p className="text-xl md:text-2xl font-bold text-white mt-1">Walk a full custom home build — foundation to keys, in four minutes.</p>
+            </div>
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── COMPETITOR COMPARISON ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-5xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ACCENT }}>The Difference</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white"><WordReveal text="Apex vs. The Handyman" /></h2>
+          </div>
+          <GlassCard className="overflow-hidden">
+            <div className="grid grid-cols-[1.5fr_1fr_1fr] items-center border-b border-white/10">
+              <div className="p-4 md:p-6 text-xs uppercase tracking-widest text-slate-400">What Matters</div>
+              <div className="p-4 md:p-6 text-center" style={{ background: `${ACCENT}15` }}>
+                <p className="text-sm md:text-base font-bold" style={{ color: ACCENT_LIGHT }}>Apex</p>
+              </div>
+              <div className="p-4 md:p-6 text-center">
+                <p className="text-sm md:text-base font-semibold text-slate-400">Unlicensed Handyman</p>
+              </div>
+            </div>
+            {[
+              { feature: "State-licensed GC", us: "CCB #217840", them: "No" },
+              { feature: "Bonded + insured", us: "$1M liability", them: "Rarely" },
+              { feature: "Permits pulled correctly", us: "Every job", them: "Often skipped" },
+              { feature: "Licensed subcontractors", us: "All trades", them: "DIY quality" },
+              { feature: "Written contracts + scope", us: "Always", them: "Handshake" },
+              { feature: "Workmanship warranty", us: "1–5 years", them: "None" },
+              { feature: "Change order process", us: "Transparent", them: "Surprise bills" },
+            ].map((row, i) => (
+              <div key={i} className="grid grid-cols-[1.5fr_1fr_1fr] items-center border-b border-white/5 last:border-b-0">
+                <div className="p-4 md:p-6 text-sm text-white">{row.feature}</div>
+                <div className="p-4 md:p-6 text-center" style={{ background: `${ACCENT}08` }}>
+                  <div className="flex items-center justify-center gap-2">
+                    <CheckCircle size={18} weight="fill" style={{ color: ACCENT }} />
+                    <span className="text-sm text-white font-semibold hidden sm:inline">{row.us}</span>
+                  </div>
+                </div>
+                <div className="p-4 md:p-6 text-center text-sm text-slate-500 italic">{row.them}</div>
+              </div>
+            ))}
+          </GlassCard>
+        </div>
+      </SectionReveal>
+
+      {/* ─── CERTIFICATIONS ─── */}
+      <SectionReveal className="relative z-10 py-8">
+        <div className="mx-auto max-w-6xl px-4 md:px-6">
+          <p className="text-center text-xs uppercase tracking-widest text-slate-500 mb-6">Credentials &amp; Partnerships</p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+            {[
+              { label: "CCB Licensed", icon: Certificate },
+              { label: "NAHB Member", icon: Medal },
+              { label: "BBB A+", icon: Star },
+              { label: "OSHA Certified", icon: ShieldCheck },
+              { label: "Energy Star Partner", icon: CheckCircle },
+              { label: "EPA Lead-Safe", icon: SealCheck },
+            ].map((cert, i) => (
+              <GlassCard key={i} className="px-4 py-3 flex items-center gap-2 justify-center">
+                <cert.icon size={18} weight="duotone" style={{ color: i % 2 === 0 ? ACCENT : ACCENT_LIGHT }} />
+                <span className="text-xs font-semibold text-slate-300">{cert.label}</span>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── SERVICE AREA ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ACCENT }}>Where We Build</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white"><WordReveal text="Coverage & Availability" /></h2>
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <GlassCard className="p-6 text-center">
+              <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: ACCENT_GLOW }}>
+                <MapPin size={26} weight="duotone" style={{ color: ACCENT }} />
+              </div>
+              <p className="text-xs uppercase tracking-widest mb-2" style={{ color: ACCENT_LIGHT }}>Service Radius</p>
+              <p className="text-3xl font-black text-white">50 Miles</p>
+              <p className="text-sm text-slate-400 mt-2">Metro plus three surrounding counties. Larger custom builds considered further on request.</p>
+            </GlassCard>
+            <GlassCard className="p-6 text-center">
+              <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: ACCENT_GLOW }}>
+                <Timer size={26} weight="duotone" style={{ color: ACCENT_LIGHT }} />
+              </div>
+              <p className="text-xs uppercase tracking-widest mb-2" style={{ color: ACCENT_LIGHT }}>Lead Time</p>
+              <p className="text-3xl font-black text-white">4–8 Weeks</p>
+              <p className="text-sm text-slate-400 mt-2">From contract to boots on site. Emergency repair work fits in sooner — ask about our jump-in crew.</p>
+            </GlassCard>
+            <GlassCard className="p-6 text-center">
+              <div className="relative w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: ACCENT_GLOW }}>
+                <motion.div className="absolute inset-0 rounded-full" style={{ background: ACCENT }} animate={{ scale: [1, 1.6, 1], opacity: [0.4, 0, 0.4] }} transition={{ duration: 2, repeat: Infinity }} />
+                <CheckCircle size={26} weight="duotone" style={{ color: ACCENT }} className="relative" />
+              </div>
+              <p className="text-xs uppercase tracking-widest mb-2" style={{ color: ACCENT_LIGHT }}>Availability</p>
+              <p className="text-3xl font-black text-white">Booking Now</p>
+              <p className="text-sm text-slate-400 mt-2">Taking new-build consults through the end of the year. Smaller renos moving fastest.</p>
+            </GlassCard>
+          </div>
         </div>
       </SectionReveal>
 
@@ -494,6 +783,33 @@ export default function V2ConstructionPage() {
                   <CheckCircle size={20} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-2" />
                   <p className="text-xs font-semibold text-white">{cert}</p>
                 </GlassCard>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── PROJECT PORTFOLIO ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ACCENT }}>Recent Work</p>
+            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white"><WordReveal text="Featured Projects" /></h2>
+          </div>
+          <motion.div className="grid grid-cols-1 md:grid-cols-3 gap-6" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true }}>
+            {[
+              { title: "Modern Farmhouse Build", scope: "4,200 sq ft new build", duration: "9 months", src: "https://images.unsplash.com/photo-1521783988139-89397d761dce?w=800&q=80" },
+              { title: "Whole-Home Remodel", scope: "1920s craftsman gut renovation", duration: "6 months", src: "https://images.unsplash.com/photo-1523294587484-bae6cc870010?w=800&q=80" },
+              { title: "Primary Suite Addition", scope: "Second-story 700 sq ft addition", duration: "4 months", src: "https://images.unsplash.com/photo-1502005097973-6a7082348e28?w=800&q=80" },
+            ].map((proj, i) => (
+              <motion.div key={i} variants={fadeUp} className="group relative rounded-2xl overflow-hidden aspect-[4/5] cursor-pointer">
+                <img src={proj.src} alt={proj.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+                <div className="absolute bottom-6 left-6 right-6">
+                  <p className="text-xs uppercase tracking-widest" style={{ color: ACCENT_LIGHT }}>{proj.duration}</p>
+                  <p className="text-xl font-bold text-white mt-1">{proj.title}</p>
+                  <p className="text-sm text-slate-300 mt-1">{proj.scope}</p>
+                </div>
               </motion.div>
             ))}
           </motion.div>
@@ -587,6 +903,88 @@ export default function V2ConstructionPage() {
                 </div>
               </div>
             </GlassCard>
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── FINAL CTA ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-5xl px-4 md:px-6">
+          <GlassCard className="p-8 md:p-12 text-center">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ACCENT }}>Start With An Estimate</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white mb-4">Let's Build Something Great</h2>
+            <p className="text-slate-400 text-lg mb-8 max-w-lg mx-auto">Free on-site consultation, line-item quote, and no obligation to hire. We handle everything from permits to punch list — you enjoy the result.</p>
+            <div className="flex flex-wrap justify-center gap-4">
+              <MagneticButton className="px-10 py-4 rounded-full text-base font-semibold text-white inline-flex items-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
+                <CalendarCheck size={20} weight="duotone" /> Schedule Estimate
+              </MagneticButton>
+              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 inline-flex items-center gap-2 cursor-pointer">
+                <Phone size={18} weight="duotone" /> (555) 742-BUILD
+              </MagneticButton>
+            </div>
+            <p className="mt-6 text-xs text-slate-500">Licensed GC #CCB-217840 &bull; Bonded &bull; Fully Insured</p>
+            <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto">
+              {[
+                { label: "Licensed GC", value: "#CCB-217840" },
+                { label: "Years In Business", value: "18+" },
+                { label: "Projects Completed", value: "340+" },
+                { label: "Customer Rating", value: "4.9 / 5" },
+              ].map((stat, i) => (
+                <div key={i} className="text-center">
+                  <p className="text-xs text-slate-500 uppercase tracking-widest">{stat.label}</p>
+                  <p className="text-2xl font-black mt-1" style={{ color: ACCENT_LIGHT }}>{stat.value}</p>
+                </div>
+              ))}
+            </div>
+          </GlassCard>
+        </div>
+      </SectionReveal>
+
+      {/* ─── WARRANTY PROMISE ─── */}
+      <SectionReveal className="relative z-10 py-16">
+        <div className="mx-auto max-w-6xl px-4 md:px-6">
+          <div className="text-center mb-10">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ACCENT }}>Our Promise</p>
+            <h2 className="text-3xl md:text-4xl tracking-tighter font-bold text-white"><WordReveal text="Built With Guarantees" /></h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {[
+              { title: "On-Time Completion", desc: "We publish the timeline, track it weekly, and hit it — or you get paid.", icon: Timer },
+              { title: "Fixed-Price Contracts", desc: "No cost-plus fog. You approve every scope + change in writing.", icon: ShieldCheck },
+              { title: "Licensed &amp; Bonded", desc: "State GC license, $2M liability, OSHA-trained crews on every site.", icon: Certificate },
+              { title: "5-Year Workmanship", desc: "5-year warranty on all trades, 10-year structural on custom builds.", icon: Medal },
+            ].map((item, i) => (
+              <GlassCard key={i} className="p-5 text-center">
+                <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3" style={{ background: ACCENT_GLOW }}>
+                  <item.icon size={22} weight="duotone" style={{ color: ACCENT_LIGHT }} />
+                </div>
+                <p className="text-sm font-bold text-white" dangerouslySetInnerHTML={{ __html: item.title }} />
+                <p className="text-xs text-slate-400 mt-1 leading-relaxed" dangerouslySetInnerHTML={{ __html: item.desc }} />
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── EXTENDED FAQ ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-4xl px-4 md:px-6">
+          <div className="text-center mb-10">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ACCENT }}>Quick Answers</p>
+            <h2 className="text-3xl md:text-4xl tracking-tighter font-bold text-white"><WordReveal text="Frequently Asked" /></h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              { q: "Do you pull permits for me?", a: "Yes — every job includes all required permits, inspections, and code reviews. You never deal with the city." },
+              { q: "Do you do design + build?", a: "Yes. We can take you from concept to keys, including architectural drawings, engineering stamps, and interior finish selections." },
+              { q: "What is the deposit structure?", a: "10% at contract, progressive draws tied to milestones, and final payment at walk-through. Never pay for work that is not yet complete." },
+              { q: "Can you coordinate with my architect?", a: "Absolutely. We partner with outside architects and designers regularly. We also have in-house options if you need a full team." },
+            ].map((faq, i) => (
+              <GlassCard key={i} className="p-5">
+                <p className="text-sm font-bold text-white mb-2">{faq.q}</p>
+                <p className="text-sm text-slate-400 leading-relaxed">{faq.a}</p>
+              </GlassCard>
+            ))}
           </div>
         </div>
       </SectionReveal>

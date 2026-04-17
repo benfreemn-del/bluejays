@@ -355,6 +355,12 @@ export default function V2TowingPage() {
                 <Phone size={18} weight="duotone" /> (555) 911-TOWS
               </MagneticButton>
             </motion.div>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ ...spring, delay: 0.95 }} className="flex flex-wrap gap-3">
+              <span className="px-4 py-2 rounded-full text-xs font-semibold text-white flex items-center gap-2" style={{ background: "rgba(255,255,255,0.05)", border: `1px solid ${ACCENT}40` }}><ShieldCheck size={14} weight="duotone" style={{ color: ACCENT }} />Licensed &amp; Insured</span>
+              <span className="px-4 py-2 rounded-full text-xs font-semibold text-white flex items-center gap-2" style={{ background: "rgba(255,255,255,0.05)", border: `1px solid ${ACCENT_LIGHT}40` }}><Star size={14} weight="fill" style={{ color: ACCENT_LIGHT }} />4.9-Star Rated</span>
+              <span className="px-4 py-2 rounded-full text-xs font-semibold text-white flex items-center gap-2" style={{ background: "rgba(255,255,255,0.05)", border: `1px solid ${ACCENT}40` }}><CheckCircle size={14} weight="duotone" style={{ color: ACCENT }} />Flat-Rate Pricing</span>
+              <span className="px-4 py-2 rounded-full text-xs font-semibold text-white flex items-center gap-2" style={{ background: "rgba(255,255,255,0.05)", border: `1px solid ${ACCENT_LIGHT}40` }}><Timer size={14} weight="duotone" style={{ color: ACCENT_LIGHT }} />15-30 Min ETA</span>
+            </motion.div>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ ...spring, delay: 1 }} className="flex flex-wrap gap-6 text-sm text-slate-400">
               <span className="flex items-center gap-2"><Timer size={16} weight="duotone" style={{ color: ACCENT }} />15-30 Min ETA</span>
               <span className="flex items-center gap-2"><Clock size={16} weight="duotone" style={{ color: ACCENT }} />24/7/365 Dispatch</span>
@@ -524,6 +530,33 @@ export default function V2TowingPage() {
         </div>
       </SectionReveal>
 
+      {/* ─── GOOGLE REVIEWS HEADER ─── */}
+      <SectionReveal className="relative z-10 py-8">
+        <div className="mx-auto max-w-4xl px-4 md:px-6">
+          <GlassCard className="px-6 py-5 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8">
+            <div className="flex items-center gap-3">
+              <svg width="32" height="32" viewBox="0 0 48 48">
+                <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z" />
+                <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z" />
+                <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z" />
+                <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z" />
+              </svg>
+              <div className="text-left">
+                <p className="text-sm text-slate-400">Google Reviews</p>
+                <p className="text-lg font-bold text-white">Driver Ratings</p>
+              </div>
+            </div>
+            <div className="hidden sm:block w-px h-12 bg-white/10" />
+            <div className="text-center">
+              <div className="flex items-center justify-center gap-1 mb-1">
+                {[0,1,2,3,4].map((i) => (<Star key={i} size={20} weight="fill" style={{ color: ACCENT_LIGHT }} />))}
+              </div>
+              <p className="text-sm text-slate-400"><span className="text-white font-bold">4.9</span> out of 5 &bull; <span className="text-white font-bold">524</span> reviews</p>
+            </div>
+          </GlassCard>
+        </div>
+      </SectionReveal>
+
       {/* ─── 7. TESTIMONIALS ─── */}
       <SectionReveal id="testimonials" className="relative z-10 py-16 md:py-24">
         <div className="mx-auto max-w-7xl px-4 md:px-6">
@@ -536,17 +569,222 @@ export default function V2TowingPage() {
           <motion.div className="grid grid-cols-1 md:grid-cols-3 gap-6" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
             {testimonials.map((t, i) => (
               <motion.div key={i} variants={fadeUp}>
-                <GlassCard className="p-6 h-full flex flex-col">
-                  <Quotes size={28} weight="fill" style={{ color: ACCENT }} className="mb-3 opacity-50" />
+                <GlassCard className="p-6 h-full flex flex-col relative overflow-hidden">
+                  <Quotes size={60} weight="fill" style={{ color: ACCENT }} className="absolute -top-2 -right-2 opacity-10" />
+                  <Quotes size={28} weight="fill" style={{ color: ACCENT }} className="mb-3 opacity-60" />
                   <p className="text-slate-300 leading-relaxed flex-1 text-sm">{t.text}</p>
                   <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
-                    <span className="text-sm font-semibold text-white">{t.name}</span>
-                    <div className="flex gap-0.5">{Array.from({ length: t.rating }).map((_, j) => (<Star key={j} size={12} weight="fill" style={{ color: ACCENT }} />))}</div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-semibold text-white">{t.name}</span>
+                      <CheckCircle size={14} weight="fill" style={{ color: ACCENT }} />
+                      <span className="text-[10px] text-slate-400 uppercase tracking-wider">Verified</span>
+                    </div>
+                    <div className="flex gap-0.5">{Array.from({ length: t.rating }).map((_, j) => (<Star key={j} size={18} weight="fill" style={{ color: ACCENT_LIGHT }} />))}</div>
                   </div>
                 </GlassCard>
               </motion.div>
             ))}
           </motion.div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── FLAT-RATE PRICING ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="absolute inset-0 pointer-events-none" style={{ background: `radial-gradient(ellipse 60% 40% at 50% 50%, ${ACCENT_GLOW} 0%, transparent 70%)` }} />
+        <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6">
+          <div className="text-center mb-16">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ACCENT }}>Flat-Rate Pricing</p>
+            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white"><WordReveal text="No Surprise Surge Fees" /></h2>
+            <p className="text-slate-400 mt-4 max-w-2xl mx-auto">Holidays, weekends, 3am — the price we quote is the price you pay. Always.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              { name: "Local Tow", price: "$125", desc: "Under 10 miles, passenger vehicle. Flatbed or wheel-lift — your choice.", features: ["Up to 10 mi included", "Passenger vehicles + small SUVs", "Flatbed or wheel-lift", "24/7 dispatch", "Cash + card + insurance"], highlight: false },
+              { name: "Roadside", price: "$85", desc: "Dead battery, flat tire, lockout, or out of fuel? We come to you in under 30 minutes.", features: ["Jump start + battery test", "Tire change or patch", "Lockout + key retrieval", "5 gallon fuel delivery", "Winch + pull-out (extra)"], highlight: true },
+              { name: "Heavy Duty", price: "Custom", desc: "Commercial trucks, RVs, box trucks, and equipment up to 75,000 lbs GVWR.", features: ["Rotators + heavy wreckers", "RV + trailer recovery", "Semi-truck jump-starts", "Accident scene clearing", "Per-job written quote"], highlight: false },
+            ].map((tier, i) => (
+              <div key={i} className={`relative rounded-2xl ${tier.highlight ? 'p-[2px]' : ''}`} style={tier.highlight ? { background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT_LIGHT})` } : {}}>
+                {tier.highlight && <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-white" style={{ background: ACCENT }}>Most Called</div>}
+                <GlassCard className="p-6 h-full">
+                  <h3 className="text-xl font-bold text-white">{tier.name}</h3>
+                  <p className="text-xs text-slate-400 mt-1">{tier.desc}</p>
+                  <div className="mt-6 flex items-end gap-1">
+                    <span className="text-5xl font-black text-white">{tier.price}</span>
+                    {tier.price !== "Custom" && <span className="text-sm text-slate-400 mb-2">flat</span>}
+                  </div>
+                  <ul className="mt-6 space-y-3">
+                    {tier.features.map((f, j) => (
+                      <li key={j} className="flex items-start gap-2 text-sm text-slate-300">
+                        <CheckCircle size={18} weight="fill" style={{ color: tier.highlight ? ACCENT_LIGHT : ACCENT }} className="shrink-0 mt-0.5" />
+                        <span>{f}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <button className="mt-6 w-full px-6 py-3 rounded-full text-sm font-semibold text-white" style={{ background: tier.highlight ? ACCENT : "rgba(255,255,255,0.05)", border: tier.highlight ? "none" : "1px solid rgba(255,255,255,0.1)" }}>Call Dispatch</button>
+                </GlassCard>
+              </div>
+            ))}
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── VIDEO PLACEHOLDER ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-6xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ACCENT }}>The Fleet</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white"><WordReveal text="Meet The Fleet" /></h2>
+          </div>
+          <div className="relative rounded-2xl overflow-hidden aspect-video group cursor-pointer">
+            <img src="https://images.unsplash.com/photo-1550355291-bbee04a92027?w=1600&q=80" alt="Tow truck fleet yard" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <motion.div className="w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center shadow-2xl" style={{ background: ACCENT } as React.CSSProperties} animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}>
+                <svg width="28" height="32" viewBox="0 0 24 28" fill="white" className="ml-1">
+                  <path d="M0 0L24 14L0 28Z" />
+                </svg>
+              </motion.div>
+            </div>
+            <div className="absolute bottom-6 left-6 right-6">
+              <p className="text-xs uppercase tracking-widest" style={{ color: ACCENT_LIGHT }}>Yard Tour &bull; 2:55</p>
+              <p className="text-xl md:text-2xl font-bold text-white mt-1">See our flatbeds, wheel-lifts, and heavy-duty rotators — and meet the dispatch team.</p>
+            </div>
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── QUIZ ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="relative z-10 mx-auto max-w-5xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ACCENT }}>Quick Dispatch</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white"><WordReveal text="What Do You Need?" /></h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {[
+              { color: "#ef4444", label: "Need a Tow", detail: "Vehicle won't start, accident, or out of commission. We come to you.", rec: "Local Tow — 20 min dispatch", icon: Timer },
+              { color: ACCENT, label: "Roadside Help", detail: "Jump start, flat tire, lockout, or out of gas — quick fix to get moving again.", rec: "Roadside Service", icon: CheckCircle },
+              { color: ACCENT_LIGHT, label: "Heavy Equipment", detail: "Commercial truck, RV, or industrial recovery — we have the rotators.", rec: "Heavy Duty Dispatch", icon: ShieldCheck },
+            ].map((opt, i) => (
+              <GlassCard key={i} className="p-6 h-full flex flex-col items-start relative overflow-hidden group cursor-pointer">
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ background: `radial-gradient(circle at 50% 0%, ${opt.color}22, transparent 60%)` }} />
+                <div className="relative w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: `${opt.color}22` }}>
+                  <opt.icon size={22} weight="duotone" style={{ color: opt.color }} />
+                </div>
+                <p className="relative text-xs uppercase tracking-widest font-bold" style={{ color: opt.color }}>{opt.label}</p>
+                <p className="relative text-sm text-slate-300 mt-2 leading-relaxed flex-1">{opt.detail}</p>
+                <div className="relative mt-6 pt-4 border-t border-white/10 w-full">
+                  <p className="text-[10px] uppercase tracking-widest text-slate-400 mb-1">Dispatch</p>
+                  <p className="text-sm font-semibold text-white">{opt.rec}</p>
+                </div>
+              </GlassCard>
+            ))}
+          </div>
+          <div className="text-center mt-8">
+            <MagneticButton className="px-10 py-4 rounded-full text-base font-semibold text-white inline-flex items-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
+              <Phone size={18} weight="duotone" /> Call Dispatch
+            </MagneticButton>
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── COMPETITOR COMPARISON ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-5xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ACCENT }}>The Difference</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white"><WordReveal text="Us vs. Random Tow Truck" /></h2>
+          </div>
+          <GlassCard className="overflow-hidden">
+            <div className="grid grid-cols-[1.5fr_1fr_1fr] items-center border-b border-white/10">
+              <div className="p-4 md:p-6 text-xs uppercase tracking-widest text-slate-400">What Matters</div>
+              <div className="p-4 md:p-6 text-center" style={{ background: `${ACCENT}15` }}>
+                <p className="text-sm md:text-base font-bold" style={{ color: ACCENT_LIGHT }}>Our Fleet</p>
+              </div>
+              <div className="p-4 md:p-6 text-center">
+                <p className="text-sm md:text-base font-semibold text-slate-400">Random Tow Guy</p>
+              </div>
+            </div>
+            {[
+              { feature: "Published flat rates", us: "Online + in writing", them: "Depends on the driver" },
+              { feature: "Licensed + bonded drivers", us: "All verified", them: "Not always" },
+              { feature: "Modern GPS-tracked fleet", us: "Live ETA updates", them: "Unknown" },
+              { feature: "Insurance-direct billing", us: "Standard", them: "Cash only" },
+              { feature: "Damage-free flatbed option", us: "Always available", them: "Wheel-lift by default" },
+              { feature: "24/7 live dispatcher", us: "Local", them: "Voicemail" },
+              { feature: "Heavy-duty recovery", us: "Up to 75K GVWR", them: "Light duty only" },
+            ].map((row, i) => (
+              <div key={i} className="grid grid-cols-[1.5fr_1fr_1fr] items-center border-b border-white/5 last:border-b-0">
+                <div className="p-4 md:p-6 text-sm text-white">{row.feature}</div>
+                <div className="p-4 md:p-6 text-center" style={{ background: `${ACCENT}08` }}>
+                  <div className="flex items-center justify-center gap-2">
+                    <CheckCircle size={18} weight="fill" style={{ color: ACCENT }} />
+                    <span className="text-sm text-white font-semibold hidden sm:inline">{row.us}</span>
+                  </div>
+                </div>
+                <div className="p-4 md:p-6 text-center text-sm text-slate-500 italic">{row.them}</div>
+              </div>
+            ))}
+          </GlassCard>
+        </div>
+      </SectionReveal>
+
+      {/* ─── CERTIFICATIONS ─── */}
+      <SectionReveal className="relative z-10 py-8">
+        <div className="mx-auto max-w-6xl px-4 md:px-6">
+          <p className="text-center text-xs uppercase tracking-widest text-slate-500 mb-6">Certified &amp; Partner Network</p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+            {[
+              { label: "TRAA Certified", icon: Certificate },
+              { label: "WreckMaster", icon: Medal },
+              { label: "AAA Approved", icon: Star },
+              { label: "DOT Compliant", icon: ShieldCheck },
+              { label: "State Insurance Network", icon: CheckCircle },
+              { label: "24/7 Dispatch", icon: Timer },
+            ].map((cert, i) => (
+              <GlassCard key={i} className="px-4 py-3 flex items-center gap-2 justify-center">
+                <cert.icon size={18} weight="duotone" style={{ color: i % 2 === 0 ? ACCENT : ACCENT_LIGHT }} />
+                <span className="text-xs font-semibold text-slate-300">{cert.label}</span>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── SERVICE AREA ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ACCENT }}>Coverage Map</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white"><WordReveal text="Where We Respond" /></h2>
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <GlassCard className="p-6 text-center">
+              <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: ACCENT_GLOW }}>
+                <MapPin size={26} weight="duotone" style={{ color: ACCENT }} />
+              </div>
+              <p className="text-xs uppercase tracking-widest mb-2" style={{ color: ACCENT_LIGHT }}>Coverage Radius</p>
+              <p className="text-3xl font-black text-white">65 Miles</p>
+              <p className="text-sm text-slate-400 mt-2">Metro, interstate corridors, and out-of-state relay for long-distance tows.</p>
+            </GlassCard>
+            <GlassCard className="p-6 text-center">
+              <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: ACCENT_GLOW }}>
+                <Timer size={26} weight="duotone" style={{ color: ACCENT_LIGHT }} />
+              </div>
+              <p className="text-xs uppercase tracking-widest mb-2" style={{ color: ACCENT_LIGHT }}>Response ETA</p>
+              <p className="text-3xl font-black text-white">15–30 Min</p>
+              <p className="text-sm text-slate-400 mt-2">Live GPS dispatch from the nearest staged truck. Freeway shoulder work prioritized.</p>
+            </GlassCard>
+            <GlassCard className="p-6 text-center">
+              <div className="relative w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: ACCENT_GLOW }}>
+                <motion.div className="absolute inset-0 rounded-full" style={{ background: ACCENT }} animate={{ scale: [1, 1.6, 1], opacity: [0.4, 0, 0.4] }} transition={{ duration: 2, repeat: Infinity }} />
+                <CheckCircle size={26} weight="duotone" style={{ color: ACCENT }} className="relative" />
+              </div>
+              <p className="text-xs uppercase tracking-widest mb-2" style={{ color: ACCENT_LIGHT }}>Dispatch</p>
+              <p className="text-3xl font-black text-white">Live 24/7</p>
+              <p className="text-sm text-slate-400 mt-2">Real local dispatcher answering — holidays, blizzards, and middle of the night included.</p>
+            </GlassCard>
+          </div>
         </div>
       </SectionReveal>
 
@@ -623,6 +861,127 @@ export default function V2TowingPage() {
               </div>
             </GlassCard>
           </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── EXTENDED FAQ ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-4xl px-4 md:px-6">
+          <div className="text-center mb-10">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ACCENT }}>Quick Answers</p>
+            <h2 className="text-3xl md:text-4xl tracking-tighter font-bold text-white"><WordReveal text="Questions Before The Call" /></h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              { q: "Are you on my insurance company's roadside list?", a: "We are preferred partners for AAA and most major insurers. Tell dispatch your policy and we will bill direct." },
+              { q: "Do you handle accident scene clearing?", a: "Yes — rotator recovery, fluid absorption, and DOT-compliant scene cleanup. Police-dispatch certified." },
+              { q: "Can you tow a car that won't shift out of park?", a: "Always. Our flatbeds can winch any vehicle regardless of transmission or wheel position — no damage." },
+              { q: "What if my car is in a parking garage?", a: "Our low-clearance flatbeds fit most commercial and residential garages. We confirm clearance by phone first." },
+              { q: "How do I pay?", a: "Credit, debit, Apple/Google Pay, or insurance bill-direct. Drivers carry card readers in every truck." },
+              { q: "What if my car is totaled?", a: "We haul to any salvage yard or storage lot in our coverage area. Insurance often covers the haul." },
+              { q: "Do you tow across state lines?", a: "Yes — long-distance tows up to 500 miles. Ask dispatch for per-mile pricing." },
+              { q: "Can I ride in the truck?", a: "Absolutely, 1–2 passengers fit in the cab. Kids in booster seats welcome." },
+            ].map((faq, i) => (
+              <GlassCard key={i} className="p-5">
+                <p className="text-sm font-bold text-white mb-2">{faq.q}</p>
+                <p className="text-sm text-slate-400 leading-relaxed">{faq.a}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── VEHICLE TYPE SELECTOR ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ACCENT }}>What Do You Drive?</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white"><WordReveal text="Vehicle Types We Tow" /></h2>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { name: "Cars + Sedans", desc: "Any passenger vehicle, any make, any model. Flatbed preferred for 4WD + AWD." },
+              { name: "SUVs + Trucks", desc: "Light and medium trucks up to 1-ton. Wheel-lift or flatbed your choice." },
+              { name: "Motorcycles", desc: "Bike-specific flatbed with wheel chock + soft-strap tie-downs. No damage." },
+              { name: "RVs + Trailers", desc: "Class A/B/C motorhomes, travel trailers, and 5th wheels. Heavy-duty rigs." },
+              { name: "Exotic + Classic", desc: "Low-clearance flatbeds, enclosed options for exotics, and soft-strap tie-downs." },
+              { name: "Commercial Trucks", desc: "Box trucks, delivery vans, semis up to 75K GVWR. Rotator recovery available." },
+              { name: "Boats + PWC", desc: "Boat trailers on the highway, jet skis, and sport trailers to any destination." },
+              { name: "Heavy Equipment", desc: "Tractors, skid steers, and light industrial moved with appropriate rigs." },
+              { name: "EV + Hybrid", desc: "EV-safe flatbeds with proper tie-down to avoid frame damage. Certified for Tesla + all major EVs." },
+              { name: "Low-Clearance Exotics", desc: "Ferraris, Lamborghinis, McLarens — specialized low-clearance flatbeds + enclosed units." },
+              { name: "Long-Distance Transport", desc: "Coast-to-coast vehicle shipping on enclosed multi-car trailers for collectors and relocations." },
+              { name: "Roadside + Fuel Delivery", desc: "Out of gas? Dead battery? Flat tire? We solve the problem without towing when we can." },
+              { name: "Winch Outs", desc: "Stuck in a ditch, sand, mud, or snow? Heavy-duty winches and rigger training pull you free." },
+              { name: "Accident Recovery", desc: "Full scene clearing, fluid absorption, and DOT-compliant cleanup after collisions." },
+              { name: "Impound + Storage", desc: "Secure, fenced, 24/7-monitored impound lot. Flat-rate daily storage for law-enforcement + private tows." },
+              { name: "Jump Starts + Lockouts", desc: "Dead battery? Locked keys in the car? Quick roadside solutions before the tow truck is even needed." },
+            ].map((veh, i) => (
+              <GlassCard key={i} className="p-5">
+                <p className="text-sm font-bold text-white">{veh.name}</p>
+                <p className="text-xs text-slate-400 mt-2 leading-relaxed">{veh.desc}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── GUARANTEES ─── */}
+      <SectionReveal className="relative z-10 py-16">
+        <div className="mx-auto max-w-6xl px-4 md:px-6">
+          <div className="text-center mb-10">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ACCENT }}>Our Promise</p>
+            <h2 className="text-3xl md:text-4xl tracking-tighter font-bold text-white"><WordReveal text="Guarantees With Every Call" /></h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {[
+              { title: "Flat-Rate Pricing", desc: "The quoted price is the price — no surge fees, holidays included.", icon: CheckCircle },
+              { title: "No-Damage Promise", desc: "Scratches or damage during tow? We cover repairs, period.", icon: ShieldCheck },
+              { title: "Insurance Direct Bill", desc: "We bill your insurance carrier directly on covered tows. No out-of-pocket.", icon: Certificate },
+              { title: "24/7 Live Dispatch", desc: "Local dispatcher answers every call. No call center overseas.", icon: Timer },
+            ].map((item, i) => (
+              <GlassCard key={i} className="p-5 text-center">
+                <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3" style={{ background: ACCENT_GLOW }}>
+                  <item.icon size={22} weight="duotone" style={{ color: ACCENT }} />
+                </div>
+                <p className="text-sm font-bold text-white">{item.title}</p>
+                <p className="text-xs text-slate-400 mt-1 leading-relaxed">{item.desc}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── FINAL CTA ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-5xl px-4 md:px-6">
+          <GlassCard className="p-8 md:p-12 text-center">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ACCENT }}>Need A Tow Right Now?</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white mb-4">Dispatch A Truck</h2>
+            <p className="text-slate-400 text-lg mb-8 max-w-lg mx-auto">Live local dispatch 24/7/365. Upfront flat rates. No-damage guarantee. Most customers see a truck in under 30 minutes.</p>
+            <div className="flex flex-wrap justify-center gap-4">
+              <MagneticButton className="px-10 py-4 rounded-full text-base font-semibold text-white inline-flex items-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
+                <Phone size={20} weight="duotone" /> Call Dispatch
+              </MagneticButton>
+              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 inline-flex items-center gap-2 cursor-pointer">
+                <CalendarCheck size={18} weight="duotone" /> Schedule Non-Emergency
+              </MagneticButton>
+            </div>
+            <p className="mt-6 text-xs text-slate-500">Licensed &bull; Bonded &bull; Insured &bull; TRAA Certified &bull; DOT Compliant</p>
+            <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto">
+              {[
+                { label: "Tows / Year", value: "18K+" },
+                { label: "Trucks In Fleet", value: "22" },
+                { label: "Service Hours", value: "24/7" },
+                { label: "Avg Response", value: "24 min" },
+              ].map((stat, i) => (
+                <div key={i} className="text-center">
+                  <p className="text-xs text-slate-500 uppercase tracking-widest">{stat.label}</p>
+                  <p className="text-2xl font-black mt-1" style={{ color: ACCENT_LIGHT }}>{stat.value}</p>
+                </div>
+              ))}
+            </div>
+          </GlassCard>
         </div>
       </SectionReveal>
 

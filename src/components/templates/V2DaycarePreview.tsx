@@ -242,7 +242,7 @@ function SectionHeader({ badge, title, subtitle, accent }: { badge: string; titl
 function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.92 }}
+      initial={{ opacity: 1, scale: 0.92 }}
       whileInView={{ opacity: 1, scale: 1 }}
       viewport={{ once: true, margin: "-80px" }}
       transition={{ duration: 0.5, ease: "easeOut" as const }}
@@ -317,7 +317,7 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
   const testimonials = data.testimonials?.length > 0 ? data.testimonials : fallbackTestimonials;
 
   return (
-    <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: CHARCOAL, color: "#1c1917" }}>
+    <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ fontFamily: "Lato, system-ui, sans-serif", background: CHARCOAL, color: "#1c1917" }}>
       <FloatingSparkles accent={ACCENT} />
 
       {/* ══════════════════ 1. NAV ══════════════════ */}

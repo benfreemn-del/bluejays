@@ -355,10 +355,11 @@ export default function V2TattooPage() {
                 <InstagramLogo size={18} weight="duotone" /> @ironandink
               </MagneticButton>
             </motion.div>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ ...spring, delay: 1 }} className="flex flex-wrap gap-6 text-sm text-slate-400">
-              <span className="flex items-center gap-2"><SealCheck size={16} weight="duotone" style={{ color: CRIMSON }} />Award-Winning Artists</span>
-              <span className="flex items-center gap-2"><ShieldCheck size={16} weight="duotone" style={{ color: CRIMSON }} />Licensed & Sterile</span>
-              <span className="flex items-center gap-2"><Drop size={16} weight="duotone" style={{ color: CRIMSON }} />Premium Inks Only</span>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ ...spring, delay: 1 }} className="flex flex-wrap gap-3">
+              <span className="px-4 py-2 rounded-full text-xs font-semibold text-white flex items-center gap-2" style={{ background: "rgba(255,255,255,0.05)", border: `1px solid ${CRIMSON}40` }}><SealCheck size={14} weight="duotone" style={{ color: CRIMSON }} />Award-Winning Artists</span>
+              <span className="px-4 py-2 rounded-full text-xs font-semibold text-white flex items-center gap-2" style={{ background: "rgba(255,255,255,0.05)", border: `1px solid ${CRIMSON_LIGHT}40` }}><ShieldCheck size={14} weight="duotone" style={{ color: CRIMSON_LIGHT }} />Licensed &amp; Sterile</span>
+              <span className="px-4 py-2 rounded-full text-xs font-semibold text-white flex items-center gap-2" style={{ background: "rgba(255,255,255,0.05)", border: `1px solid ${CRIMSON}40` }}><Star size={14} weight="fill" style={{ color: CRIMSON_LIGHT }} />4.9-Star Rated</span>
+              <span className="px-4 py-2 rounded-full text-xs font-semibold text-white flex items-center gap-2" style={{ background: "rgba(255,255,255,0.05)", border: `1px solid ${CRIMSON_LIGHT}40` }}><CheckCircle size={14} weight="duotone" style={{ color: CRIMSON_LIGHT }} />Free Consultations</span>
             </motion.div>
           </div>
           <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ ...spring, delay: 0.3 }} className="hidden md:flex items-center justify-center lg:justify-end">
@@ -458,6 +459,33 @@ export default function V2TattooPage() {
         </div>
       </SectionReveal>
 
+      {/* ─── GOOGLE REVIEWS HEADER ─── */}
+      <SectionReveal className="relative z-10 py-8">
+        <div className="mx-auto max-w-4xl px-4 md:px-6">
+          <GlassCard className="px-6 py-5 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8">
+            <div className="flex items-center gap-3">
+              <svg width="32" height="32" viewBox="0 0 48 48">
+                <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z" />
+                <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z" />
+                <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z" />
+                <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z" />
+              </svg>
+              <div className="text-left">
+                <p className="text-sm text-slate-400">Google Reviews</p>
+                <p className="text-lg font-bold text-white">Verified Client Ratings</p>
+              </div>
+            </div>
+            <div className="hidden sm:block w-px h-12 bg-white/10" />
+            <div className="text-center">
+              <div className="flex items-center justify-center gap-1 mb-1">
+                {[0,1,2,3,4].map((i) => (<Star key={i} size={20} weight="fill" style={{ color: CRIMSON_LIGHT }} />))}
+              </div>
+              <p className="text-sm text-slate-400"><span className="text-white font-bold">4.9</span> out of 5 &bull; <span className="text-white font-bold">348</span> reviews</p>
+            </div>
+          </GlassCard>
+        </div>
+      </SectionReveal>
+
       {/* ─── TESTIMONIALS ─── */}
       <SectionReveal id="testimonials" className="relative z-10 py-16 md:py-24">
         <div className="mx-auto max-w-7xl px-4 md:px-6">
@@ -468,17 +496,309 @@ export default function V2TattooPage() {
           <motion.div className="grid grid-cols-1 md:grid-cols-3 gap-6" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
             {testimonials.map((t, i) => (
               <motion.div key={i} variants={fadeUp}>
-                <GlassCard className="p-6 h-full flex flex-col">
-                  <Quotes size={28} weight="fill" style={{ color: CRIMSON }} className="mb-3 opacity-50" />
+                <GlassCard className="p-6 h-full flex flex-col relative overflow-hidden">
+                  <Quotes size={60} weight="fill" style={{ color: CRIMSON }} className="absolute -top-2 -right-2 opacity-10" />
+                  <Quotes size={28} weight="fill" style={{ color: CRIMSON }} className="mb-3 opacity-60" />
                   <p className="text-slate-300 leading-relaxed flex-1 text-sm">{t.text}</p>
                   <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
-                    <span className="text-sm font-semibold text-white">{t.name}</span>
-                    <div className="flex gap-0.5">{Array.from({ length: t.rating }).map((_, j) => (<Star key={j} size={12} weight="fill" style={{ color: CRIMSON }} />))}</div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-semibold text-white">{t.name}</span>
+                      <CheckCircle size={14} weight="fill" style={{ color: CRIMSON }} />
+                      <span className="text-[10px] text-slate-400 uppercase tracking-wider">Verified</span>
+                    </div>
+                    <div className="flex gap-0.5">{Array.from({ length: t.rating }).map((_, j) => (<Star key={j} size={18} weight="fill" style={{ color: CRIMSON_LIGHT }} />))}</div>
                   </div>
                 </GlassCard>
               </motion.div>
             ))}
           </motion.div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── URGENCY / BOOKING AVAILABILITY ─── */}
+      <SectionReveal className="relative z-10 py-8">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <GlassCard className="p-6 md:p-8 flex flex-col md:flex-row items-center gap-6">
+            <div className="relative shrink-0">
+              <motion.div className="absolute inset-0 rounded-full" style={{ background: CRIMSON_LIGHT }} animate={{ scale: [1, 1.6, 1], opacity: [0.5, 0, 0.5] }} transition={{ duration: 2, repeat: Infinity }} />
+              <div className="relative w-4 h-4 rounded-full" style={{ background: CRIMSON_LIGHT }} />
+            </div>
+            <div className="flex-1 text-center md:text-left">
+              <p className="text-xs uppercase tracking-widest mb-1" style={{ color: CRIMSON_LIGHT }}>Limited Chair Slots</p>
+              <h3 className="text-2xl md:text-3xl font-bold text-white">Now Booking 6 Weeks Out</h3>
+              <p className="text-sm text-slate-400 mt-2">New bookings are filling fast for the quarter. Deposit-secured appointments available — walk-ins welcome for flash designs while slots last.</p>
+            </div>
+            <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 shrink-0 cursor-pointer" style={{ background: CRIMSON }}>
+              <CalendarCheck size={18} weight="duotone" /> Reserve A Chair
+            </MagneticButton>
+          </GlassCard>
+        </div>
+      </SectionReveal>
+
+      {/* ─── PRICING TIERS ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="absolute inset-0 pointer-events-none" style={{ background: `radial-gradient(ellipse 60% 40% at 50% 50%, ${CRIMSON_GLOW} 0%, transparent 70%)` }} />
+        <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6">
+          <div className="text-center mb-16">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: CRIMSON }}>Investment</p>
+            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white"><WordReveal text="Pricing & Packages" /></h2>
+            <p className="text-slate-400 mt-4 max-w-2xl mx-auto">Every piece is custom, but clear starting prices help you plan. Exact quote after a free consultation with your artist.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              { name: "Flash & Small", price: "$150+", desc: "Walk-in friendly pieces under 3 inches — pre-drawn flash or a simple custom design.", features: ["Pre-drawn flash available", "Single-session piece", "Black & gray or simple color", "Aftercare kit included", "Free touch-up within 60 days"], highlight: false },
+              { name: "Custom Design", price: "$450+", desc: "Medium pieces designed for you by your chosen artist. Sleeve starters and detailed concepts.", features: ["1-hour private consultation", "Full custom sketch + revisions", "Black & gray or full color", "2–4 hour session", "Premium aftercare + free touch-up"], highlight: true },
+              { name: "Large Scale", price: "$150/hr", desc: "Sleeves, back pieces, and multi-session projects billed hourly at a flat studio rate.", features: ["Multi-session project plan", "Deposit reserved to your artist", "Flat-rate $150/hour (no surprises)", "Priority scheduling", "Lifetime touch-ups for as long as we are open"], highlight: false },
+            ].map((tier, i) => (
+              <div key={i} className={`relative rounded-2xl ${tier.highlight ? 'p-[2px]' : ''}`} style={tier.highlight ? { background: `linear-gradient(135deg, ${CRIMSON}, ${CRIMSON_LIGHT})` } : {}}>
+                {tier.highlight && <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-white" style={{ background: CRIMSON }}>Most Popular</div>}
+                <GlassCard className="p-6 h-full">
+                  <h3 className="text-xl font-bold text-white">{tier.name}</h3>
+                  <p className="text-xs text-slate-400 mt-1">{tier.desc}</p>
+                  <div className="mt-6 flex items-end gap-1">
+                    <span className="text-5xl font-black text-white">{tier.price}</span>
+                  </div>
+                  <ul className="mt-6 space-y-3">
+                    {tier.features.map((f, j) => (
+                      <li key={j} className="flex items-start gap-2 text-sm text-slate-300">
+                        <CheckCircle size={18} weight="fill" style={{ color: tier.highlight ? CRIMSON_LIGHT : CRIMSON }} className="shrink-0 mt-0.5" />
+                        <span>{f}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <button className="mt-6 w-full px-6 py-3 rounded-full text-sm font-semibold text-white" style={{ background: tier.highlight ? CRIMSON : "rgba(255,255,255,0.05)", border: tier.highlight ? "none" : "1px solid rgba(255,255,255,0.1)" }}>Book a Consult</button>
+                </GlassCard>
+              </div>
+            ))}
+          </div>
+          <p className="text-center text-xs text-slate-500 mt-8">All bookings require a $100 deposit applied to the final price. Payment plans available for large multi-session work.</p>
+        </div>
+      </SectionReveal>
+
+      {/* ─── VIDEO PLACEHOLDER ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-6xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: CRIMSON }}>Studio Tour</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white"><WordReveal text="Step Inside The Studio" /></h2>
+          </div>
+          <div className="relative rounded-2xl overflow-hidden aspect-video group cursor-pointer">
+            <img src="https://images.unsplash.com/photo-1536520002442-39764a41e987?w=1600&q=80" alt="Tattoo studio private booth tour" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <motion.div className="w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center shadow-2xl" style={{ background: CRIMSON }} animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}>
+                <svg width="28" height="32" viewBox="0 0 24 28" fill="white" className="ml-1">
+                  <path d="M0 0L24 14L0 28Z" />
+                </svg>
+              </motion.div>
+            </div>
+            <div className="absolute bottom-6 left-6 right-6">
+              <p className="text-xs uppercase tracking-widest" style={{ color: CRIMSON_LIGHT }}>Private Booth Walkthrough &bull; 2:12</p>
+              <p className="text-xl md:text-2xl font-bold text-white mt-1">Meet the artists &amp; see how we build your piece from sketch to skin.</p>
+            </div>
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── HEALING JOURNEY QUIZ ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="absolute inset-0 pointer-events-none" style={{ background: `radial-gradient(ellipse 50% 60% at 20% 50%, ${CRIMSON_GLOW} 0%, transparent 70%)` }} />
+        <div className="relative z-10 mx-auto max-w-5xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: CRIMSON }}>Which Are You?</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white"><WordReveal text="Find Your Perfect Tattoo Path" /></h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {[
+              { color: "#22c55e", label: "First-Timer", detail: "Never been tattooed. Not sure what to expect, nervous about the process.", rec: "Free 30-min Consult + Small Piece", icon: Heart },
+              { color: CRIMSON, label: "Collector", detail: "Already have pieces, ready to build a sleeve, back piece, or themed set.", rec: "Custom Multi-Session Project", icon: Palette },
+              { color: CRIMSON_LIGHT, label: "Cover-Up / Rework", detail: "Have an older tattoo you want refreshed, blacked out, or redesigned.", rec: "Cover-Up Specialist Consult", icon: Pencil },
+            ].map((opt, i) => (
+              <GlassCard key={i} className="p-6 h-full flex flex-col items-start relative overflow-hidden group cursor-pointer">
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ background: `radial-gradient(circle at 50% 0%, ${opt.color}22, transparent 60%)` }} />
+                <div className="relative w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: `${opt.color}22` }}>
+                  <opt.icon size={22} weight="duotone" style={{ color: opt.color }} />
+                </div>
+                <p className="relative text-xs uppercase tracking-widest font-bold" style={{ color: opt.color }}>{opt.label}</p>
+                <p className="relative text-sm text-slate-300 mt-2 leading-relaxed flex-1">{opt.detail}</p>
+                <div className="relative mt-6 pt-4 border-t border-white/10 w-full">
+                  <p className="text-[10px] uppercase tracking-widest text-slate-400 mb-1">We Recommend</p>
+                  <p className="text-sm font-semibold text-white">{opt.rec}</p>
+                </div>
+              </GlassCard>
+            ))}
+          </div>
+          <div className="text-center mt-8">
+            <MagneticButton className="px-10 py-4 rounded-full text-base font-semibold text-white inline-flex items-center gap-2 cursor-pointer" style={{ background: CRIMSON }}>
+              <Phone size={18} weight="duotone" /> Book A Consult
+            </MagneticButton>
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── COMPETITOR COMPARISON ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-5xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: CRIMSON }}>Why Iron &amp; Ink</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white"><WordReveal text="Iron & Ink vs. The Shop Next Door" /></h2>
+          </div>
+          <GlassCard className="overflow-hidden">
+            <div className="grid grid-cols-[1.5fr_1fr_1fr] items-center border-b border-white/10">
+              <div className="p-4 md:p-6 text-xs uppercase tracking-widest text-slate-400">What Matters</div>
+              <div className="p-4 md:p-6 text-center" style={{ background: `${CRIMSON}15` }}>
+                <p className="text-sm md:text-base font-bold" style={{ color: CRIMSON_LIGHT }}>Iron &amp; Ink</p>
+              </div>
+              <div className="p-4 md:p-6 text-center">
+                <p className="text-sm md:text-base font-semibold text-slate-400">Street Shop</p>
+              </div>
+            </div>
+            {[
+              { feature: "Award-winning resident artists", us: "Every artist", them: "Rare" },
+              { feature: "Hospital-grade sterilization", us: "Standard", them: "Varies" },
+              { feature: "Single-use needles and tubes", us: "Always", them: "Sometimes" },
+              { feature: "Custom design consultations", us: "Free", them: "Fee or rushed" },
+              { feature: "Private booths for big pieces", us: "Yes", them: "Open floor" },
+              { feature: "Lifetime free touch-ups", us: "Included", them: "Extra charge" },
+              { feature: "Licensed + health-inspected", us: "Fully licensed", them: "Check first" },
+            ].map((row, i) => (
+              <div key={i} className="grid grid-cols-[1.5fr_1fr_1fr] items-center border-b border-white/5 last:border-b-0">
+                <div className="p-4 md:p-6 text-sm text-white">{row.feature}</div>
+                <div className="p-4 md:p-6 text-center" style={{ background: `${CRIMSON}08` }}>
+                  <div className="flex items-center justify-center gap-2">
+                    <CheckCircle size={18} weight="fill" style={{ color: CRIMSON_LIGHT }} />
+                    <span className="text-sm text-white font-semibold hidden sm:inline">{row.us}</span>
+                  </div>
+                </div>
+                <div className="p-4 md:p-6 text-center text-sm text-slate-500 italic">{row.them}</div>
+              </div>
+            ))}
+          </GlassCard>
+        </div>
+      </SectionReveal>
+
+      {/* ─── CERTIFICATIONS ─── */}
+      <SectionReveal className="relative z-10 py-8">
+        <div className="mx-auto max-w-6xl px-4 md:px-6">
+          <p className="text-center text-xs uppercase tracking-widest text-slate-500 mb-6">Safety, Standards &amp; Awards</p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+            {[
+              { label: "APT Member", icon: SealCheck },
+              { label: "Bloodborne Certified", icon: FirstAidKit },
+              { label: "Health Dept Inspected", icon: ShieldCheck },
+              { label: "Award of Excellence", icon: Star },
+              { label: "Vegan Inks Available", icon: Drop },
+              { label: "21+ Studio", icon: CheckCircle },
+            ].map((cert, i) => (
+              <GlassCard key={i} className="px-4 py-3 flex items-center gap-2 justify-center">
+                <cert.icon size={18} weight="duotone" style={{ color: i % 2 === 0 ? CRIMSON : CRIMSON_LIGHT }} />
+                <span className="text-xs font-semibold text-slate-300">{cert.label}</span>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── SERVICE AREA ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: CRIMSON }}>The Studio</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white"><WordReveal text="Studio Hours & Booking" /></h2>
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <GlassCard className="p-6 text-center">
+              <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: CRIMSON_GLOW }}>
+                <MapPin size={26} weight="duotone" style={{ color: CRIMSON }} />
+              </div>
+              <p className="text-xs uppercase tracking-widest mb-2" style={{ color: CRIMSON_LIGHT }}>Location</p>
+              <p className="text-xl font-black text-white">Arts District</p>
+              <p className="text-sm text-slate-400 mt-2">Street parking + pay lot next door. Walk-ins welcome for flash during studio hours.</p>
+            </GlassCard>
+            <GlassCard className="p-6 text-center">
+              <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: CRIMSON_GLOW }}>
+                <Clock size={26} weight="duotone" style={{ color: CRIMSON_LIGHT }} />
+              </div>
+              <p className="text-xs uppercase tracking-widest mb-2" style={{ color: CRIMSON_LIGHT }}>Booking Lead Time</p>
+              <p className="text-xl font-black text-white">2–6 Weeks</p>
+              <p className="text-sm text-slate-400 mt-2">Top artists book out 4–6 weeks. Flash and smaller pieces often available within a week.</p>
+            </GlassCard>
+            <GlassCard className="p-6 text-center">
+              <div className="relative w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: CRIMSON_GLOW }}>
+                <motion.div className="absolute inset-0 rounded-full" style={{ background: CRIMSON }} animate={{ scale: [1, 1.6, 1], opacity: [0.4, 0, 0.4] }} transition={{ duration: 2, repeat: Infinity }} />
+                <CalendarCheck size={26} weight="duotone" style={{ color: CRIMSON }} className="relative" />
+              </div>
+              <p className="text-xs uppercase tracking-widest mb-2" style={{ color: CRIMSON_LIGHT }}>Availability</p>
+              <p className="text-xl font-black text-white">Now Booking</p>
+              <p className="text-sm text-slate-400 mt-2">Consults free. $100 deposit reserves your chair and applies to the final piece.</p>
+            </GlassCard>
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── CONSULT PROCESS ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <div className="text-center mb-16">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: CRIMSON }}>How It Works</p>
+            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white"><WordReveal text="From Idea To Skin" /></h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {[
+              { step: "01", title: "Free Consultation", desc: "Sit with your artist (or chat online). Bring references, reveal placement, talk budget and timeline. No pressure, no fees." },
+              { step: "02", title: "Custom Sketch", desc: "Your artist drafts a personalized design. Revisions are part of the process — we refine until it is exactly you." },
+              { step: "03", title: "Session Day", desc: "Arrive rested and fed. Private booth, hospital-grade sterile setup, music of your choice. Break any time." },
+              { step: "04", title: "Heal & Touch Up", desc: "Full aftercare kit and 24/7 text support during healing. Free touch-up within 60 days to lock in the final look." },
+            ].map((p, i) => (
+              <GlassCard key={i} className="p-6 h-full relative overflow-hidden">
+                <div className="absolute top-4 right-4 text-6xl font-black opacity-5 text-white">{p.step}</div>
+                <p className="relative text-xs uppercase tracking-widest mb-2" style={{ color: CRIMSON_LIGHT }}>Step {p.step}</p>
+                <h3 className="relative text-lg font-bold text-white mb-3">{p.title}</h3>
+                <p className="relative text-sm text-slate-400 leading-relaxed">{p.desc}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── FLASH DROP GALLERY ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 items-start">
+            <div className="lg:col-span-2">
+              <p className="text-sm uppercase tracking-widest mb-3" style={{ color: CRIMSON }}>New This Month</p>
+              <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white mb-6"><WordReveal text="Flash Sheet Drops" /></h2>
+              <p className="text-slate-400 leading-relaxed mb-6">Fresh flash designs released monthly. First-come, first-tattooed — each design goes home on one body. Walk in with a printout or grab a spot online before they get claimed.</p>
+              <div className="flex flex-wrap gap-3">
+                <span className="px-3 py-1.5 rounded-full text-xs font-semibold" style={{ background: CRIMSON_GLOW, color: CRIMSON_LIGHT }}>Single-use designs</span>
+                <span className="px-3 py-1.5 rounded-full text-xs font-semibold" style={{ background: "rgba(255,255,255,0.05)", color: "#cbd5e1", border: "1px solid rgba(255,255,255,0.1)" }}>Walk-in ready</span>
+                <span className="px-3 py-1.5 rounded-full text-xs font-semibold" style={{ background: CRIMSON_GLOW, color: CRIMSON_LIGHT }}>$150 – $400 range</span>
+              </div>
+              <MagneticButton className="mt-8 px-8 py-4 rounded-full text-base font-semibold text-white inline-flex items-center gap-2 cursor-pointer" style={{ background: CRIMSON }}>
+                <CalendarCheck size={18} weight="duotone" /> Claim A Design
+              </MagneticButton>
+            </div>
+            <motion.div className="lg:col-span-3 grid grid-cols-2 sm:grid-cols-3 gap-3" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true }}>
+              {[
+                { name: "Serpent & Rose", price: "$280", src: "https://images.unsplash.com/photo-1552234994-66ba234fd567?w=400&q=80" },
+                { name: "Moth & Moon", price: "$220", src: "https://images.unsplash.com/photo-1542856391-010fb87dcfed?w=400&q=80" },
+                { name: "Dagger Script", price: "$180", src: "https://images.unsplash.com/photo-1612459284970-e8f027596582?w=400&q=80" },
+                { name: "Ocean Wave", price: "$240", src: "https://images.unsplash.com/photo-1531123414780-f74242c2b052?w=400&q=80" },
+                { name: "Raven & Keys", price: "$320", src: "https://images.unsplash.com/photo-1512495039889-52a3b799c9bc?w=400&q=80" },
+                { name: "Traditional Heart", price: "$160", src: "https://images.unsplash.com/photo-1516914943479-89db7d9ae7f2?w=400&q=80" },
+              ].map((flash, i) => (
+                <motion.div key={i} variants={fadeUp} whileHover={{ scale: 1.03 }} className="relative aspect-square rounded-2xl overflow-hidden group cursor-pointer">
+                  <img src={flash.src} alt={flash.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+                  <div className="absolute bottom-3 left-3 right-3">
+                    <p className="text-sm font-bold text-white">{flash.name}</p>
+                    <p className="text-xs" style={{ color: CRIMSON_LIGHT }}>{flash.price}</p>
+                  </div>
+                  <span className="absolute top-3 right-3 px-2 py-0.5 rounded-full text-[10px] font-bold text-white" style={{ background: CRIMSON }}>Available</span>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
         </div>
       </SectionReveal>
 
@@ -568,6 +888,100 @@ export default function V2TattooPage() {
                 <div className="flex items-start gap-4"><InstagramLogo size={20} weight="duotone" style={{ color: CRIMSON }} className="mt-0.5 shrink-0" /><div><p className="text-sm font-semibold text-white">Social</p><p className="text-sm text-slate-400">@ironandink<br />Daily portfolio updates & flash drops</p></div></div>
               </div>
             </GlassCard>
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── PRE-SESSION PREP ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: CRIMSON }}>Prep Checklist</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white"><WordReveal text="Day-Of Appointment Prep" /></h2>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { title: "Eat A Meal", desc: "A solid breakfast/lunch stabilizes blood sugar during your session." },
+              { title: "Stay Hydrated", desc: "Drink water the day before and morning of — hydrated skin takes ink better." },
+              { title: "Skip The Drinks", desc: "No alcohol or blood thinners for 24 hours. They increase bleeding + swelling." },
+              { title: "Dress Comfortable", desc: "Loose clothing with easy access to the tattoo area. Bring a hoodie if you run cold." },
+              { title: "Bring Headphones", desc: "Music, podcast, or an audiobook helps the time fly. Many clients nap through longer sessions." },
+              { title: "Arrive Early", desc: "Show up 15 minutes early for paperwork, ID check, and final design review." },
+              { title: "Bring A Snack", desc: "Longer sessions need fuel. Granola bar, pretzels, or a sugary drink for a mid-session break." },
+              { title: "Relax", desc: "Our artists have done thousands of sessions. Breathe, trust the process, and enjoy becoming art." },
+            ].map((tip, i) => (
+              <GlassCard key={i} className="p-5">
+                <p className="text-xs uppercase tracking-widest font-bold mb-2" style={{ color: CRIMSON_LIGHT }}>Tip {i + 1}</p>
+                <p className="text-base font-bold text-white">{tip.title}</p>
+                <p className="text-xs text-slate-400 mt-2 leading-relaxed">{tip.desc}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── FINAL CTA ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-4xl px-4 md:px-6">
+          <ShimmerBorder>
+            <div className="p-8 md:p-12 text-center">
+              <p className="text-sm uppercase tracking-widest mb-3" style={{ color: CRIMSON }}>Ready To Book?</p>
+              <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white mb-4">Claim Your Chair</h2>
+              <p className="text-slate-400 text-lg mb-8 max-w-lg mx-auto">Pick your artist, book a consultation, and let us turn your idea into art that lasts a lifetime. Deposits secure your slot — consults are always free.</p>
+              <div className="flex flex-wrap justify-center gap-4">
+                <MagneticButton className="px-10 py-4 rounded-full text-base font-semibold text-white inline-flex items-center gap-2 cursor-pointer" style={{ background: CRIMSON }}>
+                  <CalendarCheck size={20} weight="duotone" /> Book Consultation
+                </MagneticButton>
+                <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 inline-flex items-center gap-2 cursor-pointer">
+                  <InstagramLogo size={18} weight="duotone" /> @ironandink
+                </MagneticButton>
+              </div>
+            </div>
+          </ShimmerBorder>
+        </div>
+      </SectionReveal>
+
+      {/* ─── STUDIO GUARANTEES ─── */}
+      <SectionReveal className="relative z-10 py-16">
+        <div className="mx-auto max-w-6xl px-4 md:px-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {[
+              { title: "Sterile Setup", desc: "Single-use needles, hospital-grade autoclave, everything disposed after each client.", icon: ShieldCheck },
+              { title: "Free Touch-Ups", desc: "First touch-up free within 60 days to perfect your healed piece.", icon: Heart },
+              { title: "Vegan Inks", desc: "Premium vegan ink lines available on request with no color compromise.", icon: Drop },
+              { title: "Custom Every Time", desc: "No flash copied for two clients — every design is uniquely yours.", icon: Pencil },
+            ].map((item, i) => (
+              <GlassCard key={i} className="p-5 text-center">
+                <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3" style={{ background: CRIMSON_GLOW }}>
+                  <item.icon size={22} weight="duotone" style={{ color: CRIMSON_LIGHT }} />
+                </div>
+                <p className="text-sm font-bold text-white">{item.title}</p>
+                <p className="text-xs text-slate-400 mt-1 leading-relaxed">{item.desc}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── EXTENDED FAQ ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-4xl px-4 md:px-6">
+          <div className="text-center mb-10">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: CRIMSON }}>Quick Answers</p>
+            <h2 className="text-3xl md:text-4xl tracking-tighter font-bold text-white"><WordReveal text="More Before You Book" /></h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              { q: "Do I need to bring my own design?", a: "Bring references if you have them. If not, we design from scratch — consultations are free and there is zero expectation until you book." },
+              { q: "How much do you take as a deposit?", a: "$100 deposit to reserve your chair. The deposit applies to your final price. Non-refundable after 48 hours." },
+              { q: "Can I see your portfolio before booking?", a: "Absolutely. Browse our artists' portfolios on Instagram, or book a free 30-minute consult in the studio to flip through physical portfolios." },
+              { q: "What should I do before my appointment?", a: "Eat a solid meal, hydrate well, and avoid alcohol or blood thinners for 24 hours. Wear comfortable clothes that give access to the tattoo area." },
+            ].map((faq, i) => (
+              <GlassCard key={i} className="p-5">
+                <p className="text-sm font-bold text-white mb-2">{faq.q}</p>
+                <p className="text-sm text-slate-400 leading-relaxed">{faq.a}</p>
+              </GlassCard>
+            ))}
           </div>
         </div>
       </SectionReveal>

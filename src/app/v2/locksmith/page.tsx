@@ -339,6 +339,12 @@ export default function V2LocksmithPage() {
                 <Phone size={18} weight="duotone" /> (555) 562-KEYS
               </MagneticButton>
             </motion.div>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ ...spring, delay: 0.95 }} className="flex flex-wrap gap-3">
+              <span className="px-4 py-2 rounded-full text-xs font-semibold text-white flex items-center gap-2" style={{ background: "rgba(255,255,255,0.05)", border: `1px solid ${ACCENT}40` }}><ShieldCheck size={14} weight="duotone" style={{ color: ACCENT }} />Licensed &amp; Bonded</span>
+              <span className="px-4 py-2 rounded-full text-xs font-semibold text-white flex items-center gap-2" style={{ background: "rgba(255,255,255,0.05)", border: `1px solid ${ACCENT_LIGHT}40` }}><Star size={14} weight="fill" style={{ color: ACCENT_LIGHT }} />4.9-Star Rated</span>
+              <span className="px-4 py-2 rounded-full text-xs font-semibold text-white flex items-center gap-2" style={{ background: "rgba(255,255,255,0.05)", border: `1px solid ${ACCENT}40` }}><CheckCircle size={14} weight="duotone" style={{ color: ACCENT }} />Upfront Pricing</span>
+              <span className="px-4 py-2 rounded-full text-xs font-semibold text-white flex items-center gap-2" style={{ background: "rgba(255,255,255,0.05)", border: `1px solid ${ACCENT_LIGHT}40` }}><Timer size={14} weight="duotone" style={{ color: ACCENT_LIGHT }} />15–30 Min Response</span>
+            </motion.div>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ ...spring, delay: 1 }} className="flex flex-wrap gap-6 text-sm text-slate-400">
               <span className="flex items-center gap-2"><Timer size={16} weight="duotone" style={{ color: ACCENT }} />15-30 Min Response</span>
               <span className="flex items-center gap-2"><Clock size={16} weight="duotone" style={{ color: ACCENT }} />24/7/365 Service</span>
@@ -481,6 +487,33 @@ export default function V2LocksmithPage() {
         </div>
       </SectionReveal>
 
+      {/* ─── GOOGLE REVIEWS HEADER ─── */}
+      <SectionReveal className="relative z-10 py-8">
+        <div className="mx-auto max-w-4xl px-4 md:px-6">
+          <GlassCard className="px-6 py-5 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8">
+            <div className="flex items-center gap-3">
+              <svg width="32" height="32" viewBox="0 0 48 48">
+                <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z" />
+                <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z" />
+                <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z" />
+                <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z" />
+              </svg>
+              <div className="text-left">
+                <p className="text-sm text-slate-400">Google Reviews</p>
+                <p className="text-lg font-bold text-white">Customer Ratings</p>
+              </div>
+            </div>
+            <div className="hidden sm:block w-px h-12 bg-white/10" />
+            <div className="text-center">
+              <div className="flex items-center justify-center gap-1 mb-1">
+                {[0,1,2,3,4].map((i) => (<Star key={i} size={20} weight="fill" style={{ color: ACCENT_LIGHT }} />))}
+              </div>
+              <p className="text-sm text-slate-400"><span className="text-white font-bold">4.9</span> out of 5 &bull; <span className="text-white font-bold">466</span> reviews</p>
+            </div>
+          </GlassCard>
+        </div>
+      </SectionReveal>
+
       {/* ─── 6. TESTIMONIALS ─── */}
       <SectionReveal id="testimonials" className="relative z-10 py-16 md:py-24">
         <div className="mx-auto max-w-7xl px-4 md:px-6">
@@ -493,17 +526,222 @@ export default function V2LocksmithPage() {
           <motion.div className="grid grid-cols-1 md:grid-cols-3 gap-6" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
             {testimonials.map((t, i) => (
               <motion.div key={i} variants={fadeUp}>
-                <GlassCard className="p-6 h-full flex flex-col">
-                  <Quotes size={28} weight="fill" style={{ color: ACCENT }} className="mb-3 opacity-50" />
+                <GlassCard className="p-6 h-full flex flex-col relative overflow-hidden">
+                  <Quotes size={60} weight="fill" style={{ color: ACCENT }} className="absolute -top-2 -right-2 opacity-10" />
+                  <Quotes size={28} weight="fill" style={{ color: ACCENT }} className="mb-3 opacity-60" />
                   <p className="text-slate-300 leading-relaxed flex-1 text-sm">{t.text}</p>
                   <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
-                    <span className="text-sm font-semibold text-white">{t.name}</span>
-                    <div className="flex gap-0.5">{Array.from({ length: t.rating }).map((_, j) => (<Star key={j} size={12} weight="fill" style={{ color: ACCENT }} />))}</div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-semibold text-white">{t.name}</span>
+                      <CheckCircle size={14} weight="fill" style={{ color: ACCENT }} />
+                      <span className="text-[10px] text-slate-400 uppercase tracking-wider">Verified</span>
+                    </div>
+                    <div className="flex gap-0.5">{Array.from({ length: t.rating }).map((_, j) => (<Star key={j} size={18} weight="fill" style={{ color: ACCENT_LIGHT }} />))}</div>
                   </div>
                 </GlassCard>
               </motion.div>
             ))}
           </motion.div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── UPFRONT PRICING ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="absolute inset-0 pointer-events-none" style={{ background: `radial-gradient(ellipse 60% 40% at 50% 50%, ${ACCENT_GLOW} 0%, transparent 70%)` }} />
+        <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6">
+          <div className="text-center mb-16">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ACCENT }}>Upfront Pricing</p>
+            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white"><WordReveal text="No-Surprise Flat Rates" /></h2>
+            <p className="text-slate-400 mt-4 max-w-2xl mx-auto">The price we quote on the phone is the price you pay. If we can't help, there's no charge.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              { name: "Lockout Service", price: "$89", desc: "Residential or automotive lockout. We'll have you back inside in 15 minutes or less.", features: ["Non-destructive entry", "All residential + most vehicles", "No damage guarantee", "24/7 dispatch"], highlight: false },
+              { name: "Rekey & New Keys", price: "$149", desc: "Rekey every lock on the property to a single key — or cut a new set for the family.", features: ["Up to 5 locks rekeyed", "New master key included", "Same-day turnaround", "Smart lock compatible"], highlight: true },
+              { name: "Commercial Security", price: "Custom", desc: "Master key systems, access control, panic bars, and high-security cylinders for business.", features: ["On-site security audit", "Master key hierarchy", "HID / Schlage certified", "Service agreement available"], highlight: false },
+            ].map((tier, i) => (
+              <div key={i} className={`relative rounded-2xl ${tier.highlight ? 'p-[2px]' : ''}`} style={tier.highlight ? { background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT_LIGHT})` } : {}}>
+                {tier.highlight && <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-black" style={{ background: ACCENT }}>Most Popular</div>}
+                <GlassCard className="p-6 h-full">
+                  <h3 className="text-xl font-bold text-white">{tier.name}</h3>
+                  <p className="text-xs text-slate-400 mt-1">{tier.desc}</p>
+                  <div className="mt-6 flex items-end gap-1">
+                    <span className="text-5xl font-black text-white">{tier.price}</span>
+                    {tier.price !== "Custom" && <span className="text-sm text-slate-400 mb-2">flat</span>}
+                  </div>
+                  <ul className="mt-6 space-y-3">
+                    {tier.features.map((f, j) => (
+                      <li key={j} className="flex items-start gap-2 text-sm text-slate-300">
+                        <CheckCircle size={18} weight="fill" style={{ color: tier.highlight ? ACCENT_LIGHT : ACCENT }} className="shrink-0 mt-0.5" />
+                        <span>{f}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <button className="mt-6 w-full px-6 py-3 rounded-full text-sm font-semibold" style={{ background: tier.highlight ? ACCENT : "rgba(255,255,255,0.05)", color: tier.highlight ? "#000" : "#fff", border: tier.highlight ? "none" : "1px solid rgba(255,255,255,0.1)" }}>Call Now</button>
+                </GlassCard>
+              </div>
+            ))}
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── VIDEO PLACEHOLDER ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-6xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ACCENT }}>The Shop</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white"><WordReveal text="Meet Our Locksmiths" /></h2>
+          </div>
+          <div className="relative rounded-2xl overflow-hidden aspect-video group cursor-pointer">
+            <img src="https://images.unsplash.com/photo-1528747045269-390fe33c19f2?w=1600&q=80" alt="Locksmith van and shop tour" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <motion.div className="w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center shadow-2xl" style={{ background: ACCENT } as React.CSSProperties} animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}>
+                <svg width="28" height="32" viewBox="0 0 24 28" fill="white" className="ml-1">
+                  <path d="M0 0L24 14L0 28Z" />
+                </svg>
+              </motion.div>
+            </div>
+            <div className="absolute bottom-6 left-6 right-6">
+              <p className="text-xs uppercase tracking-widest" style={{ color: ACCENT_LIGHT }}>Mobile Shop Tour &bull; 2:18</p>
+              <p className="text-xl md:text-2xl font-bold text-white mt-1">See how we cut keys + rekey deadbolts right from the van.</p>
+            </div>
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── QUIZ ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="relative z-10 mx-auto max-w-5xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ACCENT }}>Quick Triage</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white"><WordReveal text="What's The Situation?" /></h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {[
+              { color: "#ef4444", label: "Locked Out", detail: "Stuck outside your home, car, or office right now.", rec: "Emergency Lockout — 15 min response", icon: Lock },
+              { color: ACCENT, label: "Moving In / Out", detail: "Just bought a home or moved tenants — need all locks rekeyed.", rec: "Rekey Package + Master Key", icon: House },
+              { color: ACCENT_LIGHT, label: "Business Upgrade", detail: "Access control, master keys, keypad or smart-lock upgrade.", rec: "Commercial Security Audit", icon: ShieldCheck },
+            ].map((opt, i) => (
+              <GlassCard key={i} className="p-6 h-full flex flex-col items-start relative overflow-hidden group cursor-pointer">
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ background: `radial-gradient(circle at 50% 0%, ${opt.color}22, transparent 60%)` }} />
+                <div className="relative w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: `${opt.color}22` }}>
+                  <opt.icon size={22} weight="duotone" style={{ color: opt.color }} />
+                </div>
+                <p className="relative text-xs uppercase tracking-widest font-bold" style={{ color: opt.color }}>{opt.label}</p>
+                <p className="relative text-sm text-slate-300 mt-2 leading-relaxed flex-1">{opt.detail}</p>
+                <div className="relative mt-6 pt-4 border-t border-white/10 w-full">
+                  <p className="text-[10px] uppercase tracking-widest text-slate-400 mb-1">Dispatch</p>
+                  <p className="text-sm font-semibold text-white">{opt.rec}</p>
+                </div>
+              </GlassCard>
+            ))}
+          </div>
+          <div className="text-center mt-8">
+            <MagneticButton className="px-10 py-4 rounded-full text-base font-semibold text-black inline-flex items-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
+              <Phone size={18} weight="duotone" /> Call Dispatch Now
+            </MagneticButton>
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── COMPETITOR COMPARISON ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-5xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ACCENT }}>The Difference</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white"><WordReveal text="Us vs. The Scam Locksmith" /></h2>
+          </div>
+          <GlassCard className="overflow-hidden">
+            <div className="grid grid-cols-[1.5fr_1fr_1fr] items-center border-b border-white/10">
+              <div className="p-4 md:p-6 text-xs uppercase tracking-widest text-slate-400">What Matters</div>
+              <div className="p-4 md:p-6 text-center" style={{ background: `${ACCENT}15` }}>
+                <p className="text-sm md:text-base font-bold" style={{ color: ACCENT_LIGHT }}>Our Shop</p>
+              </div>
+              <div className="p-4 md:p-6 text-center">
+                <p className="text-sm md:text-base font-semibold text-slate-400">Google Ad Scam</p>
+              </div>
+            </div>
+            {[
+              { feature: "Real local address + shop", us: "Shop + mobile vans", them: "Call center overseas" },
+              { feature: "Bonded + insured locksmiths", us: "Always", them: "Rarely" },
+              { feature: "Upfront flat-rate pricing", us: "Before arrival", them: "$19 bait, $500 surprise" },
+              { feature: "Non-destructive entry", us: "Standard", them: "Drill first, bill later" },
+              { feature: "Background-checked techs", us: "Every tech", them: "Unknown" },
+              { feature: "24/7 live dispatch", us: "Local team", them: "Unclear" },
+              { feature: "Written invoice + warranty", us: "Always", them: "Cash only" },
+            ].map((row, i) => (
+              <div key={i} className="grid grid-cols-[1.5fr_1fr_1fr] items-center border-b border-white/5 last:border-b-0">
+                <div className="p-4 md:p-6 text-sm text-white">{row.feature}</div>
+                <div className="p-4 md:p-6 text-center" style={{ background: `${ACCENT}08` }}>
+                  <div className="flex items-center justify-center gap-2">
+                    <CheckCircle size={18} weight="fill" style={{ color: ACCENT }} />
+                    <span className="text-sm text-white font-semibold hidden sm:inline">{row.us}</span>
+                  </div>
+                </div>
+                <div className="p-4 md:p-6 text-center text-sm text-slate-500 italic">{row.them}</div>
+              </div>
+            ))}
+          </GlassCard>
+        </div>
+      </SectionReveal>
+
+      {/* ─── CERTIFICATIONS ─── */}
+      <SectionReveal className="relative z-10 py-8">
+        <div className="mx-auto max-w-6xl px-4 md:px-6">
+          <p className="text-center text-xs uppercase tracking-widest text-slate-500 mb-6">Certifications &amp; Partners</p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+            {[
+              { label: "ALOA Certified", icon: Certificate },
+              { label: "State Licensed", icon: ShieldCheck },
+              { label: "BBB A+", icon: Star },
+              { label: "HID Partner", icon: Medal },
+              { label: "Schlage Pro", icon: CheckCircle },
+              { label: "Bonded + Insured", icon: Lock },
+            ].map((cert, i) => (
+              <GlassCard key={i} className="px-4 py-3 flex items-center gap-2 justify-center">
+                <cert.icon size={18} weight="duotone" style={{ color: i % 2 === 0 ? ACCENT : ACCENT_LIGHT }} />
+                <span className="text-xs font-semibold text-slate-300">{cert.label}</span>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── SERVICE AREA ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ACCENT }}>Coverage</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white"><WordReveal text="Where We Dispatch" /></h2>
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <GlassCard className="p-6 text-center">
+              <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: ACCENT_GLOW }}>
+                <MapPin size={26} weight="duotone" style={{ color: ACCENT }} />
+              </div>
+              <p className="text-xs uppercase tracking-widest mb-2" style={{ color: ACCENT_LIGHT }}>Coverage Radius</p>
+              <p className="text-3xl font-black text-white">45 Miles</p>
+              <p className="text-sm text-slate-400 mt-2">Metro, suburbs, and interstate corridors. Multiple vans staged for coverage around the clock.</p>
+            </GlassCard>
+            <GlassCard className="p-6 text-center">
+              <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: ACCENT_GLOW }}>
+                <Timer size={26} weight="duotone" style={{ color: ACCENT_LIGHT }} />
+              </div>
+              <p className="text-xs uppercase tracking-widest mb-2" style={{ color: ACCENT_LIGHT }}>Response Time</p>
+              <p className="text-3xl font-black text-white">15–30 Min</p>
+              <p className="text-sm text-slate-400 mt-2">Emergency lockouts dispatched immediately from the closest van. Scheduled work booked same-day.</p>
+            </GlassCard>
+            <GlassCard className="p-6 text-center">
+              <div className="relative w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: ACCENT_GLOW }}>
+                <motion.div className="absolute inset-0 rounded-full" style={{ background: ACCENT }} animate={{ scale: [1, 1.6, 1], opacity: [0.4, 0, 0.4] }} transition={{ duration: 2, repeat: Infinity }} />
+                <CheckCircle size={26} weight="duotone" style={{ color: ACCENT }} className="relative" />
+              </div>
+              <p className="text-xs uppercase tracking-widest mb-2" style={{ color: ACCENT_LIGHT }}>Availability</p>
+              <p className="text-3xl font-black text-white">24/7 Live</p>
+              <p className="text-sm text-slate-400 mt-2">Live local dispatcher, not a call center. Holidays, weekends, 3 AM — we answer.</p>
+            </GlassCard>
+          </div>
         </div>
       </SectionReveal>
 
@@ -605,6 +843,144 @@ export default function V2LocksmithPage() {
                 </div>
               </div>
             </GlassCard>
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── FINAL CTA ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-5xl px-4 md:px-6">
+          <GlassCard className="p-8 md:p-12 text-center">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ACCENT }}>Locked Out? Need Help?</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white mb-4">Call The Locksmith You Can Trust</h2>
+            <p className="text-slate-400 text-lg mb-8 max-w-lg mx-auto">Real local shop. Real techs. Real upfront pricing. No middle-man dispatchers, no hidden fees, no drilling unless it is the last option.</p>
+            <div className="flex flex-wrap justify-center gap-4">
+              <MagneticButton className="px-10 py-4 rounded-full text-base font-semibold text-black inline-flex items-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
+                <Phone size={20} weight="duotone" /> Call Dispatch
+              </MagneticButton>
+              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 inline-flex items-center gap-2 cursor-pointer">
+                <CalendarCheck size={18} weight="duotone" /> Schedule Non-Emergency
+              </MagneticButton>
+            </div>
+            <p className="mt-6 text-xs text-slate-500">Licensed &bull; Bonded &bull; Insured &bull; 24/7/365 Dispatch</p>
+          </GlassCard>
+        </div>
+      </SectionReveal>
+
+      {/* ─── KEY & LOCK TYPES WE SERVICE ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ACCENT }}>What We Handle</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white"><WordReveal text="Every Lock, Every Key" /></h2>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { name: "Residential Locks", desc: "Deadbolts, knob locks, smart locks, and high-security cylinders." },
+              { name: "Automotive Keys", desc: "Transponders, smart keys, and fob programming for all makes." },
+              { name: "Safe & Vault", desc: "Combination resets, safe opening, and commercial vault service." },
+              { name: "Smart Home", desc: "August, Schlage Encode, and Yale smart lock installs + setup." },
+              { name: "Master Key Systems", desc: "Hierarchical keying so the right people access the right doors." },
+              { name: "Access Control", desc: "Keypads, fobs, and smartphone access for homes + businesses." },
+              { name: "Panic Hardware", desc: "Commercial exit devices that meet public-building fire codes." },
+              { name: "Safe Combination Reset", desc: "Reset dial, electronic keypad, or biometric safes." },
+              { name: "Lock Rekey", desc: "Change the pins in existing locks so old keys no longer work — faster than replacing." },
+              { name: "High-Security Locks", desc: "Medeco, Mul-T-Lock, and Assa cylinders with restricted keys that cannot be duplicated without authorization." },
+              { name: "Smart Home Integration", desc: "Tie smart locks into Alexa, Google Home, and smartphone apps so you can lock up from anywhere." },
+              { name: "Lockbox + Key Safe", desc: "Outdoor key safes for contractors, babysitters, and short-term guests." },
+              { name: "Door Hardware Replacement", desc: "Hinges, strike plates, and reinforced plates that make break-ins much harder." },
+            ].map((svc, i) => (
+              <GlassCard key={i} className="p-5">
+                <p className="text-sm font-bold text-white">{svc.name}</p>
+                <p className="text-xs text-slate-400 mt-2 leading-relaxed">{svc.desc}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── GUARANTEES ─── */}
+      <SectionReveal className="relative z-10 py-16">
+        <div className="mx-auto max-w-6xl px-4 md:px-6">
+          <div className="text-center mb-10">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ACCENT }}>Our Promise</p>
+            <h2 className="text-3xl md:text-4xl tracking-tighter font-bold text-white"><WordReveal text="Four Guarantees You Can Hold Us To" /></h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {[
+              { title: "Upfront Pricing", desc: "The number we quote on the phone is the number on your invoice.", icon: CheckCircle },
+              { title: "No Damage Entry", desc: "Non-destructive lockout techniques on 99% of jobs. If we drill, we replace free.", icon: ShieldCheck },
+              { title: "Lifetime Key Warranty", desc: "Keys we cut are warrantied forever. Bring them back if they ever fail.", icon: Medal },
+              { title: "Background-Checked Techs", desc: "Every tech fingerprinted, background-checked, and uniformed.", icon: Certificate },
+            ].map((item, i) => (
+              <GlassCard key={i} className="p-5 text-center">
+                <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3" style={{ background: ACCENT_GLOW }}>
+                  <item.icon size={22} weight="duotone" style={{ color: ACCENT }} />
+                </div>
+                <p className="text-sm font-bold text-white">{item.title}</p>
+                <p className="text-xs text-slate-400 mt-1 leading-relaxed">{item.desc}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── COMMERCIAL FOCUS ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ACCENT }}>Commercial Security</p>
+              <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white mb-6"><WordReveal text="For Businesses & Property Managers" /></h2>
+              <p className="text-slate-300 leading-relaxed mb-8">Master key systems, access control, panic hardware, and 24/7 service contracts for retail, office, and multifamily. On-site security audits free with service contract signup.</p>
+              <div className="space-y-3">
+                {[
+                  { label: "Master Key Systems", desc: "Hierarchical keying so managers access all, tenants access only theirs." },
+                  { label: "Access Control", desc: "Keypad, fob, and smartphone access across all doors with reporting." },
+                  { label: "Panic Hardware", desc: "Commercial door exit devices that meet code for public buildings." },
+                  { label: "Service Contracts", desc: "Priority response, annual inspections, and replacement discounts." },
+                ].map((item, i) => (
+                  <GlassCard key={i} className="p-4 flex items-start gap-3">
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-xs font-bold" style={{ background: ACCENT_GLOW, color: ACCENT }}>{i + 1}</div>
+                    <div>
+                      <p className="text-sm font-semibold text-white">{item.label}</p>
+                      <p className="text-xs text-slate-400 mt-1">{item.desc}</p>
+                    </div>
+                  </GlassCard>
+                ))}
+              </div>
+            </div>
+            <div className="relative rounded-2xl overflow-hidden aspect-[4/5]">
+              <img src="https://images.unsplash.com/photo-1563986768609-322da13575f3?w=900&q=80" alt="Commercial lock and security panel install" className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+              <div className="absolute bottom-6 left-6 right-6">
+                <p className="text-xs uppercase tracking-widest" style={{ color: ACCENT_LIGHT }}>Commercial Project</p>
+                <p className="text-xl font-bold text-white mt-1">HID Access Control + Master Key</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── EXTENDED FAQ ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-4xl px-4 md:px-6">
+          <div className="text-center mb-10">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ACCENT }}>Quick Answers</p>
+            <h2 className="text-3xl md:text-4xl tracking-tighter font-bold text-white"><WordReveal text="FAQ" /></h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              { q: "How quickly can you arrive?", a: "Most emergency lockouts receive a tech within 15–30 minutes. Standard scheduling fits same-day or next-morning." },
+              { q: "Do you work with landlords + property managers?", a: "Yes — preferred vendor contracts, volume discounts, and priority response for multi-property portfolios." },
+              { q: "Can you rekey without changing locks?", a: "Absolutely. Rekeying swaps the inner pins to a new key without replacing the hardware. Faster and much cheaper." },
+              { q: "What payment do you accept?", a: "All major credit cards, Apple/Google Pay, cash, business checks, and insurance-direct billing on covered jobs." },
+            ].map((faq, i) => (
+              <GlassCard key={i} className="p-5">
+                <p className="text-sm font-bold text-white mb-2">{faq.q}</p>
+                <p className="text-sm text-slate-400 leading-relaxed">{faq.a}</p>
+              </GlassCard>
+            ))}
           </div>
         </div>
       </SectionReveal>

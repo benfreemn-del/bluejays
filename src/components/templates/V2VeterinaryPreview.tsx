@@ -391,7 +391,7 @@ function SectionHeader({ badge, title, subtitle, accent }: {
 function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 40 }}
+      initial={{ opacity: 1, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
       transition={{ duration: 0.6, ease: "easeOut" as const }}
@@ -441,7 +441,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
   const testimonials = data.testimonials?.length > 0 ? data.testimonials : fallbackTestimonials;
 
   return (
-    <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: CHARCOAL, color: "#1c1917" }}>
+    <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ fontFamily: "DM Sans, system-ui, sans-serif", background: CHARCOAL, color: "#1c1917" }}>
       <FloatingPaws accent={PRIMARY} />
 
       {/* ══════════════════ 1. NAV ══════════════════ */}

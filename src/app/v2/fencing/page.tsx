@@ -29,6 +29,10 @@ import {
   TreeStructure,
   Lock,
   HouseLine,
+  Medal,
+  Certificate,
+  Ruler,
+  Timer,
 } from "@phosphor-icons/react";
 
 /* ───────────────────────── SPRING CONFIG ───────────────────────── */
@@ -364,6 +368,12 @@ export default function V2FencingPage() {
                 <Phone size={18} weight="duotone" /> (555) 629-4150
               </MagneticButton>
             </motion.div>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ ...spring, delay: 1 }} className="flex flex-wrap gap-3">
+              <span className="px-4 py-2 rounded-full text-xs font-semibold text-white flex items-center gap-2" style={{ background: "rgba(255,255,255,0.05)", border: `1px solid ${WOOD}50` }}><ShieldCheck size={14} weight="duotone" style={{ color: WOOD_LIGHT }} />Licensed &amp; Bonded</span>
+              <span className="px-4 py-2 rounded-full text-xs font-semibold text-white flex items-center gap-2" style={{ background: "rgba(255,255,255,0.05)", border: `1px solid ${STONE}50` }}><Star size={14} weight="fill" style={{ color: STONE_LIGHT }} />4.9-Star Rated</span>
+              <span className="px-4 py-2 rounded-full text-xs font-semibold text-white flex items-center gap-2" style={{ background: "rgba(255,255,255,0.05)", border: `1px solid ${WOOD}50` }}><CheckCircle size={14} weight="duotone" style={{ color: WOOD_LIGHT }} />Free On-Site Estimates</span>
+              <span className="px-4 py-2 rounded-full text-xs font-semibold text-white flex items-center gap-2" style={{ background: "rgba(255,255,255,0.05)", border: `1px solid ${STONE}50` }}><Medal size={14} weight="duotone" style={{ color: STONE_LIGHT }} />Lifetime Warranty</span>
+            </motion.div>
           </div>
           <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ ...spring, delay: 0.3 }} className="hidden md:flex items-center justify-center lg:justify-end">
             <FenceGateSVG />
@@ -499,6 +509,33 @@ export default function V2FencingPage() {
         </div>
       </SectionReveal>
 
+      {/* ─── GOOGLE REVIEWS HEADER ─── */}
+      <SectionReveal className="relative z-10 py-8">
+        <div className="mx-auto max-w-4xl px-4 md:px-6">
+          <GlassCard className="px-6 py-5 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8">
+            <div className="flex items-center gap-3">
+              <svg width="32" height="32" viewBox="0 0 48 48">
+                <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z" />
+                <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z" />
+                <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z" />
+                <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z" />
+              </svg>
+              <div className="text-left">
+                <p className="text-sm text-slate-400">Google Reviews</p>
+                <p className="text-lg font-bold text-white">Verified Homeowner Ratings</p>
+              </div>
+            </div>
+            <div className="hidden sm:block w-px h-12 bg-white/10" />
+            <div className="text-center">
+              <div className="flex items-center justify-center gap-1 mb-1">
+                {[0,1,2,3,4].map((i) => (<Star key={i} size={20} weight="fill" style={{ color: WOOD_LIGHT }} />))}
+              </div>
+              <p className="text-sm text-slate-400"><span className="text-white font-bold">4.9</span> out of 5 &bull; <span className="text-white font-bold">189</span> reviews</p>
+            </div>
+          </GlassCard>
+        </div>
+      </SectionReveal>
+
       {/* ─── 7. TESTIMONIALS ─── */}
       <SectionReveal id="testimonials" className="relative z-10 py-16 md:py-24">
         <div className="mx-auto max-w-7xl px-4 md:px-6">
@@ -511,17 +548,238 @@ export default function V2FencingPage() {
           <motion.div className="grid grid-cols-1 md:grid-cols-3 gap-6" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
             {testimonials.map((t, i) => (
               <motion.div key={i} variants={fadeUp}>
-                <GlassCard className="p-6 h-full flex flex-col">
-                  <Quotes size={28} weight="fill" style={{ color: WOOD_LIGHT }} className="mb-3 opacity-50" />
+                <GlassCard className="p-6 h-full flex flex-col relative overflow-hidden">
+                  <Quotes size={60} weight="fill" style={{ color: WOOD_LIGHT }} className="absolute -top-2 -right-2 opacity-10" />
+                  <Quotes size={28} weight="fill" style={{ color: WOOD_LIGHT }} className="mb-3 opacity-60" />
                   <p className="text-slate-300 leading-relaxed flex-1 text-sm">{t.text}</p>
                   <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
-                    <span className="text-sm font-semibold text-white">{t.name}</span>
-                    <div className="flex gap-0.5">{Array.from({ length: t.rating }).map((_, j) => (<Star key={j} size={12} weight="fill" style={{ color: WOOD_LIGHT }} />))}</div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-semibold text-white">{t.name}</span>
+                      <CheckCircle size={14} weight="fill" style={{ color: WOOD_LIGHT }} />
+                      <span className="text-[10px] text-slate-400 uppercase tracking-wider">Verified</span>
+                    </div>
+                    <div className="flex gap-0.5">{Array.from({ length: t.rating }).map((_, j) => (<Star key={j} size={18} weight="fill" style={{ color: WOOD_LIGHT }} />))}</div>
                   </div>
                 </GlassCard>
               </motion.div>
             ))}
           </motion.div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── LINEAR FOOT PRICING ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="absolute inset-0 pointer-events-none" style={{ background: `radial-gradient(ellipse 60% 40% at 50% 50%, ${WOOD_GLOW} 0%, transparent 70%)` }} />
+        <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6">
+          <div className="text-center mb-16">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: WOOD_LIGHT }}>Transparent Pricing</p>
+            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white"><WordReveal text="Fence Pricing by Material" /></h2>
+            <p className="text-slate-400 mt-4 max-w-2xl mx-auto">Installed prices per linear foot. Exact quote depends on terrain, access, and finish options — but these are real averages from last quarter.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              { name: "Chain Link", price: "$18 – $32", desc: "Galvanized or vinyl-coated. Great for pets, budget security, and large commercial runs.", features: ["Galvanized or black vinyl", "4–8 ft height options", "Top rail + tension wire", "Walk gate included in standard runs", "5-year workmanship warranty"], highlight: false },
+              { name: "Cedar Privacy", price: "$42 – $68", desc: "Our bestselling residential style. Pressure-treated posts, premium cedar pickets.", features: ["6 ft standard, up to 8 ft", "Cedar or composite caps", "Stain package available", "HOA compliance review", "10-year workmanship warranty"], highlight: true },
+              { name: "Wrought Iron / Aluminum", price: "$55 – $120", desc: "Ornamental fencing for pools, estate perimeters, and curb-appeal upgrades.", features: ["Powder-coated aluminum or steel", "Multiple picket + cap styles", "Custom gate automation option", "Pool-code compliant", "Lifetime finish warranty"], highlight: false },
+            ].map((tier, i) => (
+              <div key={i} className={`relative rounded-2xl ${tier.highlight ? 'p-[2px]' : ''}`} style={tier.highlight ? { background: `linear-gradient(135deg, ${WOOD}, ${WOOD_LIGHT})` } : {}}>
+                {tier.highlight && <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-white" style={{ background: WOOD }}>Most Popular</div>}
+                <GlassCard className="p-6 h-full">
+                  <h3 className="text-xl font-bold text-white">{tier.name}</h3>
+                  <p className="text-xs text-slate-400 mt-1">{tier.desc}</p>
+                  <div className="mt-6 flex items-end gap-1">
+                    <span className="text-4xl font-black text-white">{tier.price}</span>
+                    <span className="text-sm text-slate-400 mb-1">/ linear ft</span>
+                  </div>
+                  <ul className="mt-6 space-y-3">
+                    {tier.features.map((f, j) => (
+                      <li key={j} className="flex items-start gap-2 text-sm text-slate-300">
+                        <CheckCircle size={18} weight="fill" style={{ color: tier.highlight ? WOOD_LIGHT : STONE_LIGHT }} className="shrink-0 mt-0.5" />
+                        <span>{f}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <button className="mt-6 w-full px-6 py-3 rounded-full text-sm font-semibold text-white" style={{ background: tier.highlight ? WOOD : "rgba(255,255,255,0.05)", border: tier.highlight ? "none" : "1px solid rgba(255,255,255,0.1)" }}>Get A Quote</button>
+                </GlassCard>
+              </div>
+            ))}
+          </div>
+          <p className="text-center text-xs text-slate-500 mt-8">HOA / code review included free with every estimate. Financing available for fence + gate packages over $8K.</p>
+        </div>
+      </SectionReveal>
+
+      {/* ─── HOA COMPLIANCE ─── */}
+      <SectionReveal className="relative z-10 py-8">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <GlassCard className="p-6 md:p-8 flex flex-col md:flex-row items-center gap-6">
+            <div className="relative shrink-0">
+              <motion.div className="absolute inset-0 rounded-full" style={{ background: WOOD_LIGHT }} animate={{ scale: [1, 1.6, 1], opacity: [0.5, 0, 0.5] }} transition={{ duration: 2, repeat: Infinity }} />
+              <div className="relative w-4 h-4 rounded-full" style={{ background: WOOD_LIGHT }} />
+            </div>
+            <div className="flex-1 text-center md:text-left">
+              <p className="text-xs uppercase tracking-widest mb-1" style={{ color: WOOD_LIGHT }}>HOA &amp; Code Compliance</p>
+              <h3 className="text-2xl md:text-3xl font-bold text-white">We Handle Permits, HOA Approvals, and Setbacks</h3>
+              <p className="text-sm text-slate-400 mt-2">You get a drawn-to-scale plan, submittal packet, and setback review — free with every estimate. No fights with the board.</p>
+            </div>
+            <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 shrink-0 cursor-pointer" style={{ background: WOOD } as React.CSSProperties}>
+              <CalendarCheck size={18} weight="duotone" /> Start HOA Review
+            </MagneticButton>
+          </GlassCard>
+        </div>
+      </SectionReveal>
+
+      {/* ─── VIDEO PLACEHOLDER ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-6xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: WOOD_LIGHT }}>On The Job</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white"><WordReveal text="Watch a Full Fence Install" /></h2>
+          </div>
+          <div className="relative rounded-2xl overflow-hidden aspect-video group cursor-pointer">
+            <img src="https://images.unsplash.com/photo-1459411552884-841db9b3cc2a?w=1600&q=80" alt="Fencing crew installation" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <motion.div className="w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center shadow-2xl" style={{ background: WOOD } as React.CSSProperties} animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}>
+                <svg width="28" height="32" viewBox="0 0 24 28" fill="white" className="ml-1">
+                  <path d="M0 0L24 14L0 28Z" />
+                </svg>
+              </motion.div>
+            </div>
+            <div className="absolute bottom-6 left-6 right-6">
+              <p className="text-xs uppercase tracking-widest" style={{ color: STONE_LIGHT }}>150 LF Privacy Fence &bull; 3:48</p>
+              <p className="text-xl md:text-2xl font-bold text-white mt-1">See how we install a 150-foot cedar privacy fence in under 2 days.</p>
+            </div>
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── QUIZ ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="relative z-10 mx-auto max-w-5xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: WOOD_LIGHT }}>Pick The Right Fence</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white"><WordReveal text="What's Your Goal?" /></h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {[
+              { color: "#22c55e", label: "Privacy", detail: "Block sightlines from neighbors or streets, wind protection, kid + pet containment.", rec: "Cedar Privacy 6–8 ft", icon: Lock },
+              { color: WOOD_LIGHT, label: "Security", detail: "Commercial perimeter, utility yards, storage, or high-security residential.", rec: "Chain Link + Privacy Slats / Wrought Iron", icon: ShieldCheck },
+              { color: STONE_LIGHT, label: "Curb Appeal", detail: "Accent fencing, pool code, front-yard style, and landscape definition.", rec: "Aluminum Ornamental + Gate", icon: HouseLine },
+            ].map((opt, i) => (
+              <GlassCard key={i} className="p-6 h-full flex flex-col items-start relative overflow-hidden group cursor-pointer">
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ background: `radial-gradient(circle at 50% 0%, ${opt.color}22, transparent 60%)` }} />
+                <div className="relative w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: `${opt.color}22` }}>
+                  <opt.icon size={22} weight="duotone" style={{ color: opt.color }} />
+                </div>
+                <p className="relative text-xs uppercase tracking-widest font-bold" style={{ color: opt.color }}>{opt.label}</p>
+                <p className="relative text-sm text-slate-300 mt-2 leading-relaxed flex-1">{opt.detail}</p>
+                <div className="relative mt-6 pt-4 border-t border-white/10 w-full">
+                  <p className="text-[10px] uppercase tracking-widest text-slate-400 mb-1">We Recommend</p>
+                  <p className="text-sm font-semibold text-white">{opt.rec}</p>
+                </div>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── COMPETITOR COMPARISON ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-5xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: WOOD_LIGHT }}>The Difference</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white"><WordReveal text="Us vs. The Big Box Installer" /></h2>
+          </div>
+          <GlassCard className="overflow-hidden">
+            <div className="grid grid-cols-[1.5fr_1fr_1fr] items-center border-b border-white/10">
+              <div className="p-4 md:p-6 text-xs uppercase tracking-widest text-slate-400">What Matters</div>
+              <div className="p-4 md:p-6 text-center" style={{ background: `${WOOD}25` }}>
+                <p className="text-sm md:text-base font-bold" style={{ color: WOOD_LIGHT }}>Our Crew</p>
+              </div>
+              <div className="p-4 md:p-6 text-center">
+                <p className="text-sm md:text-base font-semibold text-slate-400">Big Box Store</p>
+              </div>
+            </div>
+            {[
+              { feature: "In-house install crews (not subs)", us: "Always", them: "Mostly subcontracted" },
+              { feature: "HOA + permit handled for you", us: "Free", them: "Your problem" },
+              { feature: "Drawn-to-scale layout", us: "Included", them: "Rarely" },
+              { feature: "Premium materials stocked", us: "No substitutions", them: "Limited options" },
+              { feature: "Fixed price before digging", us: "Guaranteed", them: "Change orders common" },
+              { feature: "Lifetime workmanship on key items", us: "Included", them: "90 days" },
+              { feature: "Scheduled same-week start", us: "When booking", them: "4–8 weeks out" },
+            ].map((row, i) => (
+              <div key={i} className="grid grid-cols-[1.5fr_1fr_1fr] items-center border-b border-white/5 last:border-b-0">
+                <div className="p-4 md:p-6 text-sm text-white">{row.feature}</div>
+                <div className="p-4 md:p-6 text-center" style={{ background: `${WOOD}10` }}>
+                  <div className="flex items-center justify-center gap-2">
+                    <CheckCircle size={18} weight="fill" style={{ color: WOOD_LIGHT }} />
+                    <span className="text-sm text-white font-semibold hidden sm:inline">{row.us}</span>
+                  </div>
+                </div>
+                <div className="p-4 md:p-6 text-center text-sm text-slate-500 italic">{row.them}</div>
+              </div>
+            ))}
+          </GlassCard>
+        </div>
+      </SectionReveal>
+
+      {/* ─── CERTIFICATIONS ─── */}
+      <SectionReveal className="relative z-10 py-8">
+        <div className="mx-auto max-w-6xl px-4 md:px-6">
+          <p className="text-center text-xs uppercase tracking-widest text-slate-500 mb-6">Credentials &amp; Warranties</p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+            {[
+              { label: "Licensed Contractor", icon: Certificate },
+              { label: "AFA Member", icon: Medal },
+              { label: "BBB A+", icon: Star },
+              { label: "OSHA Trained Crews", icon: ShieldCheck },
+              { label: "Manufacturer Certified", icon: CheckCircle },
+              { label: "Lifetime Warranty", icon: Timer },
+            ].map((cert, i) => (
+              <GlassCard key={i} className="px-4 py-3 flex items-center gap-2 justify-center">
+                <cert.icon size={18} weight="duotone" style={{ color: i % 2 === 0 ? WOOD_LIGHT : STONE_LIGHT }} />
+                <span className="text-xs font-semibold text-slate-300">{cert.label}</span>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── SERVICE AREA ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: WOOD_LIGHT }}>Where We Build</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white"><WordReveal text="Service Area & Schedule" /></h2>
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <GlassCard className="p-6 text-center">
+              <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: WOOD_GLOW }}>
+                <MapPin size={26} weight="duotone" style={{ color: WOOD_LIGHT }} />
+              </div>
+              <p className="text-xs uppercase tracking-widest mb-2" style={{ color: WOOD_LIGHT }}>Coverage Radius</p>
+              <p className="text-3xl font-black text-white">60 Miles</p>
+              <p className="text-sm text-slate-400 mt-2">Metro, suburbs, and outlying rural towns. Larger runs considered throughout the state.</p>
+            </GlassCard>
+            <GlassCard className="p-6 text-center">
+              <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: STONE_GLOW }}>
+                <Ruler size={26} weight="duotone" style={{ color: STONE_LIGHT }} />
+              </div>
+              <p className="text-xs uppercase tracking-widest mb-2" style={{ color: STONE_LIGHT }}>Average Job</p>
+              <p className="text-3xl font-black text-white">1–3 Days</p>
+              <p className="text-sm text-slate-400 mt-2">Most residential jobs done in 1–3 days. Commercial and estate runs scheduled on timeline.</p>
+            </GlassCard>
+            <GlassCard className="p-6 text-center">
+              <div className="relative w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: WOOD_GLOW }}>
+                <motion.div className="absolute inset-0 rounded-full" style={{ background: WOOD_LIGHT }} animate={{ scale: [1, 1.6, 1], opacity: [0.4, 0, 0.4] }} transition={{ duration: 2, repeat: Infinity }} />
+                <CheckCircle size={26} weight="duotone" style={{ color: WOOD_LIGHT }} className="relative" />
+              </div>
+              <p className="text-xs uppercase tracking-widest mb-2" style={{ color: WOOD_LIGHT }}>Scheduling</p>
+              <p className="text-3xl font-black text-white">Starting Soon</p>
+              <p className="text-sm text-slate-400 mt-2">Booking installs for next month. Emergency repairs fit in sooner — call for rush availability.</p>
+            </GlassCard>
+          </div>
         </div>
       </SectionReveal>
 
@@ -602,6 +860,128 @@ export default function V2FencingPage() {
               </motion.div>
             </div>
           </ShimmerBorder>
+        </div>
+      </SectionReveal>
+
+      {/* ─── MATERIAL DEEP DIVE ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: WOOD_LIGHT }}>Material Guide</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white"><WordReveal text="Choosing The Right Material" /></h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              { name: "Cedar", lifespan: "15–25 yrs", maintenance: "Stain every 2–3 yrs", cost: "$$", best: "Warm, natural look" },
+              { name: "Vinyl", lifespan: "30+ yrs", maintenance: "Hose wash yearly", cost: "$$$", best: "Zero upkeep" },
+              { name: "Chain Link", lifespan: "20+ yrs", maintenance: "Inspect for rust", cost: "$", best: "Budget + security" },
+              { name: "Aluminum", lifespan: "30+ yrs", maintenance: "Virtually none", cost: "$$$$", best: "Ornamental + pools" },
+              { name: "Composite", lifespan: "25+ yrs", maintenance: "Occasional wash", cost: "$$$", best: "Modern + low-upkeep" },
+              { name: "Wrought Iron", lifespan: "Lifetime", maintenance: "Repaint every 8–10 yrs", cost: "$$$$$", best: "Estate + security" },
+              { name: "Shadowbox", lifespan: "15–20 yrs", maintenance: "Stain every 2–3 yrs", cost: "$$", best: "Privacy + airflow" },
+              { name: "Split Rail", lifespan: "15–20 yrs", maintenance: "Replace posts PRN", cost: "$", best: "Property lines + rustic" },
+            ].map((mat, i) => (
+              <GlassCard key={i} className="p-5">
+                <p className="text-lg font-bold text-white">{mat.name}</p>
+                <div className="mt-3 space-y-2 text-xs">
+                  <div className="flex items-start justify-between gap-2"><span className="text-slate-500">Lifespan</span><span className="text-white font-semibold">{mat.lifespan}</span></div>
+                  <div className="flex items-start justify-between gap-2"><span className="text-slate-500">Maintenance</span><span className="text-white font-semibold text-right">{mat.maintenance}</span></div>
+                  <div className="flex items-start justify-between gap-2"><span className="text-slate-500">Cost</span><span className="font-bold" style={{ color: WOOD_LIGHT }}>{mat.cost}</span></div>
+                </div>
+                <p className="mt-4 pt-4 border-t border-white/5 text-xs text-slate-300">Best for: <span className="font-semibold text-white">{mat.best}</span></p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── GUARANTEES ─── */}
+      <SectionReveal className="relative z-10 py-16">
+        <div className="mx-auto max-w-6xl px-4 md:px-6">
+          <div className="text-center mb-10">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: WOOD_LIGHT }}>The Promise</p>
+            <h2 className="text-3xl md:text-4xl tracking-tighter font-bold text-white"><WordReveal text="Built To Last, Backed By Us" /></h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {[
+              { title: "Fixed-Price Contracts", desc: "Quoted price is locked before we dig the first post. No change orders without your sign-off.", icon: ShieldCheck },
+              { title: "Lifetime Posts", desc: "Pressure-treated posts carry a lifetime replacement against rot and warping.", icon: Medal },
+              { title: "Call Before You Dig", desc: "Free utility locate + call-before-you-dig scheduled on every job — safety first.", icon: CheckCircle },
+              { title: "HOA Approval Support", desc: "We handle your HOA packet, setbacks, and code review for free with every estimate.", icon: Certificate },
+            ].map((item, i) => (
+              <GlassCard key={i} className="p-5 text-center">
+                <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3" style={{ background: WOOD_GLOW }}>
+                  <item.icon size={22} weight="duotone" style={{ color: WOOD_LIGHT }} />
+                </div>
+                <p className="text-sm font-bold text-white">{item.title}</p>
+                <p className="text-xs text-slate-400 mt-1 leading-relaxed">{item.desc}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── EXTENDED FAQ ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-4xl px-4 md:px-6">
+          <div className="text-center mb-10">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: WOOD_LIGHT }}>Quick Answers</p>
+            <h2 className="text-3xl md:text-4xl tracking-tighter font-bold text-white"><WordReveal text="Before You Book" /></h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              { q: "How long does a fence install take?", a: "Most residential installs finish in 1–3 days. Large runs or wrought iron can stretch to a week." },
+              { q: "Do you remove my old fence?", a: "Yes — removal, disposal, and post-hole repair are all included in our quote. No separate fees." },
+              { q: "Can I stain or paint my wood fence myself?", a: "Absolutely. We recommend waiting 30–60 days for the wood to dry, then apply your preferred stain or sealer." },
+              { q: "What about HOA / city permits?", a: "We pull every permit required and submit HOA packets on your behalf. You focus on picking the style." },
+              { q: "Do you guarantee your gates?", a: "Yes — gates include 3 years of hardware warranty, with lifetime service on our gate-automation installs." },
+              { q: "What if my yard has a slope?", a: "We rack or step the fence to match terrain. Rolling hills get a stepped look; gentle slopes rack beautifully." },
+              { q: "Can you build automated gates?", a: "Yes — we install sliding, swing, and bi-parting gates with keypads, remotes, or smartphone apps. Full electrical included." },
+              { q: "Do I need a permit for a fence?", a: "Most jurisdictions require a permit for fences over 6 ft or on property lines. We handle the paperwork in every case." },
+              { q: "How far in advance should I book?", a: "Peak season (spring/fall) books 3–4 weeks out. Off-season we can often start within a week of signing." },
+              { q: "Do you offer financing?", a: "Yes — 0% APR for 12 months on qualifying installs over $5K. Longer terms available with partner lenders." },
+              { q: "Do you repair existing fences?", a: "Yes, from single post replacements to full re-decking. Most repairs scheduled within a week." },
+              { q: "Can you match an existing fence?", a: "We try hard — bring us photos, and we'll match the stain, post style, and picket profile as closely as possible." },
+            ].map((faq, i) => (
+              <GlassCard key={i} className="p-5">
+                <p className="text-sm font-bold text-white mb-2">{faq.q}</p>
+                <p className="text-sm text-slate-400 leading-relaxed">{faq.a}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── FINAL CTA ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-5xl px-4 md:px-6">
+          <GlassCard className="p-8 md:p-12 text-center">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: WOOD_LIGHT }}>Ready To Start</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white mb-4">Get A Free On-Site Estimate</h2>
+            <p className="text-slate-400 text-lg mb-8 max-w-lg mx-auto">Our estimator walks your property, measures, and gives you a written quote in 30 minutes. Free, no obligation.</p>
+            <div className="flex flex-wrap justify-center gap-4">
+              <MagneticButton className="px-10 py-4 rounded-full text-base font-semibold text-white inline-flex items-center gap-2 cursor-pointer" style={{ background: WOOD } as React.CSSProperties}>
+                <CalendarCheck size={20} weight="duotone" /> Book Estimate
+              </MagneticButton>
+              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 inline-flex items-center gap-2 cursor-pointer">
+                <Phone size={18} weight="duotone" /> (555) 629-4150
+              </MagneticButton>
+            </div>
+            <p className="mt-6 text-xs text-slate-500">Licensed Contractor &bull; Bonded &bull; Fully Insured &bull; 20+ Years</p>
+            <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto">
+              {[
+                { label: "Fences Installed", value: "5,200+" },
+                { label: "Miles of Fencing", value: "Over 600" },
+                { label: "Years In Business", value: "20+" },
+                { label: "Customer Rating", value: "4.9 / 5" },
+              ].map((stat, i) => (
+                <div key={i} className="text-center">
+                  <p className="text-xs text-slate-500 uppercase tracking-widest">{stat.label}</p>
+                  <p className="text-2xl font-black mt-1" style={{ color: WOOD_LIGHT }}>{stat.value}</p>
+                </div>
+              ))}
+            </div>
+          </GlassCard>
         </div>
       </SectionReveal>
 

@@ -391,6 +391,12 @@ export default function V2DaycarePage() {
                 <Phone size={18} weight="duotone" /> (555) 321-7890
               </MagneticButton>
             </motion.div>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ ...spring, delay: 0.95 }} className="flex flex-wrap gap-3">
+              <span className="px-4 py-2 rounded-full text-xs font-semibold text-[#1c1917] flex items-center gap-2" style={{ background: "white", border: `1px solid ${PURPLE}40` }}><ShieldCheck size={14} weight="duotone" style={{ color: PURPLE }} />State Licensed</span>
+              <span className="px-4 py-2 rounded-full text-xs font-semibold text-[#1c1917] flex items-center gap-2" style={{ background: "white", border: `1px solid ${YELLOW}40` }}><Star size={14} weight="fill" style={{ color: YELLOW }} />4.9-Star Rated</span>
+              <span className="px-4 py-2 rounded-full text-xs font-semibold text-[#1c1917] flex items-center gap-2" style={{ background: "white", border: `1px solid ${PURPLE}40` }}><CheckCircle size={14} weight="duotone" style={{ color: PURPLE }} />Free Tour + Trial Day</span>
+              <span className="px-4 py-2 rounded-full text-xs font-semibold text-[#1c1917] flex items-center gap-2" style={{ background: "white", border: `1px solid ${YELLOW}40` }}><Heart size={14} weight="duotone" style={{ color: YELLOW }} />CPR Certified Staff</span>
+            </motion.div>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ ...spring, delay: 1 }} className="flex flex-wrap gap-6 text-sm text-[#6b7280]">
               <span className="flex items-center gap-2"><MapPin size={16} weight="duotone" style={{ color: PURPLE }} />456 Sunshine Lane</span>
               <span className="flex items-center gap-2"><Clock size={16} weight="duotone" style={{ color: PURPLE }} />Mon-Fri 6:30am-6:30pm</span>
@@ -510,6 +516,33 @@ export default function V2DaycarePage() {
         </div>
       </SectionReveal>
 
+      {/* ─── GOOGLE REVIEWS HEADER ─── */}
+      <SectionReveal className="relative z-10 py-8">
+        <div className="mx-auto max-w-4xl px-4 md:px-6">
+          <div className="rounded-2xl bg-white border border-gray-200 shadow-sm px-6 py-5 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8">
+            <div className="flex items-center gap-3">
+              <svg width="32" height="32" viewBox="0 0 48 48">
+                <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z" />
+                <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z" />
+                <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z" />
+                <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z" />
+              </svg>
+              <div className="text-left">
+                <p className="text-sm text-[#6b7280]">Google Reviews</p>
+                <p className="text-lg font-bold text-[#1c1917]">Parents Love Us</p>
+              </div>
+            </div>
+            <div className="hidden sm:block w-px h-12 bg-gray-200" />
+            <div className="text-center">
+              <div className="flex items-center justify-center gap-1 mb-1">
+                {[0,1,2,3,4].map((i) => (<Star key={i} size={20} weight="fill" style={{ color: YELLOW }} />))}
+              </div>
+              <p className="text-sm text-[#6b7280]"><span className="text-[#1c1917] font-bold">4.9</span> out of 5 &bull; <span className="text-[#1c1917] font-bold">152</span> reviews</p>
+            </div>
+          </div>
+        </div>
+      </SectionReveal>
+
       {/* ─── TESTIMONIALS ─── */}
       <SectionReveal id="testimonials" className="relative z-10 py-16 md:py-24">
         <div className="mx-auto max-w-7xl px-4 md:px-6">
@@ -522,17 +555,242 @@ export default function V2DaycarePage() {
           <motion.div className="grid grid-cols-1 md:grid-cols-3 gap-6" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
             {testimonials.map((t, i) => (
               <motion.div key={i} variants={fadeUp}>
-                <GlassCard className="p-6 h-full flex flex-col">
-                  <Quotes size={28} weight="fill" style={{ color: PURPLE }} className="mb-3 opacity-50" />
+                <div className="p-6 h-full flex flex-col rounded-2xl bg-white border border-gray-200 shadow-sm relative overflow-hidden">
+                  <Quotes size={60} weight="fill" style={{ color: PURPLE }} className="absolute -top-2 -right-2 opacity-10" />
+                  <Quotes size={28} weight="fill" style={{ color: PURPLE }} className="mb-3 opacity-60" />
                   <p className="text-[#4b5563] leading-relaxed flex-1 text-sm">{t.text}</p>
                   <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
-                    <span className="text-sm font-semibold text-[#1c1917]">{t.name}</span>
-                    <div className="flex gap-0.5">{Array.from({ length: t.rating }).map((_, j) => (<Star key={j} size={12} weight="fill" style={{ color: YELLOW }} />))}</div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-semibold text-[#1c1917]">{t.name}</span>
+                      <CheckCircle size={14} weight="fill" style={{ color: PURPLE }} />
+                      <span className="text-[10px] text-[#6b7280] uppercase tracking-wider">Verified</span>
+                    </div>
+                    <div className="flex gap-0.5">{Array.from({ length: t.rating }).map((_, j) => (<Star key={j} size={18} weight="fill" style={{ color: YELLOW }} />))}</div>
                   </div>
-                </GlassCard>
+                </div>
               </motion.div>
             ))}
           </motion.div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── AGE GROUP CARDS ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <div className="text-center mb-16">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: YELLOW }}>Every Age, Every Stage</p>
+            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-[#1c1917]"><WordReveal text="Programs for Every Age" /></h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {[
+              { age: "Infants", range: "6 wks – 12 mo", ratio: "1:4 ratio", color: PURPLE, desc: "Gentle routines, snuggles, tummy time, and bottle schedules shared with parents via our daily app." },
+              { age: "Toddlers", range: "13 – 24 mo", ratio: "1:6 ratio", color: YELLOW, desc: "Sensory play, early words, movement, and potty-training support when you are ready at home." },
+              { age: "Preschool", range: "2 – 4 yrs", ratio: "1:10 ratio", color: PURPLE_LIGHT, desc: "Letters, numbers, art projects, and kindergarten prep through play-based learning." },
+              { age: "Pre-K", range: "4 – 5 yrs", ratio: "1:12 ratio", color: YELLOW_LIGHT, desc: "Full kindergarten-readiness curriculum including reading, writing, math, and social skills." },
+            ].map((age, i) => (
+              <div key={i} className="p-6 h-full rounded-2xl bg-white border border-gray-200 shadow-sm">
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: `${age.color}22` }}>
+                  <Heart size={22} weight="duotone" style={{ color: age.color }} />
+                </div>
+                <h3 className="text-xl font-bold text-[#1c1917]">{age.age}</h3>
+                <p className="text-xs font-semibold mt-1" style={{ color: age.color }}>{age.range} &bull; {age.ratio}</p>
+                <p className="text-sm text-[#4b5563] mt-3 leading-relaxed">{age.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── TUITION PRICING ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <div className="text-center mb-16">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: YELLOW }}>Transparent Tuition</p>
+            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-[#1c1917]"><WordReveal text="Weekly Tuition & Schedules" /></h2>
+            <p className="text-[#4b5563] mt-4 max-w-2xl mx-auto">All tuition includes meals, snacks, diapers, and supplies — no hidden fees.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              { name: "Part-Time", price: "$245", period: "/week", desc: "3 days per week for families with flexible schedules or stay-at-home parents.", features: ["3 days per week (M/W/F or T/Th + one)", "Meals + snacks included", "All supplies + diapers", "Parent app with photos + updates"], highlight: false },
+              { name: "Full-Time", price: "$385", period: "/week", desc: "Our most popular plan — Mon-Fri, 6:30am-6:30pm. Meals, snacks, and everything included.", features: ["Monday – Friday", "Breakfast, lunch, 2 snacks", "All diapers + wipes + supplies", "Enrichment classes included", "Parent app + daily report"], highlight: true },
+              { name: "Extended Day", price: "$445", period: "/week", desc: "For early-drop and late-pickup families — 6:00am to 7:30pm with extra enrichment.", features: ["Extended 6:00am – 7:30pm", "All meals + snacks", "Spanish + music + yoga", "Before/after K drop-off available", "Sibling discount 15%"], highlight: false },
+            ].map((tier, i) => (
+              <div key={i} className={`relative rounded-2xl ${tier.highlight ? 'p-[2px]' : 'border border-gray-200'}`} style={tier.highlight ? { background: `linear-gradient(135deg, ${PURPLE}, ${YELLOW})` } : {}}>
+                {tier.highlight && <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-white" style={{ background: PURPLE }}>Most Popular</div>}
+                <div className="rounded-2xl p-6 h-full bg-white shadow-sm">
+                  <h3 className="text-xl font-bold text-[#1c1917]">{tier.name}</h3>
+                  <p className="text-xs text-[#6b7280] mt-1">{tier.desc}</p>
+                  <div className="mt-6 flex items-end gap-1">
+                    <span className="text-5xl font-black text-[#1c1917]">{tier.price}</span>
+                    <span className="text-sm text-[#6b7280] mb-2">{tier.period}</span>
+                  </div>
+                  <ul className="mt-6 space-y-3">
+                    {tier.features.map((f, j) => (
+                      <li key={j} className="flex items-start gap-2 text-sm text-[#4b5563]">
+                        <CheckCircle size={18} weight="fill" style={{ color: tier.highlight ? PURPLE : YELLOW }} className="shrink-0 mt-0.5" />
+                        <span>{f}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <button className="mt-6 w-full px-6 py-3 rounded-full text-sm font-semibold" style={{ background: tier.highlight ? PURPLE : "white", color: tier.highlight ? "white" : "#1c1917", border: tier.highlight ? "none" : "1px solid #e5e7eb" }}>Schedule A Tour</button>
+                </div>
+              </div>
+            ))}
+          </div>
+          <p className="text-center text-xs text-[#6b7280] mt-8">Military, teacher, and sibling discounts available. Dependent-care FSA eligible. State subsidies accepted.</p>
+        </div>
+      </SectionReveal>
+
+      {/* ─── ENROLLMENT URGENCY ─── */}
+      <SectionReveal className="relative z-10 py-8">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <div className="p-6 md:p-8 flex flex-col md:flex-row items-center gap-6 rounded-2xl bg-white border border-gray-200 shadow-sm">
+            <div className="relative shrink-0">
+              <motion.div className="absolute inset-0 rounded-full" style={{ background: PURPLE }} animate={{ scale: [1, 1.6, 1], opacity: [0.5, 0, 0.5] }} transition={{ duration: 2, repeat: Infinity }} />
+              <div className="relative w-4 h-4 rounded-full" style={{ background: PURPLE }} />
+            </div>
+            <div className="flex-1 text-center md:text-left">
+              <p className="text-xs uppercase tracking-widest mb-1" style={{ color: PURPLE }}>Limited Enrollment</p>
+              <h3 className="text-2xl md:text-3xl font-bold text-[#1c1917]">Fall Spots Filling — Tour This Week</h3>
+              <p className="text-sm text-[#4b5563] mt-2">Our infant and toddler rooms have limited openings for fall. Schedule a tour and reserve your spot with a $200 deposit.</p>
+            </div>
+            <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 shrink-0 cursor-pointer" style={{ background: PURPLE }}>
+              <CalendarCheck size={18} weight="duotone" /> Schedule Tour
+            </MagneticButton>
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── VIDEO PLACEHOLDER ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-6xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: YELLOW }}>Virtual Tour</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-[#1c1917]"><WordReveal text="Take A Tour From Home" /></h2>
+          </div>
+          <div className="relative rounded-2xl overflow-hidden aspect-video group cursor-pointer">
+            <img src="https://images.unsplash.com/photo-1541976590-713941681591?w=1600&q=80" alt="Daycare classroom tour" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <motion.div className="w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center shadow-2xl" style={{ background: PURPLE }} animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}>
+                <svg width="28" height="32" viewBox="0 0 24 28" fill="white" className="ml-1">
+                  <path d="M0 0L24 14L0 28Z" />
+                </svg>
+              </motion.div>
+            </div>
+            <div className="absolute bottom-6 left-6 right-6">
+              <p className="text-xs uppercase tracking-widest text-white">Full Facility Walkthrough &bull; 3:45</p>
+              <p className="text-xl md:text-2xl font-bold text-white mt-1">Step into our classrooms, outdoor playground, and kitchen — see exactly where your child will spend their day.</p>
+            </div>
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── AGE QUIZ ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="relative z-10 mx-auto max-w-5xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: YELLOW }}>Which Room?</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-[#1c1917]"><WordReveal text="Find Your Child's Classroom" /></h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {[
+              { color: PURPLE, label: "Under 2", detail: "Infants and young toddlers — gentle routines, sleep schedules, and one-on-one bonds.", rec: "Infant or Toddler Room — 1:4 / 1:6", icon: Heart },
+              { color: YELLOW, label: "2–3", detail: "Older toddlers — ready for structured play, early language, and friendships.", rec: "Young Preschool — 1:8", icon: PaintBrush },
+              { color: PURPLE_LIGHT, label: "4–5", detail: "Preparing for kindergarten — letters, numbers, and social skills through hands-on learning.", rec: "Pre-K — 1:12 with enrichment", icon: Star },
+            ].map((opt, i) => (
+              <div key={i} className="p-6 h-full flex flex-col items-start relative overflow-hidden group cursor-pointer rounded-2xl bg-white border border-gray-200 shadow-sm">
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ background: `radial-gradient(circle at 50% 0%, ${opt.color}22, transparent 60%)` }} />
+                <div className="relative w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: `${opt.color}22` }}>
+                  <opt.icon size={22} weight="duotone" style={{ color: opt.color }} />
+                </div>
+                <p className="relative text-xs uppercase tracking-widest font-bold" style={{ color: opt.color }}>Age {opt.label}</p>
+                <p className="relative text-sm text-[#4b5563] mt-2 leading-relaxed flex-1">{opt.detail}</p>
+                <div className="relative mt-6 pt-4 border-t border-gray-100 w-full">
+                  <p className="text-[10px] uppercase tracking-widest text-[#6b7280] mb-1">Matched Room</p>
+                  <p className="text-sm font-semibold text-[#1c1917]">{opt.rec}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── COMPARISON ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-5xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: YELLOW }}>The Difference</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-[#1c1917]"><WordReveal text="Us vs. Corporate Daycare Chains" /></h2>
+          </div>
+          <div className="rounded-2xl bg-white border border-gray-200 shadow-sm overflow-hidden">
+            <div className="grid grid-cols-[1.5fr_1fr_1fr] items-center border-b border-gray-200">
+              <div className="p-4 md:p-6 text-xs uppercase tracking-widest text-[#6b7280]">What Matters</div>
+              <div className="p-4 md:p-6 text-center" style={{ background: `${PURPLE}10` }}>
+                <p className="text-sm md:text-base font-bold" style={{ color: PURPLE }}>Our Center</p>
+              </div>
+              <div className="p-4 md:p-6 text-center">
+                <p className="text-sm md:text-base font-semibold text-[#6b7280]">Big Chain Daycare</p>
+              </div>
+            </div>
+            {[
+              { feature: "Low teacher:child ratios", us: "Below state minimums", them: "State minimum" },
+              { feature: "Owner on-site daily", us: "Yes", them: "Corporate director" },
+              { feature: "All supplies + meals included", us: "Zero extras", them: "Add-on fees" },
+              { feature: "Daily photos + updates app", us: "Every child", them: "Varies" },
+              { feature: "Play-based kindergarten prep", us: "Yes", them: "Rote" },
+              { feature: "CPR + early childhood certified", us: "All teachers", them: "Some" },
+              { feature: "Family-owned for 15+ years", us: "Yes", them: "Corporate" },
+            ].map((row, i) => (
+              <div key={i} className="grid grid-cols-[1.5fr_1fr_1fr] items-center border-b border-gray-100 last:border-b-0">
+                <div className="p-4 md:p-6 text-sm text-[#1c1917]">{row.feature}</div>
+                <div className="p-4 md:p-6 text-center" style={{ background: `${PURPLE}08` }}>
+                  <div className="flex items-center justify-center gap-2">
+                    <CheckCircle size={18} weight="fill" style={{ color: PURPLE }} />
+                    <span className="text-sm text-[#1c1917] font-semibold hidden sm:inline">{row.us}</span>
+                  </div>
+                </div>
+                <div className="p-4 md:p-6 text-center text-sm text-[#6b7280] italic">{row.them}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── SERVICE AREA ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: YELLOW }}>Location &amp; Hours</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-[#1c1917]"><WordReveal text="Where We Are & When" /></h2>
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="p-6 text-center rounded-2xl bg-white border border-gray-200 shadow-sm">
+              <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: PURPLE_GLOW }}>
+                <MapPin size={26} weight="duotone" style={{ color: PURPLE }} />
+              </div>
+              <p className="text-xs uppercase tracking-widest mb-2" style={{ color: PURPLE }}>Location</p>
+              <p className="text-xl font-black text-[#1c1917]">Sunshine Lane</p>
+              <p className="text-sm text-[#6b7280] mt-2">Brand-new facility with secure entry, outdoor playground, and drop-off parking. Easy commute access.</p>
+            </div>
+            <div className="p-6 text-center rounded-2xl bg-white border border-gray-200 shadow-sm">
+              <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: YELLOW_GLOW }}>
+                <Clock size={26} weight="duotone" style={{ color: YELLOW }} />
+              </div>
+              <p className="text-xs uppercase tracking-widest mb-2" style={{ color: YELLOW }}>Operating Hours</p>
+              <p className="text-xl font-black text-[#1c1917]">6:30am – 6:30pm</p>
+              <p className="text-sm text-[#6b7280] mt-2">Monday through Friday. Extended Day program extends 6:00am – 7:30pm. Closed major holidays.</p>
+            </div>
+            <div className="p-6 text-center rounded-2xl bg-white border border-gray-200 shadow-sm">
+              <div className="relative w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: PURPLE_GLOW }}>
+                <motion.div className="absolute inset-0 rounded-full" style={{ background: PURPLE }} animate={{ scale: [1, 1.6, 1], opacity: [0.4, 0, 0.4] }} transition={{ duration: 2, repeat: Infinity }} />
+                <CheckCircle size={26} weight="duotone" style={{ color: PURPLE }} className="relative" />
+              </div>
+              <p className="text-xs uppercase tracking-widest mb-2" style={{ color: PURPLE }}>Enrollment</p>
+              <p className="text-xl font-black text-[#1c1917]">Openings Soon</p>
+              <p className="text-sm text-[#6b7280] mt-2">Infant room has 2 openings, Preschool has 4. Schedule a tour this week to claim your spot.</p>
+            </div>
+          </div>
         </div>
       </SectionReveal>
 
@@ -631,6 +889,99 @@ export default function V2DaycarePage() {
               </motion.div>
             ))}
           </motion.div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── DAILY SCHEDULE SAMPLE ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: YELLOW }}>A Day With Us</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-[#1c1917]"><WordReveal text="Sample Daily Schedule" /></h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {[
+              { time: "7:00 – 9:00 AM", label: "Arrival + Free Play", desc: "Warm greetings, sign-in, breakfast service, and open-ended play with friends." },
+              { time: "9:00 – 10:30 AM", label: "Circle Time + Lesson", desc: "Age-appropriate learning: letters, numbers, songs, and the topic of the week." },
+              { time: "10:30 – 11:30 AM", label: "Outdoor Play", desc: "Structured and open play on our secure playground with shaded areas and soft surfaces." },
+              { time: "11:30 – 12:15 PM", label: "Lunch + Stories", desc: "Nutritious home-cooked meals served family-style with read-aloud story time." },
+              { time: "12:30 – 2:30 PM", label: "Rest / Quiet Time", desc: "Cot nap for younger children; quiet activities + books for non-nappers." },
+              { time: "2:30 – 6:00 PM", label: "Art, Music, Snack, Pickup", desc: "Crafts, music class, healthy snack, outdoor play, and happy handoffs at pickup." },
+              { time: "Throughout The Day", label: "Parent App Updates", desc: "Real-time photos, video clips, meal tracking, naps, and diaper logs so you never miss a moment." },
+              { time: "Weekly Enrichment", label: "Music, Spanish, Yoga", desc: "Specialty enrichment classes rotate weekly with dedicated instructors at no extra charge." },
+              { time: "Monthly", label: "Parent-Teacher Check-Ins", desc: "Short 1-on-1 meetings about development, milestones, and home-to-school continuity." },
+              { time: "Seasonal", label: "Family Events", desc: "Family picnics, holiday shows, parent-and-me classes, and graduation celebrations each season." },
+            ].map((slot, i) => (
+              <div key={i} className="p-5 rounded-2xl bg-white border border-gray-200 shadow-sm">
+                <p className="text-xs font-bold" style={{ color: PURPLE }}>{slot.time}</p>
+                <p className="text-lg font-bold text-[#1c1917] mt-1">{slot.label}</p>
+                <p className="text-sm text-[#6b7280] mt-2 leading-relaxed">{slot.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── EXTENDED FAQ ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-4xl px-4 md:px-6">
+          <div className="text-center mb-10">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: YELLOW }}>Parent FAQ</p>
+            <h2 className="text-3xl md:text-4xl tracking-tighter font-bold text-[#1c1917]"><WordReveal text="Common Parent Questions" /></h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              { q: "Are meals included?", a: "Yes — breakfast, lunch, and 2 snacks daily. Our in-house kitchen follows USDA guidelines and accommodates dietary needs." },
+              { q: "Do you provide diapers + supplies?", a: "Absolutely — all diapers, wipes, formula (we partner with Enfamil + Similac), and daily supplies are included in tuition." },
+              { q: "What is your sick policy?", a: "Fever over 100°F, contagious illness, or green nasal drainage requires a 24-hour symptom-free period before return." },
+              { q: "How do pickups and security work?", a: "Only pre-authorized adults with ID can pick up. Secure keypad entry, interior cameras, and locked exterior doors." },
+              { q: "Do you have outdoor play?", a: "Twice daily, weather permitting. Our fenced playground has separate infant + toddler zones plus a preschool area." },
+              { q: "Can I visit anytime?", a: "Yes — parents always welcome to drop in, nurse, or observe. We have nothing to hide." },
+              { q: "What if my child has allergies?", a: "Our kitchen handles dairy-free, nut-free, gluten-free, and custom meals. Every child's allergy plan is posted in the kitchen and in their classroom." },
+              { q: "Do you offer part-time options?", a: "Yes — part-time 3 days/week and mornings-only schedules available for families transitioning to childcare." },
+              { q: "Is the staff CPR + first aid certified?", a: "Every teacher is CPR + first aid certified, and we have a registered nurse on staff for medical questions." },
+              { q: "How do you track daily activities?", a: "Every child gets a daily digital report via our parent app with photos, meals, naps, diapers, and developmental notes." },
+              { q: "What is your curriculum?", a: "Play-based, emergent curriculum aligned with state early-learning standards. Kindergarten readiness assessed each quarter." },
+              { q: "Do you work with special needs?", a: "Yes — we partner with local therapists (OT, PT, speech) who come on site during the day to minimize disruption." },
+            ].map((faq, i) => (
+              <div key={i} className="p-5 rounded-2xl bg-white border border-gray-200 shadow-sm">
+                <p className="text-sm font-bold text-[#1c1917] mb-2">{faq.q}</p>
+                <p className="text-sm text-[#6b7280] leading-relaxed">{faq.a}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── FINAL CTA ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-5xl px-4 md:px-6">
+          <div className="rounded-2xl bg-white border border-gray-200 shadow-sm p-8 md:p-12 text-center">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: PURPLE }}>Start The Conversation</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-[#1c1917] mb-4">Schedule Your Free Tour</h2>
+            <p className="text-[#4b5563] text-lg mb-8 max-w-lg mx-auto">Come see the space, meet the teachers, and watch our program in action. Tours take 30 minutes and you bring your child.</p>
+            <div className="flex flex-wrap justify-center gap-4">
+              <MagneticButton className="px-10 py-4 rounded-full text-base font-semibold text-white inline-flex items-center gap-2 cursor-pointer" style={{ background: PURPLE }}>
+                <CalendarCheck size={20} weight="duotone" /> Book Tour
+              </MagneticButton>
+              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-[#1c1917] border border-gray-200 inline-flex items-center gap-2 cursor-pointer">
+                <Phone size={18} weight="duotone" /> (555) 321-7890
+              </MagneticButton>
+            </div>
+            <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto">
+              {[
+                { label: "Teacher:Child Ratio", value: "1:6 avg" },
+                { label: "Years In Business", value: "15+" },
+                { label: "Happy Families", value: "340+" },
+                { label: "Staff Certified", value: "100%" },
+              ].map((stat, i) => (
+                <div key={i} className="text-center">
+                  <p className="text-xs text-[#6b7280] uppercase tracking-widest">{stat.label}</p>
+                  <p className="text-2xl font-black mt-1" style={{ color: PURPLE }}>{stat.value}</p>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </SectionReveal>
 

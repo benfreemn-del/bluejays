@@ -323,7 +323,7 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
   ];
 
   return (
-    <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: BG, color: "#f1f5f9" }}>
+    <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ fontFamily: "Barlow, system-ui, sans-serif", background: BG, color: "#f1f5f9" }}>
       <FloatingSparks accent={ACCENT} />
 
       {/* ══════ 1. NAV ══════ */}

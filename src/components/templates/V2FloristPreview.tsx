@@ -150,7 +150,7 @@ function AccordionItem({ question, answer, isOpen, onToggle }: { question: strin
 
 function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <motion.div initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: "-80px" }} transition={{ duration: 0.7, ease: "easeOut" as const }} className={className}>
+    <motion.div initial={{ opacity: 1, x: 50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: "-80px" }} transition={{ duration: 0.7, ease: "easeOut" as const }} className={className}>
       {children}
     </motion.div>
   );
@@ -231,7 +231,7 @@ export default function V2FloristPreview({ data }: { data: GeneratedSiteData }) 
   const testimonials = data.testimonials?.length > 0 ? data.testimonials : fallbackTestimonials;
 
   return (
-    <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: BG, color: "#1c1917" }}>
+    <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ fontFamily: "Raleway, system-ui, sans-serif", background: BG, color: "#1c1917" }}>
       <FloatingPetals accent={ACCENT} />
 
       {/* 1. NAV */}
