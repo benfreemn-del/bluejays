@@ -137,7 +137,7 @@ export default function ClaimPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const redirectToCheckout = async () => {
+  const redirectToCheckout = async (planOverride?: "full" | "installment") => {
     setIsRedirecting(true);
     setMessages((prev) => [
       ...prev,
@@ -148,11 +148,12 @@ export default function ClaimPage() {
     ]);
 
     try {
-      const plan = new URLSearchParams(window.location.search).get("plan");
+      const urlPlan = new URLSearchParams(window.location.search).get("plan");
+      const plan = planOverride || urlPlan || "full";
       const res = await fetch("/api/checkout/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prospectId, plan: plan || "full" }),
+        body: JSON.stringify({ prospectId, plan }),
       });
       const data = await res.json();
 
@@ -256,7 +257,7 @@ export default function ClaimPage() {
             </span>
           )}
           <button
-            onClick={redirectToCheckout}
+            onClick={() => redirectToCheckout()}
             disabled={isRedirecting}
             className="h-9 px-5 rounded-full bg-green-500 text-white text-sm font-bold hover:bg-green-400 transition-colors disabled:opacity-50"
           >
@@ -273,7 +274,7 @@ export default function ClaimPage() {
               Checkout was cancelled — your site is still reserved
             </span>
             <button
-              onClick={redirectToCheckout}
+              onClick={() => redirectToCheckout()}
               disabled={isRedirecting}
               className="text-sm px-4 py-1.5 rounded-full bg-amber-500 text-white font-medium hover:bg-amber-600 transition-colors disabled:opacity-50"
             >
@@ -304,7 +305,7 @@ export default function ClaimPage() {
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-2">
             <button
-              onClick={redirectToCheckout}
+              onClick={() => redirectToCheckout()}
               disabled={isRedirecting}
               className="h-14 px-10 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 text-white text-lg font-bold hover:shadow-[0_0_40px_rgba(34,197,94,0.4)] transition-all duration-300 disabled:opacity-50"
             >
@@ -340,11 +341,7 @@ export default function ClaimPage() {
             <p className="text-center text-sm text-white/50 mb-6">
               Or{" "}
               <button
-                onClick={() => {
-                  const url = new URL(window.location.href);
-                  url.searchParams.set("plan", "installment");
-                  window.location.href = url.toString();
-                }}
+                onClick={() => redirectToCheckout("installment")}
                 className="underline hover:text-white/70 transition-colors"
               >
                 3 easy payments of $349
@@ -380,16 +377,33 @@ export default function ClaimPage() {
                 </div>
                 <span className="text-[10px] text-red-400 uppercase tracking-wider font-bold">Current</span>
               </div>
-              <div className="aspect-[16/10] bg-[#0a0a0a] relative">
+              <div className="aspect-[16/10] bg-[#0a0a0a] relative flex flex-col items-center justify-center text-center px-8">
+                {/* Most real business websites block iframe embedding via
+                    X-Frame-Options / frame-ancestors, so loading theirs in
+                    an iframe would leave an empty box. Show a clear card
+                    with a visit link instead. */}
                 {info?.currentWebsite ? (
-                  <iframe
-                    src={info.currentWebsite}
-                    className="w-full h-full border-0 pointer-events-none"
-                    sandbox="allow-scripts"
-                    title="Current website"
-                  />
+                  <>
+                    <div className="w-14 h-14 rounded-full bg-red-500/10 flex items-center justify-center mb-3">
+                      <svg className="w-7 h-7 text-red-400/70" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm0 0v20m10-10H2" />
+                      </svg>
+                    </div>
+                    <p className="text-white/60 text-xs uppercase tracking-wider mb-1">Your current site</p>
+                    <p className="text-white/90 text-sm font-medium mb-3 break-all px-2">
+                      {info.currentWebsite.replace(/^https?:\/\//, "").replace(/\/$/, "")}
+                    </p>
+                    <a
+                      href={info.currentWebsite}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-red-300/80 hover:text-red-200 underline underline-offset-2"
+                    >
+                      Open in new tab →
+                    </a>
+                  </>
                 ) : (
-                  <div className="flex flex-col items-center justify-center h-full text-center px-8">
+                  <>
                     <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mb-4">
                       <svg className="w-8 h-8 text-red-400/50" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                         <path d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
@@ -397,7 +411,7 @@ export default function ClaimPage() {
                     </div>
                     <p className="text-white/40 text-sm font-semibold mb-1">No Website</p>
                     <p className="text-white/25 text-xs">Potential customers can&apos;t find you online</p>
-                  </div>
+                  </>
                 )}
               </div>
             </div>
@@ -411,10 +425,14 @@ export default function ClaimPage() {
                 </div>
                 <span className="text-[10px] text-green-400 uppercase tracking-wider font-bold">Your New Site</span>
               </div>
-              <div className="aspect-[16/10] bg-[#0a0a0a] relative">
+              <div className="aspect-[16/10] bg-[#0a0a0a] relative overflow-hidden">
                 {info?.previewUrl ? (
+                  // embed=1 hides the floating device toggle + video button;
+                  // device=mobile forces the mobile responsive view so it
+                  // fits the iframe cleanly. Prospects see the site exactly
+                  // as it looks on their phone.
                   <iframe
-                    src={info.previewUrl}
+                    src={`${info.previewUrl}${info.previewUrl.includes("?") ? "&" : "?"}embed=1&device=mobile`}
                     className="w-full h-full border-0 pointer-events-none"
                     title="New website preview"
                   />
@@ -518,7 +536,7 @@ export default function ClaimPage() {
           {/* CTA after value breakdown */}
           <div className="text-center mt-8">
             <button
-              onClick={redirectToCheckout}
+              onClick={() => redirectToCheckout()}
               disabled={isRedirecting}
               className="h-14 px-10 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 text-white text-lg font-bold hover:shadow-[0_0_40px_rgba(34,197,94,0.4)] transition-all duration-300 disabled:opacity-50"
             >
@@ -528,11 +546,7 @@ export default function ClaimPage() {
               <p className="text-center text-sm text-white/50 mt-2">
                 Or{" "}
                 <button
-                  onClick={() => {
-                    const url = new URL(window.location.href);
-                    url.searchParams.set("plan", "installment");
-                    window.location.href = url.toString();
-                  }}
+                  onClick={() => redirectToCheckout("installment")}
                   className="underline hover:text-white/70 transition-colors"
                 >
                   3 easy payments of $349
@@ -966,7 +980,7 @@ export default function ClaimPage() {
             Your custom website is built, tested, and ready to go live. All that&apos;s left is for you to claim it.
           </p>
           <button
-            onClick={redirectToCheckout}
+            onClick={() => redirectToCheckout()}
             disabled={isRedirecting}
             className="h-16 px-12 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 text-white text-xl font-bold hover:shadow-[0_0_60px_rgba(34,197,94,0.4)] transition-all duration-300 disabled:opacity-50"
           >
@@ -976,11 +990,7 @@ export default function ClaimPage() {
             <p className="text-center text-sm text-white/50 mt-2">
               Or{" "}
               <button
-                onClick={() => {
-                  const url = new URL(window.location.href);
-                  url.searchParams.set("plan", "installment");
-                  window.location.href = url.toString();
-                }}
+                onClick={() => redirectToCheckout("installment")}
                 className="underline hover:text-white/70 transition-colors"
               >
                 3 easy payments of $349

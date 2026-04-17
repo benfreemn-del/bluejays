@@ -100,6 +100,12 @@ export default function PreviewClientPage({
     return "desktop";
   });
 
+  // When embedded inside the claim page's Before/After iframe (embed=1),
+  // hide the floating DeviceToggleBar + PreviewVideoButton — those controls
+  // belong on the standalone preview page, not inside a nested frame.
+  const isEmbedded = typeof window !== "undefined"
+    && new URLSearchParams(window.location.search).get("embed") === "1";
+
   const loadPreview = useCallback(async () => {
     setIsLoading(true);
     setErrorMessage(null);
@@ -191,6 +197,17 @@ export default function PreviewClientPage({
             </a>
           </div>
         </div>
+      </div>
+    );
+  }
+
+  // Embedded inside the claim page Before/After iframe — render the preview
+  // directly at iframe width (no phone-frame wrapper, no top banner, no
+  // floating toggles). The parent iframe controls sizing.
+  if (isEmbedded) {
+    return (
+      <div>
+        <PreviewContent id={id} siteData={siteData} selectedTheme={selectedTheme} version={resolvedVersion} />
       </div>
     );
   }
