@@ -11,6 +11,7 @@ import ScoutModal from "@/components/dashboard/ScoutModal";
 import ProspectDetail from "@/components/dashboard/ProspectDetail";
 import MapView from "@/components/dashboard/MapView";
 import PipelineDashboard from "@/components/dashboard/PipelineDashboard";
+import DeliverabilityWidget from "@/components/dashboard/DeliverabilityWidget";
 
 export default function DashboardPage() {
   const [prospects, setProspects] = useState<Prospect[]>([]);
@@ -309,6 +310,8 @@ export default function DashboardPage() {
               onFilterStatus={setStatusFilter}
               activeFilter={statusFilter}
             />
+
+            <DeliverabilityWidget />
 
             <div className="flex gap-2">
               <button
