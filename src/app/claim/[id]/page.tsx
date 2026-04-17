@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import SmartSocialProof from "@/components/SmartSocialProof";
+import AutoScrollPreview from "@/components/claim/AutoScrollPreview";
 
 /**
  * CLAIM PAGE — Conversion-Optimized Layout
@@ -367,95 +368,11 @@ export default function ClaimPage() {
           <h2 className="text-2xl font-bold text-center mb-8">
             See the <span className="text-sky-400">Transformation</span>
           </h2>
-          <div className="grid md:grid-cols-2 gap-6">
-            {/* Before — live screenshot of the prospect's current site via
-                thum.io. We can't iframe real sites (X-Frame-Options / CSP
-                blocks embedding), but a screenshot service sidesteps that.
-                Hover scrolls the full-page screenshot down; click opens
-                the real site in a new tab. */}
-            <a
-              href={info?.currentWebsite || "#"}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`group block rounded-2xl border border-red-500/20 overflow-hidden ${info?.currentWebsite ? "cursor-pointer hover:border-red-500/50" : "cursor-default pointer-events-none"} transition-colors`}
-              onClick={(e) => { if (!info?.currentWebsite) e.preventDefault(); }}
-            >
-              <div className="bg-red-500/10 px-5 py-3 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-red-500" />
-                  <span className="font-bold text-sm">Before</span>
-                  {info?.currentWebsite && (
-                    <span className="text-[10px] text-red-300/70 ml-2 truncate max-w-[180px]">
-                      {info.currentWebsite.replace(/^https?:\/\//, "").replace(/\/$/, "")}
-                    </span>
-                  )}
-                </div>
-                <span className="text-[10px] text-red-400 uppercase tracking-wider font-bold">Current</span>
-              </div>
-              <div className="relative bg-[#0a0a0a] overflow-hidden" style={{ height: "520px" }}>
-                {info?.currentWebsite ? (
-                  <img
-                    src={`https://image.thum.io/get/width/1200/crop/2200/noanimate/png/${info.currentWebsite}`}
-                    alt="Current website screenshot"
-                    className="absolute top-0 left-0 w-full h-auto transition-transform duration-[8000ms] ease-out group-hover:-translate-y-[calc(100%-520px)]"
-                    loading="lazy"
-                  />
-                ) : (
-                  <div className="flex flex-col items-center justify-center h-full text-center px-8">
-                    <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mb-4">
-                      <svg className="w-8 h-8 text-red-400/50" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                        <path d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
-                      </svg>
-                    </div>
-                    <p className="text-white/40 text-sm font-semibold mb-1">No Website</p>
-                    <p className="text-white/25 text-xs">Potential customers can&apos;t find you online</p>
-                  </div>
-                )}
-                {info?.currentWebsite && (
-                  <div className="absolute bottom-3 right-3 rounded-full bg-black/70 backdrop-blur-sm px-3 py-1.5 text-[10px] text-white/80 border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity">
-                    Click to open ↗
-                  </div>
-                )}
-              </div>
-            </a>
-
-            {/* After — live screenshot of the new preview. Same thum.io
-                trick. Click opens the full preview in a new tab. */}
-            <a
-              href={info?.previewUrl || "#"}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group block rounded-2xl border border-green-500/20 overflow-hidden hover:border-green-500/50 transition-colors cursor-pointer"
-            >
-              <div className="bg-green-500/10 px-5 py-3 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-green-500" />
-                  <span className="font-bold text-sm">After</span>
-                </div>
-                <span className="text-[10px] text-green-400 uppercase tracking-wider font-bold">Your New Site</span>
-              </div>
-              <div className="relative bg-[#0a0a0a] overflow-hidden" style={{ height: "520px" }}>
-                {info?.previewUrl ? (
-                  <img
-                    src={`https://image.thum.io/get/width/1200/crop/2200/noanimate/png/https://bluejayportfolio.com${info.previewUrl}`}
-                    alt="New website preview screenshot"
-                    className="absolute top-0 left-0 w-full h-auto transition-transform duration-[8000ms] ease-out group-hover:-translate-y-[calc(100%-520px)]"
-                    loading="lazy"
-                  />
-                ) : (
-                  <div className="flex items-center justify-center h-full text-white/30 text-sm">
-                    Loading preview...
-                  </div>
-                )}
-                <div className="absolute bottom-3 right-3 rounded-full bg-black/70 backdrop-blur-sm px-3 py-1.5 text-[10px] text-white/80 border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity">
-                  Click to explore ↗
-                </div>
-              </div>
-              <p className="text-xs text-white/30 py-2 px-3 text-center bg-black/40">
-                Preview images shown — we customize with your real business photos after purchase
-              </p>
-            </a>
-          </div>
+          <AutoScrollPreview
+            previewUrl={info?.previewUrl}
+            currentWebsite={info?.currentWebsite}
+            businessName={info?.businessName || ""}
+          />
 
           {info?.currentWebsite && (
             <div className="text-center mt-4">
