@@ -87,13 +87,15 @@ export async function createCheckoutSession(
   const isInstallment = paymentPlan === "installment" && !isFreeTier;
 
   if (isInstallment) {
-    // 3 monthly payments of $349 ($1,047 total — slight premium for flexibility)
+    // 3 monthly payments of $349 ($1,047 total — slight premium for flexibility).
+    // The subscription auto-cancels via `cancel_at` (set below) so Stripe only
+    // charges exactly 3 times: today, +~30 days, +~60 days.
     lineItems.push({
       price_data: {
         currency: "usd",
         product_data: {
           name: `Custom Website — ${businessName}`,
-          description: "Premium custom website — Payment 1 of 3",
+          description: "Premium custom website — 3 monthly payments of $349 (auto-ends after payment 3)",
         },
         unit_amount: 34900, // $349
         recurring: { interval: "month" as const, interval_count: 1 },
@@ -124,19 +126,19 @@ export async function createCheckoutSession(
   }
 
   // --- Optional $100/year management subscription ---
-  // Only add the recurring item if a pre-created price ID is configured.
-  // We do NOT create inline recurring price_data because mixing one-time
-  // inline prices with inline recurring prices in "subscription" mode
-  // causes Stripe API errors. If the owner wants to add the subscription,
-  // they should create the price in Stripe Dashboard and set STRIPE_PRICE_MGMT_ID.
-  if (mgmtPriceId) {
-    lineItems.push({ price: mgmtPriceId, quantity: 1 });
+  // Attached alongside the setup fee on FULL-PAY checkouts so year-1 anniversary
+  // charges automatically. Installment checkouts skip this — we can't mix a
+  // capped monthly sub with an ongoing yearly in one Stripe subscription, so
+  // the mgmt sub is created separately via webhook after payment 3 succeeds.
+  const attachMgmt = !!mgmtPriceId && !isInstallment;
+  if (attachMgmt) {
+    lineItems.push({ price: mgmtPriceId!, quantity: 1 });
   }
 
   // Determine session mode:
-  // - "subscription" if we have a recurring line item (mgmtPriceId or installment plan)
+  // - "subscription" if ANY recurring item is present (attachMgmt OR installment)
   // - "payment" for one-time only
-  const mode: "subscription" | "payment" = (mgmtPriceId || isInstallment)
+  const mode: "subscription" | "payment" = (attachMgmt || isInstallment)
     ? "subscription"
     : "payment";
 
@@ -147,8 +149,24 @@ export async function createCheckoutSession(
     line_items: lineItems,
     success_url: `${baseUrl}/onboarding/${prospectId}?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${baseUrl}/claim/${prospectId}?payment=cancelled`,
-    metadata: { prospectId, businessName, pricingTier },
+    metadata: { prospectId, businessName, pricingTier, paymentPlan },
   };
+
+  // Installment auto-cancellation: set `cancel_at` ~92 days out so Stripe
+  // charges $349 today, then again around day 30 and day 60, then auto-ends
+  // before any 4th charge. Metadata flags the plan for the webhook handler
+  // so it can spin up the deferred $100/yr mgmt subscription after payment 3.
+  if (isInstallment) {
+    const INSTALLMENT_WINDOW_DAYS = 92;
+    sessionParams.subscription_data = {
+      cancel_at: Math.floor(Date.now() / 1000) + INSTALLMENT_WINDOW_DAYS * 24 * 60 * 60,
+      metadata: {
+        prospectId,
+        paymentPlan: "installment-3x349",
+        expectedPayments: "3",
+      },
+    };
+  }
 
   // Only set customer_email if we have one
   if (email) {
