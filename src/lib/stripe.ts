@@ -73,7 +73,10 @@ export async function createCheckoutSession(
   }
 
   const stripe = getStripe();
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com";
+  // Hardcoded — CLAUDE.md pattern: Vercel had NEXT_PUBLIC_BASE_URL set to an
+  // invalid/old value, causing Stripe to reject success_url/cancel_url with
+  // "Not a valid URL". Same fix as FROM_EMAIL in email-sender.ts.
+  const baseUrl = "https://bluejayportfolio.com";
 
   const setupPriceId = process.env.STRIPE_PRICE_SETUP_ID;
   const mgmtPriceId = process.env.STRIPE_PRICE_MGMT_ID;

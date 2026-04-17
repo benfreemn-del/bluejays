@@ -86,6 +86,7 @@ const PUBLIC_API_PATHS = [
   "/api/checkout/create", // Prospects need to create checkout sessions
   "/api/claim/",          // Public claim-page data (sanitized — see /api/claim/[id])
   "/api/engagement/",     // Engagement score/triggers for claim + preview pages
+  "/api/generated-sites/",// Preview-page site data (public — same data prospects see rendered)
   "/api/proposals/",
   "/api/calendar/available-slots",
   "/api/call-lists", // CSV downloads are linked directly from the dashboard

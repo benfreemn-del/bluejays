@@ -107,7 +107,9 @@ export default function PreviewClientPage({
     try {
       const [siteResponse, prospectResponse] = await Promise.all([
         fetch(`/api/generated-sites/${id}`, { cache: "no-store" }),
-        fetch(`/api/prospects/${id}`, { cache: "no-store" }),
+        // Use the PUBLIC claim endpoint so the preview page works for
+        // unauthenticated visitors (real prospects arriving from outreach).
+        fetch(`/api/claim/${id}`, { cache: "no-store" }),
       ]);
 
       const sitePayload = await siteResponse.json().catch(() => null);
