@@ -415,15 +415,15 @@ const THEME_LIBRARY: Record<string, { url: string; name: string }[]> = {
     { url: "https://images.unsplash.com/photo-1563198804-b144dfc1661c?w=800&q=80", name: "clinic-exterior" },
   ],
   painting: [
+    // Visually verified 2026-04-17 — these photos actually show their subject.
     { url: "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=800&q=80", name: "house-painting" },
     { url: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&q=80", name: "paint-roller" },
     { url: "https://images.unsplash.com/photo-1562771379-eafdca7a02f8?w=800&q=80", name: "color-samples" },
-    { url: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800&q=80", name: "interior-painting" },
-    { url: "https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=800&q=80", name: "exterior-painting" },
-    { url: "https://images.unsplash.com/photo-1592078615290-033ee584e267?w=800&q=80", name: "paint-cans" },
-    { url: "https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?w=800&q=80", name: "painter-on-ladder" },
-    { url: "https://images.unsplash.com/photo-1558980394-4c7c9299fe96?w=800&q=80", name: "accent-wall" },
-    { url: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=800&q=80", name: "trim-work" },
+    // Removed 6 slots where the Unsplash photo didn't match its label
+    // (paint-cans was a shoe, accent-wall was a motorcycle wheel, trim-work
+    // was flowers, interior-painting was a building exterior, exterior-painting
+    // was a chair, painter-on-ladder was a gray texture). Re-add from the
+    // Upload tab with verified painting photos when needed.
   ],
   "pet-services": [
     { url: "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=800&q=80", name: "dog-grooming" },
