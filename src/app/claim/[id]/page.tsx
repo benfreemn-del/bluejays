@@ -368,42 +368,40 @@ export default function ClaimPage() {
             See the <span className="text-sky-400">Transformation</span>
           </h2>
           <div className="grid md:grid-cols-2 gap-6">
-            {/* Before */}
-            <div className="rounded-2xl border border-red-500/20 overflow-hidden">
-              <div className="bg-red-500/10 px-5 py-2.5 flex items-center justify-between">
+            {/* Before — live screenshot of the prospect's current site via
+                thum.io. We can't iframe real sites (X-Frame-Options / CSP
+                blocks embedding), but a screenshot service sidesteps that.
+                Hover scrolls the full-page screenshot down; click opens
+                the real site in a new tab. */}
+            <a
+              href={info?.currentWebsite || "#"}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`group block rounded-2xl border border-red-500/20 overflow-hidden ${info?.currentWebsite ? "cursor-pointer hover:border-red-500/50" : "cursor-default pointer-events-none"} transition-colors`}
+              onClick={(e) => { if (!info?.currentWebsite) e.preventDefault(); }}
+            >
+              <div className="bg-red-500/10 px-5 py-3 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-red-500" />
                   <span className="font-bold text-sm">Before</span>
+                  {info?.currentWebsite && (
+                    <span className="text-[10px] text-red-300/70 ml-2 truncate max-w-[180px]">
+                      {info.currentWebsite.replace(/^https?:\/\//, "").replace(/\/$/, "")}
+                    </span>
+                  )}
                 </div>
                 <span className="text-[10px] text-red-400 uppercase tracking-wider font-bold">Current</span>
               </div>
-              <div className="aspect-[16/10] bg-[#0a0a0a] relative flex flex-col items-center justify-center text-center px-8">
-                {/* Most real business websites block iframe embedding via
-                    X-Frame-Options / frame-ancestors, so loading theirs in
-                    an iframe would leave an empty box. Show a clear card
-                    with a visit link instead. */}
+              <div className="relative bg-[#0a0a0a] overflow-hidden" style={{ height: "520px" }}>
                 {info?.currentWebsite ? (
-                  <>
-                    <div className="w-14 h-14 rounded-full bg-red-500/10 flex items-center justify-center mb-3">
-                      <svg className="w-7 h-7 text-red-400/70" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm0 0v20m10-10H2" />
-                      </svg>
-                    </div>
-                    <p className="text-white/60 text-xs uppercase tracking-wider mb-1">Your current site</p>
-                    <p className="text-white/90 text-sm font-medium mb-3 break-all px-2">
-                      {info.currentWebsite.replace(/^https?:\/\//, "").replace(/\/$/, "")}
-                    </p>
-                    <a
-                      href={info.currentWebsite}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-xs text-red-300/80 hover:text-red-200 underline underline-offset-2"
-                    >
-                      Open in new tab →
-                    </a>
-                  </>
+                  <img
+                    src={`https://image.thum.io/get/width/1200/crop/2200/noanimate/png/${info.currentWebsite}`}
+                    alt="Current website screenshot"
+                    className="absolute top-0 left-0 w-full h-auto transition-transform duration-[8000ms] ease-out group-hover:-translate-y-[calc(100%-520px)]"
+                    loading="lazy"
+                  />
                 ) : (
-                  <>
+                  <div className="flex flex-col items-center justify-center h-full text-center px-8">
                     <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mb-4">
                       <svg className="w-8 h-8 text-red-400/50" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                         <path d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
@@ -411,41 +409,52 @@ export default function ClaimPage() {
                     </div>
                     <p className="text-white/40 text-sm font-semibold mb-1">No Website</p>
                     <p className="text-white/25 text-xs">Potential customers can&apos;t find you online</p>
-                  </>
+                  </div>
+                )}
+                {info?.currentWebsite && (
+                  <div className="absolute bottom-3 right-3 rounded-full bg-black/70 backdrop-blur-sm px-3 py-1.5 text-[10px] text-white/80 border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity">
+                    Click to open ↗
+                  </div>
                 )}
               </div>
-            </div>
+            </a>
 
-            {/* After */}
-            <div className="rounded-2xl border border-green-500/20 overflow-hidden">
-              <div className="bg-green-500/10 px-5 py-2.5 flex items-center justify-between">
+            {/* After — live screenshot of the new preview. Same thum.io
+                trick. Click opens the full preview in a new tab. */}
+            <a
+              href={info?.previewUrl || "#"}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group block rounded-2xl border border-green-500/20 overflow-hidden hover:border-green-500/50 transition-colors cursor-pointer"
+            >
+              <div className="bg-green-500/10 px-5 py-3 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-green-500" />
                   <span className="font-bold text-sm">After</span>
                 </div>
                 <span className="text-[10px] text-green-400 uppercase tracking-wider font-bold">Your New Site</span>
               </div>
-              <div className="aspect-[16/10] bg-[#0a0a0a] relative overflow-hidden">
+              <div className="relative bg-[#0a0a0a] overflow-hidden" style={{ height: "520px" }}>
                 {info?.previewUrl ? (
-                  // embed=1 hides the floating device toggle + video button;
-                  // device=mobile forces the mobile responsive view so it
-                  // fits the iframe cleanly. Prospects see the site exactly
-                  // as it looks on their phone.
-                  <iframe
-                    src={`${info.previewUrl}${info.previewUrl.includes("?") ? "&" : "?"}embed=1&device=mobile`}
-                    className="w-full h-full border-0 pointer-events-none"
-                    title="New website preview"
+                  <img
+                    src={`https://image.thum.io/get/width/1200/crop/2200/noanimate/png/https://bluejayportfolio.com${info.previewUrl}`}
+                    alt="New website preview screenshot"
+                    className="absolute top-0 left-0 w-full h-auto transition-transform duration-[8000ms] ease-out group-hover:-translate-y-[calc(100%-520px)]"
+                    loading="lazy"
                   />
                 ) : (
                   <div className="flex items-center justify-center h-full text-white/30 text-sm">
                     Loading preview...
                   </div>
                 )}
+                <div className="absolute bottom-3 right-3 rounded-full bg-black/70 backdrop-blur-sm px-3 py-1.5 text-[10px] text-white/80 border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity">
+                  Click to explore ↗
+                </div>
               </div>
-              <p className="text-xs text-white/30 mt-2 text-center">
+              <p className="text-xs text-white/30 py-2 px-3 text-center bg-black/40">
                 Preview images shown — we customize with your real business photos after purchase
               </p>
-            </div>
+            </a>
           </div>
 
           {info?.currentWebsite && (
