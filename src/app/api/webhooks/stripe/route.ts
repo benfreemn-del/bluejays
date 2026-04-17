@@ -180,13 +180,46 @@ export async function POST(request: NextRequest) {
       case "customer.subscription.deleted": {
         const subscription = event.data.object as {
           id: string;
-          metadata?: { prospectId?: string };
+          customer?: string;
+          metadata?: { prospectId?: string; businessName?: string; paymentPlan?: string; type?: string };
         };
 
         const prospectId = subscription.metadata?.prospectId;
         if (prospectId) {
           await updateProspect(prospectId, { subscriptionStatus: "cancelled" });
           console.log(`[Stripe Webhook] Subscription cancelled for ${prospectId}`);
+
+          // Installment-plan graduation: when the $349x3 sub hits its
+          // scheduled cancel_at (after 3 payments), stand up the deferred
+          // $100/yr mgmt subscription just like we do for full-pay customers.
+          // Guard against double-billing by checking that the prospect
+          // doesn't already have a mgmtSubscriptionId.
+          const isInstallment = subscription.metadata?.paymentPlan === "installment-3x349";
+          const isMgmtSub = subscription.metadata?.type === "management_fee";
+          if (isInstallment && !isMgmtSub && subscription.customer) {
+            try {
+              const prospect = await getProspect(prospectId);
+              if (prospect && !prospect.mgmtSubscriptionId) {
+                const mgmt = await createDeferredManagementSubscription(
+                  subscription.customer as string,
+                  prospectId,
+                  prospect.businessName,
+                );
+                await updateProspect(prospectId, {
+                  mgmtSubscriptionId: mgmt.id,
+                  subscriptionStatus: "active",
+                });
+                console.log(
+                  `[Stripe Webhook] Installment graduated — created deferred mgmt sub ${mgmt.id} for ${prospect.businessName}. First charge: ${new Date(mgmt.trial_end! * 1000).toISOString()}`
+                );
+              }
+            } catch (graduateErr) {
+              console.error(
+                `[Stripe Webhook] Failed to graduate installment customer ${prospectId} to mgmt sub:`,
+                graduateErr
+              );
+            }
+          }
         }
         break;
       }
