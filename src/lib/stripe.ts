@@ -128,22 +128,23 @@ export async function createCheckoutSession(
     }
   }
 
-  // --- Optional $100/year management subscription ---
-  // Attached alongside the setup fee on FULL-PAY checkouts so year-1 anniversary
-  // charges automatically. Installment checkouts skip this — we can't mix a
-  // capped monthly sub with an ongoing yearly in one Stripe subscription, so
-  // the mgmt sub is created separately via webhook after payment 3 succeeds.
-  const attachMgmt = !!mgmtPriceId && !isInstallment;
-  if (attachMgmt) {
-    lineItems.push({ price: mgmtPriceId!, quantity: 1 });
-  }
+  // --- $100/year management subscription is ALWAYS deferred to year-1 ---
+  // We intentionally do NOT attach the mgmt line item to the checkout session,
+  // because a Stripe subscription item charges immediately — which would hit
+  // the customer for $997 + $100 on day 0. Instead, the webhook handler
+  // (checkout.session.completed for full-pay, customer.subscription.deleted
+  // for installment) calls createDeferredManagementSubscription() after
+  // payment, which creates the $100/yr sub with a 1-year trial so the first
+  // charge lands exactly at their year-1 anniversary.
+  //
+  // Keep the `mgmtPriceId` env var readable so createDeferredManagementSubscription
+  // can reuse the same pre-created Stripe Price — but don't attach it here.
+  void mgmtPriceId;
 
   // Determine session mode:
-  // - "subscription" if ANY recurring item is present (attachMgmt OR installment)
-  // - "payment" for one-time only
-  const mode: "subscription" | "payment" = (attachMgmt || isInstallment)
-    ? "subscription"
-    : "payment";
+  // - "subscription" if installment (the only recurring line item here)
+  // - "payment" for one-time full-pay
+  const mode: "subscription" | "payment" = isInstallment ? "subscription" : "payment";
 
   // Build session params
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
