@@ -84,6 +84,8 @@ const PUBLIC_API_PATHS = [
   "/api/inbound/sms",
   "/api/inbound/vonage-sms",
   "/api/checkout/create", // Prospects need to create checkout sessions
+  "/api/claim/",          // Public claim-page data (sanitized — see /api/claim/[id])
+  "/api/engagement/",     // Engagement score/triggers for claim + preview pages
   "/api/proposals/",
   "/api/calendar/available-slots",
   "/api/call-lists", // CSV downloads are linked directly from the dashboard

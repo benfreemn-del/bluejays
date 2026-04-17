@@ -63,7 +63,9 @@ export default function ClaimPage() {
 
   useEffect(() => {
     // Fetch prospect data
-    fetch(`/api/prospects/${prospectId}`)
+    // Public endpoint — /api/claim/[id] returns only claim-safe fields
+    // (no phone/email/admin data). See src/app/api/claim/[id]/route.ts.
+    fetch(`/api/claim/${prospectId}`)
       .then((r) => {
         if (!r.ok) { setNotFound(true); return null; }
         return r.json();
