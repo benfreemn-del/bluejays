@@ -112,8 +112,9 @@ export default function AutoScrollPreview({
           ref={scrollRef}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
+          onWheel={(e) => e.stopPropagation()}
           className="relative overflow-y-auto overflow-x-hidden bg-[#050a14] scrollbar-thin"
-          style={{ height: "700px" }}
+          style={{ height: "700px", overscrollBehavior: "contain" }}
         >
           {screenshotUrl ? (
             <>
