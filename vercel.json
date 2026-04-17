@@ -8,5 +8,11 @@
       "path": "/api/replies/process",
       "schedule": "* * * * *"
     }
-  ]
+  ],
+  "functions": {
+    "src/app/api/videos/[id]/route.ts": {
+      "maxDuration": 300,
+      "includeFiles": "node_modules/@sparticuz/chromium/bin/**"
+    }
+  }
 }
