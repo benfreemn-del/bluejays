@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import SmartSocialProof from "@/components/SmartSocialProof";
-import AutoScrollPreview from "@/components/claim/AutoScrollPreview";
 
 /**
  * CLAIM PAGE — Conversion-Optimized Layout
@@ -360,32 +359,24 @@ export default function ClaimPage() {
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════════════════════ */}
-      {/* BEFORE / AFTER VISUAL COMPARISON */}
-      {/* ═══════════════════════════════════════════════════════════ */}
-      <section className="py-12 px-6">
-        <div className="max-w-5xl mx-auto">
-          <h2 className="text-2xl font-bold text-center mb-8">
-            See the <span className="text-sky-400">Transformation</span>
-          </h2>
-          <AutoScrollPreview
-            previewUrl={info?.previewUrl}
-            currentWebsite={info?.currentWebsite}
-            businessName={info?.businessName || ""}
-          />
-
-          {info?.currentWebsite && (
-            <div className="text-center mt-4">
-              <a
-                href={`/compare/${prospectId}`}
-                className="text-sky-400 hover:text-sky-300 text-sm font-medium transition-colors"
-              >
-                See detailed side-by-side comparison →
-              </a>
-            </div>
-          )}
-        </div>
-      </section>
+      {/* Preview-of-the-site section removed by design.
+          Prospects arrive here AFTER they've seen the preview link and
+          expressed interest — this page is focused on conversion only.
+          A subtle link back to the preview stays for reference. */}
+      {info?.previewUrl && (
+        <section className="py-6 px-6">
+          <div className="max-w-5xl mx-auto text-center">
+            <a
+              href={info.previewUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-sky-400 hover:text-sky-300 text-sm font-medium transition-colors"
+            >
+              Re-open your preview site ↗
+            </a>
+          </div>
+        </section>
+      )}
 
       {/* ═══════════════════════════════════════════════════════════ */}
       {/* TRUST BADGES */}

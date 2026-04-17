@@ -6,70 +6,6 @@ import type { Prospect } from "@/lib/types";
 import PreviewContent from "@/components/preview/PreviewContent";
 import PreviewVideoButton from "@/components/preview/PreviewVideoButton";
 
-/* ── Device Toggle Bar (visible to prospects) ── */
-function DeviceToggleBar({ id, device, onToggle }: { id: string; device: "desktop" | "mobile"; onToggle: (d: "desktop" | "mobile") => void }) {
-  const [copied, setCopied] = useState<string | null>(null);
-  const baseUrl = typeof window !== "undefined" ? `${window.location.origin}/preview/${id}` : `/preview/${id}`;
-
-  const copyLink = (d: string) => {
-    const url = `${baseUrl}?device=${d}`;
-    try {
-      navigator.clipboard.writeText(url).then(() => {
-        setCopied(d);
-        setTimeout(() => setCopied(null), 2000);
-      }).catch(() => {
-        // Fallback for non-secure contexts
-        prompt("Copy this link:", url);
-      });
-    } catch {
-      prompt("Copy this link:", url);
-    }
-  };
-
-  return (
-    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999] flex items-center gap-2 px-3 py-2 rounded-full border border-white/15 bg-black/80 backdrop-blur-xl shadow-2xl">
-      {/* Desktop button */}
-      <button
-        onClick={() => onToggle("desktop")}
-        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${device === "desktop" ? "bg-white text-black" : "text-white/60 hover:text-white"}`}
-      >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" /><line x1="8" y1="21" x2="16" y2="21" /><line x1="12" y1="17" x2="12" y2="21" /></svg>
-        Desktop
-      </button>
-
-      {/* Mobile button */}
-      <button
-        onClick={() => onToggle("mobile")}
-        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${device === "mobile" ? "bg-white text-black" : "text-white/60 hover:text-white"}`}
-      >
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" /><line x1="12" y1="18" x2="12" y2="18" /></svg>
-        Mobile
-      </button>
-
-      {/* Divider */}
-      <div className="w-px h-5 bg-white/15" />
-
-      {/* Copy link buttons */}
-      <button
-        onClick={() => copyLink("desktop")}
-        className="hidden sm:flex items-center gap-1 px-2 py-1.5 rounded-full text-[10px] font-medium text-white/40 hover:text-white/70 transition-colors"
-        title="Copy desktop link"
-      >
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" /></svg>
-        {copied === "desktop" ? "Copied!" : "Desktop link"}
-      </button>
-      <button
-        onClick={() => copyLink("mobile")}
-        className="hidden sm:flex items-center gap-1 px-2 py-1.5 rounded-full text-[10px] font-medium text-white/40 hover:text-white/70 transition-colors"
-        title="Copy mobile link"
-      >
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" /></svg>
-        {copied === "mobile" ? "Copied!" : "Mobile link"}
-      </button>
-    </div>
-  );
-}
-
 interface PreviewClientPageProps {
   id: string;
   version?: "v1" | "v2";
@@ -92,17 +28,20 @@ export default function PreviewClientPage({
   const [prospect, setProspect] = useState<Prospect | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [device, setDevice] = useState<"desktop" | "mobile">(() => {
-    if (typeof window !== "undefined") {
-      const params = new URLSearchParams(window.location.search);
-      return params.get("device") === "mobile" ? "mobile" : "desktop";
-    }
-    return "desktop";
+  // Per-device rendering. No manual toggle — the page just uses the device
+  // it's opened on. `?device=mobile` query param still forces a side, for
+  // internal previews (e.g. dashboard, screenshot service). Otherwise default
+  // to desktop view on wide screens and render the page's own responsive CSS
+  // at the actual viewport on narrow screens.
+  const [device] = useState<"desktop" | "mobile">(() => {
+    if (typeof window === "undefined") return "desktop";
+    const params = new URLSearchParams(window.location.search);
+    const forced = params.get("device");
+    if (forced === "mobile" || forced === "desktop") return forced;
+    return window.matchMedia("(max-width: 768px)").matches ? "mobile" : "desktop";
   });
 
-  // When embedded inside the claim page's Before/After iframe (embed=1),
-  // hide the floating DeviceToggleBar + PreviewVideoButton — those controls
-  // belong on the standalone preview page, not inside a nested frame.
+  // Embedded mode (used by screenshot service + internal tools).
   const isEmbedded = typeof window !== "undefined"
     && new URLSearchParams(window.location.search).get("embed") === "1";
 
@@ -218,22 +157,24 @@ export default function PreviewClientPage({
       <div className="bg-[#0a1520] border-b border-white/10 px-4 py-2 text-center text-xs text-white/50">
         Preview — images and content will be customized with your real business photos after purchase
       </div>
-      {device === "mobile" ? (
-        <div className="min-h-screen bg-[#111] flex items-start justify-center pt-4 pb-24">
-          <div className="relative border border-white/10 bg-black overflow-hidden shadow-2xl" style={{ width: "min(390px, calc(100vw - 32px))", maxHeight: "90vh" }}>
-            <div className="overflow-y-auto" style={{ height: "90vh" }}>
-              <div style={{ width: "min(390px, calc(100vw - 32px))" }}>
-                <PreviewContent id={id} siteData={siteData} selectedTheme={selectedTheme} version={resolvedVersion} />
-              </div>
-            </div>
-          </div>
-        </div>
-      ) : (
-        <div className="pb-20">
-          <PreviewContent id={id} siteData={siteData} selectedTheme={selectedTheme} version={resolvedVersion} />
-        </div>
-      )}
-      <DeviceToggleBar id={id} device={device} onToggle={setDevice} />
+
+      {/* Render the preview directly at the viewport width the visitor
+          actually has. On a phone → their phone width; on desktop → full
+          width. The site's own responsive CSS handles the rest. No phone-
+          frame simulator, no toggle — keeps the experience simple. */}
+      <div className="pb-20" style={device === "mobile" ? { maxWidth: "100%" } : undefined}>
+        <PreviewContent id={id} siteData={siteData} selectedTheme={selectedTheme} version={resolvedVersion} />
+      </div>
+
+      {/* Floating "Claim this site" CTA so prospects can move from the
+          preview to payment in one tap. Anchored bottom-right, non-intrusive. */}
+      <a
+        href={`/claim/${id}`}
+        className="fixed bottom-6 right-6 z-[9998] inline-flex items-center gap-2 rounded-full bg-sky-500 hover:bg-sky-400 px-5 py-3 text-sm font-semibold text-white shadow-2xl transition-colors"
+      >
+        Claim this site →
+      </a>
+
       <PreviewVideoButton prospectId={id} />
     </>
   );
