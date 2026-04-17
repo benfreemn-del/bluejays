@@ -88,7 +88,7 @@ const PORTFOLIO_ITEMS = [
   { title: "Queen Anne Victorian", type: "Traditional Revival", img: "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=800&h=600&fit=crop", desc: "Full home restoration honoring original architectural details with modern comfort" },
   { title: "Bellevue Kitchen", type: "Contemporary Kitchen", img: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=600&fit=crop", desc: "Chef-grade kitchen with waterfall island and custom walnut cabinetry" },
   { title: "Mercer Island Estate", type: "Luxury Residential", img: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=600&fit=crop", desc: "5,000 sq ft lakefront estate with bespoke furnishings throughout" },
-  { title: "Ballard Studio", type: "Creative Workspace", img: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&h=600&fit=crop", desc: "Design studio conversion balancing productivity with Nordic calm" },
+  { title: "Ballard Studio", type: "Creative Workspace", img: "https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=800&h=600&fit=crop", desc: "Design studio conversion balancing productivity with Nordic calm" },
   { title: "Fremont Bungalow", type: "Bohemian Eclectic", img: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=600&fit=crop", desc: "Craftsman bungalow layered with global textiles and vintage finds" },
 ];
 
@@ -296,7 +296,7 @@ const MAGAZINE_FEATURES = [
 
 // ─── MOOD BOARD SWATCH DATA ────────────────────────────────────────────────
 const MOOD_SWATCHES = [
-  { type: "circle", size: 140, color: "#d4a853", label: "Brushed Gold", x: 8, y: 15, rotation: -5, img: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=300&h=300&fit=crop" },
+  { type: "circle", size: 140, color: "#d4a853", label: "Brushed Gold", x: 8, y: 15, rotation: -5, img: "https://images.unsplash.com/photo-1567016432779-094069958ea5?w=300&h=300&fit=crop" },
   { type: "rect", width: 180, height: 120, color: "#6b7f5e", label: "Sage Linen", x: 55, y: 5, rotation: 3, img: "https://images.unsplash.com/photo-1528459105426-b9548367069b?w=400&h=300&fit=crop" },
   { type: "square", size: 120, color: "#f5f0e8", label: "Warm Ivory", x: 30, y: 55, rotation: -8, img: "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=300&h=300&fit=crop" },
   { type: "rect", width: 160, height: 100, color: "#1a1a1a", label: "Charcoal Velvet", x: 65, y: 50, rotation: 5, img: "https://images.unsplash.com/photo-1615873968403-89e068629265?w=400&h=300&fit=crop" },

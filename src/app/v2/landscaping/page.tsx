@@ -254,8 +254,8 @@ const seasonalData = [
 
 const testimonials = [
   { name: "The Watsons", text: "Diego turned our mud pit into a Japanese garden. The neighbors stop to take photos every time they walk by.", image: "https://images.unsplash.com/photo-1588880331179-bc9b93a8cb5e?w=400&q=80" },
-  { name: "Jen & Mike R.", text: "Our backyard is now the reason we don't go on vacation. Why leave paradise?", image: "https://images.unsplash.com/photo-1558904541-efa843a96f01?w=400&q=80" },
-  { name: "Dr. Sarah Kim", text: "The native plant rain garden handles all our runoff AND looks beautiful year-round.", image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400&q=80" },
+  { name: "Jen & Mike R.", text: "Our backyard is now the reason we don't go on vacation. Why leave paradise?", image: "https://images.unsplash.com/photo-1598902108854-10e335adac99?w=400&q=80" },
+  { name: "Dr. Sarah Kim", text: "The native plant rain garden handles all our runoff AND looks beautiful year-round.", image: "https://images.unsplash.com/photo-1557428894-56bcc97113fe?w=400&q=80" },
   { name: "The Andersons", text: "From bare dirt to outdoor kitchen with dining for 12. Diego is a magician.", image: "https://images.unsplash.com/photo-1523301343968-6a6ebf63c672?w=400&q=80" },
   { name: "Paul T.", text: "We hired 3 landscapers before Diego. He's the only one who actually DESIGNED something.", image: "https://images.unsplash.com/photo-1560749003-f4b1e17e2dff?w=400&q=80" },
 ];
@@ -290,7 +290,7 @@ const faqs = [
 const heroCards = [
   { src: "https://images.unsplash.com/photo-1584738766473-61c083514bf4?w=600&q=80", alt: "Lush garden pathway" },
   { src: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80", alt: "Stone patio with furniture" },
-  { src: "https://images.unsplash.com/photo-1558904541-efa843a96f01?w=600&q=80", alt: "Beautiful garden design" },
+  { src: "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=600&q=80", alt: "Beautiful garden design" },
 ];
 
 /* ═══════════════════════════════════════════════════════════════
@@ -955,7 +955,7 @@ export default function V2LandscapingPage() {
       <SectionReveal className="relative z-10 py-16 md:py-24">
         <div className="mx-auto max-w-4xl px-4 md:px-6">
           <div className="relative rounded-2xl overflow-hidden aspect-video border border-white/10 group cursor-pointer">
-            <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=80" alt="Beautiful landscaped backyard" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <img src="https://images.unsplash.com/photo-1523712999610-f77fbcfc3843?w=1200&q=80" alt="Beautiful landscaped backyard" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
             <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
               <div className="w-20 h-20 rounded-full flex items-center justify-center backdrop-blur-md bg-white/10 border border-white/20 group-hover:scale-110 transition-transform">
                 <PlayCircle size={48} weight="fill" style={{ color: PRIMARY_LIGHT }} />

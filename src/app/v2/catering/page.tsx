@@ -153,9 +153,9 @@ function CopperDivider() {
 const eventTypes = [
   { name: "Weddings", desc: "Bespoke menus for your most unforgettable day, from cocktail hour through the last dance.", icon: Heart, img: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=600&q=80" },
   { name: "Corporate Events", desc: "Professional catering for conferences, product launches, and annual galas that impress.", icon: Users, img: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&q=80" },
-  { name: "Private Dining", desc: "Intimate chef-driven dinners in your home with white-glove service and curated wine pairings.", icon: ForkKnife, img: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80" },
+  { name: "Private Dining", desc: "Intimate chef-driven dinners in your home with white-glove service and curated wine pairings.", icon: ForkKnife, img: "https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?w=600&q=80" },
   { name: "Holiday Parties", desc: "Festive seasonal celebrations with themed menus, signature cocktails, and stunning presentation.", icon: Champagne, img: "https://images.unsplash.com/photo-1482275548304-a58859dc31b7?w=600&q=80" },
-  { name: "Non-Profit Galas", desc: "Elegant fundraiser dining that elevates your mission with world-class cuisine and service.", icon: HandHeart, img: "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=600&q=80" },
+  { name: "Non-Profit Galas", desc: "Elegant fundraiser dining that elevates your mission with world-class cuisine and service.", icon: HandHeart, img: "https://images.unsplash.com/photo-1529543544282-ea669407fca3?w=600&q=80" },
 ];
 
 const menuItems = {
@@ -331,7 +331,7 @@ export default function V2CateringShowcase() {
         {/* Left half — food photo edge-to-edge */}
         <div className="hidden lg:block absolute top-0 left-0 w-1/2 h-full">
           <img
-            src="https://images.unsplash.com/photo-1544025162-d76694265947?w=900&q=80"
+            src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=900&q=80"
             alt="Beautifully plated dish by Ember and Oak Catering"
             className="w-full h-full object-cover"
           />
@@ -345,7 +345,7 @@ export default function V2CateringShowcase() {
           <div className="px-6 md:px-12 lg:px-16 py-20 w-full max-w-2xl">
             {/* Mobile hero image */}
             <div className="lg:hidden mb-8 rounded-2xl overflow-hidden border border-white/10">
-              <img src="https://images.unsplash.com/photo-1544025162-d76694265947?w=800&q=80" alt="Beautifully plated dish" className="w-full h-64 object-cover" />
+              <img src="https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=800&q=80" alt="Beautifully plated dish" className="w-full h-64 object-cover" />
             </div>
             <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.1 }} className="text-sm uppercase tracking-[0.3em] mb-6" style={{ color: COPPER, fontFamily: "system-ui, sans-serif" }}>
               Ember &amp; Oak Catering

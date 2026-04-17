@@ -275,7 +275,7 @@ const comparisonRows = [
 const collagePhotos = [
   { src: "/images/vet-hero-dog.png", alt: "Australian Shepherd at Northshore Vet", z: 30, x: 0, y: 0, w: "w-64 md:w-80", speed: 0.15, rotate: -3 },
   { src: "https://images.unsplash.com/photo-1573865526739-10659fec78a5?w=500&q=80", alt: "Orange cat relaxing", z: 20, x: 55, y: 15, w: "w-44 md:w-56", speed: 0.25, rotate: 4 },
-  { src: "https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?w=500&q=80", alt: "Cute rabbit", z: 25, x: 10, y: 55, w: "w-40 md:w-48", speed: 0.2, rotate: -2 },
+  { src: "https://images.unsplash.com/photo-1596463059283-da257325bab8?w=500&q=80", alt: "Cute rabbit", z: 25, x: 10, y: 55, w: "w-40 md:w-48", speed: 0.2, rotate: -2 },
   { src: "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=500&q=80", alt: "Two happy dogs", z: 15, x: 50, y: 60, w: "w-44 md:w-52", speed: 0.3, rotate: 3 },
   { src: "https://images.unsplash.com/photo-1592194996308-7b43878e84a6?w=500&q=80", alt: "Puppy portrait", z: 22, x: 70, y: -5, w: "w-36 md:w-44", speed: 0.18, rotate: -5 },
 ];

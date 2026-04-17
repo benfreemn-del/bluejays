@@ -212,16 +212,16 @@ const services = [
 const galleryImages = [
   { src: "https://images.unsplash.com/photo-1519741497674-611481863552?w=800&q=80", alt: "Romantic wedding couple at sunset", category: "Weddings" },
   { src: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=600&q=80", alt: "Wedding ceremony exchange of vows", category: "Weddings" },
-  { src: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=600&q=80", alt: "Professional woman portrait", category: "Portraits" },
+  { src: "https://images.unsplash.com/photo-1503443207922-dff7d543fd0e?w=600&q=80", alt: "Professional woman portrait", category: "Portraits" },
   { src: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=600&q=80", alt: "Natural light studio portrait", category: "Portraits" },
-  { src: "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=600&q=80", alt: "Live corporate event", category: "Events" },
+  { src: "https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=600&q=80", alt: "Live corporate event", category: "Events" },
   { src: "https://images.unsplash.com/photo-1469371670807-013ccf25f16a?w=600&q=80", alt: "Outdoor celebration event", category: "Events" },
-  { src: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&q=80", alt: "Minimalist product on white", category: "Products" },
+  { src: "https://images.unsplash.com/photo-1452421822248-d4c2b47f0c81?w=600&q=80", alt: "Minimalist product on white", category: "Products" },
   { src: "https://images.unsplash.com/photo-1505236858219-8359eb29e329?w=800&q=80", alt: "Lifestyle product flat lay", category: "Products" },
   { src: "https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=600&q=80", alt: "Seattle skyline cityscape", category: "Landscapes" },
   { src: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80", alt: "Mountain landscape at golden hour", category: "Landscapes" },
   { src: "https://images.unsplash.com/photo-1559386484-97dfc0e15539?w=600&q=80", alt: "Corporate professional headshot", category: "Headshots" },
-  { src: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80", alt: "Executive business headshot", category: "Headshots" },
+  { src: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=600&q=80", alt: "Executive business headshot", category: "Headshots" },
 ];
 
 const galleryCategories = ["All", "Weddings", "Portraits", "Events", "Products", "Landscapes", "Headshots"];
@@ -278,10 +278,10 @@ const addOns = [
 ];
 
 const styleQuizPairs = [
-  { a: { label: "Dark & Moody", img: "https://images.unsplash.com/photo-1537633552985-df8429e8048b?w=400&q=80" }, b: { label: "Light & Airy", img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&q=80" } },
-  { a: { label: "Posed & Polished", img: "https://images.unsplash.com/photo-1559386484-97dfc0e15539?w=400&q=80" }, b: { label: "Candid & Natural", img: "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=400&q=80" } },
-  { a: { label: "Bold Colors", img: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&q=80" }, b: { label: "Soft Pastels", img: "https://images.unsplash.com/photo-1505236858219-8359eb29e329?w=400&q=80" } },
-  { a: { label: "Urban & Edgy", img: "https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=400&q=80" }, b: { label: "Nature & Organic", img: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80" } },
+  { a: { label: "Dark & Moody", img: "https://images.unsplash.com/photo-1537633552985-df8429e8048b?w=400&q=80" }, b: { label: "Light & Airy", img: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&q=80" } },
+  { a: { label: "Posed & Polished", img: "https://images.unsplash.com/photo-1554048612-b6a482bc67e5?w=400&q=80" }, b: { label: "Candid & Natural", img: "https://images.unsplash.com/photo-1509967419530-da38b4704bc6?w=400&q=80" } },
+  { a: { label: "Bold Colors", img: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&q=80" }, b: { label: "Soft Pastels", img: "https://images.unsplash.com/photo-1515634928627-2a4e0dae3ddf?w=400&q=80" } },
+  { a: { label: "Urban & Edgy", img: "https://images.unsplash.com/photo-1531482615713-2afd69097998?w=400&q=80" }, b: { label: "Nature & Organic", img: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=400&q=80" } },
 ];
 
 const styleResults: Record<string, { name: string; description: string }> = {
@@ -466,7 +466,7 @@ export default function V2PhotographyPage() {
       {/* ─── SERVICES ─── */}
       <SectionReveal id="services" className="relative z-10 py-16 md:py-24">
         <div className="absolute inset-0 pointer-events-none opacity-[0.04]">
-          <svg width="100%" height="100%"><pattern id="photo-grid" width="60" height="60" patternUnits="userSpaceOnUse"><path d="M 60 0 L 0 0 0 60" fill="none" stroke={GOLD} strokeWidth="0.5" /></pattern><rect width="100%" height="100%" fill="url(#photo-grid)" /></svg>
+          <svg width="100%" height="100%"><pattern id="lens-grid" width="60" height="60" patternUnits="userSpaceOnUse"><path d="M 60 0 L 0 0 0 60" fill="none" stroke={GOLD} strokeWidth="0.5" /></pattern><rect width="100%" height="100%" fill="url(#lens-grid)" /></svg>
         </div>
         <div className="mx-auto max-w-7xl px-4 md:px-6 relative">
           <div className="text-center mb-16">
@@ -992,7 +992,7 @@ export default function V2PhotographyPage() {
       <SectionReveal className="relative z-10 py-16 md:py-24">
         <div className="mx-auto max-w-5xl px-4 md:px-6">
           <div className="relative rounded-2xl overflow-hidden aspect-video">
-            <img src="https://images.unsplash.com/photo-1537633552985-df8429e8048b?w=1200&q=80" alt="Behind the scenes photography" className="w-full h-full object-cover" />
+            <img src="https://images.unsplash.com/photo-1453799527828-cf1bd7b2f682?w=1200&q=80" alt="Behind the scenes photography" className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
               <motion.div
                 whileHover={{ scale: 1.1 }}

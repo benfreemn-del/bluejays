@@ -202,12 +202,12 @@ const faqData = [
 ];
 
 const portfolioImages = [
-  "https://images.unsplash.com/photo-1621905251918-48416bd8575a?w=600&q=80",
+  "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=600&q=80",
   "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=600&q=80",
   "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=600&q=80",
   "https://images.unsplash.com/photo-1429497419816-9ca5cfb4571a?w=600&q=80",
   "https://images.unsplash.com/photo-1590644365607-1c5e52a0baa7?w=600&q=80",
-  "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=600&q=80",
+  "https://images.unsplash.com/photo-1590856029826-c7a73142bbf1?w=600&q=80",
 ];
 
 /* ═══════════════════════════════════════════════════════════════════

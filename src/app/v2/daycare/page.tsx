@@ -369,7 +369,7 @@ export default function V2DaycarePage() {
       {/* ─── HERO ─── */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10">
         <div className="absolute inset-0 z-0">
-          <img src="https://images.unsplash.com/photo-1587616211892-f743fcca64f9?w=1600&q=80" alt="" className="w-full h-full object-cover opacity-12" />
+          <img src="https://images.unsplash.com/photo-1600132806370-bf17e65e942f?w=1600&q=80" alt="" className="w-full h-full object-cover opacity-12" />
           <div className="absolute inset-0" style={{ background: `linear-gradient(to bottom, ${BG}, transparent 30%, ${BG})` }} />
         </div>
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-4 items-center">
@@ -446,7 +446,7 @@ export default function V2DaycarePage() {
       {/* ─── ABOUT / PHILOSOPHY ─── */}
       <SectionReveal className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0 opacity-8">
-          <img src="https://images.unsplash.com/photo-1544776193-352d25ca82cd?w=1600&q=80" alt="" className="w-full h-full object-cover" />
+          <img src="https://images.unsplash.com/photo-1587351021355-a479a299d2f9?w=1600&q=80" alt="" className="w-full h-full object-cover" />
         </div>
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div>

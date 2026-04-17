@@ -333,7 +333,7 @@ const galleryPhotos = [
   { src: "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=600&q=80", alt: "Exterior house painting" },
   { src: "https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=600&q=80", alt: "Modern kitchen cabinets painted white" },
   { src: "https://images.unsplash.com/photo-1534430480872-3498386e7856?w=600&q=80", alt: "Paint color samples on wall" },
-  { src: "https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=600&q=80", alt: "Professional painter at work" },
+  { src: "https://images.unsplash.com/photo-1576153192396-180ecef2a715?w=600&q=80", alt: "Professional painter at work" },
   { src: "https://images.unsplash.com/photo-1525909002-1b05e0c869d8?w=600&q=80", alt: "Beautiful bedroom accent wall" },
 ];
 
@@ -411,7 +411,7 @@ export default function V2PaintingPage() {
       {/* ─── 1. HERO ─── */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10">
         <div className="absolute inset-0 z-0">
-          <img src="https://images.unsplash.com/photo-1572981779307-38b8cabb2407?w=1400&q=80" alt="Beautiful painted interior" className="w-full h-full object-cover object-center" />
+          <img src="https://images.unsplash.com/photo-1507652955-f3dcef5a3be5?w=1400&q=80" alt="Beautiful painted interior" className="w-full h-full object-cover object-center" />
           <div className="absolute inset-0" style={{ background: `linear-gradient(to right, ${BG} 45%, transparent 100%)` }} />
           <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${BG} 10%, transparent 50%)` }} />
         </div>
@@ -520,7 +520,7 @@ export default function V2PaintingPage() {
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="rounded-2xl overflow-hidden aspect-[4/5]">
-              <img src="https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=700&q=80" alt="Painting team at work" className="w-full h-full object-cover object-center" />
+              <img src="https://images.unsplash.com/photo-1618220179428-22790b461013?w=700&q=80" alt="Painting team at work" className="w-full h-full object-cover object-center" />
             </div>
             <div>
               <p className="text-sm uppercase tracking-widest mb-3" style={{ color: PURPLE }}>About Spectrum</p>

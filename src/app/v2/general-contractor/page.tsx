@@ -241,12 +241,12 @@ const projectTypes = [
 ];
 
 const portfolioProjects = [
-  { title: "Modern Wallingford Kitchen", neighborhood: "Wallingford", image: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80", type: "Kitchen Remodel" },
-  { title: "Green Lake ADU", neighborhood: "Green Lake", image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80", type: "ADU Construction" },
+  { title: "Modern Wallingford Kitchen", neighborhood: "Wallingford", image: "https://images.unsplash.com/photo-1600210491369-e753d80a41f3?w=600&q=80", type: "Kitchen Remodel" },
+  { title: "Green Lake ADU", neighborhood: "Green Lake", image: "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=600&q=80", type: "ADU Construction" },
   { title: "Ballard Loft Conversion", neighborhood: "Ballard", image: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=600&q=80", type: "Addition" },
   { title: "Capitol Hill Townhome", neighborhood: "Capitol Hill", image: "https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=600&q=80", type: "New Construction" },
   { title: "Ravenna Master Suite", neighborhood: "Ravenna", image: "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=600&q=80", type: "Bathroom Renovation" },
-  { title: "Fremont Open Concept", neighborhood: "Fremont", image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&q=80", type: "Whole-Home Renovation" },
+  { title: "Fremont Open Concept", neighborhood: "Fremont", image: "https://images.unsplash.com/photo-1556912998-c57cc6b63cd7?w=600&q=80", type: "Whole-Home Renovation" },
 ];
 
 const comparisonRows = [
@@ -382,7 +382,7 @@ export default function V2GeneralContractorShowcase() {
 
           {/* Mobile hero image (no 3D tilt on mobile) */}
           <div className="lg:hidden mt-8 rounded-2xl overflow-hidden border border-white/10">
-            <img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=900&q=80" alt="Construction site" className="w-full h-72 object-cover" />
+            <img src="https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?w=900&q=80" alt="Construction site" className="w-full h-72 object-cover" />
           </div>
         </div>
       </section>
@@ -813,7 +813,7 @@ export default function V2GeneralContractorShowcase() {
           </div>
 
           <div className="relative rounded-2xl overflow-hidden border border-white/10 group cursor-pointer">
-            <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200&q=80" alt="Summit Builders project showcase" className="w-full h-80 md:h-[420px] object-cover transition-transform duration-700 group-hover:scale-105" />
+            <img src="https://images.unsplash.com/photo-1590725121839-892b458a74fe?w=1200&q=80" alt="Summit Builders project showcase" className="w-full h-80 md:h-[420px] object-cover transition-transform duration-700 group-hover:scale-105" />
             <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors duration-300" />
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="w-20 h-20 rounded-full flex items-center justify-center backdrop-blur-md border transition-transform duration-300 group-hover:scale-110" style={{ background: `${AMBER}cc`, borderColor: `${AMBER}` }}>

@@ -99,7 +99,7 @@ const PROJECTS = [
     title: "200-Amp Panel Upgrade",
     location: "Ballard Craftsman",
     desc: "Replaced a 1962 Federal Pacific panel with a new Square D 200A panel, 42-circuit capacity. Full inspection passed same day.",
-    img: "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=800&q=80",
+    img: "https://images.unsplash.com/photo-1565608438257-fac3c27beb36?w=800&q=80",
   },
   {
     title: "Tesla Wall Connector",

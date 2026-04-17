@@ -316,8 +316,8 @@ const pricingTiers = [
 const galleryImages = [
   "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=600&q=80",
   "https://images.unsplash.com/photo-1552693673-1bf958298935?w=600&q=80",
-  "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=600&q=80",
-  "https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?w=600&q=80",
+  "https://images.unsplash.com/photo-1596178065887-1198b6148b2b?w=600&q=80",
+  "https://images.unsplash.com/photo-1532926381893-7542290edf1d?w=600&q=80",
   "https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?w=600&q=80",
   "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=600&q=80",
 ];

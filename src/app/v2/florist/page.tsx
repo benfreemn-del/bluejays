@@ -246,7 +246,7 @@ const galleryImages = [
   { src: "https://images.unsplash.com/photo-1563241527-3004b7be0ffd?w=400&q=80", alt: "Spring wildflower bouquet", span: "col-span-1 row-span-1" },
   { src: "https://images.unsplash.com/photo-1508610048659-a06b669e3321?w=400&q=80", alt: "Funeral tribute wreath", span: "col-span-1 row-span-1" },
   { src: "https://images.unsplash.com/photo-1517423440428-a5a00ad493e8?w=400&q=80", alt: "Modern minimalist arrangement", span: "col-span-1 row-span-1" },
-  { src: "https://images.unsplash.com/photo-1487530811176-3780de880c2d?w=600&q=80", alt: "Wedding arch floral installation", span: "col-span-2 row-span-1" },
+  { src: "https://images.unsplash.com/photo-1526047932273-341f2a7631f9?w=600&q=80", alt: "Wedding arch floral installation", span: "col-span-2 row-span-1" },
 ];
 
 /* ───────────────────────── DATA ───────────────────────── */
@@ -461,7 +461,7 @@ export default function V2FloristPage() {
             </div>
           </div>
           <div className="relative rounded-2xl overflow-hidden aspect-[4/3]">
-            <img src="https://images.unsplash.com/photo-1563241527-3004b7be0ffd?w=800&q=80" alt="Florist crafting a beautiful arrangement" className="w-full h-full object-cover" />
+            <img src="https://images.unsplash.com/photo-1525310072745-f49212b5ac6d?w=800&q=80" alt="Florist crafting a beautiful arrangement" className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
           </div>
         </div>

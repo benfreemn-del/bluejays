@@ -253,10 +253,10 @@ function ShimmerBorder({ children, className = "" }: { children: React.ReactNode
 
 /* ───────────────────────── DATA ───────────────────────── */
 const eventTypes = [
-  { title: "Weddings", description: "From intimate elopements to lavish ballroom affairs, we craft every detail of your love story into an unforgettable celebration.", icon: Heart, image: "https://images.unsplash.com/photo-1519741497674-611481863552?w=600&q=80" },
-  { title: "Corporate Galas", description: "Black-tie fundraisers, award ceremonies, and annual galas that elevate your brand and leave lasting impressions on every guest.", icon: Buildings, image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&q=80" },
+  { title: "Weddings", description: "From intimate elopements to lavish ballroom affairs, we craft every detail of your love story into an unforgettable celebration.", icon: Heart, image: "https://images.unsplash.com/photo-1525772764200-be829a350797?w=600&q=80" },
+  { title: "Corporate Galas", description: "Black-tie fundraisers, award ceremonies, and annual galas that elevate your brand and leave lasting impressions on every guest.", icon: Buildings, image: "https://images.unsplash.com/photo-1464746133101-a2c3f88e0dd9?w=600&q=80" },
   { title: "Private Parties", description: "Milestone birthdays, anniversaries, and intimate soirees designed around your personality and your guest list.", icon: Gift, image: "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=600&q=80" },
-  { title: "Non-Profit Fundraisers", description: "Charity galas, silent auctions, and benefit dinners that inspire generosity and maximize your mission's impact.", icon: Handshake, image: "https://images.unsplash.com/photo-1505236858219-8359eb29e329?w=600&q=80" },
+  { title: "Non-Profit Fundraisers", description: "Charity galas, silent auctions, and benefit dinners that inspire generosity and maximize your mission's impact.", icon: Handshake, image: "https://images.unsplash.com/photo-1540574163026-643ea20ade25?w=600&q=80" },
   { title: "Product Launches", description: "High-energy brand reveals, media events, and experiential activations that generate buzz and media coverage.", icon: Rocket, image: "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=600&q=80" },
   { title: "Milestone Celebrations", description: "Retirement parties, graduations, and once-in-a-lifetime occasions that deserve a truly spectacular setting.", icon: Trophy, image: "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=600&q=80" },
 ];
@@ -274,7 +274,7 @@ const venues = [
   { name: "Chihuly Garden", type: "Art Museum", capacity: "300 guests", image: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=500&q=80" },
   { name: "The Edgewater", type: "Waterfront Hotel", capacity: "250 guests", image: "https://images.unsplash.com/photo-1478147427282-58a87a120781?w=500&q=80" },
   { name: "Olympic Rooftop", type: "Rooftop Terrace", capacity: "150 guests", image: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=500&q=80" },
-  { name: "Sodo Park", type: "Industrial Chic", capacity: "400 guests", image: "https://images.unsplash.com/photo-1505236858219-8359eb29e329?w=500&q=80" },
+  { name: "Sodo Park", type: "Industrial Chic", capacity: "400 guests", image: "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=500&q=80" },
   { name: "The Ruins", type: "Garden Estate", capacity: "200 guests", image: "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=500&q=80" },
 ];
 
@@ -288,8 +288,8 @@ const portfolioImages = [
   { src: "https://images.unsplash.com/photo-1527529482837-4698179dc6ce?w=700&q=80", label: "Waterfront Wedding" },
   { src: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=700&q=80", label: "Corporate Gala" },
   { src: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=700&q=80", label: "Charity Benefit" },
-  { src: "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=700&q=80", label: "Garden Party" },
-  { src: "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=700&q=80", label: "Product Launch" },
+  { src: "https://images.unsplash.com/photo-1478146896981-b80fe463b330?w=700&q=80", label: "Garden Party" },
+  { src: "https://images.unsplash.com/photo-1629909615184-74f495363b67?w=700&q=80", label: "Product Launch" },
   { src: "https://images.unsplash.com/photo-1551818255-e6e10975bc17?w=700&q=80", label: "Milestone Celebration" },
 ];
 
@@ -959,7 +959,7 @@ export default function V2EventPlanningPage() {
       <SectionReveal className="relative z-10 py-16 md:py-24">
         <div className="mx-auto max-w-4xl px-4 md:px-6">
           <div className="relative aspect-video rounded-2xl overflow-hidden group cursor-pointer">
-            <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1200&q=80" alt="Event highlights" className="w-full h-full object-cover" />
+            <img src="https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=1200&q=80" alt="Event highlights" className="w-full h-full object-cover" />
             <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${BG}cc, ${BG}88)` }} />
             <div className="absolute inset-0 flex flex-col items-center justify-center">
               <motion.div className="w-20 h-20 rounded-full flex items-center justify-center border-2 mb-6" style={{ borderColor: GOLD, background: `${GOLD}22` }} animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}>

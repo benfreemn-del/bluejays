@@ -1603,7 +1603,7 @@ export default function RoofingShowcase() {
           />
           <GlassCard className="aspect-video relative overflow-hidden group cursor-pointer">
             <div className="absolute inset-0 flex items-center justify-center">
-              <img src="https://images.unsplash.com/photo-1643509867448-57001e0c333d?w=1200&q=80" alt="Summit Roofing NW shingle installation in progress" className="absolute inset-0 w-full h-full object-cover" />
+              <img src="https://images.unsplash.com/photo-1588854337236-6889d631faa8?w=1200&q=80" alt="Summit Roofing NW shingle installation in progress" className="absolute inset-0 w-full h-full object-cover" />
               <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors" />
               <motion.div
                 className="w-20 h-20 rounded-full flex items-center justify-center relative z-10"

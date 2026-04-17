@@ -383,7 +383,7 @@ export default function V2TreeServicePage() {
       {/* ─── 1. HERO ─── */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10">
         <div className="absolute inset-0 z-0">
-          <img src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=1400&q=80" alt="Majestic tree canopy" className="w-full h-full object-cover object-center" />
+          <img src="https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?w=1400&q=80" alt="Majestic tree canopy" className="w-full h-full object-cover object-center" />
           <div className="absolute inset-0" style={{ background: `linear-gradient(to right, ${BG} 45%, transparent 100%)` }} />
           <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${BG} 10%, transparent 50%)` }} />
         </div>
@@ -516,7 +516,7 @@ export default function V2TreeServicePage() {
               </div>
             </div>
             <div className="rounded-2xl overflow-hidden aspect-[4/5]">
-              <img src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=700&q=80" alt="Tree care team at work" className="w-full h-full object-cover object-center" />
+              <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=700&q=80" alt="Tree care team at work" className="w-full h-full object-cover object-center" />
             </div>
           </div>
         </div>

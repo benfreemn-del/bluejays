@@ -270,7 +270,7 @@ const petTypes = [
     name: "Dogs",
     desc: "From energetic puppies to mellow seniors, we match our care to your dog's breed, size, and personality. Group play or solo walks — whatever suits your pup best.",
     icon: Dog,
-    img: "https://images.unsplash.com/photo-1534361960057-19889db9621e?w=600&q=80",
+    img: "https://images.unsplash.com/photo-1536323760109-ca8c07450053?w=600&q=80",
     features: ["Group & solo play", "Breed-specific exercise", "Puppy socialization", "Senior gentle care"],
   },
   {
@@ -366,7 +366,7 @@ const galleryImages = [
     alt: "Fluffy white dog smiling",
   },
   {
-    src: "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600&q=80",
+    src: "https://images.unsplash.com/photo-1583511666445-775f1f2116f5?w=600&q=80",
     alt: "Two dogs playing together",
   },
   {
@@ -374,7 +374,7 @@ const galleryImages = [
     alt: "Dog with bandana outdoors",
   },
   {
-    src: "https://images.unsplash.com/photo-1596492784531-6e6eb5ea9993?w=600&q=80",
+    src: "https://images.unsplash.com/photo-1560743641-3914f2c45636?w=600&q=80",
     alt: "Sleeping kitten on blanket",
   },
 ];
@@ -1790,7 +1790,7 @@ export default function V2PetServicesShowcase() {
           </h2>
           <div className="relative rounded-2xl overflow-hidden shadow-xl border-2 border-white group cursor-pointer">
             <img
-              src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=1200&q=80"
+              src="https://images.unsplash.com/photo-1587764379873-97837921fd44?w=1200&q=80"
               alt="Tour the Happy Tails facility"
               className="w-full h-[400px] object-cover group-hover:scale-105 transition-transform duration-700"
             />

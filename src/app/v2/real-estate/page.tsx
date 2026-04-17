@@ -75,7 +75,7 @@ const properties = [
     beds: 3,
     baths: 2,
     sqft: "2,100",
-    image: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&h=500&fit=crop",
+    image: "https://images.unsplash.com/photo-1613977257363-707ba9348227?w=800&h=500&fit=crop",
     tag: "New Listing",
   },
   {
@@ -151,7 +151,7 @@ const neighborhoods = [
     vibe: "Island Paradise",
     avgPrice: "$2.4M",
     detail: "Waterfront Living",
-    image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=400&fit=crop",
+    image: "https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=600&h=400&fit=crop",
   },
   {
     name: "Kirkland",
@@ -1107,7 +1107,7 @@ export default function V2RealEstatePage() {
             className="relative rounded-3xl overflow-hidden aspect-video group cursor-pointer"
           >
             <img
-              src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1400&h=800&fit=crop"
+              src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=1400&h=800&fit=crop"
               alt="Luxury home interior for video tour"
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
             />

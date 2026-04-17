@@ -127,7 +127,7 @@ const subjects = [
 ];
 
 const tutors = [
-  { name: "Dr. Rachel Torres", role: "Founder & Lead Educator", specialty: "Math & SAT Prep", bio: "PhD in Education, 11 years of AP teaching experience. Former curriculum developer for Seattle Public Schools.", img: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=400&q=80" },
+  { name: "Dr. Rachel Torres", role: "Founder & Lead Educator", specialty: "Math & SAT Prep", bio: "PhD in Education, 11 years of AP teaching experience. Former curriculum developer for Seattle Public Schools.", img: "https://images.unsplash.com/photo-1544717305-2782549b5136?w=400&q=80" },
   { name: "Marcus Chen", role: "Science & AP Instructor", specialty: "Physics & Chemistry", bio: "MS in Physics from UW. Makes complex concepts click with real-world experiments and visual learning.", img: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80" },
   { name: "Priya Patel", role: "Reading & Writing Specialist", specialty: "English & College Essays", bio: "MFA in Creative Writing. Published author who transforms reluctant writers into confident communicators.", img: "https://images.unsplash.com/photo-1594744803329-e58b31de8bf5?w=400&q=80" },
   { name: "James Okafor", role: "Test Prep Strategist", specialty: "SAT/ACT & Study Skills", bio: "Perfect SAT scorer. Developed a test-taking methodology that has helped 500+ students improve by 200+ points.", img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&q=80" },

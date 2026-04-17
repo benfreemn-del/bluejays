@@ -405,7 +405,7 @@ export default function V2SalonPage() {
                 className="absolute top-6 right-4 md:right-8 w-[30%] md:w-[28%] h-[35%] rounded-xl overflow-hidden shadow-xl z-30 border-4 border-white"
               >
                 <img
-                  src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=400&q=80"
+                  src="https://images.unsplash.com/photo-1580618864180-f6d7d39b8ff6?w=400&q=80"
                   alt="Beautiful hair result"
                   className="w-full h-full object-cover"
                 />

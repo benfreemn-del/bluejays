@@ -256,7 +256,7 @@ const galleryPhotos = [
   { src: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&q=80", alt: "Ornamental iron fencing" },
   { src: "https://images.unsplash.com/photo-1505843490538-5133c6c7d0e1?w=600&q=80", alt: "Wood fence in backyard" },
   { src: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600&q=80", alt: "Beautiful home with fence" },
-  { src: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&q=80", alt: "Property with iron gate" },
+  { src: "https://images.unsplash.com/photo-1558882224-dda166733046?w=600&q=80", alt: "Property with iron gate" },
 ];
 
 const processSteps = [
@@ -339,7 +339,7 @@ export default function V2FencingPage() {
       {/* ─── 1. HERO ─── */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10">
         <div className="absolute inset-0 z-0">
-          <img src="https://images.unsplash.com/photo-1505843490538-5133c6c7d0e1?w=1400&q=80" alt="Beautiful wood fence" className="w-full h-full object-cover object-center" />
+          <img src="https://images.unsplash.com/photo-1597047084897-51e81819a499?w=1400&q=80" alt="Beautiful wood fence" className="w-full h-full object-cover object-center" />
           <div className="absolute inset-0" style={{ background: `linear-gradient(to right, ${BG} 45%, transparent 100%)` }} />
           <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${BG} 10%, transparent 50%)` }} />
         </div>

@@ -818,9 +818,9 @@ export default function V2PhysicalTherapyShowcase() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
               { label: "Treatment Room", img: "https://images.unsplash.com/photo-1517581177682-a085bb7ffb15?w=400&q=80" },
-              { label: "Exercise Area", img: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&q=80" },
+              { label: "Exercise Area", img: "https://images.unsplash.com/photo-1574680178050-55c6a6a96e0a?w=400&q=80" },
               { label: "Aquatic Therapy", img: "https://images.unsplash.com/photo-1575052814086-f385e2e2ad1b?w=400&q=80" },
-              { label: "Reception", img: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=400&q=80" },
+              { label: "Reception", img: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&q=80" },
             ].map((room) => (
               <div key={room.label} className="relative rounded-xl overflow-hidden group">
                 <img src={room.img} alt={room.label} className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500" />
