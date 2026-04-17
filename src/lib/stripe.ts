@@ -155,14 +155,13 @@ export async function createCheckoutSession(
     metadata: { prospectId, businessName, pricingTier, paymentPlan },
   };
 
-  // Installment auto-cancellation: set `cancel_at` ~92 days out so Stripe
-  // charges $349 today, then again around day 30 and day 60, then auto-ends
-  // before any 4th charge. Metadata flags the plan for the webhook handler
-  // so it can spin up the deferred $100/yr mgmt subscription after payment 3.
+  // Installment metadata flows to the Stripe Subscription object so the
+  // webhook handler can (a) patch the subscription with `cancel_at` right
+  // after creation — Stripe's checkout.sessions.create doesn't accept
+  // subscription_data.cancel_at directly — and (b) later spin up the
+  // deferred $100/yr mgmt subscription after payment 3.
   if (isInstallment) {
-    const INSTALLMENT_WINDOW_DAYS = 92;
     sessionParams.subscription_data = {
-      cancel_at: Math.floor(Date.now() / 1000) + INSTALLMENT_WINDOW_DAYS * 24 * 60 * 60,
       metadata: {
         prospectId,
         paymentPlan: "installment-3x349",

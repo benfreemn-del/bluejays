@@ -55,13 +55,35 @@ export async function POST(request: NextRequest) {
       case "checkout.session.completed": {
         const session = event.data.object as {
           id: string;
-          metadata?: { prospectId?: string; businessName?: string; pricingTier?: string };
+          metadata?: { prospectId?: string; businessName?: string; pricingTier?: string; paymentPlan?: string };
           customer?: string;
           customer_email?: string;
           amount_total?: number;
           subscription?: string;
           mode?: string;
         };
+
+        // Installment-plan checkouts: cap the subscription at 3 payments by
+        // patching `cancel_at` ~92 days out. checkout.sessions.create doesn't
+        // accept this param inline, so it has to be set post-creation here.
+        if (session.metadata?.paymentPlan === "installment" && session.subscription) {
+          try {
+            const stripe = getStripe();
+            const INSTALLMENT_WINDOW_DAYS = 92;
+            const cancelAt = Math.floor(Date.now() / 1000) + INSTALLMENT_WINDOW_DAYS * 24 * 60 * 60;
+            await stripe.subscriptions.update(session.subscription as string, {
+              cancel_at: cancelAt,
+            });
+            console.log(
+              `[Stripe Webhook] Installment subscription ${session.subscription} set to auto-cancel in ${INSTALLMENT_WINDOW_DAYS} days (after 3 monthly payments).`
+            );
+          } catch (capErr) {
+            console.error(
+              `[Stripe Webhook] Failed to set cancel_at on installment subscription ${session.subscription}:`,
+              capErr
+            );
+          }
+        }
 
         const prospectId = session.metadata?.prospectId;
         const businessName = session.metadata?.businessName || "Unknown";
