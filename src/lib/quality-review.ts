@@ -112,11 +112,20 @@ export function reviewSiteQuality(
     });
   }
 
-  if (!siteData.researchBrief || !siteData.researchBrief.actualServices.length || !siteData.researchBrief.serviceAreas.length || !siteData.researchBrief.differentiators.length) {
+  // Research Brief is a META-summary — a thin brief shouldn't block a site that
+  // has real services, real about text, real phone, and real photos. Flag as a
+  // warning and only when NOTHING useful was captured (no services AND no
+  // service areas). Differentiators are nice-to-have, not a blocker.
+  const brief = siteData.researchBrief;
+  const hasAnyBriefFacts = !!brief && (
+    (brief.actualServices && brief.actualServices.length > 0) ||
+    (brief.serviceAreas && brief.serviceAreas.length > 0)
+  );
+  if (!hasAnyBriefFacts) {
     issues.push({
-      severity: "critical",
+      severity: "warning",
       section: "Research Brief",
-      message: "Structured research brief is incomplete. Generation must be driven by real owner/service-area/differentiator/service facts before QC can pass.",
+      message: "Research brief has no scraped services or service areas. Consider re-running enrichment to strengthen the site.",
     });
   }
 
@@ -281,8 +290,11 @@ export function reviewSiteQuality(
   const hasBrokenImageFailure = issues.some(
     (issue) => issue.section === "Images" && /Broken production images|failed live validation|invalid real-photo/i.test(issue.message)
   );
+  // Real placeholder content (fake phone, generic about) still caps the score.
+  // Research Brief no longer contributes to this cap — it's demoted to a
+  // regular warning so strong sites with a thin meta-brief aren't held at 45.
   const hasPlaceholderFailure = issues.some(
-    (issue) => issue.section.startsWith("Placeholder ") || issue.section === "Research Brief"
+    (issue) => issue.section.startsWith("Placeholder ")
   );
 
   let score = 100;

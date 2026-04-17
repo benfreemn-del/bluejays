@@ -178,18 +178,20 @@ async function runExtendedQcChecks(
       : `All ${siteData.services.length} services appear to be generic defaults — no real business data scraped`,
   });
 
+  // Relaxed: brief passes if it has services OR service areas. Differentiators
+  // are nice-to-have, not a hard gate. A thin meta-brief no longer blocks a
+  // prospect that otherwise has real services, real about, real phone.
   const brief = siteData.researchBrief;
   const hasStructuredBrief =
     !!brief &&
-    brief.serviceAreas.length > 0 &&
-    brief.actualServices.length > 0 &&
-    brief.differentiators.length > 0;
+    ((brief.serviceAreas && brief.serviceAreas.length > 0) ||
+      (brief.actualServices && brief.actualServices.length > 0));
   checks.push({
     check: "Structured Research Brief",
     passed: hasStructuredBrief,
     detail: hasStructuredBrief
       ? `Research brief includes ${brief?.serviceAreas.length || 0} service area(s), ${brief?.actualServices.length || 0} actual service(s), and ${brief?.differentiators.length || 0} differentiator(s)`
-      : "Structured research brief is missing required real-business facts (service areas, actual services, or differentiators)",
+      : "Research brief has no scraped services or service areas — site may still be usable but consider re-enriching",
   });
 
   const placeholderIssues = lintPlaceholderContent({
@@ -388,7 +390,8 @@ export async function POST(
           check.check === "Business Name" ||
           check.check === "Template Category Match" ||
           check.check === "Placeholder Content" ||
-          check.check === "Structured Research Brief" ||
+          // Research Brief dropped from hard blockers — a thin brief is a
+          // warning, not a fail, as long as phone/name/placeholder/images pass.
           check.check === "Image URLs")
     );
     const automatedScore = Math.max(0, baseReport.score - extendedCritical.length * 5);
