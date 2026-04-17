@@ -131,7 +131,11 @@ export async function updateWarmingConfig(
 
   if (isSupabaseConfigured()) {
     try {
-      await supabase.from("domain_warming").upsert({
+      // Upsert with onConflict:"domain" requires a real UNIQUE CONSTRAINT on
+      // the domain column, which some older Supabase projects don't have
+      // (just a unique index). Do a safe update-or-insert: try update first,
+      // fall back to insert when no row exists for this domain yet.
+      const row = {
         domain: merged.domain,
         enabled: merged.enabled,
         start_date: merged.startDate,
@@ -142,7 +146,23 @@ export async function updateWarmingConfig(
         backup_domain: merged.backupDomain || null,
         use_backup: merged.useBackup,
         updated_at: new Date().toISOString(),
-      }, { onConflict: "domain" });
+      };
+
+      const { data: updated, error: updateErr } = await supabase
+        .from("domain_warming")
+        .update(row)
+        .eq("domain", merged.domain)
+        .select();
+
+      if (updateErr) throw updateErr;
+
+      if (!updated || updated.length === 0) {
+        // No existing row for this domain — insert a new one.
+        const { error: insertErr } = await supabase
+          .from("domain_warming")
+          .insert(row);
+        if (insertErr) throw insertErr;
+      }
     } catch (err) {
       console.error(`[domain-warming] Failed to save ${target} config:`, err);
     }

@@ -9,13 +9,24 @@ import { pickSendingDomain, recordEmailSent } from "./domain-warming";
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 
 /**
- * Per-domain SendGrid sender identity. Each must be registered + verified in
- * SendGrid (Single Sender Verification or Domain Authentication + identity).
- * Primary domain falls back to the legacy gmail sender until DNS fully verifies.
+ * Per-domain SendGrid sender identity. `email` + `name` is what the recipient
+ * sees in their inbox. `replyTo` overrides where replies route — used when a
+ * sender domain doesn't have a real inbox wired up yet (bluejaywebs.com
+ * currently has no inbox; replies go to bluejaycontactme@gmail.com instead).
+ * Domain Authentication in SendGrid covers the From address; no per-sender
+ * verification needed beyond that.
  */
-const SENDERS: Record<string, { email: string; name: string }> = {
-  "bluejayportfolio.com": { email: "bluejaycontactme@gmail.com", name: "BlueJays" },
-  "bluejaywebs.com": { email: "ben@bluejaywebs.com", name: "Ben @ BlueJays" },
+const SENDERS: Record<string, { email: string; name: string; replyTo?: string }> = {
+  "bluejayportfolio.com": {
+    email: "bluejaycontactme@gmail.com",
+    name: "BlueJays",
+  },
+  "bluejaywebs.com": {
+    email: "ben@bluejaywebs.com",
+    name: "Ben @ BlueJays",
+    // No inbox at ben@bluejaywebs.com yet — route replies to the real Gmail
+    replyTo: "bluejaycontactme@gmail.com",
+  },
 };
 const FALLBACK_SENDER = SENDERS["bluejayportfolio.com"];
 
@@ -43,20 +54,25 @@ async function sendViaSendGrid(
   to: string,
   subject: string,
   body: string,
-  from: { email: string; name: string },
+  from: { email: string; name: string; replyTo?: string },
 ): Promise<boolean> {
+  const payload: Record<string, unknown> = {
+    personalizations: [{ to: [{ email: to }] }],
+    from: { email: from.email, name: from.name },
+    subject,
+    content: [{ type: "text/plain", value: body }],
+  };
+  if (from.replyTo) {
+    payload.reply_to = { email: from.replyTo };
+  }
+
   const response = await fetch("https://api.sendgrid.com/v3/mail/send", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${SENDGRID_API_KEY}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      personalizations: [{ to: [{ email: to }] }],
-      from,
-      subject,
-      content: [{ type: "text/plain", value: body }],
-    }),
+    body: JSON.stringify(payload),
   });
   if (!response.ok) {
     const errorText = await response.text().catch(() => "Unknown error");
