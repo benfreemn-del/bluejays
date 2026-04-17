@@ -28,6 +28,27 @@ ${videoUrl}
 `;
 }
 
+/**
+ * "Your 4.8⭐ with 62 reviews stood out" — skipped when we don't have the data.
+ */
+function buildRatingBlurb(prospect: Prospect): string {
+  if (prospect.googleRating && prospect.reviewCount && prospect.reviewCount >= 5) {
+    return ` Your ${prospect.googleRating}-star rating with ${prospect.reviewCount} reviews is exactly the kind of reputation a strong website should be matching.`;
+  }
+  return "";
+}
+
+/**
+ * Pulls the first service name from scrapedData when available so follow-ups
+ * can reference a specific offering (e.g., "emergency repair", "kitchen remodels").
+ */
+function getTopService(prospect: Prospect): string | undefined {
+  const services = prospect.scrapedData?.services;
+  if (!services || services.length === 0) return undefined;
+  const name = services[0]?.name;
+  return name && name.length > 2 && name.length < 40 ? name.toLowerCase() : undefined;
+}
+
 export function getPitchEmail(
   prospect: Prospect,
   previewUrl: string,
@@ -45,11 +66,13 @@ export function getPitchEmail(
     ? `I found ${prospect.businessName} while searching for top-rated ${category.toLowerCase()} businesses${city ? ` in ${city}` : ""} — your reviews stood out.`
     : `I was looking for ${category.toLowerCase()} businesses${city ? ` in ${city}` : ""} and came across ${prospect.businessName} — but noticed you don't have a website yet.`;
 
+  const ratingBlurb = buildRatingBlurb(prospect);
+
   const body = `Hi ${name},
 
-${discoveryLine}
+${discoveryLine}${ratingBlurb}
 
-I thought to myself — this business clearly does great work. But does their website reflect that? So I built one that does.
+Your reviews tell one story — the question is whether your website tells the same one. So I built one that does.
 
 See your site: ${previewUrl}
 ${buildVideoBlock(videoUrl)}
@@ -57,7 +80,11 @@ Your customers are searching for ${category.toLowerCase()} services online right
 
 See more ${category.toLowerCase()} sites we've built: https://bluejayportfolio.com/v2/${prospect.category}
 
-Want to see it in action? Book a quick 15-min walkthrough — I'll show you everything live: https://calendly.com/bluejaycontactme/website-walkthrough
+The full build is $997 one-time — custom design, domain registration, and hosting setup all included. If that feels heavy right now, we also split it into 3 payments of $349.
+
+Book a quick 15-min walkthrough — I'll show you everything live, no pressure: https://calendly.com/bluejaycontactme/website-walkthrough
+
+What's one thing about your business you'd want front-and-center on a new site?
 
 — Ben @ BlueJays
 bluejaycontactme@gmail.com
@@ -73,20 +100,26 @@ export function getFollowUp1(
 ): EmailTemplate {
   const name =
     prospect.ownerName?.split(" ")[0] || prospect.businessName;
+  const categoryPhrase = prospect.category.replace("-", " ");
+  const city = prospect.city || prospect.address?.split(",")[0] || "your area";
 
   return {
-    subject: `${name} — quick question about your new site`,
+    subject: `${name} — what do ${city} customers see when they search "${categoryPhrase}"?`,
     body: `Hi ${name},
 
-Quick thought — every day without a strong website, ${prospect.businessName} is invisible to customers who are actively searching for what you do.
+Quick test — pull up your phone, Google "${categoryPhrase} near me" in ${city}, and look at the top result.
 
-I built this for you: ${previewUrl}
+Is it ${prospect.businessName}? Or is it a competitor with a stronger website?
+
+I built this for you specifically so that answer flips: ${previewUrl}
 ${buildVideoBlock(videoUrl)}
-Think about it: when someone Googles "${prospect.category.replace("-", " ")}" in your area, they find your competitors first. A site like this changes that — it puts you front and center.
+It's $997 one-time — custom design, domain registration, and hosting setup included. 3 payments of $349 if that's easier.
 
-How many customers are you losing to businesses with better websites but worse service? Probably more than you think.
+More ${categoryPhrase} sites in this style: https://bluejayportfolio.com/v2/${prospect.category}
 
-15 minutes and I'll show you exactly how this works: https://calendly.com/bluejaycontactme/website-walkthrough
+15 minutes on a Zoom and I'll show you exactly how this ranks you higher: https://calendly.com/bluejaycontactme/website-walkthrough
+
+When was the last time you Googled your own business name from your phone — what did you see?
 
 — Ben
 ${EMAIL_FOOTER.replace("{{baseUrl}}", process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com").replace("{{prospectId}}", prospect.id)}`,
@@ -102,22 +135,30 @@ export function getFollowUp2(
   const name =
     prospect.ownerName?.split(" ")[0] || prospect.businessName;
   const category = CATEGORY_CONFIG[prospect.category].label;
+  const topService = getTopService(prospect);
+  const serviceHook = topService
+    ? `I made sure ${topService} is front-and-center — it's the first thing visitors see, because it's clearly what you do best.`
+    : `I designed it around what you actually do best — front and center, not buried on some "services" sub-page.`;
 
   return {
     subject: `I looked at your current site, ${name} — here's the side-by-side`,
     body: `Hi ${name},
 
-I'll be honest — I built this site for ${prospect.businessName} because I genuinely believe your work deserves to be seen. And right now, it's not getting the attention it should online.
+I built this site for ${prospect.businessName} because your work deserves a website that doesn't make visitors second-guess the quality.
 
 Compare for yourself: ${previewUrl}
 ${buildVideoBlock(videoUrl)}
-Your competitors in the ${category.toLowerCase()} space are investing in their online presence. The businesses that win aren't always the best at what they do — they're the best at being found.
+${serviceHook}
 
-You're clearly great at what you do. Let's make sure your website tells that story.
+The businesses winning in ${category.toLowerCase()} aren't always the best at what they do — they're the best at being found. You're clearly great at the work. The website's the only thing in the way.
 
-This preview stays live for 30 days, then I move on. If you want to chat about it, pick a time: https://calendly.com/bluejaycontactme/website-walkthrough
+$997 one-time covers the custom design, domain registration, and hosting setup. Or 3 payments of $349.
 
-See what we've built for other ${category.toLowerCase()} businesses: https://bluejayportfolio.com/v2/${prospect.category}
+This preview stays live for 30 days, then I move on and build for someone else. Worth 15 minutes before it comes down? https://calendly.com/bluejaycontactme/website-walkthrough
+
+See other ${category.toLowerCase()} builds: https://bluejayportfolio.com/v2/${prospect.category}
+
+One honest question — if price weren't the issue, would you want this site live for ${prospect.businessName}?
 
 — Ben
 ${EMAIL_FOOTER.replace("{{baseUrl}}", process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com").replace("{{prospectId}}", prospect.id)}`,
