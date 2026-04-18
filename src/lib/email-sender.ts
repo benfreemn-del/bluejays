@@ -23,14 +23,11 @@ const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 const SENDERS: Record<string, { email: string; name: string; replyTo?: string }> = {
   "bluejayportfolio.com": {
     // DKIM-aligned: From @bluejayportfolio.com, SendGrid signs with
-    // em7701.bluejayportfolio.com — match. Previously this was
-    // bluejaycontactme@gmail.com which caused alignment failure.
+    // em7701.bluejayportfolio.com — match. Google Workspace MX (smtp.google.com
+    // priority 1) routes inbound replies to the Workspace inbox at
+    // ben@bluejayportfolio.com, so no reply-to override is needed.
     email: "ben@bluejayportfolio.com",
     name: "Ben @ BlueJays",
-    // TEMPORARY reply-to fallback until Google Workspace MX records are
-    // added for bluejayportfolio.com. Once MX is live, delete this line so
-    // replies route to the Workspace inbox at ben@bluejayportfolio.com.
-    replyTo: "bluejaycontactme@gmail.com",
   },
   "bluejaywebs.com": {
     email: "ben@bluejaywebs.com",
