@@ -11,15 +11,26 @@ const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 /**
  * Per-domain SendGrid sender identity. `email` + `name` is what the recipient
  * sees in their inbox. `replyTo` overrides where replies route — used when a
- * sender domain doesn't have a real inbox wired up yet (bluejaywebs.com
- * currently has no inbox; replies go to bluejaycontactme@gmail.com instead).
+ * sender domain doesn't have a fully-functional inbox wired up yet.
+ *
+ * CRITICAL — DKIM alignment: the From domain MUST match the domain that
+ * SendGrid signs the message with (the domain-auth domain). Sending From
+ * a @gmail.com address while SendGrid signs with bluejayportfolio.com is a
+ * DKIM alignment failure — tanks deliverability + hurts close rate.
  * Domain Authentication in SendGrid covers the From address; no per-sender
  * verification needed beyond that.
  */
 const SENDERS: Record<string, { email: string; name: string; replyTo?: string }> = {
   "bluejayportfolio.com": {
-    email: "bluejaycontactme@gmail.com",
-    name: "BlueJays",
+    // DKIM-aligned: From @bluejayportfolio.com, SendGrid signs with
+    // em7701.bluejayportfolio.com — match. Previously this was
+    // bluejaycontactme@gmail.com which caused alignment failure.
+    email: "ben@bluejayportfolio.com",
+    name: "Ben @ BlueJays",
+    // TEMPORARY reply-to fallback until Google Workspace MX records are
+    // added for bluejayportfolio.com. Once MX is live, delete this line so
+    // replies route to the Workspace inbox at ben@bluejayportfolio.com.
+    replyTo: "bluejaycontactme@gmail.com",
   },
   "bluejaywebs.com": {
     email: "ben@bluejaywebs.com",
