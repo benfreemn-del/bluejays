@@ -78,11 +78,33 @@ interface EmailStats {
   recentEvents: { type: string; email: string; url?: string; timestamp: string }[];
 }
 
+interface DeliverabilityHealth {
+  domain: string;
+  health: {
+    score: number;
+    grade: string;
+    openRate: number;
+    bounceRate: number;
+    spamRate: number;
+    domainAuth: { spf: boolean; dkim: boolean; dmarc: boolean };
+    warmupStatus: string;
+    dailySendLimit: number;
+    sentToday: number;
+    alerts: string[];
+  };
+  sending: { allowed: boolean; remaining: number; limit: number; phase: number };
+  bounces: { totalHardBounces: number; totalSoftBounces: number };
+}
+
+// Fixed monthly costs — update here when subscriptions change
+const FIXED_MONTHLY = 62.09; // Vercel $20 + SendGrid $20 + Twilio $1.15 + Domain $0.94 + Claude Pro $20
+
 export default function SpendingPage() {
   const [costs, setCosts] = useState<SystemCosts | null>(null);
   const [analytics, setAnalytics] = useState<CostAnalytics | null>(null);
   const [pipeline, setPipeline] = useState<PipelineVelocity | null>(null);
   const [emailStats, setEmailStats] = useState<EmailStats | null>(null);
+  const [deliverability, setDeliverability] = useState<DeliverabilityHealth | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -91,8 +113,9 @@ export default function SpendingPage() {
       fetch("/api/costs/analytics").then((r) => r.json()).catch(() => null),
       fetch("/api/pipeline-velocity").then((r) => r.json()),
       fetch("/api/email-stats").then((r) => r.json()).catch(() => null),
+      fetch("/api/email-deliverability").then((r) => r.json()).catch(() => null),
     ])
-      .then(([c, a, p, e]) => { setCosts(c); setAnalytics(a); setPipeline(p); setEmailStats(e); })
+      .then(([c, a, p, e, d]) => { setCosts(c); setAnalytics(a); setPipeline(p); setEmailStats(e); setDeliverability(d); })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
@@ -266,14 +289,16 @@ export default function SpendingPage() {
                     twilio_sms: "bg-purple-500",
                     twilio_voice: "bg-indigo-500",
                     site_generation: "bg-amber-500",
-                    manus: "bg-amber-500",          // Manus site generation
-                    openai: "bg-emerald-500",       // OpenAI GPT calls
-                    claude: "bg-violet-500",        // Anthropic Claude calls
-                    perplexity: "bg-cyan-500",      // Perplexity research calls
+                    manus: "bg-amber-500",
+                    openai: "bg-emerald-500",
+                    openai_tts: "bg-teal-500",
+                    openai_proposal: "bg-emerald-400",
+                    video_generation: "bg-teal-600",
+                    claude: "bg-violet-500",
+                    perplexity: "bg-cyan-500",
                     ai_response: "bg-red-500",
                     pipeline: "bg-sky-500",
                   };
-                  // Human-readable service labels
                   const serviceLabels: Record<string, string> = {
                     google_places: "Google Places",
                     sendgrid_email: "SendGrid Email",
@@ -281,7 +306,10 @@ export default function SpendingPage() {
                     twilio_voice: "Twilio Voice",
                     site_generation: "Site Generation",
                     manus: "Manus (Site Gen)",
-                    openai: "OpenAI (GPT)",
+                    openai: "OpenAI (GPT-4.1-mini)",
+                    openai_tts: "OpenAI TTS (Video — paused)",
+                    openai_proposal: "OpenAI (Proposals)",
+                    video_generation: "Video Generation (paused)",
                     claude: "Anthropic (Claude)",
                     perplexity: "Perplexity AI",
                     ai_response: "AI Sales Agent",
@@ -455,14 +483,15 @@ export default function SpendingPage() {
         <div className="p-6 rounded-2xl border border-white/[0.06] bg-white/[0.02]">
           <h2 className="text-lg font-bold mb-4">Monthly Subscriptions</h2>
           <div className="space-y-3">
-            <SubRow name="Vercel Pro" cost={20} status="active" description="Hosting, serverless functions, domains" />
-            <SubRow name="SendGrid Essentials" cost={20} status="active" description="Email sending, domain auth, analytics" />
+            <SubRow name="Vercel Pro" cost={20} status="active" description="Hosting, serverless functions, cron jobs, video generation compute" />
+            <SubRow name="SendGrid Essentials" cost={20} status="active" description="Email sending, domain auth, anti-bounce warmup, analytics" />
             <SubRow name="Twilio" cost={1.15} status="active" description="Phone number + per-use SMS/calls" />
-            <SubRow name="Supabase" cost={0} status="free" description="PostgreSQL database, auth, storage" />
+            <SubRow name="Supabase" cost={0} status="free" description="PostgreSQL database, auth, storage (video files, proposals)" />
             <SubRow name="Domain (bluejayportfolio.com)" cost={0.94} status="active" description="$11.25/year via Vercel" />
+            <SubRow name="Claude Pro" cost={20} status="active" description="Anthropic subscription for development, QC reviews, and manual tasks" />
             <div className="border-t border-white/[0.06] pt-3 flex justify-between items-center">
               <span className="font-bold">Total Monthly Fixed Cost</span>
-              <span className="font-bold text-lg text-orange-400">$42.09/mo</span>
+              <span className="font-bold text-lg text-orange-400">${FIXED_MONTHLY.toFixed(2)}/mo</span>
             </div>
           </div>
         </div>
@@ -495,8 +524,9 @@ export default function SpendingPage() {
                   { name: "Scaling", leads: 250, emails: 750, sms: 250 },
                   { name: "Full Speed", leads: 500, emails: 1500, sms: 500 },
                 ].map((s) => {
-                  const variable = (s.emails * 0.001) + (s.sms * 0.0079) + (s.leads * 0.017) + (s.leads * 0.006);
-                  const fixed = 42.09;
+                  // variable: emails + sms + google places + AI (proposals $0.004 only; video paused)
+                  const variable = (s.emails * 0.001) + (s.sms * 0.0079) + (s.leads * 0.017) + (s.leads * 0.004);
+                  const fixed = FIXED_MONTHLY;
                   const total = variable + fixed;
                   const perLead = total / s.leads;
                   const sales = Math.round(s.leads * 0.03);
@@ -520,24 +550,44 @@ export default function SpendingPage() {
               </tbody>
             </table>
           </div>
-          <p className="text-white/30 text-xs mt-4">* Assumes 3% close rate (3 sales per 100 leads), 3 emails per lead, 1 text per lead. Variable costs: Google Places ($0.017/search), SendGrid ($0.001/email), Twilio ($0.0079/SMS), AI ($0.006/lead).</p>
+          <p className="text-white/30 text-xs mt-4">* Assumes 3% close rate, 3 emails/lead, 1 SMS/lead. Variable costs: Google Places ($0.017/search), SendGrid ($0.001/email), Twilio ($0.0079/SMS), proposals ($0.004/lead). Video generation paused. Fixed ${FIXED_MONTHLY}/mo includes Claude Pro.</p>
         </div>
 
         {/* Per-Use Cost Reference */}
         <div className="p-6 rounded-2xl border border-white/[0.06] bg-white/[0.02]">
           <h2 className="text-lg font-bold mb-4">Per-Use Cost Reference</h2>
-          <div className="grid md:grid-cols-2 gap-4 text-sm">
-            <div className="space-y-2">
-              <div className="flex justify-between"><span className="text-white/50">SendGrid email</span><span>$0.001/email</span></div>
-              <div className="flex justify-between"><span className="text-white/50">Twilio SMS</span><span>$0.0079/text</span></div>
-              <div className="flex justify-between"><span className="text-white/50">Google Places search</span><span>$0.017/search</span></div>
-              <div className="flex justify-between"><span className="text-white/50">Google Place Details</span><span>$0.017/lookup</span></div>
+          <div className="grid md:grid-cols-2 gap-6 text-sm">
+            <div>
+              <p className="text-white/30 text-xs uppercase tracking-widest mb-2">Outreach</p>
+              <div className="space-y-2">
+                <div className="flex justify-between"><span className="text-white/50">SendGrid email</span><span>$0.001/email</span></div>
+                <div className="flex justify-between"><span className="text-white/50">Twilio SMS</span><span>$0.0079/text</span></div>
+                <div className="flex justify-between"><span className="text-white/50">Twilio phone number</span><span>$1.15/month</span></div>
+              </div>
+              <p className="text-white/30 text-xs uppercase tracking-widest mb-2 mt-4">Scouting</p>
+              <div className="space-y-2">
+                <div className="flex justify-between"><span className="text-white/50">Google Places search</span><span>$0.017/search</span></div>
+                <div className="flex justify-between"><span className="text-white/50">Google Place Details</span><span>$0.017/lookup</span></div>
+                <div className="flex justify-between"><span className="text-white/50">Google Place Photos</span><span>$0.007/photo</span></div>
+              </div>
             </div>
-            <div className="space-y-2">
-              <div className="flex justify-between"><span className="text-white/50">Google Place Photos</span><span>$0.007/photo</span></div>
-              <div className="flex justify-between"><span className="text-white/50">Claude AI response</span><span>~$0.003/response</span></div>
-              <div className="flex justify-between"><span className="text-white/50">Perplexity search</span><span>~$0.005/search</span></div>
-              <div className="flex justify-between"><span className="text-white/50">Twilio phone number</span><span>$1.15/month</span></div>
+            <div>
+              <p className="text-white/30 text-xs uppercase tracking-widest mb-2">AI Pipeline</p>
+              <div className="space-y-2">
+                <div className="flex justify-between"><span className="text-white/50">GPT-4.1-mini (proposals)</span><span>~$0.004/proposal</span></div>
+                <div className="flex justify-between"><span className="text-white/50">GPT-4.1-mini (QC scoring)</span><span>~$0.002/site</span></div>
+                <div className="flex justify-between"><span className="text-white/50">OpenAI TTS (video audio)</span><span className="text-white/30">~$0.015/min — paused</span></div>
+                <div className="flex justify-between"><span className="text-white/50">Video generation (Puppeteer+ffmpeg)</span><span className="text-white/30">~$0.05/video — paused</span></div>
+                <div className="flex justify-between"><span className="text-white/50">Claude AI sales response</span><span>~$0.003/response</span></div>
+                <div className="flex justify-between"><span className="text-white/50">Perplexity search</span><span>~$0.005/search</span></div>
+              </div>
+              <p className="text-white/30 text-xs uppercase tracking-widest mb-2 mt-4">Anti-Bounce System</p>
+              <div className="space-y-2">
+                <div className="flex justify-between"><span className="text-white/50">DNS auth checks (SPF/DKIM/DMARC)</span><span className="text-green-400">Free</span></div>
+                <div className="flex justify-between"><span className="text-white/50">Bounce suppression list</span><span className="text-green-400">Built-in</span></div>
+                <div className="flex justify-between"><span className="text-white/50">Warm-up schedule tracking</span><span className="text-green-400">Built-in</span></div>
+                <div className="flex justify-between"><span className="text-white/50">Soft bounce retry (next day)</span><span>$0.001/retry</span></div>
+              </div>
             </div>
           </div>
         </div>
@@ -589,6 +639,146 @@ export default function SpendingPage() {
             )}
           </div>
         )}
+
+        {/* Anti-Bounce & Deliverability Health */}
+        <div className="p-6 rounded-2xl border border-violet-500/20 bg-violet-500/[0.03]">
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-lg font-bold">Anti-Bounce & Deliverability Health</h2>
+            {deliverability && (
+              <span className={`text-xs px-2 py-1 rounded-full font-bold ${
+                deliverability.health.grade === "A" ? "bg-green-500/20 text-green-400" :
+                deliverability.health.grade === "B" ? "bg-blue-500/20 text-blue-400" :
+                deliverability.health.grade === "C" ? "bg-yellow-500/20 text-yellow-400" :
+                "bg-red-500/20 text-red-400"
+              }`}>
+                Grade {deliverability.health.grade} — {deliverability.health.score}/100
+              </span>
+            )}
+          </div>
+          <p className="text-white/40 text-sm mb-6">
+            Our built-in bounce suppression system keeps domain reputation high and prevents wasted send credits.
+          </p>
+
+          {deliverability ? (
+            <div className="grid md:grid-cols-3 gap-4 mb-6">
+              {/* Domain Auth */}
+              <div className="p-4 rounded-xl bg-white/[0.03] space-y-3">
+                <p className="text-xs uppercase tracking-widest text-white/30 mb-1">Domain Auth</p>
+                <div className="space-y-2">
+                  {[
+                    { key: "SPF", ok: deliverability.health.domainAuth.spf, tip: "Authorizes our sending server" },
+                    { key: "DKIM", ok: deliverability.health.domainAuth.dkim, tip: "Cryptographic signature on emails" },
+                    { key: "DMARC", ok: deliverability.health.domainAuth.dmarc, tip: "Policy for failed auth" },
+                  ].map(({ key, ok, tip }) => (
+                    <div key={key} className="flex items-center justify-between">
+                      <div>
+                        <span className="text-sm font-medium">{key}</span>
+                        <p className="text-[10px] text-white/30">{tip}</p>
+                      </div>
+                      <span className={`text-sm font-bold ${ok ? "text-green-400" : "text-red-400"}`}>
+                        {ok ? "✓ Pass" : "✗ Fail"}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                {(!deliverability.health.domainAuth.spf || !deliverability.health.domainAuth.dkim || !deliverability.health.domainAuth.dmarc) && (
+                  <p className="text-[11px] text-yellow-400 mt-2">⚠ Fix domain auth → up to 40% more emails land in inbox vs spam</p>
+                )}
+              </div>
+
+              {/* Warm-up Status */}
+              <div className="p-4 rounded-xl bg-white/[0.03] space-y-2">
+                <p className="text-xs uppercase tracking-widest text-white/30 mb-1">Warm-up Schedule</p>
+                <p className="text-2xl font-extrabold text-violet-400 capitalize">
+                  {deliverability.health.warmupStatus.replace(/-/g, " ")}
+                </p>
+                <p className="text-sm text-white/50">Phase {deliverability.sending.phase}</p>
+                <div className="w-full h-2 rounded-full bg-white/10 overflow-hidden">
+                  <div
+                    className="h-full rounded-full bg-violet-500 transition-all"
+                    style={{
+                      width: `${deliverability.health.dailySendLimit > 0
+                        ? Math.min(100, (deliverability.health.sentToday / deliverability.health.dailySendLimit) * 100)
+                        : 0}%`
+                    }}
+                  />
+                </div>
+                <p className="text-xs text-white/40">
+                  {deliverability.health.sentToday} / {deliverability.health.dailySendLimit} today
+                  {" "}({deliverability.sending.remaining} remaining)
+                </p>
+                <p className="text-[11px] text-white/30 pt-1">
+                  Gradual ramp-up protects sender score. Sending within limits = lower bounce rate = lower cost per delivered email.
+                </p>
+              </div>
+
+              {/* Bounce Stats */}
+              <div className="p-4 rounded-xl bg-white/[0.03] space-y-2">
+                <p className="text-xs uppercase tracking-widest text-white/30 mb-1">Bounce Suppression</p>
+                <div className="space-y-3">
+                  <div>
+                    <div className="flex justify-between text-sm mb-1">
+                      <span className="text-white/50">Hard bounces suppressed</span>
+                      <span className={`font-bold ${deliverability.bounces.totalHardBounces > 0 ? "text-red-400" : "text-green-400"}`}>
+                        {deliverability.bounces.totalHardBounces}
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-white/30">Never re-sent — saves ${(deliverability.bounces.totalHardBounces * 0.001).toFixed(3)} in avoided send costs</p>
+                  </div>
+                  <div>
+                    <div className="flex justify-between text-sm mb-1">
+                      <span className="text-white/50">Soft bounces (retry queue)</span>
+                      <span className="font-bold text-yellow-400">{deliverability.bounces.totalSoftBounces}</span>
+                    </div>
+                    <p className="text-[10px] text-white/30">Auto-retried next day at $0.001/retry</p>
+                  </div>
+                  <div className="border-t border-white/[0.04] pt-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-white/50">Bounce rate</span>
+                      <span className={`font-bold ${deliverability.health.bounceRate <= 2 ? "text-green-400" : "text-red-400"}`}>
+                        {deliverability.health.bounceRate.toFixed(1)}%
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-white/30">Target: under 2%. Above 5% = SendGrid account risk.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-3 gap-4 mb-6">
+              {["Domain Auth", "Warm-up Schedule", "Bounce Suppression"].map((label) => (
+                <div key={label} className="p-4 rounded-xl bg-white/[0.03] animate-pulse h-32 flex items-center justify-center">
+                  <p className="text-white/20 text-sm">{label}</p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div className="grid md:grid-cols-3 gap-4 text-sm p-4 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+            <div>
+              <p className="text-white/30 text-xs mb-1">Cost of a bounced email</p>
+              <p className="font-semibold">$0.001 wasted per hard bounce</p>
+            </div>
+            <div>
+              <p className="text-white/30 text-xs mb-1">Cost of inbox vs spam</p>
+              <p className="font-semibold">~40% conversion rate difference</p>
+            </div>
+            <div>
+              <p className="text-white/30 text-xs mb-1">System cost to run</p>
+              <p className="font-semibold text-green-400">$0 extra — built in</p>
+            </div>
+          </div>
+
+          {deliverability?.health.alerts && deliverability.health.alerts.length > 0 && (
+            <div className="mt-4 space-y-1">
+              {deliverability.health.alerts.map((alert, i) => (
+                <p key={i} className="text-xs text-yellow-400 flex gap-1.5">
+                  <span>⚠</span><span>{alert}</span>
+                </p>
+              ))}
+            </div>
+          )}
+        </div>
 
         {/* The Math That Matters */}
         <div className="p-6 rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.03]">
