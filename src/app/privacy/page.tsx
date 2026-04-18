@@ -49,7 +49,9 @@ const sections = [
     title: "SMS, Email, and Outreach Communications",
     content: [
       "BlueJays may send promotional emails and SMS messages to business owners and representatives regarding our services, including offers to view a free custom website preview. By providing your phone number or otherwise engaging with our communications, you consent to receive communications from us to the extent permitted by applicable law.",
-      "SMS consent is not a condition of purchase. Message frequency may vary. Message and data rates may apply based on your mobile carrier plan. To opt out of SMS messages at any time, reply STOP. For additional help, reply HELP or contact us at bluejaycontactme@gmail.com.",
+      "SMS consent is not a condition of purchase. Message frequency may vary (typically 2–4 messages per month per recipient). Message and data rates may apply based on your mobile carrier plan. To opt out of SMS messages at any time, reply STOP — you will receive one final confirmation and no further messages. For additional help, reply HELP or contact us at bluejaycontactme@gmail.com.",
+      "Examples of the messages we send include: a link to your free custom website preview, a short follow-up if you have not responded, a link to a booking calendar to discuss your preview, a payment link if you express interest in purchasing, and transactional notices related to an active project.",
+      "SMS consent, phone numbers, and mobile opt-in data are NOT shared with, sold to, or rented to any third parties or affiliates for marketing purposes. Phone numbers are used only by BlueJays and our direct messaging-service providers (such as Twilio) to deliver the messages you have consented to receive.",
       "Marketing emails may include an unsubscribe mechanism. You may opt out of promotional emails at any time by using the unsubscribe link provided in the email or by contacting us directly. Even if you opt out of marketing communications, we may still send service-related or transactional communications when appropriate.",
     ],
   },
@@ -77,7 +79,8 @@ const sections = [
   {
     title: "When We Share Information",
     content: [
-      "We do not sell personal information for cash. We may share information with service providers and contractors who help us host our website, manage communications, process payments, maintain databases, support analytics, or otherwise operate our business, provided they are permitted to use the information only for authorized business purposes.",
+      "We do not sell personal information for cash. We do NOT share, sell, rent, or transfer SMS consent, phone numbers, or mobile opt-in data to third parties or affiliates for their marketing or promotional purposes under any circumstances. This is separate from our general sharing practices and applies specifically to all mobile messaging data.",
+      "We may share information with service providers and contractors who help us host our website, manage communications (including Twilio for SMS delivery and SendGrid for email delivery), process payments (Stripe), maintain databases (Supabase), support analytics, or otherwise operate our business, provided they are permitted to use the information only to deliver the service on our behalf and not for their own marketing.",
       "We may also disclose information if required to do so by law, to respond to legal process, to protect our rights or property, to enforce our agreements, or in connection with a merger, acquisition, financing, or sale of all or part of our business.",
     ],
   },

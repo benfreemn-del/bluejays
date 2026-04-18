@@ -82,10 +82,15 @@ const sections = [
     ],
   },
   {
-    title: "Communications and Consent",
+    title: "SMS Messaging Program — Terms and Consent",
     content: [
-      "By submitting your contact information, responding to our outreach, or otherwise engaging with BlueJays, you agree that we may contact you by email, phone, or SMS regarding your preview, our services, service updates, or your transaction, subject to applicable law. Consent to receive promotional SMS messages is not a condition of purchase. Message frequency may vary, and message and data rates may apply.",
-      "You may opt out of marketing text messages by replying STOP and opt out of marketing emails by using the unsubscribe link included in the message or by contacting us directly. You acknowledge that we may still send non-marketing communications relating to an active project, transaction, or legal notice when appropriate.",
+      "Program description: BlueJays operates an A2P (application-to-person) 10DLC SMS messaging program in the United States. Messages sent through this program include: a link to your free custom website preview, short follow-ups regarding that preview, links to a scheduling calendar, payment links if you express interest in purchasing, and transactional notices related to any active project. Participation in the SMS program is entirely optional and is not a condition of purchasing any product or service.",
+      "Message frequency: typically 2–4 messages per month per recipient. Frequency may be higher if you are actively engaged in a purchase flow or have an active project with us.",
+      "Message and data rates: standard message and data rates may apply based on your mobile carrier plan. BlueJays does not charge recipients for messages.",
+      "Opt-in: by submitting your phone number through our website, responding 'YES' or similar to an inbound SMS, or otherwise affirmatively engaging with our outreach, you consent to receive SMS messages from BlueJays at the number provided.",
+      "Opt-out: reply STOP to any message to opt out of all future promotional SMS messages. You will receive one final confirmation and no further promotional SMS. To re-subscribe later, reply START or JOIN, or contact us. Reply HELP for help. For assistance, you may also email bluejaycontactme@gmail.com.",
+      "Privacy: SMS consent and mobile opt-in data are NOT shared with, sold to, or rented to any third parties or affiliates for their marketing purposes. Your phone number is used only by BlueJays and our messaging-service provider (Twilio) to deliver the messages you have consented to receive. Full privacy details are in our Privacy Policy.",
+      "Email communications: you may opt out of marketing emails by using the unsubscribe link included in the message or by contacting us directly. You acknowledge that we may still send non-marketing communications relating to an active project, transaction, or legal notice when appropriate.",
     ],
   },
   {

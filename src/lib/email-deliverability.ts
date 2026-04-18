@@ -734,9 +734,18 @@ export async function getDeliverabilityHealth(
 }
 
 /**
- * Get the sending domain from the FROM_EMAIL environment variable.
+ * Get the sending domain for deliverability checks.
+ * Defaults to the primary SendGrid-authenticated domain (bluejayportfolio.com)
+ * so the /deliverability dashboard checks the right SPF/DKIM/DMARC records.
+ *
+ * Previously this parsed FROM_EMAIL and returned "gmail.com" because the
+ * From used to be bluejaycontactme@gmail.com. After the DKIM alignment fix
+ * (2026-04-17), outreach actually sends from ben@bluejayportfolio.com, so
+ * that's the correct domain to audit.
  */
 export function getSendingDomain(): string {
-  const fromEmail = process.env.FROM_EMAIL || "bluejaycontactme@gmail.com";
-  return fromEmail.split("@")[1] || "gmail.com";
+  // Primary sending domain — hardcoded to match SENDERS config in
+  // email-sender.ts. The FROM_EMAIL env var is intentionally ignored here
+  // because Vercel had stale values that broke this check before.
+  return "bluejayportfolio.com";
 }
