@@ -21,6 +21,10 @@ export const THEME_LIBRARY: Record<string, { url: string; name: string }[]> = {
     { url: "https://images.unsplash.com/photo-1681881134614-2032b02da1e7?w=800&q=80", name: "roof-inspection" },
     { url: "https://images.unsplash.com/photo-1643509867448-57001e0c333d?w=800&q=80", name: "shingle-install" },
     { url: "https://images.unsplash.com/photo-1760331840361-d751cfc1becf?w=800&q=80", name: "roof-repair" },
+    { url: "https://images.unsplash.com/photo-1558036117-15d82a90b9b1?w=800&q=80", name: "metal-roof" },
+    { url: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80", name: "new-construction" },
+    { url: "https://images.unsplash.com/photo-1605117882932-f9e32b03fea9?w=800&q=80", name: "roofing-team" },
+
   ],
   veterinary: [
     { url: "https://images.unsplash.com/photo-1628009368231-7bb7cfcb0def?w=800&q=80", name: "vet-holding-cat" },
@@ -42,6 +46,8 @@ export const THEME_LIBRARY: Record<string, { url: string; name: string }[]> = {
     { url: "https://images.unsplash.com/photo-1507494924047-60b8ee826ca9?w=800&q=80", name: "light-install" },
     { url: "https://images.unsplash.com/photo-1597502310092-31cdaa35b46d?w=800&q=80", name: "worker-helmet" },
     { url: "https://images.unsplash.com/photo-1581972327480-e3764d31e5e6?w=800&q=80", name: "components" },
+    { url: "https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=800&q=80", name: "hard-hat-worker" },
+
   ],
   plumber: [
     { url: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80", name: "plumber-tool" },
@@ -52,6 +58,8 @@ export const THEME_LIBRARY: Record<string, { url: string; name: string }[]> = {
     { url: "https://images.unsplash.com/photo-1517646287270-a5a9ca602e5c?w=800&q=80", name: "bathroom-faucet" },
     { url: "https://images.unsplash.com/photo-1669920282730-ab422e592f97?w=800&q=80", name: "running-water" },
     { url: "https://images.unsplash.com/photo-1585704032915-c3400ca199e7?w=800&q=80", name: "plumber-work" },
+    { url: "https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=800&q=80", name: "pipe-fitting" },
+
   ],
   salon: [
     { url: "https://images.unsplash.com/photo-1634449571010-02389ed0f9b0?w=800&q=80", name: "hair-cutting" },
@@ -70,6 +78,11 @@ export const THEME_LIBRARY: Record<string, { url: string; name: string }[]> = {
     { url: "https://images.unsplash.com/photo-1698479603408-1a66a6d9e80f?w=800&q=80", name: "commercial-ac" },
     { url: "https://images.unsplash.com/photo-1615309662243-70f6df917b59?w=800&q=80", name: "ductwork" },
     { url: "https://images.unsplash.com/photo-1718203862467-c33159fdc504?w=800&q=80", name: "wall-ac" },
+    { url: "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=800&q=80", name: "smart-thermostat" },
+    { url: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800&q=80", name: "ac-units" },
+    { url: "https://images.unsplash.com/photo-1504384764586-bb4cdc1707b0?w=800&q=80", name: "thermostat-ctrl" },
+    { url: "https://images.unsplash.com/photo-1543269865-cbf427effbad?w=800&q=80", name: "exhaust-fan" },
+
   ],
   cleaning: [
     { url: "https://images.unsplash.com/photo-1585421514284-efb74c2b69ba?w=800&q=80", name: "cleaning-counter" },
@@ -85,6 +98,13 @@ export const THEME_LIBRARY: Record<string, { url: string; name: string }[]> = {
     { url: "https://images.unsplash.com/photo-1584738766473-61c083514bf4?w=800&q=80", name: "flower-bed" },
     { url: "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80", name: "backyard-lawn" },
     { url: "https://images.unsplash.com/photo-1604014237800-1c9102c219da?w=800&q=80", name: "patio-design" },
+    { url: "https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?w=800&q=80", name: "garden-path" },
+    { url: "https://images.unsplash.com/photo-1572025442646-866d16c84a54?w=800&q=80", name: "outdoor-lighting" },
+    { url: "https://images.unsplash.com/photo-1459411552884-841db9b3cc2a?w=800&q=80", name: "hedge-trimming" },
+    { url: "https://images.unsplash.com/photo-1560749003-f4b1e17e2dff?w=800&q=80", name: "stone-pathway" },
+    { url: "https://images.unsplash.com/photo-1588880331179-bc9b93a8cb5e?w=800&q=80", name: "water-feature" },
+    { url: "https://images.unsplash.com/photo-1598902108854-10e335adac99?w=800&q=80", name: "landscape-view" },
+
   ],
   "law-firm": [
     { url: "https://images.unsplash.com/photo-1505664194779-8beaceb93744?w=800&q=80", name: "law-library" },
@@ -92,6 +112,11 @@ export const THEME_LIBRARY: Record<string, { url: string; name: string }[]> = {
     { url: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=800&q=80", name: "legal-docs" },
     { url: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&q=80", name: "office-meeting" },
     { url: "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&q=80", name: "conference-room" },
+    { url: "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=800&q=80", name: "professional" },
+    { url: "https://images.unsplash.com/photo-1453945619913-79ec89a82c51?w=800&q=80", name: "business-portrait" },
+    { url: "https://images.unsplash.com/photo-1521791055366-0d553872125f?w=800&q=80", name: "scales-justice" },
+    { url: "https://images.unsplash.com/photo-1479142506502-19b3a3b7ff33?w=800&q=80", name: "gavel" },
+
   ],
   insurance: [
     { url: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800&q=80", name: "consultation" },
@@ -101,6 +126,9 @@ export const THEME_LIBRARY: Record<string, { url: string; name: string }[]> = {
     { url: "https://images.unsplash.com/photo-1560520031-3a4dc4e9de0c?w=800&q=80", name: "family-protect" },
     { url: "https://images.unsplash.com/photo-1609220136736-443140cffec6?w=800&q=80", name: "doc-signing" },
     { url: "https://images.unsplash.com/photo-1531983412531-1f49a365ffed?w=800&q=80", name: "property" },
+    { url: "https://images.unsplash.com/photo-1556745753-b2904692b3cd?w=800&q=80", name: "car-road" },
+    { url: "https://images.unsplash.com/photo-1521791136064-7986c2920216?w=800&q=80", name: "health-coverage" },
+
   ],
   accounting: [
     { url: "https://images.unsplash.com/photo-1554224154-22dec7ec8818?w=800&q=80", name: "calculator" },
@@ -144,6 +172,8 @@ export const THEME_LIBRARY: Record<string, { url: string; name: string }[]> = {
     { url: "https://images.unsplash.com/photo-1564343128896-3ffbcf9439e5?w=800&q=80", name: "showing-home" },
     { url: "https://images.unsplash.com/photo-1524813686514-a57563d77965?w=800&q=80", name: "aerial-view" },
     { url: "https://images.unsplash.com/photo-1604882234072-d5741489e0c0?w=800&q=80", name: "front-porch" },
+    { url: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80", name: "for-sale-sign" },
+
   ],
   photography: [
     { url: "https://images.unsplash.com/photo-1504202654196-f6a71d98dc01?w=800&q=80", name: "camera-closeup" },
@@ -153,6 +183,9 @@ export const THEME_LIBRARY: Record<string, { url: string; name: string }[]> = {
     { url: "https://images.unsplash.com/photo-1642322430525-41043cf3e99b?w=800&q=80", name: "landscape" },
     { url: "https://images.unsplash.com/photo-1601228552459-f648744df0d4?w=800&q=80", name: "event-photo" },
     { url: "https://images.unsplash.com/photo-1610901144642-231342332fb4?w=800&q=80", name: "newborn" },
+    { url: "https://images.unsplash.com/photo-1471341971476-ae15ff5dd4ea?w=800&q=80", name: "couple-shoot" },
+    { url: "https://images.unsplash.com/photo-1554048612-b6a482bc67e5?w=800&q=80", name: "editing" },
+
   ],
   "interior-design": [
     { url: "https://images.unsplash.com/photo-1533499966477-9333968a4e28?w=800&q=80", name: "modern-living" },
@@ -163,6 +196,8 @@ export const THEME_LIBRARY: Record<string, { url: string; name: string }[]> = {
     { url: "https://images.unsplash.com/photo-1600210491305-7396500b5b31?w=800&q=80", name: "home-office" },
     { url: "https://images.unsplash.com/photo-1608556984704-fa578c96e6eb?w=800&q=80", name: "color-swatches" },
     { url: "https://images.unsplash.com/photo-1605774337664-7a846e9cdf17?w=800&q=80", name: "furniture" },
+    { url: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&q=80", name: "accent-wall" },
+
   ],
   "general-contractor": [
     { url: "https://images.unsplash.com/photo-1503708928676-1cb796a0891e?w=800&q=80", name: "construction" },
@@ -170,12 +205,23 @@ export const THEME_LIBRARY: Record<string, { url: string; name: string }[]> = {
     { url: "https://images.unsplash.com/photo-1531834685032-c34bf0d84c77?w=800&q=80", name: "blueprints" },
     { url: "https://images.unsplash.com/photo-1553946550-4b8f3eea5451?w=800&q=80", name: "hardhat-worker" },
     { url: "https://images.unsplash.com/photo-1575281923032-f40d94ef6160?w=800&q=80", name: "kitchen-build" },
+    { url: "https://images.unsplash.com/photo-1503594384566-461fe158e797?w=800&q=80", name: "renovation" },
+    { url: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=800&q=80", name: "finished-remodel" },
+    { url: "https://images.unsplash.com/photo-1567521464027-f127ff144326?w=800&q=80", name: "power-tools" },
+    { url: "https://images.unsplash.com/photo-1565538810643-b5bdb714032a?w=800&q=80", name: "bath-renovation" },
+
   ],
   moving: [
     { url: "https://images.unsplash.com/photo-1520038410233-7141be7e6f97?w=800&q=80", name: "cardboard-boxes" },
     { url: "https://images.unsplash.com/photo-1577702312572-5bb9328a9f15?w=800&q=80", name: "packing-tape" },
     { url: "https://images.unsplash.com/photo-1609143739217-01b60dad1c67?w=800&q=80", name: "loading-dolly" },
     { url: "https://images.unsplash.com/photo-1581573796233-13d3d9cbefd7?w=800&q=80", name: "family-moving" },
+    { url: "https://images.unsplash.com/photo-1581573950452-5a438c5f390f?w=800&q=80", name: "moving-truck" },
+    { url: "https://images.unsplash.com/photo-1614359835514-92f8ba196357?w=800&q=80", name: "new-home-keys" },
+    { url: "https://images.unsplash.com/photo-1624137527136-66e631bdaa0e?w=800&q=80", name: "bubble-wrap" },
+    { url: "https://images.unsplash.com/photo-1601467995997-ac1ae9a8fff4?w=800&q=80", name: "empty-apartment" },
+    { url: "https://images.unsplash.com/photo-1580709839515-54b8991e2813?w=800&q=80", name: "stacked-boxes" },
+
   ],
   "pest-control": [
     { url: "https://images.unsplash.com/photo-1628352081506-83c43123ed6d?w=800&q=80", name: "tech-spraying" },
@@ -184,6 +230,10 @@ export const THEME_LIBRARY: Record<string, { url: string; name: string }[]> = {
     { url: "https://images.unsplash.com/photo-1540366244940-9dce0a570312?w=800&q=80", name: "clean-yard" },
     { url: "https://images.unsplash.com/photo-1572731561221-96d988d74dc9?w=800&q=80", name: "protective-gear" },
     { url: "https://images.unsplash.com/photo-1591735115730-4bf3a351cfe8?w=800&q=80", name: "crawl-space" },
+    { url: "https://images.unsplash.com/photo-1587293852726-70cdb56c2866?w=800&q=80", name: "home-inspection" },
+    { url: "https://images.unsplash.com/photo-1632571401005-458e9d244591?w=800&q=80", name: "rodent-trap" },
+    { url: "https://images.unsplash.com/photo-1560185893-a55cbc8c57e8?w=800&q=80", name: "pest-free-home" },
+
   ],
   "carpet-cleaning": [
     { url: "https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?w=800&q=80", name: "carpet-clean" },
@@ -194,6 +244,8 @@ export const THEME_LIBRARY: Record<string, { url: string; name: string }[]> = {
     { url: "https://images.unsplash.com/photo-1546550879-3b71f2427ae0?w=800&q=80", name: "rug-cleaning" },
     { url: "https://images.unsplash.com/photo-1496093044462-e7ee398276c9?w=800&q=80", name: "clean-carpet" },
     { url: "https://images.unsplash.com/photo-1549637642-90187f64f420?w=800&q=80", name: "fresh-floor" },
+    { url: "https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?w=800&q=80", name: "pro-equipment" },
+
   ],
   "physical-therapy": [
     { url: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&q=80", name: "stretching" },
@@ -219,6 +271,8 @@ export const THEME_LIBRARY: Record<string, { url: string; name: string }[]> = {
     { url: "https://images.unsplash.com/photo-1565058379802-bbe93b2f703a?w=800&q=80", name: "tattoo-machine" },
     { url: "https://images.unsplash.com/photo-1562962230-16e4623d36e6?w=800&q=80", name: "ink-bottles" },
     { url: "https://images.unsplash.com/photo-1568515045052-f9a854d70bfd?w=800&q=80", name: "tattoo-studio" },
+    { url: "https://images.unsplash.com/photo-1542727313-4f3e99aa2568?w=800&q=80", name: "arm-tattoo" },
+
   ],
   church: [
     { url: "https://images.unsplash.com/photo-1548625149-fc4a29cf7092?w=800&q=80", name: "church-interior" },
@@ -228,6 +282,8 @@ export const THEME_LIBRARY: Record<string, { url: string; name: string }[]> = {
     { url: "https://images.unsplash.com/photo-1507692049790-de58290a4334?w=800&q=80", name: "stained-glass" },
     { url: "https://images.unsplash.com/photo-1478147427282-58a87a120781?w=800&q=80", name: "fellowship-hall" },
     { url: "https://images.unsplash.com/photo-1505455184862-554165e5f6ba?w=800&q=80", name: "bible-study" },
+    { url: "https://images.unsplash.com/photo-1510590337019-5ef8d3d32116?w=800&q=80", name: "choir" },
+
   ],
   daycare: [
     { url: "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=800&q=80", name: "children-playing" },
@@ -235,6 +291,9 @@ export const THEME_LIBRARY: Record<string, { url: string; name: string }[]> = {
     { url: "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=800&q=80", name: "classroom" },
     { url: "https://images.unsplash.com/photo-1596464716127-f2a82984de30?w=800&q=80", name: "reading-time" },
     { url: "https://images.unsplash.com/photo-1472162072942-cd5147eb3902?w=800&q=80", name: "outdoor-play" },
+    { url: "https://images.unsplash.com/photo-1587616211892-f743fcca64f9?w=800&q=80", name: "art-activities" },
+    { url: "https://images.unsplash.com/photo-1560969184-10fe8719e047?w=800&q=80", name: "nap-room" },
+
   ],
   florist: [
     { url: "https://images.unsplash.com/photo-1487530811176-3780de880c2d?w=800&q=80", name: "flower-arrangement" },
@@ -244,6 +303,9 @@ export const THEME_LIBRARY: Record<string, { url: string; name: string }[]> = {
     { url: "https://images.unsplash.com/photo-1457089328109-e5d9bd499191?w=800&q=80", name: "wedding-flowers" },
     { url: "https://images.unsplash.com/photo-1508610048659-a06b669e3321?w=800&q=80", name: "floral-display" },
     { url: "https://images.unsplash.com/photo-1563241527-3004b7be0ffd?w=800&q=80", name: "wreath" },
+    { url: "https://images.unsplash.com/photo-1562690868-60bbe7293e94?w=800&q=80", name: "delivery" },
+    { url: "https://images.unsplash.com/photo-1558171813-4c088753af8f?w=800&q=80", name: "potted-plants" },
+
   ],
   "med-spa": [
     { url: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=800&q=80", name: "facial-treatment" },
@@ -253,6 +315,9 @@ export const THEME_LIBRARY: Record<string, { url: string; name: string }[]> = {
     { url: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=800&q=80", name: "relaxation-area" },
     { url: "https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?w=800&q=80", name: "consultation" },
     { url: "https://images.unsplash.com/photo-1591343395082-e120087004b4?w=800&q=80", name: "spa-interior" },
+    { url: "https://images.unsplash.com/photo-1560750588-73207b1ef5b8?w=800&q=80", name: "treatment-bed" },
+    { url: "https://images.unsplash.com/photo-1515377905703-c4788e51af15?w=800&q=80", name: "injectable-treatment" },
+
   ],
   restaurant: [
     { url: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80", name: "plated-food" },
@@ -269,10 +334,17 @@ export const THEME_LIBRARY: Record<string, { url: string; name: string }[]> = {
     { url: "https://images.unsplash.com/photo-1555597673-b21d5c935865?w=800&q=80", name: "karate-class" },
     { url: "https://images.unsplash.com/photo-1564415315949-7a0c4c73aab4?w=800&q=80", name: "dojo-interior" },
     { url: "https://images.unsplash.com/photo-1555597408-26bc8e548a46?w=800&q=80", name: "sparring" },
+    { url: "https://images.unsplash.com/photo-1550345332-09e3ac987658?w=800&q=80", name: "belt-ceremony" },
+    { url: "https://images.unsplash.com/photo-1517438322307-e67111335449?w=800&q=80", name: "instructor-teaching" },
+
   ],
   "pool-spa": [
     { url: "https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?w=800&q=80", name: "swimming-pool" },
     { url: "https://images.unsplash.com/photo-1613977257363-707ba9348227?w=800&q=80", name: "pool-maintenance" },
+    { url: "https://images.unsplash.com/photo-1562778612-e1e0cda9915c?w=800&q=80", name: "hot-tub" },
+    { url: "https://images.unsplash.com/photo-1572331165267-854da2b10ccc?w=800&q=80", name: "pool-cleaning" },
+    { url: "https://images.unsplash.com/photo-1519449556851-5720b33024e7?w=800&q=80", name: "pool-equipment" },
+
   ],
   catering: [
     { url: "https://images.unsplash.com/photo-1555244162-803834f70033?w=800&q=80", name: "buffet-setup" },
@@ -291,6 +363,11 @@ export const THEME_LIBRARY: Record<string, { url: string; name: string }[]> = {
     { url: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=800&q=80", name: "party-decorations" },
     { url: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=800&q=80", name: "lighting-design" },
     { url: "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800&q=80", name: "stage-setup" },
+    { url: "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=800&q=80", name: "wedding-setup" },
+    { url: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800&q=80", name: "table-centerpiece" },
+    { url: "https://images.unsplash.com/photo-1530023367847-a683933f4172?w=800&q=80", name: "outdoor-tent" },
+    { url: "https://images.unsplash.com/photo-1478146896981-b80fe463b330?w=800&q=80", name: "balloon-arch" },
+
   ],
   fencing: [
     { url: "https://images.unsplash.com/photo-1673967683504-d23d3ab5b011?w=800&q=80", name: "wooden-fence" },
@@ -300,6 +377,9 @@ export const THEME_LIBRARY: Record<string, { url: string; name: string }[]> = {
     { url: "https://images.unsplash.com/photo-1740482682683-309e6fb4898f?w=800&q=80", name: "fence-post" },
     { url: "https://images.unsplash.com/photo-1769831190663-95fe8454d8c9?w=800&q=80", name: "garden-gate" },
     { url: "https://images.unsplash.com/photo-1748908271592-d9d5690b288b?w=800&q=80", name: "fence-repair" },
+    { url: "https://images.unsplash.com/photo-1599427303058-f04cbcf4756f?w=800&q=80", name: "fence-installation" },
+    { url: "https://images.unsplash.com/photo-1516455590571-18256e5bb9ff?w=800&q=80", name: "privacy-fence" },
+
   ],
   "garage-door": [
     { url: "https://images.unsplash.com/photo-1647843097965-3686dadb7b84?w=800&q=80", name: "garage-door-exterior" },
@@ -310,6 +390,8 @@ export const THEME_LIBRARY: Record<string, { url: string; name: string }[]> = {
     { url: "https://images.unsplash.com/photo-1696992812596-3c0d4d2d1299?w=800&q=80", name: "spring-mechanism" },
     { url: "https://images.unsplash.com/photo-1609915395444-e9632e899ad9?w=800&q=80", name: "carriage-style" },
     { url: "https://images.unsplash.com/photo-1628744448839-a475cc0e90c3?w=800&q=80", name: "modern-garage" },
+    { url: "https://images.unsplash.com/photo-1584515933487-779824d29309?w=800&q=80", name: "insulated-door" },
+
   ],
   locksmith: [
     { url: "https://images.unsplash.com/photo-1654944932733-bca31b703dd7?w=800&q=80", name: "key-cutting" },
@@ -320,6 +402,8 @@ export const THEME_LIBRARY: Record<string, { url: string; name: string }[]> = {
     { url: "https://images.unsplash.com/photo-1619659741578-3e98742f4ad9?w=800&q=80", name: "padlock" },
     { url: "https://images.unsplash.com/photo-1585914641050-fa9883c4e21c?w=800&q=80", name: "security-system" },
     { url: "https://images.unsplash.com/photo-1752346800862-252719b8315d?w=800&q=80", name: "lock-repair" },
+    { url: "https://images.unsplash.com/photo-1558002038-1055907df827?w=800&q=80", name: "locksmith-tools" },
+
   ],
   medical: [
     { url: "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&q=80", name: "doctor-consultation" },
@@ -330,6 +414,8 @@ export const THEME_LIBRARY: Record<string, { url: string; name: string }[]> = {
     { url: "https://images.unsplash.com/photo-1582735689369-4fe89db7114c?w=800&q=80", name: "healthcare-team" },
     { url: "https://images.unsplash.com/photo-1562259929-b4e1fd3aef09?w=800&q=80", name: "medical-equipment" },
     { url: "https://images.unsplash.com/photo-1588854337236-6889d631faa8?w=800&q=80", name: "patient-care" },
+    { url: "https://images.unsplash.com/photo-1516549655169-df83a0774514?w=800&q=80", name: "clinic-exterior" },
+
   ],
   painting: [
     // Visually verified 2026-04-17 — these photos actually show their subject.
@@ -338,6 +424,10 @@ export const THEME_LIBRARY: Record<string, { url: string; name: string }[]> = {
     // was flowers, interior-painting was a building exterior, exterior-painting
     // was a chair, painter-on-ladder was a gray texture). Re-add from the
     // Upload tab with verified painting photos when needed.
+    { url: "https://images.unsplash.com/photo-1595814433015-e6f5ce69614e?w=800&q=80", name: "house-painting" },
+    { url: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80", name: "paint-roller" },
+    { url: "https://images.unsplash.com/photo-1560448075-bb485b067938?w=800&q=80", name: "color-samples" },
+
   ],
   "pet-services": [
     { url: "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=800&q=80", name: "dog-grooming" },
@@ -357,6 +447,10 @@ export const THEME_LIBRARY: Record<string, { url: string; name: string }[]> = {
     { url: "https://images.unsplash.com/photo-1664840951038-caf513bcc639?w=800&q=80", name: "equipment" },
     { url: "https://images.unsplash.com/photo-1663832871970-ce04419ea2ee?w=800&q=80", name: "commercial-cleaning" },
     { url: "https://images.unsplash.com/photo-1588111817213-1a12f73fbf20?w=800&q=80", name: "fence-washing" },
+    { url: "https://images.unsplash.com/photo-1523413555809-0fb1d4da238d?w=800&q=80", name: "pressure-washer-action" },
+    { url: "https://images.unsplash.com/photo-1582559934353-2e47140e7501?w=800&q=80", name: "siding-wash" },
+    { url: "https://images.unsplash.com/photo-1528238646472-f2366160b6c1?w=800&q=80", name: "before-after-surface" },
+
   ],
   towing: [
     { url: "https://images.unsplash.com/photo-1686966933735-305bd8fe0a77?w=800&q=80", name: "tow-truck" },
@@ -366,6 +460,9 @@ export const THEME_LIBRARY: Record<string, { url: string; name: string }[]> = {
     { url: "https://images.unsplash.com/photo-1644503584825-91dfe48edca6?w=800&q=80", name: "tow-driver" },
     { url: "https://images.unsplash.com/photo-1655220711988-430a51a5c254?w=800&q=80", name: "recovery" },
     { url: "https://images.unsplash.com/photo-1611083497391-971ad20e269a?w=800&q=80", name: "breakdown" },
+    { url: "https://images.unsplash.com/photo-1580274455191-1c62238fa333?w=800&q=80", name: "car-being-towed" },
+    { url: "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=800&q=80", name: "jump-start" },
+
   ],
   "tree-service": [
     { url: "https://images.unsplash.com/photo-1754321895426-68b04ba453e3?w=800&q=80", name: "tree-trimming" },
@@ -376,6 +473,8 @@ export const THEME_LIBRARY: Record<string, { url: string; name: string }[]> = {
     { url: "https://images.unsplash.com/photo-1631300313270-227604e71ea5?w=800&q=80", name: "pruning" },
     { url: "https://images.unsplash.com/photo-1626328996681-80608e0240a0?w=800&q=80", name: "bucket-truck" },
     { url: "https://images.unsplash.com/photo-1631243302248-6d36b56bdad8?w=800&q=80", name: "wood-chips" },
+    { url: "https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?w=800&q=80", name: "fallen-tree" },
+
   ],
   tutoring: [
     { url: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&q=80", name: "student-studying" },
@@ -404,9 +503,15 @@ export const THEME_LIBRARY: Record<string, { url: string; name: string }[]> = {
     { url: "https://images.unsplash.com/photo-1584568694244-14fbdf83bd30?w=800&q=80", name: "dishwasher" },
     { url: "https://images.unsplash.com/photo-1626806819282-2c1dc01a5e0c?w=800&q=80", name: "dryer-repair" },
     { url: "https://images.unsplash.com/photo-1556909172-54557c7e4fb7?w=800&q=80", name: "kitchen-appliances" },
+    { url: "https://images.unsplash.com/photo-1556909212-d5b604d0c90d?w=800&q=80", name: "technician-working" },
+
   ],
   construction: [
     { url: "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=800&q=80", name: "construction-site" },
     { url: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=800&q=80", name: "crane" },
+    { url: "https://images.unsplash.com/photo-1522770179533-24471fcdba45?w=800&q=80", name: "framing" },
+    { url: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&q=80", name: "concrete-pour" },
+    { url: "https://images.unsplash.com/photo-1520975916090-3105956dac38?w=800&q=80", name: "hard-hats" },
+
   ],
 };
