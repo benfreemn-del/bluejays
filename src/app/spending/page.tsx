@@ -97,7 +97,7 @@ interface DeliverabilityHealth {
 }
 
 // Fixed monthly costs — update here when subscriptions change
-const FIXED_MONTHLY = 62.09; // Vercel $20 + SendGrid $20 + Twilio $1.15 + Domain $0.94 + Claude Pro $20
+const FIXED_MONTHLY = 242.09; // Vercel $20 + SendGrid $20 + Twilio $1.15 + Domain $0.94 + Claude Max $200
 
 export default function SpendingPage() {
   const [costs, setCosts] = useState<SystemCosts | null>(null);
@@ -488,7 +488,7 @@ export default function SpendingPage() {
             <SubRow name="Twilio" cost={1.15} status="active" description="Phone number + per-use SMS/calls" />
             <SubRow name="Supabase" cost={0} status="free" description="PostgreSQL database, auth, storage (video files, proposals)" />
             <SubRow name="Domain (bluejayportfolio.com)" cost={0.94} status="active" description="$11.25/year via Vercel" />
-            <SubRow name="Claude Pro" cost={20} status="active" description="Anthropic subscription for development, QC reviews, and manual tasks" />
+            <SubRow name="Claude Max" cost={200} status="active" description="Anthropic Max subscription ($200/mo) for development, QC reviews, and manual tasks" />
             <div className="border-t border-white/[0.06] pt-3 flex justify-between items-center">
               <span className="font-bold">Total Monthly Fixed Cost</span>
               <span className="font-bold text-lg text-orange-400">${FIXED_MONTHLY.toFixed(2)}/mo</span>
