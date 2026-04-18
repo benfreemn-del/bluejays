@@ -6,8 +6,8 @@ import { logCost, COST_RATES } from "./cost-logger";
 import { canSendEmail, recordEmailSent, isEmailBounced, getSendingDomain } from "./email-deliverability";
 
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
-// Hardcoded — this must match the verified sender identity in SendGrid
-const FROM_EMAIL = "bluejaycontactme@gmail.com";
+// Must match the verified sender identity in SendGrid — set FROM_EMAIL env var on Vercel
+const FROM_EMAIL = process.env.FROM_EMAIL || "ben@bluejayportfolio.com";
 const EMAILS_DIR = path.join(process.cwd(), "data", "emails");
 
 export interface SentEmail {
