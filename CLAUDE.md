@@ -1729,18 +1729,40 @@ Hey {name}, just left you a voicemail about the site I built for
 {business}: {shortUrl} Reply STOP to opt out
 ```
 
-### Relationship to email templates
+### Relationship to email + voicemail templates
 
-SMS + email are synchronized across the funnel:
-- Day 0 = initial SMS + initial email (both carry the effort hook +
-  short URL)
-- Day 5 = gentle email follow-up (no SMS — save budget/reputation)
-- Day 12 = Value-reframe email + follow-up SMS 1 (same short URL)
-- Day 21 = social proof email (no SMS)
-- Day 30 = final email + final SMS (both graceful-out)
+The funnel schedule (from `FUNNEL_STEPS` in `src/lib/funnel-manager.ts`)
+interlocks SMS, email, and ringless voicemail across 30 days:
 
-The tone matches across channels so a prospect who receives both feels
-like they're hearing from the same person, not a marketing machine.
+| Day | Channels | Label |
+|-----|----------|-------|
+| 0 | email + SMS | Initial Pitch |
+| 2 | voicemail | Voicemail Drop |
+| 5 | email | Gentle Follow-Up |
+| 12 | email + SMS | Value Reframe |
+| 18 | voicemail | Follow-Up VM |
+| 21 | email | Social Proof |
+| 30 | email | Final Check-In |
+
+Notes:
+- **Voicemails on Day 2 + Day 18 only** — two ringless drops per funnel.
+  Pre-launch they're effectively paused because (a) A2P 10DLC is still
+  pending approval and (b) the voicemail provider integration has been
+  intermittently failing. When voicemails can't deliver, the funnel
+  tries SMS as a fallback — which is also blocked by `SMS_FUNNEL_DISABLED`
+  today. So Day 2 + Day 18 simply skip during warmup and the prospect
+  advances to the next email step.
+- **SMS fires on Day 0 + Day 12 only** — aligned with the email pitch +
+  Value Reframe so recipients who get both channels hear a consistent
+  voice within a few minutes of each other.
+- **Email fires on 5 days** — Day 0, 5, 12, 21, 30. Day 30 is email
+  only (the graceful-out final check-in), NOT email + SMS. Don't
+  double-send on the final day.
+- **The tone matches across channels** so a prospect who receives both
+  email + SMS + voicemail feels like they're hearing from the same
+  person, not a marketing machine. Every surface uses the effort hook,
+  the same short URL via `getShortPreviewUrl()`, and the same soft
+  reply-prompt CTA pattern.
 
 ## Short URL Rules (NON-NEGOTIABLE — added 2026-04-19)
 
