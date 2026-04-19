@@ -2,10 +2,10 @@ import fs from "fs";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
 import type { Prospect, SmsMethod, SmsProvider } from "./types";
-import { CATEGORY_CONFIG } from "./types";
 import { supabase, isSupabaseConfigured } from "./supabase";
 import { logCost, COST_RATES } from "./cost-logger";
 import { getVonagePhoneNumber, isVonageConfigured, sendViaVonage } from "./vonage-sms";
+import { getShortPreviewUrl } from "./short-urls";
 
 const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID;
 const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN;
@@ -311,29 +311,73 @@ export function getConfiguredSmsProviders(): SmsMethod[] {
   return providers;
 }
 
-function buildVideoSuffix(videoUrl?: string): string {
-  return videoUrl ? ` Video walkthrough: ${videoUrl}` : "";
-}
-
 // --- SMS Templates ---
+//
+// Rewritten 2026-04-19 to match the email template rules (see CLAUDE.md
+// "Outreach Email Template Rules" + "Short URL Rules"). SMS templates
+// follow the same principles, adapted for the constraints of the channel:
+//   - Short URL via getShortPreviewUrl() — full UUIDs break on mobile
+//     line-wrapping and look like spam links in iMessage/Android
+//   - ONE link only (the preview). No calendly, no portfolio link.
+//   - Zero pricing language, zero scarcity ("goes offline in X weeks"),
+//     zero "book a walkthrough" CTA
+//   - Personal 1-to-1 voice; mention Ben by name in the initial SMS so
+//     it doesn't look like a spam bot
+//   - Mention specific time-investment ("spent some time this week") to
+//     carry the reciprocity hook from the email template
+//   - STOP compliance on every single message (A2P 10DLC requirement)
+//   - Under 2 SMS segments (~306 chars total) to keep send cost down
+//
+// The `previewUrl` and `videoUrl` parameters are kept for backward
+// compatibility with existing callers (funnel-manager, outreach/bulk,
+// sms/send routes) but we IGNORE whatever they pass and always use the
+// canonical short URL. That way we don't have to update every caller and
+// the short URL rule is enforced regardless of how the template is invoked.
 
-export function getInitialSms(prospect: Prospect, previewUrl: string, videoUrl?: string): string {
+export function getInitialSms(
+  prospect: Prospect,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _previewUrl?: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _videoUrl?: string,
+): string {
   const name = prospect.ownerName?.split(" ")[0] || "there";
-  const categoryLabel = CATEGORY_CONFIG[prospect.category]?.label || prospect.category;
-  return `Hey ${name}! Built a free website for ${prospect.businessName} — check it out: ${previewUrl}${buildVideoSuffix(videoUrl)} More ${categoryLabel.toLowerCase()} examples: bluejayportfolio.com/v2/${prospect.category} Reply STOP to opt out`;
+  const url = getShortPreviewUrl(prospect);
+  return `Hey ${name}, Ben from BlueJays — spent some time this week building a website for ${prospect.businessName}: ${url} Take a look when you have a sec. Reply STOP to opt out`;
 }
 
-export function getFollowUpSms1(prospect: Prospect, previewUrl: string, videoUrl?: string): string {
+export function getFollowUpSms1(
+  prospect: Prospect,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _previewUrl?: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _videoUrl?: string,
+): string {
   const name = prospect.ownerName?.split(" ")[0] || "there";
-  return `${name}, what did you think of your new site? Want to walk through it on a quick call? calendly.com/bluejaycontactme/website-walkthrough Reply STOP to opt out`;
+  const url = getShortPreviewUrl(prospect);
+  return `${name} — circling back on the site I built for ${prospect.businessName}: ${url} Curious what you'd change. Reply STOP to opt out`;
 }
 
-export function getFollowUpSms2(prospect: Prospect, previewUrl: string, videoUrl?: string): string {
+export function getFollowUpSms2(
+  prospect: Prospect,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _previewUrl?: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _videoUrl?: string,
+): string {
   const name = prospect.ownerName?.split(" ")[0] || "there";
-  return `${name} — your ${prospect.businessName} site goes offline in 2 weeks. Book a quick walkthrough before it's gone: calendly.com/bluejaycontactme/website-walkthrough Reply STOP to opt out`;
+  const url = getShortPreviewUrl(prospect);
+  return `${name} — last check on that ${prospect.businessName} site: ${url} If timing's off, just say so and I'll stop reaching out. Reply STOP to opt out`;
 }
 
-export function getPostVoicemailSms(prospect: Prospect, previewUrl: string, videoUrl?: string): string {
+export function getPostVoicemailSms(
+  prospect: Prospect,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _previewUrl?: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _videoUrl?: string,
+): string {
   const name = prospect.ownerName?.split(" ")[0] || "there";
-  return `Hey ${name}, just left you a voicemail about the site we built for ${prospect.businessName}: ${previewUrl}${buildVideoSuffix(videoUrl)} Reply STOP to opt out`;
+  const url = getShortPreviewUrl(prospect);
+  return `Hey ${name}, just left you a voicemail about the site I built for ${prospect.businessName}: ${url} Reply STOP to opt out`;
 }

@@ -1649,6 +1649,99 @@ because we warm up over 14 days, the cost of a bad template during
 warmup is 14 days of compounding reputation damage that takes 30+ days
 to recover from. The template lives at the foundation — treat it as such.
 
+## Outreach SMS Template Rules (NON-NEGOTIABLE — added 2026-04-19)
+
+SMS templates follow the same philosophy as the email templates above —
+adapted for the constraints of the channel. See `src/lib/sms.ts` for
+the locked-in implementations of `getInitialSms`, `getFollowUpSms1`,
+`getFollowUpSms2`, and `getPostVoicemailSms`.
+
+### Core rules (mirror email rules)
+
+- **ONE link only** — the short preview URL via `getShortPreviewUrl()`.
+  Full UUIDs break on mobile line-wrapping and look like spam links in
+  iMessage/Android. No portfolio URLs, no Calendly URLs.
+- **Zero pricing language** — no "$997", no "3 payments of", no
+  "one-time fee". Pricing lives on the claim page, reached by clicking
+  the preview link.
+- **Zero "book a walkthrough" CTAs** — no Calendly link in SMS ever.
+  The soft reply prompt is the CTA.
+- **Zero scarcity / urgency** — no "goes offline in 2 weeks", no "limited
+  spots", no "expires soon". Feels like a scam text.
+- **Personal 1-to-1 voice** — mention Ben by name in the initial SMS
+  ("Ben from BlueJays") so the message doesn't look like a spam bot.
+  Use the prospect's first name when we have one; "Hey there" fallback.
+- **Include the effort hook** — "spent some time this week building..."
+  carries the reciprocity psychology from the email pitch. Don't skip it
+  on the initial SMS.
+- **Closing reply prompt** — "Curious what you'd change" or "Take a look
+  when you have a sec". Never "Would you like to schedule a call?".
+
+### SMS-specific constraints
+
+- **STOP compliance on EVERY message** — A2P 10DLC requirement. Append
+  `Reply STOP to opt out` at the end of every single SMS we send to a
+  prospect, regardless of message type. The kill-switch can be flipped
+  via the `SMS_FUNNEL_DISABLED` env var while A2P approval is pending.
+- **Stay under 2 segments (~306 chars)** — each segment = a Twilio bill.
+  3+ segments also look spammy to carriers during the A2P scoring.
+- **URL is the short URL** — the templates use `getShortPreviewUrl()`
+  directly; the legacy `previewUrl` parameter on the function signatures
+  is ignored (kept for backward compat with older callers).
+
+### Banned phrases in SMS (never in any outgoing SMS body)
+
+- Any price ($997, $349, etc.)
+- Any Calendly / "book a call" / "schedule" language
+- Any scarcity ("goes offline", "expires", "limited time")
+- "Free website" (triggers SMS spam filters hard)
+- Multi-link sequences (preview + portfolio + STOP = too many clickable
+  elements in one message)
+
+### Approved baseline templates
+
+Locked in `src/lib/sms.ts`. The initial SMS reads:
+
+```
+Hey {name}, Ben from BlueJays — spent some time this week building a
+website for {business}: {shortUrl} Take a look when you have a sec.
+Reply STOP to opt out
+```
+
+Follow-up 1 (circle back):
+
+```
+{name} — circling back on the site I built for {business}:
+{shortUrl} Curious what you'd change. Reply STOP to opt out
+```
+
+Follow-up 2 (graceful out):
+
+```
+{name} — last check on that {business} site: {shortUrl} If timing's
+off, just say so and I'll stop reaching out. Reply STOP to opt out
+```
+
+Post-voicemail (right after a VM drop):
+
+```
+Hey {name}, just left you a voicemail about the site I built for
+{business}: {shortUrl} Reply STOP to opt out
+```
+
+### Relationship to email templates
+
+SMS + email are synchronized across the funnel:
+- Day 0 = initial SMS + initial email (both carry the effort hook +
+  short URL)
+- Day 5 = gentle email follow-up (no SMS — save budget/reputation)
+- Day 12 = Value-reframe email + follow-up SMS 1 (same short URL)
+- Day 21 = social proof email (no SMS)
+- Day 30 = final email + final SMS (both graceful-out)
+
+The tone matches across channels so a prospect who receives both feels
+like they're hearing from the same person, not a marketing machine.
+
 ## Short URL Rules (NON-NEGOTIABLE — added 2026-04-19)
 
 Any URL that a prospect or customer will see — in an email, SMS, voicemail,
