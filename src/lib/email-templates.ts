@@ -29,6 +29,25 @@ ${videoUrl}
 }
 
 /**
+ * Resolve the greeting name for a prospect. Returns the first name when we
+ * have a real owner name on file, otherwise a neutral "there" fallback so
+ * we never generate subject lines like:
+ *   "Merit Construction, I made something for Merit Construction"
+ * or body greetings like "Hi Merit Construction,". Single-letter or empty
+ * first names also fall through to the fallback.
+ *
+ * `hasName` lets callers branch subject-line templates so they can drop
+ * the name prefix entirely when we don't have a real person to address.
+ */
+function getGreetingName(prospect: Prospect): { greeting: string; hasName: boolean } {
+  const firstName = prospect.ownerName?.trim().split(/\s+/)[0];
+  if (firstName && firstName.length > 1 && firstName.toLowerCase() !== prospect.businessName.toLowerCase()) {
+    return { greeting: firstName, hasName: true };
+  }
+  return { greeting: "there", hasName: false };
+}
+
+/**
  * "Your 4.8⭐ with 62 reviews stood out" — skipped when we don't have the data.
  */
 function buildRatingBlurb(prospect: Prospect): string {
@@ -54,13 +73,16 @@ export function getPitchEmail(
   previewUrl: string,
   videoUrl?: string,
 ): EmailTemplate {
-  const name =
-    prospect.ownerName?.split(" ")[0] || prospect.businessName;
+  const { greeting, hasName } = getGreetingName(prospect);
   const category = CATEGORY_CONFIG[prospect.category].label;
   const hasWebsite = !!prospect.currentWebsite;
   const city = prospect.city || prospect.address?.split(",")[0] || "";
 
-  const subject = `${name}, I made something for ${prospect.businessName}`;
+  // Drop the name prefix when we don't have a real owner name — avoids
+  // awkward "Merit Construction, I made something for Merit Construction"
+  const subject = hasName
+    ? `${greeting}, I made something for ${prospect.businessName}`
+    : `I made a website for ${prospect.businessName}`;
 
   const discoveryLine = hasWebsite
     ? `I found ${prospect.businessName} while searching for top-rated ${category.toLowerCase()} businesses${city ? ` in ${city}` : ""} — your reviews stood out.`
@@ -68,7 +90,7 @@ export function getPitchEmail(
 
   const ratingBlurb = buildRatingBlurb(prospect);
 
-  const body = `Hi ${name},
+  const body = `Hi ${greeting},
 
 ${discoveryLine}${ratingBlurb}
 
@@ -98,14 +120,17 @@ export function getFollowUp1(
   previewUrl: string,
   videoUrl?: string,
 ): EmailTemplate {
-  const name =
-    prospect.ownerName?.split(" ")[0] || prospect.businessName;
+  const { greeting, hasName } = getGreetingName(prospect);
   const categoryPhrase = prospect.category.replace("-", " ");
   const city = prospect.city || prospect.address?.split(",")[0] || "your area";
 
+  const subject = hasName
+    ? `${greeting} — what do ${city} customers see when they search "${categoryPhrase}"?`
+    : `What do ${city} customers see when they search "${categoryPhrase}"?`;
+
   return {
-    subject: `${name} — what do ${city} customers see when they search "${categoryPhrase}"?`,
-    body: `Hi ${name},
+    subject,
+    body: `Hi ${greeting},
 
 Quick test — pull up your phone, Google "${categoryPhrase} near me" in ${city}, and look at the top result.
 
@@ -229,17 +254,20 @@ export function getFollowUp2(
   previewUrl: string,
   videoUrl?: string,
 ): EmailTemplate {
-  const name =
-    prospect.ownerName?.split(" ")[0] || prospect.businessName;
+  const { greeting, hasName } = getGreetingName(prospect);
   const category = CATEGORY_CONFIG[prospect.category].label;
   const topService = getTopService(prospect);
   const serviceHook = topService
     ? `I made sure ${topService} is front-and-center — it's the first thing visitors see, because it's clearly what you do best.`
     : `I designed it around what you actually do best — front and center, not buried on some "services" sub-page.`;
 
+  const subject = hasName
+    ? `I looked at your current site, ${greeting} — here's the side-by-side`
+    : `${prospect.businessName} — here's the side-by-side with your current site`;
+
   return {
-    subject: `I looked at your current site, ${name} — here's the side-by-side`,
-    body: `Hi ${name},
+    subject,
+    body: `Hi ${greeting},
 
 I built this site for ${prospect.businessName} because your work deserves a website that doesn't make visitors second-guess the quality.
 
