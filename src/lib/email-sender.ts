@@ -95,17 +95,25 @@ async function logEmailToFile(email: SentEmail) {
   // Skip Supabase logging for test emails (non-UUID prospect IDs)
   if (isSupabaseConfigured() && email.prospectId.includes("-") && email.prospectId.length > 30) {
     try {
-      await supabase.from("emails").insert({
+      // The emails table uses to_address/from_address (not `to`/`from` —
+      // those are SQL reserved words). This insert was silently failing
+      // for the entire life of the table before 2026-04-18 because the
+      // columns didn't exist. DON'T RENAME back to `to`/`from` without a
+      // schema migration.
+      const { error: insertErr } = await supabase.from("emails").insert({
         id: email.id,
         prospect_id: email.prospectId,
-        to: email.to,
-        from: email.from,
+        to_address: email.to,
+        from_address: email.from,
         subject: email.subject,
         body: email.body,
         sequence: email.sequence,
         sent_at: email.sentAt,
         method: email.method,
       });
+      if (insertErr) {
+        console.error("Email log to Supabase failed:", insertErr);
+      }
     } catch (err) {
       console.error("Email log to Supabase failed:", err);
     }
@@ -212,8 +220,8 @@ export async function getEmailHistory(prospectId: string): Promise<SentEmail[]> 
     return data.map((row: Record<string, unknown>) => ({
       id: row.id as string,
       prospectId: row.prospect_id as string,
-      to: row.to as string,
-      from: row.from as string,
+      to: row.to_address as string,
+      from: row.from_address as string,
       subject: row.subject as string,
       body: row.body as string,
       sequence: row.sequence as number,

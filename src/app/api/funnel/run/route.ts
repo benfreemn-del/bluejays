@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { runDailyFunnel } from "@/lib/funnel-manager";
 import { runAutoResumeCheck } from "@/lib/followup-scheduler";
 import { sendDailyDigest } from "@/lib/alerts";
@@ -7,7 +7,14 @@ import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 
 // POST: Run the funnel processor — handles due retries first, then next due steps
 // Also runs the follow-up scheduler auto-resume check
-// This route can be called on a schedule as often as needed
+// This route can be called on a schedule as often as needed.
+//
+// NOTE — Vercel cron jobs invoke endpoints with a GET request, NOT POST.
+// The GET handler below delegates to this same POST runner so the cron
+// actually sends emails. Prior to 2026-04-18 the GET handler only returned
+// a status snapshot, which silently broke the daily funnel cron for days.
+// Do NOT revert GET to a read-only status endpoint — move status queries
+// to a separate path if needed.
 export async function POST() {
   console.log("\n[Funnel] Running funnel processor...\n");
 
@@ -97,25 +104,40 @@ export async function POST() {
   });
 }
 
-// GET: Check funnel status without sending anything
-export async function GET() {
-  const { getAllEnrollments, FUNNEL_STEPS } = await import("@/lib/funnel-manager");
-  const enrollments = getAllEnrollments();
+// GET: Runs the funnel processor (Vercel cron fires this via GET). Pass
+// `?status=1` to get a read-only snapshot instead of running.
+//
+// Pre-2026-04-18: this was a status-only endpoint that only read a local
+// JSON file. Vercel's serverless filesystem is read-only + the JSON file
+// didn't exist, so GET returned empty and the cron did nothing. The
+// active funnel cron now actually fires sends. See POST comment above.
+export async function GET(request: NextRequest) {
+  const isStatusOnly = request.nextUrl.searchParams.get("status") === "1";
 
-  return NextResponse.json({
-    enrollments: enrollments.map((enrollment) => ({
-      ...enrollment,
-      currentStepLabel:
-        enrollment.currentStep < 0
-          ? "Queued for first delivery"
-          : FUNNEL_STEPS[enrollment.currentStep]?.label || "Complete",
-      nextStepLabel: FUNNEL_STEPS[enrollment.currentStep + 1]?.label || "Done",
-      nextStepDay: FUNNEL_STEPS[enrollment.currentStep + 1]?.day || null,
-    })),
-    total: enrollments.length,
-    active: enrollments.filter((enrollment) => !enrollment.paused && !enrollment.completedAt).length,
-    paused: enrollments.filter((enrollment) => enrollment.paused).length,
-    completed: enrollments.filter((enrollment) => enrollment.completedAt).length,
-    steps: FUNNEL_STEPS,
-  });
+  if (isStatusOnly) {
+    const { FUNNEL_STEPS } = await import("@/lib/funnel-manager");
+
+    // Read live enrollment state from Supabase rather than a local JSON
+    // file — Vercel's filesystem is read-only. Falls back to empty list
+    // when Supabase isn't configured.
+    let enrollmentRows: Array<Record<string, unknown>> = [];
+    if (isSupabaseConfigured()) {
+      const { data } = await supabase
+        .from("funnel_enrollments")
+        .select("*")
+        .limit(10000);
+      enrollmentRows = (data || []) as Array<Record<string, unknown>>;
+    }
+
+    return NextResponse.json({
+      total: enrollmentRows.length,
+      active: enrollmentRows.filter((r) => !r.paused && !r.completed_at).length,
+      paused: enrollmentRows.filter((r) => !!r.paused).length,
+      completed: enrollmentRows.filter((r) => !!r.completed_at).length,
+      steps: FUNNEL_STEPS,
+    });
+  }
+
+  // Vercel cron path — actually run the funnel.
+  return POST();
 }

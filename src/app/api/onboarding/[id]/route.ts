@@ -30,17 +30,33 @@ export async function POST(
     ...body,
   };
 
-  // Save to Supabase if configured (production)
+  // Save to Supabase if configured (production).
+  //
+  // Schema reality check: the `onboarding` table was originally defined in
+  // supabase-schema.sql with { id UUID PK, prospect_id UUID FK, form_data
+  // JSONB, submitted_at TIMESTAMPTZ }. It does NOT have prospect_id as a
+  // primary/unique key, so a plain upsert with onConflict:"prospect_id"
+  // will fail. Delete-then-insert the prospect's existing row so repeat
+  // submissions overwrite cleanly.
   if (isSupabaseConfigured()) {
     try {
-      await supabase.from("onboarding").upsert({
+      await supabase.from("onboarding").delete().eq("prospect_id", id);
+      const { error: insertErr } = await supabase.from("onboarding").insert({
         prospect_id: id,
-        business_name: prospect.businessName,
-        submitted_at: onboardingData.submittedAt,
-        data: body,
-      }, { onConflict: "prospect_id" });
-    } catch {
-      // Table might not exist yet
+        form_data: {
+          // Store businessName + submittedAt inside form_data so the
+          // existing schema doesn't need new columns. The GET handler
+          // below flattens these back out for the UI.
+          businessName: prospect.businessName,
+          submittedAt: onboardingData.submittedAt,
+          ...body,
+        },
+      });
+      if (insertErr) {
+        console.error("[Onboarding] Insert failed:", insertErr);
+      }
+    } catch (err) {
+      console.error("[Onboarding] Supabase write failed:", err);
     }
   } else if (!process.env.VERCEL) {
     // Local development only — use filesystem
@@ -99,20 +115,28 @@ export async function GET(
 ) {
   const { id } = await params;
 
-  // Read from Supabase if configured
+  // Read from Supabase if configured. The table stores everything inside
+  // form_data (legacy schema) — businessName + submittedAt live there too.
   if (isSupabaseConfigured()) {
     try {
       const { data, error } = await supabase
         .from("onboarding")
         .select("*")
         .eq("prospect_id", id)
+        .order("submitted_at", { ascending: false })
+        .limit(1)
         .single();
       if (!error && data) {
+        const formData = (data.form_data as Record<string, unknown>) || {};
         return NextResponse.json({
           prospectId: data.prospect_id,
-          businessName: data.business_name,
-          submittedAt: data.submitted_at,
-          ...(data.data as object),
+          businessName:
+            (formData.businessName as string | undefined) ||
+            (data.business_name as string | undefined),
+          submittedAt:
+            (formData.submittedAt as string | undefined) ||
+            (data.submitted_at as string | undefined),
+          ...formData,
         });
       }
     } catch {
