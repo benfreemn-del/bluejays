@@ -69,83 +69,93 @@ function getTopService(prospect: Prospect): string | undefined {
   return name && name.length > 2 && name.length < 40 ? name.toLowerCase() : undefined;
 }
 
+/**
+ * Day 0 pitch email — optimized for Gmail Primary-tab placement.
+ *
+ * Rewritten 2026-04-19 after discovering that the previous version was
+ * being silently quarantined by Gmail / bucket-filtered into Promotions
+ * due to commercial trigger fingerprints:
+ *   - Multiple CTA links (preview + portfolio + calendly)
+ *   - Pricing language in the body ($997, 3 payments of $349)
+ *   - "Book a walkthrough" / "no pressure" / "limited time" cadence
+ *   - Long body (>250 words)
+ *
+ * New strategy: email is a soft "hey I built you this thing" nudge. All
+ * pricing and CTAs live on the claim page, which the prospect reaches by
+ * clicking the one preview link. The email itself reads like a personal
+ * note from one person to another.
+ *
+ * Design principles:
+ *   - Under 80 words in the body
+ *   - ONE link only (the preview)
+ *   - Zero pricing language
+ *   - Zero calendly / booking language
+ *   - Question at the end that invites a soft reply
+ *   - Casual sign-off, no title
+ */
 export function getPitchEmail(
   prospect: Prospect,
   previewUrl: string = getShortPreviewUrl(prospect),
-  videoUrl?: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _videoUrl?: string,
 ): EmailTemplate {
   const { greeting, hasName } = getGreetingName(prospect);
-  const category = CATEGORY_CONFIG[prospect.category].label;
-  const hasWebsite = !!prospect.currentWebsite;
+  const category = CATEGORY_CONFIG[prospect.category].label.toLowerCase();
   const city = prospect.city || prospect.address?.split(",")[0] || "";
 
-  // Drop the name prefix when we don't have a real owner name — avoids
-  // awkward "Merit Construction, I made something for Merit Construction"
   const subject = hasName
-    ? `${greeting}, I made something for ${prospect.businessName}`
-    : `I made a website for ${prospect.businessName}`;
+    ? `${greeting}, made something for ${prospect.businessName}`
+    : `Made something for ${prospect.businessName}`;
 
-  const discoveryLine = hasWebsite
-    ? `I found ${prospect.businessName} while searching for top-rated ${category.toLowerCase()} businesses${city ? ` in ${city}` : ""} — your reviews stood out.`
-    : `I was looking for ${category.toLowerCase()} businesses${city ? ` in ${city}` : ""} and came across ${prospect.businessName} — but noticed you don't have a website yet.`;
+  const discoveryLine = city
+    ? `I was looking at ${category} businesses in ${city} and came across ${prospect.businessName}.`
+    : `I came across ${prospect.businessName} while looking at ${category} businesses in your area.`;
 
-  const ratingBlurb = buildRatingBlurb(prospect);
+  const ratingLine =
+    prospect.googleRating && prospect.reviewCount && prospect.reviewCount >= 5
+      ? ` Your ${prospect.googleRating}★ across ${prospect.reviewCount} reviews stood out.`
+      : "";
 
   const body = `Hi ${greeting},
 
-${discoveryLine}${ratingBlurb}
+${discoveryLine}${ratingLine}
 
-Your reviews tell one story — the question is whether your website tells the same one. So I built one that does.
+I spent a few hours this week putting together what a new website for you could look like — uses your actual services, photos, and contact info:
 
-See your site: ${previewUrl}
-${buildVideoBlock(videoUrl)}
-Your customers are searching for ${category.toLowerCase()} services online right now. When they find you, what do they see? A site like this makes sure their first impression matches the quality of your work.
+${previewUrl}
 
-See more ${category.toLowerCase()} sites we've built: https://bluejayportfolio.com/v2/${prospect.category}
+Take a look when you have a minute. Curious what you'd change.
 
-The full build is $997 one-time — custom design, domain registration, and hosting setup all included. If that feels heavy right now, we also split it into 3 payments of $349.
-
-Book a quick 15-min walkthrough — I'll show you everything live, no pressure: https://calendly.com/bluejaycontactme/website-walkthrough
-
-What's one thing about your business you'd want front-and-center on a new site?
-
-— Ben @ BlueJays
+— Ben
 bluejaycontactme@gmail.com
 ${EMAIL_FOOTER.replace("{{baseUrl}}", process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com").replace("{{prospectId}}", prospect.id)}`;
 
   return { subject, body, sequence: 1 };
 }
 
+/**
+ * Day 5 follow-up — short nudge, one link, no pricing language.
+ * Same Primary-tab principles as the pitch: short, personal, soft ask.
+ */
 export function getFollowUp1(
   prospect: Prospect,
   previewUrl: string = getShortPreviewUrl(prospect),
-  videoUrl?: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _videoUrl?: string,
 ): EmailTemplate {
-  const { greeting, hasName } = getGreetingName(prospect);
-  const categoryPhrase = prospect.category.replace("-", " ");
-  const city = prospect.city || prospect.address?.split(",")[0] || "your area";
+  const { greeting } = getGreetingName(prospect);
 
-  const subject = hasName
-    ? `${greeting} — what do ${city} customers see when they search "${categoryPhrase}"?`
-    : `What do ${city} customers see when they search "${categoryPhrase}"?`;
+  const subject = `Re: ${prospect.businessName}`;
 
   return {
     subject,
     body: `Hi ${greeting},
 
-Quick test — pull up your phone, Google "${categoryPhrase} near me" in ${city}, and look at the top result.
+Wanted to circle back — sent you a link earlier to a site I built for ${prospect.businessName}. Didn't hear back so figured it got buried.
 
-Is it ${prospect.businessName}? Or is it a competitor with a stronger website?
+Here it is again if you missed it: ${previewUrl}
 
-I built this for you specifically so that answer flips: ${previewUrl}
-${buildVideoBlock(videoUrl)}
-It's $997 one-time — custom design, domain registration, and hosting setup included. 3 payments of $349 if that's easier.
-
-More ${categoryPhrase} sites in this style: https://bluejayportfolio.com/v2/${prospect.category}
-
-15 minutes on a Zoom and I'll show you exactly how this ranks you higher: https://calendly.com/bluejaycontactme/website-walkthrough
-
-When was the last time you Googled your own business name from your phone — what did you see?
+Even if the timing isn't right, I'd genuinely love to hear what you'd change about it.
 
 — Ben
 ${EMAIL_FOOTER.replace("{{baseUrl}}", process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com").replace("{{prospectId}}", prospect.id)}`,
@@ -250,41 +260,31 @@ You're receiving this because you purchased a website from BlueJays.`;
   return { subject, body, sequence: 101 };
 }
 
+/**
+ * Day 12 "value reframe" — last outreach in the active sequence.
+ * Slightly more direct ask but still no pricing language in the body.
+ */
 export function getFollowUp2(
   prospect: Prospect,
   previewUrl: string = getShortPreviewUrl(prospect),
-  videoUrl?: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _videoUrl?: string,
 ): EmailTemplate {
-  const { greeting, hasName } = getGreetingName(prospect);
-  const category = CATEGORY_CONFIG[prospect.category].label;
-  const topService = getTopService(prospect);
-  const serviceHook = topService
-    ? `I made sure ${topService} is front-and-center — it's the first thing visitors see, because it's clearly what you do best.`
-    : `I designed it around what you actually do best — front and center, not buried on some "services" sub-page.`;
+  const { greeting } = getGreetingName(prospect);
 
-  const subject = hasName
-    ? `I looked at your current site, ${greeting} — here's the side-by-side`
-    : `${prospect.businessName} — here's the side-by-side with your current site`;
+  const subject = `Last check on ${prospect.businessName}`;
 
   return {
     subject,
     body: `Hi ${greeting},
 
-I built this site for ${prospect.businessName} because your work deserves a website that doesn't make visitors second-guess the quality.
+One last nudge — the site I built for ${prospect.businessName} is still live if you want another look:
 
-Compare for yourself: ${previewUrl}
-${buildVideoBlock(videoUrl)}
-${serviceHook}
+${previewUrl}
 
-The businesses winning in ${category.toLowerCase()} aren't always the best at what they do — they're the best at being found. You're clearly great at the work. The website's the only thing in the way.
+If it's not a fit right now, totally fine. Just reply and let me know and I'll stop reaching out.
 
-$997 one-time covers the custom design, domain registration, and hosting setup. Or 3 payments of $349.
-
-This preview stays live for 30 days, then I move on and build for someone else. Worth 15 minutes before it comes down? https://calendly.com/bluejaycontactme/website-walkthrough
-
-See other ${category.toLowerCase()} builds: https://bluejayportfolio.com/v2/${prospect.category}
-
-One honest question — if price weren't the issue, would you want this site live for ${prospect.businessName}?
+Either way — thanks for being one of the ones I spent time on.
 
 — Ben
 ${EMAIL_FOOTER.replace("{{baseUrl}}", process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com").replace("{{prospectId}}", prospect.id)}`,
