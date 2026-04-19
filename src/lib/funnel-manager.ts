@@ -306,7 +306,8 @@ async function sendFunnelStep(
   options?: { retryCount?: number; queueOnFailure?: boolean }
 ): Promise<{ success: boolean; emailSent: boolean; smsSent: boolean; voicemailSent: boolean; queuedForRetry: boolean; deliveredChannel: DeliveryChannel | null; lastError?: string }> {
   const step = FUNNEL_STEPS[stepIndex];
-  const previewUrl = `${BASE_URL}${prospect.generatedSiteUrl}`;
+  // Short URL for outreach — /p/[8chars] redirects to the full preview page
+  const previewUrl = `${BASE_URL}/p/${prospect.id.slice(0, 8)}`;
   let emailSent = false;
   let smsSent = false;
   let voicemailSent = false;

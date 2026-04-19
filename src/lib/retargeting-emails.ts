@@ -47,7 +47,7 @@ function getOpenerSequence(prospect: Prospect): RetargetEmail[] {
   const name = prospect.ownerName?.split(" ")[0] || "there";
   const biz = prospect.businessName;
   const category = CATEGORY_CONFIG[prospect.category]?.label || prospect.category;
-  const previewUrl = `${BASE_URL}${prospect.generatedSiteUrl || `/preview/${prospect.id}`}`;
+  const previewUrl = `${BASE_URL}/p/${prospect.id.slice(0, 8)}`;
   const proposalUrl = `${BASE_URL}/proposal/${prospect.id}`;
 
   return [
@@ -129,7 +129,7 @@ function getClickerSequence(prospect: Prospect): RetargetEmail[] {
   const name = prospect.ownerName?.split(" ")[0] || "there";
   const biz = prospect.businessName;
   const category = CATEGORY_CONFIG[prospect.category]?.label || prospect.category;
-  const previewUrl = `${BASE_URL}${prospect.generatedSiteUrl || `/preview/${prospect.id}`}`;
+  const previewUrl = `${BASE_URL}/p/${prospect.id.slice(0, 8)}`;
   const claimUrl = `${BASE_URL}/claim/${prospect.id}`;
   const compareUrl = `${BASE_URL}/compare/${prospect.id}`;
   const bookingUrl = `${BASE_URL}/book/${prospect.id}`;
