@@ -119,6 +119,14 @@ export interface Prospect {
   outreachChannel?: "email-only" | "full";
   /** Needs SMS follow-up when phone number is verified */
   needsSmsFollowup?: boolean;
+  /** ISO timestamp of when we sent the "welcome / now fill out onboarding" email
+   *  right after a successful Stripe payment. Used for idempotency so the
+   *  webhook can retry without double-sending. */
+  welcomeEmailSentAt?: string;
+  /** ISO timestamp of when we sent the 30-minute "you haven't filled out
+   *  the onboarding form yet" reminder. Used for dedupe so the reminder
+   *  cron only fires once per prospect. */
+  onboardingReminderSentAt?: string;
   createdAt: string;
   updatedAt: string;
 }

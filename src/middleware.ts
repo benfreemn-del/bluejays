@@ -101,6 +101,7 @@ const PUBLIC_API_PATHS = [
   "/api/image-proxy",
   "/api/voicemail/status", // Twilio status callback
   "/api/voicemail/twiml",  // Twilio TwiML endpoint
+  "/api/onboarding-reminders/process", // Vercel cron — gated by CRON_SECRET in the handler
 ];
 
 export async function middleware(request: NextRequest) {

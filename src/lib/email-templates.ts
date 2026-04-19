@@ -127,6 +127,103 @@ ${EMAIL_FOOTER.replace("{{baseUrl}}", process.env.NEXT_PUBLIC_BASE_URL || "https
   };
 }
 
+/**
+ * Post-purchase welcome email — fires from the Stripe webhook immediately
+ * after `checkout.session.completed`. Confirms the payment and sends the
+ * prospect to the onboarding form at `/onboarding/[id]` so Ben has their
+ * real content (logo, brand colors, services, photos, etc.) within minutes.
+ *
+ * This email is idempotent via `prospects.welcome_email_sent_at` — the
+ * webhook checks that column before sending to avoid double-sending on
+ * Stripe retries.
+ */
+export function getWelcomeEmail(prospect: Prospect): EmailTemplate {
+  const name = prospect.ownerName?.split(" ")[0] || "there";
+  const baseUrl = "https://bluejayportfolio.com";
+  const onboardingUrl = `${baseUrl}/onboarding/${prospect.id}`;
+
+  const subject = `Welcome to BlueJays — here's what happens next, ${name}`;
+
+  const body = `Hi ${name},
+
+Thanks for trusting me with ${prospect.businessName}'s website — I'm genuinely excited to build this out for you.
+
+Here's exactly what happens from here:
+
+1. You fill out a quick onboarding form (10 min)
+   ${onboardingUrl}
+
+   This is where you give me the real content — your logo, brand colors, services, hours, photos, testimonials, and any specific requests. Everything you share here makes your final site feel like YOUR site, not a template.
+
+2. I customize your site (24-48 hours)
+   The preview you saw is V1 — I take it from there and plug in your real photos, content, and any custom features you requested.
+
+3. Domain + hosting setup (same day as approval)
+   Once you approve the final version, I register your domain and point it at the live site. Your $997 covers all of that — no surprise fees.
+
+4. Site goes live
+   I'll email you the login details and a short walkthrough video so you know exactly how everything works.
+
+The faster you fill out the onboarding form, the faster your site goes live. Most clients knock it out in under 15 minutes.
+
+Start onboarding: ${onboardingUrl}
+
+If you have any questions along the way, just reply to this email — it comes straight to me.
+
+— Ben @ BlueJays
+ben@bluejayportfolio.com
+
+—
+BlueJays Business Solutions | Washington, USA
+You're receiving this because you purchased a website from BlueJays.`;
+
+  return { subject, body, sequence: 100 };
+}
+
+/**
+ * 30-minute onboarding reminder — fires from the reminder cron
+ * (`/api/onboarding-reminders/process`) when a paid prospect hasn't
+ * submitted the onboarding form within 30 minutes of payment.
+ *
+ * Idempotent via `prospects.onboarding_reminder_sent_at` — only fires once.
+ */
+export function getOnboardingReminderEmail(prospect: Prospect): EmailTemplate {
+  const name = prospect.ownerName?.split(" ")[0] || "there";
+  const baseUrl = "https://bluejayportfolio.com";
+  const onboardingUrl = `${baseUrl}/onboarding/${prospect.id}`;
+
+  const subject = `${name}, just need a few details to start building your site`;
+
+  const body = `Hi ${name},
+
+Saw you grabbed ${prospect.businessName}'s website earlier today — thanks again!
+
+I'm ready to start customizing, but I need your onboarding form first so I can plug in your real logo, colors, services, and photos. Takes about 10 minutes:
+
+${onboardingUrl}
+
+The main things I need:
+  • Your logo (if you have one — if not I'll handle it)
+  • Your brand colors
+  • A list of your services
+  • Any photos you want featured
+  • Your preferred domain name
+  • Anything specific you want on the site
+
+Once I have all of that, I'll have your finished site ready within 24-48 hours.
+
+If something came up or you're stuck on a question, just reply to this email and I'll help.
+
+— Ben @ BlueJays
+ben@bluejayportfolio.com
+
+—
+BlueJays Business Solutions | Washington, USA
+You're receiving this because you purchased a website from BlueJays.`;
+
+  return { subject, body, sequence: 101 };
+}
+
 export function getFollowUp2(
   prospect: Prospect,
   previewUrl: string,

@@ -168,6 +168,8 @@ function dbToProspect(row: Record<string, unknown>): Prospect {
     adminNotesSubmittedAt: row.admin_notes_submitted_at as string | undefined,
     lastSubmittedAdminNotes: (row.last_submitted_admin_notes as string | null) || undefined,
     lastSubmittedTheme: (row.last_submitted_theme as "light" | "dark" | null) || undefined,
+    welcomeEmailSentAt: row.welcome_email_sent_at as string | undefined,
+    onboardingReminderSentAt: row.onboarding_reminder_sent_at as string | undefined,
     createdAt: row.created_at as string,
     updatedAt: row.updated_at as string,
   });
@@ -346,6 +348,8 @@ export async function updateProspect(
     if (sanitizedUpdates.adminNotesSubmittedAt !== undefined) dbUpdates.admin_notes_submitted_at = sanitizedUpdates.adminNotesSubmittedAt || null;
     if (sanitizedUpdates.lastSubmittedAdminNotes !== undefined) dbUpdates.last_submitted_admin_notes = sanitizedUpdates.lastSubmittedAdminNotes || null;
     if (sanitizedUpdates.lastSubmittedTheme !== undefined) dbUpdates.last_submitted_theme = sanitizedUpdates.lastSubmittedTheme || null;
+    if (sanitizedUpdates.welcomeEmailSentAt !== undefined) dbUpdates.welcome_email_sent_at = sanitizedUpdates.welcomeEmailSentAt || null;
+    if (sanitizedUpdates.onboardingReminderSentAt !== undefined) dbUpdates.onboarding_reminder_sent_at = sanitizedUpdates.onboardingReminderSentAt || null;
 
     const { data, error } = await supabase
       .from("prospects")

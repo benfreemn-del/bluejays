@@ -3,6 +3,7 @@ import fs from "fs";
 import path from "path";
 import { getProspect, updateProspect } from "@/lib/store";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
+import { alertOwner } from "@/lib/alerts";
 
 const ONBOARDING_DIR = path.join(process.cwd(), "data", "onboarding");
 
@@ -63,6 +64,28 @@ export async function POST(
   }
 
   console.log(`  ✅ Onboarding form submitted for ${prospect.businessName}`);
+
+  // Alert Ben — this is the signal to start the custom build. Non-critical
+  // (alertOwner already swallows errors internally) so we don't await.
+  const ownerLine = body?.ownerName
+    ? `Submitted by: ${body.ownerName}${body?.ownerTitle ? ` (${body.ownerTitle})` : ""}`
+    : "";
+  const phoneLine = body?.phone ? `Phone: ${body.phone}` : "";
+  const emailLine = body?.email ? `Email: ${body.email}` : "";
+  const domainLine = body?.currentDomain ? `Domain: ${body.currentDomain}` : "";
+  const contactPref = body?.preferredContact ? `Prefers: ${body.preferredContact}` : "";
+  const details = [ownerLine, phoneLine, emailLine, domainLine, contactPref]
+    .filter(Boolean)
+    .join("\n");
+
+  alertOwner({
+    type: "custom-request",
+    message: `${prospect.businessName} just submitted onboarding! Time to build.\n${details}\n\nOpen: https://bluejayportfolio.com/lead/${id}`,
+    prospect,
+    timestamp: new Date().toISOString(),
+  }).catch((err) => {
+    console.error(`[Onboarding] Failed to alert owner for ${id}:`, err);
+  });
 
   return NextResponse.json({
     message: "Onboarding data saved successfully",

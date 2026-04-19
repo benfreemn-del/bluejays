@@ -3,6 +3,9 @@ import { constructWebhookEvent, getStripe } from "@/lib/stripe";
 import { getProspect, updateProspect } from "@/lib/store";
 import { alertProspectPaid } from "@/lib/alerts";
 import { logCost, COST_RATES } from "@/lib/cost-logger";
+import { sendEmail } from "@/lib/email-sender";
+import { getWelcomeEmail } from "@/lib/email-templates";
+import type { Prospect } from "@/lib/types";
 
 /**
  * POST /api/webhooks/stripe
@@ -111,6 +114,15 @@ export async function POST(request: NextRequest) {
 
           // Send payment confirmation email to Ben
           await notifyOwnerPayment(businessName, session.customer_email || prospect.email || "N/A", session.amount_total);
+
+          // Send welcome email to the customer with the onboarding form link.
+          // Idempotent via prospect.welcomeEmailSentAt so Stripe retries don't
+          // double-send. Customer email can come from Stripe session or the
+          // prospect record (pitched via scouted email).
+          const customerEmail = session.customer_email || prospect.email;
+          if (customerEmail && !prospect.welcomeEmailSentAt) {
+            await sendWelcomeEmailToCustomer(prospect, customerEmail);
+          }
 
           // ─── Create deferred $100/year maintenance subscription ───
           // For both standard ($997) and free ($30) one-time setup payments.
@@ -309,6 +321,35 @@ async function createDeferredManagementSubscription(
 // ═══════════════════════════════════════════════════════════════
 // NOTIFICATION HELPERS
 // ═══════════════════════════════════════════════════════════════
+
+/**
+ * Send the post-purchase welcome email to the customer. Points them at the
+ * onboarding form so we can collect their real logo, brand colors, services,
+ * photos, etc. Flips `welcomeEmailSentAt` on the prospect for idempotency.
+ *
+ * Errors are logged but don't fail the webhook — the payment already went
+ * through, and Ben can resend manually from the dashboard if needed.
+ */
+async function sendWelcomeEmailToCustomer(
+  prospect: Prospect,
+  customerEmail: string
+): Promise<void> {
+  try {
+    const template = getWelcomeEmail(prospect);
+    // sequence=100 is reserved for post-purchase welcome — kept distinct from
+    // outreach sequences (1-3) so email_events reporting stays clean.
+    await sendEmail(prospect.id, customerEmail, template.subject, template.body, template.sequence);
+    await updateProspect(prospect.id, {
+      welcomeEmailSentAt: new Date().toISOString(),
+    });
+    console.log(`[Stripe Webhook] Welcome email sent to ${customerEmail} for ${prospect.businessName}`);
+  } catch (err) {
+    console.error(
+      `[Stripe Webhook] Failed to send welcome email to ${customerEmail} for ${prospect.id}:`,
+      err
+    );
+  }
+}
 
 /**
  * Send a payment notification email to Ben.
