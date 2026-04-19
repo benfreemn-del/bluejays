@@ -1544,6 +1544,69 @@ context matters and conversion tooling can work.
 - "Click here to..." / "Learn more" (calls-to-action in link text)
 - "Premium" / "professional" / "state-of-the-art" (brochure language)
 
+### Psychology Stack (NON-NEGOTIABLE — every pitch must include all 5)
+
+The body copy carries 5 distinct psychological hooks in a specific order.
+Each one is small enough to feel natural but together they compound into
+a meaningfully higher reply rate than a neutral pitch. Don't skip any.
+
+1. **Discovery + specificity** — open with a real observation about how
+   you found them: `"I was looking at {category} businesses in {city} and
+   came across {business}"`. Signals real research, not mass blast.
+   Never open with "Hope this finds you well" or any other filler.
+
+2. **Validation of their work** — reference their rating/reviews/real
+   achievement: `"Your 5★ across 23 reviews stood out"`. Rewards the
+   reader's ego for work already done. They feel SEEN before they feel
+   SOLD. Skip only if the data isn't there (fewer than 5 reviews).
+
+3. **Reciprocity + effort** — mention specific time invested: `"I spent
+   a few hours this week putting together..."`. This is the #1 reply-rate
+   driver in cold email research. Classical reciprocity: "they worked for
+   me, I should at least look." To avoid Gmail pattern-matching across a
+   daily batch of 20+ sends, the codebase rotates across several natural
+   phrasings (see `EFFORT_PHRASES` in `email-templates.ts`). Deterministic
+   by prospect.id so the same person always gets the same phrasing across
+   multiple follow-ups (consistency).
+
+4. **Humility + implicit gap** — disarm the sales-pitch threat while
+   subtly implying they have taste: `"No idea if it's what you had in
+   mind, but figured you'd want to see it"`. This line does two things
+   simultaneously — it lowers the reader's defenses ("he's not pushing
+   me"), and it primes them to compare what you built against an
+   internal standard they already hold (classic gap technique).
+
+5. **Soft reply prompt / curiosity** — close with an open question that
+   invites conversation, not a commitment: `"Curious what you'd change"`.
+   Reply rate on "Curious what you'd change" is materially higher than
+   on "Would you be open to a 15-min call?" because the former requires
+   no commitment — the reader can reply with literally any thought.
+
+**Other hooks from the broader Sales & Outreach section** (loss aversion,
+scarcity, social proof, future self, identity) are appropriate on the
+claim page, voicemail scripts, and follow-up SMS — but **NOT in the
+pitch email body**. They read as marketing copy and trip Gmail's
+Promotions classifier. Keep the pitch email pure psychology-first,
+pricing/scarcity/CTA-zero.
+
+### Effort phrase rotation rule
+
+Ben explicitly requested (2026-04-19) that every pitch mention a
+specific amount of time invested personally — "a few hours this week",
+"all afternoon yesterday", "a chunk of the weekend", etc. The codebase
+maintains an array `EFFORT_PHRASES` in `email-templates.ts` with 6-8
+natural variations.
+
+- ADD new phrases to that array, NEVER replace existing ones without
+  Ben's approval — different businesses across the funnel history may
+  have seen specific phrasings.
+- Every phrase must be casual, specific, and first-person ("I" not "we"
+  or "our team").
+- Never say "the team" or "our designers" — Ben is one person, that
+  personal thread is part of the psychology.
+- Time references can be vague ("recently", "this week") or specific
+  ("yesterday afternoon", "Sunday night"). Mix is fine.
+
 ### Approved baseline template (Day 0 pitch)
 
 Locked in `src/lib/email-templates.ts::getPitchEmail()`. If you rewrite
@@ -1555,17 +1618,21 @@ Hi {greeting},
 I was looking at {category} businesses in {city} and came across
 {businessName}. Your {rating}★ across {reviewCount} reviews stood out.
 
-I spent a few hours this week putting together what a new website for
-you could look like — uses your actual services, photos, and contact
-info:
+{effortPhrase} — uses your actual services, photos, and contact info:
 
 {shortPreviewUrl}
 
-Take a look when you have a minute. Curious what you'd change.
+No idea if it's what you had in mind, but figured you'd want to see it.
+Curious what you'd change.
 
 — Ben
 bluejaycontactme@gmail.com
 ```
+
+Where `{effortPhrase}` is deterministically picked from `EFFORT_PHRASES`
+based on prospect.id — e.g. "I spent a few hours this week putting
+together what a new website for you could look like" or "Worked on this
+for a chunk of the afternoon yesterday — a website concept for you".
 
 The follow-ups (Day 5 + Day 12) use the same principles with slightly
 different framings: "Re: [Business]" + "just circling back" for follow-up

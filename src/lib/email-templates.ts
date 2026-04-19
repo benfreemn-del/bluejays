@@ -59,6 +59,44 @@ function buildRatingBlurb(prospect: Prospect): string {
 }
 
 /**
+ * Effort-investment hook — one of the most important rules in the template.
+ *
+ * Every pitch email MUST include a specific reference to Ben personally
+ * investing time in THIS prospect's site. This is the reciprocity trigger:
+ * when someone tells you they worked hours specifically for you, you feel
+ * a pull to at least look at what they made. It separates BlueJays from
+ * mass-marketing "you need a website!" spam.
+ *
+ * We rotate across several natural phrasings so that 20 pitches sent on
+ * the same day don't have an identical-body fingerprint that Gmail can
+ * pattern-match across the batch. Deterministic selection by prospect.id
+ * means the same prospect always gets the same phrasing if they receive
+ * multiple sends over time (consistency).
+ *
+ * See CLAUDE.md "Outreach Email Template Rules" for the full rationale.
+ */
+const EFFORT_PHRASES = [
+  "I spent a few hours this week putting together what a new website for you could look like",
+  "Worked on this for a chunk of the afternoon yesterday — a website concept for you",
+  "Put together a rough version of what your website could look like over the weekend",
+  "Spent part of the morning building out a website concept for you",
+  "Threw together a website for you last night",
+  "Worked on this a few hours this week — a website draft for you",
+  "Built this out over the weekend — a website concept for you",
+  "Spent a couple hours on this recently — a website draft for you",
+];
+
+function pickEffortPhrase(prospectId: string): string {
+  // Deterministic hash: same prospect id → same phrase every time.
+  let hash = 0;
+  for (let i = 0; i < prospectId.length; i++) {
+    hash = (hash * 31 + prospectId.charCodeAt(i)) | 0;
+  }
+  const index = Math.abs(hash) % EFFORT_PHRASES.length;
+  return EFFORT_PHRASES[index];
+}
+
+/**
  * Pulls the first service name from scrapedData when available so follow-ups
  * can reference a specific offering (e.g., "emergency repair", "kitchen remodels").
  */
@@ -107,6 +145,26 @@ export function getPitchEmail(
     ? `${greeting}, made something for ${prospect.businessName}`
     : `Made something for ${prospect.businessName}`;
 
+  // --- Psychology stack baked into the body ---
+  //
+  // 1. Discovery (specificity)   — "I was looking at X in Y and came across
+  //                                 {business}" — feels like a real person
+  //                                 doing real research, not a mass blast
+  // 2. Validation (identity)     — "Your 5★ / 23 reviews stood out" —
+  //                                 rewards the reader's ego for work already
+  //                                 done, primes them to feel seen
+  // 3. Reciprocity (effort)      — "{effort phrase}" from EFFORT_PHRASES —
+  //                                 signals Ben personally invested time
+  //                                 specifically for THEM. Hook #1 for
+  //                                 reply rate per cold-email research
+  // 4. Humility (disarm + gap)   — "No idea if it's what you had in mind"
+  //                                 — lowers perceived sales-threat AND
+  //                                 implies they have standards/taste that
+  //                                 their current site might not match
+  // 5. Curiosity (soft reply)    — "Curious what you'd change" — invites
+  //                                 conversation without asking for a call
+  //
+  // See CLAUDE.md "Outreach Email Template Rules" for rationale.
   const discoveryLine = city
     ? `I was looking at ${category} businesses in ${city} and came across ${prospect.businessName}.`
     : `I came across ${prospect.businessName} while looking at ${category} businesses in your area.`;
@@ -116,15 +174,17 @@ export function getPitchEmail(
       ? ` Your ${prospect.googleRating}★ across ${prospect.reviewCount} reviews stood out.`
       : "";
 
+  const effortPhrase = pickEffortPhrase(prospect.id);
+
   const body = `Hi ${greeting},
 
 ${discoveryLine}${ratingLine}
 
-I spent a few hours this week putting together what a new website for you could look like — uses your actual services, photos, and contact info:
+${effortPhrase} — uses your actual services, photos, and contact info:
 
 ${previewUrl}
 
-Take a look when you have a minute. Curious what you'd change.
+No idea if it's what you had in mind, but figured you'd want to see it. Curious what you'd change.
 
 — Ben
 bluejaycontactme@gmail.com
