@@ -69,6 +69,17 @@ async function sendViaSendGrid(
     from: { email: from.email, name: from.name },
     subject,
     content: [{ type: "text/plain", value: body }],
+    // Disable SendGrid's click tracking + open tracking on plain-text sends.
+    // In plain-text bodies, click tracking REPLACES the visible URL with a
+    // 250-char redirect URL like https://u82955649.ct.sendgrid.net/ls/click?...
+    // which looks like spam and ruins the whole point of our /p/[code]
+    // short-URL system. We accept the loss of per-send click analytics in
+    // exchange for clean URLs that render nicely in the recipient's inbox.
+    // Revisit when we move to HTML emails (hidden tracking, best of both).
+    tracking_settings: {
+      click_tracking: { enable: false, enable_text: false },
+      open_tracking: { enable: false },
+    },
   };
   if (from.replyTo) {
     payload.reply_to = { email: from.replyTo };

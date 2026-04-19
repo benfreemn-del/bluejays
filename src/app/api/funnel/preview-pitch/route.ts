@@ -123,6 +123,12 @@ export async function POST(request: NextRequest) {
       from: { email: "ben@bluejayportfolio.com", name: "Ben @ BlueJays" },
       subject: template.subject,
       content: [{ type: "text/plain", value: template.body }],
+      // Match production email-sender settings — disable click/open tracking
+      // so the URLs in the preview match exactly what real prospects see.
+      tracking_settings: {
+        click_tracking: { enable: false, enable_text: false },
+        open_tracking: { enable: false },
+      },
     }),
   });
 
