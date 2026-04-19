@@ -1480,6 +1480,108 @@ These rules were derived from recurring issues caught across multiple review cyc
 
 ---
 
+## Outreach Email Template Rules (NON-NEGOTIABLE — locked in 2026-04-19)
+
+Ben tested the original multi-CTA pitch email against a fresh Gmail
+account on 2026-04-19. SendGrid reported "Delivered and Received" but
+the email never appeared in any folder — Google silent-quarantined it
+because the body had every Promotions/spam-classifier trigger. After
+rewriting to a minimal, personal template, Ben explicitly approved the
+new format as permanent and asked for these rules to be codified.
+
+**The email is a nudge. The claim page is the pitch.** The whole job of
+the pitch/follow-up emails is to get a prospect to click the preview
+link. Everything else — pricing, payment plans, ROI calculator, Calendly,
+comparison table, guarantees — lives on the preview + claim pages where
+context matters and conversion tooling can work.
+
+### Body structure (ALL outreach emails — pitch, follow-up 1, follow-up 2)
+
+- **Max 80 words** in the body. Short > long in cold outreach.
+- **EXACTLY ONE link** — the preview URL (via `getShortPreviewUrl`). No
+  exceptions. No portfolio link. No Calendly link. No second CTA.
+- **Zero pricing language in the body.** No "$997", no "3 payments of",
+  no "one-time", no "includes domain registration". The prospect sees
+  those on the claim page.
+- **Zero booking / walkthrough CTAs.** No "book a call", no "schedule",
+  no Calendly URL. The soft reply prompt at the end ("curious what you'd
+  change") is the CTA.
+- **Personal tone only.** First-person, no titles, no company name in the
+  sign-off. "— Ben" beats "— Ben @ BlueJays, CEO".
+- **Closing question that invites a soft reply**, not a booking. Examples:
+  "Curious what you'd change", "What you'd change about it", "Let me
+  know if it's a fit or not". Never "Would you like to schedule a call?".
+- **Subject line: short, lowercase-feeling, curiosity-inducing.** "Made
+  something for [Business]" beats "[Business] — a $997 custom website
+  opportunity". No pricing in subject. No emojis. No ALL CAPS.
+- **Soft "re:" treatment on follow-ups.** `Re: [Business Name]` as
+  follow-up 1 subject signals "continuing a conversation" which Gmail
+  treats more favorably than a new commercial send.
+- **"Thanks for being one of the ones I spent time on"** or similar in
+  the final follow-up. Reciprocity framing converts better than urgency.
+
+### Tone principles
+
+- Should read like a developer or designer emailing a stranger about
+  something interesting they noticed, not a sales rep pitching a service.
+- Use casual phrasing: "I spent a few hours this week putting together"
+  beats "I've designed a professional website solution"
+- Validate THEIR work first (reviews, rating, reputation), then mention
+  what you built. Never lead with what you want.
+- Never apologize for reaching out, never explain why you have their
+  info, never say "sorry if you're not interested". Ironically, those
+  hedges reduce response rates.
+
+### Banned phrases (never in any outreach email body or subject)
+
+- "Book a call" / "schedule a walkthrough" / "15-min demo"
+- "$997" / pricing in any form
+- "No pressure" (defensive, sounds like a pushy salesperson backpedaling)
+- "Limited time" / "expires soon" / "only a few spots left"
+- "Custom design, domain registration, and hosting setup all included"
+  (marketing copy in the body — move to claim page)
+- "The full build is..." (transactional framing)
+- "Click here to..." / "Learn more" (calls-to-action in link text)
+- "Premium" / "professional" / "state-of-the-art" (brochure language)
+
+### Approved baseline template (Day 0 pitch)
+
+Locked in `src/lib/email-templates.ts::getPitchEmail()`. If you rewrite
+it, you must preserve all of the rules above. The approved body format:
+
+```
+Hi {greeting},
+
+I was looking at {category} businesses in {city} and came across
+{businessName}. Your {rating}★ across {reviewCount} reviews stood out.
+
+I spent a few hours this week putting together what a new website for
+you could look like — uses your actual services, photos, and contact
+info:
+
+{shortPreviewUrl}
+
+Take a look when you have a minute. Curious what you'd change.
+
+— Ben
+bluejaycontactme@gmail.com
+```
+
+The follow-ups (Day 5 + Day 12) use the same principles with slightly
+different framings: "Re: [Business]" + "just circling back" for follow-up
+1, "Last check on [Business]" + graceful out for follow-up 2.
+
+### Why this matters
+
+Email deliverability compounds on volume + content. Bad body copy kills
+sender reputation even if DKIM/SPF/DMARC are perfect. **Every single
+email that lands in Promotions or Spam instead of Primary drags the
+domain's reputation down.** One clean template at 80 words with 1 link
+outperforms a polished 300-word template with 3 links every time. And
+because we warm up over 14 days, the cost of a bad template during
+warmup is 14 days of compounding reputation damage that takes 30+ days
+to recover from. The template lives at the foundation — treat it as such.
+
 ## Short URL Rules (NON-NEGOTIABLE — added 2026-04-19)
 
 Any URL that a prospect or customer will see — in an email, SMS, voicemail,
