@@ -119,6 +119,10 @@ export interface Prospect {
   outreachChannel?: "email-only" | "full";
   /** Needs SMS follow-up when phone number is verified */
   needsSmsFollowup?: boolean;
+  /** 8-char deterministic short code used for customer-facing preview URLs
+   *  (see /p/[code] route + src/lib/short-urls.ts). Derived from md5(id).
+   *  Populated by migration 20260419_prospect_short_codes.sql. */
+  short_code?: string;
   /** ISO timestamp of when we sent the "welcome / now fill out onboarding" email
    *  right after a successful Stripe payment. Used for idempotency so the
    *  webhook can retry without double-sending. */

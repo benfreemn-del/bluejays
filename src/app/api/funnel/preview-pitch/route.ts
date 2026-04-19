@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { getPitchEmail } from "@/lib/email-templates";
+import { getShortPreviewUrl } from "@/lib/short-urls";
 import type { Prospect } from "@/lib/types";
 
 /**
@@ -96,28 +97,21 @@ export async function POST(request: NextRequest) {
     status: prospectRow.status as Prospect["status"],
     scrapedData: (prospectRow.scraped_data as Prospect["scrapedData"]) || undefined,
     generatedSiteUrl: (prospectRow.generated_site_url as string | null) || undefined,
+    short_code: (prospectRow.short_code as string | null) || undefined,
     createdAt: (prospectRow.created_at as string) || new Date().toISOString(),
     updatedAt: (prospectRow.updated_at as string) || new Date().toISOString(),
   };
 
-  const previewUrl = `https://bluejayportfolio.com/preview/${prospect.id}`;
+  const previewUrl = getShortPreviewUrl(prospect);
 
-  // 3. Render the pitch
-  const template = getPitchEmail(prospect, previewUrl);
+  // 3. Render the pitch — uses the short URL automatically via template defaults
+  const template = getPitchEmail(prospect);
 
-  // 4. Send via SendGrid DIRECTLY — no warmup tracking, no retries, no DB logging
-  //    Prefix the subject so Ben recognizes it's a preview, not an accidental real send
-  const subject = `[PREVIEW] ${template.subject}`;
-  const bodyWithContext = [
-    `--- PREVIEW EMAIL (not tracked, not sent to prospect) ---`,
-    `Rendered for: ${prospect.businessName} (${prospect.category})`,
-    `Would be sent to: ${prospect.email || "(no email)"}`,
-    `Preview URL: ${previewUrl}`,
-    `-----------------------------------------------------------`,
-    ``,
-    template.body,
-  ].join("\n");
-
+  // 4. Send via SendGrid DIRECTLY — no warmup tracking, no retries, no DB logging.
+  //    NO [PREVIEW] prefix, NO banner. Ben wanted to see the email EXACTLY as a
+  //    prospect would see it, so this sends the rendered template verbatim.
+  //    The only way to tell it's a preview send is that Ben is the recipient;
+  //    that's intentional for QA fidelity.
   const response = await fetch("https://api.sendgrid.com/v3/mail/send", {
     method: "POST",
     headers: {
@@ -126,9 +120,9 @@ export async function POST(request: NextRequest) {
     },
     body: JSON.stringify({
       personalizations: [{ to: [{ email: to }] }],
-      from: { email: "ben@bluejayportfolio.com", name: "Ben @ BlueJays (preview)" },
-      subject,
-      content: [{ type: "text/plain", value: bodyWithContext }],
+      from: { email: "ben@bluejayportfolio.com", name: "Ben @ BlueJays" },
+      subject: template.subject,
+      content: [{ type: "text/plain", value: template.body }],
     }),
   });
 
@@ -145,6 +139,7 @@ export async function POST(request: NextRequest) {
     to,
     prospect: {
       id: prospect.id,
+      shortCode: prospect.short_code,
       businessName: prospect.businessName,
       category: prospect.category,
       email: prospect.email,

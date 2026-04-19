@@ -1,5 +1,6 @@
 import type { Prospect } from "./types";
 import { CATEGORY_CONFIG } from "./types";
+import { getShortPreviewUrl } from "./short-urls";
 
 export interface EmailTemplate {
   subject: string;
@@ -70,7 +71,7 @@ function getTopService(prospect: Prospect): string | undefined {
 
 export function getPitchEmail(
   prospect: Prospect,
-  previewUrl: string,
+  previewUrl: string = getShortPreviewUrl(prospect),
   videoUrl?: string,
 ): EmailTemplate {
   const { greeting, hasName } = getGreetingName(prospect);
@@ -117,7 +118,7 @@ ${EMAIL_FOOTER.replace("{{baseUrl}}", process.env.NEXT_PUBLIC_BASE_URL || "https
 
 export function getFollowUp1(
   prospect: Prospect,
-  previewUrl: string,
+  previewUrl: string = getShortPreviewUrl(prospect),
   videoUrl?: string,
 ): EmailTemplate {
   const { greeting, hasName } = getGreetingName(prospect);
@@ -251,7 +252,7 @@ You're receiving this because you purchased a website from BlueJays.`;
 
 export function getFollowUp2(
   prospect: Prospect,
-  previewUrl: string,
+  previewUrl: string = getShortPreviewUrl(prospect),
   videoUrl?: string,
 ): EmailTemplate {
   const { greeting, hasName } = getGreetingName(prospect);

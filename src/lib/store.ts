@@ -170,6 +170,7 @@ function dbToProspect(row: Record<string, unknown>): Prospect {
     lastSubmittedTheme: (row.last_submitted_theme as "light" | "dark" | null) || undefined,
     welcomeEmailSentAt: row.welcome_email_sent_at as string | undefined,
     onboardingReminderSentAt: row.onboarding_reminder_sent_at as string | undefined,
+    short_code: (row.short_code as string | null) || undefined,
     createdAt: row.created_at as string,
     updatedAt: row.updated_at as string,
   });

@@ -1480,6 +1480,48 @@ These rules were derived from recurring issues caught across multiple review cyc
 
 ---
 
+## Short URL Rules (NON-NEGOTIABLE — added 2026-04-19)
+
+Any URL that a prospect or customer will see — in an email, SMS, voicemail,
+Instagram DM, printed proposal, or anywhere else customer-facing — MUST use
+the short URL format, not a raw UUID.
+
+**Short URL pattern:** `https://bluejayportfolio.com/p/a1b2c3d4` (~40 chars)
+**NOT:** `https://bluejayportfolio.com/preview/02b37937-2980-4101-929e-dfa8dd8aba13` (~85 chars)
+
+Why:
+- Full-UUID URLs are 85+ chars, wrap ugly in email clients, look spammy, get
+  flagged by some spam filters for "long tracking links", and are impossible
+  to dictate over the phone.
+- Short `/p/[code]` URLs are clean, fit on one line, look trustworthy, and
+  match every modern brand-friendly short-link pattern (bit.ly, tinyurl,
+  Mailchimp's own shortener, etc.)
+- The actual conversion rate impact is real and measurable — clean URLs
+  consistently outperform UUID URLs in both open-rate and click-rate studies.
+
+**Implementation:**
+- Every prospect has a deterministic 8-char `short_code` (md5 of UUID).
+- Backed by `prospects.short_code` column + migration `20260419_prospect_short_codes.sql`.
+- Route: `/p/[code]/page.tsx` resolves the code to a prospect and renders the preview.
+- Helper: `import { getShortPreviewUrl } from "@/lib/short-urls"` — **ALWAYS use this**
+  when generating a customer-facing preview URL.
+
+**RULES for new code:**
+- NEVER hardcode `/preview/${id}` or `/preview/{uuid}` in a customer-facing string.
+  Use `getShortPreviewUrl(prospect)` instead.
+- NEVER hardcode `/claim/${id}` either — use `getShortClaimUrl(prospect)` when we
+  add a short claim route.
+- The long-form `/preview/[id]` route still works — it's our internal admin/dashboard
+  path. Don't break it. But don't send it to prospects.
+- If you're in a context where you only have a UUID and no prospect object, call
+  `deriveShortCode(uuid)` from the same lib — it uses the same md5 derivation so
+  you get the same short code without a DB lookup.
+
+**Exceptions:**
+- Internal admin/dashboard routes (/lead/[id], /image-mapper/[id], /preview-device/[id])
+  can use full UUIDs — those are auth-gated and operator-facing.
+- Internal APIs (/api/prospects/[id], /api/generate/[id], etc.) — not customer-facing.
+
 ## Public-Facing Surface Rules (NON-NEGOTIABLE — added 2026-04-17)
 
 The sales funnel is PUBLIC: prospects arrive from email/SMS outreach without an auth cookie. Every page/route on the prospect path must work for unauthenticated visitors.
