@@ -306,10 +306,24 @@ async function logDeliveryAttempt(attempt: DeliveryAttemptLog) {
   writeJsonFile(LOCAL_DELIVERY_LOG_FILE, attempts);
 }
 
+/**
+ * Global SMS kill-switch. Flip via Vercel env var:
+ *   SMS_FUNNEL_DISABLED=true  → funnel skips all SMS sends (email-only)
+ * Unset or "false"            → funnel sends SMS normally
+ *
+ * Added 2026-04-18 because A2P 10DLC campaign is still pending carrier
+ * review. Sending uncompliant SMS risks Twilio number suspension. Keep
+ * this flag ON until the A2P campaign shows Approved in Twilio console.
+ */
+function isSmsGloballyDisabled(): boolean {
+  const flag = (process.env.SMS_FUNNEL_DISABLED || "").toLowerCase();
+  return flag === "true" || flag === "1" || flag === "yes";
+}
+
 function buildAvailableChannels(payload: FunnelDeliveryPayload): DeliveryChannel[] {
   const channels: DeliveryChannel[] = [];
   if (payload.email?.to && payload.email.subject && payload.email.body) channels.push("email");
-  if (payload.sms?.to && payload.sms.body) channels.push("sms");
+  if (payload.sms?.to && payload.sms.body && !isSmsGloballyDisabled()) channels.push("sms");
   return channels;
 }
 
