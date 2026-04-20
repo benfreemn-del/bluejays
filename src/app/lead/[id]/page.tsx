@@ -201,12 +201,22 @@ export default function LeadPage() {
             <StatusBadge status={prospect.status} />
           </div>
           <div className="flex gap-2">
-            {prospect.generatedSiteUrl && (
-              <a href={prospect.generatedSiteUrl} target="_blank" rel="noopener noreferrer"
-                className="text-xs px-3 py-1.5 rounded-lg bg-blue-electric/10 text-blue-electric">
-                Preview Site
-              </a>
-            )}
+            {(() => {
+              // Custom-tier prospects have their real site at customSiteUrl
+              // (e.g. https://lcautism-coalition.vercel.app). Standard/free
+              // tiers use the generated V2-template preview at generatedSiteUrl.
+              // Either link opens the preview in a new tab.
+              const previewHref = prospect.pricingTier === "custom" && prospect.customSiteUrl
+                ? prospect.customSiteUrl
+                : prospect.generatedSiteUrl;
+              if (!previewHref) return null;
+              return (
+                <a href={previewHref} target="_blank" rel="noopener noreferrer"
+                  className="text-xs px-3 py-1.5 rounded-lg bg-blue-electric/10 text-blue-electric">
+                  {prospect.pricingTier === "custom" ? "View Live Site" : "Preview Site"}
+                </a>
+              );
+            })()}
             <button
               onClick={async () => {
                 setVslLoading(true);
@@ -291,9 +301,9 @@ export default function LeadPage() {
                   Build Site →
                 </button>
               )}
-              {(prospect.status === "pending-review" || prospect.status === "ready_to_review" || prospect.status === "qc_failed") && prospect.generatedSiteUrl && (
+              {(prospect.status === "pending-review" || prospect.status === "ready_to_review" || prospect.status === "qc_failed") && (prospect.generatedSiteUrl || (prospect.pricingTier === "custom" && prospect.customSiteUrl)) && (
                 <div className="flex gap-2">
-                  <a href={prospect.generatedSiteUrl} target="_blank" rel="noopener noreferrer"
+                  <a href={prospect.pricingTier === "custom" && prospect.customSiteUrl ? prospect.customSiteUrl : prospect.generatedSiteUrl!} target="_blank" rel="noopener noreferrer"
                     className="h-9 px-4 rounded-lg bg-blue-electric/20 text-blue-electric text-sm font-bold flex items-center">
                     Review Site
                   </a>
