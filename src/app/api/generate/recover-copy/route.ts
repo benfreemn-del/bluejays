@@ -62,9 +62,16 @@ export async function POST(request: NextRequest) {
   if (prospectIds && prospectIds.length > 0) {
     query = query.in("id", prospectIds);
   } else {
+    // IMPORTANT: order ASC (oldest updated_at first). Recovery bumps
+    // updated_at to NOW, so successfully-recovered prospects go to the
+    // BOTTOM of the next batch — we don't keep reprocessing them.
+    // Also exclude prospects updated in the last 30 min (already done
+    // this run or just touched by a different process).
+    const thirtyMinAgo = new Date(Date.now() - 30 * 60 * 1000).toISOString();
     query = query
       .in("status", ELIGIBLE_STATUSES)
-      .order("updated_at", { ascending: false })
+      .lte("updated_at", thirtyMinAgo)
+      .order("updated_at", { ascending: true })
       .limit(count);
   }
 
