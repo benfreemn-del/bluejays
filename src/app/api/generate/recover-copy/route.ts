@@ -118,6 +118,12 @@ export async function POST(request: NextRequest) {
     };
 
     if (!website) {
+      // Same queue-rotation trick — touch updated_at so this doesn't
+      // clog the ASC queue for no-website prospects.
+      await supabase
+        .from("prospects")
+        .update({ updated_at: new Date().toISOString() })
+        .eq("id", id);
       skipped++;
       results.push({
         id,
@@ -127,7 +133,7 @@ export async function POST(request: NextRequest) {
         before,
         after: { tagline: "", about: "" },
         status: "skipped",
-        reason: "no current website on file",
+        reason: "no current website on file (moved to end of queue)",
       });
       continue;
     }
@@ -141,8 +147,16 @@ export async function POST(request: NextRequest) {
       const newTagline = fresh.tagline?.trim() || "";
       const newAbout = fresh.about?.trim() || "";
 
-      // If the scraper couldn't find either, don't overwrite with empty
+      // If the scraper couldn't find either, don't overwrite with empty.
+      // But DO touch updated_at so this prospect doesn't keep re-appearing
+      // at the top of the ASC-ordered queue on every subsequent batch.
+      // They'll still be eligible for retry in the future — just not
+      // during the current pass.
       if (!newTagline && !newAbout) {
+        await supabase
+          .from("prospects")
+          .update({ updated_at: new Date().toISOString() })
+          .eq("id", id);
         skipped++;
         results.push({
           id,
@@ -152,7 +166,7 @@ export async function POST(request: NextRequest) {
           before,
           after: { tagline: "", about: "" },
           status: "skipped",
-          reason: "scraper returned empty tagline + about (site may have changed)",
+          reason: "scraper returned empty tagline + about (moved to end of queue)",
         });
         continue;
       }
