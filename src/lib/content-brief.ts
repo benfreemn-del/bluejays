@@ -167,6 +167,230 @@ function getCategoryLabel(category: Category): string {
   return category.replace(/-/g, " ");
 }
 
+/**
+ * Category-specific voice table — Option A (observational / hook-y).
+ *
+ * Ben approved this tone on 2026-04-19. Every category gets unique,
+ * on-brand copy that actually matches what the business DOES. Replaces
+ * the old generic "{name} serves {area} with real {category} expertise"
+ * fallback which produced garbage like "serves Snohomish area with
+ * church expertise" — a phrase that means nothing.
+ *
+ * Each entry provides:
+ *   - tagline:  Used as the final fallback when we can't build a
+ *               services/differentiator-specific tagline. Full sentence.
+ *   - aboutFill: Sentence inserted in place of the generic "We provide
+ *                professional {category} services tailored to each client"
+ *                when the scrape didn't surface a real services list.
+ *                First-person ("We ...") — the caller stitches it into
+ *                the about paragraph as a standalone sentence.
+ *
+ * When editing, respect the category's actual vibe:
+ *   - Never say "expertise" (banned outside of trades/professional svc)
+ *   - Never say "trusted provider committed to delivering exceptional
+ *     quality and service" — that phrase is in GENERIC_ABOUT_PATTERNS
+ *   - Keep it human. If the line could be swapped into any category, it
+ *     is not specific enough. Rework until only one category fits.
+ */
+interface CategoryVoice {
+  tagline: (businessName: string, area: string) => string;
+  aboutFill: (area: string) => string;
+}
+
+const CATEGORY_VOICE: Record<Category, CategoryVoice> = {
+  "real-estate": {
+    tagline: (b, a) => `${b} helps ${a} buyers and sellers close with confidence.`,
+    aboutFill: (a) => `We guide ${a} buyers and sellers through every step of the real estate journey.`,
+  },
+  dental: {
+    tagline: (b, a) => `${b} keeps ${a} smiles healthy and bright.`,
+    aboutFill: (a) => `We deliver gentle, comprehensive dental care to ${a} families.`,
+  },
+  "law-firm": {
+    tagline: (b, a) => `${b} fights for ${a} clients when it matters most.`,
+    aboutFill: (a) => `We represent ${a} clients with dedication, experience, and results that hold up in court.`,
+  },
+  landscaping: {
+    tagline: (b, a) => `${b} transforms ${a} yards into outdoor spaces you'll actually want to live in.`,
+    aboutFill: (a) => `We design, build, and maintain beautiful outdoor spaces across ${a}.`,
+  },
+  salon: {
+    tagline: (b, a) => `${b} is where ${a} comes to look and feel their best.`,
+    aboutFill: (a) => `We offer personalized hair, color, and styling services for ${a} — tailored to each guest.`,
+  },
+  electrician: {
+    tagline: (b, a) => `${b} wires ${a} homes and businesses safely.`,
+    aboutFill: (a) => `We handle everything from small repairs to full installs across ${a} — licensed, insured, and code-compliant.`,
+  },
+  plumber: {
+    tagline: (b, a) => `${b} fixes ${a} plumbing fast, with no guesswork.`,
+    aboutFill: (a) => `We keep ${a} water running clean and pipes flowing clear — drains, leaks, water heaters, and repipes.`,
+  },
+  hvac: {
+    tagline: (b, a) => `${b} keeps ${a} homes comfortable year-round.`,
+    aboutFill: (a) => `We install, service, and repair HVAC systems across ${a} — heat waves, cold snaps, and everything in between.`,
+  },
+  roofing: {
+    tagline: (b, a) => `${b} protects ${a} homes from the top down.`,
+    aboutFill: (a) => `We install, repair, and maintain roofs that stand up to ${a} weather year after year.`,
+  },
+  "general-contractor": {
+    tagline: (b, a) => `${b} builds ${a} homes and renovations with real craftsmanship.`,
+    aboutFill: (a) => `We handle custom home builds, additions, and full remodels across ${a} — licensed, bonded, and on budget.`,
+  },
+  "auto-repair": {
+    tagline: (b, a) => `${b} keeps ${a} cars on the road and running right.`,
+    aboutFill: (a) => `We diagnose, maintain, and repair vehicles across ${a} — honest pricing, straight answers.`,
+  },
+  chiropractic: {
+    tagline: (b, a) => `${b} helps ${a} move better and feel better.`,
+    aboutFill: (a) => `We provide personalized chiropractic care for ${a} residents — back pain, neck pain, injuries, and wellness.`,
+  },
+  accounting: {
+    tagline: (b, a) => `${b} keeps ${a} businesses compliant and profitable.`,
+    aboutFill: (a) => `We handle bookkeeping, tax prep, and financial strategy for ${a} businesses and families.`,
+  },
+  insurance: {
+    tagline: (b, a) => `${b} protects what matters for ${a} families and businesses.`,
+    aboutFill: (a) => `We help ${a} clients find the right coverage at the right price — auto, home, life, and commercial.`,
+  },
+  photography: {
+    tagline: (b, a) => `${b} captures ${a} moments worth remembering.`,
+    aboutFill: (a) => `We photograph weddings, portraits, families, and events across ${a}.`,
+  },
+  "interior-design": {
+    tagline: (b, a) => `${b} designs ${a} homes that actually feel like you.`,
+    aboutFill: (a) => `We turn ${a} houses into homes with thoughtful, personal design — from single rooms to whole-home transformations.`,
+  },
+  cleaning: {
+    tagline: (b, a) => `${b} keeps ${a} homes and offices spotless.`,
+    aboutFill: (a) => `We provide reliable, thorough residential and commercial cleaning across ${a}.`,
+  },
+  "pest-control": {
+    tagline: (b, a) => `${b} keeps ${a} homes and businesses pest-free.`,
+    aboutFill: (a) => `We handle prevention, extermination, and ongoing protection for ${a} — safe for pets, kids, and peace of mind.`,
+  },
+  moving: {
+    tagline: (b, a) => `${b} helps ${a} move without the headache.`,
+    aboutFill: (a) => `We handle residential and commercial moves across ${a} — packed, loaded, delivered, and treated like your own.`,
+  },
+  veterinary: {
+    tagline: (b, a) => `${b} cares for ${a} pets like family.`,
+    aboutFill: (a) => `We provide wellness, preventive, and urgent care for ${a} pets — from kittens and puppies to seniors.`,
+  },
+  fitness: {
+    tagline: (b, a) => `${b} helps ${a} get stronger, healthier, and more confident.`,
+    aboutFill: (a) => `We offer training, classes, and coaching for ${a} members at every fitness level.`,
+  },
+  tattoo: {
+    tagline: (b, a) => `${b} creates ${a} art that lasts a lifetime.`,
+    aboutFill: (a) => `We specialize in custom tattoo work for ${a} clients — fine line, color, traditional, and coverups.`,
+  },
+  florist: {
+    tagline: (b, a) => `${b} brings beauty to ${a} weddings, events, and everyday moments.`,
+    aboutFill: (a) => `We design custom floral arrangements for ${a} — weddings, funerals, corporate events, and "just because" flowers.`,
+  },
+  catering: {
+    tagline: (b, a) => `${b} feeds ${a} events with food worth remembering.`,
+    aboutFill: (a) => `We cater weddings, corporate events, and private parties across ${a}.`,
+  },
+  daycare: {
+    tagline: (b, a) => `${b} cares for ${a} kids like they're our own.`,
+    aboutFill: (a) => `We provide safe, nurturing, full-day childcare for ${a} families.`,
+  },
+  "pet-services": {
+    tagline: (b, a) => `${b} loves ${a} pets like family.`,
+    aboutFill: (a) => `We offer grooming, boarding, walking, and day care for pets across ${a}.`,
+  },
+  "martial-arts": {
+    tagline: (b, a) => `${b} teaches ${a} discipline, confidence, and strength.`,
+    aboutFill: (a) => `We train ${a} students of all ages — kids programs, adult classes, and competition-track athletes.`,
+  },
+  "physical-therapy": {
+    tagline: (b, a) => `${b} helps ${a} recover and get back to life.`,
+    aboutFill: (a) => `We treat injuries, chronic pain, and post-surgery recovery across ${a}.`,
+  },
+  tutoring: {
+    tagline: (b, a) => `${b} helps ${a} students reach their potential.`,
+    aboutFill: (a) => `We provide personalized academic tutoring for ${a} students — grades K-12 through college prep.`,
+  },
+  "pool-spa": {
+    tagline: (b, a) => `${b} keeps ${a} pools and spas crystal clear.`,
+    aboutFill: (a) => `We handle pool maintenance, repairs, and installations across ${a}.`,
+  },
+  church: {
+    tagline: (b, a) => `${b} welcomes ${a} into a community of faith, fellowship, and service.`,
+    aboutFill: (a) => `We gather ${a} in worship, community, and purpose — Sundays, small groups, and everything in between.`,
+  },
+  restaurant: {
+    tagline: (b, a) => `${b} serves ${a} food that brings people back.`,
+    aboutFill: (a) => `We craft fresh, locally-inspired meals for ${a} — lunch, dinner, and the reason you'll come back next week.`,
+  },
+  medical: {
+    tagline: (b, a) => `${b} cares for ${a} families at every stage of life.`,
+    aboutFill: (a) => `We provide comprehensive medical care to patients across ${a}.`,
+  },
+  painting: {
+    tagline: (b, a) => `${b} paints ${a} homes beautifully, inside and out.`,
+    aboutFill: (a) => `We handle interior and exterior painting for ${a} homes and businesses — prep done right, finish done clean.`,
+  },
+  fencing: {
+    tagline: (b, a) => `${b} builds ${a} fences that last.`,
+    aboutFill: (a) => `We design and install wood, vinyl, chain-link, and custom fencing across ${a}.`,
+  },
+  "tree-service": {
+    tagline: (b, a) => `${b} keeps ${a} trees healthy and safe.`,
+    aboutFill: (a) => `We handle pruning, removal, stump grinding, and tree care across ${a} — licensed arborists, insured crews.`,
+  },
+  "pressure-washing": {
+    tagline: (b, a) => `${b} restores ${a} surfaces to like-new.`,
+    aboutFill: (a) => `We pressure-wash homes, driveways, decks, and commercial exteriors across ${a}.`,
+  },
+  "garage-door": {
+    tagline: (b, a) => `${b} keeps ${a} garages working smoothly.`,
+    aboutFill: (a) => `We install, repair, and service garage doors and openers across ${a}.`,
+  },
+  locksmith: {
+    tagline: (b, a) => `${b} unlocks ${a}, day or night.`,
+    aboutFill: (a) => `We provide emergency locksmith services across ${a} — lockouts, rekeys, and security upgrades.`,
+  },
+  towing: {
+    tagline: (b, a) => `${b} helps ${a} drivers when they need it most.`,
+    aboutFill: (a) => `We provide fast, reliable towing and roadside assistance across ${a} — day or night.`,
+  },
+  construction: {
+    tagline: (b, a) => `${b} builds ${a} with craftsmanship and integrity.`,
+    aboutFill: (a) => `We handle residential and commercial construction across ${a} — new builds, additions, and major renovations.`,
+  },
+  "med-spa": {
+    tagline: (b, a) => `${b} helps ${a} look and feel their best.`,
+    aboutFill: (a) => `We offer facials, injectables, laser, and wellness treatments to ${a} clients.`,
+  },
+  "appliance-repair": {
+    tagline: (b, a) => `${b} fixes ${a} appliances fast.`,
+    aboutFill: (a) => `We repair refrigerators, washers, dryers, ovens, and dishwashers across ${a} — same-day service on most jobs.`,
+  },
+  "junk-removal": {
+    tagline: (b, a) => `${b} clears ${a} clutter fast and responsibly.`,
+    aboutFill: (a) => `We handle junk removal, donation pickup, and full-property cleanouts across ${a}.`,
+  },
+  "carpet-cleaning": {
+    tagline: (b, a) => `${b} deep-cleans ${a} carpets, rugs, and upholstery.`,
+    aboutFill: (a) => `We provide professional carpet, rug, and upholstery cleaning across ${a}.`,
+  },
+  "event-planning": {
+    tagline: (b, a) => `${b} makes ${a} events unforgettable.`,
+    aboutFill: (a) => `We plan weddings, corporate events, and private gatherings across ${a} — design, logistics, and day-of coordination.`,
+  },
+};
+
+function getCategoryVoice(category: Category): CategoryVoice {
+  return CATEGORY_VOICE[category] || {
+    tagline: (b, a) => `${b} proudly serves ${a}.`,
+    aboutFill: (a) => `We proudly serve the ${a} community.`,
+  };
+}
+
 export function buildTaglineFromResearchBrief(brief: ResearchBrief, category: Category): string {
   const services = brief.actualServices.slice(0, 2);
   const area = brief.serviceAreas[0] || brief.city || "the local area";
@@ -184,7 +408,9 @@ export function buildTaglineFromResearchBrief(brief: ResearchBrief, category: Ca
     return `${brief.businessName} serves ${area} with ${differentiator.toLowerCase()}.`;
   }
 
-  return `${brief.businessName} serves ${area} with real ${getCategoryLabel(category)} expertise.`;
+  // Terminal fallback: category-specific voice instead of generic
+  // "serves X area with Y expertise". See CATEGORY_VOICE above.
+  return getCategoryVoice(category).tagline(brief.businessName, area);
 }
 
 export function buildAboutFromResearchBrief(brief: ResearchBrief, category: Category): string {
@@ -201,9 +427,10 @@ export function buildAboutFromResearchBrief(brief: ResearchBrief, category: Cate
     : cityName
       ? `proudly serves the ${cityName} community`
       : "proudly serves the local community";
+  const aboutArea = cityName || cleanAreas[0] || "the local community";
   const servicesClause = brief.actualServices.length
     ? `Our team specializes in ${joinList(brief.actualServices.slice(0, 4), getCategoryLabel(category))}.`
-    : `We provide professional ${getCategoryLabel(category)} services tailored to each client.`;
+    : getCategoryVoice(category).aboutFill(aboutArea);
   const differentiatorClause = brief.differentiators.length
     ? `Clients choose us for ${joinList(brief.differentiators.slice(0, 2).map((entry) => entry.toLowerCase()), "our strong reputation")}.`
     : "";

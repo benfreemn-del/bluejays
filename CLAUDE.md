@@ -1480,6 +1480,80 @@ These rules were derived from recurring issues caught across multiple review cyc
 
 ---
 
+## Generated Site Copy Rules (NON-NEGOTIABLE — added 2026-04-19)
+
+Every generated preview site has a tagline + about paragraph that
+ultimately roots in `src/lib/content-brief.ts`. When the scraper can't
+surface category-specific data (no services list, no differentiators),
+the old fallback produced garbage like:
+
+> "Serving Snohomish area with church expertise."
+
+This failed because:
+- "expertise" is meaningless for most categories (churches don't have
+  "expertise", they have fellowship/community/service)
+- "serving X area" is generic across all 46 categories
+- The sentence could be swapped into any business and would read the
+  same — which means it says nothing about THIS business
+
+### The rule
+
+**Every category MUST have unique, on-brand fallback copy defined in
+`CATEGORY_VOICE` in `content-brief.ts`.** When editing or extending the
+voice table:
+
+- Each entry provides a `tagline` (final fallback) + `aboutFill` (used
+  when no services list is available). Both take `(businessName, area)`
+  and return a full sentence.
+- **"Expertise" is BANNED** outside of trades and professional services
+  where it genuinely applies (electrician, plumber, HVAC, law, medical,
+  accounting). Even there, prefer concrete verbs ("wires", "represents",
+  "diagnoses") over the word "expertise".
+- **The tagline must describe what the business DOES, not what category
+  it belongs to.** `"keeps Snohomish smiles healthy"` tells you it's
+  dental without using the word dental. `"welcomes Snohomish into a
+  community of faith"` tells you it's a church without using the word
+  expertise. That's the bar.
+- **The sentence must fail the "swap test":** if you can replace the
+  category in the sentence with any other category and it still reads
+  plausibly, the copy is too generic. Rework until only one category fits.
+- **Use specific verbs per industry:**
+  - Healthcare-adjacent: cares for, treats, heals, keeps healthy
+  - Trades: wires, fixes, builds, installs, repairs, paints, protects
+  - Creative: designs, captures, creates, styles
+  - Food: feeds, serves, crafts, caters
+  - Community: welcomes, gathers, teaches, trains
+  - Services: guides, helps, handles, clears
+
+### Tone direction (Option A — observational / hook-y)
+
+Approved by Ben on 2026-04-19. This is the permanent voice.
+
+- Opens with `{business} [verb]s {area} [object/audience]`
+- Feels like a local personally describing their business in one line
+- Never salesy, never corporate
+- Zero marketing puffery ("premier", "world-class", "unparalleled",
+  "cutting-edge" — all banned)
+- One sentence, period.
+
+### When adding a new category to `Category` type
+
+You MUST add a matching entry to `CATEGORY_VOICE` in
+`src/lib/content-brief.ts` in the SAME commit. The `getCategoryVoice`
+helper has a generic fallback but any category should hit its bespoke
+copy, not the generic one. TypeScript's `Record<Category, CategoryVoice>`
+type will catch missing entries at build time.
+
+### Regenerating existing prospects after copy edits
+
+Any change to `CATEGORY_VOICE` only applies to NEW generations. To
+backfill currently-approved or in-flight prospects with the new copy,
+fire `/api/generate/bulk-refresh` (see that endpoint for details).
+Status gate: prospects in `approved`, `pending-review`, `ready_to_review`,
+`ready_to_send`, `generated`, or `qc_failed` are eligible for refresh.
+`paid` and `dismissed` prospects are NOT refreshed — their content is
+locked.
+
 ## Outreach Email Template Rules (NON-NEGOTIABLE — locked in 2026-04-19)
 
 Ben tested the original multi-CTA pitch email against a fresh Gmail
