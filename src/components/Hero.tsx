@@ -286,10 +286,14 @@ export default function Hero() {
 
         {/* Cards */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-          {cards.map((site) => (
+          {cards.map((site) => {
+            const isExternal = site.href.startsWith("http");
+            return (
             <motion.a
               key={site.name}
               href={site.href}
+              target={isExternal ? "_blank" : undefined}
+              rel={isExternal ? "noopener noreferrer" : undefined}
               whileHover={{ scale: 1.04, y: -8 }}
               className="group relative rounded-2xl overflow-hidden bg-white/[0.03] border border-white/[0.06] cursor-pointer hover:border-sky-500/40 transition-all duration-500 hover:shadow-[0_12px_50px_rgba(14,165,233,0.3)]"
             >
@@ -339,7 +343,8 @@ export default function Hero() {
               {/* Hover glow bg */}
               <div className="absolute inset-0 rounded-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-[radial-gradient(circle_at_50%_0%,rgba(14,165,233,0.08),transparent_70%)]" />
             </motion.a>
-          ))}
+            );
+          })}
         </div>
       </div>
 
@@ -415,6 +420,6 @@ const defaultSiteCards: SiteCard[] = [
   { name: "Radiance Med Spa", category: "Med Spa", color: "#1a0f1e", href: "/v2/med-spa", icon: "✨", tagline: "Flowing elegance — rejuvenation premium" },
   { name: "ProFix Appliance Repair", category: "Appliance Repair", color: "#0f1720", href: "/v2/appliance-repair", icon: "🔧", tagline: "Circuit grid — technical precision" },
   { name: "CleanSlate Junk Removal", category: "Junk Removal", color: "#0f1a12", href: "/v2/junk-removal", icon: "🚛", tagline: "Eco-friendly — clear the clutter" },
-  { name: "FreshStart Carpet Cleaning", category: "Carpet Cleaning", color: "#0f1520", href: "/v2/carpet-cleaning", icon: "💧", tagline: "Bubble fresh — deep clean magic" },
+  { name: "Lewis County Autism Coalition", category: "Non-Profit", color: "#0a1e3f", href: "https://lcautism-coalition.vercel.app", icon: "💙", tagline: "Community, resources, hope — real client build" },
   { name: "Elevate Events", category: "Event Planning", color: "#1a1520", href: "/v2/event-planning", icon: "🎉", tagline: "Confetti sparkle — celebration design" },
 ];
