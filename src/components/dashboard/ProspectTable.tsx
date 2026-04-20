@@ -55,8 +55,19 @@ function getInitialDraft(prospect: Prospect): NoteDraft {
 }
 
 function getThemedPreviewHref(prospect: Prospect) {
+  // Custom-tier prospects have a real hand-built site at customSiteUrl
+  // (e.g. lcautism-coalition.vercel.app). No themed-device preview exists
+  // for those — the "preview" IS their real live site.
+  if (prospect.pricingTier === "custom" && prospect.customSiteUrl) {
+    return prospect.customSiteUrl;
+  }
   const theme = prospect.selectedTheme || prospect.aiThemeRecommendation || "dark";
   return `/preview-device/${prospect.id}?theme=${theme}`;
+}
+
+function hasPreviewAvailable(prospect: Prospect): boolean {
+  if (prospect.pricingTier === "custom") return !!prospect.customSiteUrl;
+  return !!prospect.generatedSiteUrl;
 }
 
 export default function ProspectTable({
@@ -650,13 +661,15 @@ export default function ProspectTable({
                   <td className="p-3"><StatusBadge status={prospect.status} /></td>
                   <td className="p-3">
                     <div className="flex flex-wrap gap-1.5" onClick={(e) => e.stopPropagation()}>
-                      {prospect.generatedSiteUrl ? (
+                      {hasPreviewAvailable(prospect) ? (
                         <a
                           href={getThemedPreviewHref(mergedProspect)}
+                          target={prospect.pricingTier === "custom" ? "_blank" : undefined}
+                          rel={prospect.pricingTier === "custom" ? "noopener noreferrer" : undefined}
                           className="text-xs px-2.5 py-1.5 rounded-lg bg-blue-electric/10 text-blue-electric hover:bg-blue-electric/20 transition-colors"
-                          title="Preview desktop & mobile"
+                          title={prospect.pricingTier === "custom" ? "Open live custom site" : "Preview desktop & mobile"}
                         >
-                          Preview
+                          {prospect.pricingTier === "custom" ? "View Site" : "Preview"}
                         </a>
                       ) : (
                         <button
