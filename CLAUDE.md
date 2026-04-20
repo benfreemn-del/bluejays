@@ -1971,6 +1971,72 @@ The claim page is the conversion surface. By the time a prospect lands here, the
 - **Every payment-plan selector must call `redirectToCheckout(plan)` directly** (don't just set `?plan=...` in the URL and reload — that makes the button appear broken to prospects who expect a click to DO something).
 - **The preview link in outreach emails/SMS points at `/preview/[id]`, not `/claim/[id]`.** Prospects flow: email → preview → claim → stripe. Never short-circuit email → claim.
 
+## Custom Pricing Tier Rules (NON-NEGOTIABLE — added 2026-04-20)
+
+A third pricing tier called `custom` exists alongside `standard` ($997) and
+`free` ($30). It's for bespoke, hand-built websites that live at their own
+domain (e.g. Lewis County Autism Coalition at `lcautism.org`) — NOT
+V2-template-generated previews.
+
+### Billing structure — custom ($100/yr)
+
+- Day 0: $100 charged at checkout via Stripe subscription (`mode: "subscription"`,
+  `interval: year`).
+- **No trial period**, **no separate setup fee**.
+- Year 1, Year 2, Year 3+: $100/yr each year on the renewal date.
+- The custom tier subscription IS the management subscription. The webhook
+  handler explicitly skips `createDeferredManagementSubscription()` for custom-tier
+  sessions so the customer is never double-billed.
+
+### Rules
+
+- **Ben manually tags prospects as `custom`.** There is no auto-routing
+  logic and no self-serve tier switch on `/claim/[id]`. The claim page
+  detects `pricingTier === "custom"` and renders a custom-specific hero +
+  CTA, but the tier assignment itself is a manual SQL/dashboard action.
+- **`prospects.custom_site_url` holds the absolute URL** of the live hand-built
+  site. Must start with `http://` or `https://`.
+- **`/p/[short_code]` redirects to `custom_site_url` for custom-tier prospects**
+  instead of rendering a `PreviewClientPage`. The short URL becomes a
+  brand-friendly shortlink pointing at the real site. Non-custom tiers
+  continue to render the template preview as before.
+- **Stripe SKU:** set `STRIPE_PRICE_CUSTOM_ID` env var to a pre-created
+  $100/yr Stripe Price. The code falls back to inline `price_data` if the
+  env var is missing, but pre-created SKU is preferred for reporting.
+- **Webhook skip:** `/api/webhooks/stripe/route.ts` must check
+  `session.metadata?.pricingTier === "custom"` and skip
+  `createDeferredManagementSubscription()`. Double-billing a customer $100+$100
+  starting year 2 is an unrecoverable customer-trust blow.
+- **The subscription id returned by Stripe IS saved as `mgmtSubscriptionId`**
+  on the prospect record — same field the standard/free tiers use for the
+  deferred sub. Keeps the dashboard's subscription-tracking UI consistent
+  across all three tiers.
+
+### When to assign a prospect to custom tier
+
+- They came in through a direct 1:1 relationship (referral, network, word-of-mouth)
+  and Ben builds them a hand-crafted site outside the V2 template system
+- They specifically asked for something more involved than a template fill-in
+- They're a non-profit, community org, or mission-driven business whose site
+  needs a bespoke feel that V2 templates can't match
+- Ben explicitly decided they're a custom project
+
+### When NOT to assign custom
+
+- Any prospect in the auto-funnel warmup pipeline
+- Any prospect whose preview is a V2-template render
+- Free tier friends/family — they go to `free` at $30
+
+### Relationship to the rest of the stack
+
+- Warmup/email/SMS outreach DOES apply to custom prospects if they're in the
+  funnel state — the pricing tier is orthogonal to the outreach state
+- Pre-purchase onboarding + welcome email + 30-min reminder work identically
+  across all three tiers (the welcome email mentions `/onboarding/[id]` regardless)
+- Post-purchase, custom-tier prospects still fill out the onboarding form,
+  but most of their content is already live at their own site — the form is
+  used more for metadata capture
+
 ## Stripe Payment Rules (NON-NEGOTIABLE — added 2026-04-17)
 
 ### Billing structure — full-pay ($997)

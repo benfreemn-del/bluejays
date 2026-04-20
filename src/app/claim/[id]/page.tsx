@@ -26,7 +26,7 @@ interface ProspectInfo {
   googleRating?: number;
   reviewCount?: number;
   currentWebsite?: string;
-  pricingTier?: "standard" | "free";
+  pricingTier?: "standard" | "free" | "custom";
   scrapedData?: {
     services?: { name: string; description?: string }[];
     testimonials?: { name: string; text: string }[];
@@ -203,7 +203,11 @@ export default function ClaimPage() {
 
   const categoryLabel = info?.category?.replace(/-/g, " ") || "business";
   const isFreeTier = info?.pricingTier === "free";
-  const displayPrice = isFreeTier ? "$30" : "$997";
+  const isCustomTier = info?.pricingTier === "custom";
+  // Custom tier: $100/year subscription starting day 0 (the sub IS the mgmt sub).
+  // Free tier: $30 setup + $100/yr after year 1.
+  // Standard tier: $997 setup + $100/yr after year 1.
+  const displayPrice = isCustomTier ? "$100/yr" : isFreeTier ? "$30" : "$997";
 
   // Value items for the "what you get" breakdown
   const valueItems = [
@@ -288,7 +292,11 @@ export default function ClaimPage() {
       <section className="py-16 px-6">
         <div className="max-w-4xl mx-auto text-center">
           <p className="text-sky-400 text-xs font-bold uppercase tracking-[0.25em] mb-4">
-            {isFreeTier ? "Your Website Is Ready" : "Your Custom Website Is Ready"}
+            {isCustomTier
+              ? "Your Custom-Built Website"
+              : isFreeTier
+                ? "Your Website Is Ready"
+                : "Your Custom Website Is Ready"}
           </p>
           <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-4">
             {info ? (
@@ -298,9 +306,11 @@ export default function ClaimPage() {
             )}
           </h1>
           <p className="text-white/50 text-lg max-w-2xl mx-auto mb-8">
-            {isFreeTier
-              ? "Your website is ready! Just cover the setup costs to get started."
-              : `A premium, mobile-optimized website designed specifically for your ${categoryLabel} business — ready to go live in 48 hours.`}
+            {isCustomTier
+              ? `A bespoke, hand-built website for ${info?.businessName || "your organization"}. Activate your $100/year hosting + ongoing support subscription below — first payment today, renews annually.`
+              : isFreeTier
+                ? "Your website is ready! Just cover the setup costs to get started."
+                : `A premium, mobile-optimized website designed specifically for your ${categoryLabel} business — ready to go live in 48 hours.`}
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-2">
@@ -337,7 +347,7 @@ export default function ClaimPage() {
               Book a Free 15-Min Walkthrough
             </a>
           </div>
-          {!isFreeTier && (
+          {!isFreeTier && !isCustomTier && (
             <p className="text-center text-sm text-white/50 mb-6">
               Or{" "}
               <button
@@ -346,6 +356,11 @@ export default function ClaimPage() {
               >
                 3 easy payments of $349
               </button>
+            </p>
+          )}
+          {isCustomTier && (
+            <p className="text-center text-sm text-white/50 mb-6">
+              $100 today, then $100/year annually. Cancel anytime — you keep the site, domain transfers to you.
             </p>
           )}
 
@@ -459,7 +474,7 @@ export default function ClaimPage() {
             >
               {isRedirecting ? "Redirecting..." : `Claim Your Website \u2014 ${displayPrice}`}
             </button>
-            {!isFreeTier && (
+            {!isFreeTier && !isCustomTier && (
               <p className="text-center text-sm text-white/50 mt-2">
                 Or{" "}
                 <button
@@ -477,7 +492,7 @@ export default function ClaimPage() {
       {/* ═══════════════════════════════════════════════════════════ */}
       {/* ROI CALCULATOR */}
       {/* ═══════════════════════════════════════════════════════════ */}
-      {!isFreeTier && (
+      {!isFreeTier && !isCustomTier && (
         <section className="py-12 px-6">
           <div className="max-w-3xl mx-auto">
             <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
@@ -527,7 +542,7 @@ export default function ClaimPage() {
       {/* ═══════════════════════════════════════════════════════════ */}
       {/* WHY NOT DIY? — Comparison Table */}
       {/* ═══════════════════════════════════════════════════════════ */}
-      {!isFreeTier && (
+      {!isFreeTier && !isCustomTier && (
         <section className="py-12 px-6">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-2xl font-bold text-center mb-2">
@@ -903,7 +918,7 @@ export default function ClaimPage() {
           >
             {isRedirecting ? "Redirecting..." : `Claim Your Website \u2014 ${displayPrice}`}
           </button>
-          {!isFreeTier && (
+          {!isFreeTier && !isCustomTier && (
             <p className="text-center text-sm text-white/50 mt-2">
               Or{" "}
               <button

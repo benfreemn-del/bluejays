@@ -44,7 +44,8 @@ export type Category =
   | "appliance-repair"
   | "junk-removal"
   | "carpet-cleaning"
-  | "event-planning";
+  | "event-planning"
+  | "non-profit";
 
 export type SmsMethod = "twilio" | "vonage" | "mock";
 
@@ -103,8 +104,18 @@ export interface Prospect {
   funnelPaused?: boolean;
   /** Lead source: "inbound" for self-submitted, "scouted" for automated pipeline */
   source?: "inbound" | "scouted";
-  /** Pricing tier: "standard" ($997) or "free" ($30 for friends/family) */
-  pricingTier?: "standard" | "free";
+  /** Pricing tier:
+   *   "standard" = $997 one-time + $100/yr mgmt sub (1-year trial)
+   *   "free"     = $30 one-time + $100/yr mgmt sub (1-year trial, friends/family)
+   *   "custom"   = $100/yr subscription starting immediately (bespoke-built sites;
+   *                the custom sub IS the mgmt sub — no separate setup fee, no trial).
+   *                See src/app/p/[code]/page.tsx for the short-URL redirect behaviour
+   *                and CLAUDE.md "Custom Pricing Tier Rules" for the full spec. */
+  pricingTier?: "standard" | "free" | "custom";
+  /** For pricing_tier=custom prospects only: absolute URL of the real live site
+   *  (e.g. https://lcautism.org). /p/[short_code] redirects here instead of
+   *  rendering the template preview. Ignored for non-custom tiers. */
+  customSiteUrl?: string;
   /** QC gate results — populated by /api/qc/review/[id] */
   qualityScore?: number;       // 0-100
   qualityNotes?: string;       // formatted text summary of issues
@@ -247,4 +258,5 @@ export const CATEGORY_CONFIG: Record<
   "junk-removal": { label: "Junk Removal", accentColor: "#22c55e", heroGradient: "linear-gradient(135deg, #0f1a12 0%, #0a120e 100%)" },
   "carpet-cleaning": { label: "Carpet Cleaning", accentColor: "#06b6d4", heroGradient: "linear-gradient(135deg, #0f1520 0%, #0a1018 100%)" },
   "event-planning": { label: "Event Planning", accentColor: "#f59e0b", heroGradient: "linear-gradient(135deg, #1a1520 0%, #120e18 100%)" },
+  "non-profit": { label: "Non-Profit", accentColor: "#3AAFDB", heroGradient: "linear-gradient(135deg, #14283a 0%, #0e1c2a 100%)" },
 };

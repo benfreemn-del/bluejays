@@ -60,7 +60,7 @@ export async function createCheckoutSession(
   prospectId: string,
   businessName: string,
   email: string,
-  pricingTier: "standard" | "free" = "standard",
+  pricingTier: "standard" | "free" | "custom" = "standard",
   paymentPlan: "full" | "installment" = "full"
 ): Promise<CheckoutSession> {
   if (!STRIPE_SECRET_KEY) {
@@ -77,6 +77,58 @@ export async function createCheckoutSession(
   // invalid/old value, causing Stripe to reject success_url/cancel_url with
   // "Not a valid URL". Same fix as FROM_EMAIL in email-sender.ts.
   const baseUrl = "https://bluejayportfolio.com";
+
+  // ─── CUSTOM TIER — $100/yr subscription, no trial, starts immediately ───
+  //
+  // For bespoke-built sites (not V2-template-generated). First $100 hits at
+  // checkout, then auto-renews annually forever. This subscription IS the
+  // management fee — the webhook handler skips creating a second deferred
+  // mgmt sub for custom-tier prospects (see /api/webhooks/stripe/route.ts).
+  //
+  // Uses STRIPE_PRICE_CUSTOM_ID env var (recommended) or falls back to
+  // inline price_data. See CLAUDE.md "Custom Pricing Tier Rules".
+  if (pricingTier === "custom") {
+    const customPriceId = process.env.STRIPE_PRICE_CUSTOM_ID;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const customLineItem: any = customPriceId
+      ? { price: customPriceId, quantity: 1 }
+      : {
+          price_data: {
+            currency: "usd",
+            product_data: {
+              name: `Custom Website — ${businessName}`,
+              description:
+                "Bespoke custom-built website — $100 annual subscription (design, hosting, ongoing maintenance, and support)",
+            },
+            unit_amount: 10000, // $100
+            recurring: { interval: "year" as const, interval_count: 1 },
+          },
+          quantity: 1,
+        };
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const customSessionParams: any = {
+      mode: "subscription",
+      line_items: [customLineItem],
+      success_url: `${baseUrl}/onboarding/${prospectId}?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${baseUrl}/claim/${prospectId}?payment=cancelled`,
+      metadata: { prospectId, businessName, pricingTier: "custom", paymentPlan: "custom-annual" },
+      subscription_data: {
+        metadata: { prospectId, businessName, pricingTier: "custom", type: "custom_annual" },
+      },
+    };
+
+    if (email) customSessionParams.customer_email = email;
+
+    try {
+      const session = await stripe.checkout.sessions.create(customSessionParams);
+      return { id: session.id, url: session.url! };
+    } catch (stripeError) {
+      console.error("[Stripe] Custom-tier checkout session creation failed:", stripeError);
+      throw stripeError;
+    }
+  }
 
   const setupPriceId = process.env.STRIPE_PRICE_SETUP_ID;
   const mgmtPriceId = process.env.STRIPE_PRICE_MGMT_ID;

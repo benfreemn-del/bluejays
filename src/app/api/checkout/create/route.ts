@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
     }
 
     const email = prospect.email || "";
-    const pricingTier = (prospect.pricingTier as "standard" | "free") || "standard";
+    const pricingTier = (prospect.pricingTier as "standard" | "free" | "custom") || "standard";
     const session = await createCheckoutSession(
       prospectId,
       prospect.businessName,

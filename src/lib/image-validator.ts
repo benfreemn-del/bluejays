@@ -303,6 +303,12 @@ const CATEGORY_FALLBACK_IDS: Record<Category, Record<FallbackImageVariant, strin
     about: "1469371670807-013ccf25f16a",
     gallery: "1519167758481-83f550bb49b3",
   },
+  // Non-profit (community orgs). Reuses warm community imagery.
+  "non-profit": {
+    hero: "1517486808906-6ca8b3f04846",
+    about: "1469571486292-0ba58a3f068b",
+    gallery: "1517486808906-6ca8b3f04846",
+  },
 };
 
 const VARIANT_DIMENSIONS: Record<FallbackImageVariant, { width: number; height: number }> = {

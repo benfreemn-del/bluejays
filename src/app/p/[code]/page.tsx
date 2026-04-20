@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import type { GeneratedSiteData } from "@/lib/generator";
 import PreviewClientPage from "@/components/preview/PreviewClientPage";
 import { getProspect, getScrapedData } from "@/lib/store";
@@ -26,21 +26,39 @@ const BASE_URL = "https://bluejayportfolio.com";
 const OG_IMAGE = `${BASE_URL}/og-image.png`;
 
 /**
- * Look up the prospect UUID from an 8-char short code.
- * Returns null if not found.
+ * Look up prospect by short code. Returns id + custom_site_url + pricing_tier
+ * so the page component can decide whether to redirect (custom-tier sites)
+ * or render the template preview.
  */
-async function resolveCodeToProspectId(code: string): Promise<string | null> {
+async function resolveShortCode(code: string): Promise<{
+  id: string;
+  customSiteUrl: string | null;
+  pricingTier: string | null;
+} | null> {
   if (!isSupabaseConfigured()) return null;
   if (!/^[a-f0-9]{8}$/i.test(code)) return null;
 
   const { data } = await supabase
     .from("prospects")
-    .select("id")
+    .select("id, custom_site_url, pricing_tier")
     .eq("short_code", code.toLowerCase())
     .limit(1)
     .single();
 
-  return (data?.id as string) || null;
+  if (!data) return null;
+  return {
+    id: data.id as string,
+    customSiteUrl: (data.custom_site_url as string | null) || null,
+    pricingTier: (data.pricing_tier as string | null) || null,
+  };
+}
+
+/**
+ * Legacy helper kept for the metadata lookup — returns just the UUID.
+ */
+async function resolveCodeToProspectId(code: string): Promise<string | null> {
+  const resolved = await resolveShortCode(code);
+  return resolved?.id || null;
 }
 
 export async function generateMetadata({
@@ -108,8 +126,20 @@ export default async function ShortPreviewPage({
   params: Promise<{ code: string }>;
 }) {
   const { code } = await params;
-  const id = await resolveCodeToProspectId(code);
-  if (!id) notFound();
+  const resolved = await resolveShortCode(code);
+  if (!resolved) notFound();
 
-  return <PreviewClientPage id={id} />;
+  // Custom-tier prospects (bespoke-built sites living at their own URL
+  // like lcautism.org) redirect to that URL instead of rendering a
+  // template preview. The short URL becomes a brand-friendly shortlink
+  // pointing at their real site. See CLAUDE.md "Custom Pricing Tier Rules".
+  if (resolved.pricingTier === "custom" && resolved.customSiteUrl) {
+    // Normalise: ensure absolute http(s) URL so redirect doesn't loop
+    const target = resolved.customSiteUrl.startsWith("http")
+      ? resolved.customSiteUrl
+      : `https://${resolved.customSiteUrl}`;
+    redirect(target);
+  }
+
+  return <PreviewClientPage id={resolved.id} />;
 }

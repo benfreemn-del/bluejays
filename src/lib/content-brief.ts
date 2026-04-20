@@ -414,6 +414,10 @@ const CATEGORY_VOICE: Record<Category, CategoryVoice> = {
     tagline: (b, a) => `${b} makes ${a} events unforgettable.`,
     aboutFill: (a) => `We plan weddings, corporate events, and private gatherings across ${a} — design, logistics, and day-of coordination.`,
   },
+  "non-profit": {
+    tagline: (b, a) => `${b} is building a stronger ${a} community.`,
+    aboutFill: (a) => `We serve ${a} families through advocacy, resources, and community programs.`,
+  },
 };
 
 function getCategoryVoice(category: Category): CategoryVoice {

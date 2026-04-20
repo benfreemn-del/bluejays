@@ -156,7 +156,8 @@ function dbToProspect(row: Record<string, unknown>): Prospect {
     instagramHandle: row.instagram_handle as string | undefined,
     funnelPaused: row.funnel_paused as boolean | undefined,
     source: (row.source as "inbound" | "scouted" | undefined) || undefined,
-    pricingTier: (row.pricing_tier as "standard" | "free" | undefined) || "standard",
+    pricingTier: (row.pricing_tier as "standard" | "free" | "custom" | undefined) || "standard",
+    customSiteUrl: (row.custom_site_url as string | null) || undefined,
     selectedTheme: (row.selected_theme as "light" | "dark" | undefined) || undefined,
     selectedVersion: (row.selected_version as "v1" | "v2" | undefined) || undefined,
     aiThemeRecommendation: (row.ai_theme_recommendation as "light" | "dark" | undefined) || undefined,
@@ -204,6 +205,7 @@ function prospectToDb(p: Prospect) {
     funnel_paused: sanitized.funnelPaused || false,
     source: sanitized.source || "scouted",
     pricing_tier: sanitized.pricingTier || "standard",
+    custom_site_url: sanitized.customSiteUrl || null,
     selected_theme: sanitized.selectedTheme || null,
     selected_version: sanitized.selectedVersion || null,
     ai_theme_recommendation: sanitized.aiThemeRecommendation || null,
@@ -344,6 +346,7 @@ export async function updateProspect(
     if (sanitizedUpdates.qualityNotes !== undefined) dbUpdates.quality_notes = sanitizedUpdates.qualityNotes;
     if (sanitizedUpdates.qcReviewedAt !== undefined) dbUpdates.qc_reviewed_at = sanitizedUpdates.qcReviewedAt;
     if (sanitizedUpdates.pricingTier !== undefined) dbUpdates.pricing_tier = sanitizedUpdates.pricingTier;
+    if (sanitizedUpdates.customSiteUrl !== undefined) dbUpdates.custom_site_url = sanitizedUpdates.customSiteUrl || null;
     if (sanitizedUpdates.adminNotes !== undefined) dbUpdates.admin_notes = sanitizedUpdates.adminNotes || null;
     if (sanitizedUpdates.adminNotesUpdatedAt !== undefined) dbUpdates.admin_notes_updated_at = sanitizedUpdates.adminNotesUpdatedAt || null;
     if (sanitizedUpdates.adminNotesSubmittedAt !== undefined) dbUpdates.admin_notes_submitted_at = sanitizedUpdates.adminNotesSubmittedAt || null;

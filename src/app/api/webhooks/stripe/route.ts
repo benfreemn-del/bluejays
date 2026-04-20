@@ -101,12 +101,21 @@ export async function POST(request: NextRequest) {
         // Update prospect status to 'paid'
         const prospect = await getProspect(prospectId);
         if (prospect) {
+          // For custom-tier sessions, the checkout subscription IS the
+          // mgmt sub — record its id on the prospect so the dashboard
+          // shows active-subscription tracking correctly.
+          const isCustomTierSession = session.metadata?.pricingTier === "custom";
+          const mgmtIdFromCustom = isCustomTierSession && session.subscription
+            ? (session.subscription as string)
+            : undefined;
+
           await updateProspect(prospectId, {
             status: "paid",
             stripeCustomerId: (session.customer as string) || undefined,
             paidAt: new Date().toISOString(),
             subscriptionStatus: session.subscription ? "active" : "none",
             funnelPaused: true, // Stop all outreach after payment
+            ...(mgmtIdFromCustom ? { mgmtSubscriptionId: mgmtIdFromCustom } : {}),
           });
 
           // Alert Ben via SMS
@@ -128,7 +137,15 @@ export async function POST(request: NextRequest) {
           // For both standard ($997) and free ($30) one-time setup payments.
           // We create a subscription with a 1-year trial so the first
           // $100 charge happens exactly 1 year after the initial purchase and covers domain renewal, hosting, ongoing maintenance, and support.
+          //
+          // Custom tier is DIFFERENT — the Stripe Checkout already created a
+          // $100/yr subscription as the custom tier's sole charge. That
+          // subscription IS the management fee. Creating a second deferred
+          // mgmt sub here would double-bill the customer starting year 2.
+          // See CLAUDE.md "Custom Pricing Tier Rules" for the full spec.
+          const isCustomTier = session.metadata?.pricingTier === "custom";
           const isValidSetupPayment =
+            !isCustomTier &&
             session.mode === "payment" &&
             session.customer &&
             session.amount_total &&

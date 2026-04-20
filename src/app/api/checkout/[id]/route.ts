@@ -33,7 +33,7 @@ export async function POST(
       await updateProspect(prospect.id, { status: "claimed" });
     }
 
-    const pricingTier = (prospect.pricingTier as "standard" | "free") || "standard";
+    const pricingTier = (prospect.pricingTier as "standard" | "free" | "custom") || "standard";
     const session = await createCheckoutSession(
       prospect.id,
       prospect.businessName,
