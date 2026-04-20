@@ -4,6 +4,8 @@ import {
   buildResearchBrief,
   buildTaglineFromResearchBrief,
   buildAboutFromResearchBrief,
+  isGenericTagline,
+  isGenericAbout,
 } from "@/lib/content-brief";
 import type { Prospect } from "@/lib/types";
 
@@ -132,13 +134,28 @@ export async function POST(request: NextRequest) {
         .single();
 
       const siteData = (existingSite?.site_data as Record<string, unknown>) || {};
+      const scrapedTagline = (prospect.scrapedData as Record<string, unknown> | undefined)?.tagline as string | undefined;
+      const scrapedAbout = (prospect.scrapedData as Record<string, unknown> | undefined)?.about as string | undefined;
+
+      const currentTagline = (siteData.tagline as string | undefined) || scrapedTagline;
+      const currentAbout = (siteData.about as string | undefined) || scrapedAbout;
+
       const before = {
-        tagline: siteData.tagline as string | undefined,
-        about: siteData.about as string | undefined,
+        tagline: currentTagline,
+        about: currentAbout,
       };
 
-      // Skip if nothing would change
-      if (before.tagline === newTagline && before.about === newAbout) {
+      // CRITICAL: only replace copy that matches our known-bad generic
+      // patterns. Real scraped/human-written copy must be preserved.
+      //
+      // This was a bug in the 2026-04-19 first version that nuked 94
+      // prospects' good copy before it was caught. See CLAUDE.md
+      // "Generated Site Copy Rules" — the refresh is a PATCH for the
+      // system's own bad fallbacks, not a stylistic rewrite.
+      const shouldReplaceTagline = isGenericTagline(currentTagline);
+      const shouldReplaceAbout = isGenericAbout(currentAbout);
+
+      if (!shouldReplaceTagline && !shouldReplaceAbout) {
         skipped++;
         results.push({
           id: prospect.id,
@@ -147,16 +164,19 @@ export async function POST(request: NextRequest) {
           before,
           after: { tagline: newTagline, about: newAbout },
           status: "skipped",
-          reason: "already matches new copy",
+          reason: "current copy is not generic — preserved",
         });
         continue;
       }
 
+      const finalTagline = shouldReplaceTagline ? newTagline : (currentTagline || newTagline);
+      const finalAbout = shouldReplaceAbout ? newAbout : (currentAbout || newAbout);
+
       // Patch site_data in generated_sites (merge; don't overwrite other fields)
       const updatedSiteData = {
         ...siteData,
-        tagline: newTagline,
-        about: newAbout,
+        tagline: finalTagline,
+        about: finalAbout,
       };
 
       const { error: updateErr } = await supabase
@@ -178,12 +198,12 @@ export async function POST(request: NextRequest) {
 
       // ALSO update the prospect's scraped_data.tagline + scraped_data.about
       // so if something downstream reads from scraped_data instead of
-      // generated_sites.site_data, the new copy is there too.
-      const updatedScraped = {
-        ...(prospect.scrapedData || {}),
-        tagline: newTagline,
-        about: newAbout,
-      };
+      // generated_sites.site_data, the new copy is there too — but ONLY
+      // for the fields we're actually replacing. Don't overwrite a
+      // preserved field with the new (unchosen) value.
+      const updatedScraped: Record<string, unknown> = { ...(prospect.scrapedData || {}) };
+      if (shouldReplaceTagline) updatedScraped.tagline = finalTagline;
+      if (shouldReplaceAbout) updatedScraped.about = finalAbout;
       await supabase
         .from("prospects")
         .update({ scraped_data: updatedScraped })
@@ -195,7 +215,7 @@ export async function POST(request: NextRequest) {
         businessName: prospect.businessName,
         category: prospect.category,
         before,
-        after: { tagline: newTagline, about: newAbout },
+        after: { tagline: finalTagline, about: finalAbout },
         status: "refreshed",
       });
     } catch (err) {

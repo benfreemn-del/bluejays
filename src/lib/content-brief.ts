@@ -18,7 +18,7 @@ export interface PlaceholderLintIssue {
   severity: "critical" | "warning";
 }
 
-const GENERIC_TAGLINE_PATTERNS = [
+export const GENERIC_TAGLINE_PATTERNS = [
   /trusted .* services for your community/i,
   /committed to delivering exceptional/i,
   /where artistry meets luxury/i,
@@ -27,9 +27,17 @@ const GENERIC_TAGLINE_PATTERNS = [
   /professional .* services\.?$/i,
   /premium .* services\.?$/i,
   /call us today/i,
+  // 2026-04-19: the bad fallback patterns this codebase itself was producing
+  // before the CATEGORY_VOICE table existed. These are the only things the
+  // bulk-refresh endpoint is allowed to overwrite — everything else is
+  // either real human/scraped copy or a newer good fallback and must be
+  // preserved.
+  /serves .+ with real .+ expertise/i,
+  /serves .+ area with real .+ expertise/i,
+  /serves the .+ community with real .+ expertise/i,
 ];
 
-const GENERIC_ABOUT_PATTERNS = [
+export const GENERIC_ABOUT_PATTERNS = [
   /trusted .* provider committed to delivering exceptional quality and service/i,
   /years of experience serving the local community/i,
   /personalized service/i,
@@ -38,7 +46,31 @@ const GENERIC_ABOUT_PATTERNS = [
   /dedicated legal representation with a personal touch/i,
   /transforms outdoor spaces into stunning landscapes/i,
   /premier salon offering expert hair and beauty services/i,
+  // 2026-04-19: the bad about fallbacks this codebase itself produced
+  /We provide professional .+ services tailored to each client/i,
+  /provides? professional .+ services tailored to each client/i,
 ];
+
+/**
+ * Is the given tagline one of our previously-generated generic
+ * fallbacks (or empty/missing)? If so it's safe to replace with the new
+ * CATEGORY_VOICE output. Human/scraped real copy must NEVER trigger
+ * true here — review the patterns above before adding new ones.
+ */
+export function isGenericTagline(tagline: string | undefined | null): boolean {
+  if (!tagline || tagline.trim().length === 0) return true;
+  return GENERIC_TAGLINE_PATTERNS.some((p) => p.test(tagline));
+}
+
+/**
+ * Same logic for about text. Only true for copy the system itself
+ * produced as a generic fallback. Real scraped/written content must
+ * never match.
+ */
+export function isGenericAbout(about: string | undefined | null): boolean {
+  if (!about || about.trim().length === 0) return true;
+  return GENERIC_ABOUT_PATTERNS.some((p) => p.test(about));
+}
 
 const PLACEHOLDER_TESTIMONIAL_NAMES = new Set([
   "happy customer",
