@@ -45,6 +45,15 @@ export default function ClaimBanner({
   prospectId,
   darkBg = true,
 }: ClaimBannerProps) {
+  // Hide the entire banner in embed mode (used by screenshot services,
+  // postcard-sender's Browserless capture, and the claim page's
+  // before/after iframe). For postcards specifically, the "Made this
+  // for X / FLIP OVER → TAKE A LOOK" overlay already conveys the
+  // same message, and the web-only bits ("Preview expires in 7d"
+  // countdown, "Claim it before a competitor" CTA) are nonsensical on paper.
+  const isEmbedded =
+    typeof window !== "undefined" &&
+    new URLSearchParams(window.location.search).get("embed") === "1";
   const [timeLeft, setTimeLeft] = useState("");
   /** Whether the mobile banner is minimised to a tiny pill. */
   const [minimised, setMinimised] = useState(false);
@@ -159,6 +168,12 @@ export default function ClaimBanner({
       );
     }
   };
+
+  // Embed-mode short-circuit: render nothing. Screenshot captures and the
+  // claim page's before/after iframe don't want the sticky bottom banner.
+  if (isEmbedded) {
+    return null;
+  }
 
   if (isDeliveredSite) {
     return (

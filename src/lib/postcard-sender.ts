@@ -83,7 +83,12 @@ const POSTCARD_BUCKET = "postcard-screenshots";
 // lookups for prospect.current_website domains. With the proxy warm now,
 // v9 forces a re-capture so Titan's actually-reachable scraped photos
 // land in the hero/card/about slots.
-const CACHE_VERSION = "v9";
+// v9 → v10 (2026-04-21): ClaimBanner now returns null in ?embed=1 mode so
+// the two sticky bottom strips ("Preview expires in 7d" + "Claim it before
+// a competitor") don't bleed into postcard captures. Those strips are
+// meaningless on paper — the postcard's own "FLIP OVER → TAKE A LOOK"
+// overlay already carries the same intent without the web-only CTAs.
+const CACHE_VERSION = "v10";
 
 // Minimum JPEG size to TRUST a cached capture. A loading-skeleton
 // screenshot at 1800x1250 compresses to ~28KB because it's mostly a
