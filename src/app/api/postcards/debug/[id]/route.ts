@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getGeneratedSite } from "@/lib/store";
 import { sanitizeImageUrls, validateImageUrl } from "@/lib/image-validator";
 import { getHeroImage } from "@/lib/preview-utils";
 
@@ -79,24 +78,50 @@ export async function GET(
       if (src.includes("/icons/")) return false;
       return true;
     });
-    // Also emit the raw getValidatedPreviewPhotos diagnostic from the
-    // server side — this tells us what the WRAPPER is producing vs what
-    // the rendered HTML actually contains, so we can spot divergences
-    // caused by caching / stale deploys / bugs in the rewrite.
-    const gs = await getGeneratedSite(id);
-    const rawPhotos = gs?.siteData?.photos ?? [];
-    const sanitized = sanitizeImageUrls(rawPhotos);
-    const category = gs?.siteData?.category ?? "general-contractor";
-    const heroCand = getHeroImage({
-      ...(gs?.siteData ?? {}),
-      photos: sanitized,
-    } as Parameters<typeof getHeroImage>[0]);
-    const galleryValidatedCount = sanitized.filter((p) => {
-      const r = validateImageUrl(p, category, "gallery");
-      return !r.shouldUseFallback;
-    }).length;
-    const heroValidated = !validateImageUrl(heroCand, category, "hero").shouldUseFallback;
-    const heroGalleryValidated = !validateImageUrl(heroCand, category, "gallery").shouldUseFallback;
+    // Fetch generated-site data via the public API so we can diagnose
+    // getValidatedPreviewPhotos logic without depending on an internal
+    // store export (there's no public getGeneratedSite in @/lib/store).
+    let serverSideDiagnostic: Record<string, unknown> | null = null;
+    try {
+      const siteRes = await fetch(
+        `https://bluejayportfolio.com/api/generated-sites/${id}`,
+        { cache: "no-store" }
+      );
+      if (siteRes.ok) {
+        const siteData = (await siteRes.json()) as {
+          photos?: string[];
+          category?: string;
+          heroImage?: string;
+        };
+        const rawPhotos = siteData?.photos ?? [];
+        const sanitized = sanitizeImageUrls(rawPhotos);
+        const category = (siteData?.category ?? "general-contractor") as Parameters<typeof validateImageUrl>[1];
+        const heroCand = getHeroImage({
+          ...(siteData as object),
+          photos: sanitized,
+        } as Parameters<typeof getHeroImage>[0]);
+        const galleryValidatedCount = sanitized.filter((p) => {
+          const r = validateImageUrl(p, category, "gallery");
+          return !r.shouldUseFallback;
+        }).length;
+        const heroValidated = heroCand
+          ? !validateImageUrl(heroCand, category, "hero").shouldUseFallback
+          : false;
+        const heroGalleryValidated = heroCand
+          ? !validateImageUrl(heroCand, category, "gallery").shouldUseFallback
+          : false;
+        serverSideDiagnostic = {
+          rawPhotosCount: rawPhotos.length,
+          sanitizedCount: sanitized.length,
+          galleryValidatedCount,
+          heroCandidate: heroCand,
+          heroCandidatePassesHeroVariant: heroValidated,
+          heroCandidatePassesGalleryVariant: heroGalleryValidated,
+        };
+      }
+    } catch {
+      serverSideDiagnostic = { error: "Failed to fetch generated-site data" };
+    }
 
     return NextResponse.json({
       prospectId: id,
@@ -105,14 +130,7 @@ export async function GET(
       uniqueImgCount: uniqueImgs.length,
       unsplashPhotoUrls: unsplashPhotos,
       allNonIconImgSrcs: nonIcon,
-      serverSideDiagnostic: {
-        rawPhotosCount: rawPhotos.length,
-        sanitizedCount: sanitized.length,
-        galleryValidatedCount,
-        heroCandidate: heroCand,
-        heroCandidatePassesHeroVariant: heroValidated,
-        heroCandidatePassesGalleryVariant: heroGalleryValidated,
-      },
+      serverSideDiagnostic,
     });
   } catch (err) {
     return NextResponse.json({ error: (err as Error).message }, { status: 500 });
