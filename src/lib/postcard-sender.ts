@@ -53,7 +53,12 @@ const POSTCARD_BUCKET = "postcard-screenshots";
 // expanded (1 → 8 hero, 1 → 5 about) and a developer-at-monitor photo
 // was removed. Any GC-prospect capture taken during the v2 era has the
 // old wrong photo embedded — v3 forces a clean re-capture.
-const CACHE_VERSION = "v3";
+// v3 → v4 (2026-04-21): Diagnostic re-capture to chase an "outlet" image
+// that appeared on the v3 postcard capture but doesn't appear in the
+// debug-endpoint's DOM dump (which shows a DJI aerial drone photo at
+// the hero-card slot). Bumping invalidates v3 cache so we see what
+// Browserless currently captures live.
+const CACHE_VERSION = "v4";
 
 // Minimum JPEG size to TRUST a cached capture. A loading-skeleton
 // screenshot at 1800x1250 compresses to ~28KB because it's mostly a
