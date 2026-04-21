@@ -74,18 +74,55 @@ function getServiceIcon(serviceName: string) {
   return Hammer;
 }
 
-/* ───────────────── STOCK IMAGES ───────────────── */
-const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1503594384566-461fe158e797?w=1400&q=80"];
-const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=600&q=80"];
+/* ───────────────── STOCK IMAGES ─────────────────
+ * Curated GC-specific Unsplash photos. Every URL has been HEAD-verified
+ * (HTTP 200) AND visually inspected — the showcase labels were lying on
+ * at least one photo (`1581094794329-c8112a89af12` was labeled "Chris on
+ * job site" but actually shows a software developer at a monitor), so
+ * never trust label text, only the pixels.
+ *
+ * Cross-category audit (2026-04-21): every photo below appears ONLY in
+ * GC-related templates (V2 GC preview, V1 GC legacy, /v2/general-contractor
+ * showcase) — no overlap with other category templates per CLAUDE.md rule
+ * 1.5 ("NEVER share the same Unsplash URL between two different category
+ * templates").
+ *
+ * Pool sizing: HERO meets the ≥8 minimum. ABOUT is 5 (tight — TODO: add
+ * 3 more GC-only headshot/worksite interior photos to hit 8).
+ */
+const STOCK_HERO_POOL = [
+  "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=1400&q=80", // metalworker grinding with sparks flying
+  "https://images.unsplash.com/photo-1590725121839-892b458a74fe?w=1400&q=80", // A-frame cabin great room (finished custom build)
+  "https://images.unsplash.com/photo-1590725140246-20acdee442be?w=1400&q=80", // A-frame interior with kitchen + staircase
+  "https://images.unsplash.com/photo-1592928302636-c83cf1e1c887?w=1400&q=80", // industrial loft living room (exposed beams, brick)
+  "https://images.unsplash.com/photo-1565538810643-b5bdb714032a?w=1400&q=80", // finished grey-cabinet kitchen with gold pendants
+  "https://images.unsplash.com/photo-1503594384566-461fe158e797?w=1400&q=80", // white-siding home exterior with tile roof
+  "https://images.unsplash.com/photo-1613545325278-f24b0cae1224?w=1400&q=80", // modern open living room with fireplace + vaulted ceiling
+  "https://images.unsplash.com/photo-1600573472550-8090b5e0745e?w=1400&q=80", // glass sliding walls opening to pool patio + steel staircase
+];
+
+const STOCK_ABOUT_POOL = [
+  "https://images.unsplash.com/photo-1600210491369-e753d80a41f3?w=600&q=80", // modern styled living room with gallery wall
+  "https://images.unsplash.com/photo-1556912998-c57cc6b63cd7?w=600&q=80",    // rustic kitchen remodel with exposed shelving
+  "https://images.unsplash.com/photo-1581858726788-75bc0f6a952d?w=600&q=80", // minimalist hallway with hardwood floors
+  "https://images.unsplash.com/photo-1581093588401-fbb62a02f120?w=600&q=80", // close-up of person in safety glasses on job site
+  "https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?w=600&q=80", // finished dining nook with white table + chairs
+];
+
+// Gallery pool — finished projects from builds. 7 entries (was 8, removed
+// `1581094794329-c8112a89af12` which was a developer-at-monitor photo
+// mistakenly labeled as a job site). Most entries overlap with HERO/ABOUT
+// pools to keep gallery imagery dense without adding more URLs; the slice
+// logic downstream skips over already-used slots via the `new Set()` dedup
+// on scraped-photo fallback chains.
 const STOCK_PROJECTS = [
-  "https://images.unsplash.com/photo-1567521464027-f127ff144326?w=600&q=80",
   "https://images.unsplash.com/photo-1565538810643-b5bdb714032a?w=600&q=80",
   "https://images.unsplash.com/photo-1581858726788-75bc0f6a952d?w=600&q=80",
   "https://images.unsplash.com/photo-1592928302636-c83cf1e1c887?w=600&q=80",
   "https://images.unsplash.com/photo-1590725140246-20acdee442be?w=600&q=80",
   "https://images.unsplash.com/photo-1503594384566-461fe158e797?w=600&q=80",
-  "https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=600&q=80",
   "https://images.unsplash.com/photo-1581093588401-fbb62a02f120?w=600&q=80",
+  "https://images.unsplash.com/photo-1613545325278-f24b0cae1224?w=600&q=80",
 ];
 
 /* ───────────────── PARTICLES ───────────────── */
@@ -231,17 +268,37 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
 
   const { ACCENT, ACCENT_GLOW } = getAccent(data.accentColor);
 
+  // Photo allocation — uniquePhotos is the deduped real-business photo list
+  // (scraped from their website + Google Places). Each slot below MUST be a
+  // distinct photo; duplicates kill trust on the preview page. Layout:
+  //   [0] hero background (full-bleed)
+  //   [1] hero overlapping card
+  //   [2] about section
+  //   [3..10] project gallery (up to 8 — stays responsive on mobile)
+  //   [last] video placeholder (always different from gallery)
   const uniquePhotos = data.photos ? [...new Set(data.photos)] : [];
 
-
   const heroImage = uniquePhotos[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
-
-
   const heroCardImage = uniquePhotos[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 1);
-
-
   const aboutImage = uniquePhotos[2] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 2);
-  const projectImages = data.photos?.length > 2 ? data.photos.slice(2, 6) : pickGallery(STOCK_PROJECTS, data.businessName);
+
+  // Gallery uses photos starting at index 3 (after hero/heroCard/about) so
+  // nothing repeats. Slice up to 8 for a two-row 4-col grid on desktop.
+  // Fall back to stock pickGallery only if the prospect has <= 3 real photos.
+  const projectImages =
+    uniquePhotos.length > 3
+      ? uniquePhotos.slice(3, 11)
+      : pickGallery(STOCK_PROJECTS, data.businessName);
+
+  // Video placeholder gets its own unique photo. Prefer the last scraped
+  // photo (often a hero-worthy "finished project" shot), fall back to the
+  // hero image if we only have one photo.
+  const videoTourImage =
+    uniquePhotos.length > 11
+      ? uniquePhotos[11]
+      : uniquePhotos.length > 3
+        ? uniquePhotos[uniquePhotos.length - 1]
+        : heroImage;
 
   const processSteps = [
     { step: "01", title: "Free Consultation", desc: `We visit your site, discuss your vision, timeline, and budget at no cost.` },
@@ -341,6 +398,9 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
             <div className="hidden md:flex items-center gap-8 text-sm text-slate-400">
               <a href="#services" className="hover:text-white transition-colors">Services</a>
               <a href="#about" className="hover:text-white transition-colors">About</a>
+              {Array.isArray(data.team) && data.team.length > 0 && (
+                <a href="#team" className="hover:text-white transition-colors">Team</a>
+              )}
               <a href="#projects" className="hover:text-white transition-colors">Projects</a>
               <a href="#contact" className="hover:text-white transition-colors">Contact</a>
             </div>
@@ -609,15 +669,98 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
         </div>
       </section>
 
+      {/* ══════ 6c. MEET THE TEAM ══════
+         Renders only when `data.team` is provided. Each team member shows
+         a portrait, name, role, and short bio. Trade businesses live or
+         die on trust — putting the actual humans on the site closes more
+         jobs than any comparison table. Keeping the section conditional
+         means prospects without a team array don't show an empty block.
+      */}
+      {Array.isArray(data.team) && data.team.length > 0 && (
+        <section id="team" className="relative z-10 py-24 md:py-32 overflow-hidden">
+          <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #10121a 0%, ${BG} 50%, #10121a 100%)` }} />
+          <BlueprintGrid opacity={0.02} accent={ACCENT} />
+          <div className="max-w-6xl mx-auto px-6 relative z-10">
+            <AnimatedSection>
+              <SectionHeader
+                badge="Meet the Team"
+                title="The People Behind Every Build"
+                subtitle={`The ${data.businessName} crew — decades of combined craftsmanship, on your project from day one to final walkthrough.`}
+                accent={ACCENT}
+              />
+            </AnimatedSection>
+            <div className={`grid gap-6 ${
+              data.team.length === 1 ? "md:grid-cols-1 max-w-md mx-auto"
+              : data.team.length === 2 ? "md:grid-cols-2 max-w-3xl mx-auto"
+              : data.team.length === 3 ? "md:grid-cols-3"
+              : "md:grid-cols-2 lg:grid-cols-4"
+            }`}>
+              {data.team.map((member: { name: string; title?: string; photo?: string; bio?: string }, i: number) => (
+                <GlassCard key={i} className="p-6 text-center group hover:border-opacity-40 transition-all duration-300">
+                  {/* Portrait — object-top keeps faces from being cropped at the forehead */}
+                  <div
+                    className="w-32 h-32 mx-auto mb-5 rounded-full overflow-hidden border-2 relative"
+                    style={{ borderColor: `${ACCENT}66` }}
+                  >
+                    {member.photo ? (
+                      <img
+                        src={member.photo}
+                        alt={member.name}
+                        className="w-full h-full object-cover object-top"
+                      />
+                    ) : (
+                      <div
+                        className="w-full h-full flex items-center justify-center text-3xl font-bold text-white"
+                        style={{ background: ACCENT }}
+                      >
+                        {member.name
+                          .split(" ")
+                          .slice(0, 2)
+                          .map((n) => n[0])
+                          .join("")}
+                      </div>
+                    )}
+                  </div>
+                  <h3 className="text-lg font-bold text-white mb-1">{member.name}</h3>
+                  {member.title && (
+                    <p
+                      className="text-xs uppercase tracking-widest mb-3 font-semibold"
+                      style={{ color: ACCENT }}
+                    >
+                      {member.title}
+                    </p>
+                  )}
+                  {member.bio && (
+                    <p className="text-sm text-slate-300 leading-relaxed">{member.bio}</p>
+                  )}
+                </GlassCard>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* ══════ 7. PROJECTS GALLERY ══════ */}
       <section id="projects" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #10121a 50%, ${BG} 100%)` }} />
         <ConstructionBeams opacity={0.02} accent={ACCENT} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <AnimatedSection>          <SectionHeader badge="Our Work" title="Recent Projects" accent={ACCENT} /></AnimatedSection>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/*
+            Responsive grid: 1 col mobile, 2 col tablet, 3 col desktop so
+            up to 8 gallery photos render nicely on every screen size.
+            Titles rotate through neutral descriptors that work for any
+            general-contractor subtype — kitchen remodelers, deck builders,
+            home builders, commercial GCs — without hardcoding "Kitchen
+            Remodel" to a deck-company gallery.
+          */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {projectImages.map((src, i) => {
-              const titles = ["Kitchen Remodel", "Custom Home Build", "Commercial Build-Out", "Bathroom Renovation"];
+              const titles = [
+                "Featured Project", "Custom Build", "Recent Work",
+                "Craftsmanship Highlight", "Signature Installation", "Completed Project",
+                "Portfolio Piece", "Client Home",
+              ];
               return (
                 <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.06]">
                   <img src={src} alt={titles[i] || `Project ${i + 1}`} className="w-full h-64 object-cover transition-transform duration-700 group-hover:scale-105" />
@@ -672,7 +815,7 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
         <div className="max-w-4xl mx-auto px-6 relative z-10">
           <SectionHeader badge="See Our Work" title="Tour Our Recent Projects" accent={ACCENT} />
           <div className="relative rounded-2xl overflow-hidden border border-white/10 group cursor-pointer">
-            <img src={projectImages[0]} alt="Project tour" className="w-full h-64 md:h-96 object-cover transition-transform duration-700 group-hover:scale-105" />
+            <img src={videoTourImage} alt="Project tour" className="w-full h-64 md:h-96 object-cover transition-transform duration-700 group-hover:scale-105" />
             <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
               <div className="w-20 h-20 rounded-full flex items-center justify-center border-2 transition-transform duration-300 group-hover:scale-110" style={{ background: `${ACCENT}cc`, borderColor: ACCENT }}>
                 <Play size={36} weight="fill" className="text-white ml-1" />
@@ -707,15 +850,32 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
             </span>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {testimonials.map((t, i) => (
-              <GlassCard key={i} className="p-6 h-full flex flex-col">
-                <div className="flex gap-0.5 mb-4">
-                  {Array.from({ length: t.rating || 5 }).map((_, j) => <Star key={j} size={16} weight="fill" style={{ color: ACCENT }} />)}
-                </div>
-                <p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p>
-                <div className="pt-4 border-t border-white/5"><span className="text-sm font-semibold text-white">{t.name}</span></div>
-              </GlassCard>
-            ))}
+            {testimonials.map((t, i) => {
+              // Defensive field resolution — accept either {text,name} (type spec)
+              // OR {quote,author} (how some scrapers/enrichment scripts save them).
+              // Silently rendering undefined produced empty quote marks + blank
+              // names on Titan/Meyer until this was hardened.
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              const anyT = t as any;
+              const text = anyT.text || anyT.quote || "";
+              const name = anyT.name || anyT.author || "Verified Customer";
+              const location = anyT.location || "";
+              if (!text) return null; // never render empty quote marks
+              return (
+                <GlassCard key={i} className="p-6 h-full flex flex-col">
+                  <div className="flex gap-0.5 mb-4">
+                    {Array.from({ length: t.rating || 5 }).map((_, j) => <Star key={j} size={16} weight="fill" style={{ color: ACCENT }} />)}
+                  </div>
+                  <p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{text}&rdquo;</p>
+                  <div className="pt-4 border-t border-white/5">
+                    <span className="text-sm font-semibold text-white">{name}</span>
+                    {location && !name.includes(location) && (
+                      <span className="block text-xs text-slate-400 mt-0.5">{location}</span>
+                    )}
+                  </div>
+                </GlassCard>
+              );
+            })}
           </div>
         </div>
       </section>

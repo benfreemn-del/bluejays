@@ -44,12 +44,16 @@ const MIN_REVIEWS_FOR_POSTCARD = 20;
 const POSTCARD_BUCKET = "postcard-screenshots";
 
 // Cache version. Bump this whenever capture logic changes materially
-// (e.g. new waitForFunction, new viewport size, new JPEG quality) so
-// stale bad captures get orphaned instead of being silently reused.
+// (e.g. new waitForFunction, new viewport size, new JPEG quality) OR
+// when the preview content itself changes in a way that invalidates
+// every cached capture (e.g. a V2 template's stock image pool changes).
 // v1 → v2 (2026-04-20): poisoned caches from pre-waitForFunction era
-// contained 28KB "Loading your website preview..." skeletons; bumping
-// the key forces a clean re-capture for every prospect.
-const CACHE_VERSION = "v2";
+// contained 28KB "Loading your website preview..." skeletons.
+// v2 → v3 (2026-04-21): V2GeneralContractorPreview's stock pools were
+// expanded (1 → 8 hero, 1 → 5 about) and a developer-at-monitor photo
+// was removed. Any GC-prospect capture taken during the v2 era has the
+// old wrong photo embedded — v3 forces a clean re-capture.
+const CACHE_VERSION = "v3";
 
 // Minimum JPEG size to TRUST a cached capture. A loading-skeleton
 // screenshot at 1800x1250 compresses to ~28KB because it's mostly a
