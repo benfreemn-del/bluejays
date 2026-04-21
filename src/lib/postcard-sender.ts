@@ -78,7 +78,12 @@ const POSTCARD_BUCKET = "postcard-screenshots";
 // the Supabase cache ended up with a blank-slot capture taken against
 // the OLD code. v8 forces a clean re-capture once the new code is
 // definitely live.
-const CACHE_VERSION = "v8";
+// v8 → v9 (2026-04-21): v8 captures happened while /api/image-proxy was
+// cold-starting and intermittently 403ing on Supabase-dynamic-allowlist
+// lookups for prospect.current_website domains. With the proxy warm now,
+// v9 forces a re-capture so Titan's actually-reachable scraped photos
+// land in the hero/card/about slots.
+const CACHE_VERSION = "v9";
 
 // Minimum JPEG size to TRUST a cached capture. A loading-skeleton
 // screenshot at 1800x1250 compresses to ~28KB because it's mostly a
