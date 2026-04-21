@@ -46,8 +46,10 @@ const PROTECTED_PATHS = [
   "/api/leads/manual",
   "/api/test-funnel",
   // Sensitive API routes that must require auth
+  // (/api/funnel/run is intentionally NOT listed here — it's Vercel-cron
+  //  invoked and gated by CRON_SECRET inside the handler. Listed below in
+  //  PUBLIC_API_PATHS.)
   "/api/funnel",
-  "/api/funnel/run",
   "/api/funnel/enroll",
   "/api/outreach/bulk",
   "/api/costs",
@@ -71,11 +73,13 @@ const PROTECTED_PATHS = [
   "/api/retarget",
   "/api/followup-scheduler",
   "/api/scout-optimizer",
-  "/api/replies/process",
+  // /api/replies/process moved to PUBLIC_API_PATHS — gated by CRON_SECRET
+  //  inside the handler. Must be reachable by Vercel cron every minute.
   "/api/email-deliverability",
   "/api/email-tracking",
   "/api/auto-scout",
   "/api/warming",
+  "/api/postcards",
   "/funnel-tracker",
 ];
 
@@ -102,6 +106,9 @@ const PUBLIC_API_PATHS = [
   "/api/voicemail/status", // Twilio status callback
   "/api/voicemail/twiml",  // Twilio TwiML endpoint
   "/api/onboarding-reminders/process", // Vercel cron — gated by CRON_SECRET in the handler
+  "/api/funnel/run",                   // Vercel cron (daily 08:00 UTC) — gated by CRON_SECRET
+  "/api/replies/process",              // Vercel cron (per minute) — gated by CRON_SECRET
+  "/api/postcards/html/",              // Lob's renderer fetches these; public (just pre-rendered preview HTML)
 ];
 
 export async function middleware(request: NextRequest) {
