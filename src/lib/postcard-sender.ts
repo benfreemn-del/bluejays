@@ -62,7 +62,11 @@ const POSTCARD_BUCKET = "postcard-screenshots";
 // v4 → v5 (2026-04-21): Post-fix re-capture. The v4 Supabase cache still
 // holds a capture taken BEFORE the outlet photo was removed from the
 // fallback pool, so bump forces clean re-capture of every prospect.
-const CACHE_VERSION = "v5";
+// v5 → v6 (2026-04-21): waitForFunction was firing before hero-card img
+// finished loading from plus.unsplash.com (premium domain is slow), so v5
+// captures showed a blank card. Updated waitFn to require 3+ loaded imgs
+// (catches bg + card + about). v6 bump invalidates the blank-card v5 cache.
+const CACHE_VERSION = "v6";
 
 // Minimum JPEG size to TRUST a cached capture. A loading-skeleton
 // screenshot at 1800x1250 compresses to ~28KB because it's mostly a
@@ -129,15 +133,23 @@ async function capturePostcardShot(prospectId: string): Promise<string> {
   }
 
   const browserlessUrl = `https://production-sfo.browserless.io/screenshot?token=${encodeURIComponent(browserlessKey)}&stealth=true`;
-  // Wait until the loading skeleton has disappeared AND at least one hero
-  // image has rendered — both signals the React preview has fully painted.
+  // Wait until the loading skeleton has disappeared AND at least THREE imgs
+  // on the page are fully loaded (complete + naturalWidth > 0). Previously
+  // we waited for a single hero img, which fired too early — the V2 hero has
+  // a BACKGROUND image AND a hero CARD image, and the card was frequently
+  // still loading from plus.unsplash.com (premium subdomain is slow) when
+  // we captured. Waiting for 3+ loaded imgs catches bg + card + first about
+  // image, which are the three most visible above-the-fold assets. If <3
+  // imgs exist on the page (unlikely for a V2 preview) we fall back to a
+  // text-length heuristic so we still succeed eventually.
   const waitFn = `async () => {
     const hasLoadingText = Array.from(document.querySelectorAll('*'))
       .some(el => el.textContent && el.textContent.includes('Loading your website preview'));
     if (hasLoadingText) return false;
-    const heroImg = document.querySelector('section img, [class*="hero"] img');
-    if (!heroImg) return document.body.textContent.length > 200;
-    return heroImg.complete && heroImg.naturalWidth > 0;
+    const imgs = Array.from(document.querySelectorAll('img'));
+    const loaded = imgs.filter(img => img.complete && img.naturalWidth > 0);
+    if (imgs.length < 3) return document.body.textContent.length > 200;
+    return loaded.length >= 3;
   }`;
   const payload = {
     url: target,
