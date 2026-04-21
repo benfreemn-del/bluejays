@@ -73,7 +73,12 @@ const POSTCARD_BUCKET = "postcard-screenshots";
 // so the new ordering takes effect. Also GC fallback pool audit removed
 // 4 low-quality/mis-indexed stock photos — captures still using those
 // need to be refreshed.
-const CACHE_VERSION = "v7";
+// v7 → v8 (2026-04-21): v7 capture fired before the deploy of the
+// getValidatedPreviewPhotos rewrite had actually landed in Vercel, so
+// the Supabase cache ended up with a blank-slot capture taken against
+// the OLD code. v8 forces a clean re-capture once the new code is
+// definitely live.
+const CACHE_VERSION = "v8";
 
 // Minimum JPEG size to TRUST a cached capture. A loading-skeleton
 // screenshot at 1800x1250 compresses to ~28KB because it's mostly a
