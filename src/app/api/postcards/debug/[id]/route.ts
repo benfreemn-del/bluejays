@@ -67,12 +67,22 @@ export async function GET(
     }
     // Only Unsplash-derived or hero-worthy images (skip tiny SVGs and icons by filtering on photo-*).
     const unsplashPhotos = uniqueImgs.filter((src) => src.includes("images.unsplash.com/photo-"));
+    // Also filter out obvious logos/icons (base64 data URIs for SVG icons,
+    // small .png/.svg paths under /images, etc.) so the caller sees only
+    // real content photos.
+    const nonIcon = uniqueImgs.filter((src) => {
+      if (src.startsWith("data:")) return false;
+      if (src.endsWith(".svg")) return false;
+      if (src.includes("/icons/")) return false;
+      return true;
+    });
     return NextResponse.json({
       prospectId: id,
       target,
       totalImgCount: imgs.length,
       uniqueImgCount: uniqueImgs.length,
       unsplashPhotoUrls: unsplashPhotos,
+      allNonIconImgSrcs: nonIcon,
     });
   } catch (err) {
     return NextResponse.json({ error: (err as Error).message }, { status: 500 });
