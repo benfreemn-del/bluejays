@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { logCost, COST_RATES } from "@/lib/cost-logger";
+import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 
 /**
  * Image Proxy — serves external images through our server.
@@ -32,6 +33,35 @@ const ALLOWED_DOMAINS = [
   "graph.facebook.com",
   "s3.amazonaws.com",
 ];
+
+/**
+ * Look up the prospect's currentWebsite domain from Supabase.
+ * Used to dynamically allow images from a prospect's own site
+ * (e.g. prodecksnw.com for Pro Decks NW) without hardcoding every
+ * business website into ALLOWED_DOMAINS.
+ *
+ * Returns the hostname (with and without www prefix) or empty array
+ * if the prospect has no website or Supabase isn't reachable.
+ */
+async function getProspectDomains(prospectId: string): Promise<string[]> {
+  if (!isSupabaseConfigured() || !prospectId) return [];
+  try {
+    const { data } = await supabase
+      .from("prospects")
+      .select("current_website")
+      .eq("id", prospectId)
+      .limit(1)
+      .single();
+    const website = data?.current_website as string | null;
+    if (!website) return [];
+    const host = new URL(website).hostname.toLowerCase();
+    // Allow both `www.example.com` and `example.com` variants
+    const stripped = host.replace(/^www\./, "");
+    return host !== stripped ? [host, stripped] : [host, `www.${host}`];
+  } catch {
+    return [];
+  }
+}
 
 /** Block private/internal IP ranges to prevent SSRF */
 function isPrivateHostname(hostname: string): boolean {
@@ -104,8 +134,37 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Forbidden: private IP addresses are not allowed" }, { status: 403 });
     }
 
-    if (!ALLOWED_DOMAINS.includes(parsedHostname)) {
-      return NextResponse.json({ error: "Forbidden: domain not in allowlist" }, { status: 403 });
+    // Dynamic allowlist: when a prospectId is provided, also allow images
+    // from THAT prospect's own website domain. Solves the case where a
+    // scraped business (e.g. Pro Decks NW at prodecksnw.com) has high-quality
+    // photos on their own CDN that we want to display in the preview without
+    // hardcoding every possible business domain into ALLOWED_DOMAINS.
+    let allowed = ALLOWED_DOMAINS.includes(parsedHostname);
+    let prospectDomainsResolved: string[] = [];
+    if (!allowed && prospectId) {
+      prospectDomainsResolved = await getProspectDomains(prospectId);
+      if (prospectDomainsResolved.includes(parsedHostname.toLowerCase())) {
+        allowed = true;
+      }
+    }
+
+    if (!allowed) {
+      // Include diagnostic info in the 403 so we can debug dynamic-allowlist
+      // failures without needing Vercel log access. The error message is
+      // unchanged (so client error-handling doesn't break); diagnostic info
+      // lives under `debug`.
+      return NextResponse.json(
+        {
+          error: "Forbidden: domain not in allowlist",
+          debug: {
+            requestedHostname: parsedHostname,
+            prospectId: prospectId ?? null,
+            prospectDomainsResolved,
+            supabaseConfigured: isSupabaseConfigured(),
+          },
+        },
+        { status: 403 }
+      );
     }
 
     const isGooglePhoto = fetchUrl.includes("maps.googleapis.com");
