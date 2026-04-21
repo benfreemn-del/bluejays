@@ -56,8 +56,18 @@ export async function GET(
       );
     }
     const html = await res.text();
-    // Extract all img src values. Keep ordering — gives us hero, hero-card, about, gallery in the order they appear.
-    const imgs = Array.from(html.matchAll(/<img[^>]+src="([^"]+)"/g)).map((m) => m[1]);
+    // Extract all img src values with optional fallback-attempt attribute. Keep
+    // ordering — gives us hero, hero-card, about, gallery in the order they appear.
+    const imgMatches = Array.from(html.matchAll(/<img[^>]*>/g));
+    const imgsWithFallbackInfo = imgMatches.map((m) => {
+      const tag = m[0];
+      const src = /src="([^"]+)"/.exec(tag)?.[1] ?? "";
+      const attempt = /data-fallback-attempt="([^"]+)"/.exec(tag)?.[1];
+      const section = /data-fallback-section="([^"]+)"/.exec(tag)?.[1];
+      return { src, attempt, section };
+    });
+    const imgs = imgsWithFallbackInfo.map((o) => o.src);
+    const fallbackSubstituted = imgsWithFallbackInfo.filter((o) => o.attempt);
     // Dedup preserving first-seen order.
     const seen = new Set<string>();
     const uniqueImgs: string[] = [];
@@ -130,6 +140,12 @@ export async function GET(
       uniqueImgCount: uniqueImgs.length,
       unsplashPhotoUrls: unsplashPhotos,
       allNonIconImgSrcs: nonIcon,
+      fallbackSubstitutionCount: fallbackSubstituted.length,
+      fallbackSubstitutions: fallbackSubstituted.slice(0, 10).map((o) => ({
+        currentSrc: o.src.slice(0, 100),
+        attempt: o.attempt,
+        section: o.section,
+      })),
       serverSideDiagnostic,
     });
   } catch (err) {
