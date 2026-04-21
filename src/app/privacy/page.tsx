@@ -67,6 +67,7 @@ const sections = [
     content: [
       "Our website may use cookies, pixels, server logs, and similar technologies to understand site traffic, improve performance, measure campaign effectiveness, and maintain site security. These technologies may collect information such as IP address, browser type, device identifiers, pages viewed, referral information, and approximate location derived from network information.",
       "We may use analytics and hosting tools provided by third parties, including services associated with Vercel and other website infrastructure providers. You can generally control cookies through your browser settings, although disabling certain cookies may affect site functionality.",
+      "We also use retargeting pixels provided by Meta (Facebook) and Google Ads on our homepage, preview pages, and claim pages. These pixels allow us to show relevant ads about BlueJays to visitors who have previously shown interest, across Meta properties (Facebook, Instagram) and the Google Display Network. The pixels record anonymized visit events only — no personal identifiers, purchase details, or message content are sent to Meta or Google. You can opt out of interest-based advertising via the Meta Ad Preferences page, Google Ads Settings, or your browser's Do Not Track settings.",
     ],
   },
   {

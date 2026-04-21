@@ -5,6 +5,7 @@ import About from "@/components/About";
 import Services from "@/components/Services";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
+import RetargetingPixels from "@/components/RetargetingPixels";
 
 const BASE_URL = "https://bluejayportfolio.com";
 const OG_IMAGE = `${BASE_URL}/og-image.png`;
@@ -35,6 +36,9 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <main>
+      {/* Retargeting pixels — organic homepage visitors enter a 30-day
+          retargeting window. Self-gates on env vars + ?embed=1. */}
+      <RetargetingPixels />
       <Hero />
       <Stats />
       <About />

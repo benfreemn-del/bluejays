@@ -1,6 +1,7 @@
 // Server component layout — provides metadata for the /claim/[id] route.
 // The page itself is a "use client" component and cannot export metadata directly.
 import type { Metadata } from "next";
+import RetargetingPixels from "@/components/RetargetingPixels";
 
 const BASE_URL = "https://bluejayportfolio.com";
 const OG_IMAGE = `${BASE_URL}/og-image.png`;
@@ -52,5 +53,13 @@ export async function generateMetadata({
 }
 
 export default function ClaimLayout({ children }: { children: React.ReactNode }) {
-  return <>{children}</>;
+  return (
+    <>
+      {/* Retargeting pixels — prospects who view the claim page enter a
+          30-day retargeting window on Meta + Google Ads. High-intent signal:
+          these are folks who opened the preview AND clicked through to claim. */}
+      <RetargetingPixels />
+      {children}
+    </>
+  );
 }
