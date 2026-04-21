@@ -53,12 +53,16 @@ const POSTCARD_BUCKET = "postcard-screenshots";
 // expanded (1 → 8 hero, 1 → 5 about) and a developer-at-monitor photo
 // was removed. Any GC-prospect capture taken during the v2 era has the
 // old wrong photo embedded — v3 forces a clean re-capture.
-// v3 → v4 (2026-04-21): Diagnostic re-capture to chase an "outlet" image
-// that appeared on the v3 postcard capture but doesn't appear in the
-// debug-endpoint's DOM dump (which shows a DJI aerial drone photo at
-// the hero-card slot). Bumping invalidates v3 cache so we see what
-// Browserless currently captures live.
-const CACHE_VERSION = "v4";
+// v3 → v4 (2026-04-21): Diagnostic re-capture that confirmed an outlet
+// photo (unsplash premium_photo-1681589433923-33ea0898397f, literally
+// captioned "an orange cord plugged into a white wall outlet") was being
+// served as Titan Builders' hero card. The offender lived in the "remodeling
+// construction project" search-result pool inside the general-contractor
+// section of category-fallback-images.ts.
+// v4 → v5 (2026-04-21): Post-fix re-capture. The v4 Supabase cache still
+// holds a capture taken BEFORE the outlet photo was removed from the
+// fallback pool, so bump forces clean re-capture of every prospect.
+const CACHE_VERSION = "v5";
 
 // Minimum JPEG size to TRUST a cached capture. A loading-skeleton
 // screenshot at 1800x1250 compresses to ~28KB because it's mostly a

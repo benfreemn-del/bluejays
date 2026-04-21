@@ -2956,12 +2956,6 @@ export const CATEGORY_FALLBACK_COLLECTIONS: Record<string, CategoryFallbackColle
         "alt": "Interior room undergoing renovation with exposed walls and doorway"
       },
       {
-        "id": "npibUvAEu2M",
-        "page": "https://unsplash.com/photos/npibUvAEu2M",
-        "raw": "https://plus.unsplash.com/premium_photo-1681589433923-33ea0898397f?ixid=M3wxMjA3fDB8MXxzZWFyY2h8OXx8cmVtb2RlbGluZyUyMGNvbnN0cnVjdGlvbiUyMHByb2plY3R8ZW58MHx8fHwxNzc1ODgxMzYyfDA&ixlib=rb-4.1.0",
-        "alt": "an orange cord plugged into a white wall outlet"
-      },
-      {
         "id": "hPZk_DfODx0",
         "page": "https://unsplash.com/photos/hPZk_DfODx0",
         "raw": "https://images.unsplash.com/photo-1768321915339-b88858824bc6?ixid=M3wxMjA3fDB8MXxzZWFyY2h8MTB8fHJlbW9kZWxpbmclMjBjb25zdHJ1Y3Rpb24lMjBwcm9qZWN0fGVufDB8fHx8MTc3NTg4MTM2Mnww&ixlib=rb-4.1.0",
