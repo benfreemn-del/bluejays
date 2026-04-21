@@ -1,4 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getGeneratedSite } from "@/lib/store";
+import { sanitizeImageUrls, validateImageUrl } from "@/lib/image-validator";
+import { getHeroImage } from "@/lib/preview-utils";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -76,6 +79,25 @@ export async function GET(
       if (src.includes("/icons/")) return false;
       return true;
     });
+    // Also emit the raw getValidatedPreviewPhotos diagnostic from the
+    // server side — this tells us what the WRAPPER is producing vs what
+    // the rendered HTML actually contains, so we can spot divergences
+    // caused by caching / stale deploys / bugs in the rewrite.
+    const gs = await getGeneratedSite(id);
+    const rawPhotos = gs?.siteData?.photos ?? [];
+    const sanitized = sanitizeImageUrls(rawPhotos);
+    const category = gs?.siteData?.category ?? "general-contractor";
+    const heroCand = getHeroImage({
+      ...(gs?.siteData ?? {}),
+      photos: sanitized,
+    } as Parameters<typeof getHeroImage>[0]);
+    const galleryValidatedCount = sanitized.filter((p) => {
+      const r = validateImageUrl(p, category, "gallery");
+      return !r.shouldUseFallback;
+    }).length;
+    const heroValidated = !validateImageUrl(heroCand, category, "hero").shouldUseFallback;
+    const heroGalleryValidated = !validateImageUrl(heroCand, category, "gallery").shouldUseFallback;
+
     return NextResponse.json({
       prospectId: id,
       target,
@@ -83,6 +105,14 @@ export async function GET(
       uniqueImgCount: uniqueImgs.length,
       unsplashPhotoUrls: unsplashPhotos,
       allNonIconImgSrcs: nonIcon,
+      serverSideDiagnostic: {
+        rawPhotosCount: rawPhotos.length,
+        sanitizedCount: sanitized.length,
+        galleryValidatedCount,
+        heroCandidate: heroCand,
+        heroCandidatePassesHeroVariant: heroValidated,
+        heroCandidatePassesGalleryVariant: heroGalleryValidated,
+      },
     });
   } catch (err) {
     return NextResponse.json({ error: (err as Error).message }, { status: 500 });
