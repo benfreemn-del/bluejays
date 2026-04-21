@@ -66,7 +66,14 @@ const POSTCARD_BUCKET = "postcard-screenshots";
 // finished loading from plus.unsplash.com (premium domain is slow), so v5
 // captures showed a blank card. Updated waitFn to require 3+ loaded imgs
 // (catches bg + card + about). v6 bump invalidates the blank-card v5 cache.
-const CACHE_VERSION = "v6";
+// v6 → v7 (2026-04-21): PreviewContent.tsx::getValidatedPreviewPhotos was
+// rewritten to prefer REAL scraped photos over category fallbacks for the
+// [0]/[1]/[2] slots (hero bg, hero card, about). Cache v6 holds captures
+// from the old logic (stock photos at those slots); v7 forces re-capture
+// so the new ordering takes effect. Also GC fallback pool audit removed
+// 4 low-quality/mis-indexed stock photos — captures still using those
+// need to be refreshed.
+const CACHE_VERSION = "v7";
 
 // Minimum JPEG size to TRUST a cached capture. A loading-skeleton
 // screenshot at 1800x1250 compresses to ~28KB because it's mostly a

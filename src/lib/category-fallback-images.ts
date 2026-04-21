@@ -2920,12 +2920,6 @@ export const CATEGORY_FALLBACK_COLLECTIONS: Record<string, CategoryFallbackColle
         "alt": "Custom kitchen cabinets in various stages of installation base for island in center"
       },
       {
-        "id": "Y10b8vP6pEI",
-        "page": "https://unsplash.com/photos/Y10b8vP6pEI",
-        "raw": "https://images.unsplash.com/photo-1773430266699-efa32d1a2127?ixid=M3wxMjA3fDB8MXxzZWFyY2h8Mnx8cmVtb2RlbGluZyUyMGNvbnN0cnVjdGlvbiUyMHByb2plY3R8ZW58MHx8fHwxNzc1ODgxMzYyfDA&ixlib=rb-4.1.0",
-        "alt": "Wooden structure under a cloudy sky"
-      },
-      {
         "id": "pmVHjCWmGnw",
         "page": "https://unsplash.com/photos/pmVHjCWmGnw",
         "raw": "https://images.unsplash.com/photo-1765277789236-18b14cb7869f?ixid=M3wxMjA3fDB8MXxzZWFyY2h8M3x8cmVtb2RlbGluZyUyMGNvbnN0cnVjdGlvbiUyMHByb2plY3R8ZW58MHx8fHwxNzc1ODgxMzYyfDA&ixlib=rb-4.1.0",
@@ -2970,28 +2964,10 @@ export const CATEGORY_FALLBACK_COLLECTIONS: Record<string, CategoryFallbackColle
     ],
     "team": [
       {
-        "id": "13e6QAgNmFM",
-        "page": "https://unsplash.com/photos/13e6QAgNmFM",
-        "raw": "https://plus.unsplash.com/premium_photo-1667520175454-1db3d90afd28?ixid=M3wxMjA3fDB8MXxzZWFyY2h8MXx8Y29udHJhY3RvciUyMHRlYW18ZW58MHx8fHwxNzc1ODgxMzYzfDA&ixlib=rb-4.1.0",
-        "alt": "Asian structure engineer and worker making handshake on building working site. All people wearing safety hardhat during walking in construction workplace. Business deal, merger and acquisition concept"
-      },
-      {
-        "id": "2ASQyjafflo",
-        "page": "https://unsplash.com/photos/2ASQyjafflo",
-        "raw": "https://images.unsplash.com/photo-1648135327756-b606e2eb8caa?ixid=M3wxMjA3fDB8MXxzZWFyY2h8Mnx8Y29udHJhY3RvciUyMHRlYW18ZW58MHx8fHwxNzc1ODgxMzYzfDA&ixlib=rb-4.1.0",
-        "alt": "a white hard hat sitting on top of a solar panel"
-      },
-      {
         "id": "vp0ffQcBqJ0",
         "page": "https://unsplash.com/photos/vp0ffQcBqJ0",
         "raw": "https://images.unsplash.com/photo-1772300164438-f73307d3b645?ixid=M3wxMjA3fDB8MXxzZWFyY2h8M3x8Y29udHJhY3RvciUyMHRlYW18ZW58MHx8fHwxNzc1ODgxMzYzfDA&ixlib=rb-4.1.0",
         "alt": "Workers in a large, empty warehouse with polished floors."
-      },
-      {
-        "id": "qqgAI1jVAdM",
-        "page": "https://unsplash.com/photos/qqgAI1jVAdM",
-        "raw": "https://images.unsplash.com/photo-1659353589112-005e063abdaf?ixid=M3wxMjA3fDB8MXxzZWFyY2h8NHx8Y29udHJhY3RvciUyMHRlYW18ZW58MHx8fHwxNzc1ODgxMzYzfDA&ixlib=rb-4.1.0",
-        "alt": "a couple of men wearing hard hats"
       }
     ]
   },

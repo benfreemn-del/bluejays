@@ -55,7 +55,6 @@ import {
   getCompleteCategoryFallbackSet,
 } from "@/lib/stock-image-picker";
 import {
-  getAboutImage,
   getHeroHeading,
   getHeroImage,
   getHeroSubtitle,
@@ -162,22 +161,34 @@ function getValidatedPreviewPhotos(id: string, siteData: GeneratedSiteData, busi
     uniquePhotos.push(normalizedUrl);
   };
 
+  // PRIORITY ORDER — scraped photos first, category fallbacks only to fill gaps.
+  //
+  // Every V2 template consumes this list as: [0]=hero-bg, [1]=hero-card,
+  // [2]=about, [3+]=gallery. Previous logic put the hero/about category
+  // fallbacks at slots [0] and [1] via getHeroImage + validateImageUrl's
+  // strict "hero"/"about" variant rules, which rejected legitimate business
+  // photos (e.g. Titan Builders' DJI aerial drone shots of finished homes)
+  // in favor of generic Unsplash stock. For a prospect with 14 real photos
+  // on their own website, rendering a stock contractor-on-ladder as the
+  // hero card was a massive downgrade.
+  //
+  // New rule: if a prospect has ANY scraped photos that pass gallery-variant
+  // validation, they fill [0]/[1]/[2] before any fallback runs. Only when
+  // we run out of real photos do we reach for category pools — and only for
+  // the slots we couldn't fill with real imagery.
+
+  // Prefer the explicitly-chosen heroImage first (the generator already
+  // picked the best candidate). Falls through to scraped photos if missing.
   const heroCandidate = normalizePreviewPhotoUrl(getHeroImage({ ...siteData, photos: sanitizedPhotos }));
-  const heroResult = validateImageUrl(heroCandidate, category, "hero");
-  pushUnique(
-    heroResult.shouldUseFallback
-      ? getCategoryFallbackImage(category, "hero", businessName, 0, uniquePhotos)
-      : heroResult.sanitizedUrl
-  );
+  if (heroCandidate) {
+    const heroResult = validateImageUrl(heroCandidate, category, "gallery");
+    if (!heroResult.shouldUseFallback && heroResult.sanitizedUrl) {
+      pushUnique(heroResult.sanitizedUrl);
+    }
+  }
 
-  const aboutCandidate = normalizePreviewPhotoUrl(getAboutImage({ ...siteData, photos: sanitizedPhotos }));
-  const aboutResult = validateImageUrl(aboutCandidate, category, "about");
-  pushUnique(
-    aboutResult.shouldUseFallback
-      ? getCategoryFallbackImage(category, "about", businessName, 1, uniquePhotos)
-      : aboutResult.sanitizedUrl
-  );
-
+  // Now push every remaining scraped photo that passes gallery validation.
+  // pushUnique skips the heroCandidate we already added.
   for (const photo of sanitizedPhotos) {
     const result = validateImageUrl(photo, category, "gallery");
     if (!result.shouldUseFallback && result.sanitizedUrl) {
@@ -185,7 +196,20 @@ function getValidatedPreviewPhotos(id: string, siteData: GeneratedSiteData, busi
     }
   }
 
-  pushUnique(getCategoryFallbackImage(category, "hero-card", businessName, 2, uniquePhotos));
+  // Backfill slots [0], [1], [2] with category-pool fallbacks ONLY if we
+  // don't have 3 scraped photos. These three slots are the above-the-fold
+  // images — they MUST be populated or the preview looks broken.
+  if (uniquePhotos.length < 1) {
+    pushUnique(getCategoryFallbackImage(category, "hero", businessName, 0, uniquePhotos));
+  }
+  if (uniquePhotos.length < 2) {
+    pushUnique(getCategoryFallbackImage(category, "about", businessName, 1, uniquePhotos));
+  }
+  if (uniquePhotos.length < 3) {
+    pushUnique(getCategoryFallbackImage(category, "hero-card", businessName, 2, uniquePhotos));
+  }
+
+  // Remaining category fallbacks for services/team/testimonials slots.
   pushUnique(getCategoryFallbackImage(category, "services", businessName, 3, uniquePhotos));
   pushUnique(getCategoryFallbackImage(category, "team", businessName, 4, uniquePhotos));
   pushUnique(getCategoryFallbackImage(category, "testimonials", businessName, 5, uniquePhotos));
