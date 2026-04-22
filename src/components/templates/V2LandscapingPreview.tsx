@@ -292,7 +292,10 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
 
 
   const aboutImage = uniquePhotos[2] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 2);
-  const galleryImages = data.photos?.length > 2 ? data.photos.slice(2, 10) : pickGallery(STOCK_GALLERY, data.businessName);
+  // Show ALL real photos in gallery (no 8-photo cap) — use stock only when no real photos exist
+  const galleryImages = uniquePhotos.length > 2
+    ? uniquePhotos.slice(2)
+    : pickGallery(STOCK_GALLERY, data.businessName);
 
   const processSteps = [
     { step: "01", title: "Free Consultation", desc: `We visit your property, discuss your vision, and provide a detailed, no-obligation quote.`, icon: Phone },
@@ -495,17 +498,38 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
 
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <SectionHeader badge="Our Work" title="Project Gallery" subtitle={`Browse our portfolio of completed landscaping projects by ${data.businessName}.`} accent={PRIMARY} />
-          <div className="columns-1 md:columns-2 lg:columns-3 gap-4 space-y-4">
-            {galleryImages.map((src, i) => (
-              <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.06] hover:border-opacity-30 transition-all duration-500 break-inside-avoid">
-                <img src={src} alt={`Landscape project ${i + 1}`} className={`w-full object-cover transition-transform duration-700 group-hover:scale-105 ${i % 3 === 0 ? "h-80" : i % 3 === 1 ? "h-64" : "h-72"}`} />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="absolute bottom-0 left-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                  <div className="flex items-center gap-2"><Tree size={14} weight="fill" style={{ color: PRIMARY }} /><span className="text-xs text-white/80 font-medium">{data.businessName}</span></div>
+          {/* Masonry gallery — shows ALL photos with dynamic height variation */}
+          <div className="columns-1 md:columns-2 lg:columns-3 gap-5 space-y-5">
+            {galleryImages.map((src, i) => {
+              // Height pattern: tall, medium, short, tall, medium... for visual rhythm
+              const heights = ["h-80", "h-64", "h-72", "h-96", "h-64", "h-80"];
+              const h = heights[i % heights.length];
+              return (
+                <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.06] hover:border-white/20 transition-all duration-500 break-inside-avoid shadow-xl">
+                  <img src={src} alt={`Landscape project ${i + 1} by ${data.businessName}`} className={`w-full ${h} object-cover transition-transform duration-700 group-hover:scale-105`} />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-2 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-500">
+                    <div className="flex items-center gap-2">
+                      <Tree size={14} weight="fill" style={{ color: PRIMARY }} />
+                      <span className="text-xs text-white font-semibold">{data.businessName}</span>
+                      <span className="text-white/50 text-xs ml-auto">Project {i + 1}</span>
+                    </div>
+                  </div>
+                  {/* Accent corner glow on hover */}
+                  <div className="absolute top-3 right-3 w-2 h-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: PRIMARY }} />
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
+          {/* Photo count badge */}
+          {galleryImages.length > 0 && (
+            <p className="text-center text-sm text-slate-500 mt-8">
+              <span className="inline-flex items-center gap-1.5">
+                <span className="inline-block w-1.5 h-1.5 rounded-full" style={{ background: PRIMARY }} />
+                {galleryImages.length} completed projects
+              </span>
+            </p>
+          )}
         </div>
       </section>
 
