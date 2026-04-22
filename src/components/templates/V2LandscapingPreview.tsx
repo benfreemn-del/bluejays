@@ -375,8 +375,15 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
         <div className="mx-auto max-w-7xl px-4 md:px-6 py-4">
           <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
             <div className="flex items-center gap-2">
-              <Tree size={24} weight="fill" style={{ color: PRIMARY }} />
-              <span className="text-lg font-bold tracking-tight text-white">{data.businessName}</span>
+              {data.logoUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={data.logoUrl} alt={`${data.businessName} logo`} className="h-9 w-auto max-w-[140px] object-contain" />
+              ) : (
+                <>
+                  <Tree size={24} weight="fill" style={{ color: PRIMARY }} />
+                  <span className="text-lg font-bold tracking-tight text-white">{data.businessName}</span>
+                </>
+              )}
             </div>
             <div className="hidden md:flex items-center gap-8 text-sm text-slate-400">
               <a href="#portfolio" className="hover:text-white transition-colors">Portfolio</a>
@@ -419,7 +426,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
           <div className="max-w-2xl space-y-8">
             <div>
               <p className="text-sm uppercase tracking-widest mb-4" style={{ color: PRIMARY }}>Professional Landscaping</p>
-              <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 20px rgba(0,0,0,0.7)" }}>{data.tagline}</h1>
+              <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 20px rgba(0,0,0,0.7)" }}>{(data as { heroTagline?: string }).heroTagline || data.tagline}</h1>
             </div>
             <p className="text-lg text-slate-300 max-w-md leading-relaxed">{(() => { const t = data.about; if (t.length <= 180) return t; const dot = t.indexOf('.', 80); return dot > 0 && dot < 220 ? t.slice(0, dot + 1) : t.slice(0, 180).trim() + '...'; })()}</p>
             <div className="flex flex-wrap gap-4">
