@@ -1,10 +1,23 @@
-export const metadata = {
-  title: "[V2] Precision Financial Partners | Premium Accounting Template",
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Accounting & CPA Website Design | Live Example — BlueJays",
   description:
-    "V2 premium animated accounting template with gold accents, glass morphism, and trust-building micro-interactions.",
+    "See a premium accounting and CPA firm website in action. BlueJays builds custom accounting websites starting at $997 — full custom design, domain, and hosting included. 48-hour launch.",
+  keywords: "accounting website design, CPA website design, tax firm website, bookkeeping website",
+  openGraph: {
+    title: "Accounting & CPA Website Design | Live Example — BlueJays",
+    description: "See a premium accounting and CPA firm website in action. BlueJays builds custom accounting websites starting at $997 — full custom design, domain, and hosting included. 48-hour launch.",
+    url: "https://bluejayportfolio.com/v2/accounting",
+    siteName: "BlueJays Web Design Portfolio",
+    type: "website",
+  },
+  alternates: {
+    canonical: "https://bluejayportfolio.com/v2/accounting",
+  },
 };
 
-export default function V2AccountingLayout({
+export default function AccountingV2Layout({
   children,
 }: {
   children: React.ReactNode;

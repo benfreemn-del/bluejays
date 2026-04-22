@@ -3,6 +3,15 @@ import type { GeneratedSiteData } from "@/lib/generator";
 import PreviewClientPage from "@/components/preview/PreviewClientPage";
 import RetargetingPixels from "@/components/RetargetingPixels";
 import { getProspect, getScrapedData } from "@/lib/store";
+import { redirect } from "next/navigation";
+
+const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
+const TERMINAL_STATUSES = new Set(["paid", "claimed", "pro-bono"]);
+const ACTIVE_STATUSES = new Set([
+  "scouted", "scraped", "generated", "pending-review", "ready_to_review",
+  "qc_failed", "approved", "ready_to_send", "changes_pending",
+  "ready_to_finalize", "deployed",
+]);
 
 export const dynamic = "force-dynamic";
 
@@ -109,6 +118,22 @@ export default async function PreviewPage({
   const { id } = await params;
   const { version, theme } = await searchParams;
   const initialTheme = theme === "light" || theme === "dark" ? theme : undefined;
+
+  // Check 30-day preview expiry — only for prospects in the outreach funnel
+  try {
+    const prospect = await getProspect(id);
+    if (prospect && !TERMINAL_STATUSES.has(prospect.status) && !ACTIVE_STATUSES.has(prospect.status)) {
+      const anchor = prospect.contactedAt || (
+        // Fallback: if status is post-contact but contactedAt wasn't recorded, use updatedAt
+        prospect.status !== "contacted" ? null : prospect.updatedAt
+      );
+      if (anchor && Date.now() - new Date(anchor).getTime() > THIRTY_DAYS_MS) {
+        redirect(`/expired/${id}`);
+      }
+    }
+  } catch {
+    // Don't block preview rendering on expiry check errors
+  }
 
   return (
     <>

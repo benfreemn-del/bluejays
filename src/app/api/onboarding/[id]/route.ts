@@ -69,6 +69,40 @@ export async function POST(
     console.log(`[Onboarding] Skipped file write on Vercel`);
   }
 
+  // Persist structured fields in adminNotes for quick access during finalization
+  const { logoUrl, brandColors, photosNotes, tagline, changeRequests } = body as {
+    logoUrl?: string; brandColors?: string; photosNotes?: string;
+    tagline?: string; changeRequests?: string;
+  };
+  const noteLines = [
+    logoUrl ? `Logo: ${logoUrl}` : null,
+    brandColors ? `Brand colors: ${brandColors}` : null,
+    photosNotes ? `Photos/imagery: ${photosNotes}` : null,
+    tagline ? `Tagline: "${tagline}"` : null,
+    changeRequests ? `Change requests:\n${changeRequests}` : null,
+  ].filter(Boolean).join("\n");
+
+  if (noteLines) {
+    const existing = prospect.adminNotes || "";
+    const block = (existing ? "\n\n---\n" : "") + `Onboarding form (${new Date().toLocaleDateString()}):\n${noteLines}`;
+    await updateProspect(id, {
+      adminNotes: existing + block,
+      adminNotesUpdatedAt: new Date().toISOString(),
+    });
+  }
+
+  // Alert Ben via SMS
+  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com";
+  const alertMsg = [
+    `📋 ${prospect.businessName} submitted their onboarding form!`,
+    logoUrl ? `🎨 Logo provided` : "❌ No logo",
+    brandColors ? `🎨 Colors: ${brandColors}` : "",
+    tagline ? `💬 Tagline: "${tagline.substring(0, 60)}"` : "",
+    changeRequests ? `📝 Requests: "${changeRequests.substring(0, 100)}"` : "No specific requests",
+    `📋 Dashboard: ${BASE_URL}/dashboard`,
+  ].filter(Boolean).join("\n");
+  await sendOwnerAlert(alertMsg).catch(() => {});
+
   // Only update status if the prospect has already paid via Stripe.
   // The Stripe webhook handles the paid transition; onboarding form
   // submission alone should not grant paid status.

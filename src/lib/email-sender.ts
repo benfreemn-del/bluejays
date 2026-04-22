@@ -37,7 +37,6 @@ const SENDERS: Record<string, { email: string; name: string; replyTo?: string }>
   },
 };
 const FALLBACK_SENDER = SENDERS["bluejayportfolio.com"];
-
 const EMAILS_DIR = path.join(process.cwd(), "data", "emails");
 
 export interface SentEmail {

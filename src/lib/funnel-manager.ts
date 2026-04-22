@@ -49,10 +49,10 @@ export interface FunnelStep {
 export const FUNNEL_STEPS: FunnelStep[] = [
   { day: 0, channels: ["email", "sms"], label: "Initial Pitch" },
   { day: 2, channels: ["voicemail"], label: "Voicemail Drop" },
-  { day: 5, channels: ["email"], label: "Gentle Follow-Up" },
+  { day: 5, channels: ["email", "sms"], label: "Gentle Follow-Up" },
   { day: 12, channels: ["email", "sms"], label: "Value Reframe" },
   { day: 18, channels: ["voicemail"], label: "Follow-Up VM" },
-  { day: 21, channels: ["email"], label: "Social Proof" },
+  { day: 21, channels: ["email", "sms"], label: "Social Proof" },
   { day: 30, channels: ["email"], label: "Final Check-In" },
 ];
 
@@ -167,7 +167,8 @@ async function getEmailTemplate(prospect: Prospect, stepIndex: number, previewUr
   }
 
   if (stepIndex === 0) {
-    return getPitchEmail(prospect, previewUrl, videoUrl);
+    const proposalUrl = `${BASE_URL}/proposal/${prospect.id}`;
+    return getPitchEmail(prospect, previewUrl, videoUrl, proposalUrl);
   }
   if (stepIndex === 2) {
     return getFollowUp1(prospect, previewUrl, videoUrl);
@@ -315,7 +316,8 @@ async function sendFunnelStep(
   options?: { retryCount?: number; queueOnFailure?: boolean }
 ): Promise<{ success: boolean; emailSent: boolean; smsSent: boolean; voicemailSent: boolean; queuedForRetry: boolean; deliveredChannel: DeliveryChannel | null; lastError?: string }> {
   const step = FUNNEL_STEPS[stepIndex];
-  const previewUrl = `${BASE_URL}${prospect.generatedSiteUrl}`;
+  // Short URL for outreach — /p/[8chars] redirects to the full preview page
+  const previewUrl = `${BASE_URL}/p/${prospect.id.slice(0, 8)}`;
   let emailSent = false;
   let smsSent = false;
   let voicemailSent = false;
@@ -505,7 +507,10 @@ export async function enrollInFunnel(prospectId: string): Promise<{ success: boo
   filtered.push(enrollment);
   await saveEnrollmentsAsync(filtered);
 
-  await updateProspect(prospectId, { status: "contacted" });
+  // Set contactedAt on first outreach only — used for 30-day preview expiry
+  const existingProspect = await getProspect(prospectId);
+  const contactedAtPatch = existingProspect?.contactedAt ? {} : { contactedAt: new Date().toISOString() };
+  await updateProspect(prospectId, { status: "contacted", ...contactedAtPatch });
 
   const outcome = results.success
     ? `${results.emailSent ? "Email" : "SMS"}${results.deliveredChannel && results.voicemailSent ? " + voicemail" : ""} delivered.`

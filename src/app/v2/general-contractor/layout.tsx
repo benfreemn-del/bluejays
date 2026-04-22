@@ -1,10 +1,23 @@
-export const metadata = {
-  title: "Summit Builders NW | Licensed General Contractor — Seattle, WA",
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "General Contractor Website Design | Live Example — BlueJays",
   description:
-    "V2 premium general contractor showcase for Summit Builders NW. 22 years building Seattle's future. Licensed WA #SUMMIBW891PZ.",
+    "See a premium general contractor website in action. BlueJays builds custom GC websites starting at $997 — full custom design, domain, and hosting included. 48-hour turnaround.",
+  keywords: "general contractor website design, GC website, contractor website design, remodeling company website",
+  openGraph: {
+    title: "General Contractor Website Design | Live Example — BlueJays",
+    description: "See a premium general contractor website in action. BlueJays builds custom GC websites starting at $997 — full custom design, domain, and hosting included. 48-hour turnaround.",
+    url: "https://bluejayportfolio.com/v2/general-contractor",
+    siteName: "BlueJays Web Design Portfolio",
+    type: "website",
+  },
+  alternates: {
+    canonical: "https://bluejayportfolio.com/v2/general-contractor",
+  },
 };
 
-export default function V2GeneralContractorLayout({
+export default function GeneralContractorV2Layout({
   children,
 }: {
   children: React.ReactNode;

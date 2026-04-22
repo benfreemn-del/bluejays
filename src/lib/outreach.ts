@@ -38,7 +38,7 @@ export async function sendPitchEmail(prospect: Prospect) {
     );
   }
 
-  const previewUrl = `${BASE_URL}${prospect.generatedSiteUrl}`;
+  const previewUrl = `${BASE_URL}/p/${prospect.id.slice(0, 8)}`;
   const videoUrl = await getProspectVideoUrl(prospect.id);
 
   // Check what sequence we're on

@@ -2121,3 +2121,269 @@ Key infrastructure:
 - Twilio: A2P 10DLC pending carrier approval (required for US SMS at scale)
 - Stripe: Sandbox mode for testing; Live mode keys + Live mode webhook required before May 1
 - OpenAI + Anthropic API keys on Vercel for QC/supercharge pipeline
+## Client Features System (for paid clients — businesses whose websites we built)
+
+**Core philosophy:** "Best website = better online reputation." The three client features below are value-adds included with every $997 website. They make the site actively generate leads and protect the owner's Google reputation automatically. Each feature is scoped per-prospect by `prospectId`. Only `status: "paid"` prospects should have these features enabled.
+
+### Feature 1: Google Review Funnel
+
+**What it does:**
+- Business owner texts past customers a link: `bluejayportfolio.com/review/[prospectId]`
+- Customer taps the link and rates 1–5 stars
+- **5 stars** → Thank you message + "Leave us a Google Review" button (links to their Google listing)
+- **1–4 stars** → Private feedback form. Feedback is emailed to the business owner. Never goes public.
+- This filters negative reviews OUT of Google while funneling 5-stars IN.
+
+**Files:**
+- `src/app/review/[id]/page.tsx` — server component, fetches prospect, passes props
+- `src/app/review/[id]/ReviewClient.tsx` — interactive star rating UI ("use client")
+- `src/app/api/review/submit/route.ts` — saves review to `client_reviews` Supabase table, emails owner on < 5 stars
+- `src/app/api/review-request/send/route.ts` — POST `{ prospectId, customerPhone, customerName? }` → sends SMS to customer
+
+**Dashboard UI:**
+- `src/components/dashboard/ReviewRequestPanel.tsx` — collapsible panel for entering customer phones and sending requests. Include this in ProspectDetail for paid clients.
+
+**Supabase tables needed:**
+```sql
+create table client_reviews (
+  id uuid primary key,
+  prospect_id text not null,
+  business_name text,
+  rating int not null,
+  feedback text,
+  submitted_at timestamptz default now()
+);
+```
+
+**Rules:**
+- NEVER redirect < 5 star reviews to Google. They go to the owner's inbox only.
+- Google review URL: prefer `scrapedData.googlePlaceId` for direct link. Fall back to Google search URL.
+- The review page uses the business's `accentColor` for branding. Feels custom-built.
+- Always mention "Powered by bluejayportfolio.com" in the footer of the review page.
+
+---
+
+### Feature 2: Missed-Call Auto-Texter
+
+**What it does:**
+- When a customer calls the client's business phone and gets no answer, they automatically receive an SMS within seconds:
+  > "Hi! You just called [BusinessName] and we missed you. Book a time here: [booking link]"
+- This recovers missed leads that would otherwise call a competitor next.
+
+**How it works (Twilio):**
+1. Buy or assign a Twilio phone number to the client in Twilio dashboard
+2. Set that number's "A call comes in" webhook URL to:
+   `https://bluejayportfolio.com/api/missed-call/twiml/[prospectId]`
+3. Set the Status Callback URL to:
+   `https://bluejayportfolio.com/api/missed-call/callback`
+4. Store the client's Twilio number in Supabase: `client_feature_configs.missed_call_config.clientPhoneNumber`
+
+**Files:**
+- `src/app/api/missed-call/twiml/[id]/route.ts` — TwiML: greets caller, records voicemail, tells them to expect a text
+- `src/app/api/missed-call/callback/route.ts` — receives Twilio StatusCallback, detects missed/no-answer calls, sends auto-SMS to caller
+- `src/app/api/missed-call/config/[id]/route.ts` — GET/PATCH per-client config (enabled, customMessage, clientPhoneNumber)
+
+**"Missed call" detection logic:**
+- `CallStatus === "no-answer"` OR `CallStatus === "busy"` OR `CallStatus === "failed"` → missed
+- `CallStatus === "completed"` AND `CallDuration < 10` → also missed (rang through, hung up before VM)
+
+**Supabase tables needed:**
+```sql
+create table client_feature_configs (
+  prospect_id text primary key,
+  missed_call_config jsonb,
+  updated_at timestamptz default now()
+);
+```
+
+**Rules:**
+- NEVER send the auto-SMS if the call was answered (CallStatus = "completed" with duration > 10s)
+- The auto-SMS always includes the `/book/[id]` booking link so the caller can self-schedule
+- This feature is ON by default for all paid clients
+- Per-client custom message can be set via PATCH `/api/missed-call/config/[id]`
+
+---
+
+### Feature 3: Booking Automation (Contact Form → Auto Booking SMS)
+
+**What it does:**
+- When someone submits the contact/inquiry form on the client's website, they instantly receive an SMS:
+  > "Hi [Name]! Thanks for reaching out to [BusinessName]. We'll be in touch shortly. Want to pick a time now? [booking link]"
+- Also emails the business owner with the full lead details.
+- Saves submission to `contact_form_submissions` Supabase table.
+
+**File:** `src/app/api/contact-form/[id]/route.ts`
+
+**Integration:**
+- Client websites POST to `https://bluejayportfolio.com/api/contact-form/[prospectId]`
+- Body: `{ name, phone, email?, message?, service? }`
+- CORS headers allow cross-origin posts from client websites
+- Booking link = `/book/[prospectId]` (existing booking page) or client's own Calendly URL
+
+**Supabase tables needed:**
+```sql
+create table contact_form_submissions (
+  id uuid primary key,
+  prospect_id text not null,
+  business_name text,
+  customer_name text,
+  customer_phone text,
+  customer_email text,
+  message text,
+  service_requested text,
+  submitted_at timestamptz default now(),
+  sms_sent boolean default false,
+  email_sent boolean default false
+);
+```
+
+**Rules:**
+- ALWAYS send auto-SMS immediately on submission — this is the key conversion hook
+- Include a booking link in every auto-SMS — don't just say "we'll call you"
+- Email the business owner every time so they can follow up manually too
+- CORS is open on this endpoint — client sites are hosted on other domains
+
+---
+
+### Onboarding Integration: Booking Link After Form Submit
+
+After a paying client submits their onboarding form (`/api/onboarding/[id]`), send them an SMS with next steps + their booking link if applicable. This is already sending an owner alert — add a welcome SMS to the client (business owner) if their phone is on file.
+
+---
+
+## ════════════════════════════════════════════
+## BEN'S HOME TODO LIST (updated 2026-04-22)
+## ════════════════════════════════════════════
+
+---
+
+### BLOCK 1 — MUST DO BEFORE FIRST EMAIL GOES OUT
+
+- [ ] **Add `BEN_PHONE` env var on Vercel**: `BEN_PHONE=(253) 886-3753`
+  - This shows up in every email signature and the claim page. Set it once, appears everywhere.
+
+- [ ] **Run the email patch script** with your real Supabase credentials:
+  ```
+  SUPABASE_URL=https://[your-project].supabase.co \
+  SUPABASE_SERVICE_ROLE_KEY=[your-service-role-key] \
+  npx tsx scripts/patch-prospect-emails.ts
+  ```
+  Adds emails to 8 prospects, moves Meyer Electric back to "generated".
+
+- [ ] **Set up SendGrid domain authentication** (~20 min, one-time):
+  1. SendGrid → Settings → Sender Authentication → Authenticate a Domain
+  2. Enter `bluejayportfolio.com`
+  3. Copy the 3 DNS CNAME records it gives you
+  4. Add those records to your DNS (Vercel Domains or wherever bluejayportfolio.com lives)
+  5. Click "Verify" in SendGrid once DNS propagates (~5-30 min)
+  6. Vercel → Project Settings → Environment Variables → add `FROM_EMAIL=ben@bluejayportfolio.com`
+  7. Redeploy
+
+- [ ] **Set SendGrid Event Webhook**:
+  - SendGrid → Settings → Mail Settings → Event Webhook
+  - URL: `https://bluejayportfolio.com/api/email-tracking`
+  - Enable: click, open, bounce, spam report
+
+- [ ] **Approve prospects in dashboard** — review the pending prospects, approve the ones ready, funnel fires automatically.
+
+---
+
+### BLOCK 2 — CREDIBILITY (DO BEFORE SCALING TO 100+ EMAILS)
+
+These are the things the code can't do for you. Without these, scaling outreach just means more people googling you and finding nothing.
+
+- [ ] **Get 3 real paying clients first** — friends, family, a business you know personally. Charge $97 or free. The goal is testimonials, not revenue. Even one real client with a name and face is worth more than every line of copy on the claim page.
+
+- [ ] **Create a Google Business Profile for BlueJays**:
+  1. Go to business.google.com
+  2. Create profile: "BlueJays Web Design" — Washington State
+  3. Category: Web Designer
+  4. Add your phone (253) 886-3753, website bluejayportfolio.com
+  5. Ask your first 3 clients to leave you a Google review here
+  This is what a skeptical business owner finds when they Google you. Right now there's nothing.
+
+- [ ] **Add a short "About Ben" section to bluejayportfolio.com** — just your name, that you're local (Washington), and 1-2 sentences about why you do this. Business owners are buying from a person. Make it personal. A headshot helps.
+
+- [ ] **Text or call Steadfast Plumbing**: (360) 797-2979 — no email found, but they're a warm prospect
+- [ ] **Text or call Sequim Valley Electric**: (360) 681-3330 — same situation
+
+---
+
+### BLOCK 3 — FUNNEL IMPROVEMENTS (BUILT — NEED WIRING)
+
+- [ ] **Add `BEN_PHONE` to Vercel env vars** — `(253) 886-3753` (see Block 1). Shows up in all emails automatically.
+
+- [ ] **Set up Supabase tables for client features** (run in Supabase SQL editor):
+  ```sql
+  create table if not exists client_reviews (
+    id uuid primary key,
+    prospect_id text not null,
+    business_name text,
+    rating int not null check (rating between 1 and 5),
+    feedback text,
+    submitted_at timestamptz default now()
+  );
+
+  create table if not exists client_feature_configs (
+    prospect_id text primary key,
+    missed_call_config jsonb default '{}',
+    updated_at timestamptz default now()
+  );
+
+  create table if not exists contact_form_submissions (
+    id uuid primary key,
+    prospect_id text not null,
+    business_name text,
+    customer_name text,
+    customer_phone text,
+    customer_email text,
+    message text,
+    service_requested text,
+    submitted_at timestamptz default now(),
+    sms_sent boolean default false,
+    email_sent boolean default false
+  );
+
+  create table if not exists schedule_bookings (
+    id uuid primary key,
+    prospect_id text not null,
+    business_name text,
+    contact_name text,
+    phone text,
+    email text,
+    slot_iso timestamptz not null,
+    slot_label text,
+    date text,
+    notes text,
+    status text default 'confirmed',
+    created_at timestamptz default now()
+  );
+  ```
+
+- [ ] **Test review funnel on your phone**:
+  1. Open `bluejayportfolio.com/review/[any-prospect-id]`
+  2. Tap 5 stars → should show Google review button
+  3. Tap 3 stars → fill feedback → submit → you should get an email
+
+- [ ] **Test scheduling modal**: open `bluejayportfolio.com/schedule/[any-prospect-id]` — should show a calendar, tap a date, pick a slot, fill in details, confirm. Check that you get an email/SMS.
+
+- [ ] **Wire missed-call auto-texter for first paid client**:
+  1. In Twilio: assign or buy a number for the client
+  2. Set incoming call URL → `https://bluejayportfolio.com/api/missed-call/twiml/[prospectId]`
+  3. Set status callback → `https://bluejayportfolio.com/api/missed-call/callback`
+  4. PATCH `/api/missed-call/config/[id]` with `{ clientPhoneNumber: "+1XXXXXXXXXX" }`
+
+- [ ] **Add ReviewRequestPanel to the ProspectDetail view** for paid clients — import from `src/components/dashboard/ReviewRequestPanel.tsx` and render it when `prospect.status === "paid"`.
+
+---
+
+### BLOCK 4 — GROWTH (LATER, AFTER FIRST 5 CLIENTS)
+
+- [ ] **Lewis County Autism Coalition** — find the Claude session where you built it, bring the code in. Fix the mobile English→Spanish button.
+
+- [ ] **Build a client dashboard at `/client/[id]`** — where paying clients can see their review stats, contact form submissions, and missed call logs. The reviews + scheduling system is already built; this is just a read-only UI over the data.
+
+- [ ] **CSV uploader for review blast** — business owner pastes 50 past customer phone numbers, system sends review request SMS to all of them at once. Gets clients 20+ Google reviews fast. This is a major upsell.
+
+- [ ] **Google Calendar integration** — let clients OAuth-connect their Google Calendar so bookings appear automatically. Right now it uses our custom slot system.
+

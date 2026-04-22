@@ -68,6 +68,19 @@ function esc(s: string): string {
 // pulls its data from, so the in-body link is belt-and-suspenders.
 export const EMAIL_FOOTER = `Quilcene, WA · Opt out: {{baseUrl}}/unsubscribe/{{prospectId}}`;
 
+/**
+ * Deterministic A/B variant assignment — same prospect always gets the same variant.
+ * Uses a simple hash of the prospect ID. Variant "A" ≈ 50%, variant "B" ≈ 50%.
+ * Kept for the ab-report API which tracks open/click rates per variant.
+ */
+export function getSubjectVariant(prospectId: string): "A" | "B" {
+  let hash = 0;
+  for (let i = 0; i < prospectId.length; i++) {
+    hash = (hash * 31 + prospectId.charCodeAt(i)) >>> 0;
+  }
+  return hash % 2 === 0 ? "A" : "B";
+}
+
 function buildVideoBlock(videoUrl?: string) {
   if (!videoUrl) return "";
 
@@ -437,5 +450,117 @@ Either way — thanks for being one of the ones I spent time on.
 — Ben
 ${EMAIL_FOOTER.replace("{{baseUrl}}", process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com").replace("{{prospectId}}", prospect.id)}`,
     sequence: 3,
+  };
+}
+
+const BASE = process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com";
+const CONTACT_EMAIL = process.env.FROM_EMAIL || "ben@bluejayportfolio.com";
+const BEN_PHONE = process.env.BEN_PHONE || "(253) 886-3753";
+
+export function getReferralEmail(
+  prospect: Prospect,
+  referralCode: string,
+): EmailTemplate {
+  const name = prospect.ownerName?.split(" ")[0] || prospect.businessName;
+  const referralUrl = `${BASE}?ref=${referralCode}`;
+
+  return {
+    subject: `${name} — a quick thank-you and something for your network`,
+    body: `Hi ${name},
+
+It's been about a month since ${prospect.businessName} went live — hope customers are already finding you online.
+
+If you know any other local business owners who could use a premium website, share your personal link:
+
+${referralUrl}
+
+Every business that claims a site through your link earns you $50 off your next annual renewal.
+
+Thanks for trusting us with ${prospect.businessName}'s online presence.
+
+— Ben
+${CONTACT_EMAIL}`,
+    sequence: 0,
+  };
+}
+
+export function getHandoffEmail(
+  prospect: Prospect,
+  liveUrl: string,
+): EmailTemplate {
+  const name = prospect.ownerName?.split(" ")[0] || prospect.businessName;
+
+  return {
+    subject: `${prospect.businessName} is live — here's everything you need`,
+    body: `Hi ${name},
+
+Your website is live. Bookmark this email — it's your complete reference going forward.
+
+Your site: ${liveUrl}
+
+
+What's covered at $100/year
+---
+  - Domain renewal
+  - Hosting (your site stays up, always)
+  - Maintenance and security updates
+  - Support — reply to this email anytime
+  - Minor content updates (hours, phone, services, photos)
+
+
+How to request a change
+---
+Reply to this email with what you want updated. Most updates are done within 48 hours.
+
+Or upload materials anytime at: ${BASE}/onboarding/${prospect.id}
+
+
+Questions?
+---
+Reply here, email ${CONTACT_EMAIL}, or call/text ${BEN_PHONE}
+
+Congratulations, ${name}. Your work deserves to be found — and now it will be.
+
+— Ben @ BlueJays`,
+    sequence: 0,
+  };
+}
+
+export function getMonthlyReportEmail(
+  prospect: Prospect,
+  liveUrl: string,
+  monthName: string,
+  daysLive: number,
+): EmailTemplate {
+  const name = prospect.ownerName?.split(" ")[0] || prospect.businessName;
+  const renewalReminder =
+    daysLive >= 335
+      ? `\nHeads up — your annual plan renews soon. We'll send a reminder before anything is charged.\n`
+      : "";
+
+  return {
+    subject: `${prospect.businessName} — ${monthName} update`,
+    body: `Hi ${name},
+
+Monthly check-in on ${prospect.businessName}'s website (${daysLive} days live).
+
+${liveUrl}
+${renewalReminder}
+A few quick wins to get more from your site this month:
+
+- Add your website to your Google Business Profile — it's the #1 traffic driver
+- Put the URL in your Instagram bio and Facebook About section
+- Ask happy customers to mention your website when they leave a Google review
+- Add it to your business cards, invoices, and email signature
+- Send us any new photos — fresh content helps with Google rankings
+
+
+Need something updated?
+---
+New hours, services, a team photo — just reply to this email. Included in your plan, usually done within 48 hours.
+
+— Ben @ BlueJays
+${CONTACT_EMAIL} | ${BEN_PHONE}`,
+    sequence: 0,
   };
 }

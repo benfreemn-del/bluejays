@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { constructWebhookEvent, getStripe } from "@/lib/stripe";
 import { getProspect, updateProspect } from "@/lib/store";
-import { alertProspectPaid } from "@/lib/alerts";
+import { alertProspectPaid, sendOwnerAlert } from "@/lib/alerts";
 import { logCost, COST_RATES } from "@/lib/cost-logger";
 import { sendEmail } from "@/lib/email-sender";
 import { getWelcomeEmail } from "@/lib/email-templates";
@@ -133,6 +133,31 @@ export async function POST(request: NextRequest) {
             await sendWelcomeEmailToCustomer(prospect, customerEmail);
           }
 
+          // ─── Referral credit ───
+          // If this prospect was referred by an existing client, increment that
+          // client's referralCount. Each successful referral earns them $50 off
+          // their next $100/yr renewal.
+          if (prospect.referredBy) {
+            try {
+              const { getAllProspects: _getAllProspects } = await import("@/lib/store");
+              const allProspects = await _getAllProspects();
+              const referrer = allProspects.find(
+                (p) => p.referralCode === prospect.referredBy
+              );
+              if (referrer) {
+                await updateProspect(referrer.id, {
+                  referralCount: (referrer.referralCount || 0) + 1,
+                });
+                await sendOwnerAlert(
+                  `🎉 Referral credit! ${referrer.businessName} referred ${businessName} — they now have ${(referrer.referralCount || 0) + 1} referral(s). Credit $50 off their next renewal.`
+                ).catch(() => {});
+                console.log(`[Stripe Webhook] Referral credited to ${referrer.businessName} (${referrer.id})`);
+              }
+            } catch (refErr) {
+              console.error("[Stripe Webhook] Referral credit failed:", refErr);
+            }
+          }
+
           // ─── Create deferred $100/year maintenance subscription ───
           // For both standard ($997) and free ($30) one-time setup payments.
           // We create a subscription with a 1-year trial so the first
@@ -250,6 +275,45 @@ export async function POST(request: NextRequest) {
             }
           }
         }
+        break;
+      }
+
+      case "checkout.session.expired": {
+        // Prospect started checkout but didn't complete payment
+        const session = event.data.object as {
+          id: string;
+          metadata?: { prospectId?: string; businessName?: string };
+          customer_email?: string;
+        };
+
+        const prospectId = session.metadata?.prospectId;
+        const businessName = session.metadata?.businessName || "Unknown";
+
+        if (!prospectId) break;
+
+        const prospect = await getProspect(prospectId);
+        if (!prospect || prospect.status === "paid") break; // already paid, ignore
+
+        console.log(`[Stripe Webhook] Abandoned checkout for ${businessName} (${prospectId})`);
+
+        // Alert Ben — warm lead who was close to buying
+        const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com";
+        const claimUrl = `${BASE_URL}/claim/${prospectId}`;
+        await sendOwnerAlert(
+          `🛒 Abandoned checkout: ${businessName}\n` +
+          `They opened the payment page but didn't finish.\n` +
+          `📞 ${prospect.phone || "No phone"}\n` +
+          `📧 ${session.customer_email || prospect.email || "No email"}\n` +
+          `🔗 Their checkout: ${claimUrl}\n` +
+          `📋 ${BASE_URL}/dashboard`
+        ).catch(() => {});
+
+        // Send recovery email to the prospect
+        const clientEmail = session.customer_email || prospect.email;
+        if (clientEmail && SENDGRID_API_KEY) {
+          await sendAbandonedCheckoutEmail(clientEmail, prospect.businessName, prospectId).catch(() => {});
+        }
+
         break;
       }
 
@@ -424,4 +488,152 @@ async function notifyOwnerPayment(
   } catch (err) {
     console.error("[Stripe Webhook] Failed to send payment notification:", err);
   }
+}
+
+/**
+ * Send a welcome email to the client after successful payment.
+ * Sets expectations: 48-hour timeline, what Ben needs, and next steps.
+ */
+async function sendClientWelcomeEmail(
+  clientEmail: string,
+  businessName: string,
+  prospectId: string
+) {
+  if (!SENDGRID_API_KEY) return;
+
+  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com";
+  const previewUrl = `${BASE_URL}/preview/${prospectId}`;
+  const onboardingUrl = `${BASE_URL}/onboarding/${prospectId}`;
+
+  try {
+    await fetch("https://api.sendgrid.com/v3/mail/send", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${SENDGRID_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        personalizations: [{ to: [{ email: clientEmail }] }],
+        from: { email: FROM_EMAIL, name: "Ben @ BlueJays" },
+        subject: `Your ${businessName} site is being built — here's what happens next`,
+        content: [
+          {
+            type: "text/plain",
+            value: `Payment confirmed — thank you for trusting BlueJays with ${businessName}!
+
+Here's what happens now:
+
+━━━━━━━━━━━━━━━━━━━━
+TIMELINE
+━━━━━━━━━━━━━━━━━━━━
+• Today: I review your purchase and begin customizing your site
+• Within 24 hours: I'll reach out via email with any questions about your branding, photos, or content preferences
+• Within 48 hours: Your site goes live at your new domain
+
+━━━━━━━━━━━━━━━━━━━━
+FILL OUT YOUR ONBOARDING FORM
+━━━━━━━━━━━━━━━━━━━━
+Takes 3 minutes. Tells me everything I need to make your site perfect:
+
+${onboardingUrl}
+
+You can share your logo, brand colors, photos, taglines, and any specific requests.
+If you skip it, no worries — I'll use what I already have from your existing web presence.
+
+━━━━━━━━━━━━━━━━━━━━
+YOUR CURRENT PREVIEW
+━━━━━━━━━━━━━━━━━━━━
+${previewUrl}
+
+This is the starting point. The final version will be customized with your real photos, your exact branding, and your specific services.
+
+━━━━━━━━━━━━━━━━━━━━
+WHAT'S INCLUDED
+━━━━━━━━━━━━━━━━━━━━
+✓ Custom website design and build
+✓ Domain registration (your business name .com)
+✓ Hosting setup — no monthly fees, ever
+✓ Mobile-optimized and fast
+✓ One round of revisions included
+
+After the first year, we bill $100/year for domain renewal, hosting, ongoing maintenance, and support. You'll get an email reminder before any charge.
+
+━━━━━━━━━━━━━━━━━━━━
+QUESTIONS?
+━━━━━━━━━━━━━━━━━━━━
+Just reply to this email. I personally handle every site — you're not dealing with a support ticket or a bot.
+
+Talk soon,
+Ben @ BlueJays
+bluejaycontactme@gmail.com
+`,
+          },
+        ],
+      }),
+    });
+    console.log(`[Stripe Webhook] Welcome email sent to ${clientEmail}`);
+
+    await logCost({
+      service: "sendgrid_email",
+      action: "client_welcome_email",
+      costUsd: COST_RATES.sendgrid_email,
+      metadata: { businessName, clientEmail, type: "client_welcome" },
+    });
+  } catch (err) {
+    console.error("[Stripe Webhook] Failed to send client welcome email:", err);
+  }
+}
+
+/**
+ * Send a recovery email when a prospect starts checkout but doesn't complete.
+ * Warm lead — they were close. Keep it short and remove friction.
+ */
+async function sendAbandonedCheckoutEmail(
+  clientEmail: string,
+  businessName: string,
+  prospectId: string
+) {
+  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com";
+  const claimUrl = `${BASE_URL}/claim/${prospectId}`;
+
+  await fetch("https://api.sendgrid.com/v3/mail/send", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${SENDGRID_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      personalizations: [{ to: [{ email: clientEmail }] }],
+      from: { email: FROM_EMAIL, name: "Ben @ BlueJays" },
+      subject: `Did something go wrong with your ${businessName} site?`,
+      content: [{
+        type: "text/plain",
+        value: `Hey — I noticed you started the checkout for your ${businessName} website but it looks like something may have interrupted it.
+
+No worries if you changed your mind — zero pressure. But if it was a technical issue or a question popped up, I'm here.
+
+Your site is still reserved and ready to go live:
+${claimUrl}
+
+A few things that sometimes cause hiccups:
+- Card declined: try a different card or use the 3-payment plan ($349 × 3)
+- Questions about what's included: just reply and I'll answer directly
+- Timing: the link above stays active — come back whenever works
+
+If you're still in, just click the link above and you'll be taken right back to where you left off.
+
+— Ben @ BlueJays
+bluejaycontactme@gmail.com`,
+      }],
+    }),
+  });
+
+  console.log(`[Stripe Webhook] Abandoned checkout recovery email sent to ${clientEmail}`);
+
+  await logCost({
+    service: "sendgrid_email",
+    action: "abandoned_checkout_recovery",
+    costUsd: COST_RATES.sendgrid_email,
+    metadata: { businessName, clientEmail, type: "abandoned_checkout" },
+  });
 }

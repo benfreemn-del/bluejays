@@ -1,10 +1,23 @@
-export const metadata = {
-  title: "[V2] Iron & Oak Fitness | Premium Fitness Template",
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Fitness & Gym Website Design | Live Example — BlueJays",
   description:
-    "V2 premium animated fitness template — bold energy, neon lime on black, outlined hero text, interactive schedule, BMI calculator, vertical timeline testimonials.",
+    "See a premium fitness studio and gym website in action. BlueJays builds custom fitness websites starting at $997 — custom design, domain, and hosting. Membership pages, class schedules, and more.",
+  keywords: "fitness website design, gym website design, personal trainer website, fitness studio website",
+  openGraph: {
+    title: "Fitness & Gym Website Design | Live Example — BlueJays",
+    description: "See a premium fitness studio and gym website in action. BlueJays builds custom fitness websites starting at $997 — custom design, domain, and hosting. Membership pages, class schedules, and more.",
+    url: "https://bluejayportfolio.com/v2/fitness",
+    siteName: "BlueJays Web Design Portfolio",
+    type: "website",
+  },
+  alternates: {
+    canonical: "https://bluejayportfolio.com/v2/fitness",
+  },
 };
 
-export default function V2FitnessLayout({
+export default function FitnessV2Layout({
   children,
 }: {
   children: React.ReactNode;

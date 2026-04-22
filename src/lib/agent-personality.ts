@@ -282,3 +282,40 @@ export const INTENT_STATUS_MAP: Record<string, string> = {
   custom_request: "interested",
   unknown: "responded", // escalate to Ben for review
 };
+
+/**
+ * Ben's 15-Minute Zoom Call Script
+ * Goal: Walk through the preview live, handle objections, close or set a follow-up date.
+ * Never end a call without a specific next step.
+ */
+export const ZOOM_CALL_SCRIPT = {
+  open: `"Hey [name], thanks for jumping on — I'll keep this to 15 minutes, I know you're busy. Quick question before I share my screen — have you had a chance to click around the preview I sent, or is this your first real look at it?"`,
+
+  screenShare: `Pull up their preview URL. Walk top to bottom.
+Call out specific details:
+- "I pulled your actual services from your Google profile — see these cards here?"
+- "That's your real rating and review count up top."
+- "The color scheme — I matched that to your existing branding."
+Let them react. Silence is fine. Most owners just need a moment to process someone actually built this for them.`,
+
+  keyLine: `"What you're seeing is version one — built from what's publicly available online. After you claim it, we do a full customization round. Real photos, your colors, whatever you want changed — layout, copy, all of it. This is the starting point, not the finish line."`,
+
+  openingQuestion: `"What's your gut reaction? What would you want different?"
+(Write down what they say — their answer means they're mentally making it theirs.)`,
+
+  objections: {
+    price: `"$997 one-time — that covers design, domain registration, and hosting setup. After year one it's $100/year maintenance. We also do 3 payments of $349 if you'd rather spread it out."`,
+    alreadyHaveWebsite: `"I know — I looked at it before I built this. This is designed as an upgrade, not a replacement. Same branding, just more modern. Take a look at both side by side — which one would you rather send a customer to?"`,
+    needToThink: `"Totally fair. What's the main thing you're weighing? I'd rather answer it now while we're both here than have you guess at it later."`,
+    tooExpensive: `"$997 is firm — design, domain, and hosting is a real cost. But the 3-payment option makes it $349 today. Most businesses make that back off their first new customer."`,
+  },
+
+  close: `"So here's where we're at — I've already done the work, the site is built and live. The next step is just claiming it. Do you want to move forward today, or is there something specific holding you back I can help you work through?"
+
+If yes: "Perfect — I'll send you the claim link right now, takes about 5 minutes. Once you're in, we'll schedule the customization call and get your real photos and any changes done."
+
+If not yet: "No problem — what's the timeline looking like? I want to make sure I hold your preview and don't move on to someone else in [city]."`,
+
+  neverEndWithoutADate: `Always close with a specific next step. Never "think about it."
+Example: "Let's touch base Thursday — does that work?"`,
+};
