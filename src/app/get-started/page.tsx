@@ -253,6 +253,26 @@ export default function GetStartedPage() {
             />
           </div>
 
+          {/* SMS + email consent — required for A2P 10DLC / TCR approval.
+              TCR rejected our first campaign submission because they couldn't
+              verify an explicit Call-to-Action granting SMS consent. This
+              checkbox is the CTA: the user must tick it before submitting
+              the form, and submission = written opt-in. Never pre-check. */}
+          <label className="flex items-start gap-3 p-4 rounded-xl bg-white/[0.02] border border-white/10 hover:border-white/20 transition-colors cursor-pointer">
+            <input
+              type="checkbox"
+              required
+              name="smsConsent"
+              className="mt-1 w-5 h-5 rounded border-white/20 bg-white/5 text-sky-500 focus:ring-sky-500 focus:ring-offset-0 focus:ring-2 cursor-pointer"
+            />
+            <span className="text-sm text-white/70 leading-relaxed">
+              I agree to receive communication from BlueJay Business Solutions about my website preview, including email and SMS text messages at the phone number I provided. Message frequency varies (up to 4 messages per week). Message and data rates may apply. Reply STOP to opt out, HELP for help. See our{" "}
+              <a href="/privacy" className="text-sky-400 hover:text-sky-300 underline">Privacy Policy</a>
+              {" "}and{" "}
+              <a href="/terms" className="text-sky-400 hover:text-sky-300 underline">Terms</a>.
+            </span>
+          </label>
+
           {/* Error */}
           {error && (
             <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm text-center">
