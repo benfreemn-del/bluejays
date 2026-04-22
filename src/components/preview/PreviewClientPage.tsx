@@ -5,6 +5,7 @@ import type { GeneratedSiteData } from "@/lib/generator";
 import type { Prospect } from "@/lib/types";
 import PreviewContent from "@/components/preview/PreviewContent";
 import PreviewVideoButton from "@/components/preview/PreviewVideoButton";
+import TextMeBackWidget from "@/components/preview/TextMeBackWidget";
 
 interface PreviewClientPageProps {
   id: string;
@@ -176,6 +177,11 @@ export default function PreviewClientPage({
       </a>
 
       <PreviewVideoButton prospectId={id} />
+
+      {/* Text-me-back widget — TCPA-compliant SMS opt-in for preview
+          visitors. Anchored bottom-LEFT so it doesn't compete with the
+          Claim CTA (bottom-right). Auto-hides in ?embed=1 mode. */}
+      <TextMeBackWidget prospectId={id} />
     </>
   );
 }

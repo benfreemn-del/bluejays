@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import SmartSocialProof from "@/components/SmartSocialProof";
+import ExitIntentModal from "@/components/claim/ExitIntentModal";
 
 /**
  * CLAIM PAGE — Conversion-Optimized Layout
@@ -246,6 +247,12 @@ export default function ClaimPage() {
 
   return (
     <div className="min-h-screen bg-[#050a14] text-white">
+      {/* Exit-intent modal — fires on desktop when cursor heads for the
+          top-edge close button after >10s on page. Offers a 3-day
+          reminder email for lapsed visitors. Self-hides in embed mode,
+          on mobile/touch, and once-per-session per prospect. */}
+      <ExitIntentModal prospectId={prospectId} />
+
       {/* ═══════════════════════════════════════════════════════════ */}
       {/* HERO SECTION */}
       {/* ═══════════════════════════════════════════════════════════ */}
