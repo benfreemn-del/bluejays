@@ -12,7 +12,8 @@ export type RetryStatus = "pending" | "retrying" | "sent" | "exhausted" | "cance
 export interface EmailDeliveryPayload {
   to: string;
   subject: string;
-  body: string;
+  body: string;           // text/plain fallback
+  htmlBody?: string;      // multipart text/html with inline preview screenshot
   sequence: number;
 }
 
@@ -365,7 +366,8 @@ async function executeSend(channel: DeliveryChannel, payload: FunnelDeliveryPayl
       payload.email.to,
       payload.email.subject,
       payload.email.body,
-      payload.email.sequence
+      payload.email.sequence,
+      payload.email.htmlBody,
     );
     return;
   }

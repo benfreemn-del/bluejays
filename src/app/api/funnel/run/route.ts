@@ -15,7 +15,16 @@ import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 // a status snapshot, which silently broke the daily funnel cron for days.
 // Do NOT revert GET to a read-only status endpoint — move status queries
 // to a separate path if needed.
-export async function POST() {
+export async function POST(request?: NextRequest) {
+  // When called via direct POST (not from our own GET handler), enforce the
+  // same CRON_SECRET gate. GET already validates before delegating to POST.
+  if (request) {
+    const authHeader = request.headers.get("authorization");
+    const cronSecret = process.env.CRON_SECRET;
+    if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+  }
   console.log("\n[Funnel] Running funnel processor...\n");
 
   // Step 1: Run auto-resume check first (resumes funnels for silent prospects)
@@ -112,6 +121,18 @@ export async function POST() {
 // didn't exist, so GET returned empty and the cron did nothing. The
 // active funnel cron now actually fires sends. See POST comment above.
 export async function GET(request: NextRequest) {
+  // Vercel cron auth check. When CRON_SECRET is set in env, Vercel auto-adds
+  // `Authorization: Bearer <secret>` to cron invocations. If the env var is
+  // unset locally (dev), we skip this check so local tests still work.
+  // IMPORTANT: This is a public-API route (see PUBLIC_API_PATHS in middleware),
+  // so the CRON_SECRET is the ONLY gate preventing strangers from running the
+  // funnel. Do not loosen.
+  const authHeader = request.headers.get("authorization");
+  const cronSecret = process.env.CRON_SECRET;
+  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const isStatusOnly = request.nextUrl.searchParams.get("status") === "1";
 
   if (isStatusOnly) {

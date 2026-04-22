@@ -23,7 +23,16 @@ import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 export const dynamic = "force-dynamic";
 
 const BASE_URL = "https://bluejayportfolio.com";
-const OG_IMAGE = `${BASE_URL}/og-image.png`;
+const FALLBACK_OG_IMAGE = `${BASE_URL}/og-image.png`;
+
+// Same per-prospect OpenGraph screenshot logic as /preview/[id]. The
+// short URL is what goes in every email/SMS/DM, so this is the primary
+// surface that gets scraped by Gmail/Apple Mail/iMessage when the link
+// is shared. Renders the prospect's own preview via thum.io.
+function getPreviewScreenshotUrl(prospectId: string): string {
+  const targetUrl = `${BASE_URL}/preview/${prospectId}?embed=1`;
+  return `https://image.thum.io/get/width/1200/crop/630/fullpage/noanimate/wait/5/png/${targetUrl}`;
+}
 
 /**
  * Look up prospect by short code. Returns id + custom_site_url + pricing_tier
@@ -104,6 +113,14 @@ export async function generateMetadata({
     : `See the custom website we built for ${businessName}${locationSuffix}. Claim it today — no contracts, 100% satisfaction guaranteed.`;
   const pageUrl = `${BASE_URL}/p/${code}`;
 
+  // Per-prospect OG screenshot — the short URL is what prospects actually
+  // click from email/SMS, so this is the URL Gmail / Apple Mail / iMessage
+  // scrape for link previews. Show them a live shot of the site.
+  const resolvedId = await resolveCodeToProspectId(code);
+  const previewScreenshot = resolvedId
+    ? getPreviewScreenshotUrl(resolvedId)
+    : FALLBACK_OG_IMAGE;
+
   return {
     title,
     description,
@@ -114,9 +131,12 @@ export async function generateMetadata({
       title,
       description,
       url: pageUrl,
-      images: [{ url: OG_IMAGE, width: 1200, height: 630, alt: "BlueJays" }],
+      images: [
+        { url: previewScreenshot, width: 1200, height: 630, alt: `${businessName} — Website Preview by BlueJays` },
+        { url: FALLBACK_OG_IMAGE, width: 1200, height: 630, alt: "BlueJays" },
+      ],
     },
-    twitter: { card: "summary_large_image", title, description, images: [OG_IMAGE] },
+    twitter: { card: "summary_large_image", title, description, images: [previewScreenshot] },
   };
 }
 

@@ -101,17 +101,30 @@ function getServiceIcon(serviceName: string) {
 }
 
 /* ───────────────────────── STOCK FALLBACK IMAGES ───────────────────────── */
-const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1558904541-efa843a96f01?w=1400&q=80"];
-const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?w=600&q=80"];
+// Every entry must be an actual landscape/yard/garden photo. Previously
+// contained a ping-pong room, a potted cactus on a pink studio backdrop,
+// a computer monitor, and a sky — which made stock fallbacks look broken.
+// Each URL below was visually inspected 2026-04-22. If you add a new one,
+// download it and look at it first — Unsplash photo IDs don't describe
+// their content.
+const STOCK_HERO_POOL = [
+  "https://images.unsplash.com/photo-1558904541-efa843a96f01?w=1400&q=80",  // lush green lawn closeup
+  "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1400&q=80", // modern house w/ manicured lawn
+  "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=1400&q=80", // rose garden path
+];
+const STOCK_ABOUT_POOL = [
+  "https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?w=800&q=80", // vegetable garden
+  "https://images.unsplash.com/photo-1598902108854-10e335adac99?w=800&q=80", // forest garden
+];
 const STOCK_GALLERY = [
-  "https://images.unsplash.com/photo-1558904541-efa843a96f01?w=600&q=80",
-  "https://images.unsplash.com/photo-1572025442646-866d16c84a54?w=600&q=80",
-  "https://images.unsplash.com/photo-1459411552884-841db9b3cc2a?w=800&q=80",
-  "https://images.unsplash.com/photo-1560749003-f4b1e17e2dff?w=600&q=80",
-  "https://images.unsplash.com/photo-1588880331179-bc9b93a8cb5e?w=600&q=80",
-  "https://images.unsplash.com/photo-1598902108854-10e335adac99?w=600&q=80",
-  "https://images.unsplash.com/photo-1590212151175-e58edd96185b?w=600&q=80",
-  "https://images.unsplash.com/photo-1601297183305-6df142704ea2?w=800&q=80",
+  "https://images.unsplash.com/photo-1558904541-efa843a96f01?w=800&q=80",  // grass lawn
+  "https://images.unsplash.com/photo-1560749003-f4b1e17e2dff?w=800&q=80",  // backyard with string lights
+  "https://images.unsplash.com/photo-1588880331179-bc9b93a8cb5e?w=800&q=80", // cottage garden
+  "https://images.unsplash.com/photo-1598902108854-10e335adac99?w=800&q=80", // forest garden
+  "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=800&q=80", // rose garden path
+  "https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?w=800&q=80", // vegetable garden
+  "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80", // modern home with lawn
+  "https://images.unsplash.com/photo-1713936025889-e7920f0fb952?w=800&q=80", // audited: landscaping building w/ grass
 ];
 
 /* ───────────────────────── FLOATING LEAF PARTICLES ───────────────────────── */
@@ -371,35 +384,58 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
       <FloatingLeaves accent={PRIMARY} />
 
       {/* ══════════════════ 1. NAV ══════════════════ */}
+      {/* When a real logo is provided we switch to a solid white nav so
+          the logo reads cleanly. Dark-theme glass nav only kicks in for
+          the text-fallback case. */}
       <nav className="fixed top-0 left-0 right-0 z-50">
         <div className="mx-auto max-w-7xl px-4 md:px-6 py-4">
-          <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
-            <div className="flex items-center gap-2">
-              {data.logoUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={data.logoUrl} alt={`${data.businessName} logo`} className="h-9 w-auto max-w-[140px] object-contain" />
-              ) : (
-                <>
-                  <Tree size={24} weight="fill" style={{ color: PRIMARY }} />
-                  <span className="text-lg font-bold tracking-tight text-white">{data.businessName}</span>
-                </>
-              )}
+          {data.logoUrl ? (
+            <div className="flex items-center justify-between px-5 md:px-7 py-3 rounded-2xl bg-white/95 backdrop-blur-sm shadow-[0_8px_32px_-8px_rgba(0,0,0,0.45)] border border-white/60">
+              <div className="flex items-center gap-2">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={data.logoUrl}
+                  alt={`${data.businessName} logo`}
+                  className="h-14 md:h-16 w-auto max-w-[220px] object-contain"
+                />
+              </div>
+              <div className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-700">
+                <a href="#portfolio" className="hover:text-slate-900 transition-colors">Portfolio</a>
+                <a href="#services" className="hover:text-slate-900 transition-colors">Services</a>
+                <a href="#about" className="hover:text-slate-900 transition-colors">About</a>
+                <a href="#contact" className="hover:text-slate-900 transition-colors">Contact</a>
+              </div>
+              <div className="flex items-center gap-3">
+                <MagneticButton className="px-4 md:px-5 py-2 rounded-full text-sm font-semibold text-white transition-colors cursor-pointer" style={{ background: PRIMARY } as React.CSSProperties}>
+                  Free Estimate
+                </MagneticButton>
+                <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden p-2 rounded-lg text-slate-700 hover:bg-slate-100 transition-colors">
+                  {mobileMenuOpen ? <X size={24} /> : <List size={24} />}
+                </button>
+              </div>
             </div>
-            <div className="hidden md:flex items-center gap-8 text-sm text-slate-400">
-              <a href="#portfolio" className="hover:text-white transition-colors">Portfolio</a>
-              <a href="#services" className="hover:text-white transition-colors">Services</a>
-              <a href="#about" className="hover:text-white transition-colors">About</a>
-              <a href="#contact" className="hover:text-white transition-colors">Contact</a>
-            </div>
-            <div className="flex items-center gap-3">
-              <MagneticButton className="px-4 md:px-5 py-2 rounded-full text-sm font-semibold text-white transition-colors cursor-pointer" style={{ background: PRIMARY } as React.CSSProperties}>
-                Free Estimate
-              </MagneticButton>
-              <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden p-2 rounded-lg text-white hover:bg-white/10 transition-colors">
-                {mobileMenuOpen ? <X size={24} /> : <List size={24} />}
-              </button>
-            </div>
-          </GlassCard>
+          ) : (
+            <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
+              <div className="flex items-center gap-2">
+                <Tree size={24} weight="fill" style={{ color: PRIMARY }} />
+                <span className="text-lg font-bold tracking-tight text-white">{data.businessName}</span>
+              </div>
+              <div className="hidden md:flex items-center gap-8 text-sm text-slate-400">
+                <a href="#portfolio" className="hover:text-white transition-colors">Portfolio</a>
+                <a href="#services" className="hover:text-white transition-colors">Services</a>
+                <a href="#about" className="hover:text-white transition-colors">About</a>
+                <a href="#contact" className="hover:text-white transition-colors">Contact</a>
+              </div>
+              <div className="flex items-center gap-3">
+                <MagneticButton className="px-4 md:px-5 py-2 rounded-full text-sm font-semibold text-white transition-colors cursor-pointer" style={{ background: PRIMARY } as React.CSSProperties}>
+                  Free Estimate
+                </MagneticButton>
+                <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden p-2 rounded-lg text-white hover:bg-white/10 transition-colors">
+                  {mobileMenuOpen ? <X size={24} /> : <List size={24} />}
+                </button>
+              </div>
+            </GlassCard>
+          )}
           <AnimatePresence>
             {mobileMenuOpen && (
               <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.3, ease: "easeInOut" }} className="md:hidden mt-2 overflow-hidden">

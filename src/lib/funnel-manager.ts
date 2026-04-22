@@ -227,14 +227,31 @@ async function getNextSmsSequence(prospectId: string): Promise<number> {
 
 async function buildStepPayload(prospect: Prospect, stepIndex: number, previewUrl: string): Promise<FunnelDeliveryPayload | undefined> {
   const step = FUNNEL_STEPS[stepIndex];
+
+  // A2P 10DLC COMPLIANCE: only send SMS to prospects who explicitly opted in.
+  // `source: "inbound"` means the prospect submitted the /get-started form and
+  // ticked the SMS consent checkbox — that's a verifiable CTA per TCR rules.
+  // `source: "scouted"` (auto-scout cold outreach) has NOT opted in and must
+  // NOT receive SMS, or the campaign can get yanked and the number flagged.
+  // Cold-outreach prospects still get email + voicemail (both have their own
+  // compliance frameworks that permit contacting publicly-listed business
+  // numbers/emails). Lock this in before A2P approval — TCR revokes campaigns
+  // that send to scraped numbers post-approval. Undo only with written
+  // consent captured through another channel (manual phone confirmation, etc).
+  const isInboundOptIn = prospect.source === "inbound";
+  const smsAllowedForThisProspect = isInboundOptIn;
+
   const emailTemplate = step.channels.includes("email") ? await getEmailTemplate(prospect, stepIndex, previewUrl) : undefined;
-  const smsBody = step.channels.includes("sms") ? getFallbackSmsBody(prospect, stepIndex, previewUrl) : undefined;
+  const smsBody = step.channels.includes("sms") && smsAllowedForThisProspect
+    ? getFallbackSmsBody(prospect, stepIndex, previewUrl)
+    : undefined;
 
   const email: EmailDeliveryPayload | undefined = emailTemplate && prospect.email
     ? {
         to: prospect.email,
         subject: emailTemplate.subject,
         body: emailTemplate.body,
+        htmlBody: emailTemplate.htmlBody,  // pitch email includes inline screenshot
         sequence: emailTemplate.sequence,
       }
     : undefined;
@@ -264,7 +281,13 @@ async function buildStepPayload(prospect: Prospect, stepIndex: number, previewUr
 }
 
 async function buildVoicemailFollowUpPayload(prospect: Prospect, stepIndex: number, previewUrl: string): Promise<FunnelDeliveryPayload | undefined> {
-  const sms = prospect.phone
+  // Same A2P 10DLC rule as buildStepPayload — only inbound opt-ins receive SMS.
+  // Voicemail goes to everyone (carriers treat ringless VM under different
+  // compliance framework), but the SMS that would follow the VM is gated to
+  // prospects who filled out the /get-started form with consent ticked.
+  const smsAllowedForThisProspect = prospect.source === "inbound";
+
+  const sms = prospect.phone && smsAllowedForThisProspect
     ? {
         to: prospect.phone,
         body: getPostVoicemailSms(prospect, previewUrl),
@@ -484,6 +507,28 @@ export async function enrollInFunnel(prospectId: string): Promise<{ success: boo
     }
   } catch (err) {
     console.error(`[funnel] could not queue video generation for ${prospectId}:`, err);
+  }
+
+  // Fire off direct-mail postcard (non-blocking). USPS first-class delivery
+  // takes 3-5 days, so a postcard fired at enrollment physically arrives
+  // between Day 0 email and Day 5 follow-up — a perfect mid-funnel touch.
+  // `sendPostcard` gates internally on 4.5★/20-reviews and no-op's when
+  // `LOB_API_KEY` isn't configured, so it's safe to unconditionally call.
+  try {
+    const { sendPostcard } = await import("./postcard-sender");
+    void sendPostcard(prospect).then((result) => {
+      if (result.sent) {
+        console.log(`[funnel] postcard queued at Lob for ${prospectId}: ${result.lobId} (delivery ${result.expectedDeliveryDate})`);
+      } else if (result.skipped) {
+        console.log(`[funnel] postcard skipped for ${prospectId}: ${result.skipped}`);
+      } else if (result.error) {
+        console.warn(`[funnel] postcard send failed for ${prospectId}: ${result.error}`);
+      }
+    }).catch((err) => {
+      console.error(`[funnel] postcard send errored for ${prospectId}:`, err);
+    });
+  } catch (err) {
+    console.error(`[funnel] could not queue postcard for ${prospectId}:`, err);
   }
 
   const results = await sendFunnelStep(prospect, 0);

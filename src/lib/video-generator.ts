@@ -27,6 +27,43 @@ const OUTRO_PAUSE_SECONDS = 4;
 const TARGET_VOICE = process.env.OPENAI_TTS_VOICE || "alloy";
 const TARGET_TTS_MODEL = process.env.OPENAI_TTS_MODEL || "tts-1";
 
+// -- Runtime ffmpeg binary ---------------------------------------------------
+// Vercel's file tracer refuses to bundle ffmpeg-static's binary regardless of
+// includeFiles / outputFileTracingIncludes patterns we've tried (the binary is
+// resolved at build time to a pnpm path but never copied into the function).
+// Plan B: download a prebuilt static ffmpeg binary into /tmp on first call.
+// /tmp has 512MB on Vercel and persists for the lifetime of a warm container,
+// so subsequent calls on the same instance skip the download.
+const FFMPEG_RUNTIME_URL = "https://github.com/eugeneware/ffmpeg-static/releases/download/b6.0/ffmpeg-linux-x64";
+const FFMPEG_RUNTIME_PATH = "/tmp/ffmpeg-bluejays";
+
+async function ensureFfmpegAvailable(): Promise<string> {
+  // If the package's own ffmpeg path resolves AND exists (local dev / future
+  // Vercel fix), use it. Skips the ~5s /tmp download on local dev.
+  if (ffmpegBinary && fs.existsSync(ffmpegBinary)) {
+    try { fs.chmodSync(ffmpegBinary, 0o755); } catch { /* ignore */ }
+    return ffmpegBinary;
+  }
+
+  // Already downloaded and still warm → reuse.
+  if (fs.existsSync(FFMPEG_RUNTIME_PATH)) {
+    try { fs.chmodSync(FFMPEG_RUNTIME_PATH, 0o755); } catch { /* ignore */ }
+    return FFMPEG_RUNTIME_PATH;
+  }
+
+  console.log(`[video-generator] Downloading ffmpeg to ${FFMPEG_RUNTIME_PATH}...`);
+  const started = Date.now();
+  const res = await fetch(FFMPEG_RUNTIME_URL, { redirect: "follow" });
+  if (!res.ok) {
+    throw new Error(`Failed to download ffmpeg runtime: HTTP ${res.status} from ${FFMPEG_RUNTIME_URL}`);
+  }
+  const buf = Buffer.from(await res.arrayBuffer());
+  await writeFile(FFMPEG_RUNTIME_PATH, buf);
+  fs.chmodSync(FFMPEG_RUNTIME_PATH, 0o755);
+  console.log(`[video-generator] ffmpeg downloaded in ${Date.now() - started}ms (${buf.length} bytes)`);
+  return FFMPEG_RUNTIME_PATH;
+}
+
 export type VideoStatus = "not_started" | "queued" | "generating" | "ready" | "failed" | "preview_missing";
 
 export interface ProspectVideoStatus {
@@ -182,6 +219,32 @@ async function getBrowserExecutablePath() {
 }
 
 async function launchCaptureBrowser(): Promise<Browser> {
+  // Production path: Browserless.io (hosted Chrome as a service).
+  // Set `BROWSERLESS_API_KEY` to your Browserless.io key and the video
+  // pipeline connects remotely — bypassing Vercel's 250MB function size
+  // limit that kills the @sparticuz/chromium bundled-binary approach.
+  //
+  // Local dev path: fallback to system Chromium / puppeteer-bundled.
+  // Keeps `npm run dev` working without a Browserless subscription.
+  const browserlessKey = process.env.BROWSERLESS_API_KEY;
+  if (browserlessKey) {
+    const wsEndpoint =
+      `wss://production-sfo.browserless.io/chrome?token=${encodeURIComponent(browserlessKey)}` +
+      `&--window-size=${VIDEO_WIDTH},${VIDEO_HEIGHT}` +
+      // `stealth=true` = Browserless applies anti-bot-detection patches
+      // so our screen captures don't get blocked by prospect sites that
+      // reject obvious headless Chrome user-agents.
+      `&stealth=true`;
+    return puppeteer.connect({
+      browserWSEndpoint: wsEndpoint,
+      defaultViewport: {
+        width: VIDEO_WIDTH,
+        height: VIDEO_HEIGHT,
+        deviceScaleFactor: 1,
+      },
+    }) as unknown as Browser;
+  }
+
   const executablePath = await getBrowserExecutablePath();
 
   return puppeteer.launch({
@@ -261,11 +324,34 @@ async function detectCapturePlan(previewUrl: string, outputDir: string): Promise
       };
     }, VIDEO_HEIGHT);
 
+    // Cap the captured height. Some prospect previews are 15,000-20,000px
+    // tall (general-contractor with team + gallery + testimonials + FAQ).
+    // First attempt capped at 8000px but ffmpeg's split filter still OOM'd
+    // the Lambda — `split` creates N parallel copies of the input frame in
+    // memory, so 1440x8000 × 3 bytes × N segments (typically 4-5) = 500MB+.
+    // Dropping to 4000px + bumping Lambda memory to 3008MB in vercel.json
+    // gives enough headroom. 4000px still covers hero + 2 major sections,
+    // which is what a 60-90s pitch video should focus on anyway.
+    const MAX_CAPTURE_HEIGHT = 4000;
+    const captureClipHeight = Math.min(plan.documentHeight, MAX_CAPTURE_HEIGHT);
+
     await page.screenshot({
       path: path.join(outputDir, "fullpage.png"),
-      fullPage: true,
       type: "png",
+      clip: {
+        x: 0,
+        y: 0,
+        width: VIDEO_WIDTH,
+        height: captureClipHeight,
+      },
     });
+
+    // Also cap the capture plan's maxScrollY/documentHeight so the scroll
+    // segments don't ask ffmpeg to crop past the actual image bottom
+    // (would produce black bars or cause crop filter errors).
+    plan.maxScrollY = Math.min(plan.maxScrollY, Math.max(0, captureClipHeight - VIDEO_HEIGHT));
+    plan.documentHeight = captureClipHeight;
+    plan.sections = plan.sections.filter((s) => s.y <= plan.maxScrollY);
 
     return plan;
   } finally {
@@ -359,7 +445,10 @@ async function runCommand(command: string, args: string[]) {
 }
 
 async function renderVideoFromPlan(imagePath: string, audioPath: string, outputPath: string, plan: CapturePlan, durationSeconds: number) {
-  const ffmpegPath = ffmpegBinary || process.env.FFMPEG_PATH || "/usr/bin/ffmpeg";
+  // Prefer FFMPEG_PATH env var (explicit override), then
+  // ensureFfmpegAvailable() which falls back to /tmp runtime download on
+  // serverless platforms where the bundled binary isn't available.
+  const ffmpegPath = process.env.FFMPEG_PATH || await ensureFfmpegAvailable();
   if (!ffmpegPath) {
     throw new Error("FFmpeg binary is not available");
   }
@@ -374,7 +463,13 @@ async function renderVideoFromPlan(imagePath: string, audioPath: string, outputP
         ? `${segment.startY}`
         : `${segment.startY} + (${delta})*(t/${duration})`;
 
-      return `[base${index}]trim=duration=${duration},setpts=PTS-STARTPTS,crop=${VIDEO_WIDTH}:${VIDEO_HEIGHT}:0:'min(max(${escapeFilterExpression(yExpression)},0),max(0,ih-${VIDEO_HEIGHT}))':eval=frame,setsar=1[v${index}]`;
+      // NOTE: We previously passed `eval=frame` to force per-frame evaluation
+      // of the y expression, but the ffmpeg 6.0 static build we download at
+      // runtime rejects it with "Option not found on crop filter". Modern
+      // ffmpeg's crop filter already evaluates expressions containing `t`
+      // (time) per-frame by default, so dropping `eval=frame` is safe and
+      // keeps the scroll animation working.
+      return `[base${index}]trim=duration=${duration},setpts=PTS-STARTPTS,crop=${VIDEO_WIDTH}:${VIDEO_HEIGHT}:0:'min(max(${escapeFilterExpression(yExpression)},0),max(0,ih-${VIDEO_HEIGHT}))',setsar=1[v${index}]`;
     })
     .join(";");
 
@@ -507,8 +602,22 @@ async function uploadGeneratedVideo(prospectId: string, filePath: string) {
 function toAbsolutePreviewUrl(relativeOrAbsoluteUrl: string) {
   if (/^https?:\/\//i.test(relativeOrAbsoluteUrl)) return relativeOrAbsoluteUrl;
 
-  const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || process.env.APP_URL || process.env.VERCEL_PROJECT_PRODUCTION_URL || "https://bluejayportfolio.com")
-    .replace(/\/$/, "");
+  // Source the base URL. Vercel's auto-injected `VERCEL_PROJECT_PRODUCTION_URL`
+  // is a BARE HOSTNAME like `bluejays.vercel.app` (NO protocol), so we must
+  // normalize — otherwise Chrome navigates to "bluejays.vercel.app/preview/..."
+  // which is not a valid URL and Browserless throws
+  // "Protocol error (Page.navigate): Cannot navigate to invalid URL".
+  // The fallback explicit URL also ensures the apex domain wins over any
+  // preview-branch URL, which is what customer-facing screenshots want.
+  let baseUrl =
+    process.env.NEXT_PUBLIC_APP_URL ||
+    process.env.APP_URL ||
+    process.env.VERCEL_PROJECT_PRODUCTION_URL ||
+    "https://bluejayportfolio.com";
+  baseUrl = baseUrl.replace(/\/$/, "");
+  if (!/^https?:\/\//i.test(baseUrl)) {
+    baseUrl = `https://${baseUrl}`;
+  }
 
   return `${baseUrl}${relativeOrAbsoluteUrl.startsWith("/") ? relativeOrAbsoluteUrl : `/${relativeOrAbsoluteUrl}`}`;
 }
