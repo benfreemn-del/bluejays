@@ -30,7 +30,7 @@ export interface RetargetEmail {
   delayDays: number; // days after retarget enrollment
 }
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+const BASE_URL = (process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000").split("?")[0].replace(/\/$/, "");
 const BEN_PHONE = process.env.BEN_PHONE || "(253) 886-3753";
 
 function footer(prospectId: string): string {

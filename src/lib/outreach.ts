@@ -8,7 +8,9 @@ import {
 } from "./email-templates";
 import { getProspectVideoUrl } from "./video-generator";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+// Strip any accidentally embedded query params from the base URL env var
+const _rawBaseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+const BASE_URL = _rawBaseUrl.split("?")[0].replace(/\/$/, "");
 
 /**
  * Statuses that indicate a prospect has passed quality review and is

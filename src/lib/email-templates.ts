@@ -23,7 +23,9 @@ export interface EmailTemplate {
 }
 
 const CONTACT_EMAIL = process.env.FROM_EMAIL || "ben@bluejayportfolio.com";
-const BASE = process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com";
+// Strip any accidentally embedded query params from the base URL env var
+const _rawBase = process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com";
+const BASE = _rawBase.split("?")[0].replace(/\/$/, "");
 const BEN_PHONE = process.env.BEN_PHONE || "(253) 886-3753";
 
 /**

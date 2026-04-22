@@ -24,7 +24,7 @@ import {
 } from "./funnel-delivery";
 
 const FUNNEL_FILE = path.join(process.cwd(), "data", "funnel-enrollments.json");
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+const BASE_URL = (process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000").split("?")[0].replace(/\/$/, "");
 
 export interface FunnelEnrollment {
   prospectId: string;
