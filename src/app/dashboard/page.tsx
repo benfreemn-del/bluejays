@@ -12,6 +12,7 @@ import ProspectDetail from "@/components/dashboard/ProspectDetail";
 import MapView from "@/components/dashboard/MapView";
 import PipelineDashboard from "@/components/dashboard/PipelineDashboard";
 import DeliverabilityWidget from "@/components/dashboard/DeliverabilityWidget";
+import ClientsBillingView from "@/components/dashboard/ClientsBillingView";
 
 export default function DashboardPage() {
   const [prospects, setProspects] = useState<Prospect[]>([]);
@@ -22,7 +23,7 @@ export default function DashboardPage() {
   );
   const [categoryFilter, setCategoryFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
-  const [view, setView] = useState<"table" | "map">("table");
+  const [view, setView] = useState<"table" | "map" | "clients">("table");
   const [addLeadOpen, setAddLeadOpen] = useState(false);
   const [newLead, setNewLead] = useState({ businessName: "", phone: "", email: "", website: "", category: "dental", city: "Seattle, WA" });
   const [addingLead, setAddingLead] = useState(false);
@@ -334,6 +335,16 @@ export default function DashboardPage() {
               >
                 Map
               </button>
+              <button
+                onClick={() => setView("clients")}
+                className={`h-9 rounded-lg px-4 text-sm font-medium transition-colors ${
+                  view === "clients"
+                    ? "bg-emerald-600 text-white"
+                    : "bg-surface border border-border text-muted hover:text-foreground"
+                }`}
+              >
+                💳 Clients
+              </button>
             </div>
 
             {view === "table" ? (
@@ -347,7 +358,7 @@ export default function DashboardPage() {
                 onSendEmail={handleSendEmail}
                 onRefresh={fetchProspects}
               />
-            ) : (
+            ) : view === "map" ? (
               <MapView
                 prospects={prospects}
                 onStateClick={(state) => {
@@ -360,6 +371,8 @@ export default function DashboardPage() {
                   setScoutOpen(true);
                 }}
               />
+            ) : (
+              <ClientsBillingView />
             )}
           </>
         )}
