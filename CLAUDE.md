@@ -1352,6 +1352,28 @@ tattoo, photography, interior-design, florist, landscaping, salon, catering, pet
 - The quality review system MUST verify that brand colors have been applied or intentionally overridden
 - Brand color application should be checked as part of the quality gate before a site is marked 'pending-review'
 
+### No Boring Colors Rule (NON-NEGOTIABLE — added 2026-04-22)
+This rule governs both category-default accent colors (in `src/lib/color-review.ts`) AND any override/fix applied to an individual prospect. Violated once when tattoo defaulted to silver gray `#a3a3a3` — gray and other desaturated colors kill the "premium" feel instantly and make every preview look the same.
+
+**BANNED as a category default or suggested accent:**
+- Any color with HSL saturation < 40% (grays, beiges, tans, muted near-white)
+- Any color with HSL lightness < 15% or > 85% (near-black or near-white — disappear on the template backgrounds)
+- "Safe" neutral palettes (`#a3a3a3`, `#d4d4d4`, `#737373`, `#e5e5e5`, `#6b7280`, `#9ca3af`) — including as "alternatives"
+- Pastel-only palettes (all four entries have lightness > 75%) — fine as ONE alternative, banned as the primary
+
+**REQUIRED for every category default + its 3 alternatives:**
+- Primary color: HSL saturation ≥ 50%, lightness between 35–65%
+- Each of the 3 alternatives must also meet the same saturation bar (≥ 40% minimum). The alternatives can vary in hue and lightness but NOT in vibrancy — at least one alternative must be bolder than the primary (higher saturation or more saturated sibling)
+- The palette must obviously belong to the industry — red/crimson/gold for tattoo, forest green for landscaping, amber/yellow for electrician, pink for salon, crimson/red for auto-repair. Generic blue is fine for many service categories but shouldn't be the default for creative/bold industries
+- The primary color SHOULD match the V2 template's internal constant when one exists (e.g. tattoo V2 uses `DEFAULT_CRIMSON = "#b91c1c"` — so `color-review.ts` tattoo primary is `#b91c1c`)
+
+**Rule of thumb for adding a new category or updating an existing one:**
+If you can imagine the color on a luxury brand storefront in that industry, it's fine. If it looks like a hospital lobby wall or a default Bootstrap button, it's banned.
+
+**When a scraped brand color gets rejected by `color-review.ts` QC (saturation too low, lightness out of range, hue mismatch):** replace it with the category default — never leave the site with a gray/beige accent. The category default is always guaranteed to be vibrant because this rule blocks gray defaults.
+
+**This rule applies retroactively:** any time `color-review.ts` is edited to add or change a category's primary or alternatives, verify the palette against the saturation/lightness bar above. The linter for this is running `npx tsx -e "import('./src/lib/color-review.ts').then(m => Object.entries(m.default || {}))"` — if we later add a runtime check, this rule becomes enforced at build time.
+
 ## Template Image URL Quality Control (QC Rule)
 - **Always review portfolio sites for broken URLs and duplicate images before deploying.** Every template and generated site must pass an image integrity check as part of the deployment pipeline.
 - **Each template should use unique, category-appropriate images** — no two templates should share the same hero/gallery images. Every business category must have its own distinct visual identity with images that reflect the specific industry.
@@ -2121,6 +2143,7 @@ Key infrastructure:
 - Twilio: A2P 10DLC pending carrier approval (required for US SMS at scale)
 - Stripe: Sandbox mode for testing; Live mode keys + Live mode webhook required before May 1
 - OpenAI + Anthropic API keys on Vercel for QC/supercharge pipeline
+
 ## Client Features System (for paid clients — businesses whose websites we built)
 
 **Core philosophy:** "Best website = better online reputation." The three client features below are value-adds included with every $997 website. They make the site actively generate leads and protect the owner's Google reputation automatically. Each feature is scoped per-prospect by `prospectId`. Only `status: "paid"` prospects should have these features enabled.
@@ -2387,3 +2410,258 @@ These are the things the code can't do for you. Without these, scaling outreach 
 
 - [ ] **Google Calendar integration** — let clients OAuth-connect their Google Calendar so bookings appear automatically. Right now it uses our custom slot system.
 
+=======
+
+## SMS A2P 10DLC Compliance Rules (NON-NEGOTIABLE — locked in 2026-04-20)
+
+TCR rejected the first A2P 10DLC campaign submission citing issues
+verifying the Call-to-Action (CTA). Root cause: the opt-in description
+said "businesses whose numbers appeared on public business listings
+(Google, Yelp, BBB)" — which TCR does NOT accept as valid SMS consent
+under TCPA. Scraped public business numbers are not opt-ins.
+
+**The fix is permanent and enforced in code:**
+
+### SMS fires ONLY for `prospect.source === "inbound"` prospects
+
+This is gated inside `src/lib/funnel-manager.ts`:
+- `buildStepPayload()` checks `prospect.source === "inbound"` before
+  building any SMS payload. Cold-outreach prospects (`source: "scouted"`)
+  get `smsBody = undefined` and only receive email + voicemail.
+- `buildVoicemailFollowUpPayload()` applies the same gate to the
+  post-voicemail SMS follow-up.
+
+### What counts as a valid opt-in source
+1. **Inbound form submission** — prospect fills out `/get-started` and
+   ticks the required SMS consent checkbox. `/api/leads/submit` sets
+   `source: "inbound"` on the created prospect. The checkbox wording
+   is locked — it must reference both email AND SMS, mention frequency
+   (up to 4/week), "Msg & data rates may apply", and "Reply STOP to
+   opt out". See `src/app/get-started/page.tsx` for the current copy.
+2. **Direct reply expressing interest + providing phone** — manually
+   updated to `source: "inbound"` when a prospect replies to email/VM
+   asking Ben to text them. Record the consent capture in prospect notes.
+
+### What does NOT count
+- Scraping a number from Google Business Profile / Yelp / BBB
+- The number being "publicly available"
+- The business being "obviously commercial"
+- Any interpretation where the user didn't take an affirmative action
+
+### Cold-outreach funnel shape (post-gate)
+| Day | Channels |
+|---|---|
+| 0 | email only (was email + SMS) |
+| 2 | voicemail |
+| 5 | email |
+| 12 | email only (was email + SMS) |
+| 18 | voicemail |
+| 21 | email |
+| 30 | email |
+
+Inbound prospects still get the full email + SMS + voicemail mix on
+the same schedule.
+
+### Fields TCR must validate (locked in the resubmission)
+- Privacy Policy URL: `https://bluejayportfolio.com/privacy` (must render)
+- Terms URL: `https://bluejayportfolio.com/terms` (must render)
+- Sample messages: fully rendered, no `{placeholder}` tokens
+- STOP compliance: every SMS template ends with "Reply STOP to opt out"
+- HELP reply: "BlueJay Business Solutions: Custom website previews for
+  local businesses. Email bluejaycontactme@gmail.com or see /terms.
+  Reply STOP to unsubscribe."
+
+### NEVER do (kills the campaign after approval)
+- Remove the `source === "inbound"` gate in funnel-manager
+- Send SMS to a prospect whose `source` is `"scouted"` or unknown
+- Describe opt-in sources to TCR that don't match what the code does
+- Skip the consent checkbox on `/get-started` — TCR can crawl it
+
+---
+
+## Marketing Plan — Cold Outreach Without SMS (locked in 2026-04-20)
+
+With SMS restricted to inbound opt-ins, the cold-outreach funnel relies
+on email + voicemail only — which alone underperforms the
+email+SMS+VM combo. These channels fill the gap and several convert
+BETTER than SMS did. Ship in this order.
+
+### Tier 1 — Highest impact
+
+**1. Inline OG screenshot in pitch email (BUILT 2026-04-20, GATED OFF)**
+- `EmailTemplate.htmlBody?` field added; `getPitchEmail` returns
+  multipart text+HTML WHEN `ENABLE_HTML_PITCH_EMAIL=true` env var is set.
+  HTML body embeds a clickable `<img>` of the prospect's thum.io preview
+  screenshot above the link.
+- `sendViaSendGrid` in `src/lib/email-sender.ts` accepts the optional
+  `htmlBody` param and sends as multipart. Plain text stays as
+  fallback for HTML-off clients.
+- **Deliverability finding 2026-04-20 (live A/B test):** sending the
+  multipart HTML+image pitch from a Day-5-of-14 warming domain to a
+  brand-new Gmail inbox landed in SPAM every time. Same content as
+  plain-text-only landed in Primary. Gmail's classifier treats
+  HTML + inline image from unseasoned senders as commercial/promo
+  material regardless of personalisation.
+- **Gate:** HTML pitch is only built when `ENABLE_HTML_PITCH_EMAIL=true`
+  on Vercel. Keep OFF during warmup. Turn ON only AFTER Day 14 of each
+  domain's ramp, once the domain has reputation to absorb the HTML.
+  Plan to A/B test primary-tab placement by flipping this on one
+  domain at a time post-warmup.
+- Shared helper: `getPreviewScreenshotUrl(prospectId)` returns the
+  thum.io URL. Use it everywhere the screenshot is referenced (OG meta,
+  email HTML, postcards) so cache keys stay consistent.
+- **NEVER flip `ENABLE_HTML_PITCH_EMAIL=true` during warmup.** Every
+  Spam/Promotions landing drags reputation. A single day of HTML
+  sends to a cold inbox list can set warmup back 7+ days.
+
+**2. Personalized video walkthrough pipeline (PARKED 2026-04-20 — post-launch)**
+
+Status: All infrastructure wired, provisioned, and debugged through round 9
+— still OOM-killing on Vercel Lambda at 3008MB memory + 4000px image cap.
+The ffmpeg `split + 5x crop + concat` filter graph holds too much frame data
+in memory simultaneously. Fixing requires rewriting `renderVideoFromPlan` to
+stream segments sequentially to disk instead of parallel-processing in RAM.
+Significant refactor — not worth the pre-launch risk.
+
+**What's already in place (ready for post-launch pickup):**
+- Browserless.io account provisioned with key on Vercel (paid, working)
+- Supabase `generated-videos` bucket created (public, 50MB, mp4/webm)
+- `BROWSERLESS_API_KEY` detected → `launchCaptureBrowser()` uses it
+- ffmpeg auto-downloads to /tmp on cold start (no bundling issues)
+- Screenshot capped at 4000px height (prevents most OOMs)
+- Lambda memory bumped to Pro-max 3008MB
+- `OPENAI_API_KEY` on Vercel working (TTS narration ready)
+- `toAbsolutePreviewUrl` always prepends https:// (no more invalid URLs)
+- Short codes backfilled for all 224 prospects
+- Auto-generation wired into `enrollInFunnel()` — will kick in the moment
+  rendering works
+
+**The remaining blocker:** `renderVideoFromPlan` in `video-generator.ts` — the
+  filter chain `[0:v]scale=W:-1,split=N...[concat]...` duplicates decoded
+  frames N times in RAM. For 1440x4000 input, that's ~86MB per split × 5
+  segments = 430MB + ffmpeg buffers + Node overhead. Sporadically OOM-kills
+  on Vercel even at 3008MB. `SIGKILL` happens outside any try/catch so the
+  client gets a generic Next.js 500 HTML page instead of our JSON error.
+
+**Fix when revisited:**
+1. Rewrite to process segments one at a time, write each to a tempfile, then
+   `concat demuxer` the tempfiles into final output. Uses ~1/N the memory.
+2. Alternative: call a dedicated video-service API (Shotstack $50/mo,
+   Synthesia, HeyGen) — zero DIY debugging. Pass template + prospect data.
+3. Interim workaround for high-value prospects: Ben records Loom videos
+   manually (~5 min each). More personal than TTS anyway.
+
+**Short-URL fact discovered along the way:** 224 prospects were missing
+`short_code` in the DB. All backfilled via md5(uuid)[:8] — `/p/[code]`
+route now resolves for everyone.
+- `src/lib/video-generator.ts::launchCaptureBrowser()` detects
+  `BROWSERLESS_API_KEY` and connects to Browserless.io via
+  `wss://production-sfo.browserless.io/chrome?token=...&stealth=true`.
+  Falls back to local @sparticuz/chromium for dev.
+- Fixes the Vercel 250MB bundle limit that blocked video gen before.
+- `enrollInFunnel()` already fires `generateProspectVideo()` async on
+  every enrollment — no SKIP flag, no wiring changes needed. Once the
+  env var is set, video gen runs automatically.
+- `POST /api/videos/[id]` — manual trigger, synchronous, `maxDuration=300`.
+- `GET /api/videos/[id]` — returns video URL when ready.
+- Supabase storage bucket `generated-videos` created 2026-04-20,
+  public, 50MB file-size limit, allows video/mp4 + video/webm.
+- Output URL: appended to outreach via the existing `{videoUrl}`
+  token in `email-templates.ts` (buildVideoBlock).
+- **Action required before it runs:** Ben to provision Browserless.io
+  account (7-day free trial, then $19/mo Starter = 10k sessions) and
+  add `BROWSERLESS_API_KEY` to Vercel env vars in all three environments.
+- Smoke test once key set:
+  ```
+  curl -X POST "https://bluejayportfolio.com/api/videos/{prospectId}" \
+    -H "Authorization: Bearer $ADMIN_PASSWORD" -m 300
+  ```
+- Cost math: 1 video = 1 Browserless session ≈ $0.0019 on Starter plan,
+  ~$0.30/video at full 100-per-day runs. Starter plan covers 10k videos/mo.
+
+**3. Direct mail postcard pipeline (SCAFFOLDED 2026-04-20)**
+- `src/lib/postcard-sender.ts` created. `sendPostcard(prospect)` sends
+  via Lob API — renders HTML front (screenshot overlay) + back
+  (handwritten-style note with QR + short URL).
+- Gated by `isEligibleForPostcard()`: only fires for prospects with
+  4.5+ star rating and 20+ reviews, protecting the ~$1.50 per-send cost.
+- Cost logged via `logCost()` service=`lob_postcard` so the /spending
+  dashboard tracks it.
+- **Action required**: set env vars on Vercel:
+  - `LOB_API_KEY` (start in test mode with `test_pub_...`, switch to
+    `live_pub_...` when ready)
+  - `LOB_FROM_NAME`, `LOB_FROM_LINE1`, `LOB_FROM_CITY`, `LOB_FROM_STATE`,
+    `LOB_FROM_ZIP` — return address on every postcard
+- **Wiring required** (not done yet): add a funnel step at Day 7 that
+  calls `sendPostcard(prospect)`. Insert in `FUNNEL_STEPS` after email
+  1 and before email 2.
+
+### Tier 2 — Ship when Tier 1 is live
+
+**4. LinkedIn outreach**
+- Discover business owner's LinkedIn via Apollo.io API (~$30/mo) or
+  manual search during review.
+- Free-tier LinkedIn allows 15-20 connection requests/day.
+- Template: "Saw your 5-star reviews in Sequim — built a website for
+  you, happy to send the link if it is useful."
+- Track connection responses in CRM as a new outreach channel.
+- 100% compliant — no TCR, no CAN-SPAM, no DNC list overlap.
+
+**5. Preview/claim page retargeting pixels**
+- Install Facebook Pixel + Google Ads tag on `/preview/[id]` and
+  `/claim/[id]`.
+- When prospect opens preview, they enter a 30-day retargeting window.
+- Spend $50-100/mo on brand-awareness retargeting ads across Meta +
+  Google Display. Ambient exposure makes the eventual email/VM land
+  warmer because "I have seen these guys before."
+- Add to Privacy Policy: mention the retargeting pixel.
+
+**6. Outbound voice calls (by Ben, not automated)**
+- Voice calls are NOT under A2P 10DLC. TCPA + DNC list apply, but
+  business-to-business voice is explicitly permitted.
+- Script: "Hi, this is Ben from BlueJay. I built a website preview for
+  [Business] — mind if I text or email you the link?" The ask flips
+  them to inbound then legally SMS-eligible.
+- Twilio outbound voice: $0.015/min. 100 calls/day ~ $5.
+- Best for high-intent prospects (opened email, did not claim).
+
+### Tier 3 — Nice-to-have adds
+
+**7. "Text me back" form on `/preview/[id]`**
+- Small widget at bottom: "Want me to text you when I am free? [phone]"
+- Explicit opt-in captured then prospect becomes SMS-eligible.
+
+**8. Chamber of Commerce / BBB data hook**
+- Scrape chamber membership lists during extraction.
+- Email opener: "Saw you are a Sequim Chamber member..." — zero cost,
+  big local trust signal.
+
+**9. Exit-intent modal on `/claim/[id]`**
+- When cursor heads for close button, show: "Leaving without claiming?
+  Want me to email the preview in 3 days as a reminder?"
+- Captures lapsed interest.
+
+**10. Automated warm-intro via shared LinkedIn connections**
+- Scrape shared connections via Apollo. Mention 1 by name in email.
+- Trust signal: mutual acquaintance reference.
+
+### Implementation order (after May 1 launch)
+1. Monitor inline-screenshot email performance (already live)
+2. Provision Browserless.io then enable video pipeline (~$20/mo)
+3. Provision Lob then enable postcard at Day 7 for 4.5+ star prospects
+4. Add LinkedIn discovery to prospect enrichment (Apollo API)
+5. Install retargeting pixels
+6. Ship "text me back" widget on preview page
+
+### Compliance + cost summary
+| Channel | Legal basis | Cost per send | Shipped |
+|---|---|---|---|
+| Cold email | CAN-SPAM, unsubscribe link | ~$0 | ✓ |
+| Inline screenshot in email | Same as above | ~$0 (thum.io free tier) | ✓ |
+| Ringless voicemail | Drop law varies by state, generally OK | ~$0.10 | provider pending |
+| SMS (inbound only) | TCPA express written consent via checkbox | $0.0075 Twilio | ✓ gate enforced |
+| Outbound voice | TCPA B2B permitted | $0.015/min | manual |
+| LinkedIn DM | Platform ToS only | $0 | pending |
+| Direct mail postcard | No regulation | ~$1.20 | code ✓ / account pending |
+| Personalized video | N/A (asset) | ~$0.30/video at Browserless | code ✓ / account pending |
+| Retargeting ad | Pixel consent in privacy policy | ~$0.01/impression | pending |
