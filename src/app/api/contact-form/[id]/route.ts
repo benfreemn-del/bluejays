@@ -5,14 +5,46 @@
  * When a visitor fills out the contact/inquiry form on the client's website,
  * this endpoint:
  *   1. Saves the submission to Supabase
- *   2. Sends the visitor an automatic SMS with a booking link
+ *   2. Returns a `scheduleUrl` that the client site opens as a booking modal
  *   3. Emails the business owner with the lead details
  *
- * Client websites embed this as their form action.
+ * The response includes a `scheduleUrl` — a white-labeled scheduling page at
+ * /schedule/[id]?name=...&phone=...&email=... that opens immediately as a
+ * modal or redirect so the customer can pick an appointment time right away.
+ * No SMS is sent at this stage — the booking confirmation handles that.
+ *
+ * Client websites embed this as their form action (CORS-enabled).
  * Body: { name, phone, email?, message?, service? }
  *
- * Booking link: /book/[prospectId] (existing booking page)
- * Or optionally override with client's own Calendly link.
+ * Embed snippet for client websites (copy-paste into their site):
+ * ─────────────────────────────────────────────────────────────────────────
+ * <div id="bj-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;align-items:center;justify-content:center;">
+ *   <div style="position:relative;width:90%;max-width:420px;height:640px;border-radius:20px;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.35);">
+ *     <button onclick="document.getElementById('bj-overlay').style.display='none'"
+ *       style="position:absolute;top:10px;right:14px;z-index:10;background:rgba(255,255,255,.8);border:none;border-radius:50%;width:28px;height:28px;font-size:16px;cursor:pointer;line-height:1;">×</button>
+ *     <iframe id="bj-frame" style="width:100%;height:100%;border:none;border-radius:20px;"></iframe>
+ *   </div>
+ * </div>
+ * <script>
+ * window.addEventListener('message', function(e) {
+ *   if (e.data && e.data.type === 'bluejays-booking-complete') {
+ *     document.getElementById('bj-overlay').style.display = 'none';
+ *   }
+ * });
+ * async function submitContactForm(name, phone, email, message, service) {
+ *   const res = await fetch('https://bluejayportfolio.com/api/contact-form/[PROSPECT_ID]', {
+ *     method: 'POST',
+ *     headers: { 'Content-Type': 'application/json' },
+ *     body: JSON.stringify({ name, phone, email, message, service })
+ *   });
+ *   const data = await res.json();
+ *   if (data.scheduleUrl) {
+ *     document.getElementById('bj-frame').src = data.scheduleUrl;
+ *     document.getElementById('bj-overlay').style.display = 'flex';
+ *   }
+ * }
+ * </script>
+ * ─────────────────────────────────────────────────────────────────────────
  */
 
 import { NextRequest, NextResponse } from "next/server";
@@ -20,28 +52,9 @@ import { getProspect } from "@/lib/store";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { v4 as uuidv4 } from "uuid";
 
-const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID;
-const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN;
-const TWILIO_PHONE_NUMBER = process.env.TWILIO_PHONE_NUMBER;
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 const FROM_EMAIL = process.env.FROM_EMAIL || "ben@bluejayportfolio.com";
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com";
-
-async function sendAutoSms(to: string, message: string): Promise<boolean> {
-  if (!TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN || !TWILIO_PHONE_NUMBER) return false;
-  const phone = to.replace(/\D/g, "");
-  const formatted = phone.startsWith("1") ? `+${phone}` : `+1${phone}`;
-  const url = `https://api.twilio.com/2010-04-01/Accounts/${TWILIO_ACCOUNT_SID}/Messages.json`;
-  const res = await fetch(url, {
-    method: "POST",
-    headers: {
-      Authorization: "Basic " + Buffer.from(`${TWILIO_ACCOUNT_SID}:${TWILIO_AUTH_TOKEN}`).toString("base64"),
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body: new URLSearchParams({ To: formatted, From: TWILIO_PHONE_NUMBER, Body: message }),
-  });
-  return res.ok;
-}
 
 async function sendOwnerEmail(ownerEmail: string, subject: string, body: string): Promise<void> {
   if (!SENDGRID_API_KEY) return;
@@ -69,14 +82,14 @@ export async function POST(
 
   const { name, phone, email, message, service } = body as {
     name: string;
-    phone: string;
+    phone?: string;
     email?: string;
     message?: string;
     service?: string;
   };
 
-  if (!id || !name || !phone) {
-    return NextResponse.json({ error: "name and phone are required" }, { status: 400 });
+  if (!id || !name) {
+    return NextResponse.json({ error: "name is required" }, { status: 400 });
   }
 
   const prospect = await getProspect(id);
@@ -84,55 +97,45 @@ export async function POST(
     return NextResponse.json({ error: "Business not found" }, { status: 404 });
   }
 
+  // Save submission to Supabase
   const submissionId = uuidv4();
-  const submission = {
-    id: submissionId,
-    prospect_id: id,
-    business_name: prospect.businessName,
-    customer_name: name,
-    customer_phone: phone,
-    customer_email: email || null,
-    message: message || null,
-    service_requested: service || null,
-    submitted_at: new Date().toISOString(),
-    sms_sent: false,
-    email_sent: false,
-  };
-
-  // Save to Supabase
   if (isSupabaseConfigured()) {
     try {
-      await supabase.from("contact_form_submissions").insert(submission);
+      await supabase.from("contact_form_submissions").insert({
+        id: submissionId,
+        prospect_id: id,
+        business_name: prospect.businessName,
+        customer_name: name,
+        customer_phone: phone || null,
+        customer_email: email || null,
+        message: message || null,
+        service_requested: service || null,
+        submitted_at: new Date().toISOString(),
+      });
     } catch {
       // Table may not exist yet
     }
   }
 
-  // Auto-SMS to the person who filled out the form
-  // Includes booking link so they can pick a time immediately
-  const bookingUrl = `${BASE_URL}/book/${id}`;
-  const firstName = name.split(" ")[0];
-  const autoSmsText = [
-    `Hi ${firstName}! Thanks for reaching out to ${prospect.businessName}.`,
-    `We received your message and will be in touch shortly.`,
-    `Want to pick a time now? Book here: ${bookingUrl}`,
-  ].join(" ");
+  // Build the schedule URL with prefilled customer info
+  const scheduleParams = new URLSearchParams({ embed: "true" });
+  if (name) scheduleParams.set("name", name);
+  if (phone) scheduleParams.set("phone", phone);
+  if (email) scheduleParams.set("email", email);
+  const scheduleUrl = `${BASE_URL}/schedule/${id}?${scheduleParams.toString()}`;
 
-  const smsSent = await sendAutoSms(phone, autoSmsText).catch(() => false);
-
-  // Email the business owner about the new lead
+  // Email the business owner about the new inquiry
   if (prospect.email) {
     const emailLines = [
       `New contact form submission for ${prospect.businessName}`,
       ``,
       `Name: ${name}`,
-      `Phone: ${phone}`,
+      phone ? `Phone: ${phone}` : null,
       email ? `Email: ${email}` : null,
       service ? `Service requested: ${service}` : null,
-      message ? `Message:\n${message}` : null,
+      message ? `Message:\n"${message}"` : null,
       ``,
-      `A booking link was automatically texted to the customer.`,
-      `Booking page: ${bookingUrl}`,
+      `The customer was shown the scheduling calendar to book immediately.`,
       ``,
       `— BlueJays Contact System`,
     ].filter(Boolean).join("\n");
@@ -144,21 +147,10 @@ export async function POST(
     ).catch(() => {});
   }
 
-  // Update Supabase with delivery status
-  if (isSupabaseConfigured()) {
-    try {
-      await supabase.from("contact_form_submissions").update({
-        sms_sent: smsSent,
-        email_sent: !!prospect.email,
-      }).eq("id", submissionId);
-    } catch { /* best effort */ }
-  }
-
   return NextResponse.json({
     success: true,
-    smsSent,
-    bookingUrl,
-    message: "Thanks! We'll be in touch shortly.",
+    scheduleUrl,
+    message: "Form received. Open scheduleUrl to let the customer book an appointment.",
   });
 }
 
