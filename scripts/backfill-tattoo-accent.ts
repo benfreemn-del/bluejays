@@ -8,6 +8,21 @@
  * Apply:   `npx tsx scripts/backfill-tattoo-accent.ts --apply`
  */
 
+import fs from "fs";
+import path from "path";
+
+// Minimal .env.local loader — tsx doesn't auto-load it like next dev does.
+const envPath = path.join(process.cwd(), ".env.local");
+if (fs.existsSync(envPath)) {
+  const content = fs.readFileSync(envPath, "utf-8");
+  for (const line of content.split("\n")) {
+    const match = line.match(/^\s*([A-Z0-9_]+)\s*=\s*(.*?)\s*$/i);
+    if (match && !process.env[match[1]]) {
+      process.env[match[1]] = match[2].replace(/^['"]|['"]$/g, "");
+    }
+  }
+}
+
 import { getAllProspects, updateProspect } from "../src/lib/store";
 import { getBestColorForCategory } from "../src/lib/color-review";
 
@@ -37,7 +52,18 @@ function isGrayish(hex: string | undefined): boolean {
 async function main() {
   const dryRun = !process.argv.includes("--apply");
   const newAccent = getBestColorForCategory("tattoo");
+  const hasSupabaseUrl = !!(process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL);
+  const hasSupabaseKey = !!(process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+  console.log(`Supabase URL: ${hasSupabaseUrl ? "set" : "MISSING"}  |  key: ${hasSupabaseKey ? "set" : "MISSING"}`);
+
   const prospects = await getAllProspects();
+  const byCategory = new Map<string, number>();
+  for (const p of prospects) {
+    byCategory.set(p.category, (byCategory.get(p.category) ?? 0) + 1);
+  }
+  console.log(`Total prospects: ${prospects.length}`);
+  console.log(`By category: ${Array.from(byCategory.entries()).map(([c, n]) => `${c}=${n}`).join(", ") || "(none)"}\n`);
+
   const tattooProspects = prospects.filter((p) => p.category === "tattoo");
 
   const changes: { id: string; name: string; before: string; after: string }[] = [];
