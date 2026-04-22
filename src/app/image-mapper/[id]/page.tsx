@@ -1510,20 +1510,41 @@ export default function ImageMapDetailPage() {
 
                   {/* ─── Theme Tab ─── */}
                   {rightTab === "theme" && (() => {
-                    const currentTheme = (prospect?.selectedTheme as "light" | "dark" | undefined)
-                      || (prospect?.aiThemeRecommendation as "light" | "dark" | undefined)
-                      || "dark";
-                    const aiRecommended = (prospect?.aiThemeRecommendation as "light" | "dark" | undefined) || "dark";
-                    const isOverridden = prospect?.selectedTheme && prospect.selectedTheme !== aiRecommended;
+                    // The `selectedTheme` value stored in the DB is scheme-B:
+                    // "light" means "apply the global --light CSS invert filter",
+                    // "dark" means "render the V2 template natively." Most V2
+                    // templates are built in one theme per category, so the
+                    // user-facing Light/Dark choice has to flip based on which
+                    // theme the category is natively built in.
+                    const LIGHT_NATIVE: string[] = [
+                      "salon", "florist", "daycare", "photography", "interior-design",
+                      "catering", "dental", "medical", "chiropractic", "physical-therapy",
+                      "veterinary", "pet-services", "accounting", "insurance", "tutoring",
+                      "church", "real-estate", "law-firm", "med-spa", "event-planning",
+                      "carpet-cleaning",
+                    ];
+                    const nativeLabel: "light" | "dark" = LIGHT_NATIVE.includes(category) ? "light" : "dark";
+                    const toRawValue = (userLabel: "light" | "dark"): "light" | "dark" =>
+                      userLabel === nativeLabel ? "dark" : "light";
+                    const toUserLabel = (raw: "light" | "dark"): "light" | "dark" =>
+                      raw === "dark" ? nativeLabel : (nativeLabel === "light" ? "dark" : "light");
 
-                    const handleThemeChange = async (theme: "light" | "dark") => {
-                      setProspect({ ...prospect, selectedTheme: theme });
+                    const rawCurrent = (prospect?.selectedTheme as "light" | "dark" | undefined)
+                      || (prospect?.aiThemeRecommendation as "light" | "dark" | undefined)
+                      || nativeLabel;
+                    const currentUserLabel = toUserLabel(rawCurrent);
+                    const aiRecommended = (prospect?.aiThemeRecommendation as "light" | "dark" | undefined) || nativeLabel;
+                    const isOverridden = prospect?.selectedTheme && prospect.selectedTheme !== prospect.aiThemeRecommendation;
+
+                    const handleThemeChange = async (userLabel: "light" | "dark") => {
+                      const rawValue = toRawValue(userLabel);
+                      setProspect({ ...prospect, selectedTheme: rawValue });
                       try {
                         await fetch(`/api/prospects/${id}`, {
                           method: "PATCH",
                           headers: { "Content-Type": "application/json" },
                           credentials: "include",
-                          body: JSON.stringify({ selectedTheme: theme }),
+                          body: JSON.stringify({ selectedTheme: rawValue }),
                         });
                         setIframeKey((k) => k + 1);
                       } catch { /* silent */ }
@@ -1543,7 +1564,7 @@ export default function ImageMapDetailPage() {
                           <button
                             onClick={() => handleThemeChange("light")}
                             className={`p-4 rounded-xl border text-center transition-all cursor-pointer ${
-                              currentTheme === "light"
+                              currentUserLabel === "light"
                                 ? "border-blue-500 bg-blue-500/10 ring-1 ring-blue-500/30"
                                 : "border-white/10 bg-white/[0.03] hover:border-white/20"
                             }`}
@@ -1560,7 +1581,7 @@ export default function ImageMapDetailPage() {
                           <button
                             onClick={() => handleThemeChange("dark")}
                             className={`p-4 rounded-xl border text-center transition-all cursor-pointer ${
-                              currentTheme === "dark"
+                              currentUserLabel === "dark"
                                 ? "border-blue-500 bg-blue-500/10 ring-1 ring-blue-500/30"
                                 : "border-white/10 bg-white/[0.03] hover:border-white/20"
                             }`}
