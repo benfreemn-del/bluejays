@@ -30,11 +30,72 @@ interface SendGridEvent {
   status?: string; // SMTP status code like "550"
 }
 
+/**
+ * Verify SendGrid's ECDSA webhook signature when the public key is
+ * configured. Returns true if signature is valid OR if no public key
+ * is set (fail-open during initial wiring, fail-closed once secured).
+ *
+ * To enable: in SendGrid → Settings → Mail Settings → Event Webhook,
+ * toggle "Signed Event Webhook Requests" and copy the Verification Key
+ * into the Vercel env var SENDGRID_WEBHOOK_PUBLIC_KEY.
+ */
+async function verifySendGridSignature(
+  rawBody: string,
+  signature: string | null,
+  timestamp: string | null
+): Promise<boolean> {
+  const publicKey = process.env.SENDGRID_WEBHOOK_PUBLIC_KEY;
+  if (!publicKey) return true; // fail-open until key is configured
+  if (!signature || !timestamp) return false;
+
+  try {
+    // SendGrid signs (timestamp + rawBody) with ECDSA-SHA256 and publishes
+    // the public key in PEM format. Node's webcrypto verifies it natively.
+    const payload = new TextEncoder().encode(timestamp + rawBody);
+    const signatureBytes = Uint8Array.from(
+      Buffer.from(signature, "base64")
+    );
+    // Strip PEM armor and decode base64 → DER → SubjectPublicKeyInfo
+    const pem = publicKey
+      .replace(/-----BEGIN PUBLIC KEY-----/, "")
+      .replace(/-----END PUBLIC KEY-----/, "")
+      .replace(/\s/g, "");
+    const keyDer = Uint8Array.from(Buffer.from(pem, "base64"));
+    const key = await crypto.subtle.importKey(
+      "spki",
+      keyDer,
+      { name: "ECDSA", namedCurve: "P-256" },
+      false,
+      ["verify"]
+    );
+    return await crypto.subtle.verify(
+      { name: "ECDSA", hash: "SHA-256" },
+      key,
+      signatureBytes,
+      payload
+    );
+  } catch (err) {
+    console.error("[Email Tracking] Signature verification error:", err);
+    return false;
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
-    const events: SendGridEvent[] = await request.json();
+    // Read raw body first — signature verification requires the exact bytes.
+    const rawBody = await request.text();
+    const signature = request.headers.get("X-Twilio-Email-Event-Webhook-Signature");
+    const timestamp = request.headers.get("X-Twilio-Email-Event-Webhook-Timestamp");
 
-    console.log(`[Email Tracking] Received ${events.length} events`);
+    const sigValid = await verifySendGridSignature(rawBody, signature, timestamp);
+    if (!sigValid) {
+      console.warn("[Email Tracking] Rejected event — signature verification failed");
+      return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
+    }
+
+    const events: SendGridEvent[] = JSON.parse(rawBody);
+
+    console.log(`[Email Tracking] Received ${events.length} events${signature ? " (signed)" : " (unsigned)"}`);
 
     for (const event of events) {
       console.log(`  ${event.event.toUpperCase()} — ${event.email} ${event.url ? "-> " + event.url : ""}`);

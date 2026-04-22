@@ -76,7 +76,11 @@ const PROTECTED_PATHS = [
   // /api/replies/process moved to PUBLIC_API_PATHS — gated by CRON_SECRET
   //  inside the handler. Must be reachable by Vercel cron every minute.
   "/api/email-deliverability",
-  "/api/email-tracking",
+  // /api/email-tracking moved to PUBLIC_API_PATHS — it's the SendGrid event
+  //  webhook (open/click/bounce events); SendGrid's POST has no auth cookie,
+  //  so leaving it behind middleware auth returns 401 on every event and
+  //  guts engagement analytics. Endpoint verifies SendGrid signature when
+  //  SENDGRID_WEBHOOK_PUBLIC_KEY is set.
   "/api/auto-scout",
   "/api/warming",
   "/api/postcards",
@@ -86,6 +90,7 @@ const PROTECTED_PATHS = [
 // Public API routes that must bypass auth (webhooks, inbound handlers)
 const PUBLIC_API_PATHS = [
   "/api/webhooks/stripe",
+  "/api/email-tracking",      // SendGrid event webhook (open/click/bounce)
   "/api/inbound/email",
   "/api/inbound/sms",
   "/api/inbound/vonage-sms",
