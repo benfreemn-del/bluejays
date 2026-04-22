@@ -300,55 +300,77 @@ export default function ClaimPage() {
               : `A premium, mobile-optimized website designed specifically for your ${categoryLabel} business — ready to go live in 48 hours.`}
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-2">
-            <button
-              onClick={redirectToCheckout}
-              disabled={isRedirecting}
-              className="h-14 px-10 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 text-white text-lg font-bold hover:shadow-[0_0_40px_rgba(34,197,94,0.4)] transition-all duration-300 disabled:opacity-50"
-            >
-              {isRedirecting ? "Redirecting..." : `Claim Your Website — ${displayPrice}`}
-            </button>
+          {/* Pricing options — installment shown first as default/recommended */}
+          {!isFreeTier ? (
+            <div className="flex flex-col sm:flex-row items-stretch justify-center gap-3 mb-4 max-w-xl mx-auto">
+              {/* Installment — MOST POPULAR */}
+              <div className="flex-1 relative">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-sky-500 text-white text-[10px] font-bold tracking-wider uppercase px-3 py-0.5 rounded-full whitespace-nowrap">
+                  Most Popular
+                </div>
+                <button
+                  onClick={() => {
+                    const url = new URL(window.location.href);
+                    url.searchParams.set("plan", "installment");
+                    window.location.href = url.toString();
+                  }}
+                  className="w-full h-full min-h-[80px] px-6 py-4 rounded-2xl border-2 border-sky-500 bg-sky-500/10 text-white font-bold hover:bg-sky-500/20 transition-all flex flex-col items-center justify-center gap-0.5"
+                >
+                  <span className="text-xl">3 × $349</span>
+                  <span className="text-xs text-white/60 font-normal">$116/mo · paid over 3 months</span>
+                </button>
+              </div>
+
+              {/* One-time */}
+              <div className="flex-1">
+                <button
+                  onClick={redirectToCheckout}
+                  disabled={isRedirecting}
+                  className="w-full h-full min-h-[80px] px-6 py-4 rounded-2xl border border-white/20 text-white font-bold hover:border-white/40 hover:bg-white/5 transition-all flex flex-col items-center justify-center gap-0.5 disabled:opacity-50"
+                >
+                  <span className="text-xl">{isRedirecting ? "..." : "$997 once"}</span>
+                  <span className="text-xs text-white/50 font-normal">then $8/mo after year one</span>
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-2">
+              <button
+                onClick={redirectToCheckout}
+                disabled={isRedirecting}
+                className="h-14 px-10 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 text-white text-lg font-bold hover:shadow-[0_0_40px_rgba(34,197,94,0.4)] transition-all duration-300 disabled:opacity-50"
+              >
+                {isRedirecting ? "Redirecting..." : `Claim Your Website — ${displayPrice}`}
+              </button>
+            </div>
+          )}
+
+          {/* Preview + walkthrough links */}
+          <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
             {info?.previewUrl && (
               <a
                 href={info.previewUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="h-14 px-8 rounded-full border border-white/20 text-white/70 text-lg font-medium hover:border-white/40 hover:text-white transition-all flex items-center gap-2"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-white/15 text-white/60 hover:text-white hover:border-white/30 transition-all text-sm"
               >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                   <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                 </svg>
-                Preview First
+                Preview the site first
               </a>
             )}
             <a
-              href="https://calendly.com/bluejaycontactme/website-walkthrough"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-blue-500/30 text-blue-400 hover:bg-blue-500/10 transition-colors text-sm font-medium"
+              href={`/book/${info?.id || ""}`}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-blue-500/30 text-blue-400 hover:bg-blue-500/10 transition-colors text-sm"
             >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
-              Book a Free 15-Min Walkthrough
+              Book a free 15-min walkthrough with Ben
             </a>
           </div>
-          {!isFreeTier && (
-            <p className="text-center text-sm text-white/50 mb-6">
-              Or{" "}
-              <button
-                onClick={() => {
-                  const url = new URL(window.location.href);
-                  url.searchParams.set("plan", "installment");
-                  window.location.href = url.toString();
-                }}
-                className="underline hover:text-white/70 transition-colors"
-              >
-                3 easy payments of $349
-              </button>
-            </p>
-          )}
 
           {/* Money-Back Guarantee Badge */}
           <div className="inline-flex items-center gap-2 bg-green-500/10 border border-green-500/20 rounded-full px-5 py-2">
@@ -533,7 +555,7 @@ export default function ClaimPage() {
                   }}
                   className="underline hover:text-white/70 transition-colors"
                 >
-                  3 easy payments of $349
+                  or 3 × $349 (payment plan)
                 </button>
               </p>
             )}

@@ -31,6 +31,7 @@ export interface RetargetEmail {
 }
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+const BEN_PHONE = process.env.BEN_PHONE || "(253) 886-3753";
 
 function footer(prospectId: string): string {
   return EMAIL_FOOTER
@@ -65,8 +66,8 @@ No login, no credit card, no commitment. Just a quick peek. The preview stays li
 
 Either way, I'm rooting for ${biz}.
 
-Best,
-The BlueJays Team
+— Ben
+${BEN_PHONE}
 ${footer(prospect.id)}`,
       sequence: 1,
       segment: "opener" as RetargetSegment,
@@ -89,8 +90,8 @@ I put together a quick breakdown of what's included and how it compares to what 
 
 No pressure at all. Just thought you'd want to know what's possible.
 
-Best,
-The BlueJays Team
+— Ben
+${BEN_PHONE}
 ${footer(prospect.id)}`,
       sequence: 2,
       segment: "opener" as RetargetSegment,
@@ -111,7 +112,8 @@ But I wanted to ask honestly: is there something specific holding you back? I he
 If none of those apply and you're just not interested, I respect that 100%. Just reply "pass" and I won't bother you again.
 
 Wishing you the best,
-The BlueJays Team
+— Ben
+${BEN_PHONE}
 ${footer(prospect.id)}`,
       sequence: 3,
       segment: "opener" as RetargetSegment,
@@ -152,8 +154,8 @@ If you liked what you saw but have questions, I'm right here. Or if you'd rather
 
 Your preview stays live for 30 days: ${previewUrl}
 
-Best,
-The BlueJays Team
+— Ben
+${BEN_PHONE}
 ${footer(prospect.id)}`,
       sequence: 1,
       segment: "clicker" as RetargetSegment,
@@ -173,8 +175,8 @@ At $997 one-time, you get the custom website design, domain registration, and ho
 
 Your preview stays live for 30 days — after that I'll need to free up the slot: ${claimUrl}
 
-Best,
-The BlueJays Team
+— Ben
+${BEN_PHONE}
 ${footer(prospect.id)}`,
       sequence: 2,
       segment: "clicker" as RetargetSegment,
@@ -194,8 +196,8 @@ If the timing isn't right, I totally understand. But if you're ready, claiming i
 
 Whatever you decide, I wish you and ${biz} nothing but success.
 
-Best,
-The BlueJays Team
+— Ben
+${BEN_PHONE}
 ${footer(prospect.id)}`,
       sequence: 3,
       segment: "clicker" as RetargetSegment,
@@ -217,7 +219,8 @@ It's yours to keep regardless: ${BASE_URL}/proposal/${prospect.id}
 If you ever want to revisit the website, it's here: ${previewUrl}
 
 All the best,
-The BlueJays Team
+— Ben
+${BEN_PHONE}
 ${footer(prospect.id)}`,
       sequence: 4,
       segment: "clicker" as RetargetSegment,

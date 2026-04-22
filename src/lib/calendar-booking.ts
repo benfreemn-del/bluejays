@@ -27,22 +27,33 @@ function ensureDir() {
 
 const WORKING_DAYS = new Set([1, 2, 3, 4]); // Mon-Thu
 
+// PDT = UTC-7, PST = UTC-8. Use fixed -7 for simplicity (close enough year-round for scheduling).
+const PDT_OFFSET_HOURS = 7;
+
 function formatSlotIso(year: number, monthIndex: number, day: number, hour: number, minute: number) {
-  const utcHour = hour + 7; // PDT (UTC-7) for April 2026
-  return new Date(Date.UTC(year, monthIndex, day, utcHour, minute, 0)).toISOString();
+  return new Date(Date.UTC(year, monthIndex, day, hour + PDT_OFFSET_HOURS, minute, 0)).toISOString();
 }
 
-function getCandidateSlots(): string[] {
+// Generates candidate slots for the next `daysAhead` calendar days starting tomorrow.
+// Working hours: Mon–Thu, 8 AM–4 PM Pacific. 30-min slots.
+function getCandidateSlots(daysAhead = 60): string[] {
   const slots: string[] = [];
-  for (let day = 8; day <= 30; day += 1) {
-    const date = new Date(Date.UTC(2026, 3, day, 12, 0, 0));
-    const weekday = date.getUTCDay();
+  const now = new Date();
+
+  for (let offset = 1; offset <= daysAhead; offset++) {
+    const d = new Date(now);
+    d.setDate(now.getDate() + offset);
+    const weekday = d.getDay();
     if (!WORKING_DAYS.has(weekday)) continue;
+
+    const year = d.getFullYear();
+    const monthIndex = d.getMonth();
+    const day = d.getDate();
 
     for (let minutes = 8 * 60; minutes < 16 * 60; minutes += SLOT_MINUTES) {
       const hour = Math.floor(minutes / 60);
       const minute = minutes % 60;
-      slots.push(formatSlotIso(2026, 3, day, hour, minute));
+      slots.push(formatSlotIso(year, monthIndex, day, hour, minute));
     }
   }
   return slots;

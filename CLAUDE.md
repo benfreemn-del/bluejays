@@ -1614,7 +1614,12 @@ After a paying client submits their onboarding form (`/api/onboarding/[id]`), se
 ## BEN'S HOME TODO LIST (updated 2026-04-22)
 ## ════════════════════════════════════════════
 
-### IMMEDIATE — Do these first (marketing is blocked without them)
+---
+
+### BLOCK 1 — MUST DO BEFORE FIRST EMAIL GOES OUT
+
+- [ ] **Add `BEN_PHONE` env var on Vercel**: `BEN_PHONE=(253) 886-3753`
+  - This shows up in every email signature and the claim page. Set it once, appears everywhere.
 
 - [ ] **Run the email patch script** with your real Supabase credentials:
   ```
@@ -1622,29 +1627,52 @@ After a paying client submits their onboarding form (`/api/onboarding/[id]`), se
   SUPABASE_SERVICE_ROLE_KEY=[your-service-role-key] \
   npx tsx scripts/patch-prospect-emails.ts
   ```
-  This adds emails to 8 prospects and moves Meyer Electric back to "generated".
+  Adds emails to 8 prospects, moves Meyer Electric back to "generated".
 
-- [ ] **Set up SendGrid domain authentication** (takes ~20 min):
-  1. Go to SendGrid → Settings → Sender Authentication → Authenticate a Domain
+- [ ] **Set up SendGrid domain authentication** (~20 min, one-time):
+  1. SendGrid → Settings → Sender Authentication → Authenticate a Domain
   2. Enter `bluejayportfolio.com`
-  3. Copy the 3 DNS records (CNAME entries)
-  4. Add them to your Vercel DNS (or wherever bluejayportfolio.com is registered)
-  5. Click "Verify" in SendGrid
-  6. Go to Vercel → Project Settings → Environment Variables → set `FROM_EMAIL=ben@bluejayportfolio.com`
+  3. Copy the 3 DNS CNAME records it gives you
+  4. Add those records to your DNS (Vercel Domains or wherever bluejayportfolio.com lives)
+  5. Click "Verify" in SendGrid once DNS propagates (~5-30 min)
+  6. Vercel → Project Settings → Environment Variables → add `FROM_EMAIL=ben@bluejayportfolio.com`
   7. Redeploy
 
 - [ ] **Set SendGrid Event Webhook**:
   - SendGrid → Settings → Mail Settings → Event Webhook
   - URL: `https://bluejayportfolio.com/api/email-tracking`
-  - Events: click, open, bounce, spam report
+  - Enable: click, open, bounce, spam report
 
-- [ ] **Approve prospects in dashboard** — after emails are patched in, open the dashboard, review the pending-review prospects, and approve them so the funnel can fire.
+- [ ] **Approve prospects in dashboard** — review the pending prospects, approve the ones ready, funnel fires automatically.
 
 ---
 
-### NEW FEATURES — Wire these up for your first paid client
+### BLOCK 2 — CREDIBILITY (DO BEFORE SCALING TO 100+ EMAILS)
 
-- [ ] **Set up Supabase tables** for the new client features. Run these SQL commands in your Supabase project (SQL editor):
+These are the things the code can't do for you. Without these, scaling outreach just means more people googling you and finding nothing.
+
+- [ ] **Get 3 real paying clients first** — friends, family, a business you know personally. Charge $97 or free. The goal is testimonials, not revenue. Even one real client with a name and face is worth more than every line of copy on the claim page.
+
+- [ ] **Create a Google Business Profile for BlueJays**:
+  1. Go to business.google.com
+  2. Create profile: "BlueJays Web Design" — Washington State
+  3. Category: Web Designer
+  4. Add your phone (253) 886-3753, website bluejayportfolio.com
+  5. Ask your first 3 clients to leave you a Google review here
+  This is what a skeptical business owner finds when they Google you. Right now there's nothing.
+
+- [ ] **Add a short "About Ben" section to bluejayportfolio.com** — just your name, that you're local (Washington), and 1-2 sentences about why you do this. Business owners are buying from a person. Make it personal. A headshot helps.
+
+- [ ] **Text or call Steadfast Plumbing**: (360) 797-2979 — no email found, but they're a warm prospect
+- [ ] **Text or call Sequim Valley Electric**: (360) 681-3330 — same situation
+
+---
+
+### BLOCK 3 — FUNNEL IMPROVEMENTS (BUILT — NEED WIRING)
+
+- [ ] **Add `BEN_PHONE` to Vercel env vars** — `(253) 886-3753` (see Block 1). Shows up in all emails automatically.
+
+- [ ] **Set up Supabase tables for client features** (run in Supabase SQL editor):
   ```sql
   create table if not exists client_reviews (
     id uuid primary key,
@@ -1674,46 +1702,47 @@ After a paying client submits their onboarding form (`/api/onboarding/[id]`), se
     sms_sent boolean default false,
     email_sent boolean default false
   );
+
+  create table if not exists schedule_bookings (
+    id uuid primary key,
+    prospect_id text not null,
+    business_name text,
+    contact_name text,
+    phone text,
+    email text,
+    slot_iso timestamptz not null,
+    slot_label text,
+    date text,
+    notes text,
+    status text default 'confirmed',
+    created_at timestamptz default now()
+  );
   ```
 
-- [ ] **Test the review funnel**:
-  1. Find a paid prospect's ID in the dashboard
-  2. Open `bluejayportfolio.com/review/[id]` in your phone browser
-  3. Tap 5 stars → should show Google review CTA
-  4. Tap 3 stars → should show feedback form
-  5. Submit 3-star feedback → check that you get an email at the prospect's email address
+- [ ] **Test review funnel on your phone**:
+  1. Open `bluejayportfolio.com/review/[any-prospect-id]`
+  2. Tap 5 stars → should show Google review button
+  3. Tap 3 stars → fill feedback → submit → you should get an email
 
-- [ ] **Test the review request SMS**:
-  - Use the ReviewRequestPanel in the dashboard (it shows on paid clients' detail pages after you add it)
-  - OR call the API directly: `POST /api/review-request/send { prospectId, customerPhone: "+12065551234" }`
+- [ ] **Test scheduling modal**: open `bluejayportfolio.com/schedule/[any-prospect-id]` — should show a calendar, tap a date, pick a slot, fill in details, confirm. Check that you get an email/SMS.
 
-- [ ] **Wire up missed-call auto-texter** for your first paid client:
-  1. In Twilio: buy a phone number for the client (or use existing)
-  2. Set incoming call webhook: `https://bluejayportfolio.com/api/missed-call/twiml/[prospectId]`
-  3. Set status callback: `https://bluejayportfolio.com/api/missed-call/callback`
-  4. Store the number via PATCH: `POST /api/missed-call/config/[id] { clientPhoneNumber: "+12065550100" }`
-  5. Test: call the number from another phone, let it ring → you should get an auto-SMS
+- [ ] **Wire missed-call auto-texter for first paid client**:
+  1. In Twilio: assign or buy a number for the client
+  2. Set incoming call URL → `https://bluejayportfolio.com/api/missed-call/twiml/[prospectId]`
+  3. Set status callback → `https://bluejayportfolio.com/api/missed-call/callback`
+  4. PATCH `/api/missed-call/config/[id]` with `{ clientPhoneNumber: "+1XXXXXXXXXX" }`
 
-- [ ] **Add ReviewRequestPanel to ProspectDetail** — find `src/components/dashboard/ProspectDetail.tsx` (or similar), import `ReviewRequestPanel`, and render it for prospects with `status === "paid"`. This gives you a UI to send review requests right from the dashboard.
+- [ ] **Add ReviewRequestPanel to the ProspectDetail view** for paid clients — import from `src/components/dashboard/ReviewRequestPanel.tsx` and render it when `prospect.status === "paid"`.
 
 ---
 
-### LATER — Good to have, not urgent
+### BLOCK 4 — GROWTH (LATER, AFTER FIRST 5 CLIENTS)
 
-- [ ] **Lewis County Autism Coalition** — still needs the English→Spanish button fixed on mobile. Find the code from that separate Claude session and bring it into this repo.
+- [ ] **Lewis County Autism Coalition** — find the Claude session where you built it, bring the code in. Fix the mobile English→Spanish button.
 
-- [ ] **Steadfast Plumbing** — no email found publicly. Call (360) 797-2979 directly.
+- [ ] **Build a client dashboard at `/client/[id]`** — where paying clients can see their review stats, contact form submissions, and missed call logs. The reviews + scheduling system is already built; this is just a read-only UI over the data.
 
-- [ ] **Sequim Valley Electric** — no email found. Call (360) 681-3330 or use their website contact form.
+- [ ] **CSV uploader for review blast** — business owner pastes 50 past customer phone numbers, system sends review request SMS to all of them at once. Gets clients 20+ Google reviews fast. This is a major upsell.
 
-- [ ] **Build a "Client Dashboard"** — a private page at `/client/[id]` where paying clients can:
-  - See their review stats (total sent, star distribution, Google vs private split)
-  - See contact form submissions from their website
-  - See missed call logs
-  - Send review requests to customers
-  This is the next big upsell — turns a $997 one-time into a stickier ongoing relationship.
-
-- [ ] **Review funnel SMS campaign** — build a CSV uploader so business owners can paste a list of 50 past customer phones and blast them all at once. This is how you get them 20+ Google reviews fast.
-
-- [ ] **Google Calendar integration** — right now booking uses the custom `/book/[id]` page. For clients who want Google Calendar, add `GOOGLE_CALENDAR_CLIENT_ID` + OAuth flow and let clients connect their own Google Calendar so booked appointments appear automatically.
+- [ ] **Google Calendar integration** — let clients OAuth-connect their Google Calendar so bookings appear automatically. Right now it uses our custom slot system.
 

@@ -24,6 +24,7 @@ export interface EmailTemplate {
 
 const CONTACT_EMAIL = process.env.FROM_EMAIL || "ben@bluejayportfolio.com";
 const BASE = process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com";
+const BEN_PHONE = process.env.BEN_PHONE || "(253) 886-3753";
 
 /**
  * CAN-SPAM compliant email footer.
@@ -36,6 +37,11 @@ You're receiving this because we built a free website preview for your business.
 Unsubscribe: {{baseUrl}}/unsubscribe/{{prospectId}}
 `;
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Sequence email 1 — The pitch
+// Goal: get them to open the preview link OR book a walkthrough call.
+// ─────────────────────────────────────────────────────────────────────────────
+
 export function getPitchEmail(
   prospect: Prospect,
   previewUrl: string,
@@ -46,24 +52,35 @@ export function getPitchEmail(
   const category = CATEGORY_CONFIG[prospect.category].label;
   const hasWebsite = !!prospect.currentWebsite;
   const city = prospect.city || prospect.address?.split(",")[0] || "";
+  const rating = prospect.googleRating;
+  const reviewCount = prospect.reviewCount;
+  const bookUrl = `${BASE}/book/${prospect.id}`;
 
-  // A/B test: variant A is curiosity-driven, variant B is direct/value-driven
+  // A/B subject lines — A is curiosity, B references their actual Google presence
   const variant = getSubjectVariant(prospect.id);
   const subject =
     variant === "A"
-      ? `${name}, I made something for ${prospect.businessName}`
-      : `New website ready for ${prospect.businessName} — take a look`;
+      ? `${name}, I built a website for ${prospect.businessName}`
+      : rating
+        ? `Your ${rating}★ rating deserves a better website, ${name}`
+        : `${prospect.businessName} should be easier to find online`;
 
-  const discoveryLine = hasWebsite
-    ? `I found ${prospect.businessName} while searching for top-rated ${category.toLowerCase()} businesses${city ? ` in ${city}` : ""} — your reviews stood out.`
-    : `I was searching for ${category.toLowerCase()} businesses${city ? ` in ${city}` : ""} and came across ${prospect.businessName} — noticed you don't have a website yet.`;
-
-  const proposalBlock = proposalUrl
-    ? `\nI also put together a short personalized breakdown — ROI estimate, what's included, and how it compares to agency pricing:\n${proposalUrl}\n`
-    : "";
+  // Discovery line — specific to what we know about them
+  let discoveryLine: string;
+  if (rating && reviewCount && reviewCount > 5) {
+    discoveryLine = `I found ${prospect.businessName} while researching ${category.toLowerCase()} businesses${city ? ` in ${city}` : ""} — ${reviewCount} Google reviews at ${rating} stars is impressive. But I noticed your online presence doesn't match the quality those reviews describe.`;
+  } else if (!hasWebsite) {
+    discoveryLine = `I was searching for ${category.toLowerCase()} businesses${city ? ` in ${city}` : ""} and couldn't find ${prospect.businessName} with a proper website. That means every time someone searches online right now, they're calling your competitors first.`;
+  } else {
+    discoveryLine = `I found ${prospect.businessName} while searching for top-rated ${category.toLowerCase()} businesses${city ? ` in ${city}` : ""} — your work clearly speaks for itself. I wanted to see if your website does too.`;
+  }
 
   const videoBlock = videoUrl
-    ? `\nI recorded a quick 90-second walkthrough of the site if you'd rather watch than click:\n${videoUrl}\n`
+    ? `\nI recorded a quick 90-second walkthrough if you'd rather watch than click:\n${videoUrl}\n`
+    : "";
+
+  const proposalBlock = proposalUrl
+    ? `\nPersonalized breakdown (ROI estimate, what's included, agency comparison):\n${proposalUrl}\n`
     : "";
 
   const footer = EMAIL_FOOTER
@@ -74,14 +91,19 @@ export function getPitchEmail(
 
 ${discoveryLine}
 
-Your work clearly speaks for itself — but does your online presence? I went ahead and built a website that does.
+I went ahead and built you a website that fixes that. You can see it here:
 
-See it here: ${previewUrl}
-${videoBlock}${proposalBlock}When someone searches for ${category.toLowerCase()} services${city ? ` in ${city}` : ""} right now, they're choosing based on what they see online first. This makes sure that first impression matches the quality of your work.
+${previewUrl}
+${videoBlock}${proposalBlock}No login, no credit card — just your actual site, ready to go. It takes about 30 seconds to look.
 
-More ${category.toLowerCase()} examples: ${BASE}/v2/${prospect.category}
+When someone searches for a ${category.toLowerCase()}${city ? ` in ${city}` : ""} right now, they're choosing based on what they see online first. This makes sure the first impression matches the quality of your work.
 
-If you want a 15-min walkthrough, I'll show you everything live — no pressure: https://calendly.com/bluejaycontactme/website-walkthrough
+See more ${category.toLowerCase()} examples: ${BASE}/v2/${prospect.category}
+
+If you'd rather see it live, I'll walk you through everything in 15 minutes — no pressure:
+${bookUrl}
+
+Or call/text me directly: ${BEN_PHONE}
 
 — Ben
 ${CONTACT_EMAIL}
@@ -90,72 +112,89 @@ ${footer}`;
   return { subject, body, sequence: 1, subjectVariant: variant };
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Sequence email 2 — Push for the call, not the preview
+// Goal: get them on a 15-min call with Ben. Preview is secondary.
+// Sent ~3 days after email 1.
+// ─────────────────────────────────────────────────────────────────────────────
+
 export function getFollowUp1(
   prospect: Prospect,
   previewUrl: string,
-  videoUrl?: string,
+  _videoUrl?: string,
 ): EmailTemplate {
   const name = prospect.ownerName?.split(" ")[0] || prospect.businessName;
   const category = CATEGORY_CONFIG[prospect.category].label;
   const city = prospect.city || "";
-
-  const videoBlock = videoUrl
-    ? `\nWalkthrough video (90 seconds): ${videoUrl}\n`
-    : "";
+  const bookUrl = `${BASE}/book/${prospect.id}`;
 
   const footer = EMAIL_FOOTER
     .replace("{{baseUrl}}", BASE)
     .replace("{{prospectId}}", prospect.id);
 
+  // Use a different angle from email 1 — competitor/market context
+  const cityLine = city ? ` in ${city}` : "";
+
   return {
-    subject: `${name} — quick question about your new site`,
+    subject: `${name}, still want to show you this`,
     body: `Hi ${name},
 
-Wanted to follow up on the website preview I sent over for ${prospect.businessName}.
+Sent a note a few days ago about the website I built for ${prospect.businessName} — wanted to follow up in case it got buried.
 
+The short version: someone's searching for a ${category.toLowerCase()}${cityLine} right now. The business with the best-looking online presence gets the call. Right now that's probably not you — and I'd like to change that.
+
+The easiest way to see it is a quick 15-minute call. I'll pull up the site, walk you through it, and answer anything you're wondering. No pitch, no pressure:
+
+Book a time: ${bookUrl}
+
+Or if you'd rather just look on your own first:
 ${previewUrl}
-${videoBlock}
-When someone searches "${category.toLowerCase()}${city ? ` ${city}` : ""}" right now, the businesses with a strong online presence win the click — regardless of who does better work.
 
-I built this so ${prospect.businessName} is the one they find first.
-
-Happy to walk you through it live: https://calendly.com/bluejaycontactme/website-walkthrough
+Either way — call or text me anytime: ${BEN_PHONE}
 
 — Ben
+${CONTACT_EMAIL}
 ${footer}`,
     sequence: 2,
   };
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Sequence email 3 — Short, human, asks for a real response
+// Goal: a reply. Any reply. Not a click, not a booking — a conversation.
+// Sent ~7 days after email 1.
+// ─────────────────────────────────────────────────────────────────────────────
+
 export function getFollowUp2(
   prospect: Prospect,
-  previewUrl: string,
-  videoUrl?: string,
+  _previewUrl: string,
+  _videoUrl?: string,
 ): EmailTemplate {
   const name = prospect.ownerName?.split(" ")[0] || prospect.businessName;
-  const category = CATEGORY_CONFIG[prospect.category].label;
-
-  const videoBlock = videoUrl
-    ? `\nWalkthrough video: ${videoUrl}\n`
-    : "";
+  const bookUrl = `${BASE}/book/${prospect.id}`;
 
   const footer = EMAIL_FOOTER
     .replace("{{baseUrl}}", BASE)
     .replace("{{prospectId}}", prospect.id);
 
   return {
-    subject: `Last note on this, ${name}`,
+    subject: `Quick honest question, ${name}`,
     body: `Hi ${name},
 
-I'll keep this short — I genuinely think ${prospect.businessName} deserves a better online presence, so I built one.
+Last one from me — I promise.
 
-${previewUrl}
-${videoBlock}
-The preview stays live for 30 days. After that I move on. If you ever want to revisit it, I'm easy to reach.
+I've sent a couple notes about the website I built for ${prospect.businessName}. I don't know if the timing's off, if you already have something in the works, or if the emails just got lost.
 
-See what we've done for other ${category.toLowerCase()} businesses: ${BASE}/v2/${prospect.category}
+Honest question: is there something specific that's holding you back? Price, timing, you already have a site, something else?
+
+If you just reply to this email I'll get it. Or if you'd rather talk through it live:
+${bookUrl}
+
+And if you're just not interested, that's completely fine — just say "pass" and I won't bother you again.
 
 — Ben
+${BEN_PHONE}
+${CONTACT_EMAIL}
 ${footer}`,
     sequence: 3,
   };
@@ -245,7 +284,7 @@ Or upload anytime at: ${BASE}/onboarding/${prospect.id}
 
 Questions?
 ---
-Reply here or email ${CONTACT_EMAIL} — Ben checks it daily.
+Reply here, email ${CONTACT_EMAIL}, or call/text ${BEN_PHONE} — Ben checks both daily.
 
 
 Congratulations, ${name}. Your work deserves to be found — and now it will be.
@@ -293,7 +332,7 @@ Need something updated?
 New hours, services, a team photo — just reply to this email. It's included in your plan and usually done within 48 hours.
 
 — Ben @ BlueJays
-${CONTACT_EMAIL}`,
+${CONTACT_EMAIL} | ${BEN_PHONE}`,
     sequence: 0,
   };
 }
