@@ -1636,7 +1636,7 @@ export default function ImageMapDetailPage() {
                     <iframe
                       key={iframeKey}
                       ref={iframeRef}
-                      src={`/preview/${id}?_t=${iframeKey}`}
+                      src={`/preview/${id}?_t=${iframeKey}&theme=${prospect?.selectedTheme || prospect?.aiThemeRecommendation || "dark"}`}
                       className="w-full h-full border-0"
                       title="Site Preview"
                     />
