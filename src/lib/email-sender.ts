@@ -63,19 +63,28 @@ async function sendViaSendGrid(
   subject: string,
   body: string,
   from: { email: string; name: string; replyTo?: string },
+  htmlBody?: string,
+  prospectId?: string,
 ): Promise<boolean> {
+  // Multipart send: when htmlBody is provided, we send text/plain AND
+  // text/html together per SendGrid's spec (text/plain FIRST, text/html
+  // SECOND so modern clients render the HTML and fallback clients see
+  // the plain text). SendGrid requires content types in this exact order.
+  const content: Array<{ type: string; value: string }> = [
+    { type: "text/plain", value: body },
+  ];
+  if (htmlBody && htmlBody.trim()) {
+    content.push({ type: "text/html", value: htmlBody });
+  }
+
   const payload: Record<string, unknown> = {
     personalizations: [{ to: [{ email: to }] }],
     from: { email: from.email, name: from.name },
     subject,
-    content: [{ type: "text/plain", value: body }],
-    // Disable SendGrid's click tracking + open tracking on plain-text sends.
-    // In plain-text bodies, click tracking REPLACES the visible URL with a
-    // 250-char redirect URL like https://u82955649.ct.sendgrid.net/ls/click?...
-    // which looks like spam and ruins the whole point of our /p/[code]
-    // short-URL system. We accept the loss of per-send click analytics in
-    // exchange for clean URLs that render nicely in the recipient's inbox.
-    // Revisit when we move to HTML emails (hidden tracking, best of both).
+    content,
+    // Keep click + open tracking off even in multipart: the plain-text
+    // fallback still shows a clean URL, and we don't want SendGrid to
+    // inject tracking redirects into the HTML anchors either.
     tracking_settings: {
       click_tracking: { enable: false, enable_text: false },
       open_tracking: { enable: false },
@@ -83,6 +92,29 @@ async function sendViaSendGrid(
   };
   if (from.replyTo) {
     payload.reply_to = { email: from.replyTo };
+  }
+
+  // List-Unsubscribe headers (RFC 2369 + RFC 8058) are the #1 Primary-tab
+  // signal Gmail looks for from commercial senders. With these set:
+  //   • Gmail renders its built-in "Unsubscribe" link near the sender name
+  //     (no more need for a noisy CAN-SPAM footer to carry the load)
+  //   • Gmail treats the sender as responsible/compliant → better placement
+  //   • Users can unsubscribe without marking spam → sender reputation stays clean
+  //
+  // The mailto target is a shared inbox; the https target POSTs to our
+  // /api/unsubscribe/[id] endpoint (which we verified supports both GET
+  // and POST for RFC 8058 one-click). Only adds when prospectId is known
+  // so the https target can be personalized to the prospect.
+  if (prospectId) {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com";
+    const unsubUrl = `${baseUrl}/api/unsubscribe/${prospectId}`;
+    const unsubMailto = `unsubscribe+${prospectId}@bluejayportfolio.com`;
+    payload.headers = {
+      "List-Unsubscribe": `<mailto:${unsubMailto}?subject=Unsubscribe>, <${unsubUrl}>`,
+      // RFC 8058: Gmail/Apple see this and enable one-click unsubscribe UI.
+      // The header value must be exactly `List-Unsubscribe=One-Click`.
+      "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+    };
   }
 
   const response = await fetch("https://api.sendgrid.com/v3/mail/send", {
@@ -154,7 +186,8 @@ export async function sendEmail(
   to: string,
   subject: string,
   body: string,
-  sequence: number
+  sequence: number,
+  htmlBody?: string,
 ): Promise<SentEmail> {
   // Check if email has hard-bounced — skip sending
   if (isEmailBounced(to)) {
@@ -188,7 +221,12 @@ export async function sendEmail(
     const cleanSubject = subject.replace(/[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu, "").trim();
     // Strip non-ASCII from body to avoid encoding issues
     const cleanBody = body.replace(/[^\x00-\x7F]/g, "").trim();
-    const success = await sendViaSendGrid(to, cleanSubject || subject, cleanBody || body, fromSender);
+    // HTML body is left as-is — HTML is UTF-safe and the non-ASCII strip
+    // above was only for plain-text SendGrid compatibility on older
+    // campaigns. Modern multipart handles Unicode in text/html natively.
+    // Pass prospectId through so sendViaSendGrid can set List-Unsubscribe
+    // headers scoped to this specific prospect (RFC 8058 one-click).
+    const success = await sendViaSendGrid(to, cleanSubject || subject, cleanBody || body, fromSender, htmlBody, prospectId);
     if (!success) {
       throw new Error(`SendGrid API failed`);
     }

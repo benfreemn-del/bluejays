@@ -4,20 +4,69 @@ import { getShortPreviewUrl } from "./short-urls";
 
 export interface EmailTemplate {
   subject: string;
-  body: string;
+  body: string;           // text/plain version — fallback for HTML-off clients
+  htmlBody?: string;      // multipart HTML version with inline screenshot
   sequence: number;
+}
+
+/**
+ * thum.io live-screenshot URL for a prospect's preview page. Same endpoint
+ * used for the per-prospect OG metadata; embedding it inline in the HTML
+ * email body turns the "here's a link" moment into a "here's a picture of
+ * YOUR site" moment. Thum caches captures for ~24h after first hit, so the
+ * OG scraper warm-up from when the prospect enrolled means the image
+ * usually loads instantly when they open the email.
+ *
+ * Kept in one place so every email template references the same capture.
+ */
+export function getPreviewScreenshotUrl(prospectId: string): string {
+  const base = "https://bluejayportfolio.com";
+  const target = `${base}/preview/${prospectId}?embed=1`;
+  return `https://image.thum.io/get/width/1200/crop/630/fullpage/noanimate/wait/5/png/${target}`;
+}
+
+/**
+ * Build the shared HTML email chrome around a body block. Keeps styling
+ * deliberately minimal so Gmail's Promotions-tab classifier doesn't trip —
+ * no tables, no custom fonts, no inline-CSS-heavy marketing layouts. Just
+ * personal-looking formatting with ONE hero image (the prospect's own site
+ * screenshot) so the email still looks hand-crafted to the recipient.
+ */
+function wrapEmailHtml(innerHtml: string): string {
+  return `<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Preview</title></head>
+<body style="margin:0;padding:0;background:#ffffff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#1a1a1a;line-height:1.5;">
+  <div style="max-width:560px;margin:0 auto;padding:16px 20px;font-size:15px;">
+    ${innerHtml}
+  </div>
+</body></html>`;
+}
+
+/** Escape string for safe HTML interpolation. */
+function esc(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 
 /**
  * CAN-SPAM compliant email footer.
  * Appended to every outbound email in the funnel.
  */
-export const EMAIL_FOOTER = `
-—
-BlueJays Business Solutions | Washington, USA
-You're receiving this because we built a free website for your business.
-Unsubscribe: {{baseUrl}}/unsubscribe/{{prospectId}}
-`;
+// Minimal CAN-SPAM-compliant footer designed for Gmail Primary placement.
+// Previously: 3-line block with brand-name header, "you're receiving this
+// because we built..." explanation, and a verbose "Unsubscribe:" label.
+// All of those are classic Gmail Promotions-tab signals (bulk-marketing
+// flavor). This minimal version keeps CAN-SPAM compliance (physical
+// address + one-click opt-out) via the List-Unsubscribe header on the
+// SendGrid payload, and surfaces only a short in-body line — Washington,
+// USA for the physical address requirement plus a plain-text opt-out
+// link. The Unsubscribe header is where Gmail's native opt-out UI
+// pulls its data from, so the in-body link is belt-and-suspenders.
+export const EMAIL_FOOTER = `Quilcene, WA · Opt out: {{baseUrl}}/unsubscribe/{{prospectId}}`;
 
 function buildVideoBlock(videoUrl?: string) {
   if (!videoUrl) return "";
@@ -190,7 +239,46 @@ No idea if it's what you had in mind, but figured you'd want to see it. Curious 
 bluejaycontactme@gmail.com
 ${EMAIL_FOOTER.replace("{{baseUrl}}", process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com").replace("{{prospectId}}", prospect.id)}`;
 
-  return { subject, body, sequence: 1 };
+  // HTML version — identical copy but with the prospect's live preview
+  // screenshot embedded inline as a clickable image.
+  //
+  // DELIVERABILITY GATE: the HTML body is only generated when the
+  // `ENABLE_HTML_PITCH_EMAIL` env var is set to "true". Reason: a 2026-04-20
+  // live A/B test sent from a freshly-warmed domain (ben@bluejayportfolio.com,
+  // Day 5 of 14-day ramp) to a brand-new Gmail inbox landed in SPAM when
+  // the email was multipart HTML+text with an inline image — the same
+  // content landed in Primary when sent as plain-text only. Per CLAUDE.md
+  // Outreach Email Template Rules, plain-text Primary-tab placement is
+  // non-negotiable during warmup. Turn this flag ON only after Day 14
+  // (fully warmed) when the domain has established reputation and one
+  // inline image no longer trips Gmail's classifier.
+  const enableHtmlPitch = process.env.ENABLE_HTML_PITCH_EMAIL === "true";
+  const screenshotUrl = enableHtmlPitch ? getPreviewScreenshotUrl(prospect.id) : "";
+
+  // HTML body only built when the deliverability gate opens (post-warmup).
+  // During warmup, returning `undefined` here means sendViaSendGrid ships
+  // as single-part text/plain only — Primary-tab compatible.
+  const htmlBody = enableHtmlPitch
+    ? wrapEmailHtml(`
+    <p style="margin:0 0 16px;">Hi ${esc(greeting)},</p>
+    <p style="margin:0 0 16px;">${esc(discoveryLine)}${ratingLine ? " " + esc(ratingLine.trim()) : ""}</p>
+    <p style="margin:0 0 16px;">${esc(effortPhrase)} — uses your actual services, photos, and contact info:</p>
+    <p style="margin:0 0 16px;">
+      <a href="${esc(previewUrl)}" style="text-decoration:none;display:block;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;">
+        <img src="${esc(screenshotUrl)}" alt="${esc(prospect.businessName)} — website preview" width="520" style="display:block;width:100%;max-width:520px;height:auto;border:0;" />
+      </a>
+    </p>
+    <p style="margin:0 0 16px;"><a href="${esc(previewUrl)}" style="color:#2563eb;">${esc(previewUrl)}</a></p>
+    <p style="margin:0 0 16px;">No idea if it's what you had in mind, but figured you'd want to see it. Curious what you'd change.</p>
+    <p style="margin:0 0 4px;">— Ben</p>
+    <p style="margin:0 0 16px;"><a href="mailto:bluejaycontactme@gmail.com" style="color:#6b7280;">bluejaycontactme@gmail.com</a></p>
+    <p style="margin:0;color:#9ca3af;font-size:11px;line-height:1.4;">
+      Quilcene, WA · <a href="${esc(process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com")}/unsubscribe/${esc(prospect.id)}" style="color:#9ca3af;">Opt out</a>
+    </p>
+  `)
+    : undefined;
+
+  return { subject, body, htmlBody, sequence: 1 };
 }
 
 /**

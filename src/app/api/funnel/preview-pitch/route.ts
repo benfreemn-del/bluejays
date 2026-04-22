@@ -112,6 +112,15 @@ export async function POST(request: NextRequest) {
   //    prospect would see it, so this sends the rendered template verbatim.
   //    The only way to tell it's a preview send is that Ben is the recipient;
   //    that's intentional for QA fidelity.
+  // List-Unsubscribe headers (RFC 2369 + RFC 8058) — Gmail renders its
+  // native Unsubscribe link near the sender name when these are set, which
+  // is the #1 Primary-tab placement signal for commercial senders. Match
+  // the header layout used by email-sender.ts so QA sends behave identically
+  // to real funnel sends for deliverability-testing purposes.
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com";
+  const unsubUrl = `${baseUrl}/api/unsubscribe/${prospect.id}`;
+  const unsubMailto = `unsubscribe+${prospect.id}@bluejayportfolio.com`;
+
   const response = await fetch("https://api.sendgrid.com/v3/mail/send", {
     method: "POST",
     headers: {
@@ -123,6 +132,10 @@ export async function POST(request: NextRequest) {
       from: { email: "ben@bluejayportfolio.com", name: "Ben @ BlueJays" },
       subject: template.subject,
       content: [{ type: "text/plain", value: template.body }],
+      headers: {
+        "List-Unsubscribe": `<mailto:${unsubMailto}?subject=Unsubscribe>, <${unsubUrl}>`,
+        "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+      },
       // Match production email-sender settings — disable click/open tracking
       // so the URLs in the preview match exactly what real prospects see.
       tracking_settings: {
