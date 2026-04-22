@@ -22,8 +22,11 @@ export const maxDuration = 300; // 5 minutes max for batch processing
 
 const VALID_CATEGORIES = Object.keys(CATEGORY_CONFIG) as Category[];
 
-// Rate limiting: max batches per day
-const DAILY_BATCH_LIMIT = 5;
+// Rate limiting: max batches per day. A "build 50 sites" click fires
+// multiple small chunks from the client, each counting as one batch, so
+// this cap needs headroom. 50 batches × ~5 sites/chunk = ~250 sites/day,
+// which is plenty and still protects against runaway cost.
+const DAILY_BATCH_LIMIT = 50;
 const MAX_SITES_PER_BATCH = 100;
 
 interface BatchResult {

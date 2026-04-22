@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { CATEGORY_CONFIG } from "@/lib/types";
 import type { Category } from "@/lib/types";
 
@@ -50,11 +50,34 @@ interface PipelineDashboardProps {
   onComplete: () => void;
 }
 
+// Each server-side batch is small enough to finish well inside Vercel's
+// 5-minute function timeout. The client loops, firing one chunk at a
+// time, until the user's target is met or a circuit breaker trips.
+const CHUNK_SIZE = 5;
+// Stop looping if this many batches in a row generate zero sites (usually
+// means scout returned no new prospects or an env var broke mid-run).
+const MAX_CONSECUTIVE_DRY_BATCHES = 2;
+
+interface LoopState {
+  target: number;
+  generated: number;
+  scouted: number;
+  failed: number;
+  skipped: number;
+  totalCost: number;
+  currentBatch: number;
+  totalBatches: number;
+  lastMessage: string;
+  stopRequested: boolean;
+}
+
 export default function PipelineDashboard({ isOpen, onClose, onComplete }: PipelineDashboardProps) {
   const [data, setData] = useState<PipelineData | null>(null);
   const [loading, setLoading] = useState(true);
   const [running, setRunning] = useState(false);
   const [runResult, setRunResult] = useState<BatchResult | null>(null);
+  const [loopState, setLoopState] = useState<LoopState | null>(null);
+  const stopRef = useRef(false);
 
   // Form state
   const [targetCount, setTargetCount] = useState(10);
@@ -84,34 +107,165 @@ export default function PipelineDashboard({ isOpen, onClose, onComplete }: Pipel
     }
   }, [isOpen, fetchData]);
 
+  const stopPipeline = () => {
+    stopRef.current = true;
+    setLoopState((prev) =>
+      prev ? { ...prev, stopRequested: true, lastMessage: "Stop requested — finishing current batch…" } : prev,
+    );
+  };
+
   const handleRunPipeline = async () => {
     if (!pipelineEnabled) return;
+    stopRef.current = false;
     setRunning(true);
     setRunResult(null);
 
-    try {
-      const res = await fetch("/api/pipeline/batch", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          targetCount,
-          location,
-          categories: selectedCategories.length > 0 ? selectedCategories : undefined,
-        }),
-      });
+    const totalBatches = Math.max(1, Math.ceil(targetCount / CHUNK_SIZE));
+    const initial: LoopState = {
+      target: targetCount,
+      generated: 0,
+      scouted: 0,
+      failed: 0,
+      skipped: 0,
+      totalCost: 0,
+      currentBatch: 0,
+      totalBatches,
+      lastMessage: "Starting…",
+      stopRequested: false,
+    };
+    setLoopState(initial);
 
-      const result = await res.json();
-      if (res.ok) {
-        setRunResult(result);
+    const merged: BatchResult = {
+      batchId: "multi",
+      status: "running",
+      targetCount,
+      location,
+      categories: selectedCategories,
+      results: { scouted: 0, generated: 0, queued: 0, skipped: 0, failed: 0 },
+      costs: { googlePlaces: 0, siteGeneration: 0, dataExtraction: 0, total: 0 },
+      prospects: [],
+      errors: [],
+      startedAt: new Date().toISOString(),
+    };
+
+    let dryBatches = 0;
+    let batchNum = 0;
+
+    try {
+      while (merged.results.generated < targetCount && !stopRef.current) {
+        batchNum += 1;
+        const remaining = targetCount - merged.results.generated;
+        const chunk = Math.min(CHUNK_SIZE, remaining);
+
+        setLoopState((prev) =>
+          prev
+            ? {
+                ...prev,
+                currentBatch: batchNum,
+                lastMessage: `Running batch ${batchNum}/${prev.totalBatches} — ${chunk} site${chunk === 1 ? "" : "s"}…`,
+              }
+            : prev,
+        );
+
+        let res: Response;
+        try {
+          res = await fetch("/api/pipeline/batch", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({
+              targetCount: chunk,
+              location,
+              categories: selectedCategories.length > 0 ? selectedCategories : undefined,
+            }),
+          });
+        } catch (fetchErr) {
+          merged.errors.push(`Batch ${batchNum} request failed: ${(fetchErr as Error).message}`);
+          break;
+        }
+
+        const result = await res.json();
+
+        if (!res.ok) {
+          merged.errors.push(result.error || `Batch ${batchNum} failed with HTTP ${res.status}`);
+          if (res.status === 429) {
+            setLoopState((prev) =>
+              prev ? { ...prev, lastMessage: "Daily batch limit hit. Stopping." } : prev,
+            );
+          }
+          break;
+        }
+
+        const batch = result as BatchResult;
+        merged.results.scouted += batch.results.scouted;
+        merged.results.generated += batch.results.generated;
+        merged.results.queued += batch.results.queued;
+        merged.results.skipped += batch.results.skipped;
+        merged.results.failed += batch.results.failed;
+        merged.costs.googlePlaces += batch.costs.googlePlaces;
+        merged.costs.siteGeneration += batch.costs.siteGeneration;
+        merged.costs.dataExtraction += batch.costs.dataExtraction;
+        merged.costs.total += batch.costs.total;
+        merged.prospects.push(...batch.prospects);
+        merged.errors.push(...batch.errors);
+
+        setLoopState((prev) =>
+          prev
+            ? {
+                ...prev,
+                generated: merged.results.generated,
+                scouted: merged.results.scouted,
+                failed: merged.results.failed,
+                skipped: merged.results.skipped,
+                totalCost: merged.costs.total,
+                lastMessage: `Batch ${batchNum} done — ${batch.results.generated} built, ${batch.results.failed} failed.`,
+              }
+            : prev,
+        );
+
+        if (batch.results.generated === 0) {
+          dryBatches += 1;
+          if (dryBatches >= MAX_CONSECUTIVE_DRY_BATCHES) {
+            merged.errors.push(
+              `Stopped after ${dryBatches} batches produced zero sites — likely out of new prospects in ${location}.`,
+            );
+            setLoopState((prev) =>
+              prev
+                ? {
+                    ...prev,
+                    lastMessage: `Stopped: ${dryBatches} batches in a row produced no sites.`,
+                  }
+                : prev,
+            );
+            break;
+          }
+        } else {
+          dryBatches = 0;
+        }
+
         fetchData();
-        onComplete();
-      } else {
-        alert(result.error || "Pipeline failed");
       }
+
+      merged.status = "completed";
+      merged.completedAt = new Date().toISOString();
+      setRunResult(merged);
+      onComplete();
     } catch (err) {
-      alert(`Pipeline error: ${(err as Error).message}`);
+      merged.errors.push(`Loop error: ${(err as Error).message}`);
+      setRunResult(merged);
     } finally {
       setRunning(false);
+      stopRef.current = false;
+      setLoopState((prev) =>
+        prev
+          ? {
+              ...prev,
+              lastMessage: prev.stopRequested
+                ? "Stopped by user."
+                : `Finished — ${merged.results.generated}/${targetCount} built.`,
+            }
+          : prev,
+      );
     }
   };
 
@@ -243,26 +397,37 @@ export default function PipelineDashboard({ isOpen, onClose, onComplete }: Pipel
                   </span>
                 </div>
 
-                {/* Run Button */}
+                {/* Run / Stop Button */}
                 <div className="relative">
-                  <button
-                    onClick={handleRunPipeline}
-                    disabled={!pipelineEnabled || running}
-                    className={`w-full h-12 rounded-xl text-sm font-bold transition-all ${
-                      pipelineEnabled
-                        ? "bg-gradient-to-r from-sky-500 to-blue-600 text-white hover:from-sky-400 hover:to-blue-500 disabled:opacity-50"
-                        : "bg-white/[0.05] text-white/30 cursor-not-allowed border border-white/[0.08]"
-                    }`}
-                  >
-                    {running ? (
-                      <span className="flex items-center justify-center gap-2">
-                        <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        Running Pipeline...
-                      </span>
-                    ) : (
-                      "Run Pipeline"
+                  <div className="flex gap-2">
+                    <button
+                      onClick={handleRunPipeline}
+                      disabled={!pipelineEnabled || running}
+                      className={`flex-1 h-12 rounded-xl text-sm font-bold transition-all ${
+                        pipelineEnabled
+                          ? "bg-gradient-to-r from-sky-500 to-blue-600 text-white hover:from-sky-400 hover:to-blue-500 disabled:opacity-50"
+                          : "bg-white/[0.05] text-white/30 cursor-not-allowed border border-white/[0.08]"
+                      }`}
+                    >
+                      {running ? (
+                        <span className="flex items-center justify-center gap-2">
+                          <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          Running…
+                        </span>
+                      ) : (
+                        `Run Pipeline (${Math.max(1, Math.ceil(targetCount / CHUNK_SIZE))} batch${Math.ceil(targetCount / CHUNK_SIZE) === 1 ? "" : "es"})`
+                      )}
+                    </button>
+                    {running && (
+                      <button
+                        onClick={stopPipeline}
+                        disabled={loopState?.stopRequested}
+                        className="h-12 px-4 rounded-xl text-sm font-bold bg-rose-500/20 border border-rose-500/40 text-rose-200 hover:bg-rose-500/30 disabled:opacity-50"
+                      >
+                        {loopState?.stopRequested ? "Stopping…" : "Stop"}
+                      </button>
                     )}
-                  </button>
+                  </div>
                   {!pipelineEnabled && (
                     <p className="text-center text-xs text-amber-400/80 mt-2 flex items-center justify-center gap-1.5">
                       <span className="w-1.5 h-1.5 rounded-full bg-amber-400/80" />
@@ -270,6 +435,30 @@ export default function PipelineDashboard({ isOpen, onClose, onComplete }: Pipel
                     </p>
                   )}
                 </div>
+
+                {/* Live progress */}
+                {loopState && (
+                  <div className="mt-4 p-4 rounded-xl border border-white/[0.08] bg-white/[0.03]">
+                    <div className="flex items-center justify-between text-xs text-white/50 mb-2">
+                      <span>
+                        Batch {loopState.currentBatch}/{loopState.totalBatches}
+                      </span>
+                      <span>
+                        {loopState.generated}/{loopState.target} built ·{" "}
+                        {loopState.failed} failed · ${loopState.totalCost.toFixed(2)}
+                      </span>
+                    </div>
+                    <div className="h-2 rounded-full bg-white/[0.06] overflow-hidden">
+                      <div
+                        className="h-full bg-gradient-to-r from-sky-500 to-blue-500 transition-all"
+                        style={{
+                          width: `${Math.min(100, (loopState.generated / Math.max(1, loopState.target)) * 100)}%`,
+                        }}
+                      />
+                    </div>
+                    <p className="mt-2 text-xs text-white/40">{loopState.lastMessage}</p>
+                  </div>
+                )}
               </div>
 
               {/* Latest Batch Result */}

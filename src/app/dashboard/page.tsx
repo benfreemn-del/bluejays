@@ -6,6 +6,7 @@ import { useState, useEffect, useCallback } from "react";
 import type { Prospect, Category } from "@/lib/types";
 import { CATEGORY_CONFIG } from "@/lib/types";
 import DashboardStats from "@/components/dashboard/DashboardStats";
+import StatusTransitionsToday from "@/components/dashboard/StatusTransitionsToday";
 import ProspectTable from "@/components/dashboard/ProspectTable";
 import ScoutModal from "@/components/dashboard/ScoutModal";
 import ProspectDetail from "@/components/dashboard/ProspectDetail";
@@ -316,6 +317,8 @@ export default function DashboardPage() {
               onFilterStatus={setStatusFilter}
               activeFilter={statusFilter}
             />
+
+            <StatusTransitionsToday />
 
             <div className="flex gap-2">
               <button

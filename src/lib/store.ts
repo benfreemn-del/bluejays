@@ -313,9 +313,37 @@ export async function addProspect(prospect: Prospect): Promise<Prospect> {
   return sanitizedProspect;
 }
 
+async function logStatusChange(
+  prospectId: string,
+  businessName: string | null | undefined,
+  fromStatus: string | null | undefined,
+  toStatus: string,
+  source: string | undefined,
+): Promise<void> {
+  if (!isSupabaseConfigured()) return;
+  if (fromStatus === toStatus) return;
+  try {
+    await supabase.from("prospect_status_changes").insert({
+      prospect_id: prospectId,
+      business_name: businessName ?? null,
+      from_status: fromStatus ?? null,
+      to_status: toStatus,
+      source: source ?? null,
+    });
+  } catch (error) {
+    console.error("[store] Failed to log status change", {
+      prospectId,
+      fromStatus,
+      toStatus,
+      error,
+    });
+  }
+}
+
 export async function updateProspect(
   id: string,
-  updates: Partial<Prospect>
+  updates: Partial<Prospect>,
+  options: { source?: string } = {},
 ): Promise<Prospect | undefined> {
   const sanitizedUpdates: Partial<Prospect> = {
     ...updates,
@@ -355,6 +383,16 @@ export async function updateProspect(
     if (sanitizedUpdates.welcomeEmailSentAt !== undefined) dbUpdates.welcome_email_sent_at = sanitizedUpdates.welcomeEmailSentAt || null;
     if (sanitizedUpdates.onboardingReminderSentAt !== undefined) dbUpdates.onboarding_reminder_sent_at = sanitizedUpdates.onboardingReminderSentAt || null;
 
+    let previousStatus: string | null = null;
+    if (sanitizedUpdates.status) {
+      const { data: currentRow } = await supabase
+        .from("prospects")
+        .select("status")
+        .eq("id", id)
+        .single();
+      previousStatus = (currentRow?.status as string | null) ?? null;
+    }
+
     const { data, error } = await supabase
       .from("prospects")
       .update(dbUpdates)
@@ -362,13 +400,33 @@ export async function updateProspect(
       .select()
       .single();
     if (error || !data) return undefined;
-    return dbToProspect(data);
+    const updated = dbToProspect(data);
+    if (sanitizedUpdates.status && previousStatus !== sanitizedUpdates.status) {
+      await logStatusChange(
+        id,
+        updated.businessName,
+        previousStatus,
+        sanitizedUpdates.status,
+        options.source,
+      );
+    }
+    return updated;
   }
   const prospects = readProspectsFile();
   const index = prospects.findIndex((p) => p.id === id);
   if (index < 0) return undefined;
+  const previousStatus = prospects[index].status;
   prospects[index] = sanitizeProspect({ ...prospects[index], ...sanitizedUpdates, updatedAt: new Date().toISOString() });
   writeProspectsFile(prospects);
+  if (sanitizedUpdates.status && previousStatus !== sanitizedUpdates.status) {
+    await logStatusChange(
+      id,
+      prospects[index].businessName,
+      previousStatus,
+      sanitizedUpdates.status,
+      options.source,
+    );
+  }
   return prospects[index];
 }
 
