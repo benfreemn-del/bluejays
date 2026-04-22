@@ -26,7 +26,7 @@ const RECOMMENDED_COLORS: Record<string, { primary: string; alternatives: string
   "veterinary": { primary: "#34d399", alternatives: ["#10b981", "#6ee7b7", "#059669"], vibe: "warm green — caring, natural, gentle" },
   "photography": { primary: "#a855f7", alternatives: ["#9333ea", "#c084fc", "#7c3aed"], vibe: "creative purple — artistic, unique, premium" },
   "accounting": { primary: "#6366f1", alternatives: ["#4f46e5", "#818cf8", "#4338ca"], vibe: "professional indigo — trustworthy, precise, smart" },
-  "tattoo": { primary: "#a3a3a3", alternatives: ["#d4d4d4", "#737373", "#e5e5e5"], vibe: "silver grey — edgy, artistic, bold" },
+  "tattoo": { primary: "#b91c1c", alternatives: ["#dc2626", "#f59e0b", "#6366f1"], vibe: "traditional crimson — ink, rebellion, artistry" },
   "florist": { primary: "#fb7185", alternatives: ["#f43f5e", "#fda4af", "#e11d48"], vibe: "rose pink — romantic, natural, beautiful" },
   "catering": { primary: "#fb923c", alternatives: ["#f97316", "#fdba74", "#ea580c"], vibe: "warm orange — appetizing, festive, inviting" },
   "daycare": { primary: "#60a5fa", alternatives: ["#3b82f6", "#93c5fd", "#2563eb"], vibe: "soft blue — safe, calming, cheerful" },

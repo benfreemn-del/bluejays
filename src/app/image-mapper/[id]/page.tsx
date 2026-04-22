@@ -555,7 +555,7 @@ export default function ImageMapDetailPage() {
   const [allProspects, setAllProspects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [scanning, setScanning] = useState(false);
-  const [rightTab, setRightTab] = useState<"library" | "upload" | "fallbacks" | "typography">("library");
+  const [rightTab, setRightTab] = useState<"library" | "upload" | "fallbacks" | "typography" | "theme">("library");
   const [selectedFont, setSelectedFont] = useState(0);
   const [uploadedImages, setUploadedImages] = useState<{ url: string; name: string }[]>([]);
   const [dragOverPosition, setDragOverPosition] = useState<number | null>(null);
@@ -820,6 +820,79 @@ export default function ImageMapDetailPage() {
     || THEME_LIBRARY[normalizedCategory.replace(/ing$/, "er")] // "plumbing" → "plumber"
     || THEME_LIBRARY["dental"]
     || [];
+
+  /* ─── Preview iframe background color ───
+     Maps the prospect's category to the actual BG the V2 template renders.
+     Values pulled directly from the Beast Mode Showcase Registry in
+     CLAUDE.md so the scaled preview frame matches what the full-screen
+     `/preview/[id]` renders — no more "everything looks dark" illusion
+     caused by the scaled iframe leaving uncolored gutter around the content.
+
+     IMPORTANT: Several categories I first assumed were "light" turned out
+     to be the showcase's DARK luxury / BOLD theme instead. The current
+     mapping reflects each template's actual BG color as specified in
+     CLAUDE.md, not a category-wide stereotype. When adding new categories,
+     copy the exact `#` from that template's showcase spec. */
+  const previewBg = (() => {
+    // ── Warm light (cream) #faf9f6 ──
+    // family-friendly + healthcare — dental, vet, daycare, church, tutoring, PT
+    if (/^(dental|veterinary|daycare|church|tutoring|physical-therapy)$/.test(normalizedCategory)) {
+      return "#faf9f6";
+    }
+    // ── Soft cream/light — lifestyle-adjacent ──
+    // salon #faf8f5, interior-design #faf9f7, photography #faf9f7
+    if (/^(salon|interior-design|photography|florist|pet-services)$/.test(normalizedCategory)) {
+      return "#faf9f7";
+    }
+    // ── White ── pure clean (tutoring v2 uses white, restaurant light menu feel)
+    if (/^(restaurant)$/.test(normalizedCategory)) {
+      return "#ffffff";
+    }
+    // ── Dark luxury near-black #09090b / #0f172a ──
+    // premium / authority categories
+    if (/^(real-estate|law-firm|accounting|insurance)$/.test(normalizedCategory)) {
+      return "#09090b";
+    }
+    // ── Dark elegant luxury #0a0a0a — med-spa + event-planning ──
+    // showcase #18 med-spa + showcase #22 event-planning both use pure black
+    // with gold/blush accents for the "luxury" vibe
+    if (/^(med-spa|event-planning)$/.test(normalizedCategory)) {
+      return "#0a0a0a";
+    }
+    // ── Warm dark charcoal #1c1917 — food/hospitality ──
+    if (/^(catering)$/.test(normalizedCategory)) {
+      return "#1c1917";
+    }
+    // ── Bold energy pure black ── fitness/martial-arts/tattoo
+    if (/^(fitness|martial-arts|tattoo)$/.test(normalizedCategory)) {
+      return "#0a0a0a";
+    }
+    // ── Dark forest green ── landscaping
+    if (/^(landscaping|tree-service)$/.test(normalizedCategory)) {
+      return "#0f1a0f";
+    }
+    // ── Default: dark professional (trades + unrecognized) ──
+    // Covers roofing, HVAC, electrician, plumber, auto-repair, general-contractor,
+    // moving, junk-removal, pest-control, cleaning, etc.
+    return "#111827";
+  })();
+
+  /* ─── Prospect's OWN scraped photos (shown first, above generic library) ───
+     These are the hi-res photos from the business's real website/Google Places
+     that got promoted through QC. Showing them in the Images tab so Ben can
+     drag real job photos onto slots without digging through scraped_data.
+     The scrapedData.photos array is the single source of truth — it's what
+     the generated-sites site_data copies from, and it's what ends up in the
+     prospect's preview. */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const rawRealPhotos: string[] = ((prospect as any)?.scrapedData?.photos || []) as string[];
+  const realPhotos = Array.from(new Set(rawRealPhotos.filter(Boolean))).map((url, i) => {
+    // Derive a short friendly name from the URL filename (strip extension + query)
+    const last = url.split("/").pop() || `photo-${i + 1}`;
+    const clean = decodeURIComponent(last.split("?")[0]).replace(/\.[a-z]+$/i, "");
+    const name = clean.length > 28 ? `real-${i + 1}` : clean;
+    return { url, name };
+  });
 
   /* ─── Drag event helpers for source images ─── */
   const onDragStartHandler = (e: React.DragEvent, imageUrl: string) => {
@@ -1179,7 +1252,7 @@ export default function ImageMapDetailPage() {
 
                   {/* Tab switcher */}
                   <div className="flex rounded-lg bg-white/5 border border-white/10 p-0.5">
-                    {(["library", "upload", "fallbacks", "typography"] as const).map((tab) => (
+                    {(["library", "upload", "fallbacks", "typography", "theme"] as const).map((tab) => (
                       <button
                         key={tab}
                         onClick={() => setRightTab(tab)}
@@ -1189,7 +1262,7 @@ export default function ImageMapDetailPage() {
                             : "text-white/40 hover:text-white/60"
                         }`}
                       >
-                        {tab === "library" ? "Images" : tab === "upload" ? "Upload" : tab === "fallbacks" ? "Fallbacks" : "Fonts"}
+                        {tab === "library" ? "Images" : tab === "upload" ? "Upload" : tab === "fallbacks" ? "Fallbacks" : tab === "typography" ? "Fonts" : "Theme"}
                       </button>
                     ))}
                   </div>
@@ -1203,6 +1276,60 @@ export default function ImageMapDetailPage() {
                       <p className="text-[11px] text-white/40 mb-3">
                         Drag any image below onto a slot on the left to assign it as a replacement.
                       </p>
+
+                      {/* Prospect's real photos — top priority, shown above stock */}
+                      {realPhotos.length > 0 && (
+                        <div className="mb-4">
+                          <div className="flex items-center justify-between mb-2">
+                            <p className="text-[10px] uppercase tracking-wider text-green-400 font-semibold">
+                              Real Photos
+                            </p>
+                            <span className="text-[9px] text-white/40">
+                              {realPhotos.length} from their website
+                            </span>
+                          </div>
+                          <div className="grid grid-cols-3 gap-2">
+                            {realPhotos.map((p, i) => (
+                              <div
+                                key={`real-${i}`}
+                                draggable
+                                onDragStart={(e) => onDragStartHandler(e, p.url)}
+                                onDragEnd={onDragEndHandler}
+                                className="group relative aspect-[4/3] rounded-lg overflow-hidden bg-green-500/5 border border-green-400/30 cursor-grab active:cursor-grabbing hover:border-green-400/60 transition-all hover:scale-[1.02]"
+                                title={p.url}
+                              >
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img
+                                  src={proxyUrl(p.url)}
+                                  alt={p.name}
+                                  className="w-full h-full object-cover"
+                                  loading="lazy"
+                                />
+                                {/* Real-photo badge */}
+                                <div className="absolute top-1 left-1 px-1.5 py-0.5 rounded bg-green-500/90 text-[8px] font-bold text-white">
+                                  REAL
+                                </div>
+                                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-1.5">
+                                  <p className="text-[9px] text-white/80 truncate">{p.name}</p>
+                                </div>
+                                <div className="absolute inset-0 bg-green-500/0 group-hover:bg-green-500/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+                                  <span className="text-[10px] font-medium text-white bg-black/50 px-2 py-0.5 rounded">
+                                    Drag me
+                                  </span>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                          <div className="mt-3 mb-2 flex items-center gap-2">
+                            <div className="h-px flex-1 bg-white/10" />
+                            <span className="text-[9px] uppercase tracking-wider text-white/30 font-semibold">
+                              Stock Library
+                            </span>
+                            <div className="h-px flex-1 bg-white/10" />
+                          </div>
+                        </div>
+                      )}
+
                       <div className="grid grid-cols-3 gap-2">
                         {libraryImages.map((libImg) => (
                           <div
@@ -1380,6 +1507,81 @@ export default function ImageMapDetailPage() {
                       </p>
                     </div>
                   )}
+
+                  {/* ─── Theme Tab ─── */}
+                  {rightTab === "theme" && (() => {
+                    const currentTheme = (prospect?.selectedTheme as "light" | "dark" | undefined)
+                      || (prospect?.aiThemeRecommendation as "light" | "dark" | undefined)
+                      || "dark";
+                    const aiRecommended = (prospect?.aiThemeRecommendation as "light" | "dark" | undefined) || "dark";
+                    const isOverridden = prospect?.selectedTheme && prospect.selectedTheme !== aiRecommended;
+
+                    const handleThemeChange = async (theme: "light" | "dark") => {
+                      setProspect({ ...prospect, selectedTheme: theme });
+                      try {
+                        await fetch(`/api/prospects/${id}`, {
+                          method: "PATCH",
+                          headers: { "Content-Type": "application/json" },
+                          credentials: "include",
+                          body: JSON.stringify({ selectedTheme: theme }),
+                        });
+                        setIframeKey((k) => k + 1);
+                      } catch { /* silent */ }
+                    };
+
+                    return (
+                      <div>
+                        <div className="flex items-center justify-between mb-3">
+                          <p className="text-[11px] text-white/40">
+                            Pick a theme for this preview. Saves + reloads the live preview.
+                          </p>
+                          <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-blue-500/10 text-blue-400">
+                            AI: {aiRecommended}
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
+                          <button
+                            onClick={() => handleThemeChange("light")}
+                            className={`p-4 rounded-xl border text-center transition-all cursor-pointer ${
+                              currentTheme === "light"
+                                ? "border-blue-500 bg-blue-500/10 ring-1 ring-blue-500/30"
+                                : "border-white/10 bg-white/[0.03] hover:border-white/20"
+                            }`}
+                          >
+                            <div className="w-10 h-10 mx-auto mb-2 rounded-lg bg-white flex items-center justify-center">
+                              <svg viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2" className="w-5 h-5">
+                                <circle cx="12" cy="12" r="5" />
+                                <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+                              </svg>
+                            </div>
+                            <p className="text-xs font-medium text-white mb-0.5">Light</p>
+                            <p className="text-[9px] text-white/30">Cream, white</p>
+                          </button>
+                          <button
+                            onClick={() => handleThemeChange("dark")}
+                            className={`p-4 rounded-xl border text-center transition-all cursor-pointer ${
+                              currentTheme === "dark"
+                                ? "border-blue-500 bg-blue-500/10 ring-1 ring-blue-500/30"
+                                : "border-white/10 bg-white/[0.03] hover:border-white/20"
+                            }`}
+                          >
+                            <div className="w-10 h-10 mx-auto mb-2 rounded-lg bg-gray-900 flex items-center justify-center">
+                              <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" className="w-5 h-5">
+                                <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+                              </svg>
+                            </div>
+                            <p className="text-xs font-medium text-white mb-0.5">Dark</p>
+                            <p className="text-[9px] text-white/30">Charcoal, navy</p>
+                          </button>
+                        </div>
+                        {isOverridden && (
+                          <p className="mt-3 text-[10px] text-amber-400/80 text-center">
+                            Overriding AI recommendation ({aiRecommended})
+                          </p>
+                        )}
+                      </div>
+                    );
+                  })()}
                 </div>
               </div>
 
@@ -1410,7 +1612,10 @@ export default function ImageMapDetailPage() {
                     </button>
                   </div>
                 </div>
-                <div className="bg-black rounded-b-xl overflow-hidden relative" style={{ height: 350 }}>
+                <div
+                  className="rounded-b-xl overflow-hidden relative"
+                  style={{ height: 350, background: previewBg }}
+                >
                   <div
                     style={
                       previewMode === "mobile"
