@@ -290,7 +290,7 @@ const portfolioImages = [
   { src: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=700&q=80", label: "Charity Benefit" },
   { src: "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=700&q=80", label: "Garden Party" },
   { src: "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=700&q=80", label: "Product Launch" },
-  { src: "https://images.unsplash.com/photo-1551818255-e6e10975bc17?w=700&q=80", label: "Milestone Celebration" },
+  { src: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=700&q=80", label: "Milestone Celebration" },
 ];
 
 const testimonials = [
