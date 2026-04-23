@@ -3,7 +3,7 @@
 /* eslint-disable @next/next/no-img-element -- These static marketing and preview components intentionally use plain img tags to preserve existing markup and visual behavior during lint-only cleanup. */
 /* eslint-disable react-hooks/purity -- Decorative particle values are intentionally randomized for static visual effects in these marketing pages and previews; this preserves existing appearance without changing business logic. */
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useRef, useCallback } from "react";
 import {
   motion,
   useMotionValue,
@@ -451,9 +451,6 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [quizAnswer, setQuizAnswer] = useState<number | null>(null);
-  const [sliderPos, setSliderPos] = useState(50);
-  const sliderRef = useRef<HTMLDivElement>(null);
-  const isDragging = useRef(false);
 
   const { TEAL, TEAL_GLOW } = getAccent(data.accentColor);
 
@@ -471,32 +468,6 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
 
   const phoneDigits = data.phone.replace(/\D/g, "");
 
-  /* Before/After slider handlers */
-  const handleSliderMove = useCallback((clientX: number) => {
-    if (!sliderRef.current || !isDragging.current) return;
-    const rect = sliderRef.current.getBoundingClientRect();
-    const x = Math.max(0, Math.min(clientX - rect.left, rect.width));
-    setSliderPos((x / rect.width) * 100);
-  }, []);
-
-  const handleMouseDown = useCallback(() => { isDragging.current = true; }, []);
-  const handleMouseUp = useCallback(() => { isDragging.current = false; }, []);
-
-  useEffect(() => {
-    const onMove = (e: MouseEvent) => handleSliderMove(e.clientX);
-    const onTouchMove = (e: TouchEvent) => handleSliderMove(e.touches[0].clientX);
-    const onUp = () => { isDragging.current = false; };
-    window.addEventListener("mousemove", onMove);
-    window.addEventListener("mouseup", onUp);
-    window.addEventListener("touchmove", onTouchMove);
-    window.addEventListener("touchend", onUp);
-    return () => {
-      window.removeEventListener("mousemove", onMove);
-      window.removeEventListener("mouseup", onUp);
-      window.removeEventListener("touchmove", onTouchMove);
-      window.removeEventListener("touchend", onUp);
-    };
-  }, [handleSliderMove]);
 
   const processSteps = [
     { step: "01", title: "Book Appointment", desc: "Schedule online or call us. We will find the perfect time for your visit." },

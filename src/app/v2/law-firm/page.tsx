@@ -508,7 +508,7 @@ export default function V2LawFirmPage() {
 
         <motion.div
           style={{ y: heroParallax }}
-          className="relative z-10 text-center max-w-5xl mx-auto px-4 md:px-6 py-32"
+          className="relative z-10 text-center w-full max-w-5xl mx-auto px-4 md:px-6 py-32"
         >
           {/* Bold typography entrance */}
           <motion.div variants={stagger} initial="hidden" animate="show" className="space-y-2 md:space-y-4">
