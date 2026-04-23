@@ -57,6 +57,15 @@ const CHUNK_SIZE = 5;
 // Stop looping if this many batches in a row generate zero sites (usually
 // means scout returned no new prospects or an env var broke mid-run).
 const MAX_CONSECUTIVE_DRY_BATCHES = 2;
+// Per-batch wall-clock timeout. Vercel's function limit is 5 min; add a
+// client-side cutoff at 4:30 so a stuck batch doesn't hang the whole UI
+// waiting for a response that will never come. AbortController triggers
+// the catch path which logs-and-continues, not break.
+const BATCH_TIMEOUT_MS = 270_000;
+// Circuit breaker for consecutive network/server failures. One flaky
+// batch shouldn't kill a 10-batch run, but if 3 in a row blow up
+// something is systemically wrong and we stop.
+const MAX_CONSECUTIVE_FAILURES = 3;
 
 interface LoopState {
   target: number;
@@ -149,6 +158,7 @@ export default function PipelineDashboard({ isOpen, onClose, onComplete }: Pipel
     };
 
     let dryBatches = 0;
+    let consecutiveFailures = 0;
     let batchNum = 0;
 
     try {
@@ -167,12 +177,20 @@ export default function PipelineDashboard({ isOpen, onClose, onComplete }: Pipel
             : prev,
         );
 
-        let res: Response;
+        // AbortController + manual timeout — fetch doesn't have a built-in
+        // timeout, so without this a hung server response would block the
+        // entire loop forever with no UI feedback.
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), BATCH_TIMEOUT_MS);
+        let res: Response | null = null;
+        let fetchFailed = false;
+        let fetchError = "";
         try {
           res = await fetch("/api/pipeline/batch", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: "include",
+            signal: controller.signal,
             body: JSON.stringify({
               targetCount: chunk,
               location,
@@ -180,22 +198,65 @@ export default function PipelineDashboard({ isOpen, onClose, onComplete }: Pipel
             }),
           });
         } catch (fetchErr) {
-          merged.errors.push(`Batch ${batchNum} request failed: ${(fetchErr as Error).message}`);
-          break;
+          fetchFailed = true;
+          fetchError = (fetchErr as Error).name === "AbortError"
+            ? `Batch ${batchNum} timed out after ${Math.round(BATCH_TIMEOUT_MS / 1000)}s`
+            : `Batch ${batchNum} request failed: ${(fetchErr as Error).message}`;
+        } finally {
+          clearTimeout(timeoutId);
         }
 
-        const result = await res.json();
+        // Network error or timeout: log it, tick the failure counter,
+        // CONTINUE to next batch unless we've hit the consecutive-failure
+        // circuit breaker. Previous code broke the whole loop on the first
+        // hiccup, which is why multi-batch runs would die mid-way.
+        if (fetchFailed || !res) {
+          merged.errors.push(fetchError);
+          consecutiveFailures += 1;
+          setLoopState((prev) =>
+            prev ? { ...prev, lastMessage: `${fetchError}. Continuing…` } : prev,
+          );
+          if (consecutiveFailures >= MAX_CONSECUTIVE_FAILURES) {
+            merged.errors.push(`Stopped after ${MAX_CONSECUTIVE_FAILURES} consecutive batch failures.`);
+            setLoopState((prev) =>
+              prev ? { ...prev, lastMessage: `Stopped: ${consecutiveFailures} batches failed in a row.` } : prev,
+            );
+            break;
+          }
+          continue;
+        }
+
+        let result: BatchResult | { error?: string };
+        try {
+          result = await res.json();
+        } catch {
+          merged.errors.push(`Batch ${batchNum} returned non-JSON response (HTTP ${res.status}).`);
+          consecutiveFailures += 1;
+          if (consecutiveFailures >= MAX_CONSECUTIVE_FAILURES) break;
+          continue;
+        }
 
         if (!res.ok) {
-          merged.errors.push(result.error || `Batch ${batchNum} failed with HTTP ${res.status}`);
+          const errMsg = (result as { error?: string }).error || `Batch ${batchNum} failed with HTTP ${res.status}`;
+          merged.errors.push(errMsg);
           if (res.status === 429) {
+            // Daily cap is a hard stop — not a flaky failure, no point retrying.
             setLoopState((prev) =>
               prev ? { ...prev, lastMessage: "Daily batch limit hit. Stopping." } : prev,
             );
+            break;
           }
-          break;
+          // Other HTTP errors: log and try the next batch.
+          consecutiveFailures += 1;
+          setLoopState((prev) =>
+            prev ? { ...prev, lastMessage: `${errMsg}. Continuing…` } : prev,
+          );
+          if (consecutiveFailures >= MAX_CONSECUTIVE_FAILURES) break;
+          continue;
         }
 
+        // Success — reset the failure streak.
+        consecutiveFailures = 0;
         const batch = result as BatchResult;
         merged.results.scouted += batch.results.scouted;
         merged.results.generated += batch.results.generated;
