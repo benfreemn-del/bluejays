@@ -9,6 +9,7 @@ import { alertOwner } from "./alerts";
 import { dropVoicemail } from "./voicemail";
 import { supabase, isSupabaseConfigured } from "./supabase";
 import { generatePersonalizedProposal } from "./proposal-generator";
+import { getShortPreviewUrl } from "./short-urls";
 import {
   attemptFunnelDelivery,
   cancelFunnelRetry,
@@ -339,8 +340,12 @@ async function sendFunnelStep(
   options?: { retryCount?: number; queueOnFailure?: boolean }
 ): Promise<{ success: boolean; emailSent: boolean; smsSent: boolean; voicemailSent: boolean; queuedForRetry: boolean; deliveredChannel: DeliveryChannel | null; lastError?: string }> {
   const step = FUNNEL_STEPS[stepIndex];
-  // Short URL for outreach — /p/[8chars] redirects to the full preview page
-  const previewUrl = `${BASE_URL}/p/${prospect.id.slice(0, 8)}`;
+  // Short URL for outreach. MUST go through getShortPreviewUrl() because
+  // /p/[code] resolves by prospects.short_code (md5(id).slice(0,8)), NOT
+  // the first 8 chars of the UUID. Building the URL from prospect.id
+  // directly sends a broken link — /p/[uuid-prefix] hits 404 because
+  // the UUID prefix doesn't match the stored short_code.
+  const previewUrl = getShortPreviewUrl(prospect);
   let emailSent = false;
   let smsSent = false;
   let voicemailSent = false;

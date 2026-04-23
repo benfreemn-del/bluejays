@@ -18,6 +18,7 @@
 
 import type { Prospect } from "./types";
 import { CATEGORY_CONFIG } from "./types";
+import { getShortPreviewUrl } from "./short-urls";
 import { EMAIL_FOOTER } from "./email-templates";
 
 export type RetargetSegment = "opener" | "clicker";
@@ -30,7 +31,11 @@ export interface RetargetEmail {
   delayDays: number; // days after retarget enrollment
 }
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+// Hardcoded per CLAUDE.md "Deployment Rules" — NEXT_PUBLIC_BASE_URL on
+// Vercel has been set to stale preview domains (bluejays-three.vercel.app)
+// in the past, which made unsubscribe + book links in outreach emails
+// point at throwaway URLs. Same pattern as stripe.ts and email-sender.ts.
+const BASE_URL = "https://bluejayportfolio.com";
 const BEN_PHONE = process.env.BEN_PHONE || "(253) 886-3753";
 
 function footer(prospectId: string): string {
@@ -48,7 +53,7 @@ function getOpenerSequence(prospect: Prospect): RetargetEmail[] {
   const name = prospect.ownerName?.split(" ")[0] || "there";
   const biz = prospect.businessName;
   const category = CATEGORY_CONFIG[prospect.category]?.label || prospect.category;
-  const previewUrl = `${BASE_URL}/p/${prospect.id.slice(0, 8)}`;
+  const previewUrl = getShortPreviewUrl(prospect);
   const proposalUrl = `${BASE_URL}/proposal/${prospect.id}`;
 
   return [
@@ -131,7 +136,7 @@ function getClickerSequence(prospect: Prospect): RetargetEmail[] {
   const name = prospect.ownerName?.split(" ")[0] || "there";
   const biz = prospect.businessName;
   const category = CATEGORY_CONFIG[prospect.category]?.label || prospect.category;
-  const previewUrl = `${BASE_URL}/p/${prospect.id.slice(0, 8)}`;
+  const previewUrl = getShortPreviewUrl(prospect);
   const claimUrl = `${BASE_URL}/claim/${prospect.id}`;
   const compareUrl = `${BASE_URL}/compare/${prospect.id}`;
   const bookingUrl = `${BASE_URL}/book/${prospect.id}`;

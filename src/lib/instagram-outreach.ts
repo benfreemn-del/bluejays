@@ -11,6 +11,7 @@
 
 import type { Prospect, Category } from "./types";
 import { CATEGORY_CONFIG } from "./types";
+import { getShortPreviewUrl } from "./short-urls";
 
 // ─── Types ───────────────────────────────────────────────────────────
 
@@ -91,12 +92,11 @@ function getCategoryCompliment(category: Category): string {
 
 // ─── Template Generators ─────────────────────────────────────────────
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-
+// Instagram DMs go to prospects — must use the short /p/[code] URL per
+// CLAUDE.md "Short URL Rules". The full /preview/[uuid] was 85+ chars,
+// which wrapped badly in Instagram's DM text box and looked like spam.
 function getPreviewUrl(prospect: Prospect): string {
-  return prospect.generatedSiteUrl
-    ? `${BASE_URL}${prospect.generatedSiteUrl}`
-    : `${BASE_URL}/preview/${prospect.id}`;
+  return getShortPreviewUrl(prospect);
 }
 
 function getFirstName(prospect: Prospect): string {

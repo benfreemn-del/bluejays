@@ -9,6 +9,7 @@ import { reviewSiteQuality, type QualityReport } from "./quality-review";
 import type { GeneratedSiteData } from "./generator";
 import { supabase, isSupabaseConfigured } from "./supabase";
 import { logCost } from "./cost-logger";
+import { getShortPreviewUrl } from "./short-urls";
 
 /**
  * GPT-4.1-mini cost estimate for proposal generation:
@@ -414,7 +415,8 @@ export async function buildProposalContext(prospectId: string): Promise<Proposal
     timestamp: item.sentAt,
   }));
 
-  const previewPath = prospect.generatedSiteUrl || `/preview/${prospect.id}`;
+  // Proposal is a customer-facing document — use short URL for clean links.
+  const previewPath = prospect.generatedSiteUrl || getShortPreviewUrl(prospect);
 
   return {
     prospect,

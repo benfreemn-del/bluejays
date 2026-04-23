@@ -31,6 +31,7 @@ import {
   INTENT_STATUS_MAP,
 } from "./agent-personality";
 import { logCost, COST_RATES } from "./cost-logger";
+import { getShortPreviewUrl } from "./short-urls";
 
 const CLAUDE_API_KEY = process.env.CLAUDE_API_KEY;
 const CALENDAR_LINK = process.env.CALENDAR_LINK || "https://calendly.com/bluejaycontactme/website-walkthrough";
@@ -58,8 +59,11 @@ function getBaseUrl(): string {
 }
 
 function getSalesLinks(prospect: Prospect) {
+  // previewUrl must be the short /p/[code] version — see CLAUDE.md
+  // "Short URL Rules". AI responses go to prospects so the link shown
+  // must match what gets sent in outreach.
   return {
-    previewUrl: `${getBaseUrl()}${prospect.generatedSiteUrl || `/preview/${prospect.id}`}`,
+    previewUrl: getShortPreviewUrl(prospect),
     proposalUrl: `${getBaseUrl()}/proposal/${prospect.id}`,
     bookingUrl: `${getBaseUrl()}/book/${prospect.id}`,
     claimUrl: `${getBaseUrl()}/claim/${prospect.id}`,

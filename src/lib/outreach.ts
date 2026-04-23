@@ -7,8 +7,7 @@ import {
   getFollowUp2,
 } from "./email-templates";
 import { getProspectVideoUrl } from "./video-generator";
-
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+import { getShortPreviewUrl } from "./short-urls";
 
 /**
  * Statuses that indicate a prospect has passed quality review and is
@@ -38,7 +37,9 @@ export async function sendPitchEmail(prospect: Prospect) {
     );
   }
 
-  const previewUrl = `${BASE_URL}/p/${prospect.id.slice(0, 8)}`;
+  // Must use getShortPreviewUrl — /p/[code] resolves by short_code column
+  // (md5(id).slice(0,8)), NOT the first 8 chars of the UUID.
+  const previewUrl = getShortPreviewUrl(prospect);
   const videoUrl = await getProspectVideoUrl(prospect.id);
 
   // Check what sequence we're on

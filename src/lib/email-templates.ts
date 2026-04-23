@@ -250,7 +250,7 @@ No idea if it's what you had in mind, but figured you'd want to see it. Curious 
 
 — Ben
 bluejaycontactme@gmail.com
-${EMAIL_FOOTER.replace("{{baseUrl}}", process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com").replace("{{prospectId}}", prospect.id)}`;
+${EMAIL_FOOTER.replace("{{baseUrl}}", "https://bluejayportfolio.com").replace("{{prospectId}}", prospect.id)}`;
 
   // HTML version — identical copy but with the prospect's live preview
   // screenshot embedded inline as a clickable image.
@@ -286,7 +286,7 @@ ${EMAIL_FOOTER.replace("{{baseUrl}}", process.env.NEXT_PUBLIC_BASE_URL || "https
     <p style="margin:0 0 4px;">— Ben</p>
     <p style="margin:0 0 16px;"><a href="mailto:bluejaycontactme@gmail.com" style="color:#6b7280;">bluejaycontactme@gmail.com</a></p>
     <p style="margin:0;color:#9ca3af;font-size:11px;line-height:1.4;">
-      Quilcene, WA · <a href="${esc(process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com")}/unsubscribe/${esc(prospect.id)}" style="color:#9ca3af;">Opt out</a>
+      Quilcene, WA · <a href="${esc("https://bluejayportfolio.com")}/unsubscribe/${esc(prospect.id)}" style="color:#9ca3af;">Opt out</a>
     </p>
   `)
     : undefined;
@@ -319,7 +319,7 @@ Here it is again if you missed it: ${previewUrl}
 Even if the timing isn't right, I'd genuinely love to hear what you'd change about it.
 
 — Ben
-${EMAIL_FOOTER.replace("{{baseUrl}}", process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com").replace("{{prospectId}}", prospect.id)}`,
+${EMAIL_FOOTER.replace("{{baseUrl}}", "https://bluejayportfolio.com").replace("{{prospectId}}", prospect.id)}`,
     sequence: 2,
   };
 }
@@ -448,12 +448,12 @@ If it's not a fit right now, totally fine. Just reply and let me know and I'll s
 Either way — thanks for being one of the ones I spent time on.
 
 — Ben
-${EMAIL_FOOTER.replace("{{baseUrl}}", process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com").replace("{{prospectId}}", prospect.id)}`,
+${EMAIL_FOOTER.replace("{{baseUrl}}", "https://bluejayportfolio.com").replace("{{prospectId}}", prospect.id)}`,
     sequence: 3,
   };
 }
 
-const BASE = process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com";
+const BASE = "https://bluejayportfolio.com";
 const CONTACT_EMAIL = process.env.FROM_EMAIL || "ben@bluejayportfolio.com";
 const BEN_PHONE = process.env.BEN_PHONE || "(253) 886-3753";
 
