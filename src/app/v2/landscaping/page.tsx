@@ -934,7 +934,7 @@ export default function V2LandscapingPage() {
       <SectionReveal className="relative z-10 py-16 md:py-24">
         <div className="mx-auto max-w-4xl px-4 md:px-6">
           <div className="relative rounded-2xl overflow-hidden aspect-video border border-white/15 group cursor-pointer">
-            <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=80" alt="Beautiful landscaped backyard" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <img src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=1200&q=80" alt="Lush backyard garden transformation" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
             <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
               <div className="w-20 h-20 rounded-full flex items-center justify-center backdrop-blur-md bg-white/10 border border-white/20 group-hover:scale-110 transition-transform">
                 <PlayCircle size={48} weight="fill" style={{ color: PRIMARY_LIGHT }} />
