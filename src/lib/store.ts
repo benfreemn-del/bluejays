@@ -224,12 +224,29 @@ function prospectToDb(p: Prospect) {
 
 export async function getAllProspects(): Promise<Prospect[]> {
   if (isSupabaseConfigured()) {
-    const { data, error } = await supabase
-      .from("prospects")
-      .select("*")
-      .order("created_at", { ascending: false });
-    if (error) throw error;
-    return (data || []).map(dbToProspect);
+    // Supabase/PostgREST caps a plain .select() at 1000 rows by default.
+    // Past 1000 prospects, older rows silently drop off — the dashboard's
+    // Contacted/Approved tiles started shrinking after 24h because new
+    // scouted rows were pushing older contacted/approved ones out of the
+    // returned window. Page through all rows in 1000-row chunks instead
+    // so every tile counts the real total.
+    const PAGE = 1000;
+    const all: Prospect[] = [];
+    let from = 0;
+    while (true) {
+      const { data, error } = await supabase
+        .from("prospects")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .range(from, from + PAGE - 1);
+      if (error) throw error;
+      const rows = (data || []).map(dbToProspect);
+      all.push(...rows);
+      if (rows.length < PAGE) break;
+      from += PAGE;
+      if (from > 50000) break; // safety rail: 50k prospects is a different conversation
+    }
+    return all;
   }
   return readProspectsFile();
 }
