@@ -162,7 +162,7 @@ function BugBackground({ opacity = 0.03, accent }: { opacity?: number; accent: s
 }
 
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>;
+  return <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>;
 }
 
 function MagneticButton({ children, className = "", onClick, style, href }: { children: React.ReactNode; className?: string; onClick?: () => void; style?: React.CSSProperties; href?: string }) {
@@ -324,7 +324,7 @@ export default function V2PestControlPreview({ data }: { data: GeneratedSiteData
             <p className="text-lg text-slate-400 max-w-md leading-relaxed">{(() => { const t = data.about; if (t.length <= 180) return t; const dot = t.indexOf('.', 80); return dot > 0 && dot < 220 ? t.slice(0, dot + 1) : t.slice(0, 180).trim() + '...'; })()}</p>
             <div className="flex flex-wrap gap-4">
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>Free Inspection <ArrowRight size={18} weight="bold" /></MagneticButton>
-              <MagneticButton href={`tel:${data.phone.replace(/\D/g, "")}`} className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer"><Phone size={18} weight="duotone" /><PhoneLink phone={data.phone} /></MagneticButton>
+              <MagneticButton href={`tel:${data.phone.replace(/\D/g, "")}`} className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer"><Phone size={18} weight="duotone" /><PhoneLink phone={data.phone} /></MagneticButton>
             </div>
             <div className="flex flex-wrap gap-6 text-sm text-slate-400">
               <span className="flex items-center gap-2"><MapPin size={16} weight="duotone" style={{ color: ACCENT }} /><MapLink address={data.address} /></span>
@@ -332,7 +332,7 @@ export default function V2PestControlPreview({ data }: { data: GeneratedSiteData
             </div>
           </div>
           <div className="hidden md:block relative">
-            <div className="relative rounded-2xl overflow-hidden border border-white/10">
+            <div className="relative rounded-2xl overflow-hidden border border-white/15">
               <img src={heroCardImage} alt={`${data.businessName} pest control`} className="w-full h-[500px] object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a1a] via-transparent to-transparent" />
               <div className="absolute inset-0 bg-gradient-to-r from-[#1a1a1a]/40 to-transparent" />
@@ -368,7 +368,7 @@ export default function V2PestControlPreview({ data }: { data: GeneratedSiteData
           <SectionHeader badge="Our Services" title="Complete Pest Elimination" subtitle={`From termites to rodents, ${data.businessName} eliminates every pest threat with proven, safe methods.`} accent={ACCENT} />
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {data.services.map((service, i) => { const Icon = getServiceIcon(service.name); return (
-              <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.02]">
+              <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]">
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${ACCENT}15, transparent 70%)` }} />
                 <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${ACCENT}4d, transparent)` }} />
                 <div className="relative z-10">
@@ -428,7 +428,7 @@ export default function V2PestControlPreview({ data }: { data: GeneratedSiteData
                     <h3 className="text-xl font-bold text-white mb-1">{tier.title}</h3>
                     <div className="flex items-baseline gap-1 mb-6"><span className="text-4xl font-black text-white">{tier.price}</span><span className="text-slate-400 text-sm">{tier.period}</span></div>
                     <ul className="space-y-3 mb-8 flex-1">{tier.features.map((f) => <li key={f} className="flex items-center gap-2 text-sm text-slate-300"><CheckCircle size={16} weight="fill" style={{ color: `${ACCENT}80` }} />{f}</li>)}</ul>
-                    <MagneticButton className="w-full py-3.5 rounded-xl text-sm font-semibold text-white border border-white/10 flex items-center justify-center gap-2 cursor-pointer">Learn More <ArrowRight size={16} weight="bold" /></MagneticButton>
+                    <MagneticButton className="w-full py-3.5 rounded-xl text-sm font-semibold text-white border border-white/15 flex items-center justify-center gap-2 cursor-pointer">Learn More <ArrowRight size={16} weight="bold" /></MagneticButton>
                   </GlassCard>
                 )}
               </div>
@@ -445,7 +445,7 @@ export default function V2PestControlPreview({ data }: { data: GeneratedSiteData
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="relative">
-              <div className="rounded-2xl overflow-hidden border border-white/10"><img src={aboutImage} alt={`${data.businessName} team`} className="w-full h-[400px] object-cover" /></div>
+              <div className="rounded-2xl overflow-hidden border border-white/15"><img src={aboutImage} alt={`${data.businessName} team`} className="w-full h-[400px] object-cover" /></div>
               <div className="absolute -bottom-4 -right-4 md:bottom-6 md:-right-6"><div className="px-5 py-3 rounded-xl backdrop-blur-md border text-white font-bold text-sm shadow-lg" style={{ background: `${ACCENT}e6`, borderColor: `${ACCENT}80` }}>{data.stats[0] ? `${data.stats[0].value} ${data.stats[0].label}` : "Pest-Free Guarantee"}</div></div>
             </div>
             <div>
@@ -525,7 +525,7 @@ export default function V2PestControlPreview({ data }: { data: GeneratedSiteData
           <AnimatedSection>          <SectionHeader badge="Our Results" title="Pest-Free Properties" accent={ACCENT} /></AnimatedSection>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {projectImages.map((src, i) => { const titles = ["Termite Treatment", "Rodent Exclusion", "Bed Bug Elimination", "Commercial Fumigation"]; const descs = ["Complete termite barrier installation.", "Full rodent exclusion and sealing.", "Heat treatment bed bug elimination.", "Commercial-grade fumigation service."]; return (
-              <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.06] hover:border-opacity-30 transition-all duration-500">
+              <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.10] hover:border-opacity-30 transition-all duration-500">
                 <img src={src} alt={titles[i]} className="w-full h-64 object-cover transition-transform duration-700 group-hover:scale-105" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                 <div className="absolute bottom-0 left-0 right-0 p-6"><h3 className="text-lg font-bold text-white mb-1">{titles[i]}</h3><p className="text-sm text-slate-300">{descs[i]}</p></div>
@@ -541,7 +541,7 @@ export default function V2PestControlPreview({ data }: { data: GeneratedSiteData
         <ShieldPattern opacity={0.02} accent={ACCENT} />
         <div className="max-w-4xl mx-auto px-6 relative z-10">
           <SectionHeader badge="See Our Work" title="Watch Our Process" subtitle="See how we protect homes and businesses from pest infestations." accent={ACCENT} />
-          <div className="relative rounded-2xl overflow-hidden border border-white/10 group cursor-pointer">
+          <div className="relative rounded-2xl overflow-hidden border border-white/15 group cursor-pointer">
             <img src={projectImages[0] || heroImage} alt="Our pest control process" className="w-full h-[300px] md:h-[450px] object-cover transition-transform duration-700 group-hover:scale-105" />
             <div className="absolute inset-0 bg-black/50 group-hover:bg-black/40 transition-colors duration-300" />
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
@@ -564,7 +564,7 @@ export default function V2PestControlPreview({ data }: { data: GeneratedSiteData
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-white/10">
+                  <tr className="border-b border-white/15">
                     <th className="text-left px-5 py-4 text-slate-400 font-medium">Feature</th>
                     <th className="text-center px-5 py-4 font-bold text-white">{data.businessName}</th>
                     <th className="text-center px-5 py-4 text-slate-400 font-medium">Others</th>
@@ -580,7 +580,7 @@ export default function V2PestControlPreview({ data }: { data: GeneratedSiteData
                     { feature: "Transparent Pricing", us: true, them: "Sometimes" },
                     { feature: "Follow-Up Visits Included", us: true, them: "Extra Cost" },
                   ].map((row, i) => (
-                    <tr key={row.feature} className={i % 2 === 0 ? "bg-white/[0.02]" : ""}>
+                    <tr key={row.feature} className={i % 2 === 0 ? "bg-white/[0.07]" : ""}>
                       <td className="px-5 py-3.5 text-slate-300 font-medium">{row.feature}</td>
                       <td className="px-5 py-3.5 text-center"><CheckCircle size={20} weight="fill" style={{ color: "#22c55e" }} className="inline-block" /></td>
                       <td className="px-5 py-3.5 text-center text-slate-500">{row.them}</td>
@@ -610,7 +610,7 @@ export default function V2PestControlPreview({ data }: { data: GeneratedSiteData
               <GlassCard key={i} className="p-6 h-full flex flex-col">
                 <div className="flex gap-0.5 mb-4">{Array.from({ length: t.rating || 5 }).map((_, j) => <Star key={j} size={16} weight="fill" style={{ color: ACCENT }} />)}</div>
                 <p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p>
-                <div className="pt-4 border-t border-white/5"><span className="text-sm font-semibold text-white">{t.name}</span></div>
+                <div className="pt-4 border-t border-white/8"><span className="text-sm font-semibold text-white">{t.name}</span></div>
               </GlassCard>
             ))}
           </div>
@@ -640,7 +640,7 @@ export default function V2PestControlPreview({ data }: { data: GeneratedSiteData
           <SectionHeader badge="Pests We Treat" title="Complete Pest Coverage" subtitle="From common household nuisances to serious infestations, we eliminate them all." accent={ACCENT} />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {COMMON_PESTS.map((pest) => (
-              <div key={pest.name} className="group relative p-6 rounded-2xl border border-white/[0.06] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.02]">
+              <div key={pest.name} className="group relative p-6 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]">
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${ACCENT}15, transparent 70%)` }} />
                 <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${ACCENT}4d, transparent)` }} />
                 <div className="relative z-10">
@@ -665,7 +665,7 @@ export default function V2PestControlPreview({ data }: { data: GeneratedSiteData
           <div className="text-center mb-8"><GlassCard className="p-8 inline-block"><div className="flex items-center gap-3 text-lg"><MapPin size={24} weight="duotone" style={{ color: ACCENT }} /><MapLink address={data.address} className="text-white font-semibold" /></div><p className="text-slate-400 text-sm mt-2">&amp; Surrounding Areas</p></GlassCard></div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-3xl mx-auto">
             {["Downtown", "Midtown", "Westside", "Eastside", "North End", "South End", "Suburbs", "Metro Area"].map((area) => (
-              <div key={area} className="flex items-center gap-2 px-4 py-3 rounded-xl border border-white/5 bg-white/[0.03]">
+              <div key={area} className="flex items-center gap-2 px-4 py-3 rounded-xl border border-white/8 bg-white/[0.08]">
                 <CheckCircle size={14} weight="fill" style={{ color: ACCENT }} />
                 <span className="text-sm text-slate-300">{area}</span>
               </div>
@@ -931,7 +931,7 @@ export default function V2PestControlPreview({ data }: { data: GeneratedSiteData
                 <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
                   Schedule Free Inspection <ArrowRight size={18} weight="bold" />
                 </MagneticButton>
-                <MagneticButton href={`tel:${data.phone.replace(/\D/g, "")}`} className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
+                <MagneticButton href={`tel:${data.phone.replace(/\D/g, "")}`} className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
                   <Phone size={18} weight="duotone" /> <PhoneLink phone={data.phone} />
                 </MagneticButton>
               </div>
@@ -961,14 +961,14 @@ export default function V2PestControlPreview({ data }: { data: GeneratedSiteData
               <h3 className="text-xl font-semibold text-white mb-6">Request Free Inspection</h3>
               <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div><label className="block text-sm text-slate-400 mb-1.5">First Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="John" /></div>
-                  <div><label className="block text-sm text-slate-400 mb-1.5">Last Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="Doe" /></div>
+                  <div><label className="block text-sm text-slate-400 mb-1.5">First Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="John" /></div>
+                  <div><label className="block text-sm text-slate-400 mb-1.5">Last Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="Doe" /></div>
                 </div>
-                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
+                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
                 <div><label className="block text-sm text-slate-400 mb-1.5">Pest Type</label>
-                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none text-sm"><option value="" className="bg-neutral-900">Select pest type</option>{data.services.map((s) => <option key={s.name} value={s.name.toLowerCase().replace(/\s+/g, "-")} className="bg-neutral-900">{s.name}</option>)}</select>
+                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none text-sm"><option value="" className="bg-neutral-900">Select pest type</option>{data.services.map((s) => <option key={s.name} value={s.name.toLowerCase().replace(/\s+/g, "-")} className="bg-neutral-900">{s.name}</option>)}</select>
                 </div>
-                <div><label className="block text-sm text-slate-400 mb-1.5">Message</label><textarea rows={4} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm resize-none" placeholder="Describe your pest problem..." /></div>
+                <div><label className="block text-sm text-slate-400 mb-1.5">Message</label><textarea rows={4} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm resize-none" placeholder="Describe your pest problem..." /></div>
                 <MagneticButton className="w-full py-4 rounded-xl text-base font-semibold text-white flex items-center justify-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>Send Request <ArrowRight size={18} weight="bold" /></MagneticButton>
               </form>
             </GlassCard>
@@ -977,7 +977,7 @@ export default function V2PestControlPreview({ data }: { data: GeneratedSiteData
       </section>
 
       {/* 15. FOOTER */}
-      <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden">
+      <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111 100%)" }} />
         <ShieldPattern opacity={0.015} accent={ACCENT} />
         <div className="mx-auto max-w-6xl px-6 relative z-10">
@@ -986,7 +986,7 @@ export default function V2PestControlPreview({ data }: { data: GeneratedSiteData
             <div><h4 className="text-sm font-semibold text-white mb-3">Quick Links</h4><div className="space-y-2">{["Services", "About", "Results", "Contact"].map((link) => <a key={link} href={`#${link.toLowerCase()}`} className="block text-sm text-slate-500 hover:text-white transition-colors">{link}</a>)}</div></div>
             <div><h4 className="text-sm font-semibold text-white mb-3">Contact</h4><div className="space-y-2 text-sm text-slate-500"><p><PhoneLink phone={data.phone} /></p><p><MapLink address={data.address} /></p>{data.socialLinks && Object.entries(data.socialLinks).map(([platform, url]) => <a key={platform} href={url} target="_blank" rel="noopener noreferrer" className="block hover:text-white transition-colors capitalize">{platform}</a>)}</div></div>
           </div>
-          <div className="border-t border-white/5 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="border-t border-white/8 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-sm text-slate-500"><Shield size={14} weight="fill" style={{ color: ACCENT }} /><span>{data.businessName} &copy; {new Date().getFullYear()}</span></div>
             <div className="flex items-center gap-2 text-xs text-slate-600"><BluejayLogo className="w-4 h-4" /><span>Created by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" style={{textDecoration:"underline"}}>bluejayportfolio.com</a></span></div>
           </div>

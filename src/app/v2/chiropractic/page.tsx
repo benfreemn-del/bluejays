@@ -265,7 +265,7 @@ function SectionReveal({ children, className = "", id }: { children: React.React
 
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
+    <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
       {children}
     </div>
   );
@@ -483,7 +483,7 @@ function SpinalAssessment() {
                 <button
                   key={opt}
                   onClick={() => handleAnswer(i)}
-                  className="p-4 rounded-xl border border-white/10 text-left text-sm text-slate-300 hover:border-teal-500/40 hover:bg-white/5 transition-all cursor-pointer"
+                  className="p-4 rounded-xl border border-white/15 text-left text-sm text-slate-300 hover:border-teal-500/40 hover:bg-white/5 transition-all cursor-pointer"
                 >
                   {opt}
                 </button>
@@ -515,7 +515,7 @@ function SpinalAssessment() {
                 <MagneticButton className="px-6 py-3 rounded-full text-sm font-semibold text-white flex items-center gap-2 cursor-pointer" style={{ background: TEAL } as React.CSSProperties}>
                   Book Free Consultation <ArrowRight size={14} weight="bold" />
                 </MagneticButton>
-                <button onClick={reset} className="px-6 py-3 rounded-full text-sm font-medium text-slate-400 border border-white/10 hover:bg-white/5 transition-colors cursor-pointer">
+                <button onClick={reset} className="px-6 py-3 rounded-full text-sm font-medium text-slate-400 border border-white/15 hover:bg-white/5 transition-colors cursor-pointer">
                   Retake Quiz
                 </button>
               </div>
@@ -541,7 +541,7 @@ function SimpleChiropracticOption({ label, detail, icon, index }: { label: strin
     <div className="flex flex-col gap-0">
       <motion.button
         onClick={() => setSelected(!selected)}
-        className={`p-5 rounded-xl border text-left transition-all cursor-pointer ${selected ? "border-teal-500/60 bg-teal-500/10" : "border-white/10 bg-white/[0.03] hover:border-teal-500/30 hover:bg-white/[0.06]"}`}
+        className={`p-5 rounded-xl border text-left transition-all cursor-pointer ${selected ? "border-teal-500/60 bg-teal-500/10" : "border-white/15 bg-white/[0.08] hover:border-teal-500/30 hover:bg-white/[0.06]"}`}
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
       >
@@ -710,7 +710,7 @@ export default function V2ChiropracticPage() {
                 { icon: ShieldCheck, text: "Insurance Accepted" },
                 { icon: Lightning, text: "Same-Day Appointments" },
               ].map((badge, i) => (
-                <div key={i} className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/10 bg-white/[0.03]">
+                <div key={i} className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/15 bg-white/[0.08]">
                   <badge.icon size={14} weight="duotone" style={{ color: TEAL_LIGHT }} />
                   <span className="text-xs text-slate-400">{badge.text}</span>
                 </div>
@@ -721,7 +721,7 @@ export default function V2ChiropracticPage() {
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer" style={{ background: TEAL } as React.CSSProperties}>
                 Schedule Consultation <ArrowRight size={18} weight="bold" />
               </MagneticButton>
-              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
+              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
                 <Phone size={18} weight="duotone" /> <a href="tel:+12067412963">(206) 741-2963</a>
               </MagneticButton>
             </motion.div>
@@ -809,7 +809,7 @@ export default function V2ChiropracticPage() {
                   </div>
                   <h3 className="text-lg font-semibold text-white mb-2">{svc.title}</h3>
                   <p className="text-sm text-slate-400 leading-relaxed flex-1">{svc.description}</p>
-                  <div className="mt-4 pt-4 border-t border-white/5">
+                  <div className="mt-4 pt-4 border-t border-white/8">
                     <span className="text-xs font-medium flex items-center gap-1 cursor-pointer group-hover:gap-2 transition-all" style={{ color: TEAL_LIGHT }}>
                       Learn More <CaretRight size={12} weight="bold" />
                     </span>
@@ -1042,9 +1042,9 @@ export default function V2ChiropracticPage() {
           </div>
           <GlassCard className="overflow-hidden">
             <div className="grid grid-cols-3 text-center text-sm">
-              <div className="p-4 border-b border-white/10 text-slate-500 font-medium">What Matters</div>
-              <div className="p-4 border-b border-l border-white/10 font-semibold" style={{ color: TEAL_LIGHT, background: `${TEAL}11` }}>Align Chiropractic</div>
-              <div className="p-4 border-b border-l border-white/10 text-slate-400 font-medium">Pain Medication</div>
+              <div className="p-4 border-b border-white/15 text-slate-500 font-medium">What Matters</div>
+              <div className="p-4 border-b border-l border-white/15 font-semibold" style={{ color: TEAL_LIGHT, background: `${TEAL}11` }}>Align Chiropractic</div>
+              <div className="p-4 border-b border-l border-white/15 text-slate-400 font-medium">Pain Medication</div>
               {[
                 ["Treats root cause, not symptoms", true, "Masks pain temporarily"],
                 ["No dependency or side effects", true, "Risk of dependency"],
@@ -1055,11 +1055,11 @@ export default function V2ChiropracticPage() {
                 ["Insurance accepted (most plans)", true, "Co-pays accumulate"],
               ].map(([label, chiro, med], i) => (
                 <div key={i} className="contents">
-                  <div className="p-3 border-b border-white/5 text-slate-400 text-left pl-6">{label as string}</div>
-                  <div className="p-3 border-b border-l border-white/5 flex items-center justify-center" style={{ background: `${TEAL}08` }}>
+                  <div className="p-3 border-b border-white/8 text-slate-400 text-left pl-6">{label as string}</div>
+                  <div className="p-3 border-b border-l border-white/8 flex items-center justify-center" style={{ background: `${TEAL}08` }}>
                     {chiro === true ? <CheckCircle size={18} weight="fill" style={{ color: TEAL_LIGHT }} /> : <X size={18} className="text-slate-600" />}
                   </div>
-                  <div className="p-3 border-b border-l border-white/5 flex items-center justify-center">
+                  <div className="p-3 border-b border-l border-white/8 flex items-center justify-center">
                     <span className="text-slate-500 text-xs text-center">{med as string}</span>
                   </div>
                 </div>
@@ -1074,7 +1074,7 @@ export default function V2ChiropracticPage() {
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="text-center mb-6">
             {/* Google Reviews Header */}
-            <div className="inline-flex flex-col sm:flex-row items-center gap-3 px-6 py-4 rounded-2xl border border-white/10 bg-white/[0.03] mb-8">
+            <div className="inline-flex flex-col sm:flex-row items-center gap-3 px-6 py-4 rounded-2xl border border-white/15 bg-white/[0.08] mb-8">
               <div className="flex items-center gap-2">
                 {/* Google G SVG */}
                 <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -1123,7 +1123,7 @@ export default function V2ChiropracticPage() {
                       <Quotes size={24} weight="fill" style={{ color: TEAL_LIGHT }} className="mb-2 opacity-30" />
                       <p className="text-slate-300 leading-relaxed text-sm">{t.text}</p>
                     </div>
-                    <div className="border-t md:border-t-0 md:border-l border-white/10 pt-4 md:pt-0 md:pl-6">
+                    <div className="border-t md:border-t-0 md:border-l border-white/15 pt-4 md:pt-0 md:pl-6">
                       <p className="text-xs uppercase tracking-widest mb-3" style={{ color: AMBER }}>Pain Journey</p>
                       <PainScale before={t.painBefore} after={t.painAfter} />
                       <div className="mt-3 text-center">
@@ -1265,7 +1265,7 @@ export default function V2ChiropracticPage() {
           <motion.div className="grid grid-cols-2 sm:grid-cols-4 gap-3" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true }}>
             {["Kirkland", "Bellevue", "Redmond", "Sammamish", "Issaquah", "Kenmore", "Bothell", "Woodinville"].map((area) => (
               <motion.div key={area} variants={fadeUp}>
-                <div className="p-4 rounded-xl border border-white/10 bg-white/[0.03] text-sm text-slate-300 flex flex-col items-center gap-2 text-center">
+                <div className="p-4 rounded-xl border border-white/15 bg-white/[0.08] text-sm text-slate-300 flex flex-col items-center gap-2 text-center">
                   <div className="flex items-center gap-1.5">
                     <motion.div
                       className="w-2 h-2 rounded-full"
@@ -1321,16 +1321,16 @@ export default function V2ChiropracticPage() {
               <h3 className="text-xl font-semibold text-white mb-6">Request an Appointment</h3>
               <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <input type="text" placeholder="First Name" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-teal-500/50" />
-                  <input type="text" placeholder="Last Name" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-teal-500/50" />
+                  <input type="text" placeholder="First Name" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-teal-500/50" />
+                  <input type="text" placeholder="Last Name" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-teal-500/50" />
                 </div>
-                <input type="email" placeholder="Email Address" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-teal-500/50" />
-                <input type="tel" placeholder="Phone Number" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-teal-500/50" />
-                <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-slate-500 text-sm focus:outline-none focus:border-teal-500/50">
+                <input type="email" placeholder="Email Address" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-teal-500/50" />
+                <input type="tel" placeholder="Phone Number" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-teal-500/50" />
+                <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-slate-500 text-sm focus:outline-none focus:border-teal-500/50">
                   <option value="">Select Service</option>
                   {services.map((s, i) => (<option key={i} value={s.title}>{s.title}</option>))}
                 </select>
-                <textarea placeholder="Describe your condition or concerns..." rows={4} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-teal-500/50 resize-none" />
+                <textarea placeholder="Describe your condition or concerns..." rows={4} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-teal-500/50 resize-none" />
                 <MagneticButton className="w-full py-3 rounded-xl text-sm font-semibold text-white cursor-pointer" style={{ background: TEAL } as React.CSSProperties}>
                   <span className="flex items-center justify-center gap-2"><CalendarCheck size={18} weight="duotone" /> Request Appointment</span>
                 </MagneticButton>
@@ -1356,7 +1356,7 @@ export default function V2ChiropracticPage() {
       </SectionReveal>
 
       {/* ═══ FOOTER ═══ */}
-      <footer className="relative z-10 border-t border-white/5 py-12">
+      <footer className="relative z-10 border-t border-white/8 py-12">
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <div className="md:col-span-2">
@@ -1384,7 +1384,7 @@ export default function V2ChiropracticPage() {
               </div>
             </div>
           </div>
-          <div className="border-t border-white/5 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="border-t border-white/8 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-xs text-slate-500">Align Chiropractic &copy; {new Date().getFullYear()}. All rights reserved.</p>
             <p className="text-xs text-slate-600 flex items-center gap-1.5"><svg width="14" height="14" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-sky-500"><path d="M24.3 4.2c-1.5-.4-3.2.1-4.5 1.1-1-.7-2.3-1-3.5-.8-2.4.4-4.2 2.5-4.2 4.9v.6c-3.2.8-6 2.8-7.8 5.6-.3.5-.1 1.1.4 1.4.5.3 1.1.1 1.4-.4 1.5-2.3 3.7-4 6.3-4.7.5-.1 1-.1 1.5 0 .8.2 1.4.8 1.7 1.5.3.8.2 1.6-.2 2.3l-2.8 4.3c-.6.9-.4 2.1.4 2.8l2.5 2.1c.4.3.8.5 1.3.5h5.2c.5 0 1-.2 1.3-.5l1.2-1c.6-.5.8-1.3.6-2l-1-3.2c-.2-.5 0-1.1.4-1.4l3.8-2.5c1.3-.9 2.1-2.3 2.1-3.9V9.6c0-2.5-1.7-4.7-4.1-5.3v-.1z" fill="currentColor"/></svg>Created by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "underline" }}>bluejayportfolio.com</a></p>
           </div>

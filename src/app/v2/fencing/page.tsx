@@ -80,7 +80,7 @@ function SectionReveal({ children, className = "", id }: { children: React.React
 
 /* ───────────────────────── GLASS CARD ───────────────────────── */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>;
+  return <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>;
 }
 
 /* ───────────────────────── MAGNETIC BUTTON ───────────────────────── */
@@ -437,7 +437,7 @@ export default function V2FencingPage() {
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer" style={{ background: WOOD } as React.CSSProperties}>
                 Get Free Quote <ArrowRight size={18} weight="bold" />
               </MagneticButton>
-              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
+              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
                 <Phone size={18} weight="duotone" /> (206) 381-7429
               </MagneticButton>
             </motion.div>
@@ -588,7 +588,7 @@ export default function V2FencingPage() {
             <p className="text-sm uppercase tracking-widest mb-3" style={{ color: WOOD_LIGHT }}>Client Reviews</p>
             {/* Google Reviews header */}
             <div className="flex items-center justify-center gap-3 mb-5">
-              <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/[0.04] text-sm font-medium text-white">
+              <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/15 bg-white/[0.07] text-sm font-medium text-white">
                 {/* Google G SVG */}
                 <svg width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -610,7 +610,7 @@ export default function V2FencingPage() {
                 <GlassCard className="p-6 h-full flex flex-col">
                   <Quotes size={28} weight="fill" style={{ color: WOOD_LIGHT }} className="mb-3 opacity-50" />
                   <p className="text-slate-300 leading-relaxed flex-1 text-sm">{t.text}</p>
-                  <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
+                  <div className="mt-4 pt-4 border-t border-white/8 flex items-center justify-between">
                     <span className="text-sm font-semibold text-white">{t.name}</span>
                     <div className="flex gap-0.5">{Array.from({ length: t.rating }).map((_, j) => (<Star key={j} size={12} weight="fill" style={{ color: WOOD_LIGHT }} />))}</div>
                   </div>
@@ -640,7 +640,7 @@ export default function V2FencingPage() {
                       <div className="flex justify-between"><span className="text-slate-500">Durability</span><span className="text-slate-300">{mat.durability}</span></div>
                       <div className="flex justify-between"><span className="text-slate-500">Maintenance</span><span className="text-slate-300">{mat.maintenance}</span></div>
                       <div className="flex justify-between"><span className="text-slate-500">Price Range</span><span style={{ color: WOOD_LIGHT }}>{mat.price}</span></div>
-                      <div className="pt-3 border-t border-white/5">
+                      <div className="pt-3 border-t border-white/8">
                         <span className="text-slate-500">Best for: </span>
                         <span className="text-slate-300">{mat.best}</span>
                       </div>
@@ -683,13 +683,13 @@ export default function V2FencingPage() {
             <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white">Ironwood vs. The Competition</h2>
           </div>
           <GlassCard className="overflow-hidden">
-            <div className="grid grid-cols-3 px-6 py-4 border-b border-white/10 text-sm font-semibold text-slate-400">
+            <div className="grid grid-cols-3 px-6 py-4 border-b border-white/15 text-sm font-semibold text-slate-400">
               <span>Feature</span>
               <span className="text-center" style={{ color: WOOD_LIGHT }}>Ironwood Fencing</span>
               <span className="text-center">Other Companies</span>
             </div>
             {comparisonRows.map((row, i) => (
-              <div key={i} className={`grid grid-cols-3 px-6 py-4 text-sm ${i % 2 === 0 ? "bg-white/[0.02]" : ""} ${i < comparisonRows.length - 1 ? "border-b border-white/5" : ""}`}>
+              <div key={i} className={`grid grid-cols-3 px-6 py-4 text-sm ${i % 2 === 0 ? "bg-white/[0.07]" : ""} ${i < comparisonRows.length - 1 ? "border-b border-white/8" : ""}`}>
                 <span className="text-slate-300">{row.feature}</span>
                 <span className="text-center">
                   <span className="inline-flex items-center justify-center w-6 h-6 rounded-full" style={{ background: `${WOOD}33` }}>
@@ -713,7 +713,7 @@ export default function V2FencingPage() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {pricingTiers.map((tier, i) => (
-              <div key={i} className={`relative rounded-2xl overflow-hidden ${tier.highlight ? "ring-2" : "border border-white/10"}`} style={tier.highlight ? { ringColor: WOOD_LIGHT } as React.CSSProperties : {}}>
+              <div key={i} className={`relative rounded-2xl overflow-hidden ${tier.highlight ? "ring-2" : "border border-white/15"}`} style={tier.highlight ? { ringColor: WOOD_LIGHT } as React.CSSProperties : {}}>
                 {tier.highlight && (
                   <div className="absolute inset-0 rounded-2xl ring-2 ring-inset pointer-events-none" style={{ borderColor: WOOD_LIGHT, boxShadow: `0 0 24px ${WOOD_GLOW}` }} />
                 )}
@@ -799,7 +799,7 @@ export default function V2FencingPage() {
                   onClick={() => setQuizOpenIndex(quizOpenIndex === i ? null : i)}
                   className="w-full flex items-center justify-between p-5 rounded-2xl text-left transition-all cursor-pointer"
                   style={{
-                    background: quizOpenIndex === i ? `${WOOD}22` : "rgba(255,255,255,0.03)",
+                    background: quizOpenIndex === i ? `${WOOD}22` : "rgba(255,255,255,0.06)",
                     border: `1px solid ${quizOpenIndex === i ? `${WOOD_LIGHT}44` : "rgba(255,255,255,0.08)"}`,
                   }}
                 >
@@ -994,7 +994,7 @@ export default function V2FencingPage() {
                   <MagneticButton className="px-10 py-4 rounded-full text-base font-semibold text-white inline-flex items-center gap-2 cursor-pointer" style={{ background: WOOD } as React.CSSProperties}>
                     <CalendarCheck size={20} weight="duotone" /> Schedule Estimate
                   </MagneticButton>
-                  <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
+                  <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
                     <Phone size={18} weight="duotone" /> Call Now
                   </MagneticButton>
                 </div>
@@ -1005,7 +1005,7 @@ export default function V2FencingPage() {
       </SectionReveal>
 
       {/* ─── FOOTER ─── */}
-      <footer className="relative z-10 border-t border-white/5 py-8">
+      <footer className="relative z-10 border-t border-white/8 py-8">
         <div className="mx-auto max-w-7xl px-4 md:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2 text-sm text-slate-500">
             <Wall size={16} weight="duotone" style={{ color: WOOD_LIGHT }} />

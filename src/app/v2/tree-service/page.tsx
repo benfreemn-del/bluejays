@@ -132,7 +132,7 @@ function SectionReveal({ children, className = "", id }: { children: React.React
 
 /* ───────────────────────── GLASS CARD ───────────────────────── */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>;
+  return <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>;
 }
 
 /* ───────────────────────── MAGNETIC BUTTON ───────────────────────── */
@@ -391,7 +391,7 @@ function TreeQuizOption({ opt }: { opt: { label: string; urgency: string; color:
         className="w-full text-left p-4 rounded-xl border transition-all cursor-pointer"
         style={{
           borderColor: selected ? opt.color : "rgba(255,255,255,0.1)",
-          background: selected ? `${opt.color}18` : "rgba(255,255,255,0.03)",
+          background: selected ? `${opt.color}18` : "rgba(255,255,255,0.06)",
         }}
       >
         <p className="text-sm font-semibold text-white mb-1">{opt.label}</p>
@@ -406,7 +406,7 @@ function TreeQuizOption({ opt }: { opt: { label: string; urgency: string; color:
             transition={{ duration: 0.3 }}
             className="overflow-hidden"
           >
-            <div className="mt-2 p-3 rounded-xl text-sm text-slate-300 flex items-center justify-between gap-3" style={{ background: "rgba(255,255,255,0.04)", borderLeft: `3px solid ${opt.color}` }}>
+            <div className="mt-2 p-3 rounded-xl text-sm text-slate-300 flex items-center justify-between gap-3" style={{ background: "rgba(255,255,255,0.08)", borderLeft: `3px solid ${opt.color}` }}>
               <span>{opt.action}</span>
               <a href="tel:+12064718349" className="shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold text-white" style={{ background: opt.color }}>Call Now</a>
             </div>
@@ -490,7 +490,7 @@ export default function V2TreeServicePage() {
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer" style={{ background: GREEN } as React.CSSProperties}>
                 Get Free Estimate <ArrowRight size={18} weight="bold" />
               </MagneticButton>
-              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
+              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
                 <Phone size={18} weight="duotone" /> (206) 471-8349
               </MagneticButton>
             </motion.div>
@@ -615,7 +615,7 @@ export default function V2TreeServicePage() {
                     <ul className="space-y-2 mb-6">
                       {tier.features.map((f, j) => <li key={j} className="flex items-center gap-2 text-sm text-slate-300"><CheckCircle size={14} weight="fill" style={{ color: "#4ade80" }} />{f}</li>)}
                     </ul>
-                    <MagneticButton className="w-full py-3 rounded-full text-sm font-semibold text-white border border-white/10 cursor-pointer">{tier.cta}</MagneticButton>
+                    <MagneticButton className="w-full py-3 rounded-full text-sm font-semibold text-white border border-white/15 cursor-pointer">{tier.cta}</MagneticButton>
                   </GlassCard>
                 )}
               </motion.div>
@@ -761,7 +761,7 @@ export default function V2TreeServicePage() {
                 <GlassCard className="p-6 h-full flex flex-col">
                   <Quotes size={28} weight="fill" style={{ color: GREEN_LIGHT }} className="mb-3 opacity-50" />
                   <p className="text-slate-300 leading-relaxed flex-1 text-sm">{t.text}</p>
-                  <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
+                  <div className="mt-4 pt-4 border-t border-white/8 flex items-center justify-between">
                     <span className="text-sm font-semibold text-white">{t.name}</span>
                     <div className="flex gap-0.5">{Array.from({ length: t.rating }).map((_, j) => (<Star key={j} size={12} weight="fill" style={{ color: GREEN_LIGHT }} />))}</div>
                   </div>
@@ -783,13 +783,13 @@ export default function V2TreeServicePage() {
             <p className="text-slate-400 max-w-md mx-auto text-sm">Not all tree companies are equal. ISA certification and proper insurance make all the difference.</p>
           </div>
           <GlassCard className="overflow-hidden">
-            <div className="grid grid-cols-3 p-4 md:p-5 border-b border-white/5 text-sm font-semibold">
+            <div className="grid grid-cols-3 p-4 md:p-5 border-b border-white/8 text-sm font-semibold">
               <span className="text-slate-400">What Matters</span>
               <span className="text-center" style={{ color: GREEN_LIGHT }}>Canopy</span>
               <span className="text-center text-slate-500">Average Co.</span>
             </div>
             {comparisonRows.map((row, i) => (
-              <div key={i} className={`grid grid-cols-3 items-center p-4 md:p-5 text-sm border-b border-white/5 last:border-0 ${i % 2 === 0 ? "bg-white/[0.01]" : ""}`}>
+              <div key={i} className={`grid grid-cols-3 items-center p-4 md:p-5 text-sm border-b border-white/8 last:border-0 ${i % 2 === 0 ? "bg-white/[0.01]" : ""}`}>
                 <span className="text-slate-300 pr-4">{row.feature}</span>
                 <div className="flex justify-center">
                   <span className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium" style={{ background: "rgba(34,197,94,0.15)", color: "#4ade80" }}>
@@ -917,7 +917,7 @@ export default function V2TreeServicePage() {
                   <MagneticButton className="px-10 py-4 rounded-full text-base font-semibold text-white inline-flex items-center gap-2 cursor-pointer" style={{ background: GREEN } as React.CSSProperties}>
                     <CalendarCheck size={20} weight="duotone" /> Schedule Estimate
                   </MagneticButton>
-                  <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
+                  <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
                     <Phone size={18} weight="duotone" /> Call Now
                   </MagneticButton>
                 </div>
@@ -949,16 +949,16 @@ export default function V2TreeServicePage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs text-slate-400 mb-1.5 font-medium uppercase tracking-wide">Name</label>
-                    <input type="text" placeholder="Your name" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm placeholder:text-slate-500 focus:outline-none focus:border-white/30 transition-colors" />
+                    <input type="text" placeholder="Your name" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white text-sm placeholder:text-slate-500 focus:outline-none focus:border-white/30 transition-colors" />
                   </div>
                   <div>
                     <label className="block text-xs text-slate-400 mb-1.5 font-medium uppercase tracking-wide">Phone</label>
-                    <input type="tel" placeholder="(206) 000-0000" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm placeholder:text-slate-500 focus:outline-none focus:border-white/30 transition-colors" />
+                    <input type="tel" placeholder="(206) 000-0000" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white text-sm placeholder:text-slate-500 focus:outline-none focus:border-white/30 transition-colors" />
                   </div>
                 </div>
                 <div>
                   <label className="block text-xs text-slate-400 mb-1.5 font-medium uppercase tracking-wide">Service Needed</label>
-                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-slate-400 text-sm focus:outline-none focus:border-white/30 transition-colors">
+                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-slate-400 text-sm focus:outline-none focus:border-white/30 transition-colors">
                     <option value="">Select a service...</option>
                     <option>Tree Removal</option>
                     <option>Tree Trimming</option>
@@ -970,7 +970,7 @@ export default function V2TreeServicePage() {
                 </div>
                 <div>
                   <label className="block text-xs text-slate-400 mb-1.5 font-medium uppercase tracking-wide">Tell Us More</label>
-                  <textarea rows={3} placeholder="Describe the tree and any concerns..." className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm placeholder:text-slate-500 focus:outline-none focus:border-white/30 transition-colors resize-none" />
+                  <textarea rows={3} placeholder="Describe the tree and any concerns..." className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white text-sm placeholder:text-slate-500 focus:outline-none focus:border-white/30 transition-colors resize-none" />
                 </div>
                 <MagneticButton className="w-full py-3.5 rounded-full text-sm font-semibold text-white cursor-pointer flex items-center justify-center gap-2" style={{ background: GREEN } as React.CSSProperties}>
                   <CalendarCheck size={18} weight="duotone" /> Request Free Estimate
@@ -982,7 +982,7 @@ export default function V2TreeServicePage() {
       </SectionReveal>
 
       {/* ─── FOOTER ─── */}
-      <footer className="relative z-10 border-t border-white/5 py-8">
+      <footer className="relative z-10 border-t border-white/8 py-8">
         <div className="mx-auto max-w-7xl px-4 md:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm text-slate-500">
             <div className="flex items-center gap-2">

@@ -94,7 +94,7 @@ function WoodGrainPattern({ opacity = 0.03 }: { opacity?: number }) {
 
 /* ───────────────── UTILITY COMPONENTS ───────────────── */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <div className={`rounded-2xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-xl ${className}`}>{children}</div>;
+  return <div className={`rounded-2xl border border-white/[0.13] bg-white/[0.07] backdrop-blur-xl ${className}`}>{children}</div>;
 }
 
 function SectionReveal({ children, className = "", id }: { children: React.ReactNode; className?: string; id?: string }) {
@@ -344,7 +344,7 @@ export default function V2CateringShowcase() {
         <div className="relative z-10 w-full lg:w-1/2 lg:ml-auto flex items-center">
           <div className="px-6 md:px-12 lg:px-16 py-20 w-full max-w-2xl">
             {/* Mobile hero image */}
-            <div className="lg:hidden mb-8 rounded-2xl overflow-hidden border border-white/10">
+            <div className="lg:hidden mb-8 rounded-2xl overflow-hidden border border-white/15">
               <img src="https://images.unsplash.com/photo-1544025162-d76694265947?w=800&q=80" alt="Beautifully plated dish" className="w-full h-64 object-cover" />
             </div>
             <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.1 }} className="text-sm uppercase tracking-[0.3em] mb-6" style={{ color: COPPER, fontFamily: "system-ui, sans-serif" }}>
@@ -412,7 +412,7 @@ export default function V2CateringShowcase() {
             {eventTypes.map((event) => {
               const Icon = event.icon;
               return (
-                <div key={event.name} className="group relative rounded-2xl overflow-hidden border border-white/[0.06] hover:border-white/15 transition-all duration-500">
+                <div key={event.name} className="group relative rounded-2xl overflow-hidden border border-white/[0.10] hover:border-white/15 transition-all duration-500">
                   <img src={event.img} alt={event.name} className="w-full h-52 object-cover transition-transform duration-700 group-hover:scale-105" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-6">
@@ -470,7 +470,7 @@ export default function V2CateringShowcase() {
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="relative">
-              <div className="rounded-2xl overflow-hidden border border-white/[0.08]">
+              <div className="rounded-2xl overflow-hidden border border-white/[0.13]">
                 <img src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=600&q=80" alt="Chef Adriana Reyes" className="w-full h-[450px] object-cover object-top" />
               </div>
               <div className="absolute -bottom-4 -right-4 md:bottom-6 md:-right-6">
@@ -635,7 +635,7 @@ export default function V2CateringShowcase() {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {galleryImages.map((img, i) => (
-              <div key={i} className={`group relative rounded-2xl overflow-hidden border border-white/[0.06] ${i === 0 || i === 3 ? "md:row-span-2" : ""}`}>
+              <div key={i} className={`group relative rounded-2xl overflow-hidden border border-white/[0.10] ${i === 0 || i === 3 ? "md:row-span-2" : ""}`}>
                 <img src={img.src} alt={img.caption} className={`w-full object-cover transition-transform duration-700 group-hover:scale-105 ${i === 0 || i === 3 ? "h-64 md:h-full" : "h-48 md:h-56"}`} />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 <div className="absolute bottom-0 left-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
@@ -739,7 +739,7 @@ export default function V2CateringShowcase() {
             <SectionBadge text="Behind the Scenes" />
             <SectionHeading>Watch Our Team in Action</SectionHeading>
           </div>
-          <div className="relative rounded-2xl overflow-hidden border border-white/[0.08] group cursor-pointer">
+          <div className="relative rounded-2xl overflow-hidden border border-white/[0.13] group cursor-pointer">
             <img src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=900&q=80" alt="Chef team preparing an event" className="w-full h-[400px] object-cover transition-transform duration-700 group-hover:scale-105" />
             <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
               <motion.div className="w-20 h-20 rounded-full flex items-center justify-center" style={{ background: `${COPPER}dd` }} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>

@@ -177,7 +177,7 @@ function SectionReveal({
 /* ───────────────────────── GLASS CARD ───────────────────────── */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
+    <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
       {children}
     </div>
   );
@@ -403,7 +403,7 @@ function PressureWashingQuizOption({ opt }: { opt: { label: string; urgency: str
         className="w-full text-left p-4 rounded-xl border transition-all cursor-pointer"
         style={{
           borderColor: selected ? opt.color : "rgba(255,255,255,0.1)",
-          background: selected ? `${opt.color}15` : "rgba(255,255,255,0.03)",
+          background: selected ? `${opt.color}15` : "rgba(255,255,255,0.06)",
         }}
       >
         <p className="text-sm font-semibold text-white mb-1">{opt.label}</p>
@@ -418,7 +418,7 @@ function PressureWashingQuizOption({ opt }: { opt: { label: string; urgency: str
             transition={{ duration: 0.3 }}
             className="overflow-hidden"
           >
-            <div className="mt-2 p-3 rounded-xl text-sm text-slate-300 flex items-center justify-between gap-3" style={{ background: "rgba(255,255,255,0.04)", borderLeft: `3px solid ${opt.color}` }}>
+            <div className="mt-2 p-3 rounded-xl text-sm text-slate-300 flex items-center justify-between gap-3" style={{ background: "rgba(255,255,255,0.08)", borderLeft: `3px solid ${opt.color}` }}>
               <span>{opt.action}</span>
               <a href="tel:+12065743892" className="shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold text-white" style={{ background: opt.color }}>Call Now</a>
             </div>
@@ -506,7 +506,7 @@ export default function V2PressureWashingPage() {
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
                 Get Free Estimate <ArrowRight size={18} weight="bold" />
               </MagneticButton>
-              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
+              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
                 <Phone size={18} weight="duotone" /> (206) 574-3892
               </MagneticButton>
             </motion.div>
@@ -705,7 +705,7 @@ export default function V2PressureWashingPage() {
                 <GlassCard className="p-6 h-full flex flex-col">
                   <Quotes size={28} weight="fill" style={{ color: ACCENT }} className="mb-3 opacity-50" />
                   <p className="text-slate-300 leading-relaxed flex-1 text-sm">{t.text}</p>
-                  <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
+                  <div className="mt-4 pt-4 border-t border-white/8 flex items-center justify-between">
                     <span className="text-sm font-semibold text-white">{t.name}</span>
                     <div className="flex gap-0.5">
                       {Array.from({ length: t.rating }).map((_, j) => (
@@ -731,13 +731,13 @@ export default function V2PressureWashingPage() {
             <p className="text-slate-400 max-w-md mx-auto text-sm">Not all pressure washing companies are equal. Here is what sets us apart from the other guys.</p>
           </div>
           <GlassCard className="overflow-hidden">
-            <div className="grid grid-cols-3 p-4 md:p-5 border-b border-white/5 text-sm font-semibold">
+            <div className="grid grid-cols-3 p-4 md:p-5 border-b border-white/8 text-sm font-semibold">
               <span className="text-slate-400">What Matters</span>
               <span className="text-center" style={{ color: ACCENT }}>AquaForce</span>
               <span className="text-center text-slate-500">Average Company</span>
             </div>
             {comparisonRows.map((row, i) => (
-              <div key={i} className={`grid grid-cols-3 items-center p-4 md:p-5 text-sm border-b border-white/5 last:border-0 ${i % 2 === 0 ? "bg-white/[0.01]" : ""}`}>
+              <div key={i} className={`grid grid-cols-3 items-center p-4 md:p-5 text-sm border-b border-white/8 last:border-0 ${i % 2 === 0 ? "bg-white/[0.01]" : ""}`}>
                 <span className="text-slate-300 pr-4">{row.feature}</span>
                 <div className="flex justify-center">
                   <span className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium" style={{ background: "rgba(34,197,94,0.15)", color: "#4ade80" }}>
@@ -953,7 +953,7 @@ export default function V2PressureWashingPage() {
                 <MagneticButton className="px-10 py-4 rounded-full text-base font-semibold text-white inline-flex items-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
                   <CalendarCheck size={20} weight="duotone" /> Get Estimate
                 </MagneticButton>
-                <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
+                <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
                   <Phone size={18} weight="duotone" /> Call Us
                 </MagneticButton>
               </div>
@@ -989,7 +989,7 @@ export default function V2PressureWashingPage() {
       </SectionReveal>
 
       {/* ─── 12. FOOTER ─── */}
-      <footer className="relative z-10 border-t border-white/5 py-8">
+      <footer className="relative z-10 border-t border-white/8 py-8">
         <div className="mx-auto max-w-7xl px-4 md:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2 text-sm text-slate-500">
             <Drop size={16} weight="duotone" style={{ color: ACCENT }} />

@@ -361,7 +361,7 @@ export default function LawFirmTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-[#8b5cf6]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-[#8b5cf6]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 {/* Hover glow */}
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_50%_0%,#8b5cf615,transparent_70%)]" />
@@ -421,7 +421,7 @@ export default function LawFirmTemplate() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group relative text-center p-8 rounded-2xl border border-white/[0.06] hover:border-[#8b5cf6]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative text-center p-8 rounded-2xl border border-white/[0.10] hover:border-[#8b5cf6]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 {/* Hover glow */}
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_50%_50%,#8b5cf612,transparent_70%)]" />
@@ -461,7 +461,7 @@ export default function LawFirmTemplate() {
             >
               <div className="relative w-full aspect-[4/5] max-w-md mx-auto">
                 {/* Main image */}
-                <div className="absolute top-0 left-0 w-[75%] h-[70%] rounded-2xl overflow-hidden border-2 border-white/[0.06] shadow-2xl z-10">
+                <div className="absolute top-0 left-0 w-[75%] h-[70%] rounded-2xl overflow-hidden border-2 border-white/[0.10] shadow-2xl z-10">
                   <img
                     src="https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?w=600&q=80"
                     alt="Courthouse"
@@ -469,7 +469,7 @@ export default function LawFirmTemplate() {
                   />
                 </div>
                 {/* Secondary image */}
-                <div className="absolute bottom-0 right-0 w-[65%] h-[55%] rounded-2xl overflow-hidden border-2 border-white/[0.06] shadow-2xl z-20">
+                <div className="absolute bottom-0 right-0 w-[65%] h-[55%] rounded-2xl overflow-hidden border-2 border-white/[0.10] shadow-2xl z-20">
                   <img
                     src="https://images.unsplash.com/photo-1593115057322-e94b77572f20?w=400&q=80"
                     alt="Attorney portrait"
@@ -512,7 +512,7 @@ export default function LawFirmTemplate() {
                   { icon: <ShieldCheckIcon />, title: "No Fee Unless We Win", desc: "Contingency basis means zero financial risk to you" },
                   { icon: <PhoneIcon />, title: "24/7 Availability", desc: "Emergency line staffed around the clock for urgent matters" },
                 ].map((feature) => (
-                  <div key={feature.title} className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/[0.04] hover:border-[#8b5cf6]/20 transition-colors duration-300">
+                  <div key={feature.title} className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.07] border border-white/[0.04] hover:border-[#8b5cf6]/20 transition-colors duration-300">
                     <div className="w-10 h-10 rounded-lg bg-[#8b5cf6]/10 border border-[#8b5cf6]/20 flex items-center justify-center text-[#8b5cf6] shrink-0">
                       {feature.icon}
                     </div>
@@ -552,7 +552,7 @@ export default function LawFirmTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.12 }}
-                className="group relative rounded-2xl border border-white/[0.06] hover:border-[#8b5cf6]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative rounded-2xl border border-white/[0.10] hover:border-[#8b5cf6]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 {/* Photo */}
                 <div className="relative aspect-[3/4] overflow-hidden">
@@ -572,7 +572,7 @@ export default function LawFirmTemplate() {
                     <p className="text-[#8b5cf6] text-sm font-semibold mb-3">{attorney.title}</p>
                     <div className="flex flex-wrap gap-2">
                       {attorney.specialties.map((s) => (
-                        <span key={s} className="text-[10px] font-semibold uppercase tracking-wider text-white/60 bg-white/10 border border-white/10 px-2.5 py-1 rounded-full">
+                        <span key={s} className="text-[10px] font-semibold uppercase tracking-wider text-white/60 bg-white/10 border border-white/15 px-2.5 py-1 rounded-full">
                           {s}
                         </span>
                       ))}
@@ -620,7 +620,7 @@ export default function LawFirmTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group text-center p-6 rounded-2xl border border-white/[0.06] hover:border-[#8b5cf6]/30 bg-white/[0.02] transition-all duration-500"
+                className="group text-center p-6 rounded-2xl border border-white/[0.10] hover:border-[#8b5cf6]/30 bg-white/[0.07] transition-all duration-500"
               >
                 <div className="w-14 h-14 mx-auto rounded-xl bg-[#8b5cf6]/10 border border-[#8b5cf6]/20 flex items-center justify-center text-[#8b5cf6] mb-4 group-hover:bg-[#8b5cf6]/20 group-hover:scale-110 transition-all duration-300">
                   {item.icon}
@@ -663,7 +663,7 @@ export default function LawFirmTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-[#8b5cf6]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-[#8b5cf6]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 {/* Top accent line */}
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-[#8b5cf6]/40 via-[#8b5cf6]/10 to-transparent" />
@@ -682,7 +682,7 @@ export default function LawFirmTemplate() {
                   {/* Quote */}
                   <p className="text-muted leading-relaxed mb-6 text-sm">&ldquo;{t.text}&rdquo;</p>
                   {/* Author */}
-                  <div className="flex items-center gap-3 pt-4 border-t border-white/[0.06]">
+                  <div className="flex items-center gap-3 pt-4 border-t border-white/[0.10]">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#8b5cf6]/30 to-[#8b5cf6]/10 flex items-center justify-center text-sm font-bold text-[#8b5cf6]">
                       {t.name.charAt(0)}
                     </div>
@@ -796,7 +796,7 @@ export default function LawFirmTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.06 }}
-                className="group p-6 rounded-2xl border border-white/[0.06] hover:border-[#8b5cf6]/20 transition-all duration-500 overflow-hidden relative bg-white/[0.02]"
+                className="group p-6 rounded-2xl border border-white/[0.10] hover:border-[#8b5cf6]/20 transition-all duration-500 overflow-hidden relative bg-white/[0.07]"
               >
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_0%_50%,#8b5cf610,transparent_70%)]" />
                 <div className="relative z-10 flex gap-4">

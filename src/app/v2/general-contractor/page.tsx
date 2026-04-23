@@ -120,7 +120,7 @@ function ConstructionBeams({ opacity = 0.04 }: { opacity?: number }) {
 /* ───────────────── UTILITY COMPONENTS ───────────────── */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.06)] ${className}`}>
+    <div className={`rounded-2xl border border-white/15 bg-white/[0.07] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.06)] ${className}`}>
       {children}
     </div>
   );
@@ -332,7 +332,7 @@ export default function V2GeneralContractorShowcase() {
           {/* 3D perspective photo behind text */}
           <div className="hidden lg:block absolute top-1/2 right-0 -translate-y-1/2 w-[55%]" style={{ perspective: "1200px" }}>
             <motion.div
-              className="rounded-2xl overflow-hidden border border-white/10 shadow-2xl"
+              className="rounded-2xl overflow-hidden border border-white/15 shadow-2xl"
               style={{ transformStyle: "preserve-3d" }}
               initial={{ rotateX: 8, rotateY: -12, scale: 0.95 }}
               animate={{ rotateX: 8, rotateY: -12, scale: 0.95 }}
@@ -381,7 +381,7 @@ export default function V2GeneralContractorShowcase() {
           </div>
 
           {/* Mobile hero image (no 3D tilt on mobile) */}
-          <div className="lg:hidden mt-8 rounded-2xl overflow-hidden border border-white/10">
+          <div className="lg:hidden mt-8 rounded-2xl overflow-hidden border border-white/15">
             <img src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=900&q=80" alt="Architectural blueprints and construction planning" className="w-full h-72 object-cover" />
           </div>
         </div>
@@ -390,7 +390,7 @@ export default function V2GeneralContractorShowcase() {
       {/* ══════════════════════════════════════════════════
           3. TRUST BAR / STATS
           ══════════════════════════════════════════════════ */}
-      <SectionReveal className="relative z-10 py-14 overflow-hidden border-y border-white/10" id="stats">
+      <SectionReveal className="relative z-10 py-14 overflow-hidden border-y border-white/15" id="stats">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG_DARK} 0%, ${BG} 100%)` }} />
         <BlueprintGrid opacity={0.02} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -432,7 +432,7 @@ export default function V2GeneralContractorShowcase() {
             {services.map((service, i) => {
               const Icon = service.icon;
               return (
-                <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.02]">
+                <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]">
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${AMBER}15, transparent 70%)` }} />
                   <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${AMBER}4d, transparent)` }} />
                   <div className="relative z-10">
@@ -470,7 +470,7 @@ export default function V2GeneralContractorShowcase() {
 
           <div className="grid md:grid-cols-3 gap-6">
             {investmentTiers.map((tier) => (
-              <div key={tier.tier} className={`relative rounded-2xl border overflow-hidden transition-all duration-300 ${tier.popular ? "border-amber-500/40 shadow-lg" : "border-white/10"}`} style={{ background: tier.popular ? `linear-gradient(180deg, ${AMBER}0d, ${BG_DARK})` : `${BG_DARK}` }}>
+              <div key={tier.tier} className={`relative rounded-2xl border overflow-hidden transition-all duration-300 ${tier.popular ? "border-amber-500/40 shadow-lg" : "border-white/15"}`} style={{ background: tier.popular ? `linear-gradient(180deg, ${AMBER}0d, ${BG_DARK})` : `${BG_DARK}` }}>
                 {tier.popular && (
                   <div className="absolute top-0 left-0 right-0 h-1" style={{ background: AMBER }} />
                 )}
@@ -607,7 +607,7 @@ export default function V2GeneralContractorShowcase() {
             {projectTypes.map((pt) => {
               const Icon = pt.icon;
               return (
-                <div key={pt.name} className="group relative p-5 rounded-2xl border border-white/[0.06] hover:border-amber-500/30 transition-all duration-400 text-center overflow-hidden bg-white/[0.02]">
+                <div key={pt.name} className="group relative p-5 rounded-2xl border border-white/[0.10] hover:border-amber-500/30 transition-all duration-400 text-center overflow-hidden bg-white/[0.07]">
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 30%, ${AMBER}12, transparent 70%)` }} />
                   <div className="relative z-10">
                     <div className="w-12 h-12 rounded-xl mx-auto mb-3 flex items-center justify-center" style={{ background: AMBER_GLOW, border: `1px solid ${AMBER}33` }}>
@@ -641,7 +641,7 @@ export default function V2GeneralContractorShowcase() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {portfolioProjects.map((proj, i) => (
-              <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.06] hover:border-amber-500/30 transition-all duration-500">
+              <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.10] hover:border-amber-500/30 transition-all duration-500">
                 <img src={proj.image} alt={proj.title} className="w-full h-64 object-cover transition-transform duration-700 group-hover:scale-105" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                 <div className="absolute top-4 left-4">
@@ -754,7 +754,7 @@ export default function V2GeneralContractorShowcase() {
             <div className="overflow-x-auto">
               <table className="w-full text-left">
                 <thead>
-                  <tr className="border-b border-white/10">
+                  <tr className="border-b border-white/15">
                     <th className="px-6 py-4 text-sm font-semibold text-slate-400">Feature</th>
                     <th className="px-6 py-4 text-sm font-semibold text-center" style={{ color: AMBER }}>Summit Builders NW</th>
                     <th className="px-6 py-4 text-sm font-semibold text-center text-slate-500">Handyman / Unlicensed</th>
@@ -762,7 +762,7 @@ export default function V2GeneralContractorShowcase() {
                 </thead>
                 <tbody>
                   {comparisonRows.map((row, i) => (
-                    <tr key={row.feature} className={i % 2 === 0 ? "bg-white/[0.02]" : ""}>
+                    <tr key={row.feature} className={i % 2 === 0 ? "bg-white/[0.07]" : ""}>
                       <td className="px-6 py-4 text-sm text-slate-300">{row.feature}</td>
                       <td className="px-6 py-4 text-center">
                         {row.us && <CheckCircle size={22} weight="fill" className="mx-auto" style={{ color: "#22c55e" }} />}
@@ -802,7 +802,7 @@ export default function V2GeneralContractorShowcase() {
               { label: "Whole-Home Renovation", color: "#ef4444", rec: "Major renovations require a licensed GC. We coordinate all trades under one warranty.", icon: Buildings },
               { label: "Commercial Build-Out", color: "#8b5cf6", rec: "Tenant improvements, restaurants, offices. We manage permits, inspections, and ADA compliance.", icon: Storefront },
             ].map((opt, i) => (
-              <button key={opt.label} onClick={() => setQuizStep(quizStep === i ? null : i)} className={`text-left p-5 rounded-2xl border transition-all duration-300 cursor-pointer ${quizStep === i ? "border-amber-500/40" : "border-white/10 hover:border-white/20"}`} style={quizStep === i ? { background: `${AMBER}0d` } : { background: "rgba(255,255,255,0.02)" }}>
+              <button key={opt.label} onClick={() => setQuizStep(quizStep === i ? null : i)} className={`text-left p-5 rounded-2xl border transition-all duration-300 cursor-pointer ${quizStep === i ? "border-amber-500/40" : "border-white/15 hover:border-white/20"}`} style={quizStep === i ? { background: `${AMBER}0d` } : { background: "rgba(255,255,255,0.02)" }}>
                 <div className="flex items-center gap-3 mb-2">
                   <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: `${opt.color}20`, border: `1px solid ${opt.color}40` }}>
                     <opt.icon size={20} weight="duotone" style={{ color: opt.color }} />
@@ -839,7 +839,7 @@ export default function V2GeneralContractorShowcase() {
             <AccentLine />
           </div>
 
-          <div className="relative rounded-2xl overflow-hidden border border-white/10 group cursor-pointer">
+          <div className="relative rounded-2xl overflow-hidden border border-white/15 group cursor-pointer">
             <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200&q=80" alt="Summit Builders project showcase" className="w-full h-80 md:h-[420px] object-cover transition-transform duration-700 group-hover:scale-105" />
             <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors duration-300" />
             <div className="absolute inset-0 flex items-center justify-center">
@@ -889,7 +889,7 @@ export default function V2GeneralContractorShowcase() {
                   ))}
                 </div>
                 <p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p>
-                <div className="pt-4 border-t border-white/5 flex items-center justify-between">
+                <div className="pt-4 border-t border-white/8 flex items-center justify-between">
                   <div>
                     <span className="text-sm font-semibold text-white block">{t.name}</span>
                     <span className="text-xs text-slate-500">{t.location}, Seattle</span>
@@ -1056,27 +1056,27 @@ export default function V2GeneralContractorShowcase() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm text-slate-400 mb-1.5">First Name</label>
-                    <input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="Chris" />
+                    <input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="Chris" />
                   </div>
                   <div>
                     <label className="block text-sm text-slate-400 mb-1.5">Last Name</label>
-                    <input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="Dalton" />
+                    <input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="Dalton" />
                   </div>
                 </div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-1.5">Phone</label>
-                  <input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(206) 555-1234" />
+                  <input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(206) 555-1234" />
                 </div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-1.5">Project Type</label>
-                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none text-sm">
+                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none text-sm">
                     <option value="" className="bg-neutral-900">Select a project type</option>
                     {services.map((s) => <option key={s.name} value={s.name.toLowerCase()} className="bg-neutral-900">{s.name}</option>)}
                   </select>
                 </div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-1.5">Project Description</label>
-                  <textarea rows={4} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm resize-none" placeholder="Tell us about your project — scope, timeline, budget range..." />
+                  <textarea rows={4} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm resize-none" placeholder="Tell us about your project — scope, timeline, budget range..." />
                 </div>
                 <MagneticButton className="w-full py-4 rounded-xl text-base font-semibold text-white flex items-center justify-center gap-2 cursor-pointer" style={{ background: AMBER }}>
                   Send Request <ArrowRight size={18} weight="bold" />
@@ -1117,7 +1117,7 @@ export default function V2GeneralContractorShowcase() {
       {/* ══════════════════════════════════════════════════
           21. FOOTER
           ══════════════════════════════════════════════════ */}
-      <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden">
+      <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0e1420 100%)` }} />
         <BlueprintGrid opacity={0.015} />
         <div className="mx-auto max-w-6xl px-6 relative z-10">
@@ -1147,7 +1147,7 @@ export default function V2GeneralContractorShowcase() {
               </div>
             </div>
           </div>
-          <div className="border-t border-white/5 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="border-t border-white/8 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-sm text-slate-500">
               <Hammer size={14} weight="fill" style={{ color: AMBER }} />
               <span>Summit Builders NW &copy; {new Date().getFullYear()}</span>

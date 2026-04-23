@@ -1070,7 +1070,7 @@ export default function DentalShowcasePage() {
             </div>
           </div>
           {/* Bottom bar */}
-          <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+          <div className="pt-8 border-t border-white/15 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-500">
             <div className="flex flex-wrap items-center gap-4">
               <span className="flex items-center gap-1.5">
                 <ShieldCheck size={14} style={{ color: TEAL }} /> ADA Member Practice

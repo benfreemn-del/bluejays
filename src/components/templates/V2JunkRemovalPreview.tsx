@@ -166,7 +166,7 @@ function LeafTrail({ opacity = 0.03, accent }: { opacity?: number; accent: strin
 /* ── shared UI components ── */
 
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>;
+  return <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>;
 }
 
 function MagneticButton({ children, className = "", onClick, style, href }: { children: React.ReactNode; className?: string; onClick?: () => void; style?: React.CSSProperties; href?: string }) {
@@ -379,7 +379,7 @@ export default function V2JunkRemovalPreview({ data }: { data: GeneratedSiteData
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
                 Get Free Quote <ArrowRight size={18} weight="bold" />
               </MagneticButton>
-              <MagneticButton href={`tel:${phoneDigits}`} className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
+              <MagneticButton href={`tel:${phoneDigits}`} className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
                 <Phone size={18} weight="duotone" /> <PhoneLink phone={data.phone} />
               </MagneticButton>
             </div>
@@ -392,7 +392,7 @@ export default function V2JunkRemovalPreview({ data }: { data: GeneratedSiteData
             </div>
           </div>
           <div className="hidden md:block relative">
-            <div className="relative rounded-2xl overflow-hidden border border-white/10">
+            <div className="relative rounded-2xl overflow-hidden border border-white/15">
               <img src={heroCardImage} alt={`${data.businessName} junk removal`} className="w-full h-[500px] object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a1a] via-transparent to-transparent" />
               <div className="absolute bottom-6 left-6">
@@ -462,7 +462,7 @@ export default function V2JunkRemovalPreview({ data }: { data: GeneratedSiteData
             {data.services.map((service, i) => {
               const Icon = getServiceIcon(service.name);
               return (
-                <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.02]">
+                <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]">
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${ACCENT}15, transparent 70%)` }} />
                   <div className="relative z-10">
                     <div className="flex items-start justify-between mb-5">
@@ -550,7 +550,7 @@ export default function V2JunkRemovalPreview({ data }: { data: GeneratedSiteData
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="relative">
-              <div className="rounded-2xl overflow-hidden border border-white/10">
+              <div className="rounded-2xl overflow-hidden border border-white/15">
                 <img src={aboutImage} alt={`${data.businessName} team`} className="w-full h-[400px] object-cover" />
               </div>
               <div className="absolute -bottom-4 -right-4 md:bottom-6 md:-right-6">
@@ -614,7 +614,7 @@ export default function V2JunkRemovalPreview({ data }: { data: GeneratedSiteData
             {galleryImages.map((src, i) => {
               const titles = ["Garage Cleanout", "Estate Clearing", "Construction Debris", "Office Cleanout"];
               return (
-                <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.06] hover:border-opacity-30 transition-all duration-500">
+                <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.10] hover:border-opacity-30 transition-all duration-500">
                   <img src={src} alt={titles[i]} className="w-full h-64 object-cover transition-transform duration-700 group-hover:scale-105" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-6">
@@ -632,7 +632,7 @@ export default function V2JunkRemovalPreview({ data }: { data: GeneratedSiteData
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a120a 50%, #1a1a1a 100%)" }} />
         <div className="max-w-4xl mx-auto px-6 relative z-10">
           <SectionHeader badge="See It In Action" title="Watch Our Crew Work" accent={ACCENT} />
-          <div className="relative rounded-2xl overflow-hidden border border-white/10">
+          <div className="relative rounded-2xl overflow-hidden border border-white/15">
             <img src={heroImage} alt="Junk removal in action" className="w-full h-[350px] object-cover" />
             <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
               <div className="w-20 h-20 rounded-full flex items-center justify-center cursor-pointer border-2" style={{ background: `${ACCENT}cc`, borderColor: ACCENT }}>
@@ -666,7 +666,7 @@ export default function V2JunkRemovalPreview({ data }: { data: GeneratedSiteData
                 <div className="text-4xl mb-4" style={{ color: `${ACCENT}33` }}>&ldquo;</div>
                 <div className="flex gap-0.5 mb-4">{Array.from({ length: t.rating || 5 }).map((_, j) => <Star key={j} size={16} weight="fill" style={{ color: ACCENT }} />)}</div>
                 <p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">{t.text}</p>
-                <div className="pt-4 border-t border-white/5 flex items-center gap-2">
+                <div className="pt-4 border-t border-white/8 flex items-center gap-2">
                   <CheckCircle size={14} weight="fill" style={{ color: ACCENT }} />
                   <span className="text-sm font-semibold text-white">{t.name}</span>
                   <span className="text-xs text-slate-500">Verified Customer</span>
@@ -687,7 +687,7 @@ export default function V2JunkRemovalPreview({ data }: { data: GeneratedSiteData
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-white/10">
+                  <tr className="border-b border-white/15">
                     <th className="text-left p-4 text-slate-400 font-medium">Feature</th>
                     <th className="text-center p-4 font-bold" style={{ color: ACCENT }}>{data.businessName}</th>
                     <th className="text-center p-4 text-slate-500 font-medium">Others</th>
@@ -695,7 +695,7 @@ export default function V2JunkRemovalPreview({ data }: { data: GeneratedSiteData
                 </thead>
                 <tbody>
                   {COMPARISON_ROWS.map((row) => (
-                    <tr key={row.feature} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                    <tr key={row.feature} className="border-b border-white/8 hover:bg-white/[0.07] transition-colors">
                       <td className="p-4 text-slate-300">{row.feature}</td>
                       <td className="p-4 text-center"><CheckCircle size={20} weight="fill" className="mx-auto" style={{ color: "#22c55e" }} /></td>
                       <td className="p-4 text-center text-slate-500 text-xs">{row.them}</td>
@@ -716,7 +716,7 @@ export default function V2JunkRemovalPreview({ data }: { data: GeneratedSiteData
           <SectionHeader badge="Estimate" title="How Much Junk Do You Have?" accent={ACCENT} />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
             {VOLUME_OPTIONS.map((opt, i) => (
-              <button key={opt.label} onClick={() => setQuizAnswer(i)} className={`p-6 rounded-2xl border text-left transition-all duration-300 cursor-pointer ${quizAnswer === i ? "border-opacity-100 bg-white/[0.06]" : "border-white/10 bg-white/[0.02] hover:bg-white/[0.04]"}`} style={quizAnswer === i ? { borderColor: ACCENT } : undefined}>
+              <button key={opt.label} onClick={() => setQuizAnswer(i)} className={`p-6 rounded-2xl border text-left transition-all duration-300 cursor-pointer ${quizAnswer === i ? "border-opacity-100 bg-white/[0.06]" : "border-white/15 bg-white/[0.07] hover:bg-white/[0.07]"}`} style={quizAnswer === i ? { borderColor: ACCENT } : undefined}>
                 <span className="text-2xl mb-3 block">{opt.emoji}</span>
                 <h3 className="text-white font-semibold text-sm">{opt.label}</h3>
               </button>
@@ -858,11 +858,11 @@ export default function V2JunkRemovalPreview({ data }: { data: GeneratedSiteData
               <h3 className="text-xl font-semibold text-white mb-6">Request a Free Quote</h3>
               <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div><label className="block text-sm text-slate-400 mb-1.5">First Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="John" /></div>
-                  <div><label className="block text-sm text-slate-400 mb-1.5">Last Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="Doe" /></div>
+                  <div><label className="block text-sm text-slate-400 mb-1.5">First Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="John" /></div>
+                  <div><label className="block text-sm text-slate-400 mb-1.5">Last Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="Doe" /></div>
                 </div>
-                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
-                <div><label className="block text-sm text-slate-400 mb-1.5">What Needs to Go?</label><textarea rows={3} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm resize-none" placeholder="Old furniture, appliances, yard waste..." /></div>
+                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
+                <div><label className="block text-sm text-slate-400 mb-1.5">What Needs to Go?</label><textarea rows={3} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm resize-none" placeholder="Old furniture, appliances, yard waste..." /></div>
                 <MagneticButton className="w-full py-4 rounded-xl text-base font-semibold text-white flex items-center justify-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
                   Get My Free Quote <ArrowRight size={18} weight="bold" />
                 </MagneticButton>
@@ -910,7 +910,7 @@ export default function V2JunkRemovalPreview({ data }: { data: GeneratedSiteData
               "Exercise Equipment", "Office Furniture", "Carpeting", "Tires",
               "Sheds & Playsets", "Fencing", "Concrete & Brick", "Storage Units",
             ].map((item) => (
-              <div key={item} className="flex items-center gap-2 rounded-xl border border-white/10 px-4 py-3" style={{ background: "rgba(255,255,255,0.03)" }}>
+              <div key={item} className="flex items-center gap-2 rounded-xl border border-white/15 px-4 py-3" style={{ background: "rgba(255,255,255,0.06)" }}>
                 <CheckCircle size={16} weight="fill" style={{ color: ACCENT }} className="shrink-0" />
                 <span className="text-sm text-white">{item}</span>
               </div>
@@ -934,7 +934,7 @@ export default function V2JunkRemovalPreview({ data }: { data: GeneratedSiteData
               { pct: "30%", label: "Recycled", desc: "Metals, electronics, wood, and recyclable materials processed responsibly" },
               { pct: "10%", label: "Landfill", desc: "Only what can't be donated or recycled goes to the landfill — our last resort" },
             ].map((e) => (
-              <div key={e.label} className="rounded-2xl border border-white/10 p-6 text-center" style={{ background: "rgba(255,255,255,0.03)" }}>
+              <div key={e.label} className="rounded-2xl border border-white/15 p-6 text-center" style={{ background: "rgba(255,255,255,0.06)" }}>
                 <p className="text-4xl font-extrabold mb-1" style={{ color: ACCENT }}>{e.pct}</p>
                 <p className="text-lg font-bold text-white mb-2">{e.label}</p>
                 <p className="text-sm text-slate-400 leading-relaxed">{e.desc}</p>
@@ -960,7 +960,7 @@ export default function V2JunkRemovalPreview({ data }: { data: GeneratedSiteData
       </section>
 
       {/* ── FOOTER ── */}
-      <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden">
+      <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111 100%)" }} />
         <RecyclePattern opacity={0.015} accent={ACCENT} />
         <div className="mx-auto max-w-6xl px-6 relative z-10">
@@ -991,7 +991,7 @@ export default function V2JunkRemovalPreview({ data }: { data: GeneratedSiteData
               </div>
             </div>
           </div>
-          <div className="border-t border-white/5 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="border-t border-white/8 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-sm text-slate-500">
               <Truck size={14} weight="fill" style={{ color: ACCENT }} />
               <span>{data.businessName} &copy; {new Date().getFullYear()}</span>

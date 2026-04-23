@@ -155,7 +155,7 @@ function SectionReveal({ children, className = "", id }: { children: React.React
 }
 
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return (<div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>);
+  return (<div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>);
 }
 
 function MagneticButton({ children, className = "", onClick, style }: { children: React.ReactNode; className?: string; onClick?: () => void; style?: React.CSSProperties }) {
@@ -375,14 +375,14 @@ export default function V2JunkRemovalPage() {
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
                 Book a Pickup <ArrowRight size={18} weight="bold" />
               </MagneticButton>
-              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
+              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
                 <Phone size={18} weight="duotone" /> (206) 294-8175
               </MagneticButton>
             </motion.div>
             {/* Trust pills */}
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ ...spring, delay: 3.2 }} className="flex flex-wrap gap-3">
               {["8 Years in Seattle", "4.9-Star Rated", "Same-Day Service", "Eco-Certified"].map((badge) => (
-                <span key={badge} className="text-xs font-semibold px-3 py-1.5 rounded-full border border-white/10 text-slate-300" style={{ background: "rgba(255,255,255,0.04)" }}>
+                <span key={badge} className="text-xs font-semibold px-3 py-1.5 rounded-full border border-white/15 text-slate-300" style={{ background: "rgba(255,255,255,0.08)" }}>
                   <CheckCircle size={12} weight="fill" style={{ color: ACCENT }} className="inline mr-1 -mt-0.5" />
                   {badge}
                 </span>
@@ -490,7 +490,7 @@ export default function V2JunkRemovalPage() {
                       <div className="flex items-start gap-2"><CheckCircle size={16} weight="fill" style={{ color: ACCENT }} className="mt-0.5 shrink-0" /><span className="text-sm text-slate-300">Eco-friendly disposal included</span></div>
                       <div className="flex items-start gap-2"><CheckCircle size={16} weight="fill" style={{ color: ACCENT }} className="mt-0.5 shrink-0" /><span className="text-sm text-slate-300">All labor and cleanup included</span></div>
                     </div>
-                    <MagneticButton className="w-full py-3 rounded-xl text-sm font-bold text-white border border-white/10">
+                    <MagneticButton className="w-full py-3 rounded-xl text-sm font-bold text-white border border-white/15">
                       Book This Size
                     </MagneticButton>
                   </GlassCard>
@@ -694,13 +694,13 @@ export default function V2JunkRemovalPage() {
             </h2>
           </div>
           <GlassCard className="overflow-hidden">
-            <div className="grid grid-cols-3 gap-0 text-center p-4 border-b border-white/5">
+            <div className="grid grid-cols-3 gap-0 text-center p-4 border-b border-white/8">
               <span className="text-sm font-semibold text-slate-400">Feature</span>
               <span className="text-sm font-bold" style={{ color: ACCENT }}>CleanSlate</span>
               <span className="text-sm font-semibold text-slate-400">Dumpster Rental</span>
             </div>
             {comparisonRows.map((row, i) => (
-              <div key={i} className={`grid grid-cols-3 gap-0 text-center p-4 ${i % 2 === 0 ? "bg-white/[0.02]" : ""}`}>
+              <div key={i} className={`grid grid-cols-3 gap-0 text-center p-4 ${i % 2 === 0 ? "bg-white/[0.07]" : ""}`}>
                 <span className="text-sm text-slate-300 text-left">{row.feature}</span>
                 <span className="text-sm" style={{ color: ACCENT }}>
                   {row.us ? <CheckCircle size={18} weight="fill" className="inline" style={{ color: ACCENT }} /> : <X size={18} weight="bold" className="inline text-red-400" />}
@@ -764,7 +764,7 @@ export default function V2JunkRemovalPage() {
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           {/* Google reviews summary */}
           <div className="text-center mb-6">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/[0.03] mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/15 bg-white/[0.08] mb-6">
               <div className="flex gap-0.5">
                 {Array.from({ length: 5 }).map((_, j) => (<Star key={j} size={16} weight="fill" style={{ color: AMBER }} />))}
               </div>
@@ -785,7 +785,7 @@ export default function V2JunkRemovalPage() {
                 <GlassCard className="p-6">
                   <Quotes size={24} weight="fill" style={{ color: ACCENT }} className="mb-3 opacity-40" />
                   <p className="text-slate-300 leading-relaxed text-sm mb-4">{t.text}</p>
-                  <div className="flex items-center justify-between pt-3 border-t border-white/5">
+                  <div className="flex items-center justify-between pt-3 border-t border-white/8">
                     <div>
                       <p className="text-sm font-semibold text-white">{t.name}</p>
                       <p className="text-xs text-slate-500">{t.role}</p>
@@ -916,7 +916,7 @@ export default function V2JunkRemovalPage() {
               { icon: Medal, label: "King County Approved" },
             ].map((badge, i) => (
               <motion.div key={i} variants={fadeUp}>
-                <div className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/[0.03]">
+                <div className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/15 bg-white/[0.08]">
                   <badge.icon size={16} weight="duotone" style={{ color: ACCENT }} />
                   <span className="text-xs font-semibold text-slate-300">{badge.label}</span>
                 </div>
@@ -1044,7 +1044,7 @@ export default function V2JunkRemovalPage() {
                   <MagneticButton className="px-10 py-4 rounded-full text-base font-semibold text-white inline-flex items-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
                     <CalendarCheck size={20} weight="duotone" /> Book a Pickup
                   </MagneticButton>
-                  <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 inline-flex items-center gap-2 cursor-pointer">
+                  <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 inline-flex items-center gap-2 cursor-pointer">
                     <Phone size={18} weight="duotone" /> (206) 294-8175
                   </MagneticButton>
                 </div>
@@ -1103,11 +1103,11 @@ export default function V2JunkRemovalPage() {
               <h3 className="text-xl font-bold text-white mb-6">Request Your Free Quote</h3>
               <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <input type="text" placeholder="Full Name" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-green-500/50 transition-colors" />
-                  <input type="tel" placeholder="Phone Number" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-green-500/50 transition-colors" />
+                  <input type="text" placeholder="Full Name" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none focus:border-green-500/50 transition-colors" />
+                  <input type="tel" placeholder="Phone Number" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none focus:border-green-500/50 transition-colors" />
                 </div>
-                <input type="email" placeholder="Email Address" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-green-500/50 transition-colors" />
-                <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-slate-500 focus:outline-none focus:border-green-500/50 transition-colors">
+                <input type="email" placeholder="Email Address" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none focus:border-green-500/50 transition-colors" />
+                <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-slate-500 focus:outline-none focus:border-green-500/50 transition-colors">
                   <option value="">What do you need removed?</option>
                   <option value="furniture">Furniture &amp; Household Items</option>
                   <option value="appliances">Appliances</option>
@@ -1120,7 +1120,7 @@ export default function V2JunkRemovalPage() {
                   <option value="electronics">Electronics &amp; E-Waste</option>
                   <option value="other">Other</option>
                 </select>
-                <textarea placeholder="Tell us about the job (what items, location, access, etc.)..." rows={4} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-green-500/50 transition-colors resize-none" />
+                <textarea placeholder="Tell us about the job (what items, location, access, etc.)..." rows={4} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none focus:border-green-500/50 transition-colors resize-none" />
                 <MagneticButton className="w-full px-6 py-4 rounded-xl text-base font-bold text-white flex items-center justify-center gap-2" style={{ background: ACCENT } as React.CSSProperties}>
                   Get My Free Quote <ArrowRight size={18} weight="bold" />
                 </MagneticButton>
@@ -1131,7 +1131,7 @@ export default function V2JunkRemovalPage() {
       </SectionReveal>
 
       {/* ─── 21. FOOTER ─── */}
-      <footer className="relative z-10 border-t border-white/5 py-8">
+      <footer className="relative z-10 border-t border-white/8 py-8">
         <div className="mx-auto max-w-7xl px-4 md:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2 text-sm text-slate-500">
             <Truck size={16} weight="duotone" style={{ color: ACCENT }} />

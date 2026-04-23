@@ -208,7 +208,7 @@ function PipePattern({ opacity = 0.03, accent }: { opacity?: number; accent: str
 /* ───────────────────────── GLASS CARD ───────────────────────── */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
+    <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
       {children}
     </div>
   );
@@ -421,7 +421,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer" style={{ background: TEAL } as React.CSSProperties}>
                 Get Free Estimate <ArrowRight size={18} weight="bold" />
               </MagneticButton>
-              <MagneticButton href={`tel:${phoneDigits}`} className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
+              <MagneticButton href={`tel:${phoneDigits}`} className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
                 <Phone size={18} weight="duotone" /> <PhoneLink phone={data.phone} />
               </MagneticButton>
             </div>
@@ -432,7 +432,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
           </div>
 
           <div className="hidden md:block relative">
-            <div className="relative rounded-2xl overflow-hidden border border-white/10">
+            <div className="relative rounded-2xl overflow-hidden border border-white/15">
               <img src={heroCardImage} alt={`${data.businessName} plumber`} className="w-full h-[500px] object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-transparent to-transparent" />
               <div className="absolute inset-0 bg-gradient-to-r from-[#0f172a]/40 to-transparent" />
@@ -500,7 +500,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
             {data.services.map((service, i) => {
               const Icon = getServiceIcon(service.name);
               return (
-                <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.02]">
+                <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]">
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${TEAL}15, transparent 70%)` }} />
                   <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${TEAL}4d, transparent)` }} />
                   <div className="relative z-10">
@@ -628,7 +628,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="relative">
-              <div className="rounded-2xl overflow-hidden border border-white/10">
+              <div className="rounded-2xl overflow-hidden border border-white/15">
                 <img src={aboutImage} alt={`${data.businessName} team`} className="w-full h-[400px] object-cover" />
               </div>
               <div className="absolute -bottom-4 -right-4 md:bottom-6 md:-right-6">
@@ -721,7 +721,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
               const titles = ["Full Bathroom Remodel", "Whole-House Repiping", "Emergency Pipe Repair", "Water Heater Installation"];
               const descs = ["Complete plumbing renovation for a modern bathroom.", "Copper to PEX repiping for a residential home.", "24-hour emergency burst pipe response.", "Tankless water heater upgrade and installation."];
               return (
-                <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.06] hover:border-opacity-30 transition-all duration-500">
+                <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.10] hover:border-opacity-30 transition-all duration-500">
                   <img src={src} alt={titles[i]} className="w-full h-64 object-cover transition-transform duration-700 group-hover:scale-105" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-6">
@@ -746,7 +746,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-white/10">
+                  <tr className="border-b border-white/15">
                     <th className="text-left p-4 text-slate-400 font-medium">Feature</th>
                     <th className="text-center p-4 font-bold text-white">{data.businessName}</th>
                     <th className="text-center p-4 text-slate-500 font-medium">Handyman / DIY</th>
@@ -754,7 +754,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
                 </thead>
                 <tbody>
                   {COMPARISON_ROWS.map((row, i) => (
-                    <tr key={row.feature} className={i < COMPARISON_ROWS.length - 1 ? "border-b border-white/5" : ""}>
+                    <tr key={row.feature} className={i < COMPARISON_ROWS.length - 1 ? "border-b border-white/8" : ""}>
                       <td className="p-4 text-slate-300">{row.feature}</td>
                       <td className="p-4 text-center">
                         <CheckCircle size={20} weight="fill" className="inline-block" style={{ color: "#22c55e" }} />
@@ -776,7 +776,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] right-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${TEAL}08` }} /></div>
         <div className="max-w-4xl mx-auto px-6 relative z-10">
           <SectionHeader badge="See Our Work" title="Watch Us In Action" accent={TEAL} />
-          <div className="relative rounded-2xl overflow-hidden border border-white/10 group cursor-pointer">
+          <div className="relative rounded-2xl overflow-hidden border border-white/15 group cursor-pointer">
             <img src={projectImages[0] || heroImage} alt="See our plumbing work" className="w-full h-[300px] md:h-[420px] object-cover transition-transform duration-700 group-hover:scale-105" />
             <div className="absolute inset-0 bg-black/50 flex items-center justify-center transition-all duration-300 group-hover:bg-black/40">
               <div className="w-20 h-20 rounded-full flex items-center justify-center border-2 transition-transform duration-300 group-hover:scale-110" style={{ borderColor: TEAL, background: `${TEAL}33` }}>
@@ -844,7 +844,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
               <GlassCard key={i} className="p-6 h-full flex flex-col">
                 <div className="flex gap-0.5 mb-4">{Array.from({ length: t.rating || 5 }).map((_, j) => <Star key={j} size={16} weight="fill" style={{ color: TEAL }} />)}</div>
                 <p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p>
-                <div className="pt-4 border-t border-white/5"><span className="text-sm font-semibold text-white">{t.name}</span></div>
+                <div className="pt-4 border-t border-white/8"><span className="text-sm font-semibold text-white">{t.name}</span></div>
               </GlassCard>
             ))}
           </div>
@@ -986,18 +986,18 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
               <h3 className="text-xl font-semibold text-white mb-6">Request a Free Estimate</h3>
               <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div><label className="block text-sm text-slate-400 mb-1.5">First Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="John" /></div>
-                  <div><label className="block text-sm text-slate-400 mb-1.5">Last Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="Doe" /></div>
+                  <div><label className="block text-sm text-slate-400 mb-1.5">First Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="John" /></div>
+                  <div><label className="block text-sm text-slate-400 mb-1.5">Last Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="Doe" /></div>
                 </div>
-                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
+                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-1.5">Service Needed</label>
-                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none text-sm">
+                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none text-sm">
                     <option value="" className="bg-neutral-900">Select a service</option>
                     {data.services.map((s) => <option key={s.name} value={s.name.toLowerCase().replace(/\s+/g, "-")} className="bg-neutral-900">{s.name}</option>)}
                   </select>
                 </div>
-                <div><label className="block text-sm text-slate-400 mb-1.5">Message</label><textarea rows={4} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm resize-none" placeholder="Describe your plumbing issue..." /></div>
+                <div><label className="block text-sm text-slate-400 mb-1.5">Message</label><textarea rows={4} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm resize-none" placeholder="Describe your plumbing issue..." /></div>
                 <MagneticButton className="w-full py-4 rounded-xl text-base font-semibold text-white flex items-center justify-center gap-2 cursor-pointer" style={{ background: TEAL } as React.CSSProperties}>
                   Send Request <ArrowRight size={18} weight="bold" />
                 </MagneticButton>
@@ -1035,7 +1035,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
       </section>
 
       {/* ══════════════════ 15. FOOTER ══════════════════ */}
-      <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden">
+      <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0a1020 100%)" }} />
         <PipePattern opacity={0.015} accent={BLUE} />
         <div className="mx-auto max-w-6xl px-6 relative z-10">
@@ -1056,7 +1056,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
               </div>
             </div>
           </div>
-          <div className="border-t border-white/5 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="border-t border-white/8 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-sm text-slate-500"><Drop size={14} weight="fill" style={{ color: TEAL }} /><span>{data.businessName} &copy; {new Date().getFullYear()}</span></div>
             <div className="flex items-center gap-2 text-xs text-slate-600"><BluejayLogo className="w-4 h-4" /><span>Created by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" style={{textDecoration:"underline"}}>bluejayportfolio.com</a></span></div>
           </div>

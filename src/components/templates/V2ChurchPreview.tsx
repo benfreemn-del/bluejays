@@ -172,7 +172,7 @@ function WaveBackground({ accent }: { accent: string }) {
 /* ───────────────────────── GLASS CARD ───────────────────────── */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
+    <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
       {children}
     </div>
   );
@@ -411,7 +411,7 @@ export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
         </div>
 
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
-          <div className="space-y-8 rounded-2xl bg-black/50 backdrop-blur-md p-6 md:p-8 border border-white/5">
+          <div className="space-y-8 rounded-2xl bg-black/50 backdrop-blur-md p-6 md:p-8 border border-white/8">
             <div>
               <p className="text-sm uppercase tracking-widest mb-4" style={{ color: GOLD }}>Welcome to {data.businessName}</p>
               <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 20px rgba(0,0,0,0.8), 0 4px 40px rgba(0,0,0,0.5)" }}>
@@ -425,7 +425,7 @@ export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer" style={{ background: GOLD } as React.CSSProperties}>
                 Plan Your Visit <ArrowRight size={18} weight="bold" />
               </MagneticButton>
-              <MagneticButton href={`tel:${phoneDigits}`} className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
+              <MagneticButton href={`tel:${phoneDigits}`} className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
                 <Phone size={18} weight="duotone" /> <PhoneLink phone={data.phone} />
               </MagneticButton>
             </div>
@@ -436,7 +436,7 @@ export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
           </div>
 
           <div className="hidden md:block relative">
-            <div className="relative rounded-2xl overflow-hidden border border-white/10">
+            <div className="relative rounded-2xl overflow-hidden border border-white/15">
               <img src={heroCardImage} alt={`${data.businessName} worship`} className="w-full h-[500px] object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a2e] via-transparent to-transparent" />
               <div className="absolute inset-0 bg-gradient-to-r from-[#1a1a2e]/40 to-transparent" />
@@ -488,7 +488,7 @@ export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="relative">
-              <div className="rounded-2xl overflow-hidden border border-white/10">
+              <div className="rounded-2xl overflow-hidden border border-white/15">
                 <img src={aboutImage} alt={`${data.businessName} community`} className="w-full h-[400px] object-cover" />
               </div>
               <div className="absolute -bottom-4 -right-4 md:bottom-6 md:-right-6">
@@ -540,7 +540,7 @@ export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
             {data.services.map((service, i) => {
               const Icon = getServiceIcon(service.name);
               return (
-                <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.02]">
+                <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]">
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${GOLD}15, transparent 70%)` }} />
                   <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${GOLD}4d, transparent)` }} />
                   <div className="relative z-10">
@@ -606,7 +606,7 @@ export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {ministries.map((m, i) => (
-              <div key={m.title} className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.02]">
+              <div key={m.title} className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]">
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${GOLD}15, transparent 70%)` }} />
                 <div className="relative z-10">
                   <div className="flex items-start justify-between mb-5">
@@ -639,7 +639,7 @@ export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
             {galleryImages.map((src, i) => {
               const titles = ["Worship Service", "Bible Study", "Community Fellowship", "Church Family"];
               return (
-                <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.06] hover:border-opacity-30 transition-all duration-500">
+                <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.10] hover:border-opacity-30 transition-all duration-500">
                   <img src={src} alt={titles[i] || `Gallery ${i + 1}`} className="w-full h-64 object-cover transition-transform duration-700 group-hover:scale-105" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-6">
@@ -672,7 +672,7 @@ export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
                   ))}
                 </div>
                 <p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p>
-                <div className="pt-4 border-t border-white/5 flex items-center justify-between">
+                <div className="pt-4 border-t border-white/8 flex items-center justify-between">
                   <span className="text-sm font-semibold text-white">{t.name}</span>
                 </div>
               </GlassCard>
@@ -840,20 +840,20 @@ export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm text-slate-400 mb-1.5">First Name</label>
-                    <input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="John" />
+                    <input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="John" />
                   </div>
                   <div>
                     <label className="block text-sm text-slate-400 mb-1.5">Last Name</label>
-                    <input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="Doe" />
+                    <input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="Doe" />
                   </div>
                 </div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-1.5">Email</label>
-                  <input type="email" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="john@example.com" />
+                  <input type="email" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="john@example.com" />
                 </div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-1.5">Message</label>
-                  <textarea rows={4} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm resize-none" placeholder="How can we help you?" />
+                  <textarea rows={4} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm resize-none" placeholder="How can we help you?" />
                 </div>
                 <MagneticButton className="w-full py-4 rounded-xl text-base font-semibold text-white flex items-center justify-center gap-2 cursor-pointer" style={{ background: GOLD } as React.CSSProperties}>
                   Send Message <ArrowRight size={18} weight="bold" />
@@ -883,7 +883,7 @@ export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
               { title: "Back-to-School Drive", desc: "Annual supply drive providing backpacks, school supplies, and clothing to local students." },
               { title: "Community Meals", desc: "Monthly free community dinners open to everyone — no membership required, all are welcome." },
             ].map((item) => (
-              <div key={item.title} className="rounded-2xl border border-white/10 p-6" style={{ background: "rgba(255,255,255,0.03)" }}>
+              <div key={item.title} className="rounded-2xl border border-white/15 p-6" style={{ background: "rgba(255,255,255,0.06)" }}>
                 <Heart size={24} weight="fill" style={{ color: GOLD }} className="mb-3" />
                 <h3 className="text-lg font-bold text-white mb-2">{item.title}</h3>
                 <p className="text-sm text-slate-400 leading-relaxed">{item.desc}</p>
@@ -910,7 +910,7 @@ export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
               { group: "Young Adults", day: "Thursdays, 7:30 PM", desc: "Community for ages 18-30 with worship, discussion, and social events." },
               { group: "Marriage Enrichment", day: "Fridays, 6:30 PM", desc: "Strengthening marriages through faith-based tools and shared experiences." },
             ].map((g) => (
-              <div key={g.group} className="flex items-start gap-4 rounded-2xl border border-white/10 p-5" style={{ background: "rgba(255,255,255,0.03)" }}>
+              <div key={g.group} className="flex items-start gap-4 rounded-2xl border border-white/15 p-5" style={{ background: "rgba(255,255,255,0.06)" }}>
                 <Cross size={28} weight="duotone" style={{ color: GOLD }} className="shrink-0 mt-1" />
                 <div>
                   <h3 className="text-lg font-bold text-white">{g.group}</h3>
@@ -960,7 +960,7 @@ export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
       </section>
 
       {/* ══════════════════ 15. FOOTER ══════════════════ */}
-      <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden">
+      <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #111128 100%)` }} />
         <CrossPattern opacity={0.015} accent={GOLD} />
         <div className="mx-auto max-w-6xl px-6 relative z-10">
@@ -994,7 +994,7 @@ export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
             </div>
           </div>
 
-          <div className="border-t border-white/5 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="border-t border-white/8 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-sm text-slate-500">
               <Cross size={14} weight="duotone" style={{ color: GOLD }} />
               <span>{data.businessName} &copy; {new Date().getFullYear()}</span>

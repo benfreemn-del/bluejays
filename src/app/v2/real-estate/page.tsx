@@ -391,7 +391,7 @@ function MortgageCalculator() {
         </div>
       </div>
       {/* Result */}
-      <div className="pt-6 border-t border-white/10 text-center">
+      <div className="pt-6 border-t border-white/15 text-center">
         <p className="text-sm text-zinc-500 mb-2">Estimated Monthly Payment</p>
         <p className="text-5xl font-black tracking-tighter" style={{ color: GOLD }}>
           ${monthly.toLocaleString()}
@@ -443,7 +443,7 @@ export default function V2RealEstatePage() {
         initial={{ y: -40, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={spring}
-        className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-[#09090b]/70 border-b border-white/5"
+        className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-[#09090b]/70 border-b border-white/8"
       >
         <div className="max-w-7xl mx-auto flex items-center justify-between px-4 md:px-6 py-4">
           <div className="flex items-center gap-3">
@@ -490,7 +490,7 @@ export default function V2RealEstatePage() {
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
-              className="md:hidden overflow-hidden border-t border-white/5"
+              className="md:hidden overflow-hidden border-t border-white/8"
             >
               <div className="flex flex-col gap-1 px-4 py-4 bg-[#09090b]/95 backdrop-blur-xl">
                 {["Properties", "Neighborhoods", "About", "Calculator", "Contact"].map((l) => (
@@ -585,7 +585,7 @@ export default function V2RealEstatePage() {
             className={`p-2 rounded-2xl backdrop-blur-xl border transition-all duration-500 ${
               searchFocus
                 ? "bg-white/[0.08] border-[#b8860b]/40 shadow-[0_0_40px_rgba(184,134,11,0.15)]"
-                : "bg-white/[0.04] border-white/[0.08]"
+                : "bg-white/[0.07] border-white/[0.13]"
             }`}
           >
             <div className="flex flex-col sm:flex-row gap-2">
@@ -595,7 +595,7 @@ export default function V2RealEstatePage() {
                 onBlur={() => setSearchFocus(false)}
               >
                 <MapPin size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500" />
-                <select className="w-full bg-white/[0.05] border border-white/[0.06] rounded-xl pl-10 pr-4 py-3.5 text-sm text-zinc-300 appearance-none cursor-pointer focus:outline-none focus:border-[#b8860b]/30">
+                <select className="w-full bg-white/[0.08] border border-white/[0.10] rounded-xl pl-10 pr-4 py-3.5 text-sm text-zinc-300 appearance-none cursor-pointer focus:outline-none focus:border-[#b8860b]/30">
                   <option>All Neighborhoods</option>
                   <option>Capitol Hill</option>
                   <option>Bellevue</option>
@@ -608,7 +608,7 @@ export default function V2RealEstatePage() {
               </div>
               <div className="flex-1 relative">
                 <CurrencyDollar size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500" />
-                <select className="w-full bg-white/[0.05] border border-white/[0.06] rounded-xl pl-10 pr-4 py-3.5 text-sm text-zinc-300 appearance-none cursor-pointer focus:outline-none focus:border-[#b8860b]/30">
+                <select className="w-full bg-white/[0.08] border border-white/[0.10] rounded-xl pl-10 pr-4 py-3.5 text-sm text-zinc-300 appearance-none cursor-pointer focus:outline-none focus:border-[#b8860b]/30">
                   <option>Any Price</option>
                   <option>Under $500K</option>
                   <option>$500K - $1M</option>
@@ -620,7 +620,7 @@ export default function V2RealEstatePage() {
               </div>
               <div className="flex-1 relative">
                 <Bed size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500" />
-                <select className="w-full bg-white/[0.05] border border-white/[0.06] rounded-xl pl-10 pr-4 py-3.5 text-sm text-zinc-300 appearance-none cursor-pointer focus:outline-none focus:border-[#b8860b]/30">
+                <select className="w-full bg-white/[0.08] border border-white/[0.10] rounded-xl pl-10 pr-4 py-3.5 text-sm text-zinc-300 appearance-none cursor-pointer focus:outline-none focus:border-[#b8860b]/30">
                   <option>Bedrooms</option>
                   <option>1+</option>
                   <option>2+</option>
@@ -647,7 +647,7 @@ export default function V2RealEstatePage() {
       </motion.section>
 
       {/* ═══════ TRUST BAR ═══════ */}
-      <section className="relative z-10 py-6 border-y border-white/5">
+      <section className="relative z-10 py-6 border-y border-white/8">
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -706,7 +706,7 @@ export default function V2RealEstatePage() {
               viewport={{ once: true }}
               transition={{ ...spring, delay: i * 0.06 }}
               whileHover={{ y: -8, transition: spring }}
-              className="flex-shrink-0 w-[300px] md:w-[400px] rounded-2xl overflow-hidden backdrop-blur-md bg-white/[0.03] border border-white/[0.06] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)] group"
+              className="flex-shrink-0 w-[300px] md:w-[400px] rounded-2xl overflow-hidden backdrop-blur-md bg-white/[0.08] border border-white/[0.10] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)] group"
             >
               <div className="relative h-56 overflow-hidden">
                 <img
@@ -734,7 +734,7 @@ export default function V2RealEstatePage() {
                 <p className="text-sm text-zinc-500 flex items-center gap-1.5 mb-4">
                   <MapPin size={14} /> {p.address}
                 </p>
-                <div className="flex items-center gap-5 text-xs text-zinc-500 border-t border-white/5 pt-4">
+                <div className="flex items-center gap-5 text-xs text-zinc-500 border-t border-white/8 pt-4">
                   <span className="flex items-center gap-1.5">
                     <Bed size={14} /> {p.beds} Beds
                   </span>
@@ -781,7 +781,7 @@ export default function V2RealEstatePage() {
                 key={i}
                 variants={cardReveal}
                 whileHover={{ y: -6, transition: spring }}
-                className="rounded-2xl overflow-hidden backdrop-blur-md bg-white/[0.03] border border-white/[0.06] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)] group cursor-pointer"
+                className="rounded-2xl overflow-hidden backdrop-blur-md bg-white/[0.08] border border-white/[0.10] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)] group cursor-pointer"
               >
                 <div className="relative h-48 overflow-hidden">
                   <img
@@ -809,7 +809,7 @@ export default function V2RealEstatePage() {
                   <motion.button
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
-                    className="w-full py-2.5 text-sm font-semibold rounded-xl border border-white/10 text-zinc-300 hover:border-[#b8860b]/30 hover:text-white transition-all"
+                    className="w-full py-2.5 text-sm font-semibold rounded-xl border border-white/15 text-zinc-300 hover:border-[#b8860b]/30 hover:text-white transition-all"
                   >
                     View Homes
                   </motion.button>
@@ -850,7 +850,7 @@ export default function V2RealEstatePage() {
                 key={i}
                 variants={cardReveal}
                 whileHover={{ y: -6, transition: spring }}
-                className="p-8 rounded-2xl backdrop-blur-md bg-white/[0.03] border border-white/[0.06] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)] text-center group"
+                className="p-8 rounded-2xl backdrop-blur-md bg-white/[0.08] border border-white/[0.10] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)] text-center group"
               >
                 <div
                   className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-5 transition-colors duration-300"
@@ -892,7 +892,7 @@ export default function V2RealEstatePage() {
                 whileInView={{ y: 0, opacity: 1 }}
                 viewport={{ once: true }}
                 transition={{ ...spring, delay: 0.3 }}
-                className="absolute -bottom-4 -right-2 md:right-4 px-5 py-3 rounded-xl backdrop-blur-xl bg-white/[0.06] border border-white/[0.08] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)]"
+                className="absolute -bottom-4 -right-2 md:right-4 px-5 py-3 rounded-xl backdrop-blur-xl bg-white/[0.06] border border-white/[0.13] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)]"
               >
                 <div className="flex items-center gap-3">
                   <Star size={20} weight="fill" color={GOLD} />
@@ -943,7 +943,7 @@ export default function V2RealEstatePage() {
                 ].map((s, i) => (
                   <div
                     key={i}
-                    className="p-4 rounded-xl bg-white/[0.03] border border-white/5 text-center"
+                    className="p-4 rounded-xl bg-white/[0.08] border border-white/8 text-center"
                   >
                     <p className="text-2xl font-black" style={{ color: GOLD }}>{s.val}</p>
                     <p className="text-xs text-zinc-500 mt-1">{s.label}</p>
@@ -999,7 +999,7 @@ export default function V2RealEstatePage() {
               <motion.div
                 key={i}
                 variants={cardReveal}
-                className="p-6 rounded-2xl backdrop-blur-md bg-white/[0.03] border border-white/[0.06] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)]"
+                className="p-6 rounded-2xl backdrop-blur-md bg-white/[0.08] border border-white/[0.10] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)]"
               >
                 <div className="flex items-center justify-between mb-4">
                   <p className="text-sm text-zinc-500 uppercase tracking-wider">{s.label}</p>
@@ -1041,7 +1041,7 @@ export default function V2RealEstatePage() {
             whileInView={{ y: 0, opacity: 1 }}
             viewport={{ once: true }}
             transition={spring}
-            className="p-8 md:p-12 rounded-3xl backdrop-blur-xl bg-white/[0.04] border border-white/[0.08] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)]"
+            className="p-8 md:p-12 rounded-3xl backdrop-blur-xl bg-white/[0.07] border border-white/[0.13] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)]"
           >
             <MortgageCalculator />
           </motion.div>
@@ -1081,7 +1081,7 @@ export default function V2RealEstatePage() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.5, ease: "easeInOut" }}
-                className="p-8 md:p-12 rounded-3xl backdrop-blur-xl bg-white/[0.04] border border-white/[0.08] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)] text-center"
+                className="p-8 md:p-12 rounded-3xl backdrop-blur-xl bg-white/[0.07] border border-white/[0.13] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)] text-center"
               >
                 <Quotes size={40} weight="fill" color={GOLD} className="mx-auto mb-6 opacity-40" />
                 <p className="text-lg md:text-xl text-zinc-300 leading-relaxed mb-8 max-w-2xl mx-auto">
@@ -1167,13 +1167,13 @@ export default function V2RealEstatePage() {
             whileInView={{ y: 0, opacity: 1 }}
             viewport={{ once: true }}
             transition={{ ...spring, delay: 0.1 }}
-            className="rounded-2xl overflow-hidden border border-white/[0.08]"
-            style={{ background: "rgba(255,255,255,0.03)" }}
+            className="rounded-2xl overflow-hidden border border-white/[0.13]"
+            style={{ background: "rgba(255,255,255,0.06)" }}
           >
             <div className="overflow-x-auto">
               <table className="w-full text-left">
                 <thead>
-                  <tr className="border-b border-white/[0.08]">
+                  <tr className="border-b border-white/[0.13]">
                     <th className="px-6 py-4 text-sm text-zinc-500 font-medium">Feature</th>
                     <th className="px-6 py-4 text-sm font-semibold text-center" style={{ color: GOLD }}>Puget Sound Realty</th>
                     <th className="px-6 py-4 text-sm text-zinc-500 font-medium text-center">Zillow / Redfin</th>
@@ -1254,7 +1254,7 @@ export default function V2RealEstatePage() {
                   key={i}
                   variants={cardReveal}
                   whileHover={{ y: -4, transition: spring }}
-                  className="p-6 rounded-2xl backdrop-blur-md bg-white/[0.03] border border-white/[0.06] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)] text-center group cursor-pointer hover:border-[#b8860b]/20 transition-colors"
+                  className="p-6 rounded-2xl backdrop-blur-md bg-white/[0.08] border border-white/[0.10] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)] text-center group cursor-pointer hover:border-[#b8860b]/20 transition-colors"
                 >
                   <MapPin size={24} color={GOLD} className="mx-auto mb-3" />
                   <p className="font-bold text-base">{area}</p>
@@ -1283,7 +1283,7 @@ export default function V2RealEstatePage() {
           >
             {RE_FAQS.map((faq, i) => (
               <motion.div key={i} variants={cardReveal}>
-                <div className="rounded-xl overflow-hidden border border-white/[0.08] bg-white/[0.04]">
+                <div className="rounded-xl overflow-hidden border border-white/[0.13] bg-white/[0.07]">
                   <button
                     onClick={() => setOpenFaq(openFaq === i ? null : i)}
                     className="w-full flex items-center justify-between p-5 text-left cursor-pointer"
@@ -1343,7 +1343,7 @@ export default function V2RealEstatePage() {
               whileInView={{ y: 0, opacity: 1 }}
               viewport={{ once: true }}
               transition={spring}
-              className="lg:col-span-3 p-8 md:p-10 rounded-3xl backdrop-blur-xl bg-white/[0.04] border border-white/[0.08] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)]"
+              className="lg:col-span-3 p-8 md:p-10 rounded-3xl backdrop-blur-xl bg-white/[0.07] border border-white/[0.13] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)]"
             >
               <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -1352,7 +1352,7 @@ export default function V2RealEstatePage() {
                     <input
                       type="text"
                       placeholder="Your full name"
-                      className="w-full bg-white/[0.05] border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:border-[#b8860b]/40 transition-colors"
+                      className="w-full bg-white/[0.08] border border-white/[0.13] rounded-xl px-4 py-3 text-sm text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:border-[#b8860b]/40 transition-colors"
                     />
                   </div>
                   <div>
@@ -1360,7 +1360,7 @@ export default function V2RealEstatePage() {
                     <input
                       type="email"
                       placeholder="you@email.com"
-                      className="w-full bg-white/[0.05] border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:border-[#b8860b]/40 transition-colors"
+                      className="w-full bg-white/[0.08] border border-white/[0.13] rounded-xl px-4 py-3 text-sm text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:border-[#b8860b]/40 transition-colors"
                     />
                   </div>
                 </div>
@@ -1370,13 +1370,13 @@ export default function V2RealEstatePage() {
                     <input
                       type="tel"
                       placeholder="(206) 555-XXXX"
-                      className="w-full bg-white/[0.05] border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:border-[#b8860b]/40 transition-colors"
+                      className="w-full bg-white/[0.08] border border-white/[0.13] rounded-xl px-4 py-3 text-sm text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:border-[#b8860b]/40 transition-colors"
                     />
                   </div>
                   <div>
                     <label className="text-xs text-zinc-500 uppercase tracking-wider mb-1.5 block">I&apos;m looking to...</label>
                     <div className="relative">
-                      <select className="w-full bg-white/[0.05] border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-zinc-300 appearance-none cursor-pointer focus:outline-none focus:border-[#b8860b]/40 transition-colors">
+                      <select className="w-full bg-white/[0.08] border border-white/[0.13] rounded-xl px-4 py-3 text-sm text-zinc-300 appearance-none cursor-pointer focus:outline-none focus:border-[#b8860b]/40 transition-colors">
                         <option>Buy a Home</option>
                         <option>Sell My Home</option>
                         <option>Both</option>
@@ -1390,7 +1390,7 @@ export default function V2RealEstatePage() {
                   <textarea
                     rows={4}
                     placeholder="Tell us about your ideal home, timeline, or any questions..."
-                    className="w-full bg-white/[0.05] border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:border-[#b8860b]/40 transition-colors resize-none"
+                    className="w-full bg-white/[0.08] border border-white/[0.13] rounded-xl px-4 py-3 text-sm text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:border-[#b8860b]/40 transition-colors resize-none"
                   />
                 </div>
                 <motion.button
@@ -1422,7 +1422,7 @@ export default function V2RealEstatePage() {
               ].map((item, i) => (
                 <div
                   key={i}
-                  className="flex items-start gap-4 p-5 rounded-xl bg-white/[0.03] border border-white/5"
+                  className="flex items-start gap-4 p-5 rounded-xl bg-white/[0.08] border border-white/8"
                 >
                   <div
                     className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
@@ -1465,7 +1465,7 @@ export default function V2RealEstatePage() {
       </section>
 
       {/* ═══════ FOOTER ═══════ */}
-      <footer className="relative z-10 border-t border-white/5 pt-16 pb-8">
+      <footer className="relative z-10 border-t border-white/8 pt-16 pb-8">
         <div className="max-w-7xl mx-auto px-4 md:px-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
             {/* Brand */}
@@ -1485,7 +1485,7 @@ export default function V2RealEstatePage() {
                   <a
                     key={i}
                     href="#"
-                    className="w-9 h-9 rounded-lg bg-white/[0.05] border border-white/5 flex items-center justify-center hover:border-[#b8860b]/30 transition-colors"
+                    className="w-9 h-9 rounded-lg bg-white/[0.08] border border-white/8 flex items-center justify-center hover:border-[#b8860b]/30 transition-colors"
                   >
                     <Icon size={18} color="#a1a1aa" />
                   </a>
@@ -1537,7 +1537,7 @@ export default function V2RealEstatePage() {
           </div>
 
           {/* Bottom */}
-          <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="border-t border-white/8 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex flex-col sm:flex-row items-center gap-2 text-xs text-zinc-600">
               <span>Licensed in WA License #22076841</span>
               <span className="hidden sm:inline">|</span>

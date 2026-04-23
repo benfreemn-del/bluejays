@@ -111,7 +111,7 @@ function SectionReveal({ children, className = "", id }: { children: React.React
 }
 
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>;
+  return <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>;
 }
 
 function MagneticButton({ children, className = "", onClick, style }: { children: React.ReactNode; className?: string; onClick?: () => void; style?: React.CSSProperties }) {
@@ -299,7 +299,7 @@ export default function V2PoolSpaPage() {
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer" style={{ background: CYAN }}>
                 Free Consultation <ArrowRight size={18} weight="bold" />
               </MagneticButton>
-              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
+              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
                 <Phone size={18} weight="duotone" /> (555) 852-9630
               </MagneticButton>
             </motion.div>
@@ -488,7 +488,7 @@ export default function V2PoolSpaPage() {
             </h2>
           </div>
           <GlassCard className="overflow-hidden">
-            <div className="grid grid-cols-3 text-center text-xs md:text-sm font-semibold uppercase tracking-widest border-b border-white/10">
+            <div className="grid grid-cols-3 text-center text-xs md:text-sm font-semibold uppercase tracking-widest border-b border-white/15">
               <div className="p-4 text-slate-400">Feature</div>
               <div className="p-4 text-white" style={{ background: `${CYAN}18` }}>Pacific Blue Pool & Spa</div>
               <div className="p-4 text-slate-500">Other Pool Companies</div>
@@ -504,7 +504,7 @@ export default function V2PoolSpaPage() {
             ].map(([feature, us, them], i) => (
               <div
                 key={i}
-                className={`grid grid-cols-3 text-center items-center border-b border-white/5 last:border-b-0 ${i % 2 === 0 ? "bg-white/[0.02]" : ""}`}
+                className={`grid grid-cols-3 text-center items-center border-b border-white/8 last:border-b-0 ${i % 2 === 0 ? "bg-white/[0.07]" : ""}`}
               >
                 <div className="p-4 text-sm text-slate-300 text-left">{feature as string}</div>
                 <div className="p-4" style={{ background: `${CYAN}10` }}>
@@ -660,7 +660,7 @@ export default function V2PoolSpaPage() {
                 <GlassCard className="p-6 h-full flex flex-col">
                   <Quotes size={28} weight="fill" style={{ color: CYAN }} className="mb-3 opacity-50" />
                   <p className="text-slate-300 leading-relaxed flex-1 text-sm">{t.text}</p>
-                  <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
+                  <div className="mt-4 pt-4 border-t border-white/8 flex items-center justify-between">
                     <span className="text-sm font-semibold text-white">{t.name}</span>
                     <div className="flex gap-0.5">{Array.from({ length: t.rating }).map((_, j) => (<Star key={j} size={12} weight="fill" style={{ color: SAND }} />))}</div>
                   </div>
@@ -962,8 +962,8 @@ export default function V2PoolSpaPage() {
                     <input
                       type="text"
                       placeholder="Jane"
-                      className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 border border-white/10 focus:outline-none focus:border-cyan-500/60 transition-colors"
-                      style={{ background: "rgba(255,255,255,0.04)" }}
+                      className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 border border-white/15 focus:outline-none focus:border-cyan-500/60 transition-colors"
+                      style={{ background: "rgba(255,255,255,0.08)" }}
                     />
                   </div>
                   <div>
@@ -971,8 +971,8 @@ export default function V2PoolSpaPage() {
                     <input
                       type="text"
                       placeholder="Smith"
-                      className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 border border-white/10 focus:outline-none focus:border-cyan-500/60 transition-colors"
-                      style={{ background: "rgba(255,255,255,0.04)" }}
+                      className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 border border-white/15 focus:outline-none focus:border-cyan-500/60 transition-colors"
+                      style={{ background: "rgba(255,255,255,0.08)" }}
                     />
                   </div>
                 </div>
@@ -981,14 +981,14 @@ export default function V2PoolSpaPage() {
                   <input
                     type="tel"
                     placeholder="(206) 555-0100"
-                    className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 border border-white/10 focus:outline-none focus:border-cyan-500/60 transition-colors"
-                    style={{ background: "rgba(255,255,255,0.04)" }}
+                    className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 border border-white/15 focus:outline-none focus:border-cyan-500/60 transition-colors"
+                    style={{ background: "rgba(255,255,255,0.08)" }}
                   />
                 </div>
                 <div>
                   <label className="block text-xs text-slate-400 mb-1 uppercase tracking-widest">Service Needed</label>
                   <select
-                    className="w-full rounded-xl px-4 py-3 text-sm text-slate-300 border border-white/10 focus:outline-none focus:border-cyan-500/60 transition-colors appearance-none"
+                    className="w-full rounded-xl px-4 py-3 text-sm text-slate-300 border border-white/15 focus:outline-none focus:border-cyan-500/60 transition-colors appearance-none"
                     style={{ background: "#0d1e25" }}
                   >
                     <option value="">Select a service…</option>
@@ -1005,8 +1005,8 @@ export default function V2PoolSpaPage() {
                   <textarea
                     rows={3}
                     placeholder="Tell us about your pool…"
-                    className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 border border-white/10 focus:outline-none focus:border-cyan-500/60 transition-colors resize-none"
-                    style={{ background: "rgba(255,255,255,0.04)" }}
+                    className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 border border-white/15 focus:outline-none focus:border-cyan-500/60 transition-colors resize-none"
+                    style={{ background: "rgba(255,255,255,0.08)" }}
                   />
                 </div>
                 <MagneticButton
@@ -1029,7 +1029,7 @@ export default function V2PoolSpaPage() {
       </SectionReveal>
 
       {/* ─── FOOTER ─── */}
-      <footer className="relative z-10 border-t border-white/5 py-8">
+      <footer className="relative z-10 border-t border-white/8 py-8">
         <div className="mx-auto max-w-7xl px-4 md:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2 text-sm text-slate-500">
             <Drop size={16} weight="duotone" style={{ color: CYAN }} />

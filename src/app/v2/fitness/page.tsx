@@ -62,7 +62,7 @@ const BLACK = "#0a0a0a";
 const LIME = "#84cc16";
 const LIME_DIM = "rgba(132, 204, 22, 0.15)";
 const LIME_GLOW = "rgba(132, 204, 22, 0.25)";
-const CARD_BG = "rgba(255,255,255,0.04)";
+const CARD_BG = "rgba(255,255,255,0.08)";
 const CARD_BORDER = "rgba(255,255,255,0.06)";
 
 /* ───────────────────────── DATA ───────────────────────── */
@@ -284,7 +284,7 @@ function Nav() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-black/95 backdrop-blur-md border-t border-white/5"
+            className="md:hidden bg-black/95 backdrop-blur-md border-t border-white/8"
           >
             <div className="px-4 py-6 flex flex-col gap-4">
               {links.map((l) => (
@@ -443,7 +443,7 @@ export default function IronAndOakFitness() {
       {/* ═══════════════════════════════════════════════════════════
          STATS TRUST BAR
          ═══════════════════════════════════════════════════════════ */}
-      <section className="relative z-10 py-8 border-y border-white/[0.06]" style={{ background: "rgba(132,204,22,0.03)" }}>
+      <section className="relative z-10 py-8 border-y border-white/[0.10]" style={{ background: "rgba(132,204,22,0.03)" }}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {[
@@ -480,7 +480,7 @@ export default function IronAndOakFitness() {
 
           {/* toggle */}
           <motion.div variants={fadeUp} className="flex justify-center mb-10">
-            <div className="flex items-center gap-4 p-1 rounded-full border border-white/10 bg-white/[0.03]">
+            <div className="flex items-center gap-4 p-1 rounded-full border border-white/15 bg-white/[0.08]">
               <button onClick={() => setAnnual(false)} className={`px-5 py-2 rounded-full text-sm font-bold transition-all ${!annual ? "text-black" : "text-white/50"}`} style={!annual ? { background: LIME } : {}}>
                 Monthly
               </button>
@@ -559,7 +559,7 @@ export default function IronAndOakFitness() {
               </thead>
               <tbody>
                 {Object.entries(SCHEDULE).map(([day, slots]) => (
-                  <tr key={day} className="border-t border-white/[0.06]">
+                  <tr key={day} className="border-t border-white/[0.10]">
                     <td className="py-4 pr-4 font-bold text-sm text-white uppercase tracking-wide">{day}</td>
                     {(["morning", "afternoon", "evening"] as const).map((slot) => {
                       const cellId = `${day}-${slot}`;
@@ -574,7 +574,7 @@ export default function IronAndOakFitness() {
                           <div
                             className="rounded-lg px-3 py-2 text-xs font-medium transition-all duration-200 cursor-default"
                             style={{
-                              background: hoveredCell === cellId ? LIME_DIM : "rgba(255,255,255,0.03)",
+                              background: hoveredCell === cellId ? LIME_DIM : "rgba(255,255,255,0.06)",
                               border: `1px solid ${hoveredCell === cellId ? LIME : "rgba(255,255,255,0.06)"}`,
                               color: val === "—" ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.7)",
                             }}
@@ -928,7 +928,7 @@ export default function IronAndOakFitness() {
                         max={8}
                         value={heightFt}
                         onChange={(e) => setHeightFt(Number(e.target.value))}
-                        className="w-full px-4 py-3 rounded-xl bg-white/[0.06] border border-white/10 text-white text-center font-bold focus:outline-none focus:border-lime-500"
+                        className="w-full px-4 py-3 rounded-xl bg-white/[0.06] border border-white/15 text-white text-center font-bold focus:outline-none focus:border-lime-500"
                       />
                       <p className="text-center text-[10px] text-white/30 mt-1">feet</p>
                     </div>
@@ -939,7 +939,7 @@ export default function IronAndOakFitness() {
                         max={11}
                         value={heightIn}
                         onChange={(e) => setHeightIn(Number(e.target.value))}
-                        className="w-full px-4 py-3 rounded-xl bg-white/[0.06] border border-white/10 text-white text-center font-bold focus:outline-none focus:border-lime-500"
+                        className="w-full px-4 py-3 rounded-xl bg-white/[0.06] border border-white/15 text-white text-center font-bold focus:outline-none focus:border-lime-500"
                       />
                       <p className="text-center text-[10px] text-white/30 mt-1">inches</p>
                     </div>
@@ -953,7 +953,7 @@ export default function IronAndOakFitness() {
                     max={500}
                     value={weightLbs}
                     onChange={(e) => setWeightLbs(Number(e.target.value))}
-                    className="w-full px-4 py-3 rounded-xl bg-white/[0.06] border border-white/10 text-white text-center font-bold focus:outline-none focus:border-lime-500"
+                    className="w-full px-4 py-3 rounded-xl bg-white/[0.06] border border-white/15 text-white text-center font-bold focus:outline-none focus:border-lime-500"
                   />
                 </div>
               </div>
@@ -999,7 +999,7 @@ export default function IronAndOakFitness() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="your@email.com"
-                className="w-full sm:flex-1 px-5 py-4 rounded-xl bg-white/[0.06] border border-white/10 text-white placeholder:text-white/30 font-medium focus:outline-none focus:border-lime-500"
+                className="w-full sm:flex-1 px-5 py-4 rounded-xl bg-white/[0.06] border border-white/15 text-white placeholder:text-white/30 font-medium focus:outline-none focus:border-lime-500"
               />
               <button className="w-full sm:w-auto px-8 py-4 rounded-xl font-black uppercase tracking-wide text-black text-sm hover:scale-105 transition-transform" style={{ background: LIME }}>
                 Claim Trial
@@ -1026,7 +1026,7 @@ export default function IronAndOakFitness() {
             <div className="overflow-x-auto">
               <table className="w-full min-w-[500px]">
                 <thead>
-                  <tr className="border-b border-white/10">
+                  <tr className="border-b border-white/15">
                     <th className="text-left text-xs font-bold uppercase tracking-wider text-white/40 pb-4">Feature</th>
                     <th className="text-center text-xs font-bold uppercase tracking-wider pb-4" style={{ color: LIME }}>Iron & Oak</th>
                     <th className="text-center text-xs font-bold uppercase tracking-wider text-white/40 pb-4">Big Box Gym</th>
@@ -1150,7 +1150,7 @@ export default function IronAndOakFitness() {
                         transition={spring}
                         className="overflow-hidden"
                       >
-                        <div className="px-5 pb-5 border-t border-white/[0.06] pt-4">
+                        <div className="px-5 pb-5 border-t border-white/[0.10] pt-4">
                           <p className="text-white/70 leading-relaxed mb-4">{option.answer}</p>
                           <a
                             href="#trial"
@@ -1269,7 +1269,7 @@ export default function IronAndOakFitness() {
           <div className="grid md:grid-cols-2 gap-6">
             {/* map placeholder */}
             <GlassCard>
-              <div className="rounded-xl overflow-hidden h-72 bg-white/[0.02]">
+              <div className="rounded-xl overflow-hidden h-72 bg-white/[0.07]">
                 <img
                   src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=800&h=500&fit=crop"
                   alt="Seattle Eastlake neighborhood"
@@ -1339,7 +1339,7 @@ export default function IronAndOakFitness() {
       {/* ═══════════════════════════════════════════════════════════
          15. FOOTER
          ═══════════════════════════════════════════════════════════ */}
-      <footer className="relative border-t border-white/[0.06] py-12 px-4 sm:px-6">
+      <footer className="relative border-t border-white/[0.10] py-12 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-3 gap-8 mb-10">
             {/* brand */}
@@ -1380,7 +1380,7 @@ export default function IronAndOakFitness() {
               </div>
             </div>
           </div>
-          <div className="border-t border-white/[0.06] pt-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-white/30">
+          <div className="border-t border-white/[0.10] pt-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-white/30">
             <p>&copy; {new Date().getFullYear()} Iron & Oak Fitness. All rights reserved.</p>
             <p className="flex items-center gap-1.5">
               <svg width="14" height="14" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-sky-500"><path d="M24.3 4.2c-1.5-.4-3.2.1-4.5 1.1-1-.7-2.3-1-3.5-.8-2.4.4-4.2 2.5-4.2 4.9v.6c-3.2.8-6 2.8-7.8 5.6-.3.5-.1 1.1.4 1.4.5.3 1.1.1 1.4-.4 1.5-2.3 3.7-4 6.3-4.7.5-.1 1-.1 1.5 0 .8.2 1.4.8 1.7 1.5.3.8.2 1.6-.2 2.3l-2.8 4.3c-.6.9-.4 2.1.4 2.8l2.5 2.1c.4.3.8.5 1.3.5h5.2c.5 0 1-.2 1.3-.5l1.2-1c.6-.5.8-1.3.6-2l-1-3.2c-.2-.5 0-1.1.4-1.4l3.8-2.5c1.3-.9 2.1-2.3 2.1-3.9V9.6c0-2.5-1.7-4.7-4.1-5.3v-.1z" fill="currentColor"/></svg>Created by{" "}

@@ -231,7 +231,7 @@ function WaterStreamBackground({ opacity = 0.03, accent }: { opacity?: number; a
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <div
-      className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}
+      className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}
     >
       {children}
     </div>
@@ -569,7 +569,7 @@ export default function V2PressureWashingPreview({ data }: { data: GeneratedSite
               </MagneticButton>
               <MagneticButton
                 href={`tel:${phoneDigits}`}
-                className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer"
+                className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer"
               >
                 <Phone size={18} weight="duotone" /> <PhoneLink phone={data.phone} />
               </MagneticButton>
@@ -586,7 +586,7 @@ export default function V2PressureWashingPreview({ data }: { data: GeneratedSite
             </div>
           </div>
           <div className="hidden md:block relative">
-            <div className="relative rounded-2xl overflow-hidden border border-white/10">
+            <div className="relative rounded-2xl overflow-hidden border border-white/15">
               <img src={heroCardImage} alt={`${data.businessName} work`} className="w-full h-[500px] object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a1a] via-transparent to-transparent" />
               <div className="absolute bottom-6 left-6">
@@ -641,7 +641,7 @@ export default function V2PressureWashingPreview({ data }: { data: GeneratedSite
             {data.services.map((service, i) => {
               const Icon = getServiceIcon(service.name);
               return (
-                <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.02]">
+                <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]">
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${ACCENT}15, transparent 70%)` }} />
                   <div className="relative z-10">
                     <div className="flex items-start justify-between mb-5">
@@ -694,7 +694,7 @@ export default function V2PressureWashingPreview({ data }: { data: GeneratedSite
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="relative">
-              <div className="rounded-2xl overflow-hidden border border-white/10">
+              <div className="rounded-2xl overflow-hidden border border-white/15">
                 <img src={aboutImage} alt={`${data.businessName} team`} className="w-full h-[400px] object-cover" />
               </div>
               <div className="absolute -bottom-4 -right-4 md:bottom-6 md:-right-6">
@@ -811,7 +811,7 @@ export default function V2PressureWashingPreview({ data }: { data: GeneratedSite
             {galleryImages.map((src, i) => {
               const titles = ["Driveway Restoration", "House Wash", "Deck Revival", "Commercial Cleaning"];
               return (
-                <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.06]">
+                <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.10]">
                   <img src={src} alt={titles[i % titles.length]} className="w-full h-64 object-cover transition-transform duration-700 group-hover:scale-105" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-6">
@@ -831,7 +831,7 @@ export default function V2PressureWashingPreview({ data }: { data: GeneratedSite
           <AnimatedSection>
             <SectionHeader badge="See Our Work" title="Watch the Transformation" accent={ACCENT} />
           </AnimatedSection>
-          <div className="relative rounded-2xl overflow-hidden border border-white/10 group cursor-pointer">
+          <div className="relative rounded-2xl overflow-hidden border border-white/15 group cursor-pointer">
             <img src={heroImage} alt="Watch our work" className="w-full h-[400px] object-cover" />
             <div className="absolute inset-0 bg-black/60 flex items-center justify-center group-hover:bg-black/50 transition-colors">
               <div className="w-20 h-20 rounded-full flex items-center justify-center" style={{ background: `${ACCENT}cc` }}>
@@ -885,7 +885,7 @@ export default function V2PressureWashingPreview({ data }: { data: GeneratedSite
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-white/10">
+                  <tr className="border-b border-white/15">
                     <th className="text-left p-4 text-slate-400 font-medium">Feature</th>
                     <th className="text-center p-4 font-bold text-white">{data.businessName}</th>
                     <th className="text-center p-4 text-slate-400 font-medium">Others</th>
@@ -893,7 +893,7 @@ export default function V2PressureWashingPreview({ data }: { data: GeneratedSite
                 </thead>
                 <tbody>
                   {COMPARISON_ROWS.map((row, i) => (
-                    <tr key={row.feature} className={i < COMPARISON_ROWS.length - 1 ? "border-b border-white/5" : ""}>
+                    <tr key={row.feature} className={i < COMPARISON_ROWS.length - 1 ? "border-b border-white/8" : ""}>
                       <td className="p-4 text-slate-300">{row.feature}</td>
                       <td className="p-4 text-center">
                         <CheckCircle size={20} weight="fill" style={{ color: "#22c55e" }} className="mx-auto" />
@@ -921,7 +921,7 @@ export default function V2PressureWashingPreview({ data }: { data: GeneratedSite
               <button
                 key={opt.label}
                 onClick={() => setQuizAnswer(opt.label)}
-                className={`w-full text-left p-5 rounded-2xl border transition-all duration-300 cursor-pointer ${quizAnswer === opt.label ? "border-white/30 bg-white/[0.06]" : "border-white/10 bg-white/[0.02] hover:bg-white/[0.04]"}`}
+                className={`w-full text-left p-5 rounded-2xl border transition-all duration-300 cursor-pointer ${quizAnswer === opt.label ? "border-white/30 bg-white/[0.06]" : "border-white/15 bg-white/[0.07] hover:bg-white/[0.07]"}`}
               >
                 <div className="flex items-center justify-between">
                   <span className="text-white font-semibold">{opt.label}</span>
@@ -978,7 +978,7 @@ export default function V2PressureWashingPreview({ data }: { data: GeneratedSite
                   ))}
                 </div>
                 <p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p>
-                <div className="pt-4 border-t border-white/5 flex items-center gap-2">
+                <div className="pt-4 border-t border-white/8 flex items-center gap-2">
                   <SealCheck size={16} weight="fill" style={{ color: "#22c55e" }} />
                   <span className="text-sm font-semibold text-white">{t.name}</span>
                   <span className="text-xs text-slate-500">Verified</span>
@@ -1105,20 +1105,20 @@ export default function V2PressureWashingPreview({ data }: { data: GeneratedSite
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm text-slate-400 mb-1.5">First Name</label>
-                    <input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="John" />
+                    <input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="John" />
                   </div>
                   <div>
                     <label className="block text-sm text-slate-400 mb-1.5">Last Name</label>
-                    <input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="Doe" />
+                    <input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="Doe" />
                   </div>
                 </div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-1.5">Phone</label>
-                  <input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(555) 123-4567" />
+                  <input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(555) 123-4567" />
                 </div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-1.5">Service Needed</label>
-                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none text-sm">
+                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none text-sm">
                     <option value="" className="bg-neutral-900">Select a service</option>
                     {data.services.map((s) => (
                       <option key={s.name} value={s.name.toLowerCase().replace(/\s+/g, "-")} className="bg-neutral-900">{s.name}</option>
@@ -1127,7 +1127,7 @@ export default function V2PressureWashingPreview({ data }: { data: GeneratedSite
                 </div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-1.5">Project Details</label>
-                  <textarea rows={3} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm resize-none" placeholder="Describe surfaces to be cleaned..." />
+                  <textarea rows={3} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm resize-none" placeholder="Describe surfaces to be cleaned..." />
                 </div>
                 <MagneticButton
                   className="w-full py-4 rounded-xl text-base font-semibold text-white flex items-center justify-center gap-2 cursor-pointer"
@@ -1179,7 +1179,7 @@ export default function V2PressureWashingPreview({ data }: { data: GeneratedSite
       </section>
 
       {/* ─── FOOTER ─── */}
-      <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden">
+      <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111 100%)" }} />
         <div className="mx-auto max-w-6xl px-6 relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
@@ -1212,7 +1212,7 @@ export default function V2PressureWashingPreview({ data }: { data: GeneratedSite
               </div>
             </div>
           </div>
-          <div className="border-t border-white/5 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="border-t border-white/8 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-sm text-slate-500">
               <Drop size={14} weight="fill" style={{ color: ACCENT }} />
               <span>{data.businessName} &copy; {new Date().getFullYear()}</span>

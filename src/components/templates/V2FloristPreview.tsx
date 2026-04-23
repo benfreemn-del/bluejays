@@ -267,7 +267,7 @@ export default function V2FloristPreview({ data }: { data: GeneratedSiteData }) 
           <div className="absolute inset-0 bg-black/60" />
         </div>
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div className="space-y-8 rounded-2xl bg-black/40 backdrop-blur-md p-6 md:p-8 border border-white/5">
+          <div className="space-y-8 rounded-2xl bg-black/40 backdrop-blur-md p-6 md:p-8 border border-white/8">
             <div>
               <p className="text-sm uppercase tracking-widest mb-4" style={{ color: SAGE }}>Fresh Flowers &amp; Design</p>
               <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 20px rgba(0,0,0,0.8)" }}>{data.tagline || `${data.businessName} — Beautiful Blooms`}</h1>
@@ -279,12 +279,12 @@ export default function V2FloristPreview({ data }: { data: GeneratedSiteData }) 
             </div>
             <div className="flex flex-wrap gap-3">
               {["Same-Day Delivery", `${data.googleRating || "5.0"}-Star Rated`, "Fresh Guarantee"].map((badge) => (
-                <span key={badge} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border border-white/10 bg-white/5 text-white/80"><CheckCircle size={14} weight="fill" style={{ color: SAGE }} /> {badge}</span>
+                <span key={badge} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border border-white/15 bg-white/5 text-white/80"><CheckCircle size={14} weight="fill" style={{ color: SAGE }} /> {badge}</span>
               ))}
             </div>
           </div>
           <div className="hidden md:block relative">
-            <div className="relative rounded-2xl overflow-hidden border border-white/10">
+            <div className="relative rounded-2xl overflow-hidden border border-white/15">
               <img src={heroCardImage} alt={`${data.businessName} flowers`} className="w-full h-[500px] object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
               <div className="absolute bottom-6 left-6"><div className="px-4 py-2 rounded-full backdrop-blur-md bg-black/40 border flex items-center gap-2" style={{ borderColor: `${ACCENT}4d` }}><Flower size={18} weight="fill" style={{ color: ACCENT }} /><span className="text-sm font-semibold text-white">Handcrafted Daily</span></div></div>

@@ -201,7 +201,7 @@ function SectionReveal({ children, className = "", id }: { children: React.React
 }
 
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return (<div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>);
+  return (<div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>);
 }
 
 function MagneticButton({ children, className = "", onClick, style }: { children: React.ReactNode; className?: string; onClick?: () => void; style?: React.CSSProperties }) {
@@ -424,7 +424,7 @@ export default function V2LocksmithPage() {
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-black flex items-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
                 Emergency Lockout <ArrowRight size={18} weight="bold" />
               </MagneticButton>
-              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
+              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
                 <Phone size={18} weight="duotone" /> (206) 294-5817
               </MagneticButton>
             </motion.div>
@@ -614,7 +614,7 @@ export default function V2LocksmithPage() {
           </div>
           {/* Google Reviews Header */}
           <div className="flex justify-center mb-10">
-            <div className="inline-flex items-center gap-3 px-5 py-3 rounded-full border border-white/10 bg-white/[0.04]">
+            <div className="inline-flex items-center gap-3 px-5 py-3 rounded-full border border-white/15 bg-white/[0.07]">
               {/* Google G SVG */}
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -639,7 +639,7 @@ export default function V2LocksmithPage() {
                 <GlassCard className="p-6 h-full flex flex-col">
                   <Quotes size={28} weight="fill" style={{ color: ACCENT }} className="mb-3 opacity-50" />
                   <p className="text-slate-300 leading-relaxed flex-1 text-sm">{t.text}</p>
-                  <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
+                  <div className="mt-4 pt-4 border-t border-white/8 flex items-center justify-between">
                     <span className="text-sm font-semibold text-white">{t.name}</span>
                     <div className="flex gap-0.5">{Array.from({ length: t.rating }).map((_, j) => (<Star key={j} size={12} weight="fill" style={{ color: ACCENT }} />))}</div>
                   </div>
@@ -721,13 +721,13 @@ export default function V2LocksmithPage() {
           </div>
           <GlassCard className="overflow-hidden">
             {/* Header row */}
-            <div className="grid grid-cols-3 border-b border-white/10">
+            <div className="grid grid-cols-3 border-b border-white/15">
               <div className="p-4 md:p-5 text-xs font-semibold text-slate-500 uppercase tracking-widest">Feature</div>
               <div className="p-4 md:p-5 text-center text-xs font-semibold uppercase tracking-widest" style={{ color: ACCENT }}>City Lock &amp; Key</div>
               <div className="p-4 md:p-5 text-center text-xs font-semibold text-slate-500 uppercase tracking-widest">The Others</div>
             </div>
             {comparisonRows.map((row, i) => (
-              <div key={i} className={`grid grid-cols-3 border-b border-white/5 last:border-0 ${i % 2 === 0 ? "bg-white/[0.01]" : ""}`}>
+              <div key={i} className={`grid grid-cols-3 border-b border-white/8 last:border-0 ${i % 2 === 0 ? "bg-white/[0.01]" : ""}`}>
                 <div className="p-4 md:p-5 text-sm text-slate-300 font-medium flex items-center">{row.feature}</div>
                 <div className="p-4 md:p-5 flex items-center justify-center gap-2">
                   <CheckCircle size={16} weight="fill" style={{ color: "#22c55e" }} />
@@ -918,7 +918,7 @@ export default function V2LocksmithPage() {
             ))}
           </motion.div>
           <div className="mt-6 flex justify-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm text-slate-400 border border-white/10">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm text-slate-400 border border-white/15">
               <CheckCircle size={15} weight="duotone" style={{ color: ACCENT }} />
               Plus surrounding communities within a 30-mile radius
             </div>
@@ -972,7 +972,7 @@ export default function V2LocksmithPage() {
                 <MagneticButton className="px-10 py-4 rounded-full text-base font-semibold text-black inline-flex items-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
                   <Phone size={20} weight="duotone" /> Call Now
                 </MagneticButton>
-                <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
+                <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
                   <CalendarCheck size={18} weight="duotone" /> Schedule Service
                 </MagneticButton>
               </div>
@@ -1021,8 +1021,8 @@ export default function V2LocksmithPage() {
                         placeholder="Jane Smith"
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 border border-white/10 focus:border-white/30 focus:outline-none transition-colors"
-                        style={{ background: "rgba(255,255,255,0.04)" }}
+                        className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 border border-white/15 focus:border-white/30 focus:outline-none transition-colors"
+                        style={{ background: "rgba(255,255,255,0.08)" }}
                       />
                     </div>
                     <div>
@@ -1033,8 +1033,8 @@ export default function V2LocksmithPage() {
                         placeholder="Your phone number"
                         value={formData.phone}
                         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                        className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 border border-white/10 focus:border-white/30 focus:outline-none transition-colors"
-                        style={{ background: "rgba(255,255,255,0.04)" }}
+                        className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 border border-white/15 focus:border-white/30 focus:outline-none transition-colors"
+                        style={{ background: "rgba(255,255,255,0.08)" }}
                       />
                     </div>
                     <div>
@@ -1043,8 +1043,8 @@ export default function V2LocksmithPage() {
                         required
                         value={formData.serviceType}
                         onChange={(e) => setFormData({ ...formData, serviceType: e.target.value })}
-                        className="w-full rounded-xl px-4 py-3 text-sm border border-white/10 focus:border-white/30 focus:outline-none transition-colors appearance-none cursor-pointer"
-                        style={{ background: "rgba(255,255,255,0.04)", color: formData.serviceType ? "#f1f5f9" : "#64748b" }}
+                        className="w-full rounded-xl px-4 py-3 text-sm border border-white/15 focus:border-white/30 focus:outline-none transition-colors appearance-none cursor-pointer"
+                        style={{ background: "rgba(255,255,255,0.08)", color: formData.serviceType ? "#f1f5f9" : "#64748b" }}
                       >
                         <option value="" disabled>Select a service...</option>
                         <option value="emergency-lockout" style={{ background: "#1a1a0a" }}>Emergency Lockout</option>
@@ -1065,8 +1065,8 @@ export default function V2LocksmithPage() {
                         placeholder="Briefly describe what you need..."
                         value={formData.description}
                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                        className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 border border-white/10 focus:border-white/30 focus:outline-none transition-colors resize-none"
-                        style={{ background: "rgba(255,255,255,0.04)" }}
+                        className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 border border-white/15 focus:border-white/30 focus:outline-none transition-colors resize-none"
+                        style={{ background: "rgba(255,255,255,0.08)" }}
                       />
                     </div>
                     <MagneticButton
@@ -1085,7 +1085,7 @@ export default function V2LocksmithPage() {
       </SectionReveal>
 
       {/* ─── 10. FOOTER ─── */}
-      <footer className="relative z-10 border-t border-white/5 py-8">
+      <footer className="relative z-10 border-t border-white/8 py-8">
         <div className="mx-auto max-w-7xl px-4 md:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2 text-sm text-slate-500">
             <Key size={16} weight="duotone" style={{ color: ACCENT }} />

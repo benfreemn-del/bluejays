@@ -371,7 +371,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
                 { icon: Star, label: `${data.googleRating || "5.0"}-Star Rated` },
                 { icon: CheckCircle, label: "Free Estimates" },
               ].map((b) => (
-                <span key={b.label} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-white/10 text-white/80 border border-white/10">
+                <span key={b.label} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-white/10 text-white/80 border border-white/15">
                   <b.icon size={14} weight="fill" style={{ color: ACCENT }} /> {b.label}
                 </span>
               ))}
@@ -381,7 +381,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
             </div>
           </div>
           <div className="hidden lg:block relative">
-            <div className="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
+            <div className="relative rounded-2xl overflow-hidden border border-white/15 shadow-2xl">
               <img src={heroCardImage} alt={`${data.businessName} roofing`} className="w-full h-[520px] object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
               <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between">
@@ -435,7 +435,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
             {data.services.map((service, i) => {
               const Icon = getServiceIcon(service.name);
               return (
-                <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.02]">
+                <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]">
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${ACCENT}15, transparent 70%)` }} />
                   <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${ACCENT}4d, transparent)` }} />
                   <div className="relative z-10">
@@ -488,7 +488,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="relative">
-              <div className="rounded-2xl overflow-hidden border border-white/10">
+              <div className="rounded-2xl overflow-hidden border border-white/15">
                 <img src={aboutImage} alt={`${data.businessName} team`} className="w-full h-[400px] object-cover" />
               </div>
               <div className="absolute -bottom-4 -right-4 md:bottom-6 md:-right-6">
@@ -526,10 +526,10 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] right-[15%] w-[500px] h-[500px] rounded-full blur-[200px]" style={{ background: `${ACCENT}18` }} /></div>
         <div className="max-w-4xl mx-auto px-6 relative z-10">
           <SectionHeader badge="See The Difference" title="Before & After" subtitle="Real results from our roofing projects — quality you can see." accent={ACCENT} />
-          <div className="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
+          <div className="relative rounded-2xl overflow-hidden border border-white/15 shadow-2xl">
             <img src="/images/roofing-before-after.jpg" alt="Before and after roof replacement" className="w-full h-auto" />
             <div className="absolute bottom-0 left-0 right-0 flex">
-              <div className="flex-1 py-3 text-center bg-slate-800/80 backdrop-blur-sm border-r border-white/10">
+              <div className="flex-1 py-3 text-center bg-slate-800/80 backdrop-blur-sm border-r border-white/15">
                 <span className="text-sm font-bold text-white">Before</span>
               </div>
               <div className="flex-1 py-3 text-center backdrop-blur-sm" style={{ background: `${ACCENT}cc` }}>
@@ -552,7 +552,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
               const titles = ["Full Roof Replacement", "Storm Damage Repair", "Commercial Roof Installation", "Gutter & Flashing Upgrade"];
               const descs = ["Complete tear-off and architectural shingle installation.", "Emergency storm response and insurance claim support.", "Flat roof installation for a commercial building.", "Premium gutter system with leak-proof flashing."];
               return (
-                <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.06] hover:border-opacity-30 transition-all duration-500">
+                <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.10] hover:border-opacity-30 transition-all duration-500">
                   <img src={src} alt={titles[i]} className="w-full h-64 object-cover transition-transform duration-700 group-hover:scale-105" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-6"><h3 className="text-lg font-bold text-white mb-1">{titles[i]}</h3><p className="text-sm text-slate-300">{descs[i]}</p></div>
@@ -603,7 +603,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
                 <span className="text-4xl leading-none font-serif mb-2" style={{ color: ACCENT }}>&ldquo;</span>
                 <div className="flex gap-0.5 mb-4">{Array.from({ length: t.rating || 5 }).map((_, j) => <Star key={j} size={18} weight="fill" style={{ color: ACCENT }} />)}</div>
                 <p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">{t.text}</p>
-                <div className="pt-4 border-t border-white/5 flex items-center justify-between">
+                <div className="pt-4 border-t border-white/8 flex items-center justify-between">
                   <span className="text-sm font-semibold text-white">{t.name}</span>
                   <span className="flex items-center gap-1 text-xs text-slate-500"><CheckCircle size={14} weight="fill" style={{ color: ACCENT }} /> Verified</span>
                 </div>
@@ -701,7 +701,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
               { name: "Manufacturer Warranty", icon: CheckCircle },
               { name: "NRCA Member", icon: Star },
             ].map((cert) => (
-              <div key={cert.name} className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10">
+              <div key={cert.name} className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/15">
                 <cert.icon size={18} weight="fill" style={{ color: ACCENT }} />
                 <span className="text-sm font-semibold text-white/80">{cert.name}</span>
               </div>
@@ -718,13 +718,13 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
         <div className="max-w-3xl mx-auto px-6 relative z-10">
           <SectionHeader badge="Why Us" title={`${data.businessName} vs. The Competition`} accent={ACCENT} />
           <GlassCard className="overflow-hidden">
-            <div className="grid grid-cols-3 text-center text-sm font-bold border-b border-white/10">
+            <div className="grid grid-cols-3 text-center text-sm font-bold border-b border-white/15">
               <div className="p-4 text-slate-400">Feature</div>
               <div className="p-4 text-white" style={{ background: `${ACCENT}15` }}>{data.businessName.split(" ")[0]}</div>
               <div className="p-4 text-slate-500">Others</div>
             </div>
             {COMPARISON_ROWS.map((row, i) => (
-              <div key={row.feature} className={`grid grid-cols-3 text-center text-sm ${i < COMPARISON_ROWS.length - 1 ? "border-b border-white/5" : ""}`}>
+              <div key={row.feature} className={`grid grid-cols-3 text-center text-sm ${i < COMPARISON_ROWS.length - 1 ? "border-b border-white/8" : ""}`}>
                 <div className="p-3 text-slate-300 text-left pl-4">{row.feature}</div>
                 <div className="p-3 flex items-center justify-center" style={{ background: `${ACCENT}08` }}>
                   <CheckCircle size={20} weight="fill" style={{ color: ACCENT }} />
@@ -742,7 +742,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[10%] w-[500px] h-[500px] rounded-full blur-[200px]" style={{ background: `${ACCENT}12` }} /></div>
         <div className="max-w-4xl mx-auto px-6 relative z-10">
           <SectionHeader badge="Watch Our Work" title="See the Quality for Yourself" accent={ACCENT} />
-          <div className="relative rounded-2xl overflow-hidden border border-white/10 cursor-pointer group">
+          <div className="relative rounded-2xl overflow-hidden border border-white/15 cursor-pointer group">
             <img src={heroImage} alt="Watch our roofing projects" className="w-full h-[350px] object-cover transition-transform duration-500 group-hover:scale-105" />
             <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors" />
             <div className="absolute inset-0 flex items-center justify-center">
@@ -926,18 +926,18 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
               <h3 className="text-xl font-semibold text-white mb-6">Request a Free Inspection</h3>
               <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div><label className="block text-sm text-slate-400 mb-1.5">First Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="John" /></div>
-                  <div><label className="block text-sm text-slate-400 mb-1.5">Last Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="Doe" /></div>
+                  <div><label className="block text-sm text-slate-400 mb-1.5">First Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="John" /></div>
+                  <div><label className="block text-sm text-slate-400 mb-1.5">Last Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="Doe" /></div>
                 </div>
-                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
+                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-1.5">Service Needed</label>
-                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none text-sm">
+                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none text-sm">
                     <option value="" className="bg-neutral-900">Select a service</option>
                     {data.services.map((s) => <option key={s.name} value={s.name.toLowerCase().replace(/\s+/g, "-")} className="bg-neutral-900">{s.name}</option>)}
                   </select>
                 </div>
-                <div><label className="block text-sm text-slate-400 mb-1.5">Message</label><textarea rows={4} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm resize-none" placeholder="Describe your roofing needs..." /></div>
+                <div><label className="block text-sm text-slate-400 mb-1.5">Message</label><textarea rows={4} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm resize-none" placeholder="Describe your roofing needs..." /></div>
                 <MagneticButton className="w-full py-4 rounded-xl text-base font-semibold text-white flex items-center justify-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
                   Send Request <ArrowRight size={18} weight="bold" />
                 </MagneticButton>
@@ -971,7 +971,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
       </section>
 
       {/* ══════════════════ 15. FOOTER ══════════════════ */}
-      <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden">
+      <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${CHARCOAL} 0%, #0a0f1a 100%)` }} />
         <RooflinePattern opacity={0.015} />
         <div className="mx-auto max-w-6xl px-6 relative z-10">
@@ -992,7 +992,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
               </div>
             </div>
           </div>
-          <div className="border-t border-white/5 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="border-t border-white/8 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-sm text-slate-500"><House size={14} weight="fill" style={{ color: ACCENT }} /><span>{data.businessName} &copy; {new Date().getFullYear()}</span></div>
             <div className="flex items-center gap-2 text-xs text-slate-600"><BluejayLogo className="w-4 h-4" /><span>Created by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" style={{textDecoration:"underline"}}>bluejayportfolio.com</a></span></div>
           </div>

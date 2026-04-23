@@ -121,7 +121,7 @@ function SectionReveal({ children, className = "", id }: { children: React.React
 
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
+    <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
       {children}
     </div>
   );
@@ -410,7 +410,7 @@ export default function V2AccountingPage() {
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer" style={{ background: GOLD }}>
                 Free Tax Consultation <ArrowRight size={18} weight="bold" />
               </MagneticButton>
-              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
+              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
                 <Phone size={18} weight="duotone" /> (206) 591-7384
               </MagneticButton>
             </motion.div>
@@ -504,7 +504,7 @@ export default function V2AccountingPage() {
                 <button
                   key={i}
                   onClick={() => setSelectedBracket(i)}
-                  className={`p-3 rounded-xl border text-center transition-all cursor-pointer ${selectedBracket === i ? "border-emerald-500/50 bg-emerald-500/10" : "border-white/10 hover:border-white/20"}`}
+                  className={`p-3 rounded-xl border text-center transition-all cursor-pointer ${selectedBracket === i ? "border-emerald-500/50 bg-emerald-500/10" : "border-white/15 hover:border-white/20"}`}
                 >
                   <p className="text-xs text-slate-400 mb-1">{bracket.range}</p>
                   <p className="text-sm font-semibold" style={{ color: selectedBracket === i ? EMERALD : "#94a3b8" }}>{bracket.rate}</p>
@@ -675,13 +675,13 @@ export default function V2AccountingPage() {
             </h2>
           </div>
           <GlassCard className="overflow-hidden">
-            <div className="grid grid-cols-3 p-4 border-b border-white/5 text-center">
+            <div className="grid grid-cols-3 p-4 border-b border-white/8 text-center">
               <p className="text-sm font-semibold text-slate-400">Feature</p>
               <p className="text-sm font-semibold" style={{ color: EMERALD }}>Evergreen Tax</p>
               <p className="text-sm font-semibold text-slate-400">DIY Software</p>
             </div>
             {comparisonRows.map((row, i) => (
-              <div key={i} className={`grid grid-cols-3 p-4 items-center text-center ${i < comparisonRows.length - 1 ? "border-b border-white/5" : ""}`}>
+              <div key={i} className={`grid grid-cols-3 p-4 items-center text-center ${i < comparisonRows.length - 1 ? "border-b border-white/8" : ""}`}>
                 <p className="text-sm text-slate-300 text-left">{row.feature}</p>
                 <div className="flex justify-center">
                   <CheckCircle size={20} weight="fill" style={{ color: EMERALD }} />
@@ -738,7 +738,7 @@ export default function V2AccountingPage() {
                         </li>
                       ))}
                     </ul>
-                    <MagneticButton className="w-full py-3 rounded-full text-sm font-semibold text-white border border-white/10 cursor-pointer">Get Started</MagneticButton>
+                    <MagneticButton className="w-full py-3 rounded-full text-sm font-semibold text-white border border-white/15 cursor-pointer">Get Started</MagneticButton>
                   </GlassCard>
                 )}
               </motion.div>
@@ -971,11 +971,11 @@ export default function V2AccountingPage() {
                 <p className="text-sm text-slate-400">Same-day email responses. Calls returned within 4 hours during business hours.</p>
               </div>
             </div>
-            <div className="mt-8 pt-6 border-t border-white/5">
+            <div className="mt-8 pt-6 border-t border-white/8">
               <p className="text-center text-sm text-slate-500 mb-4">Local clients across the Puget Sound region</p>
               <div className="flex flex-wrap justify-center gap-3">
                 {["Seattle", "Bellevue", "Redmond", "Kirkland", "Tacoma", "Renton", "Bothell", "Issaquah", "Mercer Island", "Woodinville"].map((area) => (
-                  <span key={area} className="px-3 py-1 rounded-full text-xs border border-white/10 text-slate-400">{area}</span>
+                  <span key={area} className="px-3 py-1 rounded-full text-xs border border-white/15 text-slate-400">{area}</span>
                 ))}
               </div>
             </div>
@@ -1084,7 +1084,7 @@ export default function V2AccountingPage() {
                 <MagneticButton className="px-10 py-4 rounded-full text-base font-semibold text-white inline-flex items-center gap-2 cursor-pointer" style={{ background: GOLD }}>
                   <CalendarCheck size={20} weight="duotone" /> Book Free Consultation
                 </MagneticButton>
-                <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
+                <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
                   <Phone size={18} weight="duotone" /> (206) 591-7384
                 </MagneticButton>
               </div>
@@ -1148,7 +1148,7 @@ export default function V2AccountingPage() {
       </SectionReveal>
 
       {/* ─── FOOTER ─── */}
-      <footer className="relative z-10 border-t border-white/5 py-8">
+      <footer className="relative z-10 border-t border-white/8 py-8">
         <div className="mx-auto max-w-7xl px-4 md:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2 text-sm text-slate-500">
             <Bank size={16} weight="duotone" style={{ color: GOLD }} />

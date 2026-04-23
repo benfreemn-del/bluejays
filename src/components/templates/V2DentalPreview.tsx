@@ -872,7 +872,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
           <div className="relative rounded-2xl overflow-hidden border border-slate-200 shadow-lg">
             <img src="/images/dental-before-after.png" alt="Smile transformation before and after" className="w-full h-auto" />
             <div className="absolute bottom-0 left-0 right-0 flex">
-              <div className="flex-1 py-3 text-center bg-slate-800/80 backdrop-blur-sm border-r border-white/10">
+              <div className="flex-1 py-3 text-center bg-slate-800/80 backdrop-blur-sm border-r border-white/15">
                 <span className="text-sm font-bold text-white">Before</span>
               </div>
               <div className="flex-1 py-3 text-center backdrop-blur-sm" style={{ background: `${TEAL}cc` }}>
@@ -1082,7 +1082,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
                 <p className="text-slate-600 leading-relaxed flex-1 text-sm mb-4">
                   &ldquo;{t.text}&rdquo;
                 </p>
-                <div className="pt-4 border-t border-white/5 flex items-center justify-between">
+                <div className="pt-4 border-t border-white/8 flex items-center justify-between">
                   <span className="text-sm font-semibold text-slate-900">{t.name}</span>
                 </div>
               </GlassCard>
@@ -1391,7 +1391,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
       </section>
 
       {/* ══════════════════ 15. FOOTER ══════════════════ */}
-      <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden">
+      <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, #f0ede8 100%)` }} />
         <DentalPattern opacity={0.015} accent={TEAL} />
         <div className="mx-auto max-w-6xl px-4 sm:px-6 relative z-10">
@@ -1429,7 +1429,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
             </div>
           </div>
 
-          <div className="border-t border-white/5 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="border-t border-white/8 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-sm text-slate-500">
               <Tooth size={14} weight="fill" style={{ color: TEAL }} />
               <span>{data.businessName} &copy; {new Date().getFullYear()}</span>

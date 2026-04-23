@@ -36,7 +36,7 @@ function WavePattern({ opacity = 0.03, accent }: { opacity?: number; accent: str
   return <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity }} viewBox="0 0 1000 600" preserveAspectRatio="none"><path d="M0 300 Q250 200 500 300 T1000 300" stroke={accent} strokeWidth="1.5" fill="none" /><path d="M0 350 Q250 250 500 350 T1000 350" stroke={GREEN} strokeWidth="1" fill="none" /></svg>;
 }
 
-function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) { return <div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>; }
+function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) { return <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>; }
 
 function MagneticButton({ children, className = "", onClick, style, href }: { children: React.ReactNode; className?: string; onClick?: () => void; style?: React.CSSProperties; href?: string }) {
   const ref = useRef<HTMLButtonElement>(null); const x = useMotionValue(0); const y = useMotionValue(0); const sx = useSpring(x, springFast); const sy = useSpring(y, springFast);
@@ -211,7 +211,7 @@ export default function V2PhysicalTherapyPreview({ data }: { data: GeneratedSite
               </MagneticButton>
               <MagneticButton
                 href={`tel:${data.phone.replace(/\D/g, "")}`}
-                className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer"
+                className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer"
               >
                 <Phone size={18} weight="duotone" /> <PhoneLink phone={data.phone} />
               </MagneticButton>
@@ -244,7 +244,7 @@ export default function V2PhysicalTherapyPreview({ data }: { data: GeneratedSite
             </div>
           </div>
           <div className="hidden md:block relative">
-            <div className="relative rounded-2xl overflow-hidden border border-white/10">
+            <div className="relative rounded-2xl overflow-hidden border border-white/15">
               <img
                 src={heroCardImage}
                 alt={data.businessName}
@@ -280,7 +280,7 @@ export default function V2PhysicalTherapyPreview({ data }: { data: GeneratedSite
         <WavePattern accent={ACCENT} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <SectionHeader badge="Our Services" title="Specialized Physical Therapy" subtitle={`${data.businessName} provides expert rehabilitation for a full range of conditions.`} accent={ACCENT} />
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">{data.services.map((svc, i) => { const Icon = getServiceIcon(svc.name); return <div key={svc.name} className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.02]"><div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${ACCENT}15, transparent 70%)` }} /><div className="relative z-10"><div className="flex items-start justify-between mb-5"><div className="w-12 h-12 rounded-xl flex items-center justify-center border" style={{ background: ACCENT_GLOW, borderColor: `${ACCENT}33` }}><Icon size={24} weight="duotone" style={{ color: ACCENT }} /></div><span className="text-xs font-mono text-slate-600">{String(i + 1).padStart(2, "0")}</span></div><h3 className="text-lg font-bold text-white mb-2">{svc.name}</h3><p className="text-sm text-slate-400 leading-relaxed">{svc.description || ""}</p>{svc.price && <p className="text-sm font-semibold mt-3" style={{ color: ACCENT }}>{svc.price}</p>}</div></div>; })}</div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">{data.services.map((svc, i) => { const Icon = getServiceIcon(svc.name); return <div key={svc.name} className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]"><div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${ACCENT}15, transparent 70%)` }} /><div className="relative z-10"><div className="flex items-start justify-between mb-5"><div className="w-12 h-12 rounded-xl flex items-center justify-center border" style={{ background: ACCENT_GLOW, borderColor: `${ACCENT}33` }}><Icon size={24} weight="duotone" style={{ color: ACCENT }} /></div><span className="text-xs font-mono text-slate-600">{String(i + 1).padStart(2, "0")}</span></div><h3 className="text-lg font-bold text-white mb-2">{svc.name}</h3><p className="text-sm text-slate-400 leading-relaxed">{svc.description || ""}</p>{svc.price && <p className="text-sm font-semibold mt-3" style={{ color: ACCENT }}>{svc.price}</p>}</div></div>; })}</div>
         </div>
       </section>
 
@@ -288,7 +288,7 @@ export default function V2PhysicalTherapyPreview({ data }: { data: GeneratedSite
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0d1220 50%, ${BG} 100%)` }} />
         <div className="max-w-6xl mx-auto px-6 relative z-10"><div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          <div className="relative"><div className="rounded-2xl overflow-hidden border border-white/10"><img src={aboutImage} alt={`${data.businessName} clinic`} className="w-full h-[400px] object-cover" /></div><div className="absolute -bottom-4 -right-4 md:bottom-6 md:-right-6"><div className="px-5 py-3 rounded-xl backdrop-blur-md border text-white font-bold text-sm shadow-lg" style={{ background: `${ACCENT}e6`, borderColor: `${ACCENT}80` }}>{data.stats[0] ? `${data.stats[0].value} ${data.stats[0].label}` : "Expert Care"}</div></div></div>
+          <div className="relative"><div className="rounded-2xl overflow-hidden border border-white/15"><img src={aboutImage} alt={`${data.businessName} clinic`} className="w-full h-[400px] object-cover" /></div><div className="absolute -bottom-4 -right-4 md:bottom-6 md:-right-6"><div className="px-5 py-3 rounded-xl backdrop-blur-md border text-white font-bold text-sm shadow-lg" style={{ background: `${ACCENT}e6`, borderColor: `${ACCENT}80` }}>{data.stats[0] ? `${data.stats[0].value} ${data.stats[0].label}` : "Expert Care"}</div></div></div>
           <div><span className="inline-block text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border" style={{ color: ACCENT, borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}>About Us</span><h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-6 text-white">Your Recovery, Our Mission</h2><p className="text-slate-400 leading-relaxed mb-8">{data.about}</p>
             <div className="grid grid-cols-2 gap-4">{[{ icon: Certificate, label: "Board Certified" }, { icon: CheckCircle, label: "One-on-One Care" }, { icon: Star, label: "5-Star Rated" }, { icon: ShieldCheck, label: "In-Network" }].map((b) => <GlassCard key={b.label} className="p-4 flex items-center gap-3"><div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: ACCENT_GLOW }}><b.icon size={20} weight="duotone" style={{ color: ACCENT }} /></div><span className="text-sm font-semibold text-white">{b.label}</span></GlassCard>)}</div>
           </div>
@@ -510,7 +510,7 @@ export default function V2PhysicalTherapyPreview({ data }: { data: GeneratedSite
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-white/10">
+                  <tr className="border-b border-white/15">
                     <th className="text-left p-4 text-slate-400 font-medium">Feature</th>
                     <th className="text-center p-4 font-bold text-white">{data.businessName}</th>
                     <th className="text-center p-4 text-slate-400 font-medium">Others</th>
@@ -526,7 +526,7 @@ export default function V2PhysicalTherapyPreview({ data }: { data: GeneratedSite
                     { feature: "Same-Day Appointments", them: "2-Week Wait" },
                     { feature: "Progress Reports to Physician", them: "On Request Only" },
                   ].map((row, i) => (
-                    <tr key={row.feature} className={i < 6 ? "border-b border-white/5" : ""}>
+                    <tr key={row.feature} className={i < 6 ? "border-b border-white/8" : ""}>
                       <td className="p-4 text-slate-300">{row.feature}</td>
                       <td className="p-4 text-center">
                         <CheckCircle
@@ -556,7 +556,7 @@ export default function V2PhysicalTherapyPreview({ data }: { data: GeneratedSite
           <AnimatedSection>
             <SectionHeader badge="Inside Our Clinic" title="Take a Virtual Tour" accent={ACCENT} />
           </AnimatedSection>
-          <div className="relative rounded-2xl overflow-hidden border border-white/10 group cursor-pointer">
+          <div className="relative rounded-2xl overflow-hidden border border-white/15 group cursor-pointer">
             <img
               src={heroImage}
               alt="Virtual tour"
@@ -612,7 +612,7 @@ export default function V2PhysicalTherapyPreview({ data }: { data: GeneratedSite
                 <p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">
                   &ldquo;{t.text}&rdquo;
                 </p>
-                <div className="pt-4 border-t border-white/5 flex items-center gap-2">
+                <div className="pt-4 border-t border-white/8 flex items-center gap-2">
                   <CheckCircle size={16} weight="fill" style={{ color: "#22c55e" }} />
                   <span className="text-sm font-semibold text-white">{t.name}</span>
                   <span className="text-xs text-slate-500">Verified</span>
@@ -801,7 +801,7 @@ export default function V2PhysicalTherapyPreview({ data }: { data: GeneratedSite
                 <div className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: ACCENT }}>{story.condition}</div>
                 <h4 className="text-lg font-bold text-white mb-2">{story.result}</h4>
                 <p className="text-sm text-slate-400 mb-3">{story.patient}</p>
-                <div className="flex items-center gap-2 text-xs text-slate-500 pt-3 border-t border-white/5">
+                <div className="flex items-center gap-2 text-xs text-slate-500 pt-3 border-t border-white/8">
                   <Clock size={14} weight="duotone" style={{ color: ACCENT }} />
                   <span>{story.timeline}</span>
                 </div>
@@ -917,7 +917,7 @@ export default function V2PhysicalTherapyPreview({ data }: { data: GeneratedSite
                     <label className="block text-sm text-slate-400 mb-1.5">First Name</label>
                     <input
                       type="text"
-                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm"
+                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm"
                       placeholder="John"
                     />
                   </div>
@@ -925,7 +925,7 @@ export default function V2PhysicalTherapyPreview({ data }: { data: GeneratedSite
                     <label className="block text-sm text-slate-400 mb-1.5">Last Name</label>
                     <input
                       type="text"
-                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm"
+                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm"
                       placeholder="Doe"
                     />
                   </div>
@@ -934,13 +934,13 @@ export default function V2PhysicalTherapyPreview({ data }: { data: GeneratedSite
                   <label className="block text-sm text-slate-400 mb-1.5">Phone</label>
                   <input
                     type="tel"
-                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm"
+                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm"
                     placeholder="(555) 123-4567"
                   />
                 </div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-1.5">Condition</label>
-                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none text-sm">
+                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none text-sm">
                     <option value="" className="bg-neutral-900">Select condition</option>
                     {data.services.map((s) => (
                       <option key={s.name} value={s.name.toLowerCase()} className="bg-neutral-900">
@@ -953,7 +953,7 @@ export default function V2PhysicalTherapyPreview({ data }: { data: GeneratedSite
                   <label className="block text-sm text-slate-400 mb-1.5">Additional Details</label>
                   <textarea
                     rows={3}
-                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm resize-none"
+                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm resize-none"
                     placeholder="Tell us about your condition or injury..."
                   />
                 </div>
@@ -1001,7 +1001,7 @@ export default function V2PhysicalTherapyPreview({ data }: { data: GeneratedSite
       <section className="relative z-10 py-16 overflow-hidden"><div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0c1220 100%)` }} /><div className="max-w-4xl mx-auto px-6 relative z-10 text-center"><ShimmerBorder accent={ACCENT}><div className="p-8 md:p-12"><ShieldCheck size={48} weight="fill" style={{ color: ACCENT }} className="mx-auto mb-4" /><h2 className="text-2xl md:text-4xl font-extrabold text-white mb-4">Our Patient Promise</h2><p className="text-slate-400 leading-relaxed max-w-2xl mx-auto text-lg">One-on-one care with your therapist at every session. {data.businessName} is committed to your recovery.</p><div className="flex flex-wrap justify-center gap-4 mt-8">{["Board Certified", "Direct Access", "One-on-One Care", "Insurance Accepted"].map((item) => <span key={item} className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border" style={{ color: ACCENT, borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}><CheckCircle size={16} weight="fill" /> {item}</span>)}</div></div></ShimmerBorder></div></section>
 
       {/* FOOTER */}
-      <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden"><div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #060a12 100%)` }} /><div className="mx-auto max-w-6xl px-6 relative z-10"><div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8"><div><div className="flex items-center gap-2 mb-3"><Heartbeat size={22} weight="fill" style={{ color: ACCENT }} /><span className="text-lg font-bold text-white">{data.businessName}</span></div><p className="text-sm text-slate-500 leading-relaxed">{data.about.length > 120 ? data.about.slice(0, 120).trim() + "..." : data.about}</p></div><div><h4 className="text-sm font-semibold text-white mb-3">Quick Links</h4><div className="space-y-2">{["Services", "About", "Conditions", "Contact"].map((l) => <a key={l} href={`#${l.toLowerCase()}`} className="block text-sm text-slate-500 hover:text-white transition-colors">{l}</a>)}</div></div><div><h4 className="text-sm font-semibold text-white mb-3">Contact</h4><div className="space-y-2 text-sm text-slate-500"><p><PhoneLink phone={data.phone} /></p><p><MapLink address={data.address} /></p>{data.socialLinks && Object.entries(data.socialLinks).map(([p, url]) => <a key={p} href={url} target="_blank" rel="noopener noreferrer" className="block hover:text-white transition-colors capitalize">{p}</a>)}</div></div></div><div className="border-t border-white/5 pt-6 flex flex-col md:flex-row items-center justify-between gap-4"><div className="flex items-center gap-2 text-sm text-slate-500"><Heartbeat size={14} weight="fill" style={{ color: ACCENT }} /><span>{data.businessName} &copy; {new Date().getFullYear()}</span></div><div className="flex items-center gap-2 text-xs text-slate-600"><BluejayLogo className="w-4 h-4" /><span>Created by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" style={{textDecoration:"underline"}}>bluejayportfolio.com</a></span></div></div></div></footer>
+      <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden"><div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #060a12 100%)` }} /><div className="mx-auto max-w-6xl px-6 relative z-10"><div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8"><div><div className="flex items-center gap-2 mb-3"><Heartbeat size={22} weight="fill" style={{ color: ACCENT }} /><span className="text-lg font-bold text-white">{data.businessName}</span></div><p className="text-sm text-slate-500 leading-relaxed">{data.about.length > 120 ? data.about.slice(0, 120).trim() + "..." : data.about}</p></div><div><h4 className="text-sm font-semibold text-white mb-3">Quick Links</h4><div className="space-y-2">{["Services", "About", "Conditions", "Contact"].map((l) => <a key={l} href={`#${l.toLowerCase()}`} className="block text-sm text-slate-500 hover:text-white transition-colors">{l}</a>)}</div></div><div><h4 className="text-sm font-semibold text-white mb-3">Contact</h4><div className="space-y-2 text-sm text-slate-500"><p><PhoneLink phone={data.phone} /></p><p><MapLink address={data.address} /></p>{data.socialLinks && Object.entries(data.socialLinks).map(([p, url]) => <a key={p} href={url} target="_blank" rel="noopener noreferrer" className="block hover:text-white transition-colors capitalize">{p}</a>)}</div></div></div><div className="border-t border-white/8 pt-6 flex flex-col md:flex-row items-center justify-between gap-4"><div className="flex items-center gap-2 text-sm text-slate-500"><Heartbeat size={14} weight="fill" style={{ color: ACCENT }} /><span>{data.businessName} &copy; {new Date().getFullYear()}</span></div><div className="flex items-center gap-2 text-xs text-slate-600"><BluejayLogo className="w-4 h-4" /><span>Created by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" style={{textDecoration:"underline"}}>bluejayportfolio.com</a></span></div></div></div></footer>
 
       <ClaimBanner businessName={data.businessName} accentColor={ACCENT} prospectId={data.id} />
       <div className="h-14 md:h-28" />

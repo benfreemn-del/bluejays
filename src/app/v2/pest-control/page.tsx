@@ -170,7 +170,7 @@ function SectionReveal({ children, className = "", id }: { children: React.React
 }
 
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>;
+  return <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>;
 }
 
 function MagneticButton({ children, className = "", onClick, href, style }: { children: React.ReactNode; className?: string; onClick?: () => void; href?: string; style?: React.CSSProperties }) {
@@ -367,7 +367,7 @@ function Nav() {
     { label: "Contact", href: "#contact" },
   ];
   return (
-    <nav className="fixed top-0 inset-x-0 z-50 backdrop-blur-xl border-b border-white/10" style={{ background: `${BG}cc` }}>
+    <nav className="fixed top-0 inset-x-0 z-50 backdrop-blur-xl border-b border-white/15" style={{ background: `${BG}cc` }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
         <a href="#" className="flex items-center gap-2">
           <ShieldCheck size={28} weight="fill" style={{ color: ORANGE }} />
@@ -383,7 +383,7 @@ function Nav() {
       </div>
       <AnimatePresence>
         {open && (
-          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="md:hidden overflow-hidden border-t border-white/10" style={{ background: BG }}>
+          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="md:hidden overflow-hidden border-t border-white/15" style={{ background: BG }}>
             <div className="px-4 py-4 flex flex-col gap-3">
               {links.map((l) => (<a key={l.label} href={l.href} onClick={() => setOpen(false)} className="text-sm text-gray-300 py-2">{l.label}</a>))}
               <a href="tel:+12067483920" className="flex items-center justify-center gap-2 px-4 py-3 rounded-full text-sm font-bold text-white mt-2" style={{ background: ORANGE }}>
@@ -405,7 +405,7 @@ function PestIdentifier() {
     <div>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
         {PEST_TYPES.map((p, i) => (
-          <button key={p.name} onClick={() => setSelected(i)} className={`flex flex-col items-center gap-2 p-4 rounded-xl border transition-all ${selected === i ? "border-white/30 scale-[1.02]" : "border-white/10 hover:border-white/20"}`} style={{ background: selected === i ? `${p.color}15` : "rgba(255,255,255,0.03)" }}>
+          <button key={p.name} onClick={() => setSelected(i)} className={`flex flex-col items-center gap-2 p-4 rounded-xl border transition-all ${selected === i ? "border-white/30 scale-[1.02]" : "border-white/15 hover:border-white/20"}`} style={{ background: selected === i ? `${p.color}15` : "rgba(255,255,255,0.06)" }}>
             <p.icon size={28} weight="fill" style={{ color: p.color }} />
             <span className="text-sm font-semibold text-white">{p.name}</span>
           </button>
@@ -429,11 +429,11 @@ function PestIdentifier() {
               </div>
               <p className="text-gray-300 mb-5 leading-relaxed">{pest.info}</p>
               <div className="grid md:grid-cols-2 gap-4">
-                <div className="p-4 rounded-xl border border-white/10" style={{ background: `${ORANGE}08` }}>
+                <div className="p-4 rounded-xl border border-white/15" style={{ background: `${ORANGE}08` }}>
                   <span className="text-xs font-bold uppercase tracking-wider mb-2 block" style={{ color: ORANGE_LIGHT }}>Treatment Method</span>
                   <p className="text-white text-sm">{pest.treatment}</p>
                 </div>
-                <div className="p-4 rounded-xl border border-white/10" style={{ background: `${GREEN}08` }}>
+                <div className="p-4 rounded-xl border border-white/15" style={{ background: `${GREEN}08` }}>
                   <span className="text-xs font-bold uppercase tracking-wider mb-2 block" style={{ color: GREEN }}>Prevention Tips</span>
                   <p className="text-white text-sm">{pest.prevention}</p>
                 </div>
@@ -492,7 +492,7 @@ function TreatmentEstimator() {
           <label className="text-sm font-bold text-gray-300 mb-3 block">Home Size</label>
           <div className="flex flex-col gap-2">
             {sizes.map((s) => (
-              <button key={s.val} onClick={() => setHomeSize(s.val)} className={`text-left px-4 py-2.5 rounded-lg border text-sm transition-all ${homeSize === s.val ? "border-white/30 text-white" : "border-white/10 text-gray-400 hover:border-white/20"}`} style={{ background: homeSize === s.val ? `${ORANGE}15` : "transparent" }}>
+              <button key={s.val} onClick={() => setHomeSize(s.val)} className={`text-left px-4 py-2.5 rounded-lg border text-sm transition-all ${homeSize === s.val ? "border-white/30 text-white" : "border-white/15 text-gray-400 hover:border-white/20"}`} style={{ background: homeSize === s.val ? `${ORANGE}15` : "transparent" }}>
                 {s.label}
               </button>
             ))}
@@ -503,7 +503,7 @@ function TreatmentEstimator() {
           <label className="text-sm font-bold text-gray-300 mb-3 block">Pest Type</label>
           <div className="flex flex-col gap-2">
             {pests.map((p) => (
-              <button key={p.val} onClick={() => setPestType(p.val)} className={`text-left px-4 py-2.5 rounded-lg border text-sm transition-all ${pestType === p.val ? "border-white/30 text-white" : "border-white/10 text-gray-400 hover:border-white/20"}`} style={{ background: pestType === p.val ? `${ORANGE}15` : "transparent" }}>
+              <button key={p.val} onClick={() => setPestType(p.val)} className={`text-left px-4 py-2.5 rounded-lg border text-sm transition-all ${pestType === p.val ? "border-white/30 text-white" : "border-white/15 text-gray-400 hover:border-white/20"}`} style={{ background: pestType === p.val ? `${ORANGE}15` : "transparent" }}>
                 {p.label}
               </button>
             ))}
@@ -514,7 +514,7 @@ function TreatmentEstimator() {
           <label className="text-sm font-bold text-gray-300 mb-3 block">Frequency</label>
           <div className="flex flex-col gap-2">
             {freqs.map((f) => (
-              <button key={f.val} onClick={() => setFrequency(f.val)} className={`text-left px-4 py-2.5 rounded-lg border transition-all ${frequency === f.val ? "border-white/30" : "border-white/10 hover:border-white/20"}`} style={{ background: frequency === f.val ? `${ORANGE}15` : "transparent" }}>
+              <button key={f.val} onClick={() => setFrequency(f.val)} className={`text-left px-4 py-2.5 rounded-lg border transition-all ${frequency === f.val ? "border-white/30" : "border-white/15 hover:border-white/20"}`} style={{ background: frequency === f.val ? `${ORANGE}15` : "transparent" }}>
                 <span className={`text-sm font-semibold ${frequency === f.val ? "text-white" : "text-gray-400"}`}>{f.label}</span>
                 <span className="block text-xs text-gray-500">{f.sub}</span>
               </button>
@@ -524,7 +524,7 @@ function TreatmentEstimator() {
       </div>
 
       {/* Result */}
-      <div className="text-center p-6 rounded-xl border border-white/10" style={{ background: `${ORANGE}08` }}>
+      <div className="text-center p-6 rounded-xl border border-white/15" style={{ background: `${ORANGE}08` }}>
         <span className="text-sm text-gray-400 block mb-1">Estimated {frequency === "onetime" ? "Treatment" : "Per Service"} Cost</span>
         <div className="flex items-center justify-center gap-1">
           <CurrencyDollar size={28} style={{ color: ORANGE }} />
@@ -548,7 +548,7 @@ function SeasonalCalendar() {
     <div>
       <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
         {SEASONAL_DATA.map((season, i) => (
-          <button key={season.season} onClick={() => setActiveSeason(i)} className={`flex items-center gap-2 px-5 py-3 rounded-xl border whitespace-nowrap transition-all ${activeSeason === i ? "border-white/30" : "border-white/10 hover:border-white/20"}`} style={{ background: activeSeason === i ? `${season.color}15` : "transparent" }}>
+          <button key={season.season} onClick={() => setActiveSeason(i)} className={`flex items-center gap-2 px-5 py-3 rounded-xl border whitespace-nowrap transition-all ${activeSeason === i ? "border-white/30" : "border-white/15 hover:border-white/20"}`} style={{ background: activeSeason === i ? `${season.color}15` : "transparent" }}>
             <season.icon size={20} weight="fill" style={{ color: season.color }} />
             <span className={`text-sm font-semibold ${activeSeason === i ? "text-white" : "text-gray-400"}`}>{season.season}</span>
           </button>
@@ -563,7 +563,7 @@ function SeasonalCalendar() {
             </div>
             <div className="grid sm:grid-cols-2 gap-4 mb-5">
               {s.pests.map((pest) => (
-                <div key={pest} className="flex items-center gap-2 px-3 py-2 rounded-lg border border-white/10" style={{ background: `${s.color}08` }}>
+                <div key={pest} className="flex items-center gap-2 px-3 py-2 rounded-lg border border-white/15" style={{ background: `${s.color}08` }}>
                   <Bug size={16} weight="fill" style={{ color: s.color }} />
                   <span className="text-sm text-white">{pest}</span>
                 </div>
@@ -736,7 +736,7 @@ export default function PestControlShowcase() {
         </div>
 
         {/* Emergency strip */}
-        <motion.div className="absolute bottom-0 inset-x-0 py-3 border-t border-white/10" style={{ background: `${RED}10` }} animate={{ opacity: [0.7, 1, 0.7] }} transition={{ duration: 2, repeat: Infinity }}>
+        <motion.div className="absolute bottom-0 inset-x-0 py-3 border-t border-white/15" style={{ background: `${RED}10` }} animate={{ opacity: [0.7, 1, 0.7] }} transition={{ duration: 2, repeat: Infinity }}>
           <div className="max-w-7xl mx-auto px-4 flex items-center justify-center gap-3">
             <Siren size={18} weight="fill" style={{ color: RED }} />
             <span className="text-sm font-bold text-white">Emergency Pest Response</span>
@@ -747,7 +747,7 @@ export default function PestControlShowcase() {
       </section>
 
       {/* ──────────── TRUST BAR ──────────── */}
-      <SectionReveal className="py-8 border-y border-white/10" style={{ background: `linear-gradient(135deg, ${BG}, rgba(234,88,12,0.04))` } as React.CSSProperties}>
+      <SectionReveal className="py-8 border-y border-white/15" style={{ background: `linear-gradient(135deg, ${BG}, rgba(234,88,12,0.04))` } as React.CSSProperties}>
         <div className="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
           {[
             { value: "12+", label: "Years Serving PNW", icon: CalendarCheck },
@@ -820,21 +820,21 @@ export default function PestControlShowcase() {
             <div className="relative">
               <GlassCard className="p-8">
                 <div className="space-y-6">
-                  <div className="flex items-center gap-4 p-4 rounded-xl border border-white/10" style={{ background: `${ORANGE}08` }}>
+                  <div className="flex items-center gap-4 p-4 rounded-xl border border-white/15" style={{ background: `${ORANGE}08` }}>
                     <ShieldCheck size={32} weight="fill" style={{ color: ORANGE }} />
                     <div>
                       <h4 className="text-white font-bold">Pest-Free Guarantee</h4>
                       <p className="text-sm text-gray-400">If pests return between treatments, so do we — free of charge</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4 p-4 rounded-xl border border-white/10" style={{ background: `${GREEN}08` }}>
+                  <div className="flex items-center gap-4 p-4 rounded-xl border border-white/15" style={{ background: `${GREEN}08` }}>
                     <Leaf size={32} weight="fill" style={{ color: GREEN }} />
                     <div>
                       <h4 className="text-white font-bold">Eco-Friendly First</h4>
                       <p className="text-sm text-gray-400">We use the least-toxic effective treatment every time</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4 p-4 rounded-xl border border-white/10" style={{ background: `${ORANGE}08` }}>
+                  <div className="flex items-center gap-4 p-4 rounded-xl border border-white/15" style={{ background: `${ORANGE}08` }}>
                     <Users size={32} weight="fill" style={{ color: ORANGE_LIGHT }} />
                     <div>
                       <h4 className="text-white font-bold">Family Owned</h4>
@@ -952,7 +952,7 @@ export default function PestControlShowcase() {
                   <p className="text-sm text-gray-300 leading-relaxed flex-1">{t.text}</p>
 
                   {/* Footer */}
-                  <div className="flex items-center justify-between mt-4 pt-4 border-t border-white/10">
+                  <div className="flex items-center justify-between mt-4 pt-4 border-t border-white/15">
                     <div className="flex items-center gap-2">
                       <CheckCircle size={16} weight="fill" style={{ color: GREEN }} />
                       <span className="text-sm font-semibold text-white">{t.name}</span>
@@ -1008,7 +1008,7 @@ export default function PestControlShowcase() {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-white/10">
+                  <tr className="border-b border-white/15">
                     <th className="text-left px-6 py-4 text-sm text-gray-400 font-medium">Feature</th>
                     <th className="px-6 py-4 text-sm font-bold text-center" style={{ color: ORANGE }}>Evergreen</th>
                     <th className="px-6 py-4 text-sm text-gray-400 text-center">DIY</th>
@@ -1017,7 +1017,7 @@ export default function PestControlShowcase() {
                 </thead>
                 <tbody>
                   {COMPARISON_ROWS.map((row, i) => (
-                    <tr key={row.feature} className={`border-b border-white/5 ${i % 2 === 0 ? "" : "bg-white/[0.02]"}`}>
+                    <tr key={row.feature} className={`border-b border-white/8 ${i % 2 === 0 ? "" : "bg-white/[0.07]"}`}>
                       <td className="px-6 py-4 text-sm text-gray-300">{row.feature}</td>
                       <td className="px-6 py-4 text-center">
                         <CheckCircle size={20} weight="fill" style={{ color: GREEN }} className="mx-auto" />
@@ -1189,21 +1189,21 @@ export default function PestControlShowcase() {
                 </div>
               </div>
               <div className="space-y-4">
-                <div className="flex items-center gap-4 p-4 rounded-xl border border-white/10" style={{ background: `${GREEN}08` }}>
+                <div className="flex items-center gap-4 p-4 rounded-xl border border-white/15" style={{ background: `${GREEN}08` }}>
                   <div className="w-3 h-3 rounded-full animate-pulse" style={{ background: GREEN }} />
                   <div>
                     <span className="text-sm font-bold text-white">Currently Available</span>
                     <p className="text-xs text-gray-400">Crews dispatching now</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-4 p-4 rounded-xl border border-white/10" style={{ background: `${ORANGE}08` }}>
+                <div className="flex items-center gap-4 p-4 rounded-xl border border-white/15" style={{ background: `${ORANGE}08` }}>
                   <Timer size={24} weight="fill" style={{ color: ORANGE }} />
                   <div>
                     <span className="text-sm font-bold text-white">Under 2-Hour Emergency Response</span>
                     <p className="text-xs text-gray-400">During business hours (7am - 7pm)</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-4 p-4 rounded-xl border border-white/10" style={{ background: `${ORANGE}08` }}>
+                <div className="flex items-center gap-4 p-4 rounded-xl border border-white/15" style={{ background: `${ORANGE}08` }}>
                   <MapPin size={24} weight="fill" style={{ color: ORANGE_LIGHT }} />
                   <div>
                     <span className="text-sm font-bold text-white">25-Mile Service Radius</span>
@@ -1292,9 +1292,9 @@ export default function PestControlShowcase() {
               <h3 className="text-xl font-bold text-white mb-2">Free Inspection Request</h3>
               <p className="text-sm text-gray-400 mb-6">Fill out the form and we will get back to you within 1 business hour.</p>
               <div className="space-y-4">
-                <input type="text" placeholder="Your Name" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-orange-500/50" />
-                <input type="tel" placeholder="Phone Number" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-orange-500/50" />
-                <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-gray-400 text-sm focus:outline-none focus:border-orange-500/50" style={{ background: BG }}>
+                <input type="text" placeholder="Your Name" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-orange-500/50" />
+                <input type="tel" placeholder="Phone Number" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-orange-500/50" />
+                <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-gray-400 text-sm focus:outline-none focus:border-orange-500/50" style={{ background: BG }}>
                   <option value="">What pest are you dealing with?</option>
                   <option>Ants</option>
                   <option>Rodents</option>
@@ -1305,7 +1305,7 @@ export default function PestControlShowcase() {
                   <option>Bed Bugs</option>
                   <option>Other</option>
                 </select>
-                <textarea placeholder="Describe your situation..." rows={3} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-orange-500/50 resize-none" />
+                <textarea placeholder="Describe your situation..." rows={3} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-orange-500/50 resize-none" />
                 <button className="w-full py-3 rounded-full text-sm font-bold text-white" style={{ background: ORANGE }}>
                   Request Free Inspection
                 </button>
@@ -1316,7 +1316,7 @@ export default function PestControlShowcase() {
       </SectionReveal>
 
       {/* ──────────── FOOTER ──────────── */}
-      <footer className="border-t border-white/10 py-12" style={{ background: `linear-gradient(180deg, ${BG}, #0a0f1a)` }}>
+      <footer className="border-t border-white/15 py-12" style={{ background: `linear-gradient(180deg, ${BG}, #0a0f1a)` }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
@@ -1352,7 +1352,7 @@ export default function PestControlShowcase() {
               </ul>
             </div>
           </div>
-          <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="border-t border-white/15 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-xs text-gray-500">
               &copy; {new Date().getFullYear()} Evergreen Pest Solutions. All rights reserved.
             </p>

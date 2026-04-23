@@ -164,7 +164,7 @@ function GlassCard({
 }) {
   return (
     <div
-      className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}
+      className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}
     >
       {children}
     </div>
@@ -541,7 +541,7 @@ export default function V2RestaurantPage() {
                 style={{ background: RED } as React.CSSProperties}>
                 Reserve a Table <ArrowRight size={18} weight="bold" />
               </MagneticButton>
-              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
+              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
                 <Phone size={18} weight="duotone" /> (555) 867-5309
               </MagneticButton>
             </motion.div>
@@ -785,7 +785,7 @@ export default function V2RestaurantPage() {
                 <GlassCard className="p-6 h-full flex flex-col">
                   <Quotes size={28} weight="fill" style={{ color: GOLD }} className="mb-3 opacity-50" />
                   <p className="text-slate-300 leading-relaxed flex-1 text-sm">{t.text}</p>
-                  <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
+                  <div className="mt-4 pt-4 border-t border-white/8 flex items-center justify-between">
                     <span className="text-sm font-semibold text-white">{t.name}</span>
                     <div className="flex gap-0.5">
                       {Array.from({ length: t.rating }).map((_, j) => (
@@ -975,7 +975,7 @@ export default function V2RestaurantPage() {
                     <CalendarCheck size={20} weight="duotone" />
                     Book Online
                   </MagneticButton>
-                  <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
+                  <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
                     <Phone size={18} weight="duotone" />
                     Call to Reserve
                   </MagneticButton>
@@ -994,7 +994,7 @@ export default function V2RestaurantPage() {
             <h2 className="text-3xl md:text-5xl font-bold text-white tracking-tighter">Ember &amp; Oak vs. Chain Restaurants</h2>
           </div>
           <GlassCard className="overflow-hidden">
-            <div className="grid grid-cols-3 text-sm font-semibold border-b border-white/10">
+            <div className="grid grid-cols-3 text-sm font-semibold border-b border-white/15">
               <div className="p-4 text-slate-400">What Matters</div>
               <div className="p-4 text-center" style={{ color: GOLD }}>Ember &amp; Oak</div>
               <div className="p-4 text-center text-slate-500">Chain Restaurants</div>
@@ -1008,7 +1008,7 @@ export default function V2RestaurantPage() {
               ["Private dining & event hosting", true, "Rarely available"],
               ["No reservations fee or pressure", true, "Often required fee"],
             ].map(([label, us, them], i) => (
-              <div key={i} className={`grid grid-cols-3 text-sm border-b border-white/5 ${i % 2 === 0 ? "bg-white/[0.02]" : ""}`}>
+              <div key={i} className={`grid grid-cols-3 text-sm border-b border-white/8 ${i % 2 === 0 ? "bg-white/[0.07]" : ""}`}>
                 <div className="p-4 text-slate-300">{label as string}</div>
                 <div className="p-4 text-center">
                   {us === true ? (
@@ -1086,7 +1086,7 @@ export default function V2RestaurantPage() {
               <motion.button
                 key={i}
                 onClick={() => setQuizAnswer(i)}
-                className={`p-5 rounded-xl border text-left transition-all cursor-pointer ${quizAnswer === i ? "border-[#d4a846] bg-[#d4a846]/10" : "border-white/10 bg-white/[0.03] hover:border-[#d4a846]/50 hover:bg-white/[0.06]"}`}
+                className={`p-5 rounded-xl border text-left transition-all cursor-pointer ${quizAnswer === i ? "border-[#d4a846] bg-[#d4a846]/10" : "border-white/15 bg-white/[0.08] hover:border-[#d4a846]/50 hover:bg-white/[0.06]"}`}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
@@ -1152,7 +1152,7 @@ export default function V2RestaurantPage() {
       </SectionReveal>
 
       {/* ─── FOOTER ─── */}
-      <footer className="relative z-10 border-t border-white/5 py-8">
+      <footer className="relative z-10 border-t border-white/8 py-8">
         <div className="mx-auto max-w-7xl px-4 md:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2 text-sm text-slate-500">
             <ForkKnife size={16} weight="duotone" style={{ color: GOLD }} />

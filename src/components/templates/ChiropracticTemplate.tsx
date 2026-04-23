@@ -377,7 +377,7 @@ export default function ChiropracticTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-[#14b8a6]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-[#14b8a6]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 {/* Hover glow */}
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_50%_0%,#14b8a615,transparent_70%)]" />
@@ -434,7 +434,7 @@ export default function ChiropracticTemplate() {
             >
               <div className="relative w-full aspect-[4/5] max-w-md mx-auto">
                 {/* Main image */}
-                <div className="absolute top-0 left-0 w-[75%] h-[70%] rounded-2xl overflow-hidden border-2 border-white/[0.06] shadow-2xl z-10">
+                <div className="absolute top-0 left-0 w-[75%] h-[70%] rounded-2xl overflow-hidden border-2 border-white/[0.10] shadow-2xl z-10">
                   <img
                     src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=600&q=80"
                     alt="Chiropractic treatment room"
@@ -442,7 +442,7 @@ export default function ChiropracticTemplate() {
                   />
                 </div>
                 {/* Secondary image */}
-                <div className="absolute bottom-0 right-0 w-[65%] h-[55%] rounded-2xl overflow-hidden border-2 border-white/[0.06] shadow-2xl z-20">
+                <div className="absolute bottom-0 right-0 w-[65%] h-[55%] rounded-2xl overflow-hidden border-2 border-white/[0.10] shadow-2xl z-20">
                   <img
                     src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=400&q=80"
                     alt="Patient consultation"
@@ -485,7 +485,7 @@ export default function ChiropracticTemplate() {
                   { icon: <HandsHealingIcon />, title: "Personalized Plans", desc: "Custom treatment protocols built around your body and goals" },
                   { icon: <LeafIcon />, title: "Natural Healing", desc: "Drug-free, non-invasive care that works with your body, not against it" },
                 ].map((feature) => (
-                  <div key={feature.title} className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/[0.04] hover:border-[#14b8a6]/20 transition-colors duration-300">
+                  <div key={feature.title} className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.07] border border-white/[0.04] hover:border-[#14b8a6]/20 transition-colors duration-300">
                     <div className="w-10 h-10 rounded-lg bg-[#14b8a6]/10 border border-[#14b8a6]/20 flex items-center justify-center text-[#14b8a6] shrink-0">
                       {feature.icon}
                     </div>
@@ -525,7 +525,7 @@ export default function ChiropracticTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.12 }}
-                className="group relative rounded-2xl border border-white/[0.06] hover:border-[#14b8a6]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative rounded-2xl border border-white/[0.10] hover:border-[#14b8a6]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 {/* Photo */}
                 <div className="relative aspect-[3/4] overflow-hidden">
@@ -545,7 +545,7 @@ export default function ChiropracticTemplate() {
                     <p className="text-[#14b8a6] text-sm font-semibold mb-3">{member.title}</p>
                     <div className="flex flex-wrap gap-2">
                       {member.specialties.map((s) => (
-                        <span key={s} className="text-[10px] font-semibold uppercase tracking-wider text-white/60 bg-white/10 border border-white/10 px-2.5 py-1 rounded-full">
+                        <span key={s} className="text-[10px] font-semibold uppercase tracking-wider text-white/60 bg-white/10 border border-white/15 px-2.5 py-1 rounded-full">
                           {s}
                         </span>
                       ))}
@@ -588,7 +588,7 @@ export default function ChiropracticTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-[#14b8a6]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-[#14b8a6]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 {/* Top accent line */}
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-[#14b8a6]/40 via-[#14b8a6]/10 to-transparent" />
@@ -607,7 +607,7 @@ export default function ChiropracticTemplate() {
                   {/* Quote */}
                   <p className="text-muted leading-relaxed mb-6 text-sm">&ldquo;{t.text}&rdquo;</p>
                   {/* Author */}
-                  <div className="flex items-center gap-3 pt-4 border-t border-white/[0.06]">
+                  <div className="flex items-center gap-3 pt-4 border-t border-white/[0.10]">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#14b8a6]/30 to-[#14b8a6]/10 flex items-center justify-center text-sm font-bold text-[#14b8a6]">
                       {t.name.charAt(0)}
                     </div>
@@ -647,7 +647,7 @@ export default function ChiropracticTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.03 }}
-                className="group flex items-center gap-3 p-4 rounded-xl border border-white/[0.06] hover:border-[#14b8a6]/30 bg-white/[0.02] transition-all duration-300"
+                className="group flex items-center gap-3 p-4 rounded-xl border border-white/[0.10] hover:border-[#14b8a6]/30 bg-white/[0.07] transition-all duration-300"
               >
                 <div className="w-2 h-2 rounded-full bg-[#14b8a6]/40 group-hover:bg-[#14b8a6] transition-colors duration-300 shrink-0" />
                 <span className="text-sm font-medium text-muted group-hover:text-white transition-colors duration-300">{condition}</span>
@@ -681,7 +681,7 @@ export default function ChiropracticTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.06 }}
-                className="group p-6 rounded-2xl border border-white/[0.06] hover:border-[#14b8a6]/20 transition-all duration-500 overflow-hidden relative bg-white/[0.02]"
+                className="group p-6 rounded-2xl border border-white/[0.10] hover:border-[#14b8a6]/20 transition-all duration-500 overflow-hidden relative bg-white/[0.07]"
               >
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_0%_50%,#14b8a610,transparent_70%)]" />
                 <div className="relative z-10 flex gap-4">

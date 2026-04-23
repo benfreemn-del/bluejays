@@ -397,7 +397,7 @@ export default function TattooTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group relative rounded-2xl border border-white/[0.06] hover:border-[#a3a3a3]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative rounded-2xl border border-white/[0.10] hover:border-[#a3a3a3]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 {/* Photo */}
                 <div className="relative aspect-[3/4] overflow-hidden">
@@ -417,7 +417,7 @@ export default function TattooTemplate() {
                     <p className="text-[#a3a3a3] text-sm font-semibold mb-3">{artist.title}</p>
                     <div className="flex flex-wrap gap-1.5">
                       {artist.specialties.map((s) => (
-                        <span key={s} className="text-[9px] font-semibold uppercase tracking-wider text-white/60 bg-white/10 border border-white/10 px-2 py-0.5 rounded-full">
+                        <span key={s} className="text-[9px] font-semibold uppercase tracking-wider text-white/60 bg-white/10 border border-white/15 px-2 py-0.5 rounded-full">
                           {s}
                         </span>
                       ))}
@@ -455,7 +455,7 @@ export default function TattooTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-[#a3a3a3]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-[#a3a3a3]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 {/* Hover glow */}
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_50%_0%,#a3a3a315,transparent_70%)]" />
@@ -505,7 +505,7 @@ export default function TattooTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-[#a3a3a3]/30 transition-all duration-500 overflow-hidden bg-white/[0.02] text-center"
+                className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-[#a3a3a3]/30 transition-all duration-500 overflow-hidden bg-white/[0.07] text-center"
               >
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_50%_50%,#a3a3a312,transparent_70%)]" />
                 <div className="relative z-10">
@@ -546,7 +546,7 @@ export default function TattooTemplate() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="p-8 md:p-10 rounded-2xl border border-[#a3a3a3]/15 bg-white/[0.02] relative overflow-hidden"
+            className="p-8 md:p-10 rounded-2xl border border-[#a3a3a3]/15 bg-white/[0.07] relative overflow-hidden"
           >
             <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_50%_0%,#a3a3a310,transparent_60%)]" />
             <div className="absolute top-0 left-0 w-20 h-20 border-t border-l border-[#a3a3a3]/20 rounded-tl-2xl" />
@@ -559,7 +559,7 @@ export default function TattooTemplate() {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.05 }}
-                  className="flex items-start gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.04] hover:border-[#a3a3a3]/20 transition-colors duration-300"
+                  className="flex items-start gap-3 p-3 rounded-xl bg-white/[0.07] border border-white/[0.04] hover:border-[#a3a3a3]/20 transition-colors duration-300"
                 >
                   <div className="w-7 h-7 rounded-lg bg-[#a3a3a3]/10 border border-[#a3a3a3]/20 flex items-center justify-center text-[#a3a3a3] shrink-0 mt-0.5">
                     <CheckIcon />
@@ -602,7 +602,7 @@ export default function TattooTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-[#a3a3a3]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-[#a3a3a3]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 {/* Top accent line */}
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-[#a3a3a3]/40 via-[#a3a3a3]/10 to-transparent" />
@@ -623,7 +623,7 @@ export default function TattooTemplate() {
                   {/* Quote */}
                   <p className="text-muted leading-relaxed mb-6 text-sm">&ldquo;{t.text}&rdquo;</p>
                   {/* Author */}
-                  <div className="flex items-center gap-3 pt-4 border-t border-white/[0.06]">
+                  <div className="flex items-center gap-3 pt-4 border-t border-white/[0.10]">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#a3a3a3]/30 to-[#a3a3a3]/10 flex items-center justify-center text-sm font-bold text-[#a3a3a3]">
                       {t.name.charAt(0)}
                     </div>
@@ -663,7 +663,7 @@ export default function TattooTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.06 }}
-                className="group p-6 rounded-2xl border border-white/[0.06] hover:border-[#a3a3a3]/20 transition-all duration-500 overflow-hidden relative bg-white/[0.02]"
+                className="group p-6 rounded-2xl border border-white/[0.10] hover:border-[#a3a3a3]/20 transition-all duration-500 overflow-hidden relative bg-white/[0.07]"
               >
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_0%_50%,#a3a3a310,transparent_70%)]" />
                 <div className="relative z-10 flex gap-4">

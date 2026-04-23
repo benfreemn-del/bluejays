@@ -156,7 +156,7 @@ function TreeBranchBackground({ opacity = 0.03, accent }: { opacity?: number; ac
 
 /* ─── SHARED UI ─── */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>;
+  return <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>;
 }
 
 function MagneticButton({ children, className = "", onClick, style, href }: { children: React.ReactNode; className?: string; onClick?: () => void; style?: React.CSSProperties; href?: string }) {
@@ -301,7 +301,7 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
             </div>
             <div className="flex flex-wrap gap-4">
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>Get Free Estimate <ArrowRight size={18} weight="bold" /></MagneticButton>
-              <MagneticButton href={`tel:${phoneDigits}`} className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer"><Phone size={18} weight="duotone" /> <PhoneLink phone={data.phone} /></MagneticButton>
+              <MagneticButton href={`tel:${phoneDigits}`} className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer"><Phone size={18} weight="duotone" /> <PhoneLink phone={data.phone} /></MagneticButton>
             </div>
             <div className="flex flex-wrap gap-6 text-sm text-slate-400">
               <span className="flex items-center gap-2"><MapPin size={16} weight="duotone" style={{ color: ACCENT }} /><MapLink address={data.address} /></span>
@@ -314,7 +314,7 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
             </div>
           </div>
           <div className="hidden md:block relative">
-            <div className="relative rounded-2xl overflow-hidden border border-white/10"><img src={heroCardImage} alt={data.businessName} className="w-full h-[500px] object-cover" /><div className="absolute inset-0 bg-gradient-to-t from-[#1a1a1a] via-transparent to-transparent" />
+            <div className="relative rounded-2xl overflow-hidden border border-white/15"><img src={heroCardImage} alt={data.businessName} className="w-full h-[500px] object-cover" /><div className="absolute inset-0 bg-gradient-to-t from-[#1a1a1a] via-transparent to-transparent" />
               <div className="absolute bottom-6 left-6"><div className="px-4 py-2 rounded-full backdrop-blur-md bg-black/50 border flex items-center gap-2" style={{ borderColor: `${ACCENT}4d` }}><Certificate size={18} weight="fill" style={{ color: GREEN_LIGHT }} /><span className="text-sm font-semibold text-white">ISA Certified Arborist</span></div></div>
             </div>
           </div>
@@ -338,7 +338,7 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
           <SectionHeader badge="Our Services" title="Professional Tree Care" subtitle={`${data.businessName} provides expert tree services for residential and commercial properties.`} accent={ACCENT} />
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {data.services.map((svc, i) => { const Icon = getServiceIcon(svc.name); return (
-              <div key={svc.name} className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.02]">
+              <div key={svc.name} className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]">
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${ACCENT}15, transparent 70%)` }} />
                 <div className="relative z-10">
                   <div className="flex items-start justify-between mb-5"><div className="w-12 h-12 rounded-xl flex items-center justify-center border" style={{ background: ACCENT_GLOW, borderColor: `${ACCENT}33` }}><Icon size={24} weight="duotone" style={{ color: ACCENT }} /></div><span className="text-xs font-mono text-slate-600">{String(i + 1).padStart(2, "0")}</span></div>
@@ -374,7 +374,7 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1a0a 50%, #1a1a1a 100%)" }} />
         <div className="max-w-6xl mx-auto px-6 relative z-10"><div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          <div className="relative"><div className="rounded-2xl overflow-hidden border border-white/10"><img src={aboutImage} alt={`${data.businessName} team`} className="w-full h-[400px] object-cover" /></div><div className="absolute -bottom-4 -right-4 md:bottom-6 md:-right-6"><div className="px-5 py-3 rounded-xl backdrop-blur-md border text-white font-bold text-sm shadow-lg" style={{ background: `${ACCENT}e6`, borderColor: `${ACCENT}80` }}>{data.stats[0] ? `${data.stats[0].value} ${data.stats[0].label}` : "Expert Care"}</div></div></div>
+          <div className="relative"><div className="rounded-2xl overflow-hidden border border-white/15"><img src={aboutImage} alt={`${data.businessName} team`} className="w-full h-[400px] object-cover" /></div><div className="absolute -bottom-4 -right-4 md:bottom-6 md:-right-6"><div className="px-5 py-3 rounded-xl backdrop-blur-md border text-white font-bold text-sm shadow-lg" style={{ background: `${ACCENT}e6`, borderColor: `${ACCENT}80` }}>{data.stats[0] ? `${data.stats[0].value} ${data.stats[0].label}` : "Expert Care"}</div></div></div>
           <div>
             <span className="inline-block text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border" style={{ color: ACCENT, borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}>About Us</span>
             <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-6 text-white">Your Trees, Our Expertise</h2>
@@ -448,7 +448,7 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
           <AnimatedSection><SectionHeader badge="Our Work" title="Recent Projects" accent={ACCENT} /></AnimatedSection>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {galleryImages.map((src, i) => { const titles = ["Large Oak Removal", "Crown Thinning", "Storm Damage Cleanup", "Stump Grinding"]; return (
-              <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.06]"><img src={src} alt={titles[i % titles.length]} className="w-full h-64 object-cover transition-transform duration-700 group-hover:scale-105" /><div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" /><div className="absolute bottom-0 left-0 right-0 p-6"><h3 className="text-lg font-bold text-white mb-1">{titles[i % titles.length]}</h3></div></div>
+              <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.10]"><img src={src} alt={titles[i % titles.length]} className="w-full h-64 object-cover transition-transform duration-700 group-hover:scale-105" /><div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" /><div className="absolute bottom-0 left-0 right-0 p-6"><h3 className="text-lg font-bold text-white mb-1">{titles[i % titles.length]}</h3></div></div>
             ); })}
           </div>
         </div>
@@ -459,8 +459,8 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0d1a0d 50%, #1a1a1a 100%)" }} />
         <div className="max-w-4xl mx-auto px-6 relative z-10">
           <AnimatedSection><SectionHeader badge="Compare" title={`${data.businessName} vs. The Competition`} accent={ACCENT} /></AnimatedSection>
-          <GlassCard className="overflow-hidden"><div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="border-b border-white/10"><th className="text-left p-4 text-slate-400 font-medium">Feature</th><th className="text-center p-4 font-bold text-white">{data.businessName}</th><th className="text-center p-4 text-slate-400 font-medium">Others</th></tr></thead><tbody>
-            {COMPARISON_ROWS.map((row, i) => (<tr key={row.feature} className={i < COMPARISON_ROWS.length - 1 ? "border-b border-white/5" : ""}><td className="p-4 text-slate-300">{row.feature}</td><td className="p-4 text-center"><CheckCircle size={20} weight="fill" style={{ color: "#22c55e" }} className="mx-auto" /></td><td className="p-4 text-center text-slate-500">{row.them}</td></tr>))}
+          <GlassCard className="overflow-hidden"><div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="border-b border-white/15"><th className="text-left p-4 text-slate-400 font-medium">Feature</th><th className="text-center p-4 font-bold text-white">{data.businessName}</th><th className="text-center p-4 text-slate-400 font-medium">Others</th></tr></thead><tbody>
+            {COMPARISON_ROWS.map((row, i) => (<tr key={row.feature} className={i < COMPARISON_ROWS.length - 1 ? "border-b border-white/8" : ""}><td className="p-4 text-slate-300">{row.feature}</td><td className="p-4 text-center"><CheckCircle size={20} weight="fill" style={{ color: "#22c55e" }} className="mx-auto" /></td><td className="p-4 text-center text-slate-500">{row.them}</td></tr>))}
           </tbody></table></div></GlassCard>
         </div>
       </section>
@@ -470,7 +470,7 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1a0a 50%, #1a1a1a 100%)" }} />
         <div className="max-w-4xl mx-auto px-6 relative z-10">
           <AnimatedSection><SectionHeader badge="See Our Work" title="Watch Our Crew in Action" accent={ACCENT} /></AnimatedSection>
-          <div className="relative rounded-2xl overflow-hidden border border-white/10 group cursor-pointer"><img src={heroImage} alt="Watch our work" className="w-full h-[400px] object-cover" /><div className="absolute inset-0 bg-black/60 flex items-center justify-center group-hover:bg-black/50 transition-colors"><div className="w-20 h-20 rounded-full flex items-center justify-center" style={{ background: `${ACCENT}cc` }}><PlayCircle size={48} weight="fill" className="text-white" /></div></div></div>
+          <div className="relative rounded-2xl overflow-hidden border border-white/15 group cursor-pointer"><img src={heroImage} alt="Watch our work" className="w-full h-[400px] object-cover" /><div className="absolute inset-0 bg-black/60 flex items-center justify-center group-hover:bg-black/50 transition-colors"><div className="w-20 h-20 rounded-full flex items-center justify-center" style={{ background: `${ACCENT}cc` }}><PlayCircle size={48} weight="fill" className="text-white" /></div></div></div>
         </div>
       </section>
 
@@ -481,7 +481,7 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
           <AnimatedSection><SectionHeader badge="Quick Check" title="What Does Your Tree Need?" accent={ACCENT} /></AnimatedSection>
           <div className="grid gap-4">
             {quizOptions.map((opt) => (
-              <button key={opt.label} onClick={() => setQuizAnswer(opt.label)} className={`w-full text-left p-5 rounded-2xl border transition-all duration-300 cursor-pointer ${quizAnswer === opt.label ? "border-white/30 bg-white/[0.06]" : "border-white/10 bg-white/[0.02] hover:bg-white/[0.04]"}`}>
+              <button key={opt.label} onClick={() => setQuizAnswer(opt.label)} className={`w-full text-left p-5 rounded-2xl border transition-all duration-300 cursor-pointer ${quizAnswer === opt.label ? "border-white/30 bg-white/[0.06]" : "border-white/15 bg-white/[0.07] hover:bg-white/[0.07]"}`}>
                 <div className="flex items-center justify-between"><span className="text-white font-semibold">{opt.label}</span><span className="text-xs font-bold px-3 py-1 rounded-full" style={{ color: opt.color, background: `${opt.color}1a`, border: `1px solid ${opt.color}33` }}>{opt.urgency}</span></div>
                 {quizAnswer === opt.label && <p className="text-sm text-slate-400 mt-3">{opt.rec}</p>}
               </button>
@@ -503,7 +503,7 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
                 <Quotes size={24} weight="fill" style={{ color: `${ACCENT}33` }} className="mb-3" />
                 <div className="flex gap-0.5 mb-4">{Array.from({ length: t.rating || 5 }).map((_, j) => <Star key={j} size={16} weight="fill" style={{ color: "#f59e0b" }} />)}</div>
                 <p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p>
-                <div className="pt-4 border-t border-white/5 flex items-center gap-2"><SealCheck size={16} weight="fill" style={{ color: "#22c55e" }} /><span className="text-sm font-semibold text-white">{t.name}</span><span className="text-xs text-slate-500">Verified</span></div>
+                <div className="pt-4 border-t border-white/8 flex items-center gap-2"><SealCheck size={16} weight="fill" style={{ color: "#22c55e" }} /><span className="text-sm font-semibold text-white">{t.name}</span><span className="text-xs text-slate-500">Verified</span></div>
               </GlassCard>
             ))}
           </div>
@@ -602,7 +602,7 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
                     <label className="block text-sm text-slate-400 mb-1.5">First Name</label>
                     <input
                       type="text"
-                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm"
+                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm"
                       placeholder="John"
                     />
                   </div>
@@ -610,7 +610,7 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
                     <label className="block text-sm text-slate-400 mb-1.5">Last Name</label>
                     <input
                       type="text"
-                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm"
+                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm"
                       placeholder="Doe"
                     />
                   </div>
@@ -619,13 +619,13 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
                   <label className="block text-sm text-slate-400 mb-1.5">Phone</label>
                   <input
                     type="tel"
-                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm"
+                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm"
                     placeholder="(555) 123-4567"
                   />
                 </div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-1.5">Service Needed</label>
-                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none text-sm">
+                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none text-sm">
                     <option value="" className="bg-neutral-900">Select a service</option>
                     {data.services.map((s) => (
                       <option
@@ -642,7 +642,7 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
                   <label className="block text-sm text-slate-400 mb-1.5">Details</label>
                   <textarea
                     rows={3}
-                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm resize-none"
+                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm resize-none"
                     placeholder="Describe the tree work needed..."
                   />
                 </div>
@@ -875,7 +875,7 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
               { name: "Ash", trait: "Emerald ash borer monitoring, structural pruning" },
               { name: "Fir", trait: "Tall growth, needle cast treatment, crown thinning" },
             ].map((t) => (
-              <div key={t.name} className="rounded-2xl border border-white/10 p-5 text-center" style={{ background: "rgba(255,255,255,0.03)" }}>
+              <div key={t.name} className="rounded-2xl border border-white/15 p-5 text-center" style={{ background: "rgba(255,255,255,0.06)" }}>
                 <Tree size={24} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-2" />
                 <h3 className="text-sm font-bold text-white mb-1">{t.name}</h3>
                 <p className="text-xs text-slate-500 leading-relaxed">{t.trait}</p>
@@ -901,7 +901,7 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
               { season: "Autumn", tasks: "Fall cleanup, hazard assessment, crown reduction before storms, cabling weak limbs" },
               { season: "Winter", tasks: "Storm damage response, dormant pruning, remove deadwood, plan spring planting" },
             ].map((s) => (
-              <div key={s.season} className="rounded-2xl border border-white/10 p-6" style={{ background: "rgba(255,255,255,0.03)" }}>
+              <div key={s.season} className="rounded-2xl border border-white/15 p-6" style={{ background: "rgba(255,255,255,0.06)" }}>
                 <h3 className="text-lg font-bold text-white mb-2" style={{ color: ACCENT }}>{s.season}</h3>
                 <p className="text-sm text-slate-400 leading-relaxed">{s.tasks}</p>
               </div>
@@ -958,7 +958,7 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
                 desc: "Detailed written estimates with no obligation. We explain every recommendation.",
               },
             ].map((card) => (
-              <div key={card.title} className="rounded-2xl border border-white/10 p-6 text-center" style={{ background: "rgba(255,255,255,0.03)" }}>
+              <div key={card.title} className="rounded-2xl border border-white/15 p-6 text-center" style={{ background: "rgba(255,255,255,0.06)" }}>
                 <CheckCircle size={28} weight="fill" style={{ color: ACCENT }} className="mx-auto mb-3" />
                 <h3 className="text-lg font-bold text-white mb-2">{card.title}</h3>
                 <p className="text-sm text-slate-400 leading-relaxed">{card.desc}</p>
@@ -990,8 +990,8 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
             ].map((badge) => (
               <div
                 key={badge}
-                className="flex items-center gap-2 px-5 py-3 rounded-full border border-white/10"
-                style={{ background: "rgba(255,255,255,0.03)" }}
+                className="flex items-center gap-2 px-5 py-3 rounded-full border border-white/15"
+                style={{ background: "rgba(255,255,255,0.06)" }}
               >
                 <SealCheck size={18} weight="fill" style={{ color: ACCENT }} />
                 <span className="text-sm font-medium text-white">{badge}</span>
@@ -1002,7 +1002,7 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
       </section>
 
       {/* ─── FOOTER ─── */}
-      <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden"><div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111 100%)" }} /><div className="mx-auto max-w-6xl px-6 relative z-10"><div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8"><div><div className="flex items-center gap-2 mb-3"><Tree size={22} weight="fill" style={{ color: ACCENT }} /><span className="text-lg font-bold text-white">{data.businessName}</span></div><p className="text-sm text-slate-500 leading-relaxed">{data.about.length > 120 ? data.about.slice(0, 120).trim() + "..." : data.about}</p></div><div><h4 className="text-sm font-semibold text-white mb-3">Quick Links</h4><div className="space-y-2">{["Services", "About", "Tree Health", "Contact"].map((l) => <a key={l} href={`#${l.toLowerCase().replace(" ", "-")}`} className="block text-sm text-slate-500 hover:text-white transition-colors">{l}</a>)}</div></div><div><h4 className="text-sm font-semibold text-white mb-3">Contact</h4><div className="space-y-2 text-sm text-slate-500"><p><PhoneLink phone={data.phone} /></p><p><MapLink address={data.address} /></p>{data.socialLinks && Object.entries(data.socialLinks).map(([p, url]) => <a key={p} href={url} target="_blank" rel="noopener noreferrer" className="block hover:text-white transition-colors capitalize">{p}</a>)}</div></div></div><div className="border-t border-white/5 pt-6 flex flex-col md:flex-row items-center justify-between gap-4"><div className="flex items-center gap-2 text-sm text-slate-500"><Tree size={14} weight="fill" style={{ color: ACCENT }} /><span>{data.businessName} &copy; {new Date().getFullYear()}</span></div><div className="flex items-center gap-2 text-xs text-slate-600"><BluejayLogo className="w-4 h-4" /><span>Created by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "underline" }}>bluejayportfolio.com</a></span></div></div></div></footer>
+      <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden"><div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111 100%)" }} /><div className="mx-auto max-w-6xl px-6 relative z-10"><div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8"><div><div className="flex items-center gap-2 mb-3"><Tree size={22} weight="fill" style={{ color: ACCENT }} /><span className="text-lg font-bold text-white">{data.businessName}</span></div><p className="text-sm text-slate-500 leading-relaxed">{data.about.length > 120 ? data.about.slice(0, 120).trim() + "..." : data.about}</p></div><div><h4 className="text-sm font-semibold text-white mb-3">Quick Links</h4><div className="space-y-2">{["Services", "About", "Tree Health", "Contact"].map((l) => <a key={l} href={`#${l.toLowerCase().replace(" ", "-")}`} className="block text-sm text-slate-500 hover:text-white transition-colors">{l}</a>)}</div></div><div><h4 className="text-sm font-semibold text-white mb-3">Contact</h4><div className="space-y-2 text-sm text-slate-500"><p><PhoneLink phone={data.phone} /></p><p><MapLink address={data.address} /></p>{data.socialLinks && Object.entries(data.socialLinks).map(([p, url]) => <a key={p} href={url} target="_blank" rel="noopener noreferrer" className="block hover:text-white transition-colors capitalize">{p}</a>)}</div></div></div><div className="border-t border-white/8 pt-6 flex flex-col md:flex-row items-center justify-between gap-4"><div className="flex items-center gap-2 text-sm text-slate-500"><Tree size={14} weight="fill" style={{ color: ACCENT }} /><span>{data.businessName} &copy; {new Date().getFullYear()}</span></div><div className="flex items-center gap-2 text-xs text-slate-600"><BluejayLogo className="w-4 h-4" /><span>Created by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "underline" }}>bluejayportfolio.com</a></span></div></div></div></footer>
 
       <ClaimBanner businessName={data.businessName} accentColor={ACCENT} prospectId={data.id} />
       <div className="h-14 md:h-28" />

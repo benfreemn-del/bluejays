@@ -120,7 +120,7 @@ function SectionReveal({ children, className = "", id }: { children: React.React
 }
 
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return (<div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>);
+  return (<div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>);
 }
 
 function MagneticButton({ children, className = "", onClick, style }: { children: React.ReactNode; className?: string; onClick?: () => void; style?: React.CSSProperties }) {
@@ -157,14 +157,14 @@ function QuizOption({ opt }: { opt: { label: string; urgency: string; color: str
   const [selected, setSelected] = useState(false);
   return (
     <div>
-      <button onClick={() => setSelected(!selected)} className="w-full text-left p-4 rounded-xl border transition-all cursor-pointer" style={{ borderColor: selected ? opt.color : "rgba(255,255,255,0.1)", background: selected ? `${opt.color}15` : "rgba(255,255,255,0.03)" }}>
+      <button onClick={() => setSelected(!selected)} className="w-full text-left p-4 rounded-xl border transition-all cursor-pointer" style={{ borderColor: selected ? opt.color : "rgba(255,255,255,0.1)", background: selected ? `${opt.color}15` : "rgba(255,255,255,0.06)" }}>
         <p className="text-sm font-semibold text-white mb-1">{opt.label}</p>
         <span className="text-xs px-2 py-0.5 rounded-full font-medium" style={{ background: `${opt.color}22`, color: opt.color }}>{opt.urgency}</span>
       </button>
       <AnimatePresence initial={false}>
         {selected && (
           <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.3 }} className="overflow-hidden">
-            <div className="mt-2 p-3 rounded-xl text-sm text-slate-300 flex items-center justify-between gap-3" style={{ background: "rgba(255,255,255,0.04)", borderLeft: `3px solid ${opt.color}` }}>
+            <div className="mt-2 p-3 rounded-xl text-sm text-slate-300 flex items-center justify-between gap-3" style={{ background: "rgba(255,255,255,0.08)", borderLeft: `3px solid ${opt.color}` }}>
               <span>{opt.action}</span>
               <a href="tel:+12064823917" className="shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold text-white" style={{ background: opt.color }}>Call Now</a>
             </div>
@@ -276,7 +276,7 @@ export default function V2GarageDoorPage() {
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
                 Request Service <ArrowRight size={18} weight="bold" />
               </MagneticButton>
-              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
+              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
                 <Phone size={18} weight="duotone" /> (206) 482-3917
               </MagneticButton>
             </motion.div>
@@ -307,7 +307,7 @@ export default function V2GarageDoorPage() {
                     { label: "Repairs Completed", value: "12,000+" },
                     { label: "Years in Business", value: "15 Years" },
                   ].map((s, i) => (
-                    <div key={i} className="flex items-center justify-between border-b border-white/5 pb-3 last:border-0 last:pb-0">
+                    <div key={i} className="flex items-center justify-between border-b border-white/8 pb-3 last:border-0 last:pb-0">
                       <span className="text-sm text-slate-400">{s.label}</span>
                       <span className="text-sm font-bold" style={{ color: ACCENT_LIGHT }}>{s.value}</span>
                     </div>
@@ -523,7 +523,7 @@ export default function V2GarageDoorPage() {
                   { sign: "Door shakes or jerks during operation", level: "High" },
                   { sign: "Grinding noise during movement", level: "Medium" },
                 ].map((w, i) => (
-                  <div key={i} className="flex items-center justify-between p-3 rounded-lg" style={{ background: "rgba(255,255,255,0.04)" }}>
+                  <div key={i} className="flex items-center justify-between p-3 rounded-lg" style={{ background: "rgba(255,255,255,0.08)" }}>
                     <span className="text-sm text-slate-300">{w.sign}</span>
                     <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${w.level === "Critical" ? "bg-red-500/20 text-red-400" : w.level === "High" ? "bg-amber-500/20 text-amber-400" : "bg-yellow-500/20 text-yellow-400"}`}>{w.level}</span>
                   </div>
@@ -613,7 +613,7 @@ export default function V2GarageDoorPage() {
                 <GlassCard className="p-6 h-full flex flex-col">
                   <Quotes size={28} weight="fill" style={{ color: ACCENT }} className="mb-3 opacity-50" />
                   <p className="text-slate-300 leading-relaxed flex-1 text-sm">{t.text}</p>
-                  <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
+                  <div className="mt-4 pt-4 border-t border-white/8 flex items-center justify-between">
                     <span className="text-sm font-semibold text-white">{t.name}</span>
                     <div className="flex gap-0.5">{Array.from({ length: t.rating }).map((_, j) => (<Star key={j} size={12} weight="fill" style={{ color: ACCENT }} />))}</div>
                   </div>
@@ -634,7 +634,7 @@ export default function V2GarageDoorPage() {
             </h2>
           </div>
           <GlassCard className="overflow-hidden">
-            <div className="grid grid-cols-3 text-sm font-semibold border-b border-white/10">
+            <div className="grid grid-cols-3 text-sm font-semibold border-b border-white/15">
               <div className="p-4 text-slate-400">Feature</div>
               <div className="p-4 text-center text-white" style={{ background: `${ACCENT}22` }}>IronGate Doors</div>
               <div className="p-4 text-center text-slate-500">Other Companies</div>
@@ -648,7 +648,7 @@ export default function V2GarageDoorPage() {
               ["Written Warranty", "✓ Parts & Labor", "Parts only"],
               ["Locally Owned", "✓ 15+ Years Local", "Often franchises"],
             ].map(([feature, us, them], i) => (
-              <div key={i} className={`grid grid-cols-3 text-sm ${i % 2 === 0 ? "bg-white/[0.02]" : ""} border-b border-white/5 last:border-0`}>
+              <div key={i} className={`grid grid-cols-3 text-sm ${i % 2 === 0 ? "bg-white/[0.07]" : ""} border-b border-white/8 last:border-0`}>
                 <div className="p-4 text-slate-300">{feature}</div>
                 <div className="p-4 text-center font-semibold" style={{ color: ACCENT_LIGHT }}>{us}</div>
                 <div className="p-4 text-center text-slate-500">{them}</div>
@@ -691,7 +691,7 @@ export default function V2GarageDoorPage() {
                     <p className="text-3xl font-black text-white mb-1">{plan.price}</p>
                     <p className="text-xs text-slate-400 mb-4">{plan.note}</p>
                     <ul className="space-y-2 flex-1">{plan.features.map((f, j) => (<li key={j} className="flex items-center gap-2 text-sm text-slate-300"><CheckCircle size={14} weight="fill" style={{ color: ACCENT }} />{f}</li>))}</ul>
-                    <MagneticButton className="mt-6 w-full py-3 rounded-full text-sm font-semibold text-white border border-white/10 cursor-pointer">Get Quote</MagneticButton>
+                    <MagneticButton className="mt-6 w-full py-3 rounded-full text-sm font-semibold text-white border border-white/15 cursor-pointer">Get Quote</MagneticButton>
                   </GlassCard>
                 )}
               </motion.div>
@@ -891,7 +891,7 @@ export default function V2GarageDoorPage() {
                   <MagneticButton className="px-10 py-4 rounded-full text-base font-semibold text-white inline-flex items-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
                     <CalendarCheck size={20} weight="duotone" /> Book Service
                   </MagneticButton>
-                  <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 inline-flex items-center gap-2 cursor-pointer">
+                  <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 inline-flex items-center gap-2 cursor-pointer">
                     <Phone size={18} weight="duotone" /> (206) 482-3917
                   </MagneticButton>
                 </div>
@@ -913,15 +913,15 @@ export default function V2GarageDoorPage() {
               <div className="space-y-4">
                 <div>
                   <label className="block text-xs uppercase tracking-widest text-slate-400 mb-2">Your Name</label>
-                  <input type="text" placeholder="John Smith" className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 border border-white/10 outline-none focus:border-amber-500/50 transition-colors" style={{ background: "rgba(255,255,255,0.04)" }} />
+                  <input type="text" placeholder="John Smith" className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 border border-white/15 outline-none focus:border-amber-500/50 transition-colors" style={{ background: "rgba(255,255,255,0.08)" }} />
                 </div>
                 <div>
                   <label className="block text-xs uppercase tracking-widest text-slate-400 mb-2">Phone Number</label>
-                  <input type="tel" placeholder="Your phone number" className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 border border-white/10 outline-none focus:border-amber-500/50 transition-colors" style={{ background: "rgba(255,255,255,0.04)" }} />
+                  <input type="tel" placeholder="Your phone number" className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 border border-white/15 outline-none focus:border-amber-500/50 transition-colors" style={{ background: "rgba(255,255,255,0.08)" }} />
                 </div>
                 <div>
                   <label className="block text-xs uppercase tracking-widest text-slate-400 mb-2">Service Type</label>
-                  <select className="w-full rounded-xl px-4 py-3 text-sm text-white border border-white/10 outline-none" style={{ background: "#1f1a0f" }}>
+                  <select className="w-full rounded-xl px-4 py-3 text-sm text-white border border-white/15 outline-none" style={{ background: "#1f1a0f" }}>
                     <option>Spring Replacement</option>
                     <option>Door Repair</option>
                     <option>New Installation</option>
@@ -933,7 +933,7 @@ export default function V2GarageDoorPage() {
               <div className="space-y-4">
                 <div className="h-full flex flex-col">
                   <label className="block text-xs uppercase tracking-widest text-slate-400 mb-2">Describe the Issue</label>
-                  <textarea rows={5} placeholder="Tell us what's happening with your door..." className="flex-1 w-full rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 border border-white/10 outline-none focus:border-amber-500/50 transition-colors resize-none" style={{ background: "rgba(255,255,255,0.04)" }} />
+                  <textarea rows={5} placeholder="Tell us what's happening with your door..." className="flex-1 w-full rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 border border-white/15 outline-none focus:border-amber-500/50 transition-colors resize-none" style={{ background: "rgba(255,255,255,0.08)" }} />
                 </div>
               </div>
             </div>
@@ -985,7 +985,7 @@ export default function V2GarageDoorPage() {
       </SectionReveal>
 
       {/* ─── 12. FOOTER ─── */}
-      <footer className="relative z-10 border-t border-white/5 py-8">
+      <footer className="relative z-10 border-t border-white/8 py-8">
         <div className="mx-auto max-w-7xl px-4 md:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3 text-sm text-slate-500">
             <Garage size={16} weight="duotone" style={{ color: ACCENT }} />

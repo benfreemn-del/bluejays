@@ -329,7 +329,7 @@ function GlassCard({ children, className = "", hover = true }: { children: React
     <motion.div
       whileHover={hover ? { y: -4 } : undefined}
       transition={spring}
-      className={`rounded-2xl border border-white/[0.08] bg-white/[0.03] backdrop-blur-md shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)] ${className}`}
+      className={`rounded-2xl border border-white/[0.13] bg-white/[0.08] backdrop-blur-md shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08)] ${className}`}
     >
       {children}
     </motion.div>
@@ -438,7 +438,7 @@ export default function V2LawFirmPage() {
         initial={{ y: -40, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={spring}
-        className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-[#0f172a]/80 border-b border-white/5"
+        className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-[#0f172a]/80 border-b border-white/8"
       >
         <div className="max-w-7xl mx-auto flex items-center justify-between px-4 md:px-6 py-4">
           <div className="flex items-center gap-3">
@@ -474,7 +474,7 @@ export default function V2LawFirmPage() {
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
-              className="md:hidden overflow-hidden border-t border-white/5"
+              className="md:hidden overflow-hidden border-t border-white/8"
             >
               <div className="flex flex-col gap-1 px-4 py-4 bg-[#0f172a]/95 backdrop-blur-xl">
                 {NAV_LINKS.map((link) => (
@@ -538,7 +538,7 @@ export default function V2LawFirmPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8 }}
-            className="mt-10 py-4 border-y border-white/5"
+            className="mt-10 py-4 border-y border-white/8"
           >
             <InfiniteTicker items={TICKER_ITEMS} speed={35} goldText />
           </motion.div>
@@ -696,7 +696,7 @@ export default function V2LawFirmPage() {
                           transition={{ duration: 0.3 }}
                           className="overflow-hidden"
                         >
-                          <div className="pt-4 mt-4 border-t border-white/5">
+                          <div className="pt-4 mt-4 border-t border-white/8">
                             <p className="text-sm text-slate-300 leading-relaxed mb-4">{area.details}</p>
                             <div className="space-y-2 mb-5">
                               {area.cases.map((c) => (
@@ -791,7 +791,7 @@ export default function V2LawFirmPage() {
                     <p className="mt-3 text-sm text-slate-400 leading-relaxed">{attorney.bio}</p>
                     <div className="mt-4 flex flex-wrap gap-2">
                       {attorney.credentials.map((cred) => (
-                        <span key={cred} className="px-2 py-1 text-xs rounded-md bg-white/5 border border-white/10 text-slate-300">
+                        <span key={cred} className="px-2 py-1 text-xs rounded-md bg-white/5 border border-white/15 text-slate-300">
                           {cred}
                         </span>
                       ))}
@@ -805,7 +805,7 @@ export default function V2LawFirmPage() {
       </section>
 
       {/* ══════ 7. CASE RESULTS TICKER — FULL WIDTH ══════ */}
-      <section className="relative z-10 py-10 md:py-14 overflow-hidden border-y border-white/5">
+      <section className="relative z-10 py-10 md:py-14 overflow-hidden border-y border-white/8">
         <div className="absolute inset-0" style={{ background: "linear-gradient(90deg, transparent, rgba(202,138,4,0.03), transparent)" }} />
         <InfiniteTicker
           items={["$4.2M", "$1.8M", "$890K", "Dismissed", "$2.1M", "$340K", "Not Guilty", "$1.5M", "$620K", "Dismissed"]}
@@ -962,7 +962,7 @@ export default function V2LawFirmPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-white/10">
+                  <tr className="border-b border-white/15">
                     <th className="text-left p-4 md:p-5 text-slate-400 font-medium">Feature</th>
                     <th className="p-4 md:p-5 text-center font-bold text-emerald-400">Pacific Law Group</th>
                     <th className="p-4 md:p-5 text-center font-medium text-slate-500">Large Firms</th>
@@ -970,7 +970,7 @@ export default function V2LawFirmPage() {
                 </thead>
                 <tbody>
                   {COMPARISON_ROWS.map((row, i) => (
-                    <tr key={row.feature} className={`border-b border-white/5 ${i % 2 === 0 ? "bg-white/[0.01]" : ""}`}>
+                    <tr key={row.feature} className={`border-b border-white/8 ${i % 2 === 0 ? "bg-white/[0.01]" : ""}`}>
                       <td className="p-4 md:p-5 text-slate-300">{row.feature}</td>
                       <td className="p-4 md:p-5 text-center">
                         <CheckCircle size={22} weight="fill" className="text-emerald-400 mx-auto" />
@@ -1031,7 +1031,7 @@ export default function V2LawFirmPage() {
                 viewport={{ once: true }}
                 transition={{ ...spring, delay: i * 0.05 }}
               >
-                <div className="flex items-center gap-2 px-5 py-3 rounded-full border border-white/10 bg-white/[0.03] text-sm text-slate-300">
+                <div className="flex items-center gap-2 px-5 py-3 rounded-full border border-white/15 bg-white/[0.08] text-sm text-slate-300">
                   <Trophy size={16} weight="fill" style={{ color: GOLD }} />
                   {award}
                 </div>
@@ -1140,13 +1140,13 @@ export default function V2LawFirmPage() {
                       <input
                         type={field.type}
                         placeholder={field.placeholder}
-                        className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-slate-600 focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/30 outline-none transition-all"
+                        className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder:text-slate-600 focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/30 outline-none transition-all"
                       />
                     </div>
                   ))}
                   <div>
                     <label className="block text-sm font-medium text-slate-300 mb-2">Case Type</label>
-                    <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-slate-300 focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/30 outline-none transition-all appearance-none">
+                    <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-slate-300 focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/30 outline-none transition-all appearance-none">
                       <option value="">Select case type...</option>
                       <option value="pi">Personal Injury</option>
                       <option value="criminal">Criminal Defense</option>
@@ -1161,7 +1161,7 @@ export default function V2LawFirmPage() {
                     <textarea
                       rows={4}
                       placeholder="Tell us what happened..."
-                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-slate-600 focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/30 outline-none transition-all resize-none"
+                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder:text-slate-600 focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/30 outline-none transition-all resize-none"
                     />
                   </div>
                   <ShimmerBorder className="w-full">
@@ -1232,7 +1232,7 @@ export default function V2LawFirmPage() {
       </section>
 
       {/* ══════ 15. FOOTER ══════ */}
-      <footer className="relative z-10 py-16 border-t border-white/5">
+      <footer className="relative z-10 py-16 border-t border-white/8">
         <div className="max-w-7xl mx-auto px-4 md:px-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-8">
             {/* Logo & info */}
@@ -1290,7 +1290,7 @@ export default function V2LawFirmPage() {
           </div>
 
           {/* Bottom bar */}
-          <div className="mt-12 pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="mt-12 pt-8 border-t border-white/8 flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-xs text-slate-600">
               &copy; {new Date().getFullYear()} Pacific Law Group. All rights reserved.
             </p>

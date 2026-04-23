@@ -211,7 +211,7 @@ function SectionReveal({ children, className = "", id }: { children: React.React
 }
 
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return (<div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>);
+  return (<div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>);
 }
 
 function MagneticButton({ children, className = "", onClick, style }: { children: React.ReactNode; className?: string; onClick?: () => void; style?: React.CSSProperties }) {
@@ -439,7 +439,7 @@ export default function V2TowingPage() {
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
                 <Lightning size={18} weight="fill" /> Request Tow Now
               </MagneticButton>
-              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
+              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
                 <Phone size={18} weight="duotone" /> (206) 584-3791
               </MagneticButton>
             </motion.div>
@@ -455,7 +455,7 @@ export default function V2TowingPage() {
                 { label: "30-Min Avg Response", icon: Timer },
                 { label: "Damage-Free Guarantee", icon: Certificate },
               ].map((badge, i) => (
-                <span key={i} className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border border-white/10 bg-white/5 text-slate-300">
+                <span key={i} className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border border-white/15 bg-white/5 text-slate-300">
                   <badge.icon size={12} weight="duotone" style={{ color: ACCENT }} />
                   {badge.label}
                 </span>
@@ -594,7 +594,7 @@ export default function V2TowingPage() {
                     <ul className="space-y-2 mb-6">
                       {tier.features.map((f, j) => <li key={j} className="flex items-center gap-2 text-sm text-slate-300"><CheckCircle size={14} weight="fill" style={{ color: "#4ade80" }} />{f}</li>)}
                     </ul>
-                    <MagneticButton className="w-full py-3 rounded-full text-sm font-semibold text-white border border-white/10 cursor-pointer">{tier.cta}</MagneticButton>
+                    <MagneticButton className="w-full py-3 rounded-full text-sm font-semibold text-white border border-white/15 cursor-pointer">{tier.cta}</MagneticButton>
                   </GlassCard>
                 )}
               </motion.div>
@@ -675,13 +675,13 @@ export default function V2TowingPage() {
             <p className="text-slate-400 max-w-md mx-auto text-sm">See how we stack up when it matters most — not when everything is fine, but when you are stranded.</p>
           </div>
           <GlassCard className="overflow-hidden">
-            <div className="grid grid-cols-3 p-4 md:p-5 border-b border-white/5 text-sm font-semibold">
+            <div className="grid grid-cols-3 p-4 md:p-5 border-b border-white/8 text-sm font-semibold">
               <span className="text-slate-400">What Matters</span>
               <span className="text-center" style={{ color: ACCENT }}>Rapid Rescue</span>
               <span className="text-center text-slate-500">Average Company</span>
             </div>
             {comparisonRows.map((row, i) => (
-              <div key={i} className={`grid grid-cols-3 items-center p-4 md:p-5 text-sm border-b border-white/5 last:border-0 ${i % 2 === 0 ? "bg-white/[0.01]" : ""}`}>
+              <div key={i} className={`grid grid-cols-3 items-center p-4 md:p-5 text-sm border-b border-white/8 last:border-0 ${i % 2 === 0 ? "bg-white/[0.01]" : ""}`}>
                 <span className="text-slate-300 pr-2">{row.feature}</span>
                 <div className="flex justify-center">
                   <span className="flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium" style={{ background: "rgba(34,197,94,0.15)", color: "#4ade80" }}>
@@ -765,7 +765,7 @@ export default function V2TowingPage() {
               <WordReveal text="Trusted on the Road" />
             </h2>
             {/* Google Reviews Header */}
-            <div className="inline-flex items-center gap-3 px-5 py-3 rounded-full border border-white/10 bg-white/[0.04]">
+            <div className="inline-flex items-center gap-3 px-5 py-3 rounded-full border border-white/15 bg-white/[0.07]">
               {/* Google G SVG */}
               <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -789,7 +789,7 @@ export default function V2TowingPage() {
                 <GlassCard className="p-6 h-full flex flex-col">
                   <Quotes size={28} weight="fill" style={{ color: ACCENT }} className="mb-3 opacity-50" />
                   <p className="text-slate-300 leading-relaxed flex-1 text-sm">{t.text}</p>
-                  <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
+                  <div className="mt-4 pt-4 border-t border-white/8 flex items-center justify-between">
                     <span className="text-sm font-semibold text-white">{t.name}</span>
                     <div className="flex gap-0.5">{Array.from({ length: t.rating }).map((_, j) => (<Star key={j} size={12} weight="fill" style={{ color: ACCENT }} />))}</div>
                   </div>
@@ -846,7 +846,7 @@ export default function V2TowingPage() {
                   className="w-full text-left p-4 rounded-xl border transition-all cursor-pointer"
                   style={{
                     borderColor: openQuiz === i ? opt.color : "rgba(255,255,255,0.1)",
-                    background: openQuiz === i ? `${opt.color}15` : "rgba(255,255,255,0.03)",
+                    background: openQuiz === i ? `${opt.color}15` : "rgba(255,255,255,0.06)",
                   }}
                 >
                   <div className="flex items-center gap-3 mb-1">
@@ -858,7 +858,7 @@ export default function V2TowingPage() {
                 <AnimatePresence initial={false}>
                   {openQuiz === i && (
                     <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.3 }} className="overflow-hidden">
-                      <div className="mt-2 p-3 rounded-xl text-sm text-slate-300 flex items-center justify-between gap-3" style={{ background: "rgba(255,255,255,0.04)", borderLeft: `3px solid ${opt.color}` }}>
+                      <div className="mt-2 p-3 rounded-xl text-sm text-slate-300 flex items-center justify-between gap-3" style={{ background: "rgba(255,255,255,0.08)", borderLeft: `3px solid ${opt.color}` }}>
                         <span>{opt.recommendation}</span>
                         <a href="tel:+12065843791" className="shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold text-white" style={{ background: opt.color }}>Call Now</a>
                       </div>
@@ -947,7 +947,7 @@ export default function V2TowingPage() {
                 <MagneticButton className="px-10 py-4 rounded-full text-base font-semibold text-white inline-flex items-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
                   <Phone size={20} weight="fill" /> Emergency Call
                 </MagneticButton>
-                <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
+                <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
                   <CalendarCheck size={18} weight="duotone" /> Schedule Ahead
                 </MagneticButton>
               </div>
@@ -982,7 +982,7 @@ export default function V2TowingPage() {
       </SectionReveal>
 
       {/* ─── 10. FOOTER ─── */}
-      <footer className="relative z-10 border-t border-white/5 py-8">
+      <footer className="relative z-10 border-t border-white/8 py-8">
         <div className="mx-auto max-w-7xl px-4 md:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm text-slate-500">
             <div className="flex items-center gap-2">

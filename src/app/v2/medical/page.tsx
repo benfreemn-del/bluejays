@@ -161,7 +161,7 @@ function GlassCard({
 }) {
   return (
     <div
-      className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}
+      className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}
     >
       {children}
     </div>
@@ -544,7 +544,7 @@ export default function V2MedicalPage() {
                 Schedule a Visit
                 <ArrowRight size={18} weight="bold" />
               </MagneticButton>
-              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
+              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
                 <Phone size={18} weight="duotone" />
                 (206) 412-7890
               </MagneticButton>
@@ -756,7 +756,7 @@ export default function V2MedicalPage() {
                 <GlassCard className="p-6 h-full flex flex-col">
                   <Quotes size={28} weight="fill" style={{ color: TEAL }} className="mb-3 opacity-50" />
                   <p className="text-slate-300 leading-relaxed flex-1 text-sm">{t.text}</p>
-                  <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
+                  <div className="mt-4 pt-4 border-t border-white/8 flex items-center justify-between">
                     <span className="text-sm font-semibold text-white">{t.name}</span>
                     <div className="flex gap-0.5">
                       {Array.from({ length: t.rating }).map((_, j) => (
@@ -893,7 +893,7 @@ export default function V2MedicalPage() {
               <motion.button
                 key={i}
                 onClick={() => setQuizAnswer(i)}
-                className={`p-5 rounded-xl border text-left transition-all cursor-pointer ${quizAnswer === i ? "border-[#0891b2] bg-[#0891b2]/10" : "border-white/10 bg-white/[0.03] hover:border-[#0891b2]/50 hover:bg-white/[0.06]"}`}
+                className={`p-5 rounded-xl border text-left transition-all cursor-pointer ${quizAnswer === i ? "border-[#0891b2] bg-[#0891b2]/10" : "border-white/15 bg-white/[0.08] hover:border-[#0891b2]/50 hover:bg-white/[0.06]"}`}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
@@ -943,7 +943,7 @@ export default function V2MedicalPage() {
             </h2>
           </div>
           <GlassCard className="overflow-hidden">
-            <div className="grid grid-cols-3 text-sm font-semibold border-b border-white/10">
+            <div className="grid grid-cols-3 text-sm font-semibold border-b border-white/15">
               <div className="p-4 text-slate-400 uppercase tracking-wide text-xs">Feature</div>
               <div className="p-4 text-center font-bold" style={{ color: TEAL }}>Seattle Medical ✓</div>
               <div className="p-4 text-center text-slate-500">ER / Urgent Care Chains</div>
@@ -957,7 +957,7 @@ export default function V2MedicalPage() {
               ["Chronic care coordination", "✓", "Acute only"],
               ["Transparent pricing & estimates", "✓", "Billing unclear"],
             ].map(([feature, us, them], i) => (
-              <div key={i} className={`grid grid-cols-3 text-sm ${i % 2 === 0 ? "bg-white/[0.02]" : ""} border-b border-white/5 last:border-0`}>
+              <div key={i} className={`grid grid-cols-3 text-sm ${i % 2 === 0 ? "bg-white/[0.07]" : ""} border-b border-white/8 last:border-0`}>
                 <div className="p-4 text-slate-300">{feature}</div>
                 <div className="p-4 text-center font-bold" style={{ color: TEAL }}>{us}</div>
                 <div className="p-4 text-center text-slate-500">{them}</div>
@@ -1019,7 +1019,7 @@ export default function V2MedicalPage() {
                   <CalendarCheck size={20} weight="duotone" />
                   Book Appointment
                 </MagneticButton>
-                <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
+                <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
                   <Phone size={18} weight="duotone" />
                   Call Us
                 </MagneticButton>
@@ -1102,7 +1102,7 @@ export default function V2MedicalPage() {
       </SectionReveal>
 
       {/* ─── FOOTER ─── */}
-      <footer className="relative z-10 border-t border-white/5 py-8">
+      <footer className="relative z-10 border-t border-white/8 py-8">
         <div className="mx-auto max-w-7xl px-4 md:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2 text-sm text-slate-500">
             <Heartbeat size={16} weight="duotone" style={{ color: TEAL }} />

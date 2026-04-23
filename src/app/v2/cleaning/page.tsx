@@ -143,7 +143,7 @@ function SectionReveal({ children, className = "", id }: { children: React.React
 
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
+    <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
       {children}
     </div>
   );
@@ -342,7 +342,7 @@ function EstimateCalculator() {
         </div>
 
         {/* Total */}
-        <div className="border-t border-white/10 pt-4">
+        <div className="border-t border-white/15 pt-4">
           <div className="flex items-center justify-between mb-4">
             <span className="text-sm text-slate-400">Estimated Total</span>
             <motion.span
@@ -633,7 +633,7 @@ export default function V2CleaningPage() {
                 { icon: SealCheck, text: "Background Checked" },
                 { icon: Lightning, text: "Same-Day Available" },
               ].map((badge, i) => (
-                <div key={i} className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/10 bg-white/[0.03]">
+                <div key={i} className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/15 bg-white/[0.08]">
                   <badge.icon size={14} weight="duotone" style={{ color: MINT }} />
                   <span className="text-xs text-slate-400">{badge.text}</span>
                 </div>
@@ -644,7 +644,7 @@ export default function V2CleaningPage() {
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer" style={{ background: BLUE } as React.CSSProperties}>
                 Get Free Estimate <ArrowRight size={18} weight="bold" />
               </MagneticButton>
-              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
+              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
                 <Phone size={18} weight="duotone" /> <a href="tel:+12068349275">(206) 834-9275</a>
               </MagneticButton>
             </motion.div>
@@ -710,7 +710,7 @@ export default function V2CleaningPage() {
                   </div>
                   <h3 className="text-lg font-semibold text-white mb-2">{svc.title}</h3>
                   <p className="text-sm text-slate-400 leading-relaxed flex-1">{svc.description}</p>
-                  <div className="mt-4 pt-4 border-t border-white/5">
+                  <div className="mt-4 pt-4 border-t border-white/8">
                     <span className="text-xs font-medium flex items-center gap-1 cursor-pointer group-hover:gap-2 transition-all" style={{ color: BLUE_LIGHT }}>
                       Book Now <CaretRight size={12} weight="bold" />
                     </span>
@@ -845,7 +845,7 @@ export default function V2CleaningPage() {
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="text-center mb-6">
             {/* Google Reviews Header */}
-            <div className="inline-flex flex-col sm:flex-row items-center gap-4 px-6 py-4 rounded-2xl border border-white/10 bg-white/[0.04] mb-8">
+            <div className="inline-flex flex-col sm:flex-row items-center gap-4 px-6 py-4 rounded-2xl border border-white/15 bg-white/[0.07] mb-8">
               <div className="flex items-center gap-2">
                 <svg width="24" height="24" viewBox="0 0 24 24" aria-label="Google">
                   <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -894,7 +894,7 @@ export default function V2CleaningPage() {
                   </div>
                   <Quotes size={20} weight="fill" style={{ color: BLUE_LIGHT }} className="mb-2 opacity-30" />
                   <p className="text-sm text-slate-300 leading-relaxed mb-4">{t.text}</p>
-                  <div className="border-t border-white/5 pt-3">
+                  <div className="border-t border-white/8 pt-3">
                     <p className="text-xs uppercase tracking-widest mb-2" style={{ color: MINT }}>Rooms Cleaned</p>
                     <div className="flex flex-wrap gap-2">
                       {t.rooms.map((room) => (
@@ -971,7 +971,7 @@ export default function V2CleaningPage() {
             </h2>
           </div>
           <GlassCard className="overflow-hidden">
-            <div className="grid grid-cols-3 text-sm font-semibold border-b border-white/10">
+            <div className="grid grid-cols-3 text-sm font-semibold border-b border-white/15">
               <div className="p-4 text-slate-400 uppercase tracking-wide text-xs">Feature</div>
               <div className="p-4 text-center" style={{ color: MINT }}>Crystal Clean Co. ✓</div>
               <div className="p-4 text-center text-slate-500">DIY Cleaning</div>
@@ -985,7 +985,7 @@ export default function V2CleaningPage() {
               ["Flexible scheduling & rescheduling", "✓", "Your time only"],
               ["Insured & bonded team", "✓", "No coverage"],
             ].map(([feature, us, them], i) => (
-              <div key={i} className={`grid grid-cols-3 text-sm ${i % 2 === 0 ? "bg-white/[0.02]" : ""} border-b border-white/5 last:border-0`}>
+              <div key={i} className={`grid grid-cols-3 text-sm ${i % 2 === 0 ? "bg-white/[0.07]" : ""} border-b border-white/8 last:border-0`}>
                 <div className="p-4 text-slate-300">{feature}</div>
                 <div className="p-4 text-center font-bold" style={{ color: MINT }}>{us}</div>
                 <div className="p-4 text-center text-slate-500">{them}</div>
@@ -1049,7 +1049,7 @@ export default function V2CleaningPage() {
                         </li>
                       ))}
                     </ul>
-                    <MagneticButton className="w-full mt-6 py-3 rounded-xl text-sm font-semibold text-white border border-white/10 cursor-pointer">
+                    <MagneticButton className="w-full mt-6 py-3 rounded-xl text-sm font-semibold text-white border border-white/15 cursor-pointer">
                       Book {tier.name}
                     </MagneticButton>
                   </GlassCard>
@@ -1126,7 +1126,7 @@ export default function V2CleaningPage() {
           <motion.div className="flex flex-wrap justify-center gap-3" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true }}>
             {["Capitol Hill", "Ballard", "Fremont", "Queen Anne", "Wallingford", "Green Lake", "Ravenna", "University District", "Beacon Hill", "Columbia City", "West Seattle", "Magnolia", "Bellevue", "Kirkland", "Redmond"].map((area) => (
               <motion.div key={area} variants={fadeUp}>
-                <div className="px-4 py-2 rounded-full border border-white/10 bg-white/[0.03] text-sm text-slate-400 flex items-center gap-2">
+                <div className="px-4 py-2 rounded-full border border-white/15 bg-white/[0.08] text-sm text-slate-400 flex items-center gap-2">
                   <MapPin size={14} weight="duotone" style={{ color: BLUE_LIGHT }} />
                   {area}
                 </div>
@@ -1173,16 +1173,16 @@ export default function V2CleaningPage() {
               <h3 className="text-xl font-semibold text-white mb-6">Request a Quote</h3>
               <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <input type="text" placeholder="First Name" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-sky-500/50" />
-                  <input type="text" placeholder="Last Name" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-sky-500/50" />
+                  <input type="text" placeholder="First Name" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-sky-500/50" />
+                  <input type="text" placeholder="Last Name" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-sky-500/50" />
                 </div>
-                <input type="email" placeholder="Email Address" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-sky-500/50" />
-                <input type="tel" placeholder="Phone Number" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-sky-500/50" />
-                <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-slate-500 text-sm focus:outline-none focus:border-sky-500/50">
+                <input type="email" placeholder="Email Address" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-sky-500/50" />
+                <input type="tel" placeholder="Phone Number" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-sky-500/50" />
+                <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-slate-500 text-sm focus:outline-none focus:border-sky-500/50">
                   <option value="">Select Service</option>
                   {services.map((s, i) => (<option key={i} value={s.title}>{s.title}</option>))}
                 </select>
-                <textarea placeholder="Tell us about your space (bedrooms, bathrooms, special requests)..." rows={4} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-sky-500/50 resize-none" />
+                <textarea placeholder="Tell us about your space (bedrooms, bathrooms, special requests)..." rows={4} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-sky-500/50 resize-none" />
                 <MagneticButton className="w-full py-3 rounded-xl text-sm font-semibold text-white cursor-pointer" style={{ background: BLUE } as React.CSSProperties}>
                   <span className="flex items-center justify-center gap-2"><CalendarCheck size={18} weight="duotone" /> Get Free Quote</span>
                 </MagneticButton>
@@ -1208,7 +1208,7 @@ export default function V2CleaningPage() {
       </SectionReveal>
 
       {/* ═══ FOOTER ═══ */}
-      <footer className="relative z-10 border-t border-white/5 py-12">
+      <footer className="relative z-10 border-t border-white/8 py-12">
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <div className="md:col-span-2">
@@ -1236,7 +1236,7 @@ export default function V2CleaningPage() {
               </div>
             </div>
           </div>
-          <div className="border-t border-white/5 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="border-t border-white/8 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-xs text-slate-500">Crystal Clean Co. &copy; {new Date().getFullYear()}. All rights reserved.</p>
             <p className="text-xs text-slate-600 flex items-center gap-1.5"><svg width="14" height="14" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-sky-500"><path d="M24.3 4.2c-1.5-.4-3.2.1-4.5 1.1-1-.7-2.3-1-3.5-.8-2.4.4-4.2 2.5-4.2 4.9v.6c-3.2.8-6 2.8-7.8 5.6-.3.5-.1 1.1.4 1.4.5.3 1.1.1 1.4-.4 1.5-2.3 3.7-4 6.3-4.7.5-.1 1-.1 1.5 0 .8.2 1.4.8 1.7 1.5.3.8.2 1.6-.2 2.3l-2.8 4.3c-.6.9-.4 2.1.4 2.8l2.5 2.1c.4.3.8.5 1.3.5h5.2c.5 0 1-.2 1.3-.5l1.2-1c.6-.5.8-1.3.6-2l-1-3.2c-.2-.5 0-1.1.4-1.4l3.8-2.5c1.3-.9 2.1-2.3 2.1-3.9V9.6c0-2.5-1.7-4.7-4.1-5.3v-.1z" fill="currentColor"/></svg>Created by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "underline" }}>bluejayportfolio.com</a></p>
           </div>

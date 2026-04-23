@@ -94,7 +94,7 @@ function SectionReveal({ children, className = "", id }: { children: React.React
 }
 
 function GlassCard({ children, className = "", style, onClick }: { children: React.ReactNode; className?: string; style?: React.CSSProperties; onClick?: () => void }) {
-  return (<div className={`rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`} style={style} onClick={onClick}>{children}</div>);
+  return (<div className={`rounded-2xl border border-white/15 bg-white/[0.07] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`} style={style} onClick={onClick}>{children}</div>);
 }
 
 function MagneticButton({ children, className = "", onClick, style, type }: { children: React.ReactNode; className?: string; onClick?: () => void; style?: React.CSSProperties; type?: "button" | "submit" | "reset" }) {
@@ -336,13 +336,13 @@ export default function V2CarpetCleaningPage() {
               <MagneticButton className="px-8 py-4 rounded-full text-lg font-semibold text-white shadow-lg shadow-cyan-500/20" style={{ background: ACCENT }} onClick={() => scrollTo("contact")}>
                 Book Now <ArrowRight className="inline ml-2" />
               </MagneticButton>
-              <MagneticButton className="px-8 py-4 rounded-full text-lg font-semibold text-slate-300 border border-white/10 bg-white/5" onClick={() => scrollTo("pricing")}>
+              <MagneticButton className="px-8 py-4 rounded-full text-lg font-semibold text-slate-300 border border-white/15 bg-white/5" onClick={() => scrollTo("pricing")}>
                 View Pricing
               </MagneticButton>
             </div>
             <div className="flex flex-wrap justify-center gap-3 mt-4">
               {["IICRC Certified", "Eco-Friendly", "14 Years Trusted", "24hr Dry Guarantee"].map((b) => (
-                <span key={b} className="px-3 py-1.5 rounded-full text-xs font-medium border border-white/10 bg-white/[0.04] text-slate-300 flex items-center gap-1.5">
+                <span key={b} className="px-3 py-1.5 rounded-full text-xs font-medium border border-white/15 bg-white/[0.07] text-slate-300 flex items-center gap-1.5">
                   <CheckCircle size={14} weight="fill" style={{ color: ACCENT }} />{b}
                 </span>
               ))}
@@ -402,7 +402,7 @@ export default function V2CarpetCleaningPage() {
                       </li>
                     ))}
                   </ul>
-                  <MagneticButton className={`w-full py-3 rounded-xl text-sm font-semibold ${plan.popular ? "text-white" : "text-white border border-white/10"}`} style={plan.popular ? { background: ACCENT } : { background: "rgba(255,255,255,0.05)" }} onClick={() => scrollTo("contact")}>
+                  <MagneticButton className={`w-full py-3 rounded-xl text-sm font-semibold ${plan.popular ? "text-white" : "text-white border border-white/15"}`} style={plan.popular ? { background: ACCENT } : { background: "rgba(255,255,255,0.05)" }} onClick={() => scrollTo("contact")}>
                     Book This Package
                   </MagneticButton>
                 </GlassCard>
@@ -583,7 +583,7 @@ export default function V2CarpetCleaningPage() {
           <p className="text-lg text-center max-w-2xl mx-auto text-slate-300 mb-12">Our 10-point checklist ensures nothing gets missed. Every single time.</p>
           <div className="max-w-2xl mx-auto">
             {cleaningChecklist.map((item, i) => (
-              <div key={i} className={`flex items-center gap-4 py-3 ${i < cleaningChecklist.length - 1 ? "border-b border-white/5" : ""}`}>
+              <div key={i} className={`flex items-center gap-4 py-3 ${i < cleaningChecklist.length - 1 ? "border-b border-white/8" : ""}`}>
                 <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-xs font-bold" style={{ background: ACCENT_GLOW, color: ACCENT_LIGHT, border: `1px solid ${ACCENT}30` }}>
                   {i + 1}
                 </div>
@@ -612,13 +612,13 @@ export default function V2CarpetCleaningPage() {
           <h2 className="text-4xl font-bold text-center text-white mb-3">FreshStart vs. <span style={{ color: ACCENT }}>DIY / Rental</span></h2>
           <p className="text-lg text-center max-w-2xl mx-auto text-slate-300 mb-12">Professional cleaning delivers results rental machines simply cannot match.</p>
           <GlassCard className="overflow-hidden max-w-3xl mx-auto">
-            <div className="grid grid-cols-3 text-center font-semibold text-sm border-b border-white/10">
+            <div className="grid grid-cols-3 text-center font-semibold text-sm border-b border-white/15">
               <div className="p-4 text-slate-400">Feature</div>
               <div className="p-4 text-white" style={{ background: ACCENT_GLOW }}>FreshStart</div>
               <div className="p-4 text-slate-400">DIY / Rental</div>
             </div>
             {diyComparison.map((row, i) => (
-              <div key={i} className={`grid grid-cols-3 text-center text-sm ${i < diyComparison.length - 1 ? "border-b border-white/5" : ""}`}>
+              <div key={i} className={`grid grid-cols-3 text-center text-sm ${i < diyComparison.length - 1 ? "border-b border-white/8" : ""}`}>
                 <div className="p-4 text-slate-300 text-left pl-6">{row.feature}</div>
                 <div className="p-4" style={{ background: i % 2 === 0 ? ACCENT_GLOW : "transparent" }}>
                   <CheckCircle size={20} weight="fill" style={{ color: "#34d399" }} className="mx-auto" />
@@ -642,7 +642,7 @@ export default function V2CarpetCleaningPage() {
               <GlassCard key={i} className="p-6 break-inside-avoid">
                 <Quotes size={28} weight="fill" className="mb-3 shrink-0" style={{ color: ACCENT }} />
                 <p className="text-slate-300 mb-5 leading-relaxed">&ldquo;{t.text}&rdquo;</p>
-                <div className="flex items-center justify-between pt-4 border-t border-white/10">
+                <div className="flex items-center justify-between pt-4 border-t border-white/15">
                   <div>
                     <p className="font-semibold text-white text-sm">{t.name}</p>
                     {t.role && <p className="text-xs text-slate-500">{t.role}</p>}
@@ -696,7 +696,7 @@ export default function V2CarpetCleaningPage() {
                 <p className="text-slate-300 mb-6">Your carpets will be dry within 24 hours, or we come back to speed-dry for free. Most homes are completely dry in just 4-6 hours thanks to our truck-mounted extraction and industrial air movers.</p>
                 <div className="flex flex-wrap gap-3">
                   {["Truck-mounted extraction", "Industrial air movers", "Low-moisture options", "Same-evening walkable"].map((f) => (
-                    <span key={f} className="px-3 py-1.5 rounded-full text-xs font-medium border border-white/10 bg-white/[0.04] text-slate-300">
+                    <span key={f} className="px-3 py-1.5 rounded-full text-xs font-medium border border-white/15 bg-white/[0.07] text-slate-300">
                       <CheckCircle size={12} weight="fill" style={{ color: ACCENT }} className="inline mr-1" />{f}
                     </span>
                   ))}
@@ -782,7 +782,7 @@ export default function V2CarpetCleaningPage() {
           <p className="text-lg text-center max-w-2xl mx-auto text-slate-300 mb-12">Backed by industry certifications and a commitment to quality you can trust.</p>
           <div className="flex flex-wrap justify-center gap-3">
             {certifications.map((cert, i) => (
-              <span key={i} className="px-5 py-2.5 rounded-full text-sm font-medium border border-white/10 bg-white/[0.04] text-slate-300 flex items-center gap-2">
+              <span key={i} className="px-5 py-2.5 rounded-full text-sm font-medium border border-white/15 bg-white/[0.07] text-slate-300 flex items-center gap-2">
                 <ShieldCheck size={16} weight="fill" style={{ color: ACCENT }} />{cert}
               </span>
             ))}
@@ -940,7 +940,7 @@ export default function V2CarpetCleaningPage() {
                 <MagneticButton className="px-8 py-4 rounded-full text-lg font-semibold text-white shadow-lg shadow-cyan-500/20" style={{ background: ACCENT }} onClick={() => scrollTo("contact")}>
                   Book My Free Estimate
                 </MagneticButton>
-                <MagneticButton className="px-8 py-4 rounded-full text-lg font-semibold text-slate-300 border border-white/10 bg-white/5" onClick={() => window.location.href = "tel:2063581947"}>
+                <MagneticButton className="px-8 py-4 rounded-full text-lg font-semibold text-slate-300 border border-white/15 bg-white/5" onClick={() => window.location.href = "tel:2063581947"}>
                   <Phone size={18} className="inline mr-2" /> (206) 358-1947
                 </MagneticButton>
               </div>
@@ -1011,7 +1011,7 @@ export default function V2CarpetCleaningPage() {
       </main>
 
       {/* ────────────────── FOOTER ────────────────── */}
-      <footer className="max-w-6xl mx-auto px-4 py-12 border-t border-white/10">
+      <footer className="max-w-6xl mx-auto px-4 py-12 border-t border-white/15">
         <div className="grid md:grid-cols-4 gap-8 text-sm text-slate-400">
           <div>
             <div className="flex items-center gap-2 mb-3">
@@ -1067,7 +1067,7 @@ export default function V2CarpetCleaningPage() {
             </div>
           </div>
         </div>
-        <div className="mt-10 pt-6 border-t border-white/5 text-center text-slate-500 text-xs">
+        <div className="mt-10 pt-6 border-t border-white/8 text-center text-slate-500 text-xs">
           <p>&copy; {new Date().getFullYear()} FreshStart Carpet Cleaning. All Rights Reserved.</p>
           <p className="mt-1 flex items-center gap-1.5">
             <svg width="14" height="14" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-sky-500"><path d="M24.3 4.2c-1.5-.4-3.2.1-4.5 1.1-1-.7-2.3-1-3.5-.8-2.4.4-4.2 2.5-4.2 4.9v.6c-3.2.8-6 2.8-7.8 5.6-.3.5-.1 1.1.4 1.4.5.3 1.1.1 1.4-.4 1.5-2.3 3.7-4 6.3-4.7.5-.1 1-.1 1.5 0 .8.2 1.4.8 1.7 1.5.3.8.2 1.6-.2 2.3l-2.8 4.3c-.6.9-.4 2.1.4 2.8l2.5 2.1c.4.3.8.5 1.3.5h5.2c.5 0 1-.2 1.3-.5l1.2-1c.6-.5.8-1.3.6-2l-1-3.2c-.2-.5 0-1.1.4-1.4l3.8-2.5c1.3-.9 2.1-2.3 2.1-3.9V9.6c0-2.5-1.7-4.7-4.1-5.3v-.1z" fill="currentColor"/></svg>Created by{" "}
