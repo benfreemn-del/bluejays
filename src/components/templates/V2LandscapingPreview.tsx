@@ -261,11 +261,11 @@ function AccordionItem({ question, answer, isOpen, onToggle }: { question: strin
 /* ───────────────────────── SECTION HEADER ───────────────────────── */
 function SectionHeader({ badge, title, subtitle, accent }: { badge: string; title: string; subtitle?: string; accent: string }) {
   return (
-    <div className="text-center mb-16">
-      <span className="inline-block text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border" style={{ color: accent, borderColor: `${accent}33`, background: `${accent}0d` }}>{badge}</span>
+    <div className="text-center mb-10 md:mb-12">
+      <span className="inline-block text-xs font-bold uppercase tracking-[0.25em] mb-3 px-4 py-1.5 rounded-full border" style={{ color: accent, borderColor: `${accent}33`, background: `${accent}0d` }}>{badge}</span>
       <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white">{title}</h2>
-      <div className="h-0.5 w-16 mx-auto mt-4" style={{ background: `linear-gradient(to right, ${accent}, transparent)` }} />
-      {subtitle && <p className="text-slate-400 mt-4 max-w-2xl text-lg leading-relaxed mx-auto">{subtitle}</p>}
+      <div className="h-0.5 w-16 mx-auto mt-3" style={{ background: `linear-gradient(to right, ${accent}, transparent)` }} />
+      {subtitle && <p className="text-slate-400 mt-3 max-w-2xl text-lg leading-relaxed mx-auto">{subtitle}</p>}
     </div>
   );
 }
@@ -389,7 +389,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
       <nav className="fixed top-0 left-0 right-0 z-50">
         <div className="mx-auto max-w-7xl px-4 md:px-6 py-4">
           {data.logoUrl ? (
-            <div className="flex items-center justify-between px-5 md:px-7 py-3 rounded-2xl bg-white/95 backdrop-blur-sm shadow-[0_8px_32px_-8px_rgba(0,0,0,0.45)] border border-white/60">
+            <div className="flex items-center justify-between px-5 md:px-7 py-3 rounded-2xl bg-white shadow-[0_8px_32px_-8px_rgba(0,0,0,0.45)] border border-slate-200">
               <div className="flex items-center gap-2">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -511,26 +511,32 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 4. BEFORE / AFTER SHOWCASE ══════════════════ */}
-      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0e140d 50%, #1a1a1a 100%)" }} />
-        <NaturePattern opacity={0.02} accent={PRIMARY} />
-        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[10%] w-[500px] h-[500px] rounded-full blur-[200px]" style={{ background: `${PRIMARY}06` }} /></div>
+      {/* ══════════════════ 4. BEFORE / AFTER (gated) ══════════════════ */}
+      {/* Only render when data.hideBeforeAfter is not truthy. Per CLAUDE.md,
+          before/after must be a real matched transformation pair — if a
+          prospect doesn't have one yet, hide the section entirely rather
+          than ship a generic placeholder image with their business name. */}
+      {!(data as { hideBeforeAfter?: boolean }).hideBeforeAfter && (
+        <section className="relative z-10 py-16 md:py-24 overflow-hidden">
+          <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0e140d 50%, #1a1a1a 100%)" }} />
+          <NaturePattern opacity={0.02} accent={PRIMARY} />
+          <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[10%] w-[500px] h-[500px] rounded-full blur-[200px]" style={{ background: `${PRIMARY}06` }} /></div>
 
-        <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Our Work" title="Before & After" subtitle={`See the quality of work ${data.businessName} delivers for our clients.`} accent={PRIMARY} />
+          <div className="max-w-6xl mx-auto px-6 relative z-10">
+            <SectionHeader badge="Our Work" title="Before & After" subtitle={`See the quality of work ${data.businessName} delivers for our clients.`} accent={PRIMARY} />
 
-          <div className="max-w-4xl mx-auto">
-            <div className="relative rounded-2xl overflow-hidden border border-white/[0.06]">
-              <img src="/images/landscaping-before-after.png" alt="Landscape transformation before and after" className="w-full h-auto object-cover" />
+            <div className="max-w-4xl mx-auto">
+              <div className="relative rounded-2xl overflow-hidden border border-white/[0.06]">
+                <img src="/images/landscaping-before-after.png" alt="Landscape transformation before and after" className="w-full h-auto object-cover" />
+              </div>
+              <p className="text-center text-sm text-slate-400 mt-4">Complete yard transformation — new patio, plantings, lighting, and irrigation.</p>
             </div>
-            <p className="text-center text-sm text-slate-400 mt-4">Complete yard transformation — new patio, plantings, lighting, and irrigation.</p>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ══════════════════ 5. PORTFOLIO GALLERY ══════════════════ */}
-      <section id="portfolio" className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <section id="portfolio" className="relative z-10 py-16 md:py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #11150e 50%, #1a1a1a 100%)" }} />
         <NaturePattern opacity={0.02} accent={PRIMARY} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] right-[10%] w-[500px] h-[500px] rounded-full blur-[200px]" style={{ background: `${PRIMARY}06` }} /></div>
@@ -552,7 +558,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
       </section>
 
       {/* ══════════════════ 6. SERVICES ══════════════════ */}
-      <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <section id="services" className="relative z-10 py-16 md:py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #121510 50%, #1a1a1a 100%)" }} />
         <OrganicWave opacity={0.025} accent={PRIMARY} />
         <div className="absolute inset-0 pointer-events-none">
@@ -585,7 +591,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
       </section>
 
       {/* ══════════════════ 6b. WHAT WE DO ══════════════════ */}
-      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <section className="relative z-10 py-16 md:py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0e140d 50%, #1a1a1a 100%)" }} />
         <NaturePattern opacity={0.02} accent={PRIMARY} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] left-[15%] w-[400px] h-[400px] rounded-full blur-[180px]" style={{ background: `${PRIMARY}06` }} /></div>
@@ -611,7 +617,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
           already pushes "Free Estimate" — that's the real ask. */}
 
       {/* ══════════════════ 7. ABOUT ══════════════════ */}
-      <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <section id="about" className="relative z-10 py-16 md:py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0d120b 50%, #1a1a1a 100%)" }} />
         <OrganicWave opacity={0.02} accent={PRIMARY} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${PRIMARY}06` }} /></div>
@@ -644,7 +650,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
       </section>
 
       {/* ══════════════════ 7b. WHY CHOOSE US ══════════════════ */}
-      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <section className="relative z-10 py-16 md:py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #121510 50%, #1a1a1a 100%)" }} />
         <OrganicWave opacity={0.025} accent={PRIMARY} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute bottom-[20%] left-[5%] w-[500px] h-[500px] rounded-full blur-[200px]" style={{ background: `${PRIMARY}06` }} /></div>
@@ -665,7 +671,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
       </section>
 
       {/* ══════════════════ 7c. COMPETITOR COMPARISON ══════════════════ */}
-      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <section className="relative z-10 py-16 md:py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0e140d 50%, #1a1a1a 100%)" }} />
         <NaturePattern opacity={0.02} accent={PRIMARY} />
         <div className="max-w-4xl mx-auto px-6 relative z-10">
@@ -696,7 +702,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
       </section>
 
       {/* ══════════════════ 8. PROCESS ══════════════════ */}
-      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <section className="relative z-10 py-16 md:py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #121510 50%, #1a1a1a 100%)" }} />
         <NaturePattern opacity={0.025} accent={PRIMARY} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${EARTH_BROWN}06` }} /></div>
@@ -719,7 +725,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
       </section>
 
       {/* ══════════════════ 8b. VIDEO PLACEHOLDER ══════════════════ */}
-      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <section className="relative z-10 py-16 md:py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0e140d 50%, #1a1a1a 100%)" }} />
         <NaturePattern opacity={0.02} accent={PRIMARY} />
         <div className="max-w-4xl mx-auto px-6 relative z-10">
@@ -740,7 +746,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
       </section>
 
       {/* ══════════════════ 8c. YARD NEEDS QUIZ ══════════════════ */}
-      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <section className="relative z-10 py-16 md:py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #121510 50%, #1a1a1a 100%)" }} />
         <OrganicWave opacity={0.02} accent={PRIMARY} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] right-[10%] w-[400px] h-[400px] rounded-full blur-[180px]" style={{ background: `${PRIMARY}06` }} /></div>
@@ -778,7 +784,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
 
       {/* ══════════════════ 9. TESTIMONIALS (only when real) ══════════════════ */}
       {testimonials.length > 0 && (
-        <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <section className="relative z-10 py-16 md:py-20 overflow-hidden">
           <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #121510 50%, #1a1a1a 100%)" }} />
           <NaturePattern opacity={0.02} accent={PRIMARY} />
           <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] right-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${PRIMARY}06` }} /></div>
@@ -831,7 +837,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
       </section>
 
       {/* ══════════════════ 11. SERVICE AREAS ══════════════════ */}
-      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <section className="relative z-10 py-16 md:py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0d120b 50%, #1a1a1a 100%)" }} />
         <NaturePattern opacity={0.02} accent={PRIMARY} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -847,7 +853,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
 
       {/* ══════════════════ 12. HOURS ══════════════════ */}
       {data.hours && (
-        <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <section className="relative z-10 py-16 md:py-20 overflow-hidden">
           <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #121510 50%, #1a1a1a 100%)" }} />
           <OrganicWave opacity={0.02} accent={PRIMARY} />
           <div className="max-w-3xl mx-auto px-6 relative z-10">
@@ -887,7 +893,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
       </section>
 
       {/* ══════════════════ 13. FAQ ══════════════════ */}
-      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <section className="relative z-10 py-16 md:py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #121510 50%, #1a1a1a 100%)" }} />
         <OrganicWave opacity={0.02} accent={PRIMARY} />
         <div className="max-w-3xl mx-auto px-6 relative z-10">
@@ -899,7 +905,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
       </section>
 
       {/* ══════════════════ 14. CONTACT ══════════════════ */}
-      <section id="contact" className="relative z-10 py-24 md:py-32 overflow-hidden">
+      <section id="contact" className="relative z-10 py-16 md:py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0d120b 50%, #1a1a1a 100%)" }} />
         <NaturePattern opacity={0.02} accent={PRIMARY} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">

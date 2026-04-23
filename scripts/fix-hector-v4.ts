@@ -98,6 +98,11 @@ async function main() {
   sd.logoUrl = LOGO_RAW;
   gd.logoUrl = LOGO_RAW;
 
+  // Hide the Before/After section — our /images/landscaping-before-after.png
+  // is a generic BlueJays placeholder, not a real Hector transformation pair.
+  // Per CLAUDE.md, before/after must be a real matched transformation.
+  gd.hideBeforeAfter = true;
+
   console.log("═".repeat(75));
   console.log(`HECTOR v4 — ${CURATED.length} visually-verified photos ONLY from his site`);
   console.log("═".repeat(75));
