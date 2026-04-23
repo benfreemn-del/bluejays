@@ -224,7 +224,7 @@ const faqData = [
 ];
 
 const portfolioImages = [
-  "https://images.unsplash.com/photo-1621905251918-48416bd8575a?w=600&q=80",
+  "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=600&q=80",
   "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=600&q=80",
   "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=600&q=80",
   "https://images.unsplash.com/photo-1429497419816-9ca5cfb4571a?w=600&q=80",
@@ -700,7 +700,7 @@ export default function V2ConstructionPage() {
             <h2 className="text-4xl md:text-5xl tracking-tighter font-bold text-white"><WordReveal text="See a Build Come to Life" /></h2>
           </div>
           <div className="relative rounded-2xl overflow-hidden aspect-video cursor-pointer">
-            <img src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1200&q=80" alt="Construction crew at work" className="w-full h-full object-cover" />
+            <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&q=80" alt="Construction crew at work" className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-black/55 flex items-center justify-center">
               <motion.div whileHover={{ scale: 1.1 }} transition={spring} className="flex flex-col items-center gap-4">
                 <div className="w-20 h-20 rounded-full flex items-center justify-center" style={{ background: ACCENT }}>
@@ -894,7 +894,7 @@ export default function V2ConstructionPage() {
                 </div>
                 <div>
                   <label className="block text-xs uppercase tracking-widest text-slate-400 mb-2">Phone Number</label>
-                  <input type="tel" placeholder="(206) 555-0100" className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 border border-white/10 outline-none" style={{ background: "rgba(255,255,255,0.04)" }} />
+                  <input type="tel" placeholder="Your phone number" className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 border border-white/10 outline-none" style={{ background: "rgba(255,255,255,0.04)" }} />
                 </div>
                 <div>
                   <label className="block text-xs uppercase tracking-widest text-slate-400 mb-2">Project Type</label>

@@ -542,7 +542,7 @@ export default function V2RestaurantPage() {
                 Reserve a Table <ArrowRight size={18} weight="bold" />
               </MagneticButton>
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
-                <Phone size={18} weight="duotone" /> (555) 867-5309
+                <Phone size={18} weight="duotone" /> (206) 867-5309
               </MagneticButton>
             </motion.div>
           </div>
@@ -607,7 +607,7 @@ export default function V2RestaurantPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="relative rounded-2xl overflow-hidden aspect-[4/5]">
               <img
-                src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=700&q=80"
+                src="https://images.unsplash.com/photo-1507048331197-7d4ac70811cf?w=700&q=80"
                 alt="Head Chef in kitchen"
                 className="w-full h-full object-cover object-center"
               />
@@ -832,14 +832,14 @@ export default function V2RestaurantPage() {
                   <MapPin size={20} weight="duotone" style={{ color: GOLD }} className="mt-0.5 shrink-0" />
                   <div>
                     <p className="text-sm font-semibold text-white">Location</p>
-                    <p className="text-sm text-slate-400">742 Ember Lane, Portland, OR 97205</p>
+                    <p className="text-sm text-slate-400">2847 Eastlake Ave E, Seattle, WA 98102</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
                   <Phone size={20} weight="duotone" style={{ color: GOLD }} className="mt-0.5 shrink-0" />
                   <div>
                     <p className="text-sm font-semibold text-white">Reservations</p>
-                    <p className="text-sm text-slate-400">(555) 867-5309</p>
+                    <p className="text-sm text-slate-400">(206) 867-5309</p>
                   </div>
                 </div>
               </GlassCard>
@@ -1072,7 +1072,7 @@ export default function V2RestaurantPage() {
                   {quizAnswer === 3 && "From champagne service to a custom dessert, we'll make it a night to remember."}
                 </p>
                 <a
-                  href="tel:+15558675309"
+                  href="tel:+12068675309"
                   className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-white font-semibold"
                   style={{ background: RED }}
                 >

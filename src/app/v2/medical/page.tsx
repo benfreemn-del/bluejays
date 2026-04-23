@@ -546,7 +546,7 @@ export default function V2MedicalPage() {
               </MagneticButton>
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
                 <Phone size={18} weight="duotone" />
-                (555) 412-7890
+                (206) 412-7890
               </MagneticButton>
             </motion.div>
           </div>
@@ -920,7 +920,7 @@ export default function V2MedicalPage() {
                   {quizAnswer === 3 && "Preventive care is the best medicine. Schedule your screening today."}
                 </p>
                 <a
-                  href="tel:+15554127890"
+                  href="tel:+12064127890"
                   className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-white font-semibold"
                   style={{ background: TEAL }}
                 >
@@ -968,14 +968,14 @@ export default function V2MedicalPage() {
                   <MapPin size={20} weight="duotone" style={{ color: TEAL }} className="mt-0.5 shrink-0" />
                   <div>
                     <p className="text-sm font-semibold text-white">Location</p>
-                    <p className="text-sm text-slate-400">8500 Health Parkway, Suite 100<br />Portland, OR 97210</p>
+                    <p className="text-sm text-slate-400">3821 Stone Way N, Suite 100<br />Seattle, WA 98103</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
                   <Phone size={20} weight="duotone" style={{ color: TEAL }} className="mt-0.5 shrink-0" />
                   <div>
                     <p className="text-sm font-semibold text-white">Phone</p>
-                    <p className="text-sm text-slate-400">(555) 412-7890</p>
+                    <p className="text-sm text-slate-400">(206) 412-7890</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">

@@ -408,7 +408,7 @@ export default function V2GarageDoorPage() {
           </div>
           <motion.div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
             {[
-              "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=600&q=80",
+              "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80",
               "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=600&q=80",
               "https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?w=600&q=80",
               "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&q=80",
@@ -710,7 +710,7 @@ export default function V2GarageDoorPage() {
             </h2>
           </div>
           <div className="relative rounded-2xl overflow-hidden aspect-video cursor-pointer group">
-            <img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1200&q=80" alt="Garage door installation crew" className="w-full h-full object-cover" />
+            <img src="https://images.unsplash.com/photo-1601578715938-34a0f4b0f52?w=1200&q=80" alt="Garage door installation crew" className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
               <motion.div whileHover={{ scale: 1.1 }} transition={spring} className="flex flex-col items-center gap-4">
                 <div className="w-20 h-20 rounded-full flex items-center justify-center" style={{ background: ACCENT }}>
@@ -917,7 +917,7 @@ export default function V2GarageDoorPage() {
                 </div>
                 <div>
                   <label className="block text-xs uppercase tracking-widest text-slate-400 mb-2">Phone Number</label>
-                  <input type="tel" placeholder="(206) 555-0100" className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 border border-white/10 outline-none focus:border-amber-500/50 transition-colors" style={{ background: "rgba(255,255,255,0.04)" }} />
+                  <input type="tel" placeholder="Your phone number" className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 border border-white/10 outline-none focus:border-amber-500/50 transition-colors" style={{ background: "rgba(255,255,255,0.04)" }} />
                 </div>
                 <div>
                   <label className="block text-xs uppercase tracking-widest text-slate-400 mb-2">Service Type</label>

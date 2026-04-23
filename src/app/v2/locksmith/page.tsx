@@ -1030,7 +1030,7 @@ export default function V2LocksmithPage() {
                       <input
                         type="tel"
                         required
-                        placeholder="(206) 555-0100"
+                        placeholder="Your phone number"
                         value={formData.phone}
                         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                         className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 border border-white/10 focus:border-white/30 focus:outline-none transition-colors"
