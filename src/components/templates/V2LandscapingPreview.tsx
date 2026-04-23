@@ -437,6 +437,14 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
               <span className="flex items-center gap-2"><MapPin size={16} weight="duotone" style={{ color: PRIMARY }} /><MapLink address={data.address} /></span>
               <span className="flex items-center gap-2"><Leaf size={16} weight="duotone" style={{ color: PRIMARY }} />Licensed &amp; Insured</span>
             </div>
+            {/* Trust badge pills */}
+            <div className="flex flex-wrap gap-2 pt-2">
+              {["Licensed & Insured", "Free Estimates", "King & Pierce County", "20+ Years Experience"].map(badge => (
+                <span key={badge} className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold border" style={{ color: PRIMARY, borderColor: `${PRIMARY}44`, background: `${PRIMARY}12` }}>
+                  <ShieldCheck size={12} weight="fill" />{badge}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -457,6 +465,15 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
+      {/* ══════════════════ URGENCY STRIP ══════════════════ */}
+      <div className="relative z-10 w-full py-3 flex items-center justify-center gap-4" style={{ background: PRIMARY }}>
+        <motion.div className="w-2.5 h-2.5 rounded-full bg-white/70" animate={{ scale: [1, 1.5, 1] }} transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }} />
+        <p className="text-white text-sm font-semibold tracking-wide text-center px-4">
+          🌿 Free Estimates Available — Call <a href={`tel:${data.phone.replace(/\D/g, "")}`} className="underline font-bold">{data.phone}</a>
+        </p>
+        <motion.div className="w-2.5 h-2.5 rounded-full bg-white/70" animate={{ scale: [1, 1.5, 1] }} transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut", delay: 0.75 }} />
+      </div>
+
       {/* ══════════════════ 3b. SERVICE TYPE BADGES ══════════════════ */}
       <section className="relative z-10 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111510 50%, #1a1a1a 100%)" }} />
@@ -468,24 +485,6 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
                 {badge}
               </span>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════════════ 4. BEFORE / AFTER SHOWCASE ══════════════════ */}
-      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0e140d 50%, #1a1a1a 100%)" }} />
-        <NaturePattern opacity={0.02} accent={PRIMARY} />
-        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[10%] w-[500px] h-[500px] rounded-full blur-[200px]" style={{ background: `${PRIMARY}06` }} /></div>
-
-        <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Our Work" title="Before & After" subtitle={`See the quality of work ${data.businessName} delivers for our clients.`} accent={PRIMARY} />
-
-          <div className="max-w-4xl mx-auto">
-            <div className="relative rounded-2xl overflow-hidden border border-white/[0.06]">
-              <img src="/images/landscaping-before-after.png" alt="Landscape transformation before and after" className="w-full h-auto object-cover" />
-            </div>
-            <p className="text-center text-sm text-slate-400 mt-4">Complete yard transformation — new patio, plantings, lighting, and irrigation.</p>
           </div>
         </div>
       </section>
@@ -782,6 +781,21 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
+      {/* ══════════════════ 8d. CERTIFICATIONS ══════════════════ */}
+      <section className="relative z-10 py-12 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0e140d 50%, #1a1a1a 100%)" }} />
+        <div className="max-w-5xl mx-auto px-6 relative z-10 text-center">
+          <p className="text-xs uppercase tracking-widest mb-5 text-slate-500">Certified & Trusted</p>
+          <div className="flex flex-wrap justify-center gap-3">
+            {["WA State Licensed", "Fully Insured & Bonded", "NALP Member", "BBB Accredited", "Eco-Friendly Practices", "Free Workmanship Warranty"].map(badge => (
+              <span key={badge} className="inline-flex items-center gap-1.5 border text-xs font-semibold px-4 py-2 rounded-full" style={{ borderColor: `${PRIMARY}44`, background: `${PRIMARY}10`, color: PRIMARY }}>
+                <ShieldCheck size={12} weight="fill" />{badge}
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ══════════════════ 9. TESTIMONIALS (with Google Reviews Header) ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #121510 50%, #1a1a1a 100%)" }} />
@@ -837,11 +851,23 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0d120b 50%, #1a1a1a 100%)" }} />
         <NaturePattern opacity={0.02} accent={PRIMARY} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <AnimatedSection>          <SectionHeader badge="Coverage Area" title="Areas We Serve" accent={PRIMARY} /></AnimatedSection>
+          <AnimatedSection><SectionHeader badge="Coverage Area" title={`Serving ${data.city} & Surrounding Cities`} subtitle="Professional landscaping services throughout King and Pierce County." accent={PRIMARY} /></AnimatedSection>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-4xl mx-auto mb-10">
+            {[data.city, "Kent", "Burien", "Tukwila", "Auburn", "SeaTac", "Federal Way", "Bellevue"].map((city, i) => (
+              <GlassCard key={city} className="p-4 text-center group hover:border-opacity-30 transition-all duration-300">
+                <motion.div className="w-2 h-2 rounded-full mx-auto mb-2" style={{ background: PRIMARY }} animate={{ scale: [1, 1.4, 1] }} transition={{ duration: 2, repeat: Infinity, delay: i * 0.15 }} />
+                <p className="text-sm font-semibold text-white">{city}</p>
+                <p className="text-xs text-slate-500 mt-0.5">Service Area</p>
+              </GlassCard>
+            ))}
+          </div>
           <div className="text-center">
-            <GlassCard className="p-8 inline-block">
-              <div className="flex items-center gap-3 text-lg"><MapPin size={24} weight="duotone" style={{ color: PRIMARY }} /><MapLink address={data.address} className="text-white font-semibold" /></div>
-              <p className="text-slate-400 text-sm mt-2">&amp; Surrounding Communities</p>
+            <GlassCard className="p-6 inline-flex flex-col sm:flex-row items-center gap-4">
+              <div className="flex items-center gap-2"><MapPin size={20} weight="duotone" style={{ color: PRIMARY }} /><MapLink address={data.address} className="text-white font-semibold text-sm" /></div>
+              <div className="hidden sm:block w-px h-6 bg-white/10" />
+              <a href={`tel:${data.phone.replace(/\D/g, "")}`} className="flex items-center gap-2 text-sm font-semibold" style={{ color: PRIMARY }}>
+                <Phone size={16} weight="duotone" />{data.phone}
+              </a>
             </GlassCard>
           </div>
         </div>
