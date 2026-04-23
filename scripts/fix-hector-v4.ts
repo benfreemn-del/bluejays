@@ -103,6 +103,16 @@ async function main() {
   // Per CLAUDE.md, before/after must be a real matched transformation.
   gd.hideBeforeAfter = true;
 
+  // Real coverage — Hector's about copy says "21 cities in King and
+  // Pierce County." These are the 21. Template renders them as chips
+  // in the "Areas We Serve" section instead of just his office address.
+  gd.serviceAreas = [
+    "Renton", "Bellevue", "Seattle", "Kent", "Tukwila", "Newcastle",
+    "Issaquah", "Mercer Island", "Maple Valley", "Covington", "Auburn",
+    "Federal Way", "SeaTac", "Des Moines", "Burien", "Kirkland",
+    "Redmond", "Sammamish", "Tacoma", "Puyallup", "Fife",
+  ];
+
   console.log("═".repeat(75));
   console.log(`HECTOR v4 — ${CURATED.length} visually-verified photos ONLY from his site`);
   console.log("═".repeat(75));

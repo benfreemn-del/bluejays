@@ -837,17 +837,47 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
       </section>
 
       {/* ══════════════════ 11. SERVICE AREAS ══════════════════ */}
+      {/* Renders as a grid of city chips when data.serviceAreas is set
+          (should be the prospect's real coverage map of surrounding
+          cities, not a single street address). Falls back to the
+          single-address card if the array is missing. */}
       <section className="relative z-10 py-16 md:py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0d120b 50%, #1a1a1a 100%)" }} />
         <NaturePattern opacity={0.02} accent={PRIMARY} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <AnimatedSection>          <SectionHeader badge="Coverage Area" title="Areas We Serve" accent={PRIMARY} /></AnimatedSection>
-          <div className="text-center">
-            <GlassCard className="p-8 inline-block">
-              <div className="flex items-center gap-3 text-lg"><MapPin size={24} weight="duotone" style={{ color: PRIMARY }} /><MapLink address={data.address} className="text-white font-semibold" /></div>
-              <p className="text-slate-400 text-sm mt-2">&amp; Surrounding Communities</p>
-            </GlassCard>
-          </div>
+          <AnimatedSection>          <SectionHeader badge="Coverage Area" title="Areas We Serve" subtitle="Proudly serving homeowners across the greater metro area." accent={PRIMARY} /></AnimatedSection>
+          {(() => {
+            const areas = (data as { serviceAreas?: string[] }).serviceAreas;
+            if (!areas || areas.length === 0) {
+              return (
+                <div className="text-center">
+                  <GlassCard className="p-8 inline-block">
+                    <div className="flex items-center gap-3 text-lg"><MapPin size={24} weight="duotone" style={{ color: PRIMARY }} /><MapLink address={data.address} className="text-white font-semibold" /></div>
+                    <p className="text-slate-400 text-sm mt-2">&amp; Surrounding Communities</p>
+                  </GlassCard>
+                </div>
+              );
+            }
+            return (
+              <div>
+                <div className="flex flex-wrap justify-center gap-2.5 max-w-4xl mx-auto">
+                  {areas.map((city) => (
+                    <span
+                      key={city}
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border bg-white/[0.02] hover:bg-white/[0.05] transition-colors"
+                      style={{ color: PRIMARY, borderColor: `${PRIMARY}33` }}
+                    >
+                      <MapPin size={14} weight="duotone" />
+                      {city}
+                    </span>
+                  ))}
+                </div>
+                <p className="text-center text-sm text-slate-400 mt-8">
+                  Based at <MapLink address={data.address} className="text-slate-300 hover:text-white underline underline-offset-4" />
+                </p>
+              </div>
+            );
+          })()}
         </div>
       </section>
 
