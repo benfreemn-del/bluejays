@@ -42,12 +42,11 @@ async function main() {
   for (const row of (data ?? []).reverse()) {
     const r = row as Record<string, unknown>;
     console.log("═".repeat(78));
-    console.log(`To:       ${r.to}`);
-    console.log(`From:     ${r.from}`);
+    console.log(`To:       ${r.to_address ?? r.to ?? "(missing)"}`);
+    console.log(`From:     ${r.from_address ?? r.from ?? "(missing)"}`);
     console.log(`Subject:  ${r.subject}`);
     console.log(`Sent:     ${r.sent_at}`);
     console.log(`Method:   ${r.method ?? "(unset)"}`);
-    console.log(`Status:   ${r.status ?? "(unset)"}`);
     console.log(`Sequence: ${r.sequence}`);
     console.log("─".repeat(78));
     console.log(r.body);
