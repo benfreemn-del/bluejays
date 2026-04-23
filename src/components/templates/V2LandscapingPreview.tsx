@@ -259,7 +259,7 @@ function SectionHeader({ badge, title, subtitle, accent }: { badge: string; titl
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   MAIN PREVIEW COMPONENT — GALLERY-HEAVY LANDSCAPING WITH BEFORE/AFTER
+   MAIN PREVIEW COMPONENT — GALLERY-HEAVY LANDSCAPING
    ═══════════════════════════════════════════════════════════════════ */
 /* ───────────────────────── ANIMATED SECTION ───────────────────────── */
 function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
