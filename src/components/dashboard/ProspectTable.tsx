@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import type { Prospect, Category, ProspectStatus } from "@/lib/types";
 import { CATEGORY_CONFIG } from "@/lib/types";
 import { hasPendingAdminUpdates } from "@/lib/admin-notes";
+import { getShortPreviewUrl } from "@/lib/short-urls";
 import StatusBadge from "./StatusBadge";
 import ProspectNotesDrawer, { ProspectNotesButton } from "./ProspectNotesDrawer";
 
@@ -85,6 +86,7 @@ export default function ProspectTable({
   const [bulkSending, setBulkSending] = useState(false);
   const [bulkResult, setBulkResult] = useState("");
   const [buildingIds, setBuildingIds] = useState<string[]>([]);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
   const [openNotesId, setOpenNotesId] = useState<string | null>(null);
   const [noteDrafts, setNoteDrafts] = useState<Record<string, NoteDraft>>({});
   const [submitAllLoading, setSubmitAllLoading] = useState(false);
@@ -662,15 +664,48 @@ export default function ProspectTable({
                   <td className="p-3">
                     <div className="flex flex-wrap gap-1.5" onClick={(e) => e.stopPropagation()}>
                       {hasPreviewAvailable(prospect) ? (
-                        <a
-                          href={getThemedPreviewHref(mergedProspect)}
-                          target={prospect.pricingTier === "custom" ? "_blank" : undefined}
-                          rel={prospect.pricingTier === "custom" ? "noopener noreferrer" : undefined}
-                          className="text-xs px-2.5 py-1.5 rounded-lg bg-blue-electric/10 text-blue-electric hover:bg-blue-electric/20 transition-colors"
-                          title={prospect.pricingTier === "custom" ? "Open live custom site" : "Preview desktop & mobile"}
-                        >
-                          {prospect.pricingTier === "custom" ? "View Site" : "Preview"}
-                        </a>
+                        <>
+                          <a
+                            href={getThemedPreviewHref(mergedProspect)}
+                            target={prospect.pricingTier === "custom" ? "_blank" : undefined}
+                            rel={prospect.pricingTier === "custom" ? "noopener noreferrer" : undefined}
+                            className="text-xs px-2.5 py-1.5 rounded-lg bg-blue-electric/10 text-blue-electric hover:bg-blue-electric/20 transition-colors"
+                            title={prospect.pricingTier === "custom" ? "Open live custom site" : "Preview desktop & mobile"}
+                          >
+                            {prospect.pricingTier === "custom" ? "View Site" : "Preview"}
+                          </a>
+                          <button
+                            onClick={async () => {
+                              const url = getShortPreviewUrl(prospect);
+                              try {
+                                await navigator.clipboard.writeText(url);
+                              } catch {
+                                // Clipboard API can be blocked (iframe/insecure context).
+                                // Fallback: select-and-copy via a hidden textarea.
+                                const ta = document.createElement("textarea");
+                                ta.value = url;
+                                ta.style.position = "fixed";
+                                ta.style.left = "-9999px";
+                                document.body.appendChild(ta);
+                                ta.select();
+                                try { document.execCommand("copy"); } catch { /* ignore */ }
+                                document.body.removeChild(ta);
+                              }
+                              setCopiedId(prospect.id);
+                              setTimeout(() => {
+                                setCopiedId((prev) => (prev === prospect.id ? null : prev));
+                              }, 1500);
+                            }}
+                            className={`text-xs px-2.5 py-1.5 rounded-lg transition-colors ${
+                              copiedId === prospect.id
+                                ? "bg-green-500/20 text-green-300 border border-green-400/40"
+                                : "bg-surface border border-border text-muted hover:text-foreground hover:border-border/80"
+                            }`}
+                            title="Copy shareable short preview link to clipboard"
+                          >
+                            {copiedId === prospect.id ? "Copied!" : "Copy Link"}
+                          </button>
+                        </>
                       ) : (
                         <button
                           disabled={buildingIds.includes(prospect.id)}
