@@ -357,11 +357,21 @@ function CheckupQuiz() {
   );
 }
 
+const DENTAL_FAQS = [
+  { q: "Do you accept dental insurance?", a: "Yes — we accept most major dental insurance plans including Delta Dental, MetLife, Cigna, Aetna, and Blue Cross. Our team will verify your benefits before your appointment and maximize your coverage so you're never surprised by the bill." },
+  { q: "How often should I come in for a cleaning?", a: "For most patients, we recommend a cleaning and check-up every six months. If you have a history of gum disease or other concerns, we may recommend more frequent visits. We'll create a schedule that's right for your specific needs." },
+  { q: "What's included in the New Patient Special?", a: "Our $99 new patient special includes a comprehensive exam, full set of digital X-rays, and a professional cleaning — everything you need to understand your current oral health. Regular value is over $350." },
+  { q: "Do you offer dental financing or payment plans?", a: "Absolutely. We accept CareCredit and offer in-house payment plans for larger treatments. We never want cost to stand in the way of great dental care. Ask our front desk about options — most patients are approved instantly." },
+  { q: "What if I have dental anxiety?", a: "You're not alone — dental anxiety is very common, and we've built our practice around making every visit comfortable. We offer nitrous oxide sedation, warm blankets, noise-canceling headphones, and a no-rush philosophy. Just tell us, and we'll take it slow." },
+  { q: "What should I do if I have a dental emergency?", a: "Call us immediately at (206) 432-9150. We keep same-day slots reserved for dental emergencies, including toothaches, broken teeth, and lost crowns. If it's after hours, our voicemail has an emergency line that connects directly to Dr. Park." },
+];
+
 /* ═══════════════════════════════════════════════════════════════════
    MAIN PAGE
    ═══════════════════════════════════════════════════════════════════ */
 export default function DentalShowcasePage() {
   const [mobileNav, setMobileNav] = useState(false);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [contactForm, setContactForm] = useState({ name: "", email: "", phone: "", service: "", message: "" });
 
   const NAV_LINKS = [
@@ -877,7 +887,51 @@ export default function DentalShowcasePage() {
       </SectionReveal>
 
       {/* ═══════════════════════════════════════════
-          SECTION 14 — CONTACT SECTION
+          SECTION 14 — FAQ
+          ═══════════════════════════════════════════ */}
+      <SectionReveal className="py-16 md:py-24 bg-white">
+        <div className="mx-auto max-w-3xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-[0.2em] mb-3 font-semibold" style={{ color: TEAL }}>Common Questions</p>
+            <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-slate-900">Frequently Asked</h2>
+            <p className="mt-4 text-slate-500 text-lg">Everything you need to know before your first visit.</p>
+          </div>
+          <motion.div className="space-y-3" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
+            {DENTAL_FAQS.map((faq, i) => (
+              <motion.div key={i} variants={fadeUp}>
+                <div className="border border-slate-200 rounded-xl overflow-hidden bg-white shadow-sm">
+                  <button
+                    onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                    className="w-full flex items-center justify-between p-5 text-left cursor-pointer"
+                  >
+                    <span className="text-base font-semibold text-slate-900 pr-4">{faq.q}</span>
+                    <motion.div animate={{ rotate: openFaq === i ? 180 : 0 }} transition={spring}>
+                      <CaretDown size={20} className="text-slate-400 shrink-0" />
+                    </motion.div>
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {openFaq === i && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={spring}
+                        className="overflow-hidden"
+                      >
+                        <p className="px-5 pb-5 text-slate-500 leading-relaxed border-t border-slate-100 pt-4">{faq.a}</p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+          <p className="text-center mt-8 text-slate-500">Still have questions? <a href="tel:2064329150" className="font-semibold" style={{ color: TEAL }}>Call us at (206) 432-9150</a> — we&apos;re happy to help.</p>
+        </div>
+      </SectionReveal>
+
+      {/* ═══════════════════════════════════════════
+          SECTION 15 — CONTACT SECTION
           ═══════════════════════════════════════════ */}
       <SectionReveal id="contact" className="py-20 md:py-28" style={{ background: CREAM }}>
         <div className="max-w-7xl mx-auto px-6">

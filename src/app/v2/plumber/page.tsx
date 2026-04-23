@@ -470,11 +470,21 @@ const SERVICE_AREAS = [
 const HERO_IMG = "https://images.unsplash.com/photo-1607472586893-edb57bdc0e39?w=900&q=80";
 const ABOUT_IMG = "/images/plumber-owner.png";
 
+const PLUMBER_FAQS = [
+  { q: "Do you charge extra for emergency or after-hours calls?", a: "We have a flat emergency dispatch fee for after-hours calls — no hidden charges or inflated rates when you're already stressed. Our technician will tell you the full cost upfront before starting any work. You'll never be surprised by your invoice." },
+  { q: "How quickly can you arrive for an emergency?", a: "For burst pipes, major leaks, or water-related emergencies, our average response time is under 60 minutes in the greater Seattle area. We run emergency calls 24 hours a day, 7 days a week — including holidays. Call (206) 528-4791 and we'll dispatch immediately." },
+  { q: "Are you licensed and insured in Washington State?", a: "Yes — Emerald City Plumbing holds a Washington State Plumbing Contractor license (License #EMERCP*782QA), is fully bonded, and carries $2M liability insurance. We pull all required permits so your work is compliant with local code and doesn't affect your home insurance." },
+  { q: "Can you fix my water heater, or do I need to replace it?", a: "Often a repair is all that's needed. We'll diagnose the issue first — sometimes it's just a failed thermostat, anode rod, or heating element. If the unit is older than 10–12 years or the repair cost exceeds 50% of replacement, we'll tell you honestly that replacement is the smarter investment." },
+  { q: "How do I know if I have a hidden leak?", a: "Signs include an unexplained increase in your water bill, damp spots on walls or ceilings, the sound of running water when everything is off, or low water pressure. We use electronic leak detection and thermal imaging to pinpoint leaks without destructive excavation." },
+  { q: "What's the difference between a plumber and a handyman for pipe work?", a: "In Washington State, plumbing work above $500 requires a licensed plumber. A handyman cannot legally pull permits or perform water heater replacements, sewer work, or major re-piping. Unpermitted plumbing work can void your homeowner's insurance and create issues when you sell. Always hire licensed." },
+];
+
 /* ═══════════════════════════════════════════════════════════════════
    MAIN PAGE
    ═══════════════════════════════════════════════════════════════════ */
 export default function V2PlumberPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [quizSelected, setQuizSelected] = useState<number | null>(null);
   const testimonialRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -1249,7 +1259,50 @@ export default function V2PlumberPage() {
         </div>
       </SectionReveal>
 
-      {/* ────────────────────────── 15. CONTACT ────────────────────────── */}
+      {/* ────────────────────────── 15. FAQ ────────────────────────── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="absolute inset-0" style={{ background: "rgba(13, 148, 136, 0.04)" }} />
+        <div className="relative mx-auto max-w-3xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-[0.2em] mb-3 font-semibold" style={{ color: TEAL }}>Common Questions</p>
+            <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-white">Frequently Asked</h2>
+            <p className="mt-4 text-slate-400 text-lg">Straight answers about plumbing work, pricing, and what to expect.</p>
+          </div>
+          <motion.div className="space-y-3" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
+            {PLUMBER_FAQS.map((faq, i) => (
+              <motion.div key={i} variants={fadeUp}>
+                <GlassCard className="overflow-hidden">
+                  <button
+                    onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                    className="w-full flex items-center justify-between p-5 text-left cursor-pointer"
+                  >
+                    <span className="text-base font-semibold text-white pr-4">{faq.q}</span>
+                    <motion.div animate={{ rotate: openFaq === i ? 180 : 0 }} transition={spring}>
+                      <CaretDown size={20} style={{ color: TEAL }} className="shrink-0" />
+                    </motion.div>
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {openFaq === i && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={spring}
+                        className="overflow-hidden"
+                      >
+                        <p className="px-5 pb-5 text-slate-400 leading-relaxed">{faq.a}</p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </GlassCard>
+              </motion.div>
+            ))}
+          </motion.div>
+          <p className="text-center mt-8 text-slate-400">Still have questions? <a href="tel:2065284791" className="font-semibold" style={{ color: TEAL }}>(206) 528-4791</a> — we answer 24/7.</p>
+        </div>
+      </SectionReveal>
+
+      {/* ────────────────────────── 16. CONTACT ────────────────────────── */}
       <SectionReveal id="contact" className="relative z-10 py-16 md:py-24">
         <PipeGridPattern />
         <div className="relative mx-auto max-w-7xl px-4 md:px-6">

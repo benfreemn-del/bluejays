@@ -392,11 +392,21 @@ const serviceAreas = [
   "SoDo", "Capitol Hill", "Central District", "Mount Baker",
 ];
 
+const AUTO_FAQS = [
+  { q: "Do you provide free estimates before starting repairs?", a: "Always. We'll diagnose the issue, explain what we found, and give you a written estimate before touching anything. You approve every repair — we never start work without your go-ahead. No pressure, no surprises." },
+  { q: "How long will my repair take?", a: "Most maintenance services (oil change, brakes, tires) are done same-day, typically within 1–3 hours. More involved repairs like engine work or transmission service may take 1–2 days. We'll give you a specific timeline when you drop off and text you when the car is ready." },
+  { q: "Do you service European and import vehicles?", a: "Yes — our technicians are trained and certified to work on European, Japanese, Korean, and domestic vehicles. We have manufacturer-level diagnostic software for BMW, Mercedes, Toyota, Honda, Hyundai, Ford, GM, and more. If you drive it, we can service it." },
+  { q: "Do your repairs come with a warranty?", a: "Absolutely. All parts and labor come with a 24-month / 24,000-mile warranty, whichever comes first. If something we repaired fails within the warranty period, we fix it at no charge. That's our commitment to quality work." },
+  { q: "Can you help if my check engine light is on?", a: "Yes — we have professional-grade OBD-II diagnostic equipment and our own in-house scan tools that go beyond basic code readers. We'll identify the root cause (not just clear the code), explain it in plain English, and recommend the right repair." },
+  { q: "Do you offer loaner cars or shuttle service?", a: "We offer a free shuttle service within 5 miles of the shop while your vehicle is being serviced. For longer repairs requiring an overnight stay, ask about our loaner car program — available on a first-come, first-served basis for qualifying repairs." },
+];
+
 /* ═══════════════════════════════════════════════════════════════════
    MAIN PAGE COMPONENT
    ═══════════════════════════════════════════════════════════════════ */
 export default function V2AutoRepairPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [quizOpen, setQuizOpen] = useState<number | null>(null);
 
   /* ── Scroll-driven parallax hero ── */
@@ -1143,7 +1153,49 @@ export default function V2AutoRepairPage() {
         </div>
       </SectionReveal>
 
-      {/* ────────────────────── 14. CONTACT ────────────────────── */}
+      {/* ────────────────────── 14. FAQ ────────────────────── */}
+      <SectionReveal className="relative py-16 md:py-24" style={{ background: DARK }}>
+        <div className="relative z-10 mx-auto max-w-3xl px-5">
+          <div className="text-center mb-10">
+            <p className="text-sm uppercase tracking-[0.2em] mb-3 font-semibold" style={{ color: RED }}>Common Questions</p>
+            <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-white">Frequently Asked</h2>
+            <p className="mt-4 text-slate-400 text-lg">Straight answers about our shop, pricing, and what to expect.</p>
+          </div>
+          <motion.div className="space-y-3" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
+            {AUTO_FAQS.map((faq, i) => (
+              <motion.div key={i} variants={fadeUp}>
+                <GlassCard className="overflow-hidden">
+                  <button
+                    onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                    className="w-full flex items-center justify-between p-5 text-left cursor-pointer"
+                  >
+                    <span className="text-base font-semibold text-white pr-4">{faq.q}</span>
+                    <motion.div animate={{ rotate: openFaq === i ? 180 : 0 }} transition={spring}>
+                      <CaretDown size={20} style={{ color: RED }} className="shrink-0" />
+                    </motion.div>
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {openFaq === i && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={spring}
+                        className="overflow-hidden"
+                      >
+                        <p className="px-5 pb-5 text-slate-400 leading-relaxed">{faq.a}</p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </GlassCard>
+              </motion.div>
+            ))}
+          </motion.div>
+          <p className="text-center mt-8 text-slate-400">Still have questions? <a href="tel:2068324750" className="font-semibold" style={{ color: RED }}>Call (206) 832-4750</a> — we&apos;re happy to help.</p>
+        </div>
+      </SectionReveal>
+
+      {/* ────────────────────── 15. CONTACT ────────────────────── */}
       <SectionReveal id="contact" className="relative py-24 md:py-32" style={{ background: DARK_CARD }}>
         <GearPatternBg />
         <div className="relative z-10 max-w-6xl mx-auto px-5">

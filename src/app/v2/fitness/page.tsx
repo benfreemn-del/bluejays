@@ -35,6 +35,7 @@ import {
   CalendarBlank,
   ArrowUp,
   Scales,
+  CaretDown,
 } from "@phosphor-icons/react";
 
 /* ───────────────────────── SPRING / ANIMATION CONFIGS ───────────────────────── */
@@ -287,12 +288,22 @@ function Nav() {
   );
 }
 
+const FITNESS_FAQS = [
+  { q: "What's included in the free trial?", a: "Your free trial includes unlimited access for 7 days — every class, every piece of equipment, every amenity. No credit card required. Show up at the front desk, we'll set you up with a guest pass and give you a quick tour so you feel right at home." },
+  { q: "Do I need to be in shape before I start?", a: "Absolutely not — Iron & Oak is for every fitness level. Our coaches scale every workout to meet you where you are. Whether you're a competitive athlete or haven't worked out in years, you'll get an experience designed for your current ability and goals." },
+  { q: "What types of classes and programs do you offer?", a: "We offer HIIT, strength training, yoga, functional fitness, boxing fundamentals, and open gym hours. All classes run 45–60 minutes. Our weekly schedule has 30+ sessions to fit any schedule — early mornings, lunch, evenings, and weekends." },
+  { q: "Do you offer personal training?", a: "Yes — certified personal trainers are available for one-on-one and semi-private sessions. Personal training is available as an add-on to any membership or as standalone packages. Your trainer will build a custom plan based on your goals, timeline, and injury history." },
+  { q: "Is there a long-term contract?", a: "No contracts, ever. Our memberships are month-to-month and you can cancel anytime with 30 days notice. We believe in earning your business every month, not locking you in. Most members stay because they love the results — not because they have to." },
+  { q: "What should I bring to my first workout?", a: "Just bring athletic clothes, cross-training shoes, and a water bottle. We provide fresh towels, shampoo, conditioner, and a secure locker. If you're doing a class for the first time, arrive 10 minutes early so your coach can introduce you to the movements." },
+];
+
 /* ═══════════════════════════════════════════════════════════════
    ██   MAIN PAGE
    ═══════════════════════════════════════════════════════════════ */
 export default function IronAndOakFitness() {
   /* ── membership toggle ── */
   const [annual, setAnnual] = useState(false);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   /* ── BMI calculator ── */
   const [heightFt, setHeightFt] = useState(5);
@@ -1065,7 +1076,50 @@ export default function IronAndOakFitness() {
       </Section>
 
       {/* ═══════════════════════════════════════════════════════════
-         14. CONTACT / LOCATION
+         14. FAQ
+         ═══════════════════════════════════════════════════════════ */}
+      <Section>
+        <div className="max-w-3xl mx-auto px-4">
+          <motion.div variants={fadeUp} className="text-center mb-10">
+            <p className="text-sm font-bold uppercase tracking-widest mb-3" style={{ color: LIME }}>Common Questions</p>
+            <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight text-white">Frequently <span style={{ color: LIME }}>Asked</span></h2>
+          </motion.div>
+          <motion.div className="space-y-3" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
+            {FITNESS_FAQS.map((faq, i) => (
+              <motion.div key={i} variants={fadeUp}>
+                <GlassCard className="overflow-hidden">
+                  <button
+                    onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                    className="w-full flex items-center justify-between p-5 text-left cursor-pointer"
+                  >
+                    <span className="text-base font-semibold text-white pr-4">{faq.q}</span>
+                    <motion.div animate={{ rotate: openFaq === i ? 180 : 0 }} transition={spring}>
+                      <CaretDown size={20} style={{ color: LIME }} className="shrink-0" />
+                    </motion.div>
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {openFaq === i && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={spring}
+                        className="overflow-hidden"
+                      >
+                        <p className="px-5 pb-5 text-slate-400 leading-relaxed">{faq.a}</p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </GlassCard>
+              </motion.div>
+            ))}
+          </motion.div>
+          <p className="text-center mt-8 text-slate-400">Still have questions? <a href="tel:2066194382" className="font-semibold" style={{ color: LIME }}>Call (206) 619-4382</a> or stop by for a free trial.</p>
+        </div>
+      </Section>
+
+      {/* ═══════════════════════════════════════════════════════════
+         15. CONTACT / LOCATION
          ═══════════════════════════════════════════════════════════ */}
       <Section id="contact">
         <div className="max-w-6xl mx-auto">

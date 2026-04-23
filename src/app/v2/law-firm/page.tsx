@@ -367,12 +367,22 @@ function InfiniteTicker({ items, speed = 30, goldText = false }: { items: string
   );
 }
 
+const LAW_FAQS = [
+  { q: "How much does a consultation cost?", a: "Your initial consultation is 100% free with no obligation. We listen to the facts of your case, evaluate your legal options, and give you an honest assessment — at no charge. We only get paid if we win your case (for contingency matters), so we're invested in your success from day one." },
+  { q: "What types of cases do you handle?", a: "Pacific Law Group handles personal injury (car accidents, slip and fall, wrongful death), family law (divorce, custody, adoption), criminal defense, employment discrimination, and business disputes. If you're unsure whether your matter falls within our practice areas, call us — we'll point you in the right direction." },
+  { q: "What does 'no fee unless we win' mean?", a: "For personal injury cases, we work on a contingency fee basis — meaning you pay nothing upfront and nothing unless we recover money for you. Our fee is a percentage of the settlement or verdict. There are no hidden costs, retainer fees, or billing surprises." },
+  { q: "How long will my case take?", a: "It depends on the complexity of the matter. Simple cases may resolve in weeks; major litigation can take 1–3 years. We'll give you an honest timeline estimate after reviewing your case, and we keep you updated at every stage. You'll never be left wondering what's happening." },
+  { q: "What should I bring to my first consultation?", a: "Bring any documents related to your case — accident reports, medical records, contracts, police reports, employment documents, or correspondence. The more context we have, the more accurate our initial assessment will be. If you don't have everything, come anyway — we can gather documents as we go." },
+  { q: "Do you handle cases outside of Seattle?", a: "Yes — we represent clients throughout Washington State. While our offices are in Seattle's Pioneer Square district, we handle cases in King, Pierce, Snohomish, Thurston, and other counties. For remote clients, we offer virtual consultations and handle most communication by phone and email." },
+];
+
 /* ═══════ MAIN PAGE ═══════ */
 export default function V2LawFirmPage() {
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
   const heroParallax = useTransform(scrollYProgress, [0, 1], [0, -80]);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [openAccordion, setOpenAccordion] = useState<number | null>(null);
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [quizSelected, setQuizSelected] = useState<number | null>(null);
@@ -961,7 +971,49 @@ export default function V2LawFirmPage() {
         </div>
       </section>
 
-      {/* ══════ 13. CONTACT SECTION ══════ */}
+      {/* ══════ 13. FAQ ══════ */}
+      <section className="relative z-10 py-16 md:py-24" style={{ background: NAVY_LIGHT }}>
+        <div className="mx-auto max-w-3xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-[0.2em] mb-3 font-semibold" style={{ color: EMERALD }}>Common Questions</p>
+            <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-white">Frequently Asked</h2>
+            <p className="mt-4 text-slate-400 text-lg">Straight answers about working with our firm.</p>
+          </div>
+          <motion.div className="space-y-3" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
+            {LAW_FAQS.map((faq, i) => (
+              <motion.div key={i} variants={fadeUp}>
+                <GlassCard className="overflow-hidden">
+                  <button
+                    onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                    className="w-full flex items-center justify-between p-5 text-left cursor-pointer"
+                  >
+                    <span className="text-base font-semibold text-white pr-4">{faq.q}</span>
+                    <motion.div animate={{ rotate: openFaq === i ? 180 : 0 }} transition={spring}>
+                      <CaretDown size={20} style={{ color: EMERALD }} className="shrink-0" />
+                    </motion.div>
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {openFaq === i && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={spring}
+                        className="overflow-hidden"
+                      >
+                        <p className="px-5 pb-5 text-slate-400 leading-relaxed">{faq.a}</p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </GlassCard>
+              </motion.div>
+            ))}
+          </motion.div>
+          <p className="text-center mt-8 text-slate-400">Ready to talk? <a href="tel:2064329150" className="font-semibold" style={{ color: EMERALD }}>(206) 432-9150</a> — free consultation, no obligation.</p>
+        </div>
+      </section>
+
+      {/* ══════ 14. CONTACT SECTION ══════ */}
       <section id="contact" className="relative z-10 py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 md:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16">

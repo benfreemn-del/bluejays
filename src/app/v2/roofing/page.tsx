@@ -36,6 +36,7 @@ import {
   Shield,
   Trophy,
   Users,
+  CaretDown,
 } from "@phosphor-icons/react";
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -575,11 +576,21 @@ function SectionHeader({
   );
 }
 
+const ROOF_FAQS = [
+  { q: "Does my insurance cover roof replacement?", a: "If your roof was damaged by a covered event (hail, wind, storm), your homeowners insurance almost certainly covers the replacement. We work directly with all major insurance carriers and can guide you through the entire claims process — from documenting damage to working with your adjuster. Many of our clients pay $0 out of pocket." },
+  { q: "How long does a full roof replacement take?", a: "Most residential roof replacements are completed in a single day — sometimes two days for larger or more complex roofs. We typically remove and replace in the same project, so you're never left with an exposed roof overnight. Our crews start at 7 AM and won't leave until the job is done." },
+  { q: "How do I know if I need a repair or full replacement?", a: "Take our quick Roof Age Quiz above — it's a good starting point. Roofs under 15 years with isolated damage can often be repaired. Roofs over 20 years, or those with widespread shingle deterioration, granule loss, or deck damage, typically need replacement. We'll give you an honest assessment with photos from the actual inspection." },
+  { q: "What roofing materials do you use?", a: "We install GAF architectural shingles as our standard (50-year warranty), plus standing seam metal, cedar shake, and composite tile. During your estimate, we'll walk you through the options for your home's style and your budget. All materials are manufacturer-certified and come with our installation warranty on top." },
+  { q: "Are you licensed and insured in Washington State?", a: "Yes — Summit Roofing NW is a Washington State licensed roofing contractor (License #SUMRFP*892QZ), fully bonded, and carries $2M general liability plus workers' comp insurance. You should never hire an unlicensed roofer — it voids your manufacturer warranty and can affect your homeowner's insurance coverage." },
+  { q: "What's your warranty on installation?", a: "We provide a 10-year workmanship warranty on all installations, backed by Summit Roofing NW. Combined with GAF's 50-year shingle warranty and their System Plus Warranty (when applicable), you're covered for decades. We're local — we're here to stand behind our work long after the crew leaves." },
+];
+
 /* ═══════════════════════════════════════════════════════════════════
    MAIN PAGE COMPONENT
    ═══════════════════════════════════════════════════════════════════ */
 export default function RoofingShowcase() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [quizAnswer, setQuizAnswer] = useState<number | null>(null);
   const [formData, setFormData] = useState({
     name: "",
@@ -1677,7 +1688,50 @@ export default function RoofingShowcase() {
         </div>
       </SectionReveal>
 
-      {/* ═══════════════════ SECTION 15 — CONTACT ═══════════════════ */}
+      {/* ═══════════════════ SECTION 15 — FAQ ═══════════════════ */}
+      <SectionReveal className="relative z-10 py-16 md:py-24" style={{ background: "#111827" }}>
+        <div className="absolute inset-0" style={{ background: `radial-gradient(ellipse at top, ${BRICK_GLOW} 0%, transparent 60%)` }} />
+        <div className="relative mx-auto max-w-3xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-[0.2em] mb-3 font-semibold" style={{ color: BRICK }}>Common Questions</p>
+            <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-white">Frequently Asked</h2>
+            <p className="mt-4 text-slate-400 text-lg">Straight answers about roofing, insurance, and what to expect.</p>
+          </div>
+          <motion.div className="space-y-3" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
+            {ROOF_FAQS.map((faq, i) => (
+              <motion.div key={i} variants={fadeUp}>
+                <GlassCard className="overflow-hidden">
+                  <button
+                    onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                    className="w-full flex items-center justify-between p-5 text-left cursor-pointer"
+                  >
+                    <span className="text-base font-semibold text-white pr-4">{faq.q}</span>
+                    <motion.div animate={{ rotate: openFaq === i ? 180 : 0 }} transition={spring}>
+                      <CaretDown size={20} style={{ color: BRICK }} className="shrink-0" />
+                    </motion.div>
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {openFaq === i && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={spring}
+                        className="overflow-hidden"
+                      >
+                        <p className="px-5 pb-5 text-slate-400 leading-relaxed">{faq.a}</p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </GlassCard>
+              </motion.div>
+            ))}
+          </motion.div>
+          <p className="text-center mt-8 text-slate-400">Still have questions? <a href="tel:2067438291" className="font-semibold" style={{ color: BRICK }}>(206) 743-8291</a> — free estimates, no pressure.</p>
+        </div>
+      </SectionReveal>
+
+      {/* ═══════════════════ SECTION 16 — CONTACT ═══════════════════ */}
       <SectionReveal
         id="contact"
         className="relative z-10 py-20 md:py-28"

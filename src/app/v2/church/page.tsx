@@ -36,6 +36,7 @@ import {
   YoutubeLogo,
   FacebookLogo,
   InstagramLogo,
+  CaretDown,
 } from "@phosphor-icons/react";
 
 /* ───────────────────────── SPRING + ANIMATION CONFIG ───────────────────────── */
@@ -180,11 +181,21 @@ function CrossPattern({ opacity = 0.03 }: { opacity?: number }) {
   );
 }
 
+const CHURCH_FAQS = [
+  { q: "I've never been to church before — what should I expect?", a: "A warm welcome and zero pressure. Our Sunday services run about 75 minutes and include live worship, an encouraging message, and time to connect with others. Dress however you're comfortable — jeans are perfectly fine. We'd love to meet you at the welcome table in the lobby." },
+  { q: "What time are Sunday services?", a: "We hold two Sunday services: 9:00 AM and 11:00 AM. Both include the same message and worship experience. We recommend arriving 10–15 minutes early for your first visit so a greeter can show you around and point you toward our kids' check-in area if you're bringing children." },
+  { q: "Do you have programs for children and students?", a: "Yes — we have dedicated programming for every age. GraceKids (birth through 5th grade) runs during both Sunday services in our dedicated children's wing. Middle and high school students meet Wednesday evenings at 6:30 PM for Grace Youth — games, community, and relevant teaching." },
+  { q: "How can I get connected beyond Sunday services?", a: "Small groups are the heart of our community. We have over 30 groups meeting throughout the week — some study scripture, others serve together, and some just hang out. Visit the Connection Table on Sunday and we'll match you with a group that fits your schedule and interests." },
+  { q: "Do you offer online services?", a: "Yes — every Sunday service streams live on YouTube and is posted the same day for on-demand viewing. We also have a digital community for those who join us online regularly, with midweek devotionals, prayer threads, and ways to connect with others from home." },
+  { q: "How can I serve or volunteer at Grace Community?", a: "We'd love to have you on the team. We have serving opportunities in worship, kids, hospitality, tech, outreach, and more. Fill out our online volunteer form or stop by the Serve Desk on Sunday — someone will walk you through the options and help you find the right fit." },
+];
+
 /* ═══════════════════════════════════════════════════════════════════════
    MAIN PAGE COMPONENT
    ═══════════════════════════════════════════════════════════════════════ */
 export default function ChurchShowcase() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [activeTestimonial, setActiveTestimonial] = useState(0);
 
   /* Auto-rotate testimonials */
@@ -810,6 +821,48 @@ export default function ChurchShowcase() {
               </div>
             </div>
           </div>
+        </div>
+      </SectionReveal>
+
+      {/* ═══════════════ FAQ ═══════════════ */}
+      <SectionReveal className="relative py-16 md:py-24 bg-white">
+        <div className="mx-auto max-w-3xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-[0.2em] mb-3 font-semibold" style={{ color: AMBER }}>Common Questions</p>
+            <h2 className="text-4xl md:text-5xl font-bold tracking-tight" style={{ color: DARK }}>Frequently Asked</h2>
+            <p className="mt-4 text-stone-500 text-lg">Answers to help you feel at home before your first visit.</p>
+          </div>
+          <motion.div className="space-y-3" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
+            {CHURCH_FAQS.map((faq, i) => (
+              <motion.div key={i} variants={fadeUp}>
+                <div className="border rounded-xl overflow-hidden" style={{ borderColor: CARD_BORDER, background: CREAM }}>
+                  <button
+                    onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                    className="w-full flex items-center justify-between p-5 text-left cursor-pointer"
+                  >
+                    <span className="text-base font-semibold pr-4" style={{ color: DARK }}>{faq.q}</span>
+                    <motion.div animate={{ rotate: openFaq === i ? 180 : 0 }} transition={spring}>
+                      <CaretDown size={20} style={{ color: AMBER }} className="shrink-0" />
+                    </motion.div>
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {openFaq === i && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={spring}
+                        className="overflow-hidden"
+                      >
+                        <p className="px-5 pb-5 text-stone-500 leading-relaxed border-t pt-4" style={{ borderColor: CARD_BORDER }}>{faq.a}</p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+          <p className="text-center mt-8 text-stone-500">More questions? <a href="tel:2063257841" className="font-semibold" style={{ color: AMBER }}>Call us at (206) 325-7841</a> — we&apos;d love to chat.</p>
         </div>
       </SectionReveal>
 

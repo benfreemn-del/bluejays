@@ -402,6 +402,15 @@ function MortgageCalculator() {
   );
 }
 
+const RE_FAQS = [
+  { q: "How much does it cost to work with a buyer's agent?", a: "As a buyer, our services are typically free to you. The seller pays the commission in most Washington State transactions, and we negotiate the best possible terms on your behalf. You get full-service representation — market analysis, offer strategy, negotiation, and closing coordination — at no direct cost." },
+  { q: "How long does it take to buy a home in the Seattle area?", a: "From first conversation to closing keys, most buyers are under contract within 30–90 days, depending on how quickly you find the right home and your loan timeline. A cash offer can close in 2–3 weeks. Financing typically takes 30–45 days after mutual acceptance. We'll map out a realistic timeline for your situation." },
+  { q: "What's my home worth right now?", a: "The Puget Sound market changes month to month. We'll prepare a Comparative Market Analysis (CMA) using the most recent comparable sales within your neighborhood — not an algorithm estimate. Our valuations are used by sellers to price for maximum offers and by buyers to make competitive offers. Request yours free with no obligation." },
+  { q: "Should I sell my current home before buying?", a: "It depends on your financial situation and risk tolerance. Selling first gives you a clear budget and no contingency risk. Buying first means you might face a gap period with two mortgages. We help coordinate timing strategies — including bridge loans, leaseback arrangements, and contingency clauses — to make the transition smooth." },
+  { q: "Do you work with first-time buyers?", a: "Absolutely — first-time buyers are some of our favorite clients. We walk you through every step: getting pre-approved, identifying the right neighborhoods, submitting competitive offers, navigating inspection, and closing. We'll never make you feel like you're asking too many questions — that's what we're here for." },
+  { q: "How do you help sellers get the best price?", a: "Our listing strategy starts with professional photography, a strategic pricing analysis, and targeted digital marketing to reach qualified buyers. We handle all showings, collect and compare offers, and negotiate aggressively on your behalf. On average, our listed homes sell for 3–5% above initial asking price." },
+];
+
 /* ═══════════════════════════════════════════════════════════════
    MAIN PAGE
    ═══════════════════════════════════════════════════════════════ */
@@ -414,6 +423,7 @@ export default function V2RealEstatePage() {
   const heroScale = useTransform(heroScroll, [0, 1], [1.15, 1]);
   const heroOpacity = useTransform(heroScroll, [0, 0.7], [1, 0]);
   const showcaseRef = useRef<HTMLDivElement>(null);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchFocus, setSearchFocus] = useState(false);
   const [activeTestimonial, setActiveTestimonial] = useState(0);
@@ -1253,6 +1263,54 @@ export default function V2RealEstatePage() {
               ))}
             </motion.div>
           </div>
+        </div>
+      </section>
+
+      {/* ═══════ FAQ SECTION ═══════ */}
+      <section className="relative z-10 py-16 md:py-24" style={{ background: "#111114" }}>
+        <div className="max-w-3xl mx-auto px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-[0.2em] mb-3 font-semibold" style={{ color: GOLD }}>Common Questions</p>
+            <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-white">Frequently Asked</h2>
+            <p className="mt-4 text-zinc-400 text-lg">Everything you need to know about buying or selling in the Puget Sound.</p>
+          </div>
+          <motion.div
+            className="space-y-3"
+            variants={stagger}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+          >
+            {RE_FAQS.map((faq, i) => (
+              <motion.div key={i} variants={cardReveal}>
+                <div className="rounded-xl overflow-hidden border border-white/[0.08] bg-white/[0.04]">
+                  <button
+                    onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                    className="w-full flex items-center justify-between p-5 text-left cursor-pointer"
+                  >
+                    <span className="text-base font-semibold text-white pr-4">{faq.q}</span>
+                    <motion.div animate={{ rotate: openFaq === i ? 180 : 0 }} transition={spring}>
+                      <CaretDown size={20} style={{ color: GOLD }} className="shrink-0" />
+                    </motion.div>
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {openFaq === i && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={spring}
+                        className="overflow-hidden"
+                      >
+                        <p className="px-5 pb-5 text-zinc-400 leading-relaxed">{faq.a}</p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+          <p className="text-center mt-8 text-zinc-400">Ready to get started? <a href="tel:2067184291" className="font-semibold" style={{ color: GOLD }}>(206) 718-4291</a> — free consultation.</p>
         </div>
       </section>
 

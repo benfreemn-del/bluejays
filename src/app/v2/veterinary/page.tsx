@@ -280,11 +280,21 @@ const collagePhotos = [
   { src: "https://images.unsplash.com/photo-1592194996308-7b43878e84a6?w=500&q=80", alt: "Puppy portrait", z: 22, x: 70, y: -5, w: "w-36 md:w-44", speed: 0.18, rotate: -5 },
 ];
 
+const VET_FAQS = [
+  { q: "Do you see exotic pets like rabbits, birds, or reptiles?", a: "Yes — we're proud to offer care for a wide variety of exotic pets including rabbits, guinea pigs, birds, tortoises, and select reptiles. Dr. Nakamura has advanced training in exotic animal medicine and sees exotics by appointment Tuesday through Saturday." },
+  { q: "What's included in the $49 New Client Special?", a: "Your first visit includes a comprehensive wellness exam, vaccination review, parasite screen, and full health consultation with Dr. Nakamura — everything needed to get your pet's health on record. Regular value is $120. The $49 rate is for first-time patients only." },
+  { q: "How do I know if my pet needs emergency care?", a: "Signs that warrant an immediate call include: difficulty breathing, uncontrolled bleeding, suspected poisoning, seizures, inability to urinate, or collapse. Call us first at (425) 283-7164. For after-hours emergencies, we'll direct you to the 24-hour emergency clinic in Kirkland." },
+  { q: "Do you work with pet insurance?", a: "We work with all major pet insurance providers including Trupanion, Nationwide, Embrace, and Healthy Paws. We can submit claims directly on your behalf for most providers. Our front desk team will help you understand your coverage before your visit so there are no surprises." },
+  { q: "Are you a fear-free certified practice?", a: "Yes — our entire team is Fear Free Certified. That means low-stress handling techniques, calming pheromone diffusers in every exam room, treat-based rewards, and a no-rush approach. We'll always pause or stop if your pet is showing too much stress." },
+  { q: "How often should my pet get vaccinated?", a: "It depends on your pet's age, lifestyle, and health history. Core vaccines (rabies, distemper) are typically annual or every 3 years for adult dogs and cats. We create a personalized vaccination schedule at your first visit and send reminders so you never miss a due date." },
+];
+
 /* ═══════════════════════════════════════════════════════════════
    MAIN PAGE
    ═══════════════════════════════════════════════════════════════ */
 export default function V2VeterinaryPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [openService, setOpenService] = useState<number | null>(0);
   const [quizAnswer, setQuizAnswer] = useState<number | null>(null);
 
@@ -809,7 +819,49 @@ export default function V2VeterinaryPage() {
         </div>
       </SectionReveal>
 
-      {/* ═══ 14. CONTACT ═══ */}
+      {/* ═══ 14. FAQ ═══ */}
+      <SectionReveal className="relative z-10 py-16 md:py-24 bg-white">
+        <div className="mx-auto max-w-3xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-[0.2em] mb-3 font-semibold" style={{ color: GREEN }}>Common Questions</p>
+            <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-[#1c1917]">Frequently Asked</h2>
+            <p className="mt-4 text-[#6b7280] text-lg">Everything you need to know about caring for your pet at Northshore.</p>
+          </div>
+          <motion.div className="space-y-3" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
+            {VET_FAQS.map((faq, i) => (
+              <motion.div key={i} variants={fadeUp}>
+                <GlassCard className="overflow-hidden">
+                  <button
+                    onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                    className="w-full flex items-center justify-between p-5 text-left cursor-pointer"
+                  >
+                    <span className="text-base font-semibold text-[#1c1917] pr-4">{faq.q}</span>
+                    <motion.div animate={{ rotate: openFaq === i ? 180 : 0 }} transition={spring}>
+                      <CaretDown size={20} style={{ color: GREEN }} className="shrink-0" />
+                    </motion.div>
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {openFaq === i && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={spring}
+                        className="overflow-hidden"
+                      >
+                        <p className="px-5 pb-5 text-[#6b7280] leading-relaxed">{faq.a}</p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </GlassCard>
+              </motion.div>
+            ))}
+          </motion.div>
+          <p className="text-center mt-8 text-[#6b7280]">Still have questions? <a href="tel:4252837164" className="font-semibold" style={{ color: GREEN }}>(425) 283-7164</a> — we&apos;re happy to help.</p>
+        </div>
+      </SectionReveal>
+
+      {/* ═══ 15. CONTACT ═══ */}
       <SectionReveal id="contact" className="relative z-10 py-16 md:py-24">
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">

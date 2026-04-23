@@ -329,11 +329,21 @@ function SectionHeader({ title, accent, subtitle }: { title: string; accent: str
   );
 }
 
+const ELEC_FAQS = [
+  { q: "Do you offer free estimates?", a: "Yes — all diagnostic visits and project estimates are completely free. We'll assess your electrical needs, explain exactly what's required, and give you a written upfront quote before any work begins. No surprises." },
+  { q: "Are you licensed and insured in Washington State?", a: "Absolutely. Cascade Electric Co. is a Washington State licensed electrical contractor (License #CASCAEC*782QA), fully bonded, and carries $2M general liability insurance. We pull all required permits so your work is code-compliant and insurable." },
+  { q: "How fast can you respond to an electrical emergency?", a: "For emergencies — sparking outlets, burning smells, or complete power loss — we have crews available around the clock with an average response time under 60 minutes in the greater Seattle area. Call (206) 381-6040 any time." },
+  { q: "What's involved in an electrical panel upgrade?", a: "A panel upgrade typically takes 4–6 hours and involves replacing your old breaker panel with a modern 200-amp service. We handle everything: permit application, utility coordination, installation, and final inspection. Most homeowners are back on power the same day." },
+  { q: "Can you install an EV charger at my home?", a: "Yes — EV charger installation is one of our most popular services. We install Level 2 chargers from all major brands (Tesla, ChargePoint, Enel X) and can add a dedicated 50-amp circuit if your panel doesn't have capacity. Most installs are completed in 2–3 hours." },
+  { q: "Do you work on older homes with knob-and-tube or aluminum wiring?", a: "We specialize in older Seattle-area homes. We can safely rewire knob-and-tube systems, address aluminum wiring concerns, and bring your home's electrical up to modern code — all while minimizing disruption to your walls and ceilings." },
+];
+
 /* ═══════════════════════════════════════════════════════════════════════════════
    MAIN PAGE
    ═══════════════════════════════════════════════════════════════════════════════ */
 export default function ElectricianV2Showcase() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [quizActive, setQuizActive] = useState<number | null>(null);
   const [formData, setFormData] = useState({ name: "", phone: "", email: "", service: "", message: "" });
 
@@ -1001,7 +1011,48 @@ export default function ElectricianV2Showcase() {
       </Section>
 
       {/* ═══════════════════════════════════════════════════════════════
-          15. CONTACT FORM
+          15. FAQ
+          ═══════════════════════════════════════════════════════════════ */}
+      <Section>
+        <div className="absolute inset-0" style={{ background: `radial-gradient(ellipse at top, ${AMBER_GLOW} 0%, transparent 60%)` }} />
+        <div className="relative max-w-3xl mx-auto px-4">
+          <SectionHeader title="Common" accent="Questions" subtitle="Straight answers about electrical work, pricing, and what to expect." />
+          <motion.div className="space-y-3 mt-10" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
+            {ELEC_FAQS.map((faq, i) => (
+              <motion.div key={i} variants={fadeUp}>
+                <GlassCard className="overflow-hidden">
+                  <button
+                    onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                    className="w-full flex items-center justify-between p-5 text-left cursor-pointer"
+                  >
+                    <span className="text-base font-semibold text-white pr-4">{faq.q}</span>
+                    <motion.div animate={{ rotate: openFaq === i ? 180 : 0 }} transition={spring}>
+                      <CaretDown size={20} className="text-slate-400 shrink-0" />
+                    </motion.div>
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {openFaq === i && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={spring}
+                        className="overflow-hidden"
+                      >
+                        <p className="px-5 pb-5 text-slate-400 leading-relaxed">{faq.a}</p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </GlassCard>
+              </motion.div>
+            ))}
+          </motion.div>
+          <p className="text-center mt-8 text-slate-400">Still have questions? <a href="tel:2063816040" className="font-semibold" style={{ color: AMBER }}>Call (206) 381-6040</a> — we pick up 24/7.</p>
+        </div>
+      </Section>
+
+      {/* ═══════════════════════════════════════════════════════════════
+          16. CONTACT FORM
           ═══════════════════════════════════════════════════════════════ */}
       <Section id="contact">
         <div className="absolute inset-0" style={{ background: `radial-gradient(ellipse at bottom, ${AMBER_GLOW} 0%, transparent 50%)` }} />

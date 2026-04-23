@@ -34,6 +34,7 @@ import {
   Quotes,
   FacebookLogo,
   TiktokLogo,
+  CaretDown,
 } from "@phosphor-icons/react";
 
 /* ─── color constants ─── */
@@ -211,6 +212,15 @@ const comparisonRows = [
 /* ─── product brands ─── */
 const productBrands = ["Olaplex", "Kerastase", "Redken", "Aveda", "Moroccan Oil"];
 
+const SALON_FAQS = [
+  { q: "How far in advance should I book my appointment?", a: "For color services, balayage, and extensions, we recommend booking 2–3 weeks ahead, especially on weekends. Haircuts can often be accommodated within a few days. New clients get priority when booking online — we reserve slots just for you." },
+  { q: "Do you offer consultations before a big color change?", a: "Always. Before any major transformation — balayage, highlights, color correction, or extensions — we schedule a complimentary 15-minute consultation with your stylist. We'll look at your hair's current health, discuss your inspiration photos, and map out a realistic plan." },
+  { q: "What should I do to prepare for a color appointment?", a: "Come with clean, dry hair — no styling products. Bring inspiration photos (Pinterest and Instagram work great). Wear a comfortable top with a low neckline or that you don't mind getting a bit of color on. That's it — we handle the rest." },
+  { q: "Do you use Olaplex and other premium products?", a: "Yes — our color bar uses Olaplex, Kerastase, and Redken exclusively. Every color service includes an Olaplex bond-building treatment to protect your hair during processing. We believe your hair should leave healthier than when you arrived." },
+  { q: "What is your cancellation policy?", a: "We ask for 24 hours notice for cancellations and reschedules. Late cancellations within 24 hours or no-shows may incur a 50% service fee. We hold a small deposit at booking for color services — this is applied to your service total when you arrive." },
+  { q: "Can you match a color from a photo I bring in?", a: "We do our very best — and we're excellent color-matchers. Show us your inspiration photo and we'll be honest about what's achievable in one session based on your current hair. Some vivid colors or platinum results take 2–3 visits to protect your hair's integrity." },
+];
+
 /* ═══════════════════════════════════ MAIN PAGE ═══════════════════════════════════ */
 export default function V2SalonPage() {
   const heroRef = useRef<HTMLDivElement>(null);
@@ -218,6 +228,7 @@ export default function V2SalonPage() {
   const heroY = useTransform(scrollYProgress, [0, 1], [0, -80]);
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [quizSelection, setQuizSelection] = useState<number | null>(null);
 
   return (
@@ -858,7 +869,49 @@ export default function V2SalonPage() {
         </div>
       </section>
 
-      {/* ══════════════ 13. CONTACT / BOOKING ══════════════ */}
+      {/* ══════════════ 13. FAQ ══════════════ */}
+      <section className="relative z-10 py-16 md:py-24 bg-white">
+        <div className="mx-auto max-w-3xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-[0.2em] mb-3 font-semibold" style={{ color: ROSE }}>Common Questions</p>
+            <h2 className="text-4xl md:text-5xl font-bold tracking-tight" style={{ color: TEXT_DARK }}>Frequently Asked</h2>
+            <p className="mt-4 text-lg" style={{ color: TEXT_BODY }}>Everything you need to know before booking your first visit.</p>
+          </div>
+          <motion.div className="space-y-3" variants={sectionStagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
+            {SALON_FAQS.map((faq, i) => (
+              <motion.div key={i} variants={fadeUp}>
+                <div className="border rounded-xl overflow-hidden" style={{ borderColor: `${ROSE}30`, background: "#fefefe" }}>
+                  <button
+                    onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                    className="w-full flex items-center justify-between p-5 text-left cursor-pointer"
+                  >
+                    <span className="text-base font-semibold pr-4" style={{ color: TEXT_DARK }}>{faq.q}</span>
+                    <motion.div animate={{ rotate: openFaq === i ? 180 : 0 }} transition={spring}>
+                      <CaretDown size={20} style={{ color: ROSE }} className="shrink-0" />
+                    </motion.div>
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {openFaq === i && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={spring}
+                        className="overflow-hidden"
+                      >
+                        <p className="px-5 pb-5 leading-relaxed border-t pt-4" style={{ color: TEXT_BODY, borderColor: `${ROSE}20` }}>{faq.a}</p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+          <p className="text-center mt-8" style={{ color: TEXT_BODY }}>More questions? <a href="tel:2065418293" className="font-semibold" style={{ color: ROSE }}>Call us at (206) 541-8293</a> — we&apos;re always happy to chat.</p>
+        </div>
+      </section>
+
+      {/* ══════════════ 14. CONTACT / BOOKING ══════════════ */}
       <section id="contact" className="relative z-10 py-20 md:py-28" style={{ background: BG }}>
         <div className="max-w-7xl mx-auto px-4 md:px-6">
           <SectionHeading label="Book Now" title="Your" accent="Appointment" />
