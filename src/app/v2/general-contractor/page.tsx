@@ -382,7 +382,7 @@ export default function V2GeneralContractorShowcase() {
 
           {/* Mobile hero image (no 3D tilt on mobile) */}
           <div className="lg:hidden mt-8 rounded-2xl overflow-hidden border border-white/10">
-            <img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=900&q=80" alt="Construction site" className="w-full h-72 object-cover" />
+            <img src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=900&q=80" alt="Architectural blueprints and construction planning" className="w-full h-72 object-cover" />
           </div>
         </div>
       </section>
@@ -660,7 +660,7 @@ export default function V2GeneralContractorShowcase() {
       </SectionReveal>
 
       {/* ══════════════════════════════════════════════════
-          10. OWNER SPOTLIGHT — CHRIS DALTON
+          10. MEET THE TEAM
           ══════════════════════════════════════════════════ */}
       <SectionReveal id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, ${BG_DARK} 50%, ${BG} 100%)` }} />
@@ -668,42 +668,69 @@ export default function V2GeneralContractorShowcase() {
         <div className="absolute top-[20%] left-[10%] w-[500px] h-[500px] rounded-full blur-[180px] pointer-events-none" style={{ background: `${AMBER}06` }} />
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-            <div className="relative">
-              <div className="rounded-2xl overflow-hidden border border-white/10">
-                <img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=600&q=80" alt="Chris Dalton on job site" className="w-full h-[420px] object-cover object-top" />
-              </div>
-              <div className="absolute -bottom-4 -right-4 md:bottom-6 md:-right-6">
-                <div className="px-5 py-3 rounded-xl backdrop-blur-md border text-white font-bold text-sm shadow-lg" style={{ background: `${AMBER}e6`, borderColor: `${AMBER}80` }}>
-                  <ShieldCheck size={16} weight="fill" className="inline mr-2" />WA #SUMMBW*891QP
-                </div>
-              </div>
-            </div>
-            <div>
-              <SectionLabel text="Meet the Owner" />
-              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-6 text-white">Chris Dalton</h2>
-              <p className="text-slate-400 leading-relaxed mb-4">
-                Chris Dalton has been building in the Pacific Northwest for 22 years. From his first renovation in Ballard to managing multi-unit ADU projects across Seattle, he brings hands-on expertise and old-school accountability to every job.
-              </p>
-              <p className="text-slate-400 leading-relaxed mb-8">
-                As a licensed general contractor (WA #SUMMBW*891QP), Chris personally oversees every Summit Builders NW project. He believes every homeowner deserves transparent communication, honest pricing, and craftsmanship that lasts generations.
-              </p>
-              <div className="grid grid-cols-2 gap-4">
-                {[
-                  { icon: ShieldCheck, label: "WA Licensed GC" },
-                  { icon: Certificate, label: "Bonded & Insured" },
-                  { icon: Star, label: "4.9 Google Rating" },
-                  { icon: Users, label: "Expert Local Crews" },
-                ].map((badge) => (
-                  <GlassCard key={badge.label} className="p-4 flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: AMBER_GLOW }}>
-                      <badge.icon size={20} weight="duotone" style={{ color: AMBER }} />
+          <div className="text-center mb-14">
+            <SectionLabel text="Our Team" />
+            <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white">The People Behind Summit Builders</h2>
+            <AccentLine />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              {
+                name: "Chris Dalton",
+                role: "Owner & Licensed GC",
+                bio: "22 years building in the Pacific Northwest. Chris personally oversees every project — no middlemen, no surprises. WA #SUMMBW*891QP.",
+                credentials: ["WA Licensed GC", "Bonded & Insured"],
+                img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80",
+                isOwner: true,
+              },
+              {
+                name: "Mike Forsythe",
+                role: "Project Manager",
+                bio: "Coordinates all subcontractors, permits, and daily site operations. Fifteen years managing Seattle-area residential and commercial builds.",
+                credentials: ["OSHA 30 Certified", "15 Yrs Experience"],
+                img: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&q=80",
+                isOwner: false,
+              },
+              {
+                name: "Sandra Reyes",
+                role: "Design & Client Lead",
+                bio: "Guides homeowners through material selections, 3D renderings, and design decisions. The friendly face you'll work with from first meeting to final walkthrough.",
+                credentials: ["Interior Design Cert.", "3D Rendering Specialist"],
+                img: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=400&q=80",
+                isOwner: false,
+              },
+            ].map((member) => (
+              <GlassCard key={member.name} className="overflow-hidden group">
+                <div className="relative">
+                  <img
+                    src={member.img}
+                    alt={member.name}
+                    className="w-full h-[260px] object-cover object-top transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                  {member.isOwner && (
+                    <div className="absolute top-3 right-3">
+                      <span className="px-3 py-1 rounded-full text-xs font-bold text-white" style={{ background: AMBER }}>
+                        Owner
+                      </span>
                     </div>
-                    <span className="text-sm font-semibold text-white">{badge.label}</span>
-                  </GlassCard>
-                ))}
-              </div>
-            </div>
+                  )}
+                </div>
+                <div className="p-6">
+                  <h3 className="text-lg font-bold text-white mb-1">{member.name}</h3>
+                  <p className="text-sm font-semibold mb-3" style={{ color: AMBER }}>{member.role}</p>
+                  <p className="text-sm text-slate-400 leading-relaxed mb-4">{member.bio}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {member.credentials.map(c => (
+                      <span key={c} className="inline-flex items-center gap-1 text-xs px-3 py-1 rounded-full border" style={{ borderColor: `${AMBER}33`, background: `${AMBER}0d`, color: AMBER }}>
+                        <ShieldCheck size={11} weight="fill" />{c}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </GlassCard>
+            ))}
           </div>
         </div>
       </SectionReveal>
