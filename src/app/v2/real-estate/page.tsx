@@ -36,6 +36,7 @@ import {
   Handshake,
   Lightning,
   CheckCircle,
+  XCircle,
   Quotes,
   PlayCircle,
   Timer,
@@ -191,6 +192,16 @@ const marketStats = [
   { label: "Avg Days on Market", value: 14, prefix: "", suffix: " days", barPct: 28 },
   { label: "Homes Sold This Year", value: 47, prefix: "", suffix: "+", barPct: 65 },
   { label: "Client Satisfaction", value: 98, prefix: "", suffix: "%", barPct: 98 },
+];
+
+const reComparison = [
+  { feature: "Local Market Expertise", us: true, them: "Algorithm Only" },
+  { feature: "Dedicated Agent", us: true, them: false },
+  { feature: "Negotiation On Your Behalf", us: true, them: false },
+  { feature: "Off-Market Listing Access", us: true, them: false },
+  { feature: "Full Transaction Coordination", us: true, them: false },
+  { feature: "Personal Communication", us: true, them: false },
+  { feature: "Transparent, Flat Commission", us: true, them: "Hidden Fees" },
 ];
 
 /* ═══════════════════════════════════════════════════════════════
@@ -1122,6 +1133,67 @@ export default function V2RealEstatePage() {
               </motion.div>
               <p className="text-xl md:text-2xl font-bold">See Our Listings Come to Life</p>
               <p className="text-sm text-zinc-400 mt-2">3D tours, drone footage, and neighborhood walkthroughs</p>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ═══════ COMPETITOR COMPARISON ═══════ */}
+      <section className="relative z-10 py-16 md:py-24">
+        <div className="max-w-4xl mx-auto px-4 md:px-6">
+          <motion.div
+            initial={{ y: 30, opacity: 0 }}
+            whileInView={{ y: 0, opacity: 1 }}
+            viewport={{ once: true }}
+            transition={spring}
+            className="text-center mb-12"
+          >
+            <p className="text-xs font-semibold tracking-[0.2em] uppercase mb-4" style={{ color: GOLD }}>Why Work With Us</p>
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">Puget Sound Realty <span style={{ color: GOLD }}>vs.</span> Online Brokers</h2>
+            <p className="text-zinc-400 text-lg">Algorithms can&apos;t negotiate, advocate, or answer your calls at 9pm.</p>
+          </motion.div>
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            whileInView={{ y: 0, opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ ...spring, delay: 0.1 }}
+            className="rounded-2xl overflow-hidden border border-white/[0.08]"
+            style={{ background: "rgba(255,255,255,0.03)" }}
+          >
+            <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="border-b border-white/[0.08]">
+                    <th className="px-6 py-4 text-sm text-zinc-500 font-medium">Feature</th>
+                    <th className="px-6 py-4 text-sm font-semibold text-center" style={{ color: GOLD }}>Puget Sound Realty</th>
+                    <th className="px-6 py-4 text-sm text-zinc-500 font-medium text-center">Zillow / Redfin</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {reComparison.map((row, i) => (
+                    <motion.tr
+                      key={row.feature}
+                      className="border-b border-white/[0.04]"
+                      initial={{ opacity: 0, x: -16 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: i * 0.06, ...spring }}
+                    >
+                      <td className="px-6 py-4 text-sm text-zinc-300">{row.feature}</td>
+                      <td className="px-6 py-4 text-center">
+                        <CheckCircle size={20} weight="fill" color="#22c55e" className="mx-auto" />
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        {row.them === false ? (
+                          <XCircle size={20} weight="fill" color="#ef4444" className="mx-auto opacity-50" />
+                        ) : (
+                          <span className="text-xs text-zinc-500 italic">{row.them}</span>
+                        )}
+                      </td>
+                    </motion.tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </motion.div>
         </div>
