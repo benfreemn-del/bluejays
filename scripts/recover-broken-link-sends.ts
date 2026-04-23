@@ -32,9 +32,17 @@ if (fs.existsSync(envPath)) {
 }
 
 import { createClient } from "@supabase/supabase-js";
-import { sendEmail } from "../src/lib/email-sender";
 import { getShortPreviewUrl } from "../src/lib/short-urls";
 import type { Prospect } from "../src/lib/types";
+
+// email-sender.ts captures SENDGRID_API_KEY at module-evaluation time.
+// ES imports hoist above the .env.local loader at the top of this file,
+// so a normal import captures the key as undefined → mock mode. Dynamic
+// import inside main() runs AFTER process.env is populated.
+async function loadSendEmail() {
+  const mod = await import("../src/lib/email-sender");
+  return mod.sendEmail;
+}
 
 const RESEND_SEQUENCE = 99;      // out-of-band sequence so it doesn't collide with the normal funnel
 const DELAY_MS = 3000;           // 3s between sends — gentle on SendGrid + warming caps
@@ -87,6 +95,23 @@ async function main() {
   const dryRun = !process.argv.includes("--apply");
   const maxArg = process.argv.find((a) => a.startsWith("--max="));
   const maxSends = maxArg ? parseInt(maxArg.split("=")[1], 10) : Infinity;
+
+  // Load sendEmail AFTER .env.local has populated process.env so the
+  // module-level SENDGRID_API_KEY const in email-sender.ts sees the
+  // real value (not undefined → mock mode).
+  const sendEmail = await loadSendEmail();
+
+  const hasSendgridKey = Boolean(process.env.SENDGRID_API_KEY);
+  if (!dryRun && !hasSendgridKey) {
+    console.error("\n❌ SENDGRID_API_KEY is not set in .env.local.");
+    console.error("   Without it, email-sender.ts falls back to mock mode and");
+    console.error("   nothing actually goes to SendGrid. Add the key to .env.local");
+    console.error("   and re-run.\n");
+    process.exit(1);
+  }
+  if (!dryRun) {
+    console.log(`✓ SENDGRID_API_KEY detected — real sends will go out.\n`);
+  }
 
   const sb = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
