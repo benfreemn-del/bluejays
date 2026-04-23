@@ -414,7 +414,7 @@ export default function V2RealEstatePage() {
   }, []);
 
   return (
-    <div className="min-h-[100dvh] bg-[#09090b] text-white overflow-x-hidden">
+    <div className="re-v2 min-h-[100dvh] bg-[#09090b] text-white overflow-x-hidden">
       <GoldParticles />
 
       {/* ═══════ NAV ═══════ */}
@@ -931,7 +931,7 @@ export default function V2RealEstatePage() {
               </div>
 
               <motion.a
-                href="tel:2065550147"
+                href="tel:2067184291"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="inline-flex px-6 py-3 font-bold rounded-xl text-black"
@@ -1239,7 +1239,7 @@ export default function V2RealEstatePage() {
                     <label className="text-xs text-zinc-500 uppercase tracking-wider mb-1.5 block">Phone</label>
                     <input
                       type="tel"
-                      placeholder="(206) 555-0000"
+                      placeholder="(206) 555-XXXX"
                       className="w-full bg-white/[0.05] border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:border-[#b8860b]/40 transition-colors"
                     />
                   </div>
@@ -1285,8 +1285,8 @@ export default function V2RealEstatePage() {
               className="lg:col-span-2 flex flex-col gap-4"
             >
               {[
-                { icon: Phone, label: "Call Us", value: "(206) 555-0147", href: "tel:2065550147" },
-                { icon: Envelope, label: "Email", value: "hello@pugetsoundrealty.com", href: "mailto:hello@pugetsoundrealty.com" },
+                { icon: Phone, label: "Call Us", value: "(206) 718-4291", href: "tel:2067184291" },
+                { icon: Envelope, label: "Email", value: "sarah@pugetsoundrealty.com", href: "mailto:sarah@pugetsoundrealty.com" },
                 { icon: MapPin, label: "Office", value: "1847 Westlake Ave N, Suite 200, Seattle, WA 98109", href: "https://maps.google.com/?q=1847+Westlake+Ave+N+Suite+200+Seattle+WA+98109" },
                 { icon: Clock, label: "Hours", value: "Mon-Fri 9am-6pm, Sat 10am-4pm", href: undefined },
               ].map((item, i) => (
@@ -1387,11 +1387,11 @@ export default function V2RealEstatePage() {
             <div>
               <h4 className="text-sm font-bold uppercase tracking-wider mb-4" style={{ color: GOLD }}>Contact</h4>
               <div className="flex flex-col gap-3 text-sm text-zinc-500">
-                <a href="tel:2065550147" className="hover:text-white transition-colors flex items-center gap-2">
-                  <Phone size={14} color={GOLD} /> (206) 555-0147
+                <a href="tel:2067184291" className="hover:text-white transition-colors flex items-center gap-2">
+                  <Phone size={14} color={GOLD} /> (206) 718-4291
                 </a>
-                <a href="mailto:hello@pugetsoundrealty.com" className="hover:text-white transition-colors flex items-center gap-2">
-                  <Envelope size={14} color={GOLD} /> hello@pugetsoundrealty.com
+                <a href="mailto:sarah@pugetsoundrealty.com" className="hover:text-white transition-colors flex items-center gap-2">
+                  <Envelope size={14} color={GOLD} /> sarah@pugetsoundrealty.com
                 </a>
                 <a
                   href="https://maps.google.com/?q=1847+Westlake+Ave+N+Suite+200+Seattle+WA+98109"
@@ -1409,7 +1409,7 @@ export default function V2RealEstatePage() {
           {/* Bottom */}
           <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex flex-col sm:flex-row items-center gap-2 text-xs text-zinc-600">
-              <span>Licensed in WA State #12345</span>
+              <span>Licensed in WA License #22076841</span>
               <span className="hidden sm:inline">|</span>
               <span>2026 Puget Sound Realty. All rights reserved.</span>
             </div>
