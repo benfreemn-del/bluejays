@@ -439,7 +439,7 @@ const COMMON_ISSUES = [
 
 const QUIZ_OPTIONS = [
   { label: "Clogged Drain", color: "#22c55e", severity: "Common Fix", recommendation: "Most drain clogs are resolved same-day with our hydro-jetting service. Book a $99 drain cleaning.", cta: "Book Drain Cleaning" },
-  { label: "Leak or Burst Pipe", color: RED_EMERGENCY, severity: "Emergency!", recommendation: "Water damage gets worse every minute. Call now for our 60-minute emergency response.", cta: "Call Now (206) 555-0893" },
+  { label: "Leak or Burst Pipe", color: RED_EMERGENCY, severity: "Emergency!", recommendation: "Water damage gets worse every minute. Call now for our 60-minute emergency response.", cta: "Call Now (206) 528-4791" },
   { label: "Water Heater Problem", color: "#f59e0b", severity: "No Hot Water?", recommendation: "Could be a simple thermostat fix or time for a new unit. We diagnose before we quote.", cta: "Schedule Diagnosis" },
   { label: "Sewer / Main Line", color: RED_EMERGENCY, severity: "Serious", recommendation: "Sewer backups need immediate camera inspection. We use trenchless repair to minimize disruption.", cta: "Get Camera Inspection" },
 ];
@@ -498,7 +498,7 @@ export default function V2PlumberPage() {
 
   return (
     <main
-      className="relative min-h-[100dvh] overflow-x-hidden"
+      className="plumber-v2 relative min-h-[100dvh] overflow-x-hidden"
       style={{ background: SLATE, color: "#f1f5f9" }}
     >
       <FloatingWaterDrops />
@@ -533,7 +533,7 @@ export default function V2PlumberPage() {
               >
                 <span className="flex items-center gap-2">
                   <Phone size={16} weight="bold" />
-                  (206) 555-0893
+                  (206) 528-4791
                 </span>
               </MagneticButton>
               <button
@@ -700,7 +700,7 @@ export default function V2PlumberPage() {
               <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-white" />
             </span>
             Burst Pipe? Flooding? We&apos;re There in 60 Minutes &mdash;
-            <a href="tel:2065550893" className="underline underline-offset-2 font-extrabold">(206) 555-0893</a>
+            <a href="tel:2065284791" className="underline underline-offset-2 font-extrabold">(206) 528-4791</a>
           </p>
         </div>
       </SectionReveal>
@@ -720,7 +720,7 @@ export default function V2PlumberPage() {
                 { icon: Certificate, label: "Master Plumber" },
                 { icon: Clock, label: "20 Years Experience" },
                 { icon: ThumbsUp, label: "3,000+ Jobs" },
-                { icon: SealCheck, label: "WA #EMERACPL847DK" },
+                { icon: SealCheck, label: "WA #EMERCP*782QA" },
                 { icon: Star, label: "4.9 Stars" },
               ].map((item, i) => (
                 <motion.div key={i} variants={fadeUp} className="flex items-center gap-2 text-slate-300">
@@ -899,7 +899,7 @@ export default function V2PlumberPage() {
                   <Certificate size={24} weight="duotone" style={{ color: TEAL }} />
                   <div>
                     <p className="text-xs text-slate-400">WA License</p>
-                    <p className="text-sm font-bold text-white">#EMERACPL847DK</p>
+                    <p className="text-sm font-bold text-white">#EMERCP*782QA</p>
                   </div>
                 </GlassCard>
               </div>
@@ -1328,9 +1328,9 @@ export default function V2PlumberPage() {
                   <Warning size={36} weight="duotone" style={{ color: RED_EMERGENCY }} />
                   <h3 className="text-xl font-bold text-white">Plumbing Emergency?</h3>
                   <p className="text-slate-400 text-sm">Skip the form. Call now for immediate help.</p>
-                  <a href="tel:2065550893" className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-lg font-bold text-white" style={{ background: RED_EMERGENCY }}>
+                  <a href="tel:2065284791" className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-lg font-bold text-white" style={{ background: RED_EMERGENCY }}>
                     <Phone size={20} weight="bold" />
-                    (206) 555-0893
+                    (206) 528-4791
                   </a>
                 </div>
               </ShimmerBorder>
@@ -1352,7 +1352,7 @@ export default function V2PlumberPage() {
                     <Phone size={20} weight="duotone" style={{ color: TEAL }} className="mt-0.5 shrink-0" />
                     <div>
                       <p className="text-sm text-slate-400">Phone</p>
-                      <a href="tel:2065550893" className="text-white hover:underline">(206) 555-0893</a>
+                      <a href="tel:2065284791" className="text-white hover:underline">(206) 528-4791</a>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
@@ -1397,7 +1397,7 @@ export default function V2PlumberPage() {
               </div>
               <p className="text-sm text-slate-400 leading-relaxed">
                 Seattle&apos;s most trusted plumber since 2004. Licensed, bonded, and insured.
-                WA #EMERACPL847DK.
+                WA #EMERCP*782QA.
               </p>
             </div>
 
@@ -1417,7 +1417,7 @@ export default function V2PlumberPage() {
             <div>
               <h4 className="text-sm font-semibold text-white mb-4">Contact</h4>
               <div className="space-y-2 text-sm text-slate-400">
-                <a href="tel:2065550893" className="block hover:text-white transition-colors">(206) 555-0893</a>
+                <a href="tel:2065284791" className="block hover:text-white transition-colors">(206) 528-4791</a>
                 <a href="mailto:help@emeraldcityplumbing.com" className="block hover:text-white transition-colors">help@emeraldcityplumbing.com</a>
                 <p>5612 Rainier Ave S, Seattle, WA 98118</p>
                 <p>Mon-Sat 7am-7pm &middot; 24/7 Emergency</p>
@@ -1427,7 +1427,7 @@ export default function V2PlumberPage() {
 
           <div className="border-t border-white/[0.06] pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-sm text-slate-500">
-              &copy; {new Date().getFullYear()} Emerald City Plumbing. All rights reserved. WA License #EMERACPL847DK.
+              &copy; {new Date().getFullYear()} Emerald City Plumbing. All rights reserved. WA License #EMERCP*782QA.
             </p>
             <p className="text-sm text-slate-500 flex items-center gap-1.5">
               <svg width="14" height="14" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-sky-500"><path d="M24.3 4.2c-1.5-.4-3.2.1-4.5 1.1-1-.7-2.3-1-3.5-.8-2.4.4-4.2 2.5-4.2 4.9v.6c-3.2.8-6 2.8-7.8 5.6-.3.5-.1 1.1.4 1.4.5.3 1.1.1 1.4-.4 1.5-2.3 3.7-4 6.3-4.7.5-.1 1-.1 1.5 0 .8.2 1.4.8 1.7 1.5.3.8.2 1.6-.2 2.3l-2.8 4.3c-.6.9-.4 2.1.4 2.8l2.5 2.1c.4.3.8.5 1.3.5h5.2c.5 0 1-.2 1.3-.5l1.2-1c.6-.5.8-1.3.6-2l-1-3.2c-.2-.5 0-1.1.4-1.4l3.8-2.5c1.3-.9 2.1-2.3 2.1-3.9V9.6c0-2.5-1.7-4.7-4.1-5.3v-.1z" fill="currentColor"/></svg>Created by{" "}

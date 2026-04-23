@@ -394,7 +394,7 @@ export default function V2LawFirmPage() {
   ];
 
   return (
-    <div className="min-h-[100dvh] bg-[#0f172a] text-slate-100 overflow-x-hidden">
+    <div className="law-v2 min-h-[100dvh] bg-[#0f172a] text-slate-100 overflow-x-hidden">
 
       {/* ══════ NAV ══════ */}
       <motion.nav
@@ -414,8 +414,8 @@ export default function V2LawFirmPage() {
             ))}
           </div>
           <div className="flex items-center gap-3">
-            <a href="tel:2065550312" className="hidden sm:flex items-center gap-2 text-sm text-emerald-400 font-medium hover:text-emerald-300 transition-colors">
-              <Phone size={16} weight="bold" /> (206) 555-0312
+            <a href="tel:2064329150" className="hidden sm:flex items-center gap-2 text-sm text-emerald-400 font-medium hover:text-emerald-300 transition-colors">
+              <Phone size={16} weight="bold" /> (206) 432-9150
             </a>
             <MagneticButton className="px-5 py-2.5 bg-emerald-600 text-white text-sm font-semibold rounded-lg">
               <span className="relative z-10">Free Case Review</span>
@@ -450,8 +450,8 @@ export default function V2LawFirmPage() {
                     {link.label}
                   </a>
                 ))}
-                <a href="tel:2065550312" className="block px-4 py-3 rounded-lg text-sm text-emerald-400 font-medium">
-                  <Phone size={16} weight="bold" className="inline mr-2" /> (206) 555-0312
+                <a href="tel:2064329150" className="block px-4 py-3 rounded-lg text-sm text-emerald-400 font-medium">
+                  <Phone size={16} weight="bold" className="inline mr-2" /> (206) 432-9150
                 </a>
               </div>
             </motion.div>
@@ -518,10 +518,10 @@ export default function V2LawFirmPage() {
                 Free Case Review <ArrowRight weight="bold" size={20} />
               </span>
             </MagneticButton>
-            <a href="tel:2065550312">
+            <a href="tel:2064329150">
               <MagneticButton className="px-10 py-5 border-2 border-slate-600 text-white rounded-xl hover:border-emerald-500/50 transition-colors text-lg">
                 <span className="relative z-10 flex items-center gap-2">
-                  <Phone weight="bold" size={20} /> (206) 555-0312
+                  <Phone weight="bold" size={20} /> (206) 432-9150
                 </span>
               </MagneticButton>
             </a>
@@ -858,7 +858,7 @@ export default function V2LawFirmPage() {
                             >
                               <p className="mt-2 text-sm text-emerald-400">{option.response}</p>
                               <div className="mt-3 flex items-center gap-2 text-sm font-medium" style={{ color: option.color }}>
-                                Call Now: (206) 555-0312 <ArrowRight size={14} weight="bold" />
+                                Call Now: (206) 432-9150 <ArrowRight size={14} weight="bold" />
                               </div>
                             </motion.div>
                           )}
@@ -985,7 +985,7 @@ export default function V2LawFirmPage() {
               </div>
               <div className="mt-10 space-y-5">
                 {[
-                  { icon: Phone, text: "(206) 555-0312", href: "tel:2065550312" },
+                  { icon: Phone, text: "(206) 432-9150", href: "tel:2064329150" },
                   { icon: EnvelopeSimple, text: "consult@pacificlawgroup.com", href: "mailto:consult@pacificlawgroup.com" },
                   { icon: MapPin, text: "701 5th Avenue, Suite 3200, Seattle, WA 98104", href: "https://maps.google.com/?q=701+5th+Avenue+Suite+3200+Seattle+WA+98104" },
                 ].map((item) => (
@@ -1057,7 +1057,7 @@ export default function V2LawFirmPage() {
       {/* ══════ 14. EMERGENCY BANNER ══════ */}
       <section className="relative z-10 py-6 md:py-8" style={{ background: `linear-gradient(90deg, #7f1d1d, ${NAVY_LIGHT}, #7f1d1d)` }}>
         <div className="max-w-7xl mx-auto px-4 md:px-6">
-          <a href="tel:2065550312" className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6">
+          <a href="tel:2064329150" className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6">
             {/* Pulsing indicator */}
             <div className="flex items-center gap-2">
               <span className="relative flex h-3 w-3">
@@ -1067,7 +1067,7 @@ export default function V2LawFirmPage() {
               <span className="text-red-300 font-bold text-sm uppercase tracking-wider">Arrested?</span>
             </div>
             <span className="text-white font-black text-xl md:text-2xl tracking-tight">
-              Call Now — (206) 555-0312
+              Call Now — (206) 432-9150
             </span>
             <span className="text-red-300/70 text-sm font-medium">Available 24/7</span>
           </a>
@@ -1118,8 +1118,8 @@ export default function V2LawFirmPage() {
             <div>
               <h4 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4">Contact</h4>
               <div className="space-y-3 text-sm text-slate-500">
-                <a href="tel:2065550312" className="flex items-center gap-2 hover:text-emerald-400 transition-colors">
-                  <Phone size={14} weight="bold" /> (206) 555-0312
+                <a href="tel:2064329150" className="flex items-center gap-2 hover:text-emerald-400 transition-colors">
+                  <Phone size={14} weight="bold" /> (206) 432-9150
                 </a>
                 <a href="mailto:consult@pacificlawgroup.com" className="flex items-center gap-2 hover:text-emerald-400 transition-colors">
                   <EnvelopeSimple size={14} weight="bold" /> consult@pacificlawgroup.com

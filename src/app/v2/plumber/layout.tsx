@@ -22,5 +22,24 @@ export default function PlumberV2Layout({
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  return (
+    <>
+      {/* Space Grotesk (headings) + Inter (body) — spec for plumber modern trades */}
+      <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet"
+      />
+      <style>{`
+        .plumber-v2 h1, .plumber-v2 h2, .plumber-v2 h3, .plumber-v2 h4 {
+          font-family: 'Space Grotesk', system-ui, sans-serif !important;
+          letter-spacing: -0.02em;
+        }
+        .plumber-v2, .plumber-v2 p, .plumber-v2 a, .plumber-v2 button, .plumber-v2 input,
+        .plumber-v2 select, .plumber-v2 textarea, .plumber-v2 label, .plumber-v2 span:not(.font-mono) {
+          font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+      `}</style>
+      {children}
+    </>
+  );
 }

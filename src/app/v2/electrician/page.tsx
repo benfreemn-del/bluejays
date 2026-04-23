@@ -125,7 +125,7 @@ const QUIZ_OPTIONS = [
   { label: "Outlet / Switch Problem", color: "#22c55e", icon: Plug, rec: "Quick fix — most outlet and switch repairs are completed in under an hour. Call for same-day scheduling." },
   { label: "Panel Upgrade", color: BLUE_SPARK, icon: Lightning, rec: "Capacity upgrade — we'll assess your current panel and provide a fixed-price quote. Free estimates available." },
   { label: "New Installation", color: AMBER, icon: SolarPanel, rec: "EV chargers, generators, lighting — tell us what you need and we'll design the right system for your home." },
-  { label: "Emergency", color: RED_EMERGENCY, icon: Warning, rec: "Sparks, burning smell, or outage? Call (206) 555-0471 immediately — we respond in under 60 minutes." },
+  { label: "Emergency", color: RED_EMERGENCY, icon: Warning, rec: "Sparks, burning smell, or outage? Call (206) 381-6040 immediately — we respond in under 60 minutes." },
 ];
 
 const COMPARISON_ROWS = [
@@ -346,7 +346,7 @@ export default function ElectricianV2Showcase() {
   ];
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden" style={{ background: CHARCOAL, color: "#fff" }}>
+    <div className="elec-v2 relative min-h-screen overflow-x-hidden" style={{ background: CHARCOAL, color: "#fff" }}>
       <FloatingSparks />
 
       {/* ─────────────────── NAV ─────────────────── */}
@@ -360,8 +360,8 @@ export default function ElectricianV2Showcase() {
             {NAV_LINKS.map((l) => (
               <a key={l.label} href={l.href} className="text-sm text-white/60 hover:text-white transition-colors">{l.label}</a>
             ))}
-            <a href="tel:2065550471" className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold" style={{ background: AMBER, color: "#000" }}>
-              <Phone size={16} weight="bold" /> (206) 555-0471
+            <a href="tel:2063816040" className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold" style={{ background: AMBER, color: "#000" }}>
+              <Phone size={16} weight="bold" /> (206) 381-6040
             </a>
           </div>
           <button className="md:hidden" onClick={() => setMenuOpen(!menuOpen)}>
@@ -381,7 +381,7 @@ export default function ElectricianV2Showcase() {
                 {NAV_LINKS.map((l) => (
                   <a key={l.label} href={l.href} onClick={() => setMenuOpen(false)} className="text-white/70 py-2">{l.label}</a>
                 ))}
-                <a href="tel:2065550471" className="flex items-center justify-center gap-2 py-3 rounded-xl font-semibold mt-2" style={{ background: AMBER, color: "#000" }}>
+                <a href="tel:2063816040" className="flex items-center justify-center gap-2 py-3 rounded-xl font-semibold mt-2" style={{ background: AMBER, color: "#000" }}>
                   <Phone size={18} weight="bold" /> Call Now
                 </a>
               </div>
@@ -467,7 +467,7 @@ export default function ElectricianV2Showcase() {
               <a href="#contact" className="inline-flex items-center gap-2 px-8 py-4 rounded-xl text-lg font-bold transition-transform hover:scale-105" style={{ background: AMBER, color: "#000" }}>
                 Free Estimate <ArrowRight size={20} weight="bold" />
               </a>
-              <a href="tel:2065550471" className="inline-flex items-center gap-2 px-8 py-4 rounded-xl text-lg font-bold border-2 transition-transform hover:scale-105" style={{ borderColor: "rgba(255,255,255,0.2)", color: "#fff" }}>
+              <a href="tel:2063816040" className="inline-flex items-center gap-2 px-8 py-4 rounded-xl text-lg font-bold border-2 transition-transform hover:scale-105" style={{ borderColor: "rgba(255,255,255,0.2)", color: "#fff" }}>
                 <Phone size={20} weight="bold" /> Call Now
               </a>
             </motion.div>
@@ -504,8 +504,8 @@ export default function ElectricianV2Showcase() {
           <span className="text-sm sm:text-base font-bold text-white tracking-wide">
             Electrical Emergency? We&apos;re There in 60 Minutes or Less
           </span>
-          <a href="tel:2065550471" className="inline-flex items-center gap-2 px-4 py-1.5 bg-white rounded-full text-sm font-bold" style={{ color: RED_EMERGENCY }}>
-            <Phone size={14} weight="bold" /> (206) 555-0471
+          <a href="tel:2063816040" className="inline-flex items-center gap-2 px-4 py-1.5 bg-white rounded-full text-sm font-bold" style={{ color: RED_EMERGENCY }}>
+            <Phone size={14} weight="bold" /> (206) 381-6040
           </a>
         </div>
       </div>
@@ -788,7 +788,7 @@ export default function ElectricianV2Showcase() {
                             <div className="h-px mb-4" style={{ background: `${opt.color}20` }} />
                             <p className="text-sm text-white/50 mb-4">{opt.rec}</p>
                             <a
-                              href={opt.label === "Emergency" ? "tel:2065550471" : "#contact"}
+                              href={opt.label === "Emergency" ? "tel:2063816040" : "#contact"}
                               className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-transform hover:scale-105"
                               style={{ background: opt.color, color: "#fff" }}
                             >
@@ -1087,7 +1087,7 @@ export default function ElectricianV2Showcase() {
                 </div>
                 <div>
                   <div className="text-xs text-white/40 uppercase tracking-wider">Call or Text</div>
-                  <a href="tel:2065550471" className="text-lg font-bold text-white hover:underline">(206) 555-0471</a>
+                  <a href="tel:2063816040" className="text-lg font-bold text-white hover:underline">(206) 381-6040</a>
                 </div>
               </GlassCard>
 
@@ -1166,7 +1166,7 @@ export default function ElectricianV2Showcase() {
             {/* Emergency */}
             <div>
               <h4 className="text-sm font-semibold text-white mb-4">Emergency Line</h4>
-              <a href="tel:2065550471" className="text-2xl font-black block mb-2" style={{ color: AMBER }}>(206) 555-0471</a>
+              <a href="tel:2063816040" className="text-2xl font-black block mb-2" style={{ color: AMBER }}>(206) 381-6040</a>
               <div className="flex items-center gap-2 text-xs text-white/40">
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ background: "#22c55e" }} />
