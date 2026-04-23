@@ -305,7 +305,7 @@ export default function V2ApplianceRepairPage() {
   const counterData = useCounter(15000, 2200);
 
   return (
-    <main className="min-h-screen selection:bg-orange-500/30 selection:text-orange-200" style={{ backgroundColor: BG, color: "#f8fafc" }}>
+    <main className="appl-v2 min-h-screen selection:bg-orange-500/30 selection:text-orange-200" style={{ backgroundColor: BG, color: "#f8fafc" }}>
       <BoltGrid />
       <FloatingSparks />
 
@@ -323,8 +323,8 @@ export default function V2ApplianceRepairPage() {
               ))}
             </div>
             <div className="hidden md:flex items-center gap-4">
-              <a href="tel:2065550519" className="text-sm font-semibold flex items-center gap-2" style={{ color: ACCENT_LIGHT }}>
-                <Phone size={16} weight="duotone" /> (206) 555-0519
+              <a href="tel:2067214859" className="text-sm font-semibold flex items-center gap-2" style={{ color: ACCENT_LIGHT }}>
+                <Phone size={16} weight="duotone" /> (206) 721-4859
               </a>
               <MagneticButton className="px-5 py-2.5 rounded-full text-sm font-semibold text-white cursor-pointer" style={{ background: ACCENT }}>
                 Book Repair
@@ -346,8 +346,8 @@ export default function V2ApplianceRepairPage() {
               {["Services", "Pricing", "About", "Reviews", "Contact"].map((item) => (
                 <a key={item} href={`#${item.toLowerCase()}`} onClick={() => setIsMenuOpen(false)} className="text-base font-medium text-slate-200 hover:text-white transition-colors">{item}</a>
               ))}
-              <a href="tel:2065550519" className="text-base font-semibold flex items-center gap-2 mt-2" style={{ color: ACCENT }}>
-                <Phone size={18} weight="duotone" /> (206) 555-0519
+              <a href="tel:2067214859" className="text-base font-semibold flex items-center gap-2 mt-2" style={{ color: ACCENT }}>
+                <Phone size={18} weight="duotone" /> (206) 721-4859
               </a>
             </GlassCard>
           </motion.div>
@@ -399,7 +399,7 @@ export default function V2ApplianceRepairPage() {
 
           {/* CTA buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <MagneticButton href="tel:2065550519" className="px-8 py-4 rounded-full text-lg font-bold text-white flex items-center gap-3 cursor-pointer" style={{ background: ACCENT }}>
+            <MagneticButton href="tel:2067214859" className="px-8 py-4 rounded-full text-lg font-bold text-white flex items-center gap-3 cursor-pointer" style={{ background: ACCENT }}>
               <Phone size={22} weight="bold" /> Call Now
             </MagneticButton>
             <MagneticButton href="#services" className="px-8 py-4 rounded-full text-lg font-bold border-2 flex items-center gap-3 cursor-pointer" style={{ borderColor: STEEL, color: STEEL_LIGHT }}>
@@ -431,7 +431,7 @@ export default function V2ApplianceRepairPage() {
           </div>
           <div className="flex items-center gap-2">
             <Phone size={16} weight="bold" style={{ color: ACCENT_LIGHT }} />
-            <a href="tel:2065550519" className="text-sm font-bold" style={{ color: ACCENT }}>(206) 555-0519</a>
+            <a href="tel:2067214859" className="text-sm font-bold" style={{ color: ACCENT }}>(206) 721-4859</a>
           </div>
         </div>
       </div>
@@ -663,7 +663,7 @@ export default function V2ApplianceRepairPage() {
           </div>
           {quizChoice !== null && (
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="text-center mt-8">
-              <MagneticButton href="tel:2065550519" className="px-8 py-4 rounded-full text-lg font-bold text-white inline-flex items-center gap-3 cursor-pointer" style={{ background: ACCENT }}>
+              <MagneticButton href="tel:2067214859" className="px-8 py-4 rounded-full text-lg font-bold text-white inline-flex items-center gap-3 cursor-pointer" style={{ background: ACCENT }}>
                 <Phone size={22} weight="bold" /> Call ProFix Now
               </MagneticButton>
             </motion.div>
@@ -981,13 +981,13 @@ export default function V2ApplianceRepairPage() {
                 Reach Steve and the ProFix team for same-day appliance repair anywhere in Seattle. No voicemail trees, no hold music. A real person answers.
               </p>
               <div className="space-y-5">
-                <a href="tel:2065550519" className="flex items-center gap-4 group">
+                <a href="tel:2067214859" className="flex items-center gap-4 group">
                   <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: ACCENT_GLOW }}>
                     <Phone size={24} weight="duotone" style={{ color: ACCENT }} />
                   </div>
                   <div>
                     <div className="text-sm" style={{ color: STEEL }}>Call or Text</div>
-                    <div className="text-lg font-bold text-white group-hover:text-orange-300 transition-colors">(206) 555-0519</div>
+                    <div className="text-lg font-bold text-white group-hover:text-orange-300 transition-colors">(206) 721-4859</div>
                   </div>
                 </a>
                 <a href="mailto:fix@profixappliance.com" className="flex items-center gap-4 group">
@@ -1029,8 +1029,8 @@ export default function V2ApplianceRepairPage() {
                   <p className="text-base mb-8" style={{ color: STEEL_LIGHT }}>
                     Call now for same-day service. Your $89 diagnostic is waived with every approved repair.
                   </p>
-                  <MagneticButton href="tel:2065550519" className="w-full px-8 py-5 rounded-xl text-xl font-bold text-white flex items-center justify-center gap-3 cursor-pointer" style={{ background: ACCENT }}>
-                    <Phone size={24} weight="bold" /> (206) 555-0519
+                  <MagneticButton href="tel:2067214859" className="w-full px-8 py-5 rounded-xl text-xl font-bold text-white flex items-center justify-center gap-3 cursor-pointer" style={{ background: ACCENT }}>
+                    <Phone size={24} weight="bold" /> (206) 721-4859
                   </MagneticButton>
                   <p className="text-sm mt-4" style={{ color: STEEL }}>No voicemail. A real person answers.</p>
                 </div>
@@ -1064,8 +1064,8 @@ export default function V2ApplianceRepairPage() {
             <div>
               <h4 className="text-sm font-bold text-white uppercase tracking-wider mb-4">Contact</h4>
               <div className="space-y-2">
-                <a href="tel:2065550519" className="text-sm flex items-center gap-2 hover:text-white transition-colors" style={{ color: STEEL_LIGHT }}>
-                  <Phone size={14} weight="duotone" /> (206) 555-0519
+                <a href="tel:2067214859" className="text-sm flex items-center gap-2 hover:text-white transition-colors" style={{ color: STEEL_LIGHT }}>
+                  <Phone size={14} weight="duotone" /> (206) 721-4859
                 </a>
                 <a href="mailto:fix@profixappliance.com" className="text-sm flex items-center gap-2 hover:text-white transition-colors" style={{ color: STEEL_LIGHT }}>
                   <Envelope size={14} weight="duotone" /> fix@profixappliance.com

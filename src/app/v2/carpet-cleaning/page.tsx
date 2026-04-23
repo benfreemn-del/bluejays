@@ -281,7 +281,7 @@ export default function V2CarpetCleaningPage() {
   };
 
   return (
-    <div style={{ background: BG, color: "#e2e8f0" }} className="font-sans antialiased relative">
+    <div style={{ background: BG, color: "#e2e8f0" }} className="carpet-v2 antialiased relative">
       <BubblePattern />
       <FloatingParticles />
 
@@ -553,7 +553,7 @@ export default function V2CarpetCleaningPage() {
                     <GlassCard className="p-6 max-w-lg mx-auto border-cyan-500/20">
                       <p className="text-slate-300 mb-4">{quizOptions[quizChoice].recommendation}</p>
                       <MagneticButton className="px-6 py-3 rounded-full text-sm font-semibold text-white" style={{ background: ACCENT }} onClick={() => scrollTo("contact")}>
-                        <Phone size={16} className="inline mr-2" /> Call (206) 555-0483
+                        <Phone size={16} className="inline mr-2" /> Call (206) 358-1947
                       </MagneticButton>
                     </GlassCard>
                   </motion.div>
@@ -751,8 +751,8 @@ export default function V2CarpetCleaningPage() {
                 </div>
               </div>
               <div className="text-center">
-                <MagneticButton className="px-8 py-4 rounded-full text-lg font-bold text-white shadow-lg" style={{ background: "#ef4444" }} onClick={() => window.location.href = "tel:2065550483"}>
-                  <Phone size={20} className="inline mr-2" /> Emergency: (206) 555-0483
+                <MagneticButton className="px-8 py-4 rounded-full text-lg font-bold text-white shadow-lg" style={{ background: "#ef4444" }} onClick={() => window.location.href = "tel:2063581947"}>
+                  <Phone size={20} className="inline mr-2" /> Emergency: (206) 358-1947
                 </MagneticButton>
                 <p className="text-slate-400 text-sm mt-3">Average response time: under 2 hours</p>
               </div>
@@ -940,8 +940,8 @@ export default function V2CarpetCleaningPage() {
                 <MagneticButton className="px-8 py-4 rounded-full text-lg font-semibold text-white shadow-lg shadow-cyan-500/20" style={{ background: ACCENT }} onClick={() => scrollTo("contact")}>
                   Book My Free Estimate
                 </MagneticButton>
-                <MagneticButton className="px-8 py-4 rounded-full text-lg font-semibold text-slate-300 border border-white/10 bg-white/5" onClick={() => window.location.href = "tel:2065550483"}>
-                  <Phone size={18} className="inline mr-2" /> (206) 555-0483
+                <MagneticButton className="px-8 py-4 rounded-full text-lg font-semibold text-slate-300 border border-white/10 bg-white/5" onClick={() => window.location.href = "tel:2063581947"}>
+                  <Phone size={18} className="inline mr-2" /> (206) 358-1947
                 </MagneticButton>
               </div>
             </div>
@@ -958,7 +958,7 @@ export default function V2CarpetCleaningPage() {
                 <GlassCard className="p-3 rounded-full"><Phone size={24} style={{ color: ACCENT_LIGHT }} /></GlassCard>
                 <div>
                   <p className="text-slate-400 text-sm">Call Us</p>
-                  <a href="tel:2065550483" className="text-white font-semibold text-lg hover:text-cyan-300 transition-colors">(206) 555-0483</a>
+                  <a href="tel:2063581947" className="text-white font-semibold text-lg hover:text-cyan-300 transition-colors">(206) 358-1947</a>
                 </div>
               </div>
               <div className="flex items-center gap-4">
@@ -1047,8 +1047,8 @@ export default function V2CarpetCleaningPage() {
             <h4 className="font-semibold text-white mb-3">Contact</h4>
             <div className="space-y-3">
               <p>
-                <a href="tel:2065550483" className="hover:text-cyan-400 transition-colors flex items-center gap-2">
-                  <Phone size={14} style={{ color: ACCENT }} />(206) 555-0483
+                <a href="tel:2063581947" className="hover:text-cyan-400 transition-colors flex items-center gap-2">
+                  <Phone size={14} style={{ color: ACCENT }} />(206) 358-1947
                 </a>
               </p>
               <p>
@@ -1085,7 +1085,7 @@ export default function V2CarpetCleaningPage() {
             <Sparkle weight="fill" size={18} style={{ color: ACCENT }} />
           </motion.div>
           <p className="text-sm text-white font-medium">Deep Clean. Fresh Start.</p>
-          <a href="tel:2065550483" className="text-xs font-semibold px-3 py-1 rounded-full text-white" style={{ background: ACCENT }}>Call Now</a>
+          <a href="tel:2063581947" className="text-xs font-semibold px-3 py-1 rounded-full text-white" style={{ background: ACCENT }}>Call Now</a>
         </GlassCard>
       </div>
     </div>

@@ -205,7 +205,7 @@ export default function V2TutoringShowcase() {
   const { displayed: typedText, done: typingDone } = useTypewriter("Understanding", 90, 600);
 
   return (
-    <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: BG, color: DARK }}>
+    <main className="tutor-v2 relative min-h-[100dvh] overflow-x-hidden" style={{ background: BG, color: DARK }}>
 
       {/* ──── NAV ──── */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b" style={{ borderColor: `${PURPLE}15` }}>
@@ -282,8 +282,8 @@ export default function V2TutoringShowcase() {
             <MagneticButton className="px-8 py-4 rounded-full text-base font-bold text-white flex items-center gap-2 cursor-pointer shadow-xl shadow-purple-500/25" style={{ background: PURPLE }}>
               Book a Free Assessment <ArrowRight size={18} weight="bold" />
             </MagneticButton>
-            <a href="tel:+12065550472" className="flex items-center gap-2 px-6 py-4 rounded-full text-base font-semibold border-2 hover:bg-purple-50 transition-colors" style={{ color: PURPLE, borderColor: `${PURPLE}30` }}>
-              <Phone size={18} weight="fill" /> (206) 555-0472
+            <a href="tel:+12063748295" className="flex items-center gap-2 px-6 py-4 rounded-full text-base font-semibold border-2 hover:bg-purple-50 transition-colors" style={{ color: PURPLE, borderColor: `${PURPLE}30` }}>
+              <Phone size={18} weight="fill" /> (206) 374-8295
             </a>
           </motion.div>
 
@@ -814,7 +814,7 @@ export default function V2TutoringShowcase() {
             {quizAnswer !== null && (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={spring} className="mt-8 text-center">
                 <MagneticButton className="px-8 py-4 rounded-full text-base font-bold text-white cursor-pointer shadow-xl shadow-purple-500/25" style={{ background: PURPLE }}>
-                  <Phone size={18} weight="fill" className="inline mr-2" />Book a Free Assessment — (206) 555-0472
+                  <Phone size={18} weight="fill" className="inline mr-2" />Book a Free Assessment — (206) 374-8295
                 </MagneticButton>
               </motion.div>
             )}
@@ -1035,8 +1035,8 @@ export default function V2TutoringShowcase() {
             Discover exactly where your child stands and get a personalized learning plan. Completely free, no obligation.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a href="tel:+12065550472" className="inline-flex items-center gap-3 px-8 py-4 rounded-full font-bold text-lg hover:scale-105 transition-transform shadow-xl" style={{ background: YELLOW, color: DARK }}>
-              <Phone size={20} weight="fill" /> (206) 555-0472
+            <a href="tel:+12063748295" className="inline-flex items-center gap-3 px-8 py-4 rounded-full font-bold text-lg hover:scale-105 transition-transform shadow-xl" style={{ background: YELLOW, color: DARK }}>
+              <Phone size={20} weight="fill" /> (206) 374-8295
             </a>
             <a href="mailto:learn@brightmindstutoring.com" className="inline-flex items-center gap-2 px-6 py-4 rounded-full font-semibold text-white border-2 border-white/30 hover:border-white/60 transition-colors text-base">
               learn@brightmindstutoring.com
@@ -1057,7 +1057,7 @@ export default function V2TutoringShowcase() {
               <div className="space-y-5">
                 {[
                   { icon: MapPin, title: "Location", text: "4801 University Way NE, Seattle, WA 98105", link: "https://maps.google.com/?q=4801+University+Way+NE+Seattle+WA+98105" },
-                  { icon: Phone, title: "Phone", text: "(206) 555-0472", link: "tel:+12065550472" },
+                  { icon: Phone, title: "Phone", text: "(206) 374-8295", link: "tel:+12063748295" },
                   { icon: Clock, title: "Hours", text: "Mon-Fri 3-8PM, Sat 9AM-4PM" },
                   { icon: ChalkboardTeacher, title: "Online", text: "Virtual sessions available nationwide" },
                 ].map((item) => (
@@ -1158,7 +1158,7 @@ export default function V2TutoringShowcase() {
             <div>
               <h4 className="text-sm font-bold mb-3" style={{ color: DARK }}>Contact</h4>
               <div className="space-y-2 text-sm text-slate-500">
-                <p><a href="tel:+12065550472" className="hover:text-purple-700 transition-colors">(206) 555-0472</a></p>
+                <p><a href="tel:+12063748295" className="hover:text-purple-700 transition-colors">(206) 374-8295</a></p>
                 <p><a href="mailto:learn@brightmindstutoring.com" className="hover:text-purple-700 transition-colors">learn@brightmindstutoring.com</a></p>
                 <p><a href="https://maps.google.com/?q=4801+University+Way+NE+Seattle+WA+98105" target="_blank" rel="noopener noreferrer" className="hover:text-purple-700 transition-colors">4801 University Way NE, Seattle, WA 98105</a></p>
               </div>

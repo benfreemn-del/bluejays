@@ -22,5 +22,24 @@ export default function MedSpaV2Layout({
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  return (
+    <>
+      {/* Cormorant Garamond (headings) + Jost (body) — spec for med spa luxury clinical */}
+      <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&family=Jost:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet"
+      />
+      <style>{`
+        .medspa-v2 h1, .medspa-v2 h2, .medspa-v2 h3, .medspa-v2 h4 {
+          font-family: 'Cormorant Garamond', Georgia, serif !important;
+          letter-spacing: 0.01em;
+        }
+        .medspa-v2, .medspa-v2 p, .medspa-v2 a, .medspa-v2 button, .medspa-v2 input,
+        .medspa-v2 select, .medspa-v2 textarea, .medspa-v2 label, .medspa-v2 span:not(.font-mono) {
+          font-family: 'Jost', system-ui, -apple-system, sans-serif;
+        }
+      `}</style>
+      {children}
+    </>
+  );
 }

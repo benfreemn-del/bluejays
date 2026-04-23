@@ -536,7 +536,7 @@ export default function V2PetServicesShowcase() {
 
   return (
     <main
-      className="relative min-h-[100dvh] overflow-x-hidden"
+      className="pet-v2 relative min-h-[100dvh] overflow-x-hidden"
       style={{ background: BG, color: DARK }}
     >
       {/* ════════════════════════════════════════════════════════
@@ -673,7 +673,7 @@ export default function V2PetServicesShowcase() {
                 className="px-8 py-4 rounded-full text-base font-semibold flex items-center gap-2 cursor-pointer border-2"
                 style={{ color: DARK, borderColor: `${DARK}20` }}
               >
-                <Phone size={18} weight="duotone" /> (206) 555-0844
+                <Phone size={18} weight="duotone" /> (206) 294-7581
               </MagneticButton>
             </div>
 
@@ -1584,11 +1584,11 @@ export default function V2PetServicesShowcase() {
                   {quizOptions[quizChoice].rec}
                 </p>
                 <a
-                  href="tel:+12065550844"
+                  href="tel:+12062947581"
                   className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-bold text-white"
                   style={{ background: TEAL }}
                 >
-                  <Phone size={16} weight="fill" /> Call (206) 555-0844
+                  <Phone size={16} weight="fill" /> Call (206) 294-7581
                 </a>
               </motion.div>
             )}
@@ -1938,11 +1938,11 @@ export default function V2PetServicesShowcase() {
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <a
-              href="tel:+12065550844"
+              href="tel:+12062947581"
               className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-white font-bold text-lg hover:bg-white/90 transition-colors"
               style={{ color: TEAL }}
             >
-              <Phone size={20} weight="fill" /> (206) 555-0844
+              <Phone size={20} weight="fill" /> (206) 294-7581
             </a>
             <a
               href="mailto:woof@happytailspetcare.com"
@@ -2068,8 +2068,8 @@ export default function V2PetServicesShowcase() {
                   {
                     icon: Phone,
                     title: "Phone",
-                    text: "(206) 555-0844",
-                    link: "tel:+12065550844",
+                    text: "(206) 294-7581",
+                    link: "tel:+12062947581",
                   },
                   {
                     icon: Envelope,
@@ -2336,10 +2336,10 @@ export default function V2PetServicesShowcase() {
               <div className="space-y-2 text-sm text-stone-500">
                 <p>
                   <a
-                    href="tel:+12065550844"
+                    href="tel:+12062947581"
                     className="hover:underline"
                   >
-                    (206) 555-0844
+                    (206) 294-7581
                   </a>
                 </p>
                 <p>

@@ -284,7 +284,7 @@ export default function V2CateringShowcase() {
   const [quizChoice, setQuizChoice] = useState<number | null>(null);
 
   return (
-    <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: BG, color: CREAM, fontFamily: "'Georgia', 'Times New Roman', serif" }}>
+    <main className="cater-v2 relative min-h-[100dvh] overflow-x-hidden" style={{ background: BG, color: CREAM }}>
       <FloatingEmbers />
 
       {/* ══════ 1. NAV ══════ */}
@@ -361,7 +361,7 @@ export default function V2CateringShowcase() {
                 Request a Tasting <ArrowRight size={18} weight="bold" />
               </MagneticButton>
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold border flex items-center gap-2 cursor-pointer" style={{ color: CREAM, borderColor: `${COPPER}66` }}>
-                <Phone size={18} weight="duotone" /> (206) 555-0731
+                <Phone size={18} weight="duotone" /> (206) 482-7309
               </MagneticButton>
             </motion.div>
             {/* Trust badges */}
@@ -932,7 +932,7 @@ export default function V2CateringShowcase() {
           <div className="flex items-center gap-2 text-sm" style={{ color: WARM_GRAY, fontFamily: "system-ui, sans-serif" }}>
             <Phone size={16} weight="fill" style={{ color: COPPER }} />
             <span>Call now to reserve your date:</span>
-            <a href="tel:+12065550731" className="font-bold hover:underline" style={{ color: COPPER }}>(206) 555-0731</a>
+            <a href="tel:+12064827309" className="font-bold hover:underline" style={{ color: COPPER }}>(206) 482-7309</a>
           </div>
         </div>
       </div>
@@ -1052,8 +1052,8 @@ export default function V2CateringShowcase() {
           <h2 className="text-3xl md:text-5xl font-black tracking-tight text-white mb-4">Let&apos;s Create Something Delicious</h2>
           <p className="text-lg text-white/80 mb-8 max-w-xl mx-auto" style={{ fontFamily: "system-ui, sans-serif" }}>Book your complimentary tasting consultation today and let Chef Adriana design the perfect menu for your event.</p>
           <div className="flex flex-wrap justify-center gap-4">
-            <a href="tel:+12065550731" className="inline-flex items-center gap-3 px-8 py-4 rounded-full font-bold text-lg hover:bg-white/90 transition-colors" style={{ background: "white", color: COPPER }}>
-              <Phone size={20} weight="fill" /> (206) 555-0731
+            <a href="tel:+12064827309" className="inline-flex items-center gap-3 px-8 py-4 rounded-full font-bold text-lg hover:bg-white/90 transition-colors" style={{ background: "white", color: COPPER }}>
+              <Phone size={20} weight="fill" /> (206) 482-7309
             </a>
             <a href="mailto:events@emberandoak.com" className="inline-flex items-center gap-3 px-8 py-4 rounded-full font-bold text-lg border-2 border-white/40 text-white hover:bg-white/10 transition-colors" style={{ fontFamily: "system-ui, sans-serif" }}>
               <Envelope size={20} weight="fill" /> Email Us
@@ -1075,7 +1075,7 @@ export default function V2CateringShowcase() {
               <div className="space-y-5">
                 {[
                   { icon: MapPin, title: "Location", text: "2340 Western Ave, Seattle, WA 98121", href: "https://maps.google.com/?q=2340+Western+Ave+Seattle+WA+98121" },
-                  { icon: Phone, title: "Phone", text: "(206) 555-0731", href: "tel:+12065550731" },
+                  { icon: Phone, title: "Phone", text: "(206) 482-7309", href: "tel:+12064827309" },
                   { icon: Envelope, title: "Email", text: "events@emberandoak.com", href: "mailto:events@emberandoak.com" },
                   { icon: Clock, title: "Consultations", text: "Mon-Fri 10AM-6PM, Sat by appointment" },
                   { icon: CalendarCheck, title: "Booking", text: "Book 3-6 months ahead for best availability" },
@@ -1177,7 +1177,7 @@ export default function V2CateringShowcase() {
             <div>
               <h4 className="text-sm font-semibold mb-3" style={{ color: CREAM }}>Contact</h4>
               <div className="space-y-2 text-sm" style={{ color: WARM_GRAY, fontFamily: "system-ui, sans-serif" }}>
-                <p><a href="tel:+12065550731" className="hover:text-white transition-colors">(206) 555-0731</a></p>
+                <p><a href="tel:+12064827309" className="hover:text-white transition-colors">(206) 482-7309</a></p>
                 <p><a href="mailto:events@emberandoak.com" className="hover:text-white transition-colors">events@emberandoak.com</a></p>
                 <p><a href="https://maps.google.com/?q=2340+Western+Ave+Seattle+WA+98121" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">2340 Western Ave, Seattle, WA 98121</a></p>
               </div>

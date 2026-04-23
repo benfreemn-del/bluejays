@@ -22,5 +22,24 @@ export default function EventPlanningV2Layout({
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  return (
+    <>
+      {/* Cormorant Garamond (headings) + Raleway (body) — spec for event planning gala luxury */}
+      <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&family=Raleway:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet"
+      />
+      <style>{`
+        .event-v2 h1, .event-v2 h2, .event-v2 h3, .event-v2 h4 {
+          font-family: 'Cormorant Garamond', Georgia, serif !important;
+          letter-spacing: 0.01em;
+        }
+        .event-v2, .event-v2 p, .event-v2 a, .event-v2 button, .event-v2 input,
+        .event-v2 select, .event-v2 textarea, .event-v2 label, .event-v2 span:not(.font-mono) {
+          font-family: 'Raleway', system-ui, -apple-system, sans-serif;
+        }
+      `}</style>
+      {children}
+    </>
+  );
 }

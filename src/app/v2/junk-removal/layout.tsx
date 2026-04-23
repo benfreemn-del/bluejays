@@ -22,5 +22,24 @@ export default function JunkRemovalV2Layout({
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  return (
+    <>
+      {/* Barlow Condensed (headings) + Barlow (body) — spec for junk removal industrial trades */}
+      <link
+        href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800;900&family=Barlow:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet"
+      />
+      <style>{`
+        .junk-v2 h1, .junk-v2 h2, .junk-v2 h3, .junk-v2 h4 {
+          font-family: 'Barlow Condensed', sans-serif !important;
+          letter-spacing: 0em;
+        }
+        .junk-v2, .junk-v2 p, .junk-v2 a, .junk-v2 button, .junk-v2 input,
+        .junk-v2 select, .junk-v2 textarea, .junk-v2 label, .junk-v2 span:not(.font-mono) {
+          font-family: 'Barlow', system-ui, -apple-system, sans-serif;
+        }
+      `}</style>
+      {children}
+    </>
+  );
 }

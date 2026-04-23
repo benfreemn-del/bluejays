@@ -149,7 +149,7 @@ export default function V2PhysicalTherapyShowcase() {
   const [selectedBodyPart, setSelectedBodyPart] = useState<string | null>(null);
 
   return (
-    <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: BG, color: DARK_TEXT }}>
+    <main className="pt-v2 relative min-h-[100dvh] overflow-x-hidden" style={{ background: BG, color: DARK_TEXT }}>
 
       {/* ═══ NAV ═══ */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-200/60">
@@ -243,7 +243,7 @@ export default function V2PhysicalTherapyShowcase() {
               Schedule Your Evaluation <ArrowRight size={18} weight="bold" />
             </MagneticButton>
             <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border-2 border-white/30 flex items-center gap-2 cursor-pointer backdrop-blur-sm">
-              <Phone size={18} weight="duotone" /> (206) 555-0293
+              <Phone size={18} weight="duotone" /> (206) 581-3746
             </MagneticButton>
           </motion.div>
 
@@ -750,7 +750,7 @@ export default function V2PhysicalTherapyShowcase() {
             <p className="text-lg font-semibold mb-2" style={{ color: DARK_TEXT }}>Don&apos;t see your plan?</p>
             <p className="mb-4" style={{ color: MUTED }}>We work with most major providers and can verify your coverage over the phone. Call us and we will sort it out for you.</p>
             <MagneticButton className="px-6 py-3 rounded-full text-sm font-bold text-white cursor-pointer inline-flex items-center gap-2" style={{ background: BLUE }}>
-              <Phone size={16} weight="fill" /> Call to Verify: (206) 555-0293
+              <Phone size={16} weight="fill" /> Call to Verify: (206) 581-3746
             </MagneticButton>
           </Card>
         </div>
@@ -905,7 +905,7 @@ export default function V2PhysicalTherapyShowcase() {
             </div>
           </div>
           <MagneticButton className="px-6 py-3 rounded-full text-sm font-bold text-white cursor-pointer shrink-0 inline-flex items-center gap-2" style={{ background: ORANGE }}>
-            <Phone size={16} weight="fill" /> Call Now: (206) 555-0293
+            <Phone size={16} weight="fill" /> Call Now: (206) 581-3746
           </MagneticButton>
         </div>
       </SectionReveal>
@@ -948,8 +948,8 @@ export default function V2PhysicalTherapyShowcase() {
           <h2 className="text-3xl md:text-5xl font-black tracking-tight text-white mb-4">Start Moving Better Today</h2>
           <p className="text-lg text-white/80 mb-8 max-w-xl mx-auto">No referral needed. Schedule your evaluation with Dr. Chen and take the first step toward living without pain.</p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a href="tel:+12065550293" className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-white font-bold text-lg hover:bg-white/90 transition-colors" style={{ color: BLUE }}>
-              <Phone size={20} weight="fill" /> (206) 555-0293
+            <a href="tel:+12065813746" className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-white font-bold text-lg hover:bg-white/90 transition-colors" style={{ color: BLUE }}>
+              <Phone size={20} weight="fill" /> (206) 581-3746
             </a>
             <a href="mailto:recover@summitptrehab.com" className="inline-flex items-center gap-3 px-8 py-4 rounded-full border-2 border-white/40 text-white font-semibold text-base hover:bg-white/10 transition-colors">
               <Envelope size={20} weight="duotone" /> Email Us
@@ -969,7 +969,7 @@ export default function V2PhysicalTherapyShowcase() {
               <div className="space-y-5">
                 {[
                   { icon: MapPin, title: "Address", text: "5423 Sand Point Way NE, Seattle, WA 98105", href: "https://maps.google.com/?q=5423+Sand+Point+Way+NE+Seattle+WA+98105" },
-                  { icon: Phone, title: "Phone", text: "(206) 555-0293", href: "tel:+12065550293" },
+                  { icon: Phone, title: "Phone", text: "(206) 581-3746", href: "tel:+12065813746" },
                   { icon: Envelope, title: "Email", text: "recover@summitptrehab.com", href: "mailto:recover@summitptrehab.com" },
                   { icon: Clock, title: "Hours", text: "Mon-Fri 7AM-7PM, Sat 8AM-1PM", href: undefined },
                 ].map((item) => (
@@ -1071,7 +1071,7 @@ export default function V2PhysicalTherapyShowcase() {
             <div>
               <h4 className="text-sm font-semibold mb-3" style={{ color: DARK_TEXT }}>Contact</h4>
               <div className="space-y-2 text-sm" style={{ color: MUTED }}>
-                <p><a href="tel:+12065550293" className="hover:underline">(206) 555-0293</a></p>
+                <p><a href="tel:+12065813746" className="hover:underline">(206) 581-3746</a></p>
                 <p><a href="mailto:recover@summitptrehab.com" className="hover:underline">recover@summitptrehab.com</a></p>
                 <p><a href="https://maps.google.com/?q=5423+Sand+Point+Way+NE+Seattle+WA+98105" target="_blank" rel="noopener noreferrer" className="hover:underline">5423 Sand Point Way NE, Seattle, WA 98105</a></p>
               </div>

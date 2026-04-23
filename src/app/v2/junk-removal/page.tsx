@@ -254,7 +254,7 @@ export default function V2JunkRemovalPage() {
   }, []);
 
   return (
-    <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: BG, color: "#f1f5f9" }}>
+    <main className="junk-v2 relative min-h-[100dvh] overflow-x-hidden" style={{ background: BG, color: "#f1f5f9" }}>
       <RecyclePattern />
       <FloatingParticles />
 
@@ -376,7 +376,7 @@ export default function V2JunkRemovalPage() {
                 Book a Pickup <ArrowRight size={18} weight="bold" />
               </MagneticButton>
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
-                <Phone size={18} weight="duotone" /> (206) 555-0637
+                <Phone size={18} weight="duotone" /> (206) 294-8175
               </MagneticButton>
             </motion.div>
             {/* Trust pills */}
@@ -640,7 +640,7 @@ export default function V2JunkRemovalPage() {
                   <p className="text-2xl font-black text-white mb-3">{quizOptions[quizAnswer].recommendation}</p>
                   <p className="text-xs text-slate-400 mb-4">Final price confirmed on-site. No obligation.</p>
                   <MagneticButton className="px-8 py-3 rounded-full text-sm font-bold text-white inline-flex items-center gap-2" style={{ background: ACCENT } as React.CSSProperties}>
-                    <Phone size={16} weight="duotone" /> Call (206) 555-0637
+                    <Phone size={16} weight="duotone" /> Call (206) 294-8175
                   </MagneticButton>
                 </GlassCard>
               </motion.div>
@@ -1045,7 +1045,7 @@ export default function V2JunkRemovalPage() {
                     <CalendarCheck size={20} weight="duotone" /> Book a Pickup
                   </MagneticButton>
                   <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 inline-flex items-center gap-2 cursor-pointer">
-                    <Phone size={18} weight="duotone" /> (206) 555-0637
+                    <Phone size={18} weight="duotone" /> (206) 294-8175
                   </MagneticButton>
                 </div>
               </motion.div>
@@ -1080,7 +1080,7 @@ export default function V2JunkRemovalPage() {
                   <Phone size={20} weight="duotone" style={{ color: ACCENT }} className="mt-0.5 shrink-0" />
                   <div>
                     <p className="text-sm font-semibold text-white">Phone</p>
-                    <p className="text-sm text-slate-400"><a href="tel:2065550637" className="hover:text-white transition-colors">(206) 555-0637</a></p>
+                    <p className="text-sm text-slate-400"><a href="tel:2062948175" className="hover:text-white transition-colors">(206) 294-8175</a></p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
@@ -1138,7 +1138,7 @@ export default function V2JunkRemovalPage() {
             <span>CleanSlate Junk Removal &copy; {new Date().getFullYear()}</span>
           </div>
           <div className="flex items-center gap-4 text-xs text-slate-500">
-            <a href="tel:2065550637" className="hover:text-white transition-colors">(206) 555-0637</a>
+            <a href="tel:2062948175" className="hover:text-white transition-colors">(206) 294-8175</a>
             <span className="text-slate-700">|</span>
             <a href="mailto:go@cleanslateseattle.com" className="hover:text-white transition-colors">go@cleanslateseattle.com</a>
           </div>

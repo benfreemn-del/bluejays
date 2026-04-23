@@ -349,7 +349,7 @@ export default function V2MedSpaPage() {
   ];
 
   return (
-    <main style={{ background: BG }} className="text-slate-300 overflow-x-hidden">
+    <main style={{ background: BG }} className="medspa-v2 text-slate-300 overflow-x-hidden">
       <FloatingParticles />
 
       {/* ─── 1. STICKY NAVIGATION ─── */}
@@ -429,7 +429,7 @@ export default function V2MedSpaPage() {
               <CalendarCheck size={20} weight="duotone" /> Book a Consultation
             </MagneticButton>
             <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border inline-flex items-center gap-2 cursor-pointer" style={{ borderColor: `${GOLD}60` }}>
-              <Phone size={18} weight="duotone" /> (206) 555-0862
+              <Phone size={18} weight="duotone" /> (206) 482-9371
             </MagneticButton>
           </motion.div>
           {/* Trust Badges */}
@@ -1092,7 +1092,7 @@ export default function V2MedSpaPage() {
                     <CalendarCheck size={20} weight="duotone" /> Book Free Consultation
                   </MagneticButton>
                   <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border inline-flex items-center gap-2 cursor-pointer" style={{ borderColor: `${GOLD}60` }}>
-                    <Phone size={18} weight="duotone" /> (206) 555-0862
+                    <Phone size={18} weight="duotone" /> (206) 482-9371
                   </MagneticButton>
                 </div>
               </motion.div>
@@ -1138,7 +1138,7 @@ export default function V2MedSpaPage() {
                   <Phone size={20} weight="duotone" style={{ color: BLUSH }} className="mt-0.5 shrink-0" />
                   <div>
                     <p className="text-sm font-semibold text-white">Phone</p>
-                    <a href="tel:+12065550862" className="text-sm text-slate-400 hover:text-white transition-colors">(206) 555-0862</a>
+                    <a href="tel:+12064829371" className="text-sm text-slate-400 hover:text-white transition-colors">(206) 482-9371</a>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">

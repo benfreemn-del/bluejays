@@ -22,5 +22,24 @@ export default function TutoringV2Layout({
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  return (
+    <>
+      {/* Merriweather (headings) + Open Sans (body) — spec for tutoring academic authority */}
+      <link
+        href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400&family=Open+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet"
+      />
+      <style>{`
+        .tutor-v2 h1, .tutor-v2 h2, .tutor-v2 h3, .tutor-v2 h4 {
+          font-family: 'Merriweather', Georgia, serif !important;
+          letter-spacing: -0.01em;
+        }
+        .tutor-v2, .tutor-v2 p, .tutor-v2 a, .tutor-v2 button, .tutor-v2 input,
+        .tutor-v2 select, .tutor-v2 textarea, .tutor-v2 label, .tutor-v2 span:not(.font-mono) {
+          font-family: 'Open Sans', system-ui, -apple-system, sans-serif;
+        }
+      `}</style>
+      {children}
+    </>
+  );
 }
