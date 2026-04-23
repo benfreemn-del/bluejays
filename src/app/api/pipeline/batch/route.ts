@@ -72,10 +72,19 @@ export async function POST(request: NextRequest) {
       targetCount = 10,
       location,
       categories,
+      pageTokens: incomingPageTokens,
     } = body as {
       targetCount?: number;
       location: string;
       categories?: string[];
+      /**
+       * Map of category → Google Places next_page_token. Lets the client
+       * loop through multiple batches without re-scouting the same top-20
+       * results for each (location, category) pair. Without this, every
+       * batch after the first returned 0 new prospects because dedup killed
+       * them all, which tripped the client's dry-batch circuit breaker.
+       */
+      pageTokens?: Record<string, string>;
     };
 
     // Validate inputs
@@ -153,6 +162,11 @@ export async function POST(request: NextRequest) {
     const perCategoryLimit = Math.ceil(targetCount / categoriesToProcess.length);
     let allScoutedProspects: { id: string; businessName: string }[] = [];
 
+    // Per-category nextPageToken map returned to the client so the next
+    // batch can page forward through Google Places results instead of
+    // re-scouting the same top-20 each time.
+    const outgoingPageTokens: Record<string, string> = {};
+
     for (const category of categoriesToProcess) {
       if (allScoutedProspects.length >= targetCount) break;
 
@@ -164,8 +178,12 @@ export async function POST(request: NextRequest) {
           city: location,
           category,
           limit,
+          pageToken: incomingPageTokens?.[category],
         });
         const prospects = scoutResult.prospects;
+        if (scoutResult.nextPageToken) {
+          outgoingPageTokens[category] = scoutResult.nextPageToken;
+        }
 
         // Log scouting cost
         const scoutCost = prospects.length * COST_RATES.google_places_search;
@@ -382,7 +400,7 @@ export async function POST(request: NextRequest) {
     console.log(`  Total cost: $${batch.costs.total.toFixed(4)}`);
     console.log(`${"=".repeat(60)}\n`);
 
-    return NextResponse.json(batch);
+    return NextResponse.json({ ...batch, pageTokens: outgoingPageTokens });
   } catch (error) {
     return NextResponse.json(
       { error: (error as Error).message },

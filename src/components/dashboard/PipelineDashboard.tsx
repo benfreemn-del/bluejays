@@ -160,6 +160,13 @@ export default function PipelineDashboard({ isOpen, onClose, onComplete }: Pipel
     let dryBatches = 0;
     let consecutiveFailures = 0;
     let batchNum = 0;
+    // Per-category Google Places pageToken. Without carrying this across
+    // batches the scout endpoint re-hits page 1 of the same (location,
+    // category) query every time, sees dedup-killed duplicates, returns 0,
+    // and the dry-batch circuit breaker trips after 2 rounds. With it, each
+    // batch pages forward and can find up to ~60 results per (location,
+    // category) combo (Google's hard cap on text-search pagination).
+    let pageTokens: Record<string, string> = {};
 
     try {
       while (merged.results.generated < targetCount && !stopRef.current) {
@@ -195,6 +202,7 @@ export default function PipelineDashboard({ isOpen, onClose, onComplete }: Pipel
               targetCount: chunk,
               location,
               categories: selectedCategories.length > 0 ? selectedCategories : undefined,
+              pageTokens,
             }),
           });
         } catch (fetchErr) {
@@ -257,7 +265,9 @@ export default function PipelineDashboard({ isOpen, onClose, onComplete }: Pipel
 
         // Success — reset the failure streak.
         consecutiveFailures = 0;
-        const batch = result as BatchResult;
+        const batch = result as BatchResult & { pageTokens?: Record<string, string> };
+        // Carry per-category pagination cursors forward.
+        if (batch.pageTokens) pageTokens = { ...pageTokens, ...batch.pageTokens };
         merged.results.scouted += batch.results.scouted;
         merged.results.generated += batch.results.generated;
         merged.results.queued += batch.results.queued;
