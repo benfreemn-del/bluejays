@@ -1250,7 +1250,7 @@ export default function RoofingShowcase() {
           />
           <div className="grid sm:grid-cols-3 gap-6 max-w-4xl mx-auto">
             {FINANCING_PLANS.map((plan) => (
-              <div key={plan.title}>
+              <div key={plan.title} className={plan.featured ? "mt-4 sm:mt-0" : ""}>
                 {plan.featured ? (
                   <ShimmerBorder>
                     <div className="p-6 text-center relative">
