@@ -55,3 +55,22 @@ export function getShortClaimUrl(prospect: Prospect): string {
   const code = prospect.short_code || deriveShortCode(prospect.id);
   return `${BASE_URL}/c/${code}`;
 }
+
+/**
+ * Canonical short unsubscribe URL. Resolves via /u/[code] which 302s
+ * to /unsubscribe/[uuid]. Used in every outreach email footer to keep
+ * the opt-out link short and non-spammy.
+ */
+export function getShortUnsubUrl(prospect: Prospect): string {
+  const code = prospect.short_code || deriveShortCode(prospect.id);
+  return `${BASE_URL}/u/${code}`;
+}
+
+/**
+ * Canonical short book-a-call URL. Resolves via /b/[code] which 302s
+ * to /book/[uuid]. Used in retargeting emails.
+ */
+export function getShortBookUrl(prospect: Prospect): string {
+  const code = prospect.short_code || deriveShortCode(prospect.id);
+  return `${BASE_URL}/b/${code}`;
+}

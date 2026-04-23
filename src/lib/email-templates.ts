@@ -1,6 +1,6 @@
 import type { Prospect } from "./types";
 import { CATEGORY_CONFIG } from "./types";
-import { getShortPreviewUrl } from "./short-urls";
+import { getShortPreviewUrl, getShortUnsubUrl } from "./short-urls";
 
 export interface EmailTemplate {
   subject: string;
@@ -66,7 +66,7 @@ function esc(s: string): string {
 // USA for the physical address requirement plus a plain-text opt-out
 // link. The Unsubscribe header is where Gmail's native opt-out UI
 // pulls its data from, so the in-body link is belt-and-suspenders.
-export const EMAIL_FOOTER = `Quilcene, WA · Opt out: {{baseUrl}}/unsubscribe/{{prospectId}}`;
+export const EMAIL_FOOTER = `Quilcene, WA · Opt out: {{unsubUrl}}`;
 
 /**
  * Deterministic A/B variant assignment — same prospect always gets the same variant.
@@ -250,7 +250,7 @@ No idea if it's what you had in mind, but figured you'd want to see it. Curious 
 
 — Ben
 bluejaycontactme@gmail.com
-${EMAIL_FOOTER.replace("{{baseUrl}}", "https://bluejayportfolio.com").replace("{{prospectId}}", prospect.id)}`;
+${EMAIL_FOOTER.replace("{{unsubUrl}}", getShortUnsubUrl(prospect))}`;
 
   // HTML version — identical copy but with the prospect's live preview
   // screenshot embedded inline as a clickable image.
@@ -286,7 +286,7 @@ ${EMAIL_FOOTER.replace("{{baseUrl}}", "https://bluejayportfolio.com").replace("{
     <p style="margin:0 0 4px;">— Ben</p>
     <p style="margin:0 0 16px;"><a href="mailto:bluejaycontactme@gmail.com" style="color:#6b7280;">bluejaycontactme@gmail.com</a></p>
     <p style="margin:0;color:#9ca3af;font-size:11px;line-height:1.4;">
-      Quilcene, WA · <a href="${esc("https://bluejayportfolio.com")}/unsubscribe/${esc(prospect.id)}" style="color:#9ca3af;">Opt out</a>
+      Quilcene, WA · <a href="${esc(getShortUnsubUrl(prospect))}" style="color:#9ca3af;">Opt out</a>
     </p>
   `)
     : undefined;
@@ -319,7 +319,7 @@ Here it is again if you missed it: ${previewUrl}
 Even if the timing isn't right, I'd genuinely love to hear what you'd change about it.
 
 — Ben
-${EMAIL_FOOTER.replace("{{baseUrl}}", "https://bluejayportfolio.com").replace("{{prospectId}}", prospect.id)}`,
+${EMAIL_FOOTER.replace("{{unsubUrl}}", getShortUnsubUrl(prospect))}`,
     sequence: 2,
   };
 }
@@ -448,7 +448,7 @@ If it's not a fit right now, totally fine. Just reply and let me know and I'll s
 Either way — thanks for being one of the ones I spent time on.
 
 — Ben
-${EMAIL_FOOTER.replace("{{baseUrl}}", "https://bluejayportfolio.com").replace("{{prospectId}}", prospect.id)}`,
+${EMAIL_FOOTER.replace("{{unsubUrl}}", getShortUnsubUrl(prospect))}`,
     sequence: 3,
   };
 }

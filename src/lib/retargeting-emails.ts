@@ -18,7 +18,7 @@
 
 import type { Prospect } from "./types";
 import { CATEGORY_CONFIG } from "./types";
-import { getShortPreviewUrl } from "./short-urls";
+import { getShortPreviewUrl, getShortUnsubUrl, getShortBookUrl } from "./short-urls";
 import { EMAIL_FOOTER } from "./email-templates";
 
 export type RetargetSegment = "opener" | "clicker";
@@ -38,10 +38,8 @@ export interface RetargetEmail {
 const BASE_URL = "https://bluejayportfolio.com";
 const BEN_PHONE = process.env.BEN_PHONE || "(253) 886-3753";
 
-function footer(prospectId: string): string {
-  return EMAIL_FOOTER
-    .replace("{{baseUrl}}", BASE_URL)
-    .replace("{{prospectId}}", prospectId);
+function footer(prospect: Prospect): string {
+  return EMAIL_FOOTER.replace("{{unsubUrl}}", getShortUnsubUrl(prospect));
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -73,7 +71,7 @@ Either way, I'm rooting for ${biz}.
 
 — Ben
 ${BEN_PHONE}
-${footer(prospect.id)}`,
+${footer(prospect)}`,
       sequence: 1,
       segment: "opener" as RetargetSegment,
       delayDays: 0,
@@ -97,7 +95,7 @@ No pressure at all. Just thought you'd want to know what's possible.
 
 — Ben
 ${BEN_PHONE}
-${footer(prospect.id)}`,
+${footer(prospect)}`,
       sequence: 2,
       segment: "opener" as RetargetSegment,
       delayDays: 4,
@@ -119,7 +117,7 @@ If none of those apply and you're just not interested, I respect that 100%. Just
 Wishing you the best,
 — Ben
 ${BEN_PHONE}
-${footer(prospect.id)}`,
+${footer(prospect)}`,
       sequence: 3,
       segment: "opener" as RetargetSegment,
       delayDays: 8,
@@ -139,7 +137,7 @@ function getClickerSequence(prospect: Prospect): RetargetEmail[] {
   const previewUrl = getShortPreviewUrl(prospect);
   const claimUrl = `${BASE_URL}/claim/${prospect.id}`;
   const compareUrl = `${BASE_URL}/compare/${prospect.id}`;
-  const bookingUrl = `${BASE_URL}/book/${prospect.id}`;
+  const bookingUrl = getShortBookUrl(prospect);
 
   return [
     {
@@ -161,7 +159,7 @@ Your preview stays live for 30 days: ${previewUrl}
 
 — Ben
 ${BEN_PHONE}
-${footer(prospect.id)}`,
+${footer(prospect)}`,
       sequence: 1,
       segment: "clicker" as RetargetSegment,
       delayDays: 0,
@@ -182,7 +180,7 @@ Your preview stays live for 30 days — after that I'll need to free up the slot
 
 — Ben
 ${BEN_PHONE}
-${footer(prospect.id)}`,
+${footer(prospect)}`,
       sequence: 2,
       segment: "clicker" as RetargetSegment,
       delayDays: 3,
@@ -203,7 +201,7 @@ Whatever you decide, I wish you and ${biz} nothing but success.
 
 — Ben
 ${BEN_PHONE}
-${footer(prospect.id)}`,
+${footer(prospect)}`,
       sequence: 3,
       segment: "clicker" as RetargetSegment,
       delayDays: 7,
@@ -226,7 +224,7 @@ If you ever want to revisit the website, it's here: ${previewUrl}
 All the best,
 — Ben
 ${BEN_PHONE}
-${footer(prospect.id)}`,
+${footer(prospect)}`,
       sequence: 4,
       segment: "clicker" as RetargetSegment,
       delayDays: 14,

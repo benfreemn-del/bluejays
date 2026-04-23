@@ -353,9 +353,13 @@ export function getFollowUpSms1(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _videoUrl?: string,
 ): string {
-  const name = prospect.ownerName?.split(" ")[0] || "there";
+  const firstName = prospect.ownerName?.split(" ")[0]?.trim();
   const url = getShortPreviewUrl(prospect);
-  return `${name} — circling back on the site I built for ${prospect.businessName}: ${url} Curious what you'd change. Reply STOP to opt out`;
+  // With a real name: "Mike — circling back..."  (friendly personal).
+  // Without one: "Quick nudge — circling back..." (no lowercase "there —"
+  // sentence start which reads broken).
+  const opener = firstName ? `${firstName} — ` : "Quick nudge — ";
+  return `${opener}circling back on the site I built for ${prospect.businessName}: ${url} Curious what you'd change. Reply STOP to opt out`;
 }
 
 export function getFollowUpSms2(
@@ -365,9 +369,10 @@ export function getFollowUpSms2(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _videoUrl?: string,
 ): string {
-  const name = prospect.ownerName?.split(" ")[0] || "there";
+  const firstName = prospect.ownerName?.split(" ")[0]?.trim();
   const url = getShortPreviewUrl(prospect);
-  return `${name} — last check on that ${prospect.businessName} site: ${url} If timing's off, just say so and I'll stop reaching out. Reply STOP to opt out`;
+  const opener = firstName ? `${firstName} — last check on that ` : "Last check on that ";
+  return `${opener}${prospect.businessName} site: ${url} If timing's off, just say so and I'll stop reaching out. Reply STOP to opt out`;
 }
 
 export function getPostVoicemailSms(
