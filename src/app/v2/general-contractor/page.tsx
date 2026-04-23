@@ -339,7 +339,7 @@ export default function V2GeneralContractorShowcase() {
               whileHover={{ rotateX: 3, rotateY: -5, scale: 1 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
             >
-              <img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1400&q=80" alt="Construction site aerial view" className="w-full h-[520px] object-cover" />
+              <img src="https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=1400&q=80" alt="Beautiful custom home built by Summit Builders NW" className="w-full h-[520px] object-cover" />
               <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-[#1a2030]/90" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#1a2030]/70 via-transparent to-transparent" />
             </motion.div>
@@ -382,7 +382,7 @@ export default function V2GeneralContractorShowcase() {
 
           {/* Mobile hero image (no 3D tilt on mobile) */}
           <div className="lg:hidden mt-8 rounded-2xl overflow-hidden border border-white/15">
-            <img src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=900&q=80" alt="Architectural blueprints and construction planning" className="w-full h-72 object-cover" />
+            <img src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=900&q=80" alt="Stunning custom home exterior" className="w-full h-72 object-cover" />
           </div>
         </div>
       </section>
