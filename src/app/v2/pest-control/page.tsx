@@ -375,8 +375,8 @@ function Nav() {
         </a>
         <div className="hidden md:flex items-center gap-6">
           {links.map((l) => (<a key={l.label} href={l.href} className="text-sm text-gray-300 hover:text-white transition-colors">{l.label}</a>))}
-          <a href="tel:+12065550143" className="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-bold text-white" style={{ background: ORANGE }}>
-            <Phone size={16} weight="fill" /> (206) 555-0143
+          <a href="tel:+12067483920" className="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-bold text-white" style={{ background: ORANGE }}>
+            <Phone size={16} weight="fill" /> (206) 748-3920
           </a>
         </div>
         <button className="md:hidden text-white" onClick={() => setOpen(!open)}>{open ? <X size={24} /> : <List size={24} />}</button>
@@ -386,8 +386,8 @@ function Nav() {
           <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="md:hidden overflow-hidden border-t border-white/10" style={{ background: BG }}>
             <div className="px-4 py-4 flex flex-col gap-3">
               {links.map((l) => (<a key={l.label} href={l.href} onClick={() => setOpen(false)} className="text-sm text-gray-300 py-2">{l.label}</a>))}
-              <a href="tel:+12065550143" className="flex items-center justify-center gap-2 px-4 py-3 rounded-full text-sm font-bold text-white mt-2" style={{ background: ORANGE }}>
-                <Phone size={16} weight="fill" /> (206) 555-0143
+              <a href="tel:+12067483920" className="flex items-center justify-center gap-2 px-4 py-3 rounded-full text-sm font-bold text-white mt-2" style={{ background: ORANGE }}>
+                <Phone size={16} weight="fill" /> (206) 748-3920
               </a>
             </div>
           </motion.div>
@@ -441,7 +441,7 @@ function PestIdentifier() {
               <div className="mt-5 flex items-center gap-2">
                 <Phone size={16} style={{ color: ORANGE }} />
                 <span className="text-sm text-gray-400">Need help with {pest.name.toLowerCase()}?</span>
-                <a href="tel:+12065550143" className="text-sm font-bold ml-auto" style={{ color: ORANGE }}>Call (206) 555-0143</a>
+                <a href="tel:+12067483920" className="text-sm font-bold ml-auto" style={{ color: ORANGE }}>Call (206) 748-3920</a>
               </div>
             </GlassCard>
           </motion.div>
@@ -532,7 +532,7 @@ function TreatmentEstimator() {
           {frequency !== "onetime" && <span className="text-sm text-gray-400 ml-1">/ {frequency === "quarterly" ? "quarter" : "month"}</span>}
         </div>
         <p className="text-xs text-gray-500 mt-2">Exact pricing determined after free inspection</p>
-        <a href="tel:+12065550143" className="inline-flex items-center gap-2 mt-4 px-6 py-2.5 rounded-full text-sm font-bold text-white" style={{ background: ORANGE }}>
+        <a href="tel:+12067483920" className="inline-flex items-center gap-2 mt-4 px-6 py-2.5 rounded-full text-sm font-bold text-white" style={{ background: ORANGE }}>
           <Phone size={16} weight="fill" /> Get Exact Quote
         </a>
       </div>
@@ -587,7 +587,7 @@ export default function PestControlShowcase() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   return (
-    <main className="relative min-h-screen overflow-x-hidden" style={{ background: BG, color: "white" }}>
+    <main className="pest-v2 relative min-h-screen overflow-x-hidden" style={{ background: BG, color: "white" }}>
       <FloatingParticles />
       <Nav />
 
@@ -616,7 +616,7 @@ export default function PestControlShowcase() {
             </motion.p>
 
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <MagneticButton href="tel:+12065550143" className="flex items-center justify-center gap-2 px-8 py-4 rounded-full text-base font-bold text-white" style={{ background: ORANGE }}>
+              <MagneticButton href="tel:+12067483920" className="flex items-center justify-center gap-2 px-8 py-4 rounded-full text-base font-bold text-white" style={{ background: ORANGE }}>
                 <Phone size={20} weight="fill" /> Free Inspection
               </MagneticButton>
               <MagneticButton href="#pest-id" className="flex items-center justify-center gap-2 px-8 py-4 rounded-full text-base font-bold text-white border border-white/20 hover:border-white/40 transition-colors">
@@ -650,7 +650,7 @@ export default function PestControlShowcase() {
             <Siren size={18} weight="fill" style={{ color: RED }} />
             <span className="text-sm font-bold text-white">Emergency Pest Response</span>
             <span className="text-sm text-gray-400">Same-day service available</span>
-            <a href="tel:+12065550143" className="text-sm font-bold ml-2" style={{ color: ORANGE }}>Call Now</a>
+            <a href="tel:+12067483920" className="text-sm font-bold ml-2" style={{ color: ORANGE }}>Call Now</a>
           </div>
         </motion.div>
       </section>
@@ -972,7 +972,7 @@ export default function PestControlShowcase() {
                           </li>
                         ))}
                       </ul>
-                      <a href="tel:+12065550143" className="flex items-center justify-center gap-2 w-full py-3 rounded-full text-sm font-bold text-white" style={{ background: ORANGE }}>
+                      <a href="tel:+12067483920" className="flex items-center justify-center gap-2 w-full py-3 rounded-full text-sm font-bold text-white" style={{ background: ORANGE }}>
                         <Phone size={16} weight="fill" /> Get Started
                       </a>
                     </div>
@@ -989,7 +989,7 @@ export default function PestControlShowcase() {
                         </li>
                       ))}
                     </ul>
-                    <a href="tel:+12065550143" className="flex items-center justify-center gap-2 w-full py-3 rounded-full text-sm font-bold border border-white/20 text-white hover:border-white/40 transition-colors">
+                    <a href="tel:+12067483920" className="flex items-center justify-center gap-2 w-full py-3 rounded-full text-sm font-bold border border-white/20 text-white hover:border-white/40 transition-colors">
                       <Phone size={16} /> Learn More
                     </a>
                   </GlassCard>
@@ -1085,8 +1085,8 @@ export default function PestControlShowcase() {
               </h2>
               <p className="text-gray-400 mb-8 max-w-md mx-auto">Schedule your free inspection today. If pests return between treatments, so do we — at no cost.</p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <MagneticButton href="tel:+12065550143" className="flex items-center justify-center gap-2 px-8 py-4 rounded-full text-base font-bold text-white" style={{ background: ORANGE }}>
-                  <Phone size={20} weight="fill" /> (206) 555-0143
+                <MagneticButton href="tel:+12067483920" className="flex items-center justify-center gap-2 px-8 py-4 rounded-full text-base font-bold text-white" style={{ background: ORANGE }}>
+                  <Phone size={20} weight="fill" /> (206) 748-3920
                 </MagneticButton>
                 <MagneticButton href="#contact" className="flex items-center justify-center gap-2 px-8 py-4 rounded-full text-base font-bold text-white border border-white/20">
                   <Envelope size={20} /> Send a Message
@@ -1106,13 +1106,13 @@ export default function PestControlShowcase() {
             <GlassCard className="p-6 md:p-8">
               <h3 className="text-xl font-bold text-white mb-6">Evergreen Pest Solutions</h3>
               <div className="space-y-5">
-                <a href="tel:+12065550143" className="flex items-center gap-4 group">
+                <a href="tel:+12067483920" className="flex items-center gap-4 group">
                   <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: `${ORANGE}15` }}>
                     <Phone size={22} weight="fill" style={{ color: ORANGE }} />
                   </div>
                   <div>
                     <span className="text-sm text-gray-400 block">Phone</span>
-                    <span className="text-white font-bold group-hover:text-orange-400 transition-colors">(206) 555-0143</span>
+                    <span className="text-white font-bold group-hover:text-orange-400 transition-colors">(206) 748-3920</span>
                   </div>
                 </a>
                 <a href="https://maps.google.com/?q=1847+E+Pine+St,+Seattle,+WA+98122" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 group">
@@ -1202,7 +1202,7 @@ export default function PestControlShowcase() {
             <div>
               <h4 className="text-sm font-bold text-white mb-4">Contact</h4>
               <ul className="space-y-2">
-                <li><a href="tel:+12065550143" className="text-sm text-gray-400 hover:text-white transition-colors">(206) 555-0143</a></li>
+                <li><a href="tel:+12067483920" className="text-sm text-gray-400 hover:text-white transition-colors">(206) 748-3920</a></li>
                 <li><a href="https://maps.google.com/?q=1847+E+Pine+St,+Seattle,+WA+98122" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-400 hover:text-white transition-colors">1847 E Pine St, Seattle, WA 98122</a></li>
                 <li><span className="text-sm text-gray-400">info@evergreenpest.com</span></li>
                 <li><span className="text-sm text-gray-400">Mon-Sat 7am-7pm</span></li>

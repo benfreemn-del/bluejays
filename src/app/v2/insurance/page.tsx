@@ -86,7 +86,7 @@ const GOLD_GLOW = "rgba(202, 138, 4, 0.10)";
 /* ───────────────────────── DATA ───────────────────────── */
 const BIZ_NAME = "Puget Sound Insurance Group";
 const OWNER = "Lisa Park";
-const PHONE = "(206) 555-0187";
+const PHONE = "(206) 281-4739";
 const ADDRESS = "4201 Rainier Ave S, Suite 310, Seattle, WA 98118";
 const MAP_LINK = `https://maps.google.com/?q=${encodeURIComponent(ADDRESS)}`;
 
@@ -120,7 +120,7 @@ const FAQ_DATA = [
   { q: "How much can I save by bundling?", a: "Most families save 15-25% by bundling auto and home policies. Some carriers offer up to 30% multi-policy discounts." },
   { q: "Do you help with claims?", a: "Absolutely. We advocate on your behalf through the entire claims process, from filing to final settlement." },
   { q: "What does umbrella insurance cover?", a: "Umbrella policies provide extra liability coverage beyond your auto and home limits. They protect your assets from lawsuits and large claims." },
-  { q: "How quickly can I get a quote?", a: "Most quotes take 15-20 minutes. Call us at (206) 555-0187 or fill out our contact form and we will get back to you within one business day." },
+  { q: "How quickly can I get a quote?", a: "Most quotes take 15-20 minutes. Call us at (206) 281-4739 or fill out our contact form and we will get back to you within one business day." },
   { q: "Do you offer renters insurance?", a: "Yes. Renters insurance is affordable, typically $15-30 per month, and covers your belongings, liability, and temporary housing if needed." },
 ];
 
@@ -1257,7 +1257,7 @@ function Footer() {
 /* ───────────────────────── MAIN PAGE ───────────────────────── */
 export default function InsuranceShowcase() {
   return (
-    <main className="relative overflow-x-hidden" style={{ background: BG, color: "#e2e8f0" }}>
+    <main className="insure-v2 relative overflow-x-hidden" style={{ background: BG, color: "#e2e8f0" }}>
       <FloatingParticles />
       <Nav />
       <ShieldHero />

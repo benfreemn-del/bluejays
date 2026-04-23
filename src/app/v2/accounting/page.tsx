@@ -352,7 +352,7 @@ export default function V2AccountingPage() {
   }, []);
 
   return (
-    <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: BG, color: "#f1f5f9" }}>
+    <main className="acct-v2 relative min-h-[100dvh] overflow-x-hidden" style={{ background: BG, color: "#f1f5f9" }}>
       <FloatingParticles />
 
       {/* ─── NAV ─── */}
@@ -411,7 +411,7 @@ export default function V2AccountingPage() {
                 Free Tax Consultation <ArrowRight size={18} weight="bold" />
               </MagneticButton>
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
-                <Phone size={18} weight="duotone" /> (206) 555-0347
+                <Phone size={18} weight="duotone" /> (206) 591-7384
               </MagneticButton>
             </motion.div>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ ...spring, delay: 1 }} className="flex flex-wrap gap-6 text-sm text-slate-400">
@@ -626,7 +626,7 @@ export default function V2AccountingPage() {
                   <p className="text-white font-semibold mb-1">We recommend: {quizOptions[quizChoice].rec}</p>
                   <p className="text-sm text-slate-400 mb-4">Schedule a free consultation with Robert to discuss your specific situation.</p>
                   <MagneticButton className="px-8 py-3 rounded-full text-sm font-semibold text-white inline-flex items-center gap-2 cursor-pointer" style={{ background: GOLD }}>
-                    <Phone size={16} weight="duotone" /> Call (206) 555-0347
+                    <Phone size={16} weight="duotone" /> Call (206) 591-7384
                   </MagneticButton>
                 </GlassCard>
               </motion.div>
@@ -1085,7 +1085,7 @@ export default function V2AccountingPage() {
                   <CalendarCheck size={20} weight="duotone" /> Book Free Consultation
                 </MagneticButton>
                 <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
-                  <Phone size={18} weight="duotone" /> (206) 555-0347
+                  <Phone size={18} weight="duotone" /> (206) 591-7384
                 </MagneticButton>
               </div>
             </div>
@@ -1099,11 +1099,11 @@ export default function V2AccountingPage() {
                     <p className="text-sm text-slate-400">1201 3rd Ave, Suite 1800<br />Seattle, WA 98101</p>
                   </div>
                 </a>
-                <a href="tel:2065550347" className="flex items-start gap-4 hover:opacity-80 transition-opacity">
+                <a href="tel:2065917384" className="flex items-start gap-4 hover:opacity-80 transition-opacity">
                   <Phone size={20} weight="duotone" style={{ color: GOLD }} className="mt-0.5 shrink-0" />
                   <div>
                     <p className="text-sm font-semibold text-white">Phone</p>
-                    <p className="text-sm text-slate-400">(206) 555-0347</p>
+                    <p className="text-sm text-slate-400">(206) 591-7384</p>
                   </div>
                 </a>
                 <a href="mailto:hello@evergreentaxadvisory.com" className="flex items-start gap-4 hover:opacity-80 transition-opacity">
