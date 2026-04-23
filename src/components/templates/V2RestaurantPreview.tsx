@@ -1,5 +1,8 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element -- These static marketing and preview components intentionally use plain img tags to preserve existing markup and visual behavior during lint-only cleanup. */
+/* eslint-disable react-hooks/purity -- Decorative particle values are intentionally randomized for static visual effects in these marketing pages and previews; this preserves existing appearance without changing business logic. */
+
 import { useState, useEffect, useRef, useCallback } from "react";
 import {
   motion,
@@ -29,6 +32,7 @@ import {
 } from "@phosphor-icons/react";
 import type { GeneratedSiteData } from "@/lib/generator";
 import BluejayLogo from "../BluejayLogo";
+import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
 import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
 
@@ -85,8 +89,8 @@ function getServiceIcon(serviceName: string) {
 }
 
 /* ───────────────────────── STOCK FALLBACK IMAGES ───────────────────────── */
-const STOCK_HERO = "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1400&q=80";
-const STOCK_ABOUT = "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80";
+const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1400&q=80"];
+const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80"];
 const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=80",
   "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=600&q=80",
@@ -183,7 +187,7 @@ function HeroDecor({ accent }: { accent: string }) {
 /* ───────────────────────── GLASS CARD ───────────────────────── */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
+    <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
       {children}
     </div>
   );
@@ -325,11 +329,19 @@ export default function V2RestaurantPreview({ data }: { data: GeneratedSiteData 
 
   const { ACCENT, ACCENT_GLOW } = getAccent(data.accentColor);
 
-  const heroImage = data.photos?.[0] || STOCK_HERO;
-  const aboutImage = data.photos?.[1] || STOCK_ABOUT;
+  const uniquePhotos = data.photos ? [...new Set(data.photos)] : [];
+
+
+  const heroImage = uniquePhotos[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
+
+
+  const heroCardImage = uniquePhotos[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 1);
+
+
+  const aboutImage = uniquePhotos[2] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 2);
   const galleryImages = data.photos?.length > 2
     ? data.photos.slice(2, 8)
-    : STOCK_GALLERY;
+    : pickGallery(STOCK_GALLERY, data.businessName);
 
   const phoneDigits = data.phone.replace(/\D/g, "");
 
@@ -401,41 +413,37 @@ export default function V2RestaurantPreview({ data }: { data: GeneratedSiteData 
 
         <div className="absolute inset-0">
           <img src={heroImage} alt={`${data.businessName}`} className="w-full h-full object-cover object-center" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-black/10" />
-          <div className="absolute inset-0 bg-gradient-to-t from-white/80 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-black/70" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20" />
         </div>
-        <DiningPattern opacity={0.04} accent={ACCENT} />
-        <HeroDecor accent={ACCENT} />
-        <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full blur-[200px] pointer-events-none" style={{ background: `${ACCENT}08` }} />
-        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full blur-[160px] pointer-events-none" style={{ background: `${GOLD_ACCENT}06` }} />
 
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
           <div className="space-y-8">
             <div>
               <p className="text-sm uppercase tracking-widest mb-4" style={{ color: ACCENT }}>Fine Dining Experience</p>
-              <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}>
+              <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 20px rgba(0,0,0,0.8), 0 4px 40px rgba(0,0,0,0.5)" }}>
                 {data.tagline}
               </h1>
             </div>
-            <p className="text-lg text-slate-400 max-w-md leading-relaxed">
-              {data.about.length > 160 ? data.about.slice(0, 160).trim() + "..." : data.about}
+            <p className="text-lg text-white/80 max-w-md leading-relaxed" style={{ textShadow: "0 1px 8px rgba(0,0,0,0.6)" }}>
+              {(() => { const t = data.about; if (t.length <= 180) return t; const dot = t.indexOf('.', 80); return dot > 0 && dot < 220 ? t.slice(0, dot + 1) : t.slice(0, 180).trim() + '...'; })()}
             </p>
             <div className="flex flex-wrap gap-4">
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
                 View Our Menu <ArrowRight size={18} weight="bold" />
               </MagneticButton>
-              <MagneticButton href={`tel:${phoneDigits}`} className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
+              <MagneticButton href={`tel:${phoneDigits}`} className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
                 <Phone size={18} weight="duotone" /> <PhoneLink phone={data.phone} />
               </MagneticButton>
             </div>
-            <div className="flex flex-wrap gap-6 text-sm text-slate-400">
+            <div className="flex flex-wrap gap-6 text-sm text-white/80" style={{ textShadow: "0 1px 8px rgba(0,0,0,0.6)" }}>
               <span className="flex items-center gap-2"><MapPin size={16} weight="duotone" style={{ color: ACCENT }} /><MapLink address={data.address} /></span>
               <span className="flex items-center gap-2"><Clock size={16} weight="duotone" style={{ color: ACCENT }} />{data.hours ? data.hours.split("\n")[0] : "Open Daily"}</span>
             </div>
           </div>
           <div className="hidden md:block relative">
-            <div className="relative rounded-2xl overflow-hidden border border-white/10">
-              <img src={heroImage} alt={`${data.businessName} restaurant`} className="w-full h-[500px] object-cover" />
+            <div className="relative rounded-2xl overflow-hidden border border-white/15">
+              <img src={heroCardImage} alt={`${data.businessName} restaurant`} className="w-full h-[500px] object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a1a] via-transparent to-transparent" />
               <div className="absolute inset-0 bg-gradient-to-r from-[#1a1a1a]/40 to-transparent" />
               <div className="absolute bottom-6 left-6 flex items-center gap-3">
@@ -485,7 +493,7 @@ export default function V2RestaurantPreview({ data }: { data: GeneratedSiteData 
               <GlassCard key={i} className="p-6 h-full flex flex-col">
                 <div className="flex gap-0.5 mb-4">{Array.from({ length: t.rating || 5 }).map((_, j) => <Star key={j} size={16} weight="fill" style={{ color: ACCENT }} />)}</div>
                 <p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p>
-                <div className="pt-4 border-t border-white/5 flex items-center justify-between">
+                <div className="pt-4 border-t border-white/8 flex items-center justify-between">
                   <span className="text-sm font-semibold text-white">{t.name}</span>
                 </div>
               </GlassCard>
@@ -509,7 +517,7 @@ export default function V2RestaurantPreview({ data }: { data: GeneratedSiteData 
             {data.services.map((service, i) => {
               const Icon = getServiceIcon(service.name);
               return (
-                <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.02]">
+                <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]">
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${ACCENT}15, transparent 70%)` }} />
                   <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${ACCENT}4d, transparent)` }} />
                   <div className="relative z-10">
@@ -538,7 +546,7 @@ export default function V2RestaurantPreview({ data }: { data: GeneratedSiteData 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="relative">
-              <div className="rounded-2xl overflow-hidden border border-white/10">
+              <div className="rounded-2xl overflow-hidden border border-white/15">
                 <img src={aboutImage} alt={`${data.businessName} interior`} className="w-full h-[400px] object-cover" />
               </div>
               <div className="absolute -bottom-4 -right-4 md:bottom-6 md:-right-6">
@@ -606,7 +614,7 @@ export default function V2RestaurantPreview({ data }: { data: GeneratedSiteData 
             {galleryImages.map((src, i) => {
               const captions = ["Signature Plating", "Fresh from the Kitchen", "Seasonal Specials", "Intimate Atmosphere", "Craft Cocktails", "Chef's Table"];
               return (
-                <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.06] hover:border-opacity-30 transition-all duration-500 aspect-square">
+                <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 aspect-square">
                   <img src={src} alt={captions[i] || `Gallery ${i + 1}`} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   <div className="absolute bottom-0 left-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
@@ -751,14 +759,14 @@ export default function V2RestaurantPreview({ data }: { data: GeneratedSiteData 
               <h3 className="text-xl font-semibold text-white mb-6">Reserve a Table</h3>
               <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div><label className="block text-sm text-slate-400 mb-1.5">Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="Your Name" /></div>
-                  <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="(555) 123-4567" /></div>
+                  <div><label className="block text-sm text-slate-400 mb-1.5">Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="Your Name" /></div>
+                  <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="(555) 123-4567" /></div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div><label className="block text-sm text-slate-400 mb-1.5">Date</label><input type="date" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none transition-colors text-sm" /></div>
-                  <div><label className="block text-sm text-slate-400 mb-1.5">Party Size</label><select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none transition-colors text-sm"><option value="" className="bg-neutral-900">Select</option>{[1,2,3,4,5,6,7,8].map(n => <option key={n} value={n} className="bg-neutral-900">{n} {n === 1 ? "Guest" : "Guests"}</option>)}</select></div>
+                  <div><label className="block text-sm text-slate-400 mb-1.5">Date</label><input type="date" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none transition-colors text-sm" /></div>
+                  <div><label className="block text-sm text-slate-400 mb-1.5">Party Size</label><select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none transition-colors text-sm"><option value="" className="bg-neutral-900">Select</option>{[1,2,3,4,5,6,7,8].map(n => <option key={n} value={n} className="bg-neutral-900">{n} {n === 1 ? "Guest" : "Guests"}</option>)}</select></div>
                 </div>
-                <div><label className="block text-sm text-slate-400 mb-1.5">Special Requests</label><textarea rows={3} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm resize-none" placeholder="Dietary needs, celebrations, seating preference..." /></div>
+                <div><label className="block text-sm text-slate-400 mb-1.5">Special Requests</label><textarea rows={3} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm resize-none" placeholder="Dietary needs, celebrations, seating preference..." /></div>
                 <MagneticButton className="w-full py-4 rounded-xl text-base font-semibold text-white flex items-center justify-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
                   Request Reservation <ArrowRight size={18} weight="bold" />
                 </MagneticButton>
@@ -793,8 +801,180 @@ export default function V2RestaurantPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
+      {/* ══════════════════ CHEF SPOTLIGHT ══════════════════ */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #141010 0%, #1a1a1a 50%, #141010 100%)" }} />
+        <DiningPattern opacity={0.012} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <CookingPot size={40} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-3" />
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Meet Our Kitchen</h2>
+            <div className="w-16 h-1 mx-auto mt-3 rounded-full" style={{ background: ACCENT }} />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="rounded-2xl border border-white/15 p-6" style={{ background: "rgba(255,255,255,0.06)" }}>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ background: `${ACCENT}1a` }}>
+                  <Fire size={24} weight="fill" style={{ color: ACCENT }} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white">Head Chef</h3>
+                  <p className="text-sm text-slate-400">Culinary Excellence</p>
+                </div>
+              </div>
+              <p className="text-slate-400 leading-relaxed">Our head chef brings years of passion and expertise to every plate, crafting dishes that celebrate tradition while embracing innovation. Every ingredient is hand-selected for quality.</p>
+            </div>
+            <div className="rounded-2xl border border-white/15 p-6" style={{ background: "rgba(255,255,255,0.06)" }}>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ background: `${ACCENT}1a` }}>
+                  <Leaf size={24} weight="fill" style={{ color: ACCENT }} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white">Farm-to-Table</h3>
+                  <p className="text-sm text-slate-400">Local Sourcing</p>
+                </div>
+              </div>
+              <p className="text-slate-400 leading-relaxed">We partner with local farms and artisan producers to bring the freshest seasonal ingredients to your table. Our menu evolves with the seasons to guarantee peak flavor in every bite.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ SEASONAL SPECIALS ══════════════════ */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f0d08 100%)" }} />
+        <DiningPattern opacity={0.01} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <Coffee size={40} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-3" />
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Seasonal Specials</h2>
+            <p className="text-slate-400 mt-3 max-w-xl mx-auto">Our menu rotates with the seasons, featuring limited-time dishes crafted with the freshest ingredients available.</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              { season: "Spring", icon: Leaf, desc: "Light, fresh dishes with garden herbs and crisp vegetables" },
+              { season: "Summer", icon: Fire, desc: "Grilled specialties with vibrant sauces and seasonal fruits" },
+              { season: "Autumn", icon: CookingPot, desc: "Hearty comfort dishes with roasted root vegetables" },
+              { season: "Winter", icon: Coffee, desc: "Rich, warming plates with slow-braised meats and broths" },
+            ].map((s) => (
+              <div key={s.season} className="text-center rounded-2xl border border-white/15 p-6" style={{ background: "rgba(255,255,255,0.06)" }}>
+                <s.icon size={32} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-3" />
+                <h3 className="text-lg font-bold text-white mb-2">{s.season}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed">{s.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ RESERVATION & MID-PAGE CTA ══════════════════ */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15 0%, #1a1a1a 50%, ${ACCENT}08 100%)` }} />
+        <DiningPattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+          <ForkKnife size={44} weight="fill" style={{ color: ACCENT }} className="mx-auto mb-4" />
+          <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">Reserve Your Table Tonight</h2>
+          <p className="text-slate-400 max-w-2xl mx-auto mb-6 text-lg leading-relaxed">
+            Whether it&apos;s an intimate dinner for two or a celebration with friends, {data.businessName} is ready to make your evening unforgettable. Walk-ins are welcome, but reservations guarantee your preferred seating.
+          </p>
+          <div className="flex flex-wrap justify-center gap-4 mb-8">
+            {["Online Reservations", "Private Dining", "Special Events", "Catering Available"].map((item) => (
+              <span key={item} className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border" style={{ color: ACCENT, borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}>
+                <CheckCircle size={16} weight="fill" /> {item}
+              </span>
+            ))}
+          </div>
+          <a href={`tel:${data.phone}`} className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-white font-bold text-lg transition-transform hover:scale-105" style={{ background: ACCENT }}>
+            <Phone size={20} weight="fill" /> Call to Reserve
+          </a>
+        </div>
+      </section>
+
+      {/* ══════════════════ WHY CHOOSE US ══════════════════ */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f0d08 0%, #1a1a1a 100%)" }} />
+        <DiningPattern opacity={0.012} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Why Diners Choose <span style={{ color: ACCENT }}>{data.businessName}</span></h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              { title: "Scratch Kitchen", desc: "Every dish prepared fresh from scratch daily — no shortcuts, no frozen ingredients" },
+              { title: "Local Ingredients", desc: "We source from local farms and markets for the freshest seasonal flavors" },
+              { title: "Warm Hospitality", desc: "Our team treats every guest like family from the moment you walk in" },
+              { title: "Memorable Experiences", desc: "From anniversary dinners to casual nights out, we make every visit special" },
+            ].map((card) => (
+              <div key={card.title} className="rounded-2xl border border-white/15 p-6 text-center" style={{ background: "rgba(255,255,255,0.06)" }}>
+                <CheckCircle size={28} weight="fill" style={{ color: ACCENT }} className="mx-auto mb-3" />
+                <h3 className="text-lg font-bold text-white mb-2">{card.title}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed">{card.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ HOURS & DINING INFO ══════════════════ */}
+      {data.hours && (
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #141010 0%, #1a1a1a 100%)" }} />
+        <DiningPattern opacity={0.01} accent={ACCENT} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+          <ShimmerBorder accent={ACCENT}>
+            <div className="p-8">
+              <Clock size={36} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-4" />
+              <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-4">Hours & Dining Info</h2>
+              <p className="text-slate-400 leading-relaxed whitespace-pre-line text-lg mb-6">{data.hours}</p>
+              <div className="flex flex-wrap justify-center gap-4">
+                {["Dine-In", "Takeout", "Private Events", "Full Bar"].map((item) => (
+                  <span key={item} className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border" style={{ color: ACCENT, borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}>
+                    <ForkKnife size={14} weight="fill" /> {item}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </ShimmerBorder>
+        </div>
+      </section>
+      )}
+
+      {/* ══════════════════ ENHANCED CERTIFICATIONS ══════════════════ */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #141010 100%)" }} />
+        <DiningPattern opacity={0.012} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-10">
+            <ShieldCheck size={36} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-3" />
+            <h2 className="text-2xl md:text-3xl font-extrabold text-white">Recognized & Trusted</h2>
+            <p className="text-slate-400 mt-2 max-w-lg mx-auto">
+              {data.businessName} is proud to be recognized by industry organizations and local publications.
+            </p>
+          </div>
+          <div className="flex flex-wrap justify-center gap-6">
+            {[
+              "Health Dept. A Rating",
+              "ServSafe Certified",
+              "Wine Spectator Award",
+              "Local Best Of Winner",
+              "Farm-to-Table Certified",
+              "Zagat Recommended",
+            ].map((badge) => (
+              <div
+                key={badge}
+                className="flex items-center gap-2 px-5 py-3 rounded-full border border-white/15"
+                style={{ background: "rgba(255,255,255,0.06)" }}
+              >
+                <ShieldCheck size={18} weight="fill" style={{ color: ACCENT }} />
+                <span className="text-sm font-medium text-white">{badge}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ══════════════════ 15. FOOTER ══════════════════ */}
-      <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden">
+      <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111 100%)" }} />
         <DiningPattern opacity={0.015} accent={ACCENT} />
         <div className="mx-auto max-w-6xl px-6 relative z-10">
@@ -816,7 +996,7 @@ export default function V2RestaurantPreview({ data }: { data: GeneratedSiteData 
               </div>
             </div>
           </div>
-          <div className="border-t border-white/5 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="border-t border-white/8 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-sm text-slate-500"><ForkKnife size={14} weight="fill" style={{ color: ACCENT }} /><span>{data.businessName} &copy; {new Date().getFullYear()}</span></div>
             <div className="flex items-center gap-2 text-xs text-slate-600"><BluejayLogo className="w-4 h-4" /><span>Created by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" style={{textDecoration:"underline"}}>bluejayportfolio.com</a></span></div>
           </div>

@@ -1,5 +1,7 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element -- These static marketing and preview components intentionally use plain img tags to preserve existing markup and visual behavior during lint-only cleanup. */
+
 import { motion } from "framer-motion";
 import TemplateLayout from "./TemplateLayout";
 
@@ -413,7 +415,7 @@ export default function SalonTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.12 }}
-                className="group relative rounded-2xl border border-white/[0.06] hover:border-[#ec4899]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative rounded-2xl border border-white/[0.10] hover:border-[#ec4899]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 {/* Hover glow */}
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_50%_0%,#ec489915,transparent_70%)]" />
@@ -473,7 +475,7 @@ export default function SalonTemplate() {
             >
               <div className="relative w-full aspect-[4/5] max-w-md mx-auto">
                 {/* Main image */}
-                <div className="absolute top-0 left-0 w-[75%] h-[70%] rounded-2xl overflow-hidden border-2 border-white/[0.06] shadow-2xl z-10">
+                <div className="absolute top-0 left-0 w-[75%] h-[70%] rounded-2xl overflow-hidden border-2 border-white/[0.10] shadow-2xl z-10">
                   <img
                     src="https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?w=600&q=80"
                     alt="Salon interior"
@@ -481,7 +483,7 @@ export default function SalonTemplate() {
                   />
                 </div>
                 {/* Secondary image */}
-                <div className="absolute bottom-0 right-0 w-[65%] h-[55%] rounded-2xl overflow-hidden border-2 border-white/[0.06] shadow-2xl z-20">
+                <div className="absolute bottom-0 right-0 w-[65%] h-[55%] rounded-2xl overflow-hidden border-2 border-white/[0.10] shadow-2xl z-20">
                   <img
                     src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=400&q=80"
                     alt="Styling session"
@@ -524,7 +526,7 @@ export default function SalonTemplate() {
                   { icon: <SparkleIcon className="w-5 h-5" />, title: "Premium Products Only", desc: "Olaplex, Kerastase, Redken, and K18 exclusively" },
                   { icon: <MirrorIcon className="w-5 h-5" />, title: "Consultation-First", desc: "Every service begins with an in-depth hair consultation" },
                 ].map((feature) => (
-                  <div key={feature.title} className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/[0.04] hover:border-[#ec4899]/20 transition-colors duration-300">
+                  <div key={feature.title} className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.07] border border-white/[0.04] hover:border-[#ec4899]/20 transition-colors duration-300">
                     <div className="w-10 h-10 rounded-lg bg-[#ec4899]/10 border border-[#ec4899]/20 flex items-center justify-center text-[#ec4899] shrink-0">
                       {feature.icon}
                     </div>
@@ -564,7 +566,7 @@ export default function SalonTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.12 }}
-                className="group relative rounded-2xl border border-white/[0.06] hover:border-[#ec4899]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative rounded-2xl border border-white/[0.10] hover:border-[#ec4899]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 {/* Photo */}
                 <div className="relative aspect-[3/4] overflow-hidden">
@@ -584,7 +586,7 @@ export default function SalonTemplate() {
                     <p className="text-[#ec4899] text-sm font-semibold mb-2">{stylist.title}</p>
                     <div className="flex flex-wrap gap-1.5 mb-3">
                       {stylist.specialties.map((s) => (
-                        <span key={s} className="text-[10px] font-semibold uppercase tracking-wider text-white/60 bg-white/10 border border-white/10 px-2.5 py-1 rounded-full">
+                        <span key={s} className="text-[10px] font-semibold uppercase tracking-wider text-white/60 bg-white/10 border border-white/15 px-2.5 py-1 rounded-full">
                           {s}
                         </span>
                       ))}
@@ -623,7 +625,7 @@ export default function SalonTemplate() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.05 }}
-                className="group relative aspect-square rounded-xl overflow-hidden border border-white/[0.06] hover:border-[#ec4899]/30 transition-all duration-500"
+                className="group relative aspect-square rounded-xl overflow-hidden border border-white/[0.10] hover:border-[#ec4899]/30 transition-all duration-500"
               >
                 <img
                   src={src}
@@ -677,7 +679,7 @@ export default function SalonTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group text-center p-6 rounded-2xl border border-white/[0.06] hover:border-[#ec4899]/30 bg-white/[0.02] transition-all duration-500"
+                className="group text-center p-6 rounded-2xl border border-white/[0.10] hover:border-[#ec4899]/30 bg-white/[0.07] transition-all duration-500"
               >
                 <div className="w-14 h-14 mx-auto rounded-xl bg-[#ec4899]/10 border border-[#ec4899]/20 flex items-center justify-center text-[#ec4899] mb-4 group-hover:bg-[#ec4899]/20 group-hover:scale-110 transition-all duration-300">
                   {item.icon}
@@ -720,7 +722,7 @@ export default function SalonTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-[#ec4899]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-[#ec4899]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 {/* Top accent line */}
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-[#ec4899]/40 via-[#ec4899]/10 to-transparent" />
@@ -739,7 +741,7 @@ export default function SalonTemplate() {
                   {/* Quote */}
                   <p className="text-muted leading-relaxed mb-6 text-sm">&ldquo;{t.text}&rdquo;</p>
                   {/* Author */}
-                  <div className="flex items-center gap-3 pt-4 border-t border-white/[0.06]">
+                  <div className="flex items-center gap-3 pt-4 border-t border-white/[0.10]">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#ec4899]/30 to-[#ec4899]/10 flex items-center justify-center text-sm font-bold text-[#ec4899]">
                       {t.name.charAt(0)}
                     </div>

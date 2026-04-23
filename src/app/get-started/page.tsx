@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import { useState } from "react";
 import { CATEGORY_CONFIG, type Category } from "@/lib/types";
 
@@ -73,12 +75,12 @@ export default function GetStartedPage() {
           <p className="text-white/30 text-sm">
             We&apos;ll text you at <span className="text-white/50 font-medium">{form.phone}</span> when it&apos;s ready.
           </p>
-          <a href="/" className="inline-flex items-center gap-2 mt-8 text-sky-400 text-sm hover:underline transition-colors">
+          <Link href="/" className="inline-flex items-center gap-2 mt-8 text-sky-400 text-sm hover:underline transition-colors">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
               <path d="M19 12H5M12 19l-7-7 7-7" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
             Back to BlueJays
-          </a>
+          </Link>
         </div>
       </div>
     );
@@ -100,10 +102,10 @@ export default function GetStartedPage() {
       <div className="relative z-10 max-w-xl mx-auto px-5 py-10 md:py-16">
         {/* Header */}
         <div className="text-center mb-8 md:mb-10">
-          <a href="/" className="inline-flex items-center gap-2.5 mb-6 md:mb-8 group">
+          <Link href="/" className="inline-flex items-center gap-2.5 mb-6 md:mb-8 group">
             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-sky-500 to-blue-600 group-hover:shadow-[0_0_20px_rgba(14,165,233,0.4)] transition-shadow" />
             <span className="text-xl font-bold text-white">BlueJays</span>
-          </a>
+          </Link>
 
           <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-3 leading-tight">
             Get a Free Custom <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-blue-500">Website Preview</span> for Your Business

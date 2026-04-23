@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getProspect } from "@/lib/store";
 import { sendPitchEmail } from "@/lib/outreach";
 import { sendSms, getSmsHistory, getInitialSms, getFollowUpSms1, getFollowUpSms2 } from "@/lib/sms";
+import { getProspectVideoUrl } from "@/lib/video-generator";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
@@ -44,14 +45,15 @@ export async function POST(request: NextRequest) {
     if (channels.includes("sms") && prospect.phone && prospect.generatedSiteUrl) {
       try {
         const previewUrl = `${BASE_URL}${prospect.generatedSiteUrl}`;
+        const videoUrl = await getProspectVideoUrl(prospect.id);
         const history = await getSmsHistory(prospect.id);
         const lastSeq = history.length > 0 ? Math.max(...history.map((s) => s.sequence)) : 0;
-        let body: string;
-        if (lastSeq === 0) body = getInitialSms(prospect, previewUrl);
-        else if (lastSeq === 1) body = getFollowUpSms1(prospect, previewUrl);
-        else if (lastSeq === 2) body = getFollowUpSms2(prospect, previewUrl);
+        let smsBody: string;
+        if (lastSeq === 0) smsBody = getInitialSms(prospect, previewUrl, videoUrl);
+        else if (lastSeq === 1) smsBody = getFollowUpSms1(prospect, previewUrl, videoUrl);
+        else if (lastSeq === 2) smsBody = getFollowUpSms2(prospect, previewUrl, videoUrl);
         else { result.sms = "all 3 sent already"; continue; }
-        await sendSms(prospect.id, prospect.phone, body, lastSeq + 1);
+        await sendSms(prospect.id, prospect.phone, smsBody, lastSeq + 1);
         result.sms = "sent";
       } catch (err) {
         result.sms = `failed: ${(err as Error).message}`;

@@ -1,5 +1,7 @@
 "use client";
 
+import { normalizeAddress } from "@/lib/address-normalizer";
+
 /**
  * Wraps an address in a clickable Google Maps link.
  * Critical for mobile — users tap to get directions instantly.
@@ -15,7 +17,8 @@ export function MapLink({
   children?: React.ReactNode;
   style?: React.CSSProperties;
 }) {
-  const mapsUrl = `https://maps.google.com/?q=${encodeURIComponent(address)}`;
+  const normalizedAddress = normalizeAddress(address) || address;
+  const mapsUrl = `https://maps.google.com/?q=${encodeURIComponent(normalizedAddress)}`;
   return (
     <a
       href={mapsUrl}
@@ -24,7 +27,7 @@ export function MapLink({
       className={`hover:underline transition-colors ${className}`}
       style={style}
     >
-      {children || address}
+      {children || normalizedAddress}
     </a>
   );
 }

@@ -1,21 +1,15 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
-import {
-  motion,
-  useMotionValue,
-  useSpring,
-  useInView,
-  AnimatePresence,
-} from "framer-motion";
+/* eslint-disable @next/next/no-img-element */
+
+import { useState, useRef, useEffect } from "react";
+import { motion, useInView, AnimatePresence } from "framer-motion";
 import {
   Cross,
   BookOpen,
   Heart,
   UsersThree,
   HandsPraying,
-  Bird,
-  Church,
   MusicNotes,
   Baby,
   Handshake,
@@ -28,118 +22,112 @@ import {
   ArrowRight,
   Quotes,
   Envelope,
+  Play,
+  Users,
+  CurrencyDollar,
+  HandHeart,
+  Coffee,
+  Church,
   Star,
+  CaretRight,
+  NavigationArrow,
+  Wheelchair,
+  Car,
+  YoutubeLogo,
+  FacebookLogo,
+  InstagramLogo,
+  CaretDown,
 } from "@phosphor-icons/react";
 
-/* ───────────────────────── SPRING CONFIG ───────────────────────── */
+/* ───────────────────────── SPRING + ANIMATION CONFIG ───────────────────────── */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
-const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
-const springGentle = { type: "spring" as const, stiffness: 60, damping: 18 };
 
 const stagger = {
   hidden: {},
-  show: {
-    transition: { staggerChildren: 0.08 },
-  },
+  show: { transition: { staggerChildren: 0.08 } },
 };
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
+  hidden: { opacity: 0, y: 24 },
   show: { opacity: 1, y: 0, transition: spring },
 };
 
 /* ───────────────────────── COLORS ───────────────────────── */
-const NAVY = "#1a1a2e";
-const GOLD = "#d4a853";
-const GOLD_LIGHT = "#e2c07a";
-const GOLD_GLOW = "rgba(212, 168, 83, 0.15)";
+const CREAM = "#faf9f6";
+const AMBER = "#d97706";
+const AMBER_LIGHT = "#f59e0b";
+const AMBER_GLOW = "rgba(217, 119, 6, 0.10)";
+const DARK = "#1c1917";
+const BODY = "#78716c";
+const CARD_BORDER = "#e7e5e4";
 
-/* ───────────────────────── FLOATING LIGHT PARTICLES ───────────────────────── */
-function FloatingParticles() {
-  const particles = Array.from({ length: 20 }, (_, i) => ({
-    id: i,
-    x: Math.random() * 100,
-    delay: Math.random() * 8,
-    duration: 7 + Math.random() * 7,
-    size: 2 + Math.random() * 4,
-    opacity: 0.12 + Math.random() * 0.28,
-  }));
+/* ───────────────────────── DATA ───────────────────────── */
+const serviceTimes = [
+  { day: "Sunday", time: "9:00 AM", label: "Traditional Worship", icon: Cross, desc: "Hymns, choir, and liturgical readings in a reverent atmosphere." },
+  { day: "Sunday", time: "11:00 AM", label: "Contemporary Worship", icon: MusicNotes, desc: "Full band, modern songs, and a relaxed, come-as-you-are vibe." },
+  { day: "Wednesday", time: "7:00 PM", label: "Midweek Study", icon: BookOpen, desc: "Verse-by-verse Bible study and small-group prayer time." },
+];
 
-  return (
-    <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden hidden md:block">
-      {particles.map((p) => (
-        <motion.div
-          key={p.id}
-          className="absolute rounded-full"
-          style={{
-            left: `${p.x}%`,
-            width: p.size,
-            height: p.size,
-            background: GOLD_LIGHT,
-            willChange: "transform, opacity",
-          }}
-          animate={{
-            y: ["-10vh", "110vh"],
-            opacity: [0, p.opacity, p.opacity, 0],
-          }}
-          transition={{
-            y: { duration: p.duration, repeat: Infinity, delay: p.delay, ease: "linear" },
-            opacity: {
-              duration: p.duration,
-              repeat: Infinity,
-              delay: p.delay,
-              times: [0, 0.1, 0.9, 1],
-            },
-          }}
-        />
-      ))}
-    </div>
-  );
-}
+const ministries = [
+  { name: "Children's Ministry", icon: Baby, desc: "Age-appropriate Bible lessons, crafts, and activities every Sunday for ages 0-11." },
+  { name: "Youth Group", icon: UsersThree, desc: "Middle and high schoolers meet Wednesdays for worship, games, and real conversations." },
+  { name: "Small Groups", icon: Users, desc: "Neighborhood groups of 8-12 people meeting weekly in homes for fellowship and study." },
+  { name: "Worship Team", icon: MusicNotes, desc: "Vocalists, musicians, and tech volunteers leading the congregation in worship." },
+  { name: "Community Outreach", icon: HandHeart, desc: "Monthly food drives, shelter partnerships, and neighborhood service projects." },
+  { name: "Women's Ministry", icon: Heart, desc: "Bible studies, retreats, and mentorship circles for women of all ages and stages." },
+];
 
-/* ───────────────────────── WORD REVEAL ───────────────────────── */
-function WordReveal({ text, className = "" }: { text: string; className?: string }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-50px" });
-  const words = text.split(" ");
+const events = [
+  { title: "Easter Sunrise Service", date: "April 20", time: "6:30 AM", location: "Ballard Locks Waterfront", color: "#fbbf24" },
+  { title: "Community BBQ", date: "May 3", time: "12:00 PM", location: "Church Lawn", color: "#f97316" },
+  { title: "VBS Registration", date: "June 1-5", time: "9 AM - 12 PM", location: "Main Campus", color: "#34d399" },
+  { title: "Marriage Enrichment", date: "May 17", time: "6:30 PM", location: "Fellowship Hall", color: "#f472b6" },
+];
 
-  return (
-    <motion.span
-      ref={ref}
-      className={`inline-flex flex-wrap gap-x-3 ${className}`}
-      variants={stagger}
-      initial="hidden"
-      animate={isInView ? "show" : "hidden"}
-    >
-      {words.map((word, i) => (
-        <motion.span key={i} variants={fadeUp} className="inline-block">
-          {word}
-        </motion.span>
-      ))}
-    </motion.span>
-  );
-}
+const sermons = [
+  { title: "Finding Peace in the Storm", speaker: "Pastor David Kim", date: "Apr 6, 2026", series: "Anchored", img: "https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=600&q=80" },
+  { title: "Love Your Neighbor", speaker: "Rachel Kim", date: "Mar 30, 2026", series: "Better Together", img: "https://images.unsplash.com/photo-1445445290350-18a3b86e0b5a?w=600&q=80" },
+  { title: "Faith Over Fear", speaker: "Guest Speaker", date: "Mar 23, 2026", series: "Anchored", img: "https://images.unsplash.com/photo-1507692049790-de58290a4334?w=600&q=80" },
+];
+
+const stats = [
+  { value: 300, suffix: "+", label: "Weekly Attendees" },
+  { value: 45, suffix: "", label: "Small Groups" },
+  { value: 125, suffix: "K", label: "Given to Local Causes", prefix: "$" },
+  { value: 2000, suffix: "+", label: "Meals Served Annually" },
+];
+
+const testimonials = [
+  { quote: "We walked in knowing nobody. Within a month, we had dinner invitations from 3 families.", author: "The Martinez Family", img: "https://images.unsplash.com/photo-1609220136736-443140cffec6?w=400&q=80" },
+  { quote: "My teenage son actually WANTS to go to church now. The youth group changed everything.", author: "Angela S.", img: "https://images.unsplash.com/photo-1573497019236-17f8177b81e8?w=400&q=80" },
+  { quote: "After losing my husband, this community carried me. Literally \u2014 meals for 6 months straight.", author: "Margaret O.", img: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=400&q=80" },
+  { quote: "I was skeptical of organized religion. Grace changed my mind. It\u2019s not about religion \u2014 it\u2019s about people.", author: "Jake T.", img: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&q=80" },
+  { quote: "Moved from another state during COVID. Grace was the first place that felt like home.", author: "Sarah & Brandon L.", img: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400&q=80" },
+];
+
+const NAV_LINKS = [
+  { label: "Services", href: "#services" },
+  { label: "About", href: "#about" },
+  { label: "Ministries", href: "#ministries" },
+  { label: "Events", href: "#events" },
+  { label: "Sermons", href: "#sermons" },
+  { label: "I\u2019m New", href: "#new-here" },
+  { label: "Give", href: "#give" },
+  { label: "Contact", href: "#contact" },
+];
 
 /* ───────────────────────── SECTION REVEAL ───────────────────────── */
-function SectionReveal({
-  children,
-  className = "",
-  id,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  id?: string;
-}) {
+function SectionReveal({ children, className = "", id, style }: { children: React.ReactNode; className?: string; id?: string; style?: React.CSSProperties }) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-80px" });
-
+  const isInView = useInView(ref, { once: true, margin: "-60px" });
   return (
     <motion.section
       ref={ref}
       id={id}
       className={className}
-      initial={{ opacity: 0, y: 50 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+      style={style}
+      initial={{ opacity: 0, y: 40 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
       transition={spring}
     >
       {children}
@@ -147,471 +135,190 @@ function SectionReveal({
   );
 }
 
-/* ───────────────────────── STAINED GLASS CROSS SVG ───────────────────────── */
-function StainedGlassCrossSVG() {
+/* ───────────────────────── COUNTER ANIMATION ───────────────────────── */
+function AnimatedCounter({ value, prefix = "", suffix = "" }: { value: number; prefix?: string; suffix?: string }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true });
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (!isInView) return;
+    let start = 0;
+    const duration = 2000;
+    const step = Math.ceil(value / (duration / 16));
+    const timer = setInterval(() => {
+      start += step;
+      if (start >= value) {
+        setCount(value);
+        clearInterval(timer);
+      } else {
+        setCount(start);
+      }
+    }, 16);
+    return () => clearInterval(timer);
+  }, [isInView, value]);
+
   return (
-    <div className="relative flex items-center justify-center">
-      <motion.div
-        className="absolute inset-0 rounded-full"
-        style={{ background: `radial-gradient(circle, ${GOLD_GLOW} 0%, transparent 70%)`, filter: "blur(40px)" }}
-        animate={{ scale: [1, 1.2, 1], opacity: [0.6, 1, 0.6] }}
-        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <svg viewBox="0 0 200 240" className="relative z-10 w-48 h-56 md:w-56 md:h-72" fill="none">
-        {/* Outer glow rings */}
-        <motion.circle cx="100" cy="115" r="92" stroke={GOLD} strokeWidth="0.5" opacity={0.12}
-          animate={{ r: [90, 94, 90] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} />
-        <motion.circle cx="100" cy="115" r="82" stroke={GOLD} strokeWidth="0.3" opacity={0.08}
-          animate={{ r: [80, 84, 80] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }} />
+    <span ref={ref}>
+      {prefix}{count.toLocaleString()}{suffix}
+    </span>
+  );
+}
 
-        {/* Radiant light rays behind cross */}
-        {[0, 30, 60, 90, 120, 150].map((angle, i) => (
-          <motion.line key={i} x1="100" y1="115" x2={100 + 80 * Math.cos((angle * Math.PI) / 180)} y2={115 + 80 * Math.sin((angle * Math.PI) / 180)}
-            stroke={GOLD} strokeWidth="0.8" opacity={0.15}
-            animate={{ opacity: [0.05, 0.2, 0.05] }}
-            transition={{ duration: 3, repeat: Infinity, delay: i * 0.3, ease: "easeInOut" }} />
-        ))}
-        {[15, 45, 75, 105, 135, 165].map((angle, i) => (
-          <motion.line key={`r${i}`} x1="100" y1="115" x2={100 + 70 * Math.cos((angle * Math.PI) / 180)} y2={115 + 70 * Math.sin((angle * Math.PI) / 180)}
-            stroke={GOLD_LIGHT} strokeWidth="0.5" opacity={0.1}
-            animate={{ opacity: [0.03, 0.15, 0.03] }}
-            transition={{ duration: 3.5, repeat: Infinity, delay: i * 0.25 + 0.5, ease: "easeInOut" }} />
-        ))}
-
-        {/* Stained glass arc window behind cross */}
-        <motion.path d="M55 170 L55 80 Q55 30 100 30 Q145 30 145 80 L145 170"
-          stroke={GOLD} strokeWidth="1.5" fill={`${GOLD}08`}
-          initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }}
-          transition={{ duration: 2, ease: "easeInOut" }} />
-        {/* Stained glass colored panels */}
-        <motion.path d="M65 80 Q65 50 100 50 Q135 50 135 80 L135 100 L65 100Z"
-          fill={`${GOLD}0d`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1, duration: 1 }} />
-        <motion.path d="M65 100 L135 100 L135 140 L65 140Z"
-          fill={`${GOLD}08`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2, duration: 1 }} />
-        <motion.path d="M65 140 L135 140 L135 170 L65 170Z"
-          fill={`${GOLD}06`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.4, duration: 1 }} />
-
-        {/* Main cross - vertical beam */}
-        <motion.path d="M92 45 L92 195 L108 195 L108 45 Z"
-          fill={`${GOLD}22`} stroke={GOLD} strokeWidth="2" strokeLinejoin="round"
-          initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }}
-          transition={{ duration: 1.5, delay: 0.5, ease: "easeInOut" }} />
-        {/* Cross inner highlight - vertical */}
-        <rect x="96" y="50" width="8" height="140" fill={`${GOLD}0d`} />
-
-        {/* Main cross - horizontal beam */}
-        <motion.path d="M60 85 L140 85 L140 105 L60 105 Z"
-          fill={`${GOLD}22`} stroke={GOLD} strokeWidth="2" strokeLinejoin="round"
-          initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }}
-          transition={{ duration: 1.2, delay: 1, ease: "easeInOut" }} />
-        {/* Cross inner highlight - horizontal */}
-        <rect x="65" y="89" width="70" height="8" fill={`${GOLD}0d`} />
-
-        {/* Decorative circle at cross center */}
-        <motion.circle cx="100" cy="95" r="12" fill={`${GOLD}15`} stroke={GOLD} strokeWidth="1.5"
-          initial={{ scale: 0 }} animate={{ scale: 1 }}
-          transition={{ duration: 0.5, delay: 1.5, ease: "backOut" }} />
-        <circle cx="100" cy="95" r="6" fill={`${GOLD}0d`} />
-        <motion.circle cx="100" cy="95" r="3" fill={GOLD}
-          animate={{ opacity: [0.3, 0.8, 0.3], scale: [0.9, 1.2, 0.9] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }} />
-
-        {/* Small decorative elements at cross tips */}
-        <motion.circle cx="100" cy="42" r="4" fill={`${GOLD}22`} stroke={GOLD} strokeWidth="1"
-          initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 2, ease: "backOut" }} />
-        <motion.circle cx="60" cy="95" r="3.5" fill={`${GOLD}22`} stroke={GOLD} strokeWidth="1"
-          initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 2.1, ease: "backOut" }} />
-        <motion.circle cx="140" cy="95" r="3.5" fill={`${GOLD}22`} stroke={GOLD} strokeWidth="1"
-          initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 2.2, ease: "backOut" }} />
-
-        {/* Sparkle accents */}
-        <motion.circle cx="165" cy="40" r="3" fill={GOLD_LIGHT}
-          animate={{ opacity: [0.2, 1, 0.2], scale: [0.7, 1.3, 0.7] }}
-          transition={{ duration: 2.5, repeat: Infinity }} />
-        <motion.circle cx="30" cy="60" r="2" fill={GOLD}
-          animate={{ opacity: [0.1, 0.8, 0.1], scale: [0.5, 1.2, 0.5] }}
-          transition={{ duration: 3, repeat: Infinity, delay: 0.8 }} />
-        <motion.circle cx="175" cy="130" r="2.5" fill={GOLD_LIGHT}
-          animate={{ opacity: [0.15, 0.7, 0.15] }}
-          transition={{ duration: 2, repeat: Infinity, delay: 1.2 }} />
-        <motion.circle cx="25" cy="150" r="2" fill={GOLD}
-          animate={{ opacity: [0.1, 0.6, 0.1] }}
-          transition={{ duration: 2.5, repeat: Infinity, delay: 0.4 }} />
-
-        {/* Pulsing glow at base */}
-        <motion.ellipse cx="100" cy="200" rx="40" ry="5" fill={GOLD}
-          animate={{ opacity: [0.05, 0.15, 0.05], rx: [38, 42, 38] }}
-          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }} />
+/* ───────────────────────── SUBTLE CROSS PATTERN SVG ───────────────────────── */
+function CrossPattern({ opacity = 0.03 }: { opacity?: number }) {
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ opacity }}>
+      <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <pattern id="crossPattern" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
+            <path d="M28 10 L32 10 L32 28 L50 28 L50 32 L32 32 L32 50 L28 50 L28 32 L10 32 L10 28 L28 28Z" fill={AMBER} />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#crossPattern)" />
       </svg>
     </div>
   );
 }
 
-/* ───────────────────────── LIQUID GLASS CARD ───────────────────────── */
-function GlassCard({
-  children,
-  className = "",
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
-  return (
-    <div
-      className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}
-    >
-      {children}
-    </div>
-  );
-}
-
-/* ───────────────────────── MAGNETIC BUTTON ───────────────────────── */
-function MagneticButton({
-  children,
-  className = "",
-  onClick,
-  style,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  onClick?: () => void;
-  style?: React.CSSProperties;
-}) {
-  const ref = useRef<HTMLButtonElement>(null);
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const springX = useSpring(x, springFast);
-  const springY = useSpring(y, springFast);
-
-  const isTouchDevice =
-    typeof window !== "undefined" &&
-    window.matchMedia("(pointer: coarse)").matches;
-
-  const handleMouseMove = useCallback(
-    (e: React.MouseEvent) => {
-      if (!ref.current || isTouchDevice) return;
-      const rect = ref.current.getBoundingClientRect();
-      const cx = rect.left + rect.width / 2;
-      const cy = rect.top + rect.height / 2;
-      x.set((e.clientX - cx) * 0.25);
-      y.set((e.clientY - cy) * 0.25);
-    },
-    [x, y, isTouchDevice]
-  );
-
-  const handleMouseLeave = useCallback(() => {
-    x.set(0);
-    y.set(0);
-  }, [x, y]);
-
-  return (
-    <motion.button
-      ref={ref}
-      style={{ x: springX, y: springY, willChange: "transform", ...style }}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      onClick={onClick}
-      className={className}
-      whileTap={{ scale: 0.97 }}
-    >
-      {children}
-    </motion.button>
-  );
-}
-
-/* ───────────────────────── SHIMMER BORDER ───────────────────────── */
-function ShimmerBorder({
-  children,
-  className = "",
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
-  return (
-    <div className={`relative rounded-2xl p-[1px] overflow-hidden ${className}`}>
-      <motion.div
-        className="absolute inset-0 rounded-2xl"
-        style={{
-          background: `conic-gradient(from 0deg, transparent, ${GOLD}, transparent, ${GOLD_LIGHT}, transparent)`,
-          willChange: "transform",
-        }}
-        animate={{ rotate: [0, 360] }}
-        transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-      />
-      <div className="relative rounded-2xl z-10" style={{ background: NAVY }}>
-        {children}
-      </div>
-    </div>
-  );
-}
-
-/* ───────────────────────── WAVE BACKGROUND ───────────────────────── */
-function WaveBackground() {
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
-      <motion.svg
-        viewBox="0 0 1440 320"
-        className="absolute bottom-0 w-full"
-        preserveAspectRatio="none"
-      >
-        <motion.path
-          fill={GOLD}
-          fillOpacity="0.3"
-          animate={{
-            d: [
-              "M0,224L48,213.3C96,203,192,181,288,186.7C384,192,480,224,576,229.3C672,235,768,213,864,197.3C960,181,1056,171,1152,181.3C1248,192,1344,224,1392,240L1440,256L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z",
-              "M0,256L48,240C96,224,192,192,288,192C384,192,480,224,576,234.7C672,245,768,235,864,218.7C960,203,1056,181,1152,186.7C1248,192,1344,224,1392,240L1440,256L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z",
-              "M0,224L48,213.3C96,203,192,181,288,186.7C384,192,480,224,576,229.3C672,235,768,213,864,197.3C960,181,1056,171,1152,181.3C1248,192,1344,224,1392,240L1440,256L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z",
-            ],
-          }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-        />
-      </motion.svg>
-    </div>
-  );
-}
-
-/* ───────────────────────── DATA ───────────────────────── */
-const serviceTimes = [
-  {
-    day: "Sunday Morning",
-    time: "9:00 AM & 11:00 AM",
-    description: "Join us for worship, prayer, and a powerful message. Children's ministry available during both services.",
-    icon: Church,
-  },
-  {
-    day: "Wednesday Evening",
-    time: "7:00 PM",
-    description: "Midweek Bible study and prayer meeting. A time to dive deeper into God's Word together.",
-    icon: BookOpen,
-  },
-  {
-    day: "Youth Group",
-    time: "Friday 6:30 PM",
-    description: "A vibrant community for teens to grow in faith, build friendships, and have fun together.",
-    icon: UsersThree,
-  },
+const CHURCH_FAQS = [
+  { q: "I've never been to church before — what should I expect?", a: "A warm welcome and zero pressure. Our Sunday services run about 75 minutes and include live worship, an encouraging message, and time to connect with others. Dress however you're comfortable — jeans are perfectly fine. We'd love to meet you at the welcome table in the lobby." },
+  { q: "What time are Sunday services?", a: "We hold two Sunday services: 9:00 AM and 11:00 AM. Both include the same message and worship experience. We recommend arriving 10–15 minutes early for your first visit so a greeter can show you around and point you toward our kids' check-in area if you're bringing children." },
+  { q: "Do you have programs for children and students?", a: "Yes — we have dedicated programming for every age. GraceKids (birth through 5th grade) runs during both Sunday services in our dedicated children's wing. Middle and high school students meet Wednesday evenings at 6:30 PM for Grace Youth — games, community, and relevant teaching." },
+  { q: "How can I get connected beyond Sunday services?", a: "Small groups are the heart of our community. We have over 30 groups meeting throughout the week — some study scripture, others serve together, and some just hang out. Visit the Connection Table on Sunday and we'll match you with a group that fits your schedule and interests." },
+  { q: "Do you offer online services?", a: "Yes — every Sunday service streams live on YouTube and is posted the same day for on-demand viewing. We also have a digital community for those who join us online regularly, with midweek devotionals, prayer threads, and ways to connect with others from home." },
+  { q: "How can I serve or volunteer at Grace Community?", a: "We'd love to have you on the team. We have serving opportunities in worship, kids, hospitality, tech, outreach, and more. Fill out our online volunteer form or stop by the Serve Desk on Sunday — someone will walk you through the options and help you find the right fit." },
 ];
 
-const beliefs = [
-  { title: "The Gospel", description: "We believe in the transformative power of Jesus Christ and His saving grace for all people.", icon: Cross },
-  { title: "God's Word", description: "The Bible is our foundation — the inspired, authoritative guide for faith and daily living.", icon: BookOpen },
-  { title: "Love in Action", description: "We are called to love God and love others through compassion, service, and generosity.", icon: Heart },
-  { title: "Community", description: "We grow together as a family of believers, supporting one another through every season of life.", icon: UsersThree },
-  { title: "Prayer", description: "Prayer is the heartbeat of our church. We believe in the power of coming before God together.", icon: HandsPraying },
-  { title: "The Holy Spirit", description: "We are led and empowered by the Holy Spirit, who guides, comforts, and transforms us daily.", icon: Bird },
-];
-
-const ministries = [
-  { title: "Children's Ministry", description: "A safe, fun environment where kids discover God's love through age-appropriate teaching, worship, and activities.", icon: Baby },
-  { title: "Youth Group", description: "Dynamic gatherings for teens to explore their faith, build lasting friendships, and grow as future leaders.", icon: UsersThree },
-  { title: "Worship Team", description: "Musicians and vocalists leading our congregation into God's presence through modern and traditional worship.", icon: MusicNotes },
-  { title: "Small Groups", description: "Intimate gatherings in homes throughout the week for Bible study, prayer, and authentic community.", icon: BookOpen },
-  { title: "Outreach", description: "Serving our neighbors and the nations through local missions, food drives, and global partnerships.", icon: Handshake },
-  { title: "Prayer Ministry", description: "Dedicated teams interceding for our church, community, and world. Join us in the power of prayer.", icon: HandsPraying },
-];
-
-const pastors = [
-  { name: "Pastor David Thompson", role: "Lead Pastor", photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80", initials: "DT" },
-  { name: "Pastor Maria Gonzalez", role: "Worship & Care Pastor", photo: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=400&q=80", initials: "MG" },
-  { name: "Pastor James Mitchell", role: "Youth & Outreach Pastor", photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&q=80", initials: "JM" },
-];
-
-const events = [
-  { date: "Apr 13", title: "Easter Celebration Service", description: "A special morning of worship, music, and the Easter message. Invite your family and friends to celebrate the risen King." },
-  { date: "Apr 20", title: "Community Potluck Lunch", description: "Stay after the 11 AM service for food, fellowship, and fun. Bring a dish to share and enjoy time with your church family." },
-  { date: "May 3", title: "Women's Conference", description: "A full day of worship, teaching, and encouragement for women of all ages. Guest speaker Pastor Linda Hayes." },
-  { date: "May 17", title: "Men's Breakfast", description: "Start your Saturday morning with a hearty breakfast and a powerful devotional. All men and young men welcome." },
-];
-
-const testimonials = [
-  {
-    name: "Rebecca & Mark S.",
-    text: "When we moved to a new city, we felt lost. Walking through the doors of Grace Community, we immediately felt at home. This church became our family.",
-  },
-  {
-    name: "James W.",
-    text: "After going through the hardest season of my life, the small group I joined here carried me through. I found hope again and a community that truly cares.",
-  },
-  {
-    name: "Angela D.",
-    text: "My kids absolutely love Sunday mornings now. The children's ministry is incredible, and as a single mom, I finally feel supported and encouraged in my faith.",
-  },
-];
-
-const galleryImages = [
-  { src: "https://images.unsplash.com/photo-1438232992991-995b7058bbb3?w=600&q=80", alt: "Worship service" },
-  { src: "https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=600&q=80", alt: "Bible study" },
-  { src: "https://images.unsplash.com/photo-1544427920-c49ccfb85579?w=600&q=80", alt: "Community gathering" },
-  { src: "https://images.unsplash.com/photo-1494972308805-463bc619d34e?w=600&q=80", alt: "Church interior" },
-];
-
-/* ═══════════════════════════════════════════════════════════════════
+/* ═══════════════════════════════════════════════════════════════════════
    MAIN PAGE COMPONENT
-   ═══════════════════════════════════════════════════════════════════ */
-export default function V2ChurchPage() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+   ═══════════════════════════════════════════════════════════════════════ */
+export default function ChurchShowcase() {
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [activeTestimonial, setActiveTestimonial] = useState(0);
+
+  /* Auto-rotate testimonials */
+  useEffect(() => {
+    const t = setInterval(() => setActiveTestimonial((p) => (p + 1) % testimonials.length), 6000);
+    return () => clearInterval(t);
+  }, []);
 
   return (
-    <main
-      className="relative min-h-[100dvh] overflow-x-hidden"
-      style={{ background: NAVY, color: "#f1f5f9" }}
-    >
-      <FloatingParticles />
+    <div className="church-v2 relative min-h-screen overflow-x-hidden" style={{ background: CREAM, color: DARK }}>
 
-      {/* ─── NAV ─── */}
-      <motion.nav
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={spring}
-        className="fixed top-0 left-0 right-0 z-50"
-      >
-        <div className="mx-auto max-w-7xl px-4 md:px-6 py-4">
-          <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
-            <div className="flex items-center gap-2">
-              <Cross size={24} weight="duotone" style={{ color: GOLD }} />
-              <span className="text-lg font-bold tracking-tight text-white">
-                Grace Community Church
-              </span>
-            </div>
-            <div className="hidden md:flex items-center gap-8 text-sm text-slate-400">
-              <a href="#services" className="hover:text-white transition-colors">Services</a>
-              <a href="#about" className="hover:text-white transition-colors">About</a>
-              <a href="#ministries" className="hover:text-white transition-colors">Ministries</a>
-              <a href="#visit" className="hover:text-white transition-colors">Visit Us</a>
-            </div>
-            <div className="flex items-center gap-3">
-              <MagneticButton
-                className="px-4 md:px-5 py-2 rounded-full text-sm font-semibold text-white transition-colors cursor-pointer"
-                style={{ background: GOLD } as React.CSSProperties}
-              >
-                Plan Your Visit
-              </MagneticButton>
-              <button
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="md:hidden p-2 rounded-lg text-white hover:bg-white/10 transition-colors"
-              >
-                {mobileMenuOpen ? <X size={24} /> : <List size={24} />}
+      {/* ═══════════════ NAVBAR ═══════════════ */}
+      <nav className="fixed top-0 inset-x-0 z-50 backdrop-blur-md border-b" style={{ background: "rgba(250,249,246,0.92)", borderColor: CARD_BORDER }}>
+        <div className="mx-auto max-w-7xl px-4 md:px-6 flex items-center justify-between h-16">
+          <a href="#" className="flex items-center gap-2">
+            <Cross size={28} weight="duotone" style={{ color: AMBER }} />
+            <span className="text-lg font-bold tracking-tight" style={{ color: DARK }}>Grace Community Church</span>
+          </a>
+          <div className="hidden lg:flex items-center gap-6">
+            {NAV_LINKS.map((l) => (
+              <a key={l.href} href={l.href} className="text-sm font-medium transition-colors hover:opacity-80" style={{ color: BODY }}>
+                {l.label}
+              </a>
+            ))}
+            <a href="#contact" className="ml-2 rounded-full px-5 py-2 text-sm font-semibold text-white transition-transform hover:scale-105" style={{ background: AMBER }}>
+              Plan Your Visit
+            </a>
+          </div>
+          <button className="lg:hidden p-2" onClick={() => setMobileOpen(true)} aria-label="Open menu">
+            <List size={26} style={{ color: DARK }} />
+          </button>
+        </div>
+      </nav>
+
+      {/* Mobile menu */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            className="fixed inset-0 z-[60] flex flex-col"
+            style={{ background: CREAM }}
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+          >
+            <div className="flex items-center justify-between px-4 h-16 border-b" style={{ borderColor: CARD_BORDER }}>
+              <span className="text-lg font-bold" style={{ color: DARK }}>Grace Community</span>
+              <button onClick={() => setMobileOpen(false)} aria-label="Close menu">
+                <X size={26} style={{ color: DARK }} />
               </button>
             </div>
-          </GlassCard>
-
-          {/* Mobile Menu */}
-          <AnimatePresence>
-            {mobileMenuOpen && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-                className="md:hidden mt-2 overflow-hidden"
-              >
-                <GlassCard className="flex flex-col gap-1 px-4 py-4">
-                  {[
-                    { label: "Services", href: "#services" },
-                    { label: "About", href: "#about" },
-                    { label: "Ministries", href: "#ministries" },
-                    { label: "Visit Us", href: "#visit" },
-                  ].map((link) => (
-                    <a
-                      key={link.label}
-                      href={link.href}
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="block px-4 py-3 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-white/5 transition-colors"
-                    >
-                      {link.label}
-                    </a>
-                  ))}
-                </GlassCard>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </motion.nav>
-
-      {/* ─── HERO ─── */}
-      <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
-        {/* Warm gradient background */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: `radial-gradient(ellipse 80% 60% at 50% 30%, ${GOLD_GLOW} 0%, transparent 70%), radial-gradient(ellipse 60% 50% at 80% 70%, rgba(212,168,83,0.08) 0%, transparent 60%)`,
-          }}
-        />
-        {/* Subtle cross pattern */}
-        <div className="absolute inset-0 pointer-events-none opacity-[0.03]"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M28 0h4v28h28v4H32v28h-4V32H0v-4h28V0z' fill='%23d4a853' fill-opacity='1'/%3E%3C/svg%3E")`,
-            backgroundSize: "60px 60px",
-          }}
-        />
-        <div className="mx-auto max-w-7xl px-4 md:px-6 w-full relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
-          <div className="space-y-8 text-center lg:text-left">
-            <motion.p
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ ...spring, delay: 0.1 }}
-              className="text-sm uppercase tracking-widest"
-              style={{ color: GOLD }}
-            >
-              Grace Community Church
-            </motion.p>
-            <h1
-              className="text-4xl md:text-7xl tracking-tighter leading-none font-bold text-white"
-              style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}
-            >
-              <WordReveal text="A Place to Belong" />
-            </h1>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ ...spring, delay: 0.6 }}
-              className="text-lg md:text-xl text-slate-400 max-w-xl leading-relaxed"
-            >
-              A welcoming community where faith comes alive, lives are transformed,
-              and everyone has a place at the table.
-            </motion.p>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ ...spring, delay: 0.8 }}
-              className="flex flex-wrap justify-center lg:justify-start gap-4"
-            >
-              <MagneticButton
-                className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer"
-                style={{ background: GOLD } as React.CSSProperties}
-              >
+            <div className="flex flex-col gap-1 p-6">
+              {NAV_LINKS.map((l) => (
+                <a key={l.href} href={l.href} onClick={() => setMobileOpen(false)} className="text-lg font-medium py-3 border-b transition-colors" style={{ color: DARK, borderColor: CARD_BORDER }}>
+                  {l.label}
+                </a>
+              ))}
+              <a href="#contact" onClick={() => setMobileOpen(false)} className="mt-4 rounded-full px-6 py-3 text-center text-white font-semibold" style={{ background: AMBER }}>
                 Plan Your Visit
-                <ArrowRight size={18} weight="bold" />
-              </MagneticButton>
-              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
-                <Church size={18} weight="duotone" />
-                Watch Online
-              </MagneticButton>
-            </motion.div>
-          </div>
-          <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ ...spring, delay: 0.3 }} className="hidden md:flex items-center justify-center lg:justify-end">
-            <StainedGlassCrossSVG />
+              </a>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ═══════════════ HERO ═══════════════ */}
+      <section className="relative min-h-[90vh] flex items-center justify-center pt-16 overflow-hidden">
+        {/* Background community photo */}
+        <div className="absolute inset-0">
+          <img
+            src="https://images.unsplash.com/photo-1523580494863-6f3031224c94?w=1920&q=80"
+            alt="Community gathering"
+            className="w-full h-full object-cover"
+          />
+          {/* Warm golden overlay */}
+          <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(217,119,6,0.35) 0%, rgba(245,158,11,0.25) 40%, rgba(250,249,246,0.95) 100%)" }} />
+        </div>
+
+        <div className="relative z-10 text-center px-4 py-20 md:py-32 max-w-4xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+          >
+            <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-6 text-sm font-medium border" style={{ background: "rgba(255,255,255,0.85)", borderColor: CARD_BORDER, color: AMBER }}>
+              <Cross size={16} weight="fill" />
+              Grace Community Church
+            </div>
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-[0.95] mb-6" style={{ color: DARK }}>
+              A Place to{" "}
+              <span style={{ color: AMBER }}>Belong</span>
+            </h1>
+            <p className="text-lg md:text-xl max-w-2xl mx-auto mb-8 leading-relaxed" style={{ color: DARK, textShadow: "0 1px 8px rgba(255,255,255,0.8), 0 0 20px rgba(255,255,255,0.5)" }}>
+              A diverse, multigenerational community in the heart of Ballard, Seattle.
+              Everyone is welcome here.
+            </p>
+          </motion.div>
+
+          <motion.div
+            className="flex flex-col sm:flex-row items-center justify-center gap-4"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.6 }}
+          >
+            <div className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold" style={{ background: "rgba(255,255,255,0.9)", color: DARK, border: `1px solid ${CARD_BORDER}` }}>
+              <Clock size={18} style={{ color: AMBER }} />
+              Sundays 9 AM & 11 AM
+            </div>
+            <a href="#new-here" className="inline-flex items-center gap-2 rounded-full px-7 py-3 text-white font-semibold shadow-lg transition-all hover:scale-105 hover:shadow-xl" style={{ background: AMBER }}>
+              Plan Your Visit
+              <ArrowRight size={18} weight="bold" />
+            </a>
           </motion.div>
         </div>
       </section>
 
-      {/* ─── SERVICE TIMES ─── */}
-      <SectionReveal id="services" className="relative z-10 py-16 md:py-24">
-        {/* Section background glow */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: `radial-gradient(ellipse 50% 40% at 50% 0%, ${GOLD_GLOW} 0%, transparent 70%)`,
-          }}
-        />
+      {/* ═══════════════ SERVICE TIMES ═══════════════ */}
+      <SectionReveal id="services" className="relative py-20 md:py-28">
+        <CrossPattern opacity={0.02} />
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6">
-          <div className="text-center mb-16">
-            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: GOLD }}>
-              Join Us
-            </p>
-            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white">
-              <WordReveal text="Service Times" />
-            </h2>
+          <div className="text-center mb-14">
+            <p className="text-sm uppercase tracking-widest mb-2 font-semibold" style={{ color: AMBER }}>Join Us</p>
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight" style={{ color: DARK }}>Service Times</h2>
           </div>
 
           <motion.div
@@ -622,105 +329,82 @@ export default function V2ChurchPage() {
             viewport={{ once: true, margin: "-50px" }}
           >
             {serviceTimes.map((svc, i) => (
-              <motion.div key={i} variants={fadeUp}>
-                <GlassCard className="p-6 md:p-8 text-center h-full">
-                  <div
-                    className="w-14 h-14 rounded-xl flex items-center justify-center mx-auto mb-5"
-                    style={{ background: GOLD_GLOW }}
-                  >
-                    <svc.icon size={28} weight="duotone" style={{ color: GOLD }} />
-                  </div>
-                  <h3 className="text-xl font-semibold text-white mb-1">{svc.day}</h3>
-                  <p className="text-lg font-bold mb-3" style={{ color: GOLD }}>{svc.time}</p>
-                  <p className="text-sm text-slate-400 leading-relaxed">{svc.description}</p>
-                </GlassCard>
+              <motion.div key={i} variants={fadeUp} className="bg-white rounded-2xl shadow-sm border p-8 text-center hover:shadow-md transition-shadow" style={{ borderColor: CARD_BORDER }}>
+                <div className="w-14 h-14 rounded-xl flex items-center justify-center mx-auto mb-5" style={{ background: AMBER_GLOW }}>
+                  <svc.icon size={28} weight="duotone" style={{ color: AMBER }} />
+                </div>
+                <p className="text-sm font-semibold uppercase tracking-wider mb-1" style={{ color: AMBER }}>{svc.day}</p>
+                <h3 className="text-2xl font-bold mb-1" style={{ color: DARK }}>{svc.time}</h3>
+                <p className="text-base font-semibold mb-3" style={{ color: DARK }}>{svc.label}</p>
+                <p className="text-sm leading-relaxed" style={{ color: BODY }}>{svc.desc}</p>
               </motion.div>
             ))}
           </motion.div>
+
+          <div className="mt-8 text-center">
+            <p className="inline-flex items-center gap-2 text-sm" style={{ color: BODY }}>
+              <MapPin size={16} style={{ color: AMBER }} />
+              6201 15th Ave NW, Seattle, WA 98107
+            </p>
+          </div>
         </div>
       </SectionReveal>
 
-      {/* ─── ABOUT / WELCOME ─── */}
-      <SectionReveal id="about" className="relative z-10 py-16 md:py-24 overflow-hidden">
-        <WaveBackground />
+      {/* ═══════════════ ABOUT GRACE ═══════════════ */}
+      <SectionReveal id="about" className="relative py-20 md:py-28 overflow-hidden" style={{ background: "linear-gradient(180deg, #f5f0eb 0%, #faf9f6 100%)" }}>
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div>
-              <p className="text-sm uppercase tracking-widest mb-3" style={{ color: GOLD }}>
-                Welcome Home
-              </p>
-              <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white mb-6">
-                <WordReveal text="Our Story, Your Story" />
+              <p className="text-sm uppercase tracking-widest mb-2 font-semibold" style={{ color: AMBER }}>Our Story</p>
+              <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-6" style={{ color: DARK }}>
+                Welcome to <span style={{ color: AMBER }}>Grace</span>
               </h2>
-              <div className="space-y-4 text-slate-400 leading-relaxed">
+              <div className="space-y-4 text-base leading-relaxed" style={{ color: BODY }}>
                 <p>
-                  Grace Community Church was founded on a simple belief: everyone
-                  deserves a place where they are known, loved, and free to grow.
-                  For over 25 years, we have been a home for families, individuals,
-                  and seekers alike.
+                  Grace Community Church is a diverse, multigenerational family in the Ballard neighborhood of Seattle.
+                  We believe that church should feel less like an obligation and more like coming home.
                 </p>
                 <p>
-                  Whether you are taking your first steps in faith or have walked
-                  with God for decades, you will find a warm, authentic community
-                  here. We gather not as perfect people, but as a family learning
-                  to love like Jesus — imperfectly, passionately, and without
-                  reservation.
+                  Founded in 2014 by Pastor David and Rachel Kim, Grace started as a living-room gathering of 12 people
+                  with a simple dream: create a space where anyone, regardless of background, could experience authentic
+                  community and encounter the love of God.
                 </p>
                 <p>
-                  From Sunday worship to midweek groups, from mission trips to
-                  neighborhood potlucks, everything we do is rooted in the belief
-                  that life is better together.
+                  Today, over 300 people call Grace home. We worship together, serve our neighbors, raise our kids side by side,
+                  and carry each other through life's hardest chapters.
                 </p>
               </div>
+              <a href="#new-here" className="mt-6 inline-flex items-center gap-2 text-sm font-semibold transition-colors hover:opacity-80" style={{ color: AMBER }}>
+                Learn what to expect
+                <ArrowRight size={16} weight="bold" />
+              </a>
             </div>
-
-            <motion.div
-              className="grid grid-cols-2 gap-4"
-              variants={stagger}
-              initial="hidden"
-              whileInView="show"
-              viewport={{ once: true }}
-            >
-              {[
-                { icon: Heart, label: "25+ Years", desc: "Serving our community" },
-                { icon: UsersThree, label: "800+ Members", desc: "One church family" },
-                { icon: HandsPraying, label: "12 Small Groups", desc: "Growing together" },
-                { icon: Handshake, label: "Global Outreach", desc: "3 mission partners" },
-              ].map((item, i) => (
-                <motion.div key={i} variants={fadeUp}>
-                  <GlassCard className="p-5 text-center">
-                    <item.icon
-                      size={28}
-                      weight="duotone"
-                      style={{ color: GOLD }}
-                      className="mx-auto mb-2"
-                    />
-                    <p className="text-sm font-semibold text-white">{item.label}</p>
-                    <p className="text-xs text-slate-400 mt-1">{item.desc}</p>
-                  </GlassCard>
-                </motion.div>
-              ))}
-            </motion.div>
+            <div className="relative">
+              <img
+                src="https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=800&q=80"
+                alt="Grace Community Church family gathering"
+                className="w-full rounded-2xl shadow-lg object-cover aspect-[4/3]"
+              />
+              <div className="absolute -bottom-4 -left-4 rounded-xl bg-white shadow-md border px-5 py-3 flex items-center gap-3" style={{ borderColor: CARD_BORDER }}>
+                <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: AMBER_GLOW }}>
+                  <Heart size={20} weight="fill" style={{ color: AMBER }} />
+                </div>
+                <div>
+                  <p className="text-sm font-bold" style={{ color: DARK }}>Since 2014</p>
+                  <p className="text-xs" style={{ color: BODY }}>10 years of community</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </SectionReveal>
 
-      {/* ─── BELIEFS ─── */}
-      <SectionReveal className="relative z-10 py-16 md:py-24">
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: `radial-gradient(ellipse 60% 50% at 20% 50%, ${GOLD_GLOW} 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 80% 80%, rgba(212,168,83,0.06) 0%, transparent 50%)`,
-          }}
-        />
+      {/* ═══════════════ MINISTRIES ═══════════════ */}
+      <SectionReveal id="ministries" className="relative py-20 md:py-28">
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6">
-          <div className="text-center mb-16">
-            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: GOLD }}>
-              What We Believe
-            </p>
-            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white">
-              <WordReveal text="Rooted in Faith" />
-            </h2>
+          <div className="text-center mb-14">
+            <p className="text-sm uppercase tracking-widest mb-2 font-semibold" style={{ color: AMBER }}>Get Involved</p>
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight" style={{ color: DARK }}>Ministries</h2>
           </div>
 
           <motion.div
@@ -730,239 +414,86 @@ export default function V2ChurchPage() {
             whileInView="show"
             viewport={{ once: true, margin: "-50px" }}
           >
-            {beliefs.map((belief, i) => (
-              <motion.div key={i} variants={fadeUp}>
-                <motion.div
-                  whileHover={{ scale: 1.03 }}
-                  transition={springGentle}
-                  style={{ willChange: "transform" }}
-                >
-                  <GlassCard className="p-6 h-full">
-                    <div
-                      className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
-                      style={{ background: GOLD_GLOW }}
-                    >
-                      <belief.icon size={24} weight="duotone" style={{ color: GOLD }} />
-                    </div>
-                    <h3 className="text-lg font-semibold text-white mb-2">{belief.title}</h3>
-                    <p className="text-sm text-slate-400 leading-relaxed">{belief.description}</p>
-                  </GlassCard>
-                </motion.div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </SectionReveal>
-
-      {/* ─── MINISTRIES ─── */}
-      <SectionReveal id="ministries" className="relative z-10 py-16 md:py-24">
-        <div
-          className="absolute inset-0 pointer-events-none opacity-[0.03]"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='40' cy='40' r='2' fill='%23d4a853'/%3E%3C/svg%3E")`,
-            backgroundSize: "80px 80px",
-          }}
-        />
-        <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6">
-          <div className="text-center mb-16">
-            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: GOLD }}>
-              Get Involved
-            </p>
-            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white">
-              <WordReveal text="Our Ministries" />
-            </h2>
-          </div>
-
-          <motion.div
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-            variants={stagger}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, margin: "-50px" }}
-          >
-            {ministries.map((ministry, i) => (
-              <motion.div key={i} variants={fadeUp}>
-                <motion.div
-                  whileHover={{ scale: 1.03 }}
-                  transition={springGentle}
-                  style={{ willChange: "transform" }}
-                >
-                  <GlassCard className="p-6 h-full">
-                    <div
-                      className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
-                      style={{ background: GOLD_GLOW }}
-                    >
-                      <ministry.icon size={24} weight="duotone" style={{ color: GOLD }} />
-                    </div>
-                    <h3 className="text-lg font-semibold text-white mb-2">{ministry.title}</h3>
-                    <p className="text-sm text-slate-400 leading-relaxed">{ministry.description}</p>
-                  </GlassCard>
-                </motion.div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </SectionReveal>
-
-      {/* ─── PASTORS / LEADERSHIP ─── */}
-      <SectionReveal className="relative z-10 py-16 md:py-24">
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: `radial-gradient(ellipse 50% 50% at 70% 30%, ${GOLD_GLOW} 0%, transparent 60%)`,
-          }}
-        />
-        <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6">
-          <div className="text-center mb-16">
-            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: GOLD }}>
-              Our Shepherds
-            </p>
-            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white">
-              <WordReveal text="Meet Our Pastors" />
-            </h2>
-          </div>
-
-          <motion.div
-            className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-4xl mx-auto"
-            variants={stagger}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, margin: "-50px" }}
-          >
-            {pastors.map((pastor, i) => (
-              <motion.div key={i} variants={fadeUp}>
-                <motion.div
-                  whileHover={{ scale: 1.03 }}
-                  transition={springGentle}
-                  className="cursor-default"
-                  style={{ willChange: "transform" }}
-                >
-                  <GlassCard className="p-6 text-center">
-                    <div className="w-24 h-24 rounded-full mx-auto mb-4 overflow-hidden border-2" style={{ borderColor: GOLD_GLOW }}>
-                      <img
-                        src={pastor.photo}
-                        alt={pastor.name}
-                        className="w-full h-full object-cover object-center"
-                      />
-                    </div>
-                    <h3 className="text-lg font-semibold text-white">{pastor.name}</h3>
-                    <p className="text-sm mt-1" style={{ color: GOLD }}>{pastor.role}</p>
-                  </GlassCard>
-                </motion.div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </SectionReveal>
-
-      {/* ─── EVENTS CALENDAR ─── */}
-      <SectionReveal className="relative z-10 py-16 md:py-24 overflow-hidden">
-        <WaveBackground />
-        <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
-            <div className="lg:sticky lg:top-32">
-              <p className="text-sm uppercase tracking-widest mb-3" style={{ color: GOLD }}>
-                Upcoming
-              </p>
-              <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white mb-6">
-                <WordReveal text="Events & Gatherings" />
-              </h2>
-              <p className="text-slate-400 leading-relaxed max-w-md">
-                There is always something happening at Grace Community. From special
-                services to fellowship events, find your next opportunity to connect.
-              </p>
-            </div>
-
-            <motion.div
-              className="space-y-4"
-              variants={stagger}
-              initial="hidden"
-              whileInView="show"
-              viewport={{ once: true, margin: "-50px" }}
-            >
-              {events.map((event, i) => (
-                <motion.div key={i} variants={fadeUp}>
-                  <GlassCard className="p-5 md:p-6 flex gap-5">
-                    <div
-                      className="w-16 h-16 rounded-xl flex flex-col items-center justify-center shrink-0"
-                      style={{ background: GOLD_GLOW }}
-                    >
-                      <CalendarBlank size={18} weight="duotone" style={{ color: GOLD }} className="mb-0.5" />
-                      <span className="text-xs font-bold" style={{ color: GOLD }}>{event.date}</span>
-                    </div>
-                    <div>
-                      <h3 className="text-base font-semibold text-white mb-1">{event.title}</h3>
-                      <p className="text-sm text-slate-400 leading-relaxed">{event.description}</p>
-                    </div>
-                  </GlassCard>
-                </motion.div>
-              ))}
-            </motion.div>
-          </div>
-        </div>
-      </SectionReveal>
-
-      {/* ─── GIVING ─── */}
-      <SectionReveal className="relative z-10 py-16 md:py-24">
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: `radial-gradient(ellipse 60% 50% at 50% 50%, ${GOLD_GLOW} 0%, transparent 60%)`,
-          }}
-        />
-        <div className="relative z-10 mx-auto max-w-4xl px-4 md:px-6">
-          <ShimmerBorder>
-            <div className="p-8 md:p-12 text-center">
+            {ministries.map((m, i) => (
               <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={spring}
+                key={i}
+                variants={fadeUp}
+                className="bg-white rounded-2xl shadow-sm border p-7 hover:shadow-md transition-all hover:-translate-y-1 group"
+                style={{ borderColor: CARD_BORDER }}
               >
-                <HandsPraying size={48} weight="duotone" style={{ color: GOLD }} className="mx-auto mb-4" />
-                <p className="text-sm uppercase tracking-widest mb-3" style={{ color: GOLD }}>
-                  Generosity
-                </p>
-                <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white mb-4">
-                  Give with a Grateful Heart
-                </h2>
-                <p className="text-slate-400 text-lg mb-2 max-w-lg mx-auto">
-                  Your generosity fuels our mission to serve this community and share
-                  the love of Christ with the world.
-                </p>
-                <p className="text-slate-500 text-sm mb-8 max-w-md mx-auto">
-                  Every gift — no matter the size — makes a lasting impact. Tithes and
-                  offerings support our ministries, missions, and outreach programs.
-                </p>
-                <MagneticButton
-                  className="px-10 py-4 rounded-full text-base font-semibold text-white inline-flex items-center gap-2 cursor-pointer"
-                  style={{ background: GOLD } as React.CSSProperties}
-                >
-                  <Heart size={20} weight="duotone" />
-                  Give Online
-                </MagneticButton>
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 transition-colors" style={{ background: AMBER_GLOW }}>
+                  <m.icon size={24} weight="duotone" style={{ color: AMBER }} />
+                </div>
+                <h3 className="text-lg font-bold mb-2" style={{ color: DARK }}>{m.name}</h3>
+                <p className="text-sm leading-relaxed" style={{ color: BODY }}>{m.desc}</p>
               </motion.div>
-            </div>
-          </ShimmerBorder>
+            ))}
+          </motion.div>
         </div>
       </SectionReveal>
 
-      {/* ─── TESTIMONIALS ─── */}
-      <SectionReveal className="relative z-10 py-16 md:py-24">
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: `radial-gradient(ellipse 50% 40% at 30% 60%, rgba(212,168,83,0.08) 0%, transparent 60%)`,
-          }}
-        />
+      {/* ═══════════════ UPCOMING EVENTS ═══════════════ */}
+      <SectionReveal id="events" className="relative py-20 md:py-28" style={{ background: "linear-gradient(180deg, #f5f0eb 0%, #faf9f6 100%)" }}>
+        <CrossPattern opacity={0.015} />
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6">
-          <div className="text-center mb-16">
-            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: GOLD }}>
-              Stories of Faith
-            </p>
-            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white">
-              <WordReveal text="Lives Transformed" />
-            </h2>
+          <div className="text-center mb-14">
+            <p className="text-sm uppercase tracking-widest mb-2 font-semibold" style={{ color: AMBER }}>What&apos;s Happening</p>
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight" style={{ color: DARK }}>Upcoming Events</h2>
+          </div>
+
+          <motion.div
+            className="grid grid-cols-1 sm:grid-cols-2 gap-6"
+            variants={stagger}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-50px" }}
+          >
+            {events.map((e, i) => (
+              <motion.div
+                key={i}
+                variants={fadeUp}
+                className="bg-white rounded-2xl shadow-sm border overflow-hidden hover:shadow-md transition-shadow group"
+                style={{ borderColor: CARD_BORDER }}
+              >
+                <div className="flex items-stretch">
+                  <div className="w-2 shrink-0" style={{ background: e.color }} />
+                  <div className="p-6 flex-1">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <h3 className="text-lg font-bold mb-1" style={{ color: DARK }}>{e.title}</h3>
+                        <div className="flex flex-wrap items-center gap-3 text-sm" style={{ color: BODY }}>
+                          <span className="inline-flex items-center gap-1">
+                            <CalendarBlank size={14} style={{ color: AMBER }} />
+                            {e.date}
+                          </span>
+                          <span className="inline-flex items-center gap-1">
+                            <Clock size={14} style={{ color: AMBER }} />
+                            {e.time}
+                          </span>
+                        </div>
+                        <p className="mt-2 text-sm inline-flex items-center gap-1" style={{ color: BODY }}>
+                          <MapPin size={14} style={{ color: AMBER }} />
+                          {e.location}
+                        </p>
+                      </div>
+                      <div className="shrink-0 w-10 h-10 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: AMBER_GLOW }}>
+                        <ArrowRight size={18} style={{ color: AMBER }} />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </SectionReveal>
+
+      {/* ═══════════════ SERMON ARCHIVE ═══════════════ */}
+      <SectionReveal id="sermons" className="relative py-20 md:py-28">
+        <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6">
+          <div className="text-center mb-14">
+            <p className="text-sm uppercase tracking-widest mb-2 font-semibold" style={{ color: AMBER }}>Listen Again</p>
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight" style={{ color: DARK }}>Recent Sermons</h2>
           </div>
 
           <motion.div
@@ -972,200 +503,543 @@ export default function V2ChurchPage() {
             whileInView="show"
             viewport={{ once: true, margin: "-50px" }}
           >
-            {testimonials.map((t, i) => (
-              <motion.div key={i} variants={fadeUp}>
-                <GlassCard className="p-6 h-full flex flex-col">
-                  <Quotes size={28} weight="fill" style={{ color: GOLD }} className="mb-3 opacity-50" />
-                  <p className="text-slate-300 leading-relaxed flex-1 text-sm">
-                    {t.text}
-                  </p>
-                  <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
-                    <span className="text-sm font-semibold text-white">{t.name}</span>
-                    <div className="flex gap-0.5">
-                      {Array.from({ length: 5 }).map((_, j) => (
-                        <Star key={j} size={12} weight="fill" style={{ color: GOLD }} />
-                      ))}
+            {sermons.map((s, i) => (
+              <motion.div
+                key={i}
+                variants={fadeUp}
+                className="bg-white rounded-2xl shadow-sm border overflow-hidden hover:shadow-md transition-shadow group"
+                style={{ borderColor: CARD_BORDER }}
+              >
+                <div className="relative aspect-[16/10] overflow-hidden">
+                  <img src={s.img} alt={s.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                  <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="w-14 h-14 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
+                      <Play size={24} weight="fill" style={{ color: AMBER }} />
                     </div>
                   </div>
-                </GlassCard>
+                  <div className="absolute top-3 left-3 rounded-full px-3 py-1 text-xs font-semibold bg-white/90 backdrop-blur-sm" style={{ color: AMBER }}>
+                    {s.series}
+                  </div>
+                </div>
+                <div className="p-5">
+                  <h3 className="text-base font-bold mb-1" style={{ color: DARK }}>{s.title}</h3>
+                  <p className="text-sm" style={{ color: BODY }}>{s.speaker}</p>
+                  <p className="text-xs mt-1" style={{ color: BODY }}>{s.date}</p>
+                </div>
               </motion.div>
             ))}
           </motion.div>
         </div>
       </SectionReveal>
 
-      {/* ─── GALLERY ─── */}
-      <SectionReveal className="relative z-10 py-16 md:py-24">
-        <div
-          className="absolute inset-0 pointer-events-none opacity-[0.03]"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M28 0h4v28h28v4H32v28h-4V32H0v-4h28V0z' fill='%23d4a853' fill-opacity='1'/%3E%3C/svg%3E")`,
-            backgroundSize: "60px 60px",
-          }}
-        />
+      {/* ═══════════════ MEET THE PASTORS ═══════════════ */}
+      <SectionReveal className="relative py-20 md:py-28" style={{ background: "linear-gradient(180deg, #f5f0eb 0%, #faf9f6 100%)" }}>
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6">
-          <div className="text-center mb-16">
-            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: GOLD }}>
-              Church Life
-            </p>
-            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white">
-              <WordReveal text="See Our Community" />
+          <div className="text-center mb-14">
+            <p className="text-sm uppercase tracking-widest mb-2 font-semibold" style={{ color: AMBER }}>Our Shepherds</p>
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight" style={{ color: DARK }}>Meet the Pastors</h2>
+          </div>
+
+          <div className="bg-white rounded-3xl shadow-sm border overflow-hidden" style={{ borderColor: CARD_BORDER }}>
+            <div className="grid grid-cols-1 lg:grid-cols-2">
+              <div className="relative aspect-[4/3] lg:aspect-auto">
+                <img
+                  src="https://images.unsplash.com/photo-1543269664-56d93c1b41a6?w=800&q=80"
+                  alt="Pastor David and Rachel Kim"
+                  className="w-full h-full object-cover object-top"
+                />
+              </div>
+              <div className="p-8 md:p-12 flex flex-col justify-center">
+                <h3 className="text-2xl md:text-3xl font-bold mb-2" style={{ color: DARK }}>Pastor David & Rachel Kim</h3>
+                <p className="text-sm font-medium mb-6" style={{ color: AMBER }}>Lead Pastors</p>
+                <div className="space-y-4 text-base leading-relaxed" style={{ color: BODY }}>
+                  <p>
+                    David and Rachel met at Dallas Theological Seminary, married 22 years ago, and
+                    have three kids who keep life interesting. In 2014, they packed up their Texas
+                    lives and moved to Seattle with a wild idea: plant a church that felt like family.
+                  </p>
+                  <p>
+                    David preaches with warmth and humor. Rachel leads worship and the women&apos;s ministry.
+                    Together, they set the tone for everything Grace is: honest, joyful, and unapologetically
+                    welcoming.
+                  </p>
+                </div>
+                <div className="mt-6 flex items-center gap-3">
+                  <a href="#contact" className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition-transform hover:scale-105" style={{ background: AMBER }}>
+                    <Envelope size={16} />
+                    Say Hello
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ═══════════════ COMMUNITY IMPACT ═══════════════ */}
+      <SectionReveal className="relative py-20 md:py-28">
+        <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6">
+          <div className="text-center mb-14">
+            <p className="text-sm uppercase tracking-widest mb-2 font-semibold" style={{ color: AMBER }}>By the Numbers</p>
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight" style={{ color: DARK }}>Community Impact</h2>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {stats.map((s, i) => (
+              <motion.div
+                key={i}
+                className="bg-white rounded-2xl shadow-sm border p-6 md:p-8 text-center hover:shadow-md transition-shadow"
+                style={{ borderColor: CARD_BORDER }}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1, ...spring }}
+              >
+                <p className="text-3xl md:text-4xl font-bold mb-2" style={{ color: AMBER }}>
+                  <AnimatedCounter value={s.value} prefix={s.prefix} suffix={s.suffix} />
+                </p>
+                <p className="text-sm font-medium" style={{ color: BODY }}>{s.label}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ═══════════════ I'M NEW HERE ═══════════════ */}
+      <SectionReveal id="new-here" className="relative py-20 md:py-28" style={{ background: "linear-gradient(180deg, #fef3c7 0%, #faf9f6 100%)" }}>
+        <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6">
+          <div className="text-center mb-14">
+            <p className="text-sm uppercase tracking-widest mb-2 font-semibold" style={{ color: AMBER }}>First Visit?</p>
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight" style={{ color: DARK }}>
+              I&apos;m <span style={{ color: AMBER }}>New</span> Here
             </h2>
+            <p className="mt-4 text-lg max-w-2xl mx-auto" style={{ color: BODY }}>
+              We know walking into a new church can feel intimidating. Here&apos;s what to expect so you can relax and enjoy.
+            </p>
           </div>
 
-          <motion.div
-            className="grid grid-cols-1 sm:grid-cols-2 gap-4"
-            variants={stagger}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, margin: "-50px" }}
-          >
-            {galleryImages.map((img, i) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { icon: Coffee, title: "Coffee Bar", desc: "Grab a free latte or drip coffee in the lobby. We take coffee seriously." },
+              { icon: UsersThree, title: "Casual Dress", desc: "Jeans, shorts, sundresses \u2014 whatever you\u2019re comfortable in. No dress code." },
+              { icon: Clock, title: "75-Minute Service", desc: "Music, a message, and you\u2019re out in time for lunch. We respect your time." },
+              { icon: Baby, title: "Kids Program", desc: "Safe, fun, age-appropriate classes during every service. From nursery to 5th grade." },
+            ].map((item, i) => (
+              <motion.div
+                key={i}
+                className="bg-white rounded-2xl shadow-sm border p-7 text-center hover:shadow-md transition-shadow"
+                style={{ borderColor: CARD_BORDER }}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1, ...spring }}
+              >
+                <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: AMBER_GLOW }}>
+                  <item.icon size={28} weight="duotone" style={{ color: AMBER }} />
+                </div>
+                <h3 className="text-base font-bold mb-2" style={{ color: DARK }}>{item.title}</h3>
+                <p className="text-sm leading-relaxed" style={{ color: BODY }}>{item.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="mt-10 text-center">
+            <div className="inline-flex items-center gap-2 rounded-full px-6 py-3 bg-white shadow-sm border" style={{ borderColor: CARD_BORDER }}>
+              <HandsPraying size={20} weight="duotone" style={{ color: AMBER }} />
+              <span className="text-sm font-medium" style={{ color: DARK }}>We save you a seat. Just show up.</span>
+            </div>
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ═══════════════ TESTIMONIALS ═══════════════ */}
+      <SectionReveal className="relative py-20 md:py-28">
+        <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6">
+          <div className="text-center mb-14">
+            <p className="text-sm uppercase tracking-widest mb-2 font-semibold" style={{ color: AMBER }}>Real Stories</p>
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight" style={{ color: DARK }}>What People Are Saying</h2>
+          </div>
+
+          {/* Desktop: Story cards grid */}
+          <div className="hidden md:grid grid-cols-2 lg:grid-cols-3 gap-6">
+            {testimonials.map((t, i) => (
+              <motion.div
+                key={i}
+                className="relative rounded-2xl overflow-hidden shadow-md group"
+                style={{ minHeight: 280 }}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1, ...spring }}
+              >
+                <img src={t.img} alt={t.author} className="absolute inset-0 w-full h-full object-cover" />
+                <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(28,25,23,0.85) 0%, rgba(28,25,23,0.3) 100%)" }} />
+                <div className="relative z-10 flex flex-col justify-end h-full p-6">
+                  <Quotes size={28} weight="fill" className="mb-3" style={{ color: AMBER_LIGHT }} />
+                  <p className="text-white text-sm leading-relaxed mb-3">{t.quote}</p>
+                  <p className="text-xs font-semibold" style={{ color: AMBER_LIGHT }}>\u2014 {t.author}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Mobile: Carousel */}
+          <div className="md:hidden">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTestimonial}
+                className="relative rounded-2xl overflow-hidden shadow-md"
+                style={{ minHeight: 320 }}
+                initial={{ opacity: 0, x: 30 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -30 }}
+                transition={{ duration: 0.3 }}
+              >
+                <img src={testimonials[activeTestimonial].img} alt={testimonials[activeTestimonial].author} className="absolute inset-0 w-full h-full object-cover" />
+                <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(28,25,23,0.85) 0%, rgba(28,25,23,0.3) 100%)" }} />
+                <div className="relative z-10 flex flex-col justify-end h-full p-6">
+                  <Quotes size={28} weight="fill" className="mb-3" style={{ color: AMBER_LIGHT }} />
+                  <p className="text-white text-base leading-relaxed mb-3">{testimonials[activeTestimonial].quote}</p>
+                  <p className="text-sm font-semibold" style={{ color: AMBER_LIGHT }}>\u2014 {testimonials[activeTestimonial].author}</p>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+            <div className="flex items-center justify-center gap-2 mt-4">
+              {testimonials.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setActiveTestimonial(i)}
+                  className="w-2.5 h-2.5 rounded-full transition-all"
+                  style={{ background: i === activeTestimonial ? AMBER : CARD_BORDER }}
+                  aria-label={`Testimonial ${i + 1}`}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ═══════════════ GIVE / DONATE ═══════════════ */}
+      <SectionReveal id="give" className="relative py-20 md:py-28" style={{ background: "linear-gradient(180deg, #f5f0eb 0%, #faf9f6 100%)" }}>
+        <CrossPattern opacity={0.02} />
+        <div className="relative z-10 mx-auto max-w-5xl px-4 md:px-6 text-center">
+          <p className="text-sm uppercase tracking-widest mb-2 font-semibold" style={{ color: AMBER }}>Generosity</p>
+          <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-6" style={{ color: DARK }}>
+            Partner <span style={{ color: AMBER }}>With Us</span>
+          </h2>
+          <p className="text-lg max-w-2xl mx-auto mb-10 leading-relaxed" style={{ color: BODY }}>
+            Your generosity fuels everything we do. Every dollar goes toward building a community
+            where people can find hope, healing, and belonging.
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
+            {[
+              { icon: HandHeart, title: "Local Outreach", desc: "Food banks, shelters, and neighborhood partnerships across Seattle." },
+              { icon: Church, title: "Building Fund", desc: "Expanding our campus to serve more families and host more programs." },
+              { icon: Heart, title: "Global Missions", desc: "Clean water projects, school building, and church planting worldwide." },
+            ].map((item, i) => (
+              <div key={i} className="bg-white rounded-2xl shadow-sm border p-6" style={{ borderColor: CARD_BORDER }}>
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-4" style={{ background: AMBER_GLOW }}>
+                  <item.icon size={24} weight="duotone" style={{ color: AMBER }} />
+                </div>
+                <h3 className="text-sm font-bold mb-1" style={{ color: DARK }}>{item.title}</h3>
+                <p className="text-sm leading-relaxed" style={{ color: BODY }}>{item.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          <a href="#" className="inline-flex items-center gap-2 rounded-full px-8 py-3.5 text-white font-semibold shadow-lg transition-all hover:scale-105" style={{ background: AMBER }}>
+            <CurrencyDollar size={20} weight="bold" />
+            Give Online
+          </a>
+        </div>
+      </SectionReveal>
+
+      {/* ═══════════════ LOCATION & DIRECTIONS ═══════════════ */}
+      <SectionReveal className="relative py-20 md:py-28">
+        <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6">
+          <div className="text-center mb-14">
+            <p className="text-sm uppercase tracking-widest mb-2 font-semibold" style={{ color: AMBER }}>Find Us</p>
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight" style={{ color: DARK }}>Location & Directions</h2>
+          </div>
+
+          <div className="bg-white rounded-3xl shadow-sm border overflow-hidden" style={{ borderColor: CARD_BORDER }}>
+            <div className="grid grid-cols-1 lg:grid-cols-2">
+              {/* Map placeholder */}
+              <div className="relative aspect-[4/3] lg:aspect-auto overflow-hidden" style={{ background: "#e7e5e4", minHeight: 320 }}>
+                <img
+                  src="https://images.unsplash.com/photo-1470004914212-05527e49370b?w=800&q=80"
+                  alt="Ballard, Seattle aerial view"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 flex items-center justify-center" style={{ background: "rgba(28,25,23,0.25)" }}>
+                  <a
+                    href="https://maps.google.com/?q=6201+15th+Ave+NW+Seattle+WA+98107"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 rounded-full px-6 py-3 bg-white shadow-lg font-semibold text-sm transition-transform hover:scale-105"
+                    style={{ color: DARK }}
+                  >
+                    <NavigationArrow size={18} style={{ color: AMBER }} />
+                    Get Directions
+                  </a>
+                </div>
+              </div>
+              <div className="p-8 md:p-12 flex flex-col justify-center">
+                <h3 className="text-xl font-bold mb-6" style={{ color: DARK }}>Located in the Heart of Ballard</h3>
+                <div className="space-y-5">
+                  <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: AMBER_GLOW }}>
+                      <MapPin size={20} weight="duotone" style={{ color: AMBER }} />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold" style={{ color: DARK }}>Address</p>
+                      <a href="https://maps.google.com/?q=6201+15th+Ave+NW+Seattle+WA+98107" target="_blank" rel="noopener noreferrer" className="text-sm hover:underline" style={{ color: BODY }}>
+                        6201 15th Ave NW, Seattle, WA 98107
+                      </a>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: AMBER_GLOW }}>
+                      <Car size={20} weight="duotone" style={{ color: AMBER }} />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold" style={{ color: DARK }}>Parking</p>
+                      <p className="text-sm" style={{ color: BODY }}>Free lot behind the building + street parking on 15th Ave.</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: AMBER_GLOW }}>
+                      <Wheelchair size={20} weight="duotone" style={{ color: AMBER }} />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold" style={{ color: DARK }}>Accessibility</p>
+                      <p className="text-sm" style={{ color: BODY }}>Fully ADA accessible. Ramp entrance, elevator, reserved seating.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ═══════════════ FAQ ═══════════════ */}
+      <SectionReveal className="relative py-16 md:py-24 bg-white">
+        <div className="mx-auto max-w-3xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-[0.2em] mb-3 font-semibold" style={{ color: AMBER }}>Common Questions</p>
+            <h2 className="text-4xl md:text-5xl font-bold tracking-tight" style={{ color: DARK }}>Frequently Asked</h2>
+            <p className="mt-4 text-stone-500 text-lg">Answers to help you feel at home before your first visit.</p>
+          </div>
+          <motion.div className="space-y-3" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
+            {CHURCH_FAQS.map((faq, i) => (
               <motion.div key={i} variants={fadeUp}>
-                <motion.div
-                  whileHover={{ scale: 1.02 }}
-                  transition={springGentle}
-                  className="overflow-hidden rounded-2xl border border-white/10"
-                  style={{ willChange: "transform" }}
-                >
-                  <img
-                    src={img.src}
-                    alt={img.alt}
-                    className="w-full h-56 md:h-72 object-cover"
-                  />
-                </motion.div>
+                <div className="border rounded-xl overflow-hidden" style={{ borderColor: CARD_BORDER, background: CREAM }}>
+                  <button
+                    onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                    className="w-full flex items-center justify-between p-5 text-left cursor-pointer"
+                  >
+                    <span className="text-base font-semibold pr-4" style={{ color: DARK }}>{faq.q}</span>
+                    <motion.div animate={{ rotate: openFaq === i ? 180 : 0 }} transition={spring}>
+                      <CaretDown size={20} style={{ color: AMBER }} className="shrink-0" />
+                    </motion.div>
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {openFaq === i && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={spring}
+                        className="overflow-hidden"
+                      >
+                        <p className="px-5 pb-5 text-stone-500 leading-relaxed border-t pt-4" style={{ borderColor: CARD_BORDER }}>{faq.a}</p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               </motion.div>
             ))}
           </motion.div>
+          <p className="text-center mt-8 text-stone-500">More questions? <a href="tel:2063257841" className="font-semibold" style={{ color: AMBER }}>Call us at (206) 325-7841</a> — we&apos;d love to chat.</p>
         </div>
       </SectionReveal>
 
-      {/* ─── LOCATION / MAP ─── */}
-      <SectionReveal id="visit" className="relative z-10 py-16 md:py-24">
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: `radial-gradient(ellipse 50% 50% at 50% 50%, ${GOLD_GLOW} 0%, transparent 60%)`,
-          }}
-        />
+      {/* ═══════════════ CONTACT ═══════════════ */}
+      <SectionReveal id="contact" className="relative py-20 md:py-28" style={{ background: "linear-gradient(180deg, #f5f0eb 0%, #faf9f6 100%)" }}>
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <p className="text-sm uppercase tracking-widest mb-3" style={{ color: GOLD }}>
-                Come As You Are
-              </p>
-              <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white mb-6">
-                <WordReveal text="Plan Your Visit" />
-              </h2>
-              <p className="text-slate-400 leading-relaxed max-w-md mb-8">
-                We would love to meet you. Whether it is your first time visiting a
-                church or you are looking for a new home church, you are welcome here.
-                Come as you are — we will save you a seat.
-              </p>
-              <div className="flex flex-wrap gap-4">
-                <MagneticButton
-                  className="px-10 py-4 rounded-full text-base font-semibold text-white inline-flex items-center gap-2 cursor-pointer"
-                  style={{ background: GOLD } as React.CSSProperties}
-                >
-                  <MapPin size={20} weight="duotone" />
-                  Get Directions
-                </MagneticButton>
-                <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
-                  <Phone size={18} weight="duotone" />
-                  Call Us
-                </MagneticButton>
-              </div>
+          <div className="text-center mb-14">
+            <p className="text-sm uppercase tracking-widest mb-2 font-semibold" style={{ color: AMBER }}>Reach Out</p>
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight" style={{ color: DARK }}>Contact Us</h2>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+            {/* Form */}
+            <div className="bg-white rounded-2xl shadow-sm border p-8" style={{ borderColor: CARD_BORDER }}>
+              <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
+                <div>
+                  <label className="block text-sm font-medium mb-1.5" style={{ color: DARK }}>Your Name</label>
+                  <input type="text" placeholder="Full name" className="w-full rounded-xl border px-4 py-3 text-sm outline-none focus:ring-2 transition-shadow" style={{ borderColor: CARD_BORDER, background: CREAM }} />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1.5" style={{ color: DARK }}>Email</label>
+                  <input type="email" placeholder="your@email.com" className="w-full rounded-xl border px-4 py-3 text-sm outline-none focus:ring-2 transition-shadow" style={{ borderColor: CARD_BORDER, background: CREAM }} />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1.5" style={{ color: DARK }}>How can we help?</label>
+                  <select className="w-full rounded-xl border px-4 py-3 text-sm outline-none focus:ring-2 transition-shadow" style={{ borderColor: CARD_BORDER, background: CREAM, color: BODY }}>
+                    <option>General question</option>
+                    <option>Prayer request</option>
+                    <option>Plan my first visit</option>
+                    <option>Join a small group</option>
+                    <option>Volunteer</option>
+                    <option>Other</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1.5" style={{ color: DARK }}>Message</label>
+                  <textarea rows={4} placeholder="Tell us what's on your heart..." className="w-full rounded-xl border px-4 py-3 text-sm outline-none focus:ring-2 transition-shadow resize-none" style={{ borderColor: CARD_BORDER, background: CREAM }} />
+                </div>
+                <button type="submit" className="w-full rounded-xl px-6 py-3.5 text-white font-semibold transition-all hover:scale-[1.02]" style={{ background: AMBER }}>
+                  Send Message
+                </button>
+              </form>
             </div>
 
-            <GlassCard className="p-8">
-              <h3 className="text-xl font-semibold text-white mb-6">Visit Information</h3>
-              <div className="space-y-5">
-                <div className="flex items-start gap-4">
-                  <MapPin size={20} weight="duotone" style={{ color: GOLD }} className="mt-0.5 shrink-0" />
-                  <div>
-                    <p className="text-sm font-semibold text-white">Address</p>
-                    <p className="text-sm text-slate-400">
-                      4521 Faith Avenue
-                      <br />
-                      Springfield, IL 62704
-                    </p>
+            {/* Contact info */}
+            <div className="flex flex-col gap-6">
+              <div className="bg-white rounded-2xl shadow-sm border p-6" style={{ borderColor: CARD_BORDER }}>
+                <h3 className="text-lg font-bold mb-4" style={{ color: DARK }}>Contact Information</h3>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: AMBER_GLOW }}>
+                      <Phone size={18} weight="duotone" style={{ color: AMBER }} />
+                    </div>
+                    <a href="tel:2063257841" className="text-sm font-medium hover:underline" style={{ color: DARK }}>(206) 325-7841</a>
                   </div>
-                </div>
-                <div className="flex items-start gap-4">
-                  <Phone size={20} weight="duotone" style={{ color: GOLD }} className="mt-0.5 shrink-0" />
-                  <div>
-                    <p className="text-sm font-semibold text-white">Phone</p>
-                    <p className="text-sm text-slate-400">(555) 821-3456</p>
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: AMBER_GLOW }}>
+                      <Envelope size={18} weight="duotone" style={{ color: AMBER }} />
+                    </div>
+                    <a href="mailto:hello@graceseattle.org" className="text-sm font-medium hover:underline" style={{ color: DARK }}>hello@graceseattle.org</a>
                   </div>
-                </div>
-                <div className="flex items-start gap-4">
-                  <Envelope size={20} weight="duotone" style={{ color: GOLD }} className="mt-0.5 shrink-0" />
-                  <div>
-                    <p className="text-sm font-semibold text-white">Email</p>
-                    <p className="text-sm text-slate-400">hello@gracecommunitychurch.org</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4">
-                  <Clock size={20} weight="duotone" style={{ color: GOLD }} className="mt-0.5 shrink-0" />
-                  <div>
-                    <p className="text-sm font-semibold text-white">Service Times</p>
-                    <p className="text-sm text-slate-400">
-                      Sunday: 9:00 AM & 11:00 AM
-                      <br />
-                      Wednesday: 7:00 PM
-                      <br />
-                      Friday Youth: 6:30 PM
-                    </p>
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: AMBER_GLOW }}>
+                      <MapPin size={18} weight="duotone" style={{ color: AMBER }} />
+                    </div>
+                    <a href="https://maps.google.com/?q=6201+15th+Ave+NW+Seattle+WA+98107" target="_blank" rel="noopener noreferrer" className="text-sm font-medium hover:underline" style={{ color: DARK }}>
+                      6201 15th Ave NW, Seattle, WA 98107
+                    </a>
                   </div>
                 </div>
               </div>
-            </GlassCard>
+
+              <div className="bg-white rounded-2xl shadow-sm border p-6" style={{ borderColor: CARD_BORDER }}>
+                <h3 className="text-lg font-bold mb-4" style={{ color: DARK }}>Office Hours</h3>
+                <div className="space-y-2 text-sm" style={{ color: BODY }}>
+                  <div className="flex justify-between"><span>Monday - Thursday</span><span className="font-medium" style={{ color: DARK }}>9:00 AM - 4:00 PM</span></div>
+                  <div className="flex justify-between"><span>Friday</span><span className="font-medium" style={{ color: DARK }}>9:00 AM - 12:00 PM</span></div>
+                  <div className="flex justify-between"><span>Saturday - Sunday</span><span className="font-medium" style={{ color: DARK }}>By appointment</span></div>
+                </div>
+              </div>
+
+              <div className="rounded-2xl p-6 text-center" style={{ background: AMBER_GLOW, border: `1px solid rgba(217,119,6,0.15)` }}>
+                <HandsPraying size={32} weight="duotone" style={{ color: AMBER }} className="mx-auto mb-3" />
+                <h3 className="text-base font-bold mb-1" style={{ color: DARK }}>Need Prayer?</h3>
+                <p className="text-sm mb-3" style={{ color: BODY }}>
+                  Submit a prayer request and our pastoral team will pray over it within 24 hours.
+                </p>
+                <a href="#" className="text-sm font-semibold inline-flex items-center gap-1 transition-colors hover:opacity-80" style={{ color: AMBER }}>
+                  Submit Prayer Request <ArrowRight size={14} weight="bold" />
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </SectionReveal>
 
-      {/* ─── FOOTER ─── */}
-      <footer className="relative z-10 border-t border-white/5 py-10">
+      {/* ═══════════════ FOOTER ═══════════════ */}
+      <footer className="relative py-16 border-t" style={{ background: CREAM, borderColor: CARD_BORDER }}>
         <div className="mx-auto max-w-7xl px-4 md:px-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-            <div>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+            {/* Brand */}
+            <div className="md:col-span-1">
               <div className="flex items-center gap-2 mb-4">
-                <Cross size={20} weight="duotone" style={{ color: GOLD }} />
-                <span className="text-lg font-bold text-white">Grace Community Church</span>
+                <Cross size={24} weight="duotone" style={{ color: AMBER }} />
+                <span className="text-base font-bold" style={{ color: DARK }}>Grace Community</span>
               </div>
-              <p className="text-sm text-slate-500 leading-relaxed">
-                A welcoming community where faith comes alive and everyone has a place to belong.
+              <p className="text-sm leading-relaxed mb-4" style={{ color: BODY }}>
+                A Place to Belong. Sundays at 9 AM & 11 AM in Ballard, Seattle.
               </p>
-            </div>
-            <div>
-              <h4 className="text-sm font-semibold text-white mb-3">Quick Links</h4>
-              <div className="space-y-2 text-sm text-slate-500">
-                <a href="#services" className="block hover:text-white transition-colors">Service Times</a>
-                <a href="#about" className="block hover:text-white transition-colors">About Us</a>
-                <a href="#ministries" className="block hover:text-white transition-colors">Ministries</a>
-                <a href="#visit" className="block hover:text-white transition-colors">Plan Your Visit</a>
+              <div className="flex items-center gap-3">
+                <a href="#" className="w-9 h-9 rounded-full flex items-center justify-center transition-colors hover:opacity-80" style={{ background: AMBER_GLOW }}>
+                  <YoutubeLogo size={18} weight="fill" style={{ color: AMBER }} />
+                </a>
+                <a href="#" className="w-9 h-9 rounded-full flex items-center justify-center transition-colors hover:opacity-80" style={{ background: AMBER_GLOW }}>
+                  <FacebookLogo size={18} weight="fill" style={{ color: AMBER }} />
+                </a>
+                <a href="#" className="w-9 h-9 rounded-full flex items-center justify-center transition-colors hover:opacity-80" style={{ background: AMBER_GLOW }}>
+                  <InstagramLogo size={18} weight="fill" style={{ color: AMBER }} />
+                </a>
               </div>
             </div>
+
+            {/* Service Times */}
             <div>
-              <h4 className="text-sm font-semibold text-white mb-3">Connect</h4>
-              <div className="space-y-2 text-sm text-slate-500">
-                <p>(555) 821-3456</p>
-                <p>hello@gracecommunitychurch.org</p>
-                <p>4521 Faith Avenue, Springfield, IL</p>
+              <h4 className="text-sm font-bold uppercase tracking-wider mb-4" style={{ color: DARK }}>Service Times</h4>
+              <div className="space-y-2 text-sm" style={{ color: BODY }}>
+                <p>Sunday 9:00 AM - Traditional</p>
+                <p>Sunday 11:00 AM - Contemporary</p>
+                <p>Wednesday 7:00 PM - Midweek Study</p>
+              </div>
+            </div>
+
+            {/* Quick Links */}
+            <div>
+              <h4 className="text-sm font-bold uppercase tracking-wider mb-4" style={{ color: DARK }}>Quick Links</h4>
+              <div className="space-y-2 text-sm" style={{ color: BODY }}>
+                {["About", "Ministries", "Events", "Sermons", "Give", "Contact"].map((l) => (
+                  <a key={l} href={`#${l.toLowerCase()}`} className="block hover:underline">{l}</a>
+                ))}
+              </div>
+            </div>
+
+            {/* Contact */}
+            <div>
+              <h4 className="text-sm font-bold uppercase tracking-wider mb-4" style={{ color: DARK }}>Get in Touch</h4>
+              <div className="space-y-2 text-sm" style={{ color: BODY }}>
+                <p className="flex items-center gap-2">
+                  <Phone size={14} style={{ color: AMBER }} />
+                  <a href="tel:2063257841" className="hover:underline">(206) 325-7841</a>
+                </p>
+                <p className="flex items-center gap-2">
+                  <Envelope size={14} style={{ color: AMBER }} />
+                  <a href="mailto:hello@graceseattle.org" className="hover:underline">hello@graceseattle.org</a>
+                </p>
+                <p className="flex items-center gap-2">
+                  <MapPin size={14} style={{ color: AMBER }} />
+                  <a href="https://maps.google.com/?q=6201+15th+Ave+NW+Seattle+WA+98107" target="_blank" rel="noopener noreferrer" className="hover:underline">
+                    6201 15th Ave NW, Seattle, WA 98107
+                  </a>
+                </p>
               </div>
             </div>
           </div>
-          <div className="border-t border-white/5 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-2 text-sm text-slate-500">
-              <Cross size={16} weight="duotone" style={{ color: GOLD }} />
-              <span>Grace Community Church &copy; {new Date().getFullYear()}</span>
-            </div>
-            <p className="text-xs text-slate-600">
-              Created by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" style={{textDecoration:"underline"}}>bluejayportfolio.com</a>
+
+          <div className="border-t pt-8 flex flex-col md:flex-row items-center justify-between gap-4" style={{ borderColor: CARD_BORDER }}>
+            <p className="text-xs" style={{ color: BODY }}>
+              &copy; {new Date().getFullYear()} Grace Community Church. All rights reserved.
+            </p>
+            <p className="text-xs flex items-center gap-1.5" style={{ color: BODY }}>
+              <svg width="14" height="14" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-sky-500"><path d="M24.3 4.2c-1.5-.4-3.2.1-4.5 1.1-1-.7-2.3-1-3.5-.8-2.4.4-4.2 2.5-4.2 4.9v.6c-3.2.8-6 2.8-7.8 5.6-.3.5-.1 1.1.4 1.4.5.3 1.1.1 1.4-.4 1.5-2.3 3.7-4 6.3-4.7.5-.1 1-.1 1.5 0 .8.2 1.4.8 1.7 1.5.3.8.2 1.6-.2 2.3l-2.8 4.3c-.6.9-.4 2.1.4 2.8l2.5 2.1c.4.3.8.5 1.3.5h5.2c.5 0 1-.2 1.3-.5l1.2-1c.6-.5.8-1.3.6-2l-1-3.2c-.2-.5 0-1.1.4-1.4l3.8-2.5c1.3-.9 2.1-2.3 2.1-3.9V9.6c0-2.5-1.7-4.7-4.1-5.3v-.1z" fill="currentColor"/></svg>Created by{" "}
+              <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" className="font-medium hover:underline" style={{ color: AMBER }}>
+                bluejayportfolio.com
+              </a>
             </p>
           </div>
         </div>
       </footer>
-    </main>
+    </div>
   );
 }

@@ -1,5 +1,8 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element -- These static marketing and preview components intentionally use plain img tags to preserve existing markup and visual behavior during lint-only cleanup. */
+/* eslint-disable react-hooks/purity -- Decorative particle values are intentionally randomized for static visual effects in these marketing pages and previews; this preserves existing appearance without changing business logic. */
+
 import { useState, useEffect, useRef, useCallback } from "react";
 import {
   motion,
@@ -26,11 +29,16 @@ import {
   Leaf,
   Drop,
   HandSoap,
+  CurrencyDollar,
+  Play,
+  CalendarCheck,
+  Users,
 } from "@phosphor-icons/react";
 import type { GeneratedSiteData } from "@/lib/generator";
 import BluejayLogo from "../BluejayLogo";
 import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
+import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
 
 /* ───────────────────────── SPRING CONFIGS ───────────────────────── */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
@@ -73,13 +81,80 @@ function getServiceIcon(serviceName: string) {
 }
 
 /* ───────────────────────── STOCK FALLBACK IMAGES ───────────────────────── */
-const STOCK_HERO = "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=1400&q=80";
-const STOCK_ABOUT = "https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?w=600&q=80";
+const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=1400&q=80"];
+const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?w=600&q=80"];
 const STOCK_PROJECTS = [
   "https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?w=600&q=80",
   "https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?w=600&q=80",
-  "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80",
-  "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80",
+  "https://images.unsplash.com/photo-1563453392212-326f5e854473?w=800&q=80",
+  "https://images.unsplash.com/photo-1528740561666-dc2479dc08ab?w=800&q=80",
+];
+
+/* ───────────────────────── TRUST & SAFETY BADGES DATA ───────────────────────── */
+const TRUST_BADGES = [
+  { icon: ShieldCheck, label: "Background-Checked Staff", desc: "Every team member passes rigorous background screening" },
+  { icon: CheckCircle, label: "Bonded & Insured", desc: "Full liability coverage for your peace of mind" },
+  { icon: Leaf, label: "Eco-Friendly Products", desc: "Non-toxic, green-certified cleaning solutions" },
+  { icon: Star, label: "Satisfaction Guaranteed", desc: "Not happy? We re-clean for free, no questions asked" },
+];
+
+/* ───────────────────────── PRICING PLANS DATA ───────────────────────── */
+const PRICING_PLANS = [
+  { name: "Standard Clean", price: "$149", period: "starting at", features: ["All rooms dusted & vacuumed", "Kitchen & bathroom wipe-down", "Floors mopped", "Trash removed", "Beds made"], icon: SprayBottle, featured: false },
+  { name: "Deep Clean", price: "$249", period: "starting at", features: ["Everything in Standard", "Inside appliances cleaned", "Baseboards & vents scrubbed", "Light fixtures dusted", "Cabinet fronts wiped", "Grout & tile scrubbed"], icon: Broom, featured: true },
+  { name: "Move-In/Move-Out", price: "$349", period: "starting at", features: ["Everything in Deep Clean", "Inside all cabinets & drawers", "Oven & fridge deep clean", "Garage sweep", "Window tracks cleaned", "Wall spot cleaning"], icon: House, featured: false },
+];
+
+/* ───────────────────────── WHAT WE CLEAN AREAS DATA ───────────────────────── */
+const CLEANING_AREAS = [
+  { name: "Kitchens", icon: SprayBottle, desc: "Counters degreased, appliances wiped, sinks sanitized" },
+  { name: "Bathrooms", icon: Drop, desc: "Toilets, showers, tubs scrubbed and disinfected" },
+  { name: "Bedrooms", icon: House, desc: "Dusted, vacuumed, beds made, surfaces polished" },
+  { name: "Living Areas", icon: Sparkle, desc: "Furniture dusted, floors cleaned, cushions freshened" },
+  { name: "Windows", icon: Sparkle, desc: "Interior glass, sills, and tracks wiped streak-free" },
+  { name: "Carpets", icon: Broom, desc: "Deep vacuumed, spot treated, deodorized" },
+  { name: "Appliances", icon: HandSoap, desc: "Oven, fridge, microwave, dishwasher deep cleaned" },
+  { name: "Offices", icon: Buildings, desc: "Desks sanitized, floors cleaned, trash emptied" },
+];
+
+/* ───────────────────────── CLEANING CHECKLIST DATA ───────────────────────── */
+const CLEANING_CHECKLIST = [
+  "All surfaces wiped & sanitized",
+  "Floors vacuumed & mopped",
+  "Bathrooms scrubbed top-to-bottom",
+  "Kitchen counters & appliances cleaned",
+  "Trash removed & bins lined",
+  "Beds made & linens straightened",
+  "Mirrors & glass polished",
+  "Baseboards & door frames dusted",
+  "Light switches & handles disinfected",
+  "Cobwebs removed from corners",
+];
+
+/* ───────────────────────── ECO-FRIENDLY FEATURES DATA ───────────────────────── */
+const ECO_FEATURES = [
+  { icon: Leaf, title: "Non-Toxic Products", desc: "Plant-based formulas that clean powerfully without harmful chemicals" },
+  { icon: ShieldCheck, title: "Allergen Reduction", desc: "HEPA filtration and hypoallergenic products reduce airborne irritants" },
+  { icon: CheckCircle, title: "Green Seal Certified", desc: "Our products meet the highest environmental safety standards" },
+  { icon: Drop, title: "No Harsh Residue", desc: "Zero chemical residue left behind — safe for crawling babies and pets" },
+];
+
+/* ───────────────────────── COMPETITOR COMPARISON DATA ───────────────────────── */
+const COMPARISON_ROWS = [
+  { feature: "Background-Checked Staff", us: true, them: "Sometimes" },
+  { feature: "Satisfaction Guarantee", us: true, them: "No" },
+  { feature: "Eco-Friendly Products", us: true, them: "Rarely" },
+  { feature: "Online Booking", us: true, them: "Sometimes" },
+  { feature: "Same-Day Available", us: true, them: "No" },
+  { feature: "Consistent Teams", us: true, them: "Varies" },
+  { feature: "Supplies Included", us: true, them: "Sometimes" },
+];
+
+/* ───────────────────────── CLEANING FREQUENCY QUIZ DATA ───────────────────────── */
+const FREQUENCY_OPTIONS = [
+  { freq: "Weekly", color: "#22c55e", desc: "Best for families with kids & pets. Keeps your home consistently spotless.", tag: "Best for Families" },
+  { freq: "Bi-Weekly", color: "#3b82f6", desc: "Our most popular option. Great balance of clean and budget-friendly.", tag: "Most Popular" },
+  { freq: "Monthly", color: "#a855f7", desc: "Ideal for low-traffic homes or as a maintenance refresh between deep cleans.", tag: "Great for Maintenance" },
 ];
 
 /* ───────────────────────── FLOATING SPARKLE PARTICLES ───────────────────────── */
@@ -149,7 +224,7 @@ function WaterDropBackground({ opacity = 0.03, accent }: { opacity?: number; acc
 /* ───────────────────────── GLASS CARD ───────────────────────── */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
+    <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
       {children}
     </div>
   );
@@ -255,9 +330,11 @@ export default function V2CleaningPreview({ data }: { data: GeneratedSiteData })
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const { ACCENT, ACCENT_GLOW } = getAccent(data.accentColor);
 
-  const heroImage = data.photos?.[0] || STOCK_HERO;
-  const aboutImage = data.photos?.[1] || STOCK_ABOUT;
-  const projectImages = data.photos?.length > 2 ? data.photos.slice(2, 6) : STOCK_PROJECTS;
+  const uniquePhotos = data.photos ? [...new Set(data.photos)] : [];
+  const heroImage = uniquePhotos[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
+  const heroCardImage = uniquePhotos[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 1);
+  const aboutImage = uniquePhotos[2] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 2);
+  const projectImages = uniquePhotos.length > 2 ? uniquePhotos.slice(2, 6) : pickGallery(STOCK_PROJECTS, data.businessName);
 
   const processSteps = [
     { step: "01", title: "Book Online or Call", desc: "Schedule your cleaning in minutes. We work around your availability." },
@@ -327,28 +404,25 @@ export default function V2CleaningPreview({ data }: { data: GeneratedSiteData })
 
         <div className="absolute inset-0">
           <img src={heroImage} alt={`${data.businessName}`} className="w-full h-full object-cover object-center" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/25 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/20" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
         </div>
-        <SparklePattern opacity={0.04} accent={ACCENT} />
-        <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full blur-[200px] pointer-events-none" style={{ background: `${ACCENT}08` }} />
-        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full blur-[160px] pointer-events-none" style={{ background: `${MINT}06` }} />
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
-          <div className="space-y-8">
+          <div className="space-y-8 rounded-2xl bg-black/50 backdrop-blur-md p-6 md:p-8 border border-white/8">
             <div>
               <p className="text-sm uppercase tracking-widest mb-4" style={{ color: ACCENT }}>Professional Cleaning Services</p>
-              <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}>
+              <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 20px rgba(0,0,0,0.8), 0 4px 40px rgba(0,0,0,0.5)" }}>
                 {data.tagline}
               </h1>
             </div>
             <p className="text-lg text-slate-400 max-w-md leading-relaxed">
-              {data.about.length > 160 ? data.about.slice(0, 160).trim() + "..." : data.about}
+              {(() => { const t = data.about; if (t.length <= 180) return t; const dot = t.indexOf('.', 80); return dot > 0 && dot < 220 ? t.slice(0, dot + 1) : t.slice(0, 180).trim() + '...'; })()}
             </p>
             <div className="flex flex-wrap gap-4">
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
                 Get Free Estimate <ArrowRight size={18} weight="bold" />
               </MagneticButton>
-              <MagneticButton href={`tel:${data.phone.replace(/\D/g, "")}`} className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
+              <MagneticButton href={`tel:${data.phone.replace(/\D/g, "")}`} className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
                 <Phone size={18} weight="duotone" /> <PhoneLink phone={data.phone} />
               </MagneticButton>
             </div>
@@ -358,8 +432,8 @@ export default function V2CleaningPreview({ data }: { data: GeneratedSiteData })
             </div>
           </div>
           <div className="hidden md:block relative">
-            <div className="relative rounded-2xl overflow-hidden border border-white/10">
-              <img src={heroImage} alt={`${data.businessName} professional cleaning`} className="w-full h-[500px] object-cover" />
+            <div className="relative rounded-2xl overflow-hidden border border-white/15">
+              <img src={heroCardImage} alt={`${data.businessName} professional cleaning`} className="w-full h-[500px] object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a1a] via-transparent to-transparent" />
               <div className="absolute inset-0 bg-gradient-to-r from-[#1a1a1a]/40 to-transparent" />
               <div className="absolute bottom-6 left-6 flex items-center gap-3">
@@ -397,6 +471,27 @@ export default function V2CleaningPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
+      {/* ══════════════════ TRUST & SAFETY BADGES ══════════════════ */}
+      <section className="relative z-10 py-20 md:py-24 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0c1929 50%, #1a1a1a 100%)" }} />
+        <SparklePattern opacity={0.02} accent={ACCENT} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] left-[20%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${ACCENT}06` }} /></div>
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Your Safety Matters" title="Why Families Trust Us in Their Homes" subtitle="We know letting someone into your home is personal. That's why we go above and beyond to earn your trust." accent={ACCENT} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {TRUST_BADGES.map((badge) => (
+              <GlassCard key={badge.label} className="p-6 text-center">
+                <div className="w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${ACCENT}22, ${ACCENT}0a)`, border: `1px solid ${ACCENT}33` }}>
+                  <badge.icon size={28} weight="duotone" style={{ color: ACCENT }} />
+                </div>
+                <h3 className="text-base font-bold text-white mb-2">{badge.label}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed">{badge.desc}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ══════════════════ 4. SERVICES ══════════════════ */}
       <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f172a 50%, #1a1a1a 100%)" }} />
@@ -412,7 +507,7 @@ export default function V2CleaningPreview({ data }: { data: GeneratedSiteData })
             {data.services.map((service, i) => {
               const Icon = getServiceIcon(service.name);
               return (
-                <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.02]">
+                <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]">
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${ACCENT}15, transparent 70%)` }} />
                   <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${ACCENT}4d, transparent)` }} />
                   <div className="relative z-10">
@@ -433,6 +528,77 @@ export default function V2CleaningPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
+      {/* ══════════════════ CLEANING PRICING PLANS ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0c1929 50%, #1a1a1a 100%)" }} />
+        <WaterDropBackground opacity={0.025} accent={ACCENT} />
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-[15%] left-[10%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${ACCENT}06` }} />
+          <div className="absolute bottom-[15%] right-[10%] w-[300px] h-[300px] rounded-full blur-[140px]" style={{ background: `${MINT}05` }} />
+        </div>
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Transparent Pricing" title="Cleaning Plans for Every Home" subtitle="No hidden fees. No surprises. Just honest pricing for a spotless home." accent={ACCENT} />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {PRICING_PLANS.map((plan) => (
+              <div key={plan.name} className="relative">
+                {plan.featured && (
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20 px-4 py-1 rounded-full text-xs font-bold text-white" style={{ background: ACCENT }}>
+                    Most Popular
+                  </div>
+                )}
+                {plan.featured ? (
+                  <ShimmerBorder accent={ACCENT}>
+                    <div className="p-7">
+                      <div className="w-12 h-12 rounded-xl mb-4 flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${ACCENT}22, ${ACCENT}0a)`, border: `1px solid ${ACCENT}33` }}>
+                        <plan.icon size={24} weight="duotone" style={{ color: ACCENT }} />
+                      </div>
+                      <h3 className="text-xl font-bold text-white mb-1">{plan.name}</h3>
+                      <div className="flex items-baseline gap-1 mb-1">
+                        <span className="text-3xl font-black text-white">{plan.price}</span>
+                      </div>
+                      <p className="text-xs text-slate-500 mb-5">{plan.period}</p>
+                      <ul className="space-y-2.5 mb-6">
+                        {plan.features.map((f) => (
+                          <li key={f} className="flex items-start gap-2 text-sm text-slate-300">
+                            <CheckCircle size={16} weight="fill" style={{ color: ACCENT }} className="mt-0.5 shrink-0" />
+                            {f}
+                          </li>
+                        ))}
+                      </ul>
+                      <MagneticButton className="w-full py-3 rounded-xl text-sm font-semibold text-white cursor-pointer text-center flex items-center justify-center gap-2" style={{ background: ACCENT } as React.CSSProperties}>
+                        Book Now <ArrowRight size={16} weight="bold" />
+                      </MagneticButton>
+                    </div>
+                  </ShimmerBorder>
+                ) : (
+                  <GlassCard className="p-7 h-full flex flex-col">
+                    <div className="w-12 h-12 rounded-xl mb-4 flex items-center justify-center" style={{ background: `${ACCENT}0d`, border: `1px solid ${ACCENT}1a` }}>
+                      <plan.icon size={24} weight="duotone" style={{ color: ACCENT }} />
+                    </div>
+                    <h3 className="text-xl font-bold text-white mb-1">{plan.name}</h3>
+                    <div className="flex items-baseline gap-1 mb-1">
+                      <span className="text-3xl font-black text-white">{plan.price}</span>
+                    </div>
+                    <p className="text-xs text-slate-500 mb-5">{plan.period}</p>
+                    <ul className="space-y-2.5 mb-6 flex-1">
+                      {plan.features.map((f) => (
+                        <li key={f} className="flex items-start gap-2 text-sm text-slate-300">
+                          <CheckCircle size={16} weight="fill" style={{ color: `${ACCENT}80` }} className="mt-0.5 shrink-0" />
+                          {f}
+                        </li>
+                      ))}
+                    </ul>
+                    <MagneticButton className="w-full py-3 rounded-xl text-sm font-semibold text-white border border-white/15 cursor-pointer text-center flex items-center justify-center gap-2">
+                      Get Quote <ArrowRight size={16} weight="bold" />
+                    </MagneticButton>
+                  </GlassCard>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ══════════════════ 5. WHY CHOOSE US / ABOUT ══════════════════ */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0c1929 50%, #1a1a1a 100%)" }} />
@@ -441,7 +607,7 @@ export default function V2CleaningPreview({ data }: { data: GeneratedSiteData })
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="relative">
-              <div className="rounded-2xl overflow-hidden border border-white/10">
+              <div className="rounded-2xl overflow-hidden border border-white/15">
                 <img src={aboutImage} alt={`${data.businessName} team`} className="w-full h-[400px] object-cover" />
               </div>
               <div className="absolute -bottom-4 -right-4 md:bottom-6 md:-right-6">
@@ -499,13 +665,13 @@ export default function V2CleaningPreview({ data }: { data: GeneratedSiteData })
         <WaterDropBackground opacity={0.02} accent={ACCENT} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] left-[20%] w-[500px] h-[500px] rounded-full blur-[200px]" style={{ background: `${ACCENT}06` }} /></div>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <AnimatedSection>          <SectionHeader badge="Our Work" title="Before & After Results" accent={ACCENT} /></AnimatedSection>
+          <AnimatedSection>          <SectionHeader badge="Our Work" title="Recent Projects" accent={ACCENT} /></AnimatedSection>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {projectImages.map((src, i) => {
               const titles = ["Deep Kitchen Clean", "Office Sanitization", "Move-Out Cleaning", "Post-Construction Cleanup"];
               const descs = ["Complete kitchen deep clean and degreasing.", "Full office sanitization and floor care.", "Top-to-bottom move-out cleaning service.", "Post-construction dust and debris removal."];
               return (
-                <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.06] hover:border-opacity-30 transition-all duration-500">
+                <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.10] hover:border-opacity-30 transition-all duration-500">
                   <img src={src} alt={titles[i] || `Project ${i + 1}`} className="w-full h-64 object-cover transition-transform duration-700 group-hover:scale-105" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-6">
@@ -519,20 +685,102 @@ export default function V2CleaningPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
-      {/* ══════════════════ 8. TESTIMONIALS ══════════════════ */}
+      {/* ══════════════════ ECO-FRIENDLY / GREEN CLEANING ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1f15 50%, #1a1a1a 100%)" }} />
+        <SparklePattern opacity={0.02} accent={MINT} />
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-[20%] right-[15%] w-[500px] h-[500px] rounded-full blur-[200px]" style={{ background: `${MINT}08` }} />
+        </div>
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Green Cleaning" title="Safe for Your Family & Pets" subtitle="We believe a clean home shouldn't come at the cost of your health. Every product we use is carefully chosen to protect your loved ones." accent={MINT} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {ECO_FEATURES.map((feat) => (
+              <GlassCard key={feat.title} className="p-6 text-center">
+                <div className="w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center" style={{ background: `${MINT}15`, border: `1px solid ${MINT}33` }}>
+                  <feat.icon size={28} weight="duotone" style={{ color: MINT }} />
+                </div>
+                <h3 className="text-base font-bold text-white mb-2">{feat.title}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed">{feat.desc}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ OUR RESULTS ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f172a 50%, #1a1a1a 100%)" }} />
+        <WaterDropBackground opacity={0.02} accent={ACCENT} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] left-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${ACCENT}06` }} /></div>
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Our Results" title="See the Sparkle" subtitle={`Every cleaning from ${data.businessName} delivers a visible transformation you can feel the moment you walk in.`} accent={ACCENT} />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <GlassCard className="overflow-hidden">
+              <div className="relative">
+                <img src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=600&q=80" alt="Sparkling clean kitchen" className="w-full h-64 object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#141414] via-transparent to-transparent" />
+                <div className="absolute bottom-4 left-4">
+                  <span className="px-3 py-1 rounded-full text-xs font-bold text-white" style={{ background: ACCENT }}>Our Results</span>
+                </div>
+              </div>
+              <div className="p-5">
+                <h3 className="text-lg font-bold text-white mb-1">Kitchen Deep Clean</h3>
+                <p className="text-sm text-slate-400">Degreased, sanitized, and sparkling from countertop to floor.</p>
+              </div>
+            </GlassCard>
+            <GlassCard className="overflow-hidden">
+              <div className="relative">
+                <img src="https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=600&q=80" alt="Spotless bathroom" className="w-full h-64 object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#141414] via-transparent to-transparent" />
+                <div className="absolute bottom-4 left-4">
+                  <span className="px-3 py-1 rounded-full text-xs font-bold text-white" style={{ background: ACCENT }}>Our Results</span>
+                </div>
+              </div>
+              <div className="p-5">
+                <h3 className="text-lg font-bold text-white mb-1">Bathroom Restoration</h3>
+                <p className="text-sm text-slate-400">Tile scrubbed, grout whitened, fixtures polished to a mirror shine.</p>
+              </div>
+            </GlassCard>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ 8. TESTIMONIALS (WITH GOOGLE REVIEWS HEADER) ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f172a 50%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] right-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${ACCENT}06` }} /></div>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <AnimatedSection>          <SectionHeader badge="Testimonials" title="What Our Clients Say" accent={ACCENT} /></AnimatedSection>
+          {/* Google Reviews Header */}
+          <div className="text-center mb-6">
+            <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full border border-white/15 bg-white/[0.08] backdrop-blur-xl">
+              <div className="flex gap-0.5">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Star key={i} size={20} weight="fill" style={{ color: "#facc15" }} />
+                ))}
+              </div>
+              <span className="text-white font-bold text-sm">
+                {data.googleRating || "4.9"} Rating
+              </span>
+              <span className="text-slate-400 text-sm">
+                ({data.reviewCount || "100"}+ Reviews)
+              </span>
+            </div>
+          </div>
+          <SectionHeader badge="Testimonials" title="What Our Clients Say" accent={ACCENT} />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {testimonials.map((t, i) => (
               <GlassCard key={i} className="p-6 h-full flex flex-col">
-                <div className="flex gap-0.5 mb-4">{Array.from({ length: t.rating || 5 }).map((_, j) => <Star key={j} size={16} weight="fill" style={{ color: ACCENT }} />)}</div>
-                <p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p>
-                <div className="pt-4 border-t border-white/5 flex items-center justify-between">
+                <div className="text-3xl mb-3" style={{ color: `${ACCENT}40` }}>&ldquo;</div>
+                <div className="flex gap-0.5 mb-3">{Array.from({ length: t.rating || 5 }).map((_, j) => <Star key={j} size={18} weight="fill" style={{ color: "#facc15" }} />)}</div>
+                <p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">{t.text}</p>
+                <div className="pt-4 border-t border-white/8 flex items-center justify-between">
                   <span className="text-sm font-semibold text-white">{t.name}</span>
+                  <div className="flex items-center gap-1 text-xs text-slate-500">
+                    <CheckCircle size={14} weight="fill" style={{ color: ACCENT }} />
+                    Verified
+                  </div>
                 </div>
               </GlassCard>
             ))}
@@ -555,21 +803,106 @@ export default function V2CleaningPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
-      {/* ══════════════════ 10. CHECKLIST / WHAT WE CLEAN ══════════════════ */}
+      {/* ══════════════════ COMPETITOR COMPARISON TABLE ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f172a 50%, #1a1a1a 100%)" }} />
+        <SparklePattern opacity={0.02} accent={ACCENT} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] right-[20%] w-[400px] h-[400px] rounded-full blur-[180px]" style={{ background: `${ACCENT}06` }} /></div>
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="The Difference" title={`${data.businessName} vs Average Cleaning Services`} accent={ACCENT} />
+          <GlassCard className="overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-white/15">
+                    <th className="text-left py-4 px-5 text-slate-400 font-medium">Feature</th>
+                    <th className="text-center py-4 px-4 font-bold text-white whitespace-nowrap">{data.businessName}</th>
+                    <th className="text-center py-4 px-4 text-slate-500 font-medium">Others</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {COMPARISON_ROWS.map((row, i) => (
+                    <tr key={row.feature} className={i < COMPARISON_ROWS.length - 1 ? "border-b border-white/8" : ""}>
+                      <td className="py-3.5 px-5 text-slate-300">{row.feature}</td>
+                      <td className="py-3.5 px-4 text-center">
+                        <CheckCircle size={20} weight="fill" style={{ color: "#22c55e" }} className="inline-block" />
+                      </td>
+                      <td className="py-3.5 px-4 text-center text-slate-500 text-xs">{row.them}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </GlassCard>
+        </div>
+      </section>
+
+      {/* ══════════════════ HOW OFTEN SHOULD YOU CLEAN? QUIZ ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0c1929 50%, #1a1a1a 100%)" }} />
+        <WaterDropBackground opacity={0.02} accent={ACCENT} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[25%] left-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${ACCENT}06` }} /></div>
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Find Your Schedule" title="How Often Should You Clean?" subtitle="Not sure how often you need professional cleaning? Here's our recommendation based on your lifestyle." accent={ACCENT} />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {FREQUENCY_OPTIONS.map((opt) => (
+              <GlassCard key={opt.freq} className="p-6 text-center relative overflow-hidden">
+                <div className="absolute top-0 left-0 right-0 h-1" style={{ background: opt.color }} />
+                <div className="inline-block px-3 py-1 rounded-full text-xs font-bold mb-4" style={{ background: `${opt.color}20`, color: opt.color }}>
+                  {opt.tag}
+                </div>
+                <div className="flex items-center justify-center gap-2 mb-3">
+                  <CalendarCheck size={24} weight="duotone" style={{ color: opt.color }} />
+                  <h3 className="text-2xl font-black text-white">{opt.freq}</h3>
+                </div>
+                <p className="text-sm text-slate-400 leading-relaxed mb-5">{opt.desc}</p>
+                <MagneticButton className="w-full py-3 rounded-xl text-sm font-semibold text-white cursor-pointer text-center flex items-center justify-center gap-2 border" style={{ borderColor: `${opt.color}33`, background: `${opt.color}15` } as React.CSSProperties}>
+                  <Phone size={16} weight="duotone" /> Book {opt.freq}
+                </MagneticButton>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ WHAT WE CLEAN (ENHANCED) ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0c1929 50%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[40%] right-[20%] w-[400px] h-[400px] rounded-full blur-[180px]" style={{ background: `${MINT}06` }} /></div>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <AnimatedSection>          <SectionHeader badge="Our Checklist" title="What We Clean" accent={ACCENT} /></AnimatedSection>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {["Kitchens & Counters", "Bathrooms & Showers", "Floors & Baseboards", "Windows & Mirrors", "Dusting & Cobwebs", "Appliance Cleaning", "Trash & Recycling", "Sanitization"].map((item) => (
-              <GlassCard key={item} className="p-4 flex items-center gap-3">
-                <CheckCircle size={20} weight="fill" style={{ color: ACCENT }} />
-                <span className="text-sm font-medium text-white">{item}</span>
+          <SectionHeader badge="Every Room, Every Detail" title="What We Clean" subtitle="From kitchen grease to bathroom grime, we tackle every surface with professional-grade thoroughness." accent={ACCENT} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {CLEANING_AREAS.map((area) => (
+              <GlassCard key={area.name} className="p-5 group hover:border-opacity-30 transition-all duration-500">
+                <div className="w-11 h-11 rounded-xl mb-3 flex items-center justify-center transition-all duration-300" style={{ background: `${ACCENT}15`, border: `1px solid ${ACCENT}22` }}>
+                  <area.icon size={22} weight="duotone" style={{ color: ACCENT }} />
+                </div>
+                <h3 className="text-base font-bold text-white mb-1.5">{area.name}</h3>
+                <p className="text-xs text-slate-400 leading-relaxed">{area.desc}</p>
               </GlassCard>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ CLEANING CHECKLIST ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f172a 50%, #1a1a1a 100%)" }} />
+        <WaterDropBackground opacity={0.02} accent={ACCENT} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[25%] left-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${ACCENT}06` }} /></div>
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Every Visit" title={`What\u2019s Included in Every Clean`} subtitle="No cutting corners. Every clean follows our comprehensive checklist so nothing gets missed." accent={ACCENT} />
+          <GlassCard className="p-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
+              {CLEANING_CHECKLIST.map((item) => (
+                <div key={item} className="flex items-start gap-3">
+                  <CheckCircle size={20} weight="fill" style={{ color: ACCENT }} className="mt-0.5 shrink-0" />
+                  <span className="text-sm text-slate-300 leading-relaxed">{item}</span>
+                </div>
+              ))}
+            </div>
+          </GlassCard>
         </div>
       </section>
 
@@ -636,6 +969,37 @@ export default function V2CleaningPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
+      {/* ══════════════════ SPOTLESS GUARANTEE CTA ══════════════════ */}
+      <section className="relative z-10 py-20 md:py-24 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0c1929 50%, #1a1a1a 100%)" }} />
+        <SparklePattern opacity={0.02} accent={ACCENT} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] right-[20%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${ACCENT}08` }} /></div>
+        <div className="max-w-3xl mx-auto px-6 relative z-10">
+          <ShimmerBorder accent={ACCENT}>
+            <div className="p-8 md:p-12 text-center">
+              <ShieldCheck size={48} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-5" />
+              <h2 className="text-2xl md:text-4xl font-black tracking-tight text-white mb-3">
+                Not Satisfied? We&apos;ll Re-Clean for Free.
+              </h2>
+              <p className="text-slate-400 mb-6 max-w-lg mx-auto leading-relaxed">
+                Our Spotless Guarantee means you never pay for a clean that doesn&apos;t meet your standards. If anything is missed, we come back and make it right — no questions asked.
+              </p>
+              <div className="flex flex-wrap justify-center gap-3 mb-6">
+                {[{ icon: ShieldCheck, label: "100% Guaranteed" }, { icon: Users, label: "Consistent Teams" }, { icon: Leaf, label: "Eco-Friendly" }, { icon: CheckCircle, label: "Background-Checked" }].map((b) => (
+                  <div key={b.label} className="flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-semibold text-white" style={{ borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}>
+                    <b.icon size={14} weight="fill" style={{ color: ACCENT }} />
+                    {b.label}
+                  </div>
+                ))}
+              </div>
+              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 mx-auto cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
+                Book Your Guaranteed Clean <ArrowRight size={18} weight="bold" />
+              </MagneticButton>
+            </div>
+          </ShimmerBorder>
+        </div>
+      </section>
+
       {/* ══════════════════ 13. FAQ ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f172a 50%, #1a1a1a 100%)" }} />
@@ -687,18 +1051,18 @@ export default function V2CleaningPreview({ data }: { data: GeneratedSiteData })
               <h3 className="text-xl font-semibold text-white mb-6">Request a Free Estimate</h3>
               <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div><label className="block text-sm text-slate-400 mb-1.5">First Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="John" /></div>
-                  <div><label className="block text-sm text-slate-400 mb-1.5">Last Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="Doe" /></div>
+                  <div><label className="block text-sm text-slate-400 mb-1.5">First Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="John" /></div>
+                  <div><label className="block text-sm text-slate-400 mb-1.5">Last Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="Doe" /></div>
                 </div>
-                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="(555) 123-4567" /></div>
+                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="(555) 123-4567" /></div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-1.5">Service Needed</label>
-                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none transition-colors text-sm">
+                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none transition-colors text-sm">
                     <option value="" className="bg-neutral-900">Select a service</option>
                     {data.services.map((s) => <option key={s.name} value={s.name.toLowerCase().replace(/\s+/g, "-")} className="bg-neutral-900">{s.name}</option>)}
                   </select>
                 </div>
-                <div><label className="block text-sm text-slate-400 mb-1.5">Message</label><textarea rows={4} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm resize-none" placeholder="Tell us about your cleaning needs..." /></div>
+                <div><label className="block text-sm text-slate-400 mb-1.5">Message</label><textarea rows={4} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm resize-none" placeholder="Tell us about your cleaning needs..." /></div>
                 <MagneticButton className="w-full py-4 rounded-xl text-base font-semibold text-white flex items-center justify-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
                   Send Request <ArrowRight size={18} weight="bold" />
                 </MagneticButton>
@@ -709,7 +1073,7 @@ export default function V2CleaningPreview({ data }: { data: GeneratedSiteData })
       </section>
 
       {/* ══════════════════ 15. FOOTER ══════════════════ */}
-      <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden">
+      <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111 100%)" }} />
         <SparklePattern opacity={0.015} accent={ACCENT} />
         <div className="mx-auto max-w-6xl px-6 relative z-10">
@@ -737,7 +1101,7 @@ export default function V2CleaningPreview({ data }: { data: GeneratedSiteData })
               </div>
             </div>
           </div>
-          <div className="border-t border-white/5 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="border-t border-white/8 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-sm text-slate-500"><Sparkle size={14} weight="fill" style={{ color: ACCENT }} /><span>{data.businessName} &copy; {new Date().getFullYear()}</span></div>
             <div className="flex items-center gap-2 text-xs text-slate-600"><BluejayLogo className="w-4 h-4" /><span>Created by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" style={{textDecoration:"underline"}}>bluejayportfolio.com</a></span></div>
           </div>

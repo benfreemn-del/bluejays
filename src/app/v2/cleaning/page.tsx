@@ -1,6 +1,9 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+/* eslint-disable @next/next/no-img-element */
+/* eslint-disable react-hooks/purity */
+
+import { useState, useRef, useCallback, useEffect } from "react";
 import {
   motion,
   useMotionValue,
@@ -11,40 +14,51 @@ import {
 import {
   Star,
   ShieldCheck,
-  SprayBottle,
   Broom,
   House,
   Buildings,
-  Sparkle,
   CaretDown,
   Phone,
   MapPin,
   Clock,
   ArrowRight,
+  Heart,
+  Users,
+  CalendarCheck,
   CheckCircle,
   Quotes,
   X,
   List,
-  Leaf,
-  UsersFour,
-  CalendarCheck,
-  CurrencyDollar,
+  Sparkle,
   Drop,
-  WindowsLogo,
-  Truck,
-  ListChecks,
+  Leaf,
+  HandSoap,
+  CurrencyDollar,
+  SealCheck,
+  Certificate,
+  Trophy,
+  Bathtub,
+  CookingPot,
+  Bed,
+  Couch,
+  Broom as BroomIcon,
+  Lightning,
+  Timer,
   Recycle,
+  ChartLineUp,
+  CaretRight,
+  Check,
 } from "@phosphor-icons/react";
 
 /* ───────────────────────── SPRING CONFIG ───────────────────────── */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
-const springGentle = { type: "spring" as const, stiffness: 60, damping: 18 };
 
 const stagger = {
   hidden: {},
   show: { transition: { staggerChildren: 0.08 } },
 };
+
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
   show: { opacity: 1, y: 0, transition: spring },
@@ -52,19 +66,22 @@ const fadeUp = {
 
 /* ───────────────────────── COLORS ───────────────────────── */
 const BG = "#0a1520";
+const SURFACE = "#0f1d2d";
 const BLUE = "#0284c7";
 const BLUE_LIGHT = "#38bdf8";
+const MINT = "#34d399";
+const MINT_GLOW = "rgba(52, 211, 153, 0.12)";
 const BLUE_GLOW = "rgba(2, 132, 199, 0.15)";
 
-/* ───────────────────────── FLOATING SPARKLE PARTICLES ───────────────────────── */
-function FloatingSparkles() {
-  const particles = Array.from({ length: 26 }, (_, i) => ({
+/* ───────────────────────── FLOATING BUBBLES ───────────────────────── */
+function FloatingBubbles() {
+  const particles = Array.from({ length: 16 }, (_, i) => ({
     id: i,
     x: Math.random() * 100,
     delay: Math.random() * 8,
-    duration: 5 + Math.random() * 7,
-    size: 2 + Math.random() * 4,
-    opacity: 0.15 + Math.random() * 0.35,
+    duration: 8 + Math.random() * 6,
+    size: 4 + Math.random() * 8,
+    opacity: 0.05 + Math.random() * 0.15,
   }));
 
   return (
@@ -77,11 +94,12 @@ function FloatingSparkles() {
             left: `${p.x}%`,
             width: p.size,
             height: p.size,
-            background: BLUE_LIGHT,
+            background: p.id % 2 === 0 ? BLUE_LIGHT : MINT,
+            filter: "blur(1px)",
             willChange: "transform, opacity",
           }}
           animate={{
-            y: ["-10vh", "110vh"],
+            y: ["110vh", "-10vh"],
             opacity: [0, p.opacity, p.opacity, 0],
           }}
           transition={{
@@ -94,19 +112,41 @@ function FloatingSparkles() {
   );
 }
 
-/* ───────────────────────── UTILITY COMPONENTS ───────────────────────── */
+/* ───────────────────────── SHARED COMPONENTS ───────────────────────── */
+function WordReveal({ text, className = "" }: { text: string; className?: string }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-50px" });
+  const words = text.split(" ");
+
+  return (
+    <motion.span ref={ref} className={`inline-flex flex-wrap gap-x-3 ${className}`} variants={stagger} initial="hidden" animate={isInView ? "show" : "hidden"}>
+      {words.map((word, i) => (
+        <motion.span key={i} variants={fadeUp} className="inline-block">{word}</motion.span>
+      ))}
+    </motion.span>
+  );
+}
+
 function SectionReveal({ children, className = "", id }: { children: React.ReactNode; className?: string; id?: string }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
+
   return (
-    <motion.section ref={ref} id={id} className={className} initial={{ opacity: 0, y: 50 }} animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }} transition={spring}>
+    <motion.section ref={ref} id={id} className={className}
+      initial={{ opacity: 0, y: 50 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+      transition={spring}>
       {children}
     </motion.section>
   );
 }
 
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>;
+  return (
+    <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
+      {children}
+    </div>
+  );
 }
 
 function MagneticButton({ children, className = "", onClick, style }: { children: React.ReactNode; className?: string; onClick?: () => void; style?: React.CSSProperties }) {
@@ -115,244 +155,445 @@ function MagneticButton({ children, className = "", onClick, style }: { children
   const y = useMotionValue(0);
   const springX = useSpring(x, springFast);
   const springY = useSpring(y, springFast);
-  const isTouchDevice = typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches;
-  const handleMouseMove = useCallback((e: React.MouseEvent) => { if (!ref.current || isTouchDevice) return; const rect = ref.current.getBoundingClientRect(); x.set((e.clientX - (rect.left + rect.width / 2)) * 0.25); y.set((e.clientY - (rect.top + rect.height / 2)) * 0.25); }, [x, y, isTouchDevice]);
-  const handleMouseLeave = useCallback(() => { x.set(0); y.set(0); }, [x, y]);
-  return <motion.button ref={ref} style={{ x: springX, y: springY, willChange: "transform", ...style }} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave} onClick={onClick} className={className} whileTap={{ scale: 0.97 }}>{children}</motion.button>;
-}
 
-function WordReveal({ text, className = "" }: { text: string; className?: string }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-50px" });
-  const words = text.split(" ");
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    if (!ref.current) return;
+    const rect = ref.current.getBoundingClientRect();
+    x.set((e.clientX - (rect.left + rect.width / 2)) * 0.25);
+    y.set((e.clientY - (rect.top + rect.height / 2)) * 0.25);
+  }, [x, y]);
+
+  const handleMouseLeave = useCallback(() => { x.set(0); y.set(0); }, [x, y]);
+
   return (
-    <motion.span ref={ref} className={`inline-flex flex-wrap gap-x-3 ${className}`} variants={stagger} initial="hidden" animate={isInView ? "show" : "hidden"}>
-      {words.map((word, i) => (<motion.span key={i} variants={fadeUp} className="inline-block">{word}</motion.span>))}
-    </motion.span>
+    <motion.button ref={ref} style={{ x: springX, y: springY, willChange: "transform", ...style }}
+      onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave} onClick={onClick}
+      className={className} whileTap={{ scale: 0.97 }}>
+      {children}
+    </motion.button>
   );
 }
 
 function ShimmerBorder({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <div className={`relative rounded-2xl p-[1px] overflow-hidden ${className}`}>
-      <motion.div className="absolute inset-0 rounded-2xl" style={{ background: `conic-gradient(from 0deg, transparent, ${BLUE}, transparent, ${BLUE_LIGHT}, transparent)`, willChange: "transform" }} animate={{ rotate: [0, 360] }} transition={{ duration: 4, repeat: Infinity, ease: "linear" }} />
+      <motion.div className="absolute inset-0 rounded-2xl"
+        style={{ background: `conic-gradient(from 0deg, transparent, ${BLUE}, transparent, ${MINT}, transparent)`, willChange: "transform" }}
+        animate={{ rotate: [0, 360] }}
+        transition={{ duration: 4, repeat: Infinity, ease: "linear" }} />
       <div className="relative rounded-2xl z-10" style={{ background: BG }}>{children}</div>
     </div>
   );
 }
 
-function AccordionItem({ title, description, icon: Icon, isOpen, onToggle }: { title: string; description: string; icon: React.ElementType; isOpen: boolean; onToggle: () => void }) {
+/* ───────────────────────── ROTATING ROOM CARDS (Hero) ───────────────────────── */
+const heroRooms = [
+  { name: "Kitchen", icon: CookingPot, color: BLUE_LIGHT, tasks: ["Counters & appliances", "Cabinet fronts", "Floor deep-scrub"] },
+  { name: "Bathroom", icon: Bathtub, color: MINT, tasks: ["Tile & grout", "Fixtures polished", "Mirror streak-free"] },
+  { name: "Living Room", icon: Couch, color: BLUE_LIGHT, tasks: ["Dust all surfaces", "Vacuum & mop", "Window sills"] },
+  { name: "Bedroom", icon: Bed, color: MINT, tasks: ["Linens freshened", "Under-bed cleaned", "Closet organized"] },
+];
+
+function RotatingRoomCards() {
+  const [activeRoom, setActiveRoom] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveRoom((prev) => (prev + 1) % heroRooms.length);
+    }, 3000);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
-    <GlassCard className="overflow-hidden">
-      <button onClick={onToggle} className="w-full flex items-center justify-between p-5 md:p-6 text-left group cursor-pointer">
-        <div className="flex items-center gap-4">
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: BLUE_GLOW }}><Icon size={20} weight="duotone" style={{ color: BLUE }} /></div>
-          <span className="text-lg font-semibold text-white">{title}</span>
-        </div>
-        <motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={spring}><CaretDown size={20} className="text-slate-400" /></motion.div>
-      </button>
-      <AnimatePresence initial={false}>
-        {isOpen && (
-          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={spring} className="overflow-hidden">
-            <p className="px-5 pb-5 md:px-6 md:pb-6 text-slate-400 leading-relaxed pl-[4.5rem]">{description}</p>
-          </motion.div>
-        )}
+    <div className="relative w-full max-w-sm mx-auto">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={activeRoom}
+          initial={{ opacity: 0, y: 20, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: -20, scale: 0.95 }}
+          transition={spring}
+        >
+          <GlassCard className="p-6">
+            <div className="flex items-center gap-3 mb-4">
+              {(() => {
+                const Icon = heroRooms[activeRoom].icon;
+                return (
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: `${heroRooms[activeRoom].color}22` }}>
+                    <Icon size={26} weight="duotone" style={{ color: heroRooms[activeRoom].color }} />
+                  </div>
+                );
+              })()}
+              <div>
+                <h3 className="text-lg font-semibold text-white">{heroRooms[activeRoom].name}</h3>
+                <div className="flex items-center gap-1.5">
+                  <CheckCircle size={14} weight="fill" style={{ color: MINT }} />
+                  <span className="text-xs font-medium" style={{ color: MINT }}>Cleaned</span>
+                </div>
+              </div>
+            </div>
+            <div className="space-y-2">
+              {heroRooms[activeRoom].tasks.map((task, i) => (
+                <motion.div
+                  key={task}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.15 }}
+                  className="flex items-center gap-2"
+                >
+                  <Check size={14} weight="bold" style={{ color: MINT }} />
+                  <span className="text-sm text-slate-300">{task}</span>
+                </motion.div>
+              ))}
+            </div>
+          </GlassCard>
+        </motion.div>
       </AnimatePresence>
-    </GlassCard>
-  );
-}
 
-/* ───────────────────────── SPARKLE SVG HERO ───────────────────────── */
-function SparkleHeroIcon() {
-  return (
-    <div className="relative flex items-center justify-center">
-      {/* Pulsing glow behind */}
-      <motion.div
-        className="absolute inset-0 rounded-full"
-        style={{ background: `radial-gradient(circle, ${BLUE_GLOW} 0%, transparent 70%)`, filter: "blur(40px)" }}
-        animate={{ scale: [1, 1.2, 1], opacity: [0.6, 1, 0.6] }}
-        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <svg viewBox="0 0 200 200" className="relative z-10 w-52 h-52 md:w-64 md:h-64" fill="none">
-        {/* Outer glow rings */}
-        <motion.circle cx="100" cy="100" r="90" stroke={BLUE} strokeWidth="0.5" opacity={0.12}
-          animate={{ r: [88, 92, 88] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} />
-        <motion.circle cx="100" cy="100" r="80" stroke={BLUE} strokeWidth="0.3" opacity={0.08}
-          animate={{ r: [78, 82, 78] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }} />
-
-        {/* Main sparkle star — filled */}
-        <motion.path
-          d="M100 20 L112 72 L165 72 L122 100 L135 152 L100 125 L65 152 L78 100 L35 72 L88 72Z"
-          fill={`${BLUE}22`} stroke={BLUE} strokeWidth="2" strokeLinejoin="round"
-          initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }}
-          transition={{ duration: 2.5, ease: "easeInOut" }}
-        />
-        {/* Inner star highlight */}
-        <path d="M100 45 L108 78 L140 78 L114 96 L122 130 L100 112 L78 130 L86 96 L60 78 L92 78Z"
-          fill={`${BLUE}0d`} />
-
-        {/* Center circle glow */}
-        <motion.circle cx="100" cy="90" r="16" fill={`${BLUE}18`} stroke={BLUE_LIGHT} strokeWidth="1.5"
-          initial={{ scale: 0 }} animate={{ scale: 1 }}
-          transition={{ duration: 0.8, delay: 1.2, ease: "backOut" }} />
-        <motion.circle cx="100" cy="90" r="8" fill={`${BLUE_LIGHT}30`}
-          animate={{ r: [7, 10, 7], opacity: [0.4, 0.8, 0.4] }}
-          transition={{ duration: 2, repeat: Infinity }} />
-
-        {/* Spray mist arcs */}
-        <motion.path d="M55 55 C40 40, 25 50, 20 65" stroke={BLUE_LIGHT} strokeWidth="1" strokeLinecap="round" fill="none" opacity={0.3}
-          initial={{ pathLength: 0 }} animate={{ pathLength: [0, 1, 0] }}
-          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }} />
-        <motion.path d="M145 55 C160 40, 175 50, 180 65" stroke={BLUE_LIGHT} strokeWidth="1" strokeLinecap="round" fill="none" opacity={0.3}
-          initial={{ pathLength: 0 }} animate={{ pathLength: [0, 1, 0] }}
-          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 0.5 }} />
-
-        {/* Bubble effects */}
-        <motion.circle cx="35" cy="75" r="6" fill={`${BLUE}15`} stroke={BLUE_LIGHT} strokeWidth="0.8"
-          animate={{ cy: [75, 65, 75], opacity: [0.3, 0.6, 0.3] }}
-          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }} />
-        <motion.circle cx="165" cy="80" r="5" fill={`${BLUE}12`} stroke={BLUE_LIGHT} strokeWidth="0.6"
-          animate={{ cy: [80, 68, 80], opacity: [0.2, 0.5, 0.2] }}
-          transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 0.6 }} />
-        <motion.circle cx="50" cy="140" r="4" fill={`${BLUE}10`} stroke={BLUE_LIGHT} strokeWidth="0.5"
-          animate={{ cy: [140, 130, 140], opacity: [0.2, 0.4, 0.2] }}
-          transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut", delay: 1.2 }} />
-        <motion.circle cx="155" cy="145" r="3.5" fill={`${BLUE}10`} stroke={BLUE_LIGHT} strokeWidth="0.5"
-          animate={{ cy: [145, 136, 145], opacity: [0.15, 0.35, 0.15] }}
-          transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut", delay: 0.9 }} />
-
-        {/* Sparkle accents */}
-        <motion.circle cx="170" cy="35" r="3" fill={BLUE_LIGHT}
-          animate={{ opacity: [0.2, 1, 0.2], scale: [0.7, 1.3, 0.7] }}
-          transition={{ duration: 2.5, repeat: Infinity }} />
-        <motion.circle cx="25" cy="40" r="2" fill={BLUE_LIGHT}
-          animate={{ opacity: [0.1, 0.8, 0.1], scale: [0.5, 1.2, 0.5] }}
-          transition={{ duration: 3, repeat: Infinity, delay: 0.8 }} />
-        <motion.circle cx="175" cy="160" r="2.5" fill={BLUE_LIGHT}
-          animate={{ opacity: [0.15, 0.7, 0.15] }}
-          transition={{ duration: 2, repeat: Infinity, delay: 1.2 }} />
-        <motion.circle cx="22" cy="155" r="2" fill={BLUE_LIGHT}
-          animate={{ opacity: [0.1, 0.6, 0.1] }}
-          transition={{ duration: 2.5, repeat: Infinity, delay: 0.4 }} />
-
-        {/* Tiny sparkle crosses */}
-        <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2 }}>
-          <rect x="28" y="118" width="10" height="2.5" rx="1.25" fill={BLUE_LIGHT} opacity={0.35} />
-          <rect x="31.75" y="114.25" width="2.5" height="10" rx="1.25" fill={BLUE_LIGHT} opacity={0.35} />
-        </motion.g>
-        <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.3 }}>
-          <rect x="158" y="110" width="8" height="2" rx="1" fill={BLUE_LIGHT} opacity={0.3} />
-          <rect x="161" y="107" width="2" height="8" rx="1" fill={BLUE_LIGHT} opacity={0.3} />
-        </motion.g>
-      </svg>
+      {/* Room indicators */}
+      <div className="flex justify-center gap-2 mt-4">
+        {heroRooms.map((room, i) => (
+          <button
+            key={room.name}
+            onClick={() => setActiveRoom(i)}
+            className="w-2.5 h-2.5 rounded-full transition-all cursor-pointer"
+            style={{ background: i === activeRoom ? BLUE_LIGHT : "rgba(255,255,255,0.15)", transform: i === activeRoom ? "scale(1.3)" : "scale(1)" }}
+          />
+        ))}
+      </div>
     </div>
   );
 }
 
-/* ───────────────────────── WAVE BG ───────────────────────── */
-function WaveBackground() {
+/* ───────────────────────── INSTANT ESTIMATE CALCULATOR ───────────────────────── */
+function EstimateCalculator() {
+  const [bedrooms, setBedrooms] = useState(2);
+  const [bathrooms, setBathrooms] = useState(1);
+  const [extras, setExtras] = useState<string[]>([]);
+
+  const basePrice = 99;
+  const bedroomPrice = 35;
+  const bathroomPrice = 25;
+  const extraPrices: Record<string, number> = {
+    "Deep Clean": 75,
+    "Inside Fridge": 30,
+    "Inside Oven": 30,
+    "Laundry": 25,
+    "Interior Windows": 40,
+    "Organizing": 50,
+  };
+
+  const total = basePrice + (bedrooms * bedroomPrice) + (bathrooms * bathroomPrice) + extras.reduce((sum, e) => sum + (extraPrices[e] || 0), 0);
+
+  const toggleExtra = (name: string) => {
+    setExtras(prev => prev.includes(name) ? prev.filter(e => e !== name) : [...prev, name]);
+  };
+
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
-      <motion.svg viewBox="0 0 1440 320" className="absolute bottom-0 w-full" preserveAspectRatio="none">
-        <motion.path fill={BLUE} fillOpacity="0.3" animate={{ d: ["M0,224L48,213.3C96,203,192,181,288,186.7C384,192,480,224,576,229.3C672,235,768,213,864,197.3C960,181,1056,171,1152,181.3C1248,192,1344,224,1392,240L1440,256L1440,320L0,320Z", "M0,256L48,240C96,224,192,192,288,192C384,192,480,224,576,234.7C672,245,768,235,864,218.7C960,203,1056,181,1152,186.7C1248,192,1344,224,1392,240L1440,256L1440,320L0,320Z", "M0,224L48,213.3C96,203,192,181,288,186.7C384,192,480,224,576,229.3C672,235,768,213,864,197.3C960,181,1056,171,1152,181.3C1248,192,1344,224,1392,240L1440,256L1440,320L0,320Z"] }} transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }} />
-      </motion.svg>
+    <GlassCard className="p-6 md:p-8">
+      <h3 className="text-xl font-semibold text-white mb-6">Instant Estimate Calculator</h3>
+      <div className="space-y-6">
+        {/* Bedrooms */}
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-slate-400">Bedrooms</span>
+            <span className="text-sm font-semibold text-white">{bedrooms}</span>
+          </div>
+          <input
+            type="range" min="1" max="6" value={bedrooms}
+            onChange={(e) => setBedrooms(Number(e.target.value))}
+            className="w-full accent-sky-500"
+          />
+        </div>
+
+        {/* Bathrooms */}
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-slate-400">Bathrooms</span>
+            <span className="text-sm font-semibold text-white">{bathrooms}</span>
+          </div>
+          <input
+            type="range" min="1" max="4" value={bathrooms}
+            onChange={(e) => setBathrooms(Number(e.target.value))}
+            className="w-full accent-sky-500"
+          />
+        </div>
+
+        {/* Extras */}
+        <div>
+          <p className="text-sm text-slate-400 mb-3">Add-Ons</p>
+          <div className="grid grid-cols-2 gap-2">
+            {Object.entries(extraPrices).map(([name, price]) => (
+              <button
+                key={name}
+                onClick={() => toggleExtra(name)}
+                className="p-3 rounded-xl border text-left text-sm transition-all cursor-pointer"
+                style={{
+                  background: extras.includes(name) ? `${BLUE}22` : "rgba(255,255,255,0.02)",
+                  borderColor: extras.includes(name) ? BLUE_LIGHT : "rgba(255,255,255,0.08)",
+                  color: extras.includes(name) ? "#fff" : "#94a3b8",
+                }}
+              >
+                <span className="block">{name}</span>
+                <span className="text-xs" style={{ color: MINT }}>+${price}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Total */}
+        <div className="border-t border-white/15 pt-4">
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-sm text-slate-400">Estimated Total</span>
+            <motion.span
+              key={total}
+              initial={{ scale: 1.2 }}
+              animate={{ scale: 1 }}
+              className="text-3xl font-black"
+              style={{ color: MINT }}
+            >
+              ${total}
+            </motion.span>
+          </div>
+          <MagneticButton className="w-full py-3 rounded-xl text-sm font-semibold text-white cursor-pointer" style={{ background: BLUE } as React.CSSProperties}>
+            <span className="flex items-center justify-center gap-2"><CalendarCheck size={18} /> Book This Cleaning</span>
+          </MagneticButton>
+        </div>
+      </div>
+    </GlassCard>
+  );
+}
+
+/* ───────────────────────── ECO COMMITMENT ───────────────────────── */
+function EcoCommitment() {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-50px" });
+
+  const stats = [
+    { label: "Plant-Based Products", pct: 100, color: MINT },
+    { label: "Recyclable Packaging", pct: 95, color: BLUE_LIGHT },
+    { label: "Carbon Neutral Operations", pct: 85, color: MINT },
+  ];
+
+  return (
+    <div ref={ref} className="space-y-4">
+      {stats.map((stat, i) => (
+        <div key={i}>
+          <div className="flex items-center justify-between mb-1.5">
+            <span className="text-sm text-slate-300">{stat.label}</span>
+            <span className="text-sm font-bold" style={{ color: stat.color }}>{stat.pct}%</span>
+          </div>
+          <div className="h-2 rounded-full bg-white/5 overflow-hidden">
+            <motion.div
+              className="h-full rounded-full"
+              style={{ background: stat.color }}
+              initial={{ width: 0 }}
+              animate={isInView ? { width: `${stat.pct}%` } : { width: 0 }}
+              transition={{ duration: 1.2, delay: i * 0.2, ease: "easeOut" }}
+            />
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
 
 /* ───────────────────────── DATA ───────────────────────── */
 const services = [
-  { title: "Residential Cleaning", description: "Thorough top-to-bottom home cleaning including dusting, vacuuming, mopping, kitchen and bathroom sanitation. We bring our own eco-friendly supplies and leave your home sparkling.", icon: House },
-  { title: "Commercial Cleaning", description: "Professional office and commercial space cleaning with flexible scheduling. Lobbies, workstations, break rooms, and restrooms maintained to the highest hygiene standards.", icon: Buildings },
-  { title: "Deep Cleaning", description: "Intensive cleaning for homes that need extra attention. Baseboards, inside appliances, light fixtures, window sills, grout scrubbing, and behind-furniture cleaning included.", icon: SprayBottle },
-  { title: "Move-In/Move-Out", description: "Get your security deposit back or start fresh in your new home. We clean every surface, inside cabinets, appliances, closets, and garage floors.", icon: Truck },
-  { title: "Carpet Cleaning", description: "Professional steam cleaning and stain removal for carpets and upholstery. We use truck-mounted extraction equipment for deep, lasting results.", icon: Broom },
-  { title: "Window Cleaning", description: "Crystal-clear windows inside and out. We handle screens, sills, tracks, and hard-to-reach glass with professional squeegee techniques and eco-safe solutions.", icon: WindowsLogo },
-];
-
-const stats = [
-  { value: "2,500+", label: "Homes Cleaned" },
-  { value: "4.9", label: "Star Rating" },
-  { value: "100%", label: "Satisfaction Rate" },
-  { value: "12+", label: "Years in Business" },
-];
-
-const testimonials = [
-  { name: "Jennifer M.", text: "The deep cleaning was incredible. They got stains out of our carpet that we thought were permanent. Our home has never looked this good.", rating: 5 },
-  { name: "Marcus T.", text: "We use their commercial service for our office weekly. Consistent, thorough, and the team is always professional. Highly recommend.", rating: 5 },
-  { name: "Patricia W.", text: "The move-out cleaning saved our security deposit. They cleaned things we did not even think about. Worth every penny.", rating: 5 },
+  { title: "Residential Cleaning", description: "Thorough home cleaning tailored to your needs. Every surface, every room, every time. We bring all supplies and equipment.", icon: House, price: "From $149" },
+  { title: "Commercial Cleaning", description: "Professional office and retail space cleaning. After-hours scheduling available to keep your business running smooth.", icon: Buildings, price: "From $199" },
+  { title: "Deep Cleaning", description: "Intensive top-to-bottom cleaning for homes that need extra attention. Baseboards, light fixtures, inside appliances — nothing missed.", icon: Sparkle, price: "From $299" },
+  { title: "Move-In/Out Cleaning", description: "Get your full deposit back. We clean every inch — inside cabinets, closets, window tracks, appliance interiors.", icon: Broom, price: "From $349" },
+  { title: "Post-Construction", description: "Dust, debris, and residue removal after renovations. We make your newly built or remodeled space move-in ready.", icon: Drop, price: "From $399" },
+  { title: "Recurring Service", description: "Weekly, bi-weekly, or monthly plans with consistent teams. The more often we come, the less each visit costs.", icon: CalendarCheck, price: "From $119/visit" },
 ];
 
 const processSteps = [
-  { step: "01", title: "Free Estimate", description: "Tell us about your space and we provide a transparent, no-obligation quote within hours." },
-  { step: "02", title: "Customize", description: "Choose your services, schedule, and any special requests. We tailor everything to your needs." },
-  { step: "03", title: "We Clean", description: "Our trained, insured team arrives on time with professional-grade equipment and eco-friendly products." },
-  { step: "04", title: "Walk-Through", description: "We do a final walk-through to ensure everything meets our quality standards and your satisfaction." },
+  { step: "01", title: "Free Estimate", description: "Tell us about your space — size, rooms, and any special requests. Get an instant quote online or by phone.", icon: CurrencyDollar, time: "2 min" },
+  { step: "02", title: "Customize", description: "Choose your cleaning level, add-ons, and preferred schedule. We match you with the perfect team.", icon: CheckCircle, time: "Pick your plan" },
+  { step: "03", title: "We Clean", description: "Our trained, background-checked team arrives on time with everything needed. You relax.", icon: Sparkle, time: "2-4 hours" },
+  { step: "04", title: "Walk-Through", description: "Final inspection together. If anything is not perfect, we re-clean it on the spot. 100% satisfaction guaranteed.", icon: SealCheck, time: "Done" },
 ];
 
-const checklist = [
-  "Bonded & insured team members",
-  "Eco-friendly, non-toxic products",
-  "Background-checked employees",
-  "100% satisfaction guarantee",
-  "Same-day service available",
-  "No hidden fees or surprises",
-  "Consistent team assignment",
-  "Pet-friendly cleaning solutions",
+const guarantees = [
+  { icon: ShieldCheck, text: "Bonded & Insured — $2M coverage" },
+  { icon: SealCheck, text: "Background-checked teams" },
+  { icon: Leaf, text: "100% eco-friendly products" },
+  { icon: Heart, text: "200% satisfaction guarantee" },
+  { icon: Timer, text: "On-time, every time" },
+  { icon: Recycle, text: "Zero-waste cleaning supplies" },
+  { icon: Users, text: "Same team every visit" },
+  { icon: Lightning, text: "Same-day availability" },
 ];
 
-const faqItems = [
-  { q: "Do I need to be home during the cleaning?", a: "Not at all. Many clients provide a key or access code. We are fully bonded and insured for your peace of mind." },
-  { q: "What products do you use?", a: "We use eco-friendly, non-toxic cleaning products that are safe for children, pets, and the environment while still delivering a deep clean." },
-  { q: "How do you price your services?", a: "Pricing is based on square footage, number of rooms, and the type of cleaning requested. We always provide a free estimate before starting." },
-  { q: "Can I customize what gets cleaned?", a: "Absolutely. We offer fully customizable cleaning plans. Want us to focus on kitchens and bathrooms? No problem. Need laundry folded? We can do that too." },
-  { q: "What if I am not satisfied?", a: "We offer a 100% satisfaction guarantee. If anything is not up to your standards, we will return within 24 hours to re-clean at no extra charge." },
+const testimonials = [
+  {
+    name: "Amanda R.",
+    text: "Crystal Clean has been cleaning our home bi-weekly for 2 years. They are consistent, thorough, and trustworthy. I gave them a key and never worried once.",
+    rating: 5,
+    rooms: ["Kitchen", "3 Bathrooms", "Living Areas", "Master Bedroom"],
+    service: "Bi-Weekly Residential",
+  },
+  {
+    name: "Tom & Lisa H.",
+    text: "We hired them for our move-out clean and got our FULL $2,400 deposit back. The landlord said it was the cleanest unit they had ever seen returned. Worth every penny.",
+    rating: 5,
+    rooms: ["Full Apartment", "Appliance Interiors", "Window Tracks", "Closets"],
+    service: "Move-Out Deep Clean",
+  },
+  {
+    name: "Dr. Sarah K.",
+    text: "They clean our dental office 5 nights a week. Professional, reliable, and the eco-friendly products are a must for us. Patients always comment on how clean the office looks.",
+    rating: 5,
+    rooms: ["Waiting Room", "Exam Rooms", "Restrooms", "Reception"],
+    service: "Commercial — 5x Weekly",
+  },
+  {
+    name: "Marcus J.",
+    text: "Post-construction cleaning after our kitchen remodel. They got sawdust out of places I did not even know sawdust could reach. Three of my neighbors have hired them since.",
+    rating: 5,
+    rooms: ["Kitchen", "Adjacent Rooms", "Ductwork Areas", "All Surfaces"],
+    service: "Post-Construction",
+  },
 ];
 
-const packages = [
-  { name: "Essential", price: "$149", period: "/visit", features: ["General tidying & dusting", "Kitchen & bathroom cleaning", "Vacuuming & mopping", "Trash removal", "Surface sanitization"], highlighted: false },
-  { name: "Premium", price: "$249", period: "/visit", features: ["Everything in Essential", "Deep appliance cleaning", "Baseboards & light fixtures", "Inside cabinet wipe-down", "Window interior cleaning", "Laundry folding"], highlighted: true },
-  { name: "Luxury", price: "$399", period: "/visit", features: ["Everything in Premium", "Carpet steam cleaning", "Grout & tile restoration", "Closet organization", "Garage sweep & mop", "Refrigerator deep clean", "Priority scheduling"], highlighted: false },
+const pricingTiers = [
+  { name: "Essential", price: 149, frequency: "per visit", description: "Standard cleaning for maintained homes", features: ["All rooms dusted & vacuumed", "Bathrooms sanitized", "Kitchen surfaces cleaned", "Floors mopped", "Trash removed"], popular: false },
+  { name: "Premium", price: 249, frequency: "per visit", description: "Deep attention to every detail", features: ["Everything in Essential", "Inside microwave & oven", "Baseboards & light fixtures", "Window sills & tracks", "Cabinet front wipe-down", "Detailed bathroom scrub"], popular: true },
+  { name: "Luxury", price: 399, frequency: "per visit", description: "White-glove comprehensive service", features: ["Everything in Premium", "Inside fridge & freezer", "Inside all cabinets", "Wall spot cleaning", "Laundry wash & fold", "Interior windows", "Organizing service"], popular: false },
 ];
 
-/* ═══════════════════════════════════════════════════════════════════
+const faqs = [
+  { q: "What products do you use?", a: "We use 100% plant-based, EPA Safer Choice certified cleaning products. They are tough on grime but safe for kids, pets, and the environment. We can also accommodate specific product requests." },
+  { q: "Do I need to be home?", a: "Not at all. Many of our clients give us a key or garage code. We are fully bonded and insured with $2M coverage, and every team member passes a thorough background check." },
+  { q: "How long does a cleaning take?", a: "A standard 3-bedroom home takes 2-3 hours with our team of 2. Deep cleans may take 3-4 hours. Move-out cleans for larger homes can take a full day." },
+  { q: "Can I customize my cleaning?", a: "Absolutely. Use our online estimator or tell us exactly what you need. We can focus on specific rooms, add extras like interior windows or organizing, and skip areas you handle yourself." },
+  { q: "What if I am not satisfied?", a: "We offer a 200% satisfaction guarantee. If anything is not right, we re-clean it free. If you are still not happy, we refund your cleaning AND send a competitor to clean for free on us. We are that confident." },
+  { q: "How do recurring discounts work?", a: "Weekly service gets 20% off, bi-weekly gets 15% off, monthly gets 10% off. The more frequently we clean, the less time each visit takes, and we pass those savings to you." },
+];
+
+/* ───────────────────────── CLEANING QUIZ ───────────────────────── */
+const cleaningQuizOptions = [
+  {
+    label: "I have kids or pets at home",
+    result: "We recommend bi-weekly service. Pets and kids accelerate dust and allergen buildup. Our bi-weekly plan keeps your home consistently fresh.",
+  },
+  {
+    label: "It's just me (or me and a partner)",
+    result: "Monthly service may be right for you, with deep cleaning every 3 months. We'll tailor a plan to your lifestyle and cleaning goals.",
+  },
+  {
+    label: "I want it spotless for a special occasion",
+    result: "One-time deep clean coming right up! We'll do a full top-to-bottom before your event or guests arrive.",
+  },
+  {
+    label: "I'm moving in or out",
+    result: "Our move-in/move-out clean is the most thorough service we offer — every appliance, cabinet, baseboard, and light fixture. Landlord-ready guaranteed.",
+  },
+];
+
+function CleaningQuizOption({ label, result }: { label: string; result: string }) {
+  const [selected, setSelected] = useState(false);
+  return (
+    <div className="space-y-3">
+      <button
+        onClick={() => setSelected((prev) => !prev)}
+        className="w-full p-5 rounded-xl border text-left transition-all cursor-pointer"
+        style={{
+          background: selected ? `${BLUE}22` : "rgba(255,255,255,0.02)",
+          borderColor: selected ? BLUE_LIGHT : "rgba(255,255,255,0.08)",
+        }}
+      >
+        <div className="flex items-center gap-3">
+          <div
+            className="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors"
+            style={{ borderColor: selected ? BLUE_LIGHT : "rgba(255,255,255,0.2)", background: selected ? BLUE : "transparent" }}
+          >
+            {selected && <Check size={12} weight="bold" color="#fff" />}
+          </div>
+          <span className="text-sm font-medium text-white">{label}</span>
+        </div>
+      </button>
+      <AnimatePresence>
+        {selected && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={spring}
+            className="overflow-hidden"
+          >
+            <div className="p-4 rounded-xl border" style={{ background: `${MINT}10`, borderColor: `${MINT}30` }}>
+              <p className="text-sm text-slate-300 leading-relaxed">{result}</p>
+              <MagneticButton
+                className="mt-3 px-6 py-2.5 rounded-full text-xs font-semibold text-white flex items-center gap-2 cursor-pointer"
+                style={{ background: BLUE } as React.CSSProperties}
+              >
+                <CalendarCheck size={14} /> Book This Plan
+              </MagneticButton>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+function CleaningQuiz() {
+  return (
+    <div className="space-y-4">
+      {cleaningQuizOptions.map((opt, i) => (
+        <CleaningQuizOption key={i} label={opt.label} result={opt.result} />
+      ))}
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════
    MAIN PAGE
-   ═══════════════════════════════════════════════════════════════════ */
+   ═══════════════════════════════════════════════════════════════ */
 export default function V2CleaningPage() {
-  const [openService, setOpenService] = useState<number | null>(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   return (
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: BG, color: "#f1f5f9" }}>
-      <FloatingSparkles />
+      <FloatingBubbles />
 
       {/* ─── NAV ─── */}
       <motion.nav initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={spring} className="fixed top-0 left-0 right-0 z-50">
         <div className="mx-auto max-w-7xl px-4 md:px-6 py-4">
           <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
             <div className="flex items-center gap-2">
-              <Sparkle size={24} weight="duotone" style={{ color: BLUE }} />
+              <Sparkle size={24} weight="duotone" style={{ color: BLUE_LIGHT }} />
               <span className="text-lg font-bold tracking-tight text-white">Crystal Clean Co.</span>
             </div>
             <div className="hidden md:flex items-center gap-8 text-sm text-slate-400">
               <a href="#services" className="hover:text-white transition-colors">Services</a>
+              <a href="#estimate" className="hover:text-white transition-colors">Estimate</a>
               <a href="#process" className="hover:text-white transition-colors">Process</a>
-              <a href="#testimonials" className="hover:text-white transition-colors">Reviews</a>
+              <a href="#reviews" className="hover:text-white transition-colors">Reviews</a>
               <a href="#pricing" className="hover:text-white transition-colors">Pricing</a>
               <a href="#contact" className="hover:text-white transition-colors">Contact</a>
             </div>
             <div className="flex items-center gap-3">
-              <MagneticButton className="px-4 md:px-5 py-2 rounded-full text-sm font-semibold text-white transition-colors" style={{ background: BLUE }}>Get a Quote</MagneticButton>
-              <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden p-2 rounded-lg text-white hover:bg-white/10 transition-colors">{mobileMenuOpen ? <X size={24} /> : <List size={24} />}</button>
+              <MagneticButton className="px-4 md:px-5 py-2 rounded-full text-sm font-semibold text-white cursor-pointer" style={{ background: BLUE } as React.CSSProperties}>
+                Free Estimate
+              </MagneticButton>
+              <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden p-2 rounded-lg text-white hover:bg-white/10 transition-colors cursor-pointer">
+                {mobileMenuOpen ? <X size={24} /> : <List size={24} />}
+              </button>
             </div>
           </GlassCard>
+
           <AnimatePresence>
             {mobileMenuOpen && (
               <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.3, ease: "easeInOut" }} className="md:hidden mt-2 overflow-hidden">
                 <GlassCard className="flex flex-col gap-1 px-4 py-4">
-                  {[{ label: "Services", href: "#services" }, { label: "Process", href: "#process" }, { label: "Reviews", href: "#testimonials" }, { label: "Pricing", href: "#pricing" }, { label: "Contact", href: "#contact" }].map((link) => (
-                    <a key={link.label} href={link.href} onClick={() => setMobileMenuOpen(false)} className="block px-4 py-3 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-white/5 transition-colors">{link.label}</a>
+                  {[{ label: "Services", href: "#services" }, { label: "Estimate", href: "#estimate" }, { label: "Process", href: "#process" }, { label: "Reviews", href: "#reviews" }, { label: "Pricing", href: "#pricing" }, { label: "Contact", href: "#contact" }].map((link) => (
+                    <a key={link.label} href={link.href} onClick={() => setMobileMenuOpen(false)} className="block px-4 py-3 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-white/5 transition-colors">
+                      {link.label}
+                    </a>
                   ))}
                 </GlassCard>
               </motion.div>
@@ -361,49 +602,83 @@ export default function V2CleaningPage() {
         </div>
       </motion.nav>
 
-      {/* ─── HERO ─── */}
+      {/* ═══ HERO — Rotating Room Cards ═══ */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10">
-        {/* Radial glow background */}
-        <div className="absolute inset-0 pointer-events-none" style={{ background: `radial-gradient(ellipse 60% 40% at 50% 30%, ${BLUE_GLOW} 0%, transparent 70%)` }} />
-        <div className="mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-4 items-center">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-1/3 left-1/4 w-96 h-96 rounded-full opacity-15" style={{ background: `radial-gradient(circle, ${BLUE} 0%, transparent 70%)`, filter: "blur(80px)" }} />
+          <div className="absolute bottom-1/3 right-1/4 w-80 h-80 rounded-full opacity-10" style={{ background: `radial-gradient(circle, ${MINT} 0%, transparent 70%)`, filter: "blur(60px)" }} />
+        </div>
+
+        <div className="mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
           <div className="space-y-8">
             <div>
-              <motion.p initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ ...spring, delay: 0.1 }} className="text-sm uppercase tracking-widest mb-4" style={{ color: BLUE }}>Professional Cleaning Services</motion.p>
+              <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ ...spring, delay: 0.1 }} className="flex items-center gap-3 mb-4">
+                <span className="text-sm uppercase tracking-widest" style={{ color: MINT }}>Eco-Friendly</span>
+                <span className="w-8 h-px" style={{ background: MINT }} />
+                <span className="text-sm uppercase tracking-widest" style={{ color: MINT }}>Spotless Results</span>
+              </motion.div>
               <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}>
-                <WordReveal text="Sparkling Clean, Every Time" />
+                <WordReveal text="A Cleaner Home, A Better Life" />
               </h1>
             </div>
             <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.6 }} className="text-lg text-slate-400 max-w-md leading-relaxed">
-              From weekly home cleaning to deep commercial sanitation, we deliver spotless results with eco-friendly products and meticulous attention to detail.
+              Professional house cleaning that gives you back your weekends. Eco-friendly products, background-checked teams, and a 200% satisfaction guarantee.
             </motion.p>
+
+            {/* Trust badges */}
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.7 }} className="flex flex-wrap gap-3">
+              {[
+                { icon: Leaf, text: "100% Eco-Friendly" },
+                { icon: ShieldCheck, text: "Bonded & Insured" },
+                { icon: SealCheck, text: "Background Checked" },
+                { icon: Lightning, text: "Same-Day Available" },
+              ].map((badge, i) => (
+                <div key={i} className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/15 bg-white/[0.08]">
+                  <badge.icon size={14} weight="duotone" style={{ color: MINT }} />
+                  <span className="text-xs text-slate-400">{badge.text}</span>
+                </div>
+              ))}
+            </motion.div>
+
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.8 }} className="flex flex-wrap gap-4">
-              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer" style={{ background: BLUE }}>
+              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer" style={{ background: BLUE } as React.CSSProperties}>
                 Get Free Estimate <ArrowRight size={18} weight="bold" />
               </MagneticButton>
-              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
-                <Phone size={18} weight="duotone" /> (555) 789-0123
+              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
+                <Phone size={18} weight="duotone" /> <a href="tel:+12068349275">(206) 834-9275</a>
               </MagneticButton>
             </motion.div>
+
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ ...spring, delay: 1 }} className="flex flex-wrap gap-6 text-sm text-slate-400">
-              <span className="flex items-center gap-2"><Leaf size={16} weight="duotone" style={{ color: BLUE }} />Eco-Friendly Products</span>
-              <span className="flex items-center gap-2"><ShieldCheck size={16} weight="duotone" style={{ color: BLUE }} />Bonded & Insured</span>
+              <a href="https://maps.google.com/?q=Crystal+Clean+Co+Seattle+WA" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-white transition-colors">
+                <MapPin size={16} weight="duotone" style={{ color: BLUE_LIGHT }} />Serving Greater Seattle
+              </a>
+              <span className="flex items-center gap-2"><Clock size={16} weight="duotone" style={{ color: BLUE_LIGHT }} />7 Days a Week, 7am-8pm</span>
             </motion.div>
           </div>
-          <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ ...spring, delay: 0.3 }} className="hidden md:flex items-center justify-center lg:justify-end">
-            <SparkleHeroIcon />
+
+          {/* Right side — rotating room cards */}
+          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ ...spring, delay: 0.3 }} className="hidden md:block">
+            <RotatingRoomCards />
           </motion.div>
         </div>
       </section>
 
-      {/* ─── STATS ─── */}
+      {/* ═══ STATS BAR ═══ */}
       <SectionReveal className="relative z-10 pb-8">
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <GlassCard className="p-6 md:p-8">
             <motion.div className="grid grid-cols-2 sm:grid-cols-4 gap-6 md:gap-8" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
-              {stats.map((s, i) => (
+              {[
+                { value: "2,500+", label: "Homes Cleaned", icon: House },
+                { value: "4.9", label: "Google Rating", icon: Star },
+                { value: "200%", label: "Satisfaction Guarantee", icon: Heart },
+                { value: "12+", label: "Years in Business", icon: Trophy },
+              ].map((stat, i) => (
                 <motion.div key={i} variants={fadeUp} className="text-center">
-                  <p className="text-3xl md:text-4xl font-bold tracking-tight" style={{ color: BLUE }}>{s.value}</p>
-                  <p className="text-sm text-slate-400 mt-1">{s.label}</p>
+                  <stat.icon size={24} weight="duotone" style={{ color: BLUE_LIGHT }} className="mx-auto mb-2" />
+                  <div className="text-2xl md:text-3xl font-bold text-white">{stat.value}</div>
+                  <div className="text-xs text-slate-400 mt-1">{stat.label}</div>
                 </motion.div>
               ))}
             </motion.div>
@@ -411,87 +686,34 @@ export default function V2CleaningPage() {
         </div>
       </SectionReveal>
 
-      {/* ─── SERVICES ACCORDION ─── */}
+      {/* ═══ SERVICES ═══ */}
       <SectionReveal id="services" className="relative z-10 py-16 md:py-24">
-        <div className="mx-auto max-w-7xl px-4 md:px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
-            <div className="lg:sticky lg:top-32">
-              <p className="text-sm uppercase tracking-widest mb-3" style={{ color: BLUE }}>What We Offer</p>
-              <h2 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white mb-6"><WordReveal text="Professional Cleaning Services" /></h2>
-              <p className="text-slate-400 leading-relaxed max-w-md">From routine home maintenance to intensive deep cleans, every service is delivered with professional-grade equipment and eco-friendly products. Click any service to learn more.</p>
-            </div>
-            <motion.div className="space-y-3" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
-              {services.map((svc, i) => (
-                <motion.div key={i} variants={fadeUp}>
-                  <AccordionItem title={svc.title} description={svc.description} icon={svc.icon} isOpen={openService === i} onToggle={() => setOpenService(openService === i ? null : i)} />
-                </motion.div>
-              ))}
-            </motion.div>
-          </div>
+        <div className="absolute inset-0 pointer-events-none opacity-5">
+          <svg width="100%" height="100%"><pattern id="clean-grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke={BLUE_LIGHT} strokeWidth="0.5" /></pattern><rect width="100%" height="100%" fill="url(#clean-grid)" /></svg>
         </div>
-      </SectionReveal>
-
-      {/* ─── ABOUT ─── */}
-      <SectionReveal className="relative z-10 py-16 md:py-24 overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none" style={{ background: `radial-gradient(ellipse 50% 50% at 80% 50%, ${BLUE_GLOW} 0%, transparent 70%)` }} />
-        <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div className="relative rounded-2xl overflow-hidden aspect-[4/3]">
-            <img src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&q=80" alt="Professional cleaning team at work" className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-          </div>
-          <div>
-            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: BLUE }}>About Us</p>
-            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white mb-6"><WordReveal text="12 Years of Spotless Results" /></h2>
-            <p className="text-slate-400 leading-relaxed mb-4">Crystal Clean Co. was founded with a simple mission: deliver consistently exceptional cleaning with honest pricing and genuine care for our clients and the environment.</p>
-            <p className="text-slate-400 leading-relaxed mb-6">Every team member is background-checked, trained in our proprietary methods, and committed to leaving every space cleaner than you imagined possible. We use only eco-friendly, non-toxic products that are safe for your family, pets, and the planet.</p>
-            <div className="flex flex-wrap gap-4">
-              <div className="flex items-center gap-2 text-sm"><Recycle size={18} weight="duotone" style={{ color: BLUE }} /><span className="text-slate-300">Green Certified</span></div>
-              <div className="flex items-center gap-2 text-sm"><UsersFour size={18} weight="duotone" style={{ color: BLUE }} /><span className="text-slate-300">50+ Team Members</span></div>
-              <div className="flex items-center gap-2 text-sm"><ShieldCheck size={18} weight="duotone" style={{ color: BLUE }} /><span className="text-slate-300">Fully Insured</span></div>
-            </div>
-          </div>
-        </div>
-      </SectionReveal>
-
-      {/* ─── PROCESS ─── */}
-      <SectionReveal id="process" className="relative z-10 py-16 md:py-24">
-        <div className="mx-auto max-w-7xl px-4 md:px-6">
+        <div className="mx-auto max-w-7xl px-4 md:px-6 relative">
           <div className="text-center mb-16">
-            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: BLUE }}>How It Works</p>
-            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white"><WordReveal text="Simple 4-Step Process" /></h2>
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: MINT }}>Our Services</p>
+            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white">
+              <WordReveal text="Every Space, Spotless" />
+            </h2>
           </div>
-          <motion.div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
-            {processSteps.map((step, i) => (
+          <motion.div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
+            {services.map((svc, i) => (
               <motion.div key={i} variants={fadeUp}>
-                <GlassCard className="p-6 h-full relative overflow-hidden">
-                  <div className="absolute top-4 right-4 text-5xl font-black opacity-5 text-white">{step.step}</div>
-                  <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: BLUE }}>Step {step.step}</p>
-                  <h3 className="text-lg font-semibold text-white mb-2">{step.title}</h3>
-                  <p className="text-sm text-slate-400 leading-relaxed">{step.description}</p>
-                </GlassCard>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </SectionReveal>
-
-      {/* ─── TESTIMONIALS ─── */}
-      <SectionReveal id="testimonials" className="relative z-10 py-16 md:py-24">
-        <WaveBackground />
-        <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6">
-          <div className="text-center mb-16">
-            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: BLUE }}>Client Stories</p>
-            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white"><WordReveal text="Loved by Homeowners" /></h2>
-          </div>
-          <motion.div className="grid grid-cols-1 md:grid-cols-3 gap-6" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
-            {testimonials.map((t, i) => (
-              <motion.div key={i} variants={fadeUp}>
-                <GlassCard className="p-6 h-full flex flex-col">
-                  <Quotes size={28} weight="fill" style={{ color: BLUE }} className="mb-3 opacity-50" />
-                  <p className="text-slate-300 leading-relaxed flex-1 text-sm">{t.text}</p>
-                  <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
-                    <span className="text-sm font-semibold text-white">{t.name}</span>
-                    <div className="flex gap-0.5">{Array.from({ length: t.rating }).map((_, j) => (<Star key={j} size={12} weight="fill" style={{ color: BLUE }} />))}</div>
+                <GlassCard className="p-6 h-full flex flex-col group hover:border-sky-500/30 transition-colors">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: i % 2 === 0 ? BLUE_GLOW : MINT_GLOW }}>
+                      <svc.icon size={24} weight="duotone" style={{ color: i % 2 === 0 ? BLUE_LIGHT : MINT }} />
+                    </div>
+                    <span className="px-3 py-1 rounded-full text-xs font-semibold" style={{ background: `${BLUE}22`, color: BLUE_LIGHT }}>{svc.price}</span>
+                  </div>
+                  <h3 className="text-lg font-semibold text-white mb-2">{svc.title}</h3>
+                  <p className="text-sm text-slate-400 leading-relaxed flex-1">{svc.description}</p>
+                  <div className="mt-4 pt-4 border-t border-white/8">
+                    <span className="text-xs font-medium flex items-center gap-1 cursor-pointer group-hover:gap-2 transition-all" style={{ color: BLUE_LIGHT }}>
+                      Book Now <CaretRight size={12} weight="bold" />
+                    </span>
                   </div>
                 </GlassCard>
               </motion.div>
@@ -500,54 +722,82 @@ export default function V2CleaningPage() {
         </div>
       </SectionReveal>
 
-      {/* ─── CHECKLIST GUARANTEE ─── */}
-      <SectionReveal className="relative z-10 py-16 md:py-24">
+      {/* ═══ ABOUT + ECO ═══ */}
+      <SectionReveal id="about" className="relative z-10 py-16 md:py-24">
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <p className="text-sm uppercase tracking-widest mb-3" style={{ color: BLUE }}>Our Promise</p>
-              <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white mb-6"><WordReveal text="The Crystal Clean Guarantee" /></h2>
-              <p className="text-slate-400 leading-relaxed max-w-md mb-8">Every cleaning comes with our ironclad satisfaction guarantee. If any area does not meet your standards, we return within 24 hours to make it right, no questions asked.</p>
-              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer" style={{ background: BLUE }}>
-                <ListChecks size={20} weight="duotone" /> Book With Confidence
-              </MagneticButton>
+              <p className="text-sm uppercase tracking-widest mb-3" style={{ color: MINT }}>About Crystal Clean</p>
+              <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white mb-6">
+                <WordReveal text="Clean Homes, Clean Conscience" />
+              </h2>
+              <div className="space-y-4 text-slate-400 leading-relaxed">
+                <p>Founded in 2012 by Maria Santos, Crystal Clean Co. started with one van and a commitment to doing things differently — no harsh chemicals, no cutting corners, no strangers in your home without a thorough background check.</p>
+                <p>Today we are Seattle&apos;s top-rated cleaning service with over 2,500 homes served. Every product we use is EPA Safer Choice certified. Every team member is vetted, trained, and part of our family. Your home deserves that.</p>
+              </div>
+              <div className="mt-8">
+                <p className="text-xs uppercase tracking-widest mb-4" style={{ color: MINT }}>Our Eco Commitment</p>
+                <EcoCommitment />
+              </div>
             </div>
-            <motion.div className="grid grid-cols-1 sm:grid-cols-2 gap-3" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true }}>
-              {checklist.map((item, i) => (
-                <motion.div key={i} variants={fadeUp}>
-                  <GlassCard className="p-4 flex items-center gap-3">
-                    <CheckCircle size={20} weight="duotone" style={{ color: BLUE }} className="shrink-0" />
-                    <span className="text-sm text-slate-300">{item}</span>
-                  </GlassCard>
-                </motion.div>
-              ))}
-            </motion.div>
+            <div className="relative rounded-2xl overflow-hidden aspect-[4/3]">
+              <img src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&q=80" alt="Professional cleaning team" className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+              <div className="absolute bottom-6 left-6 right-6">
+                <GlassCard className="px-4 py-3 inline-flex items-center gap-3">
+                  <Leaf size={20} weight="duotone" style={{ color: MINT }} />
+                  <span className="text-sm text-white font-medium">Maria Santos — Founder & CEO</span>
+                </GlassCard>
+              </div>
+            </div>
           </div>
         </div>
       </SectionReveal>
 
-      {/* ─── FAQ ─── */}
-      <SectionReveal id="faq" className="relative z-10 py-16 md:py-24">
-        <div className="mx-auto max-w-3xl px-4 md:px-6">
-          <div className="text-center mb-16">
-            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: BLUE }}>Common Questions</p>
-            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white"><WordReveal text="Frequently Asked Questions" /></h2>
+      {/* ═══ INSTANT ESTIMATE CALCULATOR ═══ */}
+      <SectionReveal id="estimate" className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+            <div>
+              <p className="text-sm uppercase tracking-widest mb-3" style={{ color: MINT }}>Get Your Price</p>
+              <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white mb-6">
+                <WordReveal text="Instant Online Estimate" />
+              </h2>
+              <p className="text-slate-400 leading-relaxed mb-8">No hidden fees. No surprises. Customize your cleaning plan and see your price before you book. Recurring customers save up to 20%.</p>
+              <div className="space-y-3">
+                {[
+                  "Transparent, upfront pricing",
+                  "No contracts — cancel anytime",
+                  "Recurring discounts: 10-20% off",
+                  "All supplies and equipment included",
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    <CheckCircle size={18} weight="duotone" style={{ color: MINT }} />
+                    <span className="text-sm text-slate-300">{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <EstimateCalculator />
           </div>
-          <motion.div className="space-y-3" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true }}>
-            {faqItems.map((faq, i) => (
+        </div>
+      </SectionReveal>
+
+      {/* ═══ GUARANTEES ═══ */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: MINT }}>Our Promise</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white">
+              <WordReveal text="The Crystal Clean Guarantee" />
+            </h2>
+          </div>
+          <motion.div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
+            {guarantees.map((g, i) => (
               <motion.div key={i} variants={fadeUp}>
-                <GlassCard className="overflow-hidden">
-                  <button onClick={() => setOpenFaq(openFaq === i ? null : i)} className="w-full flex items-center justify-between p-5 text-left cursor-pointer">
-                    <span className="text-base font-semibold text-white pr-4">{faq.q}</span>
-                    <motion.div animate={{ rotate: openFaq === i ? 180 : 0 }} transition={spring}><CaretDown size={20} className="text-slate-400" /></motion.div>
-                  </button>
-                  <AnimatePresence initial={false}>
-                    {openFaq === i && (
-                      <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={spring} className="overflow-hidden">
-                        <p className="px-5 pb-5 text-slate-400 leading-relaxed">{faq.a}</p>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                <GlassCard className="p-5 flex items-center gap-3">
+                  <g.icon size={22} weight="duotone" style={{ color: MINT }} className="shrink-0" />
+                  <span className="text-sm text-slate-300">{g.text}</span>
                 </GlassCard>
               </motion.div>
             ))}
@@ -555,66 +805,253 @@ export default function V2CleaningPage() {
         </div>
       </SectionReveal>
 
-      {/* ─── CONTACT ─── */}
-      <SectionReveal id="contact" className="relative z-10 py-16 md:py-24">
+      {/* ═══ PROCESS ═══ */}
+      <SectionReveal id="process" className="relative z-10 py-16 md:py-24">
         <div className="mx-auto max-w-7xl px-4 md:px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white mb-6"><WordReveal text="Ready for a Spotless Space?" /></h2>
-              <p className="text-slate-400 leading-relaxed max-w-md mb-8">Get your free estimate today. We respond within 2 hours and can often schedule service for the same week.</p>
-              <div className="flex flex-wrap gap-4">
-                <MagneticButton className="px-10 py-4 rounded-full text-base font-semibold text-white inline-flex items-center gap-2 cursor-pointer" style={{ background: BLUE }}>
-                  <CalendarCheck size={20} weight="duotone" /> Schedule Cleaning
-                </MagneticButton>
-                <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
-                  <Phone size={18} weight="duotone" /> Call Us
-                </MagneticButton>
+          <div className="text-center mb-16">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: MINT }}>How It Works</p>
+            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white">
+              <WordReveal text="Simple as 1-2-3-4" />
+            </h2>
+          </div>
+          <motion.div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
+            {processSteps.map((step, i) => (
+              <motion.div key={i} variants={fadeUp}>
+                <GlassCard className="p-6 h-full relative overflow-hidden">
+                  <div className="absolute top-4 right-4 text-5xl font-black opacity-5 text-white">{step.step}</div>
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: i % 2 === 0 ? BLUE_GLOW : MINT_GLOW }}>
+                    <step.icon size={24} weight="duotone" style={{ color: i % 2 === 0 ? BLUE_LIGHT : MINT }} />
+                  </div>
+                  <div className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: MINT }}>{step.step}</div>
+                  <h3 className="text-lg font-semibold text-white mb-2">{step.title}</h3>
+                  <p className="text-sm text-slate-400 leading-relaxed">{step.description}</p>
+                  <div className="mt-3">
+                    <span className="text-xs px-2 py-1 rounded-lg" style={{ background: `${BLUE}22`, color: BLUE_LIGHT }}>{step.time}</span>
+                  </div>
+                  {i < processSteps.length - 1 && (
+                    <div className="hidden lg:block absolute top-1/2 -right-3 w-6 h-6 z-10">
+                      <ArrowRight size={20} style={{ color: BLUE_LIGHT }} className="opacity-40" />
+                    </div>
+                  )}
+                </GlassCard>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </SectionReveal>
+
+      {/* ═══ TESTIMONIALS — Checklist-Style Reviews ═══ */}
+      <SectionReveal id="reviews" className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <div className="text-center mb-6">
+            {/* Google Reviews Header */}
+            <div className="inline-flex flex-col sm:flex-row items-center gap-4 px-6 py-4 rounded-2xl border border-white/15 bg-white/[0.07] mb-8">
+              <div className="flex items-center gap-2">
+                <svg width="24" height="24" viewBox="0 0 24 24" aria-label="Google">
+                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                </svg>
+                <span className="text-white font-bold text-lg">4.9</span>
+                <div className="flex gap-0.5">
+                  {[1,2,3,4,5].map((s) => (
+                    <Star key={s} size={16} weight="fill" style={{ color: "#FBBC05" }} />
+                  ))}
+                </div>
+              </div>
+              <div className="w-px h-6 bg-white/10 hidden sm:block" />
+              <div className="text-center sm:text-left">
+                <span className="text-white font-semibold">243 Google Reviews</span>
+                <p className="text-xs text-slate-400 mt-0.5">Consistently 5-star rated across Seattle</p>
               </div>
             </div>
-            <GlassCard className="p-8">
-              <h3 className="text-xl font-semibold text-white mb-6">Contact Info</h3>
-              <div className="space-y-4">
-                <div className="flex items-start gap-4"><MapPin size={20} weight="duotone" style={{ color: BLUE }} className="mt-0.5 shrink-0" /><div><p className="text-sm font-semibold text-white">Location</p><p className="text-sm text-slate-400">456 Clean Street, Suite 100<br />Seattle, WA 98101</p></div></div>
-                <div className="flex items-start gap-4"><Phone size={20} weight="duotone" style={{ color: BLUE }} className="mt-0.5 shrink-0" /><div><p className="text-sm font-semibold text-white">Phone</p><p className="text-sm text-slate-400">(555) 789-0123</p></div></div>
-                <div className="flex items-start gap-4"><Clock size={20} weight="duotone" style={{ color: BLUE }} className="mt-0.5 shrink-0" /><div><p className="text-sm font-semibold text-white">Hours</p><p className="text-sm text-slate-400">Monday - Friday: 7:00 AM - 7:00 PM<br />Saturday: 8:00 AM - 5:00 PM<br />Sunday: Closed</p></div></div>
-                <div className="flex items-start gap-4"><Drop size={20} weight="duotone" style={{ color: BLUE }} className="mt-0.5 shrink-0" /><div><p className="text-sm font-semibold text-white">Service Area</p><p className="text-sm text-slate-400">Greater Seattle Metro Area<br />Up to 30 miles from downtown</p></div></div>
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: MINT }}>Happy Clients</p>
+            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white">
+              <WordReveal text="Spotless Reviews" />
+            </h2>
+          </div>
+
+          <motion.div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
+            {testimonials.map((t, i) => (
+              <motion.div key={i} variants={fadeUp}>
+                <GlassCard className="p-6 h-full">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white" style={{ background: BLUE }}>
+                        {t.name.charAt(0)}
+                      </div>
+                      <div>
+                        <span className="text-sm font-semibold text-white block">{t.name}</span>
+                        <span className="text-xs" style={{ color: MINT }}>{t.service}</span>
+                      </div>
+                    </div>
+                    <div className="flex gap-0.5">
+                      {Array.from({ length: t.rating }).map((_, j) => (
+                        <Star key={j} size={12} weight="fill" style={{ color: BLUE_LIGHT }} />
+                      ))}
+                    </div>
+                  </div>
+                  <Quotes size={20} weight="fill" style={{ color: BLUE_LIGHT }} className="mb-2 opacity-30" />
+                  <p className="text-sm text-slate-300 leading-relaxed mb-4">{t.text}</p>
+                  <div className="border-t border-white/8 pt-3">
+                    <p className="text-xs uppercase tracking-widest mb-2" style={{ color: MINT }}>Rooms Cleaned</p>
+                    <div className="flex flex-wrap gap-2">
+                      {t.rooms.map((room) => (
+                        <span key={room} className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs border" style={{ borderColor: `${BLUE}33`, color: BLUE_LIGHT, background: `${BLUE}11` }}>
+                          <Check size={10} weight="bold" /> {room}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </GlassCard>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </SectionReveal>
+
+      {/* ═══ VIDEO PLACEHOLDER ═══ */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-5xl px-4 md:px-6">
+          <div className="text-center mb-10">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: MINT }}>See Us in Action</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white">
+              <WordReveal text="Watch Our Team in Action" />
+            </h2>
+            <p className="text-slate-400 mt-4 max-w-md mx-auto">From quote to clean — see our process start to finish</p>
+          </div>
+          <div className="relative w-full aspect-video rounded-2xl overflow-hidden cursor-pointer group">
+            <img
+              src="https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=1200&q=80"
+              alt="Cleaning team at work"
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-black/60" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="relative">
+                <motion.div
+                  className="absolute rounded-full"
+                  style={{ background: `${BLUE}40`, width: 80, height: 80, top: -10, left: -10 }}
+                  animate={{ scale: [1, 1.5, 1], opacity: [0.6, 0, 0.6] }}
+                  transition={{ duration: 2.5, repeat: Infinity, ease: "easeOut" }}
+                />
+                <div className="relative w-16 h-16 rounded-full flex items-center justify-center shadow-lg" style={{ background: BLUE }}>
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="white" style={{ marginLeft: 3 }}>
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                </div>
               </div>
-            </GlassCard>
+            </div>
           </div>
         </div>
       </SectionReveal>
 
-      {/* ─── PRICING PACKAGES ─── */}
-      <SectionReveal id="pricing" className="relative z-10 py-16 md:py-24">
-        <div className="absolute inset-0 pointer-events-none" style={{ background: `radial-gradient(ellipse 60% 40% at 50% 50%, ${BLUE_GLOW} 0%, transparent 70%)` }} />
-        <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6">
-          <div className="text-center mb-16">
-            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: BLUE }}>Pricing</p>
-            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white"><WordReveal text="Transparent Pricing Plans" /></h2>
+      {/* ═══ INTERACTIVE QUIZ — How Often? ═══ */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-3xl px-4 md:px-6">
+          <div className="text-center mb-10">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: MINT }}>Find Your Plan</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white">
+              <WordReveal text="How Often Should Your Home Be Cleaned?" />
+            </h2>
+            <p className="text-slate-400 mt-4 max-w-md mx-auto">Pick your situation and we&apos;ll recommend the right plan for you.</p>
           </div>
-          <motion.div className="grid grid-cols-1 md:grid-cols-3 gap-6" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
-            {packages.map((pkg, i) => (
-              <motion.div key={i} variants={fadeUp}>
-                {pkg.highlighted ? (
-                  <ShimmerBorder>
-                    <div className="p-8 text-center">
-                      <p className="text-xs uppercase tracking-widest font-bold mb-2" style={{ color: BLUE }}>Most Popular</p>
-                      <h3 className="text-2xl font-bold text-white mb-2">{pkg.name}</h3>
-                      <p className="text-4xl font-bold tracking-tight mb-1" style={{ color: BLUE }}>{pkg.price}<span className="text-base font-normal text-slate-400">{pkg.period}</span></p>
-                      <ul className="mt-6 space-y-3 text-left">
-                        {pkg.features.map((f, j) => (<li key={j} className="flex items-center gap-3 text-sm text-slate-300"><CheckCircle size={16} weight="duotone" style={{ color: BLUE }} className="shrink-0" />{f}</li>))}
+          <CleaningQuiz />
+        </div>
+      </SectionReveal>
+
+      {/* ═══ COMPARISON TABLE ═══ */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-4xl px-4 md:px-6">
+          <div className="text-center mb-10">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: MINT }}>Why Professional Wins</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white">
+              <WordReveal text="Crystal Clean Co. vs. DIY Cleaning" />
+            </h2>
+          </div>
+          <GlassCard className="overflow-hidden">
+            <div className="grid grid-cols-3 text-sm font-semibold border-b border-white/15">
+              <div className="p-4 text-slate-400 uppercase tracking-wide text-xs">Feature</div>
+              <div className="p-4 text-center" style={{ color: MINT }}>Crystal Clean Co. ✓</div>
+              <div className="p-4 text-center text-slate-500">DIY Cleaning</div>
+            </div>
+            {[
+              ["Professional-grade equipment", "✓", "Consumer products"],
+              ["Background-checked cleaners", "✓", "Unknown"],
+              ["Eco-friendly non-toxic products", "✓", "Harsh chemicals"],
+              ["Consistent quality every visit", "✓", "Variable results"],
+              ["100% satisfaction guarantee", "✓", "No recourse"],
+              ["Flexible scheduling & rescheduling", "✓", "Your time only"],
+              ["Insured & bonded team", "✓", "No coverage"],
+            ].map(([feature, us, them], i) => (
+              <div key={i} className={`grid grid-cols-3 text-sm ${i % 2 === 0 ? "bg-white/[0.07]" : ""} border-b border-white/8 last:border-0`}>
+                <div className="p-4 text-slate-300">{feature}</div>
+                <div className="p-4 text-center font-bold" style={{ color: MINT }}>{us}</div>
+                <div className="p-4 text-center text-slate-500">{them}</div>
+              </div>
+            ))}
+          </GlassCard>
+        </div>
+      </SectionReveal>
+
+      {/* ═══ PRICING TIERS ═══ */}
+      <SectionReveal id="pricing" className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <div className="text-center mb-16">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: MINT }}>Transparent Pricing</p>
+            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white">
+              <WordReveal text="Choose Your Clean" />
+            </h2>
+            <p className="text-slate-400 mt-4 max-w-md mx-auto">3-bedroom home pricing shown. Recurring customers save 10-20% per visit.</p>
+          </div>
+          <motion.div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
+            {pricingTiers.map((tier, i) => (
+              <motion.div key={i} variants={fadeUp} className="h-full">
+                {tier.popular ? (
+                  <ShimmerBorder className="h-full">
+                    <div className="p-6 md:p-8 h-full flex flex-col">
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-xl font-bold text-white">{tier.name}</h3>
+                        <span className="px-3 py-1 rounded-full text-xs font-semibold" style={{ background: `${MINT}22`, color: MINT }}>Most Popular</span>
+                      </div>
+                      <p className="text-sm text-slate-400 mb-4">{tier.description}</p>
+                      <div className="mb-6">
+                        <span className="text-4xl font-black" style={{ color: BLUE_LIGHT }}>${tier.price}</span>
+                        <span className="text-sm text-slate-500 ml-1">{tier.frequency}</span>
+                      </div>
+                      <ul className="space-y-3 flex-1">
+                        {tier.features.map((f) => (
+                          <li key={f} className="flex items-start gap-2 text-sm text-slate-300">
+                            <CheckCircle size={16} weight="fill" style={{ color: MINT }} className="mt-0.5 shrink-0" />
+                            {f}
+                          </li>
+                        ))}
                       </ul>
-                      <MagneticButton className="mt-8 w-full py-3 rounded-full text-sm font-semibold text-white cursor-pointer" style={{ background: BLUE }}>Choose {pkg.name}</MagneticButton>
+                      <MagneticButton className="w-full mt-6 py-3 rounded-xl text-sm font-semibold text-white cursor-pointer" style={{ background: BLUE } as React.CSSProperties}>
+                        Book Premium Clean
+                      </MagneticButton>
                     </div>
                   </ShimmerBorder>
                 ) : (
-                  <GlassCard className="p-8 text-center h-full flex flex-col">
-                    <h3 className="text-2xl font-bold text-white mb-2">{pkg.name}</h3>
-                    <p className="text-4xl font-bold tracking-tight mb-1" style={{ color: BLUE }}>{pkg.price}<span className="text-base font-normal text-slate-400">{pkg.period}</span></p>
-                    <ul className="mt-6 space-y-3 text-left flex-1">
-                      {pkg.features.map((f, j) => (<li key={j} className="flex items-center gap-3 text-sm text-slate-300"><CheckCircle size={16} weight="duotone" style={{ color: BLUE }} className="shrink-0" />{f}</li>))}
+                  <GlassCard className="p-6 md:p-8 h-full flex flex-col">
+                    <h3 className="text-xl font-bold text-white mb-1">{tier.name}</h3>
+                    <p className="text-sm text-slate-400 mb-4">{tier.description}</p>
+                    <div className="mb-6">
+                      <span className="text-4xl font-black text-white">${tier.price}</span>
+                      <span className="text-sm text-slate-500 ml-1">{tier.frequency}</span>
+                    </div>
+                    <ul className="space-y-3 flex-1">
+                      {tier.features.map((f) => (
+                        <li key={f} className="flex items-start gap-2 text-sm text-slate-300">
+                          <CheckCircle size={16} weight="duotone" style={{ color: BLUE_LIGHT }} className="mt-0.5 shrink-0" />
+                          {f}
+                        </li>
+                      ))}
                     </ul>
-                    <MagneticButton className="mt-8 w-full py-3 rounded-full text-sm font-semibold text-white border border-white/10 cursor-pointer">Choose {pkg.name}</MagneticButton>
+                    <MagneticButton className="w-full mt-6 py-3 rounded-xl text-sm font-semibold text-white border border-white/15 cursor-pointer">
+                      Book {tier.name}
+                    </MagneticButton>
                   </GlassCard>
                 )}
               </motion.div>
@@ -623,14 +1060,186 @@ export default function V2CleaningPage() {
         </div>
       </SectionReveal>
 
-      {/* ─── FOOTER ─── */}
-      <footer className="relative z-10 border-t border-white/5 py-8">
-        <div className="mx-auto max-w-7xl px-4 md:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2 text-sm text-slate-500">
-            <Sparkle size={16} weight="duotone" style={{ color: BLUE }} />
-            <span>Crystal Clean Co. &copy; {new Date().getFullYear()}</span>
+      {/* ═══ CTA BANNER ═══ */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <div className="rounded-2xl p-8 md:p-12 text-center relative overflow-hidden" style={{ background: BLUE }}>
+            <div className="absolute inset-0 opacity-10">
+              <svg width="100%" height="100%"><pattern id="cta-dots-c" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1.5" fill="white" /></pattern><rect width="100%" height="100%" fill="url(#cta-dots-c)" /></svg>
+            </div>
+            <div className="relative z-10">
+              <h3 className="text-3xl md:text-4xl font-bold text-white mb-4">Your Cleanest Home Ever Awaits</h3>
+              <p className="text-white/80 mb-6 max-w-md mx-auto">First-time customers get 20% off their initial cleaning. No contracts, cancel anytime.</p>
+              <div className="flex flex-wrap justify-center gap-4">
+                <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold bg-white flex items-center gap-2 cursor-pointer" style={{ color: BLUE }}>
+                  Book Your First Clean <ArrowRight size={18} weight="bold" />
+                </MagneticButton>
+                <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border-2 border-white/30 flex items-center gap-2 cursor-pointer">
+                  <Phone size={18} weight="duotone" /> (206) 834-9275
+                </MagneticButton>
+              </div>
+            </div>
           </div>
-          <p className="text-xs text-slate-600">Created by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" style={{textDecoration:"underline"}}>bluejayportfolio.com</a></p>
+        </div>
+      </SectionReveal>
+
+      {/* ═══ FAQ ═══ */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-3xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: MINT }}>Questions?</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white">
+              <WordReveal text="Frequently Asked Questions" />
+            </h2>
+          </div>
+          <div className="space-y-3">
+            {faqs.map((faq, i) => (
+              <GlassCard key={i} className="overflow-hidden">
+                <button onClick={() => setOpenFaq(openFaq === i ? null : i)} className="w-full flex items-center justify-between p-5 text-left cursor-pointer">
+                  <span className="text-base font-semibold text-white pr-4">{faq.q}</span>
+                  <motion.div animate={{ rotate: openFaq === i ? 180 : 0 }} transition={spring}>
+                    <CaretDown size={20} className="text-slate-400 shrink-0" />
+                  </motion.div>
+                </button>
+                <AnimatePresence initial={false}>
+                  {openFaq === i && (
+                    <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={spring} className="overflow-hidden">
+                      <p className="px-5 pb-5 text-slate-400 leading-relaxed">{faq.a}</p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ═══ SERVICE AREA ═══ */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: MINT }}>Coverage Area</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white">
+              <WordReveal text="Serving Greater Seattle" />
+            </h2>
+          </div>
+          <motion.div className="flex flex-wrap justify-center gap-3" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true }}>
+            {["Capitol Hill", "Ballard", "Fremont", "Queen Anne", "Wallingford", "Green Lake", "Ravenna", "University District", "Beacon Hill", "Columbia City", "West Seattle", "Magnolia", "Bellevue", "Kirkland", "Redmond"].map((area) => (
+              <motion.div key={area} variants={fadeUp}>
+                <div className="px-4 py-2 rounded-full border border-white/15 bg-white/[0.08] text-sm text-slate-400 flex items-center gap-2">
+                  <MapPin size={14} weight="duotone" style={{ color: BLUE_LIGHT }} />
+                  {area}
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </SectionReveal>
+
+      {/* ═══ CONTACT ═══ */}
+      <SectionReveal id="contact" className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+            <div>
+              <p className="text-sm uppercase tracking-widest mb-3" style={{ color: MINT }}>Let&apos;s Talk</p>
+              <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white mb-6">
+                <WordReveal text="Get Your Free Estimate" />
+              </h2>
+              <p className="text-slate-400 leading-relaxed max-w-md mb-8">
+                Ready for a cleaner home? Reach out for a free, no-obligation estimate. We respond within 1 hour during business hours.
+              </p>
+              <div className="space-y-4">
+                {[
+                  { icon: Phone, label: "Phone", value: "(206) 834-9275", href: "tel:+12068349275" },
+                  { icon: MapPin, label: "Service Area", value: "Greater Seattle & Eastside", href: "https://maps.google.com/?q=Seattle+WA" },
+                  { icon: Clock, label: "Hours", value: "7 Days a Week\n7:00 AM - 8:00 PM" },
+                ].map((item, i) => (
+                  <div key={i} className="flex items-start gap-4">
+                    <item.icon size={20} weight="duotone" style={{ color: BLUE_LIGHT }} className="mt-0.5 shrink-0" />
+                    <div>
+                      <p className="text-sm font-semibold text-white">{item.label}</p>
+                      {item.href ? (
+                        <a href={item.href} target={item.href.startsWith("https") ? "_blank" : undefined} rel="noopener noreferrer" className="text-sm text-slate-400 whitespace-pre-line hover:text-white transition-colors">{item.value}</a>
+                      ) : (
+                        <p className="text-sm text-slate-400 whitespace-pre-line">{item.value}</p>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <GlassCard className="p-6 md:p-8">
+              <h3 className="text-xl font-semibold text-white mb-6">Request a Quote</h3>
+              <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <input type="text" placeholder="First Name" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-sky-500/50" />
+                  <input type="text" placeholder="Last Name" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-sky-500/50" />
+                </div>
+                <input type="email" placeholder="Email Address" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-sky-500/50" />
+                <input type="tel" placeholder="Phone Number" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-sky-500/50" />
+                <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-slate-500 text-sm focus:outline-none focus:border-sky-500/50">
+                  <option value="">Select Service</option>
+                  {services.map((s, i) => (<option key={i} value={s.title}>{s.title}</option>))}
+                </select>
+                <textarea placeholder="Tell us about your space (bedrooms, bathrooms, special requests)..." rows={4} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-sky-500/50 resize-none" />
+                <MagneticButton className="w-full py-3 rounded-xl text-sm font-semibold text-white cursor-pointer" style={{ background: BLUE } as React.CSSProperties}>
+                  <span className="flex items-center justify-center gap-2"><CalendarCheck size={18} weight="duotone" /> Get Free Quote</span>
+                </MagneticButton>
+              </form>
+            </GlassCard>
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ═══ FINAL CTA ═══ */}
+      <SectionReveal className="relative z-10 py-8 pb-16">
+        <div className="mx-auto max-w-3xl px-4 md:px-6">
+          <ShimmerBorder>
+            <div className="p-6 md:p-8 text-center">
+              <h3 className="text-xl font-bold text-white mb-2">200% Satisfaction Guarantee</h3>
+              <p className="text-sm text-slate-400 mb-4">Not happy? We re-clean for free. Still not happy? Full refund AND a free clean from a competitor. We are that confident.</p>
+              <MagneticButton className="px-8 py-3 rounded-full text-sm font-semibold text-white inline-flex items-center gap-2 cursor-pointer" style={{ background: BLUE } as React.CSSProperties}>
+                Book Risk-Free <ArrowRight size={14} weight="bold" />
+              </MagneticButton>
+            </div>
+          </ShimmerBorder>
+        </div>
+      </SectionReveal>
+
+      {/* ═══ FOOTER ═══ */}
+      <footer className="relative z-10 border-t border-white/8 py-12">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            <div className="md:col-span-2">
+              <div className="flex items-center gap-2 mb-4">
+                <Sparkle size={24} weight="duotone" style={{ color: BLUE_LIGHT }} />
+                <span className="text-lg font-bold text-white">Crystal Clean Co.</span>
+              </div>
+              <p className="text-sm text-slate-400 leading-relaxed max-w-sm">Seattle&apos;s top-rated eco-friendly cleaning service. Serving homes and businesses since 2012 with plant-based products and background-checked teams.</p>
+            </div>
+            <div>
+              <h4 className="text-sm font-semibold text-white mb-3">Quick Links</h4>
+              <div className="space-y-2 text-sm text-slate-400">
+                <a href="#services" className="block hover:text-white transition-colors">Services</a>
+                <a href="#estimate" className="block hover:text-white transition-colors">Estimate</a>
+                <a href="#pricing" className="block hover:text-white transition-colors">Pricing</a>
+                <a href="#reviews" className="block hover:text-white transition-colors">Reviews</a>
+              </div>
+            </div>
+            <div>
+              <h4 className="text-sm font-semibold text-white mb-3">Contact</h4>
+              <div className="space-y-2 text-sm text-slate-400">
+                <a href="tel:+12068349275" className="block hover:text-white transition-colors">(206) 834-9275</a>
+                <p>Serving Greater Seattle</p>
+                <p>7 days a week, 7am-8pm</p>
+              </div>
+            </div>
+          </div>
+          <div className="border-t border-white/8 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+            <p className="text-xs text-slate-500">Crystal Clean Co. &copy; {new Date().getFullYear()}. All rights reserved.</p>
+            <p className="text-xs text-slate-600 flex items-center gap-1.5"><svg width="14" height="14" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-sky-500"><path d="M24.3 4.2c-1.5-.4-3.2.1-4.5 1.1-1-.7-2.3-1-3.5-.8-2.4.4-4.2 2.5-4.2 4.9v.6c-3.2.8-6 2.8-7.8 5.6-.3.5-.1 1.1.4 1.4.5.3 1.1.1 1.4-.4 1.5-2.3 3.7-4 6.3-4.7.5-.1 1-.1 1.5 0 .8.2 1.4.8 1.7 1.5.3.8.2 1.6-.2 2.3l-2.8 4.3c-.6.9-.4 2.1.4 2.8l2.5 2.1c.4.3.8.5 1.3.5h5.2c.5 0 1-.2 1.3-.5l1.2-1c.6-.5.8-1.3.6-2l-1-3.2c-.2-.5 0-1.1.4-1.4l3.8-2.5c1.3-.9 2.1-2.3 2.1-3.9V9.6c0-2.5-1.7-4.7-4.1-5.3v-.1z" fill="currentColor"/></svg>Created by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "underline" }}>bluejayportfolio.com</a></p>
+          </div>
         </div>
       </footer>
     </main>

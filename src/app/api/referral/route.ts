@@ -14,7 +14,7 @@ interface Referral {
   referredPhone?: string;
   referredEmail?: string;
   status: "pending" | "contacted" | "converted";
-  discount: number; // dollars off management fee
+  discount: number; // dollars off the annual maintenance fee
   createdAt: string;
 }
 
@@ -111,7 +111,7 @@ export async function POST(request: NextRequest) {
     referredPhone,
     referredEmail,
     status: "pending",
-    discount: 100, // $100 off management fee
+    discount: 100, // $100 off the annual maintenance fee
     createdAt: new Date().toISOString(),
   };
 

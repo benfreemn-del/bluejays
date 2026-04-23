@@ -1,16 +1,32 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const ADMIN_PASSWORD = (process.env.ADMIN_PASSWORD || "bluejay2026").trim();
+const ADMIN_PASSWORD = (process.env.ADMIN_PASSWORD || "").trim();
+
+// Pre-compute session token using Web Crypto (Edge-compatible)
+// This replaces Node.js crypto.createHash which doesn't work in Edge Runtime
+let SESSION_TOKEN_CACHE: string | null = null;
+async function getSessionToken(): Promise<string> {
+  if (SESSION_TOKEN_CACHE) return SESSION_TOKEN_CACHE;
+  if (!ADMIN_PASSWORD) return "";
+  const encoder = new TextEncoder();
+  const data = encoder.encode(ADMIN_PASSWORD + "bluejays-session-salt");
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  SESSION_TOKEN_CACHE = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+  return SESSION_TOKEN_CACHE;
+}
 
 // Protected routes that require login
 const PROTECTED_PATHS = [
   "/dashboard",
+  "/funnel-tracker",
   "/scripts",
   "/lead",
   "/preview-device",
+  "/image-mapper",
   "/spending",
   "/analytics",
-  "/v2",
+  "/videos",
   "/api/scout",
   "/api/prospects",
   "/api/email",
@@ -23,6 +39,7 @@ const PROTECTED_PATHS = [
   "/api/call-lists",
   "/api/export",
   "/api/edit",
+  "/api/image-mapper",
   "/api/quality-review",
   "/api/leads/manual",
   "/api/test-funnel",
@@ -47,6 +64,17 @@ const PROTECTED_PATHS = [
   "/api/onboarding",
   "/api/vsl/generate",
   "/api/voicemail",
+  "/api/videos",
+  "/api/admin",
+  "/api/retarget",
+  "/api/followup-scheduler",
+  "/api/scout-optimizer",
+  "/api/replies/process",
+  "/api/email-deliverability",
+  "/api/email-tracking",
+  "/api/auto-scout",
+  "/api/warming",
+  "/funnel-tracker",
 ];
 
 // Public API routes that must bypass auth (webhooks, inbound handlers)
@@ -54,6 +82,7 @@ const PUBLIC_API_PATHS = [
   "/api/webhooks/stripe",
   "/api/inbound/email",
   "/api/inbound/sms",
+  "/api/inbound/vonage-sms",
   "/api/checkout/create", // Prospects need to create checkout sessions
   "/api/proposals/",
   "/api/calendar/available-slots",
@@ -69,7 +98,7 @@ const PUBLIC_API_PATHS = [
   "/api/voicemail/twiml",  // Twilio TwiML endpoint
 ];
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Always allow public API paths (webhooks, inbound handlers)
@@ -81,9 +110,10 @@ export function middleware(request: NextRequest) {
   const isProtected = PROTECTED_PATHS.some((p) => pathname.startsWith(p));
   if (!isProtected) return NextResponse.next();
 
-  // Check auth cookie
+  // Check auth cookie (signed session token, not raw password)
   const authCookie = request.cookies.get("bluejays_auth")?.value;
-  if (authCookie === ADMIN_PASSWORD) return NextResponse.next();
+  const expectedToken = await getSessionToken();
+  if (authCookie === expectedToken) return NextResponse.next();
 
   // Check Authorization header (for API calls)
   const authHeader = request.headers.get("authorization");
@@ -102,55 +132,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    "/dashboard/:path*",
-    "/scripts/:path*",
-    "/api/scout/:path*",
-    "/api/prospects/:path*",
-    "/api/email/:path*",
-    "/api/sms/:path*",
-    "/api/instagram/:path*",
-    "/api/generate/:path*",
-    "/api/checkout/:path*",
-    "/api/ai-respond/:path*",
-    "/api/comms/:path*",
-    "/api/call-lists/:path*",
-    "/api/export/:path*",
-    "/api/edit/:path*",
-    "/api/quality-review/:path*",
-    "/api/notes/:path*",
-    "/api/webhooks/:path*",
-    "/api/inbound/:path*",
-    "/api/leads/manual/:path*",
-    "/api/test-funnel/:path*",
-    "/lead/:path*",
-    "/spending",
-    "/analytics",
-    "/api/spending/:path*",
-    "/api/funnel-analytics/:path*",
-    // Newly protected sensitive routes
-    "/api/funnel/run/:path*",
-    "/api/funnel/enroll/:path*",
-    "/api/outreach/bulk/:path*",
-    "/api/costs/:path*",
-    "/api/voicemail/drop/:path*",
-    "/api/winback/:path*",
-    "/api/pipeline-velocity/:path*",
-    "/api/pipeline/batch/:path*",
-    "/api/qc/:path*",
-    "/api/leaderboard/:path*",
-    "/api/email-stats/:path*",
-    "/api/referral/:path*",
-    "/api/onboarding/:path*",
-    "/api/funnel/:path*",
-    "/api/vsl/:path*",
-    "/api/voicemail/:path*",
-    "/api/leads/submit/:path*",
-    "/api/portfolio/:path*",
-    "/api/social-proof/:path*",
-    "/api/track/:path*",
-    "/api/image-proxy/:path*",
-    "/api/auth/:path*",
-    "/api/unsubscribe/:path*",
-  ],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|images/).*)"],
 };

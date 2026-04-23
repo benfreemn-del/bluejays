@@ -1,5 +1,8 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element -- These static marketing and preview components intentionally use plain img tags to preserve existing markup and visual behavior during lint-only cleanup. */
+/* eslint-disable react-hooks/purity -- Decorative particle values are intentionally randomized for static visual effects in these marketing pages and previews; this preserves existing appearance without changing business logic. */
+
 import { useState, useEffect, useRef, useCallback } from "react";
 import {
   motion,
@@ -27,11 +30,17 @@ import {
   Person,
   Brain,
   Barbell,
+  CurrencyDollar,
+  Play,
+  Timer,
+  PersonSimpleRun,
+  Heart,
 } from "@phosphor-icons/react";
 import type { GeneratedSiteData } from "@/lib/generator";
 import BluejayLogo from "../BluejayLogo";
 import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
+import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
 
 /* ───────────────────────── SPRING CONFIGS ───────────────────────── */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
@@ -79,9 +88,66 @@ function getServiceIcon(serviceName: string) {
   return Bone;
 }
 
+/* ───────────────────────── TREATMENT TYPE BADGES ───────────────────────── */
+const TREATMENT_BADGES = [
+  "Spinal Adjustments",
+  "Sports Injuries",
+  "Auto Accident",
+  "Prenatal Care",
+  "Pediatric",
+  "Wellness Care",
+];
+
+/* ───────────────────────── CONDITIONS WE TREAT ───────────────────────── */
+const CONDITIONS = [
+  { name: "Back Pain", icon: Bone },
+  { name: "Neck Pain", icon: Person },
+  { name: "Headaches & Migraines", icon: Brain },
+  { name: "Sciatica", icon: Lightning },
+  { name: "Sports Injuries", icon: PersonSimpleRun },
+  { name: "Auto Accident Injuries", icon: FirstAidKit },
+  { name: "Posture Correction", icon: Person },
+  { name: "Joint Pain", icon: Bone },
+];
+
+/* ───────────────────────── CHIROPRACTIC PROCESS STEPS ───────────────────────── */
+const CHIRO_PROCESS_STEPS = [
+  { step: "01", title: "Consultation & Exam", desc: "We listen to your concerns, review your health history, and perform a thorough hands-on evaluation to understand your unique needs." },
+  { step: "02", title: "Digital X-Rays", desc: "Advanced imaging helps us see exactly what's happening with your spine so we can create the most effective treatment plan." },
+  { step: "03", title: "Personalized Treatment Plan", desc: "Your custom care plan is designed around your specific condition, lifestyle, and wellness goals — no cookie-cutter approach." },
+  { step: "04", title: "Feel the Difference", desc: "Many patients experience relief from their very first visit. We'll track your progress and adjust your plan for lasting results." },
+];
+
+/* ───────────────────────── PATIENT COMFORT FEATURES ───────────────────────── */
+const COMFORT_FEATURES = [
+  { icon: Heart, title: "Gentle Techniques", desc: "Our doctors use low-force methods that are comfortable and effective — no surprises." },
+  { icon: ShieldCheck, title: "No Cracking Required", desc: "We offer instrument-assisted and drop-table techniques for patients who prefer a gentler approach." },
+  { icon: Timer, title: "Same-Day Relief", desc: "Many patients walk out feeling better after their very first adjustment session." },
+  { icon: UserCircle, title: "Family-Friendly", desc: "We treat patients of all ages — from infants to seniors. The whole family is welcome." },
+];
+
+/* ───────────────────────── COMPETITOR COMPARISON ROWS ───────────────────────── */
+const COMPARISON_ROWS = [
+  { feature: "Treats Root Cause", us: true, them: "No — masks symptoms" },
+  { feature: "No Side Effects", us: true, them: "Drowsiness, dependency" },
+  { feature: "Long-Term Results", us: true, them: "Temporary relief only" },
+  { feature: "Covered by Insurance", us: true, them: "Varies" },
+  { feature: "Natural Approach", us: true, them: "No — synthetic chemicals" },
+  { feature: "Personalized Care", us: true, them: "No — one-size-fits-all" },
+  { feature: "Preventive Benefits", us: true, them: "No" },
+];
+
+/* ───────────────────────── QUIZ OPTIONS ───────────────────────── */
+const QUIZ_OPTIONS = [
+  { label: "Back & Spine", desc: "The most common reason people visit a chiropractor", color: "#0f766e", icon: Bone },
+  { label: "Neck & Shoulders", desc: "Desk workers and tech neck sufferers — we see you", color: "#2563eb", icon: Person },
+  { label: "Headaches", desc: "Often caused by spinal misalignment — not just stress", color: "#7c3aed", icon: Brain },
+  { label: "Other / Multiple Areas", desc: "Full evaluation to find the source of your discomfort", color: "#d97706", icon: FirstAidKit },
+];
+
 /* ───────────────────────── STOCK FALLBACK IMAGES ───────────────────────── */
-const STOCK_HERO = "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=1400&q=80";
-const STOCK_ABOUT = "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=600&q=80";
+const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=1400&q=80"];
+const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=600&q=80"];
 const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=600&q=80",
   "https://images.unsplash.com/photo-1598257006458-087169a1f08d?w=600&q=80",
@@ -175,7 +241,7 @@ function HeroWellnessSVG({ accent }: { accent: string }) {
 /* ───────────────────────── GLASS CARD ───────────────────────── */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
+    <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
       {children}
     </div>
   );
@@ -339,16 +405,17 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
 
   const { PRIMARY, PRIMARY_GLOW } = getAccent(data.accentColor);
 
-  const heroImage = data.photos?.[0] || STOCK_HERO;
-  const aboutImage = data.photos?.[1] || STOCK_ABOUT;
-  const galleryImages = data.photos?.length > 2 ? data.photos.slice(2, 6) : STOCK_GALLERY;
+  const uniquePhotos = data.photos ? [...new Set(data.photos)] : [];
 
-  const processSteps = [
-    { step: "01", title: "Initial Consultation", desc: `We start with a thorough assessment of your health history, symptoms, and wellness goals.` },
-    { step: "02", title: "Comprehensive Exam", desc: `Digital imaging and a hands-on evaluation help us pinpoint the root cause of your discomfort.` },
-    { step: "03", title: "Personalized Treatment", desc: `Your custom care plan may include adjustments, soft tissue therapy, and rehabilitative exercises.` },
-    { step: "04", title: "Ongoing Wellness", desc: `We monitor your progress and adapt your plan to ensure lasting relief and optimal health.` },
-  ];
+
+  const heroImage = uniquePhotos[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
+
+
+  const heroCardImage = uniquePhotos[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 1);
+
+
+  const aboutImage = uniquePhotos[2] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 2);
+  const galleryImages = data.photos?.length > 2 ? data.photos.slice(2, 6) : pickGallery(STOCK_GALLERY, data.businessName);
 
   const faqs = [
     { q: `What conditions does ${data.businessName} treat?`, a: `We treat a wide range of conditions including ${data.services.slice(0, 3).map(s => s.name).join(", ")}, and more. Our holistic approach addresses the root cause, not just symptoms.` },
@@ -430,26 +497,22 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
 
         <div className="absolute inset-0">
           <img src={heroImage} alt={`${data.businessName}`} className="w-full h-full object-cover object-center" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/25 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/20" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
         </div>
-        <SpinePattern opacity={0.04} accent={PRIMARY} />
-        <HeroWellnessSVG accent={PRIMARY} />
-        <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full blur-[200px] pointer-events-none" style={{ background: `${PRIMARY}08` }} />
-        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full blur-[160px] pointer-events-none" style={{ background: `${WARM_AMBER}06` }} />
 
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
-          <div className="space-y-8">
+          <div className="space-y-8 rounded-2xl bg-black/50 backdrop-blur-md p-6 md:p-8 border border-white/8">
             <div>
               <p className="text-sm uppercase tracking-widest mb-4" style={{ color: PRIMARY }}>
                 Expert Chiropractic Care
               </p>
-              <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}>
+              <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 20px rgba(0,0,0,0.8), 0 4px 40px rgba(0,0,0,0.5)" }}>
                 {data.tagline}
               </h1>
             </div>
             <p className="text-lg text-slate-400 max-w-md leading-relaxed">
-              {data.about.length > 160 ? data.about.slice(0, 160).trim() + "..." : data.about}
+              {(() => { const t = data.about; if (t.length <= 180) return t; const dot = t.indexOf('.', 80); return dot > 0 && dot < 220 ? t.slice(0, dot + 1) : t.slice(0, 180).trim() + '...'; })()}
             </p>
             <div className="flex flex-wrap gap-4">
               <MagneticButton
@@ -461,7 +524,7 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
               </MagneticButton>
               <MagneticButton
                 href={`tel:${data.phone.replace(/\D/g, "")}`}
-                className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer"
+                className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer"
               >
                 <Phone size={18} weight="duotone" />
                 <PhoneLink phone={data.phone} />
@@ -480,8 +543,8 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
           </div>
 
           <div className="hidden md:block relative">
-            <div className="relative rounded-2xl overflow-hidden border border-white/10">
-              <img src={heroImage} alt={`${data.businessName} chiropractic care`} className="w-full h-[500px] object-cover" />
+            <div className="relative rounded-2xl overflow-hidden border border-white/15">
+              <img src={heroCardImage} alt={`${data.businessName} chiropractic care`} className="w-full h-[500px] object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a1a] via-transparent to-transparent" />
               <div className="absolute inset-0 bg-gradient-to-r from-[#1a1a1a]/40 to-transparent" />
               <div className="absolute bottom-6 left-6 flex items-center gap-3">
@@ -521,6 +584,63 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
         </div>
       </section>
 
+      {/* ══════════════════ TREATMENT TYPE BADGES ══════════════════ */}
+      <section className="relative z-10 py-10 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #151917 100%)" }} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="flex flex-wrap justify-center gap-3">
+            {TREATMENT_BADGES.map((badge) => (
+              <span
+                key={badge}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold border transition-colors"
+                style={{ color: PRIMARY, borderColor: `${PRIMARY}33`, background: `${PRIMARY}0d` }}
+              >
+                <CheckCircle size={16} weight="fill" />
+                {badge}
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ NEW PATIENT SPECIAL ══════════════════ */}
+      <section className="relative z-10 py-10 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${WARM_AMBER}15, ${WARM_AMBER}08)` }} />
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full blur-[180px]" style={{ background: `${WARM_AMBER}0a` }} />
+        </div>
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <ShimmerBorder accent={WARM_AMBER}>
+            <div className="p-6 md:p-8 text-center">
+              <div className="flex items-center justify-center gap-2 mb-3">
+                <CurrencyDollar size={28} weight="fill" style={{ color: WARM_AMBER }} />
+                <span className="text-xs font-bold uppercase tracking-widest" style={{ color: WARM_AMBER }}>Limited Time Offer</span>
+              </div>
+              <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-2">
+                New Patient Special
+              </h2>
+              <p className="text-3xl md:text-5xl font-black mb-3" style={{ color: WARM_AMBER }}>
+                $49
+              </p>
+              <p className="text-slate-300 text-lg mb-1">
+                Comprehensive Exam, X-Rays &amp; First Adjustment
+              </p>
+              <p className="text-slate-500 text-sm mb-6">
+                Regular value $250+ &mdash; Save over 80% on your first visit
+              </p>
+              <MagneticButton
+                href={`tel:${data.phone.replace(/\D/g, "")}`}
+                className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-base font-bold text-white cursor-pointer"
+                style={{ background: WARM_AMBER } as React.CSSProperties}
+              >
+                <Phone size={18} weight="fill" />
+                Call to Claim Your $49 Visit
+              </MagneticButton>
+            </div>
+          </ShimmerBorder>
+        </div>
+      </section>
+
       {/* ══════════════════ 4. SERVICES ══════════════════ */}
       <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f1512 50%, #1a1a1a 100%)" }} />
@@ -547,7 +667,7 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
               return (
                 <div
                   key={service.name}
-                  className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                  className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
                 >
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${PRIMARY}15, transparent 70%)` }} />
                   <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${PRIMARY}4d, transparent)` }} />
@@ -569,6 +689,36 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
         </div>
       </section>
 
+      {/* ══════════════════ CONDITIONS WE TREAT ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #121514 50%, #1a1a1a 100%)" }} />
+        <WellnessWave opacity={0.02} accent={PRIMARY} />
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-[20%] left-[10%] w-[500px] h-[500px] rounded-full blur-[160px]" style={{ background: `${PRIMARY}06` }} />
+        </div>
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader
+            badge="Conditions"
+            title="Conditions We Treat"
+            subtitle="People search for relief by condition — here are the most common issues we help with every day."
+            accent={PRIMARY}
+          />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+            {CONDITIONS.map((condition) => (
+              <GlassCard key={condition.name} className="p-5 md:p-6 text-center group hover:border-opacity-30 transition-all duration-300">
+                <div
+                  className="w-14 h-14 rounded-xl mx-auto mb-3 flex items-center justify-center transition-all duration-300 border"
+                  style={{ background: `${PRIMARY}15`, borderColor: `${PRIMARY}33` }}
+                >
+                  <condition.icon size={26} weight="duotone" style={{ color: PRIMARY }} />
+                </div>
+                <h3 className="text-sm md:text-base font-bold text-white">{condition.name}</h3>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ══════════════════ 5. WHY CHOOSE US / ABOUT ══════════════════ */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0d1210 50%, #1a1a1a 100%)" }} />
@@ -580,7 +730,7 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="relative">
-              <div className="rounded-2xl overflow-hidden border border-white/10">
+              <div className="rounded-2xl overflow-hidden border border-white/15">
                 <img src={aboutImage} alt={`${data.businessName} team`} className="w-full h-[400px] object-cover" />
               </div>
               <div className="absolute -bottom-4 -right-4 md:bottom-6 md:-right-6">
@@ -619,6 +769,37 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
         </div>
       </section>
 
+      {/* ══════════════════ PATIENT COMFORT — YOUR FIRST VISIT ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f1512 50%, #1a1a1a 100%)" }} />
+        <SpinePattern opacity={0.02} accent={PRIMARY} />
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute bottom-[20%] left-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${PRIMARY}08` }} />
+        </div>
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader
+            badge="Your First Visit"
+            title="Nervous? Don&rsquo;t Be."
+            subtitle="We know the idea of chiropractic care can feel intimidating. Here's what makes our approach different."
+            accent={PRIMARY}
+          />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {COMFORT_FEATURES.map((feature) => (
+              <GlassCard key={feature.title} className="p-6 text-center group">
+                <div
+                  className="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center border"
+                  style={{ background: `${PRIMARY}15`, borderColor: `${PRIMARY}33` }}
+                >
+                  <feature.icon size={26} weight="duotone" style={{ color: PRIMARY }} />
+                </div>
+                <h3 className="text-lg font-bold text-white mb-2">{feature.title}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed">{feature.desc}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ══════════════════ 6. PROCESS ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #121514 50%, #1a1a1a 100%)" }} />
@@ -628,12 +809,12 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
         </div>
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <AnimatedSection>          <SectionHeader badge="Your Journey" title="How We Help You Heal" accent={PRIMARY} /></AnimatedSection>
+          <AnimatedSection>          <SectionHeader badge="The Chiropractic Process" title="Your Path to Relief" subtitle="A clear, reassuring process designed to get you feeling better — starting from day one." accent={PRIMARY} /></AnimatedSection>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {processSteps.map((step, i) => (
+            {CHIRO_PROCESS_STEPS.map((step, i) => (
               <div key={step.step} className="relative">
-                {i < processSteps.length - 1 && (
+                {i < CHIRO_PROCESS_STEPS.length - 1 && (
                   <div className="hidden lg:block absolute top-10 left-[calc(50%+40px)] w-[calc(100%-80px)] h-px" style={{ background: `linear-gradient(to right, ${PRIMARY}33, ${PRIMARY}11)` }} />
                 )}
                 <GlassCard className="p-6 text-center relative">
@@ -665,7 +846,7 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
               const titles = ["Modern Treatment Room", "Spinal Assessment", "Rehabilitation Area", "Patient Wellness"];
               const descs = ["State-of-the-art equipment for precise adjustments.", "Comprehensive exams for accurate diagnosis.", "Dedicated space for recovery exercises.", "Focused on your long-term health goals."];
               return (
-                <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.06] hover:border-opacity-30 transition-all duration-500">
+                <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.10] hover:border-opacity-30 transition-all duration-500">
                   <img src={src} alt={titles[i] || `Gallery ${i + 1}`} className="w-full h-64 object-cover transition-transform duration-700 group-hover:scale-105" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-6">
@@ -675,6 +856,133 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
                 </div>
               );
             })}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ COMPETITOR COMPARISON TABLE ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #121514 50%, #1a1a1a 100%)" }} />
+        <SpinePattern opacity={0.02} accent={PRIMARY} />
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-[30%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${PRIMARY}06` }} />
+        </div>
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <SectionHeader
+            badge="Why Chiropractic"
+            title={`${data.businessName} vs Pain Medication`}
+            subtitle="See why natural chiropractic care is the smarter long-term choice for your health."
+            accent={PRIMARY}
+          />
+          <GlassCard className="overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="border-b border-white/15">
+                    <th className="px-4 md:px-6 py-4 text-sm font-semibold text-slate-400 uppercase tracking-wider">Feature</th>
+                    <th className="px-4 md:px-6 py-4 text-sm font-semibold text-center uppercase tracking-wider" style={{ color: PRIMARY }}>Chiropractic</th>
+                    <th className="px-4 md:px-6 py-4 text-sm font-semibold text-center text-slate-500 uppercase tracking-wider">Medication</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {COMPARISON_ROWS.map((row, i) => (
+                    <tr key={row.feature} className={i < COMPARISON_ROWS.length - 1 ? "border-b border-white/8" : ""}>
+                      <td className="px-4 md:px-6 py-4 text-sm font-medium text-white">{row.feature}</td>
+                      <td className="px-4 md:px-6 py-4 text-center">
+                        <CheckCircle size={22} weight="fill" style={{ color: PRIMARY }} className="inline-block" />
+                      </td>
+                      <td className="px-4 md:px-6 py-4 text-center text-sm text-slate-500">{row.them}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </GlassCard>
+        </div>
+      </section>
+
+      {/* ══════════════════ VIDEO PLACEHOLDER ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0d1210 50%, #1a1a1a 100%)" }} />
+        <WellnessWave opacity={0.02} accent={PRIMARY} />
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-[20%] left-[20%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${PRIMARY}06` }} />
+        </div>
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Virtual Tour" title="See What a Visit Looks Like" accent={PRIMARY} />
+          <div className="relative rounded-2xl overflow-hidden border border-white/15 group cursor-pointer">
+            <img
+              src={galleryImages[0] || heroImage}
+              alt={`${data.businessName} office tour`}
+              className="w-full h-64 md:h-96 object-cover transition-transform duration-700 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-black/50 flex items-center justify-center group-hover:bg-black/40 transition-colors duration-300">
+              <div
+                className="w-20 h-20 rounded-full flex items-center justify-center border-2 transition-transform duration-300 group-hover:scale-110"
+                style={{ background: `${PRIMARY}cc`, borderColor: `${PRIMARY}` }}
+              >
+                <Play size={36} weight="fill" className="text-white ml-1" />
+              </div>
+            </div>
+            <div className="absolute bottom-6 left-6 right-6 text-center">
+              <p className="text-white font-semibold text-lg">Take a Virtual Tour of Our Practice</p>
+              <p className="text-slate-300 text-sm mt-1">See our modern facility and meet the team</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ WHERE DOES IT HURT QUIZ ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #121514 50%, #1a1a1a 100%)" }} />
+        <SpinePattern opacity={0.025} accent={PRIMARY} />
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute bottom-[20%] right-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${WARM_AMBER}06` }} />
+        </div>
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <SectionHeader
+            badge="Self Assessment"
+            title="Where Does It Hurt?"
+            subtitle="Select your primary area of discomfort and we'll recommend the right treatment approach."
+            accent={PRIMARY}
+          />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {QUIZ_OPTIONS.map((option) => (
+              <div
+                key={option.label}
+                className="group relative p-6 rounded-2xl border border-white/[0.10] hover:border-opacity-40 transition-all duration-300 cursor-pointer overflow-hidden"
+                style={{ background: `${option.color}08` }}
+              >
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 50%, ${option.color}15, transparent 70%)` }} />
+                <div className="relative z-10 flex items-start gap-4">
+                  <div
+                    className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 border"
+                    style={{ background: `${option.color}20`, borderColor: `${option.color}40` }}
+                  >
+                    <option.icon size={24} weight="duotone" style={{ color: option.color }} />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-white mb-1">{option.label}</h3>
+                    <p className="text-sm text-slate-400 leading-relaxed">{option.desc}</p>
+                  </div>
+                </div>
+                <div className="mt-4 relative z-10">
+                  <span className="inline-flex items-center gap-1 text-sm font-semibold" style={{ color: option.color }}>
+                    Get relief <ArrowRight size={14} weight="bold" />
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="text-center mt-8">
+            <MagneticButton
+              href={`tel:${data.phone.replace(/\D/g, "")}`}
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-base font-bold text-white cursor-pointer"
+              style={{ background: PRIMARY } as React.CSSProperties}
+            >
+              <Phone size={18} weight="fill" />
+              Call for Your Free Consultation
+            </MagneticButton>
           </div>
         </div>
       </section>
@@ -690,6 +998,23 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <AnimatedSection>          <SectionHeader badge="Testimonials" title="Patient Success Stories" accent={PRIMARY} /></AnimatedSection>
 
+          {/* Google Reviews Header */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-10">
+            <div className="flex gap-0.5">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Star key={i} size={24} weight="fill" style={{ color: WARM_AMBER }} />
+              ))}
+            </div>
+            <div className="text-center sm:text-left">
+              <span className="text-white font-bold text-lg">
+                {data.googleRating || "4.9"}
+              </span>
+              <span className="text-slate-400 text-sm ml-1">
+                out of 5 &mdash; based on {data.reviewCount || "100+"} Google Reviews
+              </span>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {testimonials.map((t, i) => (
               <GlassCard key={i} className="p-6 h-full flex flex-col">
@@ -699,7 +1024,7 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
                   ))}
                 </div>
                 <p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p>
-                <div className="pt-4 border-t border-white/5 flex items-center justify-between">
+                <div className="pt-4 border-t border-white/8 flex items-center justify-between">
                   <span className="text-sm font-semibold text-white">{t.name}</span>
                 </div>
               </GlassCard>
@@ -781,9 +1106,9 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
       
       {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
       <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15, ${ACCENT}08)` }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${PRIMARY}15, ${PRIMARY}08)` }} />
         <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
-          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: ACCENT }}>
+          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: PRIMARY }}>
             Don&apos;t Miss Out
           </p>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-3">
@@ -795,7 +1120,7 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
           <a
             href={`/claim/${data.id}`}
             className="inline-flex items-center gap-2 min-h-[48px] px-8 py-3 rounded-full text-white font-bold text-base hover:shadow-lg transition-all duration-300"
-            style={{ background: ACCENT }}
+            style={{ background: PRIMARY }}
           >
             Claim This Website
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
@@ -892,20 +1217,20 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm text-slate-400 mb-1.5">First Name</label>
-                    <input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="John" />
+                    <input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="John" />
                   </div>
                   <div>
                     <label className="block text-sm text-slate-400 mb-1.5">Last Name</label>
-                    <input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="Doe" />
+                    <input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="Doe" />
                   </div>
                 </div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-1.5">Phone</label>
-                  <input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="(555) 123-4567" />
+                  <input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="(555) 123-4567" />
                 </div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-1.5">Service Needed</label>
-                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none transition-colors text-sm">
+                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none transition-colors text-sm">
                     <option value="" className="bg-neutral-900">Select a service</option>
                     {data.services.map((s) => (
                       <option key={s.name} value={s.name.toLowerCase().replace(/\s+/g, "-")} className="bg-neutral-900">{s.name}</option>
@@ -914,7 +1239,7 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
                 </div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-1.5">Message</label>
-                  <textarea rows={4} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm resize-none" placeholder="Describe your symptoms or concerns..." />
+                  <textarea rows={4} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm resize-none" placeholder="Describe your symptoms or concerns..." />
                 </div>
                 <MagneticButton
                   className="w-full py-4 rounded-xl text-base font-semibold text-white flex items-center justify-center gap-2 cursor-pointer"
@@ -929,7 +1254,7 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
         </div>
       </section>
 
-      {/* ══════════════════ 14. GUARANTEE ══════════════════ */}
+      {/* ══════════════════ 14. PAIN-FREE GUARANTEE CTA ══════════════════ */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #121514 100%)" }} />
         <SpinePattern opacity={0.015} accent={PRIMARY} />
@@ -940,11 +1265,24 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
         <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
           <ShimmerBorder accent={PRIMARY}>
             <div className="p-8 md:p-12">
-              <ShieldCheck size={48} weight="fill" style={{ color: PRIMARY }} className="mx-auto mb-4" />
-              <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-4">Our Commitment to You</h2>
-              <p className="text-slate-400 leading-relaxed max-w-2xl mx-auto text-lg">
-                At {data.businessName}, your health and comfort come first. We use evidence-based techniques and create personalized care plans to ensure the best possible outcomes for every patient.
+              <Heartbeat size={48} weight="fill" style={{ color: PRIMARY }} className="mx-auto mb-4" />
+              <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-4">
+                Start Your Journey to Pain-Free Living
+              </h2>
+              <p className="text-slate-400 leading-relaxed max-w-2xl mx-auto text-lg mb-2">
+                At {data.businessName}, your health and comfort come first. We use gentle, evidence-based techniques to help you feel your best — naturally.
               </p>
+              <p className="text-2xl md:text-3xl font-black mb-6" style={{ color: WARM_AMBER }}>
+                Your First Visit is Just $49
+              </p>
+              <MagneticButton
+                href={`tel:${data.phone.replace(/\D/g, "")}`}
+                className="inline-flex items-center gap-3 px-10 py-5 rounded-full text-lg font-bold text-white cursor-pointer"
+                style={{ background: PRIMARY } as React.CSSProperties}
+              >
+                <Phone size={22} weight="fill" />
+                Schedule Your $49 Visit Now
+              </MagneticButton>
               <div className="flex flex-wrap justify-center gap-4 mt-8">
                 {["Board Certified", "Gentle Adjustments", "Insurance Accepted", "Same-Day Appointments"].map((item) => (
                   <span key={item} className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border" style={{ color: PRIMARY, borderColor: `${PRIMARY}33`, background: `${PRIMARY}0d` }}>
@@ -959,7 +1297,7 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
       </section>
 
       {/* ══════════════════ 15. FOOTER ══════════════════ */}
-      <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden">
+      <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111 100%)" }} />
         <SpinePattern opacity={0.015} accent={PRIMARY} />
         <div className="mx-auto max-w-6xl px-6 relative z-10">
@@ -993,13 +1331,13 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
             </div>
           </div>
 
-          <div className="border-t border-white/5 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="border-t border-white/8 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-sm text-slate-500">
               <Bone size={14} weight="fill" style={{ color: PRIMARY }} />
               <span>{data.businessName} &copy; {new Date().getFullYear()}</span>
             </div>
             <div className="flex items-center gap-2 text-xs text-slate-600">
-              <span>Created by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" style={{textDecoration:"underline"}}>bluejayportfolio.com</a></span>
+              <span className="flex items-center gap-1.5"><BluejayLogo size={14} className="text-sky-500" /> Created by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" style={{textDecoration:"underline"}}>bluejayportfolio.com</a></span>
             </div>
           </div>
         </div>

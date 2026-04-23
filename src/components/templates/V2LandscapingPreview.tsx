@@ -1,5 +1,8 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element -- These static marketing and preview components intentionally use plain img tags to preserve existing markup and visual behavior during lint-only cleanup. */
+/* eslint-disable react-hooks/purity -- Decorative particle values are intentionally randomized for static visual effects in these marketing pages and previews; this preserves existing appearance without changing business logic. */
+
 import { useState, useEffect, useRef, useCallback } from "react";
 import {
   motion,
@@ -26,11 +29,23 @@ import {
   Shovel,
   Mountains,
   Park,
+  Play,
+  Lightbulb,
+  Recycle,
+  Wrench,
+  Broom,
+  SealCheck,
+  Sparkle,
+  CurrencyDollar,
+  ListChecks,
+  Scales,
+  HandPointing,
 } from "@phosphor-icons/react";
 import type { GeneratedSiteData } from "@/lib/generator";
 import BluejayLogo from "../BluejayLogo";
 import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
+import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
 
 /* ───────────────────────── SPRING CONFIGS ───────────────────────── */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
@@ -86,22 +101,17 @@ function getServiceIcon(serviceName: string) {
 }
 
 /* ───────────────────────── STOCK FALLBACK IMAGES ───────────────────────── */
-const STOCK_HERO = "https://images.unsplash.com/photo-1558904541-efa843a96f01?w=1400&q=80";
-const STOCK_ABOUT = "https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?w=600&q=80";
+const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1558904541-efa843a96f01?w=1400&q=80"];
+const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?w=600&q=80"];
 const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1558904541-efa843a96f01?w=600&q=80",
   "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&q=80",
-  "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&q=80",
+  "https://images.unsplash.com/photo-1572025442646-866d16c84a54?w=600&q=80",
   "https://images.unsplash.com/photo-1558904541-efa843a96f01?w=800&q=80",
-  "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800&q=80",
+  "https://images.unsplash.com/photo-1459411552884-841db9b3cc2a?w=800&q=80",
   "https://images.unsplash.com/photo-1560749003-f4b1e17e2dff?w=600&q=80",
   "https://images.unsplash.com/photo-1588880331179-bc9b93a8cb5e?w=600&q=80",
   "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=800&q=80",
-];
-/* Before/After pairs for showcase */
-const STOCK_BEFORE_AFTER = [
-  { before: "https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?w=600&q=80", after: "https://images.unsplash.com/photo-1558904541-efa843a96f01?w=600&q=80" },
-  { before: "https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=600&q=80", after: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&q=80" },
 ];
 
 /* ───────────────────────── FLOATING LEAF PARTICLES ───────────────────────── */
@@ -180,7 +190,7 @@ function HeroNatureSVG({ accent }: { accent: string }) {
 /* ───────────────────────── GLASS CARD ───────────────────────── */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
+    <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
       {children}
     </div>
   );
@@ -249,7 +259,7 @@ function SectionHeader({ badge, title, subtitle, accent }: { badge: string; titl
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   MAIN PREVIEW COMPONENT — GALLERY-HEAVY LANDSCAPING WITH BEFORE/AFTER
+   MAIN PREVIEW COMPONENT — GALLERY-HEAVY LANDSCAPING
    ═══════════════════════════════════════════════════════════════════ */
 /* ───────────────────────── ANIMATED SECTION ───────────────────────── */
 function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
@@ -272,15 +282,76 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
 
   const { PRIMARY, PRIMARY_GLOW } = getAccent(data.accentColor);
 
-  const heroImage = data.photos?.[0] || STOCK_HERO;
-  const aboutImage = data.photos?.[1] || STOCK_ABOUT;
-  const galleryImages = data.photos?.length > 2 ? data.photos.slice(2, 10) : STOCK_GALLERY;
+  const uniquePhotos = data.photos ? [...new Set(data.photos)] : [];
+
+
+  const heroImage = uniquePhotos[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
+
+
+  const heroCardImage = uniquePhotos[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 1);
+
+
+  const aboutImage = uniquePhotos[2] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 2);
+  // Show ALL real photos in gallery (no 8-photo cap) — use stock only when no real photos exist
+  const galleryImages = uniquePhotos.length > 2
+    ? uniquePhotos.slice(2)
+    : pickGallery(STOCK_GALLERY, data.businessName);
 
   const processSteps = [
-    { step: "01", title: "Free Estimate", desc: `We visit your property, discuss your vision, and provide a detailed, no-obligation quote.` },
-    { step: "02", title: "Custom Design", desc: `Our designers create a landscape plan tailored to your property, style, and budget.` },
-    { step: "03", title: "Professional Install", desc: `Our experienced crew transforms your outdoor space with precision and craftsmanship.` },
-    { step: "04", title: "Ongoing Care", desc: `We offer maintenance plans to keep your landscape looking pristine year-round.` },
+    { step: "01", title: "Free Consultation", desc: `We visit your property, discuss your vision, and provide a detailed, no-obligation quote.`, icon: Phone },
+    { step: "02", title: "Custom Design", desc: `Our designers create a landscape plan tailored to your property, style, and budget.`, icon: Lightbulb },
+    { step: "03", title: "Expert Installation", desc: `Our experienced crew transforms your outdoor space with precision and craftsmanship.`, icon: Wrench },
+    { step: "04", title: "Ongoing Maintenance", desc: `We offer maintenance plans to keep your landscape looking pristine year-round.`, icon: Leaf },
+  ];
+
+  /* Quiz state */
+  const [quizAnswer, setQuizAnswer] = useState<string | null>(null);
+  const quizOptions = [
+    { id: "lawn", label: "Regular Lawn Care", desc: "Keep it pristine week after week", icon: Park, color: PRIMARY },
+    { id: "makeover", label: "Landscape Makeover", desc: "Total yard transformation", icon: Sparkle, color: "#f59e0b" },
+    { id: "hardscape", label: "Hardscaping Project", desc: "Patio, walls, walkways", icon: Mountains, color: EARTH_BROWN },
+    { id: "cleanup", label: "Seasonal Cleanup", desc: "Spring or fall prep", icon: Broom, color: "#ef4444" },
+  ];
+
+  /* Competitor comparison rows */
+  const comparisonRows = [
+    { feature: "Custom Landscape Design", us: true, them: "No" },
+    { feature: "Licensed & Insured", us: true, them: "Varies" },
+    { feature: "Hardscaping Capability", us: true, them: "No" },
+    { feature: "Irrigation Expertise", us: true, them: "No" },
+    { feature: "Year-Round Service", us: true, them: "Seasonal" },
+    { feature: "Cleanup Included", us: true, them: "Extra Cost" },
+    { feature: "Workmanship Warranty", us: true, them: "No" },
+  ];
+
+  /* Service type badges */
+  const serviceBadges = ["Lawn Care", "Landscape Design", "Hardscaping", "Irrigation", "Tree Service", "Seasonal Cleanup"];
+
+  /* What we do items */
+  const whatWeDo = [
+    { name: "Lawn Maintenance", icon: Park },
+    { name: "Garden Design", icon: Flower },
+    { name: "Patio & Walkways", icon: Mountains },
+    { name: "Retaining Walls", icon: Shovel },
+    { name: "Irrigation Systems", icon: Drop },
+    { name: "Outdoor Lighting", icon: Sun },
+    { name: "Tree & Shrub Care", icon: Tree },
+    { name: "Seasonal Cleanups", icon: Broom },
+  ];
+
+  /* Pricing tiers */
+  const pricingTiers = [
+    { title: "Weekly Lawn Care", price: "$45", unit: "/visit", desc: "Mowing, edging, blowing, and basic maintenance to keep your lawn looking sharp.", icon: Park },
+    { title: "Landscape Design", price: "$2,500", unit: "+", desc: "Custom design plan with 3D renderings, plant selection, and full property layout.", icon: Lightbulb },
+    { title: "Full Yard Makeover", price: "$8,000", unit: "+", desc: "Complete transformation: design, hardscaping, planting, irrigation, and lighting.", icon: Sparkle },
+  ];
+
+  /* Why choose us */
+  const whyChooseUs = [
+    { title: "Licensed & Insured", desc: "Fully licensed, bonded, and insured for your peace of mind.", icon: ShieldCheck },
+    { title: "Custom Designs", desc: "Every project is tailored to your property, style, and budget.", icon: Lightbulb },
+    { title: "Sustainable Practices", desc: "Eco-friendly materials and water-efficient irrigation solutions.", icon: Recycle },
+    { title: "Satisfaction Guaranteed", desc: "We stand behind every project with our workmanship warranty.", icon: SealCheck },
   ];
 
   const faqs = [
@@ -343,10 +414,9 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
         <div className="absolute inset-0">
           <img src={heroImage} alt={`${data.businessName} landscaping`} className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/25 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/20" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a1a] via-transparent to-transparent" />
         </div>
-        <HeroNatureSVG accent={PRIMARY} />
 
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full">
           <div className="max-w-2xl space-y-8">
@@ -354,7 +424,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
               <p className="text-sm uppercase tracking-widest mb-4" style={{ color: PRIMARY }}>Professional Landscaping</p>
               <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 20px rgba(0,0,0,0.7)" }}>{data.tagline}</h1>
             </div>
-            <p className="text-lg text-slate-300 max-w-md leading-relaxed">{data.about.length > 160 ? data.about.slice(0, 160).trim() + "..." : data.about}</p>
+            <p className="text-lg text-slate-300 max-w-md leading-relaxed">{(() => { const t = data.about; if (t.length <= 180) return t; const dot = t.indexOf('.', 80); return dot > 0 && dot < 220 ? t.slice(0, dot + 1) : t.slice(0, 180).trim() + '...'; })()}</p>
             <div className="flex flex-wrap gap-4">
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer" style={{ background: PRIMARY } as React.CSSProperties}>
                 Get Free Estimate <ArrowRight size={18} weight="bold" />
@@ -366,6 +436,14 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
             <div className="flex flex-wrap gap-6 text-sm text-slate-300">
               <span className="flex items-center gap-2"><MapPin size={16} weight="duotone" style={{ color: PRIMARY }} /><MapLink address={data.address} /></span>
               <span className="flex items-center gap-2"><Leaf size={16} weight="duotone" style={{ color: PRIMARY }} />Licensed &amp; Insured</span>
+            </div>
+            {/* Trust badge pills */}
+            <div className="flex flex-wrap gap-2 pt-2">
+              {["Licensed & Insured", "Free Estimates", "King & Pierce County", "20+ Years Experience"].map(badge => (
+                <span key={badge} className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold border" style={{ color: PRIMARY, borderColor: `${PRIMARY}44`, background: `${PRIMARY}12` }}>
+                  <ShieldCheck size={12} weight="fill" />{badge}
+                </span>
+              ))}
             </div>
           </div>
         </div>
@@ -387,30 +465,25 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 4. BEFORE / AFTER SHOWCASE ══════════════════ */}
-      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0e140d 50%, #1a1a1a 100%)" }} />
-        <NaturePattern opacity={0.02} accent={PRIMARY} />
-        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[10%] w-[500px] h-[500px] rounded-full blur-[200px]" style={{ background: `${PRIMARY}06` }} /></div>
+      {/* ══════════════════ URGENCY STRIP ══════════════════ */}
+      <div className="relative z-10 w-full py-3 flex items-center justify-center gap-4" style={{ background: PRIMARY }}>
+        <motion.div className="w-2.5 h-2.5 rounded-full bg-white/70" animate={{ scale: [1, 1.5, 1] }} transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }} />
+        <p className="text-white text-sm font-semibold tracking-wide text-center px-4">
+          🌿 Free Estimates Available — Call <a href={`tel:${data.phone.replace(/\D/g, "")}`} className="underline font-bold">{data.phone}</a>
+        </p>
+        <motion.div className="w-2.5 h-2.5 rounded-full bg-white/70" animate={{ scale: [1, 1.5, 1] }} transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut", delay: 0.75 }} />
+      </div>
 
-        <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Transformations" title="Before & After" subtitle={`See the dramatic transformations ${data.businessName} delivers for our clients.`} accent={PRIMARY} />
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {STOCK_BEFORE_AFTER.map((pair, i) => (
-              <div key={i} className="space-y-3">
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="relative rounded-xl overflow-hidden border border-white/[0.06]">
-                    <img src={pair.before} alt={`Before ${i + 1}`} className="w-full h-48 object-cover" />
-                    <div className="absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-bold bg-red-500/80 text-white backdrop-blur-sm">Before</div>
-                  </div>
-                  <div className="relative rounded-xl overflow-hidden border border-white/[0.06]">
-                    <img src={pair.after} alt={`After ${i + 1}`} className="w-full h-48 object-cover" />
-                    <div className="absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-bold text-white backdrop-blur-sm" style={{ background: `${PRIMARY}cc` }}>After</div>
-                  </div>
-                </div>
-                <p className="text-sm text-slate-400 text-center">Complete landscape transformation by {data.businessName}</p>
-              </div>
+      {/* ══════════════════ 3b. SERVICE TYPE BADGES ══════════════════ */}
+      <section className="relative z-10 py-10 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111510 50%, #1a1a1a 100%)" }} />
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <div className="flex flex-wrap justify-center gap-3">
+            {serviceBadges.map((badge) => (
+              <span key={badge} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold border transition-colors" style={{ color: PRIMARY, borderColor: `${PRIMARY}33`, background: `${PRIMARY}0d` }}>
+                <Leaf size={14} weight="fill" style={{ color: PRIMARY }} />
+                {badge}
+              </span>
             ))}
           </div>
         </div>
@@ -424,17 +497,38 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
 
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <SectionHeader badge="Our Work" title="Project Gallery" subtitle={`Browse our portfolio of completed landscaping projects by ${data.businessName}.`} accent={PRIMARY} />
-          <div className="columns-1 md:columns-2 lg:columns-3 gap-4 space-y-4">
-            {galleryImages.map((src, i) => (
-              <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.06] hover:border-opacity-30 transition-all duration-500 break-inside-avoid">
-                <img src={src} alt={`Landscape project ${i + 1}`} className={`w-full object-cover transition-transform duration-700 group-hover:scale-105 ${i % 3 === 0 ? "h-80" : i % 3 === 1 ? "h-64" : "h-72"}`} />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="absolute bottom-0 left-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                  <div className="flex items-center gap-2"><Tree size={14} weight="fill" style={{ color: PRIMARY }} /><span className="text-xs text-white/80 font-medium">{data.businessName}</span></div>
+          {/* Masonry gallery — shows ALL photos with dynamic height variation */}
+          <div className="columns-1 md:columns-2 lg:columns-3 gap-5 space-y-5">
+            {galleryImages.map((src, i) => {
+              // Height pattern: tall, medium, short, tall, medium... for visual rhythm
+              const heights = ["h-80", "h-64", "h-72", "h-96", "h-64", "h-80"];
+              const h = heights[i % heights.length];
+              return (
+                <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.10] hover:border-white/20 transition-all duration-500 break-inside-avoid shadow-xl">
+                  <img src={src} alt={`Landscape project ${i + 1} by ${data.businessName}`} className={`w-full ${h} object-cover transition-transform duration-700 group-hover:scale-105`} />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-2 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-500">
+                    <div className="flex items-center gap-2">
+                      <Tree size={14} weight="fill" style={{ color: PRIMARY }} />
+                      <span className="text-xs text-white font-semibold">{data.businessName}</span>
+                      <span className="text-white/50 text-xs ml-auto">Project {i + 1}</span>
+                    </div>
+                  </div>
+                  {/* Accent corner glow on hover */}
+                  <div className="absolute top-3 right-3 w-2 h-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: PRIMARY }} />
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
+          {/* Photo count badge */}
+          {galleryImages.length > 0 && (
+            <p className="text-center text-sm text-slate-500 mt-8">
+              <span className="inline-flex items-center gap-1.5">
+                <span className="inline-block w-1.5 h-1.5 rounded-full" style={{ background: PRIMARY }} />
+                {galleryImages.length} completed projects
+              </span>
+            </p>
+          )}
         </div>
       </section>
 
@@ -452,7 +546,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
             {data.services.map((service, i) => {
               const Icon = getServiceIcon(service.name);
               return (
-                <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.02]">
+                <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]">
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${PRIMARY}15, transparent 70%)` }} />
                   <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${PRIMARY}4d, transparent)` }} />
                   <div className="relative z-10">
@@ -471,6 +565,56 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
+      {/* ══════════════════ 6b. WHAT WE DO ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0e140d 50%, #1a1a1a 100%)" }} />
+        <NaturePattern opacity={0.02} accent={PRIMARY} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] left-[15%] w-[400px] h-[400px] rounded-full blur-[180px]" style={{ background: `${PRIMARY}06` }} /></div>
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <AnimatedSection><SectionHeader badge="Full Service" title="What We Do" subtitle={`${data.businessName} handles every aspect of your outdoor space.`} accent={PRIMARY} /></AnimatedSection>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {whatWeDo.map((item) => (
+              <GlassCard key={item.name} className="p-5 text-center group hover:border-opacity-30 transition-all duration-300">
+                <div className="w-12 h-12 rounded-xl mx-auto mb-3 flex items-center justify-center" style={{ background: `${PRIMARY}15` }}>
+                  <item.icon size={24} weight="duotone" style={{ color: PRIMARY }} />
+                </div>
+                <p className="text-sm font-semibold text-white">{item.name}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ 6c. SERVICE PRICING ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #121510 50%, #1a1a1a 100%)" }} />
+        <OrganicWave opacity={0.02} accent={PRIMARY} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${PRIMARY}08` }} /></div>
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <AnimatedSection><SectionHeader badge="Pricing" title="Transparent Pricing" subtitle="Honest pricing with no hidden fees. Every project includes a free consultation." accent={PRIMARY} /></AnimatedSection>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {pricingTiers.map((tier, i) => (
+              <ShimmerBorder key={tier.title} accent={i === 2 ? PRIMARY : `${PRIMARY}66`}>
+                <div className="p-7 text-center">
+                  <div className="w-14 h-14 rounded-xl mx-auto mb-4 flex items-center justify-center" style={{ background: `${PRIMARY}15` }}>
+                    <tier.icon size={28} weight="duotone" style={{ color: PRIMARY }} />
+                  </div>
+                  <h3 className="text-lg font-bold text-white mb-2">{tier.title}</h3>
+                  <div className="mb-3">
+                    <span className="text-3xl font-black text-white">{tier.price}</span>
+                    <span className="text-sm text-slate-400">{tier.unit}</span>
+                  </div>
+                  <p className="text-sm text-slate-400 leading-relaxed mb-5">{tier.desc}</p>
+                  <MagneticButton className="w-full py-3 rounded-xl text-sm font-semibold text-white cursor-pointer" style={{ background: PRIMARY } as React.CSSProperties}>
+                    Get Quote <ArrowRight size={14} weight="bold" className="inline ml-1" />
+                  </MagneticButton>
+                </div>
+              </ShimmerBorder>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ══════════════════ 7. ABOUT ══════════════════ */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0d120b 50%, #1a1a1a 100%)" }} />
@@ -480,7 +624,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="relative">
-              <div className="rounded-2xl overflow-hidden border border-white/10"><img src={aboutImage} alt={`${data.businessName} team`} className="w-full h-[400px] object-cover" /></div>
+              <div className="rounded-2xl overflow-hidden border border-white/15"><img src={aboutImage} alt={`${data.businessName} team`} className="w-full h-[400px] object-cover" /></div>
               <div className="absolute -bottom-4 -right-4 md:bottom-6 md:-right-6">
                 <div className="px-5 py-3 rounded-xl backdrop-blur-md border text-white font-bold text-sm shadow-lg" style={{ background: `${PRIMARY}e6`, borderColor: `${PRIMARY}80` }}>
                   {data.stats[0] ? `${data.stats[0].value} ${data.stats[0].label}` : "Trusted Experts"}
@@ -504,6 +648,58 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
+      {/* ══════════════════ 7b. WHY CHOOSE US ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #121510 50%, #1a1a1a 100%)" }} />
+        <OrganicWave opacity={0.025} accent={PRIMARY} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute bottom-[20%] left-[5%] w-[500px] h-[500px] rounded-full blur-[200px]" style={{ background: `${PRIMARY}06` }} /></div>
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <AnimatedSection><SectionHeader badge="Why Us" title="Why Choose Us" subtitle={`${data.businessName} delivers results that last.`} accent={PRIMARY} /></AnimatedSection>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {whyChooseUs.map((item) => (
+              <GlassCard key={item.title} className="p-7 text-center group hover:border-opacity-30 transition-all duration-300">
+                <div className="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ background: `${PRIMARY}15`, border: `1px solid ${PRIMARY}33` }}>
+                  <item.icon size={26} weight="duotone" style={{ color: PRIMARY }} />
+                </div>
+                <h3 className="text-lg font-bold text-white mb-2">{item.title}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed">{item.desc}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ 7c. COMPETITOR COMPARISON ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0e140d 50%, #1a1a1a 100%)" }} />
+        <NaturePattern opacity={0.02} accent={PRIMARY} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <AnimatedSection><SectionHeader badge="Compare" title={`${data.businessName} vs. Mow-and-Go Services`} accent={PRIMARY} /></AnimatedSection>
+          <GlassCard className="overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-white/15">
+                    <th className="text-left p-4 text-slate-400 font-medium">Feature</th>
+                    <th className="text-center p-4 font-bold text-white">{data.businessName}</th>
+                    <th className="text-center p-4 text-slate-500 font-medium">Others</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {comparisonRows.map((row, i) => (
+                    <tr key={row.feature} className={i < comparisonRows.length - 1 ? "border-b border-white/8" : ""}>
+                      <td className="p-4 text-slate-300">{row.feature}</td>
+                      <td className="p-4 text-center"><CheckCircle size={22} weight="fill" style={{ color: PRIMARY }} className="mx-auto" /></td>
+                      <td className="p-4 text-center text-slate-500">{row.them}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </GlassCard>
+        </div>
+      </section>
+
       {/* ══════════════════ 8. PROCESS ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #121510 50%, #1a1a1a 100%)" }} />
@@ -517,7 +713,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
               <div key={step.step} className="relative">
                 {i < processSteps.length - 1 && <div className="hidden lg:block absolute top-10 left-[calc(50%+40px)] w-[calc(100%-80px)] h-px" style={{ background: `linear-gradient(to right, ${PRIMARY}33, ${PRIMARY}11)` }} />}
                 <GlassCard className="p-6 text-center relative">
-                  <div className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center text-2xl font-black" style={{ background: `linear-gradient(135deg, ${PRIMARY}22, ${PRIMARY}0a)`, color: PRIMARY, border: `1px solid ${PRIMARY}33` }}>{step.step}</div>
+                  <div className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${PRIMARY}22, ${PRIMARY}0a)`, border: `1px solid ${PRIMARY}33` }}><step.icon size={28} weight="duotone" style={{ color: PRIMARY }} /></div>
                   <h3 className="text-lg font-bold text-white mb-2">{step.title}</h3>
                   <p className="text-sm text-slate-400 leading-relaxed">{step.desc}</p>
                 </GlassCard>
@@ -527,20 +723,103 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 9. TESTIMONIALS ══════════════════ */}
+      {/* ══════════════════ 8b. VIDEO PLACEHOLDER ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0e140d 50%, #1a1a1a 100%)" }} />
+        <NaturePattern opacity={0.02} accent={PRIMARY} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <AnimatedSection><SectionHeader badge="Watch" title="See Our Transformations" accent={PRIMARY} /></AnimatedSection>
+          <div className="relative rounded-2xl overflow-hidden border border-white/15 group cursor-pointer">
+            <img src={galleryImages[0] || heroImage} alt="Project showcase" className="w-full h-64 md:h-96 object-cover transition-transform duration-700 group-hover:scale-105" />
+            <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+              <div className="w-20 h-20 rounded-full flex items-center justify-center backdrop-blur-md border border-white/20 transition-transform duration-300 group-hover:scale-110" style={{ background: `${PRIMARY}cc` }}>
+                <Play size={36} weight="fill" className="text-white ml-1" />
+              </div>
+            </div>
+            <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/70 to-transparent">
+              <p className="text-white font-semibold text-lg">Watch Our Work in Action</p>
+              <p className="text-white/70 text-sm mt-1">See how {data.businessName} transforms outdoor spaces</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ 8c. YARD NEEDS QUIZ ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #121510 50%, #1a1a1a 100%)" }} />
+        <OrganicWave opacity={0.02} accent={PRIMARY} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] right-[10%] w-[400px] h-[400px] rounded-full blur-[180px]" style={{ background: `${PRIMARY}06` }} /></div>
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <AnimatedSection><SectionHeader badge="Find Out" title="What Does Your Yard Need?" subtitle="Select the option that best describes your outdoor goals." accent={PRIMARY} /></AnimatedSection>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+            {quizOptions.map((opt) => (
+              <button key={opt.id} onClick={() => setQuizAnswer(opt.id)} className="text-left p-6 rounded-2xl border transition-all duration-300 cursor-pointer group" style={{ borderColor: quizAnswer === opt.id ? opt.color : "rgba(255,255,255,0.06)", background: quizAnswer === opt.id ? `${opt.color}15` : "rgba(255,255,255,0.02)" }}>
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0" style={{ background: `${opt.color}20` }}>
+                    <opt.icon size={24} weight="duotone" style={{ color: opt.color }} />
+                  </div>
+                  <div>
+                    <p className="text-base font-bold text-white mb-1">{opt.label}</p>
+                    <p className="text-sm text-slate-400">{opt.desc}</p>
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+          <AnimatePresence>
+            {quizAnswer && (
+              <motion.div initial={{ height: 0 }} animate={{ height: "auto" }} exit={{ height: 0 }} transition={spring} className="overflow-hidden">
+                <GlassCard className="p-6 text-center">
+                  <p className="text-white font-semibold mb-3">Great choice! Let&apos;s get started on your project.</p>
+                  <MagneticButton className="px-8 py-3 rounded-full text-sm font-semibold text-white cursor-pointer inline-flex items-center gap-2" style={{ background: PRIMARY } as React.CSSProperties}>
+                    <Phone size={16} weight="fill" /> Call for Free Consultation
+                  </MagneticButton>
+                </GlassCard>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </section>
+
+      {/* ══════════════════ 8d. CERTIFICATIONS ══════════════════ */}
+      <section className="relative z-10 py-12 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0e140d 50%, #1a1a1a 100%)" }} />
+        <div className="max-w-5xl mx-auto px-6 relative z-10 text-center">
+          <p className="text-xs uppercase tracking-widest mb-5 text-slate-500">Certified & Trusted</p>
+          <div className="flex flex-wrap justify-center gap-3">
+            {["WA State Licensed", "Fully Insured & Bonded", "NALP Member", "BBB Accredited", "Eco-Friendly Practices", "Free Workmanship Warranty"].map(badge => (
+              <span key={badge} className="inline-flex items-center gap-1.5 border text-xs font-semibold px-4 py-2 rounded-full" style={{ borderColor: `${PRIMARY}44`, background: `${PRIMARY}10`, color: PRIMARY }}>
+                <ShieldCheck size={12} weight="fill" />{badge}
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ 9. TESTIMONIALS (with Google Reviews Header) ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #121510 50%, #1a1a1a 100%)" }} />
         <NaturePattern opacity={0.02} accent={PRIMARY} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] right-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${PRIMARY}06` }} /></div>
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <AnimatedSection>          <SectionHeader badge="Testimonials" title="What Homeowners Say" accent={PRIMARY} /></AnimatedSection>
+          <AnimatedSection><SectionHeader badge="Testimonials" title="What Homeowners Say" accent={PRIMARY} /></AnimatedSection>
+
+          {/* Google Reviews Header */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-10">
+            <div className="flex gap-1">
+              {Array.from({ length: 5 }).map((_, i) => (<Star key={i} size={22} weight="fill" style={{ color: "#facc15" }} />))}
+            </div>
+            <span className="text-white font-bold text-lg">{data.googleRating || "5.0"}</span>
+            <span className="text-slate-400 text-sm">based on {data.reviewCount || "50"}+ Google Reviews</span>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {testimonials.map((t, i) => (
               <GlassCard key={i} className="p-6 h-full flex flex-col">
                 <div className="flex gap-0.5 mb-4">{Array.from({ length: t.rating || 5 }).map((_, j) => (<Star key={j} size={16} weight="fill" style={{ color: PRIMARY }} />))}</div>
                 <p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p>
-                <div className="pt-4 border-t border-white/5"><span className="text-sm font-semibold text-white">{t.name}</span></div>
+                <div className="pt-4 border-t border-white/8"><span className="text-sm font-semibold text-white">{t.name}</span></div>
               </GlassCard>
             ))}
           </div>
@@ -553,11 +832,17 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='40' height='40' fill='none'/%3E%3Cpath d='M0 0L40 40M40 0L0 40' stroke='%23000' stroke-width='0.5'/%3E%3C/svg%3E\")" }} />
         <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
           <Tree size={48} weight="fill" className="mx-auto mb-6 text-white/70" />
-          <h2 className="text-3xl md:text-5xl font-black tracking-tight text-white mb-4">Transform Your Outdoor Space Today</h2>
-          <p className="text-lg text-white/80 mb-8 max-w-xl mx-auto">Ready for the yard of your dreams? {data.businessName} delivers stunning results with every project. Call now for a free estimate.</p>
-          <PhoneLink phone={data.phone} className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-white font-bold text-lg hover:bg-white/90 transition-colors" style={{ color: PRIMARY }}>
-            <Phone size={22} weight="fill" />{data.phone}
-          </PhoneLink>
+          <h2 className="text-3xl md:text-5xl font-black tracking-tight text-white mb-4">Transform Your Outdoor Space</h2>
+          <p className="text-xl text-white/90 font-semibold mb-2">Free Design Consultation</p>
+          <p className="text-lg text-white/70 mb-8 max-w-xl mx-auto">Let {data.businessName} create a custom landscape plan for your property. No obligation, no pressure — just expert advice.</p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <PhoneLink phone={data.phone} className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-white font-bold text-lg hover:bg-white/90 transition-colors" style={{ color: PRIMARY }}>
+              <Phone size={22} weight="fill" />{data.phone}
+            </PhoneLink>
+            <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border-2 border-white/30 flex items-center gap-2 cursor-pointer backdrop-blur-sm">
+              <HandPointing size={20} weight="fill" /> Book Online
+            </MagneticButton>
+          </div>
         </div>
       </section>
 
@@ -566,11 +851,23 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0d120b 50%, #1a1a1a 100%)" }} />
         <NaturePattern opacity={0.02} accent={PRIMARY} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <AnimatedSection>          <SectionHeader badge="Coverage Area" title="Areas We Serve" accent={PRIMARY} /></AnimatedSection>
+          <AnimatedSection><SectionHeader badge="Coverage Area" title={`Serving ${data.city} & Surrounding Cities`} subtitle="Professional landscaping services throughout King and Pierce County." accent={PRIMARY} /></AnimatedSection>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-4xl mx-auto mb-10">
+            {[data.city, "Kent", "Burien", "Tukwila", "Auburn", "SeaTac", "Federal Way", "Bellevue"].map((city, i) => (
+              <GlassCard key={city} className="p-4 text-center group hover:border-opacity-30 transition-all duration-300">
+                <motion.div className="w-2 h-2 rounded-full mx-auto mb-2" style={{ background: PRIMARY }} animate={{ scale: [1, 1.4, 1] }} transition={{ duration: 2, repeat: Infinity, delay: i * 0.15 }} />
+                <p className="text-sm font-semibold text-white">{city}</p>
+                <p className="text-xs text-slate-500 mt-0.5">Service Area</p>
+              </GlassCard>
+            ))}
+          </div>
           <div className="text-center">
-            <GlassCard className="p-8 inline-block">
-              <div className="flex items-center gap-3 text-lg"><MapPin size={24} weight="duotone" style={{ color: PRIMARY }} /><MapLink address={data.address} className="text-white font-semibold" /></div>
-              <p className="text-slate-400 text-sm mt-2">&amp; Surrounding Communities</p>
+            <GlassCard className="p-6 inline-flex flex-col sm:flex-row items-center gap-4">
+              <div className="flex items-center gap-2"><MapPin size={20} weight="duotone" style={{ color: PRIMARY }} /><MapLink address={data.address} className="text-white font-semibold text-sm" /></div>
+              <div className="hidden sm:block w-px h-6 bg-white/10" />
+              <a href={`tel:${data.phone.replace(/\D/g, "")}`} className="flex items-center gap-2 text-sm font-semibold" style={{ color: PRIMARY }}>
+                <Phone size={16} weight="duotone" />{data.phone}
+              </a>
             </GlassCard>
           </div>
         </div>
@@ -593,9 +890,9 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
       
       {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
       <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15, ${ACCENT}08)` }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${PRIMARY}15, ${PRIMARY}08)` }} />
         <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
-          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: ACCENT }}>
+          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: PRIMARY }}>
             Don&apos;t Miss Out
           </p>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-3">
@@ -607,7 +904,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
           <a
             href={`/claim/${data.id}`}
             className="inline-flex items-center gap-2 min-h-[48px] px-8 py-3 rounded-full text-white font-bold text-base hover:shadow-lg transition-all duration-300"
-            style={{ background: ACCENT }}
+            style={{ background: PRIMARY }}
           >
             Claim This Website
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
@@ -650,17 +947,17 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
               <h3 className="text-xl font-semibold text-white mb-6">Request a Free Estimate</h3>
               <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div><label className="block text-sm text-slate-400 mb-1.5">First Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="John" /></div>
-                  <div><label className="block text-sm text-slate-400 mb-1.5">Last Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="Doe" /></div>
+                  <div><label className="block text-sm text-slate-400 mb-1.5">First Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="John" /></div>
+                  <div><label className="block text-sm text-slate-400 mb-1.5">Last Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="Doe" /></div>
                 </div>
-                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
+                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
                 <div><label className="block text-sm text-slate-400 mb-1.5">Service Needed</label>
-                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none text-sm">
+                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none text-sm">
                     <option value="" className="bg-neutral-900">Select a service</option>
                     {data.services.map((s) => (<option key={s.name} value={s.name.toLowerCase().replace(/\s+/g, "-")} className="bg-neutral-900">{s.name}</option>))}
                   </select>
                 </div>
-                <div><label className="block text-sm text-slate-400 mb-1.5">Tell Us About Your Project</label><textarea rows={4} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm resize-none" placeholder="Describe your landscaping goals..." /></div>
+                <div><label className="block text-sm text-slate-400 mb-1.5">Tell Us About Your Project</label><textarea rows={4} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm resize-none" placeholder="Describe your landscaping goals..." /></div>
                 <MagneticButton className="w-full py-4 rounded-xl text-base font-semibold text-white flex items-center justify-center gap-2 cursor-pointer" style={{ background: PRIMARY } as React.CSSProperties}>
                   Get Free Estimate <ArrowRight size={18} weight="bold" />
                 </MagneticButton>
@@ -670,8 +967,81 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
+      {/* ══════════════════ SEASONAL CARE CALENDAR ══════════════════ */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f1a0f 50%, #1a1a1a 100%)" }} />
+        <NaturePattern opacity={0.01} accent={PRIMARY} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <Sun size={40} weight="duotone" style={{ color: PRIMARY }} className="mx-auto mb-3" />
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Seasonal Care Calendar</h2>
+            <p className="text-slate-400 mt-3 max-w-xl mx-auto">Year-round lawn and landscape care to keep your property looking its best every season.</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              { season: "Spring", tasks: "Dethatching, aeration, fertilization, mulching, spring cleanup, new plantings" },
+              { season: "Summer", tasks: "Regular mowing, deep watering, pest monitoring, hedge trimming, weed control" },
+              { season: "Autumn", tasks: "Leaf cleanup, overseeding, final mowing, winterizer fertilizer, bulb planting" },
+              { season: "Winter", tasks: "Snow removal, pathway de-icing, equipment maintenance, landscape planning" },
+            ].map((s) => (
+              <div key={s.season} className="rounded-2xl border border-white/15 p-6" style={{ background: "rgba(255,255,255,0.06)" }}>
+                <h3 className="text-lg font-bold mb-2" style={{ color: PRIMARY }}>{s.season}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed">{s.tasks}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ PLANT GUIDE ══════════════════ */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f1a0f 0%, #1a1a1a 100%)" }} />
+        <NaturePattern opacity={0.012} accent={PRIMARY} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <Flower size={40} weight="duotone" style={{ color: PRIMARY }} className="mx-auto mb-3" />
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Popular Plants We Recommend</h2>
+            <div className="w-16 h-1 mx-auto mt-3 rounded-full" style={{ background: PRIMARY }} />
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              { name: "Hydrangeas", note: "Shade-loving, stunning blooms" },
+              { name: "Boxwood", note: "Year-round structure, easy to shape" },
+              { name: "Lavender", note: "Drought-tolerant, fragrant, pollinator-friendly" },
+              { name: "Japanese Maple", note: "Stunning fall color, focal point" },
+              { name: "Ornamental Grasses", note: "Low-maintenance, movement and texture" },
+              { name: "Hostas", note: "Lush shade groundcover, many varieties" },
+              { name: "Rhododendrons", note: "Evergreen with showy spring flowers" },
+              { name: "Native Ferns", note: "Woodland gardens, no-fuss greenery" },
+            ].map((p) => (
+              <div key={p.name} className="rounded-2xl border border-white/15 p-5 text-center" style={{ background: "rgba(255,255,255,0.06)" }}>
+                <Leaf size={24} weight="duotone" style={{ color: PRIMARY }} className="mx-auto mb-2" />
+                <h3 className="text-sm font-bold text-white mb-1">{p.name}</h3>
+                <p className="text-xs text-slate-500">{p.note}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${PRIMARY}15 0%, #1a1a1a 50%, ${PRIMARY}08 100%)` }} />
+        <NaturePattern opacity={0.02} accent={PRIMARY} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+          <Tree size={44} weight="fill" style={{ color: PRIMARY }} className="mx-auto mb-4" />
+          <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">Transform Your Outdoor Space</h2>
+          <p className="text-slate-400 max-w-2xl mx-auto mb-8 text-lg">
+            From simple lawn care to full landscape redesigns, {data.businessName} creates outdoor spaces you&apos;ll love coming home to.
+          </p>
+          <a href={`tel:${data.phone}`} className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-white font-bold text-lg transition-transform hover:scale-105" style={{ background: PRIMARY }}>
+            <Phone size={20} weight="fill" /> Free Landscape Consultation
+          </a>
+        </div>
+      </section>
+
       {/* ══════════════════ 15. FOOTER ══════════════════ */}
-      <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden">
+      <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111 100%)" }} />
         <NaturePattern opacity={0.015} accent={PRIMARY} />
         <div className="mx-auto max-w-6xl px-6 relative z-10">
@@ -693,7 +1063,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
               </div>
             </div>
           </div>
-          <div className="border-t border-white/5 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="border-t border-white/8 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-sm text-slate-500"><Tree size={14} weight="fill" style={{ color: PRIMARY }} /><span>{data.businessName} &copy; {new Date().getFullYear()}</span></div>
             <div className="flex items-center gap-2 text-xs text-slate-600"><BluejayLogo className="w-4 h-4" /><span>Created by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" style={{textDecoration:"underline"}}>bluejayportfolio.com</a></span></div>
           </div>

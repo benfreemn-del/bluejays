@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports -- This helper script intentionally uses CommonJS for Node-based local generation. */
 const fs = require('fs');
 const path = require('path');
 

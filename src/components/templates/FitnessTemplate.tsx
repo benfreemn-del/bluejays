@@ -1,5 +1,7 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element -- These static marketing and preview components intentionally use plain img tags to preserve existing markup and visual behavior during lint-only cleanup. */
+
 import { motion } from "framer-motion";
 import TemplateLayout from "./TemplateLayout";
 
@@ -429,7 +431,7 @@ export default function FitnessTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-[#f43f5e]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-[#f43f5e]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 {/* Hover glow */}
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_50%_0%,#f43f5e15,transparent_70%)]" />
@@ -492,7 +494,7 @@ export default function FitnessTemplate() {
                 className={`group relative p-8 rounded-2xl border transition-all duration-500 overflow-hidden ${
                   plan.highlighted
                     ? "border-[#f43f5e]/40 bg-[#f43f5e]/[0.04] scale-[1.02]"
-                    : "border-white/[0.06] hover:border-[#f43f5e]/30 bg-white/[0.02]"
+                    : "border-white/[0.10] hover:border-[#f43f5e]/30 bg-white/[0.07]"
                 }`}
               >
                 {/* Highlighted glow */}
@@ -565,7 +567,7 @@ export default function FitnessTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.12 }}
-                className="group relative rounded-2xl border border-white/[0.06] hover:border-[#f43f5e]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative rounded-2xl border border-white/[0.10] hover:border-[#f43f5e]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 {/* Photo */}
                 <div className="relative aspect-[3/4] overflow-hidden">
@@ -585,7 +587,7 @@ export default function FitnessTemplate() {
                     <p className="text-[#f43f5e] text-sm font-semibold mb-3">{trainer.title}</p>
                     <div className="flex flex-wrap gap-2">
                       {trainer.specialties.map((s) => (
-                        <span key={s} className="text-[10px] font-semibold uppercase tracking-wider text-white/60 bg-white/10 border border-white/10 px-2.5 py-1 rounded-full">
+                        <span key={s} className="text-[10px] font-semibold uppercase tracking-wider text-white/60 bg-white/10 border border-white/15 px-2.5 py-1 rounded-full">
                           {s}
                         </span>
                       ))}
@@ -628,7 +630,7 @@ export default function FitnessTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-[#f43f5e]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-[#f43f5e]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 {/* Top accent line */}
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-[#f43f5e]/40 via-[#f43f5e]/10 to-transparent" />
@@ -647,7 +649,7 @@ export default function FitnessTemplate() {
                   {/* Quote */}
                   <p className="text-muted leading-relaxed mb-6 text-sm">&ldquo;{t.text}&rdquo;</p>
                   {/* Author */}
-                  <div className="flex items-center gap-3 pt-4 border-t border-white/[0.06]">
+                  <div className="flex items-center gap-3 pt-4 border-t border-white/[0.10]">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#f43f5e]/30 to-[#f43f5e]/10 flex items-center justify-center text-sm font-bold text-[#f43f5e]">
                       {t.name.charAt(0)}
                     </div>
@@ -683,11 +685,11 @@ export default function FitnessTemplate() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="overflow-x-auto rounded-2xl border border-white/[0.06] bg-white/[0.02]"
+            className="overflow-x-auto rounded-2xl border border-white/[0.10] bg-white/[0.07]"
           >
             <table className="w-full min-w-[700px]">
               <thead>
-                <tr className="border-b border-white/[0.06]">
+                <tr className="border-b border-white/[0.10]">
                   <th className="p-4 text-left text-xs font-bold uppercase tracking-wider text-[#f43f5e]">Time</th>
                   {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
                     <th key={day} className="p-4 text-left text-xs font-bold uppercase tracking-wider text-muted">{day}</th>
@@ -737,7 +739,7 @@ export default function FitnessTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.06 }}
-                className="group p-6 rounded-2xl border border-white/[0.06] hover:border-[#f43f5e]/20 transition-all duration-500 overflow-hidden relative bg-white/[0.02]"
+                className="group p-6 rounded-2xl border border-white/[0.10] hover:border-[#f43f5e]/20 transition-all duration-500 overflow-hidden relative bg-white/[0.07]"
               >
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_0%_50%,#f43f5e10,transparent_70%)]" />
                 <div className="relative z-10 flex gap-4">

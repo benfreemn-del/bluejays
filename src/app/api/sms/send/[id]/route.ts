@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getProspect, updateProspect } from "@/lib/store";
 import { sendSms, getSmsHistory, getInitialSms, getFollowUpSms1, getFollowUpSms2 } from "@/lib/sms";
+import { getProspectVideoUrl } from "@/lib/video-generator";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
@@ -22,13 +23,14 @@ export async function POST(
   }
 
   const previewUrl = `${BASE_URL}${prospect.generatedSiteUrl}`;
+  const videoUrl = await getProspectVideoUrl(prospect.id);
   const history = await getSmsHistory(prospect.id);
   const lastSeq = history.length > 0 ? Math.max(...history.map((s) => s.sequence)) : 0;
 
   let body: string;
-  if (lastSeq === 0) body = getInitialSms(prospect, previewUrl);
-  else if (lastSeq === 1) body = getFollowUpSms1(prospect, previewUrl);
-  else if (lastSeq === 2) body = getFollowUpSms2(prospect, previewUrl);
+  if (lastSeq === 0) body = getInitialSms(prospect, previewUrl, videoUrl);
+  else if (lastSeq === 1) body = getFollowUpSms1(prospect, previewUrl, videoUrl);
+  else if (lastSeq === 2) body = getFollowUpSms2(prospect, previewUrl, videoUrl);
   else return NextResponse.json({ error: "All 3 SMS already sent" }, { status: 400 });
 
   const result = await sendSms(prospect.id, prospect.phone, body, lastSeq + 1);

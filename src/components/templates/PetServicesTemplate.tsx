@@ -1,5 +1,7 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element -- These static marketing and preview components intentionally use plain img tags to preserve existing markup and visual behavior during lint-only cleanup. */
+
 import { motion } from "framer-motion";
 import TemplateLayout from "./TemplateLayout";
 
@@ -435,7 +437,7 @@ export default function PetServicesTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-[#4ade80]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-[#4ade80]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_50%_0%,#4ade8015,transparent_70%)]" />
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#4ade80]/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -494,7 +496,7 @@ export default function PetServicesTemplate() {
                 className={`group relative rounded-2xl border transition-all duration-500 overflow-hidden ${
                   pkg.popular
                     ? "border-[#4ade80]/40 bg-[#4ade80]/[0.04] scale-[1.02]"
-                    : "border-white/[0.06] hover:border-[#4ade80]/30 bg-white/[0.02]"
+                    : "border-white/[0.10] hover:border-[#4ade80]/30 bg-white/[0.07]"
                 }`}
               >
                 {/* Popular badge */}
@@ -569,7 +571,7 @@ export default function PetServicesTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.12 }}
-                className="group relative rounded-2xl border border-white/[0.06] hover:border-[#4ade80]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative rounded-2xl border border-white/[0.10] hover:border-[#4ade80]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 <div className="relative aspect-[3/4] overflow-hidden">
                   <img
@@ -586,7 +588,7 @@ export default function PetServicesTemplate() {
                     <p className="text-[#4ade80] text-sm font-semibold mb-3">{member.title}</p>
                     <div className="flex flex-wrap gap-2">
                       {member.specialties.map((s) => (
-                        <span key={s} className="text-[10px] font-semibold uppercase tracking-wider text-white/60 bg-white/10 border border-white/10 px-2.5 py-1 rounded-full">
+                        <span key={s} className="text-[10px] font-semibold uppercase tracking-wider text-white/60 bg-white/10 border border-white/15 px-2.5 py-1 rounded-full">
                           {s}
                         </span>
                       ))}
@@ -623,7 +625,7 @@ export default function PetServicesTemplate() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className="group relative aspect-[4/3] rounded-2xl overflow-hidden border border-white/[0.06] hover:border-[#4ade80]/30 transition-all duration-500"
+                className="group relative aspect-[4/3] rounded-2xl overflow-hidden border border-white/[0.10] hover:border-[#4ade80]/30 transition-all duration-500"
               >
                 <img
                   src={img.src}
@@ -675,7 +677,7 @@ export default function PetServicesTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group text-center p-6 rounded-2xl border border-white/[0.06] hover:border-[#4ade80]/30 bg-white/[0.02] transition-all duration-500"
+                className="group text-center p-6 rounded-2xl border border-white/[0.10] hover:border-[#4ade80]/30 bg-white/[0.07] transition-all duration-500"
               >
                 <div className="w-14 h-14 mx-auto rounded-xl bg-[#4ade80]/10 border border-[#4ade80]/20 flex items-center justify-center text-[#4ade80] mb-4 group-hover:bg-[#4ade80]/20 group-hover:scale-110 transition-all duration-300">
                   {item.icon}
@@ -718,7 +720,7 @@ export default function PetServicesTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-[#4ade80]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-[#4ade80]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-[#4ade80]/40 via-[#4ade80]/10 to-transparent" />
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_0%_0%,#4ade8010,transparent_70%)]" />
@@ -732,7 +734,7 @@ export default function PetServicesTemplate() {
                     ))}
                   </div>
                   <p className="text-muted leading-relaxed mb-6 text-sm">&ldquo;{t.text}&rdquo;</p>
-                  <div className="flex items-center gap-3 pt-4 border-t border-white/[0.06]">
+                  <div className="flex items-center gap-3 pt-4 border-t border-white/[0.10]">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#4ade80]/30 to-[#4ade80]/10 flex items-center justify-center text-sm font-bold text-[#4ade80]">
                       {t.name.charAt(0)}
                     </div>
@@ -849,7 +851,7 @@ export default function PetServicesTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.06 }}
-                className="group p-6 rounded-2xl border border-white/[0.06] hover:border-[#4ade80]/20 transition-all duration-500 overflow-hidden relative bg-white/[0.02]"
+                className="group p-6 rounded-2xl border border-white/[0.10] hover:border-[#4ade80]/20 transition-all duration-500 overflow-hidden relative bg-white/[0.07]"
               >
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_0%_50%,#4ade8010,transparent_70%)]" />
                 <div className="relative z-10 flex gap-4">

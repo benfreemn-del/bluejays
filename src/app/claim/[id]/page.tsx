@@ -55,6 +55,8 @@ export default function ClaimPage() {
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [showChat, setShowChat] = useState(false);
   const [triggers, setTriggers] = useState<EngagementTriggers | undefined>(undefined);
+  const [roiJobValue, setRoiJobValue] = useState(500);
+  const [notFound, setNotFound] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const paymentCancelled = searchParams.get("payment") === "cancelled";
@@ -62,9 +64,13 @@ export default function ClaimPage() {
   useEffect(() => {
     // Fetch prospect data
     fetch(`/api/prospects/${prospectId}`)
-      .then((r) => r.json())
+      .then((r) => {
+        if (!r.ok) { setNotFound(true); return null; }
+        return r.json();
+      })
       .then((data) => {
-        if (data.error) return;
+        if (!data) return;
+        if (data.error) { setNotFound(true); return; }
         setInfo({
           businessName: data.businessName,
           category: data.category,
@@ -140,10 +146,11 @@ export default function ClaimPage() {
     ]);
 
     try {
+      const plan = new URLSearchParams(window.location.search).get("plan");
       const res = await fetch("/api/checkout/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prospectId }),
+        body: JSON.stringify({ prospectId, plan: plan || "full" }),
       });
       const data = await res.json();
 
@@ -208,6 +215,28 @@ export default function ClaimPage() {
 
   const totalValue = "$8,000";
 
+  if (notFound) {
+    return (
+      <div className="min-h-screen bg-[#050a14] text-white flex items-center justify-center">
+        <div className="text-center max-w-md px-6">
+          <div className="w-16 h-16 rounded-full bg-red-500/20 flex items-center justify-center mx-auto mb-6">
+            <span className="text-3xl">404</span>
+          </div>
+          <h1 className="text-2xl font-bold mb-3">Website Not Found</h1>
+          <p className="text-white/50 mb-6">
+            This preview link is no longer available or the website has already been claimed. If you think this is an error, please contact us.
+          </p>
+          <a
+            href="https://bluejayportfolio.com"
+            className="inline-block h-10 px-6 leading-10 rounded-full bg-sky-500 text-white text-sm font-medium hover:bg-sky-400 transition-colors"
+          >
+            Visit BlueJays Portfolio
+          </a>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#050a14] text-white">
       {/* ═══════════════════════════════════════════════════════════ */}
@@ -271,28 +300,76 @@ export default function ClaimPage() {
               : `A premium, mobile-optimized website designed specifically for your ${categoryLabel} business — ready to go live in 48 hours.`}
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
-            <button
-              onClick={redirectToCheckout}
-              disabled={isRedirecting}
-              className="h-14 px-10 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 text-white text-lg font-bold hover:shadow-[0_0_40px_rgba(34,197,94,0.4)] transition-all duration-300 disabled:opacity-50"
-            >
-              {isRedirecting ? "Redirecting..." : `Claim Your Website — ${displayPrice}`}
-            </button>
+          {/* Pricing options — installment shown first as default/recommended */}
+          {!isFreeTier ? (
+            <div className="flex flex-col sm:flex-row items-stretch justify-center gap-3 mb-4 max-w-xl mx-auto">
+              {/* Installment — MOST POPULAR */}
+              <div className="flex-1 relative">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-sky-500 text-white text-[10px] font-bold tracking-wider uppercase px-3 py-0.5 rounded-full whitespace-nowrap">
+                  Most Popular
+                </div>
+                <button
+                  onClick={() => {
+                    const url = new URL(window.location.href);
+                    url.searchParams.set("plan", "installment");
+                    window.location.href = url.toString();
+                  }}
+                  className="w-full h-full min-h-[80px] px-6 py-4 rounded-2xl border-2 border-sky-500 bg-sky-500/10 text-white font-bold hover:bg-sky-500/20 transition-all flex flex-col items-center justify-center gap-0.5"
+                >
+                  <span className="text-xl">3 × $349</span>
+                  <span className="text-xs text-white/60 font-normal">$116/mo · paid over 3 months</span>
+                </button>
+              </div>
+
+              {/* One-time */}
+              <div className="flex-1">
+                <button
+                  onClick={redirectToCheckout}
+                  disabled={isRedirecting}
+                  className="w-full h-full min-h-[80px] px-6 py-4 rounded-2xl border border-white/20 text-white font-bold hover:border-white/40 hover:bg-white/5 transition-all flex flex-col items-center justify-center gap-0.5 disabled:opacity-50"
+                >
+                  <span className="text-xl">{isRedirecting ? "..." : "$997 once"}</span>
+                  <span className="text-xs text-white/50 font-normal">then $8/mo after year one</span>
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-2">
+              <button
+                onClick={redirectToCheckout}
+                disabled={isRedirecting}
+                className="h-14 px-10 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 text-white text-lg font-bold hover:shadow-[0_0_40px_rgba(34,197,94,0.4)] transition-all duration-300 disabled:opacity-50"
+              >
+                {isRedirecting ? "Redirecting..." : `Claim Your Website — ${displayPrice}`}
+              </button>
+            </div>
+          )}
+
+          {/* Preview + walkthrough links */}
+          <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
             {info?.previewUrl && (
               <a
                 href={info.previewUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="h-14 px-8 rounded-full border border-white/20 text-white/70 text-lg font-medium hover:border-white/40 hover:text-white transition-all flex items-center gap-2"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-white/15 text-white/60 hover:text-white hover:border-white/30 transition-all text-sm"
               >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                   <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                 </svg>
-                Preview First
+                Preview the site first
               </a>
             )}
+            <a
+              href={`/book/${info?.id || ""}`}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-blue-500/30 text-blue-400 hover:bg-blue-500/10 transition-colors text-sm"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              Book a free 15-min walkthrough with Ben
+            </a>
           </div>
 
           {/* Money-Back Guarantee Badge */}
@@ -367,6 +444,9 @@ export default function ClaimPage() {
                   </div>
                 )}
               </div>
+              <p className="text-xs text-white/30 mt-2 text-center">
+                Preview images shown — we customize with your real business photos after purchase
+              </p>
             </div>
           </div>
 
@@ -397,7 +477,7 @@ export default function ClaimPage() {
             <TrustBadge
               icon={<svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>}
               title="One-Time Payment"
-              subtitle={isFreeTier ? "$30 setup + $100/yr after year one" : "$997 setup + $100/yr after year one"}
+              subtitle={isFreeTier ? "$30 setup + $100/yr after year one" : "$997 one-time + $100/yr after year one"}
             />
             <TrustBadge
               icon={<svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
@@ -424,7 +504,7 @@ export default function ClaimPage() {
           <p className="text-white/40 text-center mb-10">
             {isFreeTier
               ? "Everything you need to get online — included in your setup."
-              : "Here's what agencies charge for each piece \u2014 and what you get for $997."}
+              : "Here's what agencies charge for each piece — and what you get with the $997 one-time fee."}
           </p>
 
           <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
@@ -451,7 +531,7 @@ export default function ClaimPage() {
                 <span className="text-lg font-bold text-green-400">Your price today</span>
                 <span className="text-3xl font-extrabold text-green-400">{displayPrice}</span>
               </div>
-              <p className="text-xs text-white/30 mt-1">One-time setup fee. Includes 1 year of hosting &amp; management. After year one, a $100/year management fee applies.</p>
+              <p className="text-xs text-white/30 mt-1">$997 one-time includes custom website design, domain registration, and hosting setup. After year one, $100/year maintenance covers domain renewal, hosting, ongoing maintenance, and support.</p>
             </div>
           </div>
 
@@ -464,9 +544,143 @@ export default function ClaimPage() {
             >
               {isRedirecting ? "Redirecting..." : `Claim Your Website \u2014 ${displayPrice}`}
             </button>
+            {!isFreeTier && (
+              <p className="text-center text-sm text-white/50 mt-2">
+                Or{" "}
+                <button
+                  onClick={() => {
+                    const url = new URL(window.location.href);
+                    url.searchParams.set("plan", "installment");
+                    window.location.href = url.toString();
+                  }}
+                  className="underline hover:text-white/70 transition-colors"
+                >
+                  or 3 × $349 (payment plan)
+                </button>
+              </p>
+            )}
           </div>
         </div>
       </section>
+
+      {/* ═══════════════════════════════════════════════════════════ */}
+      {/* ROI CALCULATOR */}
+      {/* ═══════════════════════════════════════════════════════════ */}
+      {!isFreeTier && (
+        <section className="py-12 px-6">
+          <div className="max-w-3xl mx-auto">
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
+              <h3 className="text-xl font-bold text-center mb-2">
+                See How Fast It <span className="text-green-400">Pays for Itself</span>
+              </h3>
+              <p className="text-white/40 text-sm text-center mb-6">
+                Your website works 24/7 bringing in new customers
+              </p>
+
+              <div className="flex flex-col sm:flex-row items-center gap-6">
+                <div className="flex-1 w-full">
+                  <label className="text-sm text-white/60 mb-2 block">
+                    What&apos;s your average job/sale worth?
+                  </label>
+                  <div className="relative">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 text-lg">$</span>
+                    <input
+                      type="number"
+                      value={roiJobValue}
+                      onChange={(e) => setRoiJobValue(Math.max(1, Number(e.target.value) || 1))}
+                      className="w-full h-12 pl-8 pr-4 rounded-xl bg-white/5 border border-white/10 text-white text-lg placeholder:text-white/25 focus:border-green-500/50 focus:outline-none transition-colors"
+                      min={1}
+                    />
+                  </div>
+                </div>
+
+                <div className="flex-1 w-full bg-green-500/10 border border-green-500/20 rounded-xl p-5 text-center">
+                  <p className="text-green-400 text-2xl font-extrabold mb-1">
+                    {Math.ceil(997 / roiJobValue)} new customer{Math.ceil(997 / roiJobValue) !== 1 ? "s" : ""}
+                  </p>
+                  <p className="text-white/50 text-sm">
+                    At $997, you need just <span className="text-green-400 font-bold">{Math.ceil(997 / roiJobValue)}</span> new customer{Math.ceil(997 / roiJobValue) !== 1 ? "s" : ""} to pay for your entire website
+                  </p>
+                </div>
+              </div>
+
+              <p className="text-white/30 text-xs text-center mt-4 flex items-center justify-center gap-1.5">
+                <svg className="w-3.5 h-3.5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                Most of our clients see their first website lead within 2 weeks
+              </p>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ═══════════════════════════════════════════════════════════ */}
+      {/* WHY NOT DIY? — Comparison Table */}
+      {/* ═══════════════════════════════════════════════════════════ */}
+      {!isFreeTier && (
+        <section className="py-12 px-6">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-2xl font-bold text-center mb-2">
+              Why <span className="text-sky-400">BlueJays</span>?
+            </h2>
+            <p className="text-white/40 text-center text-sm mb-8">
+              See how we compare to other options
+            </p>
+
+            <div className="relative overflow-x-auto">
+              {/* Scroll hint gradient on mobile */}
+              <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-[#0a0f1a] to-transparent sm:hidden z-10" />
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-white/10">
+                    <th className="text-left py-3 px-4 text-white/50 font-medium">Feature</th>
+                    <th className="text-center py-3 px-4 text-green-400 font-bold">BlueJays</th>
+                    <th className="text-center py-3 px-4 text-white/50 font-medium">Wix / Squarespace</th>
+                    <th className="text-center py-3 px-4 text-white/50 font-medium">Hiring an Agency</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { feature: "Price", bj: "$997 one-time", wix: "$16-45/mo forever", agency: "$5,000-15,000" },
+                    { feature: "Ready in", bj: "48 hours", wix: "Weeks (you build it)", agency: "4-8 weeks" },
+                    { feature: "Custom design", bjCheck: true, wixX: true, agencyCheck: true, bj: "Built for you", wix: "Template you customize", agency: "Custom" },
+                    { feature: "Mobile optimized", bjCheck: true, wixMaybe: true, agencyCheck: true, bj: "Included", wix: "Depends on template", agency: "Usually" },
+                    { feature: "SEO built in", bjCheck: true, wixX: true, agencyCheck: true, bj: "Included", wix: "Extra plugins needed", agency: "Usually extra" },
+                    { feature: "Professional copy", bjCheck: true, wixX: true, agencyCheck: true, bj: "Written for you", wix: "You write it", agency: "Usually extra" },
+                    { feature: "Ongoing cost", bj: "$0/month", wix: "$16-45/month", agency: "$100-500/month" },
+                    { feature: "You do the work", bjX: true, wixYou: true, agencyX: true, bj: "We handle everything", wix: "All on you", agency: "They handle it" },
+                  ].map((row, i) => (
+                    <tr key={i} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                      <td className="py-3 px-4 text-white/70 font-medium">{row.feature}</td>
+                      <td className="py-3 px-4 text-center">
+                        <div className="flex flex-col items-center gap-0.5">
+                          {row.bjCheck && <span className="text-green-400 text-base">&#10003;</span>}
+                          {row.bjX && <span className="text-green-400 text-base">&#10007;</span>}
+                          <span className="text-green-400 text-xs font-medium">{row.bj}</span>
+                        </div>
+                      </td>
+                      <td className="py-3 px-4 text-center">
+                        <div className="flex flex-col items-center gap-0.5">
+                          {row.wixX && <span className="text-red-400 text-base">&#10007;</span>}
+                          {row.wixYou && <span className="text-red-400 text-base">&#10003;</span>}
+                          {row.wixMaybe && <span className="text-amber-400 text-base">~</span>}
+                          <span className="text-white/40 text-xs">{row.wix}</span>
+                        </div>
+                      </td>
+                      <td className="py-3 px-4 text-center">
+                        <div className="flex flex-col items-center gap-0.5">
+                          {row.agencyCheck && <span className="text-white/40 text-base">&#10003;</span>}
+                          {row.agencyX && <span className="text-white/40 text-base">&#10007;</span>}
+                          <span className="text-white/40 text-xs">{row.agency}</span>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ═══════════════════════════════════════════════════════════ */}
       {/* MONEY-BACK GUARANTEE — Detailed */}
@@ -480,10 +694,10 @@ export default function ClaimPage() {
               </svg>
             </div>
             <h3 className="text-xl font-bold text-green-400 mb-3">
-              100% Satisfaction Guarantee
+              100% Satisfaction or We Rebuild It Free
             </h3>
             <p className="text-white/60 text-sm leading-relaxed max-w-xl mx-auto mb-4">
-              We&apos;re confident you&apos;ll love your new website. But if for any reason you&apos;re not completely satisfied after we deliver the final version, we&apos;ll refund your money — no questions asked, no hoops to jump through.
+              If you&apos;re not completely happy with your website, we&apos;ll redesign it at no extra charge. No questions asked.
             </p>
             <p className="text-white/40 text-xs">
               That&apos;s how sure we are that this website will help {info?.businessName || "your business"} grow.
@@ -570,6 +784,45 @@ export default function ClaimPage() {
       </section>
 
       {/* ═══════════════════════════════════════════════════════════ */}
+      {/* POST-PURCHASE TIMELINE */}
+      {/* ═══════════════════════════════════════════════════════════ */}
+      <section className="py-16 px-6">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-2xl font-bold text-center mb-2">
+            What to <span className="text-sky-400">Expect</span> After Purchase
+          </h2>
+          <p className="text-white/40 text-center text-sm mb-10">
+            From purchase to live website in just 7 days
+          </p>
+
+          <div className="relative">
+            {/* Vertical line */}
+            <div className="absolute left-6 top-0 bottom-0 w-px bg-gradient-to-b from-green-500/50 via-sky-500/50 to-sky-500/20" />
+
+            <div className="space-y-8">
+              {[
+                { day: "Day 1", title: "You Purchase", description: "Instant access to your preview site. Your website is officially reserved and in our build queue.", color: "from-green-500 to-emerald-600" },
+                { day: "Day 2", title: "Onboarding Form", description: "Tell us your preferences, upload your real business photos, and share any changes you want.", color: "from-sky-500 to-blue-600" },
+                { day: "Day 3-5", title: "We Customize", description: "Our team adds your real photos, applies your brand colors, and refines all the copy to match your voice.", color: "from-sky-500 to-blue-600" },
+                { day: "Day 7", title: "Go Live", description: "Your website is connected to your domain and ready for customers. Start getting leads immediately.", color: "from-green-500 to-emerald-600" },
+              ].map((step, i) => (
+                <div key={i} className="flex gap-5 items-start">
+                  <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${step.color} flex items-center justify-center shrink-0 relative z-10 shadow-lg`}>
+                    <span className="text-white font-bold text-sm">{i + 1}</span>
+                  </div>
+                  <div className="pt-1">
+                    <span className="text-xs text-sky-400 font-bold uppercase tracking-wider">{step.day}</span>
+                    <h3 className="font-bold text-white mt-0.5 mb-1">{step.title}</h3>
+                    <p className="text-white/40 text-sm leading-relaxed">{step.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════════════ */}
       {/* FAQ Section */}
       {/* ═══════════════════════════════════════════════════════════ */}
       <section className="py-12 px-6">
@@ -582,7 +835,7 @@ export default function ClaimPage() {
             />
             <FaqItem
               question="Do I own the website?"
-              answer="Yes, 100%. Once you pay, the website is yours. We handle hosting and management for the first year, but you own all the content and design."
+              answer="Yes, 100%. Once you pay, the website is yours. The $997 one-time fee includes custom website design, domain registration, and hosting setup, and after year one the $100/year maintenance plan keeps your domain renewed, hosting active, and support available. You still own the content and design."
             />
             <FaqItem
               question="What if I already have a website?"
@@ -590,7 +843,7 @@ export default function ClaimPage() {
             />
             <FaqItem
               question="Is there a monthly fee?"
-              answer="No monthly fees for the first year. After year one, it's just $100/year for hosting, security updates, and site management. That's it — no hidden costs."
+              answer="There is no monthly fee. The website is $997 one-time, which includes custom website design, domain registration, and hosting setup. After year one, it's $100/year for maintenance, which covers domain renewal, hosting, ongoing maintenance, and support. That's it — no hidden costs."
             />
             <FaqItem
               question="What if I'm not satisfied?"
@@ -739,6 +992,21 @@ export default function ClaimPage() {
           >
             {isRedirecting ? "Redirecting..." : `Claim Your Website \u2014 ${displayPrice}`}
           </button>
+          {!isFreeTier && (
+            <p className="text-center text-sm text-white/50 mt-2">
+              Or{" "}
+              <button
+                onClick={() => {
+                  const url = new URL(window.location.href);
+                  url.searchParams.set("plan", "installment");
+                  window.location.href = url.toString();
+                }}
+                className="underline hover:text-white/70 transition-colors"
+              >
+                3 easy payments of $349
+              </button>
+            </p>
+          )}
           <div className="flex items-center justify-center gap-6 mt-6 text-xs text-white/30">
             <span className="flex items-center gap-1">
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path d="M5 13l4 4L19 7" /></svg>
@@ -761,7 +1029,7 @@ export default function ClaimPage() {
         <div className="max-w-6xl mx-auto text-center text-xs text-white/20">
           <p>BlueJays Web Design — Custom websites for local businesses</p>
           <p className="mt-1">Questions? Email us at bluejaycontactme@gmail.com</p>
-          <p className="mt-2 text-white/15">{isFreeTier ? "$30" : "$997"} one-time setup includes 1 year of website hosting, domain management, and security updates. After the first year, a $100/year management fee is automatically billed to keep your site live and maintained. You may cancel anytime.</p>
+          <p className="mt-2 text-white/15">{isFreeTier ? "$30" : "$997"} {isFreeTier ? "covers domain registration and server setup costs." : "one-time includes custom website design, domain registration, and hosting setup."} After the first year, a $100/year maintenance fee covers domain renewal, hosting, ongoing maintenance, and support. You may cancel anytime.</p>
         </div>
       </footer>
     </div>
@@ -850,10 +1118,10 @@ function getNextResponse(step: number, userMessage: string, businessName: string
     return {
       responses: [
         `Awesome, so glad you like it! The site is fully custom — built specifically for ${businessName}.`,
-        `Here's what's included: custom design, mobile optimization, SEO setup, hosting, and a year of site management. We handle everything so you can focus on running your business.`,
+        `Here's what's included: the $997 one-time fee covers custom website design, domain registration, and hosting setup. After year one, maintenance is $100/year for domain renewal, hosting, ongoing maintenance, and support.`,
         isFreeTier
-          ? `The total is just $30 one-time to cover setup costs. After year one, it's $100/year for management. Ready to claim it? Just click the green button!`
-          : `The total is $997 one-time, which includes your first year of hosting and management. After year one, it's just $100/year. Ready to claim it? Just click the green button!`,
+          ? `The total is just $30 one-time to cover setup costs. After year one, maintenance is $100/year. Ready to claim it? Just click the green button!`
+          : `The total is $997 one-time, and that includes custom website design, domain registration, and hosting setup. After year one, maintenance is just $100/year for domain renewal, hosting, ongoing maintenance, and support. Ready to claim it? Just click the green button!`,
       ],
       triggerCheckout: false,
     };
@@ -864,8 +1132,8 @@ function getNextResponse(step: number, userMessage: string, businessName: string
       responses: [
         isFreeTier
           ? `Great question! It's just $30 one-time — that covers domain registration and server setup costs.`
-          : `Great question! It's $997 one-time — that covers everything: design, development, content, SEO, hosting setup, and your first year of hosting & management.`,
-        `After year one, there's a $100/year management fee for hosting, security updates, and site maintenance. You can cancel anytime — no contracts.`,
+          : `Great question! It's $997 one-time — that includes custom website design, domain registration, and hosting setup.`,
+        `After year one, there's a $100/year maintenance fee for domain renewal, hosting, ongoing maintenance, and support. You can cancel anytime — no contracts.`,
         ...(isFreeTier ? [] : [`For context, agencies charge $3,000-$10,000+ for this. And you've already seen the actual site we built — no guesswork. Would you like to move forward?`]),
       ],
       triggerCheckout: false,
@@ -904,8 +1172,8 @@ function getNextResponse(step: number, userMessage: string, businessName: string
   if (lower.includes("domain") || lower.includes("hosting") || lower.includes("url")) {
     return {
       responses: [
-        `We handle all the technical stuff! If you have a domain, we'll connect it. If not, we'll help you get one.`,
-        `Hosting is included — fast, secure, always online. No extra costs for hosting or SSL certificates.`,
+        `We handle all the technical stuff! The $997 one-time fee includes domain registration if you need one, plus hosting setup. If you already have a domain, we'll connect it for you.`,
+        `Hosting is included in the setup, and after year one the $100/year maintenance plan keeps your hosting active, your domain renewed, and your support covered.`,
       ],
       triggerCheckout: false,
     };

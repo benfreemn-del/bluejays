@@ -38,8 +38,8 @@ async function main() {
   const allProspects = [];
 
   for (const cat of categoriesToScout) {
-    const prospects = await scout({ city, category: cat, limit });
-    allProspects.push(...prospects);
+    const result = await scout({ city, category: cat, limit });
+    allProspects.push(...result.prospects);
   }
 
   // Step 2: Scrape websites (for prospects that have one)

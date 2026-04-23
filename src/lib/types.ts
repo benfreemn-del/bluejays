@@ -46,6 +46,10 @@ export type Category =
   | "carpet-cleaning"
   | "event-planning";
 
+export type SmsMethod = "twilio" | "vonage" | "mock";
+
+export type SmsProvider = "vonage" | "twilio" | "auto";
+
 export type ProspectStatus =
   | "scouted"
   | "scraped"
@@ -54,8 +58,12 @@ export type ProspectStatus =
   | "ready_to_review"   // passed QC gate — ready for Ben's manual approval
   | "qc_failed"         // failed QC gate — needs fixes before approval
   | "approved"
+  | "ready_to_send"    // Ben has manually polished and approved — ready for outreach
+  | "changes_pending"
+  | "ready_to_finalize"
   | "deployed"
   | "contacted"
+  | "email_opened"
   | "engaged"
   | "link_clicked"
   | "responded"
@@ -86,6 +94,7 @@ export interface Prospect {
   stripeCustomerId?: string;
   paidAt?: string;
   selectedTheme?: "light" | "dark";
+  selectedVersion?: "v1" | "v2";
   aiThemeRecommendation?: "light" | "dark";
   subscriptionStatus?: "none" | "active" | "past_due" | "cancelled";
   /** Stripe subscription ID for the $100/year management fee (deferred 1 year) */
@@ -100,6 +109,30 @@ export interface Prospect {
   qualityScore?: number;       // 0-100
   qualityNotes?: string;       // formatted text summary of issues
   qcReviewedAt?: string;       // ISO timestamp of last QC run
+  /** Persisted admin instructions for future site revisions */
+  adminNotes?: string;
+  adminNotesUpdatedAt?: string;
+  adminNotesSubmittedAt?: string;
+  lastSubmittedAdminNotes?: string;
+  lastSubmittedTheme?: "light" | "dark";
+  /** Outreach channel: "email-only" for pre-SMS launch, "full" for email+sms+voicemail */
+  outreachChannel?: "email-only" | "full";
+  /** Needs SMS follow-up when phone number is verified */
+  needsSmsFollowup?: boolean;
+  /** ISO timestamp of when first outreach was sent — used for 30-day preview expiry */
+  contactedAt?: string;
+  /** Unique referral code generated at payment — shared with client in day-30 email */
+  referralCode?: string;
+  /** Prospect ID of the client who referred this prospect */
+  referredBy?: string;
+  /** ISO timestamp of when referral invite email was sent to this client */
+  referralSentAt?: string;
+  /** How many successful referrals this client has made (each earns $50 off next renewal) */
+  referralCount?: number;
+  /** ISO timestamp when handoff email was sent after site delivery */
+  handoffSentAt?: string;
+  /** ISO timestamp when last monthly report email was sent to client */
+  lastReportSentAt?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -110,6 +143,7 @@ export interface ScrapedData {
   email?: string;
   phone?: string;
   address?: string;
+  city?: string;
   services: ServiceItem[];
   testimonials: Testimonial[];
   photos: string[];
@@ -117,7 +151,14 @@ export interface ScrapedData {
   socialLinks?: Record<string, string>;
   about?: string;
   brandColor?: string;
+  brandColorSource?: "official-site" | "logo" | "category-default";
   logoUrl?: string;
+  googleRating?: number;
+  reviewCount?: number;
+  accentColor?: string;
+  // Allow additional dynamic fields from scrapers/enrichment
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
 }
 
 export interface ServiceItem {
@@ -138,6 +179,12 @@ export interface ScoutOptions {
   state?: string;
   category: Category;
   limit?: number;
+  pageToken?: string;
+}
+
+export interface ScoutResult {
+  prospects: Prospect[];
+  nextPageToken?: string;
 }
 
 export interface PipelineResult {

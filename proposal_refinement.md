@@ -55,7 +55,7 @@ The "After" column currently shows an iframe of the new preview site with three 
 
 **2.3 — The CTA Below the Comparison**
 
-The current CTA is a single button: "Claim Your New Website — $997." This is clear and direct, but it leaves no path for prospects who are interested but not ready to commit financially.
+The current CTA is a single button: "Claim Your New Website — $997." This is clear and direct, but the surrounding copy should consistently clarify that the $997 one-time fee includes custom website design, domain registration, and hosting setup, with $100/year afterward for domain renewal, hosting, ongoing maintenance, and support.
 
 **Recommendation:** Add a secondary CTA below the primary button: *"Have questions? Schedule a quick call with Ben →"* (linking to his calendar). This two-option structure is a proven conversion pattern — the primary CTA captures ready buyers, while the secondary CTA captures warm-but-hesitant prospects who would otherwise bounce. The calendar link should also be present on the preview site itself.
 
@@ -134,9 +134,9 @@ Clarity about the next steps dramatically reduces post-purchase anxiety and incr
 
 ## Section 5 — The Value Proposition and Pricing Presentation
 
-**5.1 — The "$997 Covers Everything" Breakdown**
+**5.1 — The "$997 Includes the Build and Launch" Breakdown**
 
-The price is mentioned on the compare page and in the claim chat, but there is no visual breakdown of what the $997 includes anywhere in the proposal flow. Prospects who are price-sensitive need to see the value itemized.
+The price is mentioned on the compare page and in the claim chat, but there is no visual breakdown of what the $997 one-time fee includes anywhere in the proposal flow. Prospects who are price-sensitive need to see the value itemized clearly, along with the separate $100/year maintenance plan.
 
 **Recommendation:** Add a "What's Included" section to the compare page (below the comparison, above the CTA) that lists everything in the package. This should be a clean, scannable grid — not a wall of text:
 
@@ -146,13 +146,13 @@ The price is mentioned on the compare page and in the claim chat, but there is n
 | Full customization (colors, photos, text, layout) | — |
 | Mobile optimization | — |
 | SEO best practices built in | — |
-| Domain connection and hosting setup | — |
-| Professional copywriting | — |
-| One full year of site management | — |
+| Domain registration | — |
+| Hosting setup | — |
+| Ongoing maintenance and support after year one | **$100/year** |
 | No monthly fees, no hidden costs | — |
-| **Total investment** | **$997 one-time** |
+| **Total investment** | **$997 one-time + $100/year after year one** |
 
-The "Value" column could optionally show what each item would cost from an agency, making the $997 price feel like an extraordinary deal by comparison.
+The "Value" column could optionally show what each item would cost from an agency, making the $997 one-time price feel like an extraordinary deal by comparison while still clarifying that ongoing maintenance and support are only $100/year after year one.
 
 **5.2 — The Risk Reversal Statement**
 

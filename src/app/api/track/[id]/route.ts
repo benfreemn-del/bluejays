@@ -75,6 +75,18 @@ export async function POST(
 
   console.log(`  👁️ Preview viewed: ${id} (${totalViews} total views)`);
 
+  // Update prospect status to "link_clicked" on first visit (if they were just "contacted")
+  if (totalViews === 1) {
+    try {
+      const { getProspect, updateProspect } = await import("@/lib/store");
+      const prospect = await getProspect(id);
+      if (prospect && prospect.status === "contacted") {
+        await updateProspect(id, { status: "link_clicked" as never });
+        console.log(`  ✅ Status updated: ${prospect.businessName} → link_clicked`);
+      }
+    } catch { /* don't break tracking */ }
+  }
+
   // Hot Lead Alert: text Ben when prospect views 3+, 5+, 10+ times
   if (totalViews === 3 || totalViews === 5 || totalViews === 10) {
     try {

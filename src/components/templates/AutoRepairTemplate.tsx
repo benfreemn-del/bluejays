@@ -456,7 +456,7 @@ export default function AutoRepairTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-[#ef4444]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-[#ef4444]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 {/* Hover glow */}
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_50%_0%,#ef444415,transparent_70%)]" />
@@ -538,7 +538,7 @@ export default function AutoRepairTemplate() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group relative rounded-2xl border-2 border-dashed border-[#ef4444]/30 hover:border-[#ef4444]/60 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative rounded-2xl border-2 border-dashed border-[#ef4444]/30 hover:border-[#ef4444]/60 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 {/* Coupon perforated edge effect */}
                 <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#ef4444]/40 via-[#ef4444] to-[#ef4444]/40" />
@@ -608,7 +608,7 @@ export default function AutoRepairTemplate() {
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="rounded-2xl border border-white/[0.06] overflow-hidden bg-white/[0.02]"
+              className="rounded-2xl border border-white/[0.10] overflow-hidden bg-white/[0.07]"
             >
               {/* Table Header */}
               <div className="grid grid-cols-3 bg-[#ef4444]/10 border-b border-[#ef4444]/20">
@@ -659,7 +659,7 @@ export default function AutoRepairTemplate() {
                   { icon: <TagIcon />, title: "Upfront Written Estimates", desc: "You approve the price before we touch your car. No surprises." },
                   { icon: <ShieldIcon />, title: "12-Month Warranty", desc: "Every repair backed by 12 months or 12,000 miles, whichever comes first" },
                 ].map((feature) => (
-                  <div key={feature.title} className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/[0.04] hover:border-[#ef4444]/20 transition-colors duration-300">
+                  <div key={feature.title} className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.07] border border-white/[0.04] hover:border-[#ef4444]/20 transition-colors duration-300">
                     <div className="w-10 h-10 rounded-lg bg-[#ef4444]/10 border border-[#ef4444]/20 flex items-center justify-center text-[#ef4444] shrink-0">
                       {feature.icon}
                     </div>
@@ -705,7 +705,7 @@ export default function AutoRepairTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-[#ef4444]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-[#ef4444]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 {/* Top accent line */}
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-[#ef4444]/40 via-[#ef4444]/10 to-transparent" />
@@ -724,7 +724,7 @@ export default function AutoRepairTemplate() {
                   {/* Quote */}
                   <p className="text-muted leading-relaxed mb-6 text-sm">&ldquo;{t.text}&rdquo;</p>
                   {/* Author */}
-                  <div className="flex items-center gap-3 pt-4 border-t border-white/[0.06]">
+                  <div className="flex items-center gap-3 pt-4 border-t border-white/[0.10]">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#ef4444]/30 to-[#ef4444]/10 flex items-center justify-center text-sm font-bold text-[#ef4444]">
                       {t.name.charAt(0)}
                     </div>
@@ -843,7 +843,7 @@ export default function AutoRepairTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.06 }}
-                className="group p-6 rounded-2xl border border-white/[0.06] hover:border-[#ef4444]/20 transition-all duration-500 overflow-hidden relative bg-white/[0.02]"
+                className="group p-6 rounded-2xl border border-white/[0.10] hover:border-[#ef4444]/20 transition-all duration-500 overflow-hidden relative bg-white/[0.07]"
               >
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_0%_50%,#ef444410,transparent_70%)]" />
                 <div className="relative z-10 flex gap-4">

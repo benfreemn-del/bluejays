@@ -1,6 +1,9 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+/* eslint-disable @next/next/no-img-element -- These static marketing and preview components intentionally use plain img tags to preserve existing markup and visual behavior during lint-only cleanup. */
+/* eslint-disable react-hooks/purity -- Decorative particle values are intentionally randomized for static visual effects in these marketing pages and previews; this preserves existing appearance without changing business logic. */
+
+import { useState, useRef, useCallback } from "react";
 import {
   motion,
   useMotionValue,
@@ -27,13 +30,12 @@ import {
   CaretDown,
   Envelope,
   CalendarBlank,
-  ShieldCheck,
-  CheckCircle,
 } from "@phosphor-icons/react";
 import type { GeneratedSiteData } from "@/lib/generator";
 import BluejayLogo from "../BluejayLogo";
 import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
+import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
 
 /* ───────────────────────── SPRING CONFIGS ───────────────────────── */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
@@ -79,8 +81,8 @@ function getServiceIcon(serviceName: string) {
 }
 
 /* ───────────────────────── STOCK FALLBACK IMAGES ───────────────────────── */
-const STOCK_HERO = "https://images.unsplash.com/photo-1510590337019-5ef8d3d32116?w=1400&q=80";
-const STOCK_ABOUT = "https://images.unsplash.com/photo-1438232992991-995b7058bbb3?w=600&q=80";
+const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1510590337019-5ef8d3d32116?w=1400&q=80"];
+const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1438232992991-995b7058bbb3?w=600&q=80"];
 const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1478147427282-58a87a120781?w=600&q=80",
   "https://images.unsplash.com/photo-1507692049790-de58290a4334?w=600&q=80",
@@ -89,7 +91,7 @@ const STOCK_GALLERY = [
 ];
 
 /* ───────────────────────── FLOATING LIGHT PARTICLES ───────────────────────── */
-function FloatingParticles({ accent }: { accent: string }) {
+function FloatingParticles() {
   const particles = Array.from({ length: 20 }, (_, i) => ({
     id: i,
     x: Math.random() * 100,
@@ -170,7 +172,7 @@ function WaveBackground({ accent }: { accent: string }) {
 /* ───────────────────────── GLASS CARD ───────────────────────── */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
+    <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
       {children}
     </div>
   );
@@ -319,9 +321,17 @@ export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
 
   const { GOLD, GOLD_GLOW } = getAccent(data.accentColor);
 
-  const heroImage = data.photos?.[0] || STOCK_HERO;
-  const aboutImage = data.photos?.[1] || STOCK_ABOUT;
-  const galleryImages = data.photos?.length > 2 ? data.photos.slice(2, 6) : STOCK_GALLERY;
+  const uniquePhotos = data.photos ? [...new Set(data.photos)] : [];
+
+
+  const heroImage = uniquePhotos[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
+
+
+  const heroCardImage = uniquePhotos[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 1);
+
+
+  const aboutImage = uniquePhotos[2] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 2);
+  const galleryImages = data.photos?.length > 2 ? data.photos.slice(2, 6) : pickGallery(STOCK_GALLERY, data.businessName);
 
   const phoneDigits = data.phone.replace(/\D/g, "");
 
@@ -351,7 +361,7 @@ export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
 
   return (
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: NAVY, color: "#f1f5f9" }}>
-      <FloatingParticles accent={GOLD} />
+      <FloatingParticles />
 
       {/* ══════════════════ 1. NAV ══════════════════ */}
       <nav className="fixed top-0 left-0 right-0 z-50">
@@ -396,40 +406,38 @@ export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
 
         <div className="absolute inset-0">
           <img src={heroImage} alt={`${data.businessName}`} className="w-full h-full object-cover object-center" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-black/10" />
-          <div className="absolute inset-0 bg-gradient-to-t from-white/80 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-black/70" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20" />
         </div>
-        <CrossPattern opacity={0.03} accent={GOLD} />
-        <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full blur-[200px] pointer-events-none" style={{ background: `${GOLD}08` }} />
 
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
-          <div className="space-y-8">
+          <div className="space-y-8 rounded-2xl bg-black/50 backdrop-blur-md p-6 md:p-8 border border-white/8">
             <div>
               <p className="text-sm uppercase tracking-widest mb-4" style={{ color: GOLD }}>Welcome to {data.businessName}</p>
-              <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}>
+              <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 20px rgba(0,0,0,0.8), 0 4px 40px rgba(0,0,0,0.5)" }}>
                 {data.tagline}
               </h1>
             </div>
-            <p className="text-lg text-slate-400 max-w-md leading-relaxed">
-              {data.about.length > 160 ? data.about.slice(0, 160).trim() + "..." : data.about}
+            <p className="text-lg text-white/80 max-w-md leading-relaxed" style={{ textShadow: "0 1px 8px rgba(0,0,0,0.6)" }}>
+              {(() => { const t = data.about; if (t.length <= 180) return t; const dot = t.indexOf('.', 80); return dot > 0 && dot < 220 ? t.slice(0, dot + 1) : t.slice(0, 180).trim() + '...'; })()}
             </p>
             <div className="flex flex-wrap gap-4">
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer" style={{ background: GOLD } as React.CSSProperties}>
                 Plan Your Visit <ArrowRight size={18} weight="bold" />
               </MagneticButton>
-              <MagneticButton href={`tel:${phoneDigits}`} className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
+              <MagneticButton href={`tel:${phoneDigits}`} className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
                 <Phone size={18} weight="duotone" /> <PhoneLink phone={data.phone} />
               </MagneticButton>
             </div>
-            <div className="flex flex-wrap gap-6 text-sm text-slate-400">
+            <div className="flex flex-wrap gap-6 text-sm text-white/80" style={{ textShadow: "0 1px 8px rgba(0,0,0,0.6)" }}>
               <span className="flex items-center gap-2"><MapPin size={16} weight="duotone" style={{ color: GOLD }} /> <MapLink address={data.address} /></span>
               <span className="flex items-center gap-2"><Clock size={16} weight="duotone" style={{ color: GOLD }} /> {data.hours || "Sundays 9AM & 11AM"}</span>
             </div>
           </div>
 
           <div className="hidden md:block relative">
-            <div className="relative rounded-2xl overflow-hidden border border-white/10">
-              <img src={heroImage} alt={`${data.businessName} worship`} className="w-full h-[500px] object-cover" />
+            <div className="relative rounded-2xl overflow-hidden border border-white/15">
+              <img src={heroCardImage} alt={`${data.businessName} worship`} className="w-full h-[500px] object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a2e] via-transparent to-transparent" />
               <div className="absolute inset-0 bg-gradient-to-r from-[#1a1a2e]/40 to-transparent" />
               <div className="absolute bottom-6 left-6 flex items-center gap-3">
@@ -480,7 +488,7 @@ export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="relative">
-              <div className="rounded-2xl overflow-hidden border border-white/10">
+              <div className="rounded-2xl overflow-hidden border border-white/15">
                 <img src={aboutImage} alt={`${data.businessName} community`} className="w-full h-[400px] object-cover" />
               </div>
               <div className="absolute -bottom-4 -right-4 md:bottom-6 md:-right-6">
@@ -532,7 +540,7 @@ export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
             {data.services.map((service, i) => {
               const Icon = getServiceIcon(service.name);
               return (
-                <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.02]">
+                <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]">
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${GOLD}15, transparent 70%)` }} />
                   <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${GOLD}4d, transparent)` }} />
                   <div className="relative z-10">
@@ -598,7 +606,7 @@ export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {ministries.map((m, i) => (
-              <div key={m.title} className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.02]">
+              <div key={m.title} className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]">
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${GOLD}15, transparent 70%)` }} />
                 <div className="relative z-10">
                   <div className="flex items-start justify-between mb-5">
@@ -631,7 +639,7 @@ export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
             {galleryImages.map((src, i) => {
               const titles = ["Worship Service", "Bible Study", "Community Fellowship", "Church Family"];
               return (
-                <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.06] hover:border-opacity-30 transition-all duration-500">
+                <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.10] hover:border-opacity-30 transition-all duration-500">
                   <img src={src} alt={titles[i] || `Gallery ${i + 1}`} className="w-full h-64 object-cover transition-transform duration-700 group-hover:scale-105" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-6">
@@ -664,7 +672,7 @@ export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
                   ))}
                 </div>
                 <p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p>
-                <div className="pt-4 border-t border-white/5 flex items-center justify-between">
+                <div className="pt-4 border-t border-white/8 flex items-center justify-between">
                   <span className="text-sm font-semibold text-white">{t.name}</span>
                 </div>
               </GlassCard>
@@ -832,20 +840,20 @@ export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm text-slate-400 mb-1.5">First Name</label>
-                    <input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="John" />
+                    <input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="John" />
                   </div>
                   <div>
                     <label className="block text-sm text-slate-400 mb-1.5">Last Name</label>
-                    <input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="Doe" />
+                    <input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="Doe" />
                   </div>
                 </div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-1.5">Email</label>
-                  <input type="email" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="john@example.com" />
+                  <input type="email" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="john@example.com" />
                 </div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-1.5">Message</label>
-                  <textarea rows={4} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm resize-none" placeholder="How can we help you?" />
+                  <textarea rows={4} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm resize-none" placeholder="How can we help you?" />
                 </div>
                 <MagneticButton className="w-full py-4 rounded-xl text-base font-semibold text-white flex items-center justify-center gap-2 cursor-pointer" style={{ background: GOLD } as React.CSSProperties}>
                   Send Message <ArrowRight size={18} weight="bold" />
@@ -856,8 +864,103 @@ export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
+      {/* ══════════════════ COMMUNITY OUTREACH ══════════════════ */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #111128 50%, ${NAVY} 100%)` }} />
+        <CrossPattern opacity={0.012} accent={GOLD} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <Handshake size={40} weight="duotone" style={{ color: GOLD }} className="mx-auto mb-3" />
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Community Outreach</h2>
+            <p className="text-slate-400 mt-3 max-w-xl mx-auto">Making a difference in our neighborhood through faith, service, and love.</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {[
+              { title: "Food Pantry", desc: "Weekly food distribution serving families in need throughout our community every Saturday morning." },
+              { title: "Youth Mentorship", desc: "One-on-one mentoring program pairing teens with caring adult volunteers from our congregation." },
+              { title: "Mission Trips", desc: "Annual domestic and international mission trips building homes, schools, and community centers." },
+              { title: "Senior Visits", desc: "Volunteers visit homebound seniors weekly to provide companionship, prayer, and practical help." },
+              { title: "Back-to-School Drive", desc: "Annual supply drive providing backpacks, school supplies, and clothing to local students." },
+              { title: "Community Meals", desc: "Monthly free community dinners open to everyone — no membership required, all are welcome." },
+            ].map((item) => (
+              <div key={item.title} className="rounded-2xl border border-white/15 p-6" style={{ background: "rgba(255,255,255,0.06)" }}>
+                <Heart size={24} weight="fill" style={{ color: GOLD }} className="mb-3" />
+                <h3 className="text-lg font-bold text-white mb-2">{item.title}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ SMALL GROUPS ══════════════════ */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #111128 0%, ${NAVY} 100%)` }} />
+        <CrossPattern opacity={0.01} accent={GOLD} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <UsersThree size={40} weight="duotone" style={{ color: GOLD }} className="mx-auto mb-3" />
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Small Groups</h2>
+            <p className="text-slate-400 mt-3 max-w-xl mx-auto">Life is better in community. Join a small group and grow in faith alongside others.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {[
+              { group: "Men's Fellowship", day: "Tuesdays, 7:00 PM", desc: "Bible study, accountability, and brotherhood for men of all ages." },
+              { group: "Women's Circle", day: "Wednesdays, 10:00 AM", desc: "Encouragement, prayer, and Scripture study for women." },
+              { group: "Young Adults", day: "Thursdays, 7:30 PM", desc: "Community for ages 18-30 with worship, discussion, and social events." },
+              { group: "Marriage Enrichment", day: "Fridays, 6:30 PM", desc: "Strengthening marriages through faith-based tools and shared experiences." },
+            ].map((g) => (
+              <div key={g.group} className="flex items-start gap-4 rounded-2xl border border-white/15 p-5" style={{ background: "rgba(255,255,255,0.06)" }}>
+                <Cross size={28} weight="duotone" style={{ color: GOLD }} className="shrink-0 mt-1" />
+                <div>
+                  <h3 className="text-lg font-bold text-white">{g.group}</h3>
+                  <p className="text-sm font-semibold mb-1" style={{ color: GOLD }}>{g.day}</p>
+                  <p className="text-sm text-slate-400 leading-relaxed">{g.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${GOLD}15 0%, ${NAVY} 50%, ${GOLD}08 100%)` }} />
+        <CrossPattern opacity={0.02} accent={GOLD} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+          <HandsPraying size={44} weight="fill" style={{ color: GOLD }} className="mx-auto mb-4" />
+          <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">You Belong Here</h2>
+          <p className="text-slate-400 max-w-2xl mx-auto mb-8 text-lg leading-relaxed">
+            Whether you&apos;ve been part of a church your whole life or you&apos;re just exploring, {data.businessName} welcomes you with open arms. Come as you are.
+          </p>
+          <a href={`tel:${data.phone}`} className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-white font-bold text-lg transition-transform hover:scale-105" style={{ background: GOLD }}>
+            <Phone size={20} weight="fill" /> Plan Your Visit
+          </a>
+        </div>
+      </section>
+
+      {/* ══════════════════ SERMON ARCHIVE ══════════════════ */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #111128 100%)` }} />
+        <CrossPattern opacity={0.01} accent={GOLD} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+          <BookOpen size={40} weight="duotone" style={{ color: GOLD }} className="mx-auto mb-4" />
+          <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">Missed a Sunday?</h2>
+          <p className="text-slate-400 max-w-2xl mx-auto mb-6 text-lg leading-relaxed">
+            Catch up on recent messages from our pastors. Our sermon archive is available so you can revisit teachings, share them with friends, and stay connected to the Word throughout the week.
+          </p>
+          <div className="flex flex-wrap justify-center gap-4">
+            {["Sunday Messages", "Bible Study Series", "Guest Speakers", "Special Events"].map((item) => (
+              <span key={item} className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border" style={{ color: GOLD, borderColor: `${GOLD}33`, background: `${GOLD}0d` }}>
+                <MusicNotes size={16} weight="fill" /> {item}
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ══════════════════ 15. FOOTER ══════════════════ */}
-      <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden">
+      <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #111128 100%)` }} />
         <CrossPattern opacity={0.015} accent={GOLD} />
         <div className="mx-auto max-w-6xl px-6 relative z-10">
@@ -891,13 +994,13 @@ export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
             </div>
           </div>
 
-          <div className="border-t border-white/5 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="border-t border-white/8 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-sm text-slate-500">
               <Cross size={14} weight="duotone" style={{ color: GOLD }} />
               <span>{data.businessName} &copy; {new Date().getFullYear()}</span>
             </div>
             <div className="flex items-center gap-2 text-xs text-slate-600">
-              <span>Created by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" style={{textDecoration:"underline"}}>bluejayportfolio.com</a></span>
+              <span className="flex items-center gap-1.5"><BluejayLogo size={14} className="text-sky-500" /> Created by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" style={{textDecoration:"underline"}}>bluejayportfolio.com</a></span>
             </div>
           </div>
         </div>

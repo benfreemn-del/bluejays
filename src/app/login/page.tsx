@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -63,9 +65,9 @@ export default function LoginPage() {
         </form>
 
         <p className="text-center text-muted text-xs mt-8">
-          <a href="/" className="hover:text-foreground transition-colors">
+          <Link href="/" className="hover:text-foreground transition-colors">
             &larr; Back to portfolio
-          </a>
+          </Link>
         </p>
       </div>
     </div>

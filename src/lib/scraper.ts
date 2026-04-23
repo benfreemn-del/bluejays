@@ -1,5 +1,6 @@
 import * as cheerio from "cheerio";
 import type { ScrapedData, ServiceItem, Testimonial } from "./types";
+import { canonicalizeCity, normalizeAddress } from "./address-normalizer";
 
 export async function scrapeWebsite(url: string): Promise<ScrapedData> {
   console.log(`  🌐 Scraping ${url}...`);
@@ -23,20 +24,25 @@ export async function scrapeWebsite(url: string): Promise<ScrapedData> {
     // Remove scripts, styles, nav, footer noise
     $("script, style, noscript, iframe").remove();
 
+    const address = extractAddress($, html);
+    const logoUrl = extractLogo($, url);
+    const branding = await extractBranding($, html, logoUrl);
     const data: ScrapedData = {
       businessName: extractBusinessName($),
       tagline: extractTagline($),
       email: extractEmail($, html),
       phone: extractPhone($, html),
-      address: extractAddress($, html),
+      address,
+      city: canonicalizeCity(undefined, address),
       services: extractServices($),
       testimonials: extractTestimonials($),
       photos: extractPhotos($, url),
       about: extractAbout($),
       hours: extractHours($, html),
       socialLinks: extractSocialLinks($),
-      brandColor: extractBrandColor($, html),
-      logoUrl: extractLogo($, url),
+      brandColor: branding.brandColor,
+      brandColorSource: branding.brandColorSource,
+      logoUrl,
     };
 
     console.log(
@@ -166,7 +172,7 @@ function extractAddress(
   if (streetAddress) {
     const locality = $('[itemprop="addressLocality"]').text().trim();
     const region = $('[itemprop="addressRegion"]').text().trim();
-    return [streetAddress, locality, region].filter(Boolean).join(", ");
+    return normalizeAddress([streetAddress, locality, region].filter(Boolean).join(", "));
   }
 
   // Look for address-like elements
@@ -174,13 +180,13 @@ function extractAddress(
     .first()
     .text()
     .trim();
-  if (addressEl && addressEl.length < 200) return addressEl;
+  if (addressEl && addressEl.length < 200) return normalizeAddress(addressEl);
 
   // Regex for street addresses
   const addrRegex =
     /\d{1,5}\s[\w\s]{2,30}(?:St|Street|Ave|Avenue|Blvd|Boulevard|Dr|Drive|Rd|Road|Ln|Lane|Way|Ct|Court|Pl|Place)\.?/i;
   const match = html.match(addrRegex);
-  return match ? match[0] : undefined;
+  return match ? normalizeAddress(match[0]) : undefined;
 }
 
 function extractServices($: cheerio.CheerioAPI): ServiceItem[] {
@@ -350,38 +356,151 @@ function extractHours(
   return match ? match[0] : undefined;
 }
 
-function extractBrandColor($: cheerio.CheerioAPI, html: string): string | undefined {
-  // Try theme-color meta tag (most reliable)
-  const themeColor = $('meta[name="theme-color"]').attr("content");
-  if (themeColor && isValidColor(themeColor)) return themeColor;
-
-  // Try msapplication-TileColor
-  const tileColor = $('meta[name="msapplication-TileColor"]').attr("content");
-  if (tileColor && isValidColor(tileColor)) return tileColor;
-
-  // Extract prominent colors from inline styles (look for primary/accent patterns)
-  const colorRegex = /(?:--primary|--accent|--brand|--main)[^:]*:\s*(#[0-9a-fA-F]{3,8})/g;
-  let match;
-  while ((match = colorRegex.exec(html)) !== null) {
-    if (isValidColor(match[1])) return match[1];
+async function extractBranding(
+  $: cheerio.CheerioAPI,
+  html: string,
+  logoUrl?: string
+): Promise<Pick<ScrapedData, "brandColor" | "brandColorSource">> {
+  const officialSiteColor = extractOfficialSiteBrandColor($, html);
+  if (officialSiteColor) {
+    return {
+      brandColor: officialSiteColor,
+      brandColorSource: "official-site",
+    };
   }
 
-  // Look for commonly used hex colors in CSS custom properties
-  const cssVarRegex = /--(?:color-primary|primary-color|brand-color|accent-color|theme-color)[^:]*:\s*(#[0-9a-fA-F]{3,8})/g;
-  while ((match = cssVarRegex.exec(html)) !== null) {
-    if (isValidColor(match[1])) return match[1];
+  const logoColor = await extractLogoBrandColor(logoUrl);
+  if (logoColor) {
+    return {
+      brandColor: logoColor,
+      brandColorSource: "logo",
+    };
+  }
+
+  return {};
+}
+
+function extractOfficialSiteBrandColor($: cheerio.CheerioAPI, html: string): string | undefined {
+  const weightedCandidates: Array<{ color: string; weight: number }> = [];
+
+  const pushCandidate = (value: string | undefined, weight: number) => {
+    const normalized = normalizeBrandColor(value);
+    if (!normalized) return;
+    weightedCandidates.push({ color: normalized, weight });
+  };
+
+  pushCandidate($('meta[name="theme-color"]').attr("content"), 10);
+  pushCandidate($('meta[name="msapplication-TileColor"]').attr("content"), 9);
+  pushCandidate($('meta[property="og:site_name"]').attr("content"), 0);
+
+  const cssPatterns = [
+    { regex: /--(?:primary|accent|brand|main|theme)(?:-color)?[^:]*:\s*([^;]+)/gi, weight: 8 },
+    { regex: /--(?:color-primary|primary-color|brand-color|accent-color|theme-color)[^:]*:\s*([^;]+)/gi, weight: 8 },
+    { regex: /(?:background(?:-color)?|color|fill|stroke)\s*:\s*([^;}{]+)/gi, weight: 2 },
+  ];
+
+  for (const { regex, weight } of cssPatterns) {
+    let match: RegExpExecArray | null;
+    while ((match = regex.exec(html)) !== null) {
+      pushCandidate(match[1], weight);
+    }
+  }
+
+  $("header, nav, .navbar, .menu, .btn, button, a, [class*='hero'], [class*='cta'], [class*='primary']").each((_, el) => {
+    const style = $(el).attr("style");
+    if (!style) return;
+    const styleMatches = style.match(/(?:background(?:-color)?|color|fill|stroke)\s*:\s*([^;]+)/gi) || [];
+    for (const styleMatch of styleMatches) {
+      const [, value] = styleMatch.split(":");
+      pushCandidate(value, 4);
+    }
+  });
+
+  if (weightedCandidates.length === 0) return undefined;
+
+  const scoreByColor = new Map<string, number>();
+  for (const candidate of weightedCandidates) {
+    scoreByColor.set(candidate.color, (scoreByColor.get(candidate.color) || 0) + candidate.weight);
+  }
+
+  return [...scoreByColor.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .map(([color]) => color)
+    .find((color) => isUsableBrandColor(color));
+}
+
+async function extractLogoBrandColor(logoUrl?: string): Promise<string | undefined> {
+  if (!logoUrl) return undefined;
+
+  try {
+    const response = await fetch(logoUrl, {
+      headers: { "User-Agent": "Mozilla/5.0" },
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!response.ok) return undefined;
+
+    const contentType = response.headers.get("content-type")?.toLowerCase() || "";
+    const looksSvg = contentType.includes("svg") || logoUrl.toLowerCase().endsWith(".svg");
+    if (!looksSvg) return undefined;
+
+    const svg = await response.text();
+    const matches = svg.match(/(?:fill|stroke)=["']([^"']+)["']/gi) || [];
+    for (const match of matches) {
+      const value = match.split("=")[1]?.replace(/["']/g, "");
+      const normalized = normalizeBrandColor(value);
+      if (normalized && isUsableBrandColor(normalized)) {
+        return normalized;
+      }
+    }
+  } catch {
+    return undefined;
   }
 
   return undefined;
 }
 
-function isValidColor(color: string): boolean {
-  // Must be a hex color, not white/black/gray
-  if (!color.startsWith("#")) return false;
-  const hex = color.replace("#", "").toLowerCase();
-  // Skip near-white, near-black, and gray colors
-  if (/^([0-9a-f])\1{2,5}$/.test(hex)) return false; // uniform like #fff, #000, #333
+function normalizeBrandColor(color: string | undefined): string | undefined {
+  if (!color) return undefined;
+
+  const trimmed = color.trim().toLowerCase();
+  const hexMatch = trimmed.match(/#([0-9a-f]{3}|[0-9a-f]{6})\b/i);
+  if (hexMatch) {
+    const rawHex = hexMatch[1];
+    const normalizedHex = rawHex.length === 3
+      ? rawHex.split("").map((char) => `${char}${char}`).join("")
+      : rawHex;
+    return `#${normalizedHex}`;
+  }
+
+  const rgbMatch = trimmed.match(/rgba?\((\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})/i);
+  if (rgbMatch) {
+    const [r, g, b] = rgbMatch.slice(1, 4).map((value) => Math.max(0, Math.min(255, Number(value))));
+    return `#${[r, g, b].map((value) => value.toString(16).padStart(2, "0")).join("")}`;
+  }
+
+  return undefined;
+}
+
+function isUsableBrandColor(color: string): boolean {
+  const normalized = normalizeBrandColor(color);
+  if (!normalized) return false;
+
+  const hex = normalized.slice(1);
   if (hex === "ffffff" || hex === "000000") return false;
+  if (/^([0-9a-f]{2})\1\1$/i.test(hex)) return false;
+
+  const r = parseInt(hex.slice(0, 2), 16);
+  const g = parseInt(hex.slice(2, 4), 16);
+  const b = parseInt(hex.slice(4, 6), 16);
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  const lightness = ((max + min) / 2) / 255;
+  const saturation = max === min ? 0 : (max - min) / max;
+
+  if (lightness < 0.12 || lightness > 0.82) return false;
+  if (saturation < 0.18) return false;
+  if (r > 235 && g > 235 && b < 80) return false;
+
   return true;
 }
 

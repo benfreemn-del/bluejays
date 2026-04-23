@@ -1,5 +1,8 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element -- These static marketing and preview components intentionally use plain img tags to preserve existing markup and visual behavior during lint-only cleanup. */
+/* eslint-disable react-hooks/purity -- Decorative particle values are intentionally randomized for static visual effects in these marketing pages and previews; this preserves existing appearance without changing business logic. */
+
 import { useState, useRef, useCallback } from "react";
 import {
   motion,
@@ -158,7 +161,7 @@ function GlassCard({
 }) {
   return (
     <div
-      className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}
+      className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}
     >
       {children}
     </div>
@@ -412,6 +415,7 @@ const faqData = [
 export default function V2MedicalPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [quizAnswer, setQuizAnswer] = useState<number | null>(null);
 
   return (
     <main
@@ -540,9 +544,9 @@ export default function V2MedicalPage() {
                 Schedule a Visit
                 <ArrowRight size={18} weight="bold" />
               </MagneticButton>
-              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
+              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
                 <Phone size={18} weight="duotone" />
-                (555) 412-7890
+                (206) 412-7890
               </MagneticButton>
             </motion.div>
           </div>
@@ -718,6 +722,20 @@ export default function V2MedicalPage() {
       <SectionReveal id="testimonials" className="relative z-10 py-16 md:py-24">
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="text-center mb-16">
+            {/* Google Reviews Header */}
+            <div className="flex justify-center mb-6">
+              <div className="inline-flex items-center gap-3 px-5 py-3 rounded-full border" style={{ background: "rgba(255,255,255,0.05)", borderColor: "rgba(255,255,255,0.1)" }}>
+                <div className="flex">{[...Array(5)].map((_, i) => <Star key={i} size={16} weight="fill" className="text-yellow-400" />)}</div>
+                <span className="text-white font-bold">4.9</span>
+                <span className="text-slate-400 text-sm">· 89 Google reviews</span>
+                <svg viewBox="0 0 24 24" className="w-4 h-4 shrink-0" fill="none">
+                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                </svg>
+              </div>
+            </div>
             <p className="text-sm uppercase tracking-widest mb-3" style={{ color: TEAL }}>
               Patient Stories
             </p>
@@ -738,7 +756,7 @@ export default function V2MedicalPage() {
                 <GlassCard className="p-6 h-full flex flex-col">
                   <Quotes size={28} weight="fill" style={{ color: TEAL }} className="mb-3 opacity-50" />
                   <p className="text-slate-300 leading-relaxed flex-1 text-sm">{t.text}</p>
-                  <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
+                  <div className="mt-4 pt-4 border-t border-white/8 flex items-center justify-between">
                     <span className="text-sm font-semibold text-white">{t.name}</span>
                     <div className="flex gap-0.5">
                       {Array.from({ length: t.rating }).map((_, j) => (
@@ -826,7 +844,161 @@ export default function V2MedicalPage() {
         </div>
       </SectionReveal>
 
-      {/* ─── 9. CONTACT / APPOINTMENT ─── */}
+      {/* ─── 9. VIDEO PLACEHOLDER ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-20">
+        <div className="max-w-4xl mx-auto px-4 md:px-6">
+          <div className="text-center mb-10">
+            <p className="text-sm uppercase tracking-widest mb-2 font-semibold" style={{ color: TEAL }}>See For Yourself</p>
+            <h2 className="text-3xl md:text-5xl font-bold text-white tracking-tighter">Meet Our Care Team</h2>
+            <p className="text-slate-400 mt-3">Take a virtual tour of our state-of-the-art facility</p>
+          </div>
+          <motion.div
+            className="relative rounded-2xl overflow-hidden cursor-pointer group"
+            whileHover={{ scale: 1.01 }}
+            transition={springGentle}
+          >
+            <img
+              src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=1200&q=80"
+              alt="Modern medical facility interior"
+              className="w-full h-64 md:h-96 object-cover object-center group-hover:scale-105 transition-transform duration-700"
+            />
+            <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center gap-4 group-hover:bg-black/40 transition-colors">
+              <motion.div
+                className="w-20 h-20 rounded-full flex items-center justify-center shadow-lg"
+                style={{ background: TEAL }}
+                animate={{ scale: [1, 1.05, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                <VideoCamera size={36} weight="fill" className="text-white" />
+              </motion.div>
+              <p className="text-white font-semibold text-lg">Virtual Office Tour — Meet the Team</p>
+            </div>
+          </motion.div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── 10. QUIZ — WHAT BRINGS YOU IN? ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-20">
+        <div className="max-w-2xl mx-auto px-4 text-center">
+          <p className="text-sm uppercase tracking-widest mb-2 font-semibold" style={{ color: TEAL }}>Find Your Next Step</p>
+          <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tighter mb-4">What Brings You In Today?</h2>
+          <p className="text-slate-400 mb-8">Select your situation and we will show you the fastest path to care.</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+            {[
+              { label: "Routine Checkup", icon: "🩺", urgency: "Schedule at your convenience — we have same-week openings." },
+              { label: "Sick Visit", icon: "🤒", urgency: "Same-day appointments available. Call us now." },
+              { label: "Chronic Condition", icon: "💊", urgency: "Our care team specializes in ongoing management plans." },
+              { label: "Preventive Screening", icon: "🔬", urgency: "Book a screening today — early detection saves lives." },
+            ].map((opt, i) => (
+              <motion.button
+                key={i}
+                onClick={() => setQuizAnswer(i)}
+                className={`p-5 rounded-xl border text-left transition-all cursor-pointer ${quizAnswer === i ? "border-[#0891b2] bg-[#0891b2]/10" : "border-white/15 bg-white/[0.08] hover:border-[#0891b2]/50 hover:bg-white/[0.06]"}`}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <span className="text-2xl block mb-2">{opt.icon}</span>
+                <span className="font-semibold text-white block">{opt.label}</span>
+                <span className="text-sm text-slate-400 block mt-1">{opt.urgency}</span>
+              </motion.button>
+            ))}
+          </div>
+          <AnimatePresence>
+            {quizAnswer !== null && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                transition={spring}
+                className="p-6 rounded-xl"
+                style={{ background: `${TEAL}18`, border: `1px solid ${TEAL}44` }}
+              >
+                <p className="font-semibold text-white mb-3">
+                  {quizAnswer === 0 && "Great — we'd love to be your primary care home. New patients always welcome."}
+                  {quizAnswer === 1 && "Feel better fast. We have same-day urgent care — no appointment needed."}
+                  {quizAnswer === 2 && "You deserve a care partner, not just a prescriber. Let's build your plan together."}
+                  {quizAnswer === 3 && "Preventive care is the best medicine. Schedule your screening today."}
+                </p>
+                <a
+                  href="tel:+12064127890"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-white font-semibold"
+                  style={{ background: TEAL }}
+                >
+                  <Phone size={18} weight="fill" />
+                  {quizAnswer === 1 ? "Call for Same-Day Appointment" : "Schedule Your Visit"}
+                </a>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </SectionReveal>
+
+      {/* ─── 11. COMPARISON TABLE ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-4xl px-4 md:px-6">
+          <div className="text-center mb-10">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: TEAL }}>Why Choose Us</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white">
+              <WordReveal text="Seattle Medical Center vs. ER / Urgent Care Chains" />
+            </h2>
+          </div>
+          <GlassCard className="overflow-hidden">
+            <div className="grid grid-cols-3 text-sm font-semibold border-b border-white/15">
+              <div className="p-4 text-slate-400 uppercase tracking-wide text-xs">Feature</div>
+              <div className="p-4 text-center font-bold" style={{ color: TEAL }}>Seattle Medical ✓</div>
+              <div className="p-4 text-center text-slate-500">ER / Urgent Care Chains</div>
+            </div>
+            {[
+              ["Same doctor for continuity of care", "✓", "Different provider each visit"],
+              ["Same-day appointments available", "✓", "Hours-long ER wait"],
+              ["On-site lab & imaging", "✓", "External referral needed"],
+              ["Insurance accepted (most plans)", "✓", "ER billing surprises"],
+              ["Telehealth option available", "✓", "Rarely available at ERs"],
+              ["Chronic care coordination", "✓", "Acute only"],
+              ["Transparent pricing & estimates", "✓", "Billing unclear"],
+            ].map(([feature, us, them], i) => (
+              <div key={i} className={`grid grid-cols-3 text-sm ${i % 2 === 0 ? "bg-white/[0.07]" : ""} border-b border-white/8 last:border-0`}>
+                <div className="p-4 text-slate-300">{feature}</div>
+                <div className="p-4 text-center font-bold" style={{ color: TEAL }}>{us}</div>
+                <div className="p-4 text-center text-slate-500">{them}</div>
+              </div>
+            ))}
+          </GlassCard>
+        </div>
+      </SectionReveal>
+
+      {/* ─── 12. SERVICE AREA GRID ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-4xl px-4 md:px-6">
+          <div className="text-center mb-10">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: TEAL }}>Coverage</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white">
+              <WordReveal text="Serving Patients Across Greater Seattle" />
+            </h2>
+          </div>
+          <motion.div
+            className="grid grid-cols-2 sm:grid-cols-4 gap-4"
+            variants={stagger}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-50px" }}
+          >
+            {["Fremont", "Wallingford", "Green Lake", "Phinney Ridge", "Ballard", "Crown Hill", "Greenwood", "Broadview"].map((area) => (
+              <motion.div key={area} variants={fadeUp}>
+                <GlassCard className="p-4 flex items-center gap-3">
+                  <div className="w-2.5 h-2.5 rounded-full shrink-0 animate-pulse" style={{ background: TEAL }} />
+                  <span className="text-sm text-slate-300 font-medium">{area}</span>
+                </GlassCard>
+              </motion.div>
+            ))}
+          </motion.div>
+          <div className="mt-6 text-center">
+            <p className="text-sm text-slate-500">Within 10 miles of our Stone Way clinic. Call to confirm coverage for your area.</p>
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── 13. CONTACT / APPOINTMENT ─── */}
       <SectionReveal id="contact" className="relative z-10 py-16 md:py-24">
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -847,7 +1019,7 @@ export default function V2MedicalPage() {
                   <CalendarCheck size={20} weight="duotone" />
                   Book Appointment
                 </MagneticButton>
-                <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
+                <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
                   <Phone size={18} weight="duotone" />
                   Call Us
                 </MagneticButton>
@@ -861,14 +1033,14 @@ export default function V2MedicalPage() {
                   <MapPin size={20} weight="duotone" style={{ color: TEAL }} className="mt-0.5 shrink-0" />
                   <div>
                     <p className="text-sm font-semibold text-white">Location</p>
-                    <p className="text-sm text-slate-400">8500 Health Parkway, Suite 100<br />Portland, OR 97210</p>
+                    <p className="text-sm text-slate-400">3821 Stone Way N, Suite 100<br />Seattle, WA 98103</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
                   <Phone size={20} weight="duotone" style={{ color: TEAL }} className="mt-0.5 shrink-0" />
                   <div>
                     <p className="text-sm font-semibold text-white">Phone</p>
-                    <p className="text-sm text-slate-400">(555) 412-7890</p>
+                    <p className="text-sm text-slate-400">(206) 412-7890</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
@@ -895,7 +1067,7 @@ export default function V2MedicalPage() {
         </div>
       </SectionReveal>
 
-      {/* ─── 10. NEW PATIENT CTA ─── */}
+      {/* ─── 12. NEW PATIENT CTA ─── */}
       <SectionReveal className="relative z-10 py-16 md:py-24">
         <div className="mx-auto max-w-4xl px-4 md:px-6">
           <ShimmerBorder>
@@ -930,14 +1102,14 @@ export default function V2MedicalPage() {
       </SectionReveal>
 
       {/* ─── FOOTER ─── */}
-      <footer className="relative z-10 border-t border-white/5 py-8">
+      <footer className="relative z-10 border-t border-white/8 py-8">
         <div className="mx-auto max-w-7xl px-4 md:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2 text-sm text-slate-500">
             <Heartbeat size={16} weight="duotone" style={{ color: TEAL }} />
             <span>Pinnacle Health &copy; {new Date().getFullYear()}</span>
           </div>
-          <p className="text-xs text-slate-600">
-            Created by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" style={{textDecoration:"underline"}}>bluejayportfolio.com</a>
+          <p className="text-xs text-slate-600 flex items-center gap-1.5">
+            <svg width="14" height="14" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-sky-500"><path d="M24.3 4.2c-1.5-.4-3.2.1-4.5 1.1-1-.7-2.3-1-3.5-.8-2.4.4-4.2 2.5-4.2 4.9v.6c-3.2.8-6 2.8-7.8 5.6-.3.5-.1 1.1.4 1.4.5.3 1.1.1 1.4-.4 1.5-2.3 3.7-4 6.3-4.7.5-.1 1-.1 1.5 0 .8.2 1.4.8 1.7 1.5.3.8.2 1.6-.2 2.3l-2.8 4.3c-.6.9-.4 2.1.4 2.8l2.5 2.1c.4.3.8.5 1.3.5h5.2c.5 0 1-.2 1.3-.5l1.2-1c.6-.5.8-1.3.6-2l-1-3.2c-.2-.5 0-1.1.4-1.4l3.8-2.5c1.3-.9 2.1-2.3 2.1-3.9V9.6c0-2.5-1.7-4.7-4.1-5.3v-.1z" fill="currentColor"/></svg>Created by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" style={{textDecoration:"underline"}}>bluejayportfolio.com</a>
           </p>
         </div>
       </footer>

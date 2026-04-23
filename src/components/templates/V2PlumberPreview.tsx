@@ -1,6 +1,9 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+/* eslint-disable @next/next/no-img-element -- These static marketing and preview components intentionally use plain img tags to preserve existing markup and visual behavior during lint-only cleanup. */
+/* eslint-disable react-hooks/purity -- Decorative particle values are intentionally randomized for static visual effects in these marketing pages and previews; this preserves existing appearance without changing business logic. */
+
+import { useState, useRef, useCallback } from "react";
 import {
   motion,
   useMotionValue,
@@ -26,15 +29,22 @@ import {
   List,
   Timer,
   Certificate,
-  Hammer,
-  Envelope,
   ThumbsUp,
+  Toilet,
+  Funnel,
+  Plug,
+  PlayCircle,
+  SealCheck,
   CurrencyDollar,
+  Lightning,
+  Trophy,
+  Question,
 } from "@phosphor-icons/react";
 import type { GeneratedSiteData } from "@/lib/generator";
 import BluejayLogo from "../BluejayLogo";
 import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
+import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
 
 /* ───────────────────────── SPRING CONFIGS ───────────────────────── */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
@@ -67,9 +77,73 @@ function getServiceIcon(serviceName: string) {
   return Wrench;
 }
 
+/* ───────────────────────── SERVICE TYPE BADGES ───────────────────────── */
+const SERVICE_TYPE_BADGES = [
+  { label: "Emergency Plumbing", icon: Warning },
+  { label: "Drain Cleaning", icon: Funnel },
+  { label: "Water Heaters", icon: Flame },
+  { label: "Sewer Repair", icon: Pipe },
+  { label: "Repiping", icon: Wrench },
+  { label: "Leak Detection", icon: Drop },
+];
+
+/* ───────────────────────── UPFRONT PRICING ───────────────────────── */
+const PRICING_CARDS = [
+  { service: "Drain Cleaning", price: "from $99", icon: Funnel, desc: "Clogged sink, shower, or main line cleared fast." },
+  { service: "Water Heater Install", price: "from $1,200", icon: Flame, desc: "Tank or tankless — expert installation with warranty." },
+  { service: "Leak Repair", price: "from $149", icon: Drop, desc: "Stop leaks before they cause major damage." },
+];
+
+/* ───────────────────────── WHAT WE FIX ───────────────────────── */
+const WHAT_WE_FIX = [
+  { label: "Clogged Drains", icon: Funnel },
+  { label: "Leaking Pipes", icon: Drop },
+  { label: "Water Heaters", icon: Flame },
+  { label: "Sewer Lines", icon: Pipe },
+  { label: "Toilets & Faucets", icon: Toilet },
+  { label: "Garbage Disposals", icon: Plug },
+  { label: "Gas Lines", icon: Lightning },
+  { label: "Water Filtration", icon: Drop },
+];
+
+/* ───────────────────────── PLUMBING PROCESS ───────────────────────── */
+const PLUMBING_PROCESS_STEPS = [
+  { num: "01", title: "Call 24/7", desc: "Reach us any time, day or night.", icon: Phone },
+  { num: "02", title: "Fast Diagnosis", desc: "Licensed plumber inspects the issue on-site.", icon: Wrench },
+  { num: "03", title: "Upfront Price", desc: "No surprises — you approve the cost before we start.", icon: CurrencyDollar },
+  { num: "04", title: "Problem Solved", desc: "Fixed right the first time, guaranteed.", icon: CheckCircle },
+];
+
+/* ───────────────────────── WHY CHOOSE US PILLARS ───────────────────────── */
+const WHY_CHOOSE_PILLARS = [
+  { title: "Licensed Master Plumber", desc: "Trained, certified, code-compliant.", icon: Certificate },
+  { title: "24/7 Emergency Service", desc: "Burst pipes at 3 AM? We are on the way.", icon: Clock },
+  { title: "Upfront Pricing", desc: "No hidden fees, no surprises, ever.", icon: CurrencyDollar },
+  { title: "Satisfaction Guaranteed", desc: "If you are not happy, we make it right.", icon: Trophy },
+];
+
+/* ───────────────────────── COMPETITOR COMPARISON ───────────────────────── */
+const COMPARISON_ROWS = [
+  { feature: "Licensed & Insured", us: true, them: "Varies" },
+  { feature: "Pulls Permits", us: true, them: "Rarely" },
+  { feature: "Code Compliant Work", us: true, them: "No" },
+  { feature: "Parts & Labor Warranty", us: true, them: "No" },
+  { feature: "24/7 Emergency Service", us: true, them: "No" },
+  { feature: "Camera Inspection", us: true, them: "No" },
+  { feature: "Upfront Pricing", us: true, them: "Sometimes" },
+];
+
+/* ───────────────────────── QUIZ OPTIONS ───────────────────────── */
+const QUIZ_OPTIONS = [
+  { label: "Clogged Drain", note: "Common fix — we clear it fast", icon: Funnel, color: "#22c55e" },
+  { label: "Leak or Burst Pipe", note: "Emergency! Call now", icon: Drop, color: "#ef4444" },
+  { label: "Water Heater Problem", note: "No hot water? We can help", icon: Flame, color: "#f59e0b" },
+  { label: "Sewer / Main Line", note: "Serious — call now", icon: Pipe, color: "#ef4444" },
+];
+
 /* ───────────────────────── STOCK FALLBACK IMAGES ───────────────────────── */
-const STOCK_HERO = "https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=1400&q=80";
-const STOCK_ABOUT = "https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=600&q=80";
+const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=1400&q=80"];
+const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?w=800&q=80"];
 const STOCK_PROJECTS = [
   "https://images.unsplash.com/photo-1585704032915-c3400ca199e7?w=600&q=80",
   "https://images.unsplash.com/photo-1607472586893-edb57bdc0e39?w=600&q=80",
@@ -78,7 +152,7 @@ const STOCK_PROJECTS = [
 ];
 
 /* ───────────────────────── FLOATING WATER DROPS ───────────────────────── */
-function FloatingWaterDrops({ accent }: { accent: string }) {
+function FloatingWaterDrops() {
   const particles = Array.from({ length: 20 }, (_, i) => ({
     id: i, x: Math.random() * 100, delay: Math.random() * 10,
     duration: 7 + Math.random() * 7, size: 3 + Math.random() * 5, opacity: 0.1 + Math.random() * 0.25,
@@ -134,7 +208,7 @@ function PipePattern({ opacity = 0.03, accent }: { opacity?: number; accent: str
 /* ───────────────────────── GLASS CARD ───────────────────────── */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
+    <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
       {children}
     </div>
   );
@@ -235,9 +309,17 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
 
   const { BLUE, BLUE_GLOW, TEAL_GLOW } = getAccent(data.accentColor);
 
-  const heroImage = data.photos?.[0] || STOCK_HERO;
-  const aboutImage = data.photos?.[1] || STOCK_ABOUT;
-  const projectImages = data.photos?.length > 2 ? data.photos.slice(2, 6) : STOCK_PROJECTS;
+  const uniquePhotos = data.photos ? [...new Set(data.photos)] : [];
+
+
+  const heroImage = uniquePhotos[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
+
+
+  const heroCardImage = uniquePhotos[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 1);
+
+
+  const aboutImage = uniquePhotos[2] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 2);
+  const projectImages = data.photos?.length > 2 ? data.photos.slice(2, 6) : pickGallery(STOCK_PROJECTS, data.businessName);
   const phoneDigits = data.phone.replace(/\D/g, "");
 
   const processSteps = [
@@ -264,7 +346,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
 
   return (
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: SLATE, color: "#f1f5f9" }}>
-      <FloatingWaterDrops accent={BLUE} />
+      <FloatingWaterDrops />
 
       {/* ══════════════════ 1. NAV ══════════════════ */}
       <nav className="fixed top-0 left-0 right-0 z-50">
@@ -303,31 +385,43 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </nav>
 
+      {/* ══════════════════ BEAST MODE: EMERGENCY RESPONSE STRIP ══════════════════ */}
+      <div className="fixed top-0 left-0 right-0 z-[60] py-2 text-center" style={{ background: `linear-gradient(90deg, ${TEAL} 0%, #0f766e 50%, ${TEAL} 100%)` }}>
+        <div className="flex items-center justify-center gap-3 text-sm font-bold text-white">
+          <span className="relative flex h-3 w-3">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75" />
+            <span className="relative inline-flex rounded-full h-3 w-3 bg-white" />
+          </span>
+          <span>Burst Pipe? We&apos;re There in 60 Minutes</span>
+          <span className="hidden sm:inline">—</span>
+          <a href={`tel:${phoneDigits}`} className="underline underline-offset-2 hover:no-underline hidden sm:inline">
+            Call {data.phone}
+          </a>
+          <a href={`tel:${phoneDigits}`} className="underline underline-offset-2 sm:hidden">Call Now</a>
+        </div>
+      </div>
+
       {/* ══════════════════ 2. HERO ══════════════════ */}
-      <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
+      <section className="relative min-h-[100dvh] flex items-center pt-32 z-10 overflow-hidden">
 
         <div className="absolute inset-0">
           <img src={heroImage} alt={`${data.businessName}`} className="w-full h-full object-cover object-center" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/25 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/20" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
         </div>
-        <PipePattern opacity={0.04} accent={BLUE} />
-        <WaterFlowSVG opacity={0.05} accent={BLUE} />
-        <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full blur-[200px] pointer-events-none" style={{ background: `${BLUE}08` }} />
-        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full blur-[160px] pointer-events-none" style={{ background: `${TEAL}06` }} />
 
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
           <div className="space-y-8">
             <div>
               <p className="text-sm uppercase tracking-widest mb-4" style={{ color: TEAL }}> Licensed Master Plumbers</p>
-              <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}>{data.tagline}</h1>
+              <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 20px rgba(0,0,0,0.8), 0 4px 40px rgba(0,0,0,0.5)" }}>{data.tagline}</h1>
             </div>
-            <p className="text-lg text-slate-400 max-w-md leading-relaxed">{data.about.length > 160 ? data.about.slice(0, 160).trim() + "..." : data.about}</p>
+            <p className="text-lg text-slate-400 max-w-md leading-relaxed">{(() => { const t = data.about; if (t.length <= 180) return t; const dot = t.indexOf('.', 80); return dot > 0 && dot < 220 ? t.slice(0, dot + 1) : t.slice(0, 180).trim() + '...'; })()}</p>
             <div className="flex flex-wrap gap-4">
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer" style={{ background: TEAL } as React.CSSProperties}>
                 Get Free Estimate <ArrowRight size={18} weight="bold" />
               </MagneticButton>
-              <MagneticButton href={`tel:${phoneDigits}`} className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
+              <MagneticButton href={`tel:${phoneDigits}`} className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
                 <Phone size={18} weight="duotone" /> <PhoneLink phone={data.phone} />
               </MagneticButton>
             </div>
@@ -338,8 +432,8 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
           </div>
 
           <div className="hidden md:block relative">
-            <div className="relative rounded-2xl overflow-hidden border border-white/10">
-              <img src={heroImage} alt={`${data.businessName} plumber`} className="w-full h-[500px] object-cover" />
+            <div className="relative rounded-2xl overflow-hidden border border-white/15">
+              <img src={heroCardImage} alt={`${data.businessName} plumber`} className="w-full h-[500px] object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-transparent to-transparent" />
               <div className="absolute inset-0 bg-gradient-to-r from-[#0f172a]/40 to-transparent" />
               <div className="absolute bottom-6 left-6 flex items-center gap-3">
@@ -349,6 +443,21 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ FEATURE 1: SERVICE TYPE BADGES ══════════════════ */}
+      <section className="relative z-10 py-8 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0c1222 0%, #0f172a 100%)" }} />
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
+          <div className="flex flex-wrap justify-center gap-3">
+            {SERVICE_TYPE_BADGES.map((badge) => (
+              <div key={badge.label} className="flex items-center gap-2 px-4 py-2.5 rounded-full border text-sm font-medium" style={{ color: TEAL, borderColor: `${TEAL}33`, background: `${TEAL}0d` }}>
+                <badge.icon size={16} weight="fill" style={{ color: TEAL }} />
+                {badge.label}
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -391,7 +500,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
             {data.services.map((service, i) => {
               const Icon = getServiceIcon(service.name);
               return (
-                <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.02]">
+                <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]">
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${TEAL}15, transparent 70%)` }} />
                   <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${TEAL}4d, transparent)` }} />
                   <div className="relative z-10">
@@ -408,6 +517,81 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
                 </div>
               );
             })}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ FEATURE 3: WHAT WE FIX ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1222 50%, #0f172a 100%)" }} />
+        <WaterFlowSVG opacity={0.02} accent={BLUE} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${TEAL}06` }} /></div>
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="What We Fix" title="Common Plumbing Problems" subtitle="From minor drips to major emergencies, we handle it all." accent={TEAL} />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {WHAT_WE_FIX.map((item) => (
+              <GlassCard key={item.label} className="p-5 text-center group hover:border-white/20 transition-all duration-300">
+                <div className="w-12 h-12 rounded-xl mx-auto mb-3 flex items-center justify-center border transition-all duration-300" style={{ background: TEAL_GLOW, borderColor: `${TEAL}33` }}>
+                  <item.icon size={24} weight="duotone" style={{ color: TEAL }} />
+                </div>
+                <p className="text-sm font-semibold text-white">{item.label}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ FEATURE 2: UPFRONT PRICING ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1830 50%, #0f172a 100%)" }} />
+        <PipePattern opacity={0.02} accent={BLUE} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute bottom-[20%] left-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${BLUE}06` }} /></div>
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Transparent Pricing" title="Upfront, Honest Pricing" subtitle="No hidden fees. Know the cost before we start." accent={TEAL} />
+          <div className="grid md:grid-cols-3 gap-6">
+            {PRICING_CARDS.map((card) => (
+              <GlassCard key={card.service} className="p-7 text-center group hover:border-white/20 transition-all duration-300 relative overflow-hidden">
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${TEAL}10, transparent 70%)` }} />
+                <div className="relative z-10">
+                  <div className="w-14 h-14 rounded-xl mx-auto mb-4 flex items-center justify-center border" style={{ background: TEAL_GLOW, borderColor: `${TEAL}33` }}>
+                    <card.icon size={28} weight="duotone" style={{ color: TEAL }} />
+                  </div>
+                  <h3 className="text-lg font-bold text-white mb-1">{card.service}</h3>
+                  <p className="text-2xl font-extrabold mb-3" style={{ color: TEAL }}>{card.price}</p>
+                  <p className="text-sm text-slate-400 leading-relaxed">{card.desc}</p>
+                </div>
+              </GlassCard>
+            ))}
+          </div>
+          <p className="text-center text-xs text-slate-500 mt-6">* Final pricing depends on the scope of work. Free estimates always.</p>
+        </div>
+      </section>
+
+      {/* ══════════════════ FEATURE 4: PLUMBING PROCESS ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1222 50%, #0f172a 100%)" }} />
+        <PipePattern opacity={0.025} accent={BLUE} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[15%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${TEAL}06` }} /></div>
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="How It Works" title="4 Simple Steps" accent={TEAL} />
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {PLUMBING_PROCESS_STEPS.map((step, i) => (
+              <div key={step.num} className="relative">
+                {i < PLUMBING_PROCESS_STEPS.length - 1 && (
+                  <div className="hidden lg:flex absolute top-10 left-[calc(50%+40px)] w-[calc(100%-80px)] items-center">
+                    <div className="h-px flex-1" style={{ background: `linear-gradient(to right, ${TEAL}33, ${TEAL}11)` }} />
+                    <ArrowRight size={14} style={{ color: `${TEAL}44` }} className="shrink-0 -ml-1" />
+                  </div>
+                )}
+                <GlassCard className="p-6 text-center">
+                  <div className="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center border" style={{ background: `linear-gradient(135deg, ${TEAL}22, ${TEAL}0a)`, borderColor: `${TEAL}33` }}>
+                    <step.icon size={24} weight="duotone" style={{ color: TEAL }} />
+                  </div>
+                  <h3 className="text-lg font-bold text-white mb-2">{step.title}</h3>
+                  <p className="text-sm text-slate-400 leading-relaxed">{step.desc}</p>
+                </GlassCard>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -444,7 +628,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="relative">
-              <div className="rounded-2xl overflow-hidden border border-white/10">
+              <div className="rounded-2xl overflow-hidden border border-white/15">
                 <img src={aboutImage} alt={`${data.businessName} team`} className="w-full h-[400px] object-cover" />
               </div>
               <div className="absolute -bottom-4 -right-4 md:bottom-6 md:-right-6">
@@ -477,6 +661,53 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
+      {/* ══════════════════ FEATURE 5: WHY CHOOSE US ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1222 50%, #0f172a 100%)" }} />
+        <WaterFlowSVG opacity={0.02} accent={BLUE} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute bottom-[30%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${TEAL}08` }} /></div>
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Why Us" title="Why Choose Us" subtitle={`${data.businessName} delivers expert plumbing you can trust.`} accent={TEAL} />
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {WHY_CHOOSE_PILLARS.map((pillar) => (
+              <GlassCard key={pillar.title} className="p-7 text-center group hover:border-white/20 transition-all duration-300">
+                <div className="w-14 h-14 rounded-xl mx-auto mb-4 flex items-center justify-center border transition-all duration-300" style={{ background: TEAL_GLOW, borderColor: `${TEAL}33` }}>
+                  <pillar.icon size={28} weight="duotone" style={{ color: TEAL }} />
+                </div>
+                <h3 className="text-lg font-bold text-white mb-2">{pillar.title}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed">{pillar.desc}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ BEAST MODE: HONEST PLUMBER PROMISE ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0a1020 50%, #0f172a 100%)" }} />
+        <PipePattern opacity={0.02} accent={BLUE} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] left-[20%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${TEAL}08` }} /></div>
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Our Promise" title="The Honest Plumber Promise" subtitle={`${data.businessName} believes you deserve a plumber you can trust — every single time.`} accent={TEAL} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { title: "We Show You the Problem", desc: "Before we touch a wrench, we show you exactly what is wrong — no mystery, no guesswork.", icon: Wrench },
+              { title: "Upfront Pricing", desc: "You get the full cost before work begins. No surprise charges, no hidden fees. Ever.", icon: CurrencyDollar },
+              { title: "Clean Up After Every Job", desc: "We treat your home like our own. Drop cloths down, mess cleaned up, shoes off.", icon: ThumbsUp },
+              { title: "Can't Fix It = You Don't Pay", desc: "If we cannot solve your plumbing problem, you owe us nothing. That is our guarantee.", icon: SealCheck },
+            ].map((promise) => (
+              <GlassCard key={promise.title} className="p-7 text-center group hover:border-white/20 transition-all duration-500">
+                <div className="w-14 h-14 rounded-xl mx-auto mb-4 flex items-center justify-center border" style={{ background: `${TEAL}15`, borderColor: `${TEAL}33` }}>
+                  <promise.icon size={28} weight="duotone" style={{ color: TEAL }} />
+                </div>
+                <h3 className="text-base font-bold text-white mb-2">{promise.title}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed">{promise.desc}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ══════════════════ 7. PROJECTS GALLERY ══════════════════ */}
       <section id="projects" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1830 50%, #0f172a 100%)" }} />
@@ -490,7 +721,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
               const titles = ["Full Bathroom Remodel", "Whole-House Repiping", "Emergency Pipe Repair", "Water Heater Installation"];
               const descs = ["Complete plumbing renovation for a modern bathroom.", "Copper to PEX repiping for a residential home.", "24-hour emergency burst pipe response.", "Tankless water heater upgrade and installation."];
               return (
-                <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.06] hover:border-opacity-30 transition-all duration-500">
+                <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.10] hover:border-opacity-30 transition-all duration-500">
                   <img src={src} alt={titles[i]} className="w-full h-64 object-cover transition-transform duration-700 group-hover:scale-105" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-6">
@@ -504,6 +735,94 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
+      {/* ══════════════════ FEATURE 6: COMPETITOR COMPARISON ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1222 50%, #0f172a 100%)" }} />
+        <PipePattern opacity={0.02} accent={BLUE} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[20%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${TEAL}06` }} /></div>
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Compare" title={`${data.businessName} vs. Handyman / DIY`} accent={TEAL} />
+          <GlassCard className="overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-white/15">
+                    <th className="text-left p-4 text-slate-400 font-medium">Feature</th>
+                    <th className="text-center p-4 font-bold text-white">{data.businessName}</th>
+                    <th className="text-center p-4 text-slate-500 font-medium">Handyman / DIY</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {COMPARISON_ROWS.map((row, i) => (
+                    <tr key={row.feature} className={i < COMPARISON_ROWS.length - 1 ? "border-b border-white/8" : ""}>
+                      <td className="p-4 text-slate-300">{row.feature}</td>
+                      <td className="p-4 text-center">
+                        <CheckCircle size={20} weight="fill" className="inline-block" style={{ color: "#22c55e" }} />
+                      </td>
+                      <td className="p-4 text-center text-slate-500">{row.them}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </GlassCard>
+        </div>
+      </section>
+
+      {/* ══════════════════ FEATURE 7: VIDEO PLACEHOLDER ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1830 50%, #0f172a 100%)" }} />
+        <WaterFlowSVG opacity={0.02} accent={BLUE} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] right-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${TEAL}08` }} /></div>
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="See Our Work" title="Watch Us In Action" accent={TEAL} />
+          <div className="relative rounded-2xl overflow-hidden border border-white/15 group cursor-pointer">
+            <img src={projectImages[0] || heroImage} alt="See our plumbing work" className="w-full h-[300px] md:h-[420px] object-cover transition-transform duration-700 group-hover:scale-105" />
+            <div className="absolute inset-0 bg-black/50 flex items-center justify-center transition-all duration-300 group-hover:bg-black/40">
+              <div className="w-20 h-20 rounded-full flex items-center justify-center border-2 transition-transform duration-300 group-hover:scale-110" style={{ borderColor: TEAL, background: `${TEAL}33` }}>
+                <PlayCircle size={48} weight="fill" style={{ color: TEAL }} />
+              </div>
+            </div>
+            <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 to-transparent">
+              <p className="text-white font-bold text-lg">See Our Work</p>
+              <p className="text-slate-300 text-sm">Watch how we solve plumbing problems the right way.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ FEATURE 8: PLUMBING ISSUE QUIZ ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1222 50%, #0f172a 100%)" }} />
+        <PipePattern opacity={0.02} accent={BLUE} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute bottom-[20%] left-[15%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${TEAL}06` }} /></div>
+        <div className="max-w-3xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Quick Help" title="What's Your Plumbing Issue?" subtitle="Select your problem and we will get you the right help." accent={TEAL} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {QUIZ_OPTIONS.map((opt) => (
+              <GlassCard key={opt.label} className="p-6 group hover:border-white/20 transition-all duration-300 cursor-pointer relative overflow-hidden">
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${opt.color}15, transparent 70%)` }} />
+                <div className="relative z-10 flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 border" style={{ background: `${opt.color}15`, borderColor: `${opt.color}33` }}>
+                    <opt.icon size={24} weight="duotone" style={{ color: opt.color }} />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-white mb-1">{opt.label}</h3>
+                    <p className="text-sm" style={{ color: opt.color }}>{opt.note}</p>
+                  </div>
+                </div>
+              </GlassCard>
+            ))}
+          </div>
+          <div className="text-center mt-8">
+            <MagneticButton href={`tel:${phoneDigits}`} className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-base font-semibold text-white cursor-pointer" style={{ background: TEAL } as React.CSSProperties}>
+              <Phone size={20} weight="fill" /> Call Now for Fast Help
+            </MagneticButton>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ FEATURE 9: GOOGLE REVIEWS HEADER ══════════════════ */}
       {/* ══════════════════ 8. TESTIMONIALS ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1222 50%, #0f172a 100%)" }} />
@@ -511,13 +830,21 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] right-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${TEAL}06` }} /></div>
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
+          {/* FEATURE 9: Google Reviews Header */}
+          {(data.googleRating || data.reviewCount) && (
+            <div className="flex items-center justify-center gap-3 mb-6">
+              <div className="flex gap-0.5">{Array.from({ length: 5 }).map((_, i) => <Star key={i} size={22} weight="fill" style={{ color: i < Math.round(data.googleRating || 5) ? "#facc15" : "#334155" }} />)}</div>
+              <span className="text-white font-bold text-lg">{data.googleRating || "5.0"}</span>
+              {data.reviewCount && <span className="text-slate-400 text-sm">({data.reviewCount}+ reviews)</span>}
+            </div>
+          )}
           <AnimatedSection>          <SectionHeader badge="Testimonials" title="What Our Clients Say" accent={TEAL} /></AnimatedSection>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {testimonials.map((t, i) => (
               <GlassCard key={i} className="p-6 h-full flex flex-col">
                 <div className="flex gap-0.5 mb-4">{Array.from({ length: t.rating || 5 }).map((_, j) => <Star key={j} size={16} weight="fill" style={{ color: TEAL }} />)}</div>
                 <p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p>
-                <div className="pt-4 border-t border-white/5"><span className="text-sm font-semibold text-white">{t.name}</span></div>
+                <div className="pt-4 border-t border-white/8"><span className="text-sm font-semibold text-white">{t.name}</span></div>
               </GlassCard>
             ))}
           </div>
@@ -581,9 +908,9 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
       
       {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
       <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15, ${ACCENT}08)` }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${TEAL}15, ${TEAL}08)` }} />
         <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
-          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: ACCENT }}>
+          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: TEAL }}>
             Don&apos;t Miss Out
           </p>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-3">
@@ -595,7 +922,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
           <a
             href={`/claim/${data.id}`}
             className="inline-flex items-center gap-2 min-h-[48px] px-8 py-3 rounded-full text-white font-bold text-base hover:shadow-lg transition-all duration-300"
-            style={{ background: ACCENT }}
+            style={{ background: TEAL }}
           >
             Claim This Website
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
@@ -659,18 +986,18 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
               <h3 className="text-xl font-semibold text-white mb-6">Request a Free Estimate</h3>
               <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div><label className="block text-sm text-slate-400 mb-1.5">First Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="John" /></div>
-                  <div><label className="block text-sm text-slate-400 mb-1.5">Last Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="Doe" /></div>
+                  <div><label className="block text-sm text-slate-400 mb-1.5">First Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="John" /></div>
+                  <div><label className="block text-sm text-slate-400 mb-1.5">Last Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="Doe" /></div>
                 </div>
-                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
+                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-1.5">Service Needed</label>
-                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none text-sm">
+                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none text-sm">
                     <option value="" className="bg-neutral-900">Select a service</option>
                     {data.services.map((s) => <option key={s.name} value={s.name.toLowerCase().replace(/\s+/g, "-")} className="bg-neutral-900">{s.name}</option>)}
                   </select>
                 </div>
-                <div><label className="block text-sm text-slate-400 mb-1.5">Message</label><textarea rows={4} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm resize-none" placeholder="Describe your plumbing issue..." /></div>
+                <div><label className="block text-sm text-slate-400 mb-1.5">Message</label><textarea rows={4} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm resize-none" placeholder="Describe your plumbing issue..." /></div>
                 <MagneticButton className="w-full py-4 rounded-xl text-base font-semibold text-white flex items-center justify-center gap-2 cursor-pointer" style={{ background: TEAL } as React.CSSProperties}>
                   Send Request <ArrowRight size={18} weight="bold" />
                 </MagneticButton>
@@ -680,31 +1007,35 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 14. GUARANTEE ══════════════════ */}
+      {/* ══════════════════ FEATURE 10: GUARANTEE CTA ══════════════════ */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1222 100%)" }} />
         <PipePattern opacity={0.015} accent={BLUE} />
-        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full blur-[180px]" style={{ background: `${TEAL}06` }} /></div>
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full blur-[180px]" style={{ background: `${TEAL}08` }} /></div>
         <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
           <ShimmerBorder accent={TEAL}>
             <div className="p-8 md:p-12">
-              <ShieldCheck size={48} weight="fill" style={{ color: TEAL }} className="mx-auto mb-4" />
-              <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-4">Our Guarantee</h2>
-              <p className="text-slate-400 leading-relaxed max-w-2xl mx-auto text-lg">Every job by {data.businessName} is backed by our satisfaction guarantee. We stand behind our work with warranties on all plumbing repairs and installations.</p>
-              <div className="flex flex-wrap justify-center gap-4 mt-8">
-                {["Licensed Plumbers", "Free Estimates", "Satisfaction Guaranteed", "24/7 Emergency"].map((item) => (
+              <SealCheck size={56} weight="fill" style={{ color: TEAL }} className="mx-auto mb-4" />
+              <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-4">Every Job Done Right</h2>
+              <p className="text-xl md:text-2xl font-bold mb-4" style={{ color: TEAL }}>Licensed, Insured, Guaranteed</p>
+              <p className="text-slate-400 leading-relaxed max-w-2xl mx-auto text-lg mb-8">Every job by {data.businessName} is backed by our satisfaction guarantee. We stand behind our work with warranties on all plumbing repairs and installations.</p>
+              <div className="flex flex-wrap justify-center gap-4 mb-8">
+                {["Licensed Master Plumber", "Free Estimates", "Satisfaction Guaranteed", "24/7 Emergency"].map((item) => (
                   <span key={item} className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border" style={{ color: TEAL, borderColor: `${TEAL}33`, background: `${TEAL}0d` }}>
                     <CheckCircle size={16} weight="fill" /> {item}
                   </span>
                 ))}
               </div>
+              <MagneticButton href={`tel:${phoneDigits}`} className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-base font-semibold text-white cursor-pointer" style={{ background: TEAL } as React.CSSProperties}>
+                <Phone size={20} weight="fill" /> Call {data.businessName} Today
+              </MagneticButton>
             </div>
           </ShimmerBorder>
         </div>
       </section>
 
       {/* ══════════════════ 15. FOOTER ══════════════════ */}
-      <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden">
+      <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0a1020 100%)" }} />
         <PipePattern opacity={0.015} accent={BLUE} />
         <div className="mx-auto max-w-6xl px-6 relative z-10">
@@ -725,7 +1056,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
               </div>
             </div>
           </div>
-          <div className="border-t border-white/5 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="border-t border-white/8 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-sm text-slate-500"><Drop size={14} weight="fill" style={{ color: TEAL }} /><span>{data.businessName} &copy; {new Date().getFullYear()}</span></div>
             <div className="flex items-center gap-2 text-xs text-slate-600"><BluejayLogo className="w-4 h-4" /><span>Created by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" style={{textDecoration:"underline"}}>bluejayportfolio.com</a></span></div>
           </div>

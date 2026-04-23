@@ -1,6 +1,9 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+/* eslint-disable @next/next/no-img-element -- Static marketing showcase uses plain img tags intentionally. */
+/* eslint-disable react-hooks/purity -- Decorative particle values are intentionally randomized for visual effects. */
+
+import { useState, useRef, useCallback, useEffect } from "react";
 import {
   motion,
   useMotionValue,
@@ -28,10 +31,16 @@ import {
   Lightning,
   CheckCircle,
   Certificate,
-  Medal,
   Timer,
   Users,
-  CalendarCheck,
+  CurrencyDollar,
+  Gauge,
+  Play,
+  Envelope,
+  Warning,
+  Trophy,
+  HandCoins,
+  Scales,
 } from "@phosphor-icons/react";
 
 /* ───────────────────────── SPRING CONFIG ───────────────────────── */
@@ -49,70 +58,71 @@ const fadeUp = {
 };
 
 /* ───────────────────────── COLORS ───────────────────────── */
-const BG = "#0f1720";
-const ACCENT = "#3b82f6";
-const ACCENT_LIGHT = "#93c5fd";
-const ACCENT_GLOW = "rgba(59, 130, 246, 0.15)";
+const BG = "#111111";
+const ACCENT = "#f97316";
+const ACCENT_LIGHT = "#fdba74";
+const STEEL = "#64748b";
+const STEEL_LIGHT = "#94a3b8";
+const ACCENT_GLOW = "rgba(249, 115, 22, 0.15)";
+const STEEL_GLOW = "rgba(100, 116, 139, 0.12)";
 
-/* ───────────────────────── WRENCH/GEAR NAV ICON ───────────────────────── */
-function WrenchIcon({ size = 24 }: { size?: number }) {
+/* ───────────────────────── WRENCH SVG LOGO ───────────────────────── */
+function LogoIcon({ size = 28 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
-      <path d="M22 10C22 12.2091 20.2091 14 18 14C15.7909 14 14 12.2091 14 10C14 7.79086 15.7909 6 18 6C20.2091 6 22 7.79086 22 10Z" stroke={ACCENT} strokeWidth="2" />
-      <path d="M15.5 12.5L6 22C5.44772 22.5523 5.44772 23.4477 6 24V26H8C8.55228 26 9.44772 26.5523 10 26L19.5 16.5" stroke={ACCENT_LIGHT} strokeWidth="2" strokeLinecap="round" />
-      <path d="M24 8L26 6" stroke={ACCENT} strokeWidth="2" strokeLinecap="round" />
-      <path d="M20 4L22 2" stroke={ACCENT} strokeWidth="2" strokeLinecap="round" />
-      <circle cx="18" cy="10" r="1.5" fill={ACCENT} />
+      <rect x="4" y="12" width="24" height="8" rx="2" fill={ACCENT} opacity="0.2" />
+      <path d="M8 14L14 8L18 12L24 6" stroke={ACCENT} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="24" cy="6" r="3" fill={ACCENT} opacity="0.4" />
+      <circle cx="24" cy="6" r="1.5" fill={ACCENT} />
+      <path d="M6 20L12 26" stroke={STEEL_LIGHT} strokeWidth="2" strokeLinecap="round" />
+      <path d="M12 20L18 26" stroke={STEEL_LIGHT} strokeWidth="2" strokeLinecap="round" />
+      <path d="M18 20L24 26" stroke={ACCENT_LIGHT} strokeWidth="2" strokeLinecap="round" />
     </svg>
   );
 }
 
-/* ───────────────────────── CIRCUIT BOARD PATTERN ───────────────────────── */
-function CircuitPattern() {
+/* ───────────────────────── BOLT GRID PATTERN ───────────────────────── */
+function BoltGrid() {
   return (
-    <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden hidden md:block opacity-[0.04]">
+    <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden hidden md:block opacity-[0.03]">
       <svg width="100%" height="100%">
         <defs>
-          <pattern id="circuit-grid" width="100" height="100" patternUnits="userSpaceOnUse">
-            <path d="M 0 50 L 30 50 L 40 40 L 60 40 L 70 50 L 100 50" fill="none" stroke={ACCENT_LIGHT} strokeWidth="0.5" />
-            <path d="M 50 0 L 50 30 L 40 40" fill="none" stroke={ACCENT_LIGHT} strokeWidth="0.5" />
-            <path d="M 50 100 L 50 70 L 60 60 L 80 60" fill="none" stroke={ACCENT_LIGHT} strokeWidth="0.5" />
-            <circle cx="30" cy="50" r="2" fill={ACCENT} />
-            <circle cx="70" cy="50" r="2" fill={ACCENT} />
-            <circle cx="50" cy="30" r="2" fill={ACCENT} />
-            <circle cx="50" cy="70" r="2" fill={ACCENT} />
-            <circle cx="80" cy="60" r="2" fill={ACCENT} />
+          <pattern id="bolt-grid" width="80" height="80" patternUnits="userSpaceOnUse">
+            <path d="M40 10L36 25H44L40 40" fill="none" stroke={ACCENT_LIGHT} strokeWidth="0.6" />
+            <circle cx="40" cy="10" r="1.5" fill={ACCENT} opacity="0.6" />
+            <path d="M10 40H30M50 40H70" fill="none" stroke={STEEL} strokeWidth="0.4" />
+            <path d="M40 50V70" fill="none" stroke={STEEL} strokeWidth="0.4" />
+            <rect x="38" y="68" width="4" height="4" rx="1" fill={STEEL} opacity="0.3" />
           </pattern>
         </defs>
-        <rect width="100%" height="100%" fill="url(#circuit-grid)" />
+        <rect width="100%" height="100%" fill="url(#bolt-grid)" />
       </svg>
     </div>
   );
 }
 
-/* ───────────────────────── FLOATING PARTICLES ───────────────────────── */
-function TechParticles() {
-  const particles = Array.from({ length: 25 }, (_, i) => ({
+/* ───────────────────────── FLOATING SPARKS ───────────────────────── */
+function FloatingSparks() {
+  const sparks = Array.from({ length: 20 }, (_, i) => ({
     id: i,
     x: Math.random() * 100,
-    delay: Math.random() * 10,
-    duration: 10 + Math.random() * 10,
-    size: 1 + Math.random() * 3,
-    opacity: 0.1 + Math.random() * 0.2,
+    delay: Math.random() * 12,
+    duration: 14 + Math.random() * 10,
+    size: 1 + Math.random() * 2.5,
+    opacity: 0.08 + Math.random() * 0.18,
   }));
 
   return (
     <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden hidden md:block">
-      {particles.map((p) => (
+      {sparks.map((s) => (
         <motion.div
-          key={p.id}
-          className="absolute rounded-sm"
-          style={{ left: `${p.x}%`, width: p.size, height: p.size, background: ACCENT_LIGHT, willChange: "transform, opacity" }}
-          animate={{ y: ["110vh", "-10vh"], opacity: [0, p.opacity, p.opacity, 0], rotate: [0, 180, 360] }}
+          key={s.id}
+          className="absolute rounded-full"
+          style={{ left: `${s.x}%`, width: s.size, height: s.size, background: ACCENT_LIGHT, willChange: "transform, opacity" }}
+          animate={{ y: ["110vh", "-10vh"], opacity: [0, s.opacity, s.opacity, 0] }}
           transition={{
-            y: { duration: p.duration, repeat: Infinity, delay: p.delay, ease: "linear" },
-            opacity: { duration: p.duration, repeat: Infinity, delay: p.delay, times: [0, 0.1, 0.9, 1] },
-            rotate: { duration: p.duration * 1.5, repeat: Infinity, ease: "linear" }
+            y: { duration: s.duration, repeat: Infinity, delay: s.delay, ease: "linear" },
+            opacity: { duration: s.duration, repeat: Infinity, delay: s.delay, times: [0, 0.1, 0.9, 1] },
           }}
         />
       ))}
@@ -121,17 +131,6 @@ function TechParticles() {
 }
 
 /* ───────────────────────── SHARED COMPONENTS ───────────────────────── */
-function WordReveal({ text, className = "" }: { text: string; className?: string }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-50px" });
-  const words = text.split(" ");
-  return (
-    <motion.span ref={ref} className={`inline-flex flex-wrap gap-x-3 ${className}`} variants={stagger} initial="hidden" animate={isInView ? "show" : "hidden"}>
-      {words.map((word, i) => (<motion.span key={i} variants={fadeUp} className="inline-block">{word}</motion.span>))}
-    </motion.span>
-  );
-}
-
 function SectionReveal({ children, className = "", id }: { children: React.ReactNode; className?: string; id?: string }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
@@ -143,10 +142,14 @@ function SectionReveal({ children, className = "", id }: { children: React.React
 }
 
 function GlassCard({ children, className = "", style }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) {
-  return (<div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`} style={style}>{children}</div>);
+  return (
+    <div className={`rounded-2xl border border-white/15 bg-white/[0.07] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.06)] ${className}`} style={style}>
+      {children}
+    </div>
+  );
 }
 
-function MagneticButton({ children, className = "", onClick, style }: { children: React.ReactNode; className?: string; onClick?: () => void; style?: React.CSSProperties }) {
+function MagneticButton({ children, className = "", onClick, href, style }: { children: React.ReactNode; className?: string; onClick?: () => void; href?: string; style?: React.CSSProperties }) {
   const ref = useRef<HTMLButtonElement>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -160,6 +163,15 @@ function MagneticButton({ children, className = "", onClick, style }: { children
     y.set((e.clientY - (rect.top + rect.height / 2)) * 0.25);
   }, [x, y, isTouchDevice]);
   const handleMouseLeave = useCallback(() => { x.set(0); y.set(0); }, [x, y]);
+
+  if (href) {
+    return (
+      <motion.a ref={ref as unknown as React.Ref<HTMLAnchorElement>} href={href} style={{ x: springX, y: springY, willChange: "transform", ...style } as React.CSSProperties} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave} className={className}>
+        {children}
+      </motion.a>
+    );
+  }
+
   return (
     <motion.button ref={ref} style={{ x: springX, y: springY, willChange: "transform", ...style }} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave} onClick={onClick} className={className} whileTap={{ scale: 0.97 }}>
       {children}
@@ -170,491 +182,913 @@ function MagneticButton({ children, className = "", onClick, style }: { children
 function ShimmerBorder({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <div className={`relative rounded-2xl p-[1px] overflow-hidden ${className}`}>
-      <motion.div className="absolute inset-0 rounded-2xl" style={{ background: `conic-gradient(from 0deg, transparent, ${ACCENT}, transparent, ${ACCENT_LIGHT}, transparent)`, willChange: "transform" }} animate={{ rotate: [0, 360] }} transition={{ duration: 4, repeat: Infinity, ease: "linear" }} />
+      <motion.div className="absolute inset-0 rounded-2xl" style={{ background: `conic-gradient(from 0deg, transparent, ${ACCENT}, transparent, ${STEEL_LIGHT}, transparent)`, willChange: "transform" }} animate={{ rotate: [0, 360] }} transition={{ duration: 4, repeat: Infinity, ease: "linear" }} />
       <div className="relative rounded-2xl z-10" style={{ background: BG }}>{children}</div>
     </div>
   );
 }
 
+function SectionHeader({ label, title, accent, subtitle }: { label: string; title: string; accent: string; subtitle?: string }) {
+  return (
+    <div className="text-center mb-16">
+      <span className="inline-block px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase mb-4" style={{ background: ACCENT_GLOW, color: ACCENT_LIGHT }}>{label}</span>
+      <h2 className="text-3xl md:text-5xl font-extrabold text-white">
+        {title} <span style={{ color: ACCENT }}>{accent}</span>
+      </h2>
+      {subtitle && <p className="mt-4 text-lg max-w-2xl mx-auto" style={{ color: STEEL_LIGHT }}>{subtitle}</p>}
+    </div>
+  );
+}
+
+/* ───────────────────────── ANIMATED COUNTER HOOK ───────────────────────── */
+function useCounter(target: number, duration = 2000) {
+  const [count, setCount] = useState(0);
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true });
+
+  useEffect(() => {
+    if (!isInView) return;
+    let start = 0;
+    const startTime = performance.now();
+    const step = (now: number) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      start = Math.floor(eased * target);
+      setCount(start);
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }, [isInView, target, duration]);
+
+  return { count, ref };
+}
+
 /* ───────────────────────── DATA ───────────────────────── */
-const services = [
-  { title: "Refrigerator Repair", description: "Expert diagnostics and repair for all major refrigerator brands. We fix cooling issues, ice makers, leaks, and strange noises quickly to save your food.", icon: Snowflake },
-  { title: "Washer & Dryer", description: "Fast solutions for washing machines that won't drain or spin, and dryers that aren't heating. We service both front-load and top-load models.", icon: Drop },
-  { title: "Dishwasher Repair", description: "Stop hand-washing your dishes. We repair dishwashers that won't start, aren't cleaning properly, or are leaking water onto your floor.", icon: Lightning },
-  { title: "Oven & Range", description: "Whether it's gas or electric, we fix ovens that won't heat, burners that won't ignite, and erratic temperature controls so you can get back to cooking.", icon: Fire },
-  { title: "Microwave Repair", description: "Professional repair for built-in and over-the-range microwaves. We handle issues with heating, turntables, and control panels safely.", icon: Thermometer },
-  { title: "Ice Maker Repair", description: "Don't settle for warm drinks. We repair built-in and freestanding ice makers, fixing water line issues, freezing problems, and mechanical failures.", icon: Gear },
+const SERVICES = [
+  { title: "Washer Repair", desc: "Front-load, top-load, and stackable washers. We fix drainage failures, spin cycle issues, leaks, and error codes for every major brand.", icon: Drop },
+  { title: "Dryer Repair", desc: "Gas and electric dryers that won't heat, tumble, or vent properly. We diagnose thermal fuses, heating elements, and motor problems fast.", icon: Fire },
+  { title: "Refrigerator Repair", desc: "Cooling failures, ice buildup, compressor issues, and water leaks. We save your food and your appliance with same-day diagnostics.", icon: Snowflake },
+  { title: "Dishwasher Repair", desc: "Units that won't drain, clean, or start. We handle pump failures, spray arm blockages, door latch issues, and electronic control faults.", icon: Lightning },
+  { title: "Oven & Range Repair", desc: "Gas igniters, electric elements, faulty thermostats, and self-clean malfunctions. We restore your cooking power quickly and safely.", icon: Thermometer },
+  { title: "Microwave Repair", desc: "Built-in and over-the-range units. Magnetron failures, turntable problems, control board issues, and door switch replacements.", icon: Gear },
+  { title: "Ice Maker Repair", desc: "Standalone and built-in ice makers. Water line blockages, freezing failures, slow production, and mechanical jams diagnosed on-site.", icon: Gauge },
+  { title: "Garbage Disposal Repair", desc: "Jammed, leaking, or humming disposals. We clear obstructions, replace worn components, and install new units when repair isn't viable.", icon: Wrench },
 ];
 
-const testimonials = [
-  { name: "Sarah Jenkins", text: "Our refrigerator stopped cooling right after a huge grocery trip. ProFix sent someone out within hours. The technician was polite, diagnosed the bad compressor quickly, and had it running the same day.", rating: 5 },
-  { name: "Mark T.", text: "I thought I needed a new washing machine, but the tech from ProFix found a simple clogged pump. Saved me hundreds of dollars. Honest, reliable, and very professional service.", rating: 5 },
-  { name: "The Miller Family", text: "We've used ProFix for our oven and our dishwasher over the past two years. They are always on time, explain the costs upfront, and leave the work area spotless. Highly recommend!", rating: 5 },
+const BRANDS = [
+  "Samsung", "LG", "Whirlpool", "GE", "Bosch", "Sub-Zero", "Viking", "KitchenAid",
 ];
 
-const certifications = [
-  "EPA Certified Technicians", "Factory Authorized Service", "Licensed & Insured", "Background Checked Techs", "Same-Day Service Available", "90-Day Parts Warranty", "Upfront Flat-Rate Pricing", "Local Family Owned",
+const PRICING = [
+  { tier: "Diagnostic Visit", price: "$89", desc: "Complete inspection and diagnosis. Waived if you proceed with repair.", badge: "Most Popular", highlight: false },
+  { tier: "Standard Repair", price: "$149–$249", desc: "Common fixes: thermostats, pumps, belts, igniters, door latches, and switches.", badge: null, highlight: true },
+  { tier: "Major Repair", price: "$249–$349", desc: "Compressors, control boards, motors, and sealed-system work on premium brands.", badge: null, highlight: false },
 ];
 
-const faqData = [
-  { q: "Do you offer same-day appliance repair?", a: "Yes, we offer same-day service for most calls received before 12:00 PM. We prioritize emergency repairs like refrigerators that have stopped cooling." },
-  { q: "What brands of appliances do you service?", a: "We service all major brands including Whirlpool, GE, Samsung, LG, Maytag, KitchenAid, Bosch, Frigidaire, Sub-Zero, and many more." },
-  { q: "How much does a service call cost?", a: "Our diagnostic fee is $89, which covers the technician's trip to your home and a complete diagnosis of the problem. If you choose to proceed with the repair, this fee is waived." },
-  { q: "Do you provide a warranty on your repairs?", a: "Absolutely. We provide a 90-day warranty on all parts we install and a 30-day warranty on our labor. If the same part fails within that time, we'll replace it for free." },
-  { q: "Should I repair or replace my appliance?", a: "Our technicians will give you an honest assessment. As a general rule, if the repair costs more than 50% of the price of a new appliance, or if the unit is nearing the end of its expected lifespan, replacement might be the better option." },
-  { q: "Are your technicians licensed and insured?", a: "Yes, all our technicians are fully licensed, insured, and background-checked. They also undergo continuous training to stay updated on the latest appliance technologies." },
+const TESTIMONIALS = [
+  { name: "Rachel Kim", text: "Steve came out within two hours of my call. My fridge compressor was failing and he had the part on his truck. Fixed the same afternoon. This guy is the real deal.", rating: 5, appliance: "Refrigerator" },
+  { name: "Derek & Amy Hollis", text: "Our Samsung washer was throwing error codes nonstop. ProFix diagnosed a faulty control board, ordered the exact OEM part, and installed it two days later. Runs perfectly now.", rating: 5, appliance: "Washer" },
+  { name: "Margaret Liu", text: "I called three companies before ProFix. The others wanted to charge me just to show up. Steve's $89 diagnostic was waived once I approved the repair. Honest and fair.", rating: 5, appliance: "Dishwasher" },
+  { name: "Tom Briggs", text: "My Viking range wasn't heating evenly. Steve identified a cracked igniter in under fifteen minutes. He had a replacement in stock and I was cooking dinner that night.", rating: 5, appliance: "Oven" },
 ];
 
-const portfolioImages = [
-  "https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=600&q=80",
-  "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=600&q=80",
-  "https://images.unsplash.com/photo-1581092335397-9583eb92d232?w=600&q=80",
-  "https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?w=600&q=80",
-  "https://images.unsplash.com/photo-1581092162384-8987c1d64718?w=600&q=80",
-  "https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?w=600&q=80",
+const COMPARISON_ROWS = [
+  { feature: "Repair cost (fraction of new)", us: "✓ 20-40% of new price", them: "Full replacement cost" },
+  { feature: "Same-day service available", us: "✓", them: "1-2 week delivery wait" },
+  { feature: "Extends appliance life 5-10 years", us: "✓", them: "Start fresh only" },
+  { feature: "Warranty on parts & labor", us: "✓ 90-day warranty", them: "Limited manufacturer" },
+  { feature: "Eco-friendly (less waste)", us: "✓", them: "Old appliance to landfill" },
+  { feature: "No setup/installation hassle", us: "✓", them: "Setup fees & coordination" },
+  { feature: "Diagnose first — transparent quote", us: "✓", them: "No transparency" },
+];
+
+const CERTIFICATIONS = [
+  "EPA Certified", "Factory Trained", "Licensed & Insured", "Background Checked", "BBB A+ Rated", "90-Day Warranty",
+];
+
+const HERO_STATS = [
+  { value: "15,000+", label: "Appliances Fixed" },
+  { value: "98%", label: "Same-Day Service" },
+  { value: "4.9", label: "Star Rating" },
+  { value: "15", label: "Years Experience" },
+];
+
+const QUIZ_OPTIONS = [
+  { label: "My refrigerator isn't cooling", icon: Snowflake, severity: "urgent", desc: "A warm fridge is urgent — food safety is at risk. We offer same-day emergency fridge repair for most brands. Average repair: $150-280. Call now." },
+  { label: "My washer or dryer isn't working", icon: Drop, severity: "moderate", desc: "Washer/dryer issues are our most common repair. Most are fixed in one visit. Average cost $120-250 — much less than replacement." },
+  { label: "My dishwasher is leaking or won't start", icon: Warning, severity: "moderate", desc: "Dishwasher leaks can damage flooring fast. We carry common parts on our trucks and can often fix same-day. Average repair: $100-200." },
+  { label: "My oven or stove has issues", icon: Fire, severity: "urgent", desc: "From igniter to control board, we service all oven types. Same-day for gas stove issues. Average: $130-260." },
+];
+
+const FINANCING_TIERS = [
+  { name: "Quick Fix", monthly: "$25/mo", total: "For repairs under $200", icon: Wrench },
+  { name: "Standard Plan", monthly: "$45/mo", total: "For repairs $200-$349", icon: Gear },
+  { name: "Premium Service", monthly: "$65/mo", total: "For major repairs $349+", icon: Trophy },
 ];
 
 /* ───────────────────────── MAIN COMPONENT ───────────────────────── */
 export default function V2ApplianceRepairPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [activeStatIndex, setActiveStatIndex] = useState(0);
+  const [quizChoice, setQuizChoice] = useState<number | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
-  const [expandedService, setExpandedService] = useState<number | null>(null);
+
+  /* cycle hero stats */
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveStatIndex((prev) => (prev + 1) % HERO_STATS.length);
+    }, 2800);
+    return () => clearInterval(interval);
+  }, []);
+
+  const counterData = useCounter(15000, 2200);
 
   return (
-    <main className="min-h-screen selection:bg-blue-500/30 selection:text-blue-200" style={{ backgroundColor: BG, color: "#f8fafc" }}>
-      <CircuitPattern />
-      <TechParticles />
+    <main className="appl-v2 min-h-screen selection:bg-orange-500/30 selection:text-orange-200" style={{ backgroundColor: BG, color: "#f8fafc" }}>
+      <BoltGrid />
+      <FloatingSparks />
 
-      {/* ─── 1. STICKY NAVIGATION ─── */}
-      <motion.nav initial={{ y: -100 }} animate={{ y: 0 }} transition={spring} className="fixed top-0 left-0 right-0 z-50 px-4 py-4 md:px-6 md:py-6 pointer-events-none">
+      {/* ═══════════════════ 1. STICKY NAVIGATION ═══════════════════ */}
+      <motion.nav initial={{ y: -100 }} animate={{ y: 0 }} transition={spring} className="fixed top-0 left-0 right-0 z-50 px-4 py-4 md:px-6 md:py-5 pointer-events-none">
         <div className="mx-auto max-w-7xl">
-          <GlassCard className="pointer-events-auto flex items-center justify-between px-6 py-4">
+          <GlassCard className="pointer-events-auto flex items-center justify-between px-6 py-3.5">
             <div className="flex items-center gap-3">
-              <WrenchIcon size={28} />
+              <LogoIcon size={28} />
               <span className="text-xl font-bold tracking-tight text-white">ProFix</span>
             </div>
             <div className="hidden md:flex items-center gap-8">
-              {["Services", "Process", "Testimonials", "FAQ"].map((item) => (
+              {["Services", "Pricing", "About", "Reviews", "Contact"].map((item) => (
                 <a key={item} href={`#${item.toLowerCase()}`} className="text-sm font-medium text-slate-300 hover:text-white transition-colors">{item}</a>
               ))}
             </div>
             <div className="hidden md:flex items-center gap-4">
-              <a href="tel:555-123-4567" className="text-sm font-semibold flex items-center gap-2" style={{ color: ACCENT_LIGHT }}>
-                <Phone size={16} weight="duotone" /> (555) 123-4567
+              <a href="tel:2067214859" className="text-sm font-semibold flex items-center gap-2" style={{ color: ACCENT_LIGHT }}>
+                <Phone size={16} weight="duotone" /> (206) 721-4859
               </a>
-              <MagneticButton className="px-5 py-2.5 rounded-full text-sm font-semibold text-white cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
+              <MagneticButton className="px-5 py-2.5 rounded-full text-sm font-semibold text-white cursor-pointer" style={{ background: ACCENT }}>
                 Book Repair
               </MagneticButton>
             </div>
-            <button className="md:hidden text-white p-2" onClick={() => setIsMenuOpen(true)}>
-              <List size={24} />
+            {/* mobile burger */}
+            <button className="md:hidden text-white" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+              {isMenuOpen ? <X size={24} /> : <List size={24} />}
             </button>
           </GlassCard>
         </div>
       </motion.nav>
 
-      {/* MOBILE MENU */}
+      {/* mobile menu */}
       <AnimatePresence>
         {isMenuOpen && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[60] bg-slate-900/95 backdrop-blur-xl flex flex-col p-6">
-            <div className="flex justify-end">
-              <button onClick={() => setIsMenuOpen(false)} className="p-2 text-white"><X size={32} /></button>
-            </div>
-            <div className="flex flex-col items-center justify-center flex-1 gap-8">
-              {["Services", "Process", "Testimonials", "FAQ"].map((item) => (
-                <a key={item} href={`#${item.toLowerCase()}`} onClick={() => setIsMenuOpen(false)} className="text-3xl font-bold text-white">{item}</a>
+          <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="fixed inset-x-0 top-[76px] z-40 px-4">
+            <GlassCard className="p-6 flex flex-col gap-4">
+              {["Services", "Pricing", "About", "Reviews", "Contact"].map((item) => (
+                <a key={item} href={`#${item.toLowerCase()}`} onClick={() => setIsMenuOpen(false)} className="text-base font-medium text-slate-200 hover:text-white transition-colors">{item}</a>
               ))}
-              <div className="mt-8 flex flex-col items-center gap-4">
-                <a href="tel:555-123-4567" className="text-xl font-semibold flex items-center gap-2" style={{ color: ACCENT_LIGHT }}>
-                  <Phone size={24} weight="duotone" /> (555) 123-4567
-                </a>
-                <button className="px-8 py-4 rounded-full text-lg font-semibold text-white w-full max-w-xs" style={{ background: ACCENT }}>
-                  Book Repair Now
-                </button>
-              </div>
-            </div>
+              <a href="tel:2067214859" className="text-base font-semibold flex items-center gap-2 mt-2" style={{ color: ACCENT }}>
+                <Phone size={18} weight="duotone" /> (206) 721-4859
+              </a>
+            </GlassCard>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* ─── 2. HERO SECTION ─── */}
-      <section className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-gradient-to-b from-slate-900/80 via-slate-900/60 to-slate-900/90 z-10" />
-          <motion.img initial={{ scale: 1.1 }} animate={{ scale: 1 }} transition={{ duration: 20, ease: "linear", repeat: Infinity, repeatType: "reverse" }} src="https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=1600&q=80" alt="Appliance Repair Professional" className="w-full h-full object-cover" />
-        </div>
-        <div className="relative z-10 mx-auto max-w-5xl px-4 md:px-6 text-center mt-12">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mb-8">
-            <span className="flex h-2 w-2 rounded-full" style={{ background: ACCENT_LIGHT, boxShadow: `0 0 10px ${ACCENT_LIGHT}` }} />
-            <span className="text-xs font-medium tracking-wide text-white uppercase">Fast, Reliable Appliance Repair</span>
+      {/* ═══════════════════ 2. HERO #19 — COUNTER STAT HERO ═══════════════════ */}
+      <section className="relative z-10 min-h-screen flex flex-col items-center justify-center text-center px-4 pt-28 pb-16 overflow-hidden">
+        {/* radial glow */}
+        <div className="absolute inset-0 pointer-events-none" style={{ background: `radial-gradient(ellipse 60% 40% at 50% 45%, ${ACCENT_GLOW}, transparent 70%)` }} />
+
+        {/* subtle top line decoration */}
+        <motion.div className="absolute top-32 left-1/2 -translate-x-1/2 w-px h-24" style={{ background: `linear-gradient(to bottom, transparent, ${STEEL}, transparent)` }} initial={{ scaleY: 0 }} animate={{ scaleY: 1 }} transition={{ duration: 1.2, delay: 0.3 }} />
+
+        <div className="relative z-10 max-w-4xl mx-auto">
+          {/* cycling stat counter */}
+          <div className="relative mb-8" ref={counterData.ref}>
+            <AnimatePresence mode="wait">
+              <motion.div key={activeStatIndex} initial={{ opacity: 0, y: 30, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -30, scale: 0.95 }} transition={{ duration: 0.5 }}>
+                <div className="text-7xl sm:text-8xl md:text-9xl font-black tracking-tight" style={{ color: ACCENT, textShadow: `0 0 80px ${ACCENT_GLOW}` }}>
+                  {HERO_STATS[activeStatIndex].value}
+                </div>
+                <div className="text-xl md:text-2xl font-medium tracking-wide uppercase mt-2" style={{ color: STEEL_LIGHT }}>
+                  {HERO_STATS[activeStatIndex].label}
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          {/* stat dots indicator */}
+          <div className="flex items-center justify-center gap-2.5 mb-10">
+            {HERO_STATS.map((_, i) => (
+              <button key={i} onClick={() => setActiveStatIndex(i)} className="w-2.5 h-2.5 rounded-full transition-all duration-300 cursor-pointer" style={{ background: i === activeStatIndex ? ACCENT : STEEL, transform: i === activeStatIndex ? "scale(1.3)" : "scale(1)" }} />
+            ))}
+          </div>
+
+          {/* same-day badge */}
+          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.6 }} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border mb-10" style={{ borderColor: `${ACCENT}44`, background: `${ACCENT}15` }}>
+            <motion.span className="w-2.5 h-2.5 rounded-full" style={{ background: ACCENT }} animate={{ scale: [1, 1.4, 1], opacity: [1, 0.6, 1] }} transition={{ duration: 1.5, repeat: Infinity }} />
+            <span className="text-sm font-bold tracking-wide uppercase" style={{ color: ACCENT_LIGHT }}>Same-Day Service Available</span>
           </motion.div>
-          <h1 className="text-5xl md:text-7xl lg:text-8xl tracking-tighter leading-[1.1] font-bold text-white mb-6">
-            <WordReveal text="Don't Let a Broken Appliance Ruin Your Day." />
+
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white leading-tight mb-5">
+            Same-Day Appliance Repair. <span style={{ color: ACCENT }}>Guaranteed.</span>
           </h1>
-          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto mb-10 leading-relaxed">
-            Expert diagnostics and repair for all major brands. Same-day service available to get your household running smoothly again.
-          </motion.p>
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 }} className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <MagneticButton className="w-full sm:w-auto px-8 py-4 rounded-full text-base font-semibold text-white flex items-center justify-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
-              Schedule Service <ArrowRight size={18} weight="bold" />
+          <p className="text-lg md:text-xl max-w-2xl mx-auto mb-10" style={{ color: STEEL_LIGHT }}>
+            Steve Park and the ProFix team have been keeping Seattle&apos;s kitchens and laundry rooms running for 15 years. EPA certified. Factory trained. One call, one fix.
+          </p>
+
+          {/* CTA buttons */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <MagneticButton href="tel:2067214859" className="px-8 py-4 rounded-full text-lg font-bold text-white flex items-center gap-3 cursor-pointer" style={{ background: ACCENT }}>
+              <Phone size={22} weight="bold" /> Call Now
             </MagneticButton>
-            <MagneticButton className="w-full sm:w-auto px-8 py-4 rounded-full text-base font-semibold text-white border border-white/20 bg-white/5 backdrop-blur-md flex items-center justify-center gap-2 cursor-pointer hover:bg-white/10 transition-colors">
-              <Phone size={18} weight="duotone" /> Call (555) 123-4567
+            <MagneticButton href="#services" className="px-8 py-4 rounded-full text-lg font-bold border-2 flex items-center gap-3 cursor-pointer" style={{ borderColor: STEEL, color: STEEL_LIGHT }}>
+              View Services <ArrowRight size={20} />
             </MagneticButton>
-          </motion.div>
+          </div>
         </div>
+
+        {/* trust badges row */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1 }} className="flex flex-wrap items-center justify-center gap-3 mt-14">
+          {["EPA Certified", "4.9 Stars", "15 Years", "Same-Day"].map((badge) => (
+            <span key={badge} className="px-4 py-2 rounded-full text-xs font-bold tracking-wide uppercase border" style={{ borderColor: `${STEEL}55`, color: STEEL_LIGHT, background: `${STEEL}15` }}>
+              {badge}
+            </span>
+          ))}
+        </motion.div>
       </section>
 
-      {/* ─── 3. STATS / TRUST BAR ─── */}
-      <div className="relative z-20 -mt-12 mx-auto max-w-6xl px-4 md:px-6">
-        <GlassCard className="p-6 md:p-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 divide-x divide-white/10">
-            {[
-              { label: "Years Experience", value: "15+", icon: Timer },
-              { label: "Repairs Completed", value: "10k+", icon: Wrench },
-              { label: "Happy Customers", value: "99%", icon: Users },
-              { label: "Satisfaction Guarantee", value: "100%", icon: ShieldCheck },
-            ].map((stat, i) => (
-              <div key={i} className={`flex flex-col items-center text-center ${i % 2 !== 0 ? "pl-6 md:pl-8" : ""} ${i > 1 ? "mt-6 md:mt-0 pt-6 md:pt-0 border-t border-white/10 md:border-t-0" : ""}`}>
-                <stat.icon size={28} weight="duotone" style={{ color: ACCENT_LIGHT }} className="mb-3" />
-                <span className="text-3xl md:text-4xl font-bold text-white mb-1">{stat.value}</span>
-                <span className="text-xs md:text-sm text-slate-400 font-medium uppercase tracking-wider">{stat.label}</span>
-              </div>
-            ))}
+      {/* ═══════════════════ 2.5. EMERGENCY URGENCY STRIP ═══════════════════ */}
+      <div className="relative z-10 py-5 px-4" style={{ background: `linear-gradient(90deg, ${ACCENT}18, ${ACCENT}08, ${ACCENT}18)`, borderTop: `1px solid ${ACCENT}22`, borderBottom: `1px solid ${ACCENT}22` }}>
+        <div className="mx-auto max-w-5xl flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-10 text-center">
+          <div className="flex items-center gap-2">
+            <motion.div animate={{ scale: [1, 1.3, 1], opacity: [1, 0.5, 1] }} transition={{ duration: 1.2, repeat: Infinity }} className="w-2.5 h-2.5 rounded-full" style={{ background: "#22c55e" }} />
+            <span className="text-sm font-bold" style={{ color: "#22c55e" }}>Techs Available Now</span>
           </div>
-        </GlassCard>
+          <div className="flex items-center gap-2">
+            <Timer size={16} weight="bold" style={{ color: ACCENT_LIGHT }} />
+            <span className="text-sm font-semibold" style={{ color: STEEL_LIGHT }}>Average Response: <span className="text-white font-bold">Under 2 Hours</span></span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Phone size={16} weight="bold" style={{ color: ACCENT_LIGHT }} />
+            <a href="tel:2067214859" className="text-sm font-bold" style={{ color: ACCENT }}>(206) 721-4859</a>
+          </div>
+        </div>
       </div>
 
-      {/* ─── 4. SERVICES GRID ─── */}
-      <SectionReveal id="services" className="relative z-10 py-24 md:py-32">
-        <div className="mx-auto max-w-7xl px-4 md:px-6">
-          <div className="text-center mb-16">
-            <p className="text-sm uppercase tracking-widest mb-3 font-semibold" style={{ color: ACCENT_LIGHT }}>What We Fix</p>
-            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white mb-6">
-              <WordReveal text="Comprehensive Appliance Repair" />
-            </h2>
-            <p className="text-slate-400 max-w-2xl mx-auto text-lg">From refrigerators that won't cool to washers that won't spin, our expert technicians can fix it all.</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {services.map((service, i) => (
-              <GlassCard key={i} className="overflow-hidden flex flex-col">
-                <button onClick={() => setExpandedService(expandedService === i ? null : i)} className="p-8 text-left w-full flex-1 flex flex-col cursor-pointer group">
-                  <div className="h-14 w-14 rounded-2xl flex items-center justify-center mb-6 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3" style={{ background: ACCENT_GLOW, border: `1px solid ${ACCENT}40` }}>
-                    <service.icon size={28} weight="duotone" style={{ color: ACCENT_LIGHT }} />
+      {/* ═══════════════════ 3. SERVICES ═══════════════════ */}
+      <SectionReveal id="services" className="relative z-10 py-24 px-4">
+        <div className="mx-auto max-w-7xl">
+          <SectionHeader label="Our Expertise" title="8 Appliances." accent="One Call." subtitle="From washers to garbage disposals, our factory-trained technicians diagnose and repair every major household appliance." />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {SERVICES.map((svc, i) => {
+              const Icon = svc.icon;
+              return (
+                <GlassCard key={i} className="p-6 group hover:border-orange-500/30 transition-all duration-300">
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: ACCENT_GLOW }}>
+                    <Icon size={26} weight="duotone" style={{ color: ACCENT }} />
                   </div>
-                  <h3 className="text-xl font-bold text-white mb-3 flex items-center justify-between w-full">
-                    {service.title}
-                    <motion.div animate={{ rotate: expandedService === i ? 180 : 0 }} transition={spring}><CaretDown size={20} className="text-slate-500" /></motion.div>
-                  </h3>
-                  <AnimatePresence initial={false}>
-                    {expandedService === i ? (
-                      <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={spring} className="overflow-hidden">
-                        <p className="text-slate-400 leading-relaxed pt-2">{service.description}</p>
-                      </motion.div>
-                    ) : (
-                      <p className="text-slate-400 leading-relaxed line-clamp-2">{service.description}</p>
-                    )}
-                  </AnimatePresence>
-                </button>
-              </GlassCard>
-            ))}
-          </div>
-        </div>
-      </SectionReveal>
-
-      {/* ─── 5. PORTFOLIO / GALLERY ─── */}
-      <SectionReveal className="relative z-10 py-16 md:py-24 bg-slate-900/50 border-y border-white/5">
-        <div className="mx-auto max-w-7xl px-4 md:px-6">
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
-            <div>
-              <p className="text-sm uppercase tracking-widest mb-3 font-semibold" style={{ color: ACCENT_LIGHT }}>Our Work</p>
-              <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white">
-                <WordReveal text="Professional Repairs in Action" />
-              </h2>
-            </div>
-            <MagneticButton className="px-6 py-3 rounded-full text-sm font-semibold text-white border border-white/10 bg-white/5 flex items-center gap-2 cursor-pointer whitespace-nowrap">
-              View Full Gallery <ArrowRight size={16} />
-            </MagneticButton>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-            {portfolioImages.map((src, i) => (
-              <motion.div key={i} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={i} className="group relative aspect-square rounded-2xl overflow-hidden bg-slate-800">
-                <img src={src} alt={`Appliance repair work ${i + 1}`} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 group-hover:rotate-1 opacity-80 group-hover:opacity-100" loading="lazy" />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
-                  <div className="translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                    <p className="text-white font-semibold">Expert Diagnostics</p>
-                    <p className="text-sm text-slate-300">Precision repair work</p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </SectionReveal>
-
-      {/* ─── 6. ABOUT SECTION ─── */}
-      <SectionReveal className="relative z-10 py-24 md:py-32">
-        <div className="mx-auto max-w-7xl px-4 md:px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <div className="relative">
-              <div className="aspect-[4/5] rounded-3xl overflow-hidden relative z-10 border border-white/10">
-                <img src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=800&q=80" alt="Appliance Repair Technician" className="w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent" />
-              </div>
-              <GlassCard className="absolute -bottom-8 -right-8 p-6 z-20 max-w-xs hidden md:block">
-                <div className="flex items-center gap-4 mb-2">
-                  <div className="h-12 w-12 rounded-full flex items-center justify-center" style={{ background: ACCENT_GLOW }}>
-                    <Medal size={24} weight="duotone" style={{ color: ACCENT_LIGHT }} />
-                  </div>
-                  <div>
-                    <p className="text-2xl font-bold text-white">15+ Years</p>
-                    <p className="text-xs text-slate-400 uppercase tracking-wider">Serving the Community</p>
-                  </div>
-                </div>
-              </GlassCard>
-            </div>
-            <div>
-              <p className="text-sm uppercase tracking-widest mb-3 font-semibold" style={{ color: ACCENT_LIGHT }}>About ProFix</p>
-              <h2 className="text-4xl md:text-5xl tracking-tighter leading-tight font-bold text-white mb-6">
-                <WordReveal text="Your Trusted Local Appliance Experts." />
-              </h2>
-              <div className="space-y-6 text-slate-400 text-lg leading-relaxed mb-8">
-                <p>
-                  At ProFix Appliance Repair, we understand how disruptive a broken appliance can be to your daily routine. That's why we've dedicated ourselves to providing fast, reliable, and honest repair services to our community for over 15 years.
-                </p>
-                <p>
-                  Our team of factory-trained technicians arrives fully equipped with the tools and common parts needed to fix most issues on the first visit. We believe in transparent pricing, clear communication, and treating your home with the utmost respect.
-                </p>
-              </div>
-              <ul className="space-y-4 mb-10">
-                {[
-                  "Upfront, flat-rate pricing with no hidden fees",
-                  "Fully stocked service vehicles for faster repairs",
-                  "Respectful technicians who clean up after themselves",
-                  "Locally owned and operated family business"
-                ].map((item, i) => (
-                  <li key={i} className="flex items-start gap-3">
-                    <CheckCircle size={24} weight="fill" style={{ color: ACCENT }} className="shrink-0 mt-0.5" />
-                    <span className="text-slate-300">{item}</span>
-                  </li>
-                ))}
-              </ul>
-              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white inline-flex items-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
-                Learn More About Us
-              </MagneticButton>
-            </div>
-          </div>
-        </div>
-      </SectionReveal>
-
-      {/* ─── 7. 4-STEP PROCESS ─── */}
-      <SectionReveal id="process" className="relative z-10 py-24 md:py-32 bg-slate-900/30">
-        <div className="mx-auto max-w-7xl px-4 md:px-6">
-          <div className="text-center mb-16">
-            <p className="text-sm uppercase tracking-widest mb-3 font-semibold" style={{ color: ACCENT_LIGHT }}>How It Works</p>
-            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white mb-6">
-              <WordReveal text="Our Simple Repair Process" />
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
-            <div className="hidden md:block absolute top-12 left-[10%] right-[10%] h-[1px] bg-gradient-to-r from-transparent via-slate-700 to-transparent z-0" />
-            {[
-              { step: "01", title: "Schedule", desc: "Book online or call us. We offer flexible scheduling including same-day service for emergencies.", icon: CalendarCheck },
-              { step: "02", title: "Diagnose", desc: "Our technician arrives on time, inspects the appliance, and identifies the exact cause of the problem.", icon: Wrench },
-              { step: "03", title: "Quote", desc: "We provide a clear, upfront price for the repair before any work begins. No surprises.", icon: List },
-              { step: "04", title: "Repair", desc: "We fix the issue using quality parts, test the appliance thoroughly, and clean up our workspace.", icon: CheckCircle },
-            ].map((item, i) => (
-              <div key={i} className="relative z-10 flex flex-col items-center text-center">
-                <div className="w-24 h-24 rounded-full bg-slate-900 border border-white/10 flex items-center justify-center mb-6 relative shadow-xl">
-                  <div className="absolute inset-2 rounded-full border border-dashed border-slate-700 animate-[spin_20s_linear_infinite]" />
-                  <item.icon size={32} weight="duotone" style={{ color: ACCENT_LIGHT }} />
-                  <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white" style={{ background: ACCENT }}>
-                    {item.step}
-                  </div>
-                </div>
-                <h3 className="text-xl font-bold text-white mb-3">{item.title}</h3>
-                <p className="text-slate-400 text-sm leading-relaxed">{item.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </SectionReveal>
-
-      {/* ─── 8. TESTIMONIALS ─── */}
-      <SectionReveal id="testimonials" className="relative z-10 py-24 md:py-32">
-        <div className="mx-auto max-w-7xl px-4 md:px-6">
-          <div className="text-center mb-16">
-            <p className="text-sm uppercase tracking-widest mb-3 font-semibold" style={{ color: ACCENT_LIGHT }}>Customer Reviews</p>
-            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white mb-6">
-              <WordReveal text="What Our Clients Say" />
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {testimonials.map((testimonial, i) => (
-              <GlassCard key={i} className="p-8 flex flex-col h-full relative overflow-hidden group">
-                <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
-                  <Quotes size={64} weight="fill" style={{ color: ACCENT }} />
-                </div>
-                <div className="flex gap-1 mb-6 relative z-10">
-                  {[...Array(testimonial.rating)].map((_, j) => (
-                    <Star key={j} size={18} weight="fill" style={{ color: ACCENT_LIGHT }} />
-                  ))}
-                </div>
-                <p className="text-slate-300 leading-relaxed mb-8 flex-1 relative z-10 italic">"{testimonial.text}"</p>
-                <div className="flex items-center gap-4 relative z-10">
-                  <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-white font-bold border border-white/10">
-                    {testimonial.name.charAt(0)}
-                  </div>
-                  <div>
-                    <p className="text-white font-semibold text-sm">{testimonial.name}</p>
-                    <p className="text-slate-500 text-xs">Verified Customer</p>
-                  </div>
-                </div>
-              </GlassCard>
-            ))}
-          </div>
-        </div>
-      </SectionReveal>
-
-      {/* ─── 9. GUARANTEE / CERTIFICATIONS ─── */}
-      <SectionReveal className="relative z-10 py-16 border-y border-white/5 bg-slate-900/50">
-        <div className="mx-auto max-w-7xl px-4 md:px-6">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-            <div className="flex items-center gap-6 md:w-1/3">
-              <ShieldCheck size={64} weight="duotone" style={{ color: ACCENT }} className="shrink-0" />
-              <div>
-                <h3 className="text-xl font-bold text-white mb-1">90-Day Guarantee</h3>
-                <p className="text-sm text-slate-400">Parts and labor guaranteed.</p>
-              </div>
-            </div>
-            <div className="flex flex-wrap justify-center md:justify-end gap-3 md:w-2/3">
-              {certifications.map((cert, i) => (
-                <div key={i} className="px-4 py-2 rounded-full border border-white/10 bg-white/5 text-xs font-medium text-slate-300 flex items-center gap-2">
-                  <Certificate size={14} style={{ color: ACCENT_LIGHT }} /> {cert}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </SectionReveal>
-
-      {/* ─── 10. FAQ ACCORDION ─── */}
-      <SectionReveal id="faq" className="relative z-10 py-24 md:py-32">
-        <div className="mx-auto max-w-3xl px-4 md:px-6">
-          <div className="text-center mb-12">
-            <p className="text-sm uppercase tracking-widest mb-3 font-semibold" style={{ color: ACCENT_LIGHT }}>Questions</p>
-            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white">
-              <WordReveal text="Frequently Asked Questions" />
-            </h2>
-          </div>
-          <motion.div className="space-y-3" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
-            {faqData.map((item, i) => (
-              <motion.div key={i} variants={fadeUp}>
-                <GlassCard className="overflow-hidden">
-                  <button onClick={() => setOpenFaq(openFaq === i ? null : i)} className="w-full flex items-center justify-between p-5 text-left cursor-pointer">
-                    <span className="text-sm md:text-base font-semibold text-white pr-4">{item.q}</span>
-                    <motion.div animate={{ rotate: openFaq === i ? 180 : 0 }} transition={spring}><CaretDown size={18} className="text-slate-400 shrink-0" /></motion.div>
-                  </button>
-                  <AnimatePresence initial={false}>
-                    {openFaq === i && (
-                      <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={spring} className="overflow-hidden">
-                        <p className="px-5 pb-5 text-sm text-slate-400 leading-relaxed">{item.a}</p>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                  <div className="text-xs font-bold tracking-widest uppercase mb-2" style={{ color: STEEL }}>0{i + 1}</div>
+                  <h3 className="text-lg font-bold text-white mb-2">{svc.title}</h3>
+                  <p className="text-sm leading-relaxed" style={{ color: STEEL_LIGHT }}>{svc.desc}</p>
                 </GlassCard>
-              </motion.div>
-            ))}
-          </motion.div>
+              );
+            })}
+          </div>
         </div>
       </SectionReveal>
 
-      {/* ─── 11. CTA BANNER ─── */}
-      <SectionReveal className="relative z-10 py-16 md:py-24">
-        <div className="mx-auto max-w-4xl px-4 md:px-6">
+      {/* ═══════════════════ 4. SAME-DAY GUARANTEE ═══════════════════ */}
+      <SectionReveal className="relative z-10 py-24 px-4">
+        <div className="mx-auto max-w-5xl">
           <ShimmerBorder>
-            <div className="p-8 md:p-12 text-center">
-              <motion.div initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={spring}>
-                <p className="text-sm uppercase tracking-widest mb-3 font-semibold" style={{ color: ACCENT_LIGHT }}>Fast Service</p>
-                <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white mb-4">Need a Repair Today?</h2>
-                <p className="text-slate-400 text-lg mb-8 max-w-lg mx-auto">Don't wait days for a technician. Call now to schedule same-day service and get your appliance working again.</p>
-                <div className="flex flex-wrap justify-center gap-4">
-                  <MagneticButton className="px-10 py-4 rounded-full text-base font-semibold text-white inline-flex items-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
-                    <CalendarCheck size={20} weight="duotone" /> Book Online
-                  </MagneticButton>
-                  <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 inline-flex items-center gap-2 cursor-pointer hover:bg-white/5 transition-colors">
-                    <Phone size={18} weight="duotone" /> (555) 123-4567
-                  </MagneticButton>
-                </div>
+            <div className="p-10 md:p-16 text-center">
+              <motion.div animate={{ scale: [1, 1.15, 1], opacity: [1, 0.7, 1] }} transition={{ duration: 2, repeat: Infinity }} className="w-16 h-16 rounded-full mx-auto mb-6 flex items-center justify-center" style={{ background: ACCENT_GLOW }}>
+                <Timer size={32} weight="duotone" style={{ color: ACCENT }} />
               </motion.div>
+              <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">
+                Same-Day Service <span style={{ color: ACCENT }}>Guarantee</span>
+              </h2>
+              <p className="text-lg max-w-2xl mx-auto mb-8" style={{ color: STEEL_LIGHT }}>
+                Call before noon and we guarantee a technician at your door the same day. If we can&apos;t make it, your diagnostic fee is on us. No excuses, no reschedules, no runaround.
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                {[
+                  { stat: "< 2 hrs", label: "Average Response" },
+                  { stat: "98%", label: "Same-Day Rate" },
+                  { stat: "$0", label: "If We're Late" },
+                ].map((item, i) => (
+                  <div key={i} className="text-center">
+                    <div className="text-3xl font-black" style={{ color: ACCENT }}>{item.stat}</div>
+                    <div className="text-sm mt-1" style={{ color: STEEL_LIGHT }}>{item.label}</div>
+                  </div>
+                ))}
+              </div>
             </div>
           </ShimmerBorder>
         </div>
       </SectionReveal>
 
-      {/* ─── 12. CONTACT SECTION ─── */}
-      <SectionReveal className="relative z-10 py-16 md:py-24 bg-slate-900/30">
-        <div className="mx-auto max-w-7xl px-4 md:px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white mb-6">
-                <WordReveal text="We're Here to Help." />
-              </h2>
-              <p className="text-slate-400 leading-relaxed max-w-md mb-8">
-                Contact ProFix Appliance Repair today. Our friendly dispatchers are ready to answer your questions and schedule your service appointment.
-              </p>
-            </div>
-            <GlassCard className="p-8">
-              <h3 className="text-xl font-semibold text-white mb-6">Contact Information</h3>
-              <div className="space-y-6">
-                <div className="flex items-start gap-4">
-                  <MapPin size={24} weight="duotone" style={{ color: ACCENT_LIGHT }} className="mt-0.5 shrink-0" />
-                  <div><p className="text-sm font-semibold text-white mb-1">Service Area</p><p className="text-sm text-slate-400">Serving the Greater Metro Area<br />and surrounding suburbs</p></div>
+      {/* ═══════════════════ 4.5. STAT COUNTER STRIP ═══════════════════ */}
+      <SectionReveal className="relative z-10 py-16 px-4">
+        <div className="mx-auto max-w-5xl">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              { value: "15,000+", label: "Appliances Repaired", icon: Wrench },
+              { value: "98%", label: "First-Visit Fix Rate", icon: CheckCircle },
+              { value: "4.9", label: "Google Star Rating", icon: Star },
+              { value: "287", label: "Verified Reviews", icon: Users },
+            ].map((stat, i) => {
+              const Icon = stat.icon;
+              return (
+                <div key={i} className="text-center p-6 rounded-2xl" style={{ background: `${STEEL}08`, border: `1px solid ${STEEL}15` }}>
+                  <Icon size={28} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-3" />
+                  <div className="text-3xl md:text-4xl font-black mb-1" style={{ color: ACCENT }}>{stat.value}</div>
+                  <div className="text-xs font-medium uppercase tracking-wider" style={{ color: STEEL_LIGHT }}>{stat.label}</div>
                 </div>
-                <div className="flex items-start gap-4">
-                  <Phone size={24} weight="duotone" style={{ color: ACCENT_LIGHT }} className="mt-0.5 shrink-0" />
-                  <div><p className="text-sm font-semibold text-white mb-1">Phone</p><p className="text-sm text-slate-400">(555) 123-4567<br />24/7 Emergency Answering</p></div>
-                </div>
-                <div className="flex items-start gap-4">
-                  <Clock size={24} weight="duotone" style={{ color: ACCENT_LIGHT }} className="mt-0.5 shrink-0" />
-                  <div><p className="text-sm font-semibold text-white mb-1">Operating Hours</p><p className="text-sm text-slate-400">Monday - Friday: 8:00 AM - 6:00 PM<br />Saturday: 9:00 AM - 2:00 PM</p></div>
-                </div>
-              </div>
-            </GlassCard>
+              );
+            })}
           </div>
         </div>
       </SectionReveal>
 
-      {/* ─── 13. FOOTER ─── */}
-      <footer className="relative z-10 border-t border-white/5 py-8 pb-24 md:pb-8">
-        <div className="mx-auto max-w-7xl px-4 md:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2 text-sm text-slate-500">
-            <WrenchIcon size={16} />
-            <span>ProFix Appliance Repair &copy; {new Date().getFullYear()}</span>
-          </div>
-          <p className="text-xs text-slate-600">Created by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" className="hover:text-slate-400 transition-colors" style={{textDecoration:"underline"}}>bluejayportfolio.com</a></p>
-        </div>
-      </footer>
-
-      {/* ─── 14. FIXED CLAIM BANNER ─── */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 p-4 pointer-events-none">
-        <div className="mx-auto max-w-3xl">
-          <GlassCard className="pointer-events-auto p-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-2xl border-t border-white/20" style={{ background: "rgba(15, 23, 32, 0.85)" }}>
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-full flex items-center justify-center shrink-0" style={{ background: ACCENT_GLOW }}>
-                <Timer size={20} weight="duotone" style={{ color: ACCENT_LIGHT }} />
+      {/* ═══════════════════ 5. UPFRONT PRICING ═══════════════════ */}
+      <SectionReveal id="pricing" className="relative z-10 py-24 px-4">
+        <div className="mx-auto max-w-7xl">
+          <SectionHeader label="Transparent Pricing" title="No Surprises." accent="Ever." subtitle="Our flat-rate pricing means you know the cost before we start. The $89 diagnostic is waived when you approve the repair." />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            {PRICING.map((tier, i) => (
+              <div key={i} className={`relative rounded-2xl p-8 text-center transition-all duration-300 ${tier.highlight ? "scale-105 border-2" : "border border-white/15"}`} style={{ background: tier.highlight ? `linear-gradient(135deg, ${BG}, #1a1a1a)` : `${BG}`, borderColor: tier.highlight ? ACCENT : undefined }}>
+                {tier.badge && (
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-xs font-bold text-white" style={{ background: ACCENT }}>{tier.badge}</span>
+                )}
+                <h3 className="text-lg font-bold text-white mt-2 mb-3">{tier.tier}</h3>
+                <div className="text-4xl font-black mb-4" style={{ color: ACCENT }}>{tier.price}</div>
+                <p className="text-sm" style={{ color: STEEL_LIGHT }}>{tier.desc}</p>
               </div>
-              <div>
-                <p className="text-sm font-bold text-white">Need it fixed today?</p>
-                <p className="text-xs text-slate-400">Same-day service available in your area.</p>
+            ))}
+          </div>
+          <p className="text-center mt-8 text-sm" style={{ color: STEEL }}>All prices include parts and labor. 90-day warranty on every repair.</p>
+        </div>
+      </SectionReveal>
+
+      {/* ═══════════════════ 6. BRANDS WE SERVICE ═══════════════════ */}
+      <SectionReveal className="relative z-10 py-24 px-4" style={{ background: `linear-gradient(180deg, transparent, ${STEEL_GLOW}, transparent)` }}>
+        <div className="mx-auto max-w-6xl">
+          <SectionHeader label="All Major Brands" title="Factory Trained on" accent="Your Brand." subtitle="Our technicians hold factory certifications and carry OEM parts for the most popular appliance manufacturers." />
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-5">
+            {BRANDS.map((brand, i) => (
+              <GlassCard key={i} className="p-6 text-center hover:border-orange-500/30 transition-all duration-300">
+                <div className="text-xl font-bold text-white mb-1">{brand}</div>
+                <div className="text-xs font-medium uppercase tracking-wider" style={{ color: STEEL }}>Authorized Service</div>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ═══════════════════ 7. REPAIR PROCESS ═══════════════════ */}
+      <SectionReveal className="relative z-10 py-24 px-4">
+        <div className="mx-auto max-w-6xl">
+          <SectionHeader label="How It Works" title="4 Steps to a" accent="Working Appliance" subtitle="No runaround. No hidden fees. Just a straightforward process from first call to finished repair." />
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            {[
+              { step: "01", title: "Call ProFix", desc: "Describe the problem over the phone. We'll give you a time window — usually the same day.", icon: Phone },
+              { step: "02", title: "We Diagnose", desc: "Our tech inspects the appliance on-site and tells you exactly what's wrong and what it costs. No surprises.", icon: Gauge },
+              { step: "03", title: "We Repair", desc: "Most fixes happen in one visit. We carry the most common OEM parts on every truck for fast turnarounds.", icon: Wrench },
+              { step: "04", title: "We Guarantee", desc: "Every repair is backed by a 90-day parts warranty and 30-day labor warranty. If it breaks again, we come back free.", icon: ShieldCheck },
+            ].map((item, i) => {
+              const Icon = item.icon;
+              return (
+                <div key={i} className="relative">
+                  {/* connector line */}
+                  {i < 3 && (
+                    <div className="hidden md:block absolute top-10 left-full w-full h-px z-0" style={{ background: `linear-gradient(to right, ${ACCENT}44, transparent)` }} />
+                  )}
+                  <div className="relative z-10">
+                    <div className="w-20 h-20 rounded-2xl flex items-center justify-center mb-5 mx-auto md:mx-0" style={{ background: `linear-gradient(135deg, ${ACCENT}20, ${ACCENT}08)`, border: `1px solid ${ACCENT}33` }}>
+                      <Icon size={32} weight="duotone" style={{ color: ACCENT }} />
+                    </div>
+                    <div className="text-xs font-black tracking-widest uppercase mb-2 text-center md:text-left" style={{ color: ACCENT }}>Step {item.step}</div>
+                    <h3 className="text-xl font-bold text-white mb-2 text-center md:text-left">{item.title}</h3>
+                    <p className="text-sm leading-relaxed text-center md:text-left" style={{ color: STEEL_LIGHT }}>{item.desc}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ═══════════════════ 8. OWNER SPOTLIGHT ═══════════════════ */}
+      <SectionReveal id="about" className="relative z-10 py-24 px-4">
+        <div className="mx-auto max-w-6xl">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <span className="inline-block px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase mb-6" style={{ background: ACCENT_GLOW, color: ACCENT_LIGHT }}>Meet Your Tech</span>
+              <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-6">
+                Steve Park. <span style={{ color: ACCENT }}>15 Years.</span>
+              </h2>
+              <p className="text-lg leading-relaxed mb-6" style={{ color: STEEL_LIGHT }}>
+                Steve founded ProFix Appliance Repair in Seattle&apos;s Greenwood neighborhood because he was tired of watching big-box repair chains overcharge his neighbors. Fifteen years, three EPA certifications, and thousands of house calls later, the mission is the same: fix it right, fix it fast, charge a fair price.
+              </p>
+              <p className="text-base leading-relaxed mb-8" style={{ color: STEEL }}>
+                Every technician on the ProFix team is factory-trained, background-checked, and carries the most common OEM parts on their truck so the majority of repairs happen in one visit.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                {["EPA Certified", "Factory Trained", "15 Years Experience"].map((badge) => (
+                  <span key={badge} className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold border" style={{ borderColor: `${ACCENT}44`, color: ACCENT_LIGHT, background: `${ACCENT}10` }}>
+                    <Certificate size={16} weight="duotone" style={{ color: ACCENT }} /> {badge}
+                  </span>
+                ))}
               </div>
             </div>
-            <MagneticButton className="w-full sm:w-auto px-6 py-2.5 rounded-full text-sm font-semibold text-white whitespace-nowrap cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
-              Claim $20 Off Repair
-            </MagneticButton>
+            <div className="relative">
+              <GlassCard className="p-8 md:p-10">
+                <div className="text-center">
+                  <div className="w-28 h-28 rounded-full mx-auto mb-6 flex items-center justify-center text-5xl font-black" style={{ background: `linear-gradient(135deg, ${ACCENT}, #ea580c)`, color: "white" }}>
+                    SP
+                  </div>
+                  <h3 className="text-2xl font-bold text-white mb-1">Steve Park</h3>
+                  <p className="text-sm mb-6" style={{ color: STEEL }}>Owner & Lead Technician</p>
+                  <div className="grid grid-cols-2 gap-4">
+                    {[
+                      { val: "15,000+", lbl: "Repairs" },
+                      { val: "15 yrs", lbl: "Experience" },
+                      { val: "4.9", lbl: "Google Rating" },
+                      { val: "98%", lbl: "Same-Day" },
+                    ].map((s, i) => (
+                      <div key={i} className="p-3 rounded-xl" style={{ background: `${STEEL}15` }}>
+                        <div className="text-xl font-black" style={{ color: ACCENT }}>{s.val}</div>
+                        <div className="text-xs" style={{ color: STEEL_LIGHT }}>{s.lbl}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </GlassCard>
+            </div>
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ═══════════════════ 8. "WHAT'S BROKEN?" QUIZ ═══════════════════ */}
+      <SectionReveal className="relative z-10 py-24 px-4">
+        <div className="mx-auto max-w-4xl">
+          <SectionHeader label="Quick Diagnosis" title="What Appliance" accent="Needs Repair?" subtitle="Select your appliance and we'll give you an instant cost estimate and next step." />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            {QUIZ_OPTIONS.map((opt, i) => {
+              const Icon = opt.icon;
+              const isSelected = quizChoice === i;
+              return (
+                <button key={i} onClick={() => setQuizChoice(i)} className={`text-left p-6 rounded-2xl border-2 transition-all duration-300 cursor-pointer ${isSelected ? "scale-[1.02]" : "hover:scale-[1.01]"}`} style={{ borderColor: isSelected ? ACCENT : `${STEEL}33`, background: isSelected ? `${ACCENT}10` : `${STEEL}08` }}>
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0" style={{ background: isSelected ? ACCENT_GLOW : `${STEEL}20` }}>
+                      <Icon size={24} weight="duotone" style={{ color: isSelected ? ACCENT : STEEL_LIGHT }} />
+                    </div>
+                    <div>
+                      <h4 className="text-base font-bold text-white mb-1">{opt.label}</h4>
+                      <p className="text-sm" style={{ color: STEEL_LIGHT }}>{opt.desc}</p>
+                      {isSelected && (
+                        <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="mt-3">
+                          <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold uppercase ${opt.severity === "urgent" ? "bg-red-500/20 text-red-400" : "bg-yellow-500/20 text-yellow-400"}`}>
+                            {opt.severity === "urgent" ? "Priority Response" : "Schedule Today"}
+                          </span>
+                        </motion.div>
+                      )}
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+          {quizChoice !== null && (
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="text-center mt-8">
+              <MagneticButton href="tel:2067214859" className="px-8 py-4 rounded-full text-lg font-bold text-white inline-flex items-center gap-3 cursor-pointer" style={{ background: ACCENT }}>
+                <Phone size={22} weight="bold" /> Call ProFix Now
+              </MagneticButton>
+            </motion.div>
+          )}
+        </div>
+      </SectionReveal>
+
+      {/* ═══════════════════ 9.5. HONEST REPAIR PROMISE ═══════════════════ */}
+      <SectionReveal className="relative z-10 py-24 px-4" style={{ background: `linear-gradient(180deg, transparent, ${STEEL_GLOW}, transparent)` }}>
+        <div className="mx-auto max-w-6xl">
+          <SectionHeader label="Our Promise" title="The Honest" accent="Mechanic Guarantee" subtitle="We built ProFix on trust. Here's what that means in practice." />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { title: "We Show the Problem", desc: "Before we fix anything, we show you exactly what's wrong. Photos, explanations, no jargon. You understand it, then you decide.", icon: Gauge },
+              { title: "Upfront Pricing", desc: "You get the full cost before we start. No hourly rates that balloon. No 'oh, we found another issue' surprises at the end.", icon: CurrencyDollar },
+              { title: "No Upselling", desc: "If your appliance only needs a $30 part, we'll say so. We'll never push a $300 repair when a simple fix does the job.", icon: HandCoins },
+              { title: "Replace Honestly", desc: "If repair costs more than 50% of a new unit, we'll tell you to replace it. We lose the sale, but you save money. That's the deal.", icon: Scales },
+            ].map((item, i) => {
+              const Icon = item.icon;
+              return (
+                <GlassCard key={i} className="p-6">
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: `${STEEL}20` }}>
+                    <Icon size={26} weight="duotone" style={{ color: STEEL_LIGHT }} />
+                  </div>
+                  <h3 className="text-base font-bold text-white mb-2">{item.title}</h3>
+                  <p className="text-sm leading-relaxed" style={{ color: STEEL_LIGHT }}>{item.desc}</p>
+                </GlassCard>
+              );
+            })}
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ═══════════════════ 10. COMPETITOR COMPARISON ═══════════════════ */}
+      <SectionReveal className="relative z-10 py-24 px-4" style={{ background: `linear-gradient(180deg, transparent, ${ACCENT_GLOW}, transparent)` }}>
+        <div className="mx-auto max-w-4xl">
+          <SectionHeader label="Why ProFix" title="ProFix vs." accent="Buying New" subtitle="Repair is almost always smarter — and we make it easy." />
+          <GlassCard className="overflow-hidden">
+            <div className="grid grid-cols-3 text-center py-4 px-6 border-b border-white/15">
+              <div className="text-sm font-bold text-left" style={{ color: STEEL_LIGHT }}>Feature</div>
+              <div className="text-sm font-bold" style={{ color: ACCENT }}>ProFix Repair</div>
+              <div className="text-sm font-bold" style={{ color: STEEL }}>Buying New</div>
+            </div>
+            {COMPARISON_ROWS.map((row, i) => (
+              <div key={i} className={`grid grid-cols-3 py-4 px-6 items-center ${i < COMPARISON_ROWS.length - 1 ? "border-b border-white/8" : ""}`}>
+                <div className="text-sm text-left font-medium text-white">{row.feature}</div>
+                <div className="text-sm text-center font-semibold" style={{ color: "#22c55e" }}>{row.us}</div>
+                <div className="text-sm text-center" style={{ color: STEEL }}>{row.them}</div>
+              </div>
+            ))}
           </GlassCard>
         </div>
-      </div>
+      </SectionReveal>
+
+      {/* ═══════════════════ 10. GOOGLE REVIEWS HEADER + TESTIMONIALS ═══════════════════ */}
+      <SectionReveal id="reviews" className="relative z-10 py-24 px-4">
+        <div className="mx-auto max-w-7xl">
+          {/* Google Reviews summary */}
+          <div className="text-center mb-6">
+            <div className="flex items-center justify-center gap-1.5 mb-2">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Star key={i} size={24} weight="fill" style={{ color: "#facc15" }} />
+              ))}
+            </div>
+            <p className="text-lg font-semibold text-white">4.9 out of 5 <span style={{ color: STEEL_LIGHT }}>based on 287 Google reviews</span></p>
+          </div>
+          <SectionHeader label="Real Reviews" title="Seattle Trusts" accent="ProFix." />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+            {TESTIMONIALS.map((t, i) => (
+              <GlassCard key={i} className="p-8 hover:border-orange-500/20 transition-all duration-300">
+                <div className="flex items-center gap-1.5 mb-3">
+                  {Array.from({ length: t.rating }).map((_, j) => (
+                    <Star key={j} size={18} weight="fill" style={{ color: "#facc15" }} />
+                  ))}
+                </div>
+                <Quotes size={28} weight="fill" style={{ color: `${ACCENT}40` }} className="mb-3" />
+                <p className="text-base leading-relaxed mb-5" style={{ color: STEEL_LIGHT }}>{t.text}</p>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="text-sm font-bold text-white">{t.name}</div>
+                    <div className="flex items-center gap-1.5 mt-0.5">
+                      <CheckCircle size={14} weight="fill" style={{ color: "#22c55e" }} />
+                      <span className="text-xs" style={{ color: STEEL }}>Verified Customer</span>
+                    </div>
+                  </div>
+                  <span className="px-3 py-1 rounded-full text-xs font-bold" style={{ background: `${ACCENT}15`, color: ACCENT_LIGHT }}>{t.appliance}</span>
+                </div>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ═══════════════════ 11. FINANCING ═══════════════════ */}
+      <SectionReveal className="relative z-10 py-24 px-4">
+        <div className="mx-auto max-w-5xl">
+          <SectionHeader label="Flexible Payment" title="Fix Now." accent="Pay Later." subtitle="We offer financing on repairs over $149 so a broken appliance doesn't break your budget." />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {FINANCING_TIERS.map((tier, i) => {
+              const Icon = tier.icon;
+              return (
+                <GlassCard key={i} className="p-8 text-center hover:border-orange-500/30 transition-all duration-300">
+                  <div className="w-14 h-14 rounded-xl flex items-center justify-center mx-auto mb-4" style={{ background: ACCENT_GLOW }}>
+                    <Icon size={28} weight="duotone" style={{ color: ACCENT }} />
+                  </div>
+                  <h3 className="text-lg font-bold text-white mb-2">{tier.name}</h3>
+                  <div className="text-3xl font-black mb-2" style={{ color: ACCENT }}>{tier.monthly}</div>
+                  <p className="text-sm" style={{ color: STEEL_LIGHT }}>{tier.total}</p>
+                </GlassCard>
+              );
+            })}
+          </div>
+          <p className="text-center text-sm mt-6" style={{ color: STEEL }}>0% interest for 6 months on approved credit. No prepayment penalty.</p>
+        </div>
+      </SectionReveal>
+
+      {/* ═══════════════════ 12. COMMON ISSUES / EDUCATION ═══════════════════ */}
+      <SectionReveal className="relative z-10 py-24 px-4" style={{ background: `linear-gradient(180deg, transparent, ${ACCENT_GLOW}, transparent)` }}>
+        <div className="mx-auto max-w-6xl">
+          <SectionHeader label="Know the Signs" title="When to Call a" accent="Professional" subtitle="Some problems get worse fast. Here are the warning signs that mean you should pick up the phone today." />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {[
+              { title: "Fridge Running Constantly", desc: "If your refrigerator never cycles off, the compressor, condenser coils, or thermostat may be failing. Running nonstop burns energy and wears out the motor.", icon: Snowflake, urgency: "High" },
+              { title: "Washer Vibrating Violently", desc: "Excessive shaking during spin cycles usually means worn shock absorbers or an unbalanced drum. Left unchecked, it can damage the floor and surrounding cabinetry.", icon: Drop, urgency: "Medium" },
+              { title: "Gas Smell from Range", desc: "A faint gas odor near your stove could be a loose connection or a cracked valve. Don't ignore it. Call immediately and open a window while you wait.", icon: Fire, urgency: "Critical" },
+              { title: "Dishwasher Not Draining", desc: "Standing water at the bottom of your dishwasher is usually a clogged drain hose, bad pump, or blocked air gap. Easy fix if caught early, expensive if it overflows.", icon: Lightning, urgency: "Medium" },
+              { title: "Dryer Takes Multiple Cycles", desc: "If clothes are still damp after a full cycle, the heating element, thermal fuse, or vent may be blocked. This is also a fire hazard from lint buildup.", icon: Fire, urgency: "High" },
+              { title: "Ice Maker Leaking", desc: "Water pooling under your fridge usually points to a cracked water line or defective inlet valve. Water damage to flooring adds up fast.", icon: Gauge, urgency: "Medium" },
+            ].map((issue, i) => {
+              const Icon = issue.icon;
+              const urgencyColor = issue.urgency === "Critical" ? "#ef4444" : issue.urgency === "High" ? ACCENT : "#eab308";
+              return (
+                <GlassCard key={i} className="p-6 flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0" style={{ background: `${urgencyColor}15` }}>
+                    <Icon size={24} weight="duotone" style={{ color: urgencyColor }} />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="text-base font-bold text-white">{issue.title}</h3>
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase" style={{ background: `${urgencyColor}20`, color: urgencyColor }}>{issue.urgency}</span>
+                    </div>
+                    <p className="text-sm leading-relaxed" style={{ color: STEEL_LIGHT }}>{issue.desc}</p>
+                  </div>
+                </GlassCard>
+              );
+            })}
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ═══════════════════ 13. VIDEO PLACEHOLDER ═══════════════════ */}
+      <SectionReveal className="relative z-10 py-24 px-4" style={{ background: `linear-gradient(180deg, transparent, ${STEEL_GLOW}, transparent)` }}>
+        <div className="mx-auto max-w-4xl">
+          <SectionHeader label="See Our Work" title="Watch ProFix" accent="In Action" />
+          <div className="relative rounded-2xl overflow-hidden aspect-video cursor-pointer group" style={{ background: `linear-gradient(135deg, #1a1a1a, #222)` }}>
+            <img
+              src="https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=900&q=80"
+              alt="Appliance repair technician at work"
+              className="w-full h-full object-cover opacity-60 group-hover:opacity-70 transition-opacity duration-300"
+            />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-20 h-20 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300" style={{ background: ACCENT }}>
+                <Play size={36} weight="fill" className="text-white ml-1" />
+              </div>
+            </div>
+            <div className="absolute bottom-6 left-6">
+              <div className="text-lg font-bold text-white">Behind the Service Call</div>
+              <div className="text-sm" style={{ color: STEEL_LIGHT }}>See how Steve diagnoses and repairs in a single visit</div>
+            </div>
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ═══════════════════ 14. NEIGHBORHOODS WE SERVE ═══════════════════ */}
+      <SectionReveal className="relative z-10 py-24 px-4">
+        <div className="mx-auto max-w-6xl">
+          <SectionHeader label="Local Experts" title="Your Neighborhood" accent="Repair Team" subtitle="Steve and the ProFix crew know Seattle inside and out. We've made house calls in every corner of the city." />
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            {[
+              "Greenwood", "Ballard", "Fremont", "Wallingford",
+              "Phinney Ridge", "Ravenna", "University District", "Roosevelt",
+              "Shoreline", "Lake City", "Northgate", "Maple Leaf",
+              "Green Lake", "Wedgwood", "Sand Point", "Laurelhurst",
+            ].map((hood, i) => (
+              <div key={i} className="px-5 py-3.5 rounded-xl text-center border transition-all duration-300 hover:border-orange-500/30" style={{ borderColor: `${STEEL}22`, background: `${STEEL}08` }}>
+                <div className="text-sm font-semibold text-white">{hood}</div>
+                <div className="text-xs mt-0.5" style={{ color: STEEL }}>Same-Day Available</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ═══════════════════ 15. CERTIFICATIONS BADGE ROW ═══════════════════ */}
+      <SectionReveal className="relative z-10 py-20 px-4">
+        <div className="mx-auto max-w-5xl">
+          <div className="text-center mb-10">
+            <h2 className="text-2xl md:text-3xl font-extrabold text-white">Credentials That <span style={{ color: ACCENT }}>Matter</span></h2>
+          </div>
+          <div className="flex flex-wrap items-center justify-center gap-4">
+            {CERTIFICATIONS.map((cert, i) => (
+              <span key={i} className="flex items-center gap-2 px-5 py-3 rounded-full text-sm font-bold border" style={{ borderColor: `${ACCENT}33`, color: ACCENT_LIGHT, background: `${ACCENT}08` }}>
+                <ShieldCheck size={18} weight="duotone" style={{ color: ACCENT }} />
+                {cert}
+              </span>
+            ))}
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ═══════════════════ 14. SERVICE AREA ═══════════════════ */}
+      <SectionReveal className="relative z-10 py-24 px-4">
+        <div className="mx-auto max-w-5xl">
+          <SectionHeader label="Coverage" title="We Repair Appliances Throughout" accent="Greater Seattle" subtitle="Same-day service available throughout the Puget Sound region." />
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+            {["Seattle", "Bellevue", "Kirkland", "Redmond", "Renton", "Kent", "Auburn", "Federal Way"].map((city) => (
+              <GlassCard key={city} className="p-4 text-center">
+                <div className="flex items-center justify-center gap-2 mb-1">
+                  <motion.span
+                    animate={{ scale: [1, 1.3, 1], opacity: [1, 0.6, 1] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                    className="inline-block w-2 h-2 rounded-full shrink-0"
+                    style={{ background: ACCENT }}
+                  />
+                  <p className="text-sm font-semibold text-white">{city}</p>
+                </div>
+              </GlassCard>
+            ))}
+          </div>
+          <div className="flex items-center justify-center gap-3">
+            <span className="relative flex h-3 w-3">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ background: "#22c55e" }} />
+              <span className="relative inline-flex rounded-full h-3 w-3" style={{ background: "#22c55e" }} />
+            </span>
+            <span className="text-sm text-slate-400">Technicians available now — call for same-day service</span>
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ═══════════════════ 15. FAQ ═══════════════════ */}
+      <SectionReveal className="relative z-10 py-24 px-4" style={{ background: `linear-gradient(180deg, transparent, ${ACCENT_GLOW}, transparent)` }}>
+        <div className="mx-auto max-w-3xl">
+          <SectionHeader label="Common Questions" title="Got" accent="Questions?" />
+          <div className="space-y-3">
+            {[
+              { q: "Do you offer same-day appliance repair?", a: "Yes. Call before noon and we guarantee a technician at your door the same day. Most calls are answered within two hours." },
+              { q: "How much does a service call cost?", a: "Our diagnostic fee is $89, which covers the trip and full diagnosis. If you approve the repair, the $89 is waived entirely." },
+              { q: "What brands do you service?", a: "All major brands: Samsung, LG, Whirlpool, GE, Bosch, Sub-Zero, Viking, KitchenAid, Maytag, Frigidaire, and many more." },
+              { q: "Do you warranty your repairs?", a: "Every repair comes with a 90-day parts warranty and 30-day labor warranty. If the same part fails, we replace it free." },
+              { q: "Should I repair or replace my appliance?", a: "Our technicians give honest assessments. If the repair exceeds 50% of a new unit's cost, or the appliance is past its expected lifespan, we'll tell you to replace." },
+              { q: "Are your technicians background-checked?", a: "Yes. Every ProFix tech is licensed, insured, EPA certified, and has passed a full background check." },
+            ].map((faq, i) => (
+              <GlassCard key={i} className="overflow-hidden">
+                <button onClick={() => setOpenFaq(openFaq === i ? null : i)} className="w-full text-left px-6 py-5 flex items-center justify-between cursor-pointer">
+                  <span className="text-base font-semibold text-white pr-4">{faq.q}</span>
+                  <motion.span animate={{ rotate: openFaq === i ? 180 : 0 }} transition={{ duration: 0.3 }}>
+                    <CaretDown size={20} style={{ color: ACCENT }} />
+                  </motion.span>
+                </button>
+                <AnimatePresence>
+                  {openFaq === i && (
+                    <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.3 }}>
+                      <div className="px-6 pb-5 text-sm leading-relaxed" style={{ color: STEEL_LIGHT }}>{faq.a}</div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ═══════════════════ 18.5. APPLIANCE LIFESPAN GUIDE ═══════════════════ */}
+      <SectionReveal className="relative z-10 py-24 px-4" style={{ background: `linear-gradient(180deg, transparent, ${STEEL_GLOW}, transparent)` }}>
+        <div className="mx-auto max-w-5xl">
+          <SectionHeader label="Know Your Appliances" title="Repair or" accent="Replace?" subtitle="Average lifespans for major household appliances. When repair costs exceed 50% of replacement, we'll tell you honestly." />
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            {[
+              { name: "Refrigerator", years: "13-17 yrs", icon: Snowflake },
+              { name: "Washer", years: "10-14 yrs", icon: Drop },
+              { name: "Dryer", years: "10-13 yrs", icon: Fire },
+              { name: "Dishwasher", years: "9-13 yrs", icon: Lightning },
+              { name: "Oven / Range", years: "13-20 yrs", icon: Thermometer },
+              { name: "Microwave", years: "7-10 yrs", icon: Gear },
+              { name: "Ice Maker", years: "8-12 yrs", icon: Gauge },
+              { name: "Garbage Disposal", years: "8-15 yrs", icon: Wrench },
+            ].map((item, i) => {
+              const Icon = item.icon;
+              return (
+                <GlassCard key={i} className="p-5 text-center hover:border-orange-500/20 transition-all duration-300">
+                  <Icon size={24} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-3" />
+                  <div className="text-sm font-bold text-white mb-1">{item.name}</div>
+                  <div className="text-lg font-black" style={{ color: ACCENT }}>{item.years}</div>
+                  <div className="text-[10px] uppercase tracking-wider mt-1" style={{ color: STEEL }}>Avg Lifespan</div>
+                </GlassCard>
+              );
+            })}
+          </div>
+          <p className="text-center text-sm mt-8" style={{ color: STEEL }}>
+            Source: U.S. Department of Energy appliance lifespan estimates. Actual lifespan depends on usage, maintenance, and brand quality.
+          </p>
+        </div>
+      </SectionReveal>
+
+      {/* ═══════════════════ 19. CONTACT / CTA ═══════════════════ */}
+      <SectionReveal id="contact" className="relative z-10 py-24 px-4">
+        <div className="mx-auto max-w-6xl">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <div>
+              <span className="inline-block px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase mb-6" style={{ background: ACCENT_GLOW, color: ACCENT_LIGHT }}>Get In Touch</span>
+              <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-6">
+                One Call. <span style={{ color: ACCENT }}>One Fix.</span>
+              </h2>
+              <p className="text-lg mb-10" style={{ color: STEEL_LIGHT }}>
+                Reach Steve and the ProFix team for same-day appliance repair anywhere in Seattle. No voicemail trees, no hold music. A real person answers.
+              </p>
+              <div className="space-y-5">
+                <a href="tel:2067214859" className="flex items-center gap-4 group">
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: ACCENT_GLOW }}>
+                    <Phone size={24} weight="duotone" style={{ color: ACCENT }} />
+                  </div>
+                  <div>
+                    <div className="text-sm" style={{ color: STEEL }}>Call or Text</div>
+                    <div className="text-lg font-bold text-white group-hover:text-orange-300 transition-colors">(206) 721-4859</div>
+                  </div>
+                </a>
+                <a href="mailto:fix@profixappliance.com" className="flex items-center gap-4 group">
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: ACCENT_GLOW }}>
+                    <Envelope size={24} weight="duotone" style={{ color: ACCENT }} />
+                  </div>
+                  <div>
+                    <div className="text-sm" style={{ color: STEEL }}>Email</div>
+                    <div className="text-lg font-bold text-white group-hover:text-orange-300 transition-colors">fix@profixappliance.com</div>
+                  </div>
+                </a>
+                <a href="https://maps.google.com/?q=6730+Greenwood+Ave+N+Seattle+WA+98103" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 group">
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: ACCENT_GLOW }}>
+                    <MapPin size={24} weight="duotone" style={{ color: ACCENT }} />
+                  </div>
+                  <div>
+                    <div className="text-sm" style={{ color: STEEL }}>Visit</div>
+                    <div className="text-lg font-bold text-white group-hover:text-orange-300 transition-colors">6730 Greenwood Ave N, Seattle WA 98103</div>
+                  </div>
+                </a>
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: ACCENT_GLOW }}>
+                    <Clock size={24} weight="duotone" style={{ color: ACCENT }} />
+                  </div>
+                  <div>
+                    <div className="text-sm" style={{ color: STEEL }}>Hours</div>
+                    <div className="text-lg font-bold text-white">Mon-Sat 7am-8pm</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <ShimmerBorder>
+                <div className="p-10 text-center">
+                  <div className="w-20 h-20 rounded-full mx-auto mb-6 flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${ACCENT}, #ea580c)` }}>
+                    <Phone size={36} weight="bold" className="text-white" />
+                  </div>
+                  <h3 className="text-2xl font-extrabold text-white mb-3">Book Your Repair</h3>
+                  <p className="text-base mb-8" style={{ color: STEEL_LIGHT }}>
+                    Call now for same-day service. Your $89 diagnostic is waived with every approved repair.
+                  </p>
+                  <MagneticButton href="tel:2067214859" className="w-full px-8 py-5 rounded-xl text-xl font-bold text-white flex items-center justify-center gap-3 cursor-pointer" style={{ background: ACCENT }}>
+                    <Phone size={24} weight="bold" /> (206) 721-4859
+                  </MagneticButton>
+                  <p className="text-sm mt-4" style={{ color: STEEL }}>No voicemail. A real person answers.</p>
+                </div>
+              </ShimmerBorder>
+            </div>
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ═══════════════════ FOOTER ═══════════════════ */}
+      <footer className="relative z-10 py-16 px-4 border-t border-white/8">
+        <div className="mx-auto max-w-7xl">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
+            <div>
+              <div className="flex items-center gap-3 mb-4">
+                <LogoIcon size={24} />
+                <span className="text-lg font-bold text-white">ProFix Appliance Repair</span>
+              </div>
+              <p className="text-sm leading-relaxed" style={{ color: STEEL }}>
+                Same-day appliance repair in Seattle since 2011. EPA certified, factory trained, and committed to honest pricing.
+              </p>
+            </div>
+            <div>
+              <h4 className="text-sm font-bold text-white uppercase tracking-wider mb-4">Services</h4>
+              <div className="grid grid-cols-2 gap-2">
+                {SERVICES.map((svc, i) => (
+                  <a key={i} href="#services" className="text-sm hover:text-white transition-colors" style={{ color: STEEL_LIGHT }}>{svc.title}</a>
+                ))}
+              </div>
+            </div>
+            <div>
+              <h4 className="text-sm font-bold text-white uppercase tracking-wider mb-4">Contact</h4>
+              <div className="space-y-2">
+                <a href="tel:2067214859" className="text-sm flex items-center gap-2 hover:text-white transition-colors" style={{ color: STEEL_LIGHT }}>
+                  <Phone size={14} weight="duotone" /> (206) 721-4859
+                </a>
+                <a href="mailto:fix@profixappliance.com" className="text-sm flex items-center gap-2 hover:text-white transition-colors" style={{ color: STEEL_LIGHT }}>
+                  <Envelope size={14} weight="duotone" /> fix@profixappliance.com
+                </a>
+                <a href="https://maps.google.com/?q=6730+Greenwood+Ave+N+Seattle+WA+98103" target="_blank" rel="noopener noreferrer" className="text-sm flex items-center gap-2 hover:text-white transition-colors" style={{ color: STEEL_LIGHT }}>
+                  <MapPin size={14} weight="duotone" /> 6730 Greenwood Ave N, Seattle WA 98103
+                </a>
+              </div>
+            </div>
+          </div>
+          <div className="pt-8 border-t border-white/8 flex flex-col md:flex-row items-center justify-between gap-4">
+            <p className="text-xs" style={{ color: STEEL }}>
+              &copy; {new Date().getFullYear()} ProFix Appliance Repair. All rights reserved.
+            </p>
+            <p className="text-xs flex items-center gap-1.5" style={{ color: STEEL }}>
+              <svg width="14" height="14" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-sky-500"><path d="M24.3 4.2c-1.5-.4-3.2.1-4.5 1.1-1-.7-2.3-1-3.5-.8-2.4.4-4.2 2.5-4.2 4.9v.6c-3.2.8-6 2.8-7.8 5.6-.3.5-.1 1.1.4 1.4.5.3 1.1.1 1.4-.4 1.5-2.3 3.7-4 6.3-4.7.5-.1 1-.1 1.5 0 .8.2 1.4.8 1.7 1.5.3.8.2 1.6-.2 2.3l-2.8 4.3c-.6.9-.4 2.1.4 2.8l2.5 2.1c.4.3.8.5 1.3.5h5.2c.5 0 1-.2 1.3-.5l1.2-1c.6-.5.8-1.3.6-2l-1-3.2c-.2-.5 0-1.1.4-1.4l3.8-2.5c1.3-.9 2.1-2.3 2.1-3.9V9.6c0-2.5-1.7-4.7-4.1-5.3v-.1z" fill="currentColor"/></svg>Created by{" "}
+              <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" className="underline hover:text-white transition-colors" style={{ color: STEEL_LIGHT }}>
+                bluejayportfolio.com
+              </a>
+            </p>
+          </div>
+        </div>
+      </footer>
     </main>
   );
 }

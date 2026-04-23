@@ -1,13 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
 import { scout } from "@/lib/scout";
-import { getProspect, updateProspect, getAllProspects } from "@/lib/store";
+import { getProspect, getScrapedData, saveScrapedData, updateProspect, getAllProspects } from "@/lib/store";
 import { generatePreview } from "@/lib/generator";
 import { extractBusinessData } from "@/lib/data-extractor";
 import { recommendTheme } from "@/lib/theme-recommender";
 import { logCost, COST_RATES } from "@/lib/cost-logger";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import type { Category } from "@/lib/types";
+import type { GeneratedSiteData } from "@/lib/generator";
+import { readFile } from "fs/promises";
+import path from "path";
+import {
+  researchBusinessWebsite,
+  runClaudeSupercharge,
+  runClaudeQcReview,
+} from "@/lib/claude-qc";
 import { CATEGORY_CONFIG } from "@/lib/types";
 
 export const maxDuration = 300; // 5 minutes max for batch processing
@@ -149,11 +157,12 @@ export async function POST(request: NextRequest) {
         const remaining = targetCount - allScoutedProspects.length;
         const limit = Math.min(perCategoryLimit, remaining);
 
-        const prospects = await scout({
+        const scoutResult = await scout({
           city: location,
           category,
           limit,
         });
+        const prospects = scoutResult.prospects;
 
         // Log scouting cost
         const scoutCost = prospects.length * COST_RATES.google_places_search;
@@ -220,14 +229,25 @@ export async function POST(request: NextRequest) {
             ...existingSD,
             ...data,
             businessName: data.businessName || (existingSD.businessName as string) || prospect.businessName,
-            brandColor: (existingSD.brandColor as string) || data.brandColor,
-            logoUrl: (existingSD.logoUrl as string) || data.logoUrl,
+            brandColor: data.brandColor || (existingSD.brandColor as string),
+            brandColorSource:
+              data.brandColorSource ||
+              (existingSD.brandColorSource as "official-site" | "logo" | "category-default" | undefined),
+            logoUrl: data.logoUrl || (existingSD.logoUrl as string),
           };
 
           const updates: Record<string, unknown> = {
             scrapedData: prospect.scrapedData,
             status: "scraped" as const,
           };
+          if (data.address) {
+            prospect.address = data.address;
+            updates.address = data.address;
+          }
+          if (data.city && data.city !== prospect.city) {
+            prospect.city = data.city;
+            updates.city = data.city;
+          }
           if (data.phone && !prospect.phone) {
             prospect.phone = data.phone;
             updates.phone = data.phone;
@@ -268,15 +288,51 @@ export async function POST(request: NextRequest) {
           metadata: { quality, methods, businessName, model: "template_engine" },
         });
 
-        batch.results.generated++;
+         batch.results.generated++;
         batch.results.queued++;
+
+        // STEP 4: Claude supercharge + QC (best-effort, non-blocking)
+        let finalStatus: "generated" | "ready_to_review" | "qc_failed" = "generated";
+        try {
+          const projectRoot = process.cwd();
+          const [claudeRules, qcRules, qcGuide] = await Promise.all([
+            readFile(path.join(projectRoot, "CLAUDE.md"), "utf-8"),
+            readFile(path.join(projectRoot, "QC_RULES.md"), "utf-8").catch(() => ""),
+            readFile(path.join(projectRoot, "VISUAL_QC_REVIEW_GUIDE.md"), "utf-8").catch(() => ""),
+          ]);
+          const websiteResearch = await researchBusinessWebsite(prospect.currentWebsite);
+          const siteData = (await getScrapedData(id)) as GeneratedSiteData | null;
+          if (siteData) {
+            const superchargeResult = await runClaudeSupercharge({
+              prospect, siteData, websiteResearch, claudeRules, qcRules,
+            });
+            await saveScrapedData(id, superchargeResult.siteData);
+            const qcResult = await runClaudeQcReview({
+              prospect, siteData: superchargeResult.siteData, websiteResearch,
+              claudeRules, qcRules, qcGuide, automatedQcNotes: "",
+            });
+            const score = Math.round(qcResult.score);
+            const passed = score >= 70 && qcResult.passed;
+            finalStatus = passed ? "ready_to_review" : "qc_failed";
+            await updateProspect(id, {
+              status: finalStatus,
+              qualityScore: score,
+              qualityNotes: `AUTO-QC: supercharge + Claude review. Score: ${score}/100. ${passed ? "PASS" : "FAIL"}`,
+              qcReviewedAt: new Date().toISOString(),
+            });
+            console.log(`  🤖 Claude QC: ${businessName} score=${score}/100 status=${finalStatus}`);
+          }
+        } catch (claudeErr) {
+          console.error(`  ⚠️ Claude QC failed for ${businessName} (non-blocking):`, claudeErr);
+          await updateProspect(id, { status: "generated" });
+        }
+
         batch.prospects.push({
           id: prospect.id,
           businessName: prospect.businessName,
-          status: "pending-review",
+          status: finalStatus as "pending-review",
           previewUrl,
         });
-
         console.log(`  Done: ${businessName} -> ${previewUrl}`);
       } catch (err) {
         batch.results.failed++;

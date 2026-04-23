@@ -15,6 +15,70 @@ import { logCost, COST_RATES } from "@/lib/cost-logger";
 
 const GOOGLE_API_KEY = process.env.GOOGLE_PLACES_API_KEY;
 
+const ALLOWED_DOMAINS = [
+  "images.unsplash.com",
+  "maps.googleapis.com",
+  "lh3.googleusercontent.com",
+  "lh4.googleusercontent.com",
+  "lh5.googleusercontent.com",
+  "lh6.googleusercontent.com",
+  "streetviewpixels-pa.googleapis.com",
+  // Common business website CDNs (for scraped prospect photos)
+  "static.wixstatic.com",
+  "img1.wsimg.com",
+  "images.squarespace-cdn.com",
+  "cdn.shopify.com",
+  "scontent.cdninstagram.com",
+  "graph.facebook.com",
+  "s3.amazonaws.com",
+];
+
+/** Block private/internal IP ranges to prevent SSRF */
+function isPrivateHostname(hostname: string): boolean {
+  if (hostname === "localhost" || hostname === "127.0.0.1" || hostname === "0.0.0.0") return true;
+  // IPv4 private ranges
+  const parts = hostname.split(".").map(Number);
+  if (parts.length === 4 && parts.every((n) => !isNaN(n))) {
+    if (parts[0] === 10) return true; // 10.x.x.x
+    if (parts[0] === 172 && parts[1] >= 16 && parts[1] <= 31) return true; // 172.16-31.x.x
+    if (parts[0] === 192 && parts[1] === 168) return true; // 192.168.x.x
+    if (parts[0] === 169 && parts[1] === 254) return true; // 169.254.x.x (link-local)
+    if (parts[0] === 127) return true; // 127.x.x.x
+  }
+  return false;
+}
+
+async function logImageProxyFailure(params: {
+  prospectId?: string;
+  url: string;
+  detail: string;
+  upstreamStatus?: number;
+}): Promise<void> {
+  console.error("[image-proxy] Upstream image fetch failed", {
+    url: params.url,
+    upstreamStatus: params.upstreamStatus,
+    detail: params.detail,
+    prospectId: params.prospectId,
+  });
+
+  if (!params.prospectId) {
+    return;
+  }
+
+  await logCost({
+    prospectId: params.prospectId,
+    service: "image_proxy",
+    action: "fetch",
+    costUsd: 0,
+    status: "failed",
+    metadata: {
+      failedUrl: params.url.substring(0, 500),
+      upstreamStatus: params.upstreamStatus ?? null,
+      error: params.detail.substring(0, 500),
+    },
+  });
+}
+
 export async function GET(request: NextRequest) {
   const url = request.nextUrl.searchParams.get("url");
   const prospectId = request.nextUrl.searchParams.get("prospectId") || undefined;
@@ -23,15 +87,41 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Missing url parameter" }, { status: 400 });
   }
 
+  let fetchUrl = "";
+
   try {
-    let fetchUrl = decodeURIComponent(url).trim();
+    fetchUrl = decodeURIComponent(url).trim();
+
+    // SSRF protection: validate hostname against allowlist and block private IPs
+    let parsedHostname: string;
+    try {
+      parsedHostname = new URL(fetchUrl).hostname;
+    } catch {
+      return NextResponse.json({ error: "Invalid URL" }, { status: 400 });
+    }
+
+    if (isPrivateHostname(parsedHostname)) {
+      return NextResponse.json({ error: "Forbidden: private IP addresses are not allowed" }, { status: 403 });
+    }
+
+    if (!ALLOWED_DOMAINS.includes(parsedHostname)) {
+      return NextResponse.json({ error: "Forbidden: domain not in allowlist" }, { status: 403 });
+    }
+
     const isGooglePhoto = fetchUrl.includes("maps.googleapis.com");
+    const isUnsplashImage = (() => {
+      try {
+        return new URL(fetchUrl).hostname === "images.unsplash.com";
+      } catch {
+        return false;
+      }
+    })();
+
+    // Proxy Unsplash images through our server (direct loads can fail on some deployments)
 
     // If it's a Google Places photo URL, ensure API key is appended
-    if (isGooglePhoto && GOOGLE_API_KEY) {
-      if (!fetchUrl.includes("key=")) {
-        fetchUrl += (fetchUrl.includes("?") ? "&" : "?") + `key=${GOOGLE_API_KEY}`;
-      }
+    if (isGooglePhoto && GOOGLE_API_KEY && !fetchUrl.includes("key=")) {
+      fetchUrl += (fetchUrl.includes("?") ? "&" : "?") + `key=${GOOGLE_API_KEY}`;
     }
 
     const response = await fetch(fetchUrl, {
@@ -43,16 +133,21 @@ export async function GET(request: NextRequest) {
     });
 
     if (!response.ok) {
-      // Return a 1x1 transparent pixel instead of an error
-      return new NextResponse(
-        Buffer.from("R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7", "base64"),
+      const detail = `Upstream responded with ${response.status} ${response.statusText}`;
+      await logImageProxyFailure({
+        prospectId,
+        url: fetchUrl,
+        detail,
+        upstreamStatus: response.status,
+      });
+
+      return NextResponse.json(
         {
-          status: 200,
-          headers: {
-            "Content-Type": "image/gif",
-            "Cache-Control": "public, max-age=60",
-          }
-        }
+          error: "Failed to fetch upstream image",
+          detail,
+          url: fetchUrl,
+        },
+        { status: 502 },
       );
     }
 
@@ -74,21 +169,25 @@ export async function GET(request: NextRequest) {
       status: 200,
       headers: {
         "Content-Type": contentType,
-        "Cache-Control": "public, max-age=86400, s-maxage=86400", // Cache 24h
+        "Cache-Control": "public, max-age=86400, s-maxage=86400",
         "Access-Control-Allow-Origin": "*",
       },
     });
-  } catch {
-    // Return transparent pixel on any error
-    return new NextResponse(
-      Buffer.from("R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7", "base64"),
+  } catch (error) {
+    const detail = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
+    await logImageProxyFailure({
+      prospectId,
+      url: fetchUrl || url,
+      detail,
+    });
+
+    return NextResponse.json(
       {
-        status: 200,
-        headers: {
-          "Content-Type": "image/gif",
-          "Cache-Control": "public, max-age=60",
-        }
-      }
+        error: "Failed to fetch upstream image",
+        detail,
+        url: fetchUrl || url,
+      },
+      { status: 502 },
     );
   }
 }

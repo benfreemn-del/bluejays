@@ -1,5 +1,8 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element -- These static marketing and preview components intentionally use plain img tags to preserve existing markup and visual behavior during lint-only cleanup. */
+/* eslint-disable react-hooks/purity -- Decorative particle values are intentionally randomized for static visual effects in these marketing pages and previews; this preserves existing appearance without changing business logic. */
+
 import { useState, useEffect, useRef, useCallback } from "react";
 import {
   motion,
@@ -31,6 +34,7 @@ import type { GeneratedSiteData } from "@/lib/generator";
 import BluejayLogo from "../BluejayLogo";
 import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
+import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
 
 /* ───────────────────────── SPRING CONFIGS ───────────────────────── */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
@@ -78,8 +82,8 @@ function getServiceIcon(serviceName: string) {
 }
 
 /* ───────────────────────── STOCK FALLBACK IMAGES (UNIQUE TO FITNESS) ───────────────────────── */
-const STOCK_HERO = "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1400&q=80";
-const STOCK_ABOUT = "https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=600&q=80";
+const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1400&q=80"];
+const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=600&q=80"];
 const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1540497077202-7c8a3999166f?w=600&q=80",
   "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=600&q=80",
@@ -153,7 +157,7 @@ function FitnessPattern({ opacity = 0.03, accent }: { opacity?: number; accent: 
 /* ───────────────────────── GLASS CARD ───────────────────────── */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`rounded-2xl border border-white/[0.06] bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)] ${className}`}>
+    <div className={`rounded-2xl border border-white/[0.10] bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)] ${className}`}>
       {children}
     </div>
   );
@@ -241,15 +245,47 @@ function AnimatedSection({ children, className = "" }: { children: React.ReactNo
   );
 }
 
+const COMPARISON_ROWS = [
+  { feature: "Certified Personal Trainers", us: true, them: "Varies" },
+  { feature: "Free Trial Available", us: true, them: "No" },
+  { feature: "Custom Workout Plans", us: true, them: "Extra Cost" },
+  { feature: "Nutrition Guidance", us: true, them: "No" },
+  { feature: "Flexible Membership Plans", us: true, them: "Annual Lock-in" },
+  { feature: "Group Classes Included", us: true, them: "Extra Cost" },
+  { feature: "Open Early & Late Hours", us: true, them: "Limited" },
+];
+
+const PRICING_TIERS = [
+  { title: "Basic", price: "$29", period: "/month", features: ["Full gym access", "Locker room", "Free WiFi", "Basic equipment"], featured: false },
+  { title: "Premium", price: "$59", period: "/month", features: ["Everything in Basic", "All group classes", "Personal training intro", "Nutrition consult", "Guest passes"], featured: true },
+  { title: "Elite", price: "$99", period: "/month", features: ["Everything in Premium", "Unlimited PT sessions", "Recovery zone access", "Priority booking", "Meal planning"], featured: false },
+];
+
+const FITNESS_QUIZ_OPTIONS = [
+  { label: "Lose Weight", desc: "Burn fat, build lean muscle, and feel great.", color: "#22c55e" },
+  { label: "Build Muscle", desc: "Strength training programs for all levels.", color: "#3b82f6" },
+  { label: "Improve Endurance", desc: "Cardio, HIIT, and conditioning classes.", color: "#f59e0b" },
+  { label: "Just Stay Active", desc: "Flexible workouts that fit your lifestyle.", color: "#a855f7" },
+];
+
 export default function V2FitnessPreview({ data }: { data: GeneratedSiteData }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [quizAnswer, setQuizAnswer] = useState<number | null>(null);
 
   const { RED, RED_GLOW } = getAccent(data.accentColor);
 
-  const heroImage = data.photos?.[0] || STOCK_HERO;
-  const aboutImage = data.photos?.[1] || STOCK_ABOUT;
-  const galleryImages = data.photos?.length > 2 ? data.photos.slice(2, 6) : STOCK_GALLERY;
+  const uniquePhotos = data.photos ? [...new Set(data.photos)] : [];
+
+
+  const heroImage = uniquePhotos[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
+
+
+  const heroCardImage = uniquePhotos[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 1);
+
+
+  const aboutImage = uniquePhotos[2] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 2);
+  const galleryImages = data.photos?.length > 2 ? data.photos.slice(2, 6) : pickGallery(STOCK_GALLERY, data.businessName);
   const phoneDigits = data.phone.replace(/\D/g, "");
 
   const processSteps = [
@@ -264,6 +300,10 @@ export default function V2FitnessPreview({ data }: { data: GeneratedSiteData }) 
     { q: "Do you offer personal training?", a: "Yes, we have certified personal trainers available for one-on-one sessions tailored to your specific goals and fitness level." },
     { q: "Is there a free trial?", a: `Absolutely. ${data.businessName} offers a complimentary first visit so you can experience our facility, equipment, and community before committing.` },
     { q: "What are the membership options?", a: "We offer flexible membership plans including monthly, quarterly, and annual options. Contact us for current pricing and any special promotions." },
+    { q: "Do I need to be in shape to start?", a: "Not at all! Our programs are designed for all fitness levels, from complete beginners to advanced athletes. Every workout can be scaled to your ability." },
+    { q: "What should I bring to my first class?", a: "Wear comfortable workout clothes and athletic shoes. Bring a water bottle and a towel. We provide everything else you need." },
+    { q: "Are there group classes included?", a: `Yes! All ${data.businessName} memberships include unlimited access to group fitness classes. Our schedule features over 30 classes per week across all disciplines.` },
+    { q: "Do you offer nutrition coaching?", a: "We offer nutrition coaching as an add-on to any membership. Our certified coaches create personalized meal plans and provide accountability check-ins." },
   ];
 
   /* Fallback testimonials */
@@ -321,12 +361,10 @@ export default function V2FitnessPreview({ data }: { data: GeneratedSiteData }) 
 
         <div className="absolute inset-0">
           <img src={heroImage} alt={`${data.businessName}`} className="w-full h-full object-cover object-center" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/25 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/20" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
         </div>
         <HeartbeatLine accent={RED} />
-        <FitnessPattern opacity={0.04} accent={RED} />
-        <div className="absolute top-1/4 right-1/4 w-[500px] h-[500px] rounded-full blur-[200px] pointer-events-none" style={{ background: `${RED}06` }} />
 
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
           <div className="space-y-8">
@@ -338,14 +376,14 @@ export default function V2FitnessPreview({ data }: { data: GeneratedSiteData }) 
               <div className="h-1 w-24 rounded-full mt-4" style={{ backgroundColor: RED }} />
             </div>
             <p className="text-lg text-zinc-400 max-w-md leading-relaxed">
-              {data.about.length > 160 ? data.about.slice(0, 160).trim() + "..." : data.about}
+              {(() => { const t = data.about; if (t.length <= 180) return t; const dot = t.indexOf('.', 80); return dot > 0 && dot < 220 ? t.slice(0, dot + 1) : t.slice(0, 180).trim() + '...'; })()}
             </p>
             <div className="flex flex-wrap gap-4">
               <MagneticButton className="relative px-8 py-4 rounded-xl text-base font-bold text-white flex items-center gap-2 cursor-pointer overflow-hidden" style={{ background: RED } as React.CSSProperties}>
                 <motion.span className="absolute inset-0 rounded-xl" style={{ boxShadow: `0 0 30px ${RED}` }} animate={{ opacity: [0.4, 0.8, 0.4] }} transition={{ duration: 2, repeat: Infinity }} />
                 <span className="relative flex items-center gap-2">Get Started <ArrowRight size={18} weight="bold" /></span>
               </MagneticButton>
-              <MagneticButton href={`tel:${phoneDigits}`} className="px-8 py-4 rounded-xl text-base font-bold text-zinc-300 border border-white/10 flex items-center gap-2 cursor-pointer hover:border-white/30 transition-colors">
+              <MagneticButton href={`tel:${phoneDigits}`} className="px-8 py-4 rounded-xl text-base font-bold text-zinc-300 border border-white/15 flex items-center gap-2 cursor-pointer hover:border-white/30 transition-colors">
                 <Phone size={18} weight="bold" /> <PhoneLink phone={data.phone} />
               </MagneticButton>
             </div>
@@ -356,8 +394,8 @@ export default function V2FitnessPreview({ data }: { data: GeneratedSiteData }) 
           </div>
 
           <div className="hidden md:block relative">
-            <div className="relative rounded-2xl overflow-hidden border border-white/10">
-              <img src={heroImage} alt={`${data.businessName} facility`} className="w-full h-[500px] object-cover" />
+            <div className="relative rounded-2xl overflow-hidden border border-white/15">
+              <img src={heroCardImage} alt={`${data.businessName} facility`} className="w-full h-[500px] object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent" />
               <div className="absolute bottom-6 left-6 flex items-center gap-3">
                 <div className="px-4 py-2 rounded-full backdrop-blur-md bg-black/50 border flex items-center gap-2" style={{ borderColor: `${RED}4d` }}>
@@ -381,7 +419,7 @@ export default function V2FitnessPreview({ data }: { data: GeneratedSiteData }) 
               const statIcons = [Users, Barbell, Fire, Star];
               const Icon = statIcons[i % statIcons.length];
               return (
-                <div key={stat.label} className="text-center p-6 rounded-2xl backdrop-blur-md bg-white/[0.03] border border-white/[0.06]">
+                <div key={stat.label} className="text-center p-6 rounded-2xl backdrop-blur-md bg-white/[0.08] border border-white/[0.10]">
                   <div className="flex items-center justify-center gap-2 mb-2">
                     <Icon size={22} weight="fill" style={{ color: RED }} />
                     <span className="text-3xl md:text-4xl font-black tracking-tighter text-white">{stat.value}</span>
@@ -402,7 +440,7 @@ export default function V2FitnessPreview({ data }: { data: GeneratedSiteData }) 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="relative">
-              <div className="rounded-2xl overflow-hidden border border-white/10"><img src={aboutImage} alt={`${data.businessName} gym`} className="w-full h-[400px] object-cover" /></div>
+              <div className="rounded-2xl overflow-hidden border border-white/15"><img src={aboutImage} alt={`${data.businessName} gym`} className="w-full h-[400px] object-cover" /></div>
               <div className="absolute -bottom-4 -right-4 md:bottom-6 md:-right-6">
                 <div className="px-5 py-3 rounded-xl backdrop-blur-md border text-white font-bold text-sm shadow-lg" style={{ background: `${RED}e6`, borderColor: `${RED}80` }}>
                   {data.stats[0] ? `${data.stats[0].value} ${data.stats[0].label}` : "Results Driven"}
@@ -438,7 +476,7 @@ export default function V2FitnessPreview({ data }: { data: GeneratedSiteData }) 
             {data.services.map((service, i) => {
               const Icon = getServiceIcon(service.name);
               return (
-                <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.02]">
+                <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]">
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${RED}15, transparent 70%)` }} />
                   <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${RED}4d, transparent)` }} />
                   <div className="relative z-10">
@@ -490,7 +528,7 @@ export default function V2FitnessPreview({ data }: { data: GeneratedSiteData }) 
             {galleryImages.map((src, i) => {
               const titles = ["Strength Training Floor", "HIIT Studio", "Cardio Zone", "Recovery Area"];
               return (
-                <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.06]">
+                <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.10]">
                   <img src={src} alt={titles[i]} className="w-full h-64 object-cover transition-transform duration-700 group-hover:scale-105" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-6"><h3 className="text-lg font-bold text-white">{titles[i]}</h3></div>
@@ -501,18 +539,141 @@ export default function V2FitnessPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 8. TESTIMONIALS ══════════════════ */}
+      {/* ══════════════════ 8. COMPARISON TABLE ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #080808 50%, #0a0a0a 100%)" }} />
+        <FitnessPattern opacity={0.02} accent={RED} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <AnimatedSection><SectionHeader badge="Compare" title={`${data.businessName} vs. The Competition`} accent={RED} /></AnimatedSection>
+          <GlassCard className="overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="border-b border-white/15">
+                    <th className="px-6 py-4 text-sm font-semibold text-zinc-400">Feature</th>
+                    <th className="px-6 py-4 text-sm font-semibold text-center" style={{ color: RED }}>{data.businessName}</th>
+                    <th className="px-6 py-4 text-sm font-semibold text-center text-zinc-500">Other Gyms</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {COMPARISON_ROWS.map((row, i) => (
+                    <tr key={i} className="border-b border-white/8">
+                      <td className="px-6 py-4 text-sm text-zinc-300">{row.feature}</td>
+                      <td className="px-6 py-4 text-center">{row.us ? <CheckCircle size={20} weight="fill" className="inline" style={{ color: "#22c55e" }} /> : <span className="text-zinc-500 text-sm">{String(row.them)}</span>}</td>
+                      <td className="px-6 py-4 text-center text-sm text-zinc-500">{row.them}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </GlassCard>
+        </div>
+      </section>
+
+      {/* ══════════════════ 8b. PRICING TIERS ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #080808 0%, #0a0a0a 50%, #080808 100%)" }} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <AnimatedSection><SectionHeader badge="Membership" title="Find Your Plan" subtitle="Flexible plans designed for every fitness level. No long-term contracts." accent={RED} /></AnimatedSection>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {PRICING_TIERS.map((tier) => (
+              <GlassCard key={tier.title} className={`p-8 h-full flex flex-col ${tier.featured ? "ring-2" : ""}`} style={tier.featured ? { borderColor: RED, boxShadow: `0 0 30px ${RED}22` } as React.CSSProperties : undefined}>
+                {tier.featured && <span className="inline-block self-start text-xs font-bold uppercase tracking-widest mb-4 px-3 py-1 rounded-full text-white" style={{ background: RED }}>Most Popular</span>}
+                <h3 className="text-xl font-bold text-white mb-1">{tier.title}</h3>
+                <div className="flex items-baseline gap-1 mb-4">
+                  <span className="text-4xl font-black text-white">{tier.price}</span>
+                  <span className="text-zinc-500 text-sm">{tier.period}</span>
+                </div>
+                <ul className="space-y-3 flex-1 mb-6">
+                  {tier.features.map((f) => (
+                    <li key={f} className="flex items-center gap-2 text-sm text-zinc-300"><CheckCircle size={16} weight="fill" style={{ color: RED }} />{f}</li>
+                  ))}
+                </ul>
+                <PhoneLink phone={data.phone} className="block w-full py-3 rounded-xl text-center font-bold text-sm transition-all" style={tier.featured ? { background: RED, color: "#fff" } : { background: `${RED}15`, color: RED }}>
+                  Get Started
+                </PhoneLink>
+              </GlassCard>
+            ))}
+          </div>
+          <p className="text-center text-sm text-zinc-500 mt-8">Exact pricing may vary. Call for current rates and promotions.</p>
+        </div>
+      </section>
+
+      {/* ══════════════════ 8c. FITNESS QUIZ ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #080808 50%, #0a0a0a 100%)" }} />
+        <FitnessPattern opacity={0.02} accent={RED} />
+        <div className="max-w-3xl mx-auto px-6 relative z-10">
+          <AnimatedSection><SectionHeader badge="Find Your Fit" title="What Is Your Fitness Goal?" accent={RED} /></AnimatedSection>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {FITNESS_QUIZ_OPTIONS.map((opt, i) => (
+              <button key={opt.label} onClick={() => setQuizAnswer(i)} className="text-left cursor-pointer">
+                <GlassCard className={`p-6 h-full transition-all duration-300 ${quizAnswer === i ? "ring-2" : ""}`} style={quizAnswer === i ? { borderColor: opt.color, boxShadow: `0 0 20px ${opt.color}22` } as React.CSSProperties : undefined}>
+                  <h4 className="text-lg font-bold text-white mb-1">{opt.label}</h4>
+                  <p className="text-sm text-zinc-400">{opt.desc}</p>
+                  {quizAnswer === i && (
+                    <div className="mt-4 pt-4 border-t border-white/15">
+                      <PhoneLink phone={data.phone} className="inline-flex items-center gap-2 text-sm font-bold" style={{ color: opt.color }}>
+                        <Phone size={16} weight="bold" /> Book a Free Consultation <ArrowRight size={14} />
+                      </PhoneLink>
+                    </div>
+                  )}
+                </GlassCard>
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ 8d. VIDEO PLACEHOLDER ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #080808 0%, #0a0a0a 50%, #080808 100%)" }} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <AnimatedSection><SectionHeader badge="Virtual Tour" title="See Our Facility" accent={RED} /></AnimatedSection>
+          <div className="relative rounded-2xl overflow-hidden border border-white/15 aspect-video">
+            <img src={uniquePhotos[3] || pickFromPool(STOCK_GALLERY, data.businessName, 3)} alt={`${data.businessName} facility`} className="w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+              <div className="w-20 h-20 rounded-full flex items-center justify-center cursor-pointer hover:scale-110 transition-transform" style={{ background: `${RED}cc` }}>
+                <svg viewBox="0 0 24 24" fill="white" className="w-8 h-8 ml-1"><polygon points="5,3 19,12 5,21" /></svg>
+              </div>
+            </div>
+            <div className="absolute bottom-4 left-4 text-sm text-white/70">Take a virtual tour of {data.businessName}</div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ 8e. CERTIFICATIONS ROW ══════════════════ */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #080808 100%)" }} />
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <div className="flex flex-wrap justify-center gap-4">
+            {["NASM Certified", "ACE Accredited", "CrossFit Affiliate", "CPR/AED Certified", "Nutrition Certified", "BBB A+ Rated"].map((cert) => (
+              <span key={cert} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium border" style={{ color: RED, borderColor: `${RED}33`, background: `${RED}0d` }}>
+                <ShieldCheck size={16} weight="fill" />{cert}
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ 9. TESTIMONIALS ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #080808 50%, #0a0a0a 100%)" }} />
         <FitnessPattern opacity={0.02} accent={RED} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <AnimatedSection>          <SectionHeader badge="Results" title="Member Success Stories" accent={RED} /></AnimatedSection>
+          {/* Google Reviews Header */}
+          <div className="flex flex-col items-center gap-2 mb-8">
+            <div className="flex items-center gap-1">{Array.from({ length: 5 }).map((_, i) => <Star key={i} size={22} weight="fill" style={{ color: "#facc15" }} />)}</div>
+            <p className="text-white font-bold text-lg">{data.googleRating || "4.9"} out of 5</p>
+            <span className="text-zinc-400 text-sm">based on {data.reviewCount || "100+"} Google reviews</span>
+          </div>
+          <AnimatedSection><SectionHeader badge="Results" title="Member Success Stories" accent={RED} /></AnimatedSection>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {testimonials.map((t, i) => (
               <GlassCard key={i} className="p-6 h-full flex flex-col">
                 <div className="flex gap-0.5 mb-4">{Array.from({ length: t.rating || 5 }).map((_, j) => <Star key={j} size={16} weight="fill" style={{ color: RED }} />)}</div>
                 <p className="text-zinc-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p>
-                <div className="pt-4 border-t border-white/5"><span className="text-sm font-semibold text-white">{t.name}</span></div>
+                <div className="pt-4 border-t border-white/8"><span className="text-sm font-semibold text-white">{t.name}</span></div>
               </GlassCard>
             ))}
           </div>
@@ -557,9 +718,9 @@ export default function V2FitnessPreview({ data }: { data: GeneratedSiteData }) 
       
       {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
       <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15, ${ACCENT}08)` }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${RED}15, ${RED}08)` }} />
         <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
-          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: ACCENT }}>
+          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: RED }}>
             Don&apos;t Miss Out
           </p>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-3">
@@ -571,13 +732,177 @@ export default function V2FitnessPreview({ data }: { data: GeneratedSiteData }) 
           <a
             href={`/claim/${data.id}`}
             className="inline-flex items-center gap-2 min-h-[48px] px-8 py-3 rounded-full text-white font-bold text-base hover:shadow-lg transition-all duration-300"
-            style={{ background: ACCENT }}
+            style={{ background: RED }}
           >
             Claim This Website
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
               <path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
             </svg>
           </a>
+        </div>
+      </section>
+
+      {/* ══════════════════ 11b. CLASS SCHEDULE GRID ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #080808 50%, #0a0a0a 100%)" }} />
+        <FitnessPattern opacity={0.02} accent={RED} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Schedule" title="Weekly Class Schedule" subtitle="Find the perfect class for your fitness level and goals." accent={RED} />
+          <GlassCard className="overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-white/15">
+                    <th className="text-left p-4 font-semibold text-white">Time</th>
+                    {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
+                      <th key={day} className="text-center p-4 font-semibold text-white">{day}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { time: "6:00 AM", classes: ["HIIT", "Yoga", "HIIT", "Yoga", "HIIT", "Bootcamp"] },
+                    { time: "8:00 AM", classes: ["Strength", "Spin", "Strength", "Spin", "Strength", "Yoga"] },
+                    { time: "12:00 PM", classes: ["Yoga", "Boxing", "Yoga", "Boxing", "Yoga", "Open Gym"] },
+                    { time: "5:30 PM", classes: ["CrossFit", "HIIT", "CrossFit", "HIIT", "CrossFit", "—"] },
+                    { time: "7:00 PM", classes: ["Boxing", "Strength", "Boxing", "Strength", "Open Gym", "—"] },
+                  ].map((row) => (
+                    <tr key={row.time} className="border-b border-white/8 hover:bg-white/[0.07]">
+                      <td className="p-4 font-medium text-white whitespace-nowrap">{row.time}</td>
+                      {row.classes.map((cls, i) => (
+                        <td key={i} className="text-center p-4">
+                          <span className={`text-xs font-medium px-2 py-1 rounded-full ${cls === "—" ? "text-slate-600" : ""}`}
+                            style={cls !== "—" ? { color: RED, background: `${RED}15` } : undefined}>
+                            {cls}
+                          </span>
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </GlassCard>
+          <p className="text-center text-xs text-slate-500 mt-4">Schedule subject to change. Drop-in classes available. Members get priority booking.</p>
+        </div>
+      </section>
+
+      {/* ══════════════════ 11c. TRANSFORMATION GALLERY ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #0c0808 50%, #0a0a0a 100%)" }} />
+        <FitnessPattern opacity={0.02} accent={RED} />
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Results" title="Member Transformations" subtitle="Real results from real members who committed to their fitness journey." accent={RED} />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              { name: "Jake M.", result: "Lost 47 lbs in 6 months", program: "HIIT + Nutrition Coaching", quote: "The trainers here changed my life. I feel like a completely different person." },
+              { name: "Amanda R.", result: "Gained 15 lbs muscle", program: "Strength Training", quote: "Finally found a gym that takes female strength training seriously." },
+              { name: "David L.", result: "Ran first marathon", program: "Cardio + Endurance", quote: "Went from couch potato to marathon finisher in under a year." },
+            ].map((story) => (
+              <GlassCard key={story.name} className="p-6">
+                <div className="text-2xl font-extrabold mb-2" style={{ color: RED }}>{story.result}</div>
+                <p className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">{story.program}</p>
+                <p className="text-sm text-slate-400 italic mb-4">&ldquo;{story.quote}&rdquo;</p>
+                <p className="text-sm font-bold text-white">— {story.name}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ 11d. EQUIPMENT & AMENITIES ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #080808 50%, #0a0a0a 100%)" }} />
+        <FitnessPattern opacity={0.02} accent={RED} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Facility" title="Equipment & Amenities" accent={RED} />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { icon: Barbell, title: "Free Weights", desc: "Full rack of dumbbells, barbells, and kettlebells" },
+              { icon: PersonSimpleRun, title: "Cardio Zone", desc: "Treadmills, bikes, rowers, and stair climbers" },
+              { icon: Lightning, title: "Functional Area", desc: "TRX, battle ropes, sleds, and plyometrics" },
+              { icon: Fire, title: "Boxing Ring", desc: "Heavy bags, speed bags, and ring training" },
+              { icon: Heartbeat, title: "Recovery Zone", desc: "Foam rollers, stretch area, and massage guns" },
+              { icon: Users, title: "Group Studios", desc: "Two dedicated studios for classes and training" },
+              { icon: ShieldCheck, title: "Locker Rooms", desc: "Clean facilities with showers and lockers" },
+              { icon: Medal, title: "Pro Shop", desc: "Supplements, gear, and recovery products" },
+            ].map((item) => (
+              <GlassCard key={item.title} className="p-5 text-center">
+                <div className="w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center" style={{ background: `${RED}15`, border: `1px solid ${RED}22` }}>
+                  <item.icon size={22} weight="duotone" style={{ color: RED }} />
+                </div>
+                <h4 className="text-sm font-bold text-white mb-1">{item.title}</h4>
+                <p className="text-xs text-slate-400 leading-relaxed">{item.desc}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ 11e. NUTRITION & RECOVERY ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #0c0808 50%, #0a0a0a 100%)" }} />
+        <FitnessPattern opacity={0.02} accent={RED} />
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Recovery" title="Nutrition & Recovery" subtitle="Training is only half the battle. We help you recover smarter and fuel properly." accent={RED} />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {[
+              { title: "Personalized Meal Plans", desc: "Custom nutrition programs designed around your goals, preferences, and dietary needs. Updated monthly as you progress.", icon: Fire },
+              { title: "Recovery Protocols", desc: "Foam rolling, stretching, and mobility work built into every session. Recovery is where results happen.", icon: Heartbeat },
+              { title: "Supplement Guidance", desc: "Evidence-based recommendations for protein, creatine, and recovery supplements. No gimmicks, just science.", icon: ShieldCheck },
+              { title: "Body Composition", desc: "Regular body composition scans to track muscle gain, fat loss, and overall progress beyond the scale.", icon: Star },
+            ].map((item) => (
+              <GlassCard key={item.title} className="p-6 flex gap-4 items-start">
+                <div className="w-12 h-12 rounded-full shrink-0 flex items-center justify-center" style={{ background: `${RED}15`, border: `1px solid ${RED}22` }}>
+                  <item.icon size={24} weight="duotone" style={{ color: RED }} />
+                </div>
+                <div>
+                  <h4 className="text-base font-bold text-white mb-1">{item.title}</h4>
+                  <p className="text-sm text-slate-400 leading-relaxed">{item.desc}</p>
+                </div>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ 11f. WHY CHOOSE US ══════════════════ */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #080808 100%)" }} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Difference" title="Why Members Choose Us" accent={RED} />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { icon: Medal, title: "Certified Trainers", desc: "NASM, ACE, and CSCS certified professionals" },
+              { icon: Lightning, title: "24/7 Access", desc: "Train on your schedule with keycard entry" },
+              { icon: Users, title: "Community", desc: "Supportive members who become friends" },
+              { icon: Timer, title: "30-Min Classes", desc: "Efficient workouts for busy professionals" },
+            ].map((item) => (
+              <GlassCard key={item.title} className="p-5 text-center">
+                <item.icon size={28} weight="duotone" style={{ color: RED }} className="mx-auto mb-3" />
+                <h4 className="text-sm font-bold text-white mb-1">{item.title}</h4>
+                <p className="text-xs text-slate-400">{item.desc}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ 11g. MID-PAGE CTA ══════════════════ */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: RED }} />
+        <div className="absolute inset-0 bg-black/30" />
+        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+          <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">Start Your Transformation Today</h2>
+          <p className="text-white/80 text-lg mb-8 max-w-2xl mx-auto">Your first class is free. No contracts, no pressure. Just results.</p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <PhoneLink phone={data.phone} className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-white text-sm font-bold" style={{ color: RED }}>
+              <Phone size={18} weight="fill" /> Start Free Trial
+            </PhoneLink>
+            <a href="#contact" className="inline-flex items-center gap-2 px-8 py-4 rounded-full border-2 border-white text-white text-sm font-bold hover:bg-white/10 transition-colors">
+              View Schedule <ArrowRight size={18} weight="bold" />
+            </a>
+          </div>
         </div>
       </section>
 
@@ -610,16 +935,16 @@ export default function V2FitnessPreview({ data }: { data: GeneratedSiteData }) 
               <h3 className="text-xl font-semibold text-white mb-6">Start Your Free Trial</h3>
               <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div><label className="block text-sm text-zinc-400 mb-1.5">Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-zinc-500 focus:outline-none text-sm" placeholder="Your name" /></div>
-                  <div><label className="block text-sm text-zinc-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-zinc-500 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
+                  <div><label className="block text-sm text-zinc-400 mb-1.5">Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-zinc-500 focus:outline-none text-sm" placeholder="Your name" /></div>
+                  <div><label className="block text-sm text-zinc-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-zinc-500 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
                 </div>
                 <div><label className="block text-sm text-zinc-400 mb-1.5">Interest</label>
-                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none text-sm">
+                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none text-sm">
                     <option value="" className="bg-neutral-900">Select a program</option>
                     {data.services.map((s) => <option key={s.name} value={s.name.toLowerCase().replace(/\s+/g, "-")} className="bg-neutral-900">{s.name}</option>)}
                   </select>
                 </div>
-                <div><label className="block text-sm text-zinc-400 mb-1.5">Message</label><textarea rows={3} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-zinc-500 focus:outline-none text-sm resize-none" placeholder="Tell us about your fitness goals..." /></div>
+                <div><label className="block text-sm text-zinc-400 mb-1.5">Message</label><textarea rows={3} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-zinc-500 focus:outline-none text-sm resize-none" placeholder="Tell us about your fitness goals..." /></div>
                 <MagneticButton className="w-full py-4 rounded-xl text-base font-bold text-white flex items-center justify-center gap-2 cursor-pointer" style={{ background: RED } as React.CSSProperties}>
                   Get Started <ArrowRight size={18} weight="bold" />
                 </MagneticButton>
@@ -637,9 +962,17 @@ export default function V2FitnessPreview({ data }: { data: GeneratedSiteData }) 
             <div className="p-8 md:p-12">
               <ShieldCheck size={48} weight="fill" style={{ color: RED }} className="mx-auto mb-4" />
               <h2 className="text-2xl md:text-4xl font-black text-white mb-4">Our Guarantee</h2>
-              <p className="text-zinc-400 leading-relaxed max-w-2xl mx-auto text-lg">At {data.businessName}, we are committed to your transformation. Expert trainers, world-class equipment, and a community that pushes you to be your best.</p>
-              <div className="flex flex-wrap justify-center gap-4 mt-8">
-                {["Free Trial", "No Contracts", "Expert Trainers", "Results Guaranteed"].map((item) => (
+              <p className="text-zinc-400 leading-relaxed max-w-2xl mx-auto text-lg mb-2">At {data.businessName}, we are committed to your transformation. Expert trainers, world-class equipment, and a community that pushes you to be your best.</p>
+              <p className="text-zinc-500 text-sm max-w-xl mx-auto mb-6">
+                We invest in the best equipment, hire only certified trainers,
+                and maintain the cleanest facility in town. Your fitness journey
+                deserves nothing less than excellence. Come see the difference.
+              </p>
+              <div className="flex flex-wrap justify-center gap-4 mt-4">
+                {[
+                  "Free Trial", "No Contracts", "Expert Trainers",
+                  "Results Guaranteed", "Open 7 Days", "All Levels Welcome",
+                ].map((item) => (
                   <span key={item} className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border" style={{ color: RED, borderColor: `${RED}33`, background: `${RED}0d` }}><CheckCircle size={16} weight="fill" />{item}</span>
                 ))}
               </div>
@@ -649,7 +982,7 @@ export default function V2FitnessPreview({ data }: { data: GeneratedSiteData }) 
       </section>
 
       {/* ══════════════════ 15. FOOTER ══════════════════ */}
-      <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden">
+      <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #070707 100%)" }} />
         <div className="mx-auto max-w-6xl px-6 relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
@@ -657,7 +990,7 @@ export default function V2FitnessPreview({ data }: { data: GeneratedSiteData }) 
             <div><h4 className="text-sm font-semibold text-white mb-3">Quick Links</h4><div className="space-y-2">{["Programs", "About", "Gallery", "Contact"].map((link) => <a key={link} href={`#${link.toLowerCase()}`} className="block text-sm text-zinc-500 hover:text-white transition-colors">{link}</a>)}</div></div>
             <div><h4 className="text-sm font-semibold text-white mb-3">Contact</h4><div className="space-y-2 text-sm text-zinc-500"><p><PhoneLink phone={data.phone} /></p><p><MapLink address={data.address} /></p>{data.socialLinks && Object.entries(data.socialLinks).map(([platform, url]) => <a key={platform} href={url} target="_blank" rel="noopener noreferrer" className="block hover:text-white transition-colors capitalize">{platform}</a>)}</div></div>
           </div>
-          <div className="border-t border-white/5 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="border-t border-white/8 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-sm text-zinc-500"><Barbell size={14} weight="bold" style={{ color: RED }} /><span>{data.businessName} &copy; {new Date().getFullYear()}</span></div>
             <div className="flex items-center gap-2 text-xs text-zinc-600"><BluejayLogo className="w-4 h-4" /><span>Created by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" style={{textDecoration:"underline"}}>bluejayportfolio.com</a></span></div>
           </div>

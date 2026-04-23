@@ -28,6 +28,9 @@ interface OnboardingData {
   preferredContact: string;
   specialRequests: string;
   testimonials: string;
+  themePreference: string;
+  translationNeeds: string;
+  additionalFeatures: string;
 }
 
 const initialData: OnboardingData = {
@@ -50,6 +53,9 @@ const initialData: OnboardingData = {
   preferredContact: "",
   specialRequests: "",
   testimonials: "",
+  themePreference: "",
+  translationNeeds: "",
+  additionalFeatures: "",
 };
 
 export default function OnboardingPage() {
@@ -144,11 +150,11 @@ export default function OnboardingPage() {
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-green-500 mt-0.5">&#10003;</span>
-                Domain connection and hosting setup
+                Domain registration (or connection) and hosting setup
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-green-500 mt-0.5">&#10003;</span>
-                1 year of site management and security updates
+                Ongoing maintenance is $100/year after year one and covers domain renewal, hosting, ongoing maintenance, and support
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-green-500 mt-0.5">&#10003;</span>
@@ -401,6 +407,41 @@ export default function OnboardingPage() {
             value={data.testimonials}
             onChange={handleChange}
             placeholder="Paste any customer quotes you'd like on the site"
+            rows={3}
+          />
+
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Theme Preference
+            </label>
+            <select
+              name="themePreference"
+              value={data.themePreference}
+              onChange={handleChange}
+              className="w-full h-10 px-3 rounded-lg bg-surface border border-border text-foreground text-sm"
+            >
+              <option value="">No preference</option>
+              <option value="dark">Dark theme</option>
+              <option value="light">Light theme</option>
+              <option value="both">Both (with toggle button)</option>
+            </select>
+          </div>
+
+          <TextArea
+            label="Translation / Language Needs"
+            name="translationNeeds"
+            value={data.translationNeeds}
+            onChange={handleChange}
+            placeholder="Do you need your site in any other languages? (e.g., Spanish, Vietnamese, Korean)"
+            rows={2}
+          />
+
+          <TextArea
+            label="Additional Features or Details"
+            name="additionalFeatures"
+            value={data.additionalFeatures}
+            onChange={handleChange}
+            placeholder="Any special features, integrations, or details you want on your site? (e.g., online booking, payment portal, chat widget)"
             rows={3}
           />
         </Section>

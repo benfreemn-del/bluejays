@@ -1,5 +1,8 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element -- These static marketing and preview components intentionally use plain img tags to preserve existing markup and visual behavior during lint-only cleanup. */
+/* eslint-disable react-hooks/purity -- Decorative particle values are intentionally randomized for static visual effects in these marketing pages and previews; this preserves existing appearance without changing business logic. */
+
 import { useState, useEffect, useRef, useCallback } from "react";
 import {
   motion,
@@ -29,6 +32,7 @@ import type { GeneratedSiteData } from "@/lib/generator";
 import BluejayLogo from "../BluejayLogo";
 import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
+import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
 
 /* ───────────────────────── SPRING CONFIGS ───────────────────────── */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
@@ -71,8 +75,8 @@ function getServiceIcon(serviceName: string) {
 }
 
 /* ───────────────────────── STOCK FALLBACK IMAGES ───────────────────────── */
-const STOCK_HERO = "https://images.unsplash.com/photo-1555597673-b21d5c935865?w=1400&q=80";
-const STOCK_ABOUT = "https://images.unsplash.com/photo-1550345332-09e3ac987658?w=600&q=80";
+const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1555597673-b21d5c935865?w=1400&q=80"];
+const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1550345332-09e3ac987658?w=600&q=80"];
 const STOCK_PROJECTS = [
   "https://images.unsplash.com/photo-1564415315949-7a0c4c73aab4?w=600&q=80",
   "https://images.unsplash.com/photo-1517438322307-e67111335449?w=600&q=80",
@@ -147,7 +151,7 @@ function WaterDropBackground({ opacity = 0.03, accent }: { opacity?: number; acc
 /* ───────────────────────── GLASS CARD ───────────────────────── */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
+    <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
       {children}
     </div>
   );
@@ -248,14 +252,46 @@ function AnimatedSection({ children, className = "" }: { children: React.ReactNo
   );
 }
 
+const COMPARISON_ROWS = [
+  { feature: "Certified Black Belt Instructors", us: true, them: "Varies" },
+  { feature: "Free Trial Class", us: true, them: "No" },
+  { feature: "Kids & Adult Programs", us: true, them: "Limited" },
+  { feature: "Belt Progression System", us: true, them: "No" },
+  { feature: "Competition Training", us: true, them: "Extra Cost" },
+  { feature: "Self-Defense Focus", us: true, them: "Sometimes" },
+  { feature: "Flexible Class Schedule", us: true, them: "Limited" },
+];
+
+const MA_PRICING_TIERS = [
+  { title: "Beginner", price: "$79", period: "/month", features: ["2 classes per week", "Basic techniques", "Belt testing included", "Uniform provided"], featured: false },
+  { title: "Unlimited", price: "$129", period: "/month", features: ["Unlimited classes", "All disciplines", "Competition prep", "Belt testing included", "Guest passes"], featured: true },
+  { title: "Family", price: "$199", period: "/month", features: ["Up to 4 family members", "All programs", "Priority scheduling", "Private lessons monthly", "Belt testing included"], featured: false },
+];
+
+const MA_QUIZ_OPTIONS = [
+  { label: "Self-Defense", desc: "Learn to protect yourself and build confidence.", color: "#22c55e" },
+  { label: "Fitness & Conditioning", desc: "Full-body martial arts workouts for peak performance.", color: "#3b82f6" },
+  { label: "Competition", desc: "Train for tournaments and competitive martial arts.", color: "#f59e0b" },
+  { label: "Kids Program", desc: "Discipline, respect, and confidence for children.", color: "#a855f7" },
+];
+
 export default function V2MartialArtsPreview({ data }: { data: GeneratedSiteData }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [quizAnswer, setQuizAnswer] = useState<number | null>(null);
   const { ACCENT, ACCENT_GLOW } = getAccent(data.accentColor);
 
-  const heroImage = data.photos?.[0] || STOCK_HERO;
-  const aboutImage = data.photos?.[1] || STOCK_ABOUT;
-  const projectImages = data.photos?.length > 2 ? data.photos.slice(2, 6) : STOCK_PROJECTS;
+  const uniquePhotos = data.photos ? [...new Set(data.photos)] : [];
+
+
+  const heroImage = uniquePhotos[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
+
+
+  const heroCardImage = uniquePhotos[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 1);
+
+
+  const aboutImage = uniquePhotos[2] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 2);
+  const projectImages = data.photos?.length > 2 ? data.photos.slice(2, 6) : pickGallery(STOCK_PROJECTS, data.businessName);
 
   const processSteps = [
     { step: "01", title: "Free Trial Class", desc: "Experience our training firsthand with a no-commitment introductory class." },
@@ -325,28 +361,25 @@ export default function V2MartialArtsPreview({ data }: { data: GeneratedSiteData
 
         <div className="absolute inset-0">
           <img src={heroImage} alt={`${data.businessName}`} className="w-full h-full object-cover object-center" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/25 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/20" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
         </div>
-        <SparklePattern opacity={0.04} accent={ACCENT} />
-        <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full blur-[200px] pointer-events-none" style={{ background: `${ACCENT}08` }} />
-        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full blur-[160px] pointer-events-none" style={{ background: `${GOLD}06` }} />
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
-          <div className="space-y-8">
+          <div className="space-y-8 rounded-2xl bg-black/50 backdrop-blur-md p-6 md:p-8 border border-white/8">
             <div>
               <p className="text-sm uppercase tracking-widest mb-4" style={{ color: ACCENT }}>Premier Martial Arts Academy</p>
-              <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}>
+              <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 20px rgba(0,0,0,0.8), 0 4px 40px rgba(0,0,0,0.5)" }}>
                 {data.tagline}
               </h1>
             </div>
             <p className="text-lg text-slate-400 max-w-md leading-relaxed">
-              {data.about.length > 160 ? data.about.slice(0, 160).trim() + "..." : data.about}
+              {(() => { const t = data.about; if (t.length <= 180) return t; const dot = t.indexOf('.', 80); return dot > 0 && dot < 220 ? t.slice(0, dot + 1) : t.slice(0, 180).trim() + '...'; })()}
             </p>
             <div className="flex flex-wrap gap-4">
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
                 Get Free Trial <ArrowRight size={18} weight="bold" />
               </MagneticButton>
-              <MagneticButton href={`tel:${data.phone.replace(/\D/g, "")}`} className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
+              <MagneticButton href={`tel:${data.phone.replace(/\D/g, "")}`} className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
                 <Phone size={18} weight="duotone" /> <PhoneLink phone={data.phone} />
               </MagneticButton>
             </div>
@@ -356,8 +389,8 @@ export default function V2MartialArtsPreview({ data }: { data: GeneratedSiteData
             </div>
           </div>
           <div className="hidden md:block relative">
-            <div className="relative rounded-2xl overflow-hidden border border-white/10">
-              <img src={heroImage} alt={`${data.businessName} martial arts training`} className="w-full h-[500px] object-cover" />
+            <div className="relative rounded-2xl overflow-hidden border border-white/15">
+              <img src={heroCardImage} alt={`${data.businessName} martial arts training`} className="w-full h-[500px] object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a1a] via-transparent to-transparent" />
               <div className="absolute inset-0 bg-gradient-to-r from-[#1a1a1a]/40 to-transparent" />
               <div className="absolute bottom-6 left-6 flex items-center gap-3">
@@ -410,7 +443,7 @@ export default function V2MartialArtsPreview({ data }: { data: GeneratedSiteData
             {data.services.map((service, i) => {
               const Icon = getServiceIcon(service.name);
               return (
-                <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.02]">
+                <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]">
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${ACCENT}15, transparent 70%)` }} />
                   <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${ACCENT}4d, transparent)` }} />
                   <div className="relative z-10">
@@ -439,7 +472,7 @@ export default function V2MartialArtsPreview({ data }: { data: GeneratedSiteData
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="relative">
-              <div className="rounded-2xl overflow-hidden border border-white/10">
+              <div className="rounded-2xl overflow-hidden border border-white/15">
                 <img src={aboutImage} alt={`${data.businessName} team`} className="w-full h-[400px] object-cover" />
               </div>
               <div className="absolute -bottom-4 -right-4 md:bottom-6 md:-right-6">
@@ -503,7 +536,7 @@ export default function V2MartialArtsPreview({ data }: { data: GeneratedSiteData
               const titles = ["Competition Team", "Kids Classes", "Adult Training", "Self-Defense Workshop"];
               const descs = ["Our competition team at regional championships.", "Building confidence and discipline in young minds.", "Expert-led training for all skill levels.", "Practical self-defense techniques for real situations."];
               return (
-                <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.06] hover:border-opacity-30 transition-all duration-500">
+                <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.10] hover:border-opacity-30 transition-all duration-500">
                   <img src={src} alt={titles[i] || `Project ${i + 1}`} className="w-full h-64 object-cover transition-transform duration-700 group-hover:scale-105" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-6">
@@ -517,19 +550,121 @@ export default function V2MartialArtsPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 8. TESTIMONIALS ══════════════════ */}
+      {/* ══════════════════ 8. COMPARISON TABLE ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f0808 50%, #1a1a1a 100%)" }} />
+        <SparklePattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <AnimatedSection><SectionHeader badge="Compare" title={`${data.businessName} vs. Other Schools`} accent={ACCENT} /></AnimatedSection>
+          <GlassCard className="overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead><tr className="border-b border-white/15"><th className="px-6 py-4 text-sm font-semibold text-slate-400">Feature</th><th className="px-6 py-4 text-sm font-semibold text-center" style={{ color: ACCENT }}>{data.businessName}</th><th className="px-6 py-4 text-sm font-semibold text-center text-slate-500">Other Schools</th></tr></thead>
+                <tbody>
+                  {COMPARISON_ROWS.map((row, i) => (
+                    <tr key={i} className="border-b border-white/8">
+                      <td className="px-6 py-4 text-sm text-slate-300">{row.feature}</td>
+                      <td className="px-6 py-4 text-center"><CheckCircle size={20} weight="fill" className="inline" style={{ color: "#22c55e" }} /></td>
+                      <td className="px-6 py-4 text-center text-sm text-slate-500">{row.them}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </GlassCard>
+        </div>
+      </section>
+
+      {/* ══════════════════ 8b. PRICING TIERS ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #1a0505 50%, #1a1a1a 100%)" }} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <AnimatedSection><SectionHeader badge="Membership" title="Training Plans" subtitle="Flexible plans for individuals and families. No long-term contracts." accent={ACCENT} /></AnimatedSection>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {MA_PRICING_TIERS.map((tier) => (
+              <GlassCard key={tier.title} className={`p-8 h-full flex flex-col ${tier.featured ? "ring-2" : ""}`} style={tier.featured ? { borderColor: ACCENT, boxShadow: `0 0 30px ${ACCENT}22` } as React.CSSProperties : undefined}>
+                {tier.featured && <span className="inline-block self-start text-xs font-bold uppercase tracking-widest mb-4 px-3 py-1 rounded-full text-white" style={{ background: ACCENT }}>Most Popular</span>}
+                <h3 className="text-xl font-bold text-white mb-1">{tier.title}</h3>
+                <div className="flex items-baseline gap-1 mb-4"><span className="text-4xl font-black text-white">{tier.price}</span><span className="text-slate-500 text-sm">{tier.period}</span></div>
+                <ul className="space-y-3 flex-1 mb-6">{tier.features.map((f) => <li key={f} className="flex items-center gap-2 text-sm text-slate-300"><CheckCircle size={16} weight="fill" style={{ color: ACCENT }} />{f}</li>)}</ul>
+                <PhoneLink phone={data.phone} className="block w-full py-3 rounded-xl text-center font-bold text-sm transition-all" style={tier.featured ? { background: ACCENT, color: "#fff" } : { background: `${ACCENT}15`, color: ACCENT }}>Get Started</PhoneLink>
+              </GlassCard>
+            ))}
+          </div>
+          <p className="text-center text-sm text-slate-500 mt-8">Exact pricing may vary. Call for current rates and promotions.</p>
+        </div>
+      </section>
+
+      {/* ══════════════════ 8c. TRAINING QUIZ ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f0808 50%, #1a1a1a 100%)" }} />
+        <SparklePattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-3xl mx-auto px-6 relative z-10">
+          <AnimatedSection><SectionHeader badge="Find Your Path" title="What Is Your Goal?" accent={ACCENT} /></AnimatedSection>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {MA_QUIZ_OPTIONS.map((opt, i) => (
+              <button key={opt.label} onClick={() => setQuizAnswer(i)} className="text-left cursor-pointer">
+                <GlassCard className={`p-6 h-full transition-all duration-300 ${quizAnswer === i ? "ring-2" : ""}`} style={quizAnswer === i ? { borderColor: opt.color, boxShadow: `0 0 20px ${opt.color}22` } as React.CSSProperties : undefined}>
+                  <h4 className="text-lg font-bold text-white mb-1">{opt.label}</h4>
+                  <p className="text-sm text-slate-400">{opt.desc}</p>
+                  {quizAnswer === i && (
+                    <div className="mt-4 pt-4 border-t border-white/15">
+                      <PhoneLink phone={data.phone} className="inline-flex items-center gap-2 text-sm font-bold" style={{ color: opt.color }}><Phone size={16} weight="bold" /> Book Free Trial <ArrowRight size={14} /></PhoneLink>
+                    </div>
+                  )}
+                </GlassCard>
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ 8d. VIDEO PLACEHOLDER ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #1a0505 50%, #1a1a1a 100%)" }} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <AnimatedSection><SectionHeader badge="See Us Train" title="Watch Our Classes" accent={ACCENT} /></AnimatedSection>
+          <div className="relative rounded-2xl overflow-hidden border border-white/15 aspect-video">
+            <img src={uniquePhotos[3] || pickFromPool(STOCK_PROJECTS, data.businessName, 3)} alt={`${data.businessName} training`} className="w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+              <div className="w-20 h-20 rounded-full flex items-center justify-center cursor-pointer hover:scale-110 transition-transform" style={{ background: `${ACCENT}cc` }}><svg viewBox="0 0 24 24" fill="white" className="w-8 h-8 ml-1"><polygon points="5,3 19,12 5,21" /></svg></div>
+            </div>
+            <div className="absolute bottom-4 left-4 text-sm text-white/70">Tour {data.businessName} and see our training in action</div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ 8e. CERTIFICATIONS ══════════════════ */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f0808 100%)" }} />
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <div className="flex flex-wrap justify-center gap-4">
+            {["Black Belt Instructors", "USA Martial Arts Certified", "CPR/First Aid Trained", "Background Checked", "Insured & Bonded", "Youth Safety Certified"].map((cert) => (
+              <span key={cert} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium border" style={{ color: ACCENT, borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}><ShieldCheck size={16} weight="fill" />{cert}</span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ 9. TESTIMONIALS (with Google Reviews) ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f0808 50%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] right-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${ACCENT}06` }} /></div>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <AnimatedSection>          <SectionHeader badge="Testimonials" title="What Our Clients Say" accent={ACCENT} /></AnimatedSection>
+          {/* Google Reviews Header */}
+          <div className="flex flex-col items-center gap-2 mb-8">
+            <div className="flex items-center gap-1">{Array.from({ length: 5 }).map((_, i) => <Star key={i} size={22} weight="fill" style={{ color: "#facc15" }} />)}</div>
+            <p className="text-white font-bold text-lg">{data.googleRating || "4.9"} out of 5</p>
+            <span className="text-slate-400 text-sm">based on {data.reviewCount || "100+"} Google reviews</span>
+          </div>
+          <AnimatedSection><SectionHeader badge="Testimonials" title="What Our Students Say" accent={ACCENT} /></AnimatedSection>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {testimonials.map((t, i) => (
               <GlassCard key={i} className="p-6 h-full flex flex-col">
                 <div className="flex gap-0.5 mb-4">{Array.from({ length: t.rating || 5 }).map((_, j) => <Star key={j} size={16} weight="fill" style={{ color: ACCENT }} />)}</div>
                 <p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p>
-                <div className="pt-4 border-t border-white/5 flex items-center justify-between">
+                <div className="pt-4 border-t border-white/8 flex items-center justify-between">
                   <span className="text-sm font-semibold text-white">{t.name}</span>
                 </div>
               </GlassCard>
@@ -538,7 +673,7 @@ export default function V2MartialArtsPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 9. FRESH HOME CTA ══════════════════ */}
+      {/* ══════════════════ 10. FRESH HOME CTA ══════════════════ */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT}cc, ${ACCENT})` }} />
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='40' height='40' fill='none'/%3E%3Cpath d='M0 0L40 40M40 0L0 40' stroke='%23000' stroke-width='0.5'/%3E%3C/svg%3E\")" }} />
@@ -685,18 +820,18 @@ export default function V2MartialArtsPreview({ data }: { data: GeneratedSiteData
               <h3 className="text-xl font-semibold text-white mb-6">Request a Free Trial</h3>
               <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div><label className="block text-sm text-slate-400 mb-1.5">First Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="John" /></div>
-                  <div><label className="block text-sm text-slate-400 mb-1.5">Last Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="Doe" /></div>
+                  <div><label className="block text-sm text-slate-400 mb-1.5">First Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="John" /></div>
+                  <div><label className="block text-sm text-slate-400 mb-1.5">Last Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="Doe" /></div>
                 </div>
-                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="(555) 123-4567" /></div>
+                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="(555) 123-4567" /></div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-1.5">Program Interest</label>
-                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none transition-colors text-sm">
+                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none transition-colors text-sm">
                     <option value="" className="bg-neutral-900">Select a service</option>
                     {data.services.map((s) => <option key={s.name} value={s.name.toLowerCase().replace(/\s+/g, "-")} className="bg-neutral-900">{s.name}</option>)}
                   </select>
                 </div>
-                <div><label className="block text-sm text-slate-400 mb-1.5">Message</label><textarea rows={4} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm resize-none" placeholder="Tell us about your martial arts goals..." /></div>
+                <div><label className="block text-sm text-slate-400 mb-1.5">Message</label><textarea rows={4} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm resize-none" placeholder="Tell us about your martial arts goals..." /></div>
                 <MagneticButton className="w-full py-4 rounded-xl text-base font-semibold text-white flex items-center justify-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
                   Send Request <ArrowRight size={18} weight="bold" />
                 </MagneticButton>
@@ -706,8 +841,136 @@ export default function V2MartialArtsPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
+      {/* ══════════════════ BELT PROGRESSION ══════════════════ */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111 50%, #1a1a1a 100%)" }} />
+        <SparklePattern opacity={0.01} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <Medal size={40} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-3" />
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Belt Progression System</h2>
+            <p className="text-slate-400 mt-3 max-w-xl mx-auto">Our structured ranking system ensures every student advances with clear goals and measurable achievements.</p>
+          </div>
+          <div className="flex flex-wrap justify-center gap-4">
+            {[
+              { belt: "White", color: "#f1f5f9", desc: "Fundamentals & basics" },
+              { belt: "Yellow", color: "#facc15", desc: "Core techniques" },
+              { belt: "Orange", color: "#f97316", desc: "Combination skills" },
+              { belt: "Green", color: "#22c55e", desc: "Intermediate forms" },
+              { belt: "Blue", color: "#3b82f6", desc: "Advanced techniques" },
+              { belt: "Purple", color: "#a855f7", desc: "Competition ready" },
+              { belt: "Brown", color: "#92400e", desc: "Expert level" },
+              { belt: "Black", color: "#1e1e1e", desc: "Mastery achieved" },
+            ].map((b) => (
+              <div key={b.belt} className="rounded-2xl border border-white/15 p-4 text-center w-28" style={{ background: "rgba(255,255,255,0.06)" }}>
+                <div className="w-full h-3 rounded-full mb-2" style={{ background: b.color, border: b.belt === "Black" ? "1px solid #444" : "none" }} />
+                <h3 className="text-sm font-bold text-white">{b.belt}</h3>
+                <p className="text-[10px] text-slate-500">{b.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ CLASS SCHEDULE ══════════════════ */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #111 0%, #1a1a1a 100%)" }} />
+        <SparklePattern opacity={0.012} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <Clock size={40} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-3" />
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Weekly Class Schedule</h2>
+            <div className="w-16 h-1 mx-auto mt-3 rounded-full" style={{ background: ACCENT }} />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {[
+              { day: "Mon / Wed / Fri", classes: [{ time: "4:00 PM", name: "Kids Beginners (5-8)" }, { time: "5:00 PM", name: "Youth Intermediate (9-14)" }, { time: "6:30 PM", name: "Adult All Levels" }, { time: "7:30 PM", name: "Sparring / Competition Prep" }] },
+              { day: "Tue / Thu / Sat", classes: [{ time: "9:00 AM", name: "Morning Cardio Kickboxing" }, { time: "4:30 PM", name: "Kids Advanced (9-14)" }, { time: "5:30 PM", name: "Adult Jiu-Jitsu / Grappling" }, { time: "7:00 PM", name: "Black Belt Club" }] },
+            ].map((d) => (
+              <div key={d.day} className="rounded-2xl border border-white/15 p-6" style={{ background: "rgba(255,255,255,0.06)" }}>
+                <h3 className="text-lg font-bold text-white mb-4" style={{ color: ACCENT }}>{d.day}</h3>
+                <div className="space-y-3">
+                  {d.classes.map((c) => (
+                    <div key={c.time} className="flex items-center gap-3">
+                      <span className="text-sm font-mono text-slate-500 w-20 shrink-0">{c.time}</span>
+                      <span className="text-sm text-white">{c.name}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ COMPETITION RESULTS ══════════════════ */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111 100%)" }} />
+        <SparklePattern opacity={0.01} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <Fire size={40} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-3" />
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Competition Achievements</h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              { stat: "200+", label: "Tournament Medals" },
+              { stat: "45+", label: "State Champions" },
+              { stat: "12", label: "National Qualifiers" },
+              { stat: "98%", label: "Student Retention Rate" },
+            ].map((s) => (
+              <div key={s.label} className="rounded-2xl border border-white/15 p-6 text-center" style={{ background: "rgba(255,255,255,0.06)" }}>
+                <p className="text-3xl font-extrabold mb-1" style={{ color: ACCENT }}>{s.stat}</p>
+                <p className="text-sm text-slate-400">{s.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15 0%, #1a1a1a 50%, ${ACCENT}08 100%)` }} />
+        <SparklePattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+          <Lightning size={44} weight="fill" style={{ color: ACCENT }} className="mx-auto mb-4" />
+          <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">Start Your Martial Arts Journey</h2>
+          <p className="text-slate-400 max-w-2xl mx-auto mb-6 text-lg">
+            Try a free class at {data.businessName}. No experience needed — our instructors will guide you through every technique at your own pace.
+          </p>
+          <a href={`tel:${data.phone}`} className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-white font-bold text-lg transition-transform hover:scale-105" style={{ background: ACCENT }}>
+            <Phone size={20} weight="fill" /> Claim Free Trial Class
+          </a>
+        </div>
+      </section>
+
+      {/* ══════════════════ WHY CHOOSE US ══════════════════ */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #111 0%, #1a1a1a 100%)" }} />
+        <SparklePattern opacity={0.01} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Why Train at <span style={{ color: ACCENT }}>{data.businessName}</span></h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              { title: "Expert Instructors", desc: "Black belt instructors with decades of competition and teaching experience" },
+              { title: "All Ages Welcome", desc: "Programs for kids as young as 4 through adult advanced practitioners" },
+              { title: "Character Building", desc: "Discipline, respect, and confidence developed through structured training" },
+              { title: "Competition Ready", desc: "Tournament prep and competitive team for students who want to test their skills" },
+            ].map((card) => (
+              <div key={card.title} className="rounded-2xl border border-white/15 p-6 text-center" style={{ background: "rgba(255,255,255,0.06)" }}>
+                <CheckCircle size={28} weight="fill" style={{ color: ACCENT }} className="mx-auto mb-3" />
+                <h3 className="text-lg font-bold text-white mb-2">{card.title}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed">{card.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ══════════════════ 15. FOOTER ══════════════════ */}
-      <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden">
+      <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111 100%)" }} />
         <SparklePattern opacity={0.015} accent={ACCENT} />
         <div className="mx-auto max-w-6xl px-6 relative z-10">
@@ -735,7 +998,7 @@ export default function V2MartialArtsPreview({ data }: { data: GeneratedSiteData
               </div>
             </div>
           </div>
-          <div className="border-t border-white/5 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="border-t border-white/8 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-sm text-slate-500"><HandGrabbing size={14} weight="fill" style={{ color: ACCENT }} /><span>{data.businessName} &copy; {new Date().getFullYear()}</span></div>
             <div className="flex items-center gap-2 text-xs text-slate-600"><BluejayLogo className="w-4 h-4" /><span>Created by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" style={{textDecoration:"underline"}}>bluejayportfolio.com</a></span></div>
           </div>

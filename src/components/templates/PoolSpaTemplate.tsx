@@ -1,5 +1,7 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element -- These static marketing and preview components intentionally use plain img tags to preserve existing markup and visual behavior during lint-only cleanup. */
+
 import { motion } from "framer-motion";
 import TemplateLayout from "./TemplateLayout";
 
@@ -395,7 +397,7 @@ export default function PoolSpaTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-[#22d3ee]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-[#22d3ee]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_50%_0%,#22d3ee15,transparent_70%)]" />
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#22d3ee]/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -454,7 +456,7 @@ export default function PoolSpaTemplate() {
                 className={`group relative p-8 rounded-2xl border transition-all duration-500 overflow-hidden ${
                   plan.popular
                     ? "border-[#22d3ee]/40 bg-gradient-to-b from-[#22d3ee]/[0.08] to-transparent scale-[1.02]"
-                    : "border-white/[0.06] hover:border-[#22d3ee]/30 bg-white/[0.02]"
+                    : "border-white/[0.10] hover:border-[#22d3ee]/30 bg-white/[0.07]"
                 }`}
               >
                 {plan.popular && (
@@ -522,7 +524,7 @@ export default function PoolSpaTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group relative rounded-2xl overflow-hidden border border-white/[0.06] hover:border-[#22d3ee]/30 transition-all duration-500"
+                className="group relative rounded-2xl overflow-hidden border border-white/[0.10] hover:border-[#22d3ee]/30 transition-all duration-500"
               >
                 <div className="aspect-[16/10] overflow-hidden">
                   <img
@@ -566,7 +568,7 @@ export default function PoolSpaTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group text-center p-6 rounded-2xl border border-white/[0.06] hover:border-[#22d3ee]/30 bg-white/[0.02] transition-all duration-500"
+                className="group text-center p-6 rounded-2xl border border-white/[0.10] hover:border-[#22d3ee]/30 bg-white/[0.07] transition-all duration-500"
               >
                 <div className="w-14 h-14 mx-auto rounded-xl bg-[#22d3ee]/10 border border-[#22d3ee]/20 flex items-center justify-center text-[#22d3ee] mb-4 group-hover:bg-[#22d3ee]/20 group-hover:scale-110 transition-all duration-300">
                   {tip.icon}
@@ -614,7 +616,7 @@ export default function PoolSpaTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group text-center p-6 rounded-2xl border border-white/[0.06] hover:border-[#22d3ee]/30 bg-white/[0.02] transition-all duration-500"
+                className="group text-center p-6 rounded-2xl border border-white/[0.10] hover:border-[#22d3ee]/30 bg-white/[0.07] transition-all duration-500"
               >
                 <div className="w-14 h-14 mx-auto rounded-xl bg-[#22d3ee]/10 border border-[#22d3ee]/20 flex items-center justify-center text-[#22d3ee] mb-4 group-hover:bg-[#22d3ee]/20 group-hover:scale-110 transition-all duration-300">
                   {item.icon}
@@ -657,7 +659,7 @@ export default function PoolSpaTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-[#22d3ee]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-[#22d3ee]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-[#22d3ee]/40 via-[#22d3ee]/10 to-transparent" />
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_0%_0%,#22d3ee10,transparent_70%)]" />
@@ -671,7 +673,7 @@ export default function PoolSpaTemplate() {
                     ))}
                   </div>
                   <p className="text-muted leading-relaxed mb-6 text-sm">&ldquo;{t.text}&rdquo;</p>
-                  <div className="flex items-center gap-3 pt-4 border-t border-white/[0.06]">
+                  <div className="flex items-center gap-3 pt-4 border-t border-white/[0.10]">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#22d3ee]/30 to-[#22d3ee]/10 flex items-center justify-center text-sm font-bold text-[#22d3ee]">
                       {t.name.charAt(0)}
                     </div>
@@ -790,7 +792,7 @@ export default function PoolSpaTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.06 }}
-                className="group p-6 rounded-2xl border border-white/[0.06] hover:border-[#22d3ee]/20 transition-all duration-500 overflow-hidden relative bg-white/[0.02]"
+                className="group p-6 rounded-2xl border border-white/[0.10] hover:border-[#22d3ee]/20 transition-all duration-500 overflow-hidden relative bg-white/[0.07]"
               >
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_0%_50%,#22d3ee10,transparent_70%)]" />
                 <div className="relative z-10 flex gap-4">

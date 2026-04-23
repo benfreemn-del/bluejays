@@ -1,5 +1,7 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element -- These static marketing and preview components intentionally use plain img tags to preserve existing markup and visual behavior during lint-only cleanup. */
+
 import { useState, useEffect, useRef, useCallback } from "react";
 import {
   motion,
@@ -26,11 +28,15 @@ import {
   CaretDown,
   X,
   List,
+  Play,
+  CurrencyDollar,
+  CalendarCheck,
 } from "@phosphor-icons/react";
 import type { GeneratedSiteData } from "@/lib/generator";
 import BluejayLogo from "../BluejayLogo";
 import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
+import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
 
 /* ───────────────────────── SPRING CONFIGS ───────────────────────── */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
@@ -77,8 +83,8 @@ function getServiceIcon(serviceName: string) {
 }
 
 /* ───────────────────────── STOCK FALLBACK IMAGES (UNIQUE TO LAW) ───────────────────────── */
-const STOCK_HERO = "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=1400&q=80";
-const STOCK_ABOUT = "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=600&q=80";
+const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=1400&q=80"];
+const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=600&q=80"];
 const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1453945619913-79ec89a82c51?w=600&q=80",
   "https://images.unsplash.com/photo-1521791055366-0d553872125f?w=600&q=80",
@@ -189,7 +195,7 @@ function LawPattern({ opacity = 0.03, accent }: { opacity?: number; accent: stri
 /* ───────────────────────── GLASS CARD ───────────────────────── */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
+    <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
       {children}
     </div>
   );
@@ -302,19 +308,62 @@ function AnimatedSection({ children, className = "" }: { children: React.ReactNo
 export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [openPracticeArea, setOpenPracticeArea] = useState<number | null>(0);
 
   const { EMERALD, EMERALD_GLOW } = getAccent(data.accentColor);
 
-  const heroImage = data.photos?.[0] || STOCK_HERO;
-  const aboutImage = data.photos?.[1] || STOCK_ABOUT;
-  const galleryImages = data.photos?.length > 2 ? data.photos.slice(2, 6) : STOCK_GALLERY;
+  const uniquePhotos = data.photos ? [...new Set(data.photos)] : [];
+
+
+  const heroImage = uniquePhotos[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
+
+
+  const heroCardImage = uniquePhotos[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 1);
+
+
+  const aboutImage = uniquePhotos[2] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 2);
+  const galleryImages = data.photos?.length > 2 ? data.photos.slice(2, 6) : pickGallery(STOCK_GALLERY, data.businessName);
   const phoneDigits = data.phone.replace(/\D/g, "");
 
   const processSteps = [
-    { step: "01", title: "Free Consultation", desc: "Contact us to discuss your case. We provide honest assessments and clear legal options at no cost." },
-    { step: "02", title: "Case Evaluation", desc: "Our attorneys thoroughly research the facts, gather evidence, and develop a winning strategy." },
-    { step: "03", title: "Aggressive Advocacy", desc: "We fight for your rights in negotiations or in court with relentless determination." },
-    { step: "04", title: "Resolution", desc: "We pursue the best possible outcome and keep you informed every step of the way." },
+    { step: "01", title: "Free Consultation", desc: "Contact us to discuss your case. We provide honest assessments and clear legal options at no cost.", icon: Phone },
+    { step: "02", title: "Case Evaluation", desc: "Our attorneys thoroughly research the facts, gather evidence, and develop a winning strategy.", icon: Briefcase },
+    { step: "03", title: "Strategic Planning", desc: "We build a tailored legal strategy designed to protect your rights and achieve the best outcome.", icon: CalendarCheck },
+    { step: "04", title: "Aggressive Representation", desc: "We fight relentlessly in negotiations or in court with determination and compassion.", icon: Gavel },
+  ];
+
+  const caseResults = [
+    { amount: "$2.5M", label: "Recovered", type: "Auto Accident", desc: "Secured full compensation for medical bills, lost wages, and pain and suffering." },
+    { amount: "Won", label: "Custody", type: "Family Dispute", desc: "Protected parental rights and secured a favorable custody arrangement for our client." },
+    { amount: "Dismissed", label: "All Charges", type: "Criminal Defense", desc: "Achieved full dismissal of all charges through meticulous case preparation." },
+  ];
+
+  const practiceAreas = [
+    { name: "Personal Injury", icon: ShieldCheck, desc: "Fighting for the compensation you deserve after an accident or injury." },
+    { name: "Family Law", icon: Handshake, desc: "Protecting your family through divorce, custody, and support matters." },
+    { name: "Criminal Defense", icon: Gavel, desc: "Defending your rights and freedom with aggressive legal representation." },
+    { name: "Employment", icon: Briefcase, desc: "Advocating for workers facing discrimination, wrongful termination, or wage disputes." },
+    { name: "Immigration", icon: Users, desc: "Guiding families through visas, green cards, citizenship, and deportation defense." },
+    { name: "Estate Planning", icon: Certificate, desc: "Securing your legacy with wills, trusts, and probate administration." },
+    { name: "Business Law", icon: Buildings, desc: "Helping businesses form, grow, and resolve disputes with confidence." },
+    { name: "Real Estate", icon: Buildings, desc: "Navigating property transactions, disputes, and landlord-tenant matters." },
+  ];
+
+  const comparisonRows = [
+    { feature: "Free Initial Consultation", us: true, them: "Rarely" },
+    { feature: "No Fee Unless We Win", us: true, them: "No" },
+    { feature: "Direct Attorney Access", us: true, them: "Assistants Only" },
+    { feature: "Personalized Strategy", us: true, them: "Cookie-Cutter" },
+    { feature: "Bilingual Services", us: true, them: "Sometimes" },
+    { feature: "Flexible Scheduling", us: true, them: "Limited" },
+    { feature: "Trial Experience", us: true, them: "Varies" },
+  ];
+
+  const quizOptions = [
+    { label: "Injured in an Accident", desc: "Get a free case review — you may be entitled to compensation.", icon: ShieldCheck, color: "#ef4444" },
+    { label: "Family Matter", desc: "Divorce, custody, support — we protect what matters most.", icon: Handshake, color: "#3b82f6" },
+    { label: "Criminal Charges", desc: "Your freedom is at stake — get defense counsel now.", icon: Gavel, color: "#f59e0b" },
+    { label: "Business / Employment", desc: "Protect your rights as an employee or business owner.", icon: Briefcase, color: "#8b5cf6" },
   ];
 
   const faqs = [
@@ -379,32 +428,30 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
 
         <div className="absolute inset-0">
           <img src={heroImage} alt={`${data.businessName}`} className="w-full h-full object-cover object-center" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-black/10" />
-          <div className="absolute inset-0 bg-gradient-to-t from-white/80 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-black/70" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20" />
         </div>
-        <LawPattern opacity={0.04} accent={EMERALD} />
-        <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full blur-[200px] pointer-events-none" style={{ background: `${EMERALD}08` }} />
 
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
-          <div className="space-y-8">
+          <div className="space-y-8 rounded-2xl bg-black/50 backdrop-blur-md p-6 md:p-8 border border-white/8">
             <div>
               <p className="text-sm uppercase tracking-widest mb-4" style={{ color: EMERALD }}>Experienced Legal Counsel</p>
-              <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}>
+              <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 20px rgba(0,0,0,0.8), 0 4px 40px rgba(0,0,0,0.5)" }}>
                 {data.tagline}
               </h1>
             </div>
-            <p className="text-lg text-slate-400 max-w-md leading-relaxed">
-              {data.about.length > 160 ? data.about.slice(0, 160).trim() + "..." : data.about}
+            <p className="text-lg text-white/80 max-w-md leading-relaxed" style={{ textShadow: "0 1px 8px rgba(0,0,0,0.6)" }}>
+              {(() => { const t = data.about; if (t.length <= 180) return t; const dot = t.indexOf('.', 80); return dot > 0 && dot < 220 ? t.slice(0, dot + 1) : t.slice(0, 180).trim() + '...'; })()}
             </p>
             <div className="flex flex-wrap gap-4">
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer" style={{ background: EMERALD } as React.CSSProperties}>
                 Free Consultation <ArrowRight size={18} weight="bold" />
               </MagneticButton>
-              <MagneticButton href={`tel:${phoneDigits}`} className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
+              <MagneticButton href={`tel:${phoneDigits}`} className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
                 <Phone size={18} weight="duotone" /> <PhoneLink phone={data.phone} />
               </MagneticButton>
             </div>
-            <div className="flex flex-wrap gap-6 text-sm text-slate-400">
+            <div className="flex flex-wrap gap-6 text-sm text-white/80" style={{ textShadow: "0 1px 8px rgba(0,0,0,0.6)" }}>
               <span className="flex items-center gap-2"><MapPin size={16} weight="duotone" style={{ color: EMERALD }} /><MapLink address={data.address} /></span>
               <span className="flex items-center gap-2"><Clock size={16} weight="duotone" style={{ color: EMERALD }} />24/7 Case Support</span>
             </div>
@@ -440,6 +487,72 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
+      {/* ══════════════════ PRACTICE AREA BADGES ══════════════════ */}
+      <section className="relative z-10 py-12 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1522 50%, #0f172a 100%)" }} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="flex flex-wrap justify-center gap-3">
+            {["Personal Injury", "Family Law", "Criminal Defense", "Employment Law", "Immigration", "Business Law"].map((area) => (
+              <span key={area} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold border transition-colors hover:bg-white/[0.06]" style={{ color: EMERALD, borderColor: `${EMERALD}33`, background: `${EMERALD}0d` }}>
+                <Scales size={14} weight="fill" /> {area}
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ CASE RESULTS ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0b1320 50%, #0f172a 100%)" }} />
+        <LawPattern opacity={0.02} accent={EMERALD} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${GOLD}08` }} /></div>
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Proven Results" title="Case Outcomes That Speak" subtitle="Real results for real clients. We let our track record do the talking." accent={EMERALD} />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {caseResults.map((r, i) => (
+              <GlassCard key={i} className="p-8 text-center group hover:border-opacity-30 transition-all duration-500">
+                <div className="relative">
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-2xl" style={{ background: `radial-gradient(circle at 50% 0%, ${EMERALD}15, transparent 70%)` }} />
+                  <div className="relative z-10">
+                    <Trophy size={32} weight="fill" style={{ color: GOLD }} className="mx-auto mb-4" />
+                    <p className="text-4xl md:text-5xl font-black mb-1" style={{ color: EMERALD }}>{r.amount}</p>
+                    <p className="text-sm font-bold uppercase tracking-widest text-slate-400 mb-1">{r.label}</p>
+                    <p className="text-lg font-semibold text-white mb-3">{r.type}</p>
+                    <p className="text-sm text-slate-400 leading-relaxed">{r.desc}</p>
+                  </div>
+                </div>
+              </GlassCard>
+            ))}
+          </div>
+          <p className="text-center text-xs text-slate-600 mt-6">*Results vary by case. Past results do not guarantee future outcomes.</p>
+        </div>
+      </section>
+
+      {/* ══════════════════ BEAST MODE: CASE RESULTS TICKER ══════════════════ */}
+      <section className="relative z-10 py-6 overflow-hidden" style={{ background: "#0a0f1a" }}>
+        <div className="absolute inset-0 pointer-events-none" style={{ background: `linear-gradient(90deg, #0a0f1a 0%, transparent 10%, transparent 90%, #0a0f1a 100%)` }} />
+        <div className="relative">
+          <div className="flex whitespace-nowrap" style={{ animation: "tickerScroll 20s linear infinite" }}>
+            {[...Array(3)].map((_, rep) => (
+              <div key={rep} className="flex items-center shrink-0">
+                {["$2.5M", "$890K", "Dismissed", "$1.2M", "Not Guilty", "$340K", "$4.7M", "Acquitted", "$680K"].map((result, i) => (
+                  <span key={`${rep}-${i}`} className="flex items-center mx-6">
+                    <span className="text-lg md:text-xl font-black tracking-tight" style={{ color: GOLD }}>{result}</span>
+                    <span className="mx-6 text-slate-600">|</span>
+                  </span>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+        <style>{`
+          @keyframes tickerScroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-33.33%); }
+          }
+        `}</style>
+      </section>
+
       {/* ══════════════════ 4. SERVICES ══════════════════ */}
       <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1522 50%, #0f172a 100%)" }} />
@@ -454,7 +567,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
             {data.services.map((service, i) => {
               const Icon = getServiceIcon(service.name);
               return (
-                <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.02]">
+                <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]">
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${EMERALD}15, transparent 70%)` }} />
                   <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${EMERALD}4d, transparent)` }} />
                   <div className="relative z-10">
@@ -475,6 +588,47 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
+      {/* ══════════════════ BEAST MODE: PRACTICE AREA ACCORDIONS ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0b1320 50%, #0f172a 100%)" }} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute bottom-[10%] left-[5%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${GOLD}06` }} /></div>
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Full-Service Firm" title="Practice Areas We Handle" subtitle="Comprehensive legal representation across all major areas of law." accent={EMERALD} />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {practiceAreas.map((area, i) => (
+              <GlassCard key={area.name} className="overflow-hidden transition-all duration-500">
+                <button
+                  onClick={() => setOpenPracticeArea(openPracticeArea === i ? null : i)}
+                  className="w-full flex items-center gap-4 p-6 text-left cursor-pointer"
+                >
+                  <div className="w-12 h-12 rounded-xl shrink-0 flex items-center justify-center border" style={{ background: EMERALD_GLOW, borderColor: `${EMERALD}33` }}>
+                    <area.icon size={24} weight="duotone" style={{ color: EMERALD }} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-base font-bold text-white">{area.name}</h3>
+                    <p className="text-xs text-slate-500 truncate">{area.desc}</p>
+                  </div>
+                  <CaretDown size={20} className={`text-slate-400 shrink-0 transition-transform duration-300 ${openPracticeArea === i ? "rotate-180" : ""}`} />
+                </button>
+                <AnimatePresence>
+                  {openPracticeArea === i && (
+                    <motion.div initial={{ height: 0 }} animate={{ height: "auto" }} exit={{ height: 0 }} transition={spring} className="overflow-hidden">
+                      <div className="px-6 pb-6 border-t border-white/8 pt-4">
+                        <p className="text-sm text-slate-400 leading-relaxed mb-4">{area.desc}</p>
+                        <MagneticButton className="px-5 py-2.5 rounded-lg text-sm font-semibold text-white border flex items-center gap-2 cursor-pointer" style={{ borderColor: `${EMERALD}4d`, background: `${EMERALD}15` }}>
+                          <Phone size={16} weight="bold" style={{ color: EMERALD }} />
+                          <span style={{ color: EMERALD }}>Free Case Review</span>
+                        </MagneticButton>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ══════════════════ 5. WHY CHOOSE US / ABOUT ══════════════════ */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0b1320 50%, #0f172a 100%)" }} />
@@ -483,7 +637,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="relative">
-              <div className="rounded-2xl overflow-hidden border border-white/10">
+              <div className="rounded-2xl overflow-hidden border border-white/15">
                 <img src={aboutImage} alt={`${data.businessName} attorneys`} className="w-full h-[400px] object-cover" />
               </div>
               <div className="absolute -bottom-4 -right-4 md:bottom-6 md:-right-6">
@@ -499,10 +653,10 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
               <p className="text-slate-400 leading-relaxed mb-8">{data.about}</p>
               <div className="grid grid-cols-2 gap-4">
                 {[
-                  { icon: Trophy, label: "Award-Winning Attorneys" },
-                  { icon: Users, label: "Dedicated Case Teams" },
-                  { icon: Clock, label: "24/7 Case Support" },
-                  { icon: ShieldCheck, label: "No Fee Unless We Win" },
+                  { icon: CurrencyDollar, label: "No Fee Unless We Win" },
+                  { icon: Clock, label: "24/7 Availability" },
+                  { icon: Trophy, label: "Proven Track Record" },
+                  { icon: Users, label: "Personalized Attention" },
                 ].map((badge) => (
                   <GlassCard key={badge.label} className="p-4 flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: EMERALD_GLOW }}>
@@ -524,20 +678,27 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
         <div className="absolute inset-0 pointer-events-none"><div className="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${GOLD}06` }} /></div>
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <AnimatedSection>          <SectionHeader badge="Our Process" title="How We Handle Your Case" accent={EMERALD} /></AnimatedSection>
+          <AnimatedSection>          <SectionHeader badge="Your Legal Journey" title="Free Consultation to Resolution" subtitle="A clear, transparent process that puts your rights first at every step." accent={EMERALD} /></AnimatedSection>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {processSteps.map((step, i) => (
+            {processSteps.map((step, i) => {
+              const StepIcon = step.icon;
+              return (
               <div key={step.step} className="relative">
                 {i < processSteps.length - 1 && <div className="hidden lg:block absolute top-10 left-[calc(50%+40px)] w-[calc(100%-80px)] h-px" style={{ background: `linear-gradient(to right, ${EMERALD}33, ${EMERALD}11)` }} />}
-                <GlassCard className="p-6 text-center relative">
-                  <div className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center text-2xl font-black" style={{ background: `linear-gradient(135deg, ${EMERALD}22, ${EMERALD}0a)`, color: EMERALD, border: `1px solid ${EMERALD}33` }}>
-                    {step.step}
+                <GlassCard className="p-6 text-center relative group hover:border-opacity-30 transition-all duration-500">
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-2xl" style={{ background: `radial-gradient(circle at 50% 0%, ${EMERALD}15, transparent 70%)` }} />
+                  <div className="relative z-10">
+                    <div className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${EMERALD}22, ${EMERALD}0a)`, border: `1px solid ${EMERALD}33` }}>
+                      <StepIcon size={28} weight="duotone" style={{ color: EMERALD }} />
+                    </div>
+                    <span className="text-xs font-mono text-slate-600 mb-2 block">Step {step.step}</span>
+                    <h3 className="text-lg font-bold text-white mb-2">{step.title}</h3>
+                    <p className="text-sm text-slate-400 leading-relaxed">{step.desc}</p>
                   </div>
-                  <h3 className="text-lg font-bold text-white mb-2">{step.title}</h3>
-                  <p className="text-sm text-slate-400 leading-relaxed">{step.desc}</p>
                 </GlassCard>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -553,7 +714,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
             {galleryImages.map((src, i) => {
               const titles = ["Modern Conference Room", "Law Library & Research", "Client Meeting Space", "Professional Team"];
               return (
-                <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.06] hover:border-opacity-30 transition-all duration-500">
+                <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.10] hover:border-opacity-30 transition-all duration-500">
                   <img src={src} alt={titles[i] || `Gallery ${i + 1}`} className="w-full h-64 object-cover transition-transform duration-700 group-hover:scale-105" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-6">
@@ -566,6 +727,94 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
+      {/* ══════════════════ COMPETITOR COMPARISON ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1522 50%, #0f172a 100%)" }} />
+        <LawPattern opacity={0.02} accent={EMERALD} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${EMERALD}06` }} /></div>
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Why Us" title={`${data.businessName} vs Large Corporate Firms`} accent={EMERALD} />
+          <GlassCard className="overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="border-b border-white/15">
+                    <th className="px-6 py-4 text-sm font-semibold text-slate-400">Feature</th>
+                    <th className="px-6 py-4 text-sm font-semibold text-center" style={{ color: EMERALD }}>{data.businessName}</th>
+                    <th className="px-6 py-4 text-sm font-semibold text-center text-slate-500">Large Firms</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {comparisonRows.map((row, i) => (
+                    <tr key={i} className={`border-b border-white/8 ${i % 2 === 0 ? 'bg-white/[0.01]' : ''}`}>
+                      <td className="px-6 py-4 text-sm text-white font-medium">{row.feature}</td>
+                      <td className="px-6 py-4 text-center">
+                        {row.us ? <CheckCircle size={22} weight="fill" style={{ color: EMERALD }} className="mx-auto" /> : <span className="text-sm text-slate-500">No</span>}
+                      </td>
+                      <td className="px-6 py-4 text-center text-sm text-slate-500">{row.them}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </GlassCard>
+        </div>
+      </section>
+
+      {/* ══════════════════ VIDEO PLACEHOLDER ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0b1320 50%, #0f172a 100%)" }} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${GOLD}06` }} /></div>
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Our Firm" title="Meet Your Attorney" subtitle="Get to know the legal team that will fight for your rights." accent={EMERALD} />
+          <div className="relative rounded-2xl overflow-hidden border border-white/15 group cursor-pointer">
+            <img src={heroCardImage} alt="Meet your attorney" className="w-full h-[300px] md:h-[400px] object-cover transition-transform duration-700 group-hover:scale-105" />
+            <div className="absolute inset-0 bg-black/50 group-hover:bg-black/40 transition-colors duration-300" />
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <div className="w-20 h-20 rounded-full flex items-center justify-center border-2 mb-4 transition-transform duration-300 group-hover:scale-110" style={{ background: `${EMERALD}cc`, borderColor: EMERALD }}>
+                <Play size={36} weight="fill" className="text-white ml-1" />
+              </div>
+              <p className="text-white font-bold text-lg">Watch Our Introduction</p>
+              <p className="text-slate-300 text-sm mt-1">Learn how we protect your rights</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ LEGAL HELP QUIZ ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1522 50%, #0f172a 100%)" }} />
+        <LawPattern opacity={0.02} accent={EMERALD} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute bottom-[20%] right-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${EMERALD}06` }} /></div>
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <SectionHeader badge="Get Started" title="What Legal Help Do You Need?" subtitle="Select your situation below and we will connect you with the right attorney." accent={EMERALD} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {quizOptions.map((opt) => (
+              <GlassCard key={opt.label} className="p-6 group hover:border-opacity-30 transition-all duration-500 cursor-pointer">
+                <div className="relative">
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-2xl" style={{ background: `radial-gradient(circle at 50% 0%, ${opt.color}15, transparent 70%)` }} />
+                  <div className="relative z-10 flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0" style={{ background: `${opt.color}1a`, border: `1px solid ${opt.color}33` }}>
+                      <opt.icon size={24} weight="duotone" style={{ color: opt.color }} />
+                    </div>
+                    <div>
+                      <h3 className="text-base font-bold text-white mb-1">{opt.label}</h3>
+                      <p className="text-sm text-slate-400 leading-relaxed">{opt.desc}</p>
+                    </div>
+                  </div>
+                </div>
+              </GlassCard>
+            ))}
+          </div>
+          <div className="text-center mt-8">
+            <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 mx-auto cursor-pointer" style={{ background: EMERALD } as React.CSSProperties}>
+              <Phone size={18} weight="bold" /> Call for a Free Case Review
+            </MagneticButton>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ GOOGLE REVIEWS HEADER + TESTIMONIALS ══════════════════ */}
       {/* ══════════════════ 8. TESTIMONIALS ══════════════════ */}
       <section id="testimonials" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1522 50%, #0f172a 100%)" }} />
@@ -574,12 +823,22 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <AnimatedSection>          <SectionHeader badge="Testimonials" title="Client Stories" accent={EMERALD} /></AnimatedSection>
+          {/* Google Reviews Header */}
+          <div className="flex items-center justify-center gap-3 mb-10">
+            <div className="flex gap-0.5">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Star key={i} size={22} weight="fill" style={{ color: GOLD }} />
+              ))}
+            </div>
+            <span className="text-white font-bold text-lg">{data.googleRating || "5.0"}</span>
+            <span className="text-slate-400 text-sm">based on {data.reviewCount || "50"}+ Google Reviews</span>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {testimonials.map((t, i) => (
               <GlassCard key={i} className="p-6 h-full flex flex-col">
                 <div className="flex gap-0.5 mb-4">{Array.from({ length: t.rating || 5 }).map((_, j) => <Star key={j} size={16} weight="fill" style={{ color: EMERALD }} />)}</div>
                 <p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p>
-                <div className="pt-4 border-t border-white/5 flex items-center justify-between">
+                <div className="pt-4 border-t border-white/8 flex items-center justify-between">
                   <span className="text-sm font-semibold text-white">{t.name}</span>
                 </div>
               </GlassCard>
@@ -589,21 +848,37 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
       </section>
 
       {/* ══════════════════ 9. FREE CONSULTATION CTA ══════════════════ */}
-      <section className="relative z-10 py-20 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${EMERALD}, ${EMERALD}cc, ${EMERALD})` }} />
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='40' height='40' fill='none'/%3E%3Cpath d='M0 0L40 40M40 0L0 40' stroke='%23000' stroke-width='0.5'/%3E%3C/svg%3E\")" }} />
-
-        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
-          <Gavel size={48} weight="fill" className="mx-auto mb-6 text-white/80" />
-          <h2 className="text-3xl md:text-5xl font-black tracking-tight text-white mb-4">
-            Need Legal Help Now?
-          </h2>
-          <p className="text-lg text-white/80 mb-8 max-w-xl mx-auto">
-            Do not face your legal challenges alone. {data.businessName} offers free consultations to help you understand your rights and options.
-          </p>
-          <PhoneLink phone={data.phone} className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-white font-bold text-lg hover:bg-white/90 transition-colors" style={{ color: EMERALD }}>
-            <Phone size={20} weight="bold" /> {data.phone}
-          </PhoneLink>
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0b1320 50%, #0f172a 100%)" }} />
+        <LawPattern opacity={0.02} accent={EMERALD} />
+        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] rounded-full blur-[180px]" style={{ background: `${EMERALD}0a` }} /></div>
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <ShimmerBorder accent={EMERALD}>
+            <div className="p-8 md:p-14 text-center">
+              <Scales size={48} weight="fill" style={{ color: EMERALD }} className="mx-auto mb-6" />
+              <h2 className="text-3xl md:text-5xl font-black tracking-tight text-white mb-4">
+                Your First Consultation Is Free
+              </h2>
+              <p className="text-lg text-slate-400 mb-8 max-w-xl mx-auto leading-relaxed">
+                Let&apos;s discuss your case. {data.businessName} offers free, confidential consultations to help you understand your rights and legal options. No obligation, no pressure.
+              </p>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer" style={{ background: EMERALD } as React.CSSProperties}>
+                  <Phone size={18} weight="bold" /> Schedule Free Consultation
+                </MagneticButton>
+                <PhoneLink phone={data.phone} className="inline-flex items-center gap-2 px-8 py-4 rounded-full font-semibold text-white border border-white/15 hover:bg-white/5 transition-colors">
+                  <Phone size={18} weight="bold" /> {data.phone}
+                </PhoneLink>
+              </div>
+              <div className="flex flex-wrap justify-center gap-4 mt-8">
+                {["No Fee Unless We Win", "24/7 Available", "Confidential"].map((item) => (
+                  <span key={item} className="inline-flex items-center gap-2 text-sm" style={{ color: EMERALD }}>
+                    <CheckCircle size={16} weight="fill" /> {item}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </ShimmerBorder>
         </div>
       </section>
 
@@ -641,9 +916,9 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
       
       {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
       <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15, ${ACCENT}08)` }} />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${EMERALD}15, ${EMERALD}08)` }} />
         <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
-          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: ACCENT }}>
+          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: EMERALD }}>
             Don&apos;t Miss Out
           </p>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-3">
@@ -655,7 +930,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
           <a
             href={`/claim/${data.id}`}
             className="inline-flex items-center gap-2 min-h-[48px] px-8 py-3 rounded-full text-white font-bold text-base hover:shadow-lg transition-all duration-300"
-            style={{ background: ACCENT }}
+            style={{ background: EMERALD }}
           >
             Claim This Website
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
@@ -702,17 +977,17 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
               <h3 className="text-xl font-semibold text-white mb-6">Request Free Consultation</h3>
               <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div><label className="block text-sm text-slate-400 mb-1.5">First Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="John" /></div>
-                  <div><label className="block text-sm text-slate-400 mb-1.5">Last Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="Doe" /></div>
+                  <div><label className="block text-sm text-slate-400 mb-1.5">First Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="John" /></div>
+                  <div><label className="block text-sm text-slate-400 mb-1.5">Last Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="Doe" /></div>
                 </div>
-                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="(555) 123-4567" /></div>
+                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="(555) 123-4567" /></div>
                 <div><label className="block text-sm text-slate-400 mb-1.5">Legal Matter</label>
-                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none transition-colors text-sm">
+                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none transition-colors text-sm">
                     <option value="" className="bg-slate-900">Select a practice area</option>
                     {data.services.map((s) => <option key={s.name} value={s.name.toLowerCase().replace(/\s+/g, "-")} className="bg-slate-900">{s.name}</option>)}
                   </select>
                 </div>
-                <div><label className="block text-sm text-slate-400 mb-1.5">Describe Your Case</label><textarea rows={4} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm resize-none" placeholder="Brief description of your legal matter..." /></div>
+                <div><label className="block text-sm text-slate-400 mb-1.5">Describe Your Case</label><textarea rows={4} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm resize-none" placeholder="Brief description of your legal matter..." /></div>
                 <MagneticButton className="w-full py-4 rounded-xl text-base font-semibold text-white flex items-center justify-center gap-2 cursor-pointer" style={{ background: EMERALD } as React.CSSProperties}>
                   Request Consultation <ArrowRight size={18} weight="bold" />
                 </MagneticButton>
@@ -748,7 +1023,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
       </section>
 
       {/* ══════════════════ 15. FOOTER ══════════════════ */}
-      <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden">
+      <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0a1018 100%)" }} />
         <LawPattern opacity={0.015} accent={EMERALD} />
         <div className="mx-auto max-w-6xl px-6 relative z-10">
@@ -769,7 +1044,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
               </div>
             </div>
           </div>
-          <div className="border-t border-white/5 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="border-t border-white/8 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-sm text-slate-500"><Scales size={14} weight="duotone" style={{ color: EMERALD }} /><span>{data.businessName} &copy; {new Date().getFullYear()}</span></div>
             <div className="flex items-center gap-2 text-xs text-slate-600"><BluejayLogo className="w-4 h-4" /><span>Created by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" style={{textDecoration:"underline"}}>bluejayportfolio.com</a></span></div>
           </div>

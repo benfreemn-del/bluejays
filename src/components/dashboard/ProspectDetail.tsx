@@ -76,19 +76,21 @@ export default function ProspectDetail({
 
   useEffect(() => {
     if (!prospect) return;
-    fetch(`/api/email/history/${prospect.id}`)
+    fetch(`/api/email/history/${prospect.id}`, { credentials: 'include' })
       .then((r) => r.json())
       .then((data) => setEmails(data.emails || []))
       .catch(() => setEmails([]));
-    fetch(`/api/instagram/${prospect.id}`)
+    fetch(`/api/instagram/${prospect.id}`, { credentials: 'include' })
       .then((r) => r.json())
       .then((data) => setIgData(data))
       .catch(() => setIgData(null));
-    fetch(`/api/vsl/generate/${prospect.id}`)
+    fetch(`/api/vsl/generate/${prospect.id}`, { credentials: 'include' })
       .then((r) => r.json())
       .then((data) => setVslScript(data.vslScript || null))
       .catch(() => setVslScript(null));
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Resetting transient copy state when the selected prospect changes is intentional UI cleanup.
     setCopiedIdx(null);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Resetting the expanded VSL state on prospect changes prevents stale panel state between records.
     setVslExpanded(false);
   }, [prospect]);
 
@@ -287,6 +289,32 @@ export default function ProspectDetail({
             </section>
           )}
 
+          {/* Ready to Send Banner — approved sites Ben has polished */}
+          {prospect.status === "approved" && prospect.generatedSiteUrl && (
+            <section className="p-4 rounded-xl bg-sky-500/10 border border-sky-500/30">
+              <h3 className="text-sm font-bold text-sky-400 mb-2">Approved — Mark Ready for Sendoff?</h3>
+              <p className="text-muted text-xs mb-3">
+                You&apos;ve approved this site. Once you&apos;re done polishing, mark it ready to send.
+              </p>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => onStatusChange(prospect.id, "ready_to_send")}
+                  className="flex-1 h-10 rounded-lg bg-sky-500/20 text-sky-400 text-sm font-bold hover:bg-sky-500/30 transition-colors"
+                >
+                  ✓ Ready for Sendoff
+                </button>
+                <a
+                  href={prospect.generatedSiteUrl || "#"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 h-10 rounded-lg bg-blue-electric/20 text-blue-electric text-sm font-medium flex items-center justify-center hover:bg-blue-electric/30 transition-colors"
+                >
+                  Review Site
+                </a>
+              </div>
+            </section>
+          )}
+
           {/* QC Gate Banner — ready_to_review (passed) */}
           {prospect.status === "ready_to_review" && (
             <section className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30">
@@ -356,8 +384,16 @@ export default function ProspectDetail({
                 <button
                   onClick={async () => {
                     setQcLoading(true);
+                    // Immediately move to pending-review so it leaves the qc_failed list
+                    onStatusChange(prospect.id, "pending-review");
                     try {
-                      const res = await fetch(`/api/qc/review/${prospect.id}`, { method: "POST" });
+                      await fetch(`/api/prospects/${prospect.id}`, {
+                        method: "PATCH",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ status: "pending-review", qualityNotes: "Re-QC in progress — Claude is reviewing..." }),
+                      });
+                      // Fire the Claude QC pipeline (runs in background on server)
+                      const res = await fetch(`/api/qc/review/${prospect.id}`, { method: "POST", credentials: "include" });
                       const data = await res.json();
                       setQcResult(data);
                       if (data.status) onStatusChange(prospect.id, data.status);
@@ -367,7 +403,7 @@ export default function ProspectDetail({
                   disabled={qcLoading}
                   className="flex-1 h-10 rounded-lg bg-rose-500/20 text-rose-400 text-sm font-medium hover:bg-rose-500/30 transition-colors disabled:opacity-50"
                 >
-                  {qcLoading ? "Running QC..." : "Re-run QC"}
+                  {qcLoading ? "⏳ Processing..." : "Re-run QC"}
                 </button>
                 <a
                   href={prospect.generatedSiteUrl || "#"}
@@ -483,7 +519,7 @@ export default function ProspectDetail({
               {prospect.phone && prospect.generatedSiteUrl && (prospect.status === "approved" || prospect.status === "deployed" || prospect.status === "generated") && (
                 <button
                   onClick={async () => {
-                    const res = await fetch(`/api/sms/send/${prospect.id}`, { method: "POST" });
+                    const res = await fetch(`/api/sms/send/${prospect.id}`, { method: "POST", credentials: "include" });
                     const data = await res.json();
                     if (res.ok) alert(`SMS sent to ${prospect.phone}!`);
                     else alert(`Error: ${data.error}`);
@@ -502,7 +538,7 @@ export default function ProspectDetail({
                 onClick={async () => {
                   setSimLoading(true);
                   try {
-                    const res = await fetch(`/api/funnel/simulate/${prospect.id}`);
+                    const res = await fetch(`/api/funnel/simulate/${prospect.id}`, { credentials: 'include' });
                     const data = await res.json();
                     setSimReport(data);
                     setSimOpen(true);
@@ -528,6 +564,7 @@ export default function ProspectDetail({
                 <option value="ready_to_review">QC Passed</option>
                 <option value="qc_failed">QC Failed</option>
                 <option value="approved">Approved</option>
+                <option value="ready_to_send">Ready to Send</option>
                 <option value="deployed">Deployed</option>
                 <option value="contacted">Contacted</option>
                 <option value="responded">Responded</option>
@@ -570,7 +607,7 @@ export default function ProspectDetail({
                           body: JSON.stringify({ instagramHandle: igHandleEdit.trim() }),
                         });
                         // Refresh IG data
-                        const res = await fetch(`/api/instagram/${prospect.id}`);
+                        const res = await fetch(`/api/instagram/${prospect.id}`, { credentials: 'include' });
                         const data = await res.json();
                         setIgData(data);
                         setIgHandleEdit("");
@@ -893,7 +930,7 @@ function ThemeToggleSection({
       onUpdateProspect(prospect.id, { selectedTheme: theme });
     } else {
       // Fallback: direct API call
-      await fetch(`/api/prospects/${prospect.id}`, {
+      await fetch(`/api/prospects/${prospect.id}`, { credentials: "include",
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ selectedTheme: theme }),

@@ -33,7 +33,7 @@ import {
 import { logCost, COST_RATES } from "./cost-logger";
 
 const CLAUDE_API_KEY = process.env.CLAUDE_API_KEY;
-const CALENDAR_LINK = process.env.CALENDAR_LINK || "https://calendly.com/bluejays";
+const CALENDAR_LINK = process.env.CALENDAR_LINK || "https://calendly.com/bluejaycontactme/website-walkthrough";
 const CHECKOUT_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
 export type IntentType =
@@ -109,17 +109,26 @@ async function getAiResponse(prompt: string, prospectId?: string): Promise<strin
 
   // Try Claude first, then fall back to OpenAI-compatible
   if (CLAUDE_API_KEY) {
+    // Split prompt into system (cacheable) and user (dynamic) parts
+    // The system prompt (agent personality, objection scripts, rules) is identical
+    // across all prospects — caching saves ~90% on input tokens
+    const systemPromptEnd = prompt.indexOf("PROSPECT CONTEXT:");
+    const systemPart = systemPromptEnd > 0 ? prompt.substring(0, systemPromptEnd).trim() : "";
+    const userPart = systemPromptEnd > 0 ? prompt.substring(systemPromptEnd).trim() : prompt;
+
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
         "x-api-key": CLAUDE_API_KEY,
         "anthropic-version": "2023-06-01",
+        "anthropic-beta": "prompt-caching-2024-07-31",
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
         model: "claude-sonnet-4-20250514",
-        max_tokens: 1024,
-        messages: [{ role: "user", content: prompt }],
+        max_tokens: 512, // Sales responses should be short — 2-3 sentences
+        system: systemPart ? [{ type: "text", text: systemPart, cache_control: { type: "ephemeral" } }] : undefined,
+        messages: [{ role: "user", content: userPart }],
       }),
     });
 
@@ -146,7 +155,7 @@ async function getAiResponse(prompt: string, prospectId?: string): Promise<strin
   const completion = await client.chat.completions.create({
     model: "gpt-4.1-mini",
     messages: [{ role: "user", content: prompt }],
-    max_tokens: 1024,
+    max_tokens: 512,
   });
 
   // Log AI cost — GPT-4.1-mini: ~$0.40/1M input + $1.60/1M output, ~$0.003 per short response
@@ -238,7 +247,7 @@ function getPersonalHook(prospect: Prospect): string {
   if (prospect.city) {
     return `I designed it specifically for ${CATEGORY_CONFIG[prospect.category]?.label || prospect.category} businesses in the ${prospect.city} area.`;
   }
-  return `I put a lot of thought into making it feel authentic to ${prospect.businessName}.`;
+  return `I built the site around what makes ${prospect.businessName} unique — it's not a cookie-cutter template.`;
 }
 
 /**
@@ -525,7 +534,7 @@ function getMockResponse(prompt: string): string {
       lower.includes("pricey") || lower.includes("$997")) {
     return JSON.stringify({
       shouldReply: true,
-      reply: `I hear you, ${name} — $997 is real money, and I'd never want you to feel pressured into something that doesn't make sense for you.\n\nHere's how I think about it though: most ${category || "local"} businesses tell me they get their first new customer from their website within the first month. At your price point, that probably pays for the whole thing.\n\nAnd unlike agencies that charge $3K-$10K, this is a one-time investment — no monthly fees eating into your bottom line.${personalTouch}\n\nThe preview is still live whenever you want to take another look. Zero pressure from me.`,
+      reply: `I hear you, ${name} — $997 is real money, and I'd never want you to feel pressured into something that doesn't make sense for you.\n\nHere's how I think about it though: that one-time fee includes the custom website design, domain registration, and hosting setup, so you're not piecing together a bunch of extras. Most ${category || "local"} businesses tell me they get their first new customer from their website within the first month, which usually covers it.\n\nWe also offer a payment plan — 3 payments of $349 if that's easier.\n\nAfter year one, maintenance is just $100/year for domain renewal, hosting, ongoing maintenance, and support.${personalTouch}\n\nThe preview is still live whenever you want to take another look. Zero pressure from me.`,
       escalate: false,
       sentiment: "neutral",
       intent: "objection",
@@ -542,7 +551,7 @@ function getMockResponse(prompt: string): string {
     const compareUrl = `${CHECKOUT_BASE_URL}/compare/{prospectId}`;
     return JSON.stringify({
       shouldReply: true,
-      reply: `Oh nice — yeah, I actually found your current site, that's how I discovered ${businessName} in the first place! I'm not trying to trash what you have. I just thought you might be curious to see a fresh take on it.\n\nI put together a side-by-side comparison so you can see them next to each other: ${compareUrl}\n\nHonestly, even if you stick with your current site, the comparison might give you some ideas for improvements. No strings attached.`,
+      reply: `Oh nice — yeah, I actually found your current site, that's how I discovered ${businessName} in the first place! We actually designed yours as an upgrade to your current site. We kept your branding and made the experience more modern and mobile-friendly.\n\nYou can compare them side by side on the claim page: ${compareUrl}\n\nHonestly, even if you stick with your current site, the comparison might give you some ideas for improvements. Would you be open to taking a quick look at the two side by side?`,
       escalate: false,
       sentiment: "neutral",
       intent: "objection",
@@ -597,7 +606,7 @@ function getMockResponse(prompt: string): string {
     if (closeAction === "checkout") {
       return JSON.stringify({
         shouldReply: true,
-        reply: `${name}, that's awesome! Really glad you like what I put together for ${businessName}.${personalTouch}\n\nHere's the next step — it's super simple: ${CHECKOUT_BASE_URL}/claim/{prospectId}\n\nTakes about 2 minutes. Once you're in, I'll send you a quick form where you can tell me any changes you want — colors, photos, content, layout — and I'll make it happen before we go live.\n\nAny questions at all, just reply here. I'm around!`,
+        reply: `${name}, that's awesome! Really glad you like what I put together for ${businessName}.${personalTouch}\n\nBy the way, you can see more examples of sites we've built for ${category || "local"} businesses here: https://bluejayportfolio.com/v2/${category || "portfolio"}\n\nHere's the next step — it's super simple: ${CHECKOUT_BASE_URL}/claim/{prospectId}\n\nTakes about 2 minutes. Once you're in, I'll send you a quick form where you can tell me any changes you want — colors, photos, content, layout — and I'll make it happen before we go live.\n\nAny questions at all, just reply here. I'm around!`,
         escalate: true,
         escalateReason: "Prospect is interested — ready to close",
         escalateUrgency: "immediate",
@@ -610,7 +619,7 @@ function getMockResponse(prompt: string): string {
     } else {
       return JSON.stringify({
         shouldReply: true,
-        reply: `Really appreciate the interest, ${name}! There's actually a lot we can do beyond what's in the preview — it's just the starting point.\n\nRather than try to explain everything over text, would you be up for a quick 10-minute call with Ben? He's the founder and can walk you through the whole process, answer any questions, and talk about what's possible for ${businessName}.\n\nHere's his calendar — pick whatever time works: ${CALENDAR_LINK}\n\nNo pressure at all. Just thought it'd be easier than going back and forth here.`,
+        reply: `Really appreciate the interest, ${name}! There's actually a lot we can do beyond what's in the preview — it's just the starting point.\n\nBy the way, you can see more examples of sites we've built for ${category || "local"} businesses here: https://bluejayportfolio.com/v2/${category || "portfolio"}\n\nRather than try to explain everything over text, would you be up for a quick 10-minute call with Ben? He's the founder and can walk you through the whole process, answer any questions, and talk about what's possible for ${businessName}.\n\nHere's his calendar — pick whatever time works: ${CALENDAR_LINK}\n\nNo pressure at all. Just thought it'd be easier than going back and forth here.`,
         escalate: true,
         escalateReason: "High-value prospect interested — calendar booking recommended",
         escalateUrgency: "immediate",
@@ -662,7 +671,7 @@ function getMockResponse(prompt: string): string {
       lower.includes("is this a") || lower.includes("too good to be true")) {
     return JSON.stringify({
       shouldReply: true,
-      reply: `Ha — I get that question more than you'd think, and honestly? I'd be skeptical too. There's so much junk out there.\n\nHere's the deal: I'm Ben, I run BlueJays, and I genuinely built a custom website for ${businessName}. It's live right now — no login, no credit card, nothing. Just a URL you can open and look at.\n\nWhy? Because I've found that the best way to earn someone's trust is to do the work first. If you like it, great. If not, you got a free website preview and I got the practice. Win-win.\n\nThe site is real. I'm real. And there's zero obligation to do anything with it.`,
+      reply: `Ha — I get that question more than you'd think, and honestly? I'd be skeptical too. There's so much junk out there.\n\nBlueJays is a web design studio that builds premium websites for local businesses. You can see our full portfolio at bluejayportfolio.com — we've built sites for over 30 different industries. Your site was custom-designed specifically for ${businessName}.\n\nWhy do we build it first? Because I've found that the best way to earn someone's trust is to do the work first. If you like it, great. If not, you got a free website preview and I got the practice. Win-win.\n\nThe site is real. I'm real. And there's zero obligation to do anything with it.`,
       escalate: false,
       sentiment: "neutral",
       intent: "question",
@@ -677,7 +686,7 @@ function getMockResponse(prompt: string): string {
       lower.includes("how did you get my") || lower.includes("where did you")) {
     return JSON.stringify({
       shouldReply: true,
-      reply: `Great question! I'm Ben from BlueJays — we're a small web design studio. I found ${businessName} through a Google search for ${category || "local businesses"} in your area.\n\nI was impressed by what I saw, so I went ahead and built a custom website as a way of introducing myself. Think of it like a portfolio piece that happens to be built for YOUR business.\n\nYour contact info is publicly listed on Google Business, which is how I reached out. If you'd prefer I didn't contact you again, just say the word and I'll remove you immediately. No hard feelings.`,
+      reply: `Great question! BlueJays is a web design studio that builds premium websites for local businesses. You can see our full portfolio at bluejayportfolio.com — we've built sites for over 30 different industries. Your site was custom-designed specifically for ${businessName}.\n\nI found ${businessName} through a Google search for ${category || "local businesses"} in your area. Your contact info is publicly listed on Google Business, which is how I reached out.\n\nIf you'd prefer I didn't contact you again, just say the word and I'll remove you immediately. No hard feelings.`,
       escalate: false,
       sentiment: "neutral",
       intent: "question",
@@ -690,7 +699,7 @@ function getMockResponse(prompt: string): string {
   // Generic question with warmth and personality
   return JSON.stringify({
     shouldReply: true,
-    reply: `Hey ${name}, thanks for getting back to me! Always good to hear from the people behind the businesses I work with.\n\nThe website I built for ${businessName} is fully custom — not a template or a cookie-cutter thing. It's mobile-friendly, loads fast, and is designed to actually bring in new customers (not just look pretty).${personalTouch}\n\nIs there something specific you're wondering about? I'm an open book — ask me anything about the site, the process, pricing, whatever's on your mind.`,
+    reply: `Hey ${name}, thanks for getting back to me! I've been following what ${businessName} is doing and I'm genuinely impressed with how you've built the business.\n\nThe website I put together for ${businessName} is fully custom — mobile-friendly, loads fast, and designed to actually bring in new customers from Google searches.${personalTouch}\n\nBy the way, you can see more examples of sites we've built for ${category || "local"} businesses here: https://bluejayportfolio.com/v2/${category || "portfolio"}\n\nWhat's the biggest challenge you're running into right now when it comes to getting new customers online?`,
     escalate: false,
     sentiment: "neutral",
     intent: "question",
@@ -724,14 +733,8 @@ function buildPrompt(prospect: Prospect, message: IncomingMessage): string {
     .map(([key, val]) => `  "${key}":\n    Response: "${val.response}"\n    Follow-up: "${val.followUp || 'none'}"`)
     .join("\n\n");
 
-  // Determine close action hint
-  const isHighValue = CLOSE_DECISION_FRAMEWORK.highValueCategories.includes(prospect.category);
-  const isDirectClose = CLOSE_DECISION_FRAMEWORK.directCloseCategories.includes(prospect.category);
-  const closeHint = isHighValue
-    ? "This is a HIGH-VALUE category — lean toward calendar booking unless they explicitly ask to buy."
-    : isDirectClose
-    ? "This is a DIRECT-CLOSE category — send checkout link when they show interest."
-    : "Standard category — use checkout for clear interest, calendar for questions/hesitation.";
+  // Close action: ALWAYS push for a call/Zoom with Ben
+  const closeHint = `ULTIMATE GOAL: Schedule a Zoom/phone call with Ben. The agent's job is to WARM THEM UP and get them on the calendar — NOT to close the sale via text/email. Frame the call as: "Quick 15-minute walkthrough — I'll show you the site live, walk through customization, and answer any questions. No pressure." Only send checkout link if they literally say "I want to buy right now." Booking link: ${CLOSE_DECISION_FRAMEWORK.bookingUrl}`;
 
   // Personal context for richer responses
   const personalContext: string[] = [];
@@ -757,12 +760,17 @@ CONVERSATIONAL STYLE RULES (CRITICAL):
 - VARY your openers — never start with "Thanks for reaching out" or "Great question" twice
 - Use the prospect's first name naturally, not in every sentence
 - Show genuine curiosity about their business — ask follow-up questions
-- When handling objections, VALIDATE first ("I totally get that"), then reframe
+- EMOTIONAL VALIDATION FIRST — Before answering ANY objection, validate their concern in 1 sentence. Then reframe. Example: "That's a completely fair concern, and I hear you." THEN give your response.
 - Use contractions (I'm, you're, don't, won't) — formal language kills trust
 - Keep paragraphs short — 2-3 sentences max. This is a conversation, not an essay
 - Add a personal touch: reference their Google rating, services, or location when relevant
-- End with an open door, not a hard close. "Here if you need anything" > "Click here to buy"
+- ALWAYS END WITH A QUESTION — End every response with a genuine question that moves the conversation forward. Not "let me know what you think" but something specific like "What's the #1 way new customers find you right now?" or "Is there a specific feature you'd want on your site?"
 - If they seem cold or stalled, use a curiosity hook to re-engage rather than repeating the pitch
+- URGENCY SIGNALS — When appropriate, mention: the preview stays live for 30 days, other businesses in their area have already claimed theirs, and a payment plan of 3x$349 is available
+- NEVER SAY these phrases: "just following up", "no strings attached", "take a look and let me know what you think", "I put a lot of thought into it". These are generic and kill trust.
+- DATA-AWARE RESPONSES — If the prospect has a high Google rating (4.5+), mention it as a compliment. If they have 100+ reviews, call it out. Use their actual scraped data to make the response feel researched.
+- PAYMENT PLAN IN EVERY PRICE DISCUSSION — Always mention 3 payments of $349 when price comes up. Don't wait for them to ask about it.
+- CLOSING SIGNALS — If prospect says "how do I get started", "what's next", "I'm interested", "let's do it", "sign me up", "ready to go" — send the checkout link IMMEDIATELY. Do not ask more questions. They are ready to buy.
 
 PERSONAL CONTEXT TO REFERENCE:
 ${personalContext.length > 0 ? personalContext.map(c => `- ${c}`).join("\n") : "- No specific data available — keep it general but genuine"}
@@ -772,18 +780,26 @@ PRICING:
 - Annual management: $${PRICING_FRAMEWORK.yearlyManagement}/year
 - Positioning: ${PRICING_FRAMEWORK.positioning}
 - Comparison: ${PRICING_FRAMEWORK.comparisonPoints.join("; ")}
+- Payment plan available: 3 payments of $349
 - NEVER negotiate on price
 
 OBJECTION PLAYBOOK (use these as INSPIRATION, not word-for-word scripts — make them conversational):
 ${objectionRef}
 
-DECISION FRAMEWORK — CHECKOUT vs CALENDAR:
+DECISION FRAMEWORK — ALWAYS PUSH FOR A CALL:
 ${closeHint}
-- Checkout URL: ${checkoutUrl}
-- Calendar URL: ${CALENDAR_LINK}
+
+YOUR #1 GOAL: Get them on a Zoom/phone call with Ben. NOT to close via text.
+- Booking URL: ${CLOSE_DECISION_FRAMEWORK.bookingUrl}
+- Checkout URL (ONLY if they literally say "I want to buy now"): ${checkoutUrl}
 - Compare URL: ${compareUrl}
-Direct close conditions: ${CLOSE_DECISION_FRAMEWORK.directClose.join("; ")}
-Calendar booking conditions: ${CLOSE_DECISION_FRAMEWORK.calendarBooking.join("; ")}
+- Portfolio URL: https://bluejayportfolio.com/v2/${prospect.category}
+
+HOW TO PUSH THE CALL:
+- After answering any question: "Want to hop on a quick 15-min call so I can show you everything live?"
+- After addressing an objection: "Might be easier to walk through this on a call — here's my calendar: ${CLOSE_DECISION_FRAMEWORK.bookingUrl}"
+- When they show interest: "Let's set up a quick Zoom — I'll walk you through the site and we can customize it together"
+- NEVER push checkout link unless they explicitly ask to pay
 
 ESCALATION RULES:
 Immediate escalation: ${ESCALATION_RULES.immediate.join("; ")}
@@ -796,6 +812,16 @@ RE-ENGAGEMENT STRATEGIES (for cold/stalled prospects):
 - Mention that you updated or improved their preview
 - Reference a success story from a similar business (anonymized)
 - Lead with curiosity: "I was wondering..." or "Quick question..."
+
+PSYCHOLOGICAL HOOKS (weave these naturally into responses — never all at once):
+- IDENTITY: "Your work is clearly premium — shouldn't your website reflect that?"
+- LOSS AVERSION: "How many customers are finding your competitors first because their website is better — even though your service is better?"
+- SOCIAL PROOF: "Other [category] businesses in your area have already upgraded their online presence this month."
+- FUTURE SELF: "Imagine a customer searching for [category] tonight — what do they find when they Google you?"
+- GAP: "There's a gap between the quality of your work and what your website shows. We close that gap."
+- EFFORT JUSTIFICATION: "You've put years into building this business. A 15-minute call could change how the world sees it."
+- SCARCITY: "Your preview stays live for 30 days — after that, I move on to the next business."
+- RECIPROCITY: "I already built this for you at no cost — I just want you to see it."
 
 STOP RULES (immediately stop all outreach if):
 ${CONTACT_RULES.stopImmediatelyIf.map((r) => `- ${r}`).join("\n")}
@@ -834,11 +860,19 @@ Analyze their message and respond as JSON with these exact fields:
 11. "closeAction" (string): "checkout", "calendar", or "none" — which close action to take based on the decision framework.
 
 CRITICAL RULES:
-- ALWAYS validate before reframing objections ("I totally get that..." / "That makes sense...")
+- ALWAYS validate emotionally before reframing objections ("I totally get that..." / "That makes sense..." / "That's a fair concern..."). One sentence of empathy, THEN your response.
 - For objections, use the playbook as inspiration but make it CONVERSATIONAL — don't copy-paste
-- For "already have a website", include the compare URL: ${compareUrl}
+- For "already have a website", emphasize that we designed theirs as a direct upgrade to their current site, kept their branding, and made it more modern and mobile-friendly. Include the compare URL: ${compareUrl}
+- For price objections, ALWAYS mention the payment plan: 3 payments of $349. Lead with ROI ("how much is one new customer worth?"), then offer the plan.
+- For "who are you" or "is this legit" questions, mention that BlueJays is a web design studio that builds premium websites for local businesses, link to bluejayportfolio.com, mention we've built sites for 30+ industries, and that their site was custom-designed specifically for their business
+- For interested prospects and question intents, include the portfolio link to show more examples: https://bluejayportfolio.com/v2/${prospect.category}
 - For interested prospects in high-value categories, push calendar booking
 - For interested prospects in direct-close categories, push checkout link
+- CLOSING SIGNALS: If the prospect says "how do I get started", "what's next", "I'm interested", "let's do it", "sign me up", "ready to go", "take my money" — send the checkout link IMMEDIATELY at ${checkoutUrl}. Do NOT ask more questions. They are ready.
+- ALWAYS end every response with a genuine question that moves the conversation forward
+- If the prospect has a Google rating of 4.5+ or 100+ reviews, compliment it specifically — "Your ${prospect.googleRating} stars across ${prospect.reviewCount || 0} reviews says a lot about how you run your business"
+- NEVER say: "just following up", "no strings attached", "take a look and let me know what you think", "I put a lot of thought into it"
+- When appropriate, mention urgency: "Your preview stays live for 30 days" or "A few other ${categoryLabel} businesses in your area have already claimed theirs"
 - ALWAYS pause the funnel when a prospect replies (pauseFunnel: true)
 - Map intent to CRM status using the INTENT-TO-STATUS MAPPING above
 - VARY your language — if this were a real text conversation, you wouldn't use the same phrases twice
@@ -943,12 +977,12 @@ export async function processIncomingMessage(
 
     switch (objectionType) {
       case "too expensive":
-        reply = `${getWarmOpener(name, "empathetic")} $997 is real money, and I'd never want you to feel pressured.\n\nHere's how I think about it though: most ${CATEGORY_CONFIG[prospect.category]?.label || ""} businesses tell me they get their first new customer from their website within the first month. That usually more than covers it.\n\nAnd unlike agencies that charge $3K-$10K, this is a one-time investment — no monthly fees eating into your bottom line.\n\n${personalHook}\n\nThe preview is still live whenever you want to take another look. Zero pressure from me. ${getWarmSignoff(name)}`;
+        reply = `${getWarmOpener(name, "empathetic")} $997 is real money, and I'd never want you to feel pressured.\n\nThat one-time fee includes the custom website design, domain registration, and hosting setup. Most ${CATEGORY_CONFIG[prospect.category]?.label || ""} businesses tell me they get their first new customer from their website within the first month, and that usually more than covers it.\n\nWe also offer a payment plan — 3 payments of $349 if that's easier.\n\nAfter year one, maintenance is just $100/year for domain renewal, hosting, ongoing maintenance, and support.\n\n${personalHook}\n\nThe preview is still live whenever you want to take another look. Zero pressure from me. ${getWarmSignoff(name)}`;
         break;
 
       case "already have a website": {
         const compareUrl = `${CHECKOUT_BASE_URL}/compare/${prospect.id}`;
-        reply = `Oh nice — yeah, I actually found your current site, that's how I discovered ${prospect.businessName}! I'm not trying to trash what you have. I just thought you might be curious to see a fresh take.\n\nI put together a side-by-side comparison: ${compareUrl}\n\nEven if you stick with your current site, the comparison might give you some ideas. No strings attached.`;
+        reply = `Oh nice — yeah, I actually found your current site, that's how I discovered ${prospect.businessName}! We actually designed yours as an upgrade to your current site. We kept your branding and made the experience more modern and mobile-friendly.\n\nYou can compare them side by side on the claim page: ${compareUrl}\n\nEven if you stick with your current site, the comparison might give you some ideas. What's one thing you wish your current site did better?`;
         break;
       }
 
@@ -961,11 +995,11 @@ export async function processIncomingMessage(
         break;
 
       case "can you do it cheaper":
-        reply = `I wish I could, ${name} — but $997 is our standard rate and we keep it firm because we don't cut corners. For context, most agencies charge $3K-$10K for this level of work. We just found a way to do it efficiently without sacrificing quality.\n\nThe good news? It's a one-time investment. No monthly subscriptions, no hidden fees. And most owners tell me they make it back from their first new online customer.\n\n${personalHook}`;
+        reply = `I wish I could, ${name} — but $997 is our standard rate and we keep it firm because we don't cut corners. That one-time fee includes the custom website design, domain registration, and hosting setup. After year one, maintenance is just $100/year for domain renewal, hosting, ongoing maintenance, and support.\n\nThat said, we do offer a payment plan — 3 payments of $349 if that's easier on the budget.\n\nFor context, most agencies charge $3K-$10K for this level of work. We just found a way to do it efficiently without sacrificing quality.\n\n${personalHook}`;
         break;
 
       case "what's included":
-        reply = `Great question! Here's the full breakdown:\n\nWhat you see in the preview is actually just the starting point. After you sign on, we customize everything to your exact preferences — colors, photos, layout, content, any features you want.\n\nThe $997 covers:\n- Custom design + development\n- Mobile optimization\n- SEO setup (so people can actually find you)\n- Professional copywriting\n- Hosting setup + domain connection\n- A full year of site management\n\nNo hidden fees, no monthly subscriptions. ${personalHook}\n\nWant me to go deeper on any of those?`;
+        reply = `Great question! Here's the full breakdown:\n\nWhat you see in the preview is just the starting point. After you sign on, we customize the site to your preferences — colors, photos, layout, and content.\n\nThe $997 one-time fee includes:\n- Custom website design\n- Domain registration\n- Hosting setup\n\nThen after year one, the $100/year maintenance plan covers:\n- Domain renewal\n- Hosting\n- Ongoing maintenance\n- Support\n\nNo hidden fees, and no monthly subscription. ${personalHook}\n\nWant me to go deeper on any of those?`;
         break;
 
       default: {

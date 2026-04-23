@@ -2,6 +2,8 @@
 // Portfolio pages (/, /templates/*, /preview/*) are public
 // Dashboard, scripts, API routes require auth
 
+import { createHash } from "crypto";
+
 const ADMIN_PASSWORD = (process.env.ADMIN_PASSWORD || "bluejay2026").trim();
 
 export function isProtectedRoute(pathname: string): boolean {
@@ -50,5 +52,7 @@ export function validateAuth(authHeader: string | null): boolean {
 }
 
 export function checkSessionCookie(cookieValue: string | undefined): boolean {
-  return cookieValue === ADMIN_PASSWORD;
+  if (!cookieValue) return false;
+  const expectedToken = createHash("sha256").update(ADMIN_PASSWORD + "bluejays-session-salt").digest("hex");
+  return cookieValue === expectedToken;
 }

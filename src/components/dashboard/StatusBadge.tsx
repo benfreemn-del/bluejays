@@ -31,6 +31,21 @@ const statusConfig: Record<
     bg: "bg-emerald-900/50",
     text: "text-emerald-300",
   },
+  ready_to_send: {
+    label: "Ready to Send",
+    bg: "bg-sky-900/50",
+    text: "text-sky-300",
+  },
+  changes_pending: {
+    label: "Changes Pending",
+    bg: "bg-amber-900/50",
+    text: "text-amber-300",
+  },
+  ready_to_finalize: {
+    label: "Ready to Finalize",
+    bg: "bg-sky-900/50",
+    text: "text-sky-300",
+  },
   deployed: {
     label: "Deployed",
     bg: "bg-orange-900/50",

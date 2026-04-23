@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import type { Prospect, Category } from "@/lib/types";
 import { CATEGORY_CONFIG } from "@/lib/types";
 
@@ -59,34 +59,48 @@ export default function MapView({ prospects, onStateClick }: MapViewProps) {
   const [scoutCategory, setScoutCategory] = useState<Category>("dental");
   const [scouting, setScouting] = useState(false);
   const [scoutResult, setScoutResult] = useState("");
+  const [exhaustedCategories, setExhaustedCategories] = useState<Record<string, string[]>>({});
+  const [pageTokens, setPageTokens] = useState<Record<string, string>>({});
+
+  // Available categories for current county (filter out exhausted ones)
+  const availableCategories = (Object.keys(CATEGORY_CONFIG) as Category[]).filter(
+    cat => !(exhaustedCategories[scoutCounty]?.includes(cat))
+  );
 
   // Group prospects by state
-  const stateData: Record<string, { count: number; hasPaid: boolean }> = {};
-  for (const p of prospects) {
-    const st = p.state || "WA";
-    if (!stateData[st]) stateData[st] = { count: 0, hasPaid: false };
-    stateData[st].count++;
-    if (p.status === "paid") stateData[st].hasPaid = true;
-  }
+  const stateData = useMemo<Record<string, { count: number }>>(() => {
+    const grouped: Record<string, { count: number }> = {};
+    for (const prospect of prospects) {
+      const state = prospect.state || "WA";
+      if (!grouped[state]) grouped[state] = { count: 0 };
+      grouped[state].count++;
+
+    }
+    return grouped;
+  }, [prospects]);
 
   // Group by county with full status tracking.
   // The prospect's `city` field is stored as "{County Name}, {State Abbreviation}"
   // by the scouting system (e.g. "King, WA"). We parse out the county name so
   // it matches the GeoJSON NAME property used to render county polygons.
-  const countyData: Record<string, { count: number; hasPaid: boolean; hasContacted: boolean; hasReady: boolean; categories: string[]; paidBusinesses: string[] }> = {};
-  for (const p of prospects) {
-    const rawCity = p.city || "Unknown";
-    const countyName = parseCountyName(rawCity);
-    if (!countyData[countyName]) countyData[countyName] = { count: 0, hasPaid: false, hasContacted: false, hasReady: false, categories: [], paidBusinesses: [] };
-    countyData[countyName].count++;
-    if (p.status === "paid") { countyData[countyName].hasPaid = true; countyData[countyName].paidBusinesses.push(p.businessName); }
-    if (p.status === "contacted" || p.status === "responded") countyData[countyName].hasContacted = true;
-    if (p.status === "pending-review" || p.status === "ready_to_review" || p.status === "approved") countyData[countyName].hasReady = true;
-    if (!countyData[countyName].categories.includes(p.category)) countyData[countyName].categories.push(p.category);
-  }
+  const TOTAL_CATEGORIES = 47; // All available business categories
 
-  // Paid customer pins (for overlay on county view)
-  const paidProspects = prospects.filter(p => p.status === "paid");
+  const countyData = useMemo<Record<string, { count: number; hasContacted: boolean; categories: string[]; isFullyScouted: boolean }>>(() => {
+    const grouped: Record<string, { count: number; hasContacted: boolean; categories: string[]; isFullyScouted: boolean }> = {};
+    for (const prospect of prospects) {
+      const rawCity = prospect.city || "Unknown";
+      const countyName = parseCountyName(rawCity);
+      if (!grouped[countyName]) grouped[countyName] = { count: 0, hasContacted: false, categories: [], isFullyScouted: false };
+      grouped[countyName].count++;
+      if (prospect.status === "contacted" || prospect.status === "responded") grouped[countyName].hasContacted = true;
+      if (!grouped[countyName].categories.includes(prospect.category)) grouped[countyName].categories.push(prospect.category);
+    }
+    // Mark as fully scouted if all categories have been covered
+    for (const county of Object.values(grouped)) {
+      county.isFullyScouted = county.categories.length >= TOTAL_CATEGORIES;
+    }
+    return grouped;
+  }, [prospects]);
 
   // Load GeoJSON data
   useEffect(() => {
@@ -101,15 +115,13 @@ export default function MapView({ prospects, onStateClick }: MapViewProps) {
       const abbr = STATE_ABBR[name];
       const d = abbr ? stateData[abbr] : null;
       if (!d) return "#1a2744"; // Not started — dark blue
-      if (d.hasPaid) return "#166534"; // Has sales — green
-      return "#92400e"; // In progress — amber
+      return "#991b1b"; // Scouted — red
     } else {
       const d = countyData[name];
-      if (!d) return "#1a2744"; // Not started
-      if (d.hasPaid) return "#166534"; // Has paid customers — green
+      if (!d) return "#1a2744"; // Not started — dark blue
+      if (d.isFullyScouted) return "#166534"; // Fully scouted (all categories) — green
       if (d.hasContacted) return "#1e3a5f"; // Contacted — blue
-      if (d.hasReady) return "#92400e"; // Sites ready — amber
-      return "#44403c"; // Scouted but not ready — stone
+      return "#991b1b"; // Scouted (in progress) — red
     }
   }, [stateData, countyData]);
 
@@ -118,15 +130,13 @@ export default function MapView({ prospects, onStateClick }: MapViewProps) {
       const abbr = STATE_ABBR[name];
       const d = abbr ? stateData[abbr] : null;
       if (!d) return "#334155";
-      if (d.hasPaid) return "#22c55e";
-      return "#f59e0b";
+      return "#ef4444"; // Red border for scouted states
     } else {
       const d = countyData[name];
       if (!d) return "#334155";
-      if (d.hasPaid) return "#22c55e"; // Green border
+      if (d.isFullyScouted) return "#22c55e"; // Green border — fully scouted
       if (d.hasContacted) return "#3b82f6"; // Blue border
-      if (d.hasReady) return "#f59e0b"; // Amber border
-      return "#78716c"; // Stone border
+      return "#ef4444"; // Red border — scouted
     }
   }, [stateData, countyData]);
 
@@ -163,18 +173,64 @@ export default function MapView({ prospects, onStateClick }: MapViewProps) {
     setScouting(true);
     setScoutResult("");
     try {
+      const tokenKey = `${scoutCounty}-${scoutCategory}`;
+      const existingToken = pageTokens[tokenKey];
       const res = await fetch("/api/scout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ city: `${scoutCounty}, ${selectedState}`, category: scoutCategory, limit: 5 }),
+        body: JSON.stringify({
+          city: `${scoutCounty}, ${selectedState}`,
+          category: scoutCategory,
+          limit: 5,
+          pageToken: existingToken || undefined,
+        }),
       });
       const data = await res.json();
-      for (const p of data.prospects) {
-        await fetch(`/api/generate/${p.id}`, { method: "POST" });
+
+      // If the API returned an error, treat as exhausted
+      if (data.error || !res.ok) {
+        const catLabel = CATEGORY_CONFIG[scoutCategory]?.label || scoutCategory;
+        setExhaustedCategories(prev => ({
+          ...prev,
+          [scoutCounty]: [...(prev[scoutCounty] || []), scoutCategory],
+        }));
+        setScoutResult(`${catLabel} done for ${scoutCounty}. Switched to next category.`);
+        return;
       }
-      setScoutResult(`Found ${data.prospects.length} businesses in ${scoutCounty}! Switch to Table View to manage them.`);
-    } catch {
-      setScoutResult("Error running scout.");
+
+      // Save next page token OR mark category as done for this county
+      if (data.nextPageToken) {
+        setPageTokens(prev => ({ ...prev, [tokenKey]: data.nextPageToken }));
+      } else {
+        // No more pages from Google — this category is done for this county
+        setPageTokens(prev => { const n = { ...prev }; delete n[tokenKey]; return n; });
+      }
+
+      // If 0 new results (all dupes or truly exhausted), remove from dropdown
+      // useEffect will auto-switch scoutCategory to the next available one
+      if (data.prospects.length === 0) {
+        const catLabel = CATEGORY_CONFIG[scoutCategory]?.label || scoutCategory;
+        setExhaustedCategories(prev => ({
+          ...prev,
+          [scoutCounty]: [...(prev[scoutCounty] || []), scoutCategory],
+        }));
+        setScoutResult(`No new ${catLabel} businesses in ${scoutCounty}. Switched to next category.`);
+      } else {
+        // Generate sites for new prospects
+        for (const p of data.prospects) {
+          await fetch(`/api/generate/${p.id}`, { method: "POST" });
+        }
+        setScoutResult(`Found ${data.prospects.length} new businesses in ${scoutCounty}! Switch to Table View to manage them.`);
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Unknown error";
+      // Also mark category as exhausted on error — prevents retrying broken category
+      const catLabel = CATEGORY_CONFIG[scoutCategory]?.label || scoutCategory;
+      setExhaustedCategories(prev => ({
+        ...prev,
+        [scoutCounty]: [...(prev[scoutCounty] || []), scoutCategory],
+      }));
+      setScoutResult(`${catLabel} done for ${scoutCounty}. Switched to next category.`);
     } finally {
       setScouting(false);
     }
@@ -210,19 +266,13 @@ export default function MapView({ prospects, onStateClick }: MapViewProps) {
             <span className="w-3 h-3 rounded border border-[#334155] bg-[#1a2744] inline-block" /> Not Started
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded border border-[#78716c] bg-[#44403c] inline-block" /> Scouted
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded border border-amber-500 bg-[#92400e] inline-block" /> Sites Ready
+            <span className="w-3 h-3 rounded border border-red-500 bg-[#991b1b] inline-block" /> Scouted
           </span>
           <span className="flex items-center gap-1.5">
             <span className="w-3 h-3 rounded border border-blue-500 bg-[#1e3a5f] inline-block" /> Contacted
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded border border-green-500 bg-[#166534] inline-block" /> Paid
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-red-500 inline-block" /> 📌 Purchase
+            <span className="w-3 h-3 rounded border border-green-500 bg-[#166534] inline-block" /> Fully Scouted
           </span>
         </div>
       </div>
@@ -300,9 +350,9 @@ export default function MapView({ prospects, onStateClick }: MapViewProps) {
               {countyData[scoutCounty] ? (
                 <p className="text-sm text-muted mb-3">
                   {countyData[scoutCounty].count} prospect{countyData[scoutCounty].count !== 1 ? "s" : ""} scouted
-                  {countyData[scoutCounty].paidBusinesses.length > 0 && (
-                    <span className="text-green-400 ml-1">· {countyData[scoutCounty].paidBusinesses.length} paid</span>
-                  )}
+                  <span className={`ml-1 ${countyData[scoutCounty].isFullyScouted ? "text-green-400" : "text-red-400"}`}>
+                    · {countyData[scoutCounty].categories.length}/{TOTAL_CATEGORIES} categories
+                  </span>
                 </p>
               ) : (
                 <p className="text-sm text-muted mb-3">No prospects yet — run a scout!</p>
@@ -315,7 +365,7 @@ export default function MapView({ prospects, onStateClick }: MapViewProps) {
                     onChange={(e) => setScoutCategory(e.target.value as Category)}
                     className="w-full h-10 px-3 rounded-lg bg-surface border border-border text-foreground text-sm"
                   >
-                    {(Object.keys(CATEGORY_CONFIG) as Category[]).map((cat) => (
+                    {availableCategories.map((cat) => (
                       <option key={cat} value={cat}>{CATEGORY_CONFIG[cat].label}</option>
                     ))}
                   </select>

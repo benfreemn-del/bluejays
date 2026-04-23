@@ -2,17 +2,29 @@ import fs from "fs";
 import path from "path";
 import type { Prospect } from "./types";
 import { getProspect, updateProspect } from "./store";
-import { sendEmail, getEmailHistory } from "./email-sender";
-import { sendSms, getSmsHistory, getInitialSms, getFollowUpSms1, getFollowUpSms2, getPostVoicemailSms } from "./sms";
+import { getInitialSms, getFollowUpSms1, getFollowUpSms2, getPostVoicemailSms, getSmsHistory } from "./sms";
 import { getPitchEmail, getFollowUp1, getFollowUp2 } from "./email-templates";
 import { generateSmartFollowUp } from "./smart-followup";
 import { alertOwner } from "./alerts";
 import { dropVoicemail } from "./voicemail";
 import { supabase, isSupabaseConfigured } from "./supabase";
 import { generatePersonalizedProposal } from "./proposal-generator";
+import {
+  attemptFunnelDelivery,
+  cancelFunnelRetry,
+  getActiveFunnelRetry,
+  getDueFunnelRetries,
+  markFunnelRetrySent,
+  rescheduleFunnelRetry,
+  type DeliveryChannel,
+  type EmailDeliveryPayload,
+  type FunnelDeliveryPayload,
+  type FunnelRetryRecord,
+  type SmsDeliveryPayload,
+} from "./funnel-delivery";
 
 const FUNNEL_FILE = path.join(process.cwd(), "data", "funnel-enrollments.json");
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+const BASE_URL = (process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000").split("?")[0].replace(/\/$/, "");
 
 export interface FunnelEnrollment {
   prospectId: string;
@@ -37,10 +49,10 @@ export interface FunnelStep {
 export const FUNNEL_STEPS: FunnelStep[] = [
   { day: 0, channels: ["email", "sms"], label: "Initial Pitch" },
   { day: 2, channels: ["voicemail"], label: "Voicemail Drop" },
-  { day: 5, channels: ["email"], label: "Gentle Follow-Up" },
+  { day: 5, channels: ["email", "sms"], label: "Gentle Follow-Up" },
   { day: 12, channels: ["email", "sms"], label: "Value Reframe" },
   { day: 18, channels: ["voicemail"], label: "Follow-Up VM" },
-  { day: 21, channels: ["email"], label: "Social Proof" },
+  { day: 21, channels: ["email", "sms"], label: "Social Proof" },
   { day: 30, channels: ["email"], label: "Final Check-In" },
 ];
 
@@ -64,10 +76,7 @@ function ensureDir() {
 }
 
 function loadEnrollments(): FunnelEnrollment[] {
-  // On Vercel, use Supabase for enrollment persistence
-  // Local file is only for dev; loadEnrollmentsAsync handles Supabase
   if (process.env.VERCEL) {
-    // Synchronous fallback — return empty; callers should use async version
     console.log("[Funnel] Skipping local file read on Vercel — use async loader");
     return [];
   }
@@ -86,22 +95,21 @@ async function loadEnrollmentsAsync(): Promise<FunnelEnrollment[]> {
         return data.map((row: Record<string, unknown>) => ({
           prospectId: row.prospect_id as string,
           enrolledAt: row.enrolled_at as string,
-          currentStep: row.current_step as number,
+          currentStep: Number(row.current_step),
           lastSentAt: row.last_sent_at as string | null,
-          paused: row.paused as boolean,
+          paused: Boolean(row.paused),
           pauseReason: row.pause_reason as string | undefined,
           completedAt: row.completed_at as string | undefined,
         }));
       }
     } catch {
-      // Table might not exist yet — fall through to local
+      // Table might not exist yet — fall through to local.
     }
   }
   return loadEnrollments();
 }
 
 function saveEnrollments(enrollments: FunnelEnrollment[]) {
-  // Skip file writes on Vercel (read-only filesystem)
   if (process.env.VERCEL) {
     console.log("[Funnel] Skipping local file write on Vercel — using Supabase");
     return;
@@ -113,26 +121,309 @@ function saveEnrollments(enrollments: FunnelEnrollment[]) {
 async function saveEnrollmentsAsync(enrollments: FunnelEnrollment[]) {
   if (isSupabaseConfigured()) {
     try {
-      for (const e of enrollments) {
+      for (const enrollment of enrollments) {
         await supabase.from("funnel_enrollments").upsert({
-          prospect_id: e.prospectId,
-          enrolled_at: e.enrolledAt,
-          current_step: e.currentStep,
-          last_sent_at: e.lastSentAt,
-          paused: e.paused,
-          pause_reason: e.pauseReason || null,
-          completed_at: e.completedAt || null,
+          prospect_id: enrollment.prospectId,
+          enrolled_at: enrollment.enrolledAt,
+          current_step: enrollment.currentStep,
+          last_sent_at: enrollment.lastSentAt,
+          paused: enrollment.paused,
+          pause_reason: enrollment.pauseReason || null,
+          completed_at: enrollment.completedAt || null,
         }, { onConflict: "prospect_id" });
       }
     } catch {
-      // Table might not exist yet
+      // Table might not exist yet.
     }
   }
   saveEnrollments(enrollments);
 }
 
+function findEnrollment(enrollments: FunnelEnrollment[], prospectId: string): FunnelEnrollment | undefined {
+  return enrollments.find((enrollment) => enrollment.prospectId === prospectId);
+}
+
+function markEnrollmentStepDelivered(enrollment: FunnelEnrollment, stepIndex: number) {
+  enrollment.currentStep = Math.max(enrollment.currentStep, stepIndex);
+  enrollment.lastSentAt = new Date().toISOString();
+  if (enrollment.currentStep >= FUNNEL_STEPS.length - 1) {
+    enrollment.completedAt = new Date().toISOString();
+  }
+}
+
+function isStopStatus(status: string): boolean {
+  return FUNNEL_STOP_STATUSES.includes(status);
+}
+
+async function getEmailTemplate(prospect: Prospect, stepIndex: number, previewUrl: string) {
+  if (stepIndex === 0) {
+    const proposalUrl = `${BASE_URL}/proposal/${prospect.id}`;
+    return getPitchEmail(prospect, previewUrl, undefined, proposalUrl);
+  }
+  if (stepIndex === 2) {
+    return getFollowUp1(prospect, previewUrl);
+  }
+  if (stepIndex === 3) {
+    return getFollowUp2(prospect, previewUrl);
+  }
+
+  const smart = generateSmartFollowUp(prospect);
+  return {
+    subject: smart.email.subject,
+    body: smart.email.body,
+    sequence: stepIndex + 1,
+  };
+}
+
+function getFallbackSmsBody(prospect: Prospect, stepIndex: number, previewUrl: string): string {
+  const firstName = prospect.ownerName?.split(" ")[0] || "there";
+
+  if (stepIndex === 0) return getInitialSms(prospect, previewUrl);
+  if (stepIndex === 2) return getFollowUpSms1(prospect, previewUrl);
+  if (stepIndex === 3) return getFollowUpSms2(prospect, previewUrl);
+  if (stepIndex === 5) {
+    return `Hi ${firstName}, just checking whether you had a chance to look at the free website we built for ${prospect.businessName}: ${previewUrl} If you want any edits or want to claim it, just reply here. Reply STOP to opt out.`;
+  }
+  if (stepIndex === 6) {
+    return `Final check-in from BlueJays, ${firstName}. Your ${prospect.businessName} preview is still live here: ${previewUrl} If you want it transferred to you, just reply. Reply STOP to opt out.`;
+  }
+
+  return `Hi ${firstName}, your ${prospect.businessName} preview is still ready here: ${previewUrl} Let us know if you want any changes or want to claim it. Reply STOP to opt out.`;
+}
+
+function getVoicemailFallbackEmail(prospect: Prospect, previewUrl: string, stepIndex: number): EmailDeliveryPayload | undefined {
+  if (!prospect.email) return undefined;
+
+  const subject = stepIndex === 4
+    ? `Quick follow-up about your ${prospect.businessName} website preview`
+    : `Quick follow-up after our voicemail about ${prospect.businessName}`;
+
+  const firstName = prospect.ownerName?.split(" ")[0] || "there";
+  const body = `Hi ${firstName},\n\nI just tried to reach you about the free website preview we built for ${prospect.businessName}. You can review it here: ${previewUrl}\n\nIf you’d like any edits or want to claim it, just reply to this email and we’ll take care of it.\n\nBest,\nBlueJays`;
+
+  return {
+    to: prospect.email,
+    subject,
+    body,
+    sequence: stepIndex + 1,
+  };
+}
+
+async function getNextSmsSequence(prospectId: string): Promise<number> {
+  const smsHistory = await getSmsHistory(prospectId);
+  const lastSequence = smsHistory.length > 0 ? Math.max(...smsHistory.map((entry) => entry.sequence)) : 0;
+  return lastSequence + 1;
+}
+
+async function buildStepPayload(prospect: Prospect, stepIndex: number, previewUrl: string): Promise<FunnelDeliveryPayload | undefined> {
+  const step = FUNNEL_STEPS[stepIndex];
+  const emailTemplate = step.channels.includes("email") ? await getEmailTemplate(prospect, stepIndex, previewUrl) : undefined;
+  const smsBody = step.channels.includes("sms") ? getFallbackSmsBody(prospect, stepIndex, previewUrl) : undefined;
+
+  const email: EmailDeliveryPayload | undefined = emailTemplate && prospect.email
+    ? {
+        to: prospect.email,
+        subject: emailTemplate.subject,
+        body: emailTemplate.body,
+        sequence: emailTemplate.sequence,
+      }
+    : undefined;
+
+  const sms: SmsDeliveryPayload | undefined = smsBody && prospect.phone
+    ? {
+        to: prospect.phone,
+        body: smsBody,
+        sequence: await getNextSmsSequence(prospect.id),
+      }
+    : undefined;
+
+  if (!email && !sms) return undefined;
+
+  const preferredChannel: DeliveryChannel = step.channels.includes("sms") && !step.channels.includes("email")
+    ? "sms"
+    : "email";
+
+  return {
+    prospectId: prospect.id,
+    stepIndex,
+    stepLabel: step.label,
+    preferredChannel,
+    email,
+    sms,
+  };
+}
+
+async function buildVoicemailFollowUpPayload(prospect: Prospect, stepIndex: number, previewUrl: string): Promise<FunnelDeliveryPayload | undefined> {
+  const sms = prospect.phone
+    ? {
+        to: prospect.phone,
+        body: getPostVoicemailSms(prospect, previewUrl),
+        sequence: await getNextSmsSequence(prospect.id),
+      }
+    : undefined;
+
+  const email = getVoicemailFallbackEmail(prospect, previewUrl, stepIndex);
+
+  if (!sms && !email) return undefined;
+
+  return {
+    prospectId: prospect.id,
+    stepIndex,
+    stepLabel: `${FUNNEL_STEPS[stepIndex].label} Follow-Up`,
+    preferredChannel: "sms",
+    email,
+    sms,
+  };
+}
+
+function payloadFromRetryRecord(record: FunnelRetryRecord): FunnelDeliveryPayload {
+  return {
+    prospectId: record.prospectId,
+    stepIndex: record.stepIndex,
+    stepLabel: record.stepLabel,
+    preferredChannel: record.primaryChannel,
+    email: record.emailTo && record.emailSubject && record.emailBody && record.emailSequence !== null
+      ? {
+          to: record.emailTo,
+          subject: record.emailSubject,
+          body: record.emailBody,
+          sequence: record.emailSequence,
+        }
+      : undefined,
+    sms: record.smsTo && record.smsBody && record.smsSequence !== null
+      ? {
+          to: record.smsTo,
+          body: record.smsBody,
+          sequence: record.smsSequence,
+        }
+      : undefined,
+  };
+}
+
+async function sendFunnelStep(
+  prospect: Prospect,
+  stepIndex: number,
+  options?: { retryCount?: number; queueOnFailure?: boolean }
+): Promise<{ success: boolean; emailSent: boolean; smsSent: boolean; voicemailSent: boolean; queuedForRetry: boolean; deliveredChannel: DeliveryChannel | null; lastError?: string }> {
+  const step = FUNNEL_STEPS[stepIndex];
+  // Short URL for outreach — /p/[8chars] redirects to the full preview page
+  const previewUrl = `${BASE_URL}/p/${prospect.id.slice(0, 8)}`;
+  let emailSent = false;
+  let smsSent = false;
+  let voicemailSent = false;
+  let queuedForRetry = false;
+  let deliveredChannel: DeliveryChannel | null = null;
+  let lastError: string | undefined;
+
+  if (step.channels.includes("voicemail") && prospect.phone) {
+    try {
+      const vmStage: "initial" | "followUp" = step.day === 18 ? "followUp" : "initial";
+      const drop = await dropVoicemail(prospect.id, prospect.phone, prospect.businessName, vmStage);
+      voicemailSent = drop.status === "sent";
+      console.log(`  Funnel step ${stepIndex} (Day ${step.day}) voicemail ${drop.status} for ${prospect.businessName}`);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown voicemail error";
+      lastError = message;
+      console.log(`  Funnel voicemail failed for ${prospect.businessName}: ${message}`);
+    }
+  }
+
+  let payload: FunnelDeliveryPayload | undefined;
+  if (step.channels.includes("email") || step.channels.includes("sms")) {
+    payload = await buildStepPayload(prospect, stepIndex, previewUrl);
+  } else if (step.channels.includes("voicemail")) {
+    payload = await buildVoicemailFollowUpPayload(prospect, stepIndex, previewUrl);
+  }
+
+  if (payload) {
+    const delivery = await attemptFunnelDelivery(payload, {
+      retryCount: options?.retryCount ?? 0,
+      queueOnFailure: options?.queueOnFailure ?? !voicemailSent,
+    });
+
+    emailSent = delivery.emailSent;
+    smsSent = delivery.smsSent;
+    queuedForRetry = delivery.queuedForRetry;
+    deliveredChannel = delivery.deliveredChannel;
+    lastError = delivery.lastError || lastError;
+
+    if (!delivery.success && delivery.lastError) {
+      console.log(`  Funnel channel delivery failed for ${prospect.businessName}: ${delivery.lastError}`);
+    }
+  }
+
+  return {
+    success: voicemailSent || emailSent || smsSent,
+    emailSent,
+    smsSent,
+    voicemailSent,
+    queuedForRetry,
+    deliveredChannel,
+    lastError,
+  };
+}
+
+async function processQueuedFunnelRetries(
+  enrollments: FunnelEnrollment[]
+): Promise<{
+  sent: { name: string; step: string; email: boolean; sms: boolean; voicemail: boolean }[];
+  queued: { name: string; step: string; retryId: string; reason: string }[];
+}> {
+  const sent: { name: string; step: string; email: boolean; sms: boolean; voicemail: boolean }[] = [];
+  const queued: { name: string; step: string; retryId: string; reason: string }[] = [];
+  const dueRetries = await getDueFunnelRetries();
+
+  for (const retry of dueRetries) {
+    const enrollment = findEnrollment(enrollments, retry.prospectId);
+    if (!enrollment) {
+      await cancelFunnelRetry(retry, "Enrollment no longer exists");
+      continue;
+    }
+
+    const prospect = await getProspect(retry.prospectId);
+    if (!prospect) {
+      await cancelFunnelRetry(retry, "Prospect no longer exists");
+      continue;
+    }
+
+    if (enrollment.paused || enrollment.completedAt || prospect.funnelPaused || isStopStatus(prospect.status)) {
+      await cancelFunnelRetry(retry, `Retry cancelled because prospect is paused or in status '${prospect.status}'`);
+      continue;
+    }
+
+    const payload = payloadFromRetryRecord(retry);
+    const delivery = await attemptFunnelDelivery(payload, {
+      retryCount: retry.attemptCount + 1,
+      queueOnFailure: false,
+    });
+
+    if (delivery.success && delivery.deliveredChannel) {
+      await markFunnelRetrySent(retry, delivery.deliveredChannel);
+      markEnrollmentStepDelivered(enrollment, retry.stepIndex);
+      sent.push({
+        name: prospect.businessName,
+        step: `${retry.stepLabel} (retry)`,
+        email: delivery.emailSent,
+        sms: delivery.smsSent,
+        voicemail: false,
+      });
+      continue;
+    }
+
+    const schedule = await rescheduleFunnelRetry(retry, delivery.lastError || "Retry delivery failed");
+    queued.push({
+      name: prospect.businessName,
+      step: `${retry.stepLabel} (retry)`,
+      retryId: schedule.record.id,
+      reason: schedule.record.lastError || "Retry delivery failed",
+    });
+  }
+
+  return { sent, queued };
+}
+
 export function getEnrollment(prospectId: string): FunnelEnrollment | undefined {
-  return loadEnrollments().find((e) => e.prospectId === prospectId);
+  return loadEnrollments().find((enrollment) => enrollment.prospectId === prospectId);
 }
 
 export function getAllEnrollments(): FunnelEnrollment[] {
@@ -141,80 +432,88 @@ export function getAllEnrollments(): FunnelEnrollment[] {
 
 /**
  * Enroll a prospect in the auto-funnel.
- * Immediately sends Day 0 (initial pitch email + text).
+ * Immediately attempts Day 0 with resilient channel fallback.
  */
 export async function enrollInFunnel(prospectId: string): Promise<{ success: boolean; message: string }> {
   const prospect = await getProspect(prospectId);
   if (!prospect) return { success: false, message: "Prospect not found" };
   if (!prospect.generatedSiteUrl) return { success: false, message: "No preview site — generate one first" };
 
-  // Don't enroll if prospect is in a stop state
-  if (FUNNEL_STOP_STATUSES.includes(prospect.status)) {
+  if (isStopStatus(prospect.status)) {
     return { success: false, message: `Prospect status is '${prospect.status}' — cannot enroll in funnel` };
   }
 
-  // Allow enrollment for approved or ready_to_review prospects
   const canEnroll = ["approved", "ready_to_review", "generated", "contacted"].includes(prospect.status);
   if (!canEnroll) {
     return { success: false, message: `Prospect status is '${prospect.status}' — must be approved or ready to review first` };
   }
 
-  // Don't enroll if funnel is paused on the prospect record
   if (prospect.funnelPaused) {
     return { success: false, message: "Prospect funnel is paused (they replied or unsubscribed)" };
   }
 
-  // Check if already enrolled
   const enrollments = await loadEnrollmentsAsync();
-  const existing = enrollments.find((e) => e.prospectId === prospectId);
+  const existing = enrollments.find((enrollment) => enrollment.prospectId === prospectId);
   if (existing && !existing.completedAt && !existing.paused) {
     return { success: false, message: "Already in funnel" };
   }
 
-  // Personalized proposals must exist before a prospect enters the funnel.
   await generatePersonalizedProposal(prospectId);
 
-  // Send Day 0 immediately
   const results = await sendFunnelStep(prospect, 0);
+  if (!results.success && !results.queuedForRetry) {
+    return {
+      success: false,
+      message: `Could not start funnel for ${prospect.businessName} because no reachable channel was available.`,
+    };
+  }
 
-  // Save enrollment
+  const now = new Date().toISOString();
   const enrollment: FunnelEnrollment = {
     prospectId,
-    enrolledAt: new Date().toISOString(),
-    currentStep: 0,
-    lastSentAt: new Date().toISOString(),
+    enrolledAt: now,
+    currentStep: results.success ? 0 : -1,
+    lastSentAt: results.success ? now : null,
     paused: false,
   };
 
-  // Remove old enrollment if re-enrolling
-  const filtered = enrollments.filter((e) => e.prospectId !== prospectId);
+  const filtered = enrollments.filter((item) => item.prospectId !== prospectId);
   filtered.push(enrollment);
   await saveEnrollmentsAsync(filtered);
 
-  // Update prospect status
-  await updateProspect(prospectId, { status: "contacted" });
+  // Set contactedAt on first outreach only — used for 30-day preview expiry
+  const existingProspect = await getProspect(prospectId);
+  const contactedAtPatch = existingProspect?.contactedAt ? {} : { contactedAt: new Date().toISOString() };
+  await updateProspect(prospectId, { status: "contacted", ...contactedAtPatch });
+
+  const outcome = results.success
+    ? `${results.emailSent ? "Email" : "SMS"}${results.deliveredChannel && results.voicemailSent ? " + voicemail" : ""} delivered.`
+    : "Both channels failed, so the step was queued for retry.";
 
   return {
     success: true,
-    message: `Funnel started for ${prospect.businessName}. ${results.emailSent ? "Email sent. " : ""}${results.smsSent ? "Text sent." : ""}`,
+    message: `Funnel started for ${prospect.businessName}. ${outcome}`,
   };
 }
 
 /**
- * Run the daily funnel check — sends next step to all prospects who are due.
- * Call this from a cron job (POST /api/funnel/run).
- *
- * Respects both the enrollment-level paused flag AND the prospect-level
- * funnelPaused flag (set when a prospect replies via inbound email/SMS).
+ * Run the funnel processor. This handles due retries first, then sends the next
+ * due step for active prospects.
  */
 export async function runDailyFunnel(): Promise<{
   processed: number;
   sent: { name: string; step: string; email: boolean; sms: boolean; voicemail: boolean }[];
   paused: { name: string; reason: string }[];
+  queued: { name: string; step: string; retryId: string; reason: string }[];
 }> {
   const enrollments = await loadEnrollmentsAsync();
   const sent: { name: string; step: string; email: boolean; sms: boolean; voicemail: boolean }[] = [];
   const paused: { name: string; reason: string }[] = [];
+  const queued: { name: string; step: string; retryId: string; reason: string }[] = [];
+
+  const retryResults = await processQueuedFunnelRetries(enrollments);
+  sent.push(...retryResults.sent);
+  queued.push(...retryResults.queued);
 
   for (const enrollment of enrollments) {
     if (enrollment.paused || enrollment.completedAt) continue;
@@ -222,7 +521,6 @@ export async function runDailyFunnel(): Promise<{
     const prospect = await getProspect(enrollment.prospectId);
     if (!prospect) continue;
 
-    // Check if prospect-level funnel is paused (set by inbound reply handler)
     if (prospect.funnelPaused) {
       enrollment.paused = true;
       enrollment.pauseReason = "Prospect replied — funnel paused by AI responder";
@@ -230,13 +528,11 @@ export async function runDailyFunnel(): Promise<{
       continue;
     }
 
-    // Check if prospect has reached a stop status
-    if (FUNNEL_STOP_STATUSES.includes(prospect.status)) {
+    if (isStopStatus(prospect.status)) {
       enrollment.paused = true;
       enrollment.pauseReason = `Prospect status: ${prospect.status}`;
       paused.push({ name: prospect.businessName, reason: prospect.status });
 
-      // Alert owner for notable status changes
       if (["responded", "interested", "claimed", "paid"].includes(prospect.status)) {
         await alertOwner({
           type: "prospect-responded",
@@ -248,138 +544,56 @@ export async function runDailyFunnel(): Promise<{
       continue;
     }
 
-    // Check if dismissed or unsubscribed
-    if (prospect.status === "unsubscribed") {
-      enrollment.paused = true;
-      enrollment.pauseReason = "Unsubscribed — all outreach stopped";
-      continue;
-    }
-
-    // Calculate next step
     const nextStep = enrollment.currentStep + 1;
     if (nextStep >= FUNNEL_STEPS.length) {
       enrollment.completedAt = new Date().toISOString();
       continue;
     }
 
-    // Check if enough days have passed
+    const activeRetry = await getActiveFunnelRetry(prospect.id, nextStep);
+    if (activeRetry) {
+      queued.push({
+        name: prospect.businessName,
+        step: FUNNEL_STEPS[nextStep].label,
+        retryId: activeRetry.id,
+        reason: activeRetry.lastError || "Waiting for scheduled retry",
+      });
+      continue;
+    }
+
     const daysSinceEnrolled = Math.floor(
       (Date.now() - new Date(enrollment.enrolledAt).getTime()) / (1000 * 60 * 60 * 24)
     );
     const stepConfig = FUNNEL_STEPS[nextStep];
 
     if (daysSinceEnrolled >= stepConfig.day) {
-      // Time to send next step
       const results = await sendFunnelStep(prospect, nextStep);
-      enrollment.currentStep = nextStep;
-      enrollment.lastSentAt = new Date().toISOString();
 
-      sent.push({
-        name: prospect.businessName,
-        step: stepConfig.label,
-        email: results.emailSent,
-        sms: results.smsSent,
-        voicemail: results.voicemailSent,
-      });
+      if (results.success) {
+        markEnrollmentStepDelivered(enrollment, nextStep);
+        sent.push({
+          name: prospect.businessName,
+          step: stepConfig.label,
+          email: results.emailSent,
+          sms: results.smsSent,
+          voicemail: results.voicemailSent,
+        });
+      } else if (results.queuedForRetry) {
+        const retry = await getActiveFunnelRetry(prospect.id, nextStep);
+        if (retry) {
+          queued.push({
+            name: prospect.businessName,
+            step: stepConfig.label,
+            retryId: retry.id,
+            reason: results.lastError || "Both channels failed; queued for retry",
+          });
+        }
+      }
     }
   }
 
   await saveEnrollmentsAsync(enrollments);
-  return { processed: enrollments.length, sent, paused };
-}
-
-/**
- * Send a specific funnel step to a prospect.
- * Handles email, SMS, and voicemail channels per the step config.
- */
-async function sendFunnelStep(
-  prospect: Prospect,
-  stepIndex: number
-): Promise<{ emailSent: boolean; smsSent: boolean; voicemailSent: boolean }> {
-  const step = FUNNEL_STEPS[stepIndex];
-  const previewUrl = `${BASE_URL}${prospect.generatedSiteUrl}`;
-  let emailSent = false;
-  let smsSent = false;
-  let voicemailSent = false;
-
-  // Send email
-  if (step.channels.includes("email") && prospect.email) {
-    try {
-      let template;
-      if (stepIndex === 0) {
-        template = getPitchEmail(prospect, previewUrl);
-      } else if (stepIndex === 2) {
-        // Step 2 = Day 5 Gentle Follow-Up
-        template = getFollowUp1(prospect, previewUrl);
-      } else if (stepIndex === 3) {
-        // Step 3 = Day 12 Value Reframe
-        template = getFollowUp2(prospect, previewUrl);
-      } else {
-        // Steps 5-6 (Day 21, Day 30): use smart follow-up
-        const smart = generateSmartFollowUp(prospect);
-        template = { subject: smart.email.subject, body: smart.email.body, sequence: stepIndex + 1 };
-      }
-
-      await sendEmail(prospect.id, prospect.email, template.subject, template.body, template.sequence);
-      emailSent = true;
-      console.log(`  Funnel step ${stepIndex} (Day ${step.day}) email sent to ${prospect.businessName}`);
-    } catch (err) {
-      console.log(`  Funnel email failed for ${prospect.businessName}: ${(err as Error).message}`);
-    }
-  }
-
-  // Send SMS
-  if (step.channels.includes("sms") && prospect.phone) {
-    try {
-      const smsHistory = await getSmsHistory(prospect.id);
-      const lastSeq = smsHistory.length > 0 ? Math.max(...smsHistory.map((s) => s.sequence)) : 0;
-
-      if (lastSeq < 3) {
-        let body: string;
-        if (lastSeq === 0) body = getInitialSms(prospect, previewUrl);
-        else if (lastSeq === 1) body = getFollowUpSms1(prospect, previewUrl);
-        else body = getFollowUpSms2(prospect, previewUrl);
-
-        await sendSms(prospect.id, prospect.phone, body, lastSeq + 1);
-        smsSent = true;
-        console.log(`  Funnel step ${stepIndex} (Day ${step.day}) text sent to ${prospect.businessName}`);
-      }
-    } catch (err) {
-      console.log(`  Funnel text failed for ${prospect.businessName}: ${(err as Error).message}`);
-    }
-  }
-
-  // Drop voicemail (Days 2 and 18 per CLAUDE.md)
-  if (step.channels.includes("voicemail") && prospect.phone) {
-    try {
-      // Day 2 = initial voicemail; Day 18 = follow-up voicemail
-      const vmStage: "initial" | "followUp" = step.day === 18 ? "followUp" : "initial";
-      const drop = await dropVoicemail(prospect.id, prospect.phone, prospect.businessName, vmStage);
-      voicemailSent = drop.status === "sent";
-      console.log(`  📞 Funnel step ${stepIndex} (Day ${step.day}) voicemail ${drop.status} for ${prospect.businessName}`);
-
-      // Per CLAUDE.md: "Always follow up a voicemail with a text"
-      // Send a follow-up SMS shortly after the voicemail drop
-      if (voicemailSent) {
-        try {
-          const vmFollowUpText = getPostVoicemailSms(prospect, previewUrl);
-          const smsHistory = await getSmsHistory(prospect.id);
-          const nextSeq = smsHistory.length > 0 ? Math.max(...smsHistory.map((s) => s.sequence)) + 1 : 1;
-          if (nextSeq <= 3) {
-            await sendSms(prospect.id, prospect.phone, vmFollowUpText, nextSeq);
-            smsSent = true;
-            console.log(`  📱 Post-voicemail follow-up text sent to ${prospect.businessName}`);
-          }
-        } catch (err) {
-          console.log(`  ⚠️ Post-voicemail text failed for ${prospect.businessName}: ${(err as Error).message}`);
-        }
-      }
-    } catch (err) {
-      console.log(`  ⚠️ Voicemail drop failed for ${prospect.businessName}: ${(err as Error).message}`);
-    }
-  }
-
-  return { emailSent, smsSent, voicemailSent };
+  return { processed: enrollments.length, sent, paused, queued };
 }
 
 /**
@@ -387,7 +601,7 @@ async function sendFunnelStep(
  */
 export function pauseFunnel(prospectId: string, reason: string): boolean {
   const enrollments = loadEnrollments();
-  const enrollment = enrollments.find((e) => e.prospectId === prospectId);
+  const enrollment = enrollments.find((item) => item.prospectId === prospectId);
   if (!enrollment) return false;
   enrollment.paused = true;
   enrollment.pauseReason = reason;
@@ -401,13 +615,12 @@ export function pauseFunnel(prospectId: string, reason: string): boolean {
  */
 export async function resumeFunnel(prospectId: string): Promise<boolean> {
   const enrollments = loadEnrollments();
-  const enrollment = enrollments.find((e) => e.prospectId === prospectId);
+  const enrollment = enrollments.find((item) => item.prospectId === prospectId);
   if (!enrollment) return false;
   enrollment.paused = false;
   enrollment.pauseReason = undefined;
   saveEnrollments(enrollments);
 
-  // Also clear the prospect-level pause flag
   await updateProspect(prospectId, { funnelPaused: false });
   return true;
 }

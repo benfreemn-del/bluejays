@@ -274,7 +274,7 @@ function QuoteCalculator() {
               className={`flex-1 h-12 rounded-xl text-sm font-bold transition-all duration-300 border ${
                 bedrooms === n
                   ? "bg-[#f97316] border-[#f97316] text-white shadow-lg shadow-[#f97316]/20"
-                  : "bg-white/5 border-white/10 text-white/60 hover:border-[#f97316]/30"
+                  : "bg-white/5 border-white/15 text-white/60 hover:border-[#f97316]/30"
               }`}
             >
               {n}{n === 5 ? "+" : ""}
@@ -298,7 +298,7 @@ function QuoteCalculator() {
               className={`flex-1 h-12 rounded-xl text-sm font-bold transition-all duration-300 border ${
                 distance === opt.key
                   ? "bg-[#f97316] border-[#f97316] text-white shadow-lg shadow-[#f97316]/20"
-                  : "bg-white/5 border-white/10 text-white/60 hover:border-[#f97316]/30"
+                  : "bg-white/5 border-white/15 text-white/60 hover:border-[#f97316]/30"
               }`}
             >
               {opt.label}
@@ -314,7 +314,7 @@ function QuoteCalculator() {
           className={`w-full h-12 rounded-xl text-sm font-bold transition-all duration-300 border flex items-center justify-center gap-2 ${
             packing
               ? "bg-[#f97316]/15 border-[#f97316]/40 text-[#f97316]"
-              : "bg-white/5 border-white/10 text-white/60 hover:border-[#f97316]/30"
+              : "bg-white/5 border-white/15 text-white/60 hover:border-[#f97316]/30"
           }`}
         >
           <BoxIcon />
@@ -421,7 +421,7 @@ export default function MovingTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-[#f97316]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-[#f97316]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_50%_0%,#f9731615,transparent_70%)]" />
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#f97316]/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -477,7 +477,7 @@ export default function MovingTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group relative text-center p-8 rounded-2xl border border-white/[0.06] hover:border-[#f97316]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative text-center p-8 rounded-2xl border border-white/[0.10] hover:border-[#f97316]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_50%_0%,#f9731610,transparent_70%)]" />
                 <div className="relative z-10">
@@ -563,7 +563,7 @@ export default function MovingTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group text-center p-6 rounded-2xl border border-white/[0.06] hover:border-[#f97316]/30 bg-white/[0.02] transition-all duration-500"
+                className="group text-center p-6 rounded-2xl border border-white/[0.10] hover:border-[#f97316]/30 bg-white/[0.07] transition-all duration-500"
               >
                 <div className="w-14 h-14 mx-auto rounded-xl bg-[#f97316]/10 border border-[#f97316]/20 flex items-center justify-center text-[#f97316] mb-4 group-hover:bg-[#f97316]/20 group-hover:scale-110 transition-all duration-300">
                   {badge.icon}
@@ -605,7 +605,7 @@ export default function MovingTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-[#f97316]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-[#f97316]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-[#f97316]/40 via-[#f97316]/10 to-transparent" />
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_0%_0%,#f9731610,transparent_70%)]" />
@@ -619,7 +619,7 @@ export default function MovingTemplate() {
                     ))}
                   </div>
                   <p className="text-muted leading-relaxed mb-6 text-sm">&ldquo;{t.text}&rdquo;</p>
-                  <div className="flex items-center gap-3 pt-4 border-t border-white/[0.06]">
+                  <div className="flex items-center gap-3 pt-4 border-t border-white/[0.10]">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#f97316]/30 to-[#f97316]/10 flex items-center justify-center text-sm font-bold text-[#f97316]">
                       {t.name.charAt(0)}
                     </div>
@@ -659,7 +659,7 @@ export default function MovingTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.04 }}
-                className="group text-center p-4 rounded-xl border border-white/[0.06] hover:border-[#f97316]/30 bg-white/[0.02] transition-all duration-300"
+                className="group text-center p-4 rounded-xl border border-white/[0.10] hover:border-[#f97316]/30 bg-white/[0.07] transition-all duration-300"
               >
                 <p className="font-semibold text-sm group-hover:text-[#f97316] transition-colors duration-300">{area}</p>
               </motion.div>

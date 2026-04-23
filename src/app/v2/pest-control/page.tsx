@@ -1,6 +1,9 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+/* eslint-disable @next/next/no-img-element -- Showcase marketing page uses plain img tags intentionally. */
+/* eslint-disable react-hooks/purity -- Decorative particle values are intentionally randomized for static visual effects. */
+
+import { useState, useRef, useCallback, useEffect } from "react";
 import {
   motion,
   useMotionValue,
@@ -12,7 +15,6 @@ import {
   Star,
   ShieldCheck,
   Bug,
-  ShieldWarning,
   CaretDown,
   Phone,
   MapPin,
@@ -27,14 +29,23 @@ import {
   Warning,
   House,
   Users,
-  TreeEvergreen,
   Skull,
   Eye,
-  FirstAidKit,
-  SunHorizon,
   Snowflake,
   Flower,
   ThermometerHot,
+  Drop,
+  Crosshair,
+  Siren,
+  PawPrint,
+  Timer,
+  CurrencyDollar,
+  Buildings,
+  Recycle,
+  HandHeart,
+  Envelope,
+  Target,
+  Binoculars,
 } from "@phosphor-icons/react";
 
 /* ───────────────────────── SPRING CONFIG ───────────────────────── */
@@ -51,22 +62,93 @@ const fadeUp = {
 };
 
 /* ───────────────────────── COLORS ───────────────────────── */
-const BG = "#0f1a0a";
+const BG = "#111827";
 const ORANGE = "#ea580c";
 const ORANGE_LIGHT = "#fb923c";
 const ORANGE_GLOW = "rgba(234, 88, 12, 0.15)";
-const GREEN_DARK = "#166534";
-const GREEN_GLOW = "rgba(22, 101, 52, 0.1)";
+const RED = "#ef4444";
+const GREEN = "#22c55e";
+
+/* ───────────────────────── DATA ───────────────────────── */
+const SERVICES = [
+  { title: "General Pest Control", desc: "Comprehensive ant, spider, cockroach, and silverfish elimination with quarterly prevention plans.", icon: Bug },
+  { title: "Termite Treatment", desc: "Advanced liquid barrier and bait station systems to protect your home's structural integrity.", icon: Skull },
+  { title: "Rodent Control", desc: "Humane trapping, exclusion sealing, and ongoing monitoring for mice and rats.", icon: Eye },
+  { title: "Mosquito Management", desc: "Yard treatment and larvicide programs to reclaim your outdoor living spaces.", icon: Drop },
+  { title: "Wildlife Removal", desc: "Safe, humane removal of raccoons, squirrels, opossums, and birds from your property.", icon: PawPrint },
+  { title: "Commercial Services", desc: "Restaurant, warehouse, and office pest management with compliance documentation.", icon: Buildings },
+];
+
+const PEST_TYPES = [
+  { name: "Ants", icon: Bug, color: "#f97316", danger: 2, treatment: "Liquid barrier + bait stations", prevention: "Seal cracks, remove food sources, trim vegetation from foundation.", info: "Carpenter ants can cause structural damage similar to termites. Odorous house ants are the most common PNW invader." },
+  { name: "Rodents", icon: Eye, color: "#ef4444", danger: 4, treatment: "Snap traps + exclusion sealing", prevention: "Seal gaps larger than 1/4 inch, store food in containers, remove outdoor harborage.", info: "Mice can squeeze through a hole the size of a dime. They contaminate 10x more food than they eat." },
+  { name: "Termites", icon: Skull, color: "#dc2626", danger: 5, treatment: "Liquid barrier + monitoring stations", prevention: "Eliminate wood-to-soil contact, fix leaks, ensure drainage away from foundation.", info: "Subterranean termites cause $5 billion in US property damage annually. Pacific dampwood termites thrive in our wet climate." },
+  { name: "Wasps", icon: Warning, color: "#eab308", danger: 3, treatment: "Nest removal + perimeter spray", prevention: "Seal eaves and soffits, remove food attractants, treat early spring.", info: "Yellow jackets become aggressive in late summer. Paper wasps build under eaves and deck railings." },
+  { name: "Spiders", icon: Bug, color: "#8b5cf6", danger: 2, treatment: "Web removal + residual spray", prevention: "Reduce outdoor lighting, clear clutter, seal entry points.", info: "Giant house spiders are common in PNW. Hobo spiders are often misidentified but rarely dangerous." },
+  { name: "Cockroaches", icon: Bug, color: "#92400e", danger: 3, treatment: "Gel bait + growth regulator", prevention: "Fix moisture issues, deep clean kitchen, seal plumbing penetrations.", info: "German cockroaches reproduce rapidly indoors. One female can produce 300+ offspring in a year." },
+  { name: "Bed Bugs", icon: Warning, color: "#be123c", danger: 4, treatment: "Heat treatment + residual spray", prevention: "Inspect second-hand furniture, use mattress encasements, vacuum frequently.", info: "Bed bugs can survive months without feeding. Heat treatment above 120F is the most effective elimination method." },
+  { name: "Mosquitoes", icon: Drop, color: "#0ea5e9", danger: 2, treatment: "Larvicide + yard fogging", prevention: "Eliminate standing water, maintain gutters, use screen repairs.", info: "PNW mosquitoes are most active May through September. They breed in as little as a bottle cap of standing water." },
+];
+
+const PROCESS_STEPS = [
+  { step: 1, title: "Free Inspection", desc: "Thorough assessment of your property to identify pest types, entry points, and harborage areas.", icon: Binoculars },
+  { step: 2, title: "Custom Plan", desc: "Tailored treatment strategy based on your specific pest issues, property layout, and family needs.", icon: Target },
+  { step: 3, title: "Safe Treatment", desc: "EPA-approved products applied by certified technicians with family and pet safety as top priority.", icon: ShieldCheck },
+  { step: 4, title: "Monitor & Follow-Up", desc: "Scheduled re-inspections to ensure complete elimination and prevent re-infestation.", icon: Eye },
+  { step: 5, title: "Prevention Program", desc: "Ongoing quarterly barrier treatments that stop pests before they start.", icon: CalendarCheck },
+];
+
+const TESTIMONIALS = [
+  { name: "David Chen", text: "Found carpenter ants swarming in our kitchen wall. Jake's team came same day, identified the colony source in our crawlspace, and had it treated within hours. No ants since.", rating: 5, pest: "Ants", urgency: "Emergency", response: "2 hours", color: "#f97316" },
+  { name: "Maria Gutierrez", text: "We had a mouse problem every fall for years. Evergreen sealed every entry point and set up monitoring. First winter with zero rodents in 8 years.", rating: 5, pest: "Rodents", urgency: "Standard", response: "Next day", color: "#ef4444" },
+  { name: "Tom & Rachel W.", text: "Termite inspection before our home purchase found active damage. Jake gave us an honest assessment and treatment plan. Saved us from a costly mistake.", rating: 5, pest: "Termites", urgency: "Standard", response: "2 days", color: "#dc2626" },
+  { name: "Sarah Kim", text: "Wasps built a massive nest under our deck right before a family BBQ. Called Saturday morning, Jake was there by noon. Kids could play outside again that afternoon.", rating: 5, pest: "Wasps", urgency: "Emergency", response: "3 hours", color: "#eab308" },
+  { name: "James Olsen", text: "Quarterly preventive service keeps our rental properties pest-free year-round. Professional, always on time, and the tenants love the peace of mind.", rating: 5, pest: "General", urgency: "Preventive", response: "Scheduled", color: "#22c55e" },
+  { name: "Linda Nakamura", text: "Bed bug nightmare at our B&B. Evergreen did the heat treatment, and follow-up inspections confirmed total elimination. They saved our business.", rating: 5, pest: "Bed Bugs", urgency: "Emergency", response: "Same day", color: "#be123c" },
+];
+
+const SEASONAL_DATA = [
+  { season: "Spring", icon: Flower, color: "#22c55e", pests: ["Ants", "Termite swarmers", "Wasps (nest building)", "Spiders"], tip: "Schedule a perimeter treatment before colonies establish. Inspect foundation for new entry points after winter." },
+  { season: "Summer", icon: ThermometerHot, color: "#f97316", pests: ["Mosquitoes", "Yellow jackets", "Fleas & ticks", "Carpenter ants"], tip: "Peak activity season. Eliminate standing water, keep yard trimmed, and maintain quarterly barrier treatments." },
+  { season: "Fall", icon: Leaf, color: "#d97706", pests: ["Rodents (seeking warmth)", "Spiders (mating season)", "Stink bugs", "Cluster flies"], tip: "Rodents invade homes as temperatures drop. Seal gaps, clean gutters, and set monitoring stations." },
+  { season: "Winter", icon: Snowflake, color: "#60a5fa", pests: ["Mice & rats", "Cockroaches", "Silverfish", "Overwintering wasps"], tip: "Indoor pests thrive in heated spaces. Check crawlspace, attic, and garage for signs of activity." },
+];
+
+const COMPARISON_ROWS = [
+  { feature: "Licensed & insured technicians", us: true, diy: false, chain: true },
+  { feature: "Pet & child-safe products", us: true, diy: "Varies", chain: "Sometimes" },
+  { feature: "Same-day emergency response", us: true, diy: false, chain: false },
+  { feature: "Free follow-up if pests return", us: true, diy: false, chain: "Extra cost" },
+  { feature: "Custom treatment plans", us: true, diy: false, chain: false },
+  { feature: "Eco-friendly options", us: true, diy: "Varies", chain: "Rarely" },
+  { feature: "Local PNW pest expertise", us: true, diy: false, chain: false },
+];
+
+const FAQS = [
+  { q: "Are your treatments safe for pets and children?", a: "Absolutely. We use EPA-approved products and apply them strategically to minimize exposure. We'll advise on any brief re-entry times, but most treatments are safe once dry (typically 30 minutes to 2 hours)." },
+  { q: "How quickly can you respond to an emergency?", a: "For urgent pest situations like wasp nests near high-traffic areas or large rodent sightings, we offer same-day response. Most emergency calls are handled within 2-4 hours during business hours." },
+  { q: "Do you offer free inspections?", a: "Yes. Every new customer receives a complimentary property inspection where we identify pest types, entry points, and harborage areas before recommending any treatment." },
+  { q: "What does a quarterly prevention plan include?", a: "Our quarterly service includes a full exterior perimeter treatment, interior inspection, web and nest removal, rodent station monitoring, and a detailed report. We adjust products seasonally for the pests most active in the PNW at that time of year." },
+  { q: "How long until I see results?", a: "Most customers notice a significant reduction within 24-48 hours. Complete elimination typically takes 1-2 weeks depending on the pest type and severity. Our guarantee covers free re-treatment if pests persist." },
+  { q: "Do you handle commercial properties?", a: "Yes. We service restaurants, offices, warehouses, and multi-family properties. We provide compliance documentation and can work around business hours." },
+];
+
+const ECO_METHODS = [
+  { title: "Targeted Application", desc: "We apply products precisely where pests live and travel, minimizing environmental impact.", icon: Target },
+  { title: "Integrated Pest Management", desc: "Combining biological, physical, and chemical methods for the most sustainable results.", icon: Recycle },
+  { title: "EPA-Approved Products", desc: "All our treatments use EPA-registered products that meet the highest safety standards.", icon: ShieldCheck },
+  { title: "Pet & Child Safe", desc: "Products selected specifically for safety around families, pets, and sensitive environments.", icon: HandHeart },
+];
 
 /* ───────────────────────── FLOATING PARTICLES ───────────────────────── */
 function FloatingParticles() {
-  const particles = Array.from({ length: 20 }, (_, i) => ({
+  const particles = Array.from({ length: 18 }, (_, i) => ({
     id: i,
     x: Math.random() * 100,
     delay: Math.random() * 8,
     duration: 6 + Math.random() * 6,
     size: 2 + Math.random() * 3,
-    opacity: 0.1 + Math.random() * 0.25,
+    opacity: 0.08 + Math.random() * 0.15,
   }));
   return (
     <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden hidden md:block">
@@ -88,10 +170,10 @@ function SectionReveal({ children, className = "", id }: { children: React.React
 }
 
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>;
+  return <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>;
 }
 
-function MagneticButton({ children, className = "", onClick, style }: { children: React.ReactNode; className?: string; onClick?: () => void; style?: React.CSSProperties }) {
+function MagneticButton({ children, className = "", onClick, href, style }: { children: React.ReactNode; className?: string; onClick?: () => void; href?: string; style?: React.CSSProperties }) {
   const ref = useRef<HTMLButtonElement>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -100,6 +182,9 @@ function MagneticButton({ children, className = "", onClick, style }: { children
   const isTouchDevice = typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches;
   const handleMouseMove = useCallback((e: React.MouseEvent) => { if (!ref.current || isTouchDevice) return; const rect = ref.current.getBoundingClientRect(); x.set((e.clientX - (rect.left + rect.width / 2)) * 0.25); y.set((e.clientY - (rect.top + rect.height / 2)) * 0.25); }, [x, y, isTouchDevice]);
   const handleMouseLeave = useCallback(() => { x.set(0); y.set(0); }, [x, y]);
+  if (href) {
+    return <motion.a ref={ref as unknown as React.Ref<HTMLAnchorElement>} href={href} style={{ x: springX, y: springY, willChange: "transform", ...style }} onMouseMove={handleMouseMove as unknown as React.MouseEventHandler<HTMLAnchorElement>} onMouseLeave={handleMouseLeave} className={className} whileTap={{ scale: 0.97 }}>{children}</motion.a>;
+  }
   return <motion.button ref={ref} style={{ x: springX, y: springY, willChange: "transform", ...style }} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave} onClick={onClick} className={className} whileTap={{ scale: 0.97 }}>{children}</motion.button>;
 }
 
@@ -123,466 +208,1161 @@ function ShimmerBorder({ children, className = "" }: { children: React.ReactNode
   );
 }
 
-/* ───────────────────────── HERO SHIELD SVG ───────────────────────── */
-function ShieldHeroIcon() {
+function SectionHeader({ label, title, accent }: { label: string; title: string; accent: string }) {
   return (
-    <div className="relative flex items-center justify-center">
-      {/* Pulsing glow behind */}
-      <motion.div
-        className="absolute inset-0 rounded-full"
-        style={{ background: `radial-gradient(circle, ${ORANGE_GLOW} 0%, transparent 70%)`, filter: "blur(40px)" }}
-        animate={{ scale: [1, 1.2, 1], opacity: [0.6, 1, 0.6] }}
-        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <svg viewBox="0 0 180 210" className="relative z-10 w-52 h-60 md:w-60 md:h-72" fill="none">
-        {/* Outer glow rings */}
-        <motion.circle cx="90" cy="100" r="88" stroke={ORANGE} strokeWidth="0.5" opacity={0.12}
-          animate={{ r: [86, 90, 86] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} />
-        <motion.circle cx="90" cy="100" r="78" stroke={ORANGE} strokeWidth="0.3" opacity={0.08}
-          animate={{ r: [76, 80, 76] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }} />
-
-        {/* Main shield — filled */}
-        <motion.path
-          d="M90 12 L155 42 C155 42 160 105 140 148 C125 178 90 195 90 195 C90 195 55 178 40 148 C20 105 25 42 25 42 Z"
-          fill={`${ORANGE}18`} stroke={ORANGE} strokeWidth="2.5"
-          initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }}
-          transition={{ duration: 2, ease: "easeInOut" }}
-        />
-        {/* Shield inner highlight */}
-        <path
-          d="M90 30 L140 52 C140 52 144 100 128 135 C118 158 90 172 90 172 C90 172 62 158 52 135 C36 100 40 52 40 52 Z"
-          fill={`${ORANGE}0d`}
-        />
-
-        {/* Bug silhouette inside shield */}
-        {/* Bug body */}
-        <motion.ellipse cx="90" cy="95" rx="14" ry="20" fill={`${ORANGE}20`} stroke={ORANGE_LIGHT} strokeWidth="1.5"
-          initial={{ scale: 0 }} animate={{ scale: 1 }}
-          transition={{ duration: 0.8, delay: 1.2, ease: "backOut" }} />
-        {/* Bug head */}
-        <motion.circle cx="90" cy="72" r="8" fill={`${ORANGE}18`} stroke={ORANGE_LIGHT} strokeWidth="1.2"
-          initial={{ scale: 0 }} animate={{ scale: 1 }}
-          transition={{ duration: 0.6, delay: 1.4, ease: "backOut" }} />
-        {/* Bug antennae */}
-        <motion.path d="M85 65 C80 55, 72 50, 68 48" stroke={ORANGE_LIGHT} strokeWidth="1" strokeLinecap="round" fill="none" opacity={0.5}
-          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 1.6, duration: 0.8 }} />
-        <motion.path d="M95 65 C100 55, 108 50, 112 48" stroke={ORANGE_LIGHT} strokeWidth="1" strokeLinecap="round" fill="none" opacity={0.5}
-          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 1.7, duration: 0.8 }} />
-        {/* Bug legs */}
-        <motion.path d="M78 85 L65 78 M78 95 L62 95 M78 105 L65 112" stroke={ORANGE_LIGHT} strokeWidth="1" strokeLinecap="round" opacity={0.4}
-          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 1.8, duration: 0.8 }} />
-        <motion.path d="M102 85 L115 78 M102 95 L118 95 M102 105 L115 112" stroke={ORANGE_LIGHT} strokeWidth="1" strokeLinecap="round" opacity={0.4}
-          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 1.9, duration: 0.8 }} />
-
-        {/* X mark over bug */}
-        <motion.line x1="70" y1="70" x2="110" y2="115" stroke={ORANGE} strokeWidth="3" strokeLinecap="round"
-          initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 0.8 }}
-          transition={{ duration: 0.8, delay: 2.2, ease: "easeOut" }} />
-        <motion.line x1="110" y1="70" x2="70" y2="115" stroke={ORANGE} strokeWidth="3" strokeLinecap="round"
-          initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 0.8 }}
-          transition={{ duration: 0.8, delay: 2.4, ease: "easeOut" }} />
-
-        {/* Warning glow pulse */}
-        <motion.circle cx="90" cy="92" r="28" fill={`${ORANGE}08`}
-          animate={{ r: [26, 34, 26], opacity: [0.1, 0.25, 0.1] }}
-          transition={{ duration: 2.5, repeat: Infinity }} />
-
-        {/* Shield gradient band at bottom */}
-        <motion.path d="M55 148 C70 165, 110 165, 125 148" stroke={ORANGE_LIGHT} strokeWidth="1" fill="none" opacity={0.25}
-          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 2.8 }} />
-
-        {/* Sparkle accents */}
-        <motion.circle cx="160" cy="25" r="3" fill={ORANGE_LIGHT}
-          animate={{ opacity: [0.2, 1, 0.2], scale: [0.7, 1.3, 0.7] }}
-          transition={{ duration: 2.5, repeat: Infinity }} />
-        <motion.circle cx="18" cy="45" r="2" fill={ORANGE_LIGHT}
-          animate={{ opacity: [0.1, 0.8, 0.1], scale: [0.5, 1.2, 0.5] }}
-          transition={{ duration: 3, repeat: Infinity, delay: 0.8 }} />
-        <motion.circle cx="165" cy="150" r="2.5" fill={ORANGE_LIGHT}
-          animate={{ opacity: [0.15, 0.7, 0.15] }}
-          transition={{ duration: 2, repeat: Infinity, delay: 1.2 }} />
-        <motion.circle cx="15" cy="165" r="2" fill={ORANGE_LIGHT}
-          animate={{ opacity: [0.1, 0.6, 0.1] }}
-          transition={{ duration: 2.5, repeat: Infinity, delay: 0.4 }} />
-      </svg>
+    <div className="text-center mb-16">
+      <motion.span className="inline-block text-xs font-bold tracking-[0.25em] uppercase px-4 py-1.5 rounded-full border mb-6" style={{ color: ORANGE_LIGHT, borderColor: `${ORANGE}40`, background: `${ORANGE}10` }}>{label}</motion.span>
+      <h2 className="text-3xl md:text-5xl font-extrabold text-white">
+        {title} <span style={{ color: ORANGE }}>{accent}</span>
+      </h2>
     </div>
   );
 }
 
-/* ───────────────────────── DATA ───────────────────────── */
-const services = [
-  { title: "Termite Control", description: "Comprehensive termite inspection, treatment, and prevention using liquid barriers, bait stations, and fumigation. Protect your property from costly structural damage.", icon: Bug },
-  { title: "Ant Elimination", description: "Targeted treatments for fire ants, carpenter ants, and household ant colonies. We locate the source and eliminate the entire colony, not just the scouts.", icon: Bug },
-  { title: "Rodent Removal", description: "Humane and effective mouse and rat control including sealing entry points, trapping, and exclusion services. We prevent re-entry with structural modifications.", icon: Skull },
-  { title: "Bed Bug Treatment", description: "Heat treatment and chemical solutions to completely eliminate bed bugs at every life stage. Includes follow-up inspection to ensure 100% eradication.", icon: Warning },
-  { title: "Mosquito Control", description: "Yard treatments, misting systems, and larvicide applications to dramatically reduce mosquito populations. Enjoy your outdoor spaces again.", icon: Bug },
-  { title: "Wildlife Management", description: "Safe removal of raccoons, squirrels, bats, and other wildlife from your property. Includes exclusion work and damage repair to prevent re-entry.", icon: TreeEvergreen },
+/* ───────────────────────── PEST THREAT RADAR HERO ───────────────────────── */
+function PestRadarHero() {
+  const [eliminated, setEliminated] = useState<number[]>([]);
+  const [scanComplete, setScanComplete] = useState(false);
+  const [rotation, setRotation] = useState(0);
+
+  const pestDots = [
+    { id: 0, cx: 65, cy: 45, angle: 310 },
+    { id: 1, cx: 140, cy: 70, angle: 30 },
+    { id: 2, cx: 155, cy: 130, angle: 70 },
+    { id: 3, cx: 130, cy: 170, angle: 120 },
+    { id: 4, cx: 60, cy: 165, angle: 220 },
+    { id: 5, cx: 40, cy: 110, angle: 250 },
+    { id: 6, cx: 80, cy: 55, angle: 340 },
+    { id: 7, cx: 160, cy: 100, angle: 50 },
+  ];
+
+  useEffect(() => {
+    let angle = 0;
+    const interval = setInterval(() => {
+      angle = (angle + 3) % 360;
+      setRotation(angle);
+
+      pestDots.forEach((dot) => {
+        const diff = Math.abs(angle - dot.angle);
+        const wrapped = diff > 180 ? 360 - diff : diff;
+        if (wrapped < 15 && !eliminated.includes(dot.id)) {
+          setEliminated((prev) => {
+            if (prev.includes(dot.id)) return prev;
+            return [...prev, dot.id];
+          });
+        }
+      });
+    }, 30);
+
+    const completeTimer = setTimeout(() => {
+      setScanComplete(true);
+      clearInterval(interval);
+    }, 9000);
+
+    return () => {
+      clearInterval(interval);
+      clearTimeout(completeTimer);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return (
+    <div className="relative flex items-center justify-center w-64 h-64 md:w-80 md:h-80">
+      {/* Glow behind radar */}
+      <motion.div className="absolute inset-0 rounded-full" style={{ background: `radial-gradient(circle, ${ORANGE_GLOW} 0%, transparent 70%)`, filter: "blur(50px)" }} animate={{ scale: [1, 1.15, 1], opacity: [0.5, 0.8, 0.5] }} transition={{ duration: 3, repeat: Infinity }} />
+
+      <svg viewBox="0 0 200 200" className="relative z-10 w-full h-full" fill="none">
+        {/* Radar rings */}
+        <circle cx="100" cy="100" r="90" stroke={`${ORANGE}30`} strokeWidth="0.5" />
+        <circle cx="100" cy="100" r="70" stroke={`${ORANGE}20`} strokeWidth="0.5" />
+        <circle cx="100" cy="100" r="50" stroke={`${ORANGE}18`} strokeWidth="0.5" />
+        <circle cx="100" cy="100" r="30" stroke={`${ORANGE}12`} strokeWidth="0.5" />
+
+        {/* Crosshairs */}
+        <line x1="100" y1="10" x2="100" y2="190" stroke={`${ORANGE}15`} strokeWidth="0.5" />
+        <line x1="10" y1="100" x2="190" y2="100" stroke={`${ORANGE}15`} strokeWidth="0.5" />
+
+        {/* House silhouette at center */}
+        <path d="M100 60 L120 78 L120 105 L112 105 L112 90 L100 90 L88 90 L88 105 L80 105 L80 78 Z" fill={`${ORANGE}15`} stroke={ORANGE_LIGHT} strokeWidth="1" opacity={0.5} />
+        {/* Chimney */}
+        <rect x="112" y="65" width="5" height="12" fill={`${ORANGE}15`} stroke={ORANGE_LIGHT} strokeWidth="0.5" opacity={0.4} />
+        {/* Door */}
+        <rect x="95" y="92" width="10" height="13" fill={`${ORANGE}20`} stroke={ORANGE_LIGHT} strokeWidth="0.5" opacity={0.4} />
+
+        {/* Radar sweep */}
+        <g transform={`rotate(${rotation} 100 100)`}>
+          <defs>
+            <linearGradient id="sweepGrad" gradientUnits="userSpaceOnUse" x1="100" y1="100" x2="100" y2="10">
+              <stop offset="0%" stopColor={ORANGE} stopOpacity="0" />
+              <stop offset="100%" stopColor={ORANGE} stopOpacity="0.6" />
+            </linearGradient>
+          </defs>
+          <path d={`M100 100 L100 10 A90 90 0 0 1 ${100 + 90 * Math.sin(Math.PI / 6)} ${100 - 90 * Math.cos(Math.PI / 6)} Z`} fill="url(#sweepGrad)" />
+          <line x1="100" y1="100" x2="100" y2="10" stroke={ORANGE} strokeWidth="1.5" opacity={0.8} />
+        </g>
+
+        {/* Pest dots */}
+        {pestDots.map((dot) => {
+          const isEliminated = eliminated.includes(dot.id);
+          return (
+            <g key={dot.id}>
+              {!isEliminated && (
+                <>
+                  <circle cx={dot.cx} cy={dot.cy} r="4" fill={RED} opacity={0.8}>
+                    <animate attributeName="opacity" values="0.5;1;0.5" dur="1.5s" repeatCount="indefinite" />
+                  </circle>
+                  <circle cx={dot.cx} cy={dot.cy} r="7" fill="none" stroke={RED} strokeWidth="0.5" opacity={0.4}>
+                    <animate attributeName="r" values="5;9;5" dur="2s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" values="0.4;0;0.4" dur="2s" repeatCount="indefinite" />
+                  </circle>
+                </>
+              )}
+              {isEliminated && (
+                <motion.g initial={{ scale: 2, opacity: 1 }} animate={{ scale: 0, opacity: 0 }} transition={{ duration: 0.6 }}>
+                  <circle cx={dot.cx} cy={dot.cy} r="8" fill={RED} opacity={0.5} />
+                  <line x1={dot.cx - 3} y1={dot.cy - 3} x2={dot.cx + 3} y2={dot.cy + 3} stroke="white" strokeWidth="1.5" />
+                  <line x1={dot.cx + 3} y1={dot.cy - 3} x2={dot.cx - 3} y2={dot.cy + 3} stroke="white" strokeWidth="1.5" />
+                </motion.g>
+              )}
+            </g>
+          );
+        })}
+
+        {/* Center dot */}
+        <circle cx="100" cy="100" r="3" fill={ORANGE}>
+          <animate attributeName="r" values="2;4;2" dur="2s" repeatCount="indefinite" />
+        </circle>
+      </svg>
+
+      {/* Status text */}
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 text-center w-full">
+        <AnimatePresence mode="wait">
+          {scanComplete ? (
+            <motion.div key="safe" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-center gap-2">
+              <ShieldCheck size={18} weight="fill" style={{ color: GREEN }} />
+              <span className="text-sm font-bold tracking-wider uppercase" style={{ color: GREEN }}>No Threats Detected</span>
+            </motion.div>
+          ) : (
+            <motion.div key="scan" initial={{ opacity: 0 }} animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 1.5, repeat: Infinity }} className="flex items-center justify-center gap-2">
+              <Crosshair size={16} style={{ color: ORANGE_LIGHT }} />
+              <span className="text-xs font-mono tracking-wider uppercase" style={{ color: ORANGE_LIGHT }}>Scanning... {eliminated.length}/{pestDots.length} eliminated</span>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+}
+
+/* ───────────────────────── NAV ───────────────────────── */
+function Nav() {
+  const [open, setOpen] = useState(false);
+  const links = [
+    { label: "Services", href: "#services" },
+    { label: "About", href: "#about" },
+    { label: "Pest ID", href: "#pest-id" },
+    { label: "Process", href: "#process" },
+    { label: "Reviews", href: "#reviews" },
+    { label: "FAQ", href: "#faq" },
+    { label: "Contact", href: "#contact" },
+  ];
+  return (
+    <nav className="fixed top-0 inset-x-0 z-50 backdrop-blur-xl border-b border-white/15" style={{ background: `${BG}cc` }}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
+        <a href="#" className="flex items-center gap-2">
+          <ShieldCheck size={28} weight="fill" style={{ color: ORANGE }} />
+          <span className="text-lg font-extrabold text-white">Evergreen <span style={{ color: ORANGE }}>Pest</span></span>
+        </a>
+        <div className="hidden md:flex items-center gap-6">
+          {links.map((l) => (<a key={l.label} href={l.href} className="text-sm text-gray-300 hover:text-white transition-colors">{l.label}</a>))}
+          <a href="tel:+12067483920" className="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-bold text-white" style={{ background: ORANGE }}>
+            <Phone size={16} weight="fill" /> (206) 748-3920
+          </a>
+        </div>
+        <button className="md:hidden text-white" onClick={() => setOpen(!open)}>{open ? <X size={24} /> : <List size={24} />}</button>
+      </div>
+      <AnimatePresence>
+        {open && (
+          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="md:hidden overflow-hidden border-t border-white/15" style={{ background: BG }}>
+            <div className="px-4 py-4 flex flex-col gap-3">
+              {links.map((l) => (<a key={l.label} href={l.href} onClick={() => setOpen(false)} className="text-sm text-gray-300 py-2">{l.label}</a>))}
+              <a href="tel:+12067483920" className="flex items-center justify-center gap-2 px-4 py-3 rounded-full text-sm font-bold text-white mt-2" style={{ background: ORANGE }}>
+                <Phone size={16} weight="fill" /> (206) 748-3920
+              </a>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </nav>
+  );
+}
+
+/* ───────────────────────── PEST IDENTIFIER ───────────────────────── */
+function PestIdentifier() {
+  const [selected, setSelected] = useState<number | null>(null);
+  const pest = selected !== null ? PEST_TYPES[selected] : null;
+  return (
+    <div>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
+        {PEST_TYPES.map((p, i) => (
+          <button key={p.name} onClick={() => setSelected(i)} className={`flex flex-col items-center gap-2 p-4 rounded-xl border transition-all ${selected === i ? "border-white/30 scale-[1.02]" : "border-white/15 hover:border-white/20"}`} style={{ background: selected === i ? `${p.color}15` : "rgba(255,255,255,0.06)" }}>
+            <p.icon size={28} weight="fill" style={{ color: p.color }} />
+            <span className="text-sm font-semibold text-white">{p.name}</span>
+          </button>
+        ))}
+      </div>
+      <AnimatePresence mode="wait">
+        {pest && (
+          <motion.div key={pest.name} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={spring}>
+            <GlassCard className="p-6 md:p-8">
+              <div className="flex items-center gap-3 mb-4">
+                <pest.icon size={32} weight="fill" style={{ color: pest.color }} />
+                <h4 className="text-xl font-bold text-white">{pest.name}</h4>
+                <div className="ml-auto flex items-center gap-2">
+                  <span className="text-xs font-bold uppercase tracking-wider text-gray-400">Danger:</span>
+                  <div className="flex gap-0.5">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <div key={i} className="w-5 h-2 rounded-full" style={{ background: i < pest.danger ? RED : "rgba(255,255,255,0.1)" }} />
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <p className="text-gray-300 mb-5 leading-relaxed">{pest.info}</p>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="p-4 rounded-xl border border-white/15" style={{ background: `${ORANGE}08` }}>
+                  <span className="text-xs font-bold uppercase tracking-wider mb-2 block" style={{ color: ORANGE_LIGHT }}>Treatment Method</span>
+                  <p className="text-white text-sm">{pest.treatment}</p>
+                </div>
+                <div className="p-4 rounded-xl border border-white/15" style={{ background: `${GREEN}08` }}>
+                  <span className="text-xs font-bold uppercase tracking-wider mb-2 block" style={{ color: GREEN }}>Prevention Tips</span>
+                  <p className="text-white text-sm">{pest.prevention}</p>
+                </div>
+              </div>
+              <div className="mt-5 flex items-center gap-2">
+                <Phone size={16} style={{ color: ORANGE }} />
+                <span className="text-sm text-gray-400">Need help with {pest.name.toLowerCase()}?</span>
+                <a href="tel:+12067483920" className="text-sm font-bold ml-auto" style={{ color: ORANGE }}>Call (206) 748-3920</a>
+              </div>
+            </GlassCard>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+/* ───────────────────────── TREATMENT ESTIMATOR ───────────────────────── */
+function TreatmentEstimator() {
+  const [homeSize, setHomeSize] = useState<string>("medium");
+  const [pestType, setPestType] = useState<string>("general");
+  const [frequency, setFrequency] = useState<string>("quarterly");
+
+  const sizeMult: Record<string, number> = { small: 0.8, medium: 1, large: 1.3, xlarge: 1.6 };
+  const pestMult: Record<string, number> = { general: 1, termite: 2.2, rodent: 1.4, mosquito: 0.9, bedbug: 2.5, wildlife: 1.8 };
+  const freqPrice: Record<string, number> = { onetime: 199, quarterly: 99, monthly: 79 };
+
+  const basePrice = freqPrice[frequency];
+  const total = Math.round(basePrice * sizeMult[homeSize] * pestMult[pestType]);
+
+  const sizes = [
+    { val: "small", label: "Under 1,500 sqft" },
+    { val: "medium", label: "1,500 - 2,500 sqft" },
+    { val: "large", label: "2,500 - 4,000 sqft" },
+    { val: "xlarge", label: "4,000+ sqft" },
+  ];
+  const pests = [
+    { val: "general", label: "General Pests" },
+    { val: "termite", label: "Termites" },
+    { val: "rodent", label: "Rodents" },
+    { val: "mosquito", label: "Mosquitoes" },
+    { val: "bedbug", label: "Bed Bugs" },
+    { val: "wildlife", label: "Wildlife" },
+  ];
+  const freqs = [
+    { val: "onetime", label: "One-Time", sub: "Single treatment" },
+    { val: "quarterly", label: "Quarterly", sub: "Best value" },
+    { val: "monthly", label: "Monthly", sub: "Heavy infestations" },
+  ];
+
+  return (
+    <GlassCard className="p-6 md:p-8">
+      <div className="grid md:grid-cols-3 gap-6 mb-8">
+        {/* Home Size */}
+        <div>
+          <label className="text-sm font-bold text-gray-300 mb-3 block">Home Size</label>
+          <div className="flex flex-col gap-2">
+            {sizes.map((s) => (
+              <button key={s.val} onClick={() => setHomeSize(s.val)} className={`text-left px-4 py-2.5 rounded-lg border text-sm transition-all ${homeSize === s.val ? "border-white/30 text-white" : "border-white/15 text-gray-400 hover:border-white/20"}`} style={{ background: homeSize === s.val ? `${ORANGE}15` : "transparent" }}>
+                {s.label}
+              </button>
+            ))}
+          </div>
+        </div>
+        {/* Pest Type */}
+        <div>
+          <label className="text-sm font-bold text-gray-300 mb-3 block">Pest Type</label>
+          <div className="flex flex-col gap-2">
+            {pests.map((p) => (
+              <button key={p.val} onClick={() => setPestType(p.val)} className={`text-left px-4 py-2.5 rounded-lg border text-sm transition-all ${pestType === p.val ? "border-white/30 text-white" : "border-white/15 text-gray-400 hover:border-white/20"}`} style={{ background: pestType === p.val ? `${ORANGE}15` : "transparent" }}>
+                {p.label}
+              </button>
+            ))}
+          </div>
+        </div>
+        {/* Frequency */}
+        <div>
+          <label className="text-sm font-bold text-gray-300 mb-3 block">Frequency</label>
+          <div className="flex flex-col gap-2">
+            {freqs.map((f) => (
+              <button key={f.val} onClick={() => setFrequency(f.val)} className={`text-left px-4 py-2.5 rounded-lg border transition-all ${frequency === f.val ? "border-white/30" : "border-white/15 hover:border-white/20"}`} style={{ background: frequency === f.val ? `${ORANGE}15` : "transparent" }}>
+                <span className={`text-sm font-semibold ${frequency === f.val ? "text-white" : "text-gray-400"}`}>{f.label}</span>
+                <span className="block text-xs text-gray-500">{f.sub}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Result */}
+      <div className="text-center p-6 rounded-xl border border-white/15" style={{ background: `${ORANGE}08` }}>
+        <span className="text-sm text-gray-400 block mb-1">Estimated {frequency === "onetime" ? "Treatment" : "Per Service"} Cost</span>
+        <div className="flex items-center justify-center gap-1">
+          <CurrencyDollar size={28} style={{ color: ORANGE }} />
+          <span className="text-4xl font-black text-white">{total}</span>
+          {frequency !== "onetime" && <span className="text-sm text-gray-400 ml-1">/ {frequency === "quarterly" ? "quarter" : "month"}</span>}
+        </div>
+        <p className="text-xs text-gray-500 mt-2">Exact pricing determined after free inspection</p>
+        <a href="tel:+12067483920" className="inline-flex items-center gap-2 mt-4 px-6 py-2.5 rounded-full text-sm font-bold text-white" style={{ background: ORANGE }}>
+          <Phone size={16} weight="fill" /> Get Exact Quote
+        </a>
+      </div>
+    </GlassCard>
+  );
+}
+
+/* ───────────────────────── SEASONAL CALENDAR ───────────────────────── */
+function SeasonalCalendar() {
+  const [activeSeason, setActiveSeason] = useState(0);
+  const s = SEASONAL_DATA[activeSeason];
+  return (
+    <div>
+      <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+        {SEASONAL_DATA.map((season, i) => (
+          <button key={season.season} onClick={() => setActiveSeason(i)} className={`flex items-center gap-2 px-5 py-3 rounded-xl border whitespace-nowrap transition-all ${activeSeason === i ? "border-white/30" : "border-white/15 hover:border-white/20"}`} style={{ background: activeSeason === i ? `${season.color}15` : "transparent" }}>
+            <season.icon size={20} weight="fill" style={{ color: season.color }} />
+            <span className={`text-sm font-semibold ${activeSeason === i ? "text-white" : "text-gray-400"}`}>{season.season}</span>
+          </button>
+        ))}
+      </div>
+      <AnimatePresence mode="wait">
+        <motion.div key={s.season} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.3 }}>
+          <GlassCard className="p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <s.icon size={28} weight="fill" style={{ color: s.color }} />
+              <h4 className="text-xl font-bold text-white">{s.season} Pests in the PNW</h4>
+            </div>
+            <div className="grid sm:grid-cols-2 gap-4 mb-5">
+              {s.pests.map((pest) => (
+                <div key={pest} className="flex items-center gap-2 px-3 py-2 rounded-lg border border-white/15" style={{ background: `${s.color}08` }}>
+                  <Bug size={16} weight="fill" style={{ color: s.color }} />
+                  <span className="text-sm text-white">{pest}</span>
+                </div>
+              ))}
+            </div>
+            <div className="p-4 rounded-xl" style={{ background: `${s.color}08`, border: `1px solid ${s.color}25` }}>
+              <span className="text-xs font-bold uppercase tracking-wider block mb-1" style={{ color: s.color }}>Pro Tip</span>
+              <p className="text-sm text-gray-300 leading-relaxed">{s.tip}</p>
+            </div>
+          </GlassCard>
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
+}
+
+/* ───────────────────────── PEST QUIZ ───────────────────────── */
+const pestQuizOptions = [
+  {
+    label: "I see ants or spiders",
+    result: "Common invaders! Our Perimeter Protection plan treats every entry point with pet-safe, family-safe barrier spray. One visit stops them for 90 days.",
+    urgency: "Standard",
+  },
+  {
+    label: "I suspect rodents (mice or rats)",
+    result: "Rodents require immediate action — they contaminate food and chew wiring. We'll trap, seal entry points, and sanitize. Usually resolved in 2 visits.",
+    urgency: "Urgent",
+  },
+  {
+    label: "I found bed bugs",
+    result: "Bed bugs need professional heat treatment — DIY sprays don't reach all hiding spots. Our heat treatment eliminates 100% in one day. Call us now.",
+    urgency: "Emergency",
+  },
+  {
+    label: "I have a wasp, hornet, or yellow jacket nest",
+    result: "Never attempt nest removal yourself. Our certified technicians safely remove nests at any size — same-day emergency service available.",
+    urgency: "Emergency",
+  },
 ];
 
-const stats = [
-  { value: "15,000+", label: "Homes Protected" },
-  { value: "4.9", label: "Star Rating" },
-  { value: "100%", label: "Pest-Free Guarantee" },
-  { value: "25+", label: "Years Experience" },
-];
+function PestQuizOption({ label, result, urgency }: { label: string; result: string; urgency: string }) {
+  const [selected, setSelected] = useState(false);
+  const urgencyColor = urgency === "Emergency" ? RED : urgency === "Urgent" ? ORANGE : GREEN;
+  return (
+    <div className="space-y-3">
+      <button
+        onClick={() => setSelected((prev) => !prev)}
+        className="w-full p-5 rounded-xl border text-left transition-all cursor-pointer"
+        style={{
+          background: selected ? `${ORANGE}15` : "rgba(255,255,255,0.02)",
+          borderColor: selected ? ORANGE : "rgba(255,255,255,0.08)",
+        }}
+      >
+        <div className="flex items-center gap-3">
+          <div
+            className="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors"
+            style={{ borderColor: selected ? ORANGE_LIGHT : "rgba(255,255,255,0.2)", background: selected ? ORANGE : "transparent" }}
+          >
+            {selected && (
+              <svg width="10" height="10" viewBox="0 0 12 12" fill="white">
+                <path d="M10 3L5 8.5 2 5.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+              </svg>
+            )}
+          </div>
+          <span className="text-sm font-medium text-white">{label}</span>
+          <span className="ml-auto text-xs font-bold px-2 py-0.5 rounded-full shrink-0" style={{ background: `${urgencyColor}20`, color: urgencyColor, border: `1px solid ${urgencyColor}40` }}>
+            {urgency}
+          </span>
+        </div>
+      </button>
+      <AnimatePresence>
+        {selected && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="overflow-hidden"
+          >
+            <div className="p-4 rounded-xl border" style={{ background: `${ORANGE}10`, borderColor: `${ORANGE}30` }}>
+              <p className="text-sm text-gray-300 leading-relaxed mb-3">{result}</p>
+              <a
+                href="tel:+12067483920"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-bold text-white"
+                style={{ background: ORANGE }}
+              >
+                <Phone size={14} weight="fill" />
+                {urgency === "Emergency" ? "Call Now — Emergency Line" : "Call (206) 748-3920"}
+              </a>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
 
-const testimonials = [
-  { name: "Robert H.", text: "We had a terrible termite problem and they handled it quickly and professionally. Two years later, still pest-free. Their guarantee is the real deal.", rating: 5 },
-  { name: "Angela S.", text: "The mosquito treatment transformed our backyard. We can actually have dinner outside now without being eaten alive. Monthly service is worth every penny.", rating: 5 },
-  { name: "James D.", text: "After two other companies failed to solve our rodent problem, these guys sealed every entry point and we have not seen a mouse since. Incredibly thorough.", rating: 5 },
-];
+function PestQuiz() {
+  return (
+    <div className="space-y-4">
+      {pestQuizOptions.map((opt, i) => (
+        <PestQuizOption key={i} label={opt.label} result={opt.result} urgency={opt.urgency} />
+      ))}
+    </div>
+  );
+}
 
-const processSteps = [
-  { step: "01", title: "Free Inspection", description: "Our licensed technician performs a thorough inspection of your property to identify pests, entry points, and conditions." },
-  { step: "02", title: "Custom Plan", description: "We develop a targeted treatment plan based on the specific pests, severity, and your property's unique characteristics." },
-  { step: "03", title: "Treatment", description: "Our trained team executes the treatment using EPA-approved products that are effective yet safe for your family and pets." },
-  { step: "04", title: "Prevention", description: "We seal entry points, set up monitoring stations, and schedule follow-ups to ensure pests never return." },
-];
-
-const pestGuide = [
-  { pest: "Termites", signs: "Mud tubes, hollow wood, discarded wings, frass piles", danger: "High", icon: Bug },
-  { pest: "Bed Bugs", signs: "Bite marks, blood spots on sheets, musty odor", danger: "Medium", icon: Warning },
-  { pest: "Rodents", signs: "Droppings, gnaw marks, scratching noises, grease trails", danger: "High", icon: Skull },
-  { pest: "Cockroaches", signs: "Droppings, egg cases, musty smell, nighttime activity", danger: "Medium", icon: Bug },
-  { pest: "Ants", signs: "Trails, small dirt mounds, wood shavings (carpenter ants)", danger: "Low-High", icon: Bug },
-  { pest: "Mosquitoes", signs: "Standing water, buzzing, bite welts, dusk activity", danger: "Medium", icon: Bug },
-];
-
-const seasonalPlans = [
-  { season: "Spring", icon: Flower, pests: "Ants, termites, wasps", description: "Colony prevention treatments as pests become active after winter dormancy." },
-  { season: "Summer", icon: ThermometerHot, pests: "Mosquitoes, fleas, ticks", description: "Peak season protection with yard treatments and barrier applications." },
-  { season: "Fall", icon: SunHorizon, pests: "Rodents, spiders, stink bugs", description: "Exclusion work to prevent pests from seeking shelter in your home." },
-  { season: "Winter", icon: Snowflake, pests: "Mice, rats, cockroaches", description: "Interior monitoring and treatment for overwintering pests." },
-];
-
-const faqItems = [
-  { q: "Are your treatments safe for children and pets?", a: "Yes. We use EPA-approved products and apply them in targeted areas. We provide specific re-entry guidelines for each treatment, typically 2-4 hours." },
-  { q: "Do you offer a pest-free guarantee?", a: "Absolutely. If pests return between scheduled treatments, we come back at no additional charge. Our guarantee is backed by over 25 years of results." },
-  { q: "How often should I have my home treated?", a: "We recommend quarterly treatments for general pest prevention. Some situations like termite monitoring require annual inspections, while mosquito control is monthly during warm months." },
-  { q: "What should I do to prepare for a treatment?", a: "We provide a detailed prep checklist before each visit. Generally, we ask that food be stored, pets be relocated temporarily, and heavy furniture be accessible." },
-  { q: "Do you handle commercial properties?", a: "Yes. We service restaurants, offices, warehouses, and multi-unit housing with customized IPM (Integrated Pest Management) programs that meet health code requirements." },
-];
-
-/* ═══════════════════════════════════════════════════════════════════
-   MAIN PAGE
-   ═══════════════════════════════════════════════════════════════════ */
-export default function V2PestControlPage() {
-  const [openService, setOpenService] = useState<number | null>(0);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+/* ═══════════════════════════════════════════════════════════════════════
+   MAIN PAGE COMPONENT
+   ═══════════════════════════════════════════════════════════════════════ */
+export default function PestControlShowcase() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   return (
-    <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: BG, color: "#f1f5f9" }}>
+    <main className="pest-v2 relative min-h-screen overflow-x-hidden" style={{ background: BG, color: "white" }}>
       <FloatingParticles />
+      <Nav />
 
-      {/* ─── NAV ─── */}
-      <motion.nav initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={spring} className="fixed top-0 left-0 right-0 z-50">
-        <div className="mx-auto max-w-7xl px-4 md:px-6 py-4">
-          <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
-            <div className="flex items-center gap-2">
-              <ShieldWarning size={24} weight="duotone" style={{ color: ORANGE }} />
-              <span className="text-lg font-bold tracking-tight text-white">Guardian Pest Defense</span>
-            </div>
-            <div className="hidden md:flex items-center gap-8 text-sm text-slate-400">
-              <a href="#services" className="hover:text-white transition-colors">Services</a>
-              <a href="#process" className="hover:text-white transition-colors">Process</a>
-              <a href="#pest-guide" className="hover:text-white transition-colors">Pest Guide</a>
-              <a href="#testimonials" className="hover:text-white transition-colors">Reviews</a>
-              <a href="#contact" className="hover:text-white transition-colors">Contact</a>
-            </div>
-            <div className="flex items-center gap-3">
-              <MagneticButton className="px-4 md:px-5 py-2 rounded-full text-sm font-semibold text-white" style={{ background: ORANGE }}>Free Inspection</MagneticButton>
-              <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden p-2 rounded-lg text-white hover:bg-white/10 transition-colors">{mobileMenuOpen ? <X size={24} /> : <List size={24} />}</button>
-            </div>
-          </GlassCard>
-          <AnimatePresence>
-            {mobileMenuOpen && (
-              <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.3, ease: "easeInOut" }} className="md:hidden mt-2 overflow-hidden">
-                <GlassCard className="flex flex-col gap-1 px-4 py-4">
-                  {[{ label: "Services", href: "#services" }, { label: "Process", href: "#process" }, { label: "Pest Guide", href: "#pest-guide" }, { label: "Reviews", href: "#testimonials" }, { label: "Contact", href: "#contact" }].map((link) => (
-                    <a key={link.label} href={link.href} onClick={() => setMobileMenuOpen(false)} className="block px-4 py-3 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-white/5 transition-colors">{link.label}</a>
-                  ))}
-                </GlassCard>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </motion.nav>
+      {/* ──────────── HERO ──────────── */}
+      <section className="relative min-h-screen flex items-center justify-center pt-16 overflow-hidden">
+        {/* Background glow */}
+        <div className="absolute inset-0" style={{ background: `radial-gradient(ellipse at 50% 40%, ${ORANGE}12 0%, transparent 60%)` }} />
+        {/* Grid pattern */}
+        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: `linear-gradient(${ORANGE}30 1px, transparent 1px), linear-gradient(90deg, ${ORANGE}30 1px, transparent 1px)`, backgroundSize: "60px 60px" }} />
 
-      {/* ─── HERO ─── */}
-      <section className="relative min-h-[100dvh] flex items-center pt-24 z-10">
-        <div className="absolute inset-0 pointer-events-none" style={{ background: `radial-gradient(ellipse 60% 40% at 50% 30%, ${ORANGE_GLOW} 0%, transparent 70%)` }} />
-        <div className="mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-4 items-center">
-          <div className="space-y-8">
-            <div>
-              <motion.p initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ ...spring, delay: 0.1 }} className="text-sm uppercase tracking-widest mb-4" style={{ color: ORANGE }}>Certified Pest Elimination</motion.p>
-              <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}>
-                <WordReveal text="Your Home, Pest-Free Guaranteed" />
-              </h1>
-            </div>
-            <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.6 }} className="text-lg text-slate-400 max-w-md leading-relaxed">
-              From termites to wildlife, we eliminate pests at the source with EPA-approved treatments that are safe for your family and pets. 25+ years of protection.
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-20 flex flex-col lg:flex-row items-center gap-12">
+          {/* Left text */}
+          <div className="flex-1 text-center lg:text-left">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="inline-flex items-center gap-2 px-4 py-2 rounded-full border mb-6" style={{ borderColor: `${GREEN}40`, background: `${GREEN}10` }}>
+              <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: GREEN }} />
+              <span className="text-xs font-bold tracking-wider uppercase" style={{ color: GREEN }}>Seattle&apos;s Trusted Pest Experts</span>
+            </motion.div>
+
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-[0.95] mb-6">
+              <WordReveal text="Your Home," className="text-white" />
+              <br />
+              <WordReveal text="Pest Free." className="block mt-2" />
+            </h1>
+            <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="text-lg text-gray-400 max-w-lg mx-auto lg:mx-0 mb-8">
+              Evergreen Pest Solutions protects Pacific Northwest homes and businesses with eco-friendly treatments, same-day emergency response, and guaranteed results.
             </motion.p>
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.8 }} className="flex flex-wrap gap-4">
-              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer" style={{ background: ORANGE }}>
-                Get Free Inspection <ArrowRight size={18} weight="bold" />
+
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+              <MagneticButton href="tel:+12067483920" className="flex items-center justify-center gap-2 px-8 py-4 rounded-full text-base font-bold text-white" style={{ background: ORANGE }}>
+                <Phone size={20} weight="fill" /> Free Inspection
               </MagneticButton>
-              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
-                <Phone size={18} weight="duotone" /> (555) 456-7890
+              <MagneticButton href="#pest-id" className="flex items-center justify-center gap-2 px-8 py-4 rounded-full text-base font-bold text-white border border-white/20 hover:border-white/40 transition-colors">
+                What&apos;s Bugging You? <ArrowRight size={18} />
               </MagneticButton>
             </motion.div>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ ...spring, delay: 1 }} className="flex flex-wrap gap-6 text-sm text-slate-400">
-              <span className="flex items-center gap-2"><ShieldCheck size={16} weight="duotone" style={{ color: ORANGE }} />Licensed & Insured</span>
-              <span className="flex items-center gap-2"><Leaf size={16} weight="duotone" style={{ color: ORANGE }} />EPA-Approved Products</span>
+
+            {/* Trust pills */}
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }} className="flex flex-wrap gap-3 mt-8 justify-center lg:justify-start">
+              {[
+                { icon: ShieldCheck, text: "Licensed & Insured" },
+                { icon: Leaf, text: "Eco-Friendly" },
+                { icon: Star, text: "4.9 Rating" },
+              ].map((b) => (
+                <span key={b.text} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-semibold" style={{ borderColor: `${ORANGE}30`, background: `${ORANGE}08`, color: ORANGE_LIGHT }}>
+                  <b.icon size={14} weight="fill" /> {b.text}
+                </span>
+              ))}
             </motion.div>
           </div>
-          <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ ...spring, delay: 0.3 }} className="hidden md:flex items-center justify-center lg:justify-end">
-            <ShieldHeroIcon />
+
+          {/* Right radar */}
+          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.3, duration: 0.8 }} className="flex-shrink-0">
+            <PestRadarHero />
           </motion.div>
         </div>
+
+        {/* Emergency strip */}
+        <motion.div className="absolute bottom-0 inset-x-0 py-3 border-t border-white/15" style={{ background: `${RED}10` }} animate={{ opacity: [0.7, 1, 0.7] }} transition={{ duration: 2, repeat: Infinity }}>
+          <div className="max-w-7xl mx-auto px-4 flex items-center justify-center gap-3">
+            <Siren size={18} weight="fill" style={{ color: RED }} />
+            <span className="text-sm font-bold text-white">Emergency Pest Response</span>
+            <span className="text-sm text-gray-400">Same-day service available</span>
+            <a href="tel:+12067483920" className="text-sm font-bold ml-2" style={{ color: ORANGE }}>Call Now</a>
+          </div>
+        </motion.div>
       </section>
 
-      {/* ─── STATS ─── */}
-      <SectionReveal className="relative z-10 pb-8">
-        <div className="mx-auto max-w-7xl px-4 md:px-6">
-          <GlassCard className="p-6 md:p-8">
-            <motion.div className="grid grid-cols-2 sm:grid-cols-4 gap-6 md:gap-8" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
-              {stats.map((s, i) => (
-                <motion.div key={i} variants={fadeUp} className="text-center">
-                  <p className="text-3xl md:text-4xl font-bold tracking-tight" style={{ color: ORANGE }}>{s.value}</p>
-                  <p className="text-sm text-slate-400 mt-1">{s.label}</p>
-                </motion.div>
+      {/* ──────────── TRUST BAR ──────────── */}
+      <SectionReveal className="py-8 border-y border-white/15" style={{ background: `linear-gradient(135deg, ${BG}, rgba(234,88,12,0.04))` } as React.CSSProperties}>
+        <div className="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+          {[
+            { value: "12+", label: "Years Serving PNW", icon: CalendarCheck },
+            { value: "5,000+", label: "Homes Protected", icon: House },
+            { value: "4.9", label: "Google Rating", icon: Star },
+            { value: "<2hr", label: "Emergency Response", icon: Timer },
+          ].map((s) => (
+            <div key={s.label} className="flex flex-col items-center gap-2">
+              <s.icon size={24} weight="fill" style={{ color: ORANGE }} />
+              <span className="text-2xl md:text-3xl font-black text-white">{s.value}</span>
+              <span className="text-xs text-gray-400 uppercase tracking-wider">{s.label}</span>
+            </div>
+          ))}
+        </div>
+      </SectionReveal>
+
+      {/* ──────────── SERVICES ──────────── */}
+      <SectionReveal id="services" className="py-24 relative">
+        <div className="absolute inset-0" style={{ background: `radial-gradient(ellipse at 30% 50%, ${ORANGE}06 0%, transparent 50%)` }} />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
+          <SectionHeader label="Our Services" title="Complete Pest" accent="Protection" />
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {SERVICES.map((s, i) => (
+              <motion.div key={s.title} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ ...spring, delay: i * 0.08 }}>
+                <GlassCard className="p-6 h-full hover:border-white/20 transition-colors group">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: `${ORANGE}15` }}>
+                      <s.icon size={24} weight="fill" style={{ color: ORANGE }} />
+                    </div>
+                    <span className="text-xs font-bold px-2 py-1 rounded-full" style={{ background: `${ORANGE}15`, color: ORANGE_LIGHT }}>0{i + 1}</span>
+                  </div>
+                  <h3 className="text-lg font-bold text-white mb-2 group-hover:text-orange-400 transition-colors">{s.title}</h3>
+                  <p className="text-sm text-gray-400 leading-relaxed">{s.desc}</p>
+                </GlassCard>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ──────────── ABOUT ──────────── */}
+      <SectionReveal id="about" className="py-24 relative">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, transparent, ${ORANGE}04, transparent)` }} />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <motion.span className="inline-block text-xs font-bold tracking-[0.25em] uppercase px-4 py-1.5 rounded-full border mb-6" style={{ color: ORANGE_LIGHT, borderColor: `${ORANGE}40`, background: `${ORANGE}10` }}>Meet the Owner</motion.span>
+              <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-6">
+                Jake <span style={{ color: ORANGE }}>Mendez</span>
+              </h2>
+              <div className="space-y-4 text-gray-400 leading-relaxed">
+                <p>
+                  Growing up in the Pacific Northwest, Jake Mendez saw firsthand how our damp climate creates the perfect conditions for pests. After earning his entomology degree and spending five years with a national pest company, he knew Seattle deserved better — a local company that treats homes like their own.
+                </p>
+                <p>
+                  Jake founded Evergreen Pest Solutions in 2014 with a simple promise: eco-friendly treatments that actually work, honest pricing with no hidden fees, and same-day emergency response because pests do not wait for business hours.
+                </p>
+                <p>
+                  Today, Evergreen protects over 5,000 PNW homes and businesses. Every technician is state-certified, background-checked, and trained in Integrated Pest Management. The company is a member of the National Pest Management Association and the Washington State Pest Management Association.
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-3 mt-6">
+                {["EPA Certified", "NPMA Member", "WA Licensed", "BBB A+ Rated"].map((badge) => (
+                  <span key={badge} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-semibold" style={{ borderColor: `${GREEN}30`, background: `${GREEN}08`, color: GREEN }}>
+                    <CheckCircle size={14} weight="fill" /> {badge}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div className="relative">
+              <GlassCard className="p-8">
+                <div className="space-y-6">
+                  <div className="flex items-center gap-4 p-4 rounded-xl border border-white/15" style={{ background: `${ORANGE}08` }}>
+                    <ShieldCheck size={32} weight="fill" style={{ color: ORANGE }} />
+                    <div>
+                      <h4 className="text-white font-bold">Pest-Free Guarantee</h4>
+                      <p className="text-sm text-gray-400">If pests return between treatments, so do we — free of charge</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4 p-4 rounded-xl border border-white/15" style={{ background: `${GREEN}08` }}>
+                    <Leaf size={32} weight="fill" style={{ color: GREEN }} />
+                    <div>
+                      <h4 className="text-white font-bold">Eco-Friendly First</h4>
+                      <p className="text-sm text-gray-400">We use the least-toxic effective treatment every time</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4 p-4 rounded-xl border border-white/15" style={{ background: `${ORANGE}08` }}>
+                    <Users size={32} weight="fill" style={{ color: ORANGE_LIGHT }} />
+                    <div>
+                      <h4 className="text-white font-bold">Family Owned</h4>
+                      <p className="text-sm text-gray-400">Local team, local knowledge, personal accountability</p>
+                    </div>
+                  </div>
+                </div>
+              </GlassCard>
+              {/* Decorative glow */}
+              <div className="absolute -z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full opacity-20" style={{ background: `radial-gradient(circle, ${ORANGE} 0%, transparent 70%)`, filter: "blur(60px)" }} />
+            </div>
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ──────────── PEST IDENTIFIER TOOL ──────────── */}
+      <SectionReveal id="pest-id" className="py-24 relative">
+        <div className="absolute inset-0" style={{ background: `radial-gradient(ellipse at 70% 30%, ${ORANGE}06 0%, transparent 50%)` }} />
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 relative z-10">
+          <SectionHeader label="Interactive Tool" title="What's Bugging" accent="You?" />
+          <p className="text-center text-gray-400 max-w-xl mx-auto mb-10 -mt-8">Select a pest type to learn about danger levels, treatment methods, and prevention tips specific to the Pacific Northwest.</p>
+          <PestIdentifier />
+        </div>
+      </SectionReveal>
+
+      {/* ──────────── TREATMENT ESTIMATOR ──────────── */}
+      <SectionReveal className="py-24 relative">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, transparent, ${ORANGE}04, transparent)` }} />
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 relative z-10">
+          <SectionHeader label="Plan & Price" title="Treatment" accent="Estimator" />
+          <p className="text-center text-gray-400 max-w-xl mx-auto mb-10 -mt-8">Get an instant estimate for your pest control needs. Final pricing is confirmed after your free inspection.</p>
+          <TreatmentEstimator />
+        </div>
+      </SectionReveal>
+
+      {/* ──────────── SEASONAL PEST CALENDAR ──────────── */}
+      <SectionReveal className="py-24 relative">
+        <div className="absolute inset-0" style={{ background: `radial-gradient(ellipse at 50% 80%, ${GREEN}06 0%, transparent 50%)` }} />
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 relative z-10">
+          <SectionHeader label="PNW Knowledge" title="Seasonal Pest" accent="Calendar" />
+          <p className="text-center text-gray-400 max-w-xl mx-auto mb-10 -mt-8">Know what to expect each season in the Pacific Northwest so you can stay one step ahead of pests.</p>
+          <SeasonalCalendar />
+        </div>
+      </SectionReveal>
+
+      {/* ──────────── PROCESS ──────────── */}
+      <SectionReveal id="process" className="py-24 relative">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, transparent, ${ORANGE}04)` }} />
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 relative z-10">
+          <SectionHeader label="How It Works" title="Our 5-Step" accent="Process" />
+          <div className="space-y-6">
+            {PROCESS_STEPS.map((s, i) => (
+              <motion.div key={s.step} initial={{ opacity: 0, x: i % 2 === 0 ? -30 : 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ ...spring, delay: i * 0.1 }}>
+                <GlassCard className="p-6 flex items-start gap-5">
+                  <div className="flex-shrink-0 w-14 h-14 rounded-xl flex items-center justify-center relative" style={{ background: `${ORANGE}15` }}>
+                    <s.icon size={26} weight="fill" style={{ color: ORANGE }} />
+                    <span className="absolute -top-2 -right-2 w-6 h-6 rounded-full text-xs font-black text-white flex items-center justify-center" style={{ background: ORANGE }}>{s.step}</span>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-white mb-1">{s.title}</h3>
+                    <p className="text-sm text-gray-400 leading-relaxed">{s.desc}</p>
+                  </div>
+                  {i < PROCESS_STEPS.length - 1 && (
+                    <div className="hidden md:block absolute left-[43px] bottom-0 translate-y-full w-px h-6" style={{ background: `${ORANGE}30` }} />
+                  )}
+                </GlassCard>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ──────────── TESTIMONIALS — Pest Type + Urgency Cards ──────────── */}
+      <SectionReveal id="reviews" className="py-24 relative">
+        <div className="absolute inset-0" style={{ background: `radial-gradient(ellipse at 60% 30%, ${ORANGE}06 0%, transparent 50%)` }} />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
+          <SectionHeader label="Customer Stories" title="Real Results," accent="Real Reviews" />
+          {/* Google rating header */}
+          <div className="flex items-center justify-center gap-3 mb-12 -mt-8">
+            <div className="flex gap-0.5">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Star key={i} size={20} weight="fill" style={{ color: "#facc15" }} />
               ))}
-            </motion.div>
+            </div>
+            <span className="text-white font-bold">4.9</span>
+            <span className="text-gray-400 text-sm">from 287 Google reviews</span>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {TESTIMONIALS.map((t, i) => (
+              <motion.div key={t.name} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ ...spring, delay: i * 0.08 }}>
+                <GlassCard className="p-6 h-full flex flex-col">
+                  {/* Pest tag + urgency badge */}
+                  <div className="flex items-center gap-2 mb-4">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold" style={{ background: `${t.color}20`, color: t.color, border: `1px solid ${t.color}40` }}>
+                      <Bug size={12} weight="fill" /> {t.pest}
+                    </span>
+                    <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold ${t.urgency === "Emergency" ? "bg-red-500/15 text-red-400 border border-red-500/30" : t.urgency === "Preventive" ? "bg-green-500/15 text-green-400 border border-green-500/30" : "bg-white/10 text-gray-300 border border-white/20"}`}>
+                      {t.urgency === "Emergency" && <Siren size={12} weight="fill" />}
+                      {t.urgency === "Preventive" && <ShieldCheck size={12} weight="fill" />}
+                      {t.urgency === "Standard" && <Clock size={12} />}
+                      {t.urgency}
+                    </span>
+                  </div>
+
+                  {/* Stars */}
+                  <div className="flex gap-0.5 mb-3">
+                    {Array.from({ length: t.rating }).map((_, j) => (
+                      <Star key={j} size={16} weight="fill" style={{ color: "#facc15" }} />
+                    ))}
+                  </div>
+
+                  {/* Quote */}
+                  <Quotes size={20} weight="fill" style={{ color: `${ORANGE}40` }} className="mb-2" />
+                  <p className="text-sm text-gray-300 leading-relaxed flex-1">{t.text}</p>
+
+                  {/* Footer */}
+                  <div className="flex items-center justify-between mt-4 pt-4 border-t border-white/15">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle size={16} weight="fill" style={{ color: GREEN }} />
+                      <span className="text-sm font-semibold text-white">{t.name}</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-xs text-gray-500">
+                      <Timer size={12} /> {t.response}
+                    </div>
+                  </div>
+                </GlassCard>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ──────────── ECO-FRIENDLY METHODS ──────────── */}
+      <SectionReveal className="py-24 relative">
+        <div className="absolute inset-0" style={{ background: `radial-gradient(ellipse at 40% 50%, ${GREEN}06 0%, transparent 50%)` }} />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
+          <SectionHeader label="Our Approach" title="Eco-Friendly" accent="Methods" />
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {ECO_METHODS.map((m, i) => (
+              <motion.div key={m.title} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ ...spring, delay: i * 0.08 }}>
+                <GlassCard className="p-6 text-center h-full">
+                  <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: `${GREEN}15` }}>
+                    <m.icon size={26} weight="fill" style={{ color: GREEN }} />
+                  </div>
+                  <h3 className="text-base font-bold text-white mb-2">{m.title}</h3>
+                  <p className="text-sm text-gray-400 leading-relaxed">{m.desc}</p>
+                </GlassCard>
+              </motion.div>
+            ))}
+          </div>
+          {/* IPM callout */}
+          <ShimmerBorder className="mt-10 max-w-3xl mx-auto">
+            <div className="p-6 md:p-8 text-center">
+              <Leaf size={28} weight="fill" style={{ color: GREEN }} className="mx-auto mb-3" />
+              <h3 className="text-xl font-bold text-white mb-2">Integrated Pest Management</h3>
+              <p className="text-sm text-gray-400 leading-relaxed max-w-xl mx-auto">
+                We follow IPM principles — using biological controls, habitat modification, and targeted treatments as a system. Chemical intervention is the last resort, not the first. This approach is better for your family, pets, and the environment.
+              </p>
+            </div>
+          </ShimmerBorder>
+        </div>
+      </SectionReveal>
+
+      {/* ──────────── COMPARISON ──────────── */}
+      <SectionReveal className="py-24 relative">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, transparent, ${ORANGE}04, transparent)` }} />
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 relative z-10">
+          <SectionHeader label="Why Choose Us" title="Evergreen vs." accent="The Rest" />
+          <GlassCard className="overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-white/15">
+                    <th className="text-left px-6 py-4 text-sm text-gray-400 font-medium">Feature</th>
+                    <th className="px-6 py-4 text-sm font-bold text-center" style={{ color: ORANGE }}>Evergreen</th>
+                    <th className="px-6 py-4 text-sm text-gray-400 text-center">DIY</th>
+                    <th className="px-6 py-4 text-sm text-gray-400 text-center">Big Chains</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {COMPARISON_ROWS.map((row, i) => (
+                    <tr key={row.feature} className={`border-b border-white/8 ${i % 2 === 0 ? "" : "bg-white/[0.07]"}`}>
+                      <td className="px-6 py-4 text-sm text-gray-300">{row.feature}</td>
+                      <td className="px-6 py-4 text-center">
+                        <CheckCircle size={20} weight="fill" style={{ color: GREEN }} className="mx-auto" />
+                      </td>
+                      <td className="px-6 py-4 text-center text-sm text-gray-500">
+                        {row.diy === true ? <CheckCircle size={18} style={{ color: GREEN }} className="mx-auto" /> : row.diy === false ? <X size={18} style={{ color: RED }} className="mx-auto" /> : <span>{row.diy}</span>}
+                      </td>
+                      <td className="px-6 py-4 text-center text-sm text-gray-500">
+                        {row.chain === true ? <CheckCircle size={18} style={{ color: GREEN }} className="mx-auto" /> : row.chain === false ? <X size={18} style={{ color: RED }} className="mx-auto" /> : <span>{row.chain}</span>}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </GlassCard>
         </div>
       </SectionReveal>
 
-      {/* ─── SERVICES ─── */}
-      <SectionReveal id="services" className="relative z-10 py-16 md:py-24">
-        <div className="mx-auto max-w-7xl px-4 md:px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
-            <div className="lg:sticky lg:top-32">
-              <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ORANGE }}>Our Services</p>
-              <h2 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white mb-6"><WordReveal text="Complete Pest Elimination" /></h2>
-              <p className="text-slate-400 leading-relaxed max-w-md">We handle every type of pest with targeted, proven methods. Our IPM approach means fewer chemicals and better long-term results.</p>
-            </div>
-            <motion.div className="space-y-3" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
-              {services.map((svc, i) => (
-                <motion.div key={i} variants={fadeUp}>
-                  <GlassCard className="overflow-hidden">
-                    <button onClick={() => setOpenService(openService === i ? null : i)} className="w-full flex items-center justify-between p-5 md:p-6 text-left cursor-pointer">
-                      <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: ORANGE_GLOW }}><svc.icon size={20} weight="duotone" style={{ color: ORANGE }} /></div>
-                        <span className="text-lg font-semibold text-white">{svc.title}</span>
-                      </div>
-                      <motion.div animate={{ rotate: openService === i ? 180 : 0 }} transition={spring}><CaretDown size={20} className="text-slate-400" /></motion.div>
-                    </button>
-                    <AnimatePresence initial={false}>
-                      {openService === i && (
-                        <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={spring} className="overflow-hidden">
-                          <p className="px-5 pb-5 md:px-6 md:pb-6 text-slate-400 leading-relaxed pl-[4.5rem]">{svc.description}</p>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </GlassCard>
-                </motion.div>
-              ))}
-            </motion.div>
+      {/* ──────────── VIDEO PLACEHOLDER ──────────── */}
+      <SectionReveal className="py-24 relative">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, transparent, ${ORANGE}04, transparent)` }} />
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 relative z-10">
+          <div className="text-center mb-10">
+            <motion.span className="inline-block text-xs font-bold tracking-[0.25em] uppercase px-4 py-1.5 rounded-full border mb-6" style={{ color: ORANGE_LIGHT, borderColor: `${ORANGE}40`, background: `${ORANGE}10` }}>See Our Process</motion.span>
+            <h2 className="text-3xl md:text-5xl font-extrabold text-white">
+              Watch Our Pest Treatment <span style={{ color: ORANGE }}>Process</span>
+            </h2>
+            <p className="text-gray-400 mt-3 max-w-md mx-auto">See how we eliminate pests safely and effectively — from inspection to treatment to prevention</p>
           </div>
-        </div>
-      </SectionReveal>
-
-      {/* ─── ABOUT ─── */}
-      <SectionReveal className="relative z-10 py-16 md:py-24 overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none" style={{ background: `radial-gradient(ellipse 50% 50% at 20% 50%, ${GREEN_GLOW} 0%, transparent 70%)` }} />
-        <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div>
-            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ORANGE }}>About Us</p>
-            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white mb-6"><WordReveal text="25 Years Defending Homes" /></h2>
-            <p className="text-slate-400 leading-relaxed mb-4">Guardian Pest Defense was built on a promise: your home should be a sanctuary, not a habitat for pests. For over two decades, we have protected thousands of families with science-based pest management.</p>
-            <p className="text-slate-400 leading-relaxed mb-6">Every technician is state-licensed, background-checked, and continuously trained on the latest IPM (Integrated Pest Management) techniques. We combine preventive strategies with targeted treatments for lasting results.</p>
-            <div className="flex flex-wrap gap-4">
-              <div className="flex items-center gap-2 text-sm"><Eye size={18} weight="duotone" style={{ color: ORANGE }} /><span className="text-slate-300">Free Inspections</span></div>
-              <div className="flex items-center gap-2 text-sm"><Users size={18} weight="duotone" style={{ color: ORANGE }} /><span className="text-slate-300">35+ Technicians</span></div>
-              <div className="flex items-center gap-2 text-sm"><FirstAidKit size={18} weight="duotone" style={{ color: ORANGE }} /><span className="text-slate-300">Pet-Safe Methods</span></div>
+          <div className="relative w-full aspect-video rounded-2xl overflow-hidden cursor-pointer group">
+            <img
+              src="https://images.unsplash.com/photo-1576919228236-a097c32a5cd4?w=1200&q=80"
+              alt="Pest control technician at work"
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-black/60" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="relative">
+                <motion.div
+                  className="absolute rounded-full"
+                  style={{ background: `${ORANGE}40`, width: 88, height: 88, top: -12, left: -12 }}
+                  animate={{ scale: [1, 1.5, 1], opacity: [0.6, 0, 0.6] }}
+                  transition={{ duration: 2.5, repeat: Infinity, ease: "easeOut" }}
+                />
+                <div className="relative w-16 h-16 rounded-full flex items-center justify-center shadow-lg" style={{ background: ORANGE }}>
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="white" style={{ marginLeft: 3 }}>
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                </div>
+              </div>
             </div>
           </div>
-          <div className="relative rounded-2xl overflow-hidden aspect-[4/3]">
-            <img src="https://images.unsplash.com/photo-1563089145-599997674d42?w=800&q=80" alt="Pest control technician inspecting a home" className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-          </div>
         </div>
       </SectionReveal>
 
-      {/* ─── PROCESS ─── */}
-      <SectionReveal id="process" className="relative z-10 py-16 md:py-24">
-        <div className="mx-auto max-w-7xl px-4 md:px-6">
-          <div className="text-center mb-16">
-            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ORANGE }}>How It Works</p>
-            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white"><WordReveal text="Our 4-Step Defense Plan" /></h2>
+      {/* ──────────── INTERACTIVE QUIZ — What's Invading? ──────────── */}
+      <SectionReveal className="py-24 relative">
+        <div className="absolute inset-0" style={{ background: `radial-gradient(ellipse at 50% 50%, ${ORANGE}06 0%, transparent 50%)` }} />
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10">
+          <div className="text-center mb-10">
+            <motion.span className="inline-block text-xs font-bold tracking-[0.25em] uppercase px-4 py-1.5 rounded-full border mb-6" style={{ color: ORANGE_LIGHT, borderColor: `${ORANGE}40`, background: `${ORANGE}10` }}>Quick Help</motion.span>
+            <h2 className="text-3xl md:text-5xl font-extrabold text-white">
+              What&apos;s Invading <span style={{ color: ORANGE }}>Your Home?</span>
+            </h2>
+            <p className="text-gray-400 mt-3">Select your situation and we&apos;ll give you the fastest path to a pest-free home.</p>
           </div>
-          <motion.div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
-            {processSteps.map((step, i) => (
-              <motion.div key={i} variants={fadeUp}>
-                <GlassCard className="p-6 h-full relative overflow-hidden">
-                  <div className="absolute top-4 right-4 text-5xl font-black opacity-5 text-white">{step.step}</div>
-                  <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: ORANGE }}>Step {step.step}</p>
-                  <h3 className="text-lg font-semibold text-white mb-2">{step.title}</h3>
-                  <p className="text-sm text-slate-400 leading-relaxed">{step.description}</p>
-                </GlassCard>
-              </motion.div>
-            ))}
-          </motion.div>
+          <PestQuiz />
         </div>
       </SectionReveal>
 
-      {/* ─── TESTIMONIALS ─── */}
-      <SectionReveal id="testimonials" className="relative z-10 py-16 md:py-24">
-        <div className="mx-auto max-w-7xl px-4 md:px-6">
-          <div className="text-center mb-16">
-            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ORANGE }}>Client Stories</p>
-            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white"><WordReveal text="Trusted by Homeowners" /></h2>
-          </div>
-          <motion.div className="grid grid-cols-1 md:grid-cols-3 gap-6" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
-            {testimonials.map((t, i) => (
-              <motion.div key={i} variants={fadeUp}>
-                <GlassCard className="p-6 h-full flex flex-col">
-                  <Quotes size={28} weight="fill" style={{ color: ORANGE }} className="mb-3 opacity-50" />
-                  <p className="text-slate-300 leading-relaxed flex-1 text-sm">{t.text}</p>
-                  <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
-                    <span className="text-sm font-semibold text-white">{t.name}</span>
-                    <div className="flex gap-0.5">{Array.from({ length: t.rating }).map((_, j) => (<Star key={j} size={12} weight="fill" style={{ color: ORANGE }} />))}</div>
-                  </div>
-                </GlassCard>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </SectionReveal>
-
-      {/* ─── PEST IDENTIFICATION GUIDE ─── */}
-      <SectionReveal id="pest-guide" className="relative z-10 py-16 md:py-24">
-        <div className="absolute inset-0 pointer-events-none" style={{ background: `radial-gradient(ellipse 60% 40% at 50% 50%, ${GREEN_GLOW} 0%, transparent 70%)` }} />
-        <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6">
-          <div className="text-center mb-16">
-            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ORANGE }}>Know Your Enemy</p>
-            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white"><WordReveal text="Pest Identification Guide" /></h2>
-          </div>
-          <motion.div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
-            {pestGuide.map((p, i) => (
-              <motion.div key={i} variants={fadeUp}>
-                <GlassCard className="p-6 h-full">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: ORANGE_GLOW }}><p.icon size={20} weight="duotone" style={{ color: ORANGE }} /></div>
-                      <h3 className="text-lg font-semibold text-white">{p.pest}</h3>
+      {/* ──────────── PRICING ──────────── */}
+      <SectionReveal className="py-24 relative">
+        <div className="absolute inset-0" style={{ background: `radial-gradient(ellipse at 50% 50%, ${ORANGE}06 0%, transparent 50%)` }} />
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 relative z-10">
+          <SectionHeader label="Pricing" title="Protection" accent="Plans" />
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              { title: "One-Time Treatment", price: "$149", sub: "Starting at", features: ["Full property inspection", "Targeted treatment", "30-day guarantee", "Follow-up check"], popular: false },
+              { title: "Quarterly Plan", price: "$99", sub: "Per quarter", features: ["Perimeter barrier", "Interior inspection", "Rodent monitoring", "Web removal", "Seasonal adjustments", "Re-treatment guarantee"], popular: true },
+              { title: "Monthly Plan", price: "$79", sub: "Per month", features: ["All quarterly features", "Monthly service visits", "Priority scheduling", "Emergency response", "Termite monitoring", "Unlimited callbacks"], popular: false },
+            ].map((plan, i) => (
+              <motion.div key={plan.title} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ ...spring, delay: i * 0.1 }}>
+                {plan.popular ? (
+                  <ShimmerBorder>
+                    <div className="p-6">
+                      <span className="inline-block text-xs font-bold tracking-wider uppercase px-3 py-1 rounded-full mb-4" style={{ background: ORANGE, color: "white" }}>Most Popular</span>
+                      <h3 className="text-xl font-bold text-white mb-1">{plan.title}</h3>
+                      <p className="text-xs text-gray-500 mb-3">{plan.sub}</p>
+                      <div className="text-4xl font-black text-white mb-6">{plan.price}<span className="text-sm text-gray-400 font-normal">/qtr</span></div>
+                      <ul className="space-y-3 mb-6">
+                        {plan.features.map((f) => (
+                          <li key={f} className="flex items-center gap-2 text-sm text-gray-300">
+                            <CheckCircle size={16} weight="fill" style={{ color: GREEN }} /> {f}
+                          </li>
+                        ))}
+                      </ul>
+                      <a href="tel:+12067483920" className="flex items-center justify-center gap-2 w-full py-3 rounded-full text-sm font-bold text-white" style={{ background: ORANGE }}>
+                        <Phone size={16} weight="fill" /> Get Started
+                      </a>
                     </div>
-                    <span className={`text-xs font-bold uppercase px-2 py-1 rounded-full ${p.danger === "High" ? "bg-red-500/20 text-red-400" : p.danger === "Medium" ? "bg-yellow-500/20 text-yellow-400" : "bg-green-500/20 text-green-400"}`}>{p.danger} Risk</span>
-                  </div>
-                  <p className="text-sm text-slate-400 leading-relaxed"><span className="text-slate-300 font-medium">Signs: </span>{p.signs}</p>
-                </GlassCard>
+                  </ShimmerBorder>
+                ) : (
+                  <GlassCard className="p-6 h-full flex flex-col">
+                    <h3 className="text-xl font-bold text-white mb-1">{plan.title}</h3>
+                    <p className="text-xs text-gray-500 mb-3">{plan.sub}</p>
+                    <div className="text-4xl font-black text-white mb-6">{plan.price}</div>
+                    <ul className="space-y-3 mb-6 flex-1">
+                      {plan.features.map((f) => (
+                        <li key={f} className="flex items-center gap-2 text-sm text-gray-300">
+                          <CheckCircle size={16} weight="fill" style={{ color: GREEN }} /> {f}
+                        </li>
+                      ))}
+                    </ul>
+                    <a href="tel:+12067483920" className="flex items-center justify-center gap-2 w-full py-3 rounded-full text-sm font-bold border border-white/20 text-white hover:border-white/40 transition-colors">
+                      <Phone size={16} /> Learn More
+                    </a>
+                  </GlassCard>
+                )}
               </motion.div>
             ))}
-          </motion.div>
+          </div>
+          <p className="text-center text-xs text-gray-500 mt-6">All plans include free initial inspection. Exact pricing confirmed after assessment.</p>
         </div>
       </SectionReveal>
 
-      {/* ─── FAQ ─── */}
-      <SectionReveal className="relative z-10 py-16 md:py-24">
-        <div className="mx-auto max-w-3xl px-4 md:px-6">
-          <div className="text-center mb-16">
-            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ORANGE }}>Common Questions</p>
-            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white"><WordReveal text="Frequently Asked Questions" /></h2>
-          </div>
-          <motion.div className="space-y-3" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true }}>
-            {faqItems.map((faq, i) => (
-              <motion.div key={i} variants={fadeUp}>
-                <GlassCard className="overflow-hidden">
-                  <button onClick={() => setOpenFaq(openFaq === i ? null : i)} className="w-full flex items-center justify-between p-5 text-left cursor-pointer">
-                    <span className="text-base font-semibold text-white pr-4">{faq.q}</span>
-                    <motion.div animate={{ rotate: openFaq === i ? 180 : 0 }} transition={spring}><CaretDown size={20} className="text-slate-400" /></motion.div>
-                  </button>
-                  <AnimatePresence initial={false}>
-                    {openFaq === i && (
-                      <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={spring} className="overflow-hidden">
-                        <p className="px-5 pb-5 text-slate-400 leading-relaxed">{faq.a}</p>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </GlassCard>
-              </motion.div>
+      {/* ──────────── FAQ ──────────── */}
+      <SectionReveal id="faq" className="py-24 relative">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, transparent, ${ORANGE}04, transparent)` }} />
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10">
+          <SectionHeader label="Questions" title="Frequently" accent="Asked" />
+          <div className="space-y-3">
+            {FAQS.map((faq, i) => (
+              <GlassCard key={i} className="overflow-hidden">
+                <button onClick={() => setOpenFaq(openFaq === i ? null : i)} className="w-full flex items-center justify-between px-6 py-4 text-left">
+                  <span className="text-sm font-semibold text-white pr-4">{faq.q}</span>
+                  <motion.div animate={{ rotate: openFaq === i ? 180 : 0 }} transition={{ duration: 0.3 }}>
+                    <CaretDown size={18} style={{ color: ORANGE }} />
+                  </motion.div>
+                </button>
+                <AnimatePresence>
+                  {openFaq === i && (
+                    <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.3 }}>
+                      <p className="px-6 pb-4 text-sm text-gray-400 leading-relaxed">{faq.a}</p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </GlassCard>
             ))}
-          </motion.div>
+          </div>
         </div>
       </SectionReveal>
 
-      {/* ─── SEASONAL PROTECTION PLANS ─── */}
-      <SectionReveal className="relative z-10 py-16 md:py-24">
-        <div className="mx-auto max-w-7xl px-4 md:px-6">
-          <div className="text-center mb-16">
-            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ORANGE }}>Year-Round Defense</p>
-            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white"><WordReveal text="Seasonal Protection Plans" /></h2>
-          </div>
-          <motion.div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
-            {seasonalPlans.map((plan, i) => (
-              <motion.div key={i} variants={fadeUp}>
-                <GlassCard className="p-6 h-full text-center">
-                  <plan.icon size={32} weight="duotone" style={{ color: ORANGE }} className="mx-auto mb-4" />
-                  <h3 className="text-xl font-bold text-white mb-1">{plan.season}</h3>
-                  <p className="text-xs uppercase tracking-widest mb-3" style={{ color: ORANGE }}>{plan.pests}</p>
-                  <p className="text-sm text-slate-400 leading-relaxed">{plan.description}</p>
-                </GlassCard>
-              </motion.div>
-            ))}
-          </motion.div>
-          <div className="text-center mt-10">
-            <ShimmerBorder className="inline-block">
-              <div className="px-8 py-4">
-                <p className="text-sm text-slate-300">Annual protection plans start at <span className="text-2xl font-bold" style={{ color: ORANGE }}>$39</span><span className="text-slate-400">/month</span></p>
+      {/* ──────────── SERVICE AREA ──────────── */}
+      <SectionReveal className="py-24 relative">
+        <div className="absolute inset-0" style={{ background: `radial-gradient(ellipse at 50% 50%, ${ORANGE}06 0%, transparent 50%)` }} />
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 relative z-10">
+          <SectionHeader label="Coverage" title="Service" accent="Area" />
+          <GlassCard className="p-6 md:p-8">
+            <div className="grid md:grid-cols-2 gap-8">
+              <div>
+                <h3 className="text-lg font-bold text-white mb-4">Serving the Greater Seattle Area</h3>
+                <div className="grid grid-cols-2 gap-2">
+                  {["Seattle", "Bellevue", "Kirkland", "Redmond", "Renton", "Bothell", "Shoreline", "Burien", "Tukwila", "Mercer Island", "Issaquah", "Woodinville"].map((area) => (
+                    <div key={area} className="flex items-center gap-2 text-sm text-gray-300">
+                      <CheckCircle size={14} weight="fill" style={{ color: GREEN }} /> {area}
+                    </div>
+                  ))}
+                </div>
               </div>
-            </ShimmerBorder>
-          </div>
+              <div className="space-y-4">
+                <div className="flex items-center gap-4 p-4 rounded-xl border border-white/15" style={{ background: `${GREEN}08` }}>
+                  <div className="w-3 h-3 rounded-full animate-pulse" style={{ background: GREEN }} />
+                  <div>
+                    <span className="text-sm font-bold text-white">Currently Available</span>
+                    <p className="text-xs text-gray-400">Crews dispatching now</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4 p-4 rounded-xl border border-white/15" style={{ background: `${ORANGE}08` }}>
+                  <Timer size={24} weight="fill" style={{ color: ORANGE }} />
+                  <div>
+                    <span className="text-sm font-bold text-white">Under 2-Hour Emergency Response</span>
+                    <p className="text-xs text-gray-400">During business hours (7am - 7pm)</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4 p-4 rounded-xl border border-white/15" style={{ background: `${ORANGE}08` }}>
+                  <MapPin size={24} weight="fill" style={{ color: ORANGE_LIGHT }} />
+                  <div>
+                    <span className="text-sm font-bold text-white">25-Mile Service Radius</span>
+                    <p className="text-xs text-gray-400">From our Capitol Hill headquarters</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </GlassCard>
         </div>
       </SectionReveal>
 
-      {/* ─── CONTACT ─── */}
-      <SectionReveal id="contact" className="relative z-10 py-16 md:py-24">
-        <div className="mx-auto max-w-7xl px-4 md:px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white mb-6"><WordReveal text="Take Back Your Home" /></h2>
-              <p className="text-slate-400 leading-relaxed max-w-md mb-8">Schedule your free inspection today. We will identify the problem, provide a transparent quote, and start protecting your home within 48 hours.</p>
-              <div className="flex flex-wrap gap-4">
-                <MagneticButton className="px-10 py-4 rounded-full text-base font-semibold text-white inline-flex items-center gap-2 cursor-pointer" style={{ background: ORANGE }}>
-                  <CalendarCheck size={20} weight="duotone" /> Schedule Inspection
+      {/* ──────────── CTA ──────────── */}
+      <SectionReveal className="py-24 relative">
+        <div className="absolute inset-0" style={{ background: `radial-gradient(ellipse at 50% 50%, ${ORANGE}10 0%, transparent 50%)` }} />
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
+          <ShimmerBorder>
+            <div className="p-8 md:p-12">
+              <ShieldCheck size={40} weight="fill" style={{ color: ORANGE }} className="mx-auto mb-4" />
+              <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">
+                Ready for a <span style={{ color: ORANGE }}>Pest-Free</span> Home?
+              </h2>
+              <p className="text-gray-400 mb-8 max-w-md mx-auto">Schedule your free inspection today. If pests return between treatments, so do we — at no cost.</p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <MagneticButton href="tel:+12067483920" className="flex items-center justify-center gap-2 px-8 py-4 rounded-full text-base font-bold text-white" style={{ background: ORANGE }}>
+                  <Phone size={20} weight="fill" /> (206) 748-3920
                 </MagneticButton>
-                <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
-                  <Phone size={18} weight="duotone" /> Call Us
+                <MagneticButton href="#contact" className="flex items-center justify-center gap-2 px-8 py-4 rounded-full text-base font-bold text-white border border-white/20">
+                  <Envelope size={20} /> Send a Message
                 </MagneticButton>
               </div>
             </div>
-            <GlassCard className="p-8">
-              <h3 className="text-xl font-semibold text-white mb-6">Contact Info</h3>
+          </ShimmerBorder>
+        </div>
+      </SectionReveal>
+
+      {/* ──────────── CONTACT ──────────── */}
+      <SectionReveal id="contact" className="py-24 relative">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, transparent, ${ORANGE}04, transparent)` }} />
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 relative z-10">
+          <SectionHeader label="Get in Touch" title="Contact" accent="Us" />
+          <div className="grid md:grid-cols-2 gap-8">
+            <GlassCard className="p-6 md:p-8">
+              <h3 className="text-xl font-bold text-white mb-6">Evergreen Pest Solutions</h3>
+              <div className="space-y-5">
+                <a href="tel:+12067483920" className="flex items-center gap-4 group">
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: `${ORANGE}15` }}>
+                    <Phone size={22} weight="fill" style={{ color: ORANGE }} />
+                  </div>
+                  <div>
+                    <span className="text-sm text-gray-400 block">Phone</span>
+                    <span className="text-white font-bold group-hover:text-orange-400 transition-colors">(206) 748-3920</span>
+                  </div>
+                </a>
+                <a href="https://maps.google.com/?q=1847+E+Pine+St,+Seattle,+WA+98122" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 group">
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: `${ORANGE}15` }}>
+                    <MapPin size={22} weight="fill" style={{ color: ORANGE }} />
+                  </div>
+                  <div>
+                    <span className="text-sm text-gray-400 block">Address</span>
+                    <span className="text-white font-bold group-hover:text-orange-400 transition-colors">1847 E Pine St, Seattle, WA 98122</span>
+                  </div>
+                </a>
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: `${ORANGE}15` }}>
+                    <Clock size={22} weight="fill" style={{ color: ORANGE }} />
+                  </div>
+                  <div>
+                    <span className="text-sm text-gray-400 block">Hours</span>
+                    <span className="text-white font-bold">Mon - Sat: 7:00 AM - 7:00 PM</span>
+                    <span className="block text-xs text-gray-500">Emergency service available 24/7</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: `${ORANGE}15` }}>
+                    <Envelope size={22} weight="fill" style={{ color: ORANGE }} />
+                  </div>
+                  <div>
+                    <span className="text-sm text-gray-400 block">Email</span>
+                    <span className="text-white font-bold">info@evergreenpest.com</span>
+                  </div>
+                </div>
+              </div>
+            </GlassCard>
+            <GlassCard className="p-6 md:p-8 flex flex-col justify-center">
+              <h3 className="text-xl font-bold text-white mb-2">Free Inspection Request</h3>
+              <p className="text-sm text-gray-400 mb-6">Fill out the form and we will get back to you within 1 business hour.</p>
               <div className="space-y-4">
-                <div className="flex items-start gap-4"><MapPin size={20} weight="duotone" style={{ color: ORANGE }} className="mt-0.5 shrink-0" /><div><p className="text-sm font-semibold text-white">Location</p><p className="text-sm text-slate-400">789 Shield Drive<br />Dallas, TX 75201</p></div></div>
-                <div className="flex items-start gap-4"><Phone size={20} weight="duotone" style={{ color: ORANGE }} className="mt-0.5 shrink-0" /><div><p className="text-sm font-semibold text-white">Phone</p><p className="text-sm text-slate-400">(555) 456-7890</p></div></div>
-                <div className="flex items-start gap-4"><Clock size={20} weight="duotone" style={{ color: ORANGE }} className="mt-0.5 shrink-0" /><div><p className="text-sm font-semibold text-white">Hours</p><p className="text-sm text-slate-400">Monday - Friday: 7:00 AM - 6:00 PM<br />Saturday: 8:00 AM - 2:00 PM<br />Emergency: 24/7 Available</p></div></div>
-                <div className="flex items-start gap-4"><House size={20} weight="duotone" style={{ color: ORANGE }} className="mt-0.5 shrink-0" /><div><p className="text-sm font-semibold text-white">Service Area</p><p className="text-sm text-slate-400">Dallas-Fort Worth Metroplex<br />Residential & Commercial</p></div></div>
+                <input type="text" placeholder="Your Name" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-orange-500/50" />
+                <input type="tel" placeholder="Phone Number" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-orange-500/50" />
+                <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-gray-400 text-sm focus:outline-none focus:border-orange-500/50" style={{ background: BG }}>
+                  <option value="">What pest are you dealing with?</option>
+                  <option>Ants</option>
+                  <option>Rodents</option>
+                  <option>Termites</option>
+                  <option>Wasps / Bees</option>
+                  <option>Spiders</option>
+                  <option>Cockroaches</option>
+                  <option>Bed Bugs</option>
+                  <option>Other</option>
+                </select>
+                <textarea placeholder="Describe your situation..." rows={3} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-orange-500/50 resize-none" />
+                <button className="w-full py-3 rounded-full text-sm font-bold text-white" style={{ background: ORANGE }}>
+                  Request Free Inspection
+                </button>
               </div>
             </GlassCard>
           </div>
         </div>
       </SectionReveal>
 
-      {/* ─── FOOTER ─── */}
-      <footer className="relative z-10 border-t border-white/5 py-8">
-        <div className="mx-auto max-w-7xl px-4 md:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2 text-sm text-slate-500">
-            <ShieldWarning size={16} weight="duotone" style={{ color: ORANGE }} />
-            <span>Guardian Pest Defense &copy; {new Date().getFullYear()}</span>
+      {/* ──────────── FOOTER ──────────── */}
+      <footer className="border-t border-white/15 py-12" style={{ background: `linear-gradient(180deg, ${BG}, #0a0f1a)` }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="grid md:grid-cols-4 gap-8 mb-8">
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <ShieldCheck size={24} weight="fill" style={{ color: ORANGE }} />
+                <span className="text-lg font-extrabold text-white">Evergreen <span style={{ color: ORANGE }}>Pest</span></span>
+              </div>
+              <p className="text-sm text-gray-400 leading-relaxed">Protecting Pacific Northwest homes and businesses since 2014. Licensed, insured, and committed to eco-friendly pest solutions.</p>
+            </div>
+            <div>
+              <h4 className="text-sm font-bold text-white mb-4">Services</h4>
+              <ul className="space-y-2">
+                {SERVICES.slice(0, 4).map((s) => (
+                  <li key={s.title}><a href="#services" className="text-sm text-gray-400 hover:text-white transition-colors">{s.title}</a></li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-sm font-bold text-white mb-4">Quick Links</h4>
+              <ul className="space-y-2">
+                {["About Us", "Our Process", "Reviews", "FAQ", "Contact"].map((l) => (
+                  <li key={l}><a href={`#${l.toLowerCase().replace(/\s/g, "-")}`} className="text-sm text-gray-400 hover:text-white transition-colors">{l}</a></li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-sm font-bold text-white mb-4">Contact</h4>
+              <ul className="space-y-2">
+                <li><a href="tel:+12067483920" className="text-sm text-gray-400 hover:text-white transition-colors">(206) 748-3920</a></li>
+                <li><a href="https://maps.google.com/?q=1847+E+Pine+St,+Seattle,+WA+98122" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-400 hover:text-white transition-colors">1847 E Pine St, Seattle, WA 98122</a></li>
+                <li><span className="text-sm text-gray-400">info@evergreenpest.com</span></li>
+                <li><span className="text-sm text-gray-400">Mon-Sat 7am-7pm</span></li>
+              </ul>
+            </div>
           </div>
-          <p className="text-xs text-slate-600">Created by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" style={{textDecoration:"underline"}}>bluejayportfolio.com</a></p>
+          <div className="border-t border-white/15 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+            <p className="text-xs text-gray-500">
+              &copy; {new Date().getFullYear()} Evergreen Pest Solutions. All rights reserved.
+            </p>
+            <p className="text-xs text-gray-500 flex items-center gap-1.5">
+              <svg width="14" height="14" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-sky-500"><path d="M24.3 4.2c-1.5-.4-3.2.1-4.5 1.1-1-.7-2.3-1-3.5-.8-2.4.4-4.2 2.5-4.2 4.9v.6c-3.2.8-6 2.8-7.8 5.6-.3.5-.1 1.1.4 1.4.5.3 1.1.1 1.4-.4 1.5-2.3 3.7-4 6.3-4.7.5-.1 1-.1 1.5 0 .8.2 1.4.8 1.7 1.5.3.8.2 1.6-.2 2.3l-2.8 4.3c-.6.9-.4 2.1.4 2.8l2.5 2.1c.4.3.8.5 1.3.5h5.2c.5 0 1-.2 1.3-.5l1.2-1c.6-.5.8-1.3.6-2l-1-3.2c-.2-.5 0-1.1.4-1.4l3.8-2.5c1.3-.9 2.1-2.3 2.1-3.9V9.6c0-2.5-1.7-4.7-4.1-5.3v-.1z" fill="currentColor"/></svg>Created by{" "}
+              <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors" style={{ color: ORANGE_LIGHT }}>
+                bluejayportfolio.com
+              </a>
+            </p>
+          </div>
         </div>
       </footer>
     </main>

@@ -11,6 +11,7 @@
 import { scrapeWebsite, extractInstagramHandle } from "./scraper";
 import type { ScrapedData } from "./types";
 import { logCost, COST_RATES } from "./cost-logger";
+import { canonicalizeCity, normalizeAddress } from "./address-normalizer";
 
 const GOOGLE_API_KEY = process.env.GOOGLE_PLACES_API_KEY;
 
@@ -18,6 +19,12 @@ interface ExtractionResult {
   data: ScrapedData;
   methods: string[];
   quality: "high" | "medium" | "low";
+}
+
+interface GoogleAddressComponent {
+  long_name: string;
+  short_name: string;
+  types: string[];
 }
 
 /**
@@ -34,6 +41,7 @@ export async function extractBusinessData(
   const methods: string[] = [];
   let data: ScrapedData = {
     businessName,
+    city: canonicalizeCity(city),
     services: [],
     testimonials: [],
     photos: [],
@@ -44,20 +52,25 @@ export async function extractBusinessData(
     try {
       console.log(`  Level 1: Cheerio scraping ${website}...`);
       const scraped = await scrapeWebsite(website);
+      const canonicalScraped: Partial<ScrapedData> = {
+        ...scraped,
+        address: normalizeAddress(scraped.address),
+        city: canonicalizeCity(scraped.city, scraped.address),
+      };
       const hasUsefulData =
-        scraped.phone ||
-        scraped.services.length > 0 ||
-        scraped.about ||
-        scraped.photos.length > 0;
+        canonicalScraped.phone ||
+        canonicalScraped.services?.length ||
+        canonicalScraped.about ||
+        canonicalScraped.photos?.length;
 
       if (hasUsefulData) {
-        data = mergeScrapedData(data, scraped);
+        data = mergeScrapedData(data, canonicalScraped);
         methods.push("cheerio");
         console.log(
-          `  Level 1 success: phone=${!!data.phone}, services=${data.services.length}, photos=${data.photos.length}`
+          `  Level 1 success: phone=${!!data.phone}, city=${data.city || "n/a"}, services=${data.services.length}, photos=${data.photos.length}`
         );
       } else {
-        console.log(`  Level 1 returned no useful data`);
+        console.log("  Level 1 returned no useful data");
       }
     } catch (err) {
       console.log(`  Level 1 failed: ${(err as Error).message}`);
@@ -67,13 +80,13 @@ export async function extractBusinessData(
   // ── LEVEL 2: Google Places Details ──
   if (GOOGLE_API_KEY) {
     try {
-      console.log(`  Level 2: Google Places Details...`);
+      console.log("  Level 2: Google Places Details...");
       const placeData = await fetchGooglePlaceDetails(businessName, city, placeId, prospectId);
       if (placeData) {
         data = mergeScrapedData(data, placeData);
         methods.push("google-places");
         console.log(
-          `  Level 2 success: phone=${!!data.phone}, photos=${data.photos.length}`
+          `  Level 2 success: phone=${!!data.phone}, city=${data.city || "n/a"}, photos=${data.photos.length}`
         );
       }
     } catch (err) {
@@ -84,8 +97,8 @@ export async function extractBusinessData(
   // ── LEVEL 3: Web search fallback ──
   if (!data.phone || data.photos.length === 0) {
     try {
-      console.log(`  Level 3: Web search fallback...`);
-      const searchData = await searchForBusinessData(businessName, city);
+      console.log("  Level 3: Web search fallback...");
+      const searchData = await searchForBusinessData(businessName, data.city || city);
       if (searchData) {
         data = mergeScrapedData(data, searchData);
         methods.push("web-search");
@@ -95,6 +108,9 @@ export async function extractBusinessData(
       console.log(`  Level 3 failed: ${(err as Error).message}`);
     }
   }
+
+  // Final city safety pass so county-like values never escape extraction
+  data.city = canonicalizeCity(data.city, data.address) || canonicalizeCity(city, data.address);
 
   // Extract Instagram handle from social links if available
   if (data.socialLinks?.instagram) {
@@ -108,6 +124,31 @@ export async function extractBusinessData(
   const quality = calculateQuality(data);
 
   return { data, methods, quality };
+}
+
+function extractCityFromGoogleAddressComponents(
+  components: GoogleAddressComponent[] | undefined,
+  formattedAddress?: string
+): string | undefined {
+  if (!components?.length) {
+    return canonicalizeCity(undefined, formattedAddress);
+  }
+
+  const priorityTypes = [
+    "locality",
+    "postal_town",
+    "sublocality_level_1",
+    "administrative_area_level_3",
+    "neighborhood",
+  ];
+
+  for (const type of priorityTypes) {
+    const component = components.find((entry) => entry.types.includes(type));
+    const candidate = canonicalizeCity(component?.long_name, formattedAddress);
+    if (candidate) return candidate;
+  }
+
+  return canonicalizeCity(undefined, formattedAddress);
 }
 
 /**
@@ -150,7 +191,7 @@ async function fetchGooglePlaceDetails(
   }
 
   // Fetch full details
-  const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${resolvedPlaceId}&fields=formatted_phone_number,website,opening_hours,photos,reviews,editorial_summary&key=${GOOGLE_API_KEY}`;
+  const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${resolvedPlaceId}&fields=name,formatted_address,address_components,formatted_phone_number,website,opening_hours,photos,reviews,editorial_summary&key=${GOOGLE_API_KEY}`;
   const detailsRes = await fetch(detailsUrl, { signal: AbortSignal.timeout(10000) });
   const detailsData = await detailsRes.json();
 
@@ -167,6 +208,15 @@ async function fetchGooglePlaceDetails(
 
   const result = detailsData.result;
   const data: Partial<ScrapedData> = {};
+
+  if (result.name) {
+    data.businessName = result.name;
+  }
+
+  if (result.formatted_address) {
+    data.address = normalizeAddress(result.formatted_address);
+    data.city = extractCityFromGoogleAddressComponents(result.address_components, result.formatted_address);
+  }
 
   if (result.formatted_phone_number) {
     data.phone = result.formatted_phone_number;
@@ -195,7 +245,7 @@ async function fetchGooglePlaceDetails(
       .slice(0, 3)
       .map((r: { author_name: string; text: string }) => ({
         name: r.author_name,
-        text: r.text.length > 200 ? r.text.slice(0, 200) + "..." : r.text,
+        text: r.text.length > 200 ? `${r.text.slice(0, 200)}...` : r.text,
       }));
   }
 
@@ -261,12 +311,18 @@ function mergeScrapedData(
   existing: ScrapedData,
   incoming: Partial<ScrapedData>
 ): ScrapedData {
+  const mergedAddress = normalizeAddress(incoming.address || existing.address);
+  const mergedCity =
+    canonicalizeCity(incoming.city, incoming.address) ||
+    canonicalizeCity(existing.city, mergedAddress);
+
   return {
     businessName: incoming.businessName || existing.businessName,
     tagline: incoming.tagline || existing.tagline,
     email: incoming.email || existing.email,
     phone: incoming.phone || existing.phone,
-    address: incoming.address || existing.address,
+    address: mergedAddress,
+    city: mergedCity,
     services:
       incoming.services && incoming.services.length > 0
         ? incoming.services
@@ -277,12 +333,13 @@ function mergeScrapedData(
         : existing.testimonials,
     photos:
       incoming.photos && incoming.photos.length > 0
-        ? [...new Set([...existing.photos, ...incoming.photos])]
+        ? [...new Set([...(existing.photos || []), ...incoming.photos])]
         : existing.photos,
     hours: incoming.hours || existing.hours,
     socialLinks: { ...existing.socialLinks, ...incoming.socialLinks },
     about: incoming.about || existing.about,
     brandColor: incoming.brandColor || existing.brandColor,
+    brandColorSource: incoming.brandColorSource || existing.brandColorSource,
     logoUrl: incoming.logoUrl || existing.logoUrl,
   };
 }
@@ -301,8 +358,9 @@ function calculateQuality(
   if (data.testimonials.length > 0) score += 1;
   if (data.hours) score += 1;
   if (data.email) score += 1;
+  if (data.city) score += 1;
 
-  if (score >= 8) return "high";
-  if (score >= 4) return "medium";
+  if (score >= 9) return "high";
+  if (score >= 5) return "medium";
   return "low";
 }

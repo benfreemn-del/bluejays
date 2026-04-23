@@ -30,7 +30,15 @@ CREATE TABLE IF NOT EXISTS generated_sites (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   prospect_id UUID REFERENCES prospects(id) ON DELETE CASCADE,
   site_data JSONB NOT NULL,
-  created_at TIMESTAMPTZ DEFAULT NOW()
+  video_url TEXT,
+  video_status TEXT NOT NULL DEFAULT 'not_started',
+  video_error TEXT,
+  video_storage_path TEXT,
+  video_script TEXT,
+  video_duration_seconds INTEGER,
+  video_generated_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- Email history
@@ -131,6 +139,11 @@ CREATE TRIGGER prospects_updated_at
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at();
 
+CREATE TRIGGER generated_sites_updated_at
+  BEFORE UPDATE ON generated_sites
+  FOR EACH ROW
+  EXECUTE FUNCTION update_updated_at();
+
 -- Enable Row Level Security (but allow all for service role)
 ALTER TABLE prospects ENABLE ROW LEVEL SECURITY;
 ALTER TABLE generated_sites ENABLE ROW LEVEL SECURITY;
@@ -142,6 +155,9 @@ ALTER TABLE notes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE proposals ENABLE ROW LEVEL SECURITY;
 ALTER TABLE calendar_bookings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE priority_call_list ENABLE ROW LEVEL SECURITY;
+
+CREATE INDEX IF NOT EXISTS generated_sites_video_status_idx ON generated_sites (video_status);
+CREATE INDEX IF NOT EXISTS generated_sites_prospect_id_idx ON generated_sites (prospect_id);
 
 -- Policies: allow all operations via service role key
 CREATE POLICY "Allow all for service role" ON prospects FOR ALL USING (true);

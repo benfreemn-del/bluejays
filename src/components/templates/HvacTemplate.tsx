@@ -506,7 +506,7 @@ export default function HvacTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-[#06b6d4]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-[#06b6d4]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 {/* Hover glow */}
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_50%_0%,#06b6d415,transparent_70%)]" />
@@ -624,7 +624,7 @@ export default function HvacTemplate() {
                   { icon: <DollarIcon />, title: "Utility Rebates", desc: "We help you claim every available rebate and incentive" },
                   { icon: <ThermometerIcon />, title: "Smart Thermostats", desc: "WiFi-enabled controls that learn your schedule and save money" },
                 ].map((feature) => (
-                  <div key={feature.title} className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/[0.04] hover:border-[#06b6d4]/20 transition-colors duration-300">
+                  <div key={feature.title} className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.07] border border-white/[0.04] hover:border-[#06b6d4]/20 transition-colors duration-300">
                     <div className="w-10 h-10 rounded-lg bg-[#06b6d4]/10 border border-[#06b6d4]/20 flex items-center justify-center text-[#06b6d4] shrink-0">
                       {feature.icon}
                     </div>
@@ -675,7 +675,7 @@ export default function HvacTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group text-center p-6 rounded-2xl border border-white/[0.06] hover:border-[#06b6d4]/30 bg-white/[0.02] transition-all duration-500"
+                className="group text-center p-6 rounded-2xl border border-white/[0.10] hover:border-[#06b6d4]/30 bg-white/[0.07] transition-all duration-500"
               >
                 <div className="w-14 h-14 mx-auto rounded-xl bg-[#06b6d4]/10 border border-[#06b6d4]/20 flex items-center justify-center text-[#06b6d4] mb-4 group-hover:bg-[#06b6d4]/20 group-hover:scale-110 transition-all duration-300">
                   {item.icon}
@@ -716,7 +716,7 @@ export default function HvacTemplate() {
                 className={`group relative p-7 rounded-2xl border transition-all duration-500 overflow-hidden ${
                   plan.popular
                     ? "border-[#06b6d4]/40 bg-gradient-to-b from-[#06b6d4]/[0.08] to-transparent scale-[1.02]"
-                    : "border-white/[0.06] bg-white/[0.02] hover:border-[#06b6d4]/20"
+                    : "border-white/[0.10] bg-white/[0.07] hover:border-[#06b6d4]/20"
                 }`}
               >
                 {plan.popular && (
@@ -794,7 +794,7 @@ export default function HvacTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-[#06b6d4]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-[#06b6d4]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 {/* Top accent line */}
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-[#06b6d4]/40 via-[#06b6d4]/10 to-transparent" />
@@ -813,7 +813,7 @@ export default function HvacTemplate() {
                   {/* Quote */}
                   <p className="text-muted leading-relaxed mb-6 text-sm">&ldquo;{t.text}&rdquo;</p>
                   {/* Author */}
-                  <div className="flex items-center gap-3 pt-4 border-t border-white/[0.06]">
+                  <div className="flex items-center gap-3 pt-4 border-t border-white/[0.10]">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#06b6d4]/30 to-[#06b6d4]/10 flex items-center justify-center text-sm font-bold text-[#06b6d4]">
                       {t.name.charAt(0)}
                     </div>
@@ -936,7 +936,7 @@ export default function HvacTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.06 }}
-                className="group p-6 rounded-2xl border border-white/[0.06] hover:border-[#06b6d4]/20 transition-all duration-500 overflow-hidden relative bg-white/[0.02]"
+                className="group p-6 rounded-2xl border border-white/[0.10] hover:border-[#06b6d4]/20 transition-all duration-500 overflow-hidden relative bg-white/[0.07]"
               >
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_0%_50%,#06b6d410,transparent_70%)]" />
                 <div className="relative z-10 flex gap-4">

@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import { useState, useEffect, useCallback } from "react";
 import type { Prospect, Category } from "@/lib/types";
 import { CATEGORY_CONFIG } from "@/lib/types";
@@ -9,6 +11,8 @@ import ScoutModal from "@/components/dashboard/ScoutModal";
 import ProspectDetail from "@/components/dashboard/ProspectDetail";
 import MapView from "@/components/dashboard/MapView";
 import PipelineDashboard from "@/components/dashboard/PipelineDashboard";
+import DeliverabilityWidget from "@/components/dashboard/DeliverabilityWidget";
+import ClientsBillingView from "@/components/dashboard/ClientsBillingView";
 
 export default function DashboardPage() {
   const [prospects, setProspects] = useState<Prospect[]>([]);
@@ -19,17 +23,53 @@ export default function DashboardPage() {
   );
   const [categoryFilter, setCategoryFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
-  const [view, setView] = useState<"table" | "map">("table");
+  const [view, setView] = useState<"table" | "map" | "clients">("table");
   const [addLeadOpen, setAddLeadOpen] = useState(false);
   const [newLead, setNewLead] = useState({ businessName: "", phone: "", email: "", website: "", category: "dental", city: "Seattle, WA" });
   const [addingLead, setAddingLead] = useState(false);
   const [pipelineOpen, setPipelineOpen] = useState(false);
+  const [autoScoutOpen, setAutoScoutOpen] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [autoScoutData, setAutoScoutData] = useState<any>(null);
+  const [autoScoutRunning, setAutoScoutRunning] = useState(false);
+  const [autoScoutMsg, setAutoScoutMsg] = useState("");
+
+  const loadAutoScout = useCallback(async () => {
+    try {
+      const res = await fetch("/api/auto-scout", { credentials: "include" });
+      if (res.ok) setAutoScoutData(await res.json());
+    } catch { /* ignore */ }
+  }, []);
+
+  useEffect(() => { if (autoScoutOpen) loadAutoScout(); }, [autoScoutOpen, loadAutoScout]);
+
+  const toggleAutoScout = async (enabled: boolean) => {
+    await fetch("/api/auto-scout", { method: "PATCH", credentials: "include", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ enabled }) });
+    loadAutoScout();
+  };
+
+  const runAutoScout = async () => {
+    setAutoScoutRunning(true);
+    setAutoScoutMsg("Running auto-scout...");
+    try {
+      const res = await fetch("/api/auto-scout", { method: "POST", credentials: "include" });
+      const data = await res.json();
+      setAutoScoutMsg(`Done: ${data.leadsFound || 0} leads found. ${data.stoppedReason || ""}`);
+      loadAutoScout();
+      fetchProspects();
+    } catch { setAutoScoutMsg("Error running auto-scout"); }
+    setAutoScoutRunning(false);
+  };
 
   const fetchProspects = useCallback(async () => {
     try {
-      const res = await fetch("/api/prospects");
+      const res = await fetch("/api/prospects", { credentials: "include" });
+      if (!res.ok) {
+        console.error("Failed to fetch prospects:", res.status, res.statusText);
+        return;
+      }
       const data = await res.json();
-      setProspects(data.prospects);
+      setProspects(data.prospects || []);
     } catch (err) {
       console.error("Failed to fetch prospects:", err);
     } finally {
@@ -43,7 +83,7 @@ export default function DashboardPage() {
 
   const handleSendEmail = async (prospect: Prospect) => {
     try {
-      const res = await fetch(`/api/email/send/${prospect.id}`, {
+      const res = await fetch(`/api/email/send/${prospect.id}`, { credentials: "include",
         method: "POST",
       });
       const data = await res.json();
@@ -60,7 +100,7 @@ export default function DashboardPage() {
 
   const handleStatusChange = async (id: string, status: string) => {
     try {
-      await fetch(`/api/prospects/${id}`, {
+      await fetch(`/api/prospects/${id}`, { credentials: "include",
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status }),
@@ -78,7 +118,7 @@ export default function DashboardPage() {
 
   const handleUpdateProspect = async (id: string, updates: Partial<Prospect>) => {
     try {
-      await fetch(`/api/prospects/${id}`, {
+      await fetch(`/api/prospects/${id}`, { credentials: "include",
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updates),
@@ -101,7 +141,7 @@ export default function DashboardPage() {
     }
 
     try {
-      const res = await fetch("/api/funnel/enroll", {
+      const res = await fetch("/api/funnel/enroll", { credentials: "include",
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ prospectIds: [selectedProspect.id] }),
@@ -122,85 +162,146 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Top Bar */}
-      <header className="border-b border-border bg-surface sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-electric to-blue-deep" />
-            <h1 className="text-xl font-bold">BlueJays Dashboard</h1>
+      <header className="sticky top-0 z-40 border-b border-border bg-surface/95 backdrop-blur">
+        <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-3 sm:px-6 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex min-w-0 items-center gap-3">
+            <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-electric to-blue-deep" />
+            <div className="min-w-0">
+              <p className="text-xs uppercase tracking-[0.18em] text-muted">BlueJays</p>
+              <h1 className="truncate text-lg font-semibold sm:text-xl">Dashboard</h1>
+            </div>
           </div>
-          <div className="flex items-center gap-3">
-            <a href="/" className="text-sm text-muted hover:text-foreground transition-colors">
-              Portfolio
+          <div className="flex flex-wrap items-center gap-2 lg:justify-end">
+            <Link href="/" className="rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-background hover:text-foreground">
+              Home
+            </Link>
+            <Link href="/scripts" className="rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-background hover:text-foreground">
+              AI
+            </Link>
+            <a href="/spending" className="rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-background hover:text-foreground">
+              Spend
             </a>
-            <a href="/scripts" className="text-sm text-muted hover:text-foreground transition-colors">
-              AI Convos
+            <Link href="/funnel-tracker" className="rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-background hover:text-foreground">
+              Funnel
+            </Link>
+            <a href="/deliverability" className="rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-background hover:text-foreground">
+              Email
             </a>
-            <a href="/spending" className="text-sm text-muted hover:text-foreground transition-colors">
-              Spending
+            <a href="/analytics" className="rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-background hover:text-foreground">
+              Stats
             </a>
-            <a href="/deliverability" className="text-sm text-muted hover:text-foreground transition-colors">
-              Deliverability
-            </a>
-            <a href="/analytics" className="text-sm text-muted hover:text-foreground transition-colors">
-              Analytics
-            </a>
+            <Link href="/image-mapper" className="rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-background hover:text-foreground">
+              Images
+            </Link>
             <a
               href="/api/call-lists?type=all&format=csv"
-              className="h-9 px-4 rounded-lg bg-surface border border-border text-muted text-sm font-medium flex items-center hover:text-foreground hover:border-blue-electric/40 transition-colors"
+              className="flex h-9 items-center rounded-lg border border-border px-3 text-sm font-medium text-muted transition-colors hover:border-blue-electric/40 hover:text-foreground"
             >
-              All Phones
+              Phones
             </a>
             <a
               href="/api/call-lists?type=priority&format=csv"
-              className="h-9 px-4 rounded-lg bg-surface border border-orange-500/30 text-orange-400 text-sm font-medium flex items-center hover:border-orange-500/60 transition-colors"
+              className="flex h-9 items-center rounded-lg border border-orange-500/30 px-3 text-sm font-medium text-orange-400 transition-colors hover:border-orange-500/60"
             >
-              Priority List
+              Priority
             </a>
             <button
               onClick={handleStartFunnelForSelected}
-              className="h-9 px-4 rounded-lg bg-surface border border-sky-500/30 text-sky-400 text-sm font-medium hover:border-sky-500/60 transition-colors"
+              disabled={!selectedProspect}
+              className="h-9 rounded-lg border border-sky-500/30 px-3 text-sm font-medium text-sky-400 transition-colors hover:border-sky-500/60 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {selectedProspect ? `Start Funnel: ${selectedProspect.businessName}` : "Start Funnel (Select Prospect)"}
+              Funnel
             </button>
             <button
               onClick={async () => {
                 if (!confirm("Send test funnel to benfreemn@gmail.com? This will send 2 real emails.")) return;
                 try {
-                  const res = await fetch("/api/test-funnel", { method: "POST" });
+                  const res = await fetch("/api/test-funnel", { method: "POST", credentials: "include" });
                   const data = await res.json();
                   alert(data.message || data.error);
                 } catch { alert("Error sending test funnel"); }
               }}
-              className="h-9 px-4 rounded-lg bg-surface border border-purple-500/30 text-purple-400 text-sm font-medium hover:border-purple-500/60 transition-colors"
+              className="h-9 rounded-lg border border-purple-500/30 px-3 text-sm font-medium text-purple-400 transition-colors hover:border-purple-500/60"
             >
-              Send Ben Test Funnel
+              Test
             </button>
             <button
               onClick={() => setAddLeadOpen(true)}
-              className="h-9 px-4 rounded-lg bg-surface border border-green-500/30 text-green-400 text-sm font-medium hover:border-green-500/60 transition-colors"
+              className="h-9 rounded-lg border border-green-500/30 px-3 text-sm font-medium text-green-400 transition-colors hover:border-green-500/60"
             >
-              + Add Lead
+              Lead
             </button>
             <button
-              onClick={() => setPipelineOpen(true)}
-              className="h-9 px-4 rounded-lg bg-surface border border-sky-500/30 text-sky-400 text-sm font-medium hover:border-sky-500/60 transition-colors"
+              onClick={() => setAutoScoutOpen(!autoScoutOpen)}
+              className={`h-9 rounded-lg border px-3 text-sm font-medium transition-colors ${autoScoutData?.config?.enabled ? "border-emerald-500/50 text-emerald-400 bg-emerald-500/10" : "border-amber-500/30 text-amber-400"}`}
             >
-              Pipeline
+              Auto-Scout {autoScoutData?.config?.enabled ? "●" : "○"}
             </button>
             <button
               onClick={() => setScoutOpen(true)}
-              className="h-9 px-4 rounded-lg bg-blue-electric text-white text-sm font-medium hover:bg-blue-deep transition-colors"
+              className="h-9 rounded-lg bg-blue-electric px-3 text-sm font-medium text-white transition-colors hover:bg-blue-deep"
             >
-              + New Scout
+              Scout
             </button>
           </div>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-6 py-8 space-y-8">
+      {/* Auto-Scout Panel */}
+      {autoScoutOpen && (
+        <div className="border-b border-border bg-surface/95 backdrop-blur">
+          <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-semibold text-foreground">Auto-Scout</h3>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => toggleAutoScout(!autoScoutData?.config?.enabled)}
+                  className={`relative w-12 h-6 rounded-full transition-colors cursor-pointer ${autoScoutData?.config?.enabled ? "bg-emerald-500" : "bg-white/20"}`}
+                >
+                  <div className={`absolute top-0.5 w-5 h-5 rounded-full bg-white transition-transform ${autoScoutData?.config?.enabled ? "translate-x-6" : "translate-x-0.5"}`} />
+                </button>
+                <span className="text-xs text-muted">{autoScoutData?.config?.enabled ? "Active" : "Paused"}</span>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-4">
+              <div className="rounded-lg border border-border bg-background p-3">
+                <p className="text-xs text-muted">State</p>
+                <p className="text-lg font-bold text-foreground">{autoScoutData?.config?.state || "WA"}</p>
+              </div>
+              <div className="rounded-lg border border-border bg-background p-3">
+                <p className="text-xs text-muted">Counties Done</p>
+                <p className="text-lg font-bold text-foreground">{autoScoutData?.progress?.countiesDone || 0}/{autoScoutData?.progress?.countiesTotal || 39}</p>
+              </div>
+              <div className="rounded-lg border border-border bg-background p-3">
+                <p className="text-xs text-muted">Today</p>
+                <p className="text-lg font-bold text-foreground">{autoScoutData?.progress?.todayLeads || 0}/{autoScoutData?.config?.dailyLimit || 100}</p>
+              </div>
+              <div className="rounded-lg border border-border bg-background p-3">
+                <p className="text-xs text-muted">Total Leads</p>
+                <p className="text-lg font-bold text-foreground">{autoScoutData?.progress?.totalLeads || 0}</p>
+              </div>
+              <div className="rounded-lg border border-border bg-background p-3">
+                <p className="text-xs text-muted">Last Run</p>
+                <p className="text-sm font-medium text-foreground truncate">{autoScoutData?.progress?.lastRunAt ? new Date(autoScoutData.progress.lastRunAt).toLocaleString() : "Never"}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={runAutoScout}
+                disabled={autoScoutRunning}
+                className="h-9 px-4 rounded-lg bg-blue-electric text-white text-sm font-medium disabled:opacity-50 cursor-pointer"
+              >
+                {autoScoutRunning ? "Running..." : "Run Now"}
+              </button>
+              {autoScoutMsg && <p className="text-xs text-muted">{autoScoutMsg}</p>}
+            </div>
+          </div>
+        </div>
+      )}
+
+      <main className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-6 sm:py-8">
         {loading ? (
-          <div className="text-center py-20 text-muted">
+          <div className="py-20 text-center text-muted">
             Loading prospects...
           </div>
         ) : (
@@ -211,27 +312,38 @@ export default function DashboardPage() {
               activeFilter={statusFilter}
             />
 
-            {/* View toggle */}
+            <DeliverabilityWidget />
+
             <div className="flex gap-2">
               <button
                 onClick={() => { setView("table"); fetchProspects(); }}
-                className={`h-9 px-4 rounded-lg text-sm font-medium transition-colors ${
+                className={`h-9 rounded-lg px-4 text-sm font-medium transition-colors ${
                   view === "table"
                     ? "bg-blue-electric text-white"
                     : "bg-surface border border-border text-muted hover:text-foreground"
                 }`}
               >
-                Table View
+                Table
               </button>
               <button
                 onClick={() => setView("map")}
-                className={`h-9 px-4 rounded-lg text-sm font-medium transition-colors ${
+                className={`h-9 rounded-lg px-4 text-sm font-medium transition-colors ${
                   view === "map"
                     ? "bg-blue-electric text-white"
                     : "bg-surface border border-border text-muted hover:text-foreground"
                 }`}
               >
-                Map View
+                Map
+              </button>
+              <button
+                onClick={() => setView("clients")}
+                className={`h-9 rounded-lg px-4 text-sm font-medium transition-colors ${
+                  view === "clients"
+                    ? "bg-emerald-600 text-white"
+                    : "bg-surface border border-border text-muted hover:text-foreground"
+                }`}
+              >
+                💳 Clients
               </button>
             </div>
 
@@ -246,7 +358,7 @@ export default function DashboardPage() {
                 onSendEmail={handleSendEmail}
                 onRefresh={fetchProspects}
               />
-            ) : (
+            ) : view === "map" ? (
               <MapView
                 prospects={prospects}
                 onStateClick={(state) => {
@@ -255,11 +367,12 @@ export default function DashboardPage() {
                       TX: "Texas", CA: "California", NY: "New York",
                       FL: "Florida", IL: "Illinois", PA: "Pennsylvania",
                     })[0]?.[1] || state;
-                  // Open scout modal pre-filled for that state
                   void stateName;
                   setScoutOpen(true);
                 }}
               />
+            ) : (
+              <ClientsBillingView />
             )}
           </>
         )}
@@ -289,80 +402,124 @@ export default function DashboardPage() {
         onUpdateProspect={handleUpdateProspect}
       />
 
-      {/* Add Lead Modal */}
       {addLeadOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setAddLeadOpen(false)} />
-          <div className="relative bg-surface border border-border rounded-2xl p-8 w-full max-w-md shadow-2xl">
-            <h2 className="text-xl font-bold mb-6">Manually Add Lead</h2>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
+          <div className="w-full max-w-md rounded-2xl border border-border bg-surface p-6 shadow-xl">
+            <div className="mb-5 flex items-start justify-between gap-4">
+              <div>
+                <h2 className="text-xl font-semibold">Add Lead</h2>
+                <p className="mt-1 text-sm text-muted">Create a lead manually.</p>
+              </div>
+              <button
+                onClick={() => setAddLeadOpen(false)}
+                className="text-muted transition-colors hover:text-foreground"
+              >
+                ✕
+              </button>
+            </div>
+
             <div className="space-y-4">
               <div>
-                <label className="block text-sm text-muted mb-1">Business Name *</label>
-                <input type="text" value={newLead.businessName} onChange={(e) => setNewLead({ ...newLead, businessName: e.target.value })}
-                  className="w-full h-10 px-3 rounded-lg bg-surface-light border border-border text-foreground text-sm" placeholder="e.g., Bright Smile Dental" />
+                <label className="mb-1 block text-sm text-muted">Business Name</label>
+                <input
+                  value={newLead.businessName}
+                  onChange={(e) => setNewLead({ ...newLead, businessName: e.target.value })}
+                  className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-blue-electric"
+                  placeholder="Acme Dental"
+                />
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
-                  <label className="block text-sm text-muted mb-1">Phone</label>
-                  <input type="tel" value={newLead.phone} onChange={(e) => setNewLead({ ...newLead, phone: e.target.value })}
-                    className="w-full h-10 px-3 rounded-lg bg-surface-light border border-border text-foreground text-sm" placeholder="(206) 555-1234" />
+                  <label className="mb-1 block text-sm text-muted">Phone</label>
+                  <input
+                    value={newLead.phone}
+                    onChange={(e) => setNewLead({ ...newLead, phone: e.target.value })}
+                    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-blue-electric"
+                    placeholder="(555) 555-5555"
+                  />
                 </div>
                 <div>
-                  <label className="block text-sm text-muted mb-1">Email</label>
-                  <input type="email" value={newLead.email} onChange={(e) => setNewLead({ ...newLead, email: e.target.value })}
-                    className="w-full h-10 px-3 rounded-lg bg-surface-light border border-border text-foreground text-sm" placeholder="owner@business.com" />
+                  <label className="mb-1 block text-sm text-muted">Email</label>
+                  <input
+                    value={newLead.email}
+                    onChange={(e) => setNewLead({ ...newLead, email: e.target.value })}
+                    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-blue-electric"
+                    placeholder="owner@example.com"
+                  />
                 </div>
               </div>
               <div>
-                <label className="block text-sm text-muted mb-1">Current Website</label>
-                <input type="url" value={newLead.website} onChange={(e) => setNewLead({ ...newLead, website: e.target.value })}
-                  className="w-full h-10 px-3 rounded-lg bg-surface-light border border-border text-foreground text-sm" placeholder="https://theirsite.com" />
+                <label className="mb-1 block text-sm text-muted">Website</label>
+                <input
+                  value={newLead.website}
+                  onChange={(e) => setNewLead({ ...newLead, website: e.target.value })}
+                  className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-blue-electric"
+                  placeholder="https://example.com"
+                />
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
-                  <label className="block text-sm text-muted mb-1">Category</label>
-                  <select value={newLead.category} onChange={(e) => setNewLead({ ...newLead, category: e.target.value })}
-                    className="w-full h-10 px-3 rounded-lg bg-surface-light border border-border text-foreground text-sm">
+                  <label className="mb-1 block text-sm text-muted">Category</label>
+                  <select
+                    value={newLead.category}
+                    onChange={(e) => setNewLead({ ...newLead, category: e.target.value })}
+                    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-blue-electric"
+                  >
                     {(Object.keys(CATEGORY_CONFIG) as Category[]).map((cat) => (
                       <option key={cat} value={cat}>{CATEGORY_CONFIG[cat].label}</option>
                     ))}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm text-muted mb-1">City</label>
-                  <input type="text" value={newLead.city} onChange={(e) => setNewLead({ ...newLead, city: e.target.value })}
-                    className="w-full h-10 px-3 rounded-lg bg-surface-light border border-border text-foreground text-sm" placeholder="Seattle, WA" />
+                  <label className="mb-1 block text-sm text-muted">City</label>
+                  <input
+                    value={newLead.city}
+                    onChange={(e) => setNewLead({ ...newLead, city: e.target.value })}
+                    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-blue-electric"
+                    placeholder="Seattle, WA"
+                  />
                 </div>
               </div>
             </div>
-            <div className="flex gap-3 mt-6">
-              <button onClick={() => setAddLeadOpen(false)}
-                className="flex-1 h-10 rounded-lg border border-border text-muted text-sm hover:bg-surface-light transition-colors">
+
+            <div className="mt-6 flex items-center justify-end gap-3">
+              <button
+                onClick={() => setAddLeadOpen(false)}
+                className="h-10 rounded-lg border border-border px-4 text-sm text-muted transition-colors hover:text-foreground"
+              >
                 Cancel
               </button>
               <button
-                disabled={addingLead || !newLead.businessName}
                 onClick={async () => {
+                  if (!newLead.businessName.trim()) {
+                    alert("Business name is required");
+                    return;
+                  }
                   setAddingLead(true);
                   try {
-                    const res = await fetch("/api/leads/manual", {
+                    const res = await fetch("/api/prospects", {
                       method: "POST",
+                      credentials: "include",
                       headers: { "Content-Type": "application/json" },
                       body: JSON.stringify(newLead),
                     });
                     const data = await res.json();
-                    if (data.success) {
-                      setAddLeadOpen(false);
-                      setNewLead({ businessName: "", phone: "", email: "", website: "", category: "dental", city: "Seattle, WA" });
-                      fetchProspects();
-                    } else {
-                      alert(data.error || "Failed to add lead");
+                    if (!res.ok) {
+                      throw new Error(data.error || "Failed to add lead");
                     }
-                  } catch { alert("Error adding lead"); }
-                  finally { setAddingLead(false); }
+                    setAddLeadOpen(false);
+                    setNewLead({ businessName: "", phone: "", email: "", website: "", category: "dental", city: "Seattle, WA" });
+                    fetchProspects();
+                  } catch (error) {
+                    alert(error instanceof Error ? error.message : "Failed to add lead");
+                  } finally {
+                    setAddingLead(false);
+                  }
                 }}
-                className="flex-1 h-10 rounded-lg bg-green-500 text-white text-sm font-medium disabled:opacity-50 hover:bg-green-600 transition-colors">
-                {addingLead ? "Adding..." : "Add & Build Site"}
+                disabled={addingLead}
+                className="h-10 rounded-lg bg-blue-electric px-4 text-sm font-medium text-white transition-colors hover:bg-blue-deep disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {addingLead ? "Adding..." : "Add Lead"}
               </button>
             </div>
           </div>

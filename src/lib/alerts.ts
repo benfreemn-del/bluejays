@@ -80,19 +80,42 @@ function getAlertEmoji(type: AlertType): string {
 
 // Trigger functions for common alert scenarios
 
+/** Send a raw SMS alert to Ben — use for custom messages with action links. */
+export async function sendOwnerAlert(message: string): Promise<void> {
+  await sendOwnerSms(message);
+}
+
 export async function alertHighValueLead(prospect: Prospect) {
+  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com";
+  const previewUrl = `${BASE_URL}${prospect.generatedSiteUrl || `/preview/${prospect.id}`}`;
+  const phone = prospect.phone || "N/A";
+  const callLine = prospect.phone ? `📞 Call: ${phone}` : `📞 Phone: N/A`;
   await alertOwner({
     type: "high-value-lead",
-    message: `High-value lead detected!\n${prospect.businessName} (${prospect.category})\nRating: ${prospect.googleRating} (${prospect.reviewCount} reviews)\nPhone: ${prospect.phone || "N/A"}`,
+    message: [
+      `High-value lead: ${prospect.businessName} (${prospect.category})`,
+      `⭐ ${prospect.googleRating || "?"} stars · ${prospect.reviewCount || 0} reviews`,
+      callLine,
+      `🌐 ${previewUrl}`,
+      `📋 ${BASE_URL}/dashboard`,
+    ].join("\n"),
     prospect,
     timestamp: new Date().toISOString(),
   });
 }
 
 export async function alertProspectResponded(prospect: Prospect, response: string) {
+  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com";
+  const previewUrl = `${BASE_URL}${prospect.generatedSiteUrl || `/preview/${prospect.id}`}`;
   await alertOwner({
     type: "prospect-responded",
-    message: `${prospect.businessName} replied!\nPreview: "${response.substring(0, 100)}..."`,
+    message: [
+      `💬 ${prospect.businessName} replied!`,
+      `"${response.substring(0, 120)}"`,
+      prospect.phone ? `📞 Call: ${prospect.phone}` : "",
+      `🌐 Preview: ${previewUrl}`,
+      `📋 Dashboard: ${BASE_URL}/dashboard`,
+    ].filter(Boolean).join("\n"),
     prospect,
     timestamp: new Date().toISOString(),
   });

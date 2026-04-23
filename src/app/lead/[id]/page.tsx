@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import type { Prospect } from "@/lib/types";
 import { CATEGORY_CONFIG } from "@/lib/types";
@@ -39,14 +39,10 @@ export default function LeadPage() {
   const [simOpen, setSimOpen] = useState(false);
 
   useEffect(() => {
-    loadData();
-  }, [id]);
-
-  useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [timeline]);
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     setLoading(true);
     try {
       // Load prospect
@@ -129,7 +125,11 @@ export default function LeadPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, router]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   const addNote = async () => {
     if (!noteInput.trim()) return;

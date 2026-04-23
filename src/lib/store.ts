@@ -2,9 +2,67 @@ import fs from "fs";
 import path from "path";
 import type { Prospect, ScrapedData } from "./types";
 import { supabase, isSupabaseConfigured } from "./supabase";
+import { canonicalizeCity, normalizeAddress } from "./address-normalizer";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const PROSPECTS_FILE = path.join(DATA_DIR, "prospects.json");
+const GENERATED_SITE_FETCH_RETRIES = 3;
+const GENERATED_SITE_BACKOFF_MS = 250;
+
+function wait(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function logGeneratedSiteFetchError(id: string, attempt: number, error: unknown) {
+  console.error("[store] Failed to load generated site data", {
+    prospectId: id,
+    attempt,
+    error,
+  });
+}
+
+function logGeneratedSiteMissing(id: string) {
+  console.warn("[store] No generated site data found for prospect", {
+    prospectId: id,
+  });
+}
+
+interface GeneratedSiteRow {
+  site_data: object | null;
+}
+
+async function fetchGeneratedSiteRow(id: string): Promise<GeneratedSiteRow | null> {
+  const { data, error } = await supabase
+    .from("generated_sites")
+    .select("site_data")
+    .eq("prospect_id", id)
+    .limit(1);
+
+  if (error) {
+    throw error;
+  }
+
+  return Array.isArray(data) && data.length > 0 ? (data[0] as GeneratedSiteRow) : null;
+}
+
+async function getGeneratedSiteRowWithRetry(id: string): Promise<GeneratedSiteRow | null> {
+  for (let attempt = 1; attempt <= GENERATED_SITE_FETCH_RETRIES; attempt += 1) {
+    try {
+      return await fetchGeneratedSiteRow(id);
+    } catch (error) {
+      logGeneratedSiteFetchError(id, attempt, error);
+
+      if (attempt === GENERATED_SITE_FETCH_RETRIES) {
+        return null;
+      }
+
+      await wait(GENERATED_SITE_BACKOFF_MS * attempt);
+    }
+  }
+
+  return null;
+}
+
 
 function sanitizePhotoUrls(photos: unknown): string[] {
   if (!Array.isArray(photos)) return [];
@@ -18,8 +76,12 @@ function sanitizePhotoUrls(photos: unknown): string[] {
 function sanitizeScrapedData(scrapedData: ScrapedData | undefined): ScrapedData | undefined {
   if (!scrapedData) return scrapedData;
 
+  const normalizedAddress = normalizeAddress(scrapedData.address);
+
   return {
     ...scrapedData,
+    address: normalizedAddress,
+    city: canonicalizeCity(scrapedData.city, normalizedAddress),
     photos: sanitizePhotoUrls(scrapedData.photos),
     logoUrl: scrapedData.logoUrl?.trim() || undefined,
   };
@@ -31,14 +93,22 @@ function sanitizeGeneratedSiteData(data: object | null): object | null {
   const record = data as Record<string, unknown>;
   return {
     ...record,
+    address: normalizeAddress(typeof record.address === "string" ? record.address : undefined),
     photos: sanitizePhotoUrls(record.photos),
   };
 }
 
 function sanitizeProspect(prospect: Prospect): Prospect {
+  const normalizedAddress = normalizeAddress(prospect.address) || "";
+  const normalizedScrapedData = sanitizeScrapedData(prospect.scrapedData);
+
   return {
     ...prospect,
-    scrapedData: sanitizeScrapedData(prospect.scrapedData),
+    address: normalizedAddress,
+    city: canonicalizeCity(prospect.city, normalizedAddress || normalizedScrapedData?.address) || prospect.city,
+    adminNotes: prospect.adminNotes ?? undefined,
+    lastSubmittedAdminNotes: prospect.lastSubmittedAdminNotes ?? undefined,
+    scrapedData: normalizedScrapedData,
   };
 }
 
@@ -88,10 +158,16 @@ function dbToProspect(row: Record<string, unknown>): Prospect {
     source: (row.source as "inbound" | "scouted" | undefined) || undefined,
     pricingTier: (row.pricing_tier as "standard" | "free" | undefined) || "standard",
     selectedTheme: (row.selected_theme as "light" | "dark" | undefined) || undefined,
+    selectedVersion: (row.selected_version as "v1" | "v2" | undefined) || undefined,
     aiThemeRecommendation: (row.ai_theme_recommendation as "light" | "dark" | undefined) || undefined,
     qualityScore: row.quality_score as number | undefined,
     qualityNotes: row.quality_notes as string | undefined,
     qcReviewedAt: row.qc_reviewed_at as string | undefined,
+    adminNotes: (row.admin_notes as string | null) || undefined,
+    adminNotesUpdatedAt: row.admin_notes_updated_at as string | undefined,
+    adminNotesSubmittedAt: row.admin_notes_submitted_at as string | undefined,
+    lastSubmittedAdminNotes: (row.last_submitted_admin_notes as string | null) || undefined,
+    lastSubmittedTheme: (row.last_submitted_theme as "light" | "dark" | null) || undefined,
     createdAt: row.created_at as string,
     updatedAt: row.updated_at as string,
   });
@@ -126,7 +202,16 @@ function prospectToDb(p: Prospect) {
     source: sanitized.source || "scouted",
     pricing_tier: sanitized.pricingTier || "standard",
     selected_theme: sanitized.selectedTheme || null,
+    selected_version: sanitized.selectedVersion || null,
     ai_theme_recommendation: sanitized.aiThemeRecommendation || null,
+    quality_score: sanitized.qualityScore || null,
+    quality_notes: sanitized.qualityNotes || null,
+    qc_reviewed_at: sanitized.qcReviewedAt || null,
+    admin_notes: sanitized.adminNotes || null,
+    admin_notes_updated_at: sanitized.adminNotesUpdatedAt || null,
+    admin_notes_submitted_at: sanitized.adminNotesSubmittedAt || null,
+    last_submitted_admin_notes: sanitized.lastSubmittedAdminNotes || null,
+    last_submitted_theme: sanitized.lastSubmittedTheme || null,
   };
 }
 
@@ -241,18 +326,26 @@ export async function updateProspect(
     if (sanitizedUpdates.phone) dbUpdates.phone = sanitizedUpdates.phone;
     if (sanitizedUpdates.email) dbUpdates.email = sanitizedUpdates.email;
     if (sanitizedUpdates.ownerName) dbUpdates.owner_name = sanitizedUpdates.ownerName;
+    if (sanitizedUpdates.address !== undefined) dbUpdates.address = normalizeAddress(sanitizedUpdates.address) || "";
+    if (sanitizedUpdates.city !== undefined) dbUpdates.city = canonicalizeCity(sanitizedUpdates.city, sanitizedUpdates.address) || sanitizedUpdates.city;
     if (sanitizedUpdates.stripeCustomerId) dbUpdates.stripe_customer_id = sanitizedUpdates.stripeCustomerId;
     if (sanitizedUpdates.paidAt) dbUpdates.paid_at = sanitizedUpdates.paidAt;
     if (sanitizedUpdates.subscriptionStatus) dbUpdates.subscription_status = sanitizedUpdates.subscriptionStatus;
     if (sanitizedUpdates.mgmtSubscriptionId) dbUpdates.mgmt_subscription_id = sanitizedUpdates.mgmtSubscriptionId;
     if (sanitizedUpdates.instagramHandle !== undefined) dbUpdates.instagram_handle = sanitizedUpdates.instagramHandle;
     if (sanitizedUpdates.funnelPaused !== undefined) dbUpdates.funnel_paused = sanitizedUpdates.funnelPaused;
-    if (sanitizedUpdates.selectedTheme) dbUpdates.selected_theme = sanitizedUpdates.selectedTheme;
+    if (sanitizedUpdates.selectedTheme !== undefined) dbUpdates.selected_theme = sanitizedUpdates.selectedTheme || null;
+    if (sanitizedUpdates.selectedVersion !== undefined) dbUpdates.selected_version = sanitizedUpdates.selectedVersion || null;
     if (sanitizedUpdates.aiThemeRecommendation) dbUpdates.ai_theme_recommendation = sanitizedUpdates.aiThemeRecommendation;
     if (sanitizedUpdates.qualityScore !== undefined) dbUpdates.quality_score = sanitizedUpdates.qualityScore;
     if (sanitizedUpdates.qualityNotes !== undefined) dbUpdates.quality_notes = sanitizedUpdates.qualityNotes;
     if (sanitizedUpdates.qcReviewedAt !== undefined) dbUpdates.qc_reviewed_at = sanitizedUpdates.qcReviewedAt;
     if (sanitizedUpdates.pricingTier !== undefined) dbUpdates.pricing_tier = sanitizedUpdates.pricingTier;
+    if (sanitizedUpdates.adminNotes !== undefined) dbUpdates.admin_notes = sanitizedUpdates.adminNotes || null;
+    if (sanitizedUpdates.adminNotesUpdatedAt !== undefined) dbUpdates.admin_notes_updated_at = sanitizedUpdates.adminNotesUpdatedAt || null;
+    if (sanitizedUpdates.adminNotesSubmittedAt !== undefined) dbUpdates.admin_notes_submitted_at = sanitizedUpdates.adminNotesSubmittedAt || null;
+    if (sanitizedUpdates.lastSubmittedAdminNotes !== undefined) dbUpdates.last_submitted_admin_notes = sanitizedUpdates.lastSubmittedAdminNotes || null;
+    if (sanitizedUpdates.lastSubmittedTheme !== undefined) dbUpdates.last_submitted_theme = sanitizedUpdates.lastSubmittedTheme || null;
 
     const { data, error } = await supabase
       .from("prospects")
@@ -311,13 +404,14 @@ export async function saveScrapedData(id: string, data: object): Promise<void> {
 
 export async function getScrapedData(id: string): Promise<object | null> {
   if (isSupabaseConfigured()) {
-    const { data, error } = await supabase
-      .from("generated_sites")
-      .select("site_data")
-      .eq("prospect_id", id)
-      .single();
-    if (error || !data) return null;
-    return sanitizeGeneratedSiteData(data.site_data);
+    const row = await getGeneratedSiteRowWithRetry(id);
+
+    if (!row?.site_data) {
+      logGeneratedSiteMissing(id);
+      return null;
+    }
+
+    return sanitizeGeneratedSiteData(row.site_data);
   }
   const filePath = path.join(DATA_DIR, "scraped", `${id}.json`);
   if (!fs.existsSync(filePath)) return null;

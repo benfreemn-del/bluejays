@@ -1,5 +1,7 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element -- These static marketing and preview components intentionally use plain img tags to preserve existing markup and visual behavior during lint-only cleanup. */
+
 import { motion } from "framer-motion";
 import TemplateLayout from "./TemplateLayout";
 
@@ -416,7 +418,7 @@ export default function TutoringTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-[#818cf8]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-[#818cf8]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 {/* Hover glow */}
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_50%_0%,#818cf815,transparent_70%)]" />
@@ -476,7 +478,7 @@ export default function TutoringTemplate() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group relative text-center p-8 rounded-2xl border border-white/[0.06] hover:border-[#818cf8]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative text-center p-8 rounded-2xl border border-white/[0.10] hover:border-[#818cf8]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_50%_50%,#818cf812,transparent_70%)]" />
                 <div className="relative z-10">
@@ -515,7 +517,7 @@ export default function TutoringTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.12 }}
-                className="group relative rounded-2xl border border-white/[0.06] hover:border-[#818cf8]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative rounded-2xl border border-white/[0.10] hover:border-[#818cf8]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 {/* Photo */}
                 <div className="relative aspect-[3/4] overflow-hidden">
@@ -535,7 +537,7 @@ export default function TutoringTemplate() {
                     <p className="text-[#818cf8] text-sm font-semibold mb-3">{tutor.title}</p>
                     <div className="flex flex-wrap gap-2">
                       {tutor.specialties.map((s) => (
-                        <span key={s} className="text-[10px] font-semibold uppercase tracking-wider text-white/60 bg-white/10 border border-white/10 px-2.5 py-1 rounded-full">
+                        <span key={s} className="text-[10px] font-semibold uppercase tracking-wider text-white/60 bg-white/10 border border-white/15 px-2.5 py-1 rounded-full">
                           {s}
                         </span>
                       ))}
@@ -572,7 +574,7 @@ export default function TutoringTemplate() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group relative text-center p-8 rounded-2xl border border-white/[0.06] hover:border-[#818cf8]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative text-center p-8 rounded-2xl border border-white/[0.10] hover:border-[#818cf8]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_50%_50%,#818cf812,transparent_70%)]" />
                 <div className="relative z-10">
@@ -616,7 +618,7 @@ export default function TutoringTemplate() {
             >
               <div className="relative w-full aspect-[4/5] max-w-md mx-auto">
                 {/* Main image */}
-                <div className="absolute top-0 left-0 w-[75%] h-[70%] rounded-2xl overflow-hidden border-2 border-white/[0.06] shadow-2xl z-10">
+                <div className="absolute top-0 left-0 w-[75%] h-[70%] rounded-2xl overflow-hidden border-2 border-white/[0.10] shadow-2xl z-10">
                   <img
                     src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&q=80"
                     alt="Students learning together"
@@ -624,7 +626,7 @@ export default function TutoringTemplate() {
                   />
                 </div>
                 {/* Secondary image */}
-                <div className="absolute bottom-0 right-0 w-[65%] h-[55%] rounded-2xl overflow-hidden border-2 border-white/[0.06] shadow-2xl z-20">
+                <div className="absolute bottom-0 right-0 w-[65%] h-[55%] rounded-2xl overflow-hidden border-2 border-white/[0.10] shadow-2xl z-20">
                   <img
                     src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=400&q=80"
                     alt="Student studying"
@@ -667,7 +669,7 @@ export default function TutoringTemplate() {
                   { icon: <BookIcon />, title: "1-on-1 Instruction", desc: "Undivided attention from a credentialed educator" },
                   { icon: <ChartIcon />, title: "Progress Tracking", desc: "Bi-weekly reports so parents see measurable improvement" },
                 ].map((feature) => (
-                  <div key={feature.title} className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/[0.04] hover:border-[#818cf8]/20 transition-colors duration-300">
+                  <div key={feature.title} className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.07] border border-white/[0.04] hover:border-[#818cf8]/20 transition-colors duration-300">
                     <div className="w-10 h-10 rounded-lg bg-[#818cf8]/10 border border-[#818cf8]/20 flex items-center justify-center text-[#818cf8] shrink-0">
                       {feature.icon}
                     </div>
@@ -711,7 +713,7 @@ export default function TutoringTemplate() {
                 className={`group relative p-8 rounded-2xl border transition-all duration-500 overflow-hidden ${
                   plan.highlighted
                     ? "border-[#818cf8]/40 bg-gradient-to-b from-[#818cf8]/[0.08] to-transparent"
-                    : "border-white/[0.06] hover:border-[#818cf8]/30 bg-white/[0.02]"
+                    : "border-white/[0.10] hover:border-[#818cf8]/30 bg-white/[0.07]"
                 }`}
               >
                 {plan.highlighted && (
@@ -783,7 +785,7 @@ export default function TutoringTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.06 }}
-                className="group p-6 rounded-2xl border border-white/[0.06] hover:border-[#818cf8]/20 transition-all duration-500 overflow-hidden relative bg-white/[0.02]"
+                className="group p-6 rounded-2xl border border-white/[0.10] hover:border-[#818cf8]/20 transition-all duration-500 overflow-hidden relative bg-white/[0.07]"
               >
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_0%_50%,#818cf810,transparent_70%)]" />
                 <div className="relative z-10 flex gap-4">

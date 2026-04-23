@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { rateLimit } from "@/lib/rate-limit";
 import { getProspect, updateProspect } from "@/lib/store";
 import { createCheckoutSession } from "@/lib/stripe";
 
@@ -6,15 +7,22 @@ import { createCheckoutSession } from "@/lib/stripe";
  * POST /api/checkout/create
  *
  * Creates a Stripe Checkout Session for a prospect who has claimed their site.
- * Includes both the $997 one-time setup fee and $100/year management subscription.
+ * Includes the $997 one-time fee for custom website design, domain registration, and hosting setup, plus the deferred $100/year maintenance subscription for domain renewal, hosting, ongoing maintenance, and support.
  *
  * Request body: { prospectId: string }
  * Response: { url: string } — redirect the client to this Stripe Checkout URL
  */
 export async function POST(request: NextRequest) {
+  const ip = request.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
+  const { allowed } = rateLimit(`checkout:${ip}`, 10, 60 * 60 * 1000);
+  if (!allowed) {
+    return NextResponse.json({ error: "Too many checkout attempts. Please try again later." }, { status: 429 });
+  }
+
   try {
     const body = await request.json();
-    const { prospectId } = body;
+    const { prospectId, plan } = body;
+    const paymentPlan = plan === "installment" ? "installment" : "full" as const;
 
     if (!prospectId) {
       return NextResponse.json(
@@ -48,7 +56,8 @@ export async function POST(request: NextRequest) {
       prospectId,
       prospect.businessName,
       email,
-      pricingTier
+      pricingTier,
+      paymentPlan
     );
 
     return NextResponse.json({ url: session.url, sessionId: session.id });

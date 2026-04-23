@@ -4,19 +4,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import BluejayLogo, { BluejayLogoCircle } from "./BluejayLogo";
 
-/* ───────────────────────── Auth hook ───────────────────────── */
-
-/** Returns true when the bluejays_auth cookie is present in the browser. */
-function useIsAuthenticated(): boolean {
-  const [isAuth, setIsAuth] = useState(false);
-  useEffect(() => {
-    const cookies = document.cookie.split(";").map((c) => c.trim());
-    const hasAuth = cookies.some((c) => c.startsWith("bluejays_auth="));
-    setIsAuth(hasAuth);
-  }, []);
-  return isAuth;
-}
-
 /* ───────────────────────── Types ───────────────────────── */
 
 interface SiteCard {
@@ -58,8 +45,7 @@ const phrases = ["BlueJays Stand Out", "See For Yourself"];
 export default function Hero() {
   const [phase, setPhase] = useState(0);
   const [bubbleVisible, setBubbleVisible] = useState(true);
-  const [cards, setCards] = useState<SiteCard[]>(defaultSiteCards);
-  const isAuthenticated = useIsAuthenticated();
+  const [cards] = useState<SiteCard[]>(defaultSiteCards);
 
   useEffect(() => {
     const timers = [
@@ -111,11 +97,7 @@ export default function Hero() {
         </div>
         {/* Desktop nav */}
         <div className="hidden md:flex items-center gap-5">
-          {isAuthenticated ? (
-            <a href="/dashboard" className="text-sm text-white/60 hover:text-white transition-colors duration-300 font-medium">Dashboard</a>
-          ) : (
-            <a href="/login" className="text-sm text-white/60 hover:text-white transition-colors duration-300 font-medium">Login</a>
-          )}
+          <a href="/login" className="text-sm text-white/60 hover:text-white transition-colors duration-300 font-medium">Login</a>
           <a href="/get-started" className="group relative h-10 px-6 rounded-full bg-gradient-to-r from-sky-500 to-blue-600 text-white text-sm font-semibold flex items-center gap-2 hover:shadow-[0_0_30px_rgba(14,165,233,0.5)] transition-all duration-300">
             Request a Free Website <ArrowUpRightIcon />
           </a>
@@ -134,17 +116,7 @@ export default function Hero() {
             <div className="absolute right-0 top-12 w-48 py-2 rounded-xl bg-[#0a1628]/95 backdrop-blur-xl border border-white/10 shadow-2xl z-50">
               {/* Public links — always visible */}
               <a href="/get-started" className="block px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5">Request a Free Website</a>
-              {/* Auth-gated links — only shown when logged in */}
-              {isAuthenticated ? (
-                <>
-                  <div className="my-1 border-t border-white/10" />
-                  <a href="/dashboard" className="block px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5">Dashboard</a>
-                  <a href="/spending" className="block px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5">Spending</a>
-                  <a href="/scripts" className="block px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5">AI Convos</a>
-                </>
-              ) : (
-                <a href="/login" className="block px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5">Login</a>
-              )}
+              <a href="/login" className="block px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5">Login</a>
             </div>
           </details>
         </div>
@@ -314,7 +286,7 @@ export default function Hero() {
 
         {/* Cards */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-          {cards.map((site, i) => (
+          {cards.map((site) => (
             <motion.a
               key={site.name}
               href={site.href}
@@ -417,43 +389,6 @@ export default function Hero() {
       </motion.div>
     </section>
   );
-}
-
-/* ───────────────────────── Helpers ───────────────────────── */
-
-function getCategoryIcon(category: string): string {
-  const icons: Record<string, string> = {
-    "Real Estate": "\u{1F3E0}",
-    Dental: "\u{1F9B7}",
-    "Law Firm": "\u2696\uFE0F",
-    Landscaping: "\u{1F333}",
-    Salon: "\u2702\uFE0F",
-    Roofing: "\u{1F3D7}\uFE0F",
-    Fitness: "\u{1F4AA}",
-    "Pet Services": "\u{1F43E}",
-    Electrician: "\u26A1",
-    Plumber: "\u{1F527}",
-    HVAC: "\u2744\uFE0F",
-    "Auto Repair": "\u{1F697}",
-    Veterinary: "\u{1F415}",
-    Photography: "\u{1F4F8}",
-    Catering: "\u{1F37D}\uFE0F",
-  };
-  return icons[category] || "\u{1F310}";
-}
-
-function getCategoryTagline(category: string): string {
-  const taglines: Record<string, string> = {
-    "Real Estate": "Luxury listings & expert agents",
-    Dental: "Modern care for the whole family",
-    "Law Firm": "Experienced attorneys, proven results",
-    Landscaping: "Transform your outdoor space",
-    Salon: "Where artistry meets luxury",
-    Roofing: "Quality roofing you can trust",
-    Fitness: "Train harder, live better",
-    "Pet Services": "Premium care for your pets",
-  };
-  return taglines[category] || "Professional services, stunning design";
 }
 
 /* ───────────────────────── Default Cards ───────────────────────── */

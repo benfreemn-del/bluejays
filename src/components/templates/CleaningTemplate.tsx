@@ -1,5 +1,7 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element -- These static marketing and preview components intentionally use plain img tags to preserve existing markup and visual behavior during lint-only cleanup. */
+
 import { motion } from "framer-motion";
 import TemplateLayout from "./TemplateLayout";
 
@@ -383,7 +385,7 @@ export default function CleaningTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-[#38bdf8]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-[#38bdf8]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_50%_0%,#38bdf815,transparent_70%)]" />
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#38bdf8]/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -442,7 +444,7 @@ export default function CleaningTemplate() {
                 className={`group relative p-8 rounded-2xl border transition-all duration-500 overflow-hidden ${
                   plan.popular
                     ? "border-[#38bdf8]/40 bg-[#38bdf8]/[0.04]"
-                    : "border-white/[0.06] hover:border-[#38bdf8]/30 bg-white/[0.02]"
+                    : "border-white/[0.10] hover:border-[#38bdf8]/30 bg-white/[0.07]"
                 }`}
               >
                 {plan.popular && (
@@ -545,7 +547,7 @@ export default function CleaningTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group text-center p-8 rounded-2xl border border-white/[0.06] hover:border-[#38bdf8]/30 bg-white/[0.02] transition-all duration-500"
+                className="group text-center p-8 rounded-2xl border border-white/[0.10] hover:border-[#38bdf8]/30 bg-white/[0.07] transition-all duration-500"
               >
                 <div className="w-16 h-16 mx-auto rounded-xl bg-[#38bdf8]/10 border border-[#38bdf8]/20 flex items-center justify-center text-[#38bdf8] mb-5 group-hover:bg-[#38bdf8]/20 group-hover:scale-110 transition-all duration-300">
                   {item.icon}
@@ -582,7 +584,7 @@ export default function CleaningTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.12 }}
-                className="group relative rounded-2xl border border-white/[0.06] hover:border-[#38bdf8]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative rounded-2xl border border-white/[0.10] hover:border-[#38bdf8]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 <div className="relative aspect-[3/4] overflow-hidden">
                   <img
@@ -635,7 +637,7 @@ export default function CleaningTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-[#38bdf8]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-[#38bdf8]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-[#38bdf8]/40 via-[#38bdf8]/10 to-transparent" />
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_0%_0%,#38bdf810,transparent_70%)]" />
@@ -649,7 +651,7 @@ export default function CleaningTemplate() {
                     ))}
                   </div>
                   <p className="text-muted leading-relaxed mb-6 text-sm">&ldquo;{t.text}&rdquo;</p>
-                  <div className="flex items-center gap-3 pt-4 border-t border-white/[0.06]">
+                  <div className="flex items-center gap-3 pt-4 border-t border-white/[0.10]">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#38bdf8]/30 to-[#38bdf8]/10 flex items-center justify-center text-sm font-bold text-[#38bdf8]">
                       {t.name.charAt(0)}
                     </div>
@@ -690,7 +692,7 @@ export default function CleaningTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.04 }}
-                className="group flex items-center gap-3 p-4 rounded-xl border border-white/[0.06] hover:border-[#38bdf8]/30 bg-white/[0.02] transition-all duration-300"
+                className="group flex items-center gap-3 p-4 rounded-xl border border-white/[0.10] hover:border-[#38bdf8]/30 bg-white/[0.07] transition-all duration-300"
               >
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5 text-[#38bdf8] shrink-0">
                   <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />

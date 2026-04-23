@@ -60,7 +60,8 @@ export async function createCheckoutSession(
   prospectId: string,
   businessName: string,
   email: string,
-  pricingTier: "standard" | "free" = "standard"
+  pricingTier: "standard" | "free" = "standard",
+  paymentPlan: "full" | "installment" = "full"
 ): Promise<CheckoutSession> {
   if (!STRIPE_SECRET_KEY) {
     // Mock mode — return fake checkout URL for development
@@ -81,28 +82,45 @@ export async function createCheckoutSession(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const lineItems: any[] = [];
 
-  // Determine setup amount based on pricing tier
+  // Determine setup amount based on pricing tier and payment plan
   const isFreeTier = pricingTier === "free";
-  const setupAmountCents = isFreeTier ? 3000 : 99700; // $30 or $997
-  const setupDescription = isFreeTier
-    ? "Website setup — domain and server costs"
-    : "Premium custom website design, hosting setup, and deployment";
+  const isInstallment = paymentPlan === "installment" && !isFreeTier;
 
-  if (setupPriceId && !isFreeTier) {
-    // Only use the pre-created $997 price ID for standard tier
-    lineItems.push({ price: setupPriceId, quantity: 1 });
-  } else {
+  if (isInstallment) {
+    // 3 monthly payments of $349 ($1,047 total — slight premium for flexibility)
     lineItems.push({
       price_data: {
         currency: "usd",
         product_data: {
           name: `Custom Website — ${businessName}`,
-          description: setupDescription,
+          description: "Premium custom website — Payment 1 of 3",
         },
-        unit_amount: setupAmountCents,
+        unit_amount: 34900, // $349
+        recurring: { interval: "month" as const, interval_count: 1 },
       },
       quantity: 1,
     });
+  } else {
+    const setupAmountCents = isFreeTier ? 3000 : 99700; // $30 or $997
+    const setupDescription = isFreeTier
+      ? "Website setup — domain and server costs"
+      : "Premium custom website design, hosting setup, and deployment";
+
+    if (setupPriceId && !isFreeTier) {
+      lineItems.push({ price: setupPriceId, quantity: 1 });
+    } else {
+      lineItems.push({
+        price_data: {
+          currency: "usd",
+          product_data: {
+            name: `Custom Website — ${businessName}`,
+            description: setupDescription,
+          },
+          unit_amount: setupAmountCents,
+        },
+        quantity: 1,
+      });
+    }
   }
 
   // --- Optional $100/year management subscription ---
@@ -116,9 +134,9 @@ export async function createCheckoutSession(
   }
 
   // Determine session mode:
-  // - "subscription" if we have a recurring line item (mgmtPriceId)
+  // - "subscription" if we have a recurring line item (mgmtPriceId or installment plan)
   // - "payment" for one-time only
-  const mode: "subscription" | "payment" = mgmtPriceId
+  const mode: "subscription" | "payment" = (mgmtPriceId || isInstallment)
     ? "subscription"
     : "payment";
 

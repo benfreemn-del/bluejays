@@ -5,10 +5,11 @@ import type { Category } from "@/lib/types";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { city, category, limit } = body as {
+    const { city, category, limit, pageToken } = body as {
       city: string;
       category: Category;
       limit?: number;
+      pageToken?: string;
     };
 
     if (!city || !category) {
@@ -18,11 +19,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const prospects = await scout({ city, category, limit });
+    const result = await scout({ city, category, limit, pageToken });
 
     return NextResponse.json({
-      message: `Found ${prospects.length} prospects`,
-      prospects,
+      message: `Found ${result.prospects.length} prospects`,
+      prospects: result.prospects,
+      nextPageToken: result.nextPageToken || null,
+      exhausted: result.prospects.length === 0,
     });
   } catch (error) {
     return NextResponse.json(

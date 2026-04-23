@@ -1,5 +1,8 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element -- These static marketing and preview components intentionally use plain img tags to preserve existing markup and visual behavior during lint-only cleanup. */
+/* eslint-disable react-hooks/purity -- Decorative particle values are intentionally randomized for static visual effects in these marketing pages and previews; this preserves existing appearance without changing business logic. */
+
 import { useState, useEffect, useRef, useCallback } from "react";
 import {
   motion,
@@ -30,6 +33,7 @@ import type { GeneratedSiteData } from "@/lib/generator";
 import BluejayLogo from "../BluejayLogo";
 import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
+import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
 
 /* ───────────────────────── SPRING CONFIGS ───────────────────────── */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
@@ -72,8 +76,8 @@ function getServiceIcon(serviceName: string) {
 }
 
 /* ───────────────────────── STOCK FALLBACK IMAGES ───────────────────────── */
-const STOCK_HERO = "https://images.unsplash.com/photo-1587616211892-f743fcca64f9?w=1400&q=80";
-const STOCK_ABOUT = "https://images.unsplash.com/photo-1544776193-352d25ca82cd?w=600&q=80";
+const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1587616211892-f743fcca64f9?w=1400&q=80"];
+const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1544776193-352d25ca82cd?w=600&q=80"];
 const STOCK_PROJECTS = [
   "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=600&q=80",
   "https://images.unsplash.com/photo-1560969184-10fe8719e047?w=600&q=80",
@@ -249,14 +253,46 @@ function AnimatedSection({ children, className = "" }: { children: React.ReactNo
   );
 }
 
+const DAYCARE_COMPARISON_ROWS = [
+  { feature: "Licensed & State Inspected", us: true, them: "Varies" },
+  { feature: "Low Staff-to-Child Ratios", us: true, them: "Minimum Only" },
+  { feature: "Curriculum-Based Learning", us: true, them: "Sometimes" },
+  { feature: "Daily Photo/Video Updates", us: true, them: "No" },
+  { feature: "Nutritious Meals Included", us: true, them: "Extra Cost" },
+  { feature: "CPR & First Aid Certified Staff", us: true, them: "Varies" },
+  { feature: "Flexible Drop-off/Pick-up", us: true, them: "Limited" },
+];
+
+const DAYCARE_PRICING_TIERS = [
+  { title: "Part-Time", price: "$175", period: "/week", features: ["3 days per week", "Morning or afternoon", "Snacks included", "Daily updates", "Age-appropriate curriculum"], featured: false },
+  { title: "Full-Time", price: "$275", period: "/week", features: ["5 days per week", "Full day coverage", "Meals & snacks", "Daily photos", "Learning assessments", "Field trips"], featured: true },
+  { title: "Premium", price: "$350", period: "/week", features: ["Extended hours", "5 days per week", "All meals included", "Enrichment classes", "Weekly progress reports", "Priority enrollment"], featured: false },
+];
+
+const DAYCARE_QUIZ_OPTIONS = [
+  { label: "Infant Care (0-18mo)", desc: "Nurturing care focused on milestones and comfort.", color: "#ec4899" },
+  { label: "Toddler (18mo-3yr)", desc: "Exploring, learning, and building social skills.", color: "#8b5cf6" },
+  { label: "Preschool (3-5yr)", desc: "Kindergarten readiness and early academics.", color: "#3b82f6" },
+  { label: "Before/After School", desc: "Safe, fun care for school-age children.", color: "#22c55e" },
+];
+
 export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [quizAnswer, setQuizAnswer] = useState<number | null>(null);
   const { ACCENT, ACCENT_GLOW } = getAccent(data.accentColor);
 
-  const heroImage = data.photos?.[0] || STOCK_HERO;
-  const aboutImage = data.photos?.[1] || STOCK_ABOUT;
-  const projectImages = data.photos?.length > 2 ? data.photos.slice(2, 6) : STOCK_PROJECTS;
+  const uniquePhotos = data.photos ? [...new Set(data.photos)] : [];
+
+
+  const heroImage = uniquePhotos[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
+
+
+  const heroCardImage = uniquePhotos[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 1);
+
+
+  const aboutImage = uniquePhotos[2] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 2);
+  const projectImages = data.photos?.length > 2 ? data.photos.slice(2, 6) : pickGallery(STOCK_PROJECTS, data.businessName);
 
   const processSteps = [
     { step: "01", title: "Schedule a Tour", desc: "Visit our bright, safe facility and meet our caring teachers in person." },
@@ -326,22 +362,19 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
 
         <div className="absolute inset-0">
           <img src={heroImage} alt={`${data.businessName}`} className="w-full h-full object-cover object-center" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-black/10" />
-          <div className="absolute inset-0 bg-gradient-to-t from-white/80 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-black/70" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20" />
         </div>
-        <SparklePattern opacity={0.04} accent={ACCENT} />
-        <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full blur-[200px] pointer-events-none" style={{ background: `${ACCENT}08` }} />
-        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full blur-[160px] pointer-events-none" style={{ background: `${YELLOW}06` }} />
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
           <div className="space-y-8">
             <div>
               <p className="text-sm uppercase tracking-widest mb-4" style={{ color: ACCENT }}>Licensed Child Care Center</p>
-              <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-[#1c1917]" style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}>
+              <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-[#1c1917]" style={{ textShadow: "0 2px 20px rgba(0,0,0,0.8), 0 4px 40px rgba(0,0,0,0.5)" }}>
                 {data.tagline}
               </h1>
             </div>
             <p className="text-lg text-[#6b7280] max-w-md leading-relaxed">
-              {data.about.length > 160 ? data.about.slice(0, 160).trim() + "..." : data.about}
+              {(() => { const t = data.about; if (t.length <= 180) return t; const dot = t.indexOf('.', 80); return dot > 0 && dot < 220 ? t.slice(0, dot + 1) : t.slice(0, 180).trim() + '...'; })()}
             </p>
             <div className="flex flex-wrap gap-4">
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-[#1c1917] flex items-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
@@ -358,13 +391,13 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
           </div>
           <div className="hidden md:block relative">
             <div className="relative rounded-2xl overflow-hidden border border-gray-200">
-              <img src={heroImage} alt={`${data.businessName} child care`} className="w-full h-[500px] object-cover" />
+              <img src={heroCardImage} alt={`${data.businessName} child care`} className="w-full h-[500px] object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
               <div className="absolute inset-0 bg-gradient-to-r from-black/40/40 to-transparent" />
               <div className="absolute bottom-6 left-6 flex items-center gap-3">
                 <div className="px-4 py-2 rounded-full backdrop-blur-md bg-black/50 border flex items-center gap-2" style={{ borderColor: `${ACCENT}4d` }}>
                   <ShieldCheck size={18} weight="fill" style={{ color: ACCENT }} />
-                  <span className="text-sm font-semibold text-[#1c1917]">Bonded &amp; Insured</span>
+                  <span className="text-sm font-semibold text-white">Bonded &amp; Insured</span>
                 </div>
               </div>
             </div>
@@ -508,8 +541,8 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
                   <img src={src} alt={titles[i] || `Project ${i + 1}`} className="w-full h-64 object-cover transition-transform duration-700 group-hover:scale-105" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-6">
-                    <h3 className="text-lg font-bold text-[#1c1917] mb-1">{titles[i] || `Project ${i + 1}`}</h3>
-                    <p className="text-sm text-[#4b5563]">{descs[i] || ""}</p>
+                    <h3 className="text-lg font-bold text-white mb-1">{titles[i] || `Project ${i + 1}`}</h3>
+                    <p className="text-sm text-white/70">{descs[i] || ""}</p>
                   </div>
                 </div>
               );
@@ -518,13 +551,116 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 8. TESTIMONIALS ══════════════════ */}
+      {/* ══════════════════ 8. COMPARISON TABLE ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9ff 0%, #f5f0ff 50%, #faf9ff 100%)" }} />
+        <SparklePattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <AnimatedSection><SectionHeader badge="Compare" title={`${data.businessName} vs. Other Daycares`} accent={ACCENT} /></AnimatedSection>
+          <GlassCard className="overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead><tr className="border-b border-gray-200"><th className="px-6 py-4 text-sm font-semibold text-[#6b7280]">Feature</th><th className="px-6 py-4 text-sm font-semibold text-center" style={{ color: ACCENT }}>{data.businessName}</th><th className="px-6 py-4 text-sm font-semibold text-center text-[#9ca3af]">Other Daycares</th></tr></thead>
+                <tbody>
+                  {DAYCARE_COMPARISON_ROWS.map((row, i) => (
+                    <tr key={i} className="border-b border-gray-100">
+                      <td className="px-6 py-4 text-sm text-[#4b5563]">{row.feature}</td>
+                      <td className="px-6 py-4 text-center"><CheckCircle size={20} weight="fill" className="inline" style={{ color: "#22c55e" }} /></td>
+                      <td className="px-6 py-4 text-center text-sm text-[#9ca3af]">{row.them}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </GlassCard>
+        </div>
+      </section>
+
+      {/* ══════════════════ 8b. PRICING TIERS ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #fefefe 0%, #faf9ff 50%, #fefefe 100%)" }} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <AnimatedSection><SectionHeader badge="Tuition" title="Enrollment Options" subtitle="Affordable, transparent pricing. No hidden fees or surprise charges." accent={ACCENT} /></AnimatedSection>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {DAYCARE_PRICING_TIERS.map((tier) => (
+              <GlassCard key={tier.title} className={`p-8 h-full flex flex-col ${tier.featured ? "ring-2" : ""}`} style={tier.featured ? { borderColor: ACCENT, boxShadow: `0 0 30px ${ACCENT}22` } as React.CSSProperties : undefined}>
+                {tier.featured && <span className="inline-block self-start text-xs font-bold uppercase tracking-widest mb-4 px-3 py-1 rounded-full text-white" style={{ background: ACCENT }}>Most Popular</span>}
+                <h3 className="text-xl font-bold text-[#1c1917] mb-1">{tier.title}</h3>
+                <div className="flex items-baseline gap-1 mb-4"><span className="text-4xl font-black text-[#1c1917]">{tier.price}</span><span className="text-[#9ca3af] text-sm">{tier.period}</span></div>
+                <ul className="space-y-3 flex-1 mb-6">{tier.features.map((f) => <li key={f} className="flex items-center gap-2 text-sm text-[#4b5563]"><CheckCircle size={16} weight="fill" style={{ color: ACCENT }} />{f}</li>)}</ul>
+                <PhoneLink phone={data.phone} className="block w-full py-3 rounded-xl text-center font-bold text-sm transition-all" style={tier.featured ? { background: ACCENT, color: "#fff" } : { background: `${ACCENT}15`, color: ACCENT }}>Schedule a Tour</PhoneLink>
+              </GlassCard>
+            ))}
+          </div>
+          <p className="text-center text-sm text-[#9ca3af] mt-8">Tuition may vary by age group. Contact us for details and sibling discounts.</p>
+        </div>
+      </section>
+
+      {/* ══════════════════ 8c. AGE GROUP QUIZ ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9ff 0%, #f5f0ff 50%, #faf9ff 100%)" }} />
+        <SparklePattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-3xl mx-auto px-6 relative z-10">
+          <AnimatedSection><SectionHeader badge="Find Your Program" title="How Old Is Your Child?" accent={ACCENT} /></AnimatedSection>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {DAYCARE_QUIZ_OPTIONS.map((opt, i) => (
+              <button key={opt.label} onClick={() => setQuizAnswer(i)} className="text-left cursor-pointer">
+                <GlassCard className={`p-6 h-full transition-all duration-300 ${quizAnswer === i ? "ring-2" : ""}`} style={quizAnswer === i ? { borderColor: opt.color, boxShadow: `0 0 20px ${opt.color}22` } as React.CSSProperties : undefined}>
+                  <h4 className="text-lg font-bold text-[#1c1917] mb-1">{opt.label}</h4>
+                  <p className="text-sm text-[#6b7280]">{opt.desc}</p>
+                  {quizAnswer === i && (
+                    <div className="mt-4 pt-4 border-t border-gray-100">
+                      <PhoneLink phone={data.phone} className="inline-flex items-center gap-2 text-sm font-bold" style={{ color: opt.color }}><Phone size={16} weight="bold" /> Schedule a Tour <ArrowRight size={14} /></PhoneLink>
+                    </div>
+                  )}
+                </GlassCard>
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ 8d. VIDEO PLACEHOLDER ══════════════════ */}
+      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #fefefe 0%, #faf9ff 50%, #fefefe 100%)" }} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <AnimatedSection><SectionHeader badge="Take a Look" title="Tour Our Facility" accent={ACCENT} /></AnimatedSection>
+          <div className="relative rounded-2xl overflow-hidden border border-gray-200 aspect-video shadow-lg">
+            <img src={uniquePhotos[3] || pickFromPool(STOCK_PROJECTS, data.businessName, 3)} alt={`${data.businessName} facility`} className="w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+              <div className="w-20 h-20 rounded-full flex items-center justify-center cursor-pointer hover:scale-110 transition-transform" style={{ background: `${ACCENT}cc` }}><svg viewBox="0 0 24 24" fill="white" className="w-8 h-8 ml-1"><polygon points="5,3 19,12 5,21" /></svg></div>
+            </div>
+            <div className="absolute bottom-4 left-4 text-sm text-white/90 bg-black/40 px-3 py-1 rounded-full">Tour {data.businessName} and meet our teachers</div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ 8e. SAFETY CERTIFICATIONS ══════════════════ */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9ff 0%, #f5f0ff 100%)" }} />
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <p className="text-center text-xs font-bold uppercase tracking-widest mb-6" style={{ color: ACCENT }}>Safety &amp; Certifications</p>
+          <div className="flex flex-wrap justify-center gap-4">
+            {["State Licensed", "CPR/First Aid Certified", "Background Checked", "NAEYC Standards", "Fire Safety Inspected", "Health Department Approved"].map((cert) => (
+              <span key={cert} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium border" style={{ color: ACCENT, borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}><ShieldCheck size={16} weight="fill" />{cert}</span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ 9. TESTIMONIALS (with Google Reviews) ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9ff 0%, #f5f0ff 50%, #faf9ff 100%)" }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] right-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${ACCENT}06` }} /></div>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <AnimatedSection>          <SectionHeader badge="Testimonials" title="What Our Clients Say" accent={ACCENT} /></AnimatedSection>
+          {/* Google Reviews Header */}
+          <div className="flex flex-col items-center gap-2 mb-8">
+            <div className="flex items-center gap-1">{Array.from({ length: 5 }).map((_, i) => <Star key={i} size={22} weight="fill" style={{ color: "#facc15" }} />)}</div>
+            <p className="text-[#1c1917] font-bold text-lg">{data.googleRating || "4.9"} out of 5</p>
+            <span className="text-[#9ca3af] text-sm">based on {data.reviewCount || "100+"} Google reviews</span>
+          </div>
+          <AnimatedSection><SectionHeader badge="Parent Reviews" title="What Parents Are Saying" accent={ACCENT} /></AnimatedSection>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {testimonials.map((t, i) => (
               <GlassCard key={i} className="p-6 h-full flex flex-col">
@@ -539,7 +675,7 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 9. FRESH HOME CTA ══════════════════ */}
+      {/* ══════════════════ 10. FRESH HOME CTA ══════════════════ */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT}cc, ${ACCENT})` }} />
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='40' height='40' fill='none'/%3E%3Cpath d='M0 0L40 40M40 0L0 40' stroke='%23000' stroke-width='0.5'/%3E%3C/svg%3E\")" }} />
@@ -703,6 +839,141 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
                 </MagneticButton>
               </form>
             </GlassCard>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ DAILY SCHEDULE ══════════════════ */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9ff 0%, #f5f0ff 50%, #faf9ff 100%)" }} />
+        <SparklePattern opacity={0.012} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <Clock size={40} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-3" />
+            <h2 className="text-3xl md:text-4xl font-extrabold" style={{ color: "#1e1b4b" }}>A Day at {data.businessName}</h2>
+            <p className="text-slate-500 mt-3 max-w-xl mx-auto">Our structured daily schedule balances learning, play, meals, and rest for every age group.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {[
+              { time: "7:00 – 8:30 AM", activity: "Arrival & Free Play", desc: "Warm welcome, breakfast snack, and free exploration in learning centers" },
+              { time: "8:30 – 10:00 AM", activity: "Circle Time & Lessons", desc: "Group activities, songs, calendar, weather, letter and number of the day" },
+              { time: "10:00 – 11:00 AM", activity: "Outdoor Play", desc: "Supervised playground time, gross motor activities, nature walks" },
+              { time: "11:00 – 12:00 PM", activity: "Lunch & Story Time", desc: "Nutritious lunch followed by read-aloud and quiet activities" },
+              { time: "12:00 – 2:00 PM", activity: "Nap / Quiet Time", desc: "Restful nap for younger children, quiet reading and puzzles for older" },
+              { time: "2:00 – 4:00 PM", activity: "Enrichment & Art", desc: "STEM projects, art, music, Spanish, and hands-on learning" },
+              { time: "4:00 – 5:30 PM", activity: "Snack & Free Play", desc: "Afternoon snack, outdoor play, and parent pickup" },
+              { time: "5:30 – 6:00 PM", activity: "Extended Care", desc: "Calm activities, cleanup, and late pickup available" },
+            ].map((s) => (
+              <div key={s.time} className="flex items-start gap-4 rounded-2xl border border-purple-100 p-4" style={{ background: "rgba(255,255,255,0.7)" }}>
+                <span className="text-xs font-mono font-semibold shrink-0 w-28 pt-0.5" style={{ color: ACCENT }}>{s.time}</span>
+                <div>
+                  <h3 className="text-sm font-bold" style={{ color: "#1e1b4b" }}>{s.activity}</h3>
+                  <p className="text-xs text-slate-500">{s.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ CURRICULUM DETAIL ══════════════════ */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #f5f0ff 0%, #faf9ff 100%)" }} />
+        <SparklePattern opacity={0.01} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <GraduationCap size={40} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-3" />
+            <h2 className="text-3xl md:text-4xl font-extrabold" style={{ color: "#1e1b4b" }}>Our Curriculum</h2>
+            <div className="w-16 h-1 mx-auto mt-3 rounded-full" style={{ background: ACCENT }} />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {[
+              { area: "Language & Literacy", desc: "Phonics, vocabulary building, storytelling, and early reading skills" },
+              { area: "Math & Logic", desc: "Counting, patterns, shapes, sorting, and basic problem-solving" },
+              { area: "Science & Discovery", desc: "Nature exploration, simple experiments, cause-and-effect learning" },
+              { area: "Art & Creativity", desc: "Painting, drawing, sculpting, music, and dramatic play" },
+              { area: "Social-Emotional", desc: "Sharing, empathy, conflict resolution, and self-regulation skills" },
+              { area: "Physical Development", desc: "Gross motor play, fine motor activities, yoga, and movement" },
+            ].map((c) => (
+              <div key={c.area} className="rounded-2xl border border-purple-100 p-6" style={{ background: "rgba(255,255,255,0.7)" }}>
+                <Smiley size={24} weight="duotone" style={{ color: ACCENT }} className="mb-3" />
+                <h3 className="text-lg font-bold mb-2" style={{ color: "#1e1b4b" }}>{c.area}</h3>
+                <p className="text-sm text-slate-500 leading-relaxed">{c.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ PARENT COMMUNICATION ══════════════════ */}
+      <section className="relative z-10 py-16 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15 0%, #faf9ff 50%, ${ACCENT}08 100%)` }} />
+        <SparklePattern opacity={0.02} accent={ACCENT} />
+        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+          <HandHeart size={44} weight="fill" style={{ color: ACCENT }} className="mx-auto mb-4" />
+          <h2 className="text-3xl md:text-4xl font-extrabold mb-4" style={{ color: "#1e1b4b" }}>Stay Connected Every Day</h2>
+          <p className="text-slate-500 max-w-2xl mx-auto mb-6 text-lg leading-relaxed">
+            We believe parents should never feel out of the loop. {data.businessName} provides daily updates, photos, and milestone tracking so you always know how your child&apos;s day went.
+          </p>
+          <div className="flex flex-wrap justify-center gap-4 mb-8">
+            {["Daily Photo Updates", "Activity Reports", "Milestone Tracking", "Parent App Access", "Teacher Conferences"].map((item) => (
+              <span key={item} className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border" style={{ color: ACCENT, borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}>
+                <CheckCircle size={16} weight="fill" /> {item}
+              </span>
+            ))}
+          </div>
+          <a href={`tel:${data.phone}`} className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-white font-bold text-lg transition-transform hover:scale-105" style={{ background: ACCENT }}>
+            <Phone size={20} weight="fill" /> Schedule a Tour
+          </a>
+        </div>
+      </section>
+
+      {/* ══════════════════ WHY CHOOSE US ══════════════════ */}
+      <section className="relative z-10 py-20 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #f5f0ff 0%, #faf9ff 100%)" }} />
+        <SparklePattern opacity={0.01} accent={ACCENT} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-extrabold" style={{ color: "#1e1b4b" }}>Why Families Choose <span style={{ color: ACCENT }}>{data.businessName}</span></h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              { title: "Licensed & Inspected", desc: "Fully licensed facility exceeding all state safety and health requirements" },
+              { title: "Low Ratios", desc: "Small class sizes ensure your child receives personalized attention and care" },
+              { title: "Experienced Teachers", desc: "Early childhood education certified staff with years of classroom experience" },
+              { title: "Nutritious Meals", desc: "Fresh, healthy meals and snacks prepared daily meeting dietary guidelines" },
+            ].map((card) => (
+              <div key={card.title} className="rounded-2xl border border-purple-100 p-6 text-center" style={{ background: "rgba(255,255,255,0.7)" }}>
+                <CheckCircle size={28} weight="fill" style={{ color: ACCENT }} className="mx-auto mb-3" />
+                <h3 className="text-lg font-bold mb-2" style={{ color: "#1e1b4b" }}>{card.title}</h3>
+                <p className="text-sm text-slate-500 leading-relaxed">{card.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════ CERTIFICATIONS ROW ══════════════════ */}
+      <section className="relative z-10 py-12 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9ff 0%, #f5f0ff 100%)" }} />
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="flex flex-wrap justify-center gap-6">
+            {[
+              "State Licensed",
+              "CPR & First Aid Certified",
+              "Background Checked Staff",
+              "NAEYC Standards",
+              "Health Inspected",
+            ].map((badge) => (
+              <div
+                key={badge}
+                className="flex items-center gap-2 px-5 py-3 rounded-full border border-purple-100"
+                style={{ background: "rgba(255,255,255,0.7)" }}
+              >
+                <ShieldCheck size={18} weight="fill" style={{ color: ACCENT }} />
+                <span className="text-sm font-medium" style={{ color: "#1e1b4b" }}>{badge}</span>
+              </div>
+            ))}
           </div>
         </div>
       </section>

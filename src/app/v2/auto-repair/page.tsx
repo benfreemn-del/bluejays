@@ -1,8 +1,13 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element -- Static marketing showcase uses plain img tags */
+/* eslint-disable react-hooks/purity -- Decorative particle values randomized for visual effects */
+
 import { useState, useRef, useCallback, useEffect } from "react";
 import {
   motion,
+  useScroll,
+  useTransform,
   useMotionValue,
   useSpring,
   useInView,
@@ -33,16 +38,26 @@ import {
   Tag,
   Trophy,
   Lightning,
-  Speedometer,
   Handshake,
-  Images,
   Envelope,
+  Engine,
+  Truck,
+  Tire,
+  CreditCard,
+  PlayCircle,
+  CarProfile,
+  Nut,
+  Warning,
+  Leaf,
+  Question,
+  Target,
+  UserCircle,
+  Buildings,
 } from "@phosphor-icons/react";
 
 /* ───────────────────────── SPRING CONFIG ───────────────────────── */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
-const springGentle = { type: "spring" as const, stiffness: 60, damping: 18 };
 
 const stagger = {
   hidden: {},
@@ -61,10 +76,11 @@ const RED_GLOW = "rgba(220, 38, 38, 0.15)";
 const SILVER = "#94a3b8";
 const DARK = "#111111";
 const DARK_CARD = "#1a1a1a";
+const DARK_CARD_ALT = "#1f1f1f";
 
 /* ───────────────────────── FLOATING SPARK PARTICLES ───────────────────────── */
 function FloatingParticles() {
-  const particles = Array.from({ length: 20 }, (_, i) => ({
+  const particles = Array.from({ length: 18 }, (_, i) => ({
     id: i,
     x: Math.random() * 100,
     delay: Math.random() * 8,
@@ -101,105 +117,6 @@ function FloatingParticles() {
           }}
         />
       ))}
-    </div>
-  );
-}
-
-/* ───────────────────────── ANIMATED PISTON SVG ───────────────────────── */
-function AnimatedPiston() {
-  return (
-    <div className="relative flex items-center justify-center">
-      <motion.div
-        className="absolute inset-0 rounded-full"
-        style={{
-          background: `radial-gradient(circle, ${RED_GLOW} 0%, transparent 70%)`,
-          filter: "blur(30px)",
-          willChange: "transform",
-        }}
-        animate={{ scale: [1, 1.15, 1] }}
-        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <svg
-        viewBox="0 0 200 260"
-        className="relative z-10 w-48 h-60 md:w-64 md:h-80"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        {/* Cylinder walls */}
-        <motion.path
-          d="M60 30 L60 180 M140 30 L140 180"
-          stroke={SILVER}
-          strokeWidth="3"
-          strokeLinecap="round"
-          opacity={0.4}
-          initial={{ pathLength: 0 }}
-          animate={{ pathLength: 1 }}
-          transition={{ duration: 1.5, ease: "easeInOut" }}
-        />
-        {/* Cylinder head (top) */}
-        <motion.path
-          d="M55 30 L145 30"
-          stroke={SILVER}
-          strokeWidth="4"
-          strokeLinecap="round"
-          opacity={0.5}
-          initial={{ pathLength: 0 }}
-          animate={{ pathLength: 1 }}
-          transition={{ duration: 1, ease: "easeInOut" }}
-        />
-        {/* Piston head — animated up/down */}
-        <motion.g
-          animate={{ y: [0, 60, 0] }}
-          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-        >
-          {/* Piston crown */}
-          <rect x="65" y="70" width="70" height="20" rx="3" stroke={RED} strokeWidth="2.5" fill={`${RED}22`} />
-          {/* Piston rings */}
-          <line x1="68" y1="78" x2="132" y2="78" stroke={RED} strokeWidth="1" opacity={0.6} />
-          <line x1="68" y1="84" x2="132" y2="84" stroke={RED} strokeWidth="1" opacity={0.4} />
-          {/* Connecting rod */}
-          <line x1="100" y1="90" x2="100" y2="160" stroke={SILVER} strokeWidth="3" strokeLinecap="round" />
-          {/* Wrist pin */}
-          <circle cx="100" cy="90" r="4" fill={RED} stroke={RED} strokeWidth="1" />
-        </motion.g>
-        {/* Crankshaft circle — rotates */}
-        <motion.g
-          animate={{ rotate: [0, 360] }}
-          transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
-          style={{ transformOrigin: "100px 210px" }}
-        >
-          <circle cx="100" cy="210" r="25" stroke={SILVER} strokeWidth="2" fill="none" opacity={0.3} />
-          <line x1="100" y1="210" x2="100" y2="185" stroke={RED} strokeWidth="2.5" strokeLinecap="round" />
-          <circle cx="100" cy="185" r="4" fill={RED} />
-        </motion.g>
-        {/* Crankshaft center */}
-        <circle cx="100" cy="210" r="6" fill={`${RED}44`} stroke={RED} strokeWidth="1.5" />
-        {/* Spark/combustion effect at top */}
-        <motion.circle
-          cx="100"
-          cy="45"
-          r="8"
-          fill={RED}
-          animate={{ opacity: [0, 0.8, 0], scale: [0.5, 1.5, 0.5] }}
-          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut", delay: 0.1 }}
-        />
-        <motion.circle
-          cx="85"
-          cy="40"
-          r="3"
-          fill={RED_LIGHT}
-          animate={{ opacity: [0, 0.6, 0], scale: [0.5, 1.2, 0.5] }}
-          transition={{ duration: 1.5, repeat: Infinity, delay: 0.2 }}
-        />
-        <motion.circle
-          cx="115"
-          cy="42"
-          r="3"
-          fill={RED_LIGHT}
-          animate={{ opacity: [0, 0.6, 0], scale: [0.5, 1.2, 0.5] }}
-          transition={{ duration: 1.5, repeat: Infinity, delay: 0.3 }}
-        />
-      </svg>
     </div>
   );
 }
@@ -264,7 +181,7 @@ function GlassCard({
 }) {
   return (
     <div
-      className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}
+      className={`rounded-2xl border border-white/15 bg-white/[0.07] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.06)] ${className}`}
     >
       {children}
     </div>
@@ -351,48 +268,6 @@ function ShimmerBorder({
   );
 }
 
-/* ───────────────────────── ACCORDION ITEM ───────────────────────── */
-function AccordionItem({
-  title,
-  answer,
-  isOpen,
-  onToggle,
-}: {
-  title: string;
-  answer: string;
-  isOpen: boolean;
-  onToggle: () => void;
-}) {
-  return (
-    <GlassCard className="overflow-hidden">
-      <button
-        onClick={onToggle}
-        className="w-full flex items-center justify-between p-5 md:p-6 text-left group cursor-pointer"
-      >
-        <span className="text-lg font-semibold text-white pr-4">{title}</span>
-        <motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={spring}>
-          <CaretDown size={20} className="text-slate-400" />
-        </motion.div>
-      </button>
-      <AnimatePresence initial={false}>
-        {isOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={spring}
-            className="overflow-hidden"
-          >
-            <p className="px-5 pb-5 md:px-6 md:pb-6 text-slate-400 leading-relaxed">
-              {answer}
-            </p>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </GlassCard>
-  );
-}
-
 /* ───────────────────────── COUNTER ANIMATION ───────────────────────── */
 function AnimatedCounter({
   target,
@@ -426,7 +301,7 @@ function AnimatedCounter({
   }, [isInView, target, duration]);
 
   return (
-    <span ref={ref}>
+    <span ref={ref} className="tabular-nums">
       {prefix}
       {count.toLocaleString()}
       {suffix}
@@ -434,22 +309,19 @@ function AnimatedCounter({
   );
 }
 
-/* ───────────────────────── GEAR / ENGINE SVG PATTERNS ───────────────────────── */
+/* ───────────────────────── GEAR SVG PATTERN ───────────────────────── */
 function GearPatternBg() {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-[0.04]">
       <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <pattern id="gears" x="0" y="0" width="120" height="120" patternUnits="userSpaceOnUse">
-            {/* Small gear */}
             <circle cx="30" cy="30" r="15" stroke={SILVER} strokeWidth="1" fill="none" />
             <circle cx="30" cy="30" r="8" stroke={SILVER} strokeWidth="0.5" fill="none" />
-            {/* Teeth */}
             <rect x="28" y="10" width="4" height="8" fill={SILVER} opacity="0.5" />
             <rect x="28" y="42" width="4" height="8" fill={SILVER} opacity="0.5" />
             <rect x="10" y="28" width="8" height="4" fill={SILVER} opacity="0.5" />
             <rect x="42" y="28" width="8" height="4" fill={SILVER} opacity="0.5" />
-            {/* Large gear */}
             <circle cx="90" cy="90" r="22" stroke={SILVER} strokeWidth="1" fill="none" />
             <circle cx="90" cy="90" r="10" stroke={SILVER} strokeWidth="0.5" fill="none" />
             <rect x="88" y="62" width="4" height="10" fill={SILVER} opacity="0.5" />
@@ -466,1012 +338,1096 @@ function GearPatternBg() {
 
 /* ───────────────────────── SERVICES DATA ───────────────────────── */
 const services = [
-  {
-    title: "Engine Diagnostics",
-    description:
-      "State-of-the-art computer diagnostics to pinpoint engine issues fast. We read trouble codes, run live data analysis, and provide clear explanations before any work begins.",
-    icon: Gauge,
-  },
-  {
-    title: "Brake Service",
-    description:
-      "Complete brake inspections, pad and rotor replacements, brake fluid flushes, and ABS diagnostics. Your safety on the road is our top priority.",
-    icon: ShieldCheck,
-  },
-  {
-    title: "Oil Change & Lube",
-    description:
-      "Conventional, synthetic blend, and full synthetic oil changes with premium filters. We also top off all fluids and perform a complimentary multi-point inspection.",
-    icon: Drop,
-  },
-  {
-    title: "AC & Heating",
-    description:
-      "Full climate control service including refrigerant recharge, compressor repair, heater core service, and cabin air filter replacement to keep you comfortable year-round.",
-    icon: Thermometer,
-  },
-  {
-    title: "Transmission",
-    description:
-      "Automatic and manual transmission services including fluid changes, filter replacements, and complete rebuilds. We handle both domestic and import vehicles.",
-    icon: Gear,
-  },
-  {
-    title: "Tire Service",
-    description:
-      "Tire rotations, balancing, flat repairs, and new tire installations from top brands. We offer competitive pricing and a smooth, safe ride guarantee.",
-    icon: Fan,
-  },
+  { title: "Oil Changes", desc: "Conventional, synthetic blend, and full synthetic with premium filters. Multi-point inspection included.", icon: Drop },
+  { title: "Brake Service", desc: "Pads, rotors, calipers, fluid flush, and ABS diagnostics. Your safety comes first.", icon: ShieldCheck },
+  { title: "Engine Repair", desc: "From timing belts to head gaskets. Full engine rebuilds with a 2-year warranty on parts and labor.", icon: Engine },
+  { title: "Transmission", desc: "Fluid changes, filter replacement, clutch service, and complete rebuilds for automatic and manual.", icon: Gear },
+  { title: "Diagnostics", desc: "State-of-the-art computer diagnostics with live data analysis. We find the problem. Fast.", icon: Gauge },
+  { title: "A/C Service", desc: "Recharge, compressor repair, condenser replacement, and cabin air filter service.", icon: Thermometer },
+  { title: "Tire Service", desc: "Rotation, balancing, flat repair, alignment, and new tire installation from top brands.", icon: Tire },
+  { title: "Suspension", desc: "Shocks, struts, control arms, ball joints, and complete steering system service.", icon: CarSimple },
 ];
 
-/* ───────────────────────── TESTIMONIALS ───────────────────────── */
+/* ───────────────────────── TESTIMONIALS DATA ───────────────────────── */
 const testimonials = [
-  {
-    name: "Mike R.",
-    text: "Took my truck in for a strange noise and they diagnosed it in under an hour. Fair price, honest assessment, and the work was done the same day. This is my shop for life.",
-    rating: 5,
-  },
-  {
-    name: "Jennifer S.",
-    text: "Finally found a mechanic I can trust. They showed me exactly what was wrong, explained my options, and never pushed unnecessary repairs. Highly recommend Pacific Auto Works.",
-    rating: 5,
-  },
-  {
-    name: "Carlos M.",
-    text: "I have been bringing all three of my family vehicles here for two years. The team is professional, the waiting area is clean, and they always finish on time. Five stars every time.",
-    rating: 5,
-  },
+  { name: "Derek P.", text: "Tony saved me $2,400. The dealership quoted me for a full transmission rebuild. Tony found a $180 solenoid that fixed it completely. Honest mechanic. Period.", rating: 5 },
+  { name: "Karen L.", text: "My daughter's first car. Tony did the pre-purchase inspection and found issues the seller didn't disclose. Saved us from a bad deal. We went back for her real first car.", rating: 5 },
+  { name: "Chen Express Logistics", text: "They've been maintaining our fleet of 12 delivery vans for 6 years. Zero breakdowns on the road. Zero. That's unheard of in this business.", rating: 5 },
+  { name: "Ashley W.", text: "Check engine light came on driving to work. They got me in that morning and back on the road by lunch. No appointment needed. Reasonable price.", rating: 5 },
+  { name: "Marcus J.", text: "Honest. That's it. That's the review. Honest mechanics exist and Tony is proof.", rating: 5 },
 ];
 
-/* ───────────────────────── SPECIALTIES ───────────────────────── */
-const specialties = [
-  { name: "Ford / GM / Chrysler", icon: CarSimple },
-  { name: "Toyota / Honda / Nissan", icon: CarSimple },
-  { name: "BMW / Mercedes / Audi", icon: CarSimple },
-  { name: "Diesel Trucks", icon: CarSimple },
-  { name: "Hybrid Vehicles", icon: Lightning },
-  { name: "Fleet Vehicles", icon: CarSimple },
+/* ───────────────────────── VEHICLE TYPES DATA ───────────────────────── */
+const vehicleTypes = [
+  { label: "Domestic", brands: "Ford, Chevy, GM, Chrysler", icon: CarSimple },
+  { label: "Import", brands: "Toyota, Honda, Nissan, Subaru", icon: CarProfile },
+  { label: "European", brands: "BMW, Mercedes, Audi, VW", icon: CarSimple },
+  { label: "Trucks & SUVs", brands: "F-150, Silverado, RAM, Tacoma", icon: Truck },
+  { label: "Diesel", brands: "Cummins, Duramax, PowerStroke", icon: GasPump },
+  { label: "Hybrid / Electric", brands: "Prius, Tesla, Bolt, Ioniq", icon: Lightning },
 ];
 
-/* ───────────────────────── FAQ DATA ───────────────────────── */
-const faqs = [
-  {
-    question: "How long does a typical service take?",
-    answer:
-      "Most routine services like oil changes and brake inspections take 30 to 90 minutes. More complex repairs like transmission work may take 1 to 3 days. We always provide a time estimate before we begin.",
-  },
-  {
-    question: "Do you offer a warranty on repairs?",
-    answer:
-      "Yes. All parts and labor come with a 24-month / 24,000-mile warranty. We stand behind every repair we make and will make it right if anything is not up to standard.",
-  },
-  {
-    question: "Can I wait while my car is being serviced?",
-    answer:
-      "Absolutely. We have a comfortable waiting area with Wi-Fi, coffee, and a TV. For longer repairs, we offer a complimentary shuttle service within a 10-mile radius.",
-  },
-  {
-    question: "Do I need an appointment?",
-    answer:
-      "Walk-ins are welcome for quick services like oil changes. For diagnostics and major repairs, we recommend scheduling an appointment so we can dedicate a bay and technician to your vehicle.",
-  },
+/* ───────────────────────── COMPARISON DATA ───────────────────────── */
+const comparisonRows = [
+  { label: "Honest Pricing", us: true, them: "Hidden fees" },
+  { label: "Free Estimates", us: true, them: "Diagnostic fee" },
+  { label: "Same-Day Service", us: true, them: "1-2 week wait" },
+  { label: "OEM & Aftermarket Parts", us: true, them: "OEM only (marked up)" },
+  { label: "2-Year Warranty", us: true, them: "90 days" },
+  { label: "No Appointment Needed", us: true, them: "Appointment required" },
+  { label: "Owner On-Site", us: true, them: "Never" },
 ];
 
-/* ───────────────────────── GALLERY DATA ───────────────────────── */
-const galleryImages = [
-  {
-    src: "https://images.unsplash.com/photo-1625047509248-ec889cbff17f?w=600&q=80",
-    alt: "Clean modern auto repair bay with lifts",
-  },
-  {
-    src: "https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=600&q=80",
-    alt: "Mechanic working under the hood",
-  },
-  {
-    src: "https://images.unsplash.com/photo-1530046339160-ce3e530c7d2f?w=600&q=80",
-    alt: "Professional diagnostic equipment",
-  },
-  {
-    src: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=600&q=80",
-    alt: "Sports car in service bay",
-  },
-  {
-    src: "https://images.unsplash.com/photo-1487754180451-c456f719a1fc?w=600&q=80",
-    alt: "Technician inspecting brakes",
-  },
-  {
-    src: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=600&q=80",
-    alt: "Finished vehicle ready for pickup",
-  },
+/* ───────────────────────── QUIZ DATA ───────────────────────── */
+const quizOptions = [
+  { label: "Routine Maintenance", color: "#22c55e", icon: Wrench, answer: "Great! An oil change, tire rotation, or multi-point inspection keeps your car running strong. Book a quick appointment and we'll have you back on the road in under an hour." },
+  { label: "Something Sounds Wrong", color: "#f59e0b", icon: Question, answer: "Strange noises usually mean something is wearing out. The sooner we catch it, the cheaper the fix. Call us now before a small rattle turns into a big repair bill." },
+  { label: "Brakes Feel Off", color: RED, icon: Warning, answer: "Don't wait on brakes. Spongy pedals, grinding, or pulling means your stopping power is compromised. Come in today for a free brake inspection. Safety first." },
+  { label: "Check Engine Light", color: RED, icon: Gauge, answer: "Could be minor (loose gas cap) or major (catalytic converter). Our diagnostic scan pinpoints the exact issue in 30 minutes. $89 and we'll tell you exactly what's wrong." },
 ];
 
-/* ───────────────────────── COUPONS DATA ───────────────────────── */
-const coupons = [
-  {
-    title: "First Visit Special",
-    description: "Free multi-point inspection with any service over $50",
-    code: "NEWCUSTOMER",
-    icon: Tag,
-  },
-  {
-    title: "Oil Change Deal",
-    description: "Full synthetic oil change for $49.99 (reg. $79.99)",
-    code: "OIL50",
-    icon: Drop,
-  },
-  {
-    title: "Brake Service",
-    description: "15% off any brake pad and rotor replacement",
-    code: "BRAKES15",
-    icon: ShieldCheck,
-  },
+/* ───────────────────────── SERVICE AREAS ───────────────────────── */
+const serviceAreas = [
+  "Columbia City", "Beacon Hill", "Rainier Beach", "Georgetown",
+  "SoDo", "Capitol Hill", "Central District", "Mount Baker",
+];
+
+const AUTO_FAQS = [
+  { q: "Do you provide free estimates before starting repairs?", a: "Always. We'll diagnose the issue, explain what we found, and give you a written estimate before touching anything. You approve every repair — we never start work without your go-ahead. No pressure, no surprises." },
+  { q: "How long will my repair take?", a: "Most maintenance services (oil change, brakes, tires) are done same-day, typically within 1–3 hours. More involved repairs like engine work or transmission service may take 1–2 days. We'll give you a specific timeline when you drop off and text you when the car is ready." },
+  { q: "Do you service European and import vehicles?", a: "Yes — our technicians are trained and certified to work on European, Japanese, Korean, and domestic vehicles. We have manufacturer-level diagnostic software for BMW, Mercedes, Toyota, Honda, Hyundai, Ford, GM, and more. If you drive it, we can service it." },
+  { q: "Do your repairs come with a warranty?", a: "Absolutely. All parts and labor come with a 24-month / 24,000-mile warranty, whichever comes first. If something we repaired fails within the warranty period, we fix it at no charge. That's our commitment to quality work." },
+  { q: "Can you help if my check engine light is on?", a: "Yes — we have professional-grade OBD-II diagnostic equipment and our own in-house scan tools that go beyond basic code readers. We'll identify the root cause (not just clear the code), explain it in plain English, and recommend the right repair." },
+  { q: "Do you offer loaner cars or shuttle service?", a: "We offer a free shuttle service within 5 miles of the shop while your vehicle is being serviced. For longer repairs requiring an overnight stay, ask about our loaner car program — available on a first-come, first-served basis for qualifying repairs." },
 ];
 
 /* ═══════════════════════════════════════════════════════════════════
    MAIN PAGE COMPONENT
    ═══════════════════════════════════════════════════════════════════ */
 export default function V2AutoRepairPage() {
-  const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [quizOpen, setQuizOpen] = useState<number | null>(null);
+
+  /* ── Scroll-driven parallax hero ── */
+  const heroContainerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: heroContainerRef,
+    offset: ["start start", "end start"],
+  });
+  const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "40%"]);
+  const overlayOpacity = useTransform(scrollYProgress, [0, 0.5], [0.85, 0.2]);
+  const textOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
+
+  const navLinks = [
+    { label: "Services", href: "#services" },
+    { label: "Pricing", href: "#pricing" },
+    { label: "About Tony", href: "#about" },
+    { label: "Reviews", href: "#reviews" },
+    { label: "Contact", href: "#contact" },
+  ];
 
   return (
     <main
-      className="relative min-h-[100dvh] overflow-x-hidden"
+      className="auto-v2 relative min-h-[100dvh] overflow-x-hidden"
       style={{ background: DARK, color: "#e2e8f0" }}
     >
       <FloatingParticles />
 
-      {/* ─── 1. NAV ─── */}
+      {/* ────────────────────── 0. NAV ────────────────────── */}
       <motion.nav
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={spring}
-        className="fixed top-0 left-0 right-0 z-50"
+        className="fixed top-0 inset-x-0 z-50 border-b border-white/8"
+        style={{ background: "rgba(17,17,17,0.85)", backdropFilter: "blur(16px)" }}
       >
-        <div className="mx-auto max-w-7xl px-4 md:px-6 py-4">
-          <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
-            <div className="flex items-center gap-2">
-              <Wrench size={24} weight="duotone" style={{ color: RED }} />
-              <span className="text-lg font-bold tracking-tight text-white">
-                Pacific Auto Works
-              </span>
-            </div>
-            <div className="hidden md:flex items-center gap-8 text-sm text-slate-400">
-              <a href="#services" className="hover:text-white transition-colors">
-                Services
-              </a>
-              <a href="#about" className="hover:text-white transition-colors">
-                About
-              </a>
-              <a href="#reviews" className="hover:text-white transition-colors">
-                Reviews
-              </a>
-              <a href="#contact" className="hover:text-white transition-colors">
-                Contact
-              </a>
-            </div>
-            <div className="flex items-center gap-3">
-              <MagneticButton
-                className="px-4 md:px-5 py-2 rounded-full text-sm font-semibold text-white transition-colors cursor-pointer"
-                style={{ background: RED } as React.CSSProperties}
-              >
-                Book Service
-              </MagneticButton>
-              <button
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="md:hidden p-2 rounded-lg text-white hover:bg-white/10 transition-colors"
-              >
-                {mobileMenuOpen ? <X size={24} /> : <List size={24} />}
-              </button>
-            </div>
-          </GlassCard>
+        <div className="max-w-7xl mx-auto flex items-center justify-between px-5 py-4">
+          <a href="#" className="flex items-center gap-2.5">
+            <Wrench size={26} style={{ color: RED }} weight="fill" />
+            <span className="text-lg font-bold text-white tracking-tight">
+              Pacific <span style={{ color: RED }}>Auto Works</span>
+            </span>
+          </a>
 
-          {/* Mobile Menu */}
-          <AnimatePresence>
-            {mobileMenuOpen && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-                className="md:hidden mt-2 overflow-hidden"
+          {/* Desktop links */}
+          <div className="hidden md:flex items-center gap-8">
+            {navLinks.map((l) => (
+              <a
+                key={l.label}
+                href={l.href}
+                className="text-sm font-medium text-slate-400 hover:text-white transition-colors"
               >
-                <GlassCard className="flex flex-col gap-1 px-4 py-4">
-                  {[
-                    { label: "Services", href: "#services" },
-                    { label: "About", href: "#about" },
-                    { label: "Reviews", href: "#reviews" },
-                    { label: "Contact", href: "#contact" },
-                  ].map((link) => (
-                    <a
-                      key={link.label}
-                      href={link.href}
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="block px-4 py-3 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-white/5 transition-colors"
-                    >
-                      {link.label}
-                    </a>
-                  ))}
-                </GlassCard>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                {l.label}
+              </a>
+            ))}
+            <a
+              href="tel:2068324750"
+              className="ml-2 flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition-transform hover:scale-105"
+              style={{ background: RED }}
+            >
+              <Phone size={16} weight="fill" />
+              (206) 832-4750
+            </a>
+          </div>
+
+          {/* Mobile hamburger */}
+          <button
+            className="md:hidden text-white p-2"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            {mobileMenuOpen ? <X size={24} /> : <List size={24} />}
+          </button>
         </div>
+
+        {/* Mobile drawer */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={spring}
+              className="md:hidden overflow-hidden border-t border-white/8"
+              style={{ background: DARK_CARD }}
+            >
+              <div className="flex flex-col gap-1 p-4">
+                {navLinks.map((l) => (
+                  <a
+                    key={l.label}
+                    href={l.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="px-4 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/5 transition"
+                  >
+                    {l.label}
+                  </a>
+                ))}
+                <a
+                  href="tel:2068324750"
+                  className="mt-2 flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-white font-semibold"
+                  style={{ background: RED }}
+                >
+                  <Phone size={18} weight="fill" />
+                  Call Now
+                </a>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.nav>
 
-      {/* ─── 2. HERO ─── */}
-      <section className="relative min-h-[100dvh] flex items-center pt-24 z-10">
-        {/* Gear pattern background */}
-        <GearPatternBg />
-        {/* Dark garage gradient overlay */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: `radial-gradient(ellipse at 30% 50%, rgba(220,38,38,0.08) 0%, transparent 60%),
-                          radial-gradient(ellipse at 70% 80%, rgba(148,163,184,0.05) 0%, transparent 50%)`,
-          }}
-        />
-        <div className="mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-4 items-center">
-          {/* Left: text */}
-          <div className="space-y-8">
-            <div>
-              <motion.p
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ ...spring, delay: 0.1 }}
-                className="text-sm uppercase tracking-widest mb-4"
-                style={{ color: RED }}
-              >
-                Full-Service Auto Repair
-              </motion.p>
-              <h1
-                className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white"
-                style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}
-              >
-                <WordReveal text="Honest Service. Expert Hands." />
-              </h1>
-            </div>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ ...spring, delay: 0.6 }}
-              className="text-lg max-w-md leading-relaxed"
-              style={{ color: SILVER }}
-            >
-              From routine oil changes to complex engine rebuilds, our
-              ASE-certified technicians deliver honest diagnoses and quality
-              repairs you can count on.
-            </motion.p>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ ...spring, delay: 0.8 }}
-              className="flex flex-wrap gap-4"
-            >
-              <MagneticButton
-                className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer"
-                style={{ background: RED } as React.CSSProperties}
-              >
-                Schedule Service
-                <ArrowRight size={18} weight="bold" />
-              </MagneticButton>
-              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
-                <Phone size={18} weight="duotone" />
-                (555) 847-2900
-              </MagneticButton>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ ...spring, delay: 1 }}
-              className="flex flex-wrap gap-6 text-sm"
-              style={{ color: SILVER }}
-            >
-              <span className="flex items-center gap-2">
-                <MapPin size={16} weight="duotone" style={{ color: RED }} />
-                4821 Pacific Blvd
-              </span>
-              <span className="flex items-center gap-2">
-                <Clock size={16} weight="duotone" style={{ color: RED }} />
-                Mon-Sat 7am-6pm
-              </span>
-            </motion.div>
-          </div>
-
-          {/* Right: rotating wrench/gear */}
+      {/* ────────────────────── 1. HERO — SCROLL-DRIVEN PARALLAX REVEAL ────────────────────── */}
+      <div ref={heroContainerRef} className="relative h-[160vh]">
+        {/* Sticky text layer */}
+        <div className="sticky top-0 h-screen flex items-center justify-center z-20">
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ ...spring, delay: 0.3 }}
-            className="hidden md:flex items-center justify-center lg:justify-end"
+            style={{ opacity: textOpacity }}
+            className="relative z-30 text-center px-5 max-w-4xl mx-auto"
           >
-            <AnimatedPiston />
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ─── 3. STATS ─── */}
-      <SectionReveal className="relative z-10 pb-8">
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: `linear-gradient(180deg, transparent 0%, rgba(220,38,38,0.03) 50%, transparent 100%)`,
-          }}
-        />
-        <div className="relative mx-auto max-w-7xl px-4 md:px-6">
-          <GlassCard className="p-6 md:p-8">
             <motion.div
-              className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8"
-              variants={stagger}
-              initial="hidden"
-              whileInView="show"
-              viewport={{ once: true, margin: "-50px" }}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ ...spring, delay: 0.2 }}
+            >
+              <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-6 border border-white/15 bg-white/[0.07] text-sm text-slate-400">
+                <ShieldCheck size={16} style={{ color: RED }} weight="fill" />
+                ASE Master Technician &middot; Since 2006
+              </div>
+            </motion.div>
+
+            <motion.h1
+              className="text-5xl md:text-7xl lg:text-8xl font-black text-white leading-[0.95] tracking-tight mb-6"
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ ...spring, delay: 0.35 }}
+            >
+              Honest Auto Repair.
+              <br />
+              <span style={{ color: RED }}>No Surprises.</span>
+            </motion.h1>
+
+            <motion.div
+              className="flex flex-wrap justify-center gap-6 md:gap-10 mb-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ ...spring, delay: 0.5 }}
             >
               {[
-                { value: 15000, suffix: "+", label: "Cars Serviced", icon: CarSimple },
-                { value: 8, suffix: "", label: "ASE Certified Techs", icon: Certificate },
-                { value: 22, suffix: "", label: "Years Open", icon: Trophy },
-                { value: 4.9, suffix: "", label: "Google Rating", icon: Star, isDecimal: true },
-              ].map((stat, i) => (
-                <motion.div
-                  key={i}
-                  variants={fadeUp}
-                  className="text-center"
-                >
-                  <div
-                    className="w-12 h-12 rounded-xl mx-auto mb-3 flex items-center justify-center"
-                    style={{ background: RED_GLOW }}
-                  >
-                    <stat.icon size={24} weight="duotone" style={{ color: RED }} />
+                { n: 20, s: "Years" },
+                { n: 5000, s: "Cars Serviced" },
+                { n: 0, s: "Shortcuts", label: "Zero" },
+              ].map((stat) => (
+                <div key={stat.s} className="text-center">
+                  <div className="text-2xl md:text-3xl font-black text-white">
+                    {stat.label ? stat.label : <AnimatedCounter target={stat.n} suffix="+" />}
                   </div>
-                  <p className="text-2xl md:text-3xl font-bold text-white">
-                    {stat.isDecimal ? (
-                      <span>{stat.value}</span>
-                    ) : (
-                      <AnimatedCounter target={stat.value} suffix={stat.suffix} />
-                    )}
-                  </p>
-                  <p className="text-sm mt-1" style={{ color: SILVER }}>
-                    {stat.label}
-                  </p>
-                </motion.div>
+                  <div className="text-xs text-slate-500 uppercase tracking-wider mt-0.5">{stat.s}</div>
+                </div>
               ))}
             </motion.div>
+
+            <motion.div
+              className="flex flex-col sm:flex-row items-center justify-center gap-4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ ...spring, delay: 0.65 }}
+            >
+              <MagneticButton
+                className="rounded-full px-8 py-4 text-white font-bold text-lg flex items-center gap-2 shadow-lg shadow-red-900/30 transition-transform"
+                style={{ background: RED }}
+              >
+                <CalendarCheck size={20} weight="fill" />
+                Book Appointment
+              </MagneticButton>
+              <MagneticButton className="rounded-full px-8 py-4 font-bold text-lg flex items-center gap-2 border-2 border-white/20 text-white hover:bg-white/5 transition">
+                <Phone size={20} weight="fill" />
+                Call Now
+              </MagneticButton>
+            </motion.div>
+          </motion.div>
+
+          {/* Parallax image behind text — reveals as user scrolls */}
+          <motion.div
+            className="absolute inset-0 z-10"
+            style={{ y: imageY }}
+          >
+            <img
+              src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1920&q=85"
+              alt="Classic car in dramatic lighting"
+              className="w-full h-full object-cover"
+            />
+          </motion.div>
+
+          {/* Dark overlay that fades as you scroll */}
+          <motion.div
+            className="absolute inset-0 z-15"
+            style={{
+              opacity: overlayOpacity,
+              background: `linear-gradient(to bottom, ${DARK} 0%, rgba(17,17,17,0.92) 40%, rgba(17,17,17,0.7) 100%)`,
+            }}
+          />
+
+          {/* Bottom gradient fade */}
+          <div className="absolute bottom-0 left-0 right-0 h-40 z-20" style={{ background: `linear-gradient(to bottom, transparent, ${DARK})` }} />
+        </div>
+      </div>
+
+      {/* ────────────────────── 2. TRUST BAR ────────────────────── */}
+      <SectionReveal className="relative py-8 border-y border-white/8" style={{ background: DARK_CARD }}>
+        <div className="max-w-6xl mx-auto px-5">
+          <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
+            {[
+              { icon: Certificate, text: "ASE Master Tech" },
+              { icon: Clock, text: "20 Years Experience" },
+              { icon: CarSimple, text: "5,000+ Cars Serviced" },
+              { icon: ShieldCheck, text: "2-Year Warranty" },
+              { icon: Star, text: "4.8 Stars (312 Reviews)" },
+            ].map((b) => (
+              <div key={b.text} className="flex items-center gap-2 text-sm text-slate-400">
+                <b.icon size={18} style={{ color: RED }} weight="fill" />
+                <span>{b.text}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ────────────────────── 3. SERVICES — RACING FLAG CHECKER ────────────────────── */}
+      <SectionReveal id="services" className="relative py-24 md:py-32">
+        <GearPatternBg />
+        <div className="relative z-10 max-w-7xl mx-auto px-5">
+          <div className="text-center mb-16">
+            <p className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: RED }}>
+              What We Do
+            </p>
+            <h2 className="text-4xl md:text-5xl font-black text-white">
+              Full-Service <span style={{ color: RED }}>Auto Repair</span>
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-0">
+            {services.map((s, i) => {
+              // Racing flag checker: alternate dark/slightly lighter
+              const isLight = (Math.floor(i / 4) + (i % 4)) % 2 === 0;
+              return (
+                <motion.div
+                  key={s.title}
+                  className="p-8 border border-white/8 group hover:border-red-600/30 transition-colors"
+                  style={{ background: isLight ? DARK_CARD : DARK_CARD_ALT }}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ ...spring, delay: i * 0.06 }}
+                >
+                  <div
+                    className="w-12 h-12 rounded-xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform"
+                    style={{ background: `${RED}18` }}
+                  >
+                    <s.icon size={24} style={{ color: RED }} weight="duotone" />
+                  </div>
+                  <h3 className="text-lg font-bold text-white mb-2">{s.title}</h3>
+                  <p className="text-sm text-slate-400 leading-relaxed">{s.desc}</p>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ────────────────────── 4. TRANSPARENT PRICING ────────────────────── */}
+      <SectionReveal id="pricing" className="relative py-24 md:py-32" style={{ background: DARK_CARD }}>
+        <GearPatternBg />
+        <div className="relative z-10 max-w-5xl mx-auto px-5">
+          <div className="text-center mb-14">
+            <p className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: RED }}>
+              No Hidden Fees
+            </p>
+            <h2 className="text-4xl md:text-5xl font-black text-white">
+              Transparent <span style={{ color: RED }}>Pricing</span>
+            </h2>
+            <p className="mt-4 text-slate-400 max-w-xl mx-auto">
+              We show you the price BEFORE we start. No surprises on the bill. Ever.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              { title: "Oil Change", price: "$39.99", note: "Synthetic blend, filter, multi-point inspection", icon: Drop },
+              { title: "Brake Service", price: "$149", note: "Pads, rotor inspection, fluid check, road test", icon: ShieldCheck },
+              { title: "Full Diagnostic", price: "$89", note: "Computer scan, live data analysis, written report", icon: Gauge },
+            ].map((p, i) => (
+              <ShimmerBorder key={p.title}>
+                <div className="p-8 text-center">
+                  <div
+                    className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-5"
+                    style={{ background: `${RED}18` }}
+                  >
+                    <p.icon size={28} style={{ color: RED }} weight="fill" />
+                  </div>
+                  <h3 className="text-lg font-bold text-white mb-1">{p.title}</h3>
+                  <div className="text-4xl font-black mb-2" style={{ color: RED }}>
+                    {p.price}
+                  </div>
+                  <p className="text-sm text-slate-500">{p.note}</p>
+                  <p className="text-xs text-slate-600 mt-3 uppercase tracking-wider">Starting from</p>
+                </div>
+              </ShimmerBorder>
+            ))}
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ────────────────────── 5. HONEST MECHANIC GUARANTEE ────────────────────── */}
+      <SectionReveal className="relative py-24 md:py-32">
+        <div className="absolute inset-0" style={{ background: `radial-gradient(ellipse at center, ${RED_GLOW}, transparent 70%)` }} />
+        <GearPatternBg />
+        <div className="relative z-10 max-w-5xl mx-auto px-5">
+          <div className="text-center mb-14">
+            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full mb-6" style={{ background: `${RED}18`, border: `2px solid ${RED}33` }}>
+              <Handshake size={40} style={{ color: RED }} weight="fill" />
+            </div>
+            <h2 className="text-4xl md:text-5xl font-black text-white">
+              The Honest Mechanic <span style={{ color: RED }}>Guarantee</span>
+            </h2>
+            <p className="mt-4 text-slate-400 max-w-xl mx-auto">
+              Trust is earned. Here are four promises we make to every customer who walks through our door.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {[
+              { title: "No Unnecessary Repairs", desc: "If it doesn't need fixing, we won't fix it. Simple as that. We'd rather earn your trust than your money.", icon: Target },
+              { title: "Free Estimates", desc: "Walk in, tell us what's wrong, and we'll give you an honest estimate. No obligation. No pressure. No games.", icon: Tag },
+              { title: "Parts & Labor Warranty", desc: "Every repair comes with a 2-year / 24,000-mile warranty. If something isn't right, we make it right. Free.", icon: ShieldCheck },
+              { title: "We Show You the Problem", desc: "Before we touch a wrench, we show you the issue. Photos. Video. In person. You see what we see.", icon: CheckCircle },
+            ].map((g, i) => (
+              <GlassCard key={g.title} className="p-8">
+                <motion.div
+                  initial={{ opacity: 0, x: i % 2 === 0 ? -20 : 20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ ...spring, delay: i * 0.1 }}
+                >
+                  <div className="flex items-start gap-4">
+                    <div
+                      className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
+                      style={{ background: `${RED}18` }}
+                    >
+                      <g.icon size={24} style={{ color: RED }} weight="fill" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-white mb-2">{g.title}</h3>
+                      <p className="text-sm text-slate-400 leading-relaxed">{g.desc}</p>
+                    </div>
+                  </div>
+                </motion.div>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ────────────────────── 6. MEET TONY ────────────────────── */}
+      <SectionReveal id="about" className="relative py-24 md:py-32" style={{ background: DARK_CARD }}>
+        <GearPatternBg />
+        <div className="relative z-10 max-w-6xl mx-auto px-5">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Photo side */}
+            <div className="relative">
+              <div className="relative rounded-2xl overflow-hidden border border-white/15">
+                <img
+                  src="https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=800&q=80"
+                  alt="Tony Reeves — ASE Master Technician"
+                  className="w-full h-[480px] object-cover object-top"
+                />
+                <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(17,17,17,0.8) 0%, transparent 50%)" }} />
+                <div className="absolute bottom-6 left-6 right-6">
+                  <div className="flex flex-wrap gap-2">
+                    {["ASE Master Tech", "UTI Graduate", "20 Years", "5,000+ Cars"].map((badge) => (
+                      <span
+                        key={badge}
+                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border border-white/15 bg-black/60 text-white"
+                      >
+                        <Certificate size={12} style={{ color: RED }} weight="fill" />
+                        {badge}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              {/* Chrome accent line */}
+              <div className="absolute -bottom-3 left-6 right-6 h-1 rounded-full" style={{ background: `linear-gradient(to right, ${RED}, ${SILVER}, ${RED})` }} />
+            </div>
+
+            {/* Text side */}
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: RED }}>
+                Your Mechanic
+              </p>
+              <h2 className="text-4xl md:text-5xl font-black text-white mb-6">
+                Meet <span style={{ color: RED }}>Tony Reeves</span>
+              </h2>
+              <div className="space-y-4 text-slate-400 leading-relaxed">
+                <p>
+                  Started turning wrenches at 15. ASE Master Technician by 25. Tony graduated from Universal Technical Institute and spent a decade at dealerships before opening Pacific Auto Works in 2006.
+                </p>
+                <p>
+                  Twenty years and over five thousand cars later, the philosophy hasn't changed: tell the customer the truth, charge a fair price, and stand behind every repair. That's it.
+                </p>
+                <p>
+                  Tony is on-site every single day. When you bring your car in, you talk to the person who's going to work on it. No service advisors. No middlemen. No runaround.
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-3 mt-8">
+                {["ASE Master Certified", "UTI Graduate", "Washington Licensed", "EPA Certified"].map((c) => (
+                  <span
+                    key={c}
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium border border-white/15 bg-white/[0.07] text-slate-300"
+                  >
+                    <CheckCircle size={16} style={{ color: RED }} weight="fill" />
+                    {c}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ────────────────────── 7. WHAT WE WORK ON ────────────────────── */}
+      <SectionReveal className="relative py-24 md:py-32">
+        <GearPatternBg />
+        <div className="relative z-10 max-w-6xl mx-auto px-5">
+          <div className="text-center mb-14">
+            <p className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: RED }}>
+              All Makes & Models
+            </p>
+            <h2 className="text-4xl md:text-5xl font-black text-white">
+              What We <span style={{ color: RED }}>Work On</span>
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-5">
+            {vehicleTypes.map((v, i) => (
+              <motion.div
+                key={v.label}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ ...spring, delay: i * 0.07 }}
+              >
+                <GlassCard className="p-6 text-center group hover:border-red-600/30 transition-colors">
+                  <div
+                    className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform"
+                    style={{ background: `${RED}12` }}
+                  >
+                    <v.icon size={28} style={{ color: SILVER }} weight="duotone" />
+                  </div>
+                  <h3 className="text-white font-bold text-lg mb-1">{v.label}</h3>
+                  <p className="text-xs text-slate-500">{v.brands}</p>
+                </GlassCard>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ────────────────────── 8. QUIZ — WHAT DOES YOUR CAR NEED? ────────────────────── */}
+      <SectionReveal className="relative py-24 md:py-32" style={{ background: DARK_CARD }}>
+        <GearPatternBg />
+        <div className="relative z-10 max-w-4xl mx-auto px-5">
+          <div className="text-center mb-14">
+            <p className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: RED }}>
+              Quick Check
+            </p>
+            <h2 className="text-4xl md:text-5xl font-black text-white">
+              What Does Your Car <span style={{ color: RED }}>Need?</span>
+            </h2>
+            <p className="mt-4 text-slate-400">Select the option that best describes your situation.</p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            {quizOptions.map((q, i) => (
+              <div key={q.label}>
+                <button
+                  onClick={() => setQuizOpen(quizOpen === i ? null : i)}
+                  className="w-full text-left cursor-pointer"
+                >
+                  <GlassCard className={`p-6 transition-all ${quizOpen === i ? "border-white/20" : "hover:border-white/15"}`}>
+                    <div className="flex items-center gap-4">
+                      <div
+                        className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
+                        style={{ background: `${q.color}18` }}
+                      >
+                        <q.icon size={24} style={{ color: q.color }} weight="fill" />
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-white">{q.label}</h3>
+                        <div
+                          className="w-3 h-3 rounded-full mt-1"
+                          style={{ background: q.color }}
+                        />
+                      </div>
+                      <motion.div
+                        className="ml-auto"
+                        animate={{ rotate: quizOpen === i ? 180 : 0 }}
+                        transition={spring}
+                      >
+                        <CaretDown size={18} className="text-slate-500" />
+                      </motion.div>
+                    </div>
+                  </GlassCard>
+                </button>
+                <AnimatePresence>
+                  {quizOpen === i && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={spring}
+                      className="overflow-hidden"
+                    >
+                      <div className="mt-3 p-5 rounded-xl border border-white/15 bg-white/[0.07]">
+                        <p className="text-sm text-slate-400 leading-relaxed mb-4">{q.answer}</p>
+                        <a
+                          href="tel:2068324750"
+                          className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white"
+                          style={{ background: RED }}
+                        >
+                          <Phone size={16} weight="fill" />
+                          Call (206) 832-4750
+                        </a>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            ))}
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ────────────────────── 9. COMPETITOR COMPARISON ────────────────────── */}
+      <SectionReveal className="relative py-24 md:py-32">
+        <GearPatternBg />
+        <div className="relative z-10 max-w-4xl mx-auto px-5">
+          <div className="text-center mb-14">
+            <p className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: RED }}>
+              See The Difference
+            </p>
+            <h2 className="text-4xl md:text-5xl font-black text-white">
+              Pacific Auto Works <span style={{ color: RED }}>vs Dealership</span>
+            </h2>
+          </div>
+
+          <GlassCard className="overflow-hidden">
+            {/* Header row */}
+            <div className="grid grid-cols-3 p-5 border-b border-white/15 text-sm font-bold">
+              <div className="text-slate-400">Feature</div>
+              <div className="text-center" style={{ color: RED }}>Pacific Auto Works</div>
+              <div className="text-center text-slate-500">Dealership</div>
+            </div>
+            {comparisonRows.map((r, i) => (
+              <motion.div
+                key={r.label}
+                className="grid grid-cols-3 p-5 border-b border-white/8 items-center"
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ ...spring, delay: i * 0.06 }}
+              >
+                <div className="text-sm text-white font-medium">{r.label}</div>
+                <div className="text-center">
+                  <CheckCircle size={22} style={{ color: "#22c55e" }} weight="fill" />
+                </div>
+                <div className="text-center text-sm text-slate-500">{r.them}</div>
+              </motion.div>
+            ))}
           </GlassCard>
         </div>
       </SectionReveal>
 
-      {/* ─── 4. SERVICES ─── */}
-      <SectionReveal id="services" className="relative z-10 py-16 md:py-24">
+      {/* ────────────────────── 10. TESTIMONIALS — SPLIT-SCREEN ────────────────────── */}
+      <SectionReveal id="reviews" className="relative py-24 md:py-32" style={{ background: DARK_CARD }}>
         <GearPatternBg />
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: `radial-gradient(ellipse at 80% 20%, rgba(220,38,38,0.06) 0%, transparent 50%)`,
-          }}
-        />
-        <div className="relative mx-auto max-w-7xl px-4 md:px-6">
-          <div className="text-center mb-16">
-            <p
-              className="text-sm uppercase tracking-widest mb-3"
-              style={{ color: RED }}
-            >
-              What We Do
+        <div className="relative z-10 max-w-6xl mx-auto px-5">
+          <div className="text-center mb-6">
+            <p className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: RED }}>
+              Real Reviews
             </p>
-            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white">
-              <WordReveal text="Our Expert Services" />
+            <h2 className="text-4xl md:text-5xl font-black text-white">
+              What Our Customers <span style={{ color: RED }}>Say</span>
             </h2>
           </div>
 
-          <motion.div
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-            variants={stagger}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, margin: "-50px" }}
-          >
-            {services.map((svc, i) => (
-              <motion.div key={i} variants={fadeUp}>
+          {/* Google Reviews header */}
+          <div className="flex items-center justify-center gap-3 mb-14">
+            <svg width="20" height="20" viewBox="0 0 24 24" aria-label="Google">
+              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+            </svg>
+            <div className="flex gap-0.5">
+              {[...Array(5)].map((_, i) => (
+                <Star key={i} size={20} style={{ color: "#facc15" }} weight="fill" />
+              ))}
+            </div>
+            <span className="text-white font-bold">4.9</span>
+            <span className="text-slate-500 text-sm">&nbsp;&middot;&nbsp; 461 Google reviews</span>
+          </div>
+
+          <div className="space-y-6">
+            {testimonials.map((t, i) => {
+              const isEven = i % 2 === 0;
+              return (
                 <motion.div
-                  whileHover={{ scale: 1.03 }}
-                  transition={springGentle}
-                  style={{ willChange: "transform" }}
+                  key={t.name}
+                  className={`flex flex-col ${isEven ? "md:flex-row" : "md:flex-row-reverse"} gap-0 overflow-hidden rounded-2xl border border-white/8`}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ ...spring, delay: i * 0.08 }}
                 >
-                  <GlassCard className="p-6 h-full">
-                    <div className="flex items-center gap-4 mb-4">
-                      <div
-                        className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
-                        style={{ background: RED_GLOW }}
-                      >
-                        <svc.icon size={24} weight="duotone" style={{ color: RED }} />
+                  {/* Icon half */}
+                  <div
+                    className="md:w-2/5 flex items-center justify-center p-10 md:p-12"
+                    style={{ background: `linear-gradient(135deg, ${DARK}, ${DARK_CARD_ALT})` }}
+                  >
+                    <div className="text-center">
+                      <UserCircle size={64} style={{ color: SILVER }} weight="duotone" className="mx-auto mb-3 opacity-60" />
+                      <p className="text-white font-bold text-lg">{t.name}</p>
+                      <div className="flex justify-center gap-0.5 mt-2">
+                        {[...Array(t.rating)].map((_, s) => (
+                          <Star key={s} size={14} style={{ color: "#facc15" }} weight="fill" />
+                        ))}
                       </div>
-                      <h3 className="text-lg font-semibold text-white">{svc.title}</h3>
+                      <div className="flex items-center justify-center gap-1 mt-2">
+                        <CheckCircle size={14} style={{ color: "#22c55e" }} weight="fill" />
+                        <span className="text-xs text-slate-500">Verified Customer</span>
+                      </div>
                     </div>
-                    <p className="text-sm leading-relaxed" style={{ color: SILVER }}>
-                      {svc.description}
-                    </p>
-                  </GlassCard>
+                  </div>
+
+                  {/* Quote half */}
+                  <div className="md:w-3/5 flex items-center p-8 md:p-12" style={{ background: DARK_CARD }}>
+                    <div>
+                      <Quotes size={32} style={{ color: RED }} weight="fill" className="mb-4 opacity-40" />
+                      <p className="text-slate-300 leading-relaxed text-base md:text-lg">
+                        {t.text}
+                      </p>
+                    </div>
+                  </div>
                 </motion.div>
-              </motion.div>
-            ))}
-          </motion.div>
+              );
+            })}
+          </div>
         </div>
       </SectionReveal>
 
-      {/* ─── 5. WHY CHOOSE US ─── */}
-      <SectionReveal id="about" className="relative z-10 py-16 md:py-24">
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: `linear-gradient(135deg, rgba(220,38,38,0.04) 0%, transparent 40%, rgba(148,163,184,0.03) 100%)`,
-          }}
-        />
-        <div className="relative mx-auto max-w-7xl px-4 md:px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-            <div>
-              <p
-                className="text-sm uppercase tracking-widest mb-3"
-                style={{ color: RED }}
-              >
-                Why Pacific Auto Works
-              </p>
-              <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white mb-6">
-                <WordReveal text="Trusted Repair. No Surprises." />
+      {/* ────────────────────── 11. FINANCING ────────────────────── */}
+      <SectionReveal className="relative py-20 md:py-24">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${RED}15, transparent 60%)` }} />
+        <GearPatternBg />
+        <div className="relative z-10 max-w-4xl mx-auto px-5 text-center">
+          <ShimmerBorder>
+            <div className="p-10 md:p-14">
+              <CreditCard size={40} style={{ color: RED }} weight="fill" className="mx-auto mb-5" />
+              <h2 className="text-3xl md:text-4xl font-black text-white mb-3">
+                Big Repair? <span style={{ color: RED }}>We've Got You.</span>
               </h2>
-              <p className="leading-relaxed max-w-md mb-8" style={{ color: SILVER }}>
-                For over two decades, Pacific Auto Works has been the neighborhood
-                shop that treats every vehicle like our own. We believe in
-                transparent pricing, certified technicians, and repairs that last.
+              <p className="text-lg text-slate-400 mb-6">
+                0% financing for 12 months on repairs over $500. No credit check hassle. Get back on the road now, pay over time.
               </p>
-              <div className="flex flex-wrap gap-4">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <MagneticButton
-                  className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer"
-                  style={{ background: RED } as React.CSSProperties}
+                  className="rounded-full px-8 py-3.5 text-white font-bold flex items-center gap-2"
+                  style={{ background: RED }}
                 >
-                  Get a Free Quote
                   <ArrowRight size={18} weight="bold" />
+                  Apply for Financing
                 </MagneticButton>
+                <a href="tel:2068324750" className="text-sm text-slate-400 hover:text-white transition">
+                  Or call to discuss options
+                </a>
               </div>
             </div>
-
-            <motion.div
-              className="grid grid-cols-1 sm:grid-cols-2 gap-4"
-              variants={stagger}
-              initial="hidden"
-              whileInView="show"
-              viewport={{ once: true }}
-            >
-              {[
-                {
-                  icon: Certificate,
-                  label: "ASE Certified",
-                  desc: "All techs nationally certified",
-                },
-                {
-                  icon: Handshake,
-                  label: "Honest Pricing",
-                  desc: "Upfront quotes, no hidden fees",
-                },
-                {
-                  icon: ShieldCheck,
-                  label: "24/24 Warranty",
-                  desc: "24 months / 24,000 miles",
-                },
-                {
-                  icon: Speedometer,
-                  label: "Fast Turnaround",
-                  desc: "Most repairs same-day",
-                },
-              ].map((item, i) => (
-                <motion.div key={i} variants={fadeUp}>
-                  <GlassCard className="p-5 text-center">
-                    <item.icon
-                      size={28}
-                      weight="duotone"
-                      style={{ color: RED }}
-                      className="mx-auto mb-2"
-                    />
-                    <p className="text-sm font-semibold text-white">{item.label}</p>
-                    <p className="text-xs mt-1" style={{ color: SILVER }}>
-                      {item.desc}
-                    </p>
-                  </GlassCard>
-                </motion.div>
-              ))}
-            </motion.div>
-          </div>
+          </ShimmerBorder>
         </div>
       </SectionReveal>
 
-      {/* ─── 6. PROCESS ─── */}
-      <SectionReveal className="relative z-10 py-16 md:py-24">
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: `radial-gradient(ellipse at 50% 50%, rgba(220,38,38,0.05) 0%, transparent 60%)`,
-          }}
-        />
-        <div className="relative mx-auto max-w-7xl px-4 md:px-6">
-          <div className="text-center mb-16">
-            <p
-              className="text-sm uppercase tracking-widest mb-3"
-              style={{ color: RED }}
-            >
-              Simple Process
-            </p>
-            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white">
-              <WordReveal text="Four Easy Steps" />
-            </h2>
+      {/* ────────────────────── 12. VIDEO PLACEHOLDER ────────────────────── */}
+      <SectionReveal className="relative py-24 md:py-32" style={{ background: DARK_CARD }}>
+        <div className="max-w-5xl mx-auto px-5">
+          <div className="text-center mb-10">
+            <p className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: RED }}>Tour Pacific Auto Works</p>
+            <h2 className="text-4xl md:text-5xl font-black text-white">Meet Our <span style={{ color: RED }}>ASE-Certified</span> Team</h2>
           </div>
-
-          <motion.div
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
-            variants={stagger}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, margin: "-50px" }}
-          >
-            {[
-              {
-                step: "01",
-                title: "Drop Off",
-                desc: "Bring your vehicle in or schedule a convenient drop-off time. We offer early-bird and after-hours key drop.",
-                icon: CarSimple,
-              },
-              {
-                step: "02",
-                title: "Diagnose",
-                desc: "Our ASE-certified techs run a thorough inspection and computer diagnostics to identify every issue.",
-                icon: Gauge,
-              },
-              {
-                step: "03",
-                title: "Approve",
-                desc: "We call you with a detailed estimate. No work begins until you review and approve the repair plan.",
-                icon: CheckCircle,
-              },
-              {
-                step: "04",
-                title: "Pick Up",
-                desc: "Your vehicle is repaired, road-tested, and ready. We walk you through everything we did before you leave.",
-                icon: CarSimple,
-              },
-            ].map((item, i) => (
-              <motion.div key={i} variants={fadeUp}>
-                <ShimmerBorder>
-                  <div className="p-6 text-center">
-                    <div
-                      className="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center"
-                      style={{ background: RED_GLOW }}
-                    >
-                      <item.icon size={28} weight="duotone" style={{ color: RED }} />
-                    </div>
-                    <p
-                      className="text-xs font-bold tracking-widest mb-2"
-                      style={{ color: RED }}
-                    >
-                      STEP {item.step}
-                    </p>
-                    <h3 className="text-lg font-semibold text-white mb-2">
-                      {item.title}
-                    </h3>
-                    <p className="text-sm leading-relaxed" style={{ color: SILVER }}>
-                      {item.desc}
-                    </p>
-                  </div>
-                </ShimmerBorder>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </SectionReveal>
-
-      {/* ─── 7. SPECIALTIES ─── */}
-      <SectionReveal className="relative z-10 py-16 md:py-24">
-        <GearPatternBg />
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: `linear-gradient(180deg, transparent 0%, rgba(148,163,184,0.03) 50%, transparent 100%)`,
-          }}
-        />
-        <div className="relative mx-auto max-w-7xl px-4 md:px-6">
-          <div className="text-center mb-16">
-            <p
-              className="text-sm uppercase tracking-widest mb-3"
-              style={{ color: RED }}
-            >
-              We Work On
-            </p>
-            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white">
-              <WordReveal text="All Makes & Models" />
-            </h2>
-            <p className="mt-4 max-w-lg mx-auto leading-relaxed" style={{ color: SILVER }}>
-              Whether you drive a domestic pickup, a Japanese sedan, or a European
-              luxury car, our team has the training and tools to service it right.
-            </p>
-          </div>
-
-          <motion.div
-            className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4"
-            variants={stagger}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, margin: "-50px" }}
-          >
-            {specialties.map((item, i) => (
-              <motion.div key={i} variants={fadeUp}>
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  transition={springGentle}
-                  style={{ willChange: "transform" }}
+          <div className="relative rounded-2xl overflow-hidden border border-white/15 group cursor-pointer aspect-video">
+            <img
+              src="https://images.unsplash.com/photo-1530046339160-ce3e530c7d2f?w=1200&q=80"
+              alt="Pacific Auto Works ASE-certified technicians"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+            />
+            <div className="absolute inset-0 bg-black/60 group-hover:bg-black/50 transition-colors flex items-center justify-center">
+              <div className="text-center">
+                <div
+                  className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform"
+                  style={{ background: `${RED}cc`, boxShadow: `0 0 0 8px ${RED}22` }}
                 >
-                  <GlassCard className="p-5 text-center">
-                    <item.icon
-                      size={32}
-                      weight="duotone"
-                      style={{ color: RED }}
-                      className="mx-auto mb-3"
-                    />
-                    <p className="text-xs font-semibold text-white leading-tight">
-                      {item.name}
-                    </p>
-                  </GlassCard>
-                </motion.div>
-              </motion.div>
-            ))}
-          </motion.div>
+                  <PlayCircle size={44} className="text-white" weight="fill" />
+                </div>
+                <p className="text-white font-bold text-xl">Tour Pacific Auto Works</p>
+                <p className="text-slate-300 text-sm mt-1">Meet our ASE-certified technicians and tour our clean, modern facility</p>
+              </div>
+            </div>
+          </div>
         </div>
       </SectionReveal>
 
-      {/* ─── 8. TESTIMONIALS ─── */}
-      <SectionReveal id="reviews" className="relative z-10 py-16 md:py-24">
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: `radial-gradient(ellipse at 20% 80%, rgba(220,38,38,0.05) 0%, transparent 50%)`,
-          }}
-        />
-        <div className="relative mx-auto max-w-7xl px-4 md:px-6">
-          <div className="text-center mb-16">
-            <p
-              className="text-sm uppercase tracking-widest mb-3"
-              style={{ color: RED }}
-            >
-              Customer Reviews
+      {/* ────────────────────── 13. SERVICE AREAS ────────────────────── */}
+      <SectionReveal className="relative py-24 md:py-32">
+        <GearPatternBg />
+        <div className="relative z-10 max-w-5xl mx-auto px-5">
+          <div className="text-center mb-14">
+            <p className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: RED }}>
+              Serving Seattle
             </p>
-            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white">
-              <WordReveal text="What Drivers Say" />
+            <h2 className="text-4xl md:text-5xl font-black text-white">
+              Service <span style={{ color: RED }}>Areas</span>
             </h2>
           </div>
 
-          <motion.div
-            className="grid grid-cols-1 md:grid-cols-3 gap-6"
-            variants={stagger}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, margin: "-50px" }}
-          >
-            {testimonials.map((t, i) => (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {serviceAreas.map((area, i) => (
+              <motion.div
+                key={area}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ ...spring, delay: i * 0.05 }}
+              >
+                <GlassCard className="p-5 text-center group hover:border-red-600/30 transition">
+                  <MapPin size={20} style={{ color: RED }} weight="fill" className="mx-auto mb-2" />
+                  <p className="text-white font-medium text-sm">{area}</p>
+                </GlassCard>
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="mt-8 text-center">
+            <p className="text-slate-500 text-sm">
+              Located at 3815 Rainier Ave S, Seattle, WA 98118 &middot; Serving a 15-mile radius
+            </p>
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ────────────────────── 14. FAQ ────────────────────── */}
+      <SectionReveal className="relative py-16 md:py-24" style={{ background: DARK }}>
+        <div className="relative z-10 mx-auto max-w-3xl px-5">
+          <div className="text-center mb-10">
+            <p className="text-sm uppercase tracking-[0.2em] mb-3 font-semibold" style={{ color: RED }}>Common Questions</p>
+            <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-white">Frequently Asked</h2>
+            <p className="mt-4 text-slate-400 text-lg">Straight answers about our shop, pricing, and what to expect.</p>
+          </div>
+          <motion.div className="space-y-3" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
+            {AUTO_FAQS.map((faq, i) => (
               <motion.div key={i} variants={fadeUp}>
-                <GlassCard className="p-6 h-full flex flex-col">
-                  <Quotes
-                    size={28}
-                    weight="fill"
-                    style={{ color: RED }}
-                    className="mb-3 opacity-50"
-                  />
-                  <p className="text-sm leading-relaxed flex-1" style={{ color: SILVER }}>
-                    {t.text}
-                  </p>
-                  <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
-                    <span className="text-sm font-semibold text-white">{t.name}</span>
-                    <div className="flex gap-0.5">
-                      {Array.from({ length: t.rating }).map((_, j) => (
-                        <Star key={j} size={12} weight="fill" style={{ color: RED }} />
-                      ))}
-                    </div>
-                  </div>
+                <GlassCard className="overflow-hidden">
+                  <button
+                    onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                    className="w-full flex items-center justify-between p-5 text-left cursor-pointer"
+                  >
+                    <span className="text-base font-semibold text-white pr-4">{faq.q}</span>
+                    <motion.div animate={{ rotate: openFaq === i ? 180 : 0 }} transition={spring}>
+                      <CaretDown size={20} style={{ color: RED }} className="shrink-0" />
+                    </motion.div>
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {openFaq === i && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={spring}
+                        className="overflow-hidden"
+                      >
+                        <p className="px-5 pb-5 text-slate-400 leading-relaxed">{faq.a}</p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </GlassCard>
               </motion.div>
             ))}
           </motion.div>
+          <p className="text-center mt-8 text-slate-400">Still have questions? <a href="tel:2068324750" className="font-semibold" style={{ color: RED }}>Call (206) 832-4750</a> — we&apos;re happy to help.</p>
         </div>
       </SectionReveal>
 
-      {/* ─── 9. COUPONS / OFFERS ─── */}
-      <SectionReveal className="relative z-10 py-16 md:py-24">
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: `linear-gradient(180deg, transparent 0%, rgba(220,38,38,0.04) 50%, transparent 100%)`,
-          }}
-        />
-        <div className="relative mx-auto max-w-7xl px-4 md:px-6">
-          <div className="text-center mb-16">
-            <p
-              className="text-sm uppercase tracking-widest mb-3"
-              style={{ color: RED }}
-            >
-              Current Deals
-            </p>
-            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white">
-              <WordReveal text="Savings You Can Trust" />
-            </h2>
-          </div>
-
-          <motion.div
-            className="grid grid-cols-1 md:grid-cols-3 gap-6"
-            variants={stagger}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, margin: "-50px" }}
-          >
-            {coupons.map((coupon, i) => (
-              <motion.div key={i} variants={fadeUp}>
-                <ShimmerBorder>
-                  <div className="p-6 text-center">
-                    <div
-                      className="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center"
-                      style={{ background: RED_GLOW }}
-                    >
-                      <coupon.icon size={28} weight="duotone" style={{ color: RED }} />
-                    </div>
-                    <h3 className="text-lg font-semibold text-white mb-2">
-                      {coupon.title}
-                    </h3>
-                    <p className="text-sm mb-4" style={{ color: SILVER }}>
-                      {coupon.description}
-                    </p>
-                    <div
-                      className="inline-block px-4 py-2 rounded-lg text-sm font-mono font-bold tracking-wider"
-                      style={{ background: RED_GLOW, color: RED }}
-                    >
-                      {coupon.code}
-                    </div>
-                  </div>
-                </ShimmerBorder>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </SectionReveal>
-
-      {/* ─── 10. GALLERY ─── */}
-      <SectionReveal className="relative z-10 py-16 md:py-24">
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: `radial-gradient(ellipse at 60% 30%, rgba(148,163,184,0.04) 0%, transparent 50%)`,
-          }}
-        />
-        <div className="relative mx-auto max-w-7xl px-4 md:px-6">
-          <div className="text-center mb-16">
-            <p
-              className="text-sm uppercase tracking-widest mb-3"
-              style={{ color: RED }}
-            >
-              Inside the Shop
-            </p>
-            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white">
-              <WordReveal text="See Our Facility" />
-            </h2>
-          </div>
-
-          <motion.div
-            className="grid grid-cols-2 md:grid-cols-3 gap-4"
-            variants={stagger}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, margin: "-50px" }}
-          >
-            {galleryImages.map((img, i) => (
-              <motion.div
-                key={i}
-                variants={fadeUp}
-                className={i === 0 ? "col-span-2 md:col-span-1 md:row-span-2" : ""}
-              >
-                <motion.div
-                  whileHover={{ scale: 1.03 }}
-                  transition={springGentle}
-                  className="overflow-hidden rounded-2xl h-full"
-                  style={{ willChange: "transform" }}
-                >
-                  <div
-                    className={`relative overflow-hidden rounded-2xl ${
-                      i === 0 ? "aspect-square" : "aspect-video"
-                    }`}
-                  >
-                    <img
-                      src={img.src}
-                      alt={img.alt}
-                      className="w-full h-full object-cover object-center"
-                      loading="lazy"
-                    />
-                    <div
-                      className="absolute inset-0"
-                      style={{
-                        background:
-                          "linear-gradient(to top, rgba(17,17,17,0.5) 0%, transparent 50%)",
-                      }}
-                    />
-                  </div>
-                </motion.div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </SectionReveal>
-
-      {/* ─── 11. FAQ ─── */}
-      <SectionReveal className="relative z-10 py-16 md:py-24">
+      {/* ────────────────────── 15. CONTACT ────────────────────── */}
+      <SectionReveal id="contact" className="relative py-24 md:py-32" style={{ background: DARK_CARD }}>
         <GearPatternBg />
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: `linear-gradient(135deg, rgba(220,38,38,0.03) 0%, transparent 50%)`,
-          }}
-        />
-        <div className="relative mx-auto max-w-3xl px-4 md:px-6">
-          <div className="text-center mb-16">
-            <p
-              className="text-sm uppercase tracking-widest mb-3"
-              style={{ color: RED }}
-            >
-              Common Questions
+        <div className="relative z-10 max-w-6xl mx-auto px-5">
+          <div className="text-center mb-14">
+            <p className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: RED }}>
+              Get In Touch
             </p>
-            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white">
-              <WordReveal text="Frequently Asked" />
+            <h2 className="text-4xl md:text-5xl font-black text-white">
+              Book Your <span style={{ color: RED }}>Appointment</span>
             </h2>
           </div>
 
-          <motion.div
-            className="space-y-3"
-            variants={stagger}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, margin: "-50px" }}
-          >
-            {faqs.map((faq, i) => (
-              <motion.div key={i} variants={fadeUp}>
-                <AccordionItem
-                  title={faq.question}
-                  answer={faq.answer}
-                  isOpen={openFaq === i}
-                  onToggle={() => setOpenFaq(openFaq === i ? null : i)}
-                />
-              </motion.div>
-            ))}
-          </motion.div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+            {/* Contact form */}
+            <GlassCard className="p-8">
+              <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div>
+                    <label className="text-xs text-slate-500 uppercase tracking-wider mb-1.5 block">Name</label>
+                    <input
+                      type="text"
+                      placeholder="Your name"
+                      className="w-full rounded-xl px-4 py-3 bg-white/[0.07] border border-white/15 text-white placeholder:text-slate-600 focus:outline-none focus:border-red-600/50 transition"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs text-slate-500 uppercase tracking-wider mb-1.5 block">Phone</label>
+                    <input
+                      type="tel"
+                      placeholder="(206) 555-0000"
+                      className="w-full rounded-xl px-4 py-3 bg-white/[0.07] border border-white/15 text-white placeholder:text-slate-600 focus:outline-none focus:border-red-600/50 transition"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="text-xs text-slate-500 uppercase tracking-wider mb-1.5 block">Vehicle</label>
+                  <input
+                    type="text"
+                    placeholder="Year, Make, Model (e.g. 2019 Toyota Camry)"
+                    className="w-full rounded-xl px-4 py-3 bg-white/[0.07] border border-white/15 text-white placeholder:text-slate-600 focus:outline-none focus:border-red-600/50 transition"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs text-slate-500 uppercase tracking-wider mb-1.5 block">What do you need?</label>
+                  <textarea
+                    rows={4}
+                    placeholder="Describe the issue or service needed..."
+                    className="w-full rounded-xl px-4 py-3 bg-white/[0.07] border border-white/15 text-white placeholder:text-slate-600 focus:outline-none focus:border-red-600/50 transition resize-none"
+                  />
+                </div>
+                <MagneticButton
+                  className="w-full rounded-xl py-3.5 text-white font-bold flex items-center justify-center gap-2"
+                  style={{ background: RED }}
+                >
+                  <CalendarCheck size={20} weight="fill" />
+                  Request Appointment
+                </MagneticButton>
+              </form>
+            </GlassCard>
+
+            {/* Contact details */}
+            <div className="space-y-6">
+              {/* Convenience note */}
+              <GlassCard className="p-6">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0" style={{ background: `${RED}18` }}>
+                    <Clock size={24} style={{ color: RED }} weight="fill" />
+                  </div>
+                  <div>
+                    <h3 className="text-white font-bold mb-1">Early Drop-Off, Late Pick-Up</h3>
+                    <p className="text-slate-400 text-sm leading-relaxed">
+                      Drop off before 8am, pick up after 5pm. We work around your schedule so car trouble doesn't mean missing work.
+                    </p>
+                  </div>
+                </div>
+              </GlassCard>
+
+              {/* Contact info cards */}
+              {[
+                {
+                  icon: Phone,
+                  label: "Call Us",
+                  value: "(206) 832-4750",
+                  href: "tel:2068324750",
+                  sub: "Mon-Fri 7am-6pm, Sat 8am-4pm",
+                },
+                {
+                  icon: MapPin,
+                  label: "Visit Us",
+                  value: "3815 Rainier Ave S, Seattle, WA 98118",
+                  href: "https://maps.google.com/?q=3815+Rainier+Ave+S+Seattle+WA+98118",
+                  sub: "Corner of Rainier & S Edmunds",
+                },
+                {
+                  icon: Envelope,
+                  label: "Email Us",
+                  value: "service@pacificautoworks.com",
+                  href: "mailto:service@pacificautoworks.com",
+                  sub: "We respond within 2 hours",
+                },
+              ].map((c) => (
+                <a
+                  key={c.label}
+                  href={c.href}
+                  target={c.href.startsWith("http") ? "_blank" : undefined}
+                  rel={c.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                >
+                  <GlassCard className="p-6 hover:border-red-600/30 transition group">
+                    <div className="flex items-start gap-4">
+                      <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform" style={{ background: `${RED}18` }}>
+                        <c.icon size={24} style={{ color: RED }} weight="fill" />
+                      </div>
+                      <div>
+                        <p className="text-xs text-slate-500 uppercase tracking-wider mb-0.5">{c.label}</p>
+                        <p className="text-white font-bold">{c.value}</p>
+                        <p className="text-xs text-slate-500 mt-1">{c.sub}</p>
+                      </div>
+                    </div>
+                  </GlassCard>
+                </a>
+              ))}
+            </div>
+          </div>
         </div>
       </SectionReveal>
 
-      {/* ─── 12. CONTACT ─── */}
-      <SectionReveal id="contact" className="relative z-10 py-16 md:py-24">
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: `radial-gradient(ellipse at 40% 60%, rgba(220,38,38,0.05) 0%, transparent 50%)`,
-          }}
-        />
-        <div className="relative mx-auto max-w-7xl px-4 md:px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      {/* ────────────────────── 15. FOOTER ────────────────────── */}
+      <footer className="relative py-16 border-t border-white/8" style={{ background: DARK }}>
+        <GearPatternBg />
+        <div className="relative z-10 max-w-6xl mx-auto px-5">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-12">
+            {/* Brand */}
             <div>
-              <p
-                className="text-sm uppercase tracking-widest mb-3"
-                style={{ color: RED }}
-              >
-                Get in Touch
+              <div className="flex items-center gap-2 mb-4">
+                <Wrench size={22} style={{ color: RED }} weight="fill" />
+                <span className="text-lg font-bold text-white">
+                  Pacific <span style={{ color: RED }}>Auto Works</span>
+                </span>
+              </div>
+              <p className="text-sm text-slate-500 leading-relaxed mb-4">
+                Honest auto repair in Seattle's Rainier Valley. ASE Master Technician on-site every day. No surprises.
               </p>
-              <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white mb-6">
-                <WordReveal text="Ready to Roll?" />
-              </h2>
-              <p className="leading-relaxed max-w-md mb-8" style={{ color: SILVER }}>
-                Schedule your next service, get a free estimate, or just ask us a
-                question. We are here to help keep you on the road.
-              </p>
-              <div className="flex flex-wrap gap-4">
-                <MagneticButton
-                  className="px-10 py-4 rounded-full text-base font-semibold text-white inline-flex items-center gap-2 cursor-pointer"
-                  style={{ background: RED } as React.CSSProperties}
-                >
-                  <CalendarCheck size={20} weight="duotone" />
-                  Book Appointment
-                </MagneticButton>
-                <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
-                  <Phone size={18} weight="duotone" />
-                  Call Now
-                </MagneticButton>
+              {/* Trust badges */}
+              <div className="flex items-center gap-3">
+                {["ASE Certified", "BBB A+"].map((badge) => (
+                  <span
+                    key={badge}
+                    className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold border border-white/15 bg-white/[0.08] text-slate-400"
+                  >
+                    <Trophy size={12} style={{ color: RED }} weight="fill" />
+                    {badge}
+                  </span>
+                ))}
               </div>
             </div>
 
-            <GlassCard className="p-8">
-              <h3 className="text-xl font-semibold text-white mb-6">
-                Contact Information
-              </h3>
-              <div className="space-y-5">
-                <div className="flex items-start gap-4">
-                  <MapPin
-                    size={20}
-                    weight="duotone"
-                    style={{ color: RED }}
-                    className="mt-0.5 shrink-0"
-                  />
-                  <div>
-                    <p className="text-sm font-semibold text-white">Location</p>
-                    <p className="text-sm" style={{ color: SILVER }}>
-                      4821 Pacific Boulevard
-                      <br />
-                      Tacoma, WA 98408
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4">
-                  <Phone
-                    size={20}
-                    weight="duotone"
-                    style={{ color: RED }}
-                    className="mt-0.5 shrink-0"
-                  />
-                  <div>
-                    <p className="text-sm font-semibold text-white">Phone</p>
-                    <p className="text-sm" style={{ color: SILVER }}>
-                      (555) 847-2900
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4">
-                  <Envelope
-                    size={20}
-                    weight="duotone"
-                    style={{ color: RED }}
-                    className="mt-0.5 shrink-0"
-                  />
-                  <div>
-                    <p className="text-sm font-semibold text-white">Email</p>
-                    <p className="text-sm" style={{ color: SILVER }}>
-                      service@pacificautoworks.com
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4">
-                  <Clock
-                    size={20}
-                    weight="duotone"
-                    style={{ color: RED }}
-                    className="mt-0.5 shrink-0"
-                  />
-                  <div>
-                    <p className="text-sm font-semibold text-white">Hours</p>
-                    <p className="text-sm" style={{ color: SILVER }}>
-                      Monday - Friday: 7:00 AM - 6:00 PM
-                      <br />
-                      Saturday: 8:00 AM - 4:00 PM
-                      <br />
-                      Sunday: Closed
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </GlassCard>
-          </div>
-        </div>
-      </SectionReveal>
+            {/* Quick links */}
+            <div>
+              <h4 className="text-white font-bold mb-4">Services</h4>
+              <ul className="space-y-2.5">
+                {["Oil Changes", "Brake Service", "Engine Repair", "Transmission", "Diagnostics", "A/C Service"].map((s) => (
+                  <li key={s}>
+                    <a href="#services" className="text-sm text-slate-500 hover:text-white transition">
+                      {s}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-      {/* ─── 13. FOOTER ─── */}
-      <footer className="relative z-10 border-t border-white/5 py-8">
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{ background: `linear-gradient(to top, rgba(17,17,17,1) 0%, rgba(17,17,17,0.95) 100%)` }}
-        />
-        <div className="relative mx-auto max-w-7xl px-4 md:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2 text-sm text-slate-500">
-            <Wrench size={16} weight="duotone" style={{ color: RED }} />
-            <span>Pacific Auto Works &copy; {new Date().getFullYear()}</span>
+            {/* Contact */}
+            <div>
+              <h4 className="text-white font-bold mb-4">Contact</h4>
+              <ul className="space-y-3">
+                <li>
+                  <a href="tel:2068324750" className="flex items-center gap-2 text-sm text-slate-500 hover:text-white transition">
+                    <Phone size={16} style={{ color: RED }} weight="fill" />
+                    (206) 832-4750
+                  </a>
+                </li>
+                <li>
+                  <a href="mailto:service@pacificautoworks.com" className="flex items-center gap-2 text-sm text-slate-500 hover:text-white transition">
+                    <Envelope size={16} style={{ color: RED }} weight="fill" />
+                    service@pacificautoworks.com
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://maps.google.com/?q=3815+Rainier+Ave+S+Seattle+WA+98118"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-start gap-2 text-sm text-slate-500 hover:text-white transition"
+                  >
+                    <MapPin size={16} style={{ color: RED }} weight="fill" className="shrink-0 mt-0.5" />
+                    3815 Rainier Ave S, Seattle, WA 98118
+                  </a>
+                </li>
+                <li className="flex items-center gap-2 text-sm text-slate-500">
+                  <Clock size={16} style={{ color: RED }} weight="fill" />
+                  Mon-Fri 7am-6pm, Sat 8am-4pm
+                </li>
+              </ul>
+            </div>
           </div>
-          <div className="flex items-center gap-2 text-xs text-slate-600">
-            <span>Created by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" style={{textDecoration:"underline"}}>bluejayportfolio.com</a></span>
+
+          {/* Bottom bar */}
+          <div className="border-t border-white/8 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+            <p className="text-xs text-slate-600">
+              &copy; {new Date().getFullYear()} Pacific Auto Works. All rights reserved.
+            </p>
+            <p className="text-xs text-slate-600 flex items-center gap-1.5">
+              <svg width="14" height="14" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-sky-500"><path d="M24.3 4.2c-1.5-.4-3.2.1-4.5 1.1-1-.7-2.3-1-3.5-.8-2.4.4-4.2 2.5-4.2 4.9v.6c-3.2.8-6 2.8-7.8 5.6-.3.5-.1 1.1.4 1.4.5.3 1.1.1 1.4-.4 1.5-2.3 3.7-4 6.3-4.7.5-.1 1-.1 1.5 0 .8.2 1.4.8 1.7 1.5.3.8.2 1.6-.2 2.3l-2.8 4.3c-.6.9-.4 2.1.4 2.8l2.5 2.1c.4.3.8.5 1.3.5h5.2c.5 0 1-.2 1.3-.5l1.2-1c.6-.5.8-1.3.6-2l-1-3.2c-.2-.5 0-1.1.4-1.4l3.8-2.5c1.3-.9 2.1-2.3 2.1-3.9V9.6c0-2.5-1.7-4.7-4.1-5.3v-.1z" fill="currentColor"/></svg>Created by{" "}
+              <a
+                href="https://bluejayportfolio.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-slate-400 transition"
+                style={{ color: SILVER }}
+              >
+                bluejayportfolio.com
+              </a>
+            </p>
           </div>
         </div>
       </footer>

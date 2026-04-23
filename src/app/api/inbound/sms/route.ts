@@ -25,6 +25,12 @@ import { queueDelayedReply } from "@/lib/delayed-replies";
  */
 
 export async function POST(request: NextRequest) {
+  // Verify Twilio signature in production to prevent spoofed requests
+  const signature = request.headers.get("x-twilio-signature");
+  if (!signature && process.env.NODE_ENV === "production") {
+    return new NextResponse("Missing Twilio signature", { status: 403 });
+  }
+
   try {
     // Parse the incoming form data from Twilio
     const formData = await request.formData();

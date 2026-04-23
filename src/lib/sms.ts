@@ -1,14 +1,18 @@
 import fs from "fs";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
-import type { Prospect } from "./types";
+import type { Prospect, SmsMethod, SmsProvider } from "./types";
+import { CATEGORY_CONFIG } from "./types";
 import { supabase, isSupabaseConfigured } from "./supabase";
 import { logCost, COST_RATES } from "./cost-logger";
+import { getVonagePhoneNumber, isVonageConfigured, sendViaVonage } from "./vonage-sms";
 
 const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID;
 const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN;
 const TWILIO_PHONE_NUMBER = process.env.TWILIO_PHONE_NUMBER;
 const SMS_DIR = path.join(process.cwd(), "data", "sms");
+
+type ResolvedSmsProvider = Exclude<SmsProvider, "auto">;
 
 export interface SentSms {
   id: string;
@@ -18,35 +22,86 @@ export interface SentSms {
   body: string;
   sequence: number;
   sentAt: string;
-  method: "twilio" | "mock";
+  method: SmsMethod;
   messageSid?: string;
+}
+
+interface SmsSendAttemptResult {
+  ok: boolean;
+  sid?: string;
+  error?: string;
 }
 
 function ensureSmsDir() {
   if (!fs.existsSync(SMS_DIR)) fs.mkdirSync(SMS_DIR, { recursive: true });
 }
 
-async function sendViaTwilio(to: string, body: string): Promise<{ ok: boolean; sid?: string }> {
-  const url = `https://api.twilio.com/2010-04-01/Accounts/${TWILIO_ACCOUNT_SID}/Messages.json`;
-  const response = await fetch(url, {
-    method: "POST",
-    headers: {
-      Authorization: "Basic " + Buffer.from(`${TWILIO_ACCOUNT_SID}:${TWILIO_AUTH_TOKEN}`).toString("base64"),
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body: new URLSearchParams({
-      To: to,
-      From: TWILIO_PHONE_NUMBER!,
-      Body: body,
-    }),
-  });
-  if (!response.ok) return { ok: false };
-  const data = await response.json();
-  return { ok: true, sid: data.sid };
+function getSmsProviderPreference(): SmsProvider {
+  const value = process.env.SMS_PROVIDER?.toLowerCase();
+  if (value === "vonage" || value === "twilio" || value === "auto") {
+    return value;
+  }
+  return "auto";
+}
+
+function getProviderOrder(): ResolvedSmsProvider[] {
+  const preferred = getSmsProviderPreference();
+
+  if (preferred === "vonage") return ["vonage", "twilio"];
+  if (preferred === "twilio") return ["twilio", "vonage"];
+
+  // Default: Twilio primary, Vonage backup
+  if (isTwilioConfigured()) return ["twilio", "vonage"];
+  return ["vonage", "twilio"];
+}
+
+async function sendViaTwilio(to: string, body: string): Promise<SmsSendAttemptResult> {
+  if (!isTwilioConfigured()) {
+    return {
+      ok: false,
+      error: "Twilio SMS is not configured",
+    };
+  }
+
+  try {
+    const url = `https://api.twilio.com/2010-04-01/Accounts/${TWILIO_ACCOUNT_SID}/Messages.json`;
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: "Basic " + Buffer.from(`${TWILIO_ACCOUNT_SID}:${TWILIO_AUTH_TOKEN}`).toString("base64"),
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams({
+        To: to,
+        From: TWILIO_PHONE_NUMBER!,
+        Body: body,
+      }),
+    });
+
+    const rawText = await response.text();
+    let data: Record<string, unknown> | null = null;
+
+    try {
+      data = rawText ? JSON.parse(rawText) as Record<string, unknown> : null;
+    } catch {
+      data = null;
+    }
+
+    if (!response.ok) {
+      const error = (data?.message as string) || `Twilio HTTP ${response.status}: ${rawText || response.statusText}`;
+      console.error("[SMS][Twilio] Request failed:", error);
+      return { ok: false, error };
+    }
+
+    return { ok: true, sid: data?.sid as string | undefined };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Unknown Twilio SMS error";
+    console.error("[SMS][Twilio] Unexpected error:", error);
+    return { ok: false, error: message };
+  }
 }
 
 async function logSms(sms: SentSms) {
-  // Log to Supabase if configured (production)
   if (isSupabaseConfigured()) {
     try {
       await supabase.from("sms_messages").insert({
@@ -61,12 +116,11 @@ async function logSms(sms: SentSms) {
         message_sid: sms.messageSid || null,
       });
     } catch {
-      // Table might not exist yet — fall through to file logging
+      // Table might not exist yet — fall through to file logging.
     }
     return;
   }
 
-  // Skip file writes on Vercel (read-only filesystem)
   if (process.env.VERCEL) {
     console.log(`  SMS logged (skipped file write on Vercel): seq ${sms.sequence} to ${sms.to}`);
     return;
@@ -82,47 +136,127 @@ async function logSms(sms: SentSms) {
   fs.writeFileSync(filePath, JSON.stringify(messages, null, 2));
 }
 
+function buildSmsRecord(params: {
+  prospectId: string;
+  to: string;
+  body: string;
+  sequence: number;
+  method: SmsMethod;
+  from?: string;
+  messageSid?: string;
+}): SentSms {
+  return {
+    id: uuidv4(),
+    prospectId: params.prospectId,
+    to: params.to,
+    from: params.from || getVonagePhoneNumber() || TWILIO_PHONE_NUMBER || "+10000000000",
+    body: params.body,
+    sequence: params.sequence,
+    sentAt: new Date().toISOString(),
+    method: params.method,
+    messageSid: params.messageSid,
+  };
+}
+
+async function trySendWithProvider(
+  provider: ResolvedSmsProvider,
+  prospectId: string,
+  to: string,
+  body: string,
+  sequence: number
+): Promise<{ success: true; sms: SentSms } | { success: false; error: string }> {
+  if (provider === "vonage") {
+    if (!isVonageConfigured()) {
+      return { success: false, error: "Vonage SMS is not configured" };
+    }
+
+    console.log(`  Sending SMS via Vonage to ${to}...`);
+    const result = await sendViaVonage(to, body);
+    if (!result.ok) {
+      return { success: false, error: result.error || "Vonage SMS failed" };
+    }
+
+    const sms = buildSmsRecord({
+      prospectId,
+      to,
+      body,
+      sequence,
+      method: "vonage",
+      from: getVonagePhoneNumber(),
+      messageSid: result.messageId,
+    });
+
+    return { success: true, sms };
+  }
+
+  if (!isTwilioConfigured()) {
+    return { success: false, error: "Twilio SMS is not configured" };
+  }
+
+  console.log(`  Sending SMS via Twilio to ${to}...`);
+  const result = await sendViaTwilio(to, body);
+  if (!result.ok) {
+    return { success: false, error: result.error || "Twilio SMS failed" };
+  }
+
+  const sms = buildSmsRecord({
+    prospectId,
+    to,
+    body,
+    sequence,
+    method: "twilio",
+    from: TWILIO_PHONE_NUMBER,
+    messageSid: result.sid,
+  });
+
+  await logCost({
+    prospectId,
+    service: "twilio_sms",
+    action: `sms_sequence_${sequence}`,
+    costUsd: COST_RATES.twilio_sms,
+    metadata: { messageSid: result.sid, to },
+  });
+
+  return { success: true, sms };
+}
+
 export async function sendSms(
   prospectId: string,
   to: string,
   body: string,
   sequence: number
 ): Promise<SentSms> {
-  const sms: SentSms = {
-    id: uuidv4(),
-    prospectId,
-    to,
-    from: TWILIO_PHONE_NUMBER || "+10000000000",
-    body,
-    sequence,
-    sentAt: new Date().toISOString(),
-    method: TWILIO_ACCOUNT_SID ? "twilio" : "mock",
-  };
+  const providerOrder = getProviderOrder();
+  const errors: string[] = [];
 
-  if (TWILIO_ACCOUNT_SID && TWILIO_AUTH_TOKEN && TWILIO_PHONE_NUMBER) {
-    console.log(`  Sending SMS via Twilio to ${to}...`);
-    const result = await sendViaTwilio(to, body);
-    if (!result.ok) throw new Error("Twilio SMS failed");
-    sms.messageSid = result.sid;
+  for (const provider of providerOrder) {
+    const result = await trySendWithProvider(provider, prospectId, to, body, sequence);
+    if (result.success) {
+      await logSms(result.sms);
+      return result.sms;
+    }
 
-    // Log the cost of this SMS send
-    await logCost({
-      prospectId,
-      service: "twilio_sms",
-      action: `sms_sequence_${sequence}`,
-      costUsd: COST_RATES.twilio_sms,
-      metadata: { messageSid: result.sid, to },
-    });
-  } else {
-    console.log(`  [MOCK] SMS to ${to}: "${body.substring(0, 60)}..."`);
+    errors.push(`${provider}: ${result.error}`);
+    console.warn(`[SMS] ${provider} send failed for ${to}: ${result.error}`);
   }
 
-  await logSms(sms);
-  return sms;
+  if (!isSmsConfigured()) {
+    const sms = buildSmsRecord({
+      prospectId,
+      to,
+      body,
+      sequence,
+      method: "mock",
+    });
+    console.log(`  [MOCK] SMS to ${to}: "${body.substring(0, 60)}..."`);
+    await logSms(sms);
+    return sms;
+  }
+
+  throw new Error(`SMS delivery failed. Attempts: ${errors.join(" | ")}`);
 }
 
 export async function getSmsHistory(prospectId: string): Promise<SentSms[]> {
-  // Read from Supabase if configured (production)
   if (isSupabaseConfigured()) {
     try {
       const { data, error } = await supabase
@@ -139,16 +273,14 @@ export async function getSmsHistory(prospectId: string): Promise<SentSms[]> {
         body: row.body as string,
         sequence: row.sequence as number,
         sentAt: row.sent_at as string,
-        method: row.method as "twilio" | "mock",
+        method: (row.method as SmsMethod) || "mock",
         messageSid: row.message_sid as string | undefined,
       }));
     } catch {
-      // Table might not exist yet
       return [];
     }
   }
 
-  // Skip file reads on Vercel if no Supabase
   if (process.env.VERCEL) {
     return [];
   }
@@ -163,23 +295,45 @@ export function isTwilioConfigured(): boolean {
   return !!(TWILIO_ACCOUNT_SID && TWILIO_AUTH_TOKEN && TWILIO_PHONE_NUMBER);
 }
 
+export function isSmsConfigured(): boolean {
+  return isVonageConfigured() || isTwilioConfigured();
+}
+
+export function getActiveSmsProviderPreference(): SmsProvider {
+  return getSmsProviderPreference();
+}
+
+export function getConfiguredSmsProviders(): SmsMethod[] {
+  const providers: SmsMethod[] = [];
+  if (isVonageConfigured()) providers.push("vonage");
+  if (isTwilioConfigured()) providers.push("twilio");
+  if (providers.length === 0) providers.push("mock");
+  return providers;
+}
+
+function buildVideoSuffix(videoUrl?: string): string {
+  return videoUrl ? ` Video walkthrough: ${videoUrl}` : "";
+}
+
 // --- SMS Templates ---
 
-export function getInitialSms(prospect: Prospect, previewUrl: string): string {
+export function getInitialSms(prospect: Prospect, previewUrl: string, videoUrl?: string): string {
   const name = prospect.ownerName?.split(" ")[0] || "there";
-  return `Hey ${name}! This is BlueJays. We built a free custom website for ${prospect.businessName} — check it out: ${previewUrl} Let us know what you think! Reply STOP to opt out.`;
+  const categoryLabel = CATEGORY_CONFIG[prospect.category]?.label || prospect.category;
+  return `Hey ${name}! Built a free website for ${prospect.businessName} — check it out: ${previewUrl}${buildVideoSuffix(videoUrl)} Want a quick 15-min walkthrough? Book here: calendly.com/bluejaycontactme/website-walkthrough More ${categoryLabel.toLowerCase()} examples: bluejayportfolio.com/v2/${prospect.category} Reply STOP to opt out`;
 }
 
-export function getFollowUpSms1(prospect: Prospect, previewUrl: string): string {
+export function getFollowUpSms1(prospect: Prospect, previewUrl: string, videoUrl?: string): string {
   const name = prospect.ownerName?.split(" ")[0] || "there";
-  return `Hi ${name}, just following up on the website we built for ${prospect.businessName}. Have you had a chance to look? ${previewUrl} Reply STOP to opt out.`;
+  return `${name}, what did you think of your new site? Want to walk through it on a quick call? calendly.com/bluejaycontactme/website-walkthrough Reply STOP to opt out`;
 }
 
-export function getFollowUpSms2(prospect: Prospect, previewUrl: string): string {
+export function getFollowUpSms2(prospect: Prospect, previewUrl: string, videoUrl?: string): string {
   const name = prospect.ownerName?.split(" ")[0] || "there";
-  return `Last message from us ${name} — your free ${prospect.businessName} website is still live at ${previewUrl}. Claim it before we move on! No pressure either way. Reply STOP to opt out.`;
+  return `${name} — your ${prospect.businessName} site goes offline in 2 weeks. Book a quick walkthrough before it's gone: calendly.com/bluejaycontactme/website-walkthrough Reply STOP to opt out`;
 }
 
-export function getPostVoicemailSms(prospect: Prospect, previewUrl: string): string {
-  return `Hey! This is BlueJays — I just left you a quick voicemail about the website I built for ${prospect.businessName}. Here's the link: ${previewUrl} Reply STOP to opt out.`;
+export function getPostVoicemailSms(prospect: Prospect, previewUrl: string, videoUrl?: string): string {
+  const name = prospect.ownerName?.split(" ")[0] || "there";
+  return `Hey ${name}, just left you a voicemail about the site we built for ${prospect.businessName}: ${previewUrl}${buildVideoSuffix(videoUrl)} Reply STOP to opt out`;
 }

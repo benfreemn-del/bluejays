@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { rateLimit } from "@/lib/rate-limit";
 import { v4 as uuidv4 } from "uuid";
 import { addProspect } from "@/lib/store";
 import { generatePreview } from "@/lib/generator";
@@ -7,6 +8,7 @@ import { alertOwner } from "@/lib/alerts";
 import { logCost, COST_RATES } from "@/lib/cost-logger";
 import type { Prospect, Category } from "@/lib/types";
 import { CATEGORY_CONFIG } from "@/lib/types";
+import { canonicalizeCity, normalizeAddress } from "@/lib/address-normalizer";
 
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 const OWNER_EMAIL = "bluejaycontactme@gmail.com";
@@ -123,6 +125,12 @@ async function notifyOwnerSms(lead: { businessName: string; phone: string; categ
 // Scrapes their info, generates a preview site, notifies owner
 
 export async function POST(request: NextRequest) {
+  const ip = request.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
+  const { allowed } = rateLimit(`lead-submit:${ip}`, 5, 60 * 60 * 1000);
+  if (!allowed) {
+    return NextResponse.json({ error: "Too many submissions. Please try again later." }, { status: 429 });
+  }
+
   const body = await request.json();
   const { businessName, ownerName, phone, email, website, category, city, state } = body;
 
@@ -157,7 +165,7 @@ export async function POST(request: NextRequest) {
     phone: normalizePhone(phone),
     email: email?.trim() || undefined,
     address: "",
-    city: city?.trim() || "Unknown",
+    city: canonicalizeCity(city?.trim()) || city?.trim() || "Unknown",
     state: state?.trim() || "",
     category: resolvedCategory,
     currentWebsite: website?.trim() || undefined,
@@ -174,6 +182,14 @@ export async function POST(request: NextRequest) {
       const scraped = await scrapeWebsite(website);
       prospect.scrapedData = scraped;
       prospect.status = "scraped";
+
+      if (scraped?.address) {
+        prospect.address = normalizeAddress(scraped.address) || "";
+      }
+      const resolvedCity = canonicalizeCity(scraped?.city, scraped?.address);
+      if (resolvedCity) {
+        prospect.city = resolvedCity;
+      }
 
       // Try to detect state from scraped address data if not provided by form
       if (!prospect.state && scraped?.address) {
