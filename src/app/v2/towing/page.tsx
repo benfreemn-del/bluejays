@@ -245,6 +245,93 @@ function ShimmerBorder({ children, className = "" }: { children: React.ReactNode
 }
 
 /* ───────────────────────── DATA ───────────────────────── */
+const comparisonRows = [
+  { feature: "Avg. Response Time", us: "15-30 Minutes", them: "45-90 Minutes" },
+  { feature: "Upfront Pricing", us: "Always Quoted First", them: "Billed After" },
+  { feature: "Licensed & Insured", us: "Fully Verified", them: "Varies" },
+  { feature: "Damage-Free Guarantee", us: "In Writing", them: "No Guarantee" },
+  { feature: "Secure Storage Facility", us: "24/7 Monitored Yard", them: "Sometimes" },
+  { feature: "Roadside Assistance", us: "Included / Same Call", them: "Separate Service" },
+  { feature: "GPS Tracking Updates", us: "Live ETA Texted", them: "Call & Wait" },
+];
+
+const pricingTiers = [
+  {
+    title: "Local Tow",
+    price: "$75–$125",
+    unit: "flat rate",
+    desc: "Towing within 15 miles — perfect for breakdowns, lockouts, and local shop drops.",
+    features: ["15-mile radius", "Wheel-lift or flatbed", "All vehicle types", "Works with AAA & insurance"],
+    cta: "Get Exact Quote",
+    highlight: false,
+  },
+  {
+    title: "Emergency Roadside",
+    price: "$55–$95",
+    unit: "per service",
+    desc: "Jump starts, tire changes, fuel delivery, and lockouts — no tow required.",
+    features: ["30-min avg arrival", "Jump start, tire, lockout", "Fuel delivery available", "On-scene in minutes"],
+    cta: "Call Now",
+    highlight: true,
+  },
+  {
+    title: "Long Distance",
+    price: "$2.50–$4",
+    unit: "per mile",
+    desc: "State-to-state and cross-country flatbed transport with GPS tracking and full insurance.",
+    features: ["Statewide & interstate", "Enclosed or open flatbed", "GPS tracking + updates", "Door-to-door delivery"],
+    cta: "Get Quote",
+    highlight: false,
+  },
+];
+
+const quizOptions = [
+  {
+    label: "Emergency Tow",
+    icon: Warning,
+    recommendation: "Call us immediately at (206) 584-3791. We dispatch the nearest truck with a 15-30 min ETA. Stay in your vehicle with hazard lights on if it's safe to do so.",
+    urgency: "URGENT",
+    color: ACCENT,
+  },
+  {
+    label: "Roadside Assistance",
+    icon: Wrench,
+    recommendation: "We handle jump starts, flat tires, lockouts, and fuel delivery on-site without towing. Give us a call and our roadside tech will be there fast.",
+    urgency: "FAST SERVICE",
+    color: "#f97316",
+  },
+  {
+    label: "Long Distance Move",
+    icon: Path,
+    recommendation: "Our enclosed and open flatbed fleet handles cross-state vehicle transport. Call or fill out the dispatch form below for a custom quote based on distance.",
+    urgency: "PLAN AHEAD",
+    color: "#3b82f6",
+  },
+  {
+    label: "Vehicle Storage",
+    icon: MapTrifold,
+    recommendation: "Our secure, monitored storage yard accepts vehicles anytime. Monthly and weekly rates available. Great for accident vehicles waiting on insurance.",
+    urgency: "AVAILABLE NOW",
+    color: "#22c55e",
+  },
+];
+
+const serviceAreaGrid = [
+  { area: "Downtown Core", time: "10–20 min", icon: "🏙️" },
+  { area: "North Highway Corridor", time: "15–25 min", icon: "🛣️" },
+  { area: "South Interstate", time: "20–30 min", icon: "🚗" },
+  { area: "Airport Area", time: "15–25 min", icon: "✈️" },
+];
+
+const certifications = [
+  "Towing & Recovery Assoc.",
+  "DOT Certified",
+  "BBB Accredited",
+  "Bonded & Insured",
+  "AAA Authorized",
+  "CDL Licensed Drivers",
+];
+
 const services = [
   { title: "Roadside Assistance", description: "Flat tires, dead batteries, fuel delivery, and lockouts. We handle the most common roadside emergencies fast so you can get back on the road without a tow.", icon: Wrench },
   { title: "Standard Towing", description: "Safe, reliable towing for sedans, SUVs, and pickups. Our wheel-lift and dolly systems protect your vehicle during transport to any destination you choose.", icon: Car },
@@ -280,6 +367,7 @@ export default function V2TowingPage() {
   const [openService, setOpenService] = useState<number | null>(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [openQuiz, setOpenQuiz] = useState<number | null>(null);
 
   return (
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: BG, color: "#f1f5f9" }}>
@@ -352,12 +440,26 @@ export default function V2TowingPage() {
                 <Lightning size={18} weight="fill" /> Request Tow Now
               </MagneticButton>
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
-                <Phone size={18} weight="duotone" /> (555) 911-TOWS
+                <Phone size={18} weight="duotone" /> (206) 584-3791
               </MagneticButton>
             </motion.div>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ ...spring, delay: 1 }} className="flex flex-wrap gap-6 text-sm text-slate-400">
               <span className="flex items-center gap-2"><Timer size={16} weight="duotone" style={{ color: ACCENT }} />15-30 Min ETA</span>
               <span className="flex items-center gap-2"><Clock size={16} weight="duotone" style={{ color: ACCENT }} />24/7/365 Dispatch</span>
+            </motion.div>
+            {/* Trust badge pills */}
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 1.2 }} className="flex flex-wrap gap-2">
+              {[
+                { label: "Licensed & Insured", icon: ShieldCheck },
+                { label: "24/7 Emergency", icon: Siren },
+                { label: "30-Min Avg Response", icon: Timer },
+                { label: "Damage-Free Guarantee", icon: Certificate },
+              ].map((badge, i) => (
+                <span key={i} className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border border-white/10 bg-white/5 text-slate-300">
+                  <badge.icon size={12} weight="duotone" style={{ color: ACCENT }} />
+                  {badge.label}
+                </span>
+              ))}
             </motion.div>
           </div>
           <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ ...spring, delay: 0.3 }} className="hidden lg:flex items-center justify-center">
@@ -368,6 +470,26 @@ export default function V2TowingPage() {
           </motion.div>
         </div>
       </section>
+
+      {/* ─── EMERGENCY URGENCY STRIP ─── */}
+      <div className="relative z-10 w-full" style={{ background: ACCENT }}>
+        <div className="mx-auto max-w-7xl px-4 md:px-6 py-3 flex flex-col sm:flex-row items-center justify-center gap-3 text-white text-sm font-semibold">
+          <span className="flex items-center gap-2">
+            <motion.span
+              className="inline-block w-2.5 h-2.5 rounded-full bg-white"
+              animate={{ opacity: [1, 0.3, 1], scale: [1, 1.3, 1] }}
+              transition={{ duration: 1.2, repeat: Infinity }}
+            />
+            Emergency Dispatchers On Duty Now
+          </span>
+          <span className="hidden sm:block opacity-50">|</span>
+          <a href="tel:2065843791" className="flex items-center gap-1.5 underline underline-offset-2 hover:opacity-80 transition-opacity">
+            <Phone size={14} weight="fill" /> (206) 584-3791
+          </a>
+          <span className="hidden sm:block opacity-50">|</span>
+          <span className="opacity-90">Average arrival: 15–30 minutes</span>
+        </div>
+      </div>
 
       {/* ─── 2. STATS ─── */}
       <SectionReveal className="relative z-10 pb-8">
@@ -436,6 +558,51 @@ export default function V2TowingPage() {
         </div>
       </SectionReveal>
 
+      {/* ─── 4. PRICING TIERS ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ACCENT }}>Transparent Pricing</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white mb-4">
+              <WordReveal text="Upfront Rates — No Surprises" />
+            </h2>
+            <p className="text-slate-400 max-w-md mx-auto text-sm">Every price is quoted before we dispatch. You always know what you are paying before we arrive.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {pricingTiers.map((tier, i) => (
+              <motion.div key={i} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}>
+                {tier.highlight ? (
+                  <ShimmerBorder className="h-full">
+                    <div className="p-6 h-full flex flex-col">
+                      <span className="text-xs font-bold px-3 py-1 rounded-full mb-4 self-start" style={{ background: ACCENT, color: "white" }}>Most Popular</span>
+                      <h3 className="text-xl font-bold text-white mb-1">{tier.title}</h3>
+                      <p className="text-3xl font-black tracking-tight mb-1" style={{ color: ACCENT }}>{tier.price}</p>
+                      <p className="text-xs text-slate-400 mb-4">{tier.unit}</p>
+                      <p className="text-sm text-slate-400 leading-relaxed mb-6 flex-1">{tier.desc}</p>
+                      <ul className="space-y-2 mb-6">
+                        {tier.features.map((f, j) => <li key={j} className="flex items-center gap-2 text-sm text-slate-300"><CheckCircle size={14} weight="fill" style={{ color: "#4ade80" }} />{f}</li>)}
+                      </ul>
+                      <MagneticButton className="w-full py-3 rounded-full text-sm font-semibold text-white cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>{tier.cta}</MagneticButton>
+                    </div>
+                  </ShimmerBorder>
+                ) : (
+                  <GlassCard className="p-6 h-full flex flex-col">
+                    <h3 className="text-xl font-bold text-white mb-1">{tier.title}</h3>
+                    <p className="text-3xl font-black tracking-tight mb-1" style={{ color: ACCENT }}>{tier.price}</p>
+                    <p className="text-xs text-slate-400 mb-4">{tier.unit}</p>
+                    <p className="text-sm text-slate-400 leading-relaxed mb-6 flex-1">{tier.desc}</p>
+                    <ul className="space-y-2 mb-6">
+                      {tier.features.map((f, j) => <li key={j} className="flex items-center gap-2 text-sm text-slate-300"><CheckCircle size={14} weight="fill" style={{ color: "#4ade80" }} />{f}</li>)}
+                    </ul>
+                    <MagneticButton className="w-full py-3 rounded-full text-sm font-semibold text-white border border-white/10 cursor-pointer">{tier.cta}</MagneticButton>
+                  </GlassCard>
+                )}
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </SectionReveal>
+
       {/* ─── 4. 24/7 EMERGENCY CTA ─── */}
       <SectionReveal id="emergency" className="relative z-10 py-16 md:py-24">
         <div className="mx-auto max-w-4xl px-4 md:px-6">
@@ -453,7 +620,7 @@ export default function V2TowingPage() {
                   Stranded on the highway? Involved in an accident? Locked out? One call and we dispatch the nearest truck to your exact GPS location.
                 </p>
                 <MagneticButton className="px-12 py-5 rounded-full text-lg font-bold text-white inline-flex items-center gap-3 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
-                  <Phone size={24} weight="fill" /> (555) 911-TOWS
+                  <Phone size={24} weight="fill" /> (206) 584-3791
                 </MagneticButton>
               </motion.div>
             </div>
@@ -497,6 +664,58 @@ export default function V2TowingPage() {
         </div>
       </SectionReveal>
 
+      {/* ─── COMPARISON TABLE ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-4xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ACCENT }}>Why We Win</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white mb-4">
+              <WordReveal text="Rapid Rescue vs. Average Towing" />
+            </h2>
+            <p className="text-slate-400 max-w-md mx-auto text-sm">See how we stack up when it matters most — not when everything is fine, but when you are stranded.</p>
+          </div>
+          <GlassCard className="overflow-hidden">
+            <div className="grid grid-cols-3 p-4 md:p-5 border-b border-white/5 text-sm font-semibold">
+              <span className="text-slate-400">What Matters</span>
+              <span className="text-center" style={{ color: ACCENT }}>Rapid Rescue</span>
+              <span className="text-center text-slate-500">Average Company</span>
+            </div>
+            {comparisonRows.map((row, i) => (
+              <div key={i} className={`grid grid-cols-3 items-center p-4 md:p-5 text-sm border-b border-white/5 last:border-0 ${i % 2 === 0 ? "bg-white/[0.01]" : ""}`}>
+                <span className="text-slate-300 pr-2">{row.feature}</span>
+                <div className="flex justify-center">
+                  <span className="flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium" style={{ background: "rgba(34,197,94,0.15)", color: "#4ade80" }}>
+                    <CheckCircle size={12} weight="fill" /> {row.us}
+                  </span>
+                </div>
+                <div className="flex justify-center">
+                  <span className="flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium" style={{ background: "rgba(239,68,68,0.1)", color: "#f87171" }}>
+                    <X size={12} weight="bold" /> {row.them}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </GlassCard>
+        </div>
+      </SectionReveal>
+
+      {/* ─── CERTIFICATIONS ─── */}
+      <SectionReveal className="relative z-10 py-10 md:py-14">
+        <div className="mx-auto max-w-5xl px-4 md:px-6">
+          <div className="text-center mb-8">
+            <p className="text-sm uppercase tracking-widest" style={{ color: ACCENT }}>Licensed, Certified &amp; Trusted</p>
+          </div>
+          <div className="flex flex-wrap justify-center gap-3">
+            {certifications.map((cert) => (
+              <span key={cert} className="flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-medium text-slate-300" style={{ borderColor: "rgba(239,68,68,0.3)", background: "rgba(239,68,68,0.07)" }}>
+                <Certificate size={14} weight="duotone" style={{ color: ACCENT }} />
+                {cert}
+              </span>
+            ))}
+          </div>
+        </div>
+      </SectionReveal>
+
       {/* ─── 6. COVERAGE MAP / AREAS ─── */}
       <SectionReveal id="coverage" className="relative z-10 py-16 md:py-24">
         <div className="mx-auto max-w-7xl px-4 md:px-6">
@@ -508,19 +727,32 @@ export default function V2TowingPage() {
             <p className="text-slate-400 max-w-lg mx-auto">Our trucks are strategically positioned throughout the region for the fastest possible response times.</p>
           </div>
           <motion.div className="grid grid-cols-2 sm:grid-cols-4 gap-4" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
-            {coverageAreas.map((area, i) => (
+            {[
+              { area: "Seattle Downtown", time: "10–18 min" },
+              { area: "Capitol Hill", time: "12–20 min" },
+              { area: "I-5 Corridor", time: "15–25 min" },
+              { area: "Sea-Tac Airport", time: "15–25 min" },
+              { area: "Rainier Valley", time: "15–22 min" },
+              { area: "Bellevue / Eastside", time: "18–28 min" },
+              { area: "University District", time: "12–20 min" },
+              { area: "Sodo / Waterfront", time: "10–18 min" },
+            ].map((loc, i) => (
               <motion.div key={i} variants={fadeUp}>
                 <GlassCard className="p-4 text-center">
-                  <MapTrifold size={20} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-2" />
-                  <p className="text-sm font-semibold text-white">{area}</p>
+                  <div className="w-2 h-2 rounded-full mx-auto mb-2" style={{ background: "#22c55e", boxShadow: "0 0 8px #22c55e" }} />
+                  <p className="text-sm font-semibold text-white">{loc.area}</p>
+                  <p className="text-xs mt-1" style={{ color: ACCENT }}>{loc.time}</p>
                 </GlassCard>
               </motion.div>
             ))}
           </motion.div>
-          <p className="text-center text-sm text-slate-400 mt-6">
-            <CheckCircle size={16} weight="duotone" style={{ color: ACCENT }} className="inline mr-1 -mt-0.5" />
-            Long-distance towing available statewide and beyond
-          </p>
+          <div className="text-center mt-8 space-y-2">
+            <p className="text-sm text-slate-400">
+              <CheckCircle size={16} weight="duotone" style={{ color: ACCENT }} className="inline mr-1 -mt-0.5" />
+              Long-distance towing available statewide and beyond
+            </p>
+            <p className="text-xs text-slate-500">Response times are estimates based on current unit positions. Actual times may vary.</p>
+          </div>
         </div>
       </SectionReveal>
 
@@ -529,9 +761,27 @@ export default function V2TowingPage() {
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="text-center mb-16">
             <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ACCENT }}>Customer Stories</p>
-            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white">
+            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white mb-6">
               <WordReveal text="Trusted on the Road" />
             </h2>
+            {/* Google Reviews Header */}
+            <div className="inline-flex items-center gap-3 px-5 py-3 rounded-full border border-white/10 bg-white/[0.04]">
+              {/* Google G SVG */}
+              <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+              </svg>
+              {/* Stars */}
+              <div className="flex items-center gap-0.5">
+                {[1,2,3,4,5].map(s => (
+                  <Star key={s} size={14} weight="fill" style={{ color: "#facc15" }} />
+                ))}
+              </div>
+              <span className="text-sm font-semibold text-white">4.8</span>
+              <span className="text-xs text-slate-400">· 427 Google reviews</span>
+            </div>
           </div>
           <motion.div className="grid grid-cols-1 md:grid-cols-3 gap-6" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
             {testimonials.map((t, i) => (
@@ -547,6 +797,77 @@ export default function V2TowingPage() {
               </motion.div>
             ))}
           </motion.div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── VIDEO PLACEHOLDER ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-5xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ACCENT }}>See Us in Action</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white">
+              <WordReveal text="Watch Our Crew Work" />
+            </h2>
+          </div>
+          <div className="relative rounded-2xl overflow-hidden aspect-video cursor-pointer group">
+            <img src="https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=1200&q=80" alt="Tow truck on the road" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+            <div className="absolute inset-0 bg-black/55 flex items-center justify-center">
+              <motion.div className="relative flex items-center justify-center" whileHover={{ scale: 1.1 }} transition={springFast}>
+                <motion.div className="absolute w-28 h-28 rounded-full border-2 border-white/40" animate={{ scale: [1, 1.4, 1], opacity: [0.6, 0, 0.6] }} transition={{ duration: 2, repeat: Infinity }} />
+                <div className="w-20 h-20 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 flex items-center justify-center">
+                  <div className="w-0 h-0 ml-1" style={{ borderTop: "12px solid transparent", borderBottom: "12px solid transparent", borderLeft: "20px solid white" }} />
+                </div>
+              </motion.div>
+            </div>
+            <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
+              <GlassCard className="px-4 py-2 text-sm text-white font-medium">Highway Rescue — Flatbed Recovery</GlassCard>
+              <GlassCard className="px-3 py-2 text-xs text-white">3:12</GlassCard>
+            </div>
+          </div>
+          <p className="text-center text-slate-400 text-sm mt-4">Real footage from our dispatch team — professional, fast, and damage-free every time.</p>
+        </div>
+      </SectionReveal>
+
+      {/* ─── QUIZ ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-3xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ACCENT }}>What Do You Need?</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white mb-4">
+              <WordReveal text="Tell Us Your Situation" />
+            </h2>
+            <p className="text-slate-400 max-w-md mx-auto text-sm">Select your situation and we will tell you exactly what to expect and how fast we can help.</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {quizOptions.map((opt, i) => (
+              <div key={i}>
+                <button
+                  onClick={() => setOpenQuiz(openQuiz === i ? null : i)}
+                  className="w-full text-left p-4 rounded-xl border transition-all cursor-pointer"
+                  style={{
+                    borderColor: openQuiz === i ? opt.color : "rgba(255,255,255,0.1)",
+                    background: openQuiz === i ? `${opt.color}15` : "rgba(255,255,255,0.03)",
+                  }}
+                >
+                  <div className="flex items-center gap-3 mb-1">
+                    <opt.icon size={18} weight="duotone" style={{ color: opt.color }} />
+                    <p className="text-sm font-semibold text-white">{opt.label}</p>
+                  </div>
+                  <span className="text-xs px-2 py-0.5 rounded-full font-medium ml-7" style={{ background: `${opt.color}22`, color: opt.color }}>{opt.urgency}</span>
+                </button>
+                <AnimatePresence initial={false}>
+                  {openQuiz === i && (
+                    <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.3 }} className="overflow-hidden">
+                      <div className="mt-2 p-3 rounded-xl text-sm text-slate-300 flex items-center justify-between gap-3" style={{ background: "rgba(255,255,255,0.04)", borderLeft: `3px solid ${opt.color}` }}>
+                        <span>{opt.recommendation}</span>
+                        <a href="tel:+12065843791" className="shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold text-white" style={{ background: opt.color }}>Call Now</a>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            ))}
+          </div>
         </div>
       </SectionReveal>
 
@@ -581,6 +902,36 @@ export default function V2TowingPage() {
         </div>
       </SectionReveal>
 
+      {/* ─── GUARANTEE ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ACCENT }}>Our Promise</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white mb-4">
+              <WordReveal text="The Rapid Rescue Guarantee" />
+            </h2>
+            <p className="text-slate-400 max-w-md mx-auto text-sm">Every tow comes with these non-negotiable commitments — no exceptions, no excuses.</p>
+          </div>
+          <motion.div className="grid grid-cols-1 sm:grid-cols-3 gap-6" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
+            {[
+              { icon: ShieldCheck, title: "Damage-Free Guarantee", desc: "If our tow causes any damage to your vehicle, we cover the repair cost — in writing, no argument." },
+              { icon: Timer, title: "On-Time or We Discount", desc: "If our truck arrives more than 15 minutes past the quoted ETA, we automatically reduce your bill by 25%." },
+              { icon: Certificate, title: "Price Match + Fixed Rate", desc: "The price quoted on the phone is exactly what you pay. No surprise fees added when the truck arrives." },
+            ].map((item, i) => (
+              <motion.div key={i} variants={fadeUp}>
+                <GlassCard className="p-6 h-full text-center">
+                  <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: ACCENT_GLOW }}>
+                    <item.icon size={28} weight="duotone" style={{ color: ACCENT }} />
+                  </div>
+                  <h3 className="text-lg font-bold text-white mb-2">{item.title}</h3>
+                  <p className="text-sm text-slate-400 leading-relaxed">{item.desc}</p>
+                </GlassCard>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </SectionReveal>
+
       {/* ─── 9. CONTACT ─── */}
       <SectionReveal className="relative z-10 py-16 md:py-24">
         <div className="mx-auto max-w-7xl px-4 md:px-6">
@@ -603,14 +954,14 @@ export default function V2TowingPage() {
             </div>
             <GlassCard className="p-8">
               <h3 className="text-xl font-semibold text-white mb-6">Dispatch Center</h3>
-              <div className="space-y-4">
+              <div className="space-y-4 mb-6">
                 <div className="flex items-start gap-4">
                   <MapPin size={20} weight="duotone" style={{ color: ACCENT }} className="mt-0.5 shrink-0" />
-                  <div><p className="text-sm font-semibold text-white">Headquarters</p><p className="text-sm text-slate-400">321 Rescue Blvd<br />Phoenix, AZ 85001</p></div>
+                  <div><p className="text-sm font-semibold text-white">Headquarters</p><p className="text-sm text-slate-400">4821 E Marginal Way S<br />Seattle, WA 98134</p></div>
                 </div>
                 <div className="flex items-start gap-4">
                   <Phone size={20} weight="duotone" style={{ color: ACCENT }} className="mt-0.5 shrink-0" />
-                  <div><p className="text-sm font-semibold text-white">Dispatch Line</p><p className="text-sm text-slate-400">(555) 911-TOWS (8697)</p></div>
+                  <div><p className="text-sm font-semibold text-white">Dispatch Line</p><p className="text-sm text-slate-400">(206) 584-3791</p></div>
                 </div>
                 <div className="flex items-start gap-4">
                   <Clock size={20} weight="duotone" style={{ color: ACCENT }} className="mt-0.5 shrink-0" />
@@ -621,6 +972,10 @@ export default function V2TowingPage() {
                   <div><p className="text-sm font-semibold text-white">Accident?</p><p className="text-sm text-slate-400">Call 911 first, then call us.<br />We coordinate with emergency services.</p></div>
                 </div>
               </div>
+              <div className="p-4 rounded-xl text-sm" style={{ background: ACCENT_GLOW, border: `1px solid rgba(239,68,68,0.2)` }}>
+                <p className="text-white font-semibold mb-1">Insurance &amp; Motor Clubs</p>
+                <p className="text-slate-300">We work with AAA, USAA, Allstate, State Farm, and all major providers. We can bill insurance directly — just provide your policy number when you call.</p>
+              </div>
             </GlassCard>
           </div>
         </div>
@@ -629,9 +984,13 @@ export default function V2TowingPage() {
       {/* ─── 10. FOOTER ─── */}
       <footer className="relative z-10 border-t border-white/5 py-8">
         <div className="mx-auto max-w-7xl px-4 md:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2 text-sm text-slate-500">
-            <Truck size={16} weight="duotone" style={{ color: ACCENT }} />
-            <span>Rapid Rescue Towing &copy; {new Date().getFullYear()}</span>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm text-slate-500">
+            <div className="flex items-center gap-2">
+              <Truck size={16} weight="duotone" style={{ color: ACCENT }} />
+              <span>Rapid Rescue Towing &copy; {new Date().getFullYear()}</span>
+            </div>
+            <span className="hidden sm:block text-slate-700">·</span>
+            <span className="text-slate-600">WA Tow License #TWG-2847 · DOT #3291847</span>
           </div>
           <p className="text-xs text-slate-600 flex items-center gap-1.5"><svg width="14" height="14" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-sky-500"><path d="M24.3 4.2c-1.5-.4-3.2.1-4.5 1.1-1-.7-2.3-1-3.5-.8-2.4.4-4.2 2.5-4.2 4.9v.6c-3.2.8-6 2.8-7.8 5.6-.3.5-.1 1.1.4 1.4.5.3 1.1.1 1.4-.4 1.5-2.3 3.7-4 6.3-4.7.5-.1 1-.1 1.5 0 .8.2 1.4.8 1.7 1.5.3.8.2 1.6-.2 2.3l-2.8 4.3c-.6.9-.4 2.1.4 2.8l2.5 2.1c.4.3.8.5 1.3.5h5.2c.5 0 1-.2 1.3-.5l1.2-1c.6-.5.8-1.3.6-2l-1-3.2c-.2-.5 0-1.1.4-1.4l3.8-2.5c1.3-.9 2.1-2.3 2.1-3.9V9.6c0-2.5-1.7-4.7-4.1-5.3v-.1z" fill="currentColor"/></svg>Created by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" style={{textDecoration:"underline"}}>bluejayportfolio.com</a></p>
         </div>

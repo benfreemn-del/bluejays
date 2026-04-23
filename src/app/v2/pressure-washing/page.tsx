@@ -374,6 +374,61 @@ const galleryItems = [
   },
 ];
 
+/* ───────────────────────── COMPARISON DATA ───────────────────────── */
+const comparisonRows = [
+  { feature: "Licensed & Fully Insured", them: "Varies" },
+  { feature: "Free On-Site Estimate", them: "Sometimes" },
+  { feature: "Soft-Wash for Delicate Surfaces", them: "No" },
+  { feature: "EPA Biodegradable Detergents", them: "Rarely" },
+  { feature: "Satisfaction Guarantee (Redo-Free)", them: "No" },
+  { feature: "Commercial-Grade Equipment", them: "Sometimes" },
+  { feature: "Roof Soft-Wash (Warranty Safe)", them: "No" },
+];
+
+/* ───────────────────────── QUIZ DATA ───────────────────────── */
+const washQuizOptions = [
+  { label: "House or Building Exterior", urgency: "Most Popular", color: ACCENT, action: "Our soft-wash house treatment removes years of mold, mildew, and grime safely — perfect for vinyl, brick, and stucco without risk of damage." },
+  { label: "Driveway or Walkway", urgency: "Fast Results", color: "#22c55e", action: "We blast oil stains, tire marks, and embedded dirt from concrete and pavers — restoring them to like-new in a single visit." },
+  { label: "Deck, Patio or Roof", urgency: "Highly Recommended", color: "#f97316", action: "Our specialized soft-wash cleans and preserves wood, composite, and shingles — extending their life by years and restoring color." },
+  { label: "Commercial Property", urgency: "After-Hours Available", color: "#8b5cf6", action: "We schedule commercial cleanings outside business hours to minimize disruption to your customers and operations, any surface." },
+];
+
+/* ───────────────────────── QUIZ OPTION COMPONENT ───────────────────────── */
+function PressureWashingQuizOption({ opt }: { opt: { label: string; urgency: string; color: string; action: string } }) {
+  const [selected, setSelected] = useState(false);
+  return (
+    <div>
+      <button
+        onClick={() => setSelected(!selected)}
+        className="w-full text-left p-4 rounded-xl border transition-all cursor-pointer"
+        style={{
+          borderColor: selected ? opt.color : "rgba(255,255,255,0.1)",
+          background: selected ? `${opt.color}15` : "rgba(255,255,255,0.03)",
+        }}
+      >
+        <p className="text-sm font-semibold text-white mb-1">{opt.label}</p>
+        <span className="text-xs px-2 py-0.5 rounded-full font-medium" style={{ background: `${opt.color}22`, color: opt.color }}>{opt.urgency}</span>
+      </button>
+      <AnimatePresence initial={false}>
+        {selected && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="overflow-hidden"
+          >
+            <div className="mt-2 p-3 rounded-xl text-sm text-slate-300 flex items-center justify-between gap-3" style={{ background: "rgba(255,255,255,0.04)", borderLeft: `3px solid ${opt.color}` }}>
+              <span>{opt.action}</span>
+              <a href="tel:+12065743892" className="shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold text-white" style={{ background: opt.color }}>Call Now</a>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 /* ═══════════════════════════════════════════════════════════════════
    MAIN PAGE COMPONENT
    ═══════════════════════════════════════════════════════════════════ */
@@ -452,11 +507,16 @@ export default function V2PressureWashingPage() {
                 Get Free Estimate <ArrowRight size={18} weight="bold" />
               </MagneticButton>
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
-                <Phone size={18} weight="duotone" /> (555) 876-3200
+                <Phone size={18} weight="duotone" /> (206) 574-3892
               </MagneticButton>
             </motion.div>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ ...spring, delay: 1 }} className="flex flex-wrap gap-6 text-sm text-slate-400">
-              <span className="flex items-center gap-2"><MapPin size={16} weight="duotone" style={{ color: ACCENT }} />Serving Metro &amp; Surrounding Areas</span>
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 1 }} className="flex flex-wrap gap-2">
+              {["Licensed & Insured", "EPA Certified", "Satisfaction Guaranteed", "Eco-Friendly"].map((badge) => (
+                <span key={badge} className="px-3 py-1.5 text-xs font-medium rounded-full" style={{ background: "rgba(2,132,199,0.15)", color: ACCENT_LIGHT, border: "1px solid rgba(2,132,199,0.3)" }}>{badge}</span>
+              ))}
+            </motion.div>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ ...spring, delay: 1.1 }} className="flex flex-wrap gap-6 text-sm text-slate-400">
+              <span className="flex items-center gap-2"><MapPin size={16} weight="duotone" style={{ color: ACCENT }} />Serving Seattle &amp; Puget Sound</span>
               <span className="flex items-center gap-2"><Clock size={16} weight="duotone" style={{ color: ACCENT }} />Mon-Sat 7am-6pm</span>
             </motion.div>
           </div>
@@ -469,6 +529,15 @@ export default function V2PressureWashingPage() {
           </motion.div>
         </div>
       </section>
+
+      {/* ─── URGENCY STRIP ─── */}
+      <div className="relative z-10 py-3" style={{ background: ACCENT }}>
+        <div className="mx-auto max-w-7xl px-4 md:px-6 flex items-center justify-center gap-3 text-white text-sm font-medium flex-wrap text-center">
+          <motion.div className="w-2 h-2 rounded-full bg-white shrink-0" animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 1.5, repeat: Infinity }} />
+          <span>Crews Available Now — Same-Week Scheduling · Call <a href="tel:+12065743892" className="underline font-bold">(206) 574-3892</a></span>
+          <motion.div className="w-2 h-2 rounded-full bg-white shrink-0" animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 1.5, repeat: Infinity, delay: 0.75 }} />
+        </div>
+      </div>
 
       {/* ─── 2. STATS / TRUST INDICATORS ─── */}
       <SectionReveal className="relative z-10 pb-8">
@@ -617,6 +686,15 @@ export default function V2PressureWashingPage() {
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="text-center mb-16">
             <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ACCENT }}>Customer Stories</p>
+            {/* Google Reviews Header */}
+            <div className="flex items-center justify-center gap-2 mb-4 flex-wrap">
+              <div className="flex gap-0.5">
+                {[1,2,3,4,5].map((s) => <Star key={s} size={16} weight="fill" style={{ color: "#facc15" }} />)}
+              </div>
+              <span className="text-white font-semibold text-sm">4.9</span>
+              <span className="text-slate-400 text-sm">· 527 Google reviews</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="ml-1 shrink-0"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+            </div>
             <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white">
               <WordReveal text="Trusted by Homeowners" />
             </h2>
@@ -639,6 +717,69 @@ export default function V2PressureWashingPage() {
               </motion.div>
             ))}
           </motion.div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── COMPARISON TABLE ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-4xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ACCENT }}>Why We Win</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white mb-4">
+              <WordReveal text="AquaForce vs. The Competition" />
+            </h2>
+            <p className="text-slate-400 max-w-md mx-auto text-sm">Not all pressure washing companies are equal. Here is what sets us apart from the other guys.</p>
+          </div>
+          <GlassCard className="overflow-hidden">
+            <div className="grid grid-cols-3 p-4 md:p-5 border-b border-white/5 text-sm font-semibold">
+              <span className="text-slate-400">What Matters</span>
+              <span className="text-center" style={{ color: ACCENT }}>AquaForce</span>
+              <span className="text-center text-slate-500">Average Company</span>
+            </div>
+            {comparisonRows.map((row, i) => (
+              <div key={i} className={`grid grid-cols-3 items-center p-4 md:p-5 text-sm border-b border-white/5 last:border-0 ${i % 2 === 0 ? "bg-white/[0.01]" : ""}`}>
+                <span className="text-slate-300 pr-4">{row.feature}</span>
+                <div className="flex justify-center">
+                  <span className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium" style={{ background: "rgba(34,197,94,0.15)", color: "#4ade80" }}>
+                    <CheckCircle size={12} weight="fill" /> Yes
+                  </span>
+                </div>
+                <div className="flex justify-center">
+                  <span className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium" style={{ background: "rgba(239,68,68,0.1)", color: "#f87171" }}>
+                    <X size={12} weight="bold" /> {row.them}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </GlassCard>
+        </div>
+      </SectionReveal>
+
+      {/* ─── VIDEO PLACEHOLDER ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-5xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ACCENT }}>See the Difference</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white">
+              <WordReveal text="Watch Us Work" />
+            </h2>
+          </div>
+          <div className="relative rounded-2xl overflow-hidden aspect-video cursor-pointer group">
+            <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&q=80" alt="Pressure washing transformation" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+            <div className="absolute inset-0 bg-black/55 flex items-center justify-center">
+              <motion.div className="relative flex items-center justify-center" whileHover={{ scale: 1.1 }} transition={springFast}>
+                <motion.div className="absolute w-28 h-28 rounded-full border-2 border-white/40" animate={{ scale: [1, 1.4, 1], opacity: [0.6, 0, 0.6] }} transition={{ duration: 2, repeat: Infinity }} />
+                <div className="w-20 h-20 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 flex items-center justify-center">
+                  <div className="w-0 h-0 ml-1" style={{ borderTop: "12px solid transparent", borderBottom: "12px solid transparent", borderLeft: "20px solid white" }} />
+                </div>
+              </motion.div>
+            </div>
+            <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
+              <GlassCard className="px-4 py-2 text-sm text-white font-medium">Before &amp; After — Driveway Transformation</GlassCard>
+              <GlassCard className="px-3 py-2 text-xs text-white">2:34</GlassCard>
+            </div>
+          </div>
+          <p className="text-center text-slate-400 text-sm mt-4">Real job footage — watch years of grime disappear in minutes.</p>
         </div>
       </SectionReveal>
 
@@ -666,6 +807,42 @@ export default function V2PressureWashingPage() {
               </motion.div>
             ))}
           </motion.div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── QUIZ ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-3xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ACCENT }}>Find Your Service</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white mb-4">
+              <WordReveal text="What Do You Need Washed?" />
+            </h2>
+            <p className="text-slate-400 max-w-md mx-auto text-sm">Select what you need cleaned and we will show you exactly what to expect.</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {washQuizOptions.map((opt, i) => (
+              <PressureWashingQuizOption key={i} opt={opt} />
+            ))}
+          </div>
+          <p className="text-center text-slate-400 text-sm mt-6">Not sure? <a href="tel:+12065743892" className="underline" style={{ color: ACCENT_LIGHT }}>Call (206) 574-3892</a> and we will recommend the right service for your property.</p>
+        </div>
+      </SectionReveal>
+
+      {/* ─── CERTIFICATIONS ─── */}
+      <SectionReveal className="relative z-10 py-10 md:py-14">
+        <div className="mx-auto max-w-5xl px-4 md:px-6">
+          <div className="text-center mb-8">
+            <p className="text-sm uppercase tracking-widest" style={{ color: ACCENT }}>Licensed, Certified &amp; Trusted</p>
+          </div>
+          <div className="flex flex-wrap justify-center gap-3">
+            {["WA Contractor License", "EPA Certified", "BBB Accredited", "Fully Bonded & Insured", "Soft-Wash Certified", "100% Eco-Friendly", "PWNA Member"].map((cert) => (
+              <span key={cert} className="flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-medium text-slate-300" style={{ borderColor: "rgba(2,132,199,0.3)", background: "rgba(2,132,199,0.07)" }}>
+                <Certificate size={14} weight="duotone" style={{ color: ACCENT }} />
+                {cert}
+              </span>
+            ))}
+          </div>
         </div>
       </SectionReveal>
 
@@ -722,6 +899,45 @@ export default function V2PressureWashingPage() {
         </div>
       </SectionReveal>
 
+      {/* ─── SERVICE AREA ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ACCENT }}>Where We Work</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white mb-4">
+              <WordReveal text="Seattle & Puget Sound Service Area" />
+            </h2>
+            <p className="text-slate-400 max-w-md mx-auto text-sm">Serving homeowners and businesses across King, Pierce, and Snohomish Counties with same-week scheduling.</p>
+          </div>
+          <motion.div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
+            {[
+              { area: "Seattle", detail: "All Neighborhoods" },
+              { area: "Bellevue", detail: "East Side" },
+              { area: "Tacoma", detail: "Pierce County" },
+              { area: "Redmond", detail: "Tech Corridor" },
+              { area: "Kirkland", detail: "Eastside" },
+              { area: "Renton", detail: "South King" },
+              { area: "Everett", detail: "Snohomish County" },
+              { area: "Federal Way", detail: "South Sound" },
+            ].map((loc, i) => (
+              <motion.div key={i} variants={fadeUp}>
+                <GlassCard className="p-4 text-center">
+                  <div className="w-2 h-2 rounded-full mx-auto mb-2" style={{ background: "#22c55e", boxShadow: "0 0 8px #22c55e" }} />
+                  <p className="text-sm font-semibold text-white">{loc.area}</p>
+                  <p className="text-xs text-slate-400 mt-0.5">{loc.detail}</p>
+                </GlassCard>
+              </motion.div>
+            ))}
+          </motion.div>
+          <div className="text-center mt-8">
+            <span className="inline-flex items-center gap-2 text-sm text-slate-400">
+              <MapPin size={16} weight="duotone" style={{ color: ACCENT }} />
+              Don&apos;t see your city? Call us — we likely serve your area.
+            </span>
+          </div>
+        </div>
+      </SectionReveal>
+
       {/* ─── 11. CONTACT ─── */}
       <SectionReveal className="relative z-10 py-16 md:py-24">
         <div className="mx-auto max-w-7xl px-4 md:px-6">
@@ -749,14 +965,14 @@ export default function V2PressureWashingPage() {
                   <MapPin size={20} weight="duotone" style={{ color: ACCENT }} className="mt-0.5 shrink-0" />
                   <div>
                     <p className="text-sm font-semibold text-white">Service Area</p>
-                    <p className="text-sm text-slate-400">Greater Metro Area<br />Up to 50 miles out</p>
+                    <p className="text-sm text-slate-400">Seattle &amp; Puget Sound<br />King, Pierce &amp; Snohomish Counties</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
                   <Phone size={20} weight="duotone" style={{ color: ACCENT }} className="mt-0.5 shrink-0" />
                   <div>
                     <p className="text-sm font-semibold text-white">Phone</p>
-                    <p className="text-sm text-slate-400">(555) 876-3200</p>
+                    <p className="text-sm text-slate-400">(206) 574-3892</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">

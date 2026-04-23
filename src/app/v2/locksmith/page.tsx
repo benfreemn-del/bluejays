@@ -235,6 +235,92 @@ function ShimmerBorder({ children, className = "" }: { children: React.ReactNode
 }
 
 /* ───────────────────────── DATA ───────────────────────── */
+const comparisonRows = [
+  { feature: "Response Time", us: "15-30 Minutes", them: "45-90 Minutes" },
+  { feature: "Upfront Pricing", us: "Always Quoted First", them: "Sometimes" },
+  { feature: "Licensed & Insured", us: "Fully Licensed", them: "Varies" },
+  { feature: "Background-Checked Techs", us: "Every Technician", them: "Rarely" },
+  { feature: "24/7 Availability", us: "365 Days a Year", them: "Business Hours" },
+  { feature: "Warranty on Work", us: "90-Day Guarantee", them: "No Warranty" },
+  { feature: "High-Security Brands", us: "Medeco, Mul-T-Lock, ASSA", them: "Basic Hardware Only" },
+];
+
+const pricingTiers = [
+  {
+    name: "Lockout Service",
+    price: "$75 – $125",
+    description: "Emergency residential, commercial, or automotive lockout. Upfront quote before we start.",
+    features: ["15-30 min response", "Non-destructive entry", "All lock types", "No hidden fees", "Available 24/7"],
+    cta: "Get Unlocked Now",
+    highlighted: false,
+  },
+  {
+    name: "Lock Rekey",
+    price: "$35 – $65",
+    description: "Per lock rekey service. Change who has access without replacing the hardware.",
+    features: ["Same-day service", "All cylinder types", "Master key available", "Multiple locks discounted", "Landlord & move-in specials"],
+    cta: "Schedule Rekey",
+    highlighted: true,
+  },
+  {
+    name: "High-Security Install",
+    price: "$150 – $350",
+    description: "Premium lock installation with anti-pick, anti-drill, and bump-resistant technology.",
+    features: ["Medeco / Mul-T-Lock", "ANSI Grade 1 rated", "Restricted key control", "Professional installation", "5-year hardware warranty"],
+    cta: "Upgrade Security",
+    highlighted: false,
+  },
+];
+
+const quizOptions = [
+  {
+    label: "Locked Out",
+    icon: LockOpen,
+    urgency: "URGENT",
+    urgencyColor: "#ef4444",
+    recommendation: "Call us immediately at (206) 294-5817. Our emergency dispatch will have a technician to you in 15-30 minutes. Stay with your vehicle or in a safe public area.",
+  },
+  {
+    label: "Need New Keys",
+    icon: Key,
+    urgency: "SCHEDULED",
+    urgencyColor: ACCENT,
+    recommendation: "We can cut and program keys for any lock or vehicle — including transponder and smart keys. Schedule a same-day or next-day appointment for fastest service.",
+  },
+  {
+    label: "Security Upgrade",
+    icon: ShieldCheck,
+    urgency: "PLANNED",
+    urgencyColor: "#22c55e",
+    recommendation: "We recommend a free security audit first. Our tech will assess your current locks, identify vulnerabilities, and recommend the right high-security solution for your budget.",
+  },
+  {
+    label: "Commercial Job",
+    icon: Buildings,
+    urgency: "CONSULT",
+    urgencyColor: "#3b82f6",
+    recommendation: "Commercial jobs need a site assessment. We handle master key systems, access control, panic bars, and multi-unit rekeying. Call for a free commercial quote.",
+  },
+];
+
+const certBadges = [
+  "ALOA Member",
+  "SAVTA Certified",
+  "BBB Accredited",
+  "State Licensed",
+  "Fully Bonded",
+  "Background Checked",
+];
+
+const serviceAreaGrid = [
+  { area: "Downtown Seattle", time: "15-20 min" },
+  { area: "Capitol Hill", time: "18-25 min" },
+  { area: "Bellevue", time: "20-30 min" },
+  { area: "Kirkland", time: "22-30 min" },
+  { area: "Redmond", time: "25-35 min" },
+  { area: "Renton", time: "20-28 min" },
+];
+
 const services = [
   { title: "Residential Locksmith", description: "Home lockouts, lock changes, rekeying, deadbolt installation, and smart lock setup. We secure your home with the latest hardware and get you back inside fast.", icon: House },
   { title: "Commercial Locksmith", description: "Master key systems, high-security locks, panic bars, access control, and commercial-grade deadbolts for offices, retail, and warehouses.", icon: Buildings },
@@ -270,6 +356,9 @@ export default function V2LocksmithPage() {
   const [openService, setOpenService] = useState<number | null>(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [quizOpen, setQuizOpen] = useState<number | null>(null);
+  const [formData, setFormData] = useState({ name: "", phone: "", serviceType: "", description: "" });
+  const [formSent, setFormSent] = useState(false);
 
   return (
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: BG, color: "#f1f5f9" }}>
@@ -336,10 +425,24 @@ export default function V2LocksmithPage() {
                 Emergency Lockout <ArrowRight size={18} weight="bold" />
               </MagneticButton>
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
-                <Phone size={18} weight="duotone" /> (555) 562-KEYS
+                <Phone size={18} weight="duotone" /> (206) 294-5817
               </MagneticButton>
             </motion.div>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ ...spring, delay: 1 }} className="flex flex-wrap gap-6 text-sm text-slate-400">
+            {/* Trust Badge Pills */}
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 1 }} className="flex flex-wrap gap-2">
+              {[
+                { icon: Certificate, label: "Licensed & Bonded" },
+                { icon: ShieldCheck, label: "Background Checked" },
+                { icon: Timer, label: "30-Min Response" },
+                { icon: CheckCircle, label: "Upfront Pricing" },
+              ].map((badge, i) => (
+                <span key={i} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border" style={{ borderColor: `${ACCENT}40`, background: `${ACCENT}10`, color: ACCENT_LIGHT }}>
+                  <badge.icon size={12} weight="fill" />
+                  {badge.label}
+                </span>
+              ))}
+            </motion.div>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ ...spring, delay: 1.2 }} className="flex flex-wrap gap-6 text-sm text-slate-400">
               <span className="flex items-center gap-2"><Timer size={16} weight="duotone" style={{ color: ACCENT }} />15-30 Min Response</span>
               <span className="flex items-center gap-2"><Clock size={16} weight="duotone" style={{ color: ACCENT }} />24/7/365 Service</span>
             </motion.div>
@@ -352,6 +455,25 @@ export default function V2LocksmithPage() {
           </motion.div>
         </div>
       </section>
+
+      {/* ─── 1.5. EMERGENCY URGENCY STRIP ─── */}
+      <div className="relative z-10 w-full" style={{ background: ACCENT }}>
+        <div className="mx-auto max-w-7xl px-4 md:px-6 py-3 flex flex-col sm:flex-row items-center justify-center gap-3 text-center">
+          <div className="flex items-center gap-2">
+            <motion.span
+              className="inline-block w-2.5 h-2.5 rounded-full bg-black/40"
+              animate={{ opacity: [1, 0.3, 1] }}
+              transition={{ duration: 1.2, repeat: Infinity }}
+            />
+            <span className="text-sm font-bold text-black tracking-wide uppercase">Locksmiths On-Call 24/7</span>
+          </div>
+          <span className="hidden sm:block text-black/30 text-sm">—</span>
+          <a href="tel:2062945817" className="text-sm font-bold text-black hover:underline flex items-center gap-1.5">
+            <Phone size={14} weight="fill" />
+            (206) 294-5817 — Call or Text Anytime
+          </a>
+        </div>
+      </div>
 
       {/* ─── 2. STATS ─── */}
       <SectionReveal className="relative z-10 pb-8">
@@ -472,7 +594,7 @@ export default function V2LocksmithPage() {
                 </p>
                 <div className="flex flex-wrap justify-center gap-4">
                   <MagneticButton className="px-10 py-4 rounded-full text-base font-semibold text-black inline-flex items-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
-                    <Phone size={20} weight="duotone" /> Call (555) 562-KEYS
+                    <Phone size={20} weight="duotone" /> Call (206) 294-5817
                   </MagneticButton>
                 </div>
               </motion.div>
@@ -484,11 +606,32 @@ export default function V2LocksmithPage() {
       {/* ─── 6. TESTIMONIALS ─── */}
       <SectionReveal id="testimonials" className="relative z-10 py-16 md:py-24">
         <div className="mx-auto max-w-7xl px-4 md:px-6">
-          <div className="text-center mb-16">
+          <div className="text-center mb-10">
             <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ACCENT }}>Customer Stories</p>
             <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white">
               <WordReveal text="Trusted When It Matters" />
             </h2>
+          </div>
+          {/* Google Reviews Header */}
+          <div className="flex justify-center mb-10">
+            <div className="inline-flex items-center gap-3 px-5 py-3 rounded-full border border-white/10 bg-white/[0.04]">
+              {/* Google G SVG */}
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+              </svg>
+              {/* Stars */}
+              <div className="flex gap-0.5">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Star key={i} size={16} weight="fill" style={{ color: ACCENT }} />
+                ))}
+              </div>
+              <span className="text-sm font-semibold text-white">4.8</span>
+              <span className="text-sm text-slate-400">·</span>
+              <span className="text-sm text-slate-400">312 Google reviews</span>
+            </div>
           </div>
           <motion.div className="grid grid-cols-1 md:grid-cols-3 gap-6" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
             {testimonials.map((t, i) => (
@@ -507,33 +650,283 @@ export default function V2LocksmithPage() {
         </div>
       </SectionReveal>
 
-      {/* ─── 7. SERVICE AREAS ─── */}
+      {/* ─── 8. PRICING TIERS ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ACCENT }}>Transparent Pricing</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white">
+              <WordReveal text="No Surprises. Ever." />
+            </h2>
+            <p className="text-slate-400 mt-4 max-w-xl mx-auto">Every job starts with an upfront quote. You approve the price before we touch anything. Period.</p>
+          </div>
+          <motion.div className="grid grid-cols-1 md:grid-cols-3 gap-6" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
+            {pricingTiers.map((tier, i) => (
+              <motion.div key={i} variants={fadeUp}>
+                {tier.highlighted ? (
+                  <ShimmerBorder className="h-full">
+                    <div className="p-6 md:p-8 flex flex-col h-full">
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold mb-4 self-start" style={{ background: ACCENT, color: "#000" }}>
+                        Most Popular
+                      </div>
+                      <h3 className="text-xl font-bold text-white mb-1">{tier.name}</h3>
+                      <p className="text-3xl font-bold mb-3" style={{ color: ACCENT }}>{tier.price}</p>
+                      <p className="text-sm text-slate-400 leading-relaxed mb-6">{tier.description}</p>
+                      <ul className="space-y-2 mb-8 flex-1">
+                        {tier.features.map((f, j) => (
+                          <li key={j} className="flex items-center gap-2 text-sm text-slate-300">
+                            <CheckCircle size={15} weight="fill" style={{ color: ACCENT }} className="shrink-0" />
+                            {f}
+                          </li>
+                        ))}
+                      </ul>
+                      <MagneticButton className="w-full py-3 rounded-full text-sm font-bold text-black cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
+                        {tier.cta}
+                      </MagneticButton>
+                    </div>
+                  </ShimmerBorder>
+                ) : (
+                  <GlassCard className="p-6 md:p-8 flex flex-col h-full">
+                    <h3 className="text-xl font-bold text-white mb-1">{tier.name}</h3>
+                    <p className="text-3xl font-bold mb-3" style={{ color: ACCENT }}>{tier.price}</p>
+                    <p className="text-sm text-slate-400 leading-relaxed mb-6">{tier.description}</p>
+                    <ul className="space-y-2 mb-8 flex-1">
+                      {tier.features.map((f, j) => (
+                        <li key={j} className="flex items-center gap-2 text-sm text-slate-300">
+                          <CheckCircle size={15} weight="fill" style={{ color: ACCENT }} className="shrink-0" />
+                          {f}
+                        </li>
+                      ))}
+                    </ul>
+                    <MagneticButton className="w-full py-3 rounded-full text-sm font-bold text-white border border-white/15 cursor-pointer hover:border-white/30 transition-colors">
+                      {tier.cta}
+                    </MagneticButton>
+                  </GlassCard>
+                )}
+              </motion.div>
+            ))}
+          </motion.div>
+          <p className="text-center text-xs text-slate-500 mt-6">All prices quoted upfront before work begins. Final price never exceeds quote without your approval.</p>
+        </div>
+      </SectionReveal>
+
+      {/* ─── 9. COMPARISON TABLE ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-4xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ACCENT }}>Why Choose Us</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white">
+              <WordReveal text="City Lock & Key vs. The Competition" />
+            </h2>
+          </div>
+          <GlassCard className="overflow-hidden">
+            {/* Header row */}
+            <div className="grid grid-cols-3 border-b border-white/10">
+              <div className="p-4 md:p-5 text-xs font-semibold text-slate-500 uppercase tracking-widest">Feature</div>
+              <div className="p-4 md:p-5 text-center text-xs font-semibold uppercase tracking-widest" style={{ color: ACCENT }}>City Lock &amp; Key</div>
+              <div className="p-4 md:p-5 text-center text-xs font-semibold text-slate-500 uppercase tracking-widest">The Others</div>
+            </div>
+            {comparisonRows.map((row, i) => (
+              <div key={i} className={`grid grid-cols-3 border-b border-white/5 last:border-0 ${i % 2 === 0 ? "bg-white/[0.01]" : ""}`}>
+                <div className="p-4 md:p-5 text-sm text-slate-300 font-medium flex items-center">{row.feature}</div>
+                <div className="p-4 md:p-5 flex items-center justify-center gap-2">
+                  <CheckCircle size={16} weight="fill" style={{ color: "#22c55e" }} />
+                  <span className="text-xs md:text-sm font-semibold text-green-400 hidden sm:inline">{row.us}</span>
+                </div>
+                <div className="p-4 md:p-5 flex items-center justify-center gap-2">
+                  <X size={16} weight="bold" className="text-red-400 shrink-0" />
+                  <span className="text-xs md:text-sm text-slate-500 hidden sm:inline">{row.them}</span>
+                </div>
+              </div>
+            ))}
+          </GlassCard>
+        </div>
+      </SectionReveal>
+
+      {/* ─── 10. VIDEO PLACEHOLDER ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-5xl px-4 md:px-6">
+          <div className="text-center mb-10">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ACCENT }}>See Our Work</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white">
+              <WordReveal text="Watch a High-Security Lock Installation" />
+            </h2>
+          </div>
+          <div className="relative rounded-2xl overflow-hidden group cursor-pointer" style={{ aspectRatio: "16/9" }}>
+            <img
+              src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&q=80"
+              alt="Locksmith installing high-security lock"
+              className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 flex flex-col items-center justify-center" style={{ background: "rgba(0,0,0,0.55)" }}>
+              {/* Play button */}
+              <motion.div
+                whileHover={{ scale: 1.12 }}
+                whileTap={{ scale: 0.96 }}
+                className="w-20 h-20 rounded-full flex items-center justify-center shadow-2xl mb-5 cursor-pointer"
+                style={{ background: ACCENT }}
+                animate={{ boxShadow: [`0 0 0 0 ${ACCENT}60`, `0 0 0 20px transparent`] }}
+                transition={{ duration: 1.8, repeat: Infinity }}
+              >
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="black">
+                  <polygon points="5,3 19,12 5,21" />
+                </svg>
+              </motion.div>
+              <p className="text-white font-semibold text-lg text-center px-4">Watch a High-Security Lock Installation</p>
+              <p className="text-white/60 text-sm mt-1">3 min · See our process from start to finish</p>
+            </div>
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── 11. INTERACTIVE QUIZ ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-3xl px-4 md:px-6">
+          <div className="text-center mb-10">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ACCENT }}>Quick Help</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white">
+              <WordReveal text="What Do You Need?" />
+            </h2>
+            <p className="text-slate-400 mt-4">Select your situation and we will tell you exactly what to do next.</p>
+          </div>
+          <div className="space-y-3">
+            {quizOptions.map((opt, i) => {
+              const isOpen = quizOpen === i;
+              return (
+                <div key={i}>
+                  <GlassCard className="overflow-hidden">
+                    <button
+                      onClick={() => setQuizOpen(isOpen ? null : i)}
+                      className="w-full flex items-center gap-4 p-5 text-left cursor-pointer group"
+                    >
+                      <div
+                        className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 transition-colors"
+                        style={{ background: isOpen ? `${opt.urgencyColor}25` : ACCENT_GLOW }}
+                      >
+                        <opt.icon size={22} weight="duotone" style={{ color: isOpen ? opt.urgencyColor : ACCENT }} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <span className="text-base font-semibold text-white">{opt.label}</span>
+                      </div>
+                      <span
+                        className="text-xs font-bold px-2.5 py-1 rounded-full shrink-0"
+                        style={{ background: `${opt.urgencyColor}20`, color: opt.urgencyColor }}
+                      >
+                        {opt.urgency}
+                      </span>
+                      <motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={spring} className="shrink-0">
+                        <CaretDown size={18} className="text-slate-400" />
+                      </motion.div>
+                    </button>
+                    <AnimatePresence initial={false}>
+                      {isOpen && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={spring}
+                          className="overflow-hidden"
+                        >
+                          <div
+                            className="mx-5 mb-5 p-4 rounded-xl text-sm text-slate-300 leading-relaxed"
+                            style={{ background: `${opt.urgencyColor}10`, borderLeft: `3px solid ${opt.urgencyColor}` }}
+                          >
+                            {opt.recommendation}
+                            {opt.urgency === "URGENT" && (
+                              <div className="mt-3">
+                                <a
+                                  href="tel:2062945817"
+                                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold text-black"
+                                  style={{ background: ACCENT }}
+                                >
+                                  <Phone size={13} weight="fill" /> Call (206) 294-5817 Now
+                                </a>
+                              </div>
+                            )}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </GlassCard>
+                </div>
+              );
+            })}
+          </div>
+          <p className="text-center text-sm text-slate-500 mt-6">Not sure? Call us at <a href="tel:2062945817" className="underline" style={{ color: ACCENT }}>(206) 294-5817</a> and we will figure it out together.</p>
+        </div>
+      </SectionReveal>
+
+      {/* ─── 12. CERTIFICATIONS BADGE ROW ─── */}
+      <SectionReveal className="relative z-10 py-12 md:py-16">
+        <div className="mx-auto max-w-5xl px-4 md:px-6">
+          <div className="text-center mb-8">
+            <p className="text-sm uppercase tracking-widest" style={{ color: ACCENT }}>Credentials &amp; Certifications</p>
+          </div>
+          <motion.div
+            className="flex flex-wrap justify-center gap-3"
+            variants={stagger}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-50px" }}
+          >
+            {certBadges.map((badge, i) => (
+              <motion.span
+                key={i}
+                variants={fadeUp}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold border"
+                style={{ borderColor: `${ACCENT}35`, background: `${ACCENT}0d`, color: ACCENT_LIGHT }}
+              >
+                <Certificate size={15} weight="fill" style={{ color: ACCENT }} />
+                {badge}
+              </motion.span>
+            ))}
+          </motion.div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── 13. SERVICE AREA GRID (with response times) ─── */}
       <SectionReveal id="areas" className="relative z-10 py-16 md:py-24">
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="text-center mb-12">
-            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ACCENT }}>Coverage</p>
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ACCENT }}>Coverage Map</p>
             <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white">
-              <WordReveal text="Service Areas" />
+              <WordReveal text="Seattle Metro Service Areas" />
             </h2>
+            <p className="text-slate-400 mt-4">Estimated drive times from our nearest unit — actual response may be faster.</p>
           </div>
-          <motion.div className="grid grid-cols-2 sm:grid-cols-4 gap-4" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
-            {serviceAreas.map((area, i) => (
+          <motion.div
+            className="grid grid-cols-2 sm:grid-cols-3 gap-4"
+            variants={stagger}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-50px" }}
+          >
+            {serviceAreaGrid.map((item, i) => (
               <motion.div key={i} variants={fadeUp}>
-                <GlassCard className="p-4 text-center">
-                  <MapPin size={20} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-2" />
-                  <p className="text-sm font-semibold text-white">{area}</p>
+                <GlassCard className="p-5 flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: ACCENT_GLOW }}>
+                    <MapPin size={20} weight="duotone" style={{ color: ACCENT }} />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-white">{item.area}</p>
+                    <p className="text-xs text-slate-400 flex items-center gap-1 mt-0.5">
+                      <Timer size={11} style={{ color: ACCENT }} /> {item.time} avg response
+                    </p>
+                  </div>
                 </GlassCard>
               </motion.div>
             ))}
           </motion.div>
-          <p className="text-center text-sm text-slate-400 mt-6">
-            <CheckCircle size={16} weight="duotone" style={{ color: ACCENT }} className="inline mr-1 -mt-0.5" />
-            Plus surrounding communities within a 30-mile radius
-          </p>
+          <div className="mt-6 flex justify-center">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm text-slate-400 border border-white/10">
+              <CheckCircle size={15} weight="duotone" style={{ color: ACCENT }} />
+              Plus surrounding communities within a 30-mile radius
+            </div>
+          </div>
         </div>
       </SectionReveal>
 
-      {/* ─── 8. FAQ ─── */}
+      {/* ─── 14. FAQ ─── */}
       <SectionReveal className="relative z-10 py-16 md:py-24">
         <div className="mx-auto max-w-3xl px-4 md:px-6">
           <div className="text-center mb-12">
@@ -564,10 +957,10 @@ export default function V2LocksmithPage() {
         </div>
       </SectionReveal>
 
-      {/* ─── 9. CONTACT ─── */}
+      {/* ─── 15. CONTACT FORM + INFO ─── */}
       <SectionReveal className="relative z-10 py-16 md:py-24">
         <div className="mx-auto max-w-7xl px-4 md:px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
             <div>
               <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white mb-6">
                 <WordReveal text="Need a Locksmith? Call Us Now." />
@@ -575,7 +968,7 @@ export default function V2LocksmithPage() {
               <p className="text-slate-400 leading-relaxed max-w-md mb-8">
                 Whether it is an emergency lockout or a planned security upgrade, we are here to help. Upfront pricing, no hidden fees, satisfaction guaranteed.
               </p>
-              <div className="flex flex-wrap gap-4">
+              <div className="flex flex-wrap gap-4 mb-10">
                 <MagneticButton className="px-10 py-4 rounded-full text-base font-semibold text-black inline-flex items-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
                   <Phone size={20} weight="duotone" /> Call Now
                 </MagneticButton>
@@ -583,27 +976,109 @@ export default function V2LocksmithPage() {
                   <CalendarCheck size={18} weight="duotone" /> Schedule Service
                 </MagneticButton>
               </div>
+              <GlassCard className="p-6">
+                <div className="space-y-4">
+                  <div className="flex items-start gap-4">
+                    <MapPin size={20} weight="duotone" style={{ color: ACCENT }} className="mt-0.5 shrink-0" />
+                    <div><p className="text-sm font-semibold text-white">Location</p><p className="text-sm text-slate-400">Serving Seattle Metro &amp; Eastside Communities</p></div>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <Phone size={20} weight="duotone" style={{ color: ACCENT }} className="mt-0.5 shrink-0" />
+                    <div><p className="text-sm font-semibold text-white">Phone</p><a href="tel:2062945817" className="text-sm text-slate-400 hover:underline">(206) 294-5817</a></div>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <Clock size={20} weight="duotone" style={{ color: ACCENT }} className="mt-0.5 shrink-0" />
+                    <div><p className="text-sm font-semibold text-white">Hours</p><p className="text-sm text-slate-400">Emergency: 24/7/365<br />Office: Mon–Sat 8am–8pm</p></div>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <Warning size={20} weight="duotone" style={{ color: ACCENT }} className="mt-0.5 shrink-0" />
+                    <div><p className="text-sm font-semibold text-white">Emergency</p><p className="text-sm text-slate-400">Locked out? Call us now — 15-30 min average response.</p></div>
+                  </div>
+                </div>
+              </GlassCard>
             </div>
-            <GlassCard className="p-8">
-              <h3 className="text-xl font-semibold text-white mb-6">Contact Info</h3>
-              <div className="space-y-4">
-                <div className="flex items-start gap-4">
-                  <MapPin size={20} weight="duotone" style={{ color: ACCENT }} className="mt-0.5 shrink-0" />
-                  <div><p className="text-sm font-semibold text-white">Location</p><p className="text-sm text-slate-400">789 Security Lane<br />Denver, CO 80202</p></div>
+
+            {/* Contact Form */}
+            <GlassCard className="p-6 md:p-8">
+              {formSent ? (
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                  <CheckCircle size={56} weight="fill" style={{ color: ACCENT }} className="mb-4" />
+                  <h3 className="text-2xl font-bold text-white mb-2">Message Sent!</h3>
+                  <p className="text-slate-400 text-sm max-w-xs">We received your request and will reach out within minutes. For emergencies, call <a href="tel:2062945817" className="underline" style={{ color: ACCENT }}>(206) 294-5817</a> right now.</p>
                 </div>
-                <div className="flex items-start gap-4">
-                  <Phone size={20} weight="duotone" style={{ color: ACCENT }} className="mt-0.5 shrink-0" />
-                  <div><p className="text-sm font-semibold text-white">Phone</p><p className="text-sm text-slate-400">(555) 562-KEYS (5397)</p></div>
-                </div>
-                <div className="flex items-start gap-4">
-                  <Clock size={20} weight="duotone" style={{ color: ACCENT }} className="mt-0.5 shrink-0" />
-                  <div><p className="text-sm font-semibold text-white">Hours</p><p className="text-sm text-slate-400">Emergency: 24/7/365<br />Office: Mon-Sat 8am-8pm</p></div>
-                </div>
-                <div className="flex items-start gap-4">
-                  <Warning size={20} weight="duotone" style={{ color: ACCENT }} className="mt-0.5 shrink-0" />
-                  <div><p className="text-sm font-semibold text-white">Emergency</p><p className="text-sm text-slate-400">Locked out? Call us now.<br />15-30 min average response.</p></div>
-                </div>
-              </div>
+              ) : (
+                <>
+                  <h3 className="text-xl font-bold text-white mb-6">Request Service</h3>
+                  <form
+                    onSubmit={(e) => { e.preventDefault(); setFormSent(true); }}
+                    className="space-y-4"
+                  >
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-widest mb-1.5">Full Name</label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="Jane Smith"
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 border border-white/10 focus:border-white/30 focus:outline-none transition-colors"
+                        style={{ background: "rgba(255,255,255,0.04)" }}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-widest mb-1.5">Phone Number</label>
+                      <input
+                        type="tel"
+                        required
+                        placeholder="(206) 555-0100"
+                        value={formData.phone}
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 border border-white/10 focus:border-white/30 focus:outline-none transition-colors"
+                        style={{ background: "rgba(255,255,255,0.04)" }}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-widest mb-1.5">Service Type</label>
+                      <select
+                        required
+                        value={formData.serviceType}
+                        onChange={(e) => setFormData({ ...formData, serviceType: e.target.value })}
+                        className="w-full rounded-xl px-4 py-3 text-sm border border-white/10 focus:border-white/30 focus:outline-none transition-colors appearance-none cursor-pointer"
+                        style={{ background: "rgba(255,255,255,0.04)", color: formData.serviceType ? "#f1f5f9" : "#64748b" }}
+                      >
+                        <option value="" disabled>Select a service...</option>
+                        <option value="emergency-lockout" style={{ background: "#1a1a0a" }}>Emergency Lockout</option>
+                        <option value="residential" style={{ background: "#1a1a0a" }}>Residential Locksmith</option>
+                        <option value="commercial" style={{ background: "#1a1a0a" }}>Commercial Locksmith</option>
+                        <option value="automotive" style={{ background: "#1a1a0a" }}>Automotive / Car Key</option>
+                        <option value="rekey" style={{ background: "#1a1a0a" }}>Lock Rekey</option>
+                        <option value="high-security" style={{ background: "#1a1a0a" }}>High-Security Upgrade</option>
+                        <option value="safe" style={{ background: "#1a1a0a" }}>Safe Services</option>
+                        <option value="access-control" style={{ background: "#1a1a0a" }}>Access Control</option>
+                        <option value="other" style={{ background: "#1a1a0a" }}>Other / Not Sure</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-widest mb-1.5">Tell Us More (optional)</label>
+                      <textarea
+                        rows={3}
+                        placeholder="Briefly describe what you need..."
+                        value={formData.description}
+                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                        className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 border border-white/10 focus:border-white/30 focus:outline-none transition-colors resize-none"
+                        style={{ background: "rgba(255,255,255,0.04)" }}
+                      />
+                    </div>
+                    <MagneticButton
+                      className="w-full py-3.5 rounded-full text-sm font-bold text-black flex items-center justify-center gap-2 cursor-pointer"
+                      style={{ background: ACCENT } as React.CSSProperties}
+                    >
+                      <Key size={16} weight="fill" /> Send Request
+                    </MagneticButton>
+                    <p className="text-xs text-center text-slate-500">For emergencies, call directly: <a href="tel:2062945817" style={{ color: ACCENT }} className="font-semibold">(206) 294-5817</a></p>
+                  </form>
+                </>
+              )}
             </GlassCard>
           </div>
         </div>
