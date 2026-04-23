@@ -371,13 +371,12 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
     { q: "Do you offer seasonal maintenance plans?", a: `Yes! We offer weekly, bi-weekly, and seasonal maintenance packages to keep your landscape looking its best year-round. Contact ${data.businessName} for plan details and pricing.` },
   ];
 
-  /* Fallback testimonials */
-  const fallbackTestimonials = [
-    { name: "Barbara H.", text: "Our yard went from embarrassing to the best on the block. The transformation is incredible.", rating: 5 },
-    { name: "Tim W.", text: "They've maintained our property for three years. Always reliable, always professional.", rating: 5 },
-    { name: "Nicole P.", text: "The patio and garden they designed is absolutely stunning. We practically live outside now.", rating: 5 }
-  ];
-  const testimonials = data.testimonials?.length > 0 ? data.testimonials : fallbackTestimonials;
+  /* Only render testimonials when real scraped data exists. Fake named
+     reviews violate the "NEVER invent credibility signals" rule in
+     CLAUDE.md — a missing section reads as more professional than
+     obviously-fake Barbara/Tim/Nicole placeholder quotes. */
+  const testimonials = data.testimonials?.length ? data.testimonials : [];
+  const hasRealReviews = Boolean(data.googleRating && data.reviewCount);
 
   return (
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ fontFamily: "Lato, system-ui, sans-serif", background: CHARCOAL, color: "#f1f5f9" }}>
@@ -400,7 +399,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
                 />
               </div>
               <div className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-700">
-                <a href="#portfolio" className="hover:text-slate-900 transition-colors">Portfolio</a>
+                <a href="#portfolio" className="hover:text-slate-900 transition-colors">Gallery</a>
                 <a href="#services" className="hover:text-slate-900 transition-colors">Services</a>
                 <a href="#about" className="hover:text-slate-900 transition-colors">About</a>
                 <a href="#contact" className="hover:text-slate-900 transition-colors">Contact</a>
@@ -421,7 +420,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
                 <span className="text-lg font-bold tracking-tight text-white">{data.businessName}</span>
               </div>
               <div className="hidden md:flex items-center gap-8 text-sm text-slate-400">
-                <a href="#portfolio" className="hover:text-white transition-colors">Portfolio</a>
+                <a href="#portfolio" className="hover:text-white transition-colors">Gallery</a>
                 <a href="#services" className="hover:text-white transition-colors">Services</a>
                 <a href="#about" className="hover:text-white transition-colors">About</a>
                 <a href="#contact" className="hover:text-white transition-colors">Contact</a>
@@ -440,7 +439,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
             {mobileMenuOpen && (
               <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.3, ease: "easeInOut" }} className="md:hidden mt-2 overflow-hidden">
                 <GlassCard className="flex flex-col gap-1 px-4 py-4">
-                  {[{ label: "Portfolio", href: "#portfolio" }, { label: "Services", href: "#services" }, { label: "About", href: "#about" }, { label: "Contact", href: "#contact" }].map((link) => (
+                  {[{ label: "Gallery", href: "#portfolio" }, { label: "Services", href: "#services" }, { label: "About", href: "#about" }, { label: "Contact", href: "#contact" }].map((link) => (
                     <a key={link.label} href={link.href} onClick={() => setMobileMenuOpen(false)} className="block px-4 py-3 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-white/5 transition-colors">{link.label}</a>
                   ))}
                 </GlassCard>
@@ -605,35 +604,11 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 6c. SERVICE PRICING ══════════════════ */}
-      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #121510 50%, #1a1a1a 100%)" }} />
-        <OrganicWave opacity={0.02} accent={PRIMARY} />
-        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${PRIMARY}08` }} /></div>
-        <div className="max-w-5xl mx-auto px-6 relative z-10">
-          <AnimatedSection><SectionHeader badge="Pricing" title="Transparent Pricing" subtitle="Honest pricing with no hidden fees. Every project includes a free consultation." accent={PRIMARY} /></AnimatedSection>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {pricingTiers.map((tier, i) => (
-              <ShimmerBorder key={tier.title} accent={i === 2 ? PRIMARY : `${PRIMARY}66`}>
-                <div className="p-7 text-center">
-                  <div className="w-14 h-14 rounded-xl mx-auto mb-4 flex items-center justify-center" style={{ background: `${PRIMARY}15` }}>
-                    <tier.icon size={28} weight="duotone" style={{ color: PRIMARY }} />
-                  </div>
-                  <h3 className="text-lg font-bold text-white mb-2">{tier.title}</h3>
-                  <div className="mb-3">
-                    <span className="text-3xl font-black text-white">{tier.price}</span>
-                    <span className="text-sm text-slate-400">{tier.unit}</span>
-                  </div>
-                  <p className="text-sm text-slate-400 leading-relaxed mb-5">{tier.desc}</p>
-                  <MagneticButton className="w-full py-3 rounded-xl text-sm font-semibold text-white cursor-pointer" style={{ background: PRIMARY } as React.CSSProperties}>
-                    Get Quote <ArrowRight size={14} weight="bold" className="inline ml-1" />
-                  </MagneticButton>
-                </div>
-              </ShimmerBorder>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Transparent Pricing section removed 2026-04-22.
+          Landscaping projects are quote-based; showing three fixed tiers
+          ($45/visit, $2,500+, $8,000+) is fabricated pricing that most
+          scraped prospects can't actually honor. The final Contact section
+          already pushes "Free Estimate" — that's the real ask. */}
 
       {/* ══════════════════ 7. ABOUT ══════════════════ */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
@@ -801,35 +776,39 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 9. TESTIMONIALS (with Google Reviews Header) ══════════════════ */}
-      <section className="relative z-10 py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #121510 50%, #1a1a1a 100%)" }} />
-        <NaturePattern opacity={0.02} accent={PRIMARY} />
-        <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] right-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${PRIMARY}06` }} /></div>
+      {/* ══════════════════ 9. TESTIMONIALS (only when real) ══════════════════ */}
+      {testimonials.length > 0 && (
+        <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+          <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #121510 50%, #1a1a1a 100%)" }} />
+          <NaturePattern opacity={0.02} accent={PRIMARY} />
+          <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] right-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${PRIMARY}06` }} /></div>
 
-        <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <AnimatedSection><SectionHeader badge="Testimonials" title="What Homeowners Say" accent={PRIMARY} /></AnimatedSection>
+          <div className="max-w-6xl mx-auto px-6 relative z-10">
+            <AnimatedSection><SectionHeader badge="Testimonials" title="What Homeowners Say" accent={PRIMARY} /></AnimatedSection>
 
-          {/* Google Reviews Header */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-10">
-            <div className="flex gap-1">
-              {Array.from({ length: 5 }).map((_, i) => (<Star key={i} size={22} weight="fill" style={{ color: "#facc15" }} />))}
+            {/* Google Reviews header — only when real rating + count exist */}
+            {hasRealReviews && (
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-10">
+                <div className="flex gap-1">
+                  {Array.from({ length: 5 }).map((_, i) => (<Star key={i} size={22} weight="fill" style={{ color: "#facc15" }} />))}
+                </div>
+                <span className="text-white font-bold text-lg">{data.googleRating}</span>
+                <span className="text-slate-400 text-sm">based on {data.reviewCount}+ Google Reviews</span>
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {testimonials.map((t, i) => (
+                <GlassCard key={i} className="p-6 h-full flex flex-col">
+                  <div className="flex gap-0.5 mb-4">{Array.from({ length: t.rating || 5 }).map((_, j) => (<Star key={j} size={16} weight="fill" style={{ color: PRIMARY }} />))}</div>
+                  <p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p>
+                  <div className="pt-4 border-t border-white/5"><span className="text-sm font-semibold text-white">{t.name}</span></div>
+                </GlassCard>
+              ))}
             </div>
-            <span className="text-white font-bold text-lg">{data.googleRating || "5.0"}</span>
-            <span className="text-slate-400 text-sm">based on {data.reviewCount || "50"}+ Google Reviews</span>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {testimonials.map((t, i) => (
-              <GlassCard key={i} className="p-6 h-full flex flex-col">
-                <div className="flex gap-0.5 mb-4">{Array.from({ length: t.rating || 5 }).map((_, j) => (<Star key={j} size={16} weight="fill" style={{ color: PRIMARY }} />))}</div>
-                <p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p>
-                <div className="pt-4 border-t border-white/5"><span className="text-sm font-semibold text-white">{t.name}</span></div>
-              </GlassCard>
-            ))}
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ══════════════════ 10. CTA ══════════════════ */}
       <section className="relative z-10 py-20 overflow-hidden">
@@ -960,78 +939,20 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ SEASONAL CARE CALENDAR ══════════════════ */}
-      <section className="relative z-10 py-20 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f1a0f 50%, #1a1a1a 100%)" }} />
-        <NaturePattern opacity={0.01} accent={PRIMARY} />
-        <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <div className="text-center mb-12">
-            <Sun size={40} weight="duotone" style={{ color: PRIMARY }} className="mx-auto mb-3" />
-            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Seasonal Care Calendar</h2>
-            <p className="text-slate-400 mt-3 max-w-xl mx-auto">Year-round lawn and landscape care to keep your property looking its best every season.</p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-            {[
-              { season: "Spring", tasks: "Dethatching, aeration, fertilization, mulching, spring cleanup, new plantings" },
-              { season: "Summer", tasks: "Regular mowing, deep watering, pest monitoring, hedge trimming, weed control" },
-              { season: "Autumn", tasks: "Leaf cleanup, overseeding, final mowing, winterizer fertilizer, bulb planting" },
-              { season: "Winter", tasks: "Snow removal, pathway de-icing, equipment maintenance, landscape planning" },
-            ].map((s) => (
-              <div key={s.season} className="rounded-2xl border border-white/10 p-6" style={{ background: "rgba(255,255,255,0.03)" }}>
-                <h3 className="text-lg font-bold mb-2" style={{ color: PRIMARY }}>{s.season}</h3>
-                <p className="text-sm text-slate-400 leading-relaxed">{s.tasks}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Seasonal Care Calendar + Popular Plants We Recommend removed
+          2026-04-22. Both were identical generic filler that rendered
+          the same content for every landscaper — not business-specific,
+          no scraped data backing them, just wall-of-text between the
+          contact form and the final CTA. Real businesses have their own
+          seasonal programs and plant recommendations that vary by
+          climate zone; shipping the same boilerplate on every prospect
+          site is the opposite of "custom-built for you." */}
 
-      {/* ══════════════════ PLANT GUIDE ══════════════════ */}
-      <section className="relative z-10 py-20 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f1a0f 0%, #1a1a1a 100%)" }} />
-        <NaturePattern opacity={0.012} accent={PRIMARY} />
-        <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <div className="text-center mb-12">
-            <Flower size={40} weight="duotone" style={{ color: PRIMARY }} className="mx-auto mb-3" />
-            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Popular Plants We Recommend</h2>
-            <div className="w-16 h-1 mx-auto mt-3 rounded-full" style={{ background: PRIMARY }} />
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {[
-              { name: "Hydrangeas", note: "Shade-loving, stunning blooms" },
-              { name: "Boxwood", note: "Year-round structure, easy to shape" },
-              { name: "Lavender", note: "Drought-tolerant, fragrant, pollinator-friendly" },
-              { name: "Japanese Maple", note: "Stunning fall color, focal point" },
-              { name: "Ornamental Grasses", note: "Low-maintenance, movement and texture" },
-              { name: "Hostas", note: "Lush shade groundcover, many varieties" },
-              { name: "Rhododendrons", note: "Evergreen with showy spring flowers" },
-              { name: "Native Ferns", note: "Woodland gardens, no-fuss greenery" },
-            ].map((p) => (
-              <div key={p.name} className="rounded-2xl border border-white/10 p-5 text-center" style={{ background: "rgba(255,255,255,0.03)" }}>
-                <Leaf size={24} weight="duotone" style={{ color: PRIMARY }} className="mx-auto mb-2" />
-                <h3 className="text-sm font-bold text-white mb-1">{p.name}</h3>
-                <p className="text-xs text-slate-500">{p.note}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
-      <section className="relative z-10 py-16 overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${PRIMARY}15 0%, #1a1a1a 50%, ${PRIMARY}08 100%)` }} />
-        <NaturePattern opacity={0.02} accent={PRIMARY} />
-        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
-          <Tree size={44} weight="fill" style={{ color: PRIMARY }} className="mx-auto mb-4" />
-          <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">Transform Your Outdoor Space</h2>
-          <p className="text-slate-400 max-w-2xl mx-auto mb-8 text-lg">
-            From simple lawn care to full landscape redesigns, {data.businessName} creates outdoor spaces you&apos;ll love coming home to.
-          </p>
-          <a href={`tel:${data.phone}`} className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-white font-bold text-lg transition-transform hover:scale-105" style={{ background: PRIMARY }}>
-            <Phone size={20} weight="fill" /> Free Landscape Consultation
-          </a>
-        </div>
-      </section>
+      {/* Mid-page "Transform Your Outdoor Space" CTA removed 2026-04-22
+          — duplicate of the earlier CTA section (line ~819) which already
+          has the same headline. The page now has exactly one primary CTA
+          band plus the Get Your Free Estimate contact form, which is the
+          right conversion shape. */}
 
       {/* ══════════════════ 15. FOOTER ══════════════════ */}
       <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden">
@@ -1045,7 +966,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
             </div>
             <div>
               <h4 className="text-sm font-semibold text-white mb-3">Quick Links</h4>
-              <div className="space-y-2">{["Portfolio", "Services", "About", "Contact"].map((link) => (<a key={link} href={`#${link.toLowerCase()}`} className="block text-sm text-slate-500 hover:text-white transition-colors">{link}</a>))}</div>
+              <div className="space-y-2">{[{ label: "Gallery", anchor: "portfolio" }, { label: "Services", anchor: "services" }, { label: "About", anchor: "about" }, { label: "Contact", anchor: "contact" }].map((link) => (<a key={link.label} href={`#${link.anchor}`} className="block text-sm text-slate-500 hover:text-white transition-colors">{link.label}</a>))}</div>
             </div>
             <div>
               <h4 className="text-sm font-semibold text-white mb-3">Contact</h4>
