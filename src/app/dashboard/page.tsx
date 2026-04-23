@@ -171,7 +171,7 @@ export default function DashboardPage() {
               <h1 className="truncate text-lg font-semibold sm:text-xl">Dashboard</h1>
             </div>
           </div>
-          <div className="flex flex-wrap items-center gap-2 lg:justify-end">
+          <div className="flex flex-wrap items-center gap-2 lg:justify-end lg:gap-3 [&_a]:lg:text-base [&_a]:lg:px-4 [&_a]:lg:py-2.5 [&_button]:lg:text-base [&_button]:lg:px-4 lg:[&_.h-9]:h-11">
             <Link href="/" className="rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-background hover:text-foreground">
               Home
             </Link>
