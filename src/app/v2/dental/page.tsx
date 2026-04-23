@@ -2,7 +2,7 @@
 
 /* eslint-disable @next/next/no-img-element -- Static marketing showcase uses plain img tags intentionally */
 
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback } from "react";
 import {
   motion,
   useMotionValue,
@@ -192,74 +192,19 @@ function ShimmerBorder({ children, className = "" }: { children: React.ReactNode
 }
 
 /* ───────────────────────── BEFORE/AFTER SLIDER ───────────────────────── */
-function BeforeAfterSlider() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [sliderPos, setSliderPos] = useState(50);
-  const isDragging = useRef(false);
-
-  const handleMove = useCallback((clientX: number) => {
-    if (!containerRef.current || !isDragging.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    const pos = ((clientX - rect.left) / rect.width) * 100;
-    setSliderPos(Math.max(5, Math.min(95, pos)));
-  }, []);
-
-  const handleMouseDown = useCallback(() => {
-    isDragging.current = true;
-  }, []);
-
-  useEffect(() => {
-    const handleUp = () => { isDragging.current = false; };
-    const handleMoveGlobal = (e: MouseEvent) => handleMove(e.clientX);
-    const handleTouchMove = (e: TouchEvent) => {
-      if (e.touches[0]) handleMove(e.touches[0].clientX);
-    };
-    window.addEventListener("mouseup", handleUp);
-    window.addEventListener("mousemove", handleMoveGlobal);
-    window.addEventListener("touchend", handleUp);
-    window.addEventListener("touchmove", handleTouchMove);
-    return () => {
-      window.removeEventListener("mouseup", handleUp);
-      window.removeEventListener("mousemove", handleMoveGlobal);
-      window.removeEventListener("touchend", handleUp);
-      window.removeEventListener("touchmove", handleTouchMove);
-    };
-  }, [handleMove]);
-
+function BeforeAfterStatic() {
   return (
-    <div
-      ref={containerRef}
-      className="relative w-full aspect-[16/10] rounded-2xl overflow-hidden cursor-ew-resize select-none shadow-lg"
-      onMouseDown={handleMouseDown}
-      onTouchStart={handleMouseDown}
-    >
-      {/* After side */}
-      <div className="absolute inset-0">
-        <img
-          src="/images/dental-before-after.png"
-          alt="After — beautiful bright smile"
-          className="w-full h-full object-cover object-right"
-        />
-        <div className="absolute bottom-4 right-4 px-3 py-1.5 rounded-full text-white text-sm font-bold" style={{ background: TEAL }}>After</div>
-      </div>
-      {/* Before side */}
-      <div className="absolute inset-0" style={{ clipPath: `inset(0 ${100 - sliderPos}% 0 0)` }}>
-        <img
-          src="/images/dental-before-after.png"
-          alt="Before — dental transformation"
-          className="w-full h-full object-cover object-left"
-        />
-        <div className="absolute bottom-4 left-4 px-3 py-1.5 rounded-full bg-slate-700/80 backdrop-blur-sm text-white text-sm font-bold">Before</div>
-      </div>
-      {/* Slider handle */}
-      <div className="absolute top-0 bottom-0 w-[2px] bg-white/90 z-10" style={{ left: `${sliderPos}%` }}>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center">
-          <div className="flex gap-0.5">
-            <CaretDown size={12} className="text-slate-800 -rotate-90" />
-            <CaretDown size={12} className="text-slate-800 rotate-90" />
-          </div>
-        </div>
-      </div>
+    <div className="relative w-full rounded-2xl overflow-hidden shadow-lg">
+      <img
+        src="/images/dental-before-after.png"
+        alt="Before and after dental transformation"
+        className="w-full h-auto block"
+      />
+      {/* Labels */}
+      <div className="absolute bottom-4 left-4 px-3 py-1.5 rounded-full bg-slate-700/80 backdrop-blur-sm text-white text-sm font-bold">Before</div>
+      <div className="absolute bottom-4 right-4 px-3 py-1.5 rounded-full text-white text-sm font-bold" style={{ background: TEAL }}>After</div>
+      {/* Center divider line */}
+      <div className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-[2px] bg-white/70 pointer-events-none" />
     </div>
   );
 }
@@ -576,8 +521,8 @@ export default function DentalShowcasePage() {
       <SectionReveal className="py-20 md:py-28 bg-white">
         <div className="max-w-4xl mx-auto px-6">
           <SectionHeader label="Real Results" title="Smile" accent="Transformations" />
-          <BeforeAfterSlider />
-          <p className="text-center text-slate-500 text-sm mt-6">Drag the slider to see the transformation. Results from actual Emerald City Dental patients.</p>
+          <BeforeAfterStatic />
+          <p className="text-center text-slate-500 text-sm mt-6">Real results from actual Emerald City Dental patients.</p>
         </div>
       </SectionReveal>
 
