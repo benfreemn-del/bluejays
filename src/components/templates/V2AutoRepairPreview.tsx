@@ -206,7 +206,7 @@ function RacingStripes({ opacity = 0.04, accent }: { opacity?: number; accent: s
 
 /* ───────────────────────── GLASS CARD ───────────────────────── */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>;
+  return <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>;
 }
 
 /* ───────────────────────── MAGNETIC BUTTON ───────────────────────── */
@@ -382,7 +382,7 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
         <RacingStripes opacity={0.05} accent={ACCENT} />
 
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
-          <div className="space-y-8 rounded-2xl bg-black/50 backdrop-blur-md p-6 md:p-8 border border-white/5">
+          <div className="space-y-8 rounded-2xl bg-black/50 backdrop-blur-md p-6 md:p-8 border border-white/8">
             <div>
               <p className="text-sm uppercase tracking-widest mb-4" style={{ color: ACCENT }}>ASE Certified Technicians</p>
               <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 20px rgba(0,0,0,0.8), 0 4px 40px rgba(0,0,0,0.5)" }}>{data.tagline}</h1>
@@ -392,7 +392,7 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
                 Book an Appointment <ArrowRight size={18} weight="bold" />
               </MagneticButton>
-              <MagneticButton href={`tel:${phoneDigits}`} className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
+              <MagneticButton href={`tel:${phoneDigits}`} className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
                 <Phone size={18} weight="duotone" /> <PhoneLink phone={data.phone} />
               </MagneticButton>
             </div>
@@ -402,7 +402,7 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
             </div>
           </div>
           <div className="hidden md:block relative">
-            <div className="relative rounded-2xl overflow-hidden border border-white/10">
+            <div className="relative rounded-2xl overflow-hidden border border-white/15">
               <img src={heroCardImage} alt={`${data.businessName} auto repair`} className="w-full h-[500px] object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#111111] via-transparent to-transparent" />
               <div className="absolute inset-0 bg-gradient-to-r from-[#111111]/40 to-transparent" />
@@ -468,7 +468,7 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
             {data.services.map((service, i) => {
               const Icon = getServiceIcon(service.name);
               return (
-                <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.02]">
+                <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]">
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${ACCENT}15, transparent 70%)` }} />
                   <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${ACCENT}4d, transparent)` }} />
                   <div className="relative z-10">
@@ -541,7 +541,7 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="relative">
-              <div className="rounded-2xl overflow-hidden border border-white/10">
+              <div className="rounded-2xl overflow-hidden border border-white/15">
                 <img src={aboutImage} alt={`${data.businessName} shop`} className="w-full h-[400px] object-cover" />
               </div>
               <div className="absolute -bottom-4 -right-4 md:bottom-6 md:-right-6">
@@ -614,7 +614,7 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-white/10">
+                  <tr className="border-b border-white/15">
                     <th className="text-left p-4 text-slate-400 font-medium">Feature</th>
                     <th className="text-center p-4 font-bold" style={{ color: ACCENT }}>{data.businessName}</th>
                     <th className="text-center p-4 text-slate-500 font-medium">Dealership</th>
@@ -622,7 +622,7 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
                 </thead>
                 <tbody>
                   {COMPARISON_ROWS.map((row, i) => (
-                    <tr key={row.feature} className={i < COMPARISON_ROWS.length - 1 ? "border-b border-white/5" : ""}>
+                    <tr key={row.feature} className={i < COMPARISON_ROWS.length - 1 ? "border-b border-white/8" : ""}>
                       <td className="p-4 text-white font-medium">{row.feature}</td>
                       <td className="p-4 text-center">
                         <CheckCircle size={22} weight="fill" style={{ color: "#22c55e" }} className="mx-auto" />
@@ -643,7 +643,7 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
         <GearPattern opacity={0.02} accent={ACCENT} />
         <div className="max-w-4xl mx-auto px-6 relative z-10">
           <SectionHeader badge="Virtual Tour" title="See Our Shop" accent={ACCENT} />
-          <div className="relative rounded-2xl overflow-hidden border border-white/10 group cursor-pointer">
+          <div className="relative rounded-2xl overflow-hidden border border-white/15 group cursor-pointer">
             <img src={projectImages[0] || heroImage} alt={`${data.businessName} shop tour`} className="w-full h-[300px] md:h-[450px] object-cover transition-transform duration-700 group-hover:scale-105" />
             <div className="absolute inset-0 bg-black/50 group-hover:bg-black/40 transition-colors duration-300 flex items-center justify-center">
               <div className="w-20 h-20 rounded-full flex items-center justify-center border-2 border-white/30 group-hover:border-white/60 transition-colors duration-300" style={{ background: `${ACCENT}cc` }}>
@@ -697,7 +697,7 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
               const titles = ["Complete Engine Rebuild", "Brake System Overhaul", "Custom Performance Upgrade", "Full Vehicle Diagnostic"];
               const descs = ["Precision engine rebuild restoring factory performance.", "Complete brake pad, rotor, and caliper replacement.", "Performance intake and exhaust system installation.", "Comprehensive computer diagnostic and repair."];
               return (
-                <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.06] hover:border-opacity-30 transition-all duration-500">
+                <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.10] hover:border-opacity-30 transition-all duration-500">
                   <img src={src} alt={titles[i]} className="w-full h-64 object-cover transition-transform duration-700 group-hover:scale-105" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-6"><h3 className="text-lg font-bold text-white mb-1">{titles[i]}</h3><p className="text-sm text-slate-300">{descs[i]}</p></div>
@@ -717,7 +717,7 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
           <SectionHeader badge="Quick Help" title="What Does Your Car Need?" subtitle="Not sure what service you need? Pick the option that best describes your situation." accent={ACCENT} />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {QUIZ_OPTIONS.map((opt) => (
-              <div key={opt.label} className="group relative p-6 rounded-2xl border border-white/[0.06] hover:border-opacity-40 transition-all duration-500 cursor-pointer overflow-hidden bg-white/[0.02]">
+              <div key={opt.label} className="group relative p-6 rounded-2xl border border-white/[0.10] hover:border-opacity-40 transition-all duration-500 cursor-pointer overflow-hidden bg-white/[0.07]">
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${opt.color}15, transparent 70%)` }} />
                 <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${opt.color}4d, transparent)` }} />
                 <div className="relative z-10 flex items-start gap-4">
@@ -777,7 +777,7 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
                   <span className="text-xs text-green-400">Verified</span>
                 </div>
                 <p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p>
-                <div className="pt-4 border-t border-white/5"><span className="text-sm font-semibold text-white">{t.name}</span></div>
+                <div className="pt-4 border-t border-white/8"><span className="text-sm font-semibold text-white">{t.name}</span></div>
               </GlassCard>
             ))}
           </div>
@@ -917,18 +917,18 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
               <h3 className="text-xl font-semibold text-white mb-6">Schedule Service</h3>
               <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div><label className="block text-sm text-slate-400 mb-1.5">Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="John Doe" /></div>
-                  <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
+                  <div><label className="block text-sm text-slate-400 mb-1.5">Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="John Doe" /></div>
+                  <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
                 </div>
-                <div><label className="block text-sm text-slate-400 mb-1.5">Vehicle (Year, Make, Model)</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="2022 Toyota Camry" /></div>
+                <div><label className="block text-sm text-slate-400 mb-1.5">Vehicle (Year, Make, Model)</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="2022 Toyota Camry" /></div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-1.5">Service Needed</label>
-                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none text-sm">
+                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none text-sm">
                     <option value="" className="bg-neutral-900">Select a service</option>
                     {data.services.map((s) => <option key={s.name} value={s.name.toLowerCase().replace(/\s+/g, "-")} className="bg-neutral-900">{s.name}</option>)}
                   </select>
                 </div>
-                <div><label className="block text-sm text-slate-400 mb-1.5">Describe the Issue</label><textarea rows={4} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm resize-none" placeholder="What symptoms are you experiencing?" /></div>
+                <div><label className="block text-sm text-slate-400 mb-1.5">Describe the Issue</label><textarea rows={4} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm resize-none" placeholder="What symptoms are you experiencing?" /></div>
                 <MagneticButton className="w-full py-4 rounded-xl text-base font-semibold text-white flex items-center justify-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
                   Book Appointment <ArrowRight size={18} weight="bold" />
                 </MagneticButton>
@@ -966,7 +966,7 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
       </section>
 
       {/* ══════════════════ 15. FOOTER ══════════════════ */}
-      <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden">
+      <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #0a0a0a 100%)` }} />
         <GearPattern opacity={0.015} accent={ACCENT} />
         <div className="mx-auto max-w-6xl px-6 relative z-10">
@@ -987,7 +987,7 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
               </div>
             </div>
           </div>
-          <div className="border-t border-white/5 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="border-t border-white/8 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-sm text-slate-500"><Wrench size={14} weight="fill" style={{ color: ACCENT }} /><span>{data.businessName} &copy; {new Date().getFullYear()}</span></div>
             <div className="flex items-center gap-2 text-xs text-slate-600"><BluejayLogo className="w-4 h-4" /><span>Created by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" style={{textDecoration:"underline"}}>bluejayportfolio.com</a></span></div>
           </div>

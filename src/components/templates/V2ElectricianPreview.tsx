@@ -252,7 +252,7 @@ function HeroLightning({ accent }: { accent: string }) {
 /* ───────────────────────── GLASS CARD ───────────────────────── */
 function GlassCard({ children, className = "", style }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) {
   return (
-    <div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`} style={style}>
+    <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`} style={style}>
       {children}
     </div>
   );
@@ -556,7 +556,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
 
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
           {/* Left: text */}
-          <div className="space-y-8 rounded-2xl bg-black/50 backdrop-blur-md p-6 md:p-8 border border-white/5">
+          <div className="space-y-8 rounded-2xl bg-black/50 backdrop-blur-md p-6 md:p-8 border border-white/8">
             <div>
               <p className="text-sm uppercase tracking-widest mb-4" style={{ color: AMBER }}>
                 Licensed Master Electricians
@@ -581,7 +581,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
               </MagneticButton>
               <MagneticButton
                 href={`tel:${phoneDigits}`}
-                className="px-5 sm:px-8 py-4 rounded-full text-sm sm:text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer"
+                className="px-5 sm:px-8 py-4 rounded-full text-sm sm:text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer"
               >
                 <Phone size={18} weight="duotone" />
                 <PhoneLink phone={data.phone} />
@@ -603,7 +603,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
 
           {/* Right: hero image */}
           <div className="hidden md:block relative">
-            <div className="relative rounded-2xl overflow-hidden border border-white/10">
+            <div className="relative rounded-2xl overflow-hidden border border-white/15">
               <img
                 src={heroCardImage}
                 alt={`${data.businessName} professional electrician`}
@@ -697,7 +697,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
               return (
                 <div
                   key={service.name}
-                  className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                  className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
                   style={{ ["--hover-border" as string]: `${AMBER}4d` }}
                 >
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${AMBER}15, transparent 70%)` }} />
@@ -800,7 +800,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             {/* Photo */}
             <div className="relative">
-              <div className="rounded-2xl overflow-hidden border border-white/10">
+              <div className="rounded-2xl overflow-hidden border border-white/15">
                 <img
                   src={aboutImage}
                   alt={`${data.businessName} team`}
@@ -918,7 +918,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
               return (
                 <div
                   key={i}
-                  className="group relative rounded-2xl overflow-hidden border border-white/[0.06] hover:border-opacity-30 transition-all duration-500"
+                  className="group relative rounded-2xl overflow-hidden border border-white/[0.10] hover:border-opacity-30 transition-all duration-500"
                 >
                   <img
                     src={src}
@@ -986,7 +986,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-white/10">
+                  <tr className="border-b border-white/15">
                     <th className="text-left p-4 text-slate-400 font-semibold">Feature</th>
                     <th className="p-4 text-center font-bold" style={{ color: AMBER }}>{data.businessName}</th>
                     <th className="p-4 text-center text-slate-500 font-semibold">Handyman</th>
@@ -994,7 +994,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
                 </thead>
                 <tbody>
                   {COMPARISON_ROWS.map((row, i) => (
-                    <tr key={row.feature} className={i < COMPARISON_ROWS.length - 1 ? "border-b border-white/5" : ""}>
+                    <tr key={row.feature} className={i < COMPARISON_ROWS.length - 1 ? "border-b border-white/8" : ""}>
                       <td className="p-4 text-white font-medium">{row.feature}</td>
                       <td className="p-4 text-center">
                         <CheckCircle size={22} weight="fill" className="mx-auto" style={{ color: "#22c55e" }} />
@@ -1018,7 +1018,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
         </div>
         <div className="max-w-4xl mx-auto px-4 sm:px-6 relative z-10">
           <SectionHeader badge="Our Work" title="See Our Work in Action" accent={AMBER} />
-          <div className="relative rounded-2xl overflow-hidden border border-white/10 group cursor-pointer">
+          <div className="relative rounded-2xl overflow-hidden border border-white/15 group cursor-pointer">
             <img
               src={projectImages[0] || heroImage}
               alt="See our electrical work"
@@ -1137,7 +1137,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
                 <p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">
                   &ldquo;{t.text}&rdquo;
                 </p>
-                <div className="pt-4 border-t border-white/5 flex items-center justify-between">
+                <div className="pt-4 border-t border-white/8 flex items-center justify-between">
                   <span className="text-sm font-semibold text-white">{t.name}</span>
                 </div>
               </GlassCard>
@@ -1348,7 +1348,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
                     <label className="block text-sm text-slate-400 mb-1.5">First Name</label>
                     <input
                       type="text"
-                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm"
+                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm"
                       style={{ ["--tw-ring-color" as string]: `${AMBER}80` }}
                       placeholder="John"
                     />
@@ -1357,7 +1357,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
                     <label className="block text-sm text-slate-400 mb-1.5">Last Name</label>
                     <input
                       type="text"
-                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm"
+                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm"
                       placeholder="Doe"
                     />
                   </div>
@@ -1366,13 +1366,13 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
                   <label className="block text-sm text-slate-400 mb-1.5">Phone</label>
                   <input
                     type="tel"
-                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm"
+                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm"
                     placeholder="(555) 123-4567"
                   />
                 </div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-1.5">Service Needed</label>
-                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none transition-colors text-sm">
+                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none transition-colors text-sm">
                     <option value="" className="bg-neutral-900">Select a service</option>
                     {data.services.map((s) => (
                       <option key={s.name} value={s.name.toLowerCase().replace(/\s+/g, "-")} className="bg-neutral-900">
@@ -1385,7 +1385,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
                   <label className="block text-sm text-slate-400 mb-1.5">Message</label>
                   <textarea
                     rows={4}
-                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm resize-none"
+                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm resize-none"
                     placeholder="Tell us about your project..."
                   />
                 </div>
@@ -1447,7 +1447,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
       </section>
 
       {/* ══════════════════ 15. FOOTER ══════════════════ */}
-      <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden">
+      <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111 100%)" }} />
         <CircuitPattern opacity={0.015} accent={AMBER} />
         <div className="mx-auto max-w-6xl px-4 sm:px-6 relative z-10">
@@ -1492,7 +1492,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
             </div>
           </div>
 
-          <div className="border-t border-white/5 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="border-t border-white/8 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-sm text-slate-500">
               <Lightning size={14} weight="fill" style={{ color: AMBER }} />
               <span>{data.businessName} &copy; {new Date().getFullYear()}</span>

@@ -193,7 +193,7 @@ function VentPattern({ opacity = 0.03, accent }: { opacity?: number; accent: str
 /* ───────────────────────── GLASS CARD ───────────────────────── */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>
+    <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>
   );
 }
 
@@ -370,7 +370,7 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
         <AirflowWaves opacity={0.05} accent={BLUE} />
 
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
-          <div className="space-y-8 rounded-2xl bg-black/50 backdrop-blur-md p-6 md:p-8 border border-white/5">
+          <div className="space-y-8 rounded-2xl bg-black/50 backdrop-blur-md p-6 md:p-8 border border-white/8">
             <div>
               <p className="text-sm uppercase tracking-widest mb-4" style={{ color: BLUE }}>Certified HVAC Professionals</p>
               <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 20px rgba(0,0,0,0.8), 0 4px 40px rgba(0,0,0,0.5)" }}>{data.tagline}</h1>
@@ -380,7 +380,7 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-black flex items-center gap-2 cursor-pointer" style={{ background: BLUE } as React.CSSProperties}>
                 Get Free Estimate <ArrowRight size={18} weight="bold" />
               </MagneticButton>
-              <MagneticButton href={`tel:${phoneDigits}`} className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
+              <MagneticButton href={`tel:${phoneDigits}`} className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
                 <Phone size={18} weight="duotone" /> <PhoneLink phone={data.phone} />
               </MagneticButton>
             </div>
@@ -390,7 +390,7 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
             </div>
           </div>
           <div className="hidden md:block relative">
-            <div className="relative rounded-2xl overflow-hidden border border-white/10">
+            <div className="relative rounded-2xl overflow-hidden border border-white/15">
               <img src={heroCardImage} alt={`${data.businessName} HVAC`} className="w-full h-[500px] object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0c1222] via-transparent to-transparent" />
               <div className="absolute inset-0 bg-gradient-to-r from-[#0c1222]/40 to-transparent" />
@@ -457,7 +457,7 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
             {data.services.map((service, i) => {
               const Icon = getServiceIcon(service.name);
               return (
-                <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.02]">
+                <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]">
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${BLUE}15, transparent 70%)` }} />
                   <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${BLUE}4d, transparent)` }} />
                   <div className="relative z-10">
@@ -586,7 +586,7 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="relative">
-              <div className="rounded-2xl overflow-hidden border border-white/10">
+              <div className="rounded-2xl overflow-hidden border border-white/15">
                 <img src={aboutImage} alt={`${data.businessName} team`} className="w-full h-[400px] object-cover" />
               </div>
               <div className="absolute -bottom-4 -right-4 md:bottom-6 md:-right-6">
@@ -625,13 +625,13 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
         <div className="max-w-4xl mx-auto px-6 relative z-10">
           <SectionHeader badge="Why Us" title={`${data.businessName} vs. The Competition`} accent={BLUE} />
           <GlassCard className="overflow-hidden">
-            <div className="grid grid-cols-3 text-center text-sm font-bold uppercase tracking-wider py-4 px-6 border-b border-white/10">
+            <div className="grid grid-cols-3 text-center text-sm font-bold uppercase tracking-wider py-4 px-6 border-b border-white/15">
               <span className="text-slate-400 text-left">Feature</span>
               <span style={{ color: BLUE }}>{data.businessName}</span>
               <span className="text-slate-500">Big Box HVAC</span>
             </div>
             {COMPETITOR_ROWS.map((row, i) => (
-              <div key={row.feature} className={`grid grid-cols-3 text-center py-4 px-6 text-sm ${i < COMPETITOR_ROWS.length - 1 ? "border-b border-white/5" : ""}`}>
+              <div key={row.feature} className={`grid grid-cols-3 text-center py-4 px-6 text-sm ${i < COMPETITOR_ROWS.length - 1 ? "border-b border-white/8" : ""}`}>
                 <span className="text-slate-300 text-left font-medium">{row.feature}</span>
                 <span><CheckCircle size={20} weight="fill" className="inline" style={{ color: "#22c55e" }} /></span>
                 <span className="text-slate-500">{row.them}</span>
@@ -654,7 +654,7 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
               const titles = ["Central AC Installation", "Furnace Replacement", "Ductless Mini-Split System", "Commercial HVAC Upgrade"];
               const descs = ["Complete cooling system for a new construction home.", "High-efficiency furnace upgrade for maximum warmth.", "Zone-controlled comfort for an older home.", "Full commercial HVAC retrofit."];
               return (
-                <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.06] hover:border-opacity-30 transition-all duration-500">
+                <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.10] hover:border-opacity-30 transition-all duration-500">
                   <img src={src} alt={titles[i]} className="w-full h-64 object-cover transition-transform duration-700 group-hover:scale-105" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-6"><h3 className="text-lg font-bold text-white mb-1">{titles[i]}</h3><p className="text-sm text-slate-300">{descs[i]}</p></div>
@@ -672,7 +672,7 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] left-[20%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${BLUE}06` }} /></div>
         <div className="max-w-4xl mx-auto px-6 relative z-10">
           <SectionHeader badge="Our Team" title="Meet Our Team" subtitle={`See why families and businesses trust ${data.businessName} with their comfort.`} accent={BLUE} />
-          <div className="relative rounded-2xl overflow-hidden border border-white/10 group cursor-pointer">
+          <div className="relative rounded-2xl overflow-hidden border border-white/15 group cursor-pointer">
             <img src={projectImages[0] || heroImage} alt={`${data.businessName} team video`} className="w-full h-[300px] md:h-[400px] object-cover" />
             <div className="absolute inset-0 bg-black/50 group-hover:bg-black/40 transition-colors duration-300" />
             <div className="absolute inset-0 flex flex-col items-center justify-center">
@@ -714,7 +714,7 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
               <GlassCard key={i} className="p-6 h-full flex flex-col">
                 <div className="flex gap-0.5 mb-4">{Array.from({ length: t.rating || 5 }).map((_, j) => <Star key={j} size={16} weight="fill" style={{ color: BLUE }} />)}</div>
                 <p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p>
-                <div className="pt-4 border-t border-white/5"><span className="text-sm font-semibold text-white">{t.name}</span></div>
+                <div className="pt-4 border-t border-white/8"><span className="text-sm font-semibold text-white">{t.name}</span></div>
               </GlassCard>
             ))}
           </div>
@@ -888,18 +888,18 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
               <h3 className="text-xl font-semibold text-white mb-6">Request a Free Estimate</h3>
               <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div><label className="block text-sm text-slate-400 mb-1.5">First Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="John" /></div>
-                  <div><label className="block text-sm text-slate-400 mb-1.5">Last Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="Doe" /></div>
+                  <div><label className="block text-sm text-slate-400 mb-1.5">First Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="John" /></div>
+                  <div><label className="block text-sm text-slate-400 mb-1.5">Last Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="Doe" /></div>
                 </div>
-                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
+                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-1.5">Service Needed</label>
-                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none text-sm">
+                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none text-sm">
                     <option value="" className="bg-neutral-900">Select a service</option>
                     {data.services.map((s) => <option key={s.name} value={s.name.toLowerCase().replace(/\s+/g, "-")} className="bg-neutral-900">{s.name}</option>)}
                   </select>
                 </div>
-                <div><label className="block text-sm text-slate-400 mb-1.5">Message</label><textarea rows={4} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm resize-none" placeholder="Tell us about your HVAC needs..." /></div>
+                <div><label className="block text-sm text-slate-400 mb-1.5">Message</label><textarea rows={4} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm resize-none" placeholder="Tell us about your HVAC needs..." /></div>
                 <MagneticButton className="w-full py-4 rounded-xl text-base font-semibold text-black flex items-center justify-center gap-2 cursor-pointer" style={{ background: BLUE } as React.CSSProperties}>
                   Send Request <ArrowRight size={18} weight="bold" />
                 </MagneticButton>
@@ -951,7 +951,7 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
               { tip: "Upgrade Insulation", desc: "Proper attic and wall insulation keeps conditioned air where it belongs — inside your home." },
               { tip: "Heat Pump Upgrade", desc: "Modern heat pumps are 300% efficient compared to traditional furnaces. Federal tax credits up to $2,000 available." },
             ].map((t) => (
-              <div key={t.tip} className="flex items-start gap-4 rounded-2xl border border-white/10 p-5" style={{ background: "rgba(255,255,255,0.03)" }}>
+              <div key={t.tip} className="flex items-start gap-4 rounded-2xl border border-white/15 p-5" style={{ background: "rgba(255,255,255,0.06)" }}>
                 <CheckCircle size={22} weight="fill" style={{ color: BLUE }} className="shrink-0 mt-0.5" />
                 <div>
                   <h3 className="text-sm font-bold text-white mb-1">{t.tip}</h3>
@@ -987,7 +987,7 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
       </section>
 
       {/* ══════════════════ 15. FOOTER ══════════════════ */}
-      <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden">
+      <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #080e1a 100%)` }} />
         <VentPattern opacity={0.015} accent={BLUE} />
         <div className="mx-auto max-w-6xl px-6 relative z-10">
@@ -1008,7 +1008,7 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
               </div>
             </div>
           </div>
-          <div className="border-t border-white/5 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="border-t border-white/8 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-sm text-slate-500"><Fan size={14} weight="fill" style={{ color: BLUE }} /><span>{data.businessName} &copy; {new Date().getFullYear()}</span></div>
             <div className="flex items-center gap-2 text-xs text-slate-600"><BluejayLogo className="w-4 h-4" /><span>Created by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" style={{textDecoration:"underline"}}>bluejayportfolio.com</a></span></div>
           </div>

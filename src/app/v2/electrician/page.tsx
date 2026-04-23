@@ -308,8 +308,8 @@ function Section({ children, className = "", id }: { children: React.ReactNode; 
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <div
-      className={`rounded-2xl border border-white/[0.08] p-6 md:p-8 ${className}`}
-      style={{ background: "rgba(255,255,255,0.04)" }}
+      className={`rounded-2xl border border-white/[0.13] p-6 md:p-8 ${className}`}
+      style={{ background: "rgba(255,255,255,0.08)" }}
     >
       {children}
     </div>
@@ -350,7 +350,7 @@ export default function ElectricianV2Showcase() {
       <FloatingSparks />
 
       {/* ─────────────────── NAV ─────────────────── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/[0.06]" style={{ background: "rgba(26,26,26,0.92)", backdropFilter: "blur(16px)" }}>
+      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/[0.10]" style={{ background: "rgba(26,26,26,0.92)", backdropFilter: "blur(16px)" }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16 md:h-18">
           <a href="#" className="flex items-center gap-2">
             <Lightning size={28} weight="fill" style={{ color: AMBER }} />
@@ -374,7 +374,7 @@ export default function ElectricianV2Showcase() {
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              className="md:hidden overflow-hidden border-t border-white/[0.06]"
+              className="md:hidden overflow-hidden border-t border-white/[0.10]"
               style={{ background: "rgba(26,26,26,0.98)" }}
             >
               <div className="px-4 py-4 flex flex-col gap-3">
@@ -652,7 +652,7 @@ export default function ElectricianV2Showcase() {
               transition={spring}
               className="relative"
             >
-              <div className="rounded-2xl overflow-hidden border border-white/[0.08]">
+              <div className="rounded-2xl overflow-hidden border border-white/[0.13]">
                 <img
                   src="/images/electrician-owner.png"
                   alt="Mike Torres — Master Electrician"
@@ -759,7 +759,7 @@ export default function ElectricianV2Showcase() {
                     className="w-full text-left rounded-2xl border transition-all duration-300 overflow-hidden"
                     style={{
                       borderColor: isActive ? opt.color : "rgba(255,255,255,0.08)",
-                      background: isActive ? `${opt.color}10` : "rgba(255,255,255,0.04)",
+                      background: isActive ? `${opt.color}10` : "rgba(255,255,255,0.08)",
                     }}
                   >
                     <div className="p-5 flex items-center gap-4">
@@ -817,7 +817,7 @@ export default function ElectricianV2Showcase() {
             <div className="overflow-x-auto">
               <table className="w-full text-left">
                 <thead>
-                  <tr className="border-b border-white/[0.08]">
+                  <tr className="border-b border-white/[0.13]">
                     <th className="pb-4 text-sm text-white/40 font-medium">Feature</th>
                     <th className="pb-4 text-sm font-semibold text-center" style={{ color: AMBER }}>Cascade Electric</th>
                     <th className="pb-4 text-sm text-white/30 font-medium text-center">Handyman</th>
@@ -945,7 +945,7 @@ export default function ElectricianV2Showcase() {
       <Section>
         <div className="relative max-w-5xl mx-auto px-4">
           <motion.div
-            className="relative rounded-2xl overflow-hidden border border-white/[0.08] cursor-pointer group"
+            className="relative rounded-2xl overflow-hidden border border-white/[0.13] cursor-pointer group"
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
@@ -1017,7 +1017,7 @@ export default function ElectricianV2Showcase() {
                     type="text"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border border-white/[0.08] bg-white/[0.04] text-white text-sm focus:outline-none focus:border-amber-500/40 transition-colors"
+                    className="w-full px-4 py-3 rounded-xl border border-white/[0.13] bg-white/[0.07] text-white text-sm focus:outline-none focus:border-amber-500/40 transition-colors"
                     placeholder="Your name"
                   />
                 </div>
@@ -1028,7 +1028,7 @@ export default function ElectricianV2Showcase() {
                       type="tel"
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-white/[0.08] bg-white/[0.04] text-white text-sm focus:outline-none focus:border-amber-500/40 transition-colors"
+                      className="w-full px-4 py-3 rounded-xl border border-white/[0.13] bg-white/[0.07] text-white text-sm focus:outline-none focus:border-amber-500/40 transition-colors"
                       placeholder="(206) 555-0000"
                     />
                   </div>
@@ -1038,7 +1038,7 @@ export default function ElectricianV2Showcase() {
                       type="email"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-white/[0.08] bg-white/[0.04] text-white text-sm focus:outline-none focus:border-amber-500/40 transition-colors"
+                      className="w-full px-4 py-3 rounded-xl border border-white/[0.13] bg-white/[0.07] text-white text-sm focus:outline-none focus:border-amber-500/40 transition-colors"
                       placeholder="you@email.com"
                     />
                   </div>
@@ -1048,7 +1048,7 @@ export default function ElectricianV2Showcase() {
                   <select
                     value={formData.service}
                     onChange={(e) => setFormData({ ...formData, service: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border border-white/[0.08] bg-white/[0.04] text-white text-sm focus:outline-none focus:border-amber-500/40 transition-colors appearance-none"
+                    className="w-full px-4 py-3 rounded-xl border border-white/[0.13] bg-white/[0.07] text-white text-sm focus:outline-none focus:border-amber-500/40 transition-colors appearance-none"
                   >
                     <option value="" className="bg-neutral-800">Select a service</option>
                     {SERVICES.map((s) => (
@@ -1064,7 +1064,7 @@ export default function ElectricianV2Showcase() {
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     rows={4}
-                    className="w-full px-4 py-3 rounded-xl border border-white/[0.08] bg-white/[0.04] text-white text-sm focus:outline-none focus:border-amber-500/40 transition-colors resize-none"
+                    className="w-full px-4 py-3 rounded-xl border border-white/[0.13] bg-white/[0.07] text-white text-sm focus:outline-none focus:border-amber-500/40 transition-colors resize-none"
                     placeholder="Tell us about your project..."
                   />
                 </div>
@@ -1138,7 +1138,7 @@ export default function ElectricianV2Showcase() {
       {/* ═══════════════════════════════════════════════════════════════
           16. FOOTER
           ═══════════════════════════════════════════════════════════════ */}
-      <footer className="relative border-t border-white/[0.06] py-12" style={{ background: "#111111" }}>
+      <footer className="relative border-t border-white/[0.10] py-12" style={{ background: "#111111" }}>
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             {/* Brand */}
@@ -1177,7 +1177,7 @@ export default function ElectricianV2Showcase() {
             </div>
           </div>
 
-          <div className="border-t border-white/[0.06] pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="border-t border-white/[0.10] pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="text-xs text-white/25">
               &copy; {new Date().getFullYear()} Cascade Electric Co. All rights reserved.
             </div>

@@ -418,7 +418,7 @@ function GlassCard({
         href={href}
         id={id}
         onClick={onClick}
-        className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}
+        className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}
         style={style}
       >
         {children}
@@ -429,7 +429,7 @@ function GlassCard({
     <div
       id={id}
       onClick={onClick}
-      className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}
+      className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}
       style={style}
     >
       {children}
@@ -625,7 +625,7 @@ export default function RoofingShowcase() {
       <FloatingParticles />
 
       {/* ═══════════════════ NAVIGATION ═══════════════════ */}
-      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-gray-900/80 border-b border-white/5">
+      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-gray-900/80 border-b border-white/8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
           <div className="flex items-center gap-2">
             <div
@@ -676,7 +676,7 @@ export default function RoofingShowcase() {
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={spring}
-              className="md:hidden overflow-hidden bg-gray-900/95 border-t border-white/5"
+              className="md:hidden overflow-hidden bg-gray-900/95 border-t border-white/8"
             >
               <div className="px-4 py-4 flex flex-col gap-3">
                 {["Services", "Materials", "Reviews", "Contact"].map(
@@ -725,7 +725,7 @@ export default function RoofingShowcase() {
             transition={{ ...spring, delay: 0.2 }}
           >
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/[0.04] mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/15 bg-white/[0.07] mb-6">
               <ShieldCheck
                 size={16}
                 weight="fill"
@@ -841,7 +841,7 @@ export default function RoofingShowcase() {
 
       {/* ═══════════════════ SECTION 3 — TRUST BAR ═══════════════════ */}
       <SectionReveal
-        className="relative z-10 py-8 border-b border-white/5"
+        className="relative z-10 py-8 border-b border-white/8"
         style={{ background: "rgba(17,24,39,0.95)" }}
       >
         <div className="max-w-7xl mx-auto px-4">
@@ -855,7 +855,7 @@ export default function RoofingShowcase() {
             ].map((item) => (
               <div
                 key={item.text}
-                className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/[0.03]"
+                className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/15 bg-white/[0.08]"
               >
                 <item.icon
                   size={16}
@@ -1180,7 +1180,7 @@ export default function RoofingShowcase() {
                 ].map((badge) => (
                   <span
                     key={badge}
-                    className="px-3 py-1.5 rounded-full text-xs font-semibold border border-white/10 bg-white/[0.04] text-slate-300"
+                    className="px-3 py-1.5 rounded-full text-xs font-semibold border border-white/15 bg-white/[0.07] text-slate-300"
                   >
                     <CheckCircle
                       size={12}
@@ -1263,7 +1263,7 @@ export default function RoofingShowcase() {
           />
           <div className="grid sm:grid-cols-3 gap-6 max-w-4xl mx-auto">
             {FINANCING_PLANS.map((plan) => (
-              <div key={plan.title}>
+              <div key={plan.title} className={plan.featured ? "mt-4 sm:mt-0" : ""}>
                 {plan.featured ? (
                   <ShimmerBorder>
                     <div className="p-6 text-center relative">
@@ -1411,7 +1411,7 @@ export default function RoofingShowcase() {
                   <p className="text-slate-300 leading-relaxed mb-5 italic">
                     &ldquo;{t.text}&rdquo;
                   </p>
-                  <div className="flex items-center gap-3 pt-4 border-t border-white/5">
+                  <div className="flex items-center gap-3 pt-4 border-t border-white/8">
                     <div
                       className="w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0"
                       style={{
@@ -1480,7 +1480,7 @@ export default function RoofingShowcase() {
                   background:
                     quizAnswer === i
                       ? `${option.color}15`
-                      : "rgba(255,255,255,0.03)",
+                      : "rgba(255,255,255,0.06)",
                 }}
               >
                 <div
@@ -1564,7 +1564,7 @@ export default function RoofingShowcase() {
             <div className="overflow-x-auto">
               <table className="w-full text-left">
                 <thead>
-                  <tr className="border-b border-white/10">
+                  <tr className="border-b border-white/15">
                     <th className="px-6 py-4 text-sm font-semibold text-slate-400">
                       Feature
                     </th>
@@ -1585,7 +1585,7 @@ export default function RoofingShowcase() {
                       key={row.feature}
                       className={
                         i < COMPARISON_ROWS.length - 1
-                          ? "border-b border-white/5"
+                          ? "border-b border-white/8"
                           : ""
                       }
                     >
@@ -1684,7 +1684,7 @@ export default function RoofingShowcase() {
 
           {/* Availability indicator */}
           <div className="text-center mt-10">
-            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-white/10 bg-white/[0.03]">
+            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-white/15 bg-white/[0.08]">
               <motion.div
                 className="w-2.5 h-2.5 rounded-full bg-green-400"
                 animate={{
@@ -1735,7 +1735,7 @@ export default function RoofingShowcase() {
                     onChange={(e) =>
                       setFormData({ ...formData, name: e.target.value })
                     }
-                    className="w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/10 text-white placeholder:text-slate-600 focus:outline-none focus:border-red-500/50 transition-colors"
+                    className="w-full px-4 py-3 rounded-xl bg-white/[0.08] border border-white/15 text-white placeholder:text-slate-600 focus:outline-none focus:border-red-500/50 transition-colors"
                   />
                 </div>
                 <div>
@@ -1752,7 +1752,7 @@ export default function RoofingShowcase() {
                         phone: e.target.value,
                       })
                     }
-                    className="w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/10 text-white placeholder:text-slate-600 focus:outline-none focus:border-red-500/50 transition-colors"
+                    className="w-full px-4 py-3 rounded-xl bg-white/[0.08] border border-white/15 text-white placeholder:text-slate-600 focus:outline-none focus:border-red-500/50 transition-colors"
                   />
                 </div>
                 <div>
@@ -1769,7 +1769,7 @@ export default function RoofingShowcase() {
                         email: e.target.value,
                       })
                     }
-                    className="w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/10 text-white placeholder:text-slate-600 focus:outline-none focus:border-red-500/50 transition-colors"
+                    className="w-full px-4 py-3 rounded-xl bg-white/[0.08] border border-white/15 text-white placeholder:text-slate-600 focus:outline-none focus:border-red-500/50 transition-colors"
                   />
                 </div>
                 <div>
@@ -1786,7 +1786,7 @@ export default function RoofingShowcase() {
                       })
                     }
                     rows={4}
-                    className="w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/10 text-white placeholder:text-slate-600 focus:outline-none focus:border-red-500/50 transition-colors resize-none"
+                    className="w-full px-4 py-3 rounded-xl bg-white/[0.08] border border-white/15 text-white placeholder:text-slate-600 focus:outline-none focus:border-red-500/50 transition-colors resize-none"
                   />
                 </div>
                 <MagneticButton
@@ -1916,7 +1916,7 @@ export default function RoofingShowcase() {
 
       {/* ═══════════════════ SECTION 16 — FOOTER ═══════════════════ */}
       <footer
-        className="relative z-10 py-12 border-t border-white/5"
+        className="relative z-10 py-12 border-t border-white/8"
         style={{ background: CHARCOAL_DEEP }}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -1992,7 +1992,7 @@ export default function RoofingShowcase() {
                 ].map((cert) => (
                   <span
                     key={cert}
-                    className="px-2 py-1 rounded-md text-xs border border-white/10 bg-white/[0.03] text-slate-400"
+                    className="px-2 py-1 rounded-md text-xs border border-white/15 bg-white/[0.08] text-slate-400"
                   >
                     {cert}
                   </span>
@@ -2002,7 +2002,7 @@ export default function RoofingShowcase() {
           </div>
 
           {/* Bottom bar */}
-          <div className="pt-6 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="pt-6 border-t border-white/8 flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-xs text-slate-600">
               WA License #SUMMIRN892PZ | GAF Master Elite Contractor
             </p>

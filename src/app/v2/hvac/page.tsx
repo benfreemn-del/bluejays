@@ -226,7 +226,7 @@ function GlassCard({
 }) {
   return (
     <div
-      className={`relative rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md ${hover ? "transition-all duration-300 hover:border-white/20 hover:bg-white/[0.07]" : ""} ${className}`}
+      className={`relative rounded-2xl border border-white/15 bg-white/[0.07] backdrop-blur-md ${hover ? "transition-all duration-300 hover:border-white/20 hover:bg-white/[0.07]" : ""} ${className}`}
     >
       {children}
     </div>
@@ -477,7 +477,7 @@ function ComfortGauge() {
           initial={{ opacity: 0, scale: 0.7 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ ...spring, delay: 1.5 + i * 0.2 }}
-          className="absolute flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-white/10 bg-white/[0.06] backdrop-blur-sm text-xs text-white/80"
+          className="absolute flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-white/15 bg-white/[0.06] backdrop-blur-sm text-xs text-white/80"
           style={{ left: b.x - 30, top: b.y }}
         >
           <b.icon size={13} weight="fill" style={{ color: i === 0 ? ORANGE : i === 1 ? BLUE : "#22c55e" }} />
@@ -523,7 +523,7 @@ function EnergyCalculator() {
                 className={`flex flex-col items-center gap-2 p-3 rounded-xl border transition-all ${
                   systemType === s.key
                     ? "border-sky-400 bg-sky-500/10 text-white"
-                    : "border-white/10 bg-white/[0.03] text-white/50 hover:border-white/20"
+                    : "border-white/15 bg-white/[0.08] text-white/50 hover:border-white/20"
                 }`}
               >
                 <s.icon size={22} weight={systemType === s.key ? "fill" : "regular"} />
@@ -551,7 +551,7 @@ function EnergyCalculator() {
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-4 pt-4 border-t border-white/10">
+        <div className="grid grid-cols-3 gap-4 pt-4 border-t border-white/15">
           <div className="text-center">
             <p className="text-2xl md:text-3xl font-bold" style={{ color: "#22c55e" }}>
               ${annualSavings}
@@ -596,7 +596,7 @@ function DiagnosticQuiz() {
             className={`flex flex-col items-center gap-2 p-4 rounded-xl border transition-all ${
               selected === s.id
                 ? "border-sky-400 bg-sky-500/10 text-white"
-                : "border-white/10 bg-white/[0.03] text-white/60 hover:border-white/20 hover:text-white"
+                : "border-white/15 bg-white/[0.08] text-white/60 hover:border-white/20 hover:text-white"
             }`}
           >
             <s.icon size={24} weight={selected === s.id ? "fill" : "regular"} />
@@ -782,7 +782,7 @@ export default function HVACShowcase() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ ...spring, delay: 0.2 }}
-                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/10 bg-white/[0.04] text-sm text-white/70 mb-6"
+                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/15 bg-white/[0.07] text-sm text-white/70 mb-6"
               >
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ background: "#22c55e" }} />
@@ -840,7 +840,7 @@ export default function HVACShowcase() {
                 ].map((b) => (
                   <span
                     key={b.text}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border border-white/10 bg-white/[0.04] text-white/70"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border border-white/15 bg-white/[0.07] text-white/70"
                   >
                     <b.icon size={14} weight="fill" style={{ color: BLUE_LIGHT }} />
                     {b.text}
@@ -867,7 +867,7 @@ export default function HVACShowcase() {
       </section>
 
       {/* ──────────────── TRUST BAR / STATS ──────────────── */}
-      <section className="relative py-8 border-y border-white/5" style={{ background: "rgba(14,165,233,0.03)" }}>
+      <section className="relative py-8 border-y border-white/8" style={{ background: "rgba(14,165,233,0.03)" }}>
         <div className="mx-auto max-w-6xl px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {[
@@ -1010,7 +1010,7 @@ export default function HVACShowcase() {
                 className="flex flex-wrap gap-2 mt-6"
               >
                 {["EPA Certified", "NATE Trained", "BBB A+ Rated", "Carrier Dealer"].map((b) => (
-                  <span key={b} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border border-white/10 bg-white/[0.04] text-white/70">
+                  <span key={b} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border border-white/15 bg-white/[0.07] text-white/70">
                     <SealCheck size={14} weight="fill" style={{ color: BLUE_LIGHT }} />
                     {b}
                   </span>
@@ -1175,7 +1175,7 @@ export default function HVACShowcase() {
                   <p className="text-sm text-white/60 leading-relaxed flex-grow italic">&ldquo;{t.text}&rdquo;</p>
 
                   {/* Name & neighborhood */}
-                  <div className="mt-4 pt-4 border-t border-white/5 flex items-center gap-2">
+                  <div className="mt-4 pt-4 border-t border-white/8 flex items-center gap-2">
                     <CheckCircle size={16} weight="fill" style={{ color: BLUE_LIGHT }} />
                     <div>
                       <p className="text-sm font-semibold text-white">{t.name}</p>
@@ -1271,13 +1271,13 @@ export default function HVACShowcase() {
           <SectionHeader label="Why Choose Us" title={`${BUSINESS} vs.`} accent="The Competition" />
 
           <GlassCard className="overflow-hidden" hover={false}>
-            <div className="grid grid-cols-3 text-center border-b border-white/10 p-4">
+            <div className="grid grid-cols-3 text-center border-b border-white/15 p-4">
               <div />
               <p className="text-sm font-bold" style={{ color: BLUE_LIGHT }}>{BUSINESS}</p>
               <p className="text-sm font-bold text-white/40">Others</p>
             </div>
             {COMPARISON_ROWS.map((row, i) => (
-              <div key={i} className={`grid grid-cols-3 text-center p-4 ${i < COMPARISON_ROWS.length - 1 ? "border-b border-white/5" : ""}`}>
+              <div key={i} className={`grid grid-cols-3 text-center p-4 ${i < COMPARISON_ROWS.length - 1 ? "border-b border-white/8" : ""}`}>
                 <p className="text-sm text-white/70 text-left">{row.feature}</p>
                 <div className="flex justify-center">
                   <CheckCircle size={20} weight="fill" style={{ color: "#22c55e" }} />
@@ -1315,7 +1315,7 @@ export default function HVACShowcase() {
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={inView ? { opacity: 1, scale: 1 } : {}}
                   transition={{ ...spring, delay: i * 0.04 }}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm border border-white/10 bg-white/[0.03] text-white/60 hover:text-white hover:border-white/20 transition-all cursor-default"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm border border-white/15 bg-white/[0.08] text-white/60 hover:text-white hover:border-white/20 transition-all cursor-default"
                 >
                   <MapPin size={14} style={{ color: BLUE_LIGHT }} />
                   {n}
@@ -1363,7 +1363,7 @@ export default function HVACShowcase() {
                     type="text"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/10 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-sky-500/50 transition-colors"
+                    className="w-full px-4 py-3 rounded-xl bg-white/[0.07] border border-white/15 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-sky-500/50 transition-colors"
                     placeholder="Dave Morrison"
                   />
                 </div>
@@ -1373,7 +1373,7 @@ export default function HVACShowcase() {
                     type="tel"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/10 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-sky-500/50 transition-colors"
+                    className="w-full px-4 py-3 rounded-xl bg-white/[0.07] border border-white/15 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-sky-500/50 transition-colors"
                     placeholder="(206) 555-1234"
                   />
                 </div>
@@ -1384,7 +1384,7 @@ export default function HVACShowcase() {
                   type="email"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/10 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-sky-500/50 transition-colors"
+                  className="w-full px-4 py-3 rounded-xl bg-white/[0.07] border border-white/15 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-sky-500/50 transition-colors"
                   placeholder="dave@example.com"
                 />
               </div>
@@ -1393,7 +1393,7 @@ export default function HVACShowcase() {
                 <select
                   value={formData.service}
                   onChange={(e) => setFormData({ ...formData, service: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/10 text-white text-sm focus:outline-none focus:border-sky-500/50 transition-colors"
+                  className="w-full px-4 py-3 rounded-xl bg-white/[0.07] border border-white/15 text-white text-sm focus:outline-none focus:border-sky-500/50 transition-colors"
                 >
                   <option value="" className="bg-[#0c1222]">Select a service...</option>
                   <option value="ac-repair" className="bg-[#0c1222]">AC Repair</option>
@@ -1411,7 +1411,7 @@ export default function HVACShowcase() {
                   rows={4}
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/10 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-sky-500/50 transition-colors resize-none"
+                  className="w-full px-4 py-3 rounded-xl bg-white/[0.07] border border-white/15 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-sky-500/50 transition-colors resize-none"
                   placeholder="Tell us about your issue or what you need..."
                 />
               </div>
@@ -1480,7 +1480,7 @@ export default function HVACShowcase() {
       </section>
 
       {/* ──────────────── FOOTER ──────────────── */}
-      <footer className="border-t border-white/5 py-12">
+      <footer className="border-t border-white/8 py-12">
         <div className="mx-auto max-w-7xl px-4">
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             {/* Brand */}
@@ -1529,7 +1529,7 @@ export default function HVACShowcase() {
             </div>
           </div>
 
-          <div className="border-t border-white/5 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="border-t border-white/8 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-xs text-white/30">
               &copy; {new Date().getFullYear()} {BUSINESS}. All rights reserved.
             </p>

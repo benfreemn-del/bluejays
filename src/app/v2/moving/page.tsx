@@ -113,7 +113,7 @@ function SectionReveal({ children, className = "", id }: { children: React.React
 }
 
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <div className={`rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>;
+  return <div className={`rounded-2xl border border-white/15 bg-white/[0.07] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>;
 }
 
 function MagneticButton({ children, className = "", onClick, href, style }: { children: React.ReactNode; className?: string; onClick?: () => void; href?: string; style?: React.CSSProperties }) {
@@ -455,7 +455,7 @@ function CostEstimator() {
       <p className="text-sm text-slate-400 mb-3 font-medium">Home Size</p>
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 mb-6">
         {homeSizes.map((hs, i) => (
-          <button key={i} onClick={() => setSizeIdx(i)} className={`px-3 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${sizeIdx === i ? "text-white" : "text-slate-400 border border-white/10 hover:border-white/20"}`} style={sizeIdx === i ? { background: ORANGE } : {}}>
+          <button key={i} onClick={() => setSizeIdx(i)} className={`px-3 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${sizeIdx === i ? "text-white" : "text-slate-400 border border-white/15 hover:border-white/20"}`} style={sizeIdx === i ? { background: ORANGE } : {}}>
             {hs.rooms}
           </button>
         ))}
@@ -465,7 +465,7 @@ function CostEstimator() {
       <p className="text-sm text-slate-400 mb-3 font-medium">Distance</p>
       <div className="flex gap-2 mb-6">
         {[false, true].map((ld) => (
-          <button key={String(ld)} onClick={() => setIsLongDistance(ld)} className={`flex-1 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${isLongDistance === ld ? "text-white" : "text-slate-400 border border-white/10"}`} style={isLongDistance === ld ? { background: ORANGE } : {}}>
+          <button key={String(ld)} onClick={() => setIsLongDistance(ld)} className={`flex-1 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${isLongDistance === ld ? "text-white" : "text-slate-400 border border-white/15"}`} style={isLongDistance === ld ? { background: ORANGE } : {}}>
             {ld ? "Long-Distance" : "Local (Seattle)"}
           </button>
         ))}
@@ -477,7 +477,7 @@ function CostEstimator() {
         {addOns.map((a) => {
           const selected = selectedAddOns.includes(a.id);
           return (
-            <button key={a.id} onClick={() => toggleAddOn(a.id)} className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all cursor-pointer ${selected ? "border-2 text-white" : "border border-white/10 text-slate-400 hover:border-white/20"}`} style={selected ? { borderColor: ORANGE, background: "rgba(249,115,22,0.08)" } : {}}>
+            <button key={a.id} onClick={() => toggleAddOn(a.id)} className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all cursor-pointer ${selected ? "border-2 text-white" : "border border-white/15 text-slate-400 hover:border-white/20"}`} style={selected ? { borderColor: ORANGE, background: "rgba(249,115,22,0.08)" } : {}}>
               <span className="flex items-center gap-2">
                 {selected ? <CheckCircle size={18} weight="fill" style={{ color: ORANGE }} /> : <div className="w-[18px] h-[18px] rounded-full border border-white/20" />}
                 {a.label}
@@ -529,7 +529,7 @@ function MovingCountdown() {
         type="date"
         value={moveDate}
         onChange={(e) => setMoveDate(e.target.value)}
-        className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/[0.04] text-white text-sm mb-6 focus:outline-none focus:border-orange-500 transition-colors"
+        className="w-full px-4 py-3 rounded-xl border border-white/15 bg-white/[0.07] text-white text-sm mb-6 focus:outline-none focus:border-orange-500 transition-colors"
         style={{ colorScheme: "dark" }}
       />
 
@@ -545,7 +545,7 @@ function MovingCountdown() {
               const active = currentMilestoneIdx === i;
               const past = daysLeft !== null && daysLeft < m.weeks * 7;
               return (
-                <div key={i} className={`rounded-xl p-4 transition-all ${active ? "border-2" : "border border-white/10"}`} style={active ? { borderColor: ORANGE, background: "rgba(249,115,22,0.06)" } : {}}>
+                <div key={i} className={`rounded-xl p-4 transition-all ${active ? "border-2" : "border border-white/15"}`} style={active ? { borderColor: ORANGE, background: "rgba(249,115,22,0.06)" } : {}}>
                   <div className="flex items-center gap-2 mb-2">
                     {past ? <CheckCircle size={18} weight="fill" style={{ color: ORANGE }} /> : active ? <Lightning size={18} weight="fill" style={{ color: ORANGE }} /> : <Clock size={18} weight="duotone" className="text-slate-500" />}
                     <span className={`text-sm font-semibold ${active ? "text-white" : past ? "text-slate-500 line-through" : "text-slate-400"}`}>{m.label}</span>
@@ -613,7 +613,7 @@ function TruckSizeQuiz() {
             <p className="text-white font-semibold mb-4">{truckQuizQuestions[currentQ].question}</p>
             <div className="space-y-2">
               {truckQuizQuestions[currentQ].options.map((opt) => (
-                <button key={opt.value} onClick={() => handleAnswer(opt.value)} className="w-full text-left px-4 py-3 rounded-xl border border-white/10 text-sm text-slate-300 hover:border-orange-500/50 hover:bg-white/[0.03] transition-all cursor-pointer flex items-center justify-between group">
+                <button key={opt.value} onClick={() => handleAnswer(opt.value)} className="w-full text-left px-4 py-3 rounded-xl border border-white/15 text-sm text-slate-300 hover:border-orange-500/50 hover:bg-white/[0.08] transition-all cursor-pointer flex items-center justify-between group">
                   {opt.label}
                   <CaretRight size={16} className="text-slate-600 group-hover:text-orange-400 transition-colors" />
                 </button>
@@ -640,7 +640,7 @@ function TruckSizeQuiz() {
           </div>
           <p className="text-sm text-slate-400 text-center mb-4">{truckInfo.description}</p>
           <div className="flex gap-3">
-            <button onClick={reset} className="flex-1 py-2.5 rounded-xl border border-white/10 text-sm text-slate-400 hover:text-white transition-colors cursor-pointer">Retake Quiz</button>
+            <button onClick={reset} className="flex-1 py-2.5 rounded-xl border border-white/15 text-sm text-slate-400 hover:text-white transition-colors cursor-pointer">Retake Quiz</button>
             <a href={`tel:${PHONE.replace(/[^\d]/g, "")}`} className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white text-center transition-colors" style={{ background: ORANGE }}>Book This Truck</a>
           </div>
         </motion.div>
@@ -726,7 +726,7 @@ export default function V2MovingPage() {
             <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer" style={{ background: ORANGE }}>
               Get Free Estimate <ArrowRight size={18} weight="bold" />
             </MagneticButton>
-            <MagneticButton href={`tel:${PHONE.replace(/[^\d]/g, "")}`} className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
+            <MagneticButton href={`tel:${PHONE.replace(/[^\d]/g, "")}`} className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
               <Phone size={18} weight="duotone" /> {PHONE}
             </MagneticButton>
           </motion.div>
@@ -745,7 +745,7 @@ export default function V2MovingPage() {
             { icon: SealCheck, text: "BBB Accredited" },
             { icon: Users, text: "Background-Checked Crews" },
           ].map((badge, i) => (
-            <span key={i} className="flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold border border-white/10 bg-white/[0.04] text-slate-300">
+            <span key={i} className="flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold border border-white/15 bg-white/[0.07] text-slate-300">
               <badge.icon size={14} weight="duotone" style={{ color: ORANGE }} />
               {badge.text}
             </span>
@@ -914,7 +914,7 @@ export default function V2MovingPage() {
               <motion.div key={i} variants={fadeUp}>
                 <GlassCard className="p-6 h-full flex flex-col">
                   {/* Move summary header */}
-                  <div className="flex items-center gap-2 mb-3 pb-3 border-b border-white/10">
+                  <div className="flex items-center gap-2 mb-3 pb-3 border-b border-white/15">
                     <NavigationArrow size={16} weight="fill" style={{ color: ORANGE }} />
                     <span className="text-xs font-semibold" style={{ color: ORANGE }}>{t.origin}</span>
                     <ArrowRight size={12} className="text-slate-500" />
@@ -927,7 +927,7 @@ export default function V2MovingPage() {
                   </div>
                   <Quotes size={24} weight="fill" style={{ color: ORANGE }} className="mb-2 opacity-40" />
                   <p className="text-slate-300 leading-relaxed flex-1 text-sm">{t.text}</p>
-                  <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
+                  <div className="mt-4 pt-4 border-t border-white/8 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-semibold text-white">{t.name}</span>
                       <SealCheck size={14} weight="fill" style={{ color: ORANGE }} />
@@ -952,13 +952,13 @@ export default function V2MovingPage() {
             </h2>
           </div>
           <GlassCard className="overflow-hidden">
-            <div className="grid grid-cols-3 text-sm font-semibold border-b border-white/10">
+            <div className="grid grid-cols-3 text-sm font-semibold border-b border-white/15">
               <div className="p-4 text-slate-400">Feature</div>
               <div className="p-4 text-center" style={{ color: ORANGE }}>Cascade Movers</div>
               <div className="p-4 text-center text-slate-500">Typical Movers</div>
             </div>
             {comparisonRows.map((row, i) => (
-              <div key={i} className={`grid grid-cols-3 text-sm ${i < comparisonRows.length - 1 ? "border-b border-white/5" : ""}`}>
+              <div key={i} className={`grid grid-cols-3 text-sm ${i < comparisonRows.length - 1 ? "border-b border-white/8" : ""}`}>
                 <div className="p-4 text-slate-300">{row.feature}</div>
                 <div className="p-4 text-center">
                   <CheckCircle size={20} weight="fill" style={{ color: "#22c55e" }} className="mx-auto" />
@@ -1023,7 +1023,7 @@ export default function V2MovingPage() {
                         </li>
                       ))}
                     </ul>
-                    <a href={`tel:${PHONE.replace(/[^\d]/g, "")}`} className="block w-full py-3 rounded-xl text-center text-sm font-semibold text-white border border-white/10 hover:border-white/20 transition-colors">Get This Quote</a>
+                    <a href={`tel:${PHONE.replace(/[^\d]/g, "")}`} className="block w-full py-3 rounded-xl text-center text-sm font-semibold text-white border border-white/15 hover:border-white/20 transition-colors">Get This Quote</a>
                   </GlassCard>
                 )}
               </motion.div>
@@ -1153,25 +1153,25 @@ export default function V2MovingPage() {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm text-slate-400 mb-1.5 font-medium">Full Name</label>
-                  <input type="text" value={contactForm.name} onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })} placeholder="Your name" className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/[0.04] text-white text-sm placeholder:text-slate-600 focus:outline-none focus:border-orange-500 transition-colors" />
+                  <input type="text" value={contactForm.name} onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })} placeholder="Your name" className="w-full px-4 py-3 rounded-xl border border-white/15 bg-white/[0.07] text-white text-sm placeholder:text-slate-600 focus:outline-none focus:border-orange-500 transition-colors" />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm text-slate-400 mb-1.5 font-medium">Phone</label>
-                    <input type="tel" value={contactForm.phone} onChange={(e) => setContactForm({ ...contactForm, phone: e.target.value })} placeholder="(206) 555-0000" className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/[0.04] text-white text-sm placeholder:text-slate-600 focus:outline-none focus:border-orange-500 transition-colors" />
+                    <input type="tel" value={contactForm.phone} onChange={(e) => setContactForm({ ...contactForm, phone: e.target.value })} placeholder="(206) 555-0000" className="w-full px-4 py-3 rounded-xl border border-white/15 bg-white/[0.07] text-white text-sm placeholder:text-slate-600 focus:outline-none focus:border-orange-500 transition-colors" />
                   </div>
                   <div>
                     <label className="block text-sm text-slate-400 mb-1.5 font-medium">Email</label>
-                    <input type="email" value={contactForm.email} onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })} placeholder="you@email.com" className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/[0.04] text-white text-sm placeholder:text-slate-600 focus:outline-none focus:border-orange-500 transition-colors" />
+                    <input type="email" value={contactForm.email} onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })} placeholder="you@email.com" className="w-full px-4 py-3 rounded-xl border border-white/15 bg-white/[0.07] text-white text-sm placeholder:text-slate-600 focus:outline-none focus:border-orange-500 transition-colors" />
                   </div>
                 </div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-1.5 font-medium">Preferred Move Date</label>
-                  <input type="date" value={contactForm.moveDate} onChange={(e) => setContactForm({ ...contactForm, moveDate: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/[0.04] text-white text-sm focus:outline-none focus:border-orange-500 transition-colors" style={{ colorScheme: "dark" }} />
+                  <input type="date" value={contactForm.moveDate} onChange={(e) => setContactForm({ ...contactForm, moveDate: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-white/15 bg-white/[0.07] text-white text-sm focus:outline-none focus:border-orange-500 transition-colors" style={{ colorScheme: "dark" }} />
                 </div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-1.5 font-medium">Move Details</label>
-                  <textarea value={contactForm.details} onChange={(e) => setContactForm({ ...contactForm, details: e.target.value })} rows={4} placeholder="Tell us about your move: current location, destination, home size, any specialty items..." className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/[0.04] text-white text-sm placeholder:text-slate-600 focus:outline-none focus:border-orange-500 transition-colors resize-none" />
+                  <textarea value={contactForm.details} onChange={(e) => setContactForm({ ...contactForm, details: e.target.value })} rows={4} placeholder="Tell us about your move: current location, destination, home size, any specialty items..." className="w-full px-4 py-3 rounded-xl border border-white/15 bg-white/[0.07] text-white text-sm placeholder:text-slate-600 focus:outline-none focus:border-orange-500 transition-colors resize-none" />
                 </div>
                 <MagneticButton className="w-full py-3.5 rounded-xl text-sm font-semibold text-white flex items-center justify-center gap-2 cursor-pointer" style={{ background: ORANGE }}>
                   Request Free Estimate <ArrowRight size={16} weight="bold" />
@@ -1196,7 +1196,7 @@ export default function V2MovingPage() {
                   <MagneticButton className="px-10 py-4 rounded-full text-base font-semibold text-white inline-flex items-center gap-2 cursor-pointer" style={{ background: ORANGE }}>
                     <CalendarCheck size={20} weight="duotone" /> Get Free Estimate
                   </MagneticButton>
-                  <MagneticButton href={`tel:${PHONE.replace(/[^\d]/g, "")}`} className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 inline-flex items-center gap-2 cursor-pointer">
+                  <MagneticButton href={`tel:${PHONE.replace(/[^\d]/g, "")}`} className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 inline-flex items-center gap-2 cursor-pointer">
                     <Phone size={18} weight="duotone" /> {PHONE}
                   </MagneticButton>
                 </div>
@@ -1207,7 +1207,7 @@ export default function V2MovingPage() {
       </SectionReveal>
 
       {/* ─── FOOTER ─── */}
-      <footer className="relative z-10 border-t border-white/5 py-12">
+      <footer className="relative z-10 border-t border-white/8 py-12">
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <div>
@@ -1247,7 +1247,7 @@ export default function V2MovingPage() {
               </ul>
             </div>
           </div>
-          <div className="border-t border-white/5 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="border-t border-white/8 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-xs text-slate-600">&copy; {new Date().getFullYear()} Cascade Movers. All rights reserved.</p>
             <p className="text-xs text-slate-600 flex items-center gap-1.5"><svg width="14" height="14" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-sky-500"><path d="M24.3 4.2c-1.5-.4-3.2.1-4.5 1.1-1-.7-2.3-1-3.5-.8-2.4.4-4.2 2.5-4.2 4.9v.6c-3.2.8-6 2.8-7.8 5.6-.3.5-.1 1.1.4 1.4.5.3 1.1.1 1.4-.4 1.5-2.3 3.7-4 6.3-4.7.5-.1 1-.1 1.5 0 .8.2 1.4.8 1.7 1.5.3.8.2 1.6-.2 2.3l-2.8 4.3c-.6.9-.4 2.1.4 2.8l2.5 2.1c.4.3.8.5 1.3.5h5.2c.5 0 1-.2 1.3-.5l1.2-1c.6-.5.8-1.3.6-2l-1-3.2c-.2-.5 0-1.1.4-1.4l3.8-2.5c1.3-.9 2.1-2.3 2.1-3.9V9.6c0-2.5-1.7-4.7-4.1-5.3v-.1z" fill="currentColor"/></svg>Created by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" className="underline hover:text-slate-400 transition-colors">bluejayportfolio.com</a></p>
           </div>

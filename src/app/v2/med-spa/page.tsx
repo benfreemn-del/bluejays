@@ -172,7 +172,7 @@ function SectionReveal({ children, className = "", id, style }: { children: Reac
 }
 
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return (<div className={`rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.06)] ${className}`}>{children}</div>);
+  return (<div className={`rounded-2xl border border-white/15 bg-white/[0.07] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.06)] ${className}`}>{children}</div>);
 }
 
 function MagneticButton({ children, className = "", onClick, style }: { children: React.ReactNode; className?: string; onClick?: () => void; style?: React.CSSProperties }) {
@@ -435,7 +435,7 @@ export default function V2MedSpaPage() {
           {/* Trust Badges */}
           <motion.div className="flex flex-wrap justify-center gap-3" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.6, duration: 0.8 }}>
             {["Board-Certified MD", "16 Years Experience", "4.9 Stars (500+ Reviews)", "Free Consultations"].map((badge) => (
-              <span key={badge} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border" style={{ borderColor: "rgba(255,255,255,0.1)", color: BLUSH_LIGHT, background: "rgba(255,255,255,0.03)" }}>
+              <span key={badge} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border" style={{ borderColor: "rgba(255,255,255,0.1)", color: BLUSH_LIGHT, background: "rgba(255,255,255,0.06)" }}>
                 <CheckCircle size={12} weight="fill" style={{ color: GOLD }} /> {badge}
               </span>
             ))}
@@ -600,7 +600,7 @@ export default function V2MedSpaPage() {
                   onClick={() => setQuizSelection(quizSelection === i ? null : i)}
                   className="w-full text-left cursor-pointer rounded-2xl p-6 transition-all border"
                   style={{
-                    background: quizSelection === i ? `${opt.color}15` : "rgba(255,255,255,0.03)",
+                    background: quizSelection === i ? `${opt.color}15` : "rgba(255,255,255,0.06)",
                     borderColor: quizSelection === i ? `${opt.color}50` : "rgba(255,255,255,0.08)",
                   }}
                 >
@@ -612,7 +612,7 @@ export default function V2MedSpaPage() {
                   <AnimatePresence>
                     {quizSelection === i && (
                       <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={spring} className="overflow-hidden">
-                        <div className="pt-3 border-t border-white/10">
+                        <div className="pt-3 border-t border-white/15">
                           <p className="text-xs uppercase tracking-wider mb-1" style={{ color: opt.color }}>Recommended Treatment Plan</p>
                           <p className="text-sm text-white font-medium mb-3">{opt.rec}</p>
                           <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold text-white" style={{ background: opt.color }}>
@@ -752,13 +752,13 @@ export default function V2MedSpaPage() {
             </h2>
           </div>
           <GlassCard className="overflow-hidden">
-            <div className="grid grid-cols-3 gap-0 text-center text-sm font-semibold p-4 border-b border-white/10">
+            <div className="grid grid-cols-3 gap-0 text-center text-sm font-semibold p-4 border-b border-white/15">
               <span className="text-slate-400">Feature</span>
               <span style={{ color: BLUSH }}>Radiance</span>
               <span className="text-slate-400">Others</span>
             </div>
             {comparisonRows.map((row, i) => (
-              <div key={i} className="grid grid-cols-3 gap-0 text-center text-sm p-4 border-b border-white/5 last:border-b-0">
+              <div key={i} className="grid grid-cols-3 gap-0 text-center text-sm p-4 border-b border-white/8 last:border-b-0">
                 <span className="text-slate-300 text-left">{row.feature}</span>
                 <span><CheckCircle size={20} weight="fill" className="mx-auto" style={{ color: "#22c55e" }} /></span>
                 <span className="text-slate-500">{row.them}</span>
@@ -1114,10 +1114,10 @@ export default function V2MedSpaPage() {
                 Located in the heart of South Lake Union, Radiance Med Spa offers a serene escape where science meets beauty. We look forward to welcoming you.
               </p>
               <div className="flex gap-3">
-                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="p-3 rounded-full border border-white/10 hover:border-white/20 transition-colors" style={{ color: BLUSH }}>
+                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="p-3 rounded-full border border-white/15 hover:border-white/20 transition-colors" style={{ color: BLUSH }}>
                   <InstagramLogo size={20} weight="fill" />
                 </a>
-                <a href="mailto:glow@radiancemedspa.com" className="p-3 rounded-full border border-white/10 hover:border-white/20 transition-colors" style={{ color: GOLD }}>
+                <a href="mailto:glow@radiancemedspa.com" className="p-3 rounded-full border border-white/15 hover:border-white/20 transition-colors" style={{ color: GOLD }}>
                   <Envelope size={20} weight="fill" />
                 </a>
               </div>
@@ -1194,7 +1194,7 @@ export default function V2MedSpaPage() {
       </SectionReveal>
 
       {/* ─── 24. FOOTER ─── */}
-      <footer className="relative z-10 border-t border-white/5 py-8">
+      <footer className="relative z-10 border-t border-white/8 py-8">
         <div className="mx-auto max-w-7xl px-4 md:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2 text-sm text-slate-500">
             <RadianceIcon size={16} />

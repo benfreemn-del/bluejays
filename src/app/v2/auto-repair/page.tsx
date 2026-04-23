@@ -196,7 +196,7 @@ function GlassCard({
         href={href}
         id={id}
         onClick={onClick}
-        className={`rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.06)] ${className}`}
+        className={`rounded-2xl border border-white/15 bg-white/[0.07] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.06)] ${className}`}
         style={style}
       >
         {children}
@@ -207,7 +207,7 @@ function GlassCard({
     <div
       id={id}
       onClick={onClick}
-      className={`rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.06)] ${className}`}
+      className={`rounded-2xl border border-white/15 bg-white/[0.07] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.06)] ${className}`}
       style={style}
     >
       {children}
@@ -456,7 +456,7 @@ export default function V2AutoRepairPage() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={spring}
-        className="fixed top-0 inset-x-0 z-50 border-b border-white/5"
+        className="fixed top-0 inset-x-0 z-50 border-b border-white/8"
         style={{ background: "rgba(17,17,17,0.85)", backdropFilter: "blur(16px)" }}
       >
         <div className="max-w-7xl mx-auto flex items-center justify-between px-5 py-4">
@@ -505,7 +505,7 @@ export default function V2AutoRepairPage() {
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={spring}
-              className="md:hidden overflow-hidden border-t border-white/5"
+              className="md:hidden overflow-hidden border-t border-white/8"
               style={{ background: DARK_CARD }}
             >
               <div className="flex flex-col gap-1 p-4">
@@ -546,7 +546,7 @@ export default function V2AutoRepairPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ ...spring, delay: 0.2 }}
             >
-              <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-6 border border-white/10 bg-white/[0.04] text-sm text-slate-400">
+              <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-6 border border-white/15 bg-white/[0.07] text-sm text-slate-400">
                 <ShieldCheck size={16} style={{ color: RED }} weight="fill" />
                 ASE Master Technician &middot; Since 2006
               </div>
@@ -630,7 +630,7 @@ export default function V2AutoRepairPage() {
       </div>
 
       {/* ────────────────────── 2. TRUST BAR ────────────────────── */}
-      <SectionReveal className="relative py-8 border-y border-white/5" style={{ background: DARK_CARD }}>
+      <SectionReveal className="relative py-8 border-y border-white/8" style={{ background: DARK_CARD }}>
         <div className="max-w-6xl mx-auto px-5">
           <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
             {[
@@ -669,7 +669,7 @@ export default function V2AutoRepairPage() {
               return (
                 <motion.div
                   key={s.title}
-                  className="p-8 border border-white/5 group hover:border-red-600/30 transition-colors"
+                  className="p-8 border border-white/8 group hover:border-red-600/30 transition-colors"
                   style={{ background: isLight ? DARK_CARD : DARK_CARD_ALT }}
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -791,7 +791,7 @@ export default function V2AutoRepairPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Photo side */}
             <div className="relative">
-              <div className="relative rounded-2xl overflow-hidden border border-white/10">
+              <div className="relative rounded-2xl overflow-hidden border border-white/15">
                 <img
                   src="https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=800&q=80"
                   alt="Tony Reeves — ASE Master Technician"
@@ -803,7 +803,7 @@ export default function V2AutoRepairPage() {
                     {["ASE Master Tech", "UTI Graduate", "20 Years", "5,000+ Cars"].map((badge) => (
                       <span
                         key={badge}
-                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border border-white/10 bg-black/60 text-white"
+                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border border-white/15 bg-black/60 text-white"
                       >
                         <Certificate size={12} style={{ color: RED }} weight="fill" />
                         {badge}
@@ -839,7 +839,7 @@ export default function V2AutoRepairPage() {
                 {["ASE Master Certified", "UTI Graduate", "Washington Licensed", "EPA Certified"].map((c) => (
                   <span
                     key={c}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium border border-white/10 bg-white/[0.04] text-slate-300"
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium border border-white/15 bg-white/[0.07] text-slate-300"
                   >
                     <CheckCircle size={16} style={{ color: RED }} weight="fill" />
                     {c}
@@ -944,7 +944,7 @@ export default function V2AutoRepairPage() {
                       transition={spring}
                       className="overflow-hidden"
                     >
-                      <div className="mt-3 p-5 rounded-xl border border-white/10 bg-white/[0.02]">
+                      <div className="mt-3 p-5 rounded-xl border border-white/15 bg-white/[0.07]">
                         <p className="text-sm text-slate-400 leading-relaxed mb-4">{q.answer}</p>
                         <a
                           href="tel:2065550389"
@@ -979,7 +979,7 @@ export default function V2AutoRepairPage() {
 
           <GlassCard className="overflow-hidden">
             {/* Header row */}
-            <div className="grid grid-cols-3 p-5 border-b border-white/10 text-sm font-bold">
+            <div className="grid grid-cols-3 p-5 border-b border-white/15 text-sm font-bold">
               <div className="text-slate-400">Feature</div>
               <div className="text-center" style={{ color: RED }}>Pacific Auto Works</div>
               <div className="text-center text-slate-500">Dealership</div>
@@ -987,7 +987,7 @@ export default function V2AutoRepairPage() {
             {comparisonRows.map((r, i) => (
               <motion.div
                 key={r.label}
-                className="grid grid-cols-3 p-5 border-b border-white/5 items-center"
+                className="grid grid-cols-3 p-5 border-b border-white/8 items-center"
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
@@ -1034,7 +1034,7 @@ export default function V2AutoRepairPage() {
               return (
                 <motion.div
                   key={t.name}
-                  className={`flex flex-col ${isEven ? "md:flex-row" : "md:flex-row-reverse"} gap-0 overflow-hidden rounded-2xl border border-white/5`}
+                  className={`flex flex-col ${isEven ? "md:flex-row" : "md:flex-row-reverse"} gap-0 overflow-hidden rounded-2xl border border-white/8`}
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
@@ -1110,7 +1110,7 @@ export default function V2AutoRepairPage() {
       {/* ────────────────────── 12. VIDEO PLACEHOLDER ────────────────────── */}
       <SectionReveal className="relative py-24 md:py-32" style={{ background: DARK_CARD }}>
         <div className="max-w-5xl mx-auto px-5">
-          <div className="relative rounded-2xl overflow-hidden border border-white/10 group cursor-pointer">
+          <div className="relative rounded-2xl overflow-hidden border border-white/15 group cursor-pointer">
             <img
               src="https://images.unsplash.com/photo-1625047509248-ec889cbff17f?w=1200&q=80"
               alt="Pacific Auto Works shop floor"
@@ -1193,7 +1193,7 @@ export default function V2AutoRepairPage() {
                     <input
                       type="text"
                       placeholder="Your name"
-                      className="w-full rounded-xl px-4 py-3 bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-600 focus:outline-none focus:border-red-600/50 transition"
+                      className="w-full rounded-xl px-4 py-3 bg-white/[0.07] border border-white/15 text-white placeholder:text-slate-600 focus:outline-none focus:border-red-600/50 transition"
                     />
                   </div>
                   <div>
@@ -1201,7 +1201,7 @@ export default function V2AutoRepairPage() {
                     <input
                       type="tel"
                       placeholder="(206) 555-0000"
-                      className="w-full rounded-xl px-4 py-3 bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-600 focus:outline-none focus:border-red-600/50 transition"
+                      className="w-full rounded-xl px-4 py-3 bg-white/[0.07] border border-white/15 text-white placeholder:text-slate-600 focus:outline-none focus:border-red-600/50 transition"
                     />
                   </div>
                 </div>
@@ -1210,7 +1210,7 @@ export default function V2AutoRepairPage() {
                   <input
                     type="text"
                     placeholder="Year, Make, Model (e.g. 2019 Toyota Camry)"
-                    className="w-full rounded-xl px-4 py-3 bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-600 focus:outline-none focus:border-red-600/50 transition"
+                    className="w-full rounded-xl px-4 py-3 bg-white/[0.07] border border-white/15 text-white placeholder:text-slate-600 focus:outline-none focus:border-red-600/50 transition"
                   />
                 </div>
                 <div>
@@ -1218,7 +1218,7 @@ export default function V2AutoRepairPage() {
                   <textarea
                     rows={4}
                     placeholder="Describe the issue or service needed..."
-                    className="w-full rounded-xl px-4 py-3 bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-600 focus:outline-none focus:border-red-600/50 transition resize-none"
+                    className="w-full rounded-xl px-4 py-3 bg-white/[0.07] border border-white/15 text-white placeholder:text-slate-600 focus:outline-none focus:border-red-600/50 transition resize-none"
                   />
                 </div>
                 <MagneticButton
@@ -1298,7 +1298,7 @@ export default function V2AutoRepairPage() {
       </SectionReveal>
 
       {/* ────────────────────── 15. FOOTER ────────────────────── */}
-      <footer className="relative py-16 border-t border-white/5" style={{ background: DARK }}>
+      <footer className="relative py-16 border-t border-white/8" style={{ background: DARK }}>
         <GearPatternBg />
         <div className="relative z-10 max-w-6xl mx-auto px-5">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-12">
@@ -1318,7 +1318,7 @@ export default function V2AutoRepairPage() {
                 {["ASE Certified", "BBB A+"].map((badge) => (
                   <span
                     key={badge}
-                    className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold border border-white/10 bg-white/[0.03] text-slate-400"
+                    className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold border border-white/15 bg-white/[0.08] text-slate-400"
                   >
                     <Trophy size={12} style={{ color: RED }} weight="fill" />
                     {badge}
@@ -1377,7 +1377,7 @@ export default function V2AutoRepairPage() {
           </div>
 
           {/* Bottom bar */}
-          <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="border-t border-white/8 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-xs text-slate-600">
               &copy; {new Date().getFullYear()} Pacific Auto Works. All rights reserved.
             </p>

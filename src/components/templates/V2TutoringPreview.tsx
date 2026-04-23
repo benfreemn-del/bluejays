@@ -37,7 +37,7 @@ function NotebookPattern({ opacity = 0.03, accent }: { opacity?: number; accent:
   return <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity }}><defs><pattern id={pid} width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke={accent} strokeWidth="0.3" /><circle cx="5" cy="20" r="1.5" fill={GREEN} opacity="0.3" /></pattern></defs><rect width="100%" height="100%" fill={`url(#${pid})`} /></svg>;
 }
 
-function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) { return <div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>; }
+function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) { return <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>; }
 
 function MagneticButton({ children, className = "", onClick, style, href }: { children: React.ReactNode; className?: string; onClick?: () => void; style?: React.CSSProperties; href?: string }) {
   const ref = useRef<HTMLButtonElement>(null); const x = useMotionValue(0); const y = useMotionValue(0); const sx = useSpring(x, springFast); const sy = useSpring(y, springFast);
@@ -174,7 +174,7 @@ export default function V2TutoringPreview({ data }: { data: GeneratedSiteData })
               </MagneticButton>
               <MagneticButton
                 href={`tel:${data.phone.replace(/\D/g, "")}`}
-                className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer"
+                className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer"
               >
                 <Phone size={18} weight="duotone" /> <PhoneLink phone={data.phone} />
               </MagneticButton>
@@ -191,7 +191,7 @@ export default function V2TutoringPreview({ data }: { data: GeneratedSiteData })
             </div>
           </div>
           <div className="hidden md:block relative">
-            <div className="relative rounded-2xl overflow-hidden border border-white/10">
+            <div className="relative rounded-2xl overflow-hidden border border-white/15">
               <img
                 src={heroCardImage}
                 alt={data.businessName}
@@ -227,7 +227,7 @@ export default function V2TutoringPreview({ data }: { data: GeneratedSiteData })
         <NotebookPattern accent={ACCENT} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <SectionHeader badge="Subjects" title="What We Teach" subtitle={`${data.businessName} offers expert tutoring across all subjects and grade levels.`} accent={ACCENT} />
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">{data.services.map((svc, i) => { const Icon = getServiceIcon(svc.name); return <div key={svc.name} className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.02]"><div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${ACCENT}15, transparent 70%)` }} /><div className="relative z-10"><div className="flex items-start justify-between mb-5"><div className="w-12 h-12 rounded-xl flex items-center justify-center border" style={{ background: ACCENT_GLOW, borderColor: `${ACCENT}33` }}><Icon size={24} weight="duotone" style={{ color: ACCENT }} /></div><span className="text-xs font-mono text-slate-600">{String(i + 1).padStart(2, "0")}</span></div><h3 className="text-lg font-bold text-white mb-2">{svc.name}</h3><p className="text-sm text-slate-400 leading-relaxed">{svc.description || ""}</p>{svc.price && <p className="text-sm font-semibold mt-3" style={{ color: ACCENT }}>{svc.price}</p>}</div></div>; })}</div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">{data.services.map((svc, i) => { const Icon = getServiceIcon(svc.name); return <div key={svc.name} className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]"><div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${ACCENT}15, transparent 70%)` }} /><div className="relative z-10"><div className="flex items-start justify-between mb-5"><div className="w-12 h-12 rounded-xl flex items-center justify-center border" style={{ background: ACCENT_GLOW, borderColor: `${ACCENT}33` }}><Icon size={24} weight="duotone" style={{ color: ACCENT }} /></div><span className="text-xs font-mono text-slate-600">{String(i + 1).padStart(2, "0")}</span></div><h3 className="text-lg font-bold text-white mb-2">{svc.name}</h3><p className="text-sm text-slate-400 leading-relaxed">{svc.description || ""}</p>{svc.price && <p className="text-sm font-semibold mt-3" style={{ color: ACCENT }}>{svc.price}</p>}</div></div>; })}</div>
         </div>
       </section>
 
@@ -240,7 +240,7 @@ export default function V2TutoringPreview({ data }: { data: GeneratedSiteData })
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="relative">
-              <div className="rounded-2xl overflow-hidden border border-white/10">
+              <div className="rounded-2xl overflow-hidden border border-white/15">
                 <img
                   src={aboutImage}
                   alt={data.businessName}
@@ -373,7 +373,7 @@ export default function V2TutoringPreview({ data }: { data: GeneratedSiteData })
                 </div>
                 <p className="text-xs text-slate-500 uppercase tracking-wider mb-3">{story.subject}</p>
                 <div className="flex items-center gap-4">
-                  <div className="flex-1 text-center p-3 rounded-xl bg-white/[0.02] border border-white/5">
+                  <div className="flex-1 text-center p-3 rounded-xl bg-white/[0.07] border border-white/8">
                     <p className="text-xs text-slate-500 mb-1">Before</p>
                     <p className="text-lg font-bold text-slate-400">{story.before}</p>
                   </div>
@@ -448,7 +448,7 @@ export default function V2TutoringPreview({ data }: { data: GeneratedSiteData })
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-white/10">
+                  <tr className="border-b border-white/15">
                     <th className="text-left p-4 text-slate-400 font-medium">Feature</th>
                     <th className="text-center p-4 font-bold text-white">{data.businessName}</th>
                     <th className="text-center p-4 text-slate-400 font-medium">Online Apps</th>
@@ -464,7 +464,7 @@ export default function V2TutoringPreview({ data }: { data: GeneratedSiteData })
                     { feature: "Test Prep Strategies", them: "Limited" },
                     { feature: "Schedule Flexibility", them: "Fixed" },
                   ].map((row, i) => (
-                    <tr key={row.feature} className={i < 6 ? "border-b border-white/5" : ""}>
+                    <tr key={row.feature} className={i < 6 ? "border-b border-white/8" : ""}>
                       <td className="p-4 text-slate-300">{row.feature}</td>
                       <td className="p-4 text-center">
                         <CheckCircle size={20} weight="fill" style={{ color: "#22c55e" }} className="mx-auto" />
@@ -486,7 +486,7 @@ export default function V2TutoringPreview({ data }: { data: GeneratedSiteData })
           <AnimatedSection>
             <SectionHeader badge="See How It Works" title="A Peek Inside Our Sessions" accent={ACCENT} />
           </AnimatedSection>
-          <div className="relative rounded-2xl overflow-hidden border border-white/10 group cursor-pointer">
+          <div className="relative rounded-2xl overflow-hidden border border-white/15 group cursor-pointer">
             <img src={heroImage} alt="Watch tutoring sessions" className="w-full h-[400px] object-cover" />
             <div className="absolute inset-0 bg-black/60 flex items-center justify-center group-hover:bg-black/50 transition-colors">
               <div className="w-20 h-20 rounded-full flex items-center justify-center" style={{ background: `${ACCENT}cc` }}>
@@ -514,7 +514,7 @@ export default function V2TutoringPreview({ data }: { data: GeneratedSiteData })
               <button
                 key={opt.label}
                 onClick={() => setOpenFaq(opt.label === "Falling behind in class" ? 99 : opt.label === "Preparing for SAT/ACT" ? 98 : 97)}
-                className={`w-full text-left p-5 rounded-2xl border transition-all duration-300 cursor-pointer ${openFaq === (opt.label === "Falling behind in class" ? 99 : opt.label === "Preparing for SAT/ACT" ? 98 : 97) ? "border-white/30 bg-white/[0.06]" : "border-white/10 bg-white/[0.02] hover:bg-white/[0.04]"}`}
+                className={`w-full text-left p-5 rounded-2xl border transition-all duration-300 cursor-pointer ${openFaq === (opt.label === "Falling behind in class" ? 99 : opt.label === "Preparing for SAT/ACT" ? 98 : 97) ? "border-white/30 bg-white/[0.06]" : "border-white/15 bg-white/[0.07] hover:bg-white/[0.07]"}`}
               >
                 <div className="flex items-center justify-between">
                   <span className="text-white font-semibold">{opt.label}</span>
@@ -569,7 +569,7 @@ export default function V2TutoringPreview({ data }: { data: GeneratedSiteData })
                 <p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">
                   &ldquo;{t.text}&rdquo;
                 </p>
-                <div className="pt-4 border-t border-white/5 flex items-center gap-2">
+                <div className="pt-4 border-t border-white/8 flex items-center gap-2">
                   <CheckCircle size={16} weight="fill" style={{ color: "#22c55e" }} />
                   <span className="text-sm font-semibold text-white">{t.name}</span>
                   <span className="text-xs text-slate-500">Verified</span>
@@ -714,7 +714,7 @@ export default function V2TutoringPreview({ data }: { data: GeneratedSiteData })
                     <label className="block text-sm text-slate-400 mb-1.5">Parent Name</label>
                     <input
                       type="text"
-                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm"
+                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm"
                       placeholder="Your name"
                     />
                   </div>
@@ -722,7 +722,7 @@ export default function V2TutoringPreview({ data }: { data: GeneratedSiteData })
                     <label className="block text-sm text-slate-400 mb-1.5">Student Grade</label>
                     <input
                       type="text"
-                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm"
+                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm"
                       placeholder="e.g., 8th grade"
                     />
                   </div>
@@ -731,13 +731,13 @@ export default function V2TutoringPreview({ data }: { data: GeneratedSiteData })
                   <label className="block text-sm text-slate-400 mb-1.5">Phone</label>
                   <input
                     type="tel"
-                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm"
+                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm"
                     placeholder="(555) 123-4567"
                   />
                 </div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-1.5">Subject</label>
-                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none text-sm">
+                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none text-sm">
                     <option value="" className="bg-neutral-900">Select subject</option>
                     {data.services.map((s) => (
                       <option key={s.name} value={s.name.toLowerCase()} className="bg-neutral-900">
@@ -750,7 +750,7 @@ export default function V2TutoringPreview({ data }: { data: GeneratedSiteData })
                   <label className="block text-sm text-slate-400 mb-1.5">Goals</label>
                   <textarea
                     rows={3}
-                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm resize-none"
+                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm resize-none"
                     placeholder="What are your student's goals?"
                   />
                 </div>
@@ -787,7 +787,7 @@ export default function V2TutoringPreview({ data }: { data: GeneratedSiteData })
               { subject: "Computer Science", icon: Code, topics: "Python, Java, AP CS, Web Development" },
               { subject: "Test Preparation", icon: GraduationCap, topics: "SAT, ACT, GRE, GMAT, AP Exams" },
             ].map((s) => (
-              <div key={s.subject} className="rounded-2xl border border-white/10 p-6" style={{ background: "rgba(255,255,255,0.03)" }}>
+              <div key={s.subject} className="rounded-2xl border border-white/15 p-6" style={{ background: "rgba(255,255,255,0.06)" }}>
                 <s.icon size={28} weight="duotone" style={{ color: ACCENT }} className="mb-3" />
                 <h3 className="text-lg font-bold text-white mb-2">{s.subject}</h3>
                 <p className="text-sm text-slate-400 leading-relaxed">{s.topics}</p>
@@ -813,7 +813,7 @@ export default function V2TutoringPreview({ data }: { data: GeneratedSiteData })
               { title: "Homework Support Guides", desc: "Access our curated library of study guides, practice worksheets, and test prep materials tailored to your child's grade level." },
               { title: "College Planning Resources", desc: "For high schoolers, get guidance on college applications, scholarship essays, and standardized test timelines." },
             ].map((r) => (
-              <div key={r.title} className="rounded-2xl border border-white/10 p-6" style={{ background: "rgba(255,255,255,0.03)" }}>
+              <div key={r.title} className="rounded-2xl border border-white/15 p-6" style={{ background: "rgba(255,255,255,0.06)" }}>
                 <CheckCircle size={24} weight="fill" style={{ color: ACCENT }} className="mb-3" />
                 <h3 className="text-lg font-bold text-white mb-2">{r.title}</h3>
                 <p className="text-sm text-slate-400 leading-relaxed">{r.desc}</p>
@@ -839,7 +839,7 @@ export default function V2TutoringPreview({ data }: { data: GeneratedSiteData })
               { tip: "Teach Someone Else", desc: "Explaining a concept to someone else is the best way to identify gaps in your understanding." },
               { tip: "Eliminate Distractions", desc: "Put your phone in another room. Even having it face-down on the desk reduces focus by 20%." },
             ].map((t) => (
-              <div key={t.tip} className="rounded-2xl border border-white/10 p-5 text-center" style={{ background: "rgba(255,255,255,0.03)" }}>
+              <div key={t.tip} className="rounded-2xl border border-white/15 p-5 text-center" style={{ background: "rgba(255,255,255,0.06)" }}>
                 <h3 className="text-sm font-bold text-white mb-2">{t.tip}</h3>
                 <p className="text-xs text-slate-400 leading-relaxed">{t.desc}</p>
               </div>
@@ -877,7 +877,7 @@ export default function V2TutoringPreview({ data }: { data: GeneratedSiteData })
               { title: "Flexible Scheduling", desc: "In-person or online sessions available 7 days a week to fit your family's schedule" },
               { title: "Proven Results", desc: "Students average 1.5 letter grade improvement within the first 3 months of tutoring" },
             ].map((card) => (
-              <div key={card.title} className="rounded-2xl border border-white/10 p-6 text-center" style={{ background: "rgba(255,255,255,0.03)" }}>
+              <div key={card.title} className="rounded-2xl border border-white/15 p-6 text-center" style={{ background: "rgba(255,255,255,0.06)" }}>
                 <CheckCircle size={28} weight="fill" style={{ color: ACCENT }} className="mx-auto mb-3" />
                 <h3 className="text-lg font-bold text-white mb-2">{card.title}</h3>
                 <p className="text-sm text-slate-400 leading-relaxed">{card.desc}</p>
@@ -909,8 +909,8 @@ export default function V2TutoringPreview({ data }: { data: GeneratedSiteData })
             ].map((badge) => (
               <div
                 key={badge}
-                className="flex items-center gap-2 px-5 py-3 rounded-full border border-white/10"
-                style={{ background: "rgba(255,255,255,0.03)" }}
+                className="flex items-center gap-2 px-5 py-3 rounded-full border border-white/15"
+                style={{ background: "rgba(255,255,255,0.06)" }}
               >
                 <ShieldCheck size={18} weight="fill" style={{ color: ACCENT }} />
                 <span className="text-sm font-medium text-white">{badge}</span>
@@ -921,7 +921,7 @@ export default function V2TutoringPreview({ data }: { data: GeneratedSiteData })
       </section>
 
       {/* FOOTER */}
-      <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden">
+      <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div
           className="absolute inset-0"
           style={{ background: `linear-gradient(180deg, ${BG} 0%, #060a12 100%)` }}
@@ -977,7 +977,7 @@ export default function V2TutoringPreview({ data }: { data: GeneratedSiteData })
               </div>
             </div>
           </div>
-          <div className="border-t border-white/5 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="border-t border-white/8 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-sm text-slate-500">
               <BookOpen size={14} weight="fill" style={{ color: ACCENT }} />
               <span>

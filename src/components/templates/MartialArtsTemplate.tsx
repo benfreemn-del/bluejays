@@ -387,7 +387,7 @@ export default function MartialArtsTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-[#dc2626]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-[#dc2626]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 {/* Hover glow */}
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_50%_0%,#dc262615,transparent_70%)]" />
@@ -447,13 +447,13 @@ export default function MartialArtsTemplate() {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className="group relative p-5 rounded-2xl border border-white/[0.06] hover:border-[#dc2626]/20 transition-all duration-500 overflow-hidden bg-white/[0.02] flex items-center gap-5"
+                className="group relative p-5 rounded-2xl border border-white/[0.10] hover:border-[#dc2626]/20 transition-all duration-500 overflow-hidden bg-white/[0.07] flex items-center gap-5"
               >
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_0%_50%,#dc262610,transparent_70%)]" />
                 {/* Belt color indicator */}
                 <div className="relative z-10 shrink-0">
                   <div
-                    className="w-14 h-5 rounded-sm border border-white/10 shadow-md"
+                    className="w-14 h-5 rounded-sm border border-white/15 shadow-md"
                     style={{ backgroundColor: rank.color, boxShadow: `0 0 15px ${rank.color}30` }}
                   />
                 </div>
@@ -496,7 +496,7 @@ export default function MartialArtsTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.12 }}
-                className="group relative rounded-2xl border border-white/[0.06] hover:border-[#dc2626]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative rounded-2xl border border-white/[0.10] hover:border-[#dc2626]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 {/* Photo */}
                 <div className="relative aspect-[3/4] overflow-hidden">
@@ -516,7 +516,7 @@ export default function MartialArtsTemplate() {
                     <p className="text-[#dc2626] text-sm font-semibold mb-3">{instructor.title}</p>
                     <div className="flex flex-wrap gap-2">
                       {instructor.specialties.map((s) => (
-                        <span key={s} className="text-[10px] font-semibold uppercase tracking-wider text-white/60 bg-white/10 border border-white/10 px-2.5 py-1 rounded-full">
+                        <span key={s} className="text-[10px] font-semibold uppercase tracking-wider text-white/60 bg-white/10 border border-white/15 px-2.5 py-1 rounded-full">
                           {s}
                         </span>
                       ))}
@@ -553,7 +553,7 @@ export default function MartialArtsTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: dayIdx * 0.08 }}
-                className="rounded-2xl border border-white/[0.06] overflow-hidden bg-white/[0.02]"
+                className="rounded-2xl border border-white/[0.10] overflow-hidden bg-white/[0.07]"
               >
                 {/* Day header */}
                 <div className="px-6 py-3 bg-[#dc2626]/10 border-b border-[#dc2626]/15 flex items-center gap-3">
@@ -563,10 +563,10 @@ export default function MartialArtsTemplate() {
                 {/* Classes grid */}
                 <div className="divide-y divide-white/[0.04]">
                   {day.classes.map((cls, clsIdx) => (
-                    <div key={clsIdx} className="px-6 py-3 flex items-center gap-4 hover:bg-white/[0.02] transition-colors duration-200">
+                    <div key={clsIdx} className="px-6 py-3 flex items-center gap-4 hover:bg-white/[0.07] transition-colors duration-200">
                       <span className="text-sm font-mono text-[#dc2626] w-20 shrink-0">{cls.time}</span>
                       <span className="font-semibold text-sm flex-1">{cls.name}</span>
-                      <span className="text-[10px] font-semibold uppercase tracking-wider text-white/50 bg-white/5 border border-white/10 px-2.5 py-1 rounded-full">
+                      <span className="text-[10px] font-semibold uppercase tracking-wider text-white/50 bg-white/5 border border-white/15 px-2.5 py-1 rounded-full">
                         {cls.level}
                       </span>
                     </div>
@@ -613,7 +613,7 @@ export default function MartialArtsTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group text-center p-6 rounded-2xl border border-white/[0.06] hover:border-[#dc2626]/30 bg-white/[0.02] transition-all duration-500"
+                className="group text-center p-6 rounded-2xl border border-white/[0.10] hover:border-[#dc2626]/30 bg-white/[0.07] transition-all duration-500"
               >
                 <div className="w-14 h-14 mx-auto rounded-xl bg-[#dc2626]/10 border border-[#dc2626]/20 flex items-center justify-center text-[#dc2626] mb-4 group-hover:bg-[#dc2626]/20 group-hover:scale-110 transition-all duration-300">
                   {item.icon}
@@ -656,7 +656,7 @@ export default function MartialArtsTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-[#dc2626]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-[#dc2626]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 {/* Top accent line */}
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-[#dc2626]/40 via-[#dc2626]/10 to-transparent" />
@@ -675,7 +675,7 @@ export default function MartialArtsTemplate() {
                   {/* Quote */}
                   <p className="text-muted leading-relaxed mb-6 text-sm">&ldquo;{t.text}&rdquo;</p>
                   {/* Author */}
-                  <div className="flex items-center gap-3 pt-4 border-t border-white/[0.06]">
+                  <div className="flex items-center gap-3 pt-4 border-t border-white/[0.10]">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#dc2626]/30 to-[#dc2626]/10 flex items-center justify-center text-sm font-bold text-[#dc2626]">
                       {t.name.charAt(0)}
                     </div>
@@ -715,7 +715,7 @@ export default function MartialArtsTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.06 }}
-                className="group p-6 rounded-2xl border border-white/[0.06] hover:border-[#dc2626]/20 transition-all duration-500 overflow-hidden relative bg-white/[0.02]"
+                className="group p-6 rounded-2xl border border-white/[0.10] hover:border-[#dc2626]/20 transition-all duration-500 overflow-hidden relative bg-white/[0.07]"
               >
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_0%_50%,#dc262610,transparent_70%)]" />
                 <div className="relative z-10 flex gap-4">

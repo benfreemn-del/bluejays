@@ -233,7 +233,7 @@ function SectionReveal({
 /* ───────────────────────── GLASS CARD ───────────────────────── */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`rounded-2xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
+    <div className={`rounded-2xl border border-white/[0.13] bg-white/[0.07] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
       {children}
     </div>
   );
@@ -1060,7 +1060,7 @@ export default function V2PlumberPage() {
             <div className="overflow-x-auto">
               <table className="w-full min-w-[500px]">
                 <thead>
-                  <tr className="border-b border-white/10">
+                  <tr className="border-b border-white/15">
                     <th className="text-left p-4 md:p-5 text-sm text-slate-400 font-medium">Feature</th>
                     <th className="p-4 md:p-5 text-sm font-bold text-center" style={{ color: TEAL }}>Emerald City</th>
                     <th className="p-4 md:p-5 text-sm text-slate-500 text-center font-medium">Others</th>
@@ -1068,7 +1068,7 @@ export default function V2PlumberPage() {
                 </thead>
                 <tbody>
                   {COMPARISON_ROWS.map((row, i) => (
-                    <tr key={i} className={i < COMPARISON_ROWS.length - 1 ? "border-b border-white/5" : ""}>
+                    <tr key={i} className={i < COMPARISON_ROWS.length - 1 ? "border-b border-white/8" : ""}>
                       <td className="p-4 md:p-5 text-sm text-slate-300">{row.feature}</td>
                       <td className="p-4 md:p-5 text-center">
                         <CheckCircle size={22} weight="fill" style={{ color: TEAL }} className="mx-auto" />
@@ -1267,7 +1267,7 @@ export default function V2PlumberPage() {
                     <label className="block text-sm text-slate-400 mb-2">Full Name</label>
                     <input
                       type="text"
-                      className="w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-teal-500/50 transition-colors"
+                      className="w-full px-4 py-3 rounded-xl bg-white/[0.08] border border-white/15 text-white placeholder:text-slate-500 focus:outline-none focus:border-teal-500/50 transition-colors"
                       placeholder="John Smith"
                     />
                   </div>
@@ -1275,7 +1275,7 @@ export default function V2PlumberPage() {
                     <label className="block text-sm text-slate-400 mb-2">Phone Number</label>
                     <input
                       type="tel"
-                      className="w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-teal-500/50 transition-colors"
+                      className="w-full px-4 py-3 rounded-xl bg-white/[0.08] border border-white/15 text-white placeholder:text-slate-500 focus:outline-none focus:border-teal-500/50 transition-colors"
                       placeholder="(206) 555-1234"
                     />
                   </div>
@@ -1284,13 +1284,13 @@ export default function V2PlumberPage() {
                   <label className="block text-sm text-slate-400 mb-2">Email</label>
                   <input
                     type="email"
-                    className="w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-teal-500/50 transition-colors"
+                    className="w-full px-4 py-3 rounded-xl bg-white/[0.08] border border-white/15 text-white placeholder:text-slate-500 focus:outline-none focus:border-teal-500/50 transition-colors"
                     placeholder="john@example.com"
                   />
                 </div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-2">Service Needed</label>
-                  <select className="w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/10 text-white focus:outline-none focus:border-teal-500/50 transition-colors">
+                  <select className="w-full px-4 py-3 rounded-xl bg-white/[0.08] border border-white/15 text-white focus:outline-none focus:border-teal-500/50 transition-colors">
                     <option value="">Select a service...</option>
                     <option value="emergency">Emergency Plumbing</option>
                     <option value="drain">Drain Cleaning</option>
@@ -1307,7 +1307,7 @@ export default function V2PlumberPage() {
                   <label className="block text-sm text-slate-400 mb-2">Describe the Issue</label>
                   <textarea
                     rows={4}
-                    className="w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-teal-500/50 transition-colors resize-none"
+                    className="w-full px-4 py-3 rounded-xl bg-white/[0.08] border border-white/15 text-white placeholder:text-slate-500 focus:outline-none focus:border-teal-500/50 transition-colors resize-none"
                     placeholder="Tell us about the problem..."
                   />
                 </div>
@@ -1375,7 +1375,7 @@ export default function V2PlumberPage() {
               {/* Certifications */}
               <GlassCard className="p-5 flex flex-wrap items-center justify-center gap-3">
                 {["Master Plumber", "Licensed & Bonded", "Insured", "BBB A+", "WA State License"].map((cert) => (
-                  <span key={cert} className="px-3 py-1.5 rounded-full text-xs font-semibold text-slate-300 border border-white/10 bg-white/[0.03]">
+                  <span key={cert} className="px-3 py-1.5 rounded-full text-xs font-semibold text-slate-300 border border-white/15 bg-white/[0.08]">
                     {cert}
                   </span>
                 ))}
@@ -1386,7 +1386,7 @@ export default function V2PlumberPage() {
       </SectionReveal>
 
       {/* ────────────────────────── 16. FOOTER ────────────────────────── */}
-      <footer className="relative z-10 border-t border-white/[0.06] py-12">
+      <footer className="relative z-10 border-t border-white/[0.10] py-12">
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
             {/* Brand */}
@@ -1425,7 +1425,7 @@ export default function V2PlumberPage() {
             </div>
           </div>
 
-          <div className="border-t border-white/[0.06] pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="border-t border-white/[0.10] pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-sm text-slate-500">
               &copy; {new Date().getFullYear()} Emerald City Plumbing. All rights reserved. WA License #EMERACPL847DK.
             </p>

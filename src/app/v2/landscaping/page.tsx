@@ -134,7 +134,7 @@ function SectionReveal({ children, className = "", id }: { children: React.React
 }
 
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <div className={`rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.06)] ${className}`}>{children}</div>;
+  return <div className={`rounded-2xl border border-white/15 bg-white/[0.07] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.06)] ${className}`}>{children}</div>;
 }
 
 function MagneticButton({ children, className = "", onClick, style }: { children: React.ReactNode; className?: string; onClick?: () => void; style?: React.CSSProperties }) {
@@ -368,7 +368,7 @@ export default function V2LandscapingPage() {
                 <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer" style={{ background: PRIMARY } as React.CSSProperties}>
                   Free Design Consultation <ArrowRight size={18} weight="bold" />
                 </MagneticButton>
-                <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
+                <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
                   <Phone size={18} weight="duotone" /> (206) 555-0642
                 </MagneticButton>
               </motion.div>
@@ -411,7 +411,7 @@ export default function V2LandscapingPage() {
 
             {/* Mobile hero image */}
             <div className="md:hidden">
-              <div className="rounded-2xl overflow-hidden border border-white/10">
+              <div className="rounded-2xl overflow-hidden border border-white/15">
                 <img src={heroCards[0].src} alt={heroCards[0].alt} className="w-full h-[250px] object-cover" />
               </div>
             </div>
@@ -456,7 +456,7 @@ export default function V2LandscapingPage() {
                 From initial design to ongoing seasonal care, Cascade Landscapes handles every element of your outdoor space. Click any service to learn more.
               </p>
               <div className="hidden lg:block">
-                <div className="flex items-center gap-3 p-4 rounded-xl border border-white/5 bg-white/[0.02]">
+                <div className="flex items-center gap-3 p-4 rounded-xl border border-white/8 bg-white/[0.07]">
                   <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: PRIMARY_LIGHT }} />
                   <span className="text-sm text-slate-400">Now scheduling spring &amp; summer projects</span>
                 </div>
@@ -651,7 +651,7 @@ export default function V2LandscapingPage() {
               const heights = ["h-[280px]", "h-[340px]", "h-[260px]", "h-[320px]", "h-[290px]", "h-[350px]"];
               return (
                 <motion.div key={i} variants={fadeUp} className="break-inside-avoid">
-                  <div className="group relative rounded-2xl overflow-hidden border border-white/10">
+                  <div className="group relative rounded-2xl overflow-hidden border border-white/15">
                     <img src={p.image} alt={p.title} className={`w-full ${heights[i]} object-cover transition-transform duration-700 group-hover:scale-105`} />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                     <div className="absolute bottom-0 left-0 right-0 p-5">
@@ -723,7 +723,7 @@ export default function V2LandscapingPage() {
                   <button
                     key={i}
                     onClick={() => setQuizChoice(i)}
-                    className={`p-5 rounded-xl text-left border transition-all duration-300 cursor-pointer ${quizChoice === i ? "border-green-500/50 bg-white/[0.08]" : "border-white/10 bg-white/[0.02] hover:bg-white/[0.05]"}`}
+                    className={`p-5 rounded-xl text-left border transition-all duration-300 cursor-pointer ${quizChoice === i ? "border-green-500/50 bg-white/[0.08]" : "border-white/15 bg-white/[0.07] hover:bg-white/[0.08]"}`}
                   >
                     <div className="w-3 h-3 rounded-full mb-3" style={{ background: opt.color }} />
                     <div className="text-white font-semibold">{opt.label}</div>
@@ -788,7 +788,7 @@ export default function V2LandscapingPage() {
                         </li>
                       ))}
                     </ul>
-                    <MagneticButton className="w-full mt-6 py-3 rounded-xl text-sm font-semibold text-white border border-white/10 cursor-pointer">
+                    <MagneticButton className="w-full mt-6 py-3 rounded-xl text-sm font-semibold text-white border border-white/15 cursor-pointer">
                       Learn More
                     </MagneticButton>
                   </GlassCard>
@@ -874,7 +874,7 @@ export default function V2LandscapingPage() {
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           {/* Google Reviews Header */}
           <div className="text-center mb-4">
-            <div className="inline-flex items-center gap-3 px-5 py-2 rounded-full border border-white/10 bg-white/[0.03]">
+            <div className="inline-flex items-center gap-3 px-5 py-2 rounded-full border border-white/15 bg-white/[0.08]">
               <div className="flex gap-0.5">{Array.from({ length: 5 }).map((_, j) => (<Star key={j} size={18} weight="fill" style={{ color: PRIMARY_LIGHT }} />))}</div>
               <span className="text-sm text-white font-medium">4.9</span>
               <span className="text-sm text-slate-400">from 200+ Google reviews</span>
@@ -901,7 +901,7 @@ export default function V2LandscapingPage() {
                   <div className="p-5 flex flex-col flex-1">
                     <Quotes size={24} weight="fill" style={{ color: PRIMARY_LIGHT }} className="mb-2 opacity-40" />
                     <p className="text-sm text-slate-300 leading-relaxed flex-1">{t.text}</p>
-                    <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between">
+                    <div className="mt-4 pt-3 border-t border-white/8 flex items-center justify-between">
                       <span className="text-sm font-semibold text-white">{t.name}</span>
                       <div className="flex gap-0.5">{Array.from({ length: 5 }).map((_, j) => (<Star key={j} size={12} weight="fill" style={{ color: PRIMARY_LIGHT }} />))}</div>
                     </div>
@@ -926,7 +926,7 @@ export default function V2LandscapingPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-white/10">
+                  <tr className="border-b border-white/15">
                     <th className="text-left p-4 text-slate-400 font-medium">Feature</th>
                     <th className="text-center p-4 font-semibold text-white">Cascade</th>
                     <th className="text-center p-4 text-slate-500 font-medium">Others</th>
@@ -934,7 +934,7 @@ export default function V2LandscapingPage() {
                 </thead>
                 <tbody>
                   {comparisonRows.map((row, i) => (
-                    <tr key={i} className="border-b border-white/5">
+                    <tr key={i} className="border-b border-white/8">
                       <td className="p-4 text-slate-300">{row.feature}</td>
                       <td className="p-4 text-center">
                         <CheckCircle size={20} weight="fill" style={{ color: PRIMARY_LIGHT }} className="inline-block" />
@@ -954,7 +954,7 @@ export default function V2LandscapingPage() {
       {/* ═══════════════ 14. VIDEO PLACEHOLDER ═══════════════ */}
       <SectionReveal className="relative z-10 py-16 md:py-24">
         <div className="mx-auto max-w-4xl px-4 md:px-6">
-          <div className="relative rounded-2xl overflow-hidden aspect-video border border-white/10 group cursor-pointer">
+          <div className="relative rounded-2xl overflow-hidden aspect-video border border-white/15 group cursor-pointer">
             <img src="https://images.unsplash.com/photo-1523712999610-f77fbcfc3843?w=1200&q=80" alt="Beautiful landscaped backyard" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
             <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
               <div className="w-20 h-20 rounded-full flex items-center justify-center backdrop-blur-md bg-white/10 border border-white/20 group-hover:scale-110 transition-transform">
@@ -1013,17 +1013,17 @@ export default function V2LandscapingPage() {
               <h3 className="text-xl font-semibold text-white mb-6">Request Your Free Consultation</h3>
               <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <input type="text" placeholder="First Name" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-green-500/50" />
-                  <input type="text" placeholder="Last Name" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-green-500/50" />
+                  <input type="text" placeholder="First Name" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-green-500/50" />
+                  <input type="text" placeholder="Last Name" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-green-500/50" />
                 </div>
-                <input type="email" placeholder="Email Address" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-green-500/50" />
-                <input type="tel" placeholder="Phone Number" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-green-500/50" />
-                <input type="text" placeholder="Property Address" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-green-500/50" />
-                <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-slate-500 text-sm focus:outline-none focus:border-green-500/50">
+                <input type="email" placeholder="Email Address" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-green-500/50" />
+                <input type="tel" placeholder="Phone Number" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-green-500/50" />
+                <input type="text" placeholder="Property Address" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-green-500/50" />
+                <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-slate-500 text-sm focus:outline-none focus:border-green-500/50">
                   <option value="">Service Needed</option>
                   {services.map((s, i) => (<option key={i} value={s.title}>{s.title}</option>))}
                 </select>
-                <textarea placeholder="Tell us about your vision..." rows={3} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-green-500/50 resize-none" />
+                <textarea placeholder="Tell us about your vision..." rows={3} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-green-500/50 resize-none" />
                 <MagneticButton className="w-full py-3 rounded-xl text-sm font-semibold text-white cursor-pointer" style={{ background: PRIMARY } as React.CSSProperties}>
                   <span className="flex items-center justify-center gap-2"><CalendarCheck size={18} weight="duotone" /> Book Free Consultation</span>
                 </MagneticButton>
@@ -1070,10 +1070,10 @@ export default function V2LandscapingPage() {
                 <p className="text-sm text-slate-400">Mon-Fri 7am-6pm | Sat 8am-4pm</p>
               </div>
             </div>
-            <div className="mt-8 pt-6 border-t border-white/5">
+            <div className="mt-8 pt-6 border-t border-white/8">
               <div className="flex flex-wrap justify-center gap-3">
                 {["Capitol Hill", "Ballard", "Fremont", "Magnolia", "Queen Anne", "Bellevue", "Kirkland", "Mercer Island", "Redmond", "Sammamish"].map((area) => (
-                  <span key={area} className="px-3 py-1 rounded-full text-xs border border-white/10 text-slate-400 bg-white/[0.02]">{area}</span>
+                  <span key={area} className="px-3 py-1 rounded-full text-xs border border-white/15 text-slate-400 bg-white/[0.07]">{area}</span>
                 ))}
               </div>
             </div>
@@ -1115,7 +1115,7 @@ export default function V2LandscapingPage() {
       </SectionReveal>
 
       {/* ═══════════════ 16. FOOTER ═══════════════ */}
-      <footer className="relative z-10 border-t border-white/5 py-12">
+      <footer className="relative z-10 border-t border-white/8 py-12">
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
             {/* Brand */}
@@ -1127,7 +1127,7 @@ export default function V2LandscapingPage() {
               <p className="text-sm text-slate-500 leading-relaxed mb-4">Transforming Seattle&apos;s outdoors since 2010. Licensed landscape architecture with a passion for sustainable, site-specific design.</p>
               <div className="flex flex-wrap gap-2">
                 {["WALP", "Eco-Pro", "Licensed", "Insured"].map((badge) => (
-                  <span key={badge} className="px-2 py-0.5 rounded-full text-[10px] font-medium border border-white/10 text-slate-500 bg-white/[0.02]">{badge}</span>
+                  <span key={badge} className="px-2 py-0.5 rounded-full text-[10px] font-medium border border-white/15 text-slate-500 bg-white/[0.07]">{badge}</span>
                 ))}
               </div>
             </div>
@@ -1173,7 +1173,7 @@ export default function V2LandscapingPage() {
               </div>
             </div>
           </div>
-          <div className="pt-6 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="pt-6 border-t border-white/8 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-sm text-slate-600">
               <Tree size={14} weight="duotone" style={{ color: PRIMARY_LIGHT }} />
               <span>Cascade Landscapes &copy; {new Date().getFullYear()}. All rights reserved.</span>

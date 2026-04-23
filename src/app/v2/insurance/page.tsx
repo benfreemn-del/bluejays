@@ -212,13 +212,13 @@ function GlassCard({ children, className = "", glow, style, id, onClick, href }:
   const mergedStyle: React.CSSProperties = { ...(glow ? { boxShadow: `0 0 40px ${glow}` } : {}), ...(style ?? {}) };
   if (href) {
     return (
-      <a href={href} id={id} onClick={onClick} className={`relative rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md ${className}`} style={mergedStyle}>
+      <a href={href} id={id} onClick={onClick} className={`relative rounded-2xl border border-white/15 bg-white/[0.07] backdrop-blur-md ${className}`} style={mergedStyle}>
         {children}
       </a>
     );
   }
   return (
-    <div id={id} onClick={onClick} className={`relative rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md ${className}`} style={mergedStyle}>
+    <div id={id} onClick={onClick} className={`relative rounded-2xl border border-white/15 bg-white/[0.07] backdrop-blur-md ${className}`} style={mergedStyle}>
       {children}
     </div>
   );
@@ -290,7 +290,7 @@ function WordReveal({ text, className = "" }: { text: string; className?: string
 function SectionHeader({ tag, title, accent, subtitle }: { tag: string; title: string; accent: string; subtitle?: string }) {
   return (
     <div className="text-center mb-12 md:mb-16">
-      <span className="inline-block text-xs font-bold tracking-[0.25em] uppercase px-4 py-1.5 rounded-full border border-white/10 bg-white/[0.04] mb-4" style={{ color: BLUE_LIGHT }}>{tag}</span>
+      <span className="inline-block text-xs font-bold tracking-[0.25em] uppercase px-4 py-1.5 rounded-full border border-white/15 bg-white/[0.07] mb-4" style={{ color: BLUE_LIGHT }}>{tag}</span>
       <h2 className="text-3xl md:text-5xl font-extrabold text-white leading-tight">
         {title} <span style={{ color: accent }}>{""}</span>
       </h2>
@@ -386,7 +386,7 @@ function ShieldHero() {
           {/* Trust pills */}
           <motion.div className="flex flex-wrap gap-3 mt-8" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2 }}>
             {["Licensed Agent", "A+ BBB Rated", "15+ Carriers"].map((pill) => (
-              <span key={pill} className="text-xs px-3 py-1 rounded-full border border-white/10 text-slate-400 bg-white/[0.03]">
+              <span key={pill} className="text-xs px-3 py-1 rounded-full border border-white/15 text-slate-400 bg-white/[0.08]">
                 <SealCheck size={12} weight="fill" className="inline mr-1" style={{ color: EMERALD }} />{pill}
               </span>
             ))}
@@ -402,7 +402,7 @@ function ShieldHero() {
             </div>
             <div className="space-y-3">
               {[{ label: "Auto + Home Bundle", save: "Save 25%" }, { label: "Multi-Vehicle Discount", save: "Save 15%" }, { label: "Claims-Free Bonus", save: "Save 10%" }].map((item) => (
-                <div key={item.label} className="flex items-center justify-between px-4 py-3 rounded-xl bg-white/[0.04] border border-white/5">
+                <div key={item.label} className="flex items-center justify-between px-4 py-3 rounded-xl bg-white/[0.07] border border-white/8">
                   <span className="text-white text-sm">{item.label}</span>
                   <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ color: EMERALD, background: `${EMERALD}20` }}>{item.save}</span>
                 </div>
@@ -442,7 +442,7 @@ function Nav() {
       animate={{ y: 0 }}
       transition={spring}
     >
-      <div className={`mx-4 md:mx-8 mt-3 rounded-2xl border backdrop-blur-xl transition-all ${scrolled ? "border-white/10 bg-[#0f172a]/90 shadow-2xl" : "border-transparent bg-transparent"}`}>
+      <div className={`mx-4 md:mx-8 mt-3 rounded-2xl border backdrop-blur-xl transition-all ${scrolled ? "border-white/15 bg-[#0f172a]/90 shadow-2xl" : "border-transparent bg-transparent"}`}>
         <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-3">
           <a href="#" className="flex items-center gap-2">
             <Shield size={28} weight="fill" style={{ color: BLUE_LIGHT }} />
@@ -465,13 +465,13 @@ function Nav() {
       <AnimatePresence>
         {open && (
           <motion.div
-            className="md:hidden mx-4 mt-1 rounded-2xl border border-white/10 bg-[#0f172a]/95 backdrop-blur-xl p-6"
+            className="md:hidden mx-4 mt-1 rounded-2xl border border-white/15 bg-[#0f172a]/95 backdrop-blur-xl p-6"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
           >
             {links.map((l) => (
-              <a key={l.label} href={l.href} onClick={() => setOpen(false)} className="block py-3 text-slate-300 hover:text-white border-b border-white/5 last:border-0">{l.label}</a>
+              <a key={l.label} href={l.href} onClick={() => setOpen(false)} className="block py-3 text-slate-300 hover:text-white border-b border-white/8 last:border-0">{l.label}</a>
             ))}
             <a href={`tel:${PHONE.replace(/\D/g, "")}`} className="mt-4 block text-center px-5 py-3 rounded-xl text-white font-semibold" style={{ background: BLUE }}>
               {PHONE}
@@ -542,7 +542,7 @@ function AboutSection() {
           </GlassCard>
         </div>
         <div>
-          <span className="inline-block text-xs font-bold tracking-[0.25em] uppercase px-4 py-1.5 rounded-full border border-white/10 bg-white/[0.04] mb-4" style={{ color: GOLD }}>About Us</span>
+          <span className="inline-block text-xs font-bold tracking-[0.25em] uppercase px-4 py-1.5 rounded-full border border-white/15 bg-white/[0.07] mb-4" style={{ color: GOLD }}>About Us</span>
           <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-6">
             Meet <span style={{ color: BLUE_LIGHT }}>{OWNER}</span>
           </h2>
@@ -620,7 +620,7 @@ function CoverageQuiz() {
                       <button
                         key={opt}
                         onClick={() => handleAnswer(opt)}
-                        className="px-6 py-4 rounded-xl border border-white/10 text-white font-semibold hover:border-blue-500/50 hover:bg-blue-500/10 transition-all text-center"
+                        className="px-6 py-4 rounded-xl border border-white/15 text-white font-semibold hover:border-blue-500/50 hover:bg-blue-500/10 transition-all text-center"
                       >
                         {opt}
                       </button>
@@ -638,7 +638,7 @@ function CoverageQuiz() {
                       <MagneticButton href={`tel:${PHONE.replace(/\D/g, "")}`} className="px-8 py-4 rounded-xl text-white" style={{ background: BLUE }}>
                         <Phone size={20} weight="fill" /> Call {PHONE}
                       </MagneticButton>
-                      <button onClick={reset} className="px-6 py-4 rounded-xl border border-white/10 text-slate-300 hover:text-white transition-colors">
+                      <button onClick={reset} className="px-6 py-4 rounded-xl border border-white/15 text-slate-300 hover:text-white transition-colors">
                         Retake Quiz
                       </button>
                     </div>
@@ -721,7 +721,7 @@ function BundleCalculator() {
               <div className="text-sm text-slate-400 mb-4">
                 {selected.length < 2 ? "Add more coverage types to unlock savings" : `${selected.length} policies bundled`}
               </div>
-              <div className="w-full p-4 rounded-xl bg-white/[0.04] border border-white/5">
+              <div className="w-full p-4 rounded-xl bg-white/[0.07] border border-white/8">
                 <div className="flex justify-between mb-2">
                   <span className="text-slate-400 text-sm">Monthly Savings</span>
                   <span className="text-white font-bold" style={{ color: EMERALD }}>${monthlySavings}</span>
@@ -939,7 +939,7 @@ function WhyIndependent() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-white/10">
+                <tr className="border-b border-white/15">
                   <th className="text-left px-6 py-4 text-sm text-slate-400 font-medium">Feature</th>
                   <th className="text-center px-6 py-4 text-sm font-bold" style={{ color: BLUE_LIGHT }}>Independent Agent</th>
                   <th className="text-center px-6 py-4 text-sm text-slate-400 font-medium">Direct / Online</th>
@@ -947,7 +947,7 @@ function WhyIndependent() {
               </thead>
               <tbody>
                 {COMPARISON_ROWS.map((row, i) => (
-                  <tr key={i} className="border-b border-white/5 last:border-0">
+                  <tr key={i} className="border-b border-white/8 last:border-0">
                     <td className="px-6 py-4 text-sm text-slate-300">{row.feature}</td>
                     <td className="text-center px-6 py-4">
                       <CheckCircle size={22} weight="fill" style={{ color: EMERALD }} className="mx-auto" />
@@ -974,7 +974,7 @@ function CarrierPartners() {
         <SectionHeader tag="Our Partners" title="Top-Rated Carriers We Represent" accent={EMERALD} />
         <div className="flex flex-wrap justify-center gap-4">
           {CARRIERS.map((c) => (
-            <div key={c} className="px-6 py-3 rounded-xl border border-white/10 bg-white/[0.03] text-slate-300 text-sm font-semibold">
+            <div key={c} className="px-6 py-3 rounded-xl border border-white/15 bg-white/[0.08] text-slate-300 text-sm font-semibold">
               <Certificate size={16} weight="fill" className="inline mr-2" style={{ color: BLUE_LIGHT }} />{c}
             </div>
           ))}
@@ -1069,7 +1069,7 @@ function ServiceArea() {
             <h3 className="text-white font-bold mb-4">Communities We Protect</h3>
             <div className="flex flex-wrap gap-2">
               {areas.map((a) => (
-                <span key={a} className="px-3 py-1.5 rounded-full text-xs font-semibold border border-white/10 bg-white/[0.03] text-slate-300">
+                <span key={a} className="px-3 py-1.5 rounded-full text-xs font-semibold border border-white/15 bg-white/[0.08] text-slate-300">
                   <MapPin size={10} weight="fill" className="inline mr-1" style={{ color: BLUE_LIGHT }} />{a}
                 </span>
               ))}
@@ -1113,7 +1113,7 @@ function ContactForm() {
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/[0.04] text-white placeholder-slate-600 focus:border-blue-500/50 focus:outline-none transition-colors"
+                  className="w-full px-4 py-3 rounded-xl border border-white/15 bg-white/[0.07] text-white placeholder-slate-600 focus:border-blue-500/50 focus:outline-none transition-colors"
                   placeholder="John Smith"
                 />
               </div>
@@ -1124,7 +1124,7 @@ function ContactForm() {
                   required
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/[0.04] text-white placeholder-slate-600 focus:border-blue-500/50 focus:outline-none transition-colors"
+                  className="w-full px-4 py-3 rounded-xl border border-white/15 bg-white/[0.07] text-white placeholder-slate-600 focus:border-blue-500/50 focus:outline-none transition-colors"
                   placeholder="john@example.com"
                 />
               </div>
@@ -1134,7 +1134,7 @@ function ContactForm() {
                   type="tel"
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/[0.04] text-white placeholder-slate-600 focus:border-blue-500/50 focus:outline-none transition-colors"
+                  className="w-full px-4 py-3 rounded-xl border border-white/15 bg-white/[0.07] text-white placeholder-slate-600 focus:border-blue-500/50 focus:outline-none transition-colors"
                   placeholder="(206) 555-1234"
                 />
               </div>
@@ -1143,7 +1143,7 @@ function ContactForm() {
                 <select
                   value={formData.coverageType}
                   onChange={(e) => setFormData({ ...formData, coverageType: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/[0.04] text-white focus:border-blue-500/50 focus:outline-none transition-colors"
+                  className="w-full px-4 py-3 rounded-xl border border-white/15 bg-white/[0.07] text-white focus:border-blue-500/50 focus:outline-none transition-colors"
                 >
                   <option value="" className="bg-slate-900">Select coverage type...</option>
                   <option value="auto" className="bg-slate-900">Auto Insurance</option>
@@ -1160,7 +1160,7 @@ function ContactForm() {
                   rows={4}
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/[0.04] text-white placeholder-slate-600 focus:border-blue-500/50 focus:outline-none transition-colors resize-none"
+                  className="w-full px-4 py-3 rounded-xl border border-white/15 bg-white/[0.07] text-white placeholder-slate-600 focus:border-blue-500/50 focus:outline-none transition-colors resize-none"
                   placeholder="Tell us about your coverage needs..."
                 />
               </div>
@@ -1211,7 +1211,7 @@ function FinalCTA() {
 /* ───────────────────────── FOOTER ───────────────────────── */
 function Footer() {
   return (
-    <footer className="border-t border-white/5 py-12" style={{ background: BG }}>
+    <footer className="border-t border-white/8 py-12" style={{ background: BG }}>
       <div className="max-w-6xl mx-auto px-6">
         <div className="grid md:grid-cols-3 gap-8 mb-8">
           <div>
@@ -1246,7 +1246,7 @@ function Footer() {
             </div>
           </div>
         </div>
-        <div className="border-t border-white/5 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="border-t border-white/8 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-slate-600 text-xs">
             &copy; {new Date().getFullYear()} {BIZ_NAME}. All rights reserved.
           </p>

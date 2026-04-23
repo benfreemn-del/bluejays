@@ -424,7 +424,7 @@ export default function RoofingTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-[#d97706]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-[#d97706]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 {/* Hover glow */}
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_50%_0%,#d9770615,transparent_70%)]" />
@@ -481,7 +481,7 @@ export default function RoofingTemplate() {
             >
               <div className="relative w-full aspect-[4/5] max-w-md mx-auto">
                 {/* Main image */}
-                <div className="absolute top-0 left-0 w-[75%] h-[70%] rounded-2xl overflow-hidden border-2 border-white/[0.06] shadow-2xl z-10">
+                <div className="absolute top-0 left-0 w-[75%] h-[70%] rounded-2xl overflow-hidden border-2 border-white/[0.10] shadow-2xl z-10">
                   <img
                     src="https://images.unsplash.com/photo-1558036117-15d82a90b9b1?w=600&q=80"
                     alt="Roof inspection"
@@ -489,7 +489,7 @@ export default function RoofingTemplate() {
                   />
                 </div>
                 {/* Secondary image */}
-                <div className="absolute bottom-0 right-0 w-[65%] h-[55%] rounded-2xl overflow-hidden border-2 border-white/[0.06] shadow-2xl z-20">
+                <div className="absolute bottom-0 right-0 w-[65%] h-[55%] rounded-2xl overflow-hidden border-2 border-white/[0.10] shadow-2xl z-20">
                   <img
                     src="https://images.unsplash.com/photo-1513694203232-719a280e022f?w=400&q=80"
                     alt="Completed roof"
@@ -532,7 +532,7 @@ export default function RoofingTemplate() {
                   { icon: <ShieldIcon />, title: "Direct Insurance Billing", desc: "We work directly with your insurer so you pay nothing out of pocket" },
                   { icon: <PhoneIcon />, title: "24/7 Emergency Response", desc: "Emergency tarping within hours of your call, day or night" },
                 ].map((feature) => (
-                  <div key={feature.title} className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/[0.04] hover:border-[#d97706]/20 transition-colors duration-300">
+                  <div key={feature.title} className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.07] border border-white/[0.04] hover:border-[#d97706]/20 transition-colors duration-300">
                     <div className="w-10 h-10 rounded-lg bg-[#d97706]/10 border border-[#d97706]/20 flex items-center justify-center text-[#d97706] shrink-0">
                       {feature.icon}
                     </div>
@@ -575,7 +575,7 @@ export default function RoofingTemplate() {
                 className={`group relative p-8 rounded-2xl border transition-all duration-500 overflow-hidden ${
                   i === 1
                     ? "border-[#d97706]/40 bg-[#d97706]/5 scale-[1.02]"
-                    : "border-white/[0.06] bg-white/[0.02] hover:border-[#d97706]/30"
+                    : "border-white/[0.10] bg-white/[0.07] hover:border-[#d97706]/30"
                 }`}
               >
                 {i === 1 && (
@@ -606,7 +606,7 @@ export default function RoofingTemplate() {
                       </li>
                     ))}
                   </ul>
-                  <div className="pt-4 border-t border-white/[0.06]">
+                  <div className="pt-4 border-t border-white/[0.10]">
                     <p className="text-xs font-semibold text-[#d97706]/80 uppercase tracking-wider">{mat.best}</p>
                   </div>
                 </div>
@@ -641,7 +641,7 @@ export default function RoofingTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.12 }}
-                className="group relative rounded-2xl border border-white/[0.06] hover:border-[#d97706]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative rounded-2xl border border-white/[0.10] hover:border-[#d97706]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 <div className="relative aspect-[4/3] overflow-hidden">
                   <img src={project.image} alt={project.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
@@ -695,7 +695,7 @@ export default function RoofingTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group text-center p-6 rounded-2xl border border-white/[0.06] hover:border-[#d97706]/30 bg-white/[0.02] transition-all duration-500"
+                className="group text-center p-6 rounded-2xl border border-white/[0.10] hover:border-[#d97706]/30 bg-white/[0.07] transition-all duration-500"
               >
                 <div className="w-14 h-14 mx-auto rounded-xl bg-[#d97706]/10 border border-[#d97706]/20 flex items-center justify-center text-[#d97706] mb-4 group-hover:bg-[#d97706]/20 group-hover:scale-110 transition-all duration-300">
                   {item.icon}
@@ -737,7 +737,7 @@ export default function RoofingTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-[#d97706]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-[#d97706]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 {/* Top accent line */}
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-[#d97706]/40 via-[#d97706]/10 to-transparent" />
@@ -756,7 +756,7 @@ export default function RoofingTemplate() {
                   {/* Quote */}
                   <p className="text-muted leading-relaxed mb-6 text-sm">&ldquo;{t.text}&rdquo;</p>
                   {/* Author */}
-                  <div className="flex items-center gap-3 pt-4 border-t border-white/[0.06]">
+                  <div className="flex items-center gap-3 pt-4 border-t border-white/[0.10]">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#d97706]/30 to-[#d97706]/10 flex items-center justify-center text-sm font-bold text-[#d97706]">
                       {t.name.charAt(0)}
                     </div>
@@ -789,7 +789,7 @@ export default function RoofingTemplate() {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="relative p-8 md:p-12 rounded-2xl border border-[#d97706]/20 bg-white/[0.02] overflow-hidden"
+            className="relative p-8 md:p-12 rounded-2xl border border-[#d97706]/20 bg-white/[0.07] overflow-hidden"
           >
             <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_50%_0%,#d9770610,transparent_60%)]" />
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#d97706] to-transparent" />
@@ -800,7 +800,7 @@ export default function RoofingTemplate() {
                   <input
                     type="text"
                     placeholder="John Smith"
-                    className="w-full h-12 px-4 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white placeholder:text-white/30 focus:border-[#d97706]/40 focus:outline-none transition-colors"
+                    className="w-full h-12 px-4 rounded-xl bg-white/[0.07] border border-white/[0.13] text-white placeholder:text-white/30 focus:border-[#d97706]/40 focus:outline-none transition-colors"
                   />
                 </div>
                 <div>
@@ -808,7 +808,7 @@ export default function RoofingTemplate() {
                   <input
                     type="tel"
                     placeholder="(253) 555-0000"
-                    className="w-full h-12 px-4 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white placeholder:text-white/30 focus:border-[#d97706]/40 focus:outline-none transition-colors"
+                    className="w-full h-12 px-4 rounded-xl bg-white/[0.07] border border-white/[0.13] text-white placeholder:text-white/30 focus:border-[#d97706]/40 focus:outline-none transition-colors"
                   />
                 </div>
               </div>
@@ -818,12 +818,12 @@ export default function RoofingTemplate() {
                   <input
                     type="email"
                     placeholder="john@example.com"
-                    className="w-full h-12 px-4 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white placeholder:text-white/30 focus:border-[#d97706]/40 focus:outline-none transition-colors"
+                    className="w-full h-12 px-4 rounded-xl bg-white/[0.07] border border-white/[0.13] text-white placeholder:text-white/30 focus:border-[#d97706]/40 focus:outline-none transition-colors"
                   />
                 </div>
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-muted mb-2">Service Needed</label>
-                  <select className="w-full h-12 px-4 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/70 focus:border-[#d97706]/40 focus:outline-none transition-colors appearance-none">
+                  <select className="w-full h-12 px-4 rounded-xl bg-white/[0.07] border border-white/[0.13] text-white/70 focus:border-[#d97706]/40 focus:outline-none transition-colors appearance-none">
                     <option value="">Select a service...</option>
                     <option value="replacement">Roof Replacement</option>
                     <option value="repair">Roof Repair</option>
@@ -839,7 +839,7 @@ export default function RoofingTemplate() {
                 <textarea
                   rows={4}
                   placeholder="Describe your roofing needs, any damage you've noticed, or questions you have..."
-                  className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white placeholder:text-white/30 focus:border-[#d97706]/40 focus:outline-none transition-colors resize-none"
+                  className="w-full px-4 py-3 rounded-xl bg-white/[0.07] border border-white/[0.13] text-white placeholder:text-white/30 focus:border-[#d97706]/40 focus:outline-none transition-colors resize-none"
                 />
               </div>
               <button

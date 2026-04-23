@@ -203,7 +203,7 @@ function HeroNatureSVG({ accent }: { accent: string }) {
 /* ───────────────────────── GLASS CARD ───────────────────────── */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
+    <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
       {children}
     </div>
   );
@@ -526,7 +526,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
             <SectionHeader badge="Our Work" title="Before & After" subtitle={`See the quality of work ${data.businessName} delivers for our clients.`} accent={PRIMARY} />
 
             <div className="max-w-4xl mx-auto">
-              <div className="relative rounded-2xl overflow-hidden border border-white/[0.06]">
+              <div className="relative rounded-2xl overflow-hidden border border-white/[0.10]">
                 <img src="/images/landscaping-before-after.png" alt="Landscape transformation before and after" className="w-full h-auto object-cover" />
               </div>
               <p className="text-center text-sm text-slate-400 mt-4">Complete yard transformation — new patio, plantings, lighting, and irrigation.</p>
@@ -545,7 +545,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
           <SectionHeader badge="Our Work" title="Project Gallery" subtitle={`Browse our portfolio of completed landscaping projects by ${data.businessName}.`} accent={PRIMARY} />
           <div className="columns-1 md:columns-2 lg:columns-3 gap-4 space-y-4">
             {galleryImages.map((src, i) => (
-              <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.06] hover:border-opacity-30 transition-all duration-500 break-inside-avoid">
+              <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 break-inside-avoid">
                 <img src={src} alt={`Landscape project ${i + 1}`} className={`w-full object-cover transition-transform duration-700 group-hover:scale-105 ${i % 3 === 0 ? "h-80" : i % 3 === 1 ? "h-64" : "h-72"}`} />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 <div className="absolute bottom-0 left-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
@@ -571,7 +571,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
             {data.services.map((service, i) => {
               const Icon = getServiceIcon(service.name);
               return (
-                <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.02]">
+                <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]">
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${PRIMARY}15, transparent 70%)` }} />
                   <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${PRIMARY}4d, transparent)` }} />
                   <div className="relative z-10">
@@ -625,7 +625,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="relative">
-              <div className="rounded-2xl overflow-hidden border border-white/10"><img src={aboutImage} alt={`${data.businessName} team`} className="w-full h-[400px] object-cover" /></div>
+              <div className="rounded-2xl overflow-hidden border border-white/15"><img src={aboutImage} alt={`${data.businessName} team`} className="w-full h-[400px] object-cover" /></div>
               <div className="absolute -bottom-4 -right-4 md:bottom-6 md:-right-6">
                 <div className="px-5 py-3 rounded-xl backdrop-blur-md border text-white font-bold text-sm shadow-lg" style={{ background: `${PRIMARY}e6`, borderColor: `${PRIMARY}80` }}>
                   {data.stats[0] ? `${data.stats[0].value} ${data.stats[0].label}` : "Trusted Experts"}
@@ -680,7 +680,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-white/10">
+                  <tr className="border-b border-white/15">
                     <th className="text-left p-4 text-slate-400 font-medium">Feature</th>
                     <th className="text-center p-4 font-bold text-white">{data.businessName}</th>
                     <th className="text-center p-4 text-slate-500 font-medium">Others</th>
@@ -688,7 +688,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
                 </thead>
                 <tbody>
                   {comparisonRows.map((row, i) => (
-                    <tr key={row.feature} className={i < comparisonRows.length - 1 ? "border-b border-white/5" : ""}>
+                    <tr key={row.feature} className={i < comparisonRows.length - 1 ? "border-b border-white/8" : ""}>
                       <td className="p-4 text-slate-300">{row.feature}</td>
                       <td className="p-4 text-center"><CheckCircle size={22} weight="fill" style={{ color: PRIMARY }} className="mx-auto" /></td>
                       <td className="p-4 text-center text-slate-500">{row.them}</td>
@@ -730,7 +730,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
         <NaturePattern opacity={0.02} accent={PRIMARY} />
         <div className="max-w-4xl mx-auto px-6 relative z-10">
           <AnimatedSection><SectionHeader badge="Watch" title="See Our Transformations" accent={PRIMARY} /></AnimatedSection>
-          <div className="relative rounded-2xl overflow-hidden border border-white/10 group cursor-pointer">
+          <div className="relative rounded-2xl overflow-hidden border border-white/15 group cursor-pointer">
             <img src={galleryImages[0] || heroImage} alt="Project showcase" className="w-full h-64 md:h-96 object-cover transition-transform duration-700 group-hover:scale-105" />
             <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
               <div className="w-20 h-20 rounded-full flex items-center justify-center backdrop-blur-md border border-white/20 transition-transform duration-300 group-hover:scale-110" style={{ background: `${PRIMARY}cc` }}>
@@ -808,7 +808,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
                 <GlassCard key={i} className="p-6 h-full flex flex-col">
                   <div className="flex gap-0.5 mb-4">{Array.from({ length: t.rating || 5 }).map((_, j) => (<Star key={j} size={16} weight="fill" style={{ color: PRIMARY }} />))}</div>
                   <p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p>
-                  <div className="pt-4 border-t border-white/5"><span className="text-sm font-semibold text-white">{t.name}</span></div>
+                  <div className="pt-4 border-t border-white/8"><span className="text-sm font-semibold text-white">{t.name}</span></div>
                 </GlassCard>
               ))}
             </div>
@@ -864,7 +864,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
                   {areas.map((city) => (
                     <span
                       key={city}
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border bg-white/[0.02] hover:bg-white/[0.05] transition-colors"
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border bg-white/[0.07] hover:bg-white/[0.08] transition-colors"
                       style={{ color: PRIMARY, borderColor: `${PRIMARY}33` }}
                     >
                       <MapPin size={14} weight="duotone" />
@@ -955,17 +955,17 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
               <h3 className="text-xl font-semibold text-white mb-6">Request a Free Estimate</h3>
               <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div><label className="block text-sm text-slate-400 mb-1.5">First Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="John" /></div>
-                  <div><label className="block text-sm text-slate-400 mb-1.5">Last Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="Doe" /></div>
+                  <div><label className="block text-sm text-slate-400 mb-1.5">First Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="John" /></div>
+                  <div><label className="block text-sm text-slate-400 mb-1.5">Last Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="Doe" /></div>
                 </div>
-                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
+                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
                 <div><label className="block text-sm text-slate-400 mb-1.5">Service Needed</label>
-                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none text-sm">
+                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none text-sm">
                     <option value="" className="bg-neutral-900">Select a service</option>
                     {data.services.map((s) => (<option key={s.name} value={s.name.toLowerCase().replace(/\s+/g, "-")} className="bg-neutral-900">{s.name}</option>))}
                   </select>
                 </div>
-                <div><label className="block text-sm text-slate-400 mb-1.5">Tell Us About Your Project</label><textarea rows={4} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm resize-none" placeholder="Describe your landscaping goals..." /></div>
+                <div><label className="block text-sm text-slate-400 mb-1.5">Tell Us About Your Project</label><textarea rows={4} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm resize-none" placeholder="Describe your landscaping goals..." /></div>
                 <MagneticButton className="w-full py-4 rounded-xl text-base font-semibold text-white flex items-center justify-center gap-2 cursor-pointer" style={{ background: PRIMARY } as React.CSSProperties}>
                   Get Free Estimate <ArrowRight size={18} weight="bold" />
                 </MagneticButton>
@@ -991,7 +991,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
           right conversion shape. */}
 
       {/* ══════════════════ 15. FOOTER ══════════════════ */}
-      <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden">
+      <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111 100%)" }} />
         <NaturePattern opacity={0.015} accent={PRIMARY} />
         <div className="mx-auto max-w-6xl px-6 relative z-10">
@@ -1013,7 +1013,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
               </div>
             </div>
           </div>
-          <div className="border-t border-white/5 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="border-t border-white/8 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-sm text-slate-500"><Tree size={14} weight="fill" style={{ color: PRIMARY }} /><span>{data.businessName} &copy; {new Date().getFullYear()}</span></div>
             <div className="flex items-center gap-2 text-xs text-slate-600"><BluejayLogo className="w-4 h-4" /><span>Created by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" style={{textDecoration:"underline"}}>bluejayportfolio.com</a></span></div>
           </div>

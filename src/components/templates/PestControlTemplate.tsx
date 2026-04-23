@@ -378,7 +378,7 @@ export default function PestControlTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-[#84cc16]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-[#84cc16]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_50%_0%,#84cc1615,transparent_70%)]" />
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#84cc16]/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -434,7 +434,7 @@ export default function PestControlTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-[#84cc16]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-[#84cc16]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_0%_0%,#84cc1610,transparent_70%)]" />
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-[#84cc16]/30 via-[#84cc16]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -481,14 +481,14 @@ export default function PestControlTemplate() {
               className="relative"
             >
               <div className="relative w-full aspect-[4/5] max-w-md mx-auto">
-                <div className="absolute top-0 left-0 w-[75%] h-[70%] rounded-2xl overflow-hidden border-2 border-white/[0.06] shadow-2xl z-10">
+                <div className="absolute top-0 left-0 w-[75%] h-[70%] rounded-2xl overflow-hidden border-2 border-white/[0.10] shadow-2xl z-10">
                   <img
                     src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&q=80"
                     alt="Eco-friendly pest control"
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <div className="absolute bottom-0 right-0 w-[65%] h-[55%] rounded-2xl overflow-hidden border-2 border-white/[0.06] shadow-2xl z-20">
+                <div className="absolute bottom-0 right-0 w-[65%] h-[55%] rounded-2xl overflow-hidden border-2 border-white/[0.10] shadow-2xl z-20">
                   <img
                     src="https://images.unsplash.com/photo-1609710228159-0fa9bd7c0827?w=400&q=80"
                     alt="Pest control technician"
@@ -528,7 +528,7 @@ export default function PestControlTemplate() {
                   { icon: <ShieldIcon />, title: "Guaranteed Results", desc: "If pests return between treatments, we re-treat at no extra cost" },
                   { icon: <SprayIcon />, title: "IPM Approach", desc: "Integrated Pest Management targets root causes, not just symptoms" },
                 ].map((feature) => (
-                  <div key={feature.title} className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/[0.04] hover:border-[#84cc16]/20 transition-colors duration-300">
+                  <div key={feature.title} className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.07] border border-white/[0.04] hover:border-[#84cc16]/20 transition-colors duration-300">
                     <div className="w-10 h-10 rounded-lg bg-[#84cc16]/10 border border-[#84cc16]/20 flex items-center justify-center text-[#84cc16] shrink-0">
                       {feature.icon}
                     </div>
@@ -573,7 +573,7 @@ export default function PestControlTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group text-center p-6 rounded-2xl border border-white/[0.06] hover:border-[#84cc16]/30 bg-white/[0.02] transition-all duration-500 relative overflow-hidden"
+                className="group text-center p-6 rounded-2xl border border-white/[0.10] hover:border-[#84cc16]/30 bg-white/[0.07] transition-all duration-500 relative overflow-hidden"
               >
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_50%_0%,#84cc1612,transparent_70%)]" />
                 <div className="relative z-10">
@@ -617,7 +617,7 @@ export default function PestControlTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-[#84cc16]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-[#84cc16]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-[#84cc16]/40 via-[#84cc16]/10 to-transparent" />
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_0%_0%,#84cc1610,transparent_70%)]" />
@@ -631,7 +631,7 @@ export default function PestControlTemplate() {
                     ))}
                   </div>
                   <p className="text-muted leading-relaxed mb-6 text-sm">&ldquo;{t.text}&rdquo;</p>
-                  <div className="flex items-center gap-3 pt-4 border-t border-white/[0.06]">
+                  <div className="flex items-center gap-3 pt-4 border-t border-white/[0.10]">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#84cc16]/30 to-[#84cc16]/10 flex items-center justify-center text-sm font-bold text-[#84cc16]">
                       {t.name.charAt(0)}
                     </div>
@@ -672,7 +672,7 @@ export default function PestControlTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.04 }}
-                className="group flex items-center gap-3 p-4 rounded-xl border border-white/[0.06] hover:border-[#84cc16]/30 bg-white/[0.02] transition-all duration-300"
+                className="group flex items-center gap-3 p-4 rounded-xl border border-white/[0.10] hover:border-[#84cc16]/30 bg-white/[0.07] transition-all duration-300"
               >
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5 text-[#84cc16] shrink-0">
                   <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />

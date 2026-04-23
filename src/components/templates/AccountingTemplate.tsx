@@ -358,7 +358,7 @@ export default function AccountingTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-[#6366f1]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-[#6366f1]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_50%_0%,#6366f115,transparent_70%)]" />
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#6366f1]/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -431,7 +431,7 @@ export default function AccountingTemplate() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1 }}
-                  className="p-5 rounded-2xl border border-white/[0.06] bg-white/[0.02]"
+                  className="p-5 rounded-2xl border border-white/[0.10] bg-white/[0.07]"
                 >
                   <p className="text-2xl font-extrabold text-[#6366f1] mb-1">{item.value}</p>
                   <p className="text-muted text-sm font-medium">{item.label}</p>
@@ -466,7 +466,7 @@ export default function AccountingTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.12 }}
-                className="group relative rounded-2xl border border-white/[0.06] hover:border-[#6366f1]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative rounded-2xl border border-white/[0.10] hover:border-[#6366f1]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 <div className="relative aspect-[3/4] overflow-hidden">
                   <img
@@ -483,7 +483,7 @@ export default function AccountingTemplate() {
                     <p className="text-[#6366f1] text-sm font-semibold mb-3">{member.title}</p>
                     <div className="flex flex-wrap gap-2">
                       {member.specialties.map((s) => (
-                        <span key={s} className="text-[10px] font-semibold uppercase tracking-wider text-white/60 bg-white/10 border border-white/10 px-2.5 py-1 rounded-full">
+                        <span key={s} className="text-[10px] font-semibold uppercase tracking-wider text-white/60 bg-white/10 border border-white/15 px-2.5 py-1 rounded-full">
                           {s}
                         </span>
                       ))}
@@ -520,7 +520,7 @@ export default function AccountingTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.06 }}
-                className="group text-center p-6 rounded-2xl border border-white/[0.06] hover:border-[#6366f1]/30 bg-white/[0.02] transition-all duration-500"
+                className="group text-center p-6 rounded-2xl border border-white/[0.10] hover:border-[#6366f1]/30 bg-white/[0.07] transition-all duration-500"
               >
                 <div className="w-12 h-12 mx-auto rounded-xl bg-[#6366f1]/10 border border-[#6366f1]/20 flex items-center justify-center text-[#6366f1] mb-3 group-hover:bg-[#6366f1]/20 group-hover:scale-110 transition-all duration-300">
                   {industry.icon}
@@ -562,7 +562,7 @@ export default function AccountingTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-[#6366f1]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-[#6366f1]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-[#6366f1]/40 via-[#6366f1]/10 to-transparent" />
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_0%_0%,#6366f110,transparent_70%)]" />
@@ -576,7 +576,7 @@ export default function AccountingTemplate() {
                     ))}
                   </div>
                   <p className="text-muted leading-relaxed mb-6 text-sm">&ldquo;{t.text}&rdquo;</p>
-                  <div className="flex items-center gap-3 pt-4 border-t border-white/[0.06]">
+                  <div className="flex items-center gap-3 pt-4 border-t border-white/[0.10]">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#6366f1]/30 to-[#6366f1]/10 flex items-center justify-center text-sm font-bold text-[#6366f1]">
                       {t.name.charAt(0)}
                     </div>
@@ -616,7 +616,7 @@ export default function AccountingTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.06 }}
-                className="group p-6 rounded-2xl border border-white/[0.06] hover:border-[#6366f1]/20 transition-all duration-500 overflow-hidden relative bg-white/[0.02]"
+                className="group p-6 rounded-2xl border border-white/[0.10] hover:border-[#6366f1]/20 transition-all duration-500 overflow-hidden relative bg-white/[0.07]"
               >
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_0%_50%,#6366f110,transparent_70%)]" />
                 <div className="relative z-10 flex gap-4">

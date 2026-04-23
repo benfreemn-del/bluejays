@@ -854,7 +854,7 @@ export default function ChurchTemplate() {
                     ))}
                   </div>
                   <p className="text-muted leading-relaxed mb-6 text-sm">&ldquo;{t.text}&rdquo;</p>
-                  <div className="flex items-center gap-3 pt-4 border-t border-white/[0.06]">
+                  <div className="flex items-center gap-3 pt-4 border-t border-white/[0.10]">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#e2b857]/30 to-[#e2b857]/10 flex items-center justify-center text-sm font-bold text-[#e2b857]">
                       {t.name.charAt(0)}
                     </div>

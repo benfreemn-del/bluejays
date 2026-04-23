@@ -108,7 +108,7 @@ function SectionReveal({ children, className = "", id }: { children: React.React
 }
 
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>;
+  return <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>;
 }
 
 function MagneticButton({ children, className = "", onClick, style }: { children: React.ReactNode; className?: string; onClick?: () => void; style?: React.CSSProperties }) {
@@ -351,7 +351,7 @@ export default function V2TattooPage() {
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer" style={{ background: CRIMSON }}>
                 Book a Consultation <ArrowRight size={18} weight="bold" />
               </MagneticButton>
-              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
+              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
                 <InstagramLogo size={18} weight="duotone" /> @ironandink
               </MagneticButton>
             </motion.div>
@@ -500,7 +500,7 @@ export default function V2TattooPage() {
                   <Quotes size={60} weight="fill" style={{ color: CRIMSON }} className="absolute -top-2 -right-2 opacity-10" />
                   <Quotes size={28} weight="fill" style={{ color: CRIMSON }} className="mb-3 opacity-60" />
                   <p className="text-slate-300 leading-relaxed flex-1 text-sm">{t.text}</p>
-                  <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
+                  <div className="mt-4 pt-4 border-t border-white/8 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-semibold text-white">{t.name}</span>
                       <CheckCircle size={14} weight="fill" style={{ color: CRIMSON }} />
@@ -621,7 +621,7 @@ export default function V2TattooPage() {
                 </div>
                 <p className="relative text-xs uppercase tracking-widest font-bold" style={{ color: opt.color }}>{opt.label}</p>
                 <p className="relative text-sm text-slate-300 mt-2 leading-relaxed flex-1">{opt.detail}</p>
-                <div className="relative mt-6 pt-4 border-t border-white/10 w-full">
+                <div className="relative mt-6 pt-4 border-t border-white/15 w-full">
                   <p className="text-[10px] uppercase tracking-widest text-slate-400 mb-1">We Recommend</p>
                   <p className="text-sm font-semibold text-white">{opt.rec}</p>
                 </div>
@@ -644,7 +644,7 @@ export default function V2TattooPage() {
             <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white"><WordReveal text="Iron & Ink vs. The Shop Next Door" /></h2>
           </div>
           <GlassCard className="overflow-hidden">
-            <div className="grid grid-cols-[1.5fr_1fr_1fr] items-center border-b border-white/10">
+            <div className="grid grid-cols-[1.5fr_1fr_1fr] items-center border-b border-white/15">
               <div className="p-4 md:p-6 text-xs uppercase tracking-widest text-slate-400">What Matters</div>
               <div className="p-4 md:p-6 text-center" style={{ background: `${CRIMSON}15` }}>
                 <p className="text-sm md:text-base font-bold" style={{ color: CRIMSON_LIGHT }}>Iron &amp; Ink</p>
@@ -662,7 +662,7 @@ export default function V2TattooPage() {
               { feature: "Lifetime free touch-ups", us: "Included", them: "Extra charge" },
               { feature: "Licensed + health-inspected", us: "Fully licensed", them: "Check first" },
             ].map((row, i) => (
-              <div key={i} className="grid grid-cols-[1.5fr_1fr_1fr] items-center border-b border-white/5 last:border-b-0">
+              <div key={i} className="grid grid-cols-[1.5fr_1fr_1fr] items-center border-b border-white/8 last:border-b-0">
                 <div className="p-4 md:p-6 text-sm text-white">{row.feature}</div>
                 <div className="p-4 md:p-6 text-center" style={{ background: `${CRIMSON}08` }}>
                   <div className="flex items-center justify-center gap-2">
@@ -874,7 +874,7 @@ export default function V2TattooPage() {
                 <MagneticButton className="px-10 py-4 rounded-full text-base font-semibold text-white inline-flex items-center gap-2 cursor-pointer" style={{ background: CRIMSON }}>
                   <CalendarCheck size={20} weight="duotone" /> Book Consultation
                 </MagneticButton>
-                <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
+                <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
                   <Phone size={18} weight="duotone" /> Call Studio
                 </MagneticButton>
               </div>
@@ -932,7 +932,7 @@ export default function V2TattooPage() {
                 <MagneticButton className="px-10 py-4 rounded-full text-base font-semibold text-white inline-flex items-center gap-2 cursor-pointer" style={{ background: CRIMSON }}>
                   <CalendarCheck size={20} weight="duotone" /> Book Consultation
                 </MagneticButton>
-                <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 inline-flex items-center gap-2 cursor-pointer">
+                <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 inline-flex items-center gap-2 cursor-pointer">
                   <InstagramLogo size={18} weight="duotone" /> @ironandink
                 </MagneticButton>
               </div>
@@ -987,7 +987,7 @@ export default function V2TattooPage() {
       </SectionReveal>
 
       {/* ─── FOOTER ─── */}
-      <footer className="relative z-10 border-t border-white/5 py-8">
+      <footer className="relative z-10 border-t border-white/8 py-8">
         <div className="mx-auto max-w-7xl px-4 md:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2 text-sm text-slate-500">
             <PaintBrush size={16} weight="duotone" style={{ color: CRIMSON }} />

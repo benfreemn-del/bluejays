@@ -177,7 +177,7 @@ function SectionReveal({
 /* ───────────────────────── GLASS CARD ───────────────────────── */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
+    <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
       {children}
     </div>
   );
@@ -451,7 +451,7 @@ export default function V2PressureWashingPage() {
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
                 Get Free Estimate <ArrowRight size={18} weight="bold" />
               </MagneticButton>
-              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
+              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
                 <Phone size={18} weight="duotone" /> (555) 876-3200
               </MagneticButton>
             </motion.div>
@@ -661,7 +661,7 @@ export default function V2PressureWashingPage() {
                   <Quotes size={60} weight="fill" style={{ color: ACCENT }} className="absolute -top-2 -right-2 opacity-10" />
                   <Quotes size={28} weight="fill" style={{ color: ACCENT }} className="mb-3 opacity-60" />
                   <p className="text-slate-300 leading-relaxed flex-1 text-sm">{t.text}</p>
-                  <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
+                  <div className="mt-4 pt-4 border-t border-white/8 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-semibold text-white">{t.name}</span>
                       <CheckCircle size={14} weight="fill" style={{ color: ACCENT }} />
@@ -785,7 +785,7 @@ export default function V2PressureWashingPage() {
                 </div>
                 <p className="relative text-xs uppercase tracking-widest font-bold" style={{ color: opt.color }}>{opt.label}</p>
                 <p className="relative text-sm text-slate-300 mt-2 leading-relaxed flex-1">{opt.detail}</p>
-                <div className="relative mt-6 pt-4 border-t border-white/10 w-full">
+                <div className="relative mt-6 pt-4 border-t border-white/15 w-full">
                   <p className="text-[10px] uppercase tracking-widest text-slate-400 mb-1">We Recommend</p>
                   <p className="text-sm font-semibold text-white">{opt.rec}</p>
                 </div>
@@ -803,7 +803,7 @@ export default function V2PressureWashingPage() {
             <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white"><WordReveal text="Us vs. Renting a Unit" /></h2>
           </div>
           <GlassCard className="overflow-hidden">
-            <div className="grid grid-cols-[1.5fr_1fr_1fr] items-center border-b border-white/10">
+            <div className="grid grid-cols-[1.5fr_1fr_1fr] items-center border-b border-white/15">
               <div className="p-4 md:p-6 text-xs uppercase tracking-widest text-slate-400">What Matters</div>
               <div className="p-4 md:p-6 text-center" style={{ background: `${ACCENT}15` }}>
                 <p className="text-sm md:text-base font-bold" style={{ color: ACCENT_LIGHT }}>Us</p>
@@ -821,7 +821,7 @@ export default function V2PressureWashingPage() {
               { feature: "Most 2-story soft washes", us: "1–2 hours", them: "A full weekend" },
               { feature: "Satisfaction guarantee", us: "Re-clean free", them: "No recourse" },
             ].map((row, i) => (
-              <div key={i} className="grid grid-cols-[1.5fr_1fr_1fr] items-center border-b border-white/5 last:border-b-0">
+              <div key={i} className="grid grid-cols-[1.5fr_1fr_1fr] items-center border-b border-white/8 last:border-b-0">
                 <div className="p-4 md:p-6 text-sm text-white">{row.feature}</div>
                 <div className="p-4 md:p-6 text-center" style={{ background: `${ACCENT}08` }}>
                   <div className="flex items-center justify-center gap-2">
@@ -990,7 +990,7 @@ export default function V2PressureWashingPage() {
                 <MagneticButton className="px-10 py-4 rounded-full text-base font-semibold text-white inline-flex items-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
                   <CalendarCheck size={20} weight="duotone" /> Get Estimate
                 </MagneticButton>
-                <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
+                <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
                   <Phone size={18} weight="duotone" /> Call Us
                 </MagneticButton>
               </div>
@@ -1026,7 +1026,7 @@ export default function V2PressureWashingPage() {
       </SectionReveal>
 
       {/* ─── 12. FOOTER ─── */}
-      <footer className="relative z-10 border-t border-white/5 py-8">
+      <footer className="relative z-10 border-t border-white/8 py-8">
         <div className="mx-auto max-w-7xl px-4 md:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2 text-sm text-slate-500">
             <Drop size={16} weight="duotone" style={{ color: ACCENT }} />

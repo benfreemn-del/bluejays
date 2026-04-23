@@ -244,7 +244,7 @@ function GlassCard({
 }) {
   return (
     <div
-      className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}
+      className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}
     >
       {children}
     </div>
@@ -814,7 +814,7 @@ export default function V2GarageDoorPreview({
               </MagneticButton>
               <MagneticButton
                 href={`tel:${phoneDigits}`}
-                className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer"
+                className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer"
               >
                 <Phone size={18} weight="duotone" /> <PhoneLink phone={data.phone} />
               </MagneticButton>
@@ -837,7 +837,7 @@ export default function V2GarageDoorPreview({
             </div>
           </div>
           <div className="hidden md:block relative">
-            <div className="relative rounded-2xl overflow-hidden border border-white/10">
+            <div className="relative rounded-2xl overflow-hidden border border-white/15">
               <img src={heroCardImage} alt={`${data.businessName} garage door`} className="w-full h-[500px] object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a1a] via-transparent to-transparent" />
               <div className="absolute bottom-6 left-6">
@@ -910,7 +910,7 @@ export default function V2GarageDoorPreview({
             {data.services.map((service, i) => {
               const Icon = getServiceIcon(service.name);
               return (
-                <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.02]">
+                <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]">
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${ACCENT}15, transparent 70%)` }} />
                   <div className="relative z-10">
                     <div className="flex items-start justify-between mb-5">
@@ -990,7 +990,7 @@ export default function V2GarageDoorPreview({
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-white/10">
+                  <tr className="border-b border-white/15">
                     <th className="text-left p-4 text-slate-400 font-medium">Material</th>
                     <th className="text-center p-4 text-slate-400 font-medium">Durability</th>
                     <th className="text-center p-4 text-slate-400 font-medium">Insulation</th>
@@ -1000,7 +1000,7 @@ export default function V2GarageDoorPreview({
                 </thead>
                 <tbody>
                   {MATERIAL_COMPARISON.map((row) => (
-                    <tr key={row.material} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                    <tr key={row.material} className="border-b border-white/8 hover:bg-white/[0.07] transition-colors">
                       <td className="p-4 text-white font-semibold">{row.material}</td>
                       <td className="p-4 text-center text-slate-300">{row.durability}</td>
                       <td className="p-4 text-center text-slate-300">{row.insulation}</td>
@@ -1022,7 +1022,7 @@ export default function V2GarageDoorPreview({
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="relative">
-              <div className="rounded-2xl overflow-hidden border border-white/10">
+              <div className="rounded-2xl overflow-hidden border border-white/15">
                 <img src={aboutImage} alt={`${data.businessName} team`} className="w-full h-[400px] object-cover" />
               </div>
               <div className="absolute -bottom-4 -right-4 md:bottom-6 md:-right-6">
@@ -1147,7 +1147,7 @@ export default function V2GarageDoorPreview({
             {galleryImages.map((src, i) => {
               const titles = ["Custom Carriage Door", "Steel Panel Replacement", "Opener Installation", "Spring Repair"];
               return (
-                <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.06] hover:border-opacity-30 transition-all duration-500">
+                <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.10] hover:border-opacity-30 transition-all duration-500">
                   <img src={src} alt={titles[i]} className="w-full h-64 object-cover transition-transform duration-700 group-hover:scale-105" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-6">
@@ -1165,7 +1165,7 @@ export default function V2GarageDoorPreview({
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #120e18 50%, #1a1a1a 100%)" }} />
         <div className="max-w-4xl mx-auto px-6 relative z-10">
           <SectionHeader badge="See Our Work" title="Watch Our Team in Action" accent={ACCENT} />
-          <div className="relative rounded-2xl overflow-hidden border border-white/10">
+          <div className="relative rounded-2xl overflow-hidden border border-white/15">
             <img src={heroImage} alt="Garage door installation" className="w-full h-[350px] object-cover" />
             <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
               <div className="w-20 h-20 rounded-full flex items-center justify-center cursor-pointer border-2" style={{ background: `${ACCENT}cc`, borderColor: ACCENT }}>
@@ -1207,7 +1207,7 @@ export default function V2GarageDoorPreview({
                   ))}
                 </div>
                 <p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">{t.text}</p>
-                <div className="pt-4 border-t border-white/5 flex items-center gap-2">
+                <div className="pt-4 border-t border-white/8 flex items-center gap-2">
                   <CheckCircle size={14} weight="fill" style={{ color: ACCENT }} />
                   <span className="text-sm font-semibold text-white">{t.name}</span>
                   <span className="text-xs text-slate-500">Verified Customer</span>
@@ -1228,7 +1228,7 @@ export default function V2GarageDoorPreview({
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-white/10">
+                  <tr className="border-b border-white/15">
                     <th className="text-left p-4 text-slate-400 font-medium">Feature</th>
                     <th className="text-center p-4 font-bold" style={{ color: ACCENT }}>{data.businessName}</th>
                     <th className="text-center p-4 text-slate-500 font-medium">Others</th>
@@ -1236,7 +1236,7 @@ export default function V2GarageDoorPreview({
                 </thead>
                 <tbody>
                   {COMPARISON_ROWS.map((row) => (
-                    <tr key={row.feature} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                    <tr key={row.feature} className="border-b border-white/8 hover:bg-white/[0.07] transition-colors">
                       <td className="p-4 text-slate-300">{row.feature}</td>
                       <td className="p-4 text-center"><CheckCircle size={20} weight="fill" className="mx-auto" style={{ color: "#22c55e" }} /></td>
                       <td className="p-4 text-center text-slate-500 text-xs">{row.them}</td>
@@ -1260,7 +1260,7 @@ export default function V2GarageDoorPreview({
               <button
                 key={opt.label}
                 onClick={() => setQuizAnswer(i)}
-                className={`p-6 rounded-2xl border text-left transition-all duration-300 cursor-pointer ${quizAnswer === i ? "border-opacity-100 bg-white/[0.06]" : "border-white/10 bg-white/[0.02] hover:bg-white/[0.04]"}`}
+                className={`p-6 rounded-2xl border text-left transition-all duration-300 cursor-pointer ${quizAnswer === i ? "border-opacity-100 bg-white/[0.06]" : "border-white/15 bg-white/[0.07] hover:bg-white/[0.07]"}`}
                 style={quizAnswer === i ? { borderColor: opt.color } : undefined}
               >
                 <span className="text-2xl mb-3 block">{opt.emoji}</span>
@@ -1429,20 +1429,20 @@ export default function V2GarageDoorPreview({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm text-slate-400 mb-1.5">First Name</label>
-                    <input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="John" />
+                    <input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="John" />
                   </div>
                   <div>
                     <label className="block text-sm text-slate-400 mb-1.5">Last Name</label>
-                    <input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="Doe" />
+                    <input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="Doe" />
                   </div>
                 </div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-1.5">Phone</label>
-                  <input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(555) 123-4567" />
+                  <input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(555) 123-4567" />
                 </div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-1.5">Service Needed</label>
-                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none text-sm">
+                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none text-sm">
                     <option value="" className="bg-neutral-900">Select a service</option>
                     {data.services.map((s) => (
                       <option key={s.name} value={s.name.toLowerCase().replace(/\s+/g, "-")} className="bg-neutral-900">{s.name}</option>
@@ -1451,7 +1451,7 @@ export default function V2GarageDoorPreview({
                 </div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-1.5">Describe Your Issue</label>
-                  <textarea rows={3} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm resize-none" placeholder="Broken spring, noisy opener, new door..." />
+                  <textarea rows={3} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm resize-none" placeholder="Broken spring, noisy opener, new door..." />
                 </div>
                 <MagneticButton className="w-full py-4 rounded-xl text-base font-semibold text-white flex items-center justify-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
                   Send Request <ArrowRight size={18} weight="bold" />
@@ -1487,7 +1487,7 @@ export default function V2GarageDoorPreview({
       </section>
 
       {/* ── FOOTER ── */}
-      <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden">
+      <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111 100%)" }} />
         <IndustrialGrid opacity={0.015} accent={ACCENT} />
         <div className="mx-auto max-w-6xl px-6 relative z-10">
@@ -1520,7 +1520,7 @@ export default function V2GarageDoorPreview({
               </div>
             </div>
           </div>
-          <div className="border-t border-white/5 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="border-t border-white/8 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-sm text-slate-500">
               <Garage size={14} weight="fill" style={{ color: ACCENT }} />
               <span>{data.businessName} &copy; {new Date().getFullYear()}</span>

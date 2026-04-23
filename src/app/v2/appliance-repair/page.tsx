@@ -144,13 +144,13 @@ function SectionReveal({ children, className = "", id, style }: { children: Reac
 function GlassCard({ children, className = "", style, id, onClick, href }: { children: React.ReactNode; className?: string; style?: React.CSSProperties; id?: string; onClick?: () => void; href?: string }) {
   if (href) {
     return (
-      <a href={href} id={id} onClick={onClick} className={`rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.06)] ${className}`} style={style}>
+      <a href={href} id={id} onClick={onClick} className={`rounded-2xl border border-white/15 bg-white/[0.07] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.06)] ${className}`} style={style}>
         {children}
       </a>
     );
   }
   return (
-    <div id={id} onClick={onClick} className={`rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.06)] ${className}`} style={style}>
+    <div id={id} onClick={onClick} className={`rounded-2xl border border-white/15 bg-white/[0.07] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.06)] ${className}`} style={style}>
       {children}
     </div>
   );
@@ -525,7 +525,7 @@ export default function V2ApplianceRepairPage() {
           <SectionHeader label="Transparent Pricing" title="No Surprises." accent="Ever." subtitle="Our flat-rate pricing means you know the cost before we start. The $89 diagnostic is waived when you approve the repair." />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {PRICING.map((tier, i) => (
-              <div key={i} className={`relative rounded-2xl p-8 text-center transition-all duration-300 ${tier.highlight ? "scale-105 border-2" : "border border-white/10"}`} style={{ background: tier.highlight ? `linear-gradient(135deg, ${BG}, #1a1a1a)` : `${BG}`, borderColor: tier.highlight ? ACCENT : undefined }}>
+              <div key={i} className={`relative rounded-2xl p-8 text-center transition-all duration-300 ${tier.highlight ? "scale-105 border-2" : "border border-white/15"}`} style={{ background: tier.highlight ? `linear-gradient(135deg, ${BG}, #1a1a1a)` : `${BG}`, borderColor: tier.highlight ? ACCENT : undefined }}>
                 {tier.badge && (
                   <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-xs font-bold text-white" style={{ background: ACCENT }}>{tier.badge}</span>
                 )}
@@ -709,13 +709,13 @@ export default function V2ApplianceRepairPage() {
         <div className="mx-auto max-w-4xl">
           <SectionHeader label="Why ProFix" title="ProFix vs." accent="Big-Box Repair" subtitle="The chains send a stranger with a clipboard. We send Steve with a truck full of parts." />
           <GlassCard className="overflow-hidden">
-            <div className="grid grid-cols-3 text-center py-4 px-6 border-b border-white/10">
+            <div className="grid grid-cols-3 text-center py-4 px-6 border-b border-white/15">
               <div className="text-sm font-bold" style={{ color: STEEL_LIGHT }}>Feature</div>
               <div className="text-sm font-bold" style={{ color: ACCENT }}>ProFix</div>
               <div className="text-sm font-bold" style={{ color: STEEL }}>Big-Box</div>
             </div>
             {COMPARISON_ROWS.map((row, i) => (
-              <div key={i} className={`grid grid-cols-3 text-center py-4 px-6 ${i < COMPARISON_ROWS.length - 1 ? "border-b border-white/5" : ""}`}>
+              <div key={i} className={`grid grid-cols-3 text-center py-4 px-6 ${i < COMPARISON_ROWS.length - 1 ? "border-b border-white/8" : ""}`}>
                 <div className="text-sm text-left font-medium text-white">{row.feature}</div>
                 <div>
                   <CheckCircle size={22} weight="fill" style={{ color: "#22c55e" }} className="mx-auto" />
@@ -1048,7 +1048,7 @@ export default function V2ApplianceRepairPage() {
       </SectionReveal>
 
       {/* ═══════════════════ FOOTER ═══════════════════ */}
-      <footer className="relative z-10 py-16 px-4 border-t border-white/5">
+      <footer className="relative z-10 py-16 px-4 border-t border-white/8">
         <div className="mx-auto max-w-7xl">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
             <div>
@@ -1083,7 +1083,7 @@ export default function V2ApplianceRepairPage() {
               </div>
             </div>
           </div>
-          <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="pt-8 border-t border-white/8 flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-xs" style={{ color: STEEL }}>
               &copy; {new Date().getFullYear()} ProFix Appliance Repair. All rights reserved.
             </p>

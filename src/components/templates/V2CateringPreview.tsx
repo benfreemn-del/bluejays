@@ -295,7 +295,7 @@ export default function V2CateringPreview({ data }: { data: GeneratedSiteData })
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20" />
         </div>
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
-          <div className="space-y-8 rounded-2xl bg-black/50 backdrop-blur-md p-6 md:p-8 border border-white/5">
+          <div className="space-y-8 rounded-2xl bg-black/50 backdrop-blur-md p-6 md:p-8 border border-white/8">
             <div>
               <p className="text-sm uppercase tracking-widest mb-4" style={{ color: GOLD }}>Premium Catering</p>
               <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 20px rgba(0,0,0,0.8)" }}>{data.tagline || `${data.businessName} — Exceptional Cuisine`}</h1>
@@ -307,7 +307,7 @@ export default function V2CateringPreview({ data }: { data: GeneratedSiteData })
             </div>
             <div className="flex flex-wrap gap-3">
               {["Award-Winning", `${data.googleRating || "5.0"}-Star Rated`, "Custom Menus"].map((badge) => (
-                <span key={badge} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border border-white/10 bg-white/5 text-white/80"><CheckCircle size={14} weight="fill" style={{ color: GOLD }} /> {badge}</span>
+                <span key={badge} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border border-white/15 bg-white/5 text-white/80"><CheckCircle size={14} weight="fill" style={{ color: GOLD }} /> {badge}</span>
               ))}
             </div>
           </div>

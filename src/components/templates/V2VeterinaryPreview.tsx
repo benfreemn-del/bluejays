@@ -732,7 +732,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
             <div className="relative rounded-2xl overflow-hidden border border-gray-200 shadow-lg">
               <img src="/images/vet-before-after.png" alt="Pet grooming transformation before and after" className="w-full h-auto" />
               <div className="absolute bottom-0 left-0 right-0 flex">
-                <div className="flex-1 py-3 text-center bg-slate-800/80 backdrop-blur-sm border-r border-white/10">
+                <div className="flex-1 py-3 text-center bg-slate-800/80 backdrop-blur-sm border-r border-white/15">
                   <span className="text-sm font-bold text-white">Before</span>
                 </div>
                 <div className="flex-1 py-3 text-center backdrop-blur-sm" style={{ background: `${PRIMARY}cc` }}>

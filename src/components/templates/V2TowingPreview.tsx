@@ -160,7 +160,7 @@ function RoadLineBg({ opacity = 0.03, accent }: { opacity?: number; accent: stri
 
 /* ─── SHARED UI ─── */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <div className={`rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>;
+  return <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>;
 }
 
 function MagneticButton({ children, className = "", onClick, style, href }: { children: React.ReactNode; className?: string; onClick?: () => void; style?: React.CSSProperties; href?: string }) {
@@ -274,7 +274,7 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
       <FloatingParticles accent={ACCENT} />
 
       {/* ─── EMERGENCY PULSING STRIP ─── */}
-      <div className="fixed top-0 left-0 right-0 z-[60] bg-black/90 border-b border-white/10 py-2">
+      <div className="fixed top-0 left-0 right-0 z-[60] bg-black/90 border-b border-white/15 py-2">
         <div className="max-w-7xl mx-auto px-4 flex items-center justify-center gap-3">
           <motion.div
             className="w-2.5 h-2.5 rounded-full"
@@ -358,7 +358,7 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
               <MagneticButton href={`tel:${phoneDigits}`} className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
                 <Phone size={18} weight="fill" /> Call Now <ArrowRight size={18} weight="bold" />
               </MagneticButton>
-              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
+              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
                 <MapPin size={18} weight="duotone" /> <MapLink address={data.address} />
               </MagneticButton>
             </div>
@@ -372,7 +372,7 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
             </div>
           </div>
           <div className="hidden md:block relative">
-            <div className="relative rounded-2xl overflow-hidden border border-white/10">
+            <div className="relative rounded-2xl overflow-hidden border border-white/15">
               <img src={heroCardImage} alt={`${data.businessName} tow truck`} className="w-full h-[500px] object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a1a] via-transparent to-transparent" />
               <div className="absolute bottom-6 left-6">
@@ -419,7 +419,7 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
             {data.services.map((service, i) => {
               const Icon = getServiceIcon(service.name);
               return (
-                <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.02]">
+                <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]">
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${ACCENT}15, transparent 70%)` }} />
                   <div className="relative z-10">
                     <div className="flex items-start justify-between mb-5">
@@ -489,7 +489,7 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="relative">
-              <div className="rounded-2xl overflow-hidden border border-white/10">
+              <div className="rounded-2xl overflow-hidden border border-white/15">
                 <img src={aboutImage} alt={`${data.businessName} team`} className="w-full h-[400px] object-cover" />
               </div>
               <div className="absolute -bottom-4 -right-4 md:bottom-6 md:-right-6">
@@ -578,7 +578,7 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-white/10">
+                  <tr className="border-b border-white/15">
                     <th className="text-left p-4 text-slate-400 font-medium">Feature</th>
                     <th className="text-center p-4 font-bold text-white">{data.businessName}</th>
                     <th className="text-center p-4 text-slate-400 font-medium">Others</th>
@@ -586,7 +586,7 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
                 </thead>
                 <tbody>
                   {COMPARISON_ROWS.map((row, i) => (
-                    <tr key={row.feature} className={i < COMPARISON_ROWS.length - 1 ? "border-b border-white/5" : ""}>
+                    <tr key={row.feature} className={i < COMPARISON_ROWS.length - 1 ? "border-b border-white/8" : ""}>
                       <td className="p-4 text-slate-300">{row.feature}</td>
                       <td className="p-4 text-center"><CheckCircle size={20} weight="fill" style={{ color: "#22c55e" }} className="mx-auto" /></td>
                       <td className="p-4 text-center text-slate-500">{row.them}</td>
@@ -608,7 +608,7 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
           </AnimatedSection>
           <div className="grid gap-4">
             {quizOptions.map((opt) => (
-              <button key={opt.label} onClick={() => setQuizAnswer(opt.label)} className={`w-full text-left p-5 rounded-2xl border transition-all duration-300 cursor-pointer ${quizAnswer === opt.label ? "border-white/30 bg-white/[0.06]" : "border-white/10 bg-white/[0.02] hover:bg-white/[0.04]"}`}>
+              <button key={opt.label} onClick={() => setQuizAnswer(opt.label)} className={`w-full text-left p-5 rounded-2xl border transition-all duration-300 cursor-pointer ${quizAnswer === opt.label ? "border-white/30 bg-white/[0.06]" : "border-white/15 bg-white/[0.07] hover:bg-white/[0.07]"}`}>
                 <div className="flex items-center justify-between">
                   <span className="text-white font-semibold">{opt.label}</span>
                   <span className="text-xs font-bold px-3 py-1 rounded-full" style={{ color: opt.color, background: `${opt.color}1a`, border: `1px solid ${opt.color}33` }}>{opt.urgency}</span>
@@ -632,7 +632,7 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1218 50%, #1a1a1a 100%)" }} />
         <div className="max-w-4xl mx-auto px-6 relative z-10">
           <AnimatedSection><SectionHeader badge="See Us in Action" title="Watch Our Team Work" accent={ACCENT} /></AnimatedSection>
-          <div className="relative rounded-2xl overflow-hidden border border-white/10 group cursor-pointer">
+          <div className="relative rounded-2xl overflow-hidden border border-white/15 group cursor-pointer">
             <img src={heroImage} alt="Watch our work" className="w-full h-[400px] object-cover" />
             <div className="absolute inset-0 bg-black/60 flex items-center justify-center group-hover:bg-black/50 transition-colors">
               <div className="w-20 h-20 rounded-full flex items-center justify-center" style={{ background: `${ACCENT}cc` }}>
@@ -661,7 +661,7 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
                 <Quotes size={24} weight="fill" style={{ color: `${ACCENT}33` }} className="mb-3" />
                 <div className="flex gap-0.5 mb-4">{Array.from({ length: t.rating || 5 }).map((_, j) => <Star key={j} size={16} weight="fill" style={{ color: AMBER }} />)}</div>
                 <p className="text-slate-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p>
-                <div className="pt-4 border-t border-white/5 flex items-center gap-2">
+                <div className="pt-4 border-t border-white/8 flex items-center gap-2">
                   <SealCheck size={16} weight="fill" style={{ color: "#22c55e" }} />
                   <span className="text-sm font-semibold text-white">{t.name}</span>
                   <span className="text-xs text-slate-500">Verified</span>
@@ -749,17 +749,17 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
               <h3 className="text-xl font-semibold text-white mb-6">Request Service</h3>
               <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div><label className="block text-sm text-slate-400 mb-1.5">Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="Your name" /></div>
-                  <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
+                  <div><label className="block text-sm text-slate-400 mb-1.5">Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="Your name" /></div>
+                  <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
                 </div>
                 <div><label className="block text-sm text-slate-400 mb-1.5">Service Needed</label>
-                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none text-sm">
+                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none text-sm">
                     <option value="" className="bg-neutral-900">Select a service</option>
                     {data.services.map((s) => <option key={s.name} value={s.name.toLowerCase().replace(/\s+/g, "-")} className="bg-neutral-900">{s.name}</option>)}
                   </select>
                 </div>
                 <div><label className="block text-sm text-slate-400 mb-1.5">Location & Details</label>
-                  <textarea rows={3} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none text-sm resize-none" placeholder="Your location and vehicle details..." />
+                  <textarea rows={3} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm resize-none" placeholder="Your location and vehicle details..." />
                 </div>
                 <MagneticButton className="w-full py-4 rounded-xl text-base font-semibold text-white flex items-center justify-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
                   Request Service <ArrowRight size={18} weight="bold" />
@@ -817,7 +817,7 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
             <p className="text-slate-400 mt-3 max-w-xl mx-auto">{data.businessName} covers a wide service area with a modern fleet ready to handle any situation.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="rounded-2xl border border-white/10 p-6" style={{ background: "rgba(255,255,255,0.03)" }}>
+            <div className="rounded-2xl border border-white/15 p-6" style={{ background: "rgba(255,255,255,0.06)" }}>
               <MapPin size={28} weight="fill" style={{ color: ACCENT }} className="mb-3" />
               <h3 className="text-xl font-bold text-white mb-3">Service Area</h3>
               <p className="text-slate-400 leading-relaxed mb-4">We provide towing and roadside assistance throughout the greater metro area and surrounding communities. Our dispatchers know every road, highway, and back street.</p>
@@ -827,7 +827,7 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
                 ))}
               </div>
             </div>
-            <div className="rounded-2xl border border-white/10 p-6" style={{ background: "rgba(255,255,255,0.03)" }}>
+            <div className="rounded-2xl border border-white/15 p-6" style={{ background: "rgba(255,255,255,0.06)" }}>
               <Truck size={28} weight="fill" style={{ color: ACCENT }} className="mb-3" />
               <h3 className="text-xl font-bold text-white mb-3">Our Fleet</h3>
               <ul className="space-y-3">
@@ -864,7 +864,7 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
               { title: "Police Rotations", desc: "Trusted by local law enforcement for accident recovery" },
               { title: "Motor Club Partner", desc: "Accepted by all major motor club programs" },
             ].map((card) => (
-              <div key={card.title} className="rounded-2xl border border-white/10 p-5 text-center" style={{ background: "rgba(255,255,255,0.03)" }}>
+              <div key={card.title} className="rounded-2xl border border-white/15 p-5 text-center" style={{ background: "rgba(255,255,255,0.06)" }}>
                 <SealCheck size={28} weight="fill" style={{ color: ACCENT }} className="mx-auto mb-2" />
                 <h3 className="text-sm font-bold text-white mb-1">{card.title}</h3>
                 <p className="text-xs text-slate-500 leading-relaxed">{card.desc}</p>
@@ -910,7 +910,7 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
               { title: "Fully Insured", desc: "Complete liability coverage protects your vehicle from hookup to drop-off." },
               { title: "24/7 Availability", desc: "Breakdowns don't wait for business hours. Neither do we. Call anytime." },
             ].map((card) => (
-              <div key={card.title} className="rounded-2xl border border-white/10 p-6 text-center" style={{ background: "rgba(255,255,255,0.03)" }}>
+              <div key={card.title} className="rounded-2xl border border-white/15 p-6 text-center" style={{ background: "rgba(255,255,255,0.06)" }}>
                 <CheckCircle size={28} weight="fill" style={{ color: ACCENT }} className="mx-auto mb-3" />
                 <h3 className="text-lg font-bold text-white mb-2">{card.title}</h3>
                 <p className="text-sm text-slate-400 leading-relaxed">{card.desc}</p>
@@ -942,8 +942,8 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
             ].map((badge) => (
               <div
                 key={badge}
-                className="flex items-center gap-2 px-5 py-3 rounded-full border border-white/10"
-                style={{ background: "rgba(255,255,255,0.03)" }}
+                className="flex items-center gap-2 px-5 py-3 rounded-full border border-white/15"
+                style={{ background: "rgba(255,255,255,0.06)" }}
               >
                 <SealCheck size={18} weight="fill" style={{ color: ACCENT }} />
                 <span className="text-sm font-medium text-white">{badge}</span>
@@ -954,7 +954,7 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
       </section>
 
       {/* ─── FOOTER ─── */}
-      <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden">
+      <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111 100%)" }} />
         <div className="mx-auto max-w-6xl px-6 relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
@@ -984,7 +984,7 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
               </div>
             </div>
           </div>
-          <div className="border-t border-white/5 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="border-t border-white/8 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-sm text-slate-500">
               <Truck size={14} weight="fill" style={{ color: ACCENT }} />
               <span>{data.businessName} &copy; {new Date().getFullYear()}</span>

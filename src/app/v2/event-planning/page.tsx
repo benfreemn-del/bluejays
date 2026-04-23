@@ -215,7 +215,7 @@ function SectionReveal({ children, className = "", id }: { children: React.React
 
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`rounded-2xl border border-white/[0.08] bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.04)] ${className}`}>
+    <div className={`rounded-2xl border border-white/[0.13] bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.08)] ${className}`}>
       {children}
     </div>
   );
@@ -434,7 +434,7 @@ export default function V2EventPlanningPage() {
             <MagneticButton className="px-10 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer shadow-lg" style={{ background: GOLD, boxShadow: `0 0 40px ${GOLD_GLOW_STRONG}` } as React.CSSProperties}>
               Start Planning <ArrowRight size={18} weight="bold" />
             </MagneticButton>
-            <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer backdrop-blur-sm">
+            <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer backdrop-blur-sm">
               <Phone size={18} weight="duotone" /> (206) 555-0915
             </MagneticButton>
           </motion.div>
@@ -626,7 +626,7 @@ export default function V2EventPlanningPage() {
                         </li>
                       ))}
                     </ul>
-                    <MagneticButton className="mt-8 w-full py-3 rounded-full text-sm font-semibold text-white border border-white/10 cursor-pointer">
+                    <MagneticButton className="mt-8 w-full py-3 rounded-full text-sm font-semibold text-white border border-white/15 cursor-pointer">
                       Learn More
                     </MagneticButton>
                   </GlassCard>
@@ -783,7 +783,7 @@ export default function V2EventPlanningPage() {
             </h2>
           </div>
           <GlassCard className="overflow-hidden">
-            <div className="grid grid-cols-3 text-center text-sm font-semibold p-4 border-b border-white/5">
+            <div className="grid grid-cols-3 text-center text-sm font-semibold p-4 border-b border-white/8">
               <span className="text-slate-400">Feature</span>
               <span style={{ color: GOLD }}>Elevate Events</span>
               <span className="text-slate-500">DIY Planning</span>
@@ -1096,7 +1096,7 @@ export default function V2EventPlanningPage() {
                   <MagneticButton className="px-10 py-4 rounded-full text-base font-semibold text-white inline-flex items-center gap-2 cursor-pointer shadow-lg" style={{ background: GOLD, boxShadow: `0 0 40px ${GOLD_GLOW_STRONG}` } as React.CSSProperties}>
                     <CalendarCheck size={20} weight="duotone" /> Free Consultation
                   </MagneticButton>
-                  <a href="tel:2065550915" className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 inline-flex items-center gap-2 backdrop-blur-sm hover:bg-white/5 transition-colors">
+                  <a href="tel:2065550915" className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 inline-flex items-center gap-2 backdrop-blur-sm hover:bg-white/5 transition-colors">
                     <Phone size={18} weight="duotone" /> (206) 555-0915
                   </a>
                 </div>
@@ -1168,7 +1168,7 @@ export default function V2EventPlanningPage() {
       </SectionReveal>
 
       {/* ═══════════════════════ FOOTER ═══════════════════════ */}
-      <footer className="relative z-10 border-t border-white/5 py-8">
+      <footer className="relative z-10 border-t border-white/8 py-8">
         <div className="mx-auto max-w-7xl px-4 md:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2 text-sm text-slate-500">
             <EventIcon size={16} />

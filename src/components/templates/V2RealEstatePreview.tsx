@@ -142,7 +142,7 @@ function LuxuryPattern({ opacity = 0.03, accent }: { opacity?: number; accent: s
 /* ───────────────────────── GLASS CARD ───────────────────────── */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`rounded-2xl border border-white/[0.06] bg-white/[0.03] backdrop-blur-xl shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)] ${className}`}>
+    <div className={`rounded-2xl border border-white/[0.10] bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)] ${className}`}>
       {children}
     </div>
   );
@@ -374,7 +374,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
               <MagneticButton className="px-8 py-4 rounded-xl text-base font-bold text-black flex items-center gap-2 cursor-pointer" style={{ background: GOLD } as React.CSSProperties}>
                 Explore Properties <ArrowRight size={18} weight="bold" />
               </MagneticButton>
-              <MagneticButton href={`tel:${phoneDigits}`} className="px-8 py-4 rounded-xl text-base font-bold text-zinc-300 border border-white/10 flex items-center gap-2 cursor-pointer hover:border-white/20 transition-colors">
+              <MagneticButton href={`tel:${phoneDigits}`} className="px-8 py-4 rounded-xl text-base font-bold text-zinc-300 border border-white/15 flex items-center gap-2 cursor-pointer hover:border-white/20 transition-colors">
                 <Phone size={18} weight="bold" /> <PhoneLink phone={data.phone} />
               </MagneticButton>
             </div>
@@ -394,7 +394,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
               const statIcons = [House, CurrencyDollar, Calendar, Star];
               const Icon = statIcons[i % statIcons.length];
               return (
-                <div key={stat.label} className="text-center p-6 rounded-2xl backdrop-blur-md bg-white/[0.03] border border-white/[0.06]">
+                <div key={stat.label} className="text-center p-6 rounded-2xl backdrop-blur-md bg-white/[0.08] border border-white/[0.10]">
                   <div className="flex items-center justify-center gap-2 mb-2">
                     <Icon size={22} weight="fill" style={{ color: GOLD }} />
                     <span className="text-3xl md:text-4xl font-black tracking-tighter" style={{ color: GOLD }}>{stat.value}</span>
@@ -432,7 +432,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
             {marketStats.map((stat) => {
               const Icon = stat.icon;
               return (
-                <GlassCard key={stat.label} className="p-8 text-center group hover:border-white/10 transition-all duration-500">
+                <GlassCard key={stat.label} className="p-8 text-center group hover:border-white/15 transition-all duration-500">
                   <div className="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ background: `${GOLD}15`, border: `1px solid ${GOLD}33` }}>
                     <Icon size={28} weight="duotone" style={{ color: GOLD }} />
                   </div>
@@ -457,7 +457,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
             {data.services.map((service, i) => {
               const Icon = getServiceIcon(service.name);
               return (
-                <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.02]">
+                <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]">
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${GOLD}15, transparent 70%)` }} />
                   <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${GOLD}4d, transparent)` }} />
                   <div className="relative z-10">
@@ -492,7 +492,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
               { name: "Waterfront", avgPrice: "$750K–$1.2M", vibe: "Stunning views, premium finishes, and resort-style living year-round.", icon: Key },
               { name: "Family-Friendly", avgPrice: "$350K–$550K", vibe: "Parks, playgrounds, and community events — designed for families that thrive together.", icon: Handshake },
             ].map((hood) => (
-              <GlassCard key={hood.name} className="p-7 group hover:border-white/10 transition-all duration-500">
+              <GlassCard key={hood.name} className="p-7 group hover:border-white/15 transition-all duration-500">
                 <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 border" style={{ background: `${GOLD}15`, borderColor: `${GOLD}33` }}>
                   <hood.icon size={24} weight="duotone" style={{ color: GOLD }} />
                 </div>
@@ -513,9 +513,9 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 items-center">
             <div className="lg:col-span-3 relative">
-              <div className="rounded-2xl overflow-hidden border border-white/10 aspect-[4/3]"><img src={aboutImage} alt={`${data.businessName} agent`} className="w-full h-full object-cover" /></div>
+              <div className="rounded-2xl overflow-hidden border border-white/15 aspect-[4/3]"><img src={aboutImage} alt={`${data.businessName} agent`} className="w-full h-full object-cover" /></div>
               <div className="absolute -bottom-4 right-8 md:-bottom-6 md:right-8">
-                <div className="px-6 py-4 rounded-xl backdrop-blur-xl bg-white/[0.05] border border-white/[0.08]">
+                <div className="px-6 py-4 rounded-xl backdrop-blur-xl bg-white/[0.08] border border-white/[0.13]">
                   <div className="flex items-center gap-3"><Star size={20} weight="fill" style={{ color: GOLD }} /><div><p className="font-bold text-sm">Top Agent</p><p className="text-xs text-zinc-500">In Your Area</p></div></div>
                 </div>
               </div>
@@ -555,7 +555,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
             {whyChoosePillars.map((pillar) => {
               const Icon = pillar.icon;
               return (
-                <GlassCard key={pillar.title} className="p-7 group hover:border-white/10 transition-all duration-500">
+                <GlassCard key={pillar.title} className="p-7 group hover:border-white/15 transition-all duration-500">
                   <div className="flex items-start gap-5">
                     <div className="w-14 h-14 rounded-xl flex items-center justify-center shrink-0" style={{ background: `${GOLD}15`, border: `1px solid ${GOLD}33` }}>
                       <Icon size={28} weight="duotone" style={{ color: GOLD }} />
@@ -603,7 +603,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
             {galleryImages.map((src, i) => {
               const titles = ["Modern Luxury Estate", "Waterfront Retreat", "Contemporary Villa", "Penthouse Living"];
               return (
-                <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.06]">
+                <div key={i} className="group relative rounded-2xl overflow-hidden border border-white/[0.10]">
                   <img src={src} alt={titles[i]} className="w-full h-64 object-cover transition-transform duration-700 group-hover:scale-105" />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#09090b]/80 via-black/20 to-transparent" />
                   <div className="absolute top-4 left-4"><span className="px-3 py-1 text-xs font-bold rounded-full text-black" style={{ backgroundColor: GOLD }}>Featured</span></div>
@@ -623,7 +623,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
           <SectionHeader badge="Coverage" title="Areas We Serve" subtitle={`${data.businessName} knows every neighborhood, every street, every opportunity.`} accent={GOLD} />
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {areasWeServe.map((area) => (
-              <GlassCard key={area} className="p-5 text-center group hover:border-white/10 transition-all duration-300">
+              <GlassCard key={area} className="p-5 text-center group hover:border-white/15 transition-all duration-300">
                 <MapPin size={22} weight="duotone" style={{ color: GOLD }} className="mx-auto mb-2" />
                 <p className="text-white font-semibold text-sm">{area}</p>
                 <p className="text-zinc-500 text-xs mt-1">& surrounding areas</p>
@@ -642,7 +642,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-white/10">
+                  <tr className="border-b border-white/15">
                     <th className="text-left px-6 py-4 text-zinc-400 font-medium">Feature</th>
                     <th className="text-center px-6 py-4 font-bold" style={{ color: GOLD }}>{data.businessName}</th>
                     <th className="text-center px-6 py-4 text-zinc-500 font-medium">Discount Brokers</th>
@@ -650,7 +650,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
                 </thead>
                 <tbody>
                   {comparisonRows.map((row, i) => (
-                    <tr key={row.feature} className={i % 2 === 0 ? "bg-white/[0.02]" : ""}>
+                    <tr key={row.feature} className={i % 2 === 0 ? "bg-white/[0.07]" : ""}>
                       <td className="px-6 py-4 text-zinc-300">{row.feature}</td>
                       <td className="px-6 py-4 text-center">
                         <CheckCircle size={20} weight="fill" className="mx-auto" style={{ color: GOLD }} />
@@ -670,7 +670,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #09090b 0%, #070707 50%, #09090b 100%)" }} />
         <div className="max-w-5xl mx-auto px-6 relative z-10">
           <SectionHeader badge="Virtual Tour" title="See Our Featured Listings" accent={GOLD} />
-          <div className="relative rounded-2xl overflow-hidden border border-white/[0.08] aspect-video group cursor-pointer">
+          <div className="relative rounded-2xl overflow-hidden border border-white/[0.13] aspect-video group cursor-pointer">
             <img src={galleryImages[0] || heroImage} alt="Featured listings tour" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
             <div className="absolute inset-0 bg-black/50 group-hover:bg-black/40 transition-colors duration-300" />
             <div className="absolute inset-0 flex flex-col items-center justify-center">
@@ -694,7 +694,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
             {quizOptions.map((option) => {
               const Icon = option.icon;
               return (
-                <GlassCard key={option.label} className="p-6 group hover:border-white/10 transition-all duration-300 cursor-pointer">
+                <GlassCard key={option.label} className="p-6 group hover:border-white/15 transition-all duration-300 cursor-pointer">
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0" style={{ background: `${GOLD}15`, border: `1px solid ${GOLD}33` }}>
                       <Icon size={24} weight="duotone" style={{ color: GOLD }} />
@@ -738,7 +738,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
               <GlassCard key={i} className="p-6 h-full flex flex-col">
                 <div className="flex gap-0.5 mb-4">{Array.from({ length: t.rating || 5 }).map((_, j) => <Star key={j} size={18} weight="fill" style={{ color: GOLD }} />)}</div>
                 <p className="text-zinc-300 leading-relaxed flex-1 text-sm mb-4">&ldquo;{t.text}&rdquo;</p>
-                <div className="pt-4 border-t border-white/5">
+                <div className="pt-4 border-t border-white/8">
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-semibold text-white">{t.name}</span>
                     <CheckCircle size={14} weight="fill" style={{ color: GOLD }} />
@@ -834,24 +834,24 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
               <div className="h-px w-16 mb-6" style={{ backgroundColor: GOLD }} />
               <p className="text-zinc-400 leading-relaxed mb-8">Whether buying or selling, our team is ready to deliver an exceptional experience tailored to your vision.</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="flex items-center gap-3 p-4 rounded-xl bg-white/[0.03] border border-white/5"><Phone size={20} style={{ color: GOLD }} /><div><p className="text-xs text-zinc-600">Call</p><PhoneLink phone={data.phone} className="text-sm font-medium" /></div></div>
-                <div className="flex items-center gap-3 p-4 rounded-xl bg-white/[0.03] border border-white/5"><MapPin size={20} style={{ color: GOLD }} /><div><p className="text-xs text-zinc-600">Office</p><MapLink address={data.address} className="text-sm font-medium" /></div></div>
+                <div className="flex items-center gap-3 p-4 rounded-xl bg-white/[0.08] border border-white/8"><Phone size={20} style={{ color: GOLD }} /><div><p className="text-xs text-zinc-600">Call</p><PhoneLink phone={data.phone} className="text-sm font-medium" /></div></div>
+                <div className="flex items-center gap-3 p-4 rounded-xl bg-white/[0.08] border border-white/8"><MapPin size={20} style={{ color: GOLD }} /><div><p className="text-xs text-zinc-600">Office</p><MapLink address={data.address} className="text-sm font-medium" /></div></div>
               </div>
             </div>
             <GlassCard className="p-8">
               <h3 className="text-xl font-semibold text-white mb-6">Schedule Consultation</h3>
               <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div><label className="block text-sm text-zinc-400 mb-1.5">Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-zinc-500 focus:outline-none text-sm" placeholder="Your name" /></div>
-                  <div><label className="block text-sm text-zinc-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-zinc-500 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
+                  <div><label className="block text-sm text-zinc-400 mb-1.5">Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-zinc-500 focus:outline-none text-sm" placeholder="Your name" /></div>
+                  <div><label className="block text-sm text-zinc-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-zinc-500 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
                 </div>
                 <div><label className="block text-sm text-zinc-400 mb-1.5">Interest</label>
-                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none text-sm">
+                  <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none text-sm">
                     <option value="" className="bg-neutral-900">Buying or Selling?</option>
                     {data.services.map((s) => <option key={s.name} value={s.name.toLowerCase().replace(/\s+/g, "-")} className="bg-neutral-900">{s.name}</option>)}
                   </select>
                 </div>
-                <div><label className="block text-sm text-zinc-400 mb-1.5">Message</label><textarea rows={3} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-zinc-500 focus:outline-none text-sm resize-none" placeholder="Tell us about your real estate needs..." /></div>
+                <div><label className="block text-sm text-zinc-400 mb-1.5">Message</label><textarea rows={3} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-zinc-500 focus:outline-none text-sm resize-none" placeholder="Tell us about your real estate needs..." /></div>
                 <MagneticButton className="w-full py-4 rounded-xl text-base font-bold text-black flex items-center justify-center gap-2 cursor-pointer" style={{ background: GOLD } as React.CSSProperties}>
                   Schedule Consultation <ArrowRight size={18} weight="bold" />
                 </MagneticButton>
@@ -880,7 +880,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
                 <MagneticButton className="px-8 py-4 rounded-xl text-base font-bold text-black flex items-center gap-2 cursor-pointer" style={{ background: GOLD } as React.CSSProperties}>
                   <Target size={18} weight="bold" /> Get My Free Valuation
                 </MagneticButton>
-                <MagneticButton href={`tel:${phoneDigits}`} className="px-8 py-4 rounded-xl text-base font-bold text-zinc-300 border border-white/10 flex items-center gap-2 cursor-pointer hover:border-white/20 transition-colors">
+                <MagneticButton href={`tel:${phoneDigits}`} className="px-8 py-4 rounded-xl text-base font-bold text-zinc-300 border border-white/15 flex items-center gap-2 cursor-pointer hover:border-white/20 transition-colors">
                   <Phone size={18} weight="bold" /> <PhoneLink phone={data.phone} />
                 </MagneticButton>
               </div>
@@ -925,7 +925,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
               { stat: "97%", label: "List-to-Sale Ratio", note: "Sellers get near asking" },
               { stat: "2.1", label: "Months of Inventory", note: "Strong seller's market" },
             ].map((m) => (
-              <div key={m.label} className="rounded-2xl border border-white/10 p-6 text-center" style={{ background: "rgba(255,255,255,0.03)" }}>
+              <div key={m.label} className="rounded-2xl border border-white/15 p-6 text-center" style={{ background: "rgba(255,255,255,0.06)" }}>
                 <p className="text-3xl font-extrabold mb-1" style={{ color: GOLD }}>{m.stat}</p>
                 <p className="text-sm text-white font-semibold">{m.label}</p>
                 <p className="text-xs text-zinc-500 mt-1">{m.note}</p>
@@ -952,7 +952,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
               { area: "Family Suburbs", highlights: "Top-rated schools, large lots, community parks, quiet streets" },
               { area: "Historic Quarter", highlights: "Charming character homes, tree-lined streets, boutique shopping, cafes" },
             ].map((n) => (
-              <div key={n.area} className="flex items-start gap-4 rounded-2xl border border-white/10 p-6" style={{ background: "rgba(255,255,255,0.03)" }}>
+              <div key={n.area} className="flex items-start gap-4 rounded-2xl border border-white/15 p-6" style={{ background: "rgba(255,255,255,0.06)" }}>
                 <House size={28} weight="duotone" style={{ color: GOLD }} className="shrink-0 mt-1" />
                 <div>
                   <h3 className="text-lg font-bold text-white">{n.area}</h3>
@@ -981,7 +981,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
       </section>
 
       {/* ══════════════════ 15. FOOTER ══════════════════ */}
-      <footer className="relative z-10 border-t border-white/5 py-10 overflow-hidden">
+      <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #09090b 0%, #060606 100%)" }} />
         <div className="mx-auto max-w-6xl px-6 relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
@@ -989,7 +989,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
             <div><h4 className="text-sm font-semibold text-white mb-3">Quick Links</h4><div className="space-y-2">{["Services", "About", "Properties", "Contact"].map((link) => <a key={link} href={`#${link.toLowerCase()}`} className="block text-sm text-zinc-500 hover:text-white transition-colors">{link}</a>)}</div></div>
             <div><h4 className="text-sm font-semibold text-white mb-3">Contact</h4><div className="space-y-2 text-sm text-zinc-500"><p><PhoneLink phone={data.phone} /></p><p><MapLink address={data.address} /></p>{data.socialLinks && Object.entries(data.socialLinks).map(([platform, url]) => <a key={platform} href={url} target="_blank" rel="noopener noreferrer" className="block hover:text-white transition-colors capitalize">{platform}</a>)}</div></div>
           </div>
-          <div className="border-t border-white/5 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="border-t border-white/8 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-sm text-zinc-500"><Buildings size={14} weight="bold" style={{ color: GOLD }} /><span>{data.businessName} &copy; {new Date().getFullYear()}</span></div>
             <div className="flex items-center gap-2 text-xs text-zinc-600"><BluejayLogo className="w-4 h-4" /><span>Created by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" style={{textDecoration:"underline"}}>bluejayportfolio.com</a></span></div>
           </div>

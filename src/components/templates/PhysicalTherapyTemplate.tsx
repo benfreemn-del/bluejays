@@ -390,7 +390,7 @@ export default function PhysicalTherapyTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-[#2dd4bf]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-[#2dd4bf]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 {/* Hover glow */}
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_50%_0%,#2dd4bf15,transparent_70%)]" />
@@ -448,7 +448,7 @@ export default function PhysicalTherapyTemplate() {
             >
               <div className="relative w-full aspect-[4/5] max-w-md mx-auto">
                 {/* Main image */}
-                <div className="absolute top-0 left-0 w-[75%] h-[70%] rounded-2xl overflow-hidden border-2 border-white/[0.06] shadow-2xl z-10">
+                <div className="absolute top-0 left-0 w-[75%] h-[70%] rounded-2xl overflow-hidden border-2 border-white/[0.10] shadow-2xl z-10">
                   <img
                     src="https://images.unsplash.com/photo-1519125323398-675f0ddb6308?w=600&q=80"
                     alt="Physical therapy session"
@@ -456,7 +456,7 @@ export default function PhysicalTherapyTemplate() {
                   />
                 </div>
                 {/* Secondary image */}
-                <div className="absolute bottom-0 right-0 w-[65%] h-[55%] rounded-2xl overflow-hidden border-2 border-white/[0.06] shadow-2xl z-20">
+                <div className="absolute bottom-0 right-0 w-[65%] h-[55%] rounded-2xl overflow-hidden border-2 border-white/[0.10] shadow-2xl z-20">
                   <img
                     src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=400&q=80"
                     alt="Rehabilitation exercise"
@@ -499,7 +499,7 @@ export default function PhysicalTherapyTemplate() {
                   { icon: <DumbbellIcon />, title: "Therapeutic Exercise", desc: "Progressive strengthening tailored to your specific goals" },
                   { icon: <BodyIcon />, title: "Movement Analysis", desc: "Biomechanical assessment to identify and correct imbalances" },
                 ].map((feature) => (
-                  <div key={feature.title} className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/[0.04] hover:border-[#2dd4bf]/20 transition-colors duration-300">
+                  <div key={feature.title} className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.07] border border-white/[0.04] hover:border-[#2dd4bf]/20 transition-colors duration-300">
                     <div className="w-10 h-10 rounded-lg bg-[#2dd4bf]/10 border border-[#2dd4bf]/20 flex items-center justify-center text-[#2dd4bf] shrink-0">
                       {feature.icon}
                     </div>
@@ -539,7 +539,7 @@ export default function PhysicalTherapyTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.12 }}
-                className="group relative rounded-2xl border border-white/[0.06] hover:border-[#2dd4bf]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative rounded-2xl border border-white/[0.10] hover:border-[#2dd4bf]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 {/* Photo */}
                 <div className="relative aspect-[3/4] overflow-hidden">
@@ -559,7 +559,7 @@ export default function PhysicalTherapyTemplate() {
                     <p className="text-[#2dd4bf] text-sm font-semibold mb-3">{therapist.title}</p>
                     <div className="flex flex-wrap gap-2">
                       {therapist.specialties.map((s) => (
-                        <span key={s} className="text-[10px] font-semibold uppercase tracking-wider text-white/60 bg-white/10 border border-white/10 px-2.5 py-1 rounded-full">
+                        <span key={s} className="text-[10px] font-semibold uppercase tracking-wider text-white/60 bg-white/10 border border-white/15 px-2.5 py-1 rounded-full">
                           {s}
                         </span>
                       ))}
@@ -596,7 +596,7 @@ export default function PhysicalTherapyTemplate() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.04 }}
-                className="group flex items-center gap-3 p-4 rounded-xl border border-white/[0.06] hover:border-[#2dd4bf]/30 bg-white/[0.02] transition-all duration-500"
+                className="group flex items-center gap-3 p-4 rounded-xl border border-white/[0.10] hover:border-[#2dd4bf]/30 bg-white/[0.07] transition-all duration-500"
               >
                 <div className="w-2 h-2 rounded-full bg-[#2dd4bf]/50 group-hover:bg-[#2dd4bf] shrink-0 transition-colors duration-300" />
                 <span className="text-sm font-medium text-white/80 group-hover:text-white transition-colors duration-300">{condition}</span>
@@ -637,7 +637,7 @@ export default function PhysicalTherapyTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.05 }}
-                className="group px-6 py-3 rounded-xl border border-white/[0.06] hover:border-[#2dd4bf]/30 bg-white/[0.02] transition-all duration-500"
+                className="group px-6 py-3 rounded-xl border border-white/[0.10] hover:border-[#2dd4bf]/30 bg-white/[0.07] transition-all duration-500"
               >
                 <span className="text-sm font-semibold text-white/70 group-hover:text-[#2dd4bf] transition-colors duration-300">{provider}</span>
               </motion.div>
@@ -676,7 +676,7 @@ export default function PhysicalTherapyTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group relative p-7 rounded-2xl border border-white/[0.06] hover:border-[#2dd4bf]/30 transition-all duration-500 overflow-hidden bg-white/[0.02]"
+                className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-[#2dd4bf]/30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
               >
                 {/* Top accent line */}
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-[#2dd4bf]/40 via-[#2dd4bf]/10 to-transparent" />
@@ -695,7 +695,7 @@ export default function PhysicalTherapyTemplate() {
                   {/* Quote */}
                   <p className="text-muted leading-relaxed mb-6 text-sm">&ldquo;{t.text}&rdquo;</p>
                   {/* Author */}
-                  <div className="flex items-center gap-3 pt-4 border-t border-white/[0.06]">
+                  <div className="flex items-center gap-3 pt-4 border-t border-white/[0.10]">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#2dd4bf]/30 to-[#2dd4bf]/10 flex items-center justify-center text-sm font-bold text-[#2dd4bf]">
                       {t.name.charAt(0)}
                     </div>
@@ -735,7 +735,7 @@ export default function PhysicalTherapyTemplate() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.06 }}
-                className="group p-6 rounded-2xl border border-white/[0.06] hover:border-[#2dd4bf]/20 transition-all duration-500 overflow-hidden relative bg-white/[0.02]"
+                className="group p-6 rounded-2xl border border-white/[0.10] hover:border-[#2dd4bf]/20 transition-all duration-500 overflow-hidden relative bg-white/[0.07]"
               >
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-[radial-gradient(circle_at_0%_50%,#2dd4bf10,transparent_70%)]" />
                 <div className="relative z-10 flex gap-4">

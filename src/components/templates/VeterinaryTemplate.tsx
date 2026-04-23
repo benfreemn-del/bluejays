@@ -498,7 +498,7 @@ export default function VeterinaryTemplate() {
                     <p className="text-[#34d399] text-sm font-semibold mb-3">{vet.title}</p>
                     <div className="flex flex-wrap gap-2">
                       {vet.specialties.map((s) => (
-                        <span key={s} className="text-[10px] font-semibold uppercase tracking-wider text-[#6b7280] bg-white/10 border border-white/10 px-2.5 py-1 rounded-full">
+                        <span key={s} className="text-[10px] font-semibold uppercase tracking-wider text-[#6b7280] bg-white/10 border border-white/15 px-2.5 py-1 rounded-full">
                           {s}
                         </span>
                       ))}
@@ -591,7 +591,7 @@ export default function VeterinaryTemplate() {
                 </p>
               </div>
               <div className="grid md:grid-cols-2 gap-6">
-                <div className="p-5 rounded-xl bg-white/[0.03] border border-gray-200">
+                <div className="p-5 rounded-xl bg-white/[0.08] border border-gray-200">
                   <h4 className="font-bold text-sm mb-3 text-[#f87171]">When to Call</h4>
                   <ul className="space-y-2 text-muted text-sm">
                     {["Difficulty breathing or choking", "Severe bleeding or trauma", "Ingestion of toxic substances", "Seizures or collapse", "Unable to urinate or defecate"].map((item) => (
@@ -602,7 +602,7 @@ export default function VeterinaryTemplate() {
                     ))}
                   </ul>
                 </div>
-                <div className="p-5 rounded-xl bg-white/[0.03] border border-gray-200 flex flex-col items-center justify-center text-center">
+                <div className="p-5 rounded-xl bg-white/[0.08] border border-gray-200 flex flex-col items-center justify-center text-center">
                   <p className="text-muted text-sm mb-4">24/7 Emergency Hotline</p>
                   <a href="tel:4255550110" className="text-3xl md:text-4xl font-extrabold text-[#34d399] hover:text-[#6ee7b7] transition-colors mb-4">
                     (425) 555-0110
