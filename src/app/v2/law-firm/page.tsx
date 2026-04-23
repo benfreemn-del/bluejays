@@ -182,6 +182,18 @@ const COMPARISON_ROWS = [
 /* ─── awards ─── */
 const AWARDS = ["Avvo 10.0 Superb", "Super Lawyers", "WSBA Member", "KCBA", "National Trial Lawyers Top 100", "BBB A+ Rated"];
 
+/* ─── service cities ─── */
+const SERVICE_CITIES = [
+  { city: "Seattle", note: "King County Superior Court" },
+  { city: "Bellevue", note: "Eastside Office" },
+  { city: "Tacoma", note: "Pierce County Courts" },
+  { city: "Everett", note: "Snohomish County" },
+  { city: "Renton", note: "South King County" },
+  { city: "Kirkland", note: "North Eastside" },
+  { city: "Redmond", note: "Tech Corridor" },
+  { city: "Olympia", note: "State Capital Cases" },
+];
+
 /* ═══ COMPONENTS ═══ */
 
 /* ─── animated scale of justice (hero watermark) ─── */
@@ -341,6 +353,21 @@ function SectionHeader({ label, title, accent }: { label: string; title: string;
         {title} <span style={{ color: EMERALD }}>{accent}</span>
       </motion.h2>
     </motion.div>
+  );
+}
+
+/* ─── shimmer border ─── */
+function ShimmerBorder({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return (
+    <div className={`relative rounded-2xl p-[1px] overflow-hidden ${className}`}>
+      <motion.div
+        className="absolute inset-0 rounded-2xl"
+        style={{ background: `conic-gradient(from 0deg, transparent, ${EMERALD}, transparent, ${GOLD}, transparent)`, willChange: "transform" }}
+        animate={{ rotate: [0, 360] }}
+        transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+      />
+      <div className="relative rounded-2xl z-10" style={{ background: NAVY }}>{children}</div>
+    </div>
   );
 }
 
@@ -541,6 +568,24 @@ export default function V2LawFirmPage() {
         {/* bottom gradient fade */}
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#0f172a] to-transparent z-20" />
       </section>
+
+      {/* ══════ URGENCY STRIP ══════ */}
+      <div className="w-full py-3 px-4 flex items-center justify-center gap-4 md:gap-8 text-white text-sm font-medium flex-wrap" style={{ background: EMERALD }}>
+        <motion.div
+          className="w-2.5 h-2.5 rounded-full bg-white flex-shrink-0"
+          animate={{ scale: [1, 1.4, 1], opacity: [0.7, 1, 0.7] }}
+          transition={{ repeat: Infinity, duration: 1.5 }}
+        />
+        <span className="text-center">
+          Free Consultation Available &middot; Cases Reviewed Within 24 Hours &middot; Call{" "}
+          <a href="tel:2064329150" className="underline font-bold hover:no-underline">(206) 432-9150</a>
+        </span>
+        <motion.div
+          className="w-2.5 h-2.5 rounded-full bg-white flex-shrink-0"
+          animate={{ scale: [1, 1.4, 1], opacity: [0.7, 1, 0.7] }}
+          transition={{ repeat: Infinity, duration: 1.5, delay: 0.75 }}
+        />
+      </div>
 
       {/* ══════ 2. TRUST BAR ══════ */}
       <section className="relative z-10 py-10 md:py-14">
@@ -773,6 +818,31 @@ export default function V2LawFirmPage() {
       <section id="testimonials" className="relative z-10 py-16 md:py-24">
         <div className="max-w-4xl mx-auto px-4 md:px-6">
           <SectionHeader label="Client Stories" title="Words From" accent="Our Clients" />
+
+          {/* Google Reviews Header */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={spring}
+            className="flex flex-wrap items-center gap-3 mb-10 justify-center"
+          >
+            <div className="flex gap-0.5">
+              {[...Array(5)].map((_, i) => (
+                <svg key={i} className="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 20 20">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                </svg>
+              ))}
+            </div>
+            <span className="text-white font-semibold text-lg">4.9</span>
+            <span className="text-slate-400">· 198 Google reviews</span>
+            <svg className="w-5 h-5 ml-1" viewBox="0 0 24 24" fill="none">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" />
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+            </svg>
+          </motion.div>
 
           <div className="relative">
             <AnimatePresence mode="wait">
@@ -1094,11 +1164,13 @@ export default function V2LawFirmPage() {
                       className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-slate-600 focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/30 outline-none transition-all resize-none"
                     />
                   </div>
-                  <MagneticButton className="w-full px-8 py-4 bg-emerald-600 text-white font-bold rounded-xl">
-                    <span className="relative z-10 flex items-center justify-center gap-2">
-                      Request Free Case Review <ArrowRight weight="bold" size={18} />
-                    </span>
-                  </MagneticButton>
+                  <ShimmerBorder className="w-full">
+                    <MagneticButton className="w-full px-8 py-4 bg-emerald-600 text-white font-bold rounded-xl">
+                      <span className="relative z-10 flex items-center justify-center gap-2">
+                        Request Free Case Review <ArrowRight weight="bold" size={18} />
+                      </span>
+                    </MagneticButton>
+                  </ShimmerBorder>
                 </div>
               </GlassCard>
             </motion.div>
@@ -1106,7 +1178,40 @@ export default function V2LawFirmPage() {
         </div>
       </section>
 
-      {/* ══════ 14. EMERGENCY BANNER ══════ */}
+      {/* ══════ 15. SERVICE AREA GRID ══════ */}
+      <section className="relative z-10 py-16 md:py-24">
+        <div className="max-w-6xl mx-auto px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: EMERALD }}>Where We Practice</p>
+            <h2 className="text-3xl md:text-5xl tracking-tighter leading-none font-bold text-white">
+              Serving Clients Throughout{" "}
+              <span style={{ color: EMERALD }}>Washington State</span>
+            </h2>
+            <p className="mt-4 text-slate-400 max-w-xl mx-auto">
+              Our attorneys appear in courts across the Puget Sound region. Virtual consultations available statewide.
+            </p>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            {SERVICE_CITIES.map((item, i) => (
+              <motion.div
+                key={item.city}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ ...spring, delay: i * 0.06 }}
+              >
+                <GlassCard className="p-5 text-center hover:border-emerald-500/20 transition-colors">
+                  <MapPin size={20} weight="duotone" className="text-emerald-400 mx-auto mb-2" />
+                  <div className="font-bold text-white text-lg">{item.city}</div>
+                  <div className="text-xs text-slate-500 mt-1">{item.note}</div>
+                </GlassCard>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════ 16. EMERGENCY BANNER ══════ */}
       <section className="relative z-10 py-6 md:py-8" style={{ background: `linear-gradient(90deg, #7f1d1d, ${NAVY_LIGHT}, #7f1d1d)` }}>
         <div className="max-w-7xl mx-auto px-4 md:px-6">
           <a href="tel:2064329150" className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6">

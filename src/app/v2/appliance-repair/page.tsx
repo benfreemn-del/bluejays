@@ -254,13 +254,13 @@ const TESTIMONIALS = [
 ];
 
 const COMPARISON_ROWS = [
-  { feature: "Same-Day Service", us: true, them: "2-5 Days" },
-  { feature: "Upfront Pricing", us: true, them: "Hidden Fees" },
-  { feature: "EPA Certified Techs", us: true, them: "Varies" },
-  { feature: "Factory-Trained", us: true, them: "Sometimes" },
-  { feature: "90-Day Parts Warranty", us: true, them: "30 Days" },
-  { feature: "Evening Appointments", us: true, them: "No" },
-  { feature: "Free Follow-Up", us: true, them: "Extra Charge" },
+  { feature: "Repair cost (fraction of new)", us: "✓ 20-40% of new price", them: "Full replacement cost" },
+  { feature: "Same-day service available", us: "✓", them: "1-2 week delivery wait" },
+  { feature: "Extends appliance life 5-10 years", us: "✓", them: "Start fresh only" },
+  { feature: "Warranty on parts & labor", us: "✓ 90-day warranty", them: "Limited manufacturer" },
+  { feature: "Eco-friendly (less waste)", us: "✓", them: "Old appliance to landfill" },
+  { feature: "No setup/installation hassle", us: "✓", them: "Setup fees & coordination" },
+  { feature: "Diagnose first — transparent quote", us: "✓", them: "No transparency" },
 ];
 
 const CERTIFICATIONS = [
@@ -275,10 +275,10 @@ const HERO_STATS = [
 ];
 
 const QUIZ_OPTIONS = [
-  { label: "Not Cooling / Heating", icon: Snowflake, severity: "urgent", desc: "Food or comfort at risk. We prioritize these calls." },
-  { label: "Strange Noises", icon: Warning, severity: "moderate", desc: "Mechanical issue developing. Best to catch it early." },
-  { label: "Won't Start / No Power", icon: Lightning, severity: "urgent", desc: "Could be electrical or control board. We diagnose on-site." },
-  { label: "Leaking Water", icon: Drop, severity: "moderate", desc: "Water damage risk. Schedule today to avoid costly cleanup." },
+  { label: "My refrigerator isn't cooling", icon: Snowflake, severity: "urgent", desc: "A warm fridge is urgent — food safety is at risk. We offer same-day emergency fridge repair for most brands. Average repair: $150-280. Call now." },
+  { label: "My washer or dryer isn't working", icon: Drop, severity: "moderate", desc: "Washer/dryer issues are our most common repair. Most are fixed in one visit. Average cost $120-250 — much less than replacement." },
+  { label: "My dishwasher is leaking or won't start", icon: Warning, severity: "moderate", desc: "Dishwasher leaks can damage flooring fast. We carry common parts on our trucks and can often fix same-day. Average repair: $100-200." },
+  { label: "My oven or stove has issues", icon: Fire, severity: "urgent", desc: "From igniter to control board, we service all oven types. Same-day for gas stove issues. Average: $130-260." },
 ];
 
 const FINANCING_TIERS = [
@@ -634,7 +634,7 @@ export default function V2ApplianceRepairPage() {
       {/* ═══════════════════ 8. "WHAT'S BROKEN?" QUIZ ═══════════════════ */}
       <SectionReveal className="relative z-10 py-24 px-4">
         <div className="mx-auto max-w-4xl">
-          <SectionHeader label="Quick Diagnosis" title="What's" accent="Broken?" subtitle="Select the symptom that best describes your appliance problem and we'll prioritize your call." />
+          <SectionHeader label="Quick Diagnosis" title="What Appliance" accent="Needs Repair?" subtitle="Select your appliance and we'll give you an instant cost estimate and next step." />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             {QUIZ_OPTIONS.map((opt, i) => {
               const Icon = opt.icon;
@@ -700,20 +700,18 @@ export default function V2ApplianceRepairPage() {
       {/* ═══════════════════ 10. COMPETITOR COMPARISON ═══════════════════ */}
       <SectionReveal className="relative z-10 py-24 px-4" style={{ background: `linear-gradient(180deg, transparent, ${ACCENT_GLOW}, transparent)` }}>
         <div className="mx-auto max-w-4xl">
-          <SectionHeader label="Why ProFix" title="ProFix vs." accent="Big-Box Repair" subtitle="The chains send a stranger with a clipboard. We send Steve with a truck full of parts." />
+          <SectionHeader label="Why ProFix" title="ProFix vs." accent="Buying New" subtitle="Repair is almost always smarter — and we make it easy." />
           <GlassCard className="overflow-hidden">
             <div className="grid grid-cols-3 text-center py-4 px-6 border-b border-white/10">
-              <div className="text-sm font-bold" style={{ color: STEEL_LIGHT }}>Feature</div>
-              <div className="text-sm font-bold" style={{ color: ACCENT }}>ProFix</div>
-              <div className="text-sm font-bold" style={{ color: STEEL }}>Big-Box</div>
+              <div className="text-sm font-bold text-left" style={{ color: STEEL_LIGHT }}>Feature</div>
+              <div className="text-sm font-bold" style={{ color: ACCENT }}>ProFix Repair</div>
+              <div className="text-sm font-bold" style={{ color: STEEL }}>Buying New</div>
             </div>
             {COMPARISON_ROWS.map((row, i) => (
-              <div key={i} className={`grid grid-cols-3 text-center py-4 px-6 ${i < COMPARISON_ROWS.length - 1 ? "border-b border-white/5" : ""}`}>
+              <div key={i} className={`grid grid-cols-3 py-4 px-6 items-center ${i < COMPARISON_ROWS.length - 1 ? "border-b border-white/5" : ""}`}>
                 <div className="text-sm text-left font-medium text-white">{row.feature}</div>
-                <div>
-                  <CheckCircle size={22} weight="fill" style={{ color: "#22c55e" }} className="mx-auto" />
-                </div>
-                <div className="text-sm" style={{ color: STEEL }}>{row.them}</div>
+                <div className="text-sm text-center font-semibold" style={{ color: "#22c55e" }}>{row.us}</div>
+                <div className="text-sm text-center" style={{ color: STEEL }}>{row.them}</div>
               </div>
             ))}
           </GlassCard>
@@ -879,26 +877,28 @@ export default function V2ApplianceRepairPage() {
       {/* ═══════════════════ 14. SERVICE AREA ═══════════════════ */}
       <SectionReveal className="relative z-10 py-24 px-4">
         <div className="mx-auto max-w-5xl">
-          <SectionHeader label="Coverage" title="Serving All of" accent="Greater Seattle" subtitle="From Greenwood to Ballard, Fremont to Shoreline, and everywhere in between." />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <GlassCard className="p-8 text-center">
-              <MapPin size={32} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-4" />
-              <h3 className="text-lg font-bold text-white mb-2">Coverage Area</h3>
-              <p className="text-sm" style={{ color: STEEL_LIGHT }}>All of Seattle and surrounding neighborhoods within a 20-mile radius of Greenwood</p>
-            </GlassCard>
-            <GlassCard className="p-8 text-center">
-              <Clock size={32} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-4" />
-              <h3 className="text-lg font-bold text-white mb-2">Response Time</h3>
-              <p className="text-sm" style={{ color: STEEL_LIGHT }}>Under 2 hours for most calls received before noon. Evening slots available.</p>
-            </GlassCard>
-            <GlassCard className="p-8 text-center">
-              <div className="mx-auto mb-4 flex items-center justify-center">
-                <motion.div animate={{ scale: [1, 1.2, 1], opacity: [1, 0.7, 1] }} transition={{ duration: 1.5, repeat: Infinity }} className="w-3 h-3 rounded-full mr-2" style={{ background: "#22c55e" }} />
-                <span className="text-sm font-bold" style={{ color: "#22c55e" }}>Crews Available Now</span>
-              </div>
-              <h3 className="text-lg font-bold text-white mb-2">Availability</h3>
-              <p className="text-sm" style={{ color: STEEL_LIGHT }}>Mon-Sat 7am-8pm. Emergency calls accepted Sundays and holidays.</p>
-            </GlassCard>
+          <SectionHeader label="Coverage" title="We Repair Appliances Throughout" accent="Greater Seattle" subtitle="Same-day service available throughout the Puget Sound region." />
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+            {["Seattle", "Bellevue", "Kirkland", "Redmond", "Renton", "Kent", "Auburn", "Federal Way"].map((city) => (
+              <GlassCard key={city} className="p-4 text-center">
+                <div className="flex items-center justify-center gap-2 mb-1">
+                  <motion.span
+                    animate={{ scale: [1, 1.3, 1], opacity: [1, 0.6, 1] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                    className="inline-block w-2 h-2 rounded-full shrink-0"
+                    style={{ background: ACCENT }}
+                  />
+                  <p className="text-sm font-semibold text-white">{city}</p>
+                </div>
+              </GlassCard>
+            ))}
+          </div>
+          <div className="flex items-center justify-center gap-3">
+            <span className="relative flex h-3 w-3">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ background: "#22c55e" }} />
+              <span className="relative inline-flex rounded-full h-3 w-3" style={{ background: "#22c55e" }} />
+            </span>
+            <span className="text-sm text-slate-400">Technicians available now — call for same-day service</span>
           </div>
         </div>
       </SectionReveal>

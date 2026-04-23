@@ -391,7 +391,7 @@ const menuHighlights = [
 const galleryPhotos = [
   { src: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&q=80", alt: "Restaurant interior dining room" },
   { src: "https://images.unsplash.com/photo-1551218808-94e220e084d2?w=600&q=80", alt: "Plated fine dining dish" },
-  { src: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&q=80", alt: "Bar area and cocktails" },
+  { src: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=600&q=80", alt: "Bar area and cocktails" },
   { src: "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=600&q=80", alt: "Chef plating a dish" },
   { src: "https://images.unsplash.com/photo-1424847651672-bf20a4b0982b?w=600&q=80", alt: "Dessert presentation" },
   { src: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80", alt: "Curated wine and private dining atmosphere" }
@@ -542,8 +542,18 @@ export default function V2RestaurantPage() {
                 Reserve a Table <ArrowRight size={18} weight="bold" />
               </MagneticButton>
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
-                <Phone size={18} weight="duotone" /> (206) 867-5309
+                <Phone size={18} weight="duotone" /> (555) 867-5309
               </MagneticButton>
+            </motion.div>
+
+            {/* Hero trust badges */}
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 1.0 }}
+              className="flex flex-wrap gap-2">
+              {["James Beard Nominee 2024", "Open Kitchen Concept", "Seasonal Farm-to-Table", "Reservations Recommended"].map((badge) => (
+                <span key={badge} className="border border-amber-500/30 bg-amber-500/10 text-amber-300 text-xs px-3 py-1 rounded-full">
+                  {badge}
+                </span>
+              ))}
             </motion.div>
           </div>
           <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ ...spring, delay: 0.3 }} className="hidden md:flex items-center justify-center lg:justify-end">
@@ -607,7 +617,7 @@ export default function V2RestaurantPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="relative rounded-2xl overflow-hidden aspect-[4/5]">
               <img
-                src="https://images.unsplash.com/photo-1507048331197-7d4ac70811cf?w=700&q=80"
+                src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=700&q=80"
                 alt="Head Chef in kitchen"
                 className="w-full h-full object-cover object-center"
               />
@@ -755,20 +765,6 @@ export default function V2RestaurantPage() {
       <SectionReveal id="testimonials" className="relative z-10 py-16 md:py-24">
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="text-center mb-16">
-            {/* Google Reviews Header */}
-            <div className="flex justify-center mb-6">
-              <div className="inline-flex items-center gap-3 px-5 py-3 rounded-full border" style={{ background: "rgba(255,255,255,0.05)", borderColor: "rgba(255,255,255,0.1)" }}>
-                <div className="flex">{[...Array(5)].map((_, i) => <Star key={i} size={16} weight="fill" className="text-yellow-400" />)}</div>
-                <span className="text-white font-bold">4.8</span>
-                <span className="text-slate-400 text-sm">· 312 Google reviews</span>
-                <svg viewBox="0 0 24 24" className="w-4 h-4 shrink-0" fill="none">
-                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
-                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-                </svg>
-              </div>
-            </div>
             <p className="text-sm uppercase tracking-widest mb-3" style={{ color: GOLD }}>
               Guest Experiences
             </p>
@@ -832,14 +828,14 @@ export default function V2RestaurantPage() {
                   <MapPin size={20} weight="duotone" style={{ color: GOLD }} className="mt-0.5 shrink-0" />
                   <div>
                     <p className="text-sm font-semibold text-white">Location</p>
-                    <p className="text-sm text-slate-400">2847 Eastlake Ave E, Seattle, WA 98102</p>
+                    <p className="text-sm text-slate-400">742 Ember Lane, Portland, OR 97205</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
                   <Phone size={20} weight="duotone" style={{ color: GOLD }} className="mt-0.5 shrink-0" />
                   <div>
                     <p className="text-sm font-semibold text-white">Reservations</p>
-                    <p className="text-sm text-slate-400">(206) 867-5309</p>
+                    <p className="text-sm text-slate-400">(555) 867-5309</p>
                   </div>
                 </div>
               </GlassCard>
@@ -950,142 +946,7 @@ export default function V2RestaurantPage() {
         </div>
       </SectionReveal>
 
-      {/* ─── 10. COMPETITOR COMPARISON ─── */}
-      <SectionReveal className="relative z-10 py-16 md:py-20">
-        <div className="mx-auto max-w-4xl px-4 md:px-6">
-          <div className="text-center mb-10">
-            <p className="text-sm uppercase tracking-widest mb-2 font-semibold" style={{ color: GOLD }}>Why Choose Us</p>
-            <h2 className="text-3xl md:text-5xl font-bold text-white tracking-tighter">Ember & Oak vs. Chain Restaurants</h2>
-          </div>
-          <GlassCard className="overflow-hidden">
-            <div className="grid grid-cols-3 text-sm font-semibold border-b border-white/10">
-              <div className="p-4 text-slate-400">What Matters</div>
-              <div className="p-4 text-center" style={{ color: GOLD }}>Ember & Oak</div>
-              <div className="p-4 text-center text-slate-500">Chain Restaurants</div>
-            </div>
-            {[
-              ["Seasonal, Local Ingredients", true, false],
-              ["Chef-Crafted Menu (Not Frozen)", true, false],
-              ["Personalized Service", true, false],
-              ["Private Dining Available", true, "Sometimes"],
-              ["Wine & Cocktail Curation", true, "Varies"],
-              ["Custom Event Menus", true, false],
-              ["Michelin-Trained Chef", true, false],
-            ].map(([label, us, them], i) => (
-              <div key={i} className={`grid grid-cols-3 text-sm border-b border-white/5 ${i % 2 === 0 ? "bg-white/[0.02]" : ""}`}>
-                <div className="p-4 text-slate-300">{label as string}</div>
-                <div className="p-4 text-center">
-                  {us === true ? (
-                    <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-green-500/20">
-                      <ShieldCheck size={14} weight="fill" className="text-green-400" />
-                    </span>
-                  ) : (
-                    <span className="text-slate-500 text-xs">{us as string}</span>
-                  )}
-                </div>
-                <div className="p-4 text-center">
-                  {them === false ? (
-                    <span className="text-slate-600 text-lg">✕</span>
-                  ) : (
-                    <span className="text-slate-500 text-xs">{them as string}</span>
-                  )}
-                </div>
-              </div>
-            ))}
-          </GlassCard>
-        </div>
-      </SectionReveal>
-
-      {/* ─── 11. VIDEO PLACEHOLDER ─── */}
-      <SectionReveal className="relative z-10 py-16 md:py-20">
-        <div className="max-w-4xl mx-auto px-4 md:px-6">
-          <div className="text-center mb-10">
-            <p className="text-sm uppercase tracking-widest mb-2 font-semibold" style={{ color: GOLD }}>See For Yourself</p>
-            <h2 className="text-3xl md:text-5xl font-bold text-white tracking-tighter">A Peek Inside Ember & Oak</h2>
-            <p className="text-slate-400 mt-3">Ambiance, kitchen craft, and unforgettable moments</p>
-          </div>
-          <motion.div
-            className="relative rounded-2xl overflow-hidden cursor-pointer group"
-            whileHover={{ scale: 1.01 }}
-            transition={springGentle}
-          >
-            <img
-              src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=1200&q=80"
-              alt="Chef at work in restaurant kitchen"
-              className="w-full h-64 md:h-96 object-cover object-center group-hover:scale-105 transition-transform duration-700"
-            />
-            <div className="absolute inset-0 bg-black/55 flex flex-col items-center justify-center gap-4 group-hover:bg-black/45 transition-colors">
-              <motion.div
-                className="w-20 h-20 rounded-full flex items-center justify-center shadow-lg"
-                style={{ background: RED }}
-                animate={{ scale: [1, 1.05, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              >
-                <Fire size={36} weight="fill" className="text-white" />
-              </motion.div>
-              <p className="text-white font-semibold text-lg">Ambiance &amp; Kitchen Tour</p>
-            </div>
-          </motion.div>
-        </div>
-      </SectionReveal>
-
-      {/* ─── 12. QUIZ — WHAT'S THE OCCASION? ─── */}
-      <SectionReveal className="relative z-10 py-16 md:py-20">
-        <div className="max-w-2xl mx-auto px-4 text-center">
-          <p className="text-sm uppercase tracking-widest mb-2 font-semibold" style={{ color: GOLD }}>Plan Your Evening</p>
-          <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tighter mb-4">What's the Occasion?</h2>
-          <p className="text-slate-400 mb-8">Tell us what you're celebrating and we'll find the perfect table for you.</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-            {[
-              { label: "Date Night", icon: Wine, urgency: "Intimate corner booth, candlelit — perfect for two." },
-              { label: "Family Dinner", icon: Users, urgency: "Spacious patio seating, family-style options available." },
-              { label: "Business Lunch", icon: Timer, urgency: "Private room option. Quiet, professional, memorable." },
-              { label: "Special Celebration", icon: Champagne, urgency: "Celebrate in style — custom menus and champagne service." },
-            ].map((opt, i) => (
-              <motion.button
-                key={i}
-                onClick={() => setQuizAnswer(i)}
-                className={`p-5 rounded-xl border text-left transition-all cursor-pointer ${quizAnswer === i ? "border-[#d4a846] bg-[#d4a846]/10" : "border-white/10 bg-white/[0.03] hover:border-[#d4a846]/50 hover:bg-white/[0.06]"}`}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <opt.icon size={24} weight="duotone" style={{ color: GOLD }} className="mb-2" />
-                <span className="font-semibold text-white block">{opt.label}</span>
-                <span className="text-sm text-slate-400 block mt-1">{opt.urgency}</span>
-              </motion.button>
-            ))}
-          </div>
-          <AnimatePresence>
-            {quizAnswer !== null && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 10 }}
-                transition={spring}
-                className="p-6 rounded-xl"
-                style={{ background: `${GOLD}18`, border: `1px solid ${GOLD}44` }}
-              >
-                <p className="font-semibold text-white mb-3">
-                  {quizAnswer === 0 && "We'll set the mood — soft lighting, curated playlist, and our best table for two."}
-                  {quizAnswer === 1 && "Bring the whole family. Our patio is perfect for groups and we love welcoming kids."}
-                  {quizAnswer === 2 && "Our private room handles up to 12. Quiet, elegant, and equipped for presentations."}
-                  {quizAnswer === 3 && "From champagne service to a custom dessert, we'll make it a night to remember."}
-                </p>
-                <a
-                  href="tel:+12068675309"
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-white font-semibold"
-                  style={{ background: RED }}
-                >
-                  <CalendarCheck size={18} weight="fill" />
-                  Reserve Your Table
-                </a>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </SectionReveal>
-
-      {/* ─── 13. RESERVATION FORM CTA ─── */}
+      {/* ─── 10. RESERVATION FORM CTA ─── */}
       <SectionReveal id="reservation" className="relative z-10 py-16 md:py-24">
         <div className="mx-auto max-w-4xl px-4 md:px-6">
           <ShimmerBorder>
@@ -1122,6 +983,171 @@ export default function V2RestaurantPage() {
               </motion.div>
             </div>
           </ShimmerBorder>
+        </div>
+      </SectionReveal>
+
+      {/* ─── 11. COMPETITOR COMPARISON ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-20">
+        <div className="mx-auto max-w-4xl px-4 md:px-6">
+          <div className="text-center mb-10">
+            <p className="text-sm uppercase tracking-widest mb-2 font-semibold" style={{ color: GOLD }}>Why Choose Us</p>
+            <h2 className="text-3xl md:text-5xl font-bold text-white tracking-tighter">Ember &amp; Oak vs. Chain Restaurants</h2>
+          </div>
+          <GlassCard className="overflow-hidden">
+            <div className="grid grid-cols-3 text-sm font-semibold border-b border-white/10">
+              <div className="p-4 text-slate-400">What Matters</div>
+              <div className="p-4 text-center" style={{ color: GOLD }}>Ember &amp; Oak</div>
+              <div className="p-4 text-center text-slate-500">Chain Restaurants</div>
+            </div>
+            {[
+              ["House-made pasta & sauces daily", true, "Industrial prep kitchen"],
+              ["Locally sourced seasonal ingredients", true, "National supply chain"],
+              ["Personalized dietary accommodations", true, "Limited options"],
+              ["Open kitchen transparency", true, "Hidden prep area"],
+              ["Chef-led tasting experiences", true, "Not available"],
+              ["Private dining & event hosting", true, "Rarely available"],
+              ["No reservations fee or pressure", true, "Often required fee"],
+            ].map(([label, us, them], i) => (
+              <div key={i} className={`grid grid-cols-3 text-sm border-b border-white/5 ${i % 2 === 0 ? "bg-white/[0.02]" : ""}`}>
+                <div className="p-4 text-slate-300">{label as string}</div>
+                <div className="p-4 text-center">
+                  {us === true ? (
+                    <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-green-500/20">
+                      <ShieldCheck size={14} weight="fill" className="text-green-400" />
+                    </span>
+                  ) : (
+                    <span className="text-slate-500 text-xs">{us as string}</span>
+                  )}
+                </div>
+                <div className="p-4 text-center">
+                  <span className="text-slate-500 text-xs">{them as string}</span>
+                </div>
+              </div>
+            ))}
+          </GlassCard>
+        </div>
+      </SectionReveal>
+
+      {/* ─── 12. VIDEO PLACEHOLDER ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-20">
+        <div className="max-w-4xl mx-auto px-4 md:px-6">
+          <div className="text-center mb-10">
+            <p className="text-sm uppercase tracking-widest mb-2 font-semibold" style={{ color: GOLD }}>See For Yourself</p>
+            <h2 className="text-3xl md:text-5xl font-bold text-white tracking-tighter">A Peek Behind the Kitchen</h2>
+            <p className="text-slate-400 mt-3">Follow Chef Marcus from prep to plating — the open kitchen concept, live</p>
+          </div>
+          <motion.div
+            className="relative rounded-2xl overflow-hidden cursor-pointer group"
+            whileHover={{ scale: 1.01 }}
+            transition={springGentle}
+          >
+            <img
+              src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1200&q=80"
+              alt="Chef Marcus cooking in open kitchen"
+              className="w-full h-64 md:h-96 object-cover object-center group-hover:scale-105 transition-transform duration-700"
+            />
+            <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center gap-4 group-hover:bg-black/50 transition-colors">
+              {/* Pulsing ring */}
+              <div className="relative flex items-center justify-center">
+                <motion.div
+                  className="absolute rounded-full border-2 border-amber-400/40"
+                  animate={{ scale: [1, 1.6, 1], opacity: [0.6, 0, 0.6] }}
+                  transition={{ duration: 2.2, repeat: Infinity }}
+                  style={{ width: 88, height: 88 }}
+                />
+                <motion.div
+                  className="w-20 h-20 rounded-full flex items-center justify-center shadow-lg"
+                  style={{ background: GOLD }}
+                  animate={{ scale: [1, 1.05, 1] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                >
+                  <Fire size={36} weight="fill" className="text-white" />
+                </motion.div>
+              </div>
+              <p className="text-white font-semibold text-lg">Meet Chef Marcus &amp; Tour Our Open Kitchen</p>
+            </div>
+          </motion.div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── 13. QUIZ — WHAT'S YOUR PERFECT EVENING? ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-20">
+        <div className="max-w-2xl mx-auto px-4 text-center">
+          <p className="text-sm uppercase tracking-widest mb-2 font-semibold" style={{ color: GOLD }}>Plan Your Evening</p>
+          <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tighter mb-4">What&apos;s Your Perfect Evening at Ember &amp; Oak?</h2>
+          <p className="text-slate-400 mb-8">Tell us what brings you in and we&apos;ll tailor your experience.</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+            {[
+              { label: "A romantic dinner for two", icon: Wine, detail: "Perfect for dates, anniversaries, and proposals." },
+              { label: "A celebration with a group (6+)", icon: Users, detail: "Private dining room, custom prix fixe menu." },
+              { label: "A casual weeknight dinner", icon: Timer, detail: "Bar seats available — full menu, relaxed vibe." },
+              { label: "I want the chef's tasting menu", icon: Champagne, detail: "7-course seasonal journey. Reserve 48 hrs ahead." },
+            ].map((opt, i) => (
+              <motion.button
+                key={i}
+                onClick={() => setQuizAnswer(i)}
+                className={`p-5 rounded-xl border text-left transition-all cursor-pointer ${quizAnswer === i ? "border-[#d4a846] bg-[#d4a846]/10" : "border-white/10 bg-white/[0.03] hover:border-[#d4a846]/50 hover:bg-white/[0.06]"}`}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <opt.icon size={24} weight="duotone" style={{ color: GOLD }} className="mb-2" />
+                <span className="font-semibold text-white block">{opt.label}</span>
+                <span className="text-sm text-slate-400 block mt-1">{opt.detail}</span>
+              </motion.button>
+            ))}
+          </div>
+          <AnimatePresence>
+            {quizAnswer !== null && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                transition={spring}
+                className="p-6 rounded-xl text-left"
+                style={{ background: `${GOLD}18`, border: `1px solid ${GOLD}44` }}
+              >
+                <p className="font-semibold text-white mb-3">
+                  {quizAnswer === 0 && "Reserve our intimate corner booth — candlelit, quiet, with a dedicated server. Perfect for anniversaries, proposals, or date nights. We'll even arrange a special surprise."}
+                  {quizAnswer === 1 && "Our private dining room seats up to 18 guests with a custom prix fixe menu. Ideal for birthdays, rehearsal dinners, and corporate events."}
+                  {quizAnswer === 2 && "Our bar seats are first-come, first-served and have the full menu. Weeknights after 6 PM are our most relaxed vibe — less wait, great food."}
+                  {quizAnswer === 3 && "The 7-course tasting menu changes monthly and showcases the season's best. Wine pairings available. Reserve 48 hours in advance."}
+                </p>
+                <a
+                  href="tel:+15558675309"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-white font-semibold"
+                  style={{ background: RED }}
+                >
+                  <CalendarCheck size={18} weight="fill" />
+                  Reserve Your Table
+                </a>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </SectionReveal>
+
+      {/* ─── 14. CERTIFICATIONS ROW ─── */}
+      <SectionReveal className="relative z-10 py-12 md:py-16">
+        <div className="mx-auto max-w-5xl px-4 md:px-6 text-center">
+          <p className="text-xs uppercase tracking-widest mb-6 font-semibold" style={{ color: GOLD }}>Our Commitment to Excellence</p>
+          <div className="flex flex-wrap justify-center gap-3">
+            {[
+              "Health Dept Grade A",
+              "Locally Sourced",
+              "Wine Spectator Recognized",
+              "Open Since 2018",
+              "Woman-Friendly Kitchen",
+              "BBB Accredited",
+              "Michelin Recommended",
+            ].map((cert) => (
+              <span
+                key={cert}
+                className="border border-amber-500/30 bg-amber-500/10 text-amber-300 text-xs px-4 py-2 rounded-full font-medium"
+              >
+                {cert}
+              </span>
+            ))}
+          </div>
         </div>
       </SectionReveal>
 

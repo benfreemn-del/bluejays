@@ -146,13 +146,13 @@ const PLANS = [
 ];
 
 const COMPARISON_ROWS = [
-  { feature: "Same-Day Service", us: true, them: "2-3 day wait" },
-  { feature: "Upfront Pricing", us: true, them: "Surprise fees" },
-  { feature: "Licensed & Insured", us: true, them: "Sometimes" },
-  { feature: "24/7 Emergency Line", us: true, them: "Business hours" },
-  { feature: "10-Year Warranty", us: true, them: "1-year max" },
-  { feature: "Free Second Opinions", us: true, them: "No" },
-  { feature: "Financing Available", us: true, them: "Varies" },
+  { feature: "Upfront pricing, no surprises", us: true, them: "Hidden service fees" },
+  { feature: "NATE-certified technicians", us: true, them: "Varies by company" },
+  { feature: "All major brands serviced", us: true, them: "Brand-limited service" },
+  { feature: "Energy efficiency analysis included", us: true, them: "Rarely offered" },
+  { feature: "24/7 emergency service", us: true, them: "Business hours only" },
+  { feature: "Parts warranty 1 year, labor 2 years", us: true, them: "90-day parts only" },
+  { feature: "Family-owned, local reputation", us: true, them: "National franchise" },
 ];
 
 const FAQ_DATA = [
@@ -636,6 +636,103 @@ function DiagnosticQuiz() {
                   {symptom.urgency === "red" ? "Call Now" : "Schedule Service"}
                 </a>
               </div>
+            </GlassCard>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+/* ───────────────────────── HVAC TIMING QUIZ ───────────────────────── */
+const HVAC_QUIZ_OPTIONS = [
+  {
+    label: "My heat or AC stopped working suddenly",
+    icon: Warning,
+    result: "Emergency service available 24/7. Call (206) 555-7834 now — we'll dispatch a technician within 2 hours and diagnose before quoting.",
+    urgency: "urgent" as const,
+  },
+  {
+    label: "My system runs but isn't comfortable",
+    icon: Thermometer,
+    result: "Airflow, thermostat calibration, or dirty coils could be the culprit. A tune-up + diagnostic usually resolves this. We can come this week.",
+    urgency: "moderate" as const,
+  },
+  {
+    label: "My energy bills are spiking",
+    icon: CurrencyDollar,
+    result: "A 15-year-old HVAC system can cost 40% more to run than a new one. We'll assess your system efficiency and show you the ROI on an upgrade.",
+    urgency: "moderate" as const,
+  },
+  {
+    label: "I need routine maintenance",
+    icon: Wrench,
+    result: "Annual tune-ups prevent 80% of breakdowns. Our seasonal maintenance plan covers spring AC check + fall furnace check for $149/year.",
+    urgency: "low" as const,
+  },
+];
+
+function HVACTimingQuiz() {
+  const [selected, setSelected] = useState<number | null>(null);
+  const urgencyColors = { urgent: "#ef4444", moderate: BLUE, low: "#22c55e" } as const;
+
+  return (
+    <div className="max-w-2xl mx-auto">
+      <div className="space-y-3 mb-6">
+        {HVAC_QUIZ_OPTIONS.map((opt, i) => {
+          const Icon = opt.icon;
+          const isSelected = selected === i;
+          return (
+            <button
+              key={i}
+              onClick={() => setSelected(isSelected ? null : i)}
+              className="w-full flex items-center gap-4 p-4 rounded-xl border text-left transition-all cursor-pointer"
+              style={{
+                borderColor: isSelected ? BLUE : "rgba(255,255,255,0.10)",
+                background: isSelected ? `${BLUE}15` : "rgba(255,255,255,0.02)",
+                color: isSelected ? "white" : "rgba(255,255,255,0.6)",
+              }}
+            >
+              <div
+                className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+                style={{ background: isSelected ? BLUE_GLOW : "rgba(255,255,255,0.05)" }}
+              >
+                <Icon size={20} weight={isSelected ? "fill" : "regular"} style={{ color: isSelected ? BLUE : "rgba(255,255,255,0.5)" }} />
+              </div>
+              <span className="text-sm font-medium">{opt.label}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      <AnimatePresence mode="wait">
+        {selected !== null && (
+          <motion.div
+            key={selected}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={spring}
+          >
+            <GlassCard className="p-6">
+              <div className="flex items-center gap-2 mb-3">
+                <div
+                  className="w-2.5 h-2.5 rounded-full"
+                  style={{ background: urgencyColors[HVAC_QUIZ_OPTIONS[selected].urgency], boxShadow: `0 0 10px ${urgencyColors[HVAC_QUIZ_OPTIONS[selected].urgency]}` }}
+                />
+                <span className="text-xs font-bold uppercase tracking-wider" style={{ color: urgencyColors[HVAC_QUIZ_OPTIONS[selected].urgency] }}>
+                  {HVAC_QUIZ_OPTIONS[selected].urgency === "urgent" ? "Priority Response" : HVAC_QUIZ_OPTIONS[selected].urgency === "moderate" ? "Schedule Soon" : "Book at Your Convenience"}
+                </span>
+              </div>
+              <p className="text-white/80 mb-4 text-sm leading-relaxed">{HVAC_QUIZ_OPTIONS[selected].result}</p>
+              <a
+                href={`tel:${PHONE.replace(/[^0-9+]/g, "")}`}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold text-white"
+                style={{ background: HVAC_QUIZ_OPTIONS[selected].urgency === "urgent" ? "#ef4444" : BLUE }}
+              >
+                <Phone size={16} weight="fill" />
+                {HVAC_QUIZ_OPTIONS[selected].urgency === "urgent" ? "Call Now — 24/7" : "Schedule Service"}
+              </a>
             </GlassCard>
           </motion.div>
         )}
@@ -1264,11 +1361,41 @@ export default function HVACShowcase() {
         </div>
       </section>
 
+      {/* ──────────────── VIDEO PLACEHOLDER ──────────────── */}
+      <section className="relative py-24">
+        <div className="absolute inset-0 opacity-20" style={{ background: `radial-gradient(ellipse at 50% 50%, ${BLUE_GLOW}, transparent 60%)` }} />
+        <div className="relative z-10 mx-auto max-w-5xl px-4">
+          <SectionHeader label="Meet the Team" title="See How We Work" accent="Right the First Time" />
+          <div className="relative rounded-2xl overflow-hidden aspect-video cursor-pointer group border border-white/10">
+            <img
+              src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=1200&q=80"
+              alt="Summit Heating & Air technician at work"
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-black/55 group-hover:bg-black/45 transition-colors flex items-center justify-center">
+              <div className="text-center">
+                <motion.div
+                  className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4"
+                  style={{ background: `${BLUE}cc` }}
+                  animate={{ boxShadow: [`0 0 0 0px ${BLUE}44`, `0 0 0 22px ${BLUE}00`] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                  whileHover={{ scale: 1.1 }}
+                >
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z" /></svg>
+                </motion.div>
+                <p className="text-white font-bold text-lg">Meet Summit Heating &amp; Air</p>
+                <p className="text-white/70 text-sm mt-1">See how we diagnose and fix your HVAC system right the first time</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ──────────────── COMPARISON TABLE ──────────────── */}
       <section className="relative py-24">
         <div className="absolute inset-0 opacity-15" style={{ background: `radial-gradient(ellipse at 50% 50%, ${BLUE_GLOW}, transparent 60%)` }} />
         <div className="relative z-10 mx-auto max-w-3xl px-4">
-          <SectionHeader label="Why Choose Us" title={`${BUSINESS} vs.`} accent="The Competition" />
+          <SectionHeader label="Why Choose Us" title={`${BUSINESS} vs.`} accent="Big Box HVAC Companies" />
 
           <GlassCard className="overflow-hidden" hover={false}>
             <div className="grid grid-cols-3 text-center border-b border-white/10 p-4">
@@ -1286,6 +1413,18 @@ export default function HVACShowcase() {
               </div>
             ))}
           </GlassCard>
+        </div>
+      </section>
+
+      {/* ──────────────── CUSTOMER QUIZ: What's Your HVAC Situation? ──────────────── */}
+      <section className="relative py-24">
+        <div className="absolute inset-0 opacity-20" style={{ background: `radial-gradient(ellipse at 55% 45%, ${ORANGE_GLOW}, transparent 60%)` }} />
+        <div className="relative z-10 mx-auto max-w-7xl px-4">
+          <SectionHeader label="Find Your Best Option" title="What&apos;s Your" accent="HVAC Situation?" />
+          <p className="text-center text-white/50 text-sm -mt-10 mb-10 max-w-lg mx-auto">
+            Tell us where you&apos;re at and we&apos;ll give you the smartest next step.
+          </p>
+          <HVACTimingQuiz />
         </div>
       </section>
 

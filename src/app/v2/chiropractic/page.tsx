@@ -527,6 +527,50 @@ function SpinalAssessment() {
   );
 }
 
+/* ───────────────────────── SIMPLE CHIROPRACTIC QUIZ OPTION ───────────────────────── */
+const chiropracticQuizAnswers = [
+  "Low back pain is our most common case — and most satisfying to treat. Typically 6–8 visits gets you 80% better. We'll start with a full spine analysis.",
+  "Cervicogenic headaches and tech neck respond beautifully to chiropractic care. Many patients feel relief after the first adjustment.",
+  "Radiating pain means nerve involvement. We'll assess the root cause with digital X-ray and create a decompression plan.",
+  "We treat active patients at every level — weekend warriors to competitive athletes. Sports chiro, soft tissue work, and rehab exercises.",
+];
+
+function SimpleChiropracticOption({ label, detail, icon, index }: { label: string; detail: string; icon: React.ReactNode; index: number }) {
+  const [selected, setSelected] = useState(false);
+  return (
+    <div className="flex flex-col gap-0">
+      <motion.button
+        onClick={() => setSelected(!selected)}
+        className={`p-5 rounded-xl border text-left transition-all cursor-pointer ${selected ? "border-teal-500/60 bg-teal-500/10" : "border-white/10 bg-white/[0.03] hover:border-teal-500/30 hover:bg-white/[0.06]"}`}
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+      >
+        <div className="mb-2">{icon}</div>
+        <span className="font-semibold text-white block">{label}</span>
+        <span className="text-sm text-slate-400 block mt-1">{detail}</span>
+      </motion.button>
+      <AnimatePresence>
+        {selected && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={spring}
+            className="overflow-hidden"
+          >
+            <div className="mt-2 p-4 rounded-xl text-sm text-slate-300 leading-relaxed" style={{ background: `${TEAL}18`, border: `1px solid ${TEAL_LIGHT}44` }}>
+              <p className="mb-3">{chiropracticQuizAnswers[index]}</p>
+              <a href="tel:+12067412963" className="inline-flex items-center gap-2 px-5 py-2 rounded-full text-white text-xs font-semibold" style={{ background: TEAL }}>
+                <Phone size={14} weight="fill" /> Book Your Visit
+              </a>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 /* ───────────────────────── DATA ───────────────────────── */
 const services = [
   { title: "Spinal Adjustments", description: "Precise, gentle spinal adjustments to restore proper alignment using both manual and instrument-assisted techniques tailored to your comfort level.", icon: Bone, price: "From $65" },
@@ -945,39 +989,78 @@ export default function V2ChiropracticPage() {
         </div>
       </SectionReveal>
 
+      {/* ═══ VIDEO PLACEHOLDER ═══ */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="max-w-4xl mx-auto px-4 md:px-6">
+          <div className="text-center mb-10">
+            <p className="text-sm uppercase tracking-widest mb-2 font-semibold" style={{ color: AMBER }}>See What a Chiropractic Visit Looks Like</p>
+            <h2 className="text-3xl md:text-5xl font-bold text-white tracking-tighter">Your First Visit, Explained</h2>
+            <p className="text-slate-400 mt-3">From check-in to adjustment — a full first visit walkthrough</p>
+          </div>
+          <motion.div
+            className="relative rounded-2xl overflow-hidden cursor-pointer group"
+            whileHover={{ scale: 1.01 }}
+            transition={springGentle}
+          >
+            <img
+              src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=1200&q=80"
+              alt="Chiropractic adjustment therapy session"
+              className="w-full h-64 md:h-96 object-cover object-center group-hover:scale-105 transition-transform duration-700"
+            />
+            <div className="absolute inset-0 bg-black/55 flex flex-col items-center justify-center gap-4 group-hover:bg-black/45 transition-colors">
+              {/* Pulsing ring */}
+              <div className="relative flex items-center justify-center">
+                <motion.div
+                  className="absolute rounded-full border-2"
+                  style={{ borderColor: `${TEAL_LIGHT}44`, width: 88, height: 88 }}
+                  animate={{ scale: [1, 1.6, 1], opacity: [0.6, 0, 0.6] }}
+                  transition={{ duration: 2.2, repeat: Infinity }}
+                />
+                <motion.div
+                  className="w-20 h-20 rounded-full flex items-center justify-center shadow-lg"
+                  style={{ background: TEAL }}
+                  animate={{ scale: [1, 1.05, 1] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                >
+                  <Heartbeat size={36} weight="fill" className="text-white" />
+                </motion.div>
+              </div>
+              <p className="text-white font-semibold text-lg">From check-in to adjustment — a full first visit walkthrough</p>
+            </div>
+          </motion.div>
+        </div>
+      </SectionReveal>
+
       {/* ═══ COMPARISON TABLE ═══ */}
       <SectionReveal className="relative z-10 py-16 md:py-24">
         <div className="mx-auto max-w-4xl px-4 md:px-6">
           <div className="text-center mb-12">
             <p className="text-sm uppercase tracking-widest mb-3" style={{ color: AMBER }}>Why Chiropractic?</p>
             <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white">
-              <WordReveal text="Chiropractic vs Pain Medication" />
+              <WordReveal text="Align Chiropractic vs. Pain Medication" />
             </h2>
           </div>
           <GlassCard className="overflow-hidden">
             <div className="grid grid-cols-3 text-center text-sm">
-              <div className="p-4 border-b border-white/10 text-slate-500 font-medium">Feature</div>
-              <div className="p-4 border-b border-l border-white/10 font-semibold" style={{ color: TEAL_LIGHT, background: `${TEAL}11` }}>Chiropractic</div>
-              <div className="p-4 border-b border-l border-white/10 text-slate-400 font-medium">Medication</div>
+              <div className="p-4 border-b border-white/10 text-slate-500 font-medium">What Matters</div>
+              <div className="p-4 border-b border-l border-white/10 font-semibold" style={{ color: TEAL_LIGHT, background: `${TEAL}11` }}>Align Chiropractic</div>
+              <div className="p-4 border-b border-l border-white/10 text-slate-400 font-medium">Pain Medication</div>
               {[
-                ["Treats Root Cause", true, false],
-                ["Drug-Free", true, false],
-                ["Long-Term Relief", true, false],
-                ["No Side Effects", true, false],
-                ["Improves Mobility", true, false],
-                ["Addiction Risk", false, true],
-                ["Covered by Insurance", true, true],
-                ["Same-Day Results", true, true],
+                ["Treats root cause, not symptoms", true, "Masks pain temporarily"],
+                ["No dependency or side effects", true, "Risk of dependency"],
+                ["Improves mobility & flexibility", true, "No structural improvement"],
+                ["Long-term wellness approach", true, "Short-term relief only"],
+                ["Works with your body naturally", true, "Chemical intervention"],
+                ["Preventative maintenance possible", true, "Ongoing prescription needed"],
+                ["Insurance accepted (most plans)", true, "Co-pays accumulate"],
               ].map(([label, chiro, med], i) => (
                 <div key={i} className="contents">
                   <div className="p-3 border-b border-white/5 text-slate-400 text-left pl-6">{label as string}</div>
                   <div className="p-3 border-b border-l border-white/5 flex items-center justify-center" style={{ background: `${TEAL}08` }}>
-                    {chiro ? <CheckCircle size={18} weight="fill" style={{ color: TEAL_LIGHT }} /> : <X size={18} className="text-slate-600" />}
+                    {chiro === true ? <CheckCircle size={18} weight="fill" style={{ color: TEAL_LIGHT }} /> : <X size={18} className="text-slate-600" />}
                   </div>
                   <div className="p-3 border-b border-l border-white/5 flex items-center justify-center">
-                    {med ? (
-                      (label as string) === "Addiction Risk" ? <Warning size={18} weight="fill" className="text-red-400" /> : <CheckCircle size={18} weight="fill" className="text-slate-500" />
-                    ) : <X size={18} className="text-slate-600" />}
+                    <span className="text-slate-500 text-xs text-center">{med as string}</span>
                   </div>
                 </div>
               ))}
@@ -990,10 +1073,26 @@ export default function V2ChiropracticPage() {
       <SectionReveal id="testimonials" className="relative z-10 py-16 md:py-24">
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="text-center mb-6">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/[0.03] mb-6">
-              <Star size={16} weight="fill" style={{ color: AMBER }} />
-              <span className="text-sm text-white font-medium">4.9</span>
-              <span className="text-xs text-slate-400">from 380+ Google Reviews</span>
+            {/* Google Reviews Header */}
+            <div className="inline-flex flex-col sm:flex-row items-center gap-3 px-6 py-4 rounded-2xl border border-white/10 bg-white/[0.03] mb-8">
+              <div className="flex items-center gap-2">
+                {/* Google G SVG */}
+                <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                </svg>
+                <div className="flex gap-0.5">
+                  {[1,2,3,4,5].map((s) => (
+                    <Star key={s} size={16} weight="fill" style={{ color: "#FBBC05" }} />
+                  ))}
+                </div>
+                <span className="text-white font-bold text-lg">4.9</span>
+              </div>
+              <div className="text-slate-400 text-sm">
+                <span className="font-semibold text-white">312 verified reviews</span> on Google
+              </div>
             </div>
             <p className="text-sm uppercase tracking-widest mb-3" style={{ color: AMBER }}>Patient Stories</p>
             <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white">
@@ -1063,6 +1162,41 @@ export default function V2ChiropracticPage() {
         </div>
       </SectionReveal>
 
+      {/* ═══ SIMPLE WHERE DOES IT HURT QUIZ ═══ */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="max-w-2xl mx-auto px-4 text-center">
+          <p className="text-sm uppercase tracking-widest mb-2 font-semibold" style={{ color: AMBER }}>Personalized Guidance</p>
+          <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tighter mb-4">Where Does It Hurt?</h2>
+          <p className="text-slate-400 mb-8">Tell us what&apos;s bothering you and we&apos;ll explain exactly how we help.</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+            <SimpleChiropracticOption
+              label="Lower back or hip pain"
+              detail="Most common case — typically 6–8 visits for 80% relief."
+              icon={<Bone size={24} weight="duotone" style={{ color: TEAL_LIGHT }} />}
+              index={0}
+            />
+            <SimpleChiropracticOption
+              label="Neck pain or headaches"
+              detail="Many patients feel relief after the very first adjustment."
+              icon={<Brain size={24} weight="duotone" style={{ color: TEAL_LIGHT }} />}
+              index={1}
+            />
+            <SimpleChiropracticOption
+              label="Shoulder, arm, or sciatica pain"
+              detail="Nerve involvement — we assess root cause with digital X-ray."
+              icon={<Barbell size={24} weight="duotone" style={{ color: TEAL_LIGHT }} />}
+              index={2}
+            />
+            <SimpleChiropracticOption
+              label="Sports injury or recovery"
+              detail="We treat athletes at every level — sports chiro + soft tissue work."
+              icon={<Lightning size={24} weight="duotone" style={{ color: TEAL_LIGHT }} />}
+              index={3}
+            />
+          </div>
+        </div>
+      </SectionReveal>
+
       {/* ═══ FAQ ═══ */}
       <SectionReveal className="relative z-10 py-16 md:py-24">
         <div className="mx-auto max-w-3xl px-4 md:px-6">
@@ -1125,15 +1259,24 @@ export default function V2ChiropracticPage() {
           <div className="text-center mb-12">
             <p className="text-sm uppercase tracking-widest mb-3" style={{ color: AMBER }}>Proudly Serving</p>
             <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white">
-              <WordReveal text="Greater Seattle Area" />
+              <WordReveal text="Serving Patients Across the Eastside" />
             </h2>
           </div>
-          <motion.div className="flex flex-wrap justify-center gap-3" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true }}>
-            {["Capitol Hill", "Ballard", "Fremont", "Queen Anne", "Wallingford", "Green Lake", "University District", "Ravenna", "Laurelhurst", "Montlake", "Madison Park", "Beacon Hill"].map((area) => (
+          <motion.div className="grid grid-cols-2 sm:grid-cols-4 gap-3" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true }}>
+            {["Kirkland", "Bellevue", "Redmond", "Sammamish", "Issaquah", "Kenmore", "Bothell", "Woodinville"].map((area) => (
               <motion.div key={area} variants={fadeUp}>
-                <div className="px-4 py-2 rounded-full border border-white/10 bg-white/[0.03] text-sm text-slate-400 flex items-center gap-2">
-                  <MapPin size={14} weight="duotone" style={{ color: TEAL_LIGHT }} />
-                  {area}
+                <div className="p-4 rounded-xl border border-white/10 bg-white/[0.03] text-sm text-slate-300 flex flex-col items-center gap-2 text-center">
+                  <div className="flex items-center gap-1.5">
+                    <motion.div
+                      className="w-2 h-2 rounded-full"
+                      style={{ background: TEAL_LIGHT }}
+                      animate={{ opacity: [1, 0.3, 1] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                    />
+                    <span className="text-xs font-semibold" style={{ color: TEAL_LIGHT }}>Accepting Patients</span>
+                  </div>
+                  <MapPin size={18} weight="duotone" style={{ color: TEAL_LIGHT }} />
+                  <span className="font-medium text-white">{area}</span>
                 </div>
               </motion.div>
             ))}

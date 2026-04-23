@@ -933,7 +933,72 @@ export default function V2MedicalPage() {
         </div>
       </SectionReveal>
 
-      {/* ─── 11. CONTACT / APPOINTMENT ─── */}
+      {/* ─── 11. COMPARISON TABLE ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-4xl px-4 md:px-6">
+          <div className="text-center mb-10">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: TEAL }}>Why Choose Us</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white">
+              <WordReveal text="Seattle Medical Center vs. ER / Urgent Care Chains" />
+            </h2>
+          </div>
+          <GlassCard className="overflow-hidden">
+            <div className="grid grid-cols-3 text-sm font-semibold border-b border-white/10">
+              <div className="p-4 text-slate-400 uppercase tracking-wide text-xs">Feature</div>
+              <div className="p-4 text-center font-bold" style={{ color: TEAL }}>Seattle Medical ✓</div>
+              <div className="p-4 text-center text-slate-500">ER / Urgent Care Chains</div>
+            </div>
+            {[
+              ["Same doctor for continuity of care", "✓", "Different provider each visit"],
+              ["Same-day appointments available", "✓", "Hours-long ER wait"],
+              ["On-site lab & imaging", "✓", "External referral needed"],
+              ["Insurance accepted (most plans)", "✓", "ER billing surprises"],
+              ["Telehealth option available", "✓", "Rarely available at ERs"],
+              ["Chronic care coordination", "✓", "Acute only"],
+              ["Transparent pricing & estimates", "✓", "Billing unclear"],
+            ].map(([feature, us, them], i) => (
+              <div key={i} className={`grid grid-cols-3 text-sm ${i % 2 === 0 ? "bg-white/[0.02]" : ""} border-b border-white/5 last:border-0`}>
+                <div className="p-4 text-slate-300">{feature}</div>
+                <div className="p-4 text-center font-bold" style={{ color: TEAL }}>{us}</div>
+                <div className="p-4 text-center text-slate-500">{them}</div>
+              </div>
+            ))}
+          </GlassCard>
+        </div>
+      </SectionReveal>
+
+      {/* ─── 12. SERVICE AREA GRID ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-4xl px-4 md:px-6">
+          <div className="text-center mb-10">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: TEAL }}>Coverage</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white">
+              <WordReveal text="Serving Patients Across Greater Seattle" />
+            </h2>
+          </div>
+          <motion.div
+            className="grid grid-cols-2 sm:grid-cols-4 gap-4"
+            variants={stagger}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-50px" }}
+          >
+            {["Fremont", "Wallingford", "Green Lake", "Phinney Ridge", "Ballard", "Crown Hill", "Greenwood", "Broadview"].map((area) => (
+              <motion.div key={area} variants={fadeUp}>
+                <GlassCard className="p-4 flex items-center gap-3">
+                  <div className="w-2.5 h-2.5 rounded-full shrink-0 animate-pulse" style={{ background: TEAL }} />
+                  <span className="text-sm text-slate-300 font-medium">{area}</span>
+                </GlassCard>
+              </motion.div>
+            ))}
+          </motion.div>
+          <div className="mt-6 text-center">
+            <p className="text-sm text-slate-500">Within 10 miles of our Stone Way clinic. Call to confirm coverage for your area.</p>
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── 13. CONTACT / APPOINTMENT ─── */}
       <SectionReveal id="contact" className="relative z-10 py-16 md:py-24">
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">

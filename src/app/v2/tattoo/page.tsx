@@ -296,6 +296,7 @@ const artists = [
 export default function V2TattooPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [openQuiz, setOpenQuiz] = useState<number | null>(null);
 
   return (
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: BG, color: "#f1f5f9" }}>
@@ -461,6 +462,15 @@ export default function V2TattooPage() {
       {/* ─── TESTIMONIALS ─── */}
       <SectionReveal id="testimonials" className="relative z-10 py-16 md:py-24">
         <div className="mx-auto max-w-7xl px-4 md:px-6">
+          {/* Google Reviews Header */}
+          <div className="flex justify-center mb-10">
+            <div className="inline-flex items-center gap-3 bg-white/5 border border-white/10 rounded-xl px-6 py-3">
+              <div className="flex gap-0.5">{[...Array(5)].map((_, i) => (<svg key={i} viewBox="0 0 24 24" fill="#facc15" className="w-4 h-4"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>))}</div>
+              <span className="text-white font-bold">4.9</span>
+              <span className="text-slate-400 text-sm">· 312 Google reviews</span>
+              <svg viewBox="0 0 24 24" className="w-5 h-5 shrink-0" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+            </div>
+          </div>
           <div className="text-center mb-16">
             <p className="text-sm uppercase tracking-widest mb-3" style={{ color: CRIMSON }}>Client Stories</p>
             <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-white"><WordReveal text="What Our Clients Say" /></h2>
@@ -543,6 +553,239 @@ export default function V2TattooPage() {
         </div>
       </SectionReveal>
 
+      {/* ─── URGENCY STRIP ─── */}
+      <div className="relative z-10 w-full py-3 flex items-center justify-center gap-4" style={{ background: CRIMSON }}>
+        <motion.div className="w-2.5 h-2.5 rounded-full bg-white" animate={{ scale: [1, 1.4, 1] }} transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }} />
+        <p className="text-white text-sm font-semibold tracking-wide text-center px-4">
+          🔥 Booking 4–6 Weeks Out — Reserve Your Spot — Call <a href="tel:2066543210" className="underline font-bold">(206) 654-3210</a>
+        </p>
+        <motion.div className="w-2.5 h-2.5 rounded-full bg-white" animate={{ scale: [1, 1.4, 1] }} transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut", delay: 0.75 }} />
+      </div>
+
+      {/* ─── PRICING ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <div className="text-center mb-16">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: CRIMSON }}>Tattoo Investment</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white">Transparent Pricing</h2>
+            <p className="text-slate-400 mt-4 max-w-lg mx-auto">Every tattoo is unique. Final pricing depends on design complexity, size, and placement. Here's a general guide.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            <GlassCard className="p-8 text-center">
+              <p className="text-sm uppercase tracking-widest mb-2" style={{ color: CRIMSON }}>Small Piece</p>
+              <p className="text-5xl font-black text-white mb-1">$150<span className="text-2xl">+</span></p>
+              <p className="text-slate-400 text-sm mb-6">Palm-sized & under · 1–2 hours</p>
+              <ul className="text-left space-y-2 mb-8">
+                {["Minimalist designs", "Fine line work", "Small script / text", "Simple geometric", "Cover-up consult"].map(f => (
+                  <li key={f} className="flex items-center gap-2 text-sm text-slate-300"><CheckCircle size={16} weight="fill" style={{ color: CRIMSON }} />{f}</li>
+                ))}
+              </ul>
+              <MagneticButton className="w-full py-3 rounded-full text-sm font-semibold text-white border border-white/10 cursor-pointer">Get Quote</MagneticButton>
+            </GlassCard>
+            <div className="relative">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10 bg-gradient-to-r from-red-800 to-red-600 text-white text-xs font-bold px-4 py-1 rounded-full tracking-widest">MOST POPULAR</div>
+              <GlassCard className="p-8 text-center border-2" style={{ borderColor: CRIMSON }}>
+                <p className="text-sm uppercase tracking-widest mb-2" style={{ color: CRIMSON }}>Medium Session</p>
+                <p className="text-5xl font-black text-white mb-1">$400<span className="text-2xl">+</span></p>
+                <p className="text-slate-400 text-sm mb-6">Up to forearm size · 2–4 hours</p>
+                <ul className="text-left space-y-2 mb-8">
+                  {["Custom design included", "Detailed illustrative work", "Color or black & grey", "Sleeve start-up", "Portrait detail work"].map(f => (
+                    <li key={f} className="flex items-center gap-2 text-sm text-slate-300"><CheckCircle size={16} weight="fill" style={{ color: CRIMSON }} />{f}</li>
+                  ))}
+                </ul>
+                <MagneticButton className="w-full py-3 rounded-full text-sm font-bold text-white cursor-pointer" style={{ background: CRIMSON }}>Book Consultation</MagneticButton>
+              </GlassCard>
+            </div>
+            <GlassCard className="p-8 text-center">
+              <p className="text-sm uppercase tracking-widest mb-2" style={{ color: CRIMSON }}>Large / Multi-Session</p>
+              <p className="text-5xl font-black text-white mb-1">Custom</p>
+              <p className="text-slate-400 text-sm mb-6">Sleeves, back pieces · 6+ hours</p>
+              <ul className="text-left space-y-2 mb-8">
+                {["Full sleeve planning", "Back & chest pieces", "Multi-session scheduling", "Design revision rounds", "Priority booking access"].map(f => (
+                  <li key={f} className="flex items-center gap-2 text-sm text-slate-300"><CheckCircle size={16} weight="fill" style={{ color: CRIMSON }} />{f}</li>
+                ))}
+              </ul>
+              <MagneticButton className="w-full py-3 rounded-full text-sm font-semibold text-white border border-white/10 cursor-pointer">Request Quote</MagneticButton>
+            </GlassCard>
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── COMPETITOR COMPARISON ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-4xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: CRIMSON }}>Why Choose Us</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white">Iron & Ink vs. Generic Studios</h2>
+          </div>
+          <GlassCard className="overflow-hidden">
+            <div className="grid grid-cols-3 text-sm font-bold bg-white/5 px-6 py-3">
+              <span className="text-slate-300">Feature</span>
+              <span className="text-center" style={{ color: CRIMSON }}>Iron & Ink</span>
+              <span className="text-center text-slate-500">Others</span>
+            </div>
+            {[
+              ["Licensed & Certified Artists", "✓", "Varies"],
+              ["Custom Design Consultation", "✓", "Extra Fee"],
+              ["Sterile Autoclave Equipment", "✓", "Sometimes"],
+              ["Portfolio Review Before Booking", "✓", "Not Always"],
+              ["Touch-Up Guarantee", "✓", "No"],
+              ["Aftercare Kit Included", "✓", "No"],
+              ["Single-Use Disposable Needles", "✓", "Standard"],
+            ].map(([feature, us, them], i) => (
+              <div key={i} className={`grid grid-cols-3 px-6 py-4 text-sm ${i % 2 === 0 ? "bg-white/[0.02]" : ""}`}>
+                <span className="text-slate-300">{feature}</span>
+                <span className="text-center font-bold" style={{ color: CRIMSON }}>{us}</span>
+                <span className="text-center text-slate-500">{them}</span>
+              </div>
+            ))}
+          </GlassCard>
+        </div>
+      </SectionReveal>
+
+      {/* ─── VIDEO PLACEHOLDER ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-5xl px-4 md:px-6 text-center">
+          <p className="text-sm uppercase tracking-widest mb-3" style={{ color: CRIMSON }}>Studio Life</p>
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-8">Watch Our Artists Work</h2>
+          <div className="relative aspect-video rounded-2xl overflow-hidden border border-white/10 cursor-pointer group">
+            <img src="https://images.unsplash.com/photo-1598136490929-292a0a7890c2?w=1200&q=80" alt="Tattoo artist at work" className="w-full h-full object-cover opacity-60 group-hover:opacity-70 transition-opacity" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <motion.div className="w-20 h-20 rounded-full flex items-center justify-center shadow-2xl relative" style={{ background: CRIMSON }} whileHover={{ scale: 1.1 }}>
+                <motion.div className="absolute inset-0 rounded-full" style={{ background: CRIMSON }} animate={{ scale: [1, 1.5, 1], opacity: [0.6, 0, 0.6] }} transition={{ duration: 2, repeat: Infinity }} />
+                <svg viewBox="0 0 24 24" fill="white" className="w-8 h-8 ml-1"><path d="M8 5v14l11-7z" /></svg>
+              </motion.div>
+            </div>
+            <div className="absolute bottom-4 left-4 right-4 text-left">
+              <p className="text-white font-semibold">See the precision behind every Iron & Ink tattoo</p>
+              <p className="text-white/60 text-sm">Custom designs · Expert artists · Seattle's finest studio</p>
+            </div>
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── TATTOO STYLE QUIZ ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-3xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: CRIMSON }}>Find Your Style</p>
+            <h2 className="text-4xl md:text-5xl font-bold text-white">What Tattoo Style Is Right for You?</h2>
+            <p className="text-slate-400 mt-3">Answer one question to get our artist recommendation.</p>
+          </div>
+          <div className="space-y-3">
+            {[
+              { label: "I want something minimalist and clean", rec: "Fine Line or Blackwork — our artists specialize in delicate, precise work that stays crisp for decades. Perfect for first tattoos.", price: "Starting at $150" },
+              { label: "I want bold traditional or neo-traditional", rec: "American Traditional or Neo-Trad — bold outlines, vibrant color fills, and timeless designs. A style built to last a lifetime.", price: "Starting at $200" },
+              { label: "I want a realistic portrait or photo-style", rec: "Photorealism — jaw-dropping portraits in black & grey or full color. Requires a specialist consultation to plan the design.", price: "Custom quote" },
+              { label: "I want a full sleeve or large back piece", rec: "Large-scale projects are our specialty. We plan in stages, each session building on the last. Book a free consultation to map out your canvas.", price: "Multi-session" },
+            ].map((opt, i) => (
+                <GlassCard key={i} className="overflow-hidden cursor-pointer" onClick={() => setOpenQuiz(openQuiz === i ? null : i)}>
+                  <div className="p-5 flex items-center justify-between">
+                    <span className="text-white font-semibold pr-4">{opt.label}</span>
+                    <motion.div animate={{ rotate: openQuiz === i ? 180 : 0 }} transition={spring}><CaretDown size={20} className="text-slate-400 shrink-0" /></motion.div>
+                  </div>
+                  <AnimatePresence initial={false}>
+                    {openQuiz === i && (
+                      <motion.div initial={{ height: 0 }} animate={{ height: "auto" }} exit={{ height: 0 }} transition={spring} className="overflow-hidden">
+                        <div className="px-5 pb-5 border-t border-white/5 pt-4">
+                          <p className="text-slate-300 text-sm leading-relaxed mb-3">{opt.rec}</p>
+                          <div className="flex items-center gap-4">
+                            <span className="text-xs font-bold px-3 py-1 rounded-full" style={{ background: `${CRIMSON}22`, color: CRIMSON }}>{opt.price}</span>
+                            <MagneticButton className="text-sm font-semibold text-white px-5 py-2 rounded-full cursor-pointer" style={{ background: CRIMSON }}>Book Now</MagneticButton>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </GlassCard>
+            ))}
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── STUDIO SAFETY ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <p className="text-sm uppercase tracking-widest mb-3" style={{ color: CRIMSON }}>Your Safety First</p>
+              <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Studio Safety Standards</h2>
+              <p className="text-slate-400 leading-relaxed max-w-md mb-8">At Iron & Ink, safety is not optional — it's the foundation of every tattoo we do. Our studio exceeds Washington State health department requirements at every level.</p>
+              <div className="flex flex-col gap-4">
+                {[
+                  { title: "Single-Use Needles Only", desc: "Every needle is opened in front of you and disposed of immediately after your session. No exceptions." },
+                  { title: "Autoclave Sterilization", desc: "All reusable tools are sterilized in a medical-grade autoclave after every use. Spore testing weekly." },
+                  { title: "Gloves & Barrier Precautions", desc: "Artists wear gloves throughout and use disposable covers on machines, armrests, and bottles." },
+                  { title: "EPA-Approved Surface Disinfectants", desc: "Every surface in your station is cleaned with hospital-grade disinfectant before and after each client." },
+                ].map((item, i) => (
+                  <div key={i} className="flex items-start gap-4">
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5" style={{ background: `${CRIMSON}20` }}>
+                      <CheckCircle size={16} weight="fill" style={{ color: CRIMSON }} />
+                    </div>
+                    <div>
+                      <p className="text-white font-semibold text-sm">{item.title}</p>
+                      <p className="text-slate-400 text-xs mt-1 leading-relaxed">{item.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <GlassCard className="p-8">
+              <p className="text-sm uppercase tracking-widest mb-4" style={{ color: CRIMSON }}>Walk-In vs. Appointment</p>
+              <h3 className="text-2xl font-bold text-white mb-6">How to Book</h3>
+              <div className="space-y-5">
+                {[
+                  { step: "01", title: "Walk-Ins Welcome", desc: "Small pieces (under 3 inches), flash designs, and touch-ups can often be done same-day. Check our Instagram for daily walk-in availability." },
+                  { step: "02", title: "Book a Consultation", desc: "Custom designs, large pieces, and cover-ups require a free 30-minute consultation to plan your design, discuss placement, and get an exact quote." },
+                  { step: "03", title: "Pay a Deposit", desc: "A $50–$100 deposit holds your appointment and goes toward your final price. Deposits are non-refundable for no-shows and reschedules under 48 hours." },
+                  { step: "04", title: "Session Day", desc: "Arrive well-rested, hydrated, and with a full meal. Wear comfortable clothing that gives easy access to the tattoo area." },
+                ].map((item, i) => (
+                  <div key={i} className="flex items-start gap-4">
+                    <span className="text-3xl font-black shrink-0 leading-none" style={{ color: `${CRIMSON}40` }}>{item.step}</span>
+                    <div>
+                      <p className="text-white font-semibold text-sm">{item.title}</p>
+                      <p className="text-slate-400 text-xs mt-1 leading-relaxed">{item.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </GlassCard>
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── CERTIFICATIONS ─── */}
+      <SectionReveal className="relative z-10 py-12 md:py-16">
+        <div className="mx-auto max-w-5xl px-4 md:px-6 text-center">
+          <p className="text-sm uppercase tracking-widest mb-6 text-slate-400">Licensed, Safe & Certified</p>
+          <div className="flex flex-wrap justify-center gap-3">
+            {["WA DOH Licensed", "OSHA Blood-Borne Pathogen Certified", "Autoclave Sterilization", "BBB Accredited", "Alliance of Professional Tattooists", "Vegan Inks Available"].map(badge => (
+              <span key={badge} className="border text-xs font-semibold px-4 py-2 rounded-full" style={{ borderColor: `${CRIMSON}50`, background: `${CRIMSON}15`, color: CRIMSON }}>{badge}</span>
+            ))}
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── SERVICE AREA ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: CRIMSON }}>Walk-In & Appointment</p>
+            <h2 className="text-4xl md:text-5xl font-bold text-white">Serving Seattle's <span style={{ color: CRIMSON }}>Tattoo Community</span></h2>
+            <p className="text-slate-400 mt-3 max-w-lg mx-auto">Clients travel from across the city for custom ink at Iron & Ink Studio.</p>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-4xl mx-auto">
+            {["Capitol Hill", "First Hill", "Pioneer Square", "South Lake Union", "Belltown", "Fremont", "University District", "Ballard"].map(neighborhood => (
+              <GlassCard key={neighborhood} className="p-4 text-center">
+                <motion.div className="w-2 h-2 rounded-full mx-auto mb-2" style={{ background: CRIMSON }} animate={{ scale: [1, 1.4, 1] }} transition={{ duration: 2, repeat: Infinity }} />
+                <p className="text-sm font-semibold text-white">{neighborhood}</p>
+                <p className="text-xs text-slate-500 mt-1">Regular Clients</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </SectionReveal>
+
       {/* ─── BOOKING / CONTACT ─── */}
       <SectionReveal id="booking" className="relative z-10 py-16 md:py-24">
         <div className="mx-auto max-w-7xl px-4 md:px-6">
@@ -562,8 +805,8 @@ export default function V2TattooPage() {
             <GlassCard className="p-8">
               <h3 className="text-xl font-semibold text-white mb-6">Studio Info</h3>
               <div className="space-y-4">
-                <div className="flex items-start gap-4"><MapPin size={20} weight="duotone" style={{ color: CRIMSON }} className="mt-0.5 shrink-0" /><div><p className="text-sm font-semibold text-white">Location</p><p className="text-sm text-slate-400">321 Ink Boulevard<br />Austin, TX 78701</p></div></div>
-                <div className="flex items-start gap-4"><Phone size={20} weight="duotone" style={{ color: CRIMSON }} className="mt-0.5 shrink-0" /><div><p className="text-sm font-semibold text-white">Phone</p><p className="text-sm text-slate-400">(555) 654-3210</p></div></div>
+                <div className="flex items-start gap-4"><MapPin size={20} weight="duotone" style={{ color: CRIMSON }} className="mt-0.5 shrink-0" /><div><p className="text-sm font-semibold text-white">Location</p><p className="text-sm text-slate-400">1423 Pike St, Suite 302<br />Seattle, WA 98101</p></div></div>
+                <div className="flex items-start gap-4"><Phone size={20} weight="duotone" style={{ color: CRIMSON }} className="mt-0.5 shrink-0" /><div><p className="text-sm font-semibold text-white">Phone</p><p className="text-sm text-slate-400">(206) 654-3210</p></div></div>
                 <div className="flex items-start gap-4"><Clock size={20} weight="duotone" style={{ color: CRIMSON }} className="mt-0.5 shrink-0" /><div><p className="text-sm font-semibold text-white">Hours</p><p className="text-sm text-slate-400">Tuesday - Saturday: 11:00 AM - 9:00 PM<br />Sunday: 12:00 PM - 6:00 PM<br />Monday: Closed</p></div></div>
                 <div className="flex items-start gap-4"><InstagramLogo size={20} weight="duotone" style={{ color: CRIMSON }} className="mt-0.5 shrink-0" /><div><p className="text-sm font-semibold text-white">Social</p><p className="text-sm text-slate-400">@ironandink<br />Daily portfolio updates & flash drops</p></div></div>
               </div>

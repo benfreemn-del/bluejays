@@ -650,6 +650,76 @@ function TruckSizeQuiz() {
 }
 
 /* ═══════════════════════════════════════════════════════════════════
+   INTERACTIVE: MOVING TIMING QUIZ
+   ═══════════════════════════════════════════════════════════════════ */
+const movingTimingOptions = [
+  {
+    label: "I need to move within the next 2 weeks",
+    icon: "🚨",
+    result: "We keep emergency slots available. Call now for priority scheduling — we can often accommodate 48-hour notice. Same pricing, no rush surcharge.",
+    cta: "Call for Emergency Slot",
+  },
+  {
+    label: "I'm moving next month",
+    icon: "📅",
+    result: "Perfect timing! Book now to lock in your date and get our itemized quote. We'll do a free virtual walkthrough to estimate volume.",
+    cta: "Schedule My Walkthrough",
+  },
+  {
+    label: "I'm planning 2-3 months out",
+    icon: "📆",
+    result: "Early booking means the best slot selection and 10% early-bird discount. Let's get your inventory assessed and a quote locked in.",
+    cta: "Lock In Early-Bird Rate",
+  },
+  {
+    label: "I'm still exploring options",
+    icon: "🔍",
+    result: "No pressure. Download our free Moving Checklist and compare quotes. We're happy to answer questions — no obligation.",
+    cta: "Get the Free Checklist",
+  },
+];
+
+function MovingTimingQuiz() {
+  const [selected, setSelected] = useState<number | null>(null);
+
+  return (
+    <GlassCard className="p-6 md:p-8">
+      <p className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-5">Select your timeline:</p>
+      <div className="space-y-3 mb-6">
+        {movingTimingOptions.map((opt, i) => (
+          <button
+            key={i}
+            onClick={() => setSelected(i)}
+            className="w-full text-left px-5 py-4 rounded-xl border text-sm font-medium transition-all cursor-pointer"
+            style={
+              selected === i
+                ? { borderColor: ORANGE, background: "rgba(249,115,22,0.10)", color: "white" }
+                : { borderColor: "rgba(255,255,255,0.10)", background: "rgba(255,255,255,0.02)", color: "#94a3b8" }
+            }
+          >
+            <span className="mr-2">{opt.icon}</span>
+            {opt.label}
+          </button>
+        ))}
+      </div>
+      {selected !== null && (
+        <div className="rounded-xl p-5" style={{ background: "rgba(249,115,22,0.10)", border: `1px solid ${ORANGE}44` }}>
+          <p className="text-white text-sm leading-relaxed mb-4">{movingTimingOptions[selected].result}</p>
+          <a
+            href={`tel:${PHONE.replace(/[^\d]/g, "")}`}
+            className="inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold text-white transition-colors"
+            style={{ background: ORANGE }}
+          >
+            <Phone size={16} weight="fill" />
+            {movingTimingOptions[selected].cta}
+          </a>
+        </div>
+      )}
+    </GlassCard>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════
    MAIN PAGE
    ═══════════════════════════════════════════════════════════════════ */
 export default function V2MovingPage() {
@@ -887,6 +957,44 @@ export default function V2MovingPage() {
         </div>
       </SectionReveal>
 
+      {/* ─── VIDEO PLACEHOLDER ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="absolute inset-0" style={{ background: `radial-gradient(ellipse at 50% 50%, rgba(249,115,22,0.06) 0%, transparent 60%)` }} />
+        <div className="relative z-10 mx-auto max-w-5xl px-4 md:px-6">
+          <div className="text-center mb-10">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ORANGE }}>See Us in Action</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white mb-4">
+              <WordReveal text="Watch Our Moving Crew in Action" />
+            </h2>
+            <p className="text-slate-400 max-w-xl mx-auto">See how we protect your belongings and make moving day stress-free.</p>
+          </div>
+          <div className="relative rounded-2xl overflow-hidden aspect-video cursor-pointer group">
+            <img
+              src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1200&q=80"
+              alt="Moving crew in action"
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+            <div className="absolute inset-0" style={{ background: "rgba(0,0,0,0.55)" }} />
+            {/* Pulsing ring + play button */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="relative">
+                <span className="animate-ping absolute inline-flex h-20 w-20 rounded-full opacity-40" style={{ background: ORANGE, top: "-10px", left: "-10px" }} />
+                <button
+                  className="relative w-20 h-20 rounded-full flex items-center justify-center text-white shadow-2xl transition-transform group-hover:scale-110"
+                  style={{ background: ORANGE }}
+                  aria-label="Play video"
+                >
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z" /></svg>
+                </button>
+              </div>
+            </div>
+            <div className="absolute bottom-6 left-0 right-0 text-center">
+              <p className="text-white/80 text-sm font-medium">See how we protect your belongings and make moving day stress-free</p>
+            </div>
+          </div>
+        </div>
+      </SectionReveal>
+
       {/* ─── TESTIMONIALS: Move Summary Cards ─── */}
       <SectionReveal id="testimonials" className="relative z-10 py-16 md:py-24">
         <div className="absolute inset-0" style={{ background: `radial-gradient(ellipse at 70% 50%, rgba(249,115,22,0.05) 0%, transparent 50%)` }} />
@@ -1060,6 +1168,21 @@ export default function V2MovingPage() {
               </motion.div>
             ))}
           </motion.div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── INTERACTIVE QUIZ: When Are You Moving? ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="absolute inset-0" style={{ background: `radial-gradient(ellipse at 60% 40%, rgba(249,115,22,0.07) 0%, transparent 60%)` }} />
+        <div className="relative z-10 mx-auto max-w-3xl px-4 md:px-6">
+          <div className="text-center mb-10">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: ORANGE }}>Find Your Best Option</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white mb-4">
+              <WordReveal text="When Are You Moving?" />
+            </h2>
+            <p className="text-slate-400 max-w-lg mx-auto">Tell us your timeline and we&apos;ll give you the smartest next step.</p>
+          </div>
+          <MovingTimingQuiz />
         </div>
       </SectionReveal>
 

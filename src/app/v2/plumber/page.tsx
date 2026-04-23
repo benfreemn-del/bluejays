@@ -445,13 +445,13 @@ const QUIZ_OPTIONS = [
 ];
 
 const COMPARISON_ROWS = [
-  { feature: "Licensed Master Plumber", us: true, them: "Varies" },
-  { feature: "24/7 Emergency Response", us: true, them: "No" },
-  { feature: "Upfront Flat-Rate Pricing", us: true, them: "Sometimes" },
-  { feature: "Same-Day Service", us: true, them: "Varies" },
-  { feature: "Clean Up After Every Job", us: true, them: "No" },
-  { feature: "1-Year Labor Warranty", us: true, them: "No" },
-  { feature: "Camera Diagnostics Included", us: true, them: "Extra Charge" },
+  { feature: "Upfront pricing before we start", us: true, them: "Hidden fees at invoice" },
+  { feature: "Licensed Master Plumber on every job", us: true, them: "Unknown licensure" },
+  { feature: "24/7 emergency dispatch", us: true, them: "Business hours only" },
+  { feature: "Warranty on all parts & labor", us: true, them: "No guarantee" },
+  { feature: "Show you the problem before fixing", us: true, them: "Just charge and go" },
+  { feature: "Respect your home — shoe covers & cleanup", us: true, them: "Often messy" },
+  { feature: "Family-owned, local reputation", us: true, them: "Corporate call center" },
 ];
 
 const TESTIMONIALS = [
@@ -1062,7 +1062,7 @@ export default function V2PlumberPage() {
           <div className="text-center mb-14">
             <p className="text-sm uppercase tracking-widest mb-3" style={{ color: TEAL }}>Why Choose Us</p>
             <h2 className="text-3xl md:text-5xl tracking-tighter leading-none font-bold text-white">
-              <WordReveal text="Emerald City vs. Handyman Plumbing" />
+              <WordReveal text="Emerald City Plumbing vs. Average Plumber" />
             </h2>
           </div>
 
@@ -1103,13 +1103,19 @@ export default function V2PlumberPage() {
               <WordReveal text="What Seattle Says" />
             </h2>
             {/* Google Reviews Header */}
-            <div className="flex items-center justify-center gap-2 mb-10">
+            <div className="flex items-center justify-center gap-3 mb-10">
+              <svg width="20" height="20" viewBox="0 0 24 24" aria-label="Google">
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+              </svg>
               <div className="flex">
                 {[1, 2, 3, 4, 5].map((s) => (
                   <Star key={s} size={20} weight="fill" style={{ color: "#facc15" }} />
                 ))}
               </div>
-              <span className="text-slate-300 text-sm font-medium">4.9 / 5.0 &middot; 380+ Reviews</span>
+              <span className="text-slate-300 text-sm font-medium">4.9 &nbsp;&middot;&nbsp; 387 Google reviews</span>
             </div>
           </div>
 
@@ -1183,9 +1189,9 @@ export default function V2PlumberPage() {
         <PipeGridPattern />
         <div className="relative mx-auto max-w-5xl px-4 md:px-6">
           <div className="text-center mb-10">
-            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: TEAL }}>See Our Work</p>
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: TEAL }}>See Our Plumbers Work</p>
             <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white">
-              <WordReveal text="Quality You Can See" />
+              <WordReveal text="No-Surprise Repairs — Watch How We Do It" />
             </h2>
           </div>
 
@@ -1196,20 +1202,23 @@ export default function V2PlumberPage() {
             style={{ aspectRatio: "16/9" }}
           >
             <img
-              src="https://images.unsplash.com/photo-1585704032915-c3400ca199e7?w=1200&q=80"
-              alt="Professional plumbing work in progress"
+              src="https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=1200&q=80"
+              alt="Plumber working on pipes"
               className="w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors flex items-center justify-center">
+            <div className="absolute inset-0 bg-black/50 group-hover:bg-black/40 transition-colors flex items-center justify-center">
               <motion.div
                 className="w-20 h-20 rounded-full flex items-center justify-center"
                 style={{ background: `${TEAL}cc` }}
                 whileHover={{ scale: 1.1 }}
-                animate={{ boxShadow: [`0 0 0 0px ${TEAL}44`, `0 0 0 20px ${TEAL}00`] }}
+                animate={{ boxShadow: [`0 0 0 0px ${TEAL}44`, `0 0 0 24px ${TEAL}00`] }}
                 transition={{ boxShadow: { duration: 1.5, repeat: Infinity } }}
               >
                 <Play size={32} weight="fill" className="text-white ml-1" />
               </motion.div>
+            </div>
+            <div className="absolute bottom-6 left-0 right-0 text-center px-4">
+              <p className="text-white/80 text-sm font-medium">No-surprise plumbing repairs — watch how we diagnose and fix, then quote before touching anything</p>
             </div>
           </motion.div>
         </div>

@@ -326,6 +326,7 @@ const galleryImages = [
 export default function V2DaycarePage() {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [openQuiz, setOpenQuiz] = useState<number | null>(null);
 
   return (
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: BG, color: "#1c1917" }}>
@@ -418,6 +419,31 @@ export default function V2DaycarePage() {
         </div>
       </SectionReveal>
 
+      {/* ─── URGENCY STRIP ─── */}
+      <div className="relative z-10 w-full py-4" style={{ background: PURPLE }}>
+        <div className="mx-auto max-w-7xl px-4 md:px-6 flex items-center justify-center gap-4 flex-wrap text-center">
+          <motion.div
+            className="w-2.5 h-2.5 rounded-full bg-white"
+            animate={{ scale: [1, 1.4, 1], opacity: [0.7, 1, 0.7] }}
+            transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <p className="text-white font-semibold text-sm md:text-base tracking-wide">
+            ⭐ Limited Enrollment Available — Schedule a Tour Today
+          </p>
+          <a
+            href="tel:2063217890"
+            className="text-white font-bold underline underline-offset-2 hover:no-underline transition-all text-sm md:text-base"
+          >
+            (206) 321-7890
+          </a>
+          <motion.div
+            className="w-2.5 h-2.5 rounded-full bg-white"
+            animate={{ scale: [1, 1.4, 1], opacity: [0.7, 1, 0.7] }}
+            transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut", delay: 0.7 }}
+          />
+        </div>
+      </div>
+
       {/* ─── PROGRAMS ─── */}
       <SectionReveal id="programs" className="relative z-10 py-16 md:py-24">
         <div className="mx-auto max-w-7xl px-4 md:px-6">
@@ -436,6 +462,275 @@ export default function V2DaycarePage() {
                   </div>
                   <h3 className="text-lg font-semibold text-[#1c1917] mb-2">{prog.title}</h3>
                   <p className="text-sm text-[#6b7280] leading-relaxed">{prog.description}</p>
+                </GlassCard>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── PRICING ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <div className="text-center mb-16">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: YELLOW }}>Transparent Pricing</p>
+            <h2 className="text-4xl md:text-6xl tracking-tighter leading-none font-bold text-[#1c1917]">
+              <WordReveal text="Simple, Clear Pricing" />
+            </h2>
+            <p className="mt-4 text-[#6b7280] max-w-xl mx-auto">No hidden fees. No surprises. Just great care at a fair price.</p>
+          </div>
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch"
+            variants={stagger}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-50px" }}
+          >
+            {/* Part-Time */}
+            <motion.div variants={fadeUp}>
+              <GlassCard className="p-8 h-full flex flex-col border border-purple-100">
+                <p className="text-xs uppercase tracking-widest font-semibold mb-2" style={{ color: PURPLE }}>Part-Time Care</p>
+                <div className="flex items-end gap-1 mb-1">
+                  <span className="text-4xl font-bold text-[#1c1917]">$950</span>
+                  <span className="text-[#9ca3af] text-sm mb-1">/month</span>
+                </div>
+                <p className="text-xs text-[#9ca3af] mb-6">3 days per week</p>
+                <ul className="space-y-3 flex-1 mb-8">
+                  {["3 days per week", "7am – 5pm hours", "Meals & snacks included", "Age-appropriate activities", "Monthly progress updates"].map((f, i) => (
+                    <li key={i} className="flex items-center gap-2 text-sm text-[#4b5563]">
+                      <CheckCircle size={16} weight="fill" style={{ color: PURPLE }} />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+                <MagneticButton
+                  className="w-full py-3 rounded-full text-sm font-semibold border border-purple-200 text-center cursor-pointer"
+                  style={{ color: PURPLE }}
+                >
+                  Enroll Part-Time
+                </MagneticButton>
+              </GlassCard>
+            </motion.div>
+
+            {/* Full-Time — Most Popular */}
+            <motion.div variants={fadeUp}>
+              <ShimmerBorder className="h-full">
+                <div className="p-8 h-full flex flex-col">
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-xs uppercase tracking-widest font-semibold" style={{ color: PURPLE }}>Full-Time Care</p>
+                    <span className="text-xs px-2.5 py-1 rounded-full font-semibold text-white" style={{ background: YELLOW }}>Most Popular</span>
+                  </div>
+                  <div className="flex items-end gap-1 mb-1">
+                    <span className="text-4xl font-bold text-[#1c1917]">$1,450</span>
+                    <span className="text-[#9ca3af] text-sm mb-1">/month</span>
+                  </div>
+                  <p className="text-xs text-[#9ca3af] mb-6">5 days per week</p>
+                  <ul className="space-y-3 flex-1 mb-8">
+                    {["5 days per week", "7am – 5pm hours", "All meals included", "Extended curriculum", "Weekly progress reports", "Parent app updates daily"].map((f, i) => (
+                      <li key={i} className="flex items-center gap-2 text-sm text-[#4b5563]">
+                        <CheckCircle size={16} weight="fill" style={{ color: PURPLE }} />
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
+                  <MagneticButton
+                    className="w-full py-3 rounded-full text-sm font-semibold text-white cursor-pointer"
+                    style={{ background: PURPLE }}
+                  >
+                    Enroll Full-Time
+                  </MagneticButton>
+                </div>
+              </ShimmerBorder>
+            </motion.div>
+
+            {/* Extended Day */}
+            <motion.div variants={fadeUp}>
+              <GlassCard className="p-8 h-full flex flex-col border border-purple-100">
+                <p className="text-xs uppercase tracking-widest font-semibold mb-2" style={{ color: PURPLE }}>Extended Day</p>
+                <div className="flex items-end gap-1 mb-1">
+                  <span className="text-4xl font-bold text-[#1c1917]">$1,750</span>
+                  <span className="text-[#9ca3af] text-sm mb-1">/month</span>
+                </div>
+                <p className="text-xs text-[#9ca3af] mb-6">5 days, extended hours</p>
+                <ul className="space-y-3 flex-1 mb-8">
+                  {["5 days per week", "6:30am – 6:00pm", "Premium curriculum", "Individualized learning plan", "Monthly parent meetings", "Priority enrollment renewal"].map((f, i) => (
+                    <li key={i} className="flex items-center gap-2 text-sm text-[#4b5563]">
+                      <CheckCircle size={16} weight="fill" style={{ color: PURPLE }} />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+                <MagneticButton
+                  className="w-full py-3 rounded-full text-sm font-semibold border border-purple-200 text-center cursor-pointer"
+                  style={{ color: PURPLE }}
+                >
+                  Enroll Extended
+                </MagneticButton>
+              </GlassCard>
+            </motion.div>
+          </motion.div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── COMPETITOR COMPARISON TABLE ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-4xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: YELLOW }}>How We Compare</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-tight font-bold text-[#1c1917]">
+              Sunshine Learning Center vs. The Rest
+            </h2>
+          </div>
+          <GlassCard className="overflow-hidden border border-purple-100">
+            {/* Table header */}
+            <div className="grid grid-cols-3 px-6 py-4 border-b border-purple-50" style={{ background: "rgba(124,58,237,0.04)" }}>
+              <p className="text-sm font-semibold text-[#6b7280]">Feature</p>
+              <p className="text-sm font-bold text-center" style={{ color: PURPLE }}>Sunshine Learning</p>
+              <p className="text-sm font-semibold text-center text-[#9ca3af]">Average Daycare</p>
+            </div>
+            {[
+              { feature: "State Licensed & Inspected", us: "✓", them: "Required" },
+              { feature: "Low Child-to-Teacher Ratio", us: "✓", them: "Varies" },
+              { feature: "Curriculum-Based Learning", us: "✓", them: "Sometimes" },
+              { feature: "Hot Meals Included", us: "✓", them: "Varies" },
+              { feature: "Parent App Updates", us: "✓", them: "Rarely" },
+              { feature: "CPR-Certified Staff", us: "✓", them: "Required" },
+              { feature: "Outdoor Playtime Daily", us: "✓", them: "Varies" },
+            ].map((row, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, x: -10 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ ...spring, delay: i * 0.06 }}
+                className={`grid grid-cols-3 px-6 py-4 items-center ${i % 2 === 0 ? "bg-white/60" : "bg-purple-50/30"} border-b border-purple-50 last:border-b-0`}
+              >
+                <p className="text-sm text-[#4b5563] font-medium">{row.feature}</p>
+                <div className="flex items-center justify-center gap-1.5">
+                  <CheckCircle size={18} weight="fill" className="text-green-500" />
+                  <span className="text-sm font-semibold text-green-600">{row.us}</span>
+                </div>
+                <p className="text-sm text-center text-[#9ca3af]">{row.them}</p>
+              </motion.div>
+            ))}
+          </GlassCard>
+        </div>
+      </SectionReveal>
+
+      {/* ─── VIDEO PLACEHOLDER ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-4xl px-4 md:px-6">
+          <div className="text-center mb-10">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: YELLOW }}>See It for Yourself</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-tight font-bold text-[#1c1917]">
+              Take a Virtual Tour
+            </h2>
+            <p className="mt-3 text-[#6b7280] max-w-lg mx-auto">
+              See our safe, nurturing learning environment and happy children at Sunshine Learning Center.
+            </p>
+          </div>
+          <motion.div
+            whileHover={{ scale: 1.01 }}
+            transition={springFast}
+            className="relative w-full rounded-2xl overflow-hidden border border-purple-200 cursor-pointer group"
+            style={{ aspectRatio: "16/9", background: "#ede9fe" }}
+          >
+            <img
+              src="https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=1200&q=80"
+              alt="Children playing outdoors at Sunshine Learning Center"
+              className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-50 transition-opacity duration-300"
+            />
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
+              <motion.div
+                whileHover={{ scale: 1.12 }}
+                transition={springFast}
+                className="w-20 h-20 rounded-full flex items-center justify-center shadow-xl"
+                style={{ background: PURPLE }}
+              >
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </motion.div>
+              <div className="text-center">
+                <p className="text-white font-bold text-lg drop-shadow-lg">Watch Our Tour</p>
+                <p className="text-white/80 text-sm drop-shadow">3 min · Meet our classrooms &amp; staff</p>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── PROGRAM QUIZ ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-3xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: YELLOW }}>Find the Right Fit</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-tight font-bold text-[#1c1917]">
+              Which Program Is Right for Your Child?
+            </h2>
+            <p className="mt-3 text-[#6b7280]">Tap an option to learn more and take the next step.</p>
+          </div>
+          <motion.div
+            className="space-y-3"
+            variants={stagger}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-50px" }}
+          >
+            {[
+              {
+                label: "My child is an infant (0–12 months)",
+                detail: "Our Infant Room has the lowest ratio in Seattle — 1 teacher per 3 babies. Structured sleep schedules, sensory play, and daily parent updates keep you connected every step of the way.",
+                cta: "Learn About Infant Care",
+              },
+              {
+                label: "My child is a toddler (1–2 years)",
+                detail: "Toddler classrooms focus on the language explosion, social skills, and supervised exploration. Staff trained in positive redirection create a joyful, calm environment for this exciting stage.",
+                cta: "Explore Toddler Program",
+              },
+              {
+                label: "My child is a preschooler (3–5 years)",
+                detail: "Our kindergarten-readiness curriculum covers letter recognition, counting, creative arts, and social-emotional learning — setting children up for lifelong academic success.",
+                cta: "View Preschool Program",
+              },
+              {
+                label: "I need before/after school care",
+                detail: "Homework help, supervised activities, and a safe home-away-from-home for school-age kids ages 5–12. Drop off early, pick up late — we have it covered.",
+                cta: "See School-Age Care",
+              },
+            ].map((item, i) => (
+              <motion.div key={i} variants={fadeUp}>
+                <GlassCard className="overflow-hidden border border-purple-100">
+                  <button
+                    onClick={() => setOpenQuiz(openQuiz === i ? null : i)}
+                    className="w-full flex items-center justify-between p-5 md:p-6 text-left cursor-pointer"
+                  >
+                    <span className="text-base font-semibold text-[#1c1917] pr-4">{item.label}</span>
+                    <motion.div animate={{ rotate: openQuiz === i ? 180 : 0 }} transition={spring}>
+                      <CaretDown size={20} className="text-[#9ca3af]" />
+                    </motion.div>
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {openQuiz === i && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={spring}
+                        className="overflow-hidden"
+                      >
+                        <div className="px-5 pb-6 md:px-6 space-y-4">
+                          <p className="text-[#6b7280] leading-relaxed text-sm">{item.detail}</p>
+                          <MagneticButton
+                            className="px-6 py-2.5 rounded-full text-sm font-semibold text-white inline-flex items-center gap-2 cursor-pointer"
+                            style={{ background: PURPLE }}
+                          >
+                            {item.cta} <ArrowRight size={16} weight="bold" />
+                          </MagneticButton>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </GlassCard>
               </motion.div>
             ))}
@@ -510,6 +805,30 @@ export default function V2DaycarePage() {
         </div>
       </SectionReveal>
 
+      {/* ─── GOOGLE REVIEWS HEADER ─── */}
+      <SectionReveal className="relative z-10 pt-12 pb-0">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <div className="flex items-center justify-center gap-3 flex-wrap">
+            <div className="flex items-center gap-1">
+              {[0, 1, 2, 3, 4].map((i) => (
+                <svg key={i} width="22" height="22" viewBox="0 0 24 24" fill="#eab308">
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                </svg>
+              ))}
+            </div>
+            <span className="text-2xl font-bold text-gray-700">4.9</span>
+            <span className="text-gray-400 text-lg">·</span>
+            <span className="text-gray-600 font-medium">89 Google reviews</span>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05" />
+              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+            </svg>
+          </div>
+        </div>
+      </SectionReveal>
+
       {/* ─── TESTIMONIALS ─── */}
       <SectionReveal id="testimonials" className="relative z-10 py-16 md:py-24">
         <div className="mx-auto max-w-7xl px-4 md:px-6">
@@ -558,6 +877,42 @@ export default function V2DaycarePage() {
               ))}
             </motion.div>
           </div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── CERTIFICATIONS BADGE ROW ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-20">
+        <div className="mx-auto max-w-5xl px-4 md:px-6">
+          <div className="text-center mb-10">
+            <p className="text-sm uppercase tracking-widest mb-2" style={{ color: YELLOW }}>You Can Trust Us</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-[#1c1917] tracking-tight">Safe, Licensed &amp; Trusted</h2>
+          </div>
+          <motion.div
+            className="flex flex-wrap justify-center gap-3"
+            variants={stagger}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-50px" }}
+          >
+            {[
+              "WA DCYF Licensed",
+              "NAEYC Accredited",
+              "CPR Certified Staff",
+              "Background-Checked",
+              "First Aid Trained",
+              "Nutritious USDA Meals",
+            ].map((badge, i) => (
+              <motion.div
+                key={i}
+                variants={fadeUp}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-full border text-sm font-semibold"
+                style={{ background: "#f5f3ff", borderColor: "#ddd6fe", color: PURPLE }}
+              >
+                <CheckCircle size={16} weight="fill" style={{ color: PURPLE }} />
+                {badge}
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
       </SectionReveal>
 
@@ -631,6 +986,72 @@ export default function V2DaycarePage() {
               </motion.div>
             ))}
           </motion.div>
+        </div>
+      </SectionReveal>
+
+      {/* ─── SERVICE AREA GRID ─── */}
+      <SectionReveal className="relative z-10 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest mb-3" style={{ color: YELLOW }}>Where We Serve</p>
+            <h2 className="text-4xl md:text-5xl tracking-tighter leading-tight font-bold text-[#1c1917]">
+              Serving Families Across{" "}
+              <span style={{ color: PURPLE }}>Seattle</span>
+            </h2>
+            <p className="mt-4 text-[#6b7280] max-w-xl mx-auto">
+              Families from across Seattle trust Sunshine Learning Center for premium early childhood care.
+            </p>
+          </div>
+          <motion.div
+            className="grid grid-cols-2 sm:grid-cols-4 gap-4"
+            variants={stagger}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-50px" }}
+          >
+            {[
+              "Queen Anne",
+              "Magnolia",
+              "Ballard",
+              "Fremont",
+              "Capitol Hill",
+              "First Hill",
+              "South Lake Union",
+              "University District",
+            ].map((neighborhood, i) => (
+              <motion.div key={i} variants={fadeUp}>
+                <GlassCard className="p-5 text-center border border-purple-100 hover:border-purple-300 transition-colors">
+                  <div className="flex items-center justify-center mb-3">
+                    <motion.div
+                      className="w-2.5 h-2.5 rounded-full"
+                      style={{ background: PURPLE }}
+                      animate={{ scale: [1, 1.35, 1], opacity: [0.6, 1, 0.6] }}
+                      transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: i * 0.15 }}
+                    />
+                  </div>
+                  <p className="text-sm font-semibold text-[#1c1917]">{neighborhood}</p>
+                  <p className="text-xs text-[#9ca3af] mt-1">Families Enrolled Here</p>
+                </GlassCard>
+              </motion.div>
+            ))}
+          </motion.div>
+
+          {/* Bottom CTA row */}
+          <div className="mt-12 text-center">
+            <GlassCard className="inline-flex items-center gap-4 px-6 py-4 border border-purple-100">
+              <MapPin size={20} weight="duotone" style={{ color: PURPLE }} />
+              <span className="text-sm text-[#4b5563]">
+                <span className="font-semibold text-[#1c1917]">456 Sunshine Lane, Seattle, WA</span> — Accepting enrollments now
+              </span>
+              <a
+                href="tel:2063217890"
+                className="px-4 py-2 rounded-full text-sm font-semibold text-white whitespace-nowrap"
+                style={{ background: PURPLE }}
+              >
+                Call Us
+              </a>
+            </GlassCard>
+          </div>
         </div>
       </SectionReveal>
 

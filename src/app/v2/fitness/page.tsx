@@ -207,6 +207,21 @@ function Section({ children, className = "", id }: { children: React.ReactNode; 
   );
 }
 
+/* ───────────────────────── SHIMMERBORDER ───────────────────────── */
+function ShimmerBorder({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return (
+    <div className={`relative rounded-2xl p-[1px] overflow-hidden ${className}`}>
+      <motion.div
+        className="absolute inset-0 rounded-2xl"
+        style={{ background: `conic-gradient(from 0deg, transparent, ${LIME}, transparent, rgba(132,204,22,0.4), transparent)`, willChange: "transform" }}
+        animate={{ rotate: [0, 360] }}
+        transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+      />
+      <div className="relative rounded-2xl z-10" style={{ background: "#0a0a0a" }}>{children}</div>
+    </div>
+  );
+}
+
 /* ───────────────────────── GLASS CARD ───────────────────────── */
 function GlassCard({ children, className = "", featured = false }: { children: React.ReactNode; className?: string; featured?: boolean }) {
   return (
@@ -318,6 +333,9 @@ export default function IronAndOakFitness() {
 
   /* ── schedule hover ── */
   const [hoveredCell, setHoveredCell] = useState<string | null>(null);
+
+  /* ── quiz ── */
+  const [openQuiz, setOpenQuiz] = useState<number | null>(null);
 
   /* ── email capture ── */
   const [email, setEmail] = useState("");
@@ -473,38 +491,45 @@ export default function IronAndOakFitness() {
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-6">
-            {MEMBERSHIP_TIERS.map((tier) => (
-              <GlassCard key={tier.name} featured={tier.featured} className={tier.featured ? "md:-mt-4 md:mb-0" : ""}>
-                {tier.featured && (
-                  <div className="text-center mb-4">
-                    <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider text-black" style={{ background: LIME }}>Most Popular</span>
+            {MEMBERSHIP_TIERS.map((tier) => {
+              const cardContent = (
+                <GlassCard key={tier.name} featured={tier.featured} className={tier.featured ? "md:-mt-4 md:mb-0 h-full" : "h-full"}>
+                  {tier.featured && (
+                    <div className="text-center mb-4">
+                      <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider text-black" style={{ background: LIME }}>Most Popular</span>
+                    </div>
+                  )}
+                  <h3 className="text-xl font-black uppercase tracking-wide text-white">{tier.name}</h3>
+                  <div className="mt-3 flex items-baseline gap-1">
+                    <span className="text-4xl md:text-5xl font-black" style={{ color: LIME }}>${annual ? tier.annual : tier.price}</span>
+                    <span className="text-white/40 text-sm">/mo</span>
                   </div>
-                )}
-                <h3 className="text-xl font-black uppercase tracking-wide text-white">{tier.name}</h3>
-                <div className="mt-3 flex items-baseline gap-1">
-                  <span className="text-4xl md:text-5xl font-black" style={{ color: LIME }}>${annual ? tier.annual : tier.price}</span>
-                  <span className="text-white/40 text-sm">/mo</span>
-                </div>
-                {annual && (
-                  <p className="text-xs mt-1" style={{ color: LIME }}>Billed annually &middot; Save ${(tier.price - tier.annual) * 12}/yr</p>
-                )}
-                <ul className="mt-6 space-y-3">
-                  {tier.features.map((f) => (
-                    <li key={f} className="flex items-center gap-2 text-sm text-white/80">
-                      <CheckCircle size={16} weight="fill" style={{ color: LIME, flexShrink: 0 }} /> {f}
-                    </li>
-                  ))}
-                  {tier.missing.map((f) => (
-                    <li key={f} className="flex items-center gap-2 text-sm text-white/30">
-                      <XCircle size={16} weight="fill" className="text-white/20 flex-shrink-0" /> {f}
-                    </li>
-                  ))}
-                </ul>
-                <a href="#trial" className={`mt-8 block text-center px-6 py-3 rounded-xl font-bold uppercase text-sm tracking-wide transition-all hover:scale-105 ${tier.featured ? "text-black" : "text-white border border-white/20 hover:border-white/40"}`} style={tier.featured ? { background: LIME } : {}}>
-                  {tier.featured ? "Start Free Trial" : "Get Started"}
-                </a>
-              </GlassCard>
-            ))}
+                  {annual && (
+                    <p className="text-xs mt-1" style={{ color: LIME }}>Billed annually &middot; Save ${(tier.price - tier.annual) * 12}/yr</p>
+                  )}
+                  <ul className="mt-6 space-y-3">
+                    {tier.features.map((f) => (
+                      <li key={f} className="flex items-center gap-2 text-sm text-white/80">
+                        <CheckCircle size={16} weight="fill" style={{ color: LIME, flexShrink: 0 }} /> {f}
+                      </li>
+                    ))}
+                    {tier.missing.map((f) => (
+                      <li key={f} className="flex items-center gap-2 text-sm text-white/30">
+                        <XCircle size={16} weight="fill" className="text-white/20 flex-shrink-0" /> {f}
+                      </li>
+                    ))}
+                  </ul>
+                  <a href="#trial" className={`mt-8 block text-center px-6 py-3 rounded-xl font-bold uppercase text-sm tracking-wide transition-all hover:scale-105 ${tier.featured ? "text-black" : "text-white border border-white/20 hover:border-white/40"}`} style={tier.featured ? { background: LIME } : {}}>
+                    {tier.featured ? "Start Free Trial" : "Get Started"}
+                  </a>
+                </GlassCard>
+              );
+              return tier.featured ? (
+                <ShimmerBorder key={tier.name} className="md:-mt-4">{cardContent}</ShimmerBorder>
+              ) : (
+                <div key={tier.name}>{cardContent}</div>
+              );
+            })}
           </div>
         </div>
 
@@ -1071,6 +1096,120 @@ export default function IronAndOakFitness() {
                 <Play size={36} weight="fill" className="text-black ml-1" />
               </div>
             </div>
+          </motion.div>
+        </div>
+      </Section>
+
+      {/* ═══════════════════════════════════════════════════════════
+         14A. TRAINING PROGRAM QUIZ
+         ═══════════════════════════════════════════════════════════ */}
+      <Section>
+        <div className="max-w-3xl mx-auto">
+          <motion.div variants={fadeUp} className="text-center mb-10">
+            <p className="text-sm font-bold uppercase tracking-widest mb-3" style={{ color: LIME }}>Find Your Fit</p>
+            <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight">What Training Program Is <span style={{ color: LIME }}>Right For You?</span></h2>
+            <p className="mt-3 text-white/40 text-sm">Select your goal — we'll point you to the perfect program.</p>
+          </motion.div>
+          <motion.div className="space-y-3" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
+            {[
+              {
+                label: "I want to lose weight and build confidence",
+                answer: "Our Foundations class is perfect — 45-minute full-body sessions designed for all fitness levels. Most members see results in 30 days.",
+                cta: "Try Foundations Free",
+              },
+              {
+                label: "I'm serious about getting strong",
+                answer: "Iron & Oak's Strength Program runs 4x/week with progressive overload. You'll hit PRs you didn't think possible.",
+                cta: "Start the Strength Program",
+              },
+              {
+                label: "I need flexibility and stress relief",
+                answer: "Our Recovery & Mobility classes complement any training style. 60 minutes of movement therapy that makes everything else better.",
+                cta: "Join a Mobility Class",
+              },
+              {
+                label: "I want accountability and community",
+                answer: "Group fitness is our DNA. Our coaches know your name, your goals, and won't let you quit. Try a class free this week.",
+                cta: "Try a Group Class Free",
+              },
+            ].map((option, i) => (
+              <motion.div key={i} variants={fadeUp}>
+                <GlassCard className="overflow-hidden cursor-pointer" onClick={() => setOpenQuiz(openQuiz === i ? null : i)}>
+                  <button className="w-full flex items-center justify-between p-5 text-left">
+                    <span className="text-base font-semibold text-white pr-4">{option.label}</span>
+                    <motion.div animate={{ rotate: openQuiz === i ? 180 : 0 }} transition={spring}>
+                      <CaretDown size={20} style={{ color: LIME }} className="shrink-0" />
+                    </motion.div>
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {openQuiz === i && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={spring}
+                        className="overflow-hidden"
+                      >
+                        <div className="px-5 pb-5 border-t border-white/[0.06] pt-4">
+                          <p className="text-white/70 leading-relaxed mb-4">{option.answer}</p>
+                          <a
+                            href="#trial"
+                            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-black uppercase tracking-wide text-black hover:scale-105 transition-transform"
+                            style={{ background: LIME }}
+                          >
+                            {option.cta} <ArrowRight size={16} weight="bold" />
+                          </a>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </GlassCard>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </Section>
+
+      {/* ═══════════════════════════════════════════════════════════
+         14B. SERVICE AREA GRID
+         ═══════════════════════════════════════════════════════════ */}
+      <Section>
+        <div className="max-w-5xl mx-auto">
+          <motion.div variants={fadeUp} className="text-center mb-10">
+            <p className="text-sm font-bold uppercase tracking-widest mb-3" style={{ color: LIME }}>Service Area</p>
+            <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight">Training Members From <span style={{ color: LIME }}>Across Seattle</span></h2>
+            <p className="mt-3 text-white/40 text-sm">Iron & Oak draws members from every corner of the city. Is your neighborhood on the list?</p>
+          </motion.div>
+          <motion.div
+            className="grid grid-cols-2 sm:grid-cols-4 gap-4"
+            variants={stagger}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-50px" }}
+          >
+            {[
+              "Capitol Hill",
+              "South Lake Union",
+              "Beacon Hill",
+              "Columbia City",
+              "Rainier Valley",
+              "Mt. Baker",
+              "Georgetown",
+              "SODO",
+            ].map((hood) => (
+              <motion.div key={hood} variants={fadeUp}>
+                <GlassCard className="text-center py-5">
+                  <div className="flex items-center justify-center gap-2 mb-2">
+                    <div className="relative">
+                      <div className="w-2 h-2 rounded-full animate-ping absolute" style={{ background: LIME, opacity: 0.5 }} />
+                      <div className="w-2 h-2 rounded-full relative" style={{ background: LIME }} />
+                    </div>
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Active Members</span>
+                  </div>
+                  <p className="text-sm font-black uppercase tracking-wide text-white">{hood}</p>
+                </GlassCard>
+              </motion.div>
+            ))}
           </motion.div>
         </div>
       </Section>

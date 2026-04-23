@@ -580,6 +580,97 @@ function SeasonalCalendar() {
   );
 }
 
+/* ───────────────────────── PEST QUIZ ───────────────────────── */
+const pestQuizOptions = [
+  {
+    label: "I see ants or spiders",
+    result: "Common invaders! Our Perimeter Protection plan treats every entry point with pet-safe, family-safe barrier spray. One visit stops them for 90 days.",
+    urgency: "Standard",
+  },
+  {
+    label: "I suspect rodents (mice or rats)",
+    result: "Rodents require immediate action — they contaminate food and chew wiring. We'll trap, seal entry points, and sanitize. Usually resolved in 2 visits.",
+    urgency: "Urgent",
+  },
+  {
+    label: "I found bed bugs",
+    result: "Bed bugs need professional heat treatment — DIY sprays don't reach all hiding spots. Our heat treatment eliminates 100% in one day. Call us now.",
+    urgency: "Emergency",
+  },
+  {
+    label: "I have a wasp, hornet, or yellow jacket nest",
+    result: "Never attempt nest removal yourself. Our certified technicians safely remove nests at any size — same-day emergency service available.",
+    urgency: "Emergency",
+  },
+];
+
+function PestQuizOption({ label, result, urgency }: { label: string; result: string; urgency: string }) {
+  const [selected, setSelected] = useState(false);
+  const urgencyColor = urgency === "Emergency" ? RED : urgency === "Urgent" ? ORANGE : GREEN;
+  return (
+    <div className="space-y-3">
+      <button
+        onClick={() => setSelected((prev) => !prev)}
+        className="w-full p-5 rounded-xl border text-left transition-all cursor-pointer"
+        style={{
+          background: selected ? `${ORANGE}15` : "rgba(255,255,255,0.02)",
+          borderColor: selected ? ORANGE : "rgba(255,255,255,0.08)",
+        }}
+      >
+        <div className="flex items-center gap-3">
+          <div
+            className="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors"
+            style={{ borderColor: selected ? ORANGE_LIGHT : "rgba(255,255,255,0.2)", background: selected ? ORANGE : "transparent" }}
+          >
+            {selected && (
+              <svg width="10" height="10" viewBox="0 0 12 12" fill="white">
+                <path d="M10 3L5 8.5 2 5.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+              </svg>
+            )}
+          </div>
+          <span className="text-sm font-medium text-white">{label}</span>
+          <span className="ml-auto text-xs font-bold px-2 py-0.5 rounded-full shrink-0" style={{ background: `${urgencyColor}20`, color: urgencyColor, border: `1px solid ${urgencyColor}40` }}>
+            {urgency}
+          </span>
+        </div>
+      </button>
+      <AnimatePresence>
+        {selected && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="overflow-hidden"
+          >
+            <div className="p-4 rounded-xl border" style={{ background: `${ORANGE}10`, borderColor: `${ORANGE}30` }}>
+              <p className="text-sm text-gray-300 leading-relaxed mb-3">{result}</p>
+              <a
+                href="tel:+12067483920"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-bold text-white"
+                style={{ background: ORANGE }}
+              >
+                <Phone size={14} weight="fill" />
+                {urgency === "Emergency" ? "Call Now — Emergency Line" : "Call (206) 748-3920"}
+              </a>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+function PestQuiz() {
+  return (
+    <div className="space-y-4">
+      {pestQuizOptions.map((opt, i) => (
+        <PestQuizOption key={i} label={opt.label} result={opt.result} urgency={opt.urgency} />
+      ))}
+    </div>
+  );
+}
+
 /* ═══════════════════════════════════════════════════════════════════════
    MAIN PAGE COMPONENT
    ═══════════════════════════════════════════════════════════════════════ */
@@ -943,6 +1034,58 @@ export default function PestControlShowcase() {
               </table>
             </div>
           </GlassCard>
+        </div>
+      </SectionReveal>
+
+      {/* ──────────── VIDEO PLACEHOLDER ──────────── */}
+      <SectionReveal className="py-24 relative">
+        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, transparent, ${ORANGE}04, transparent)` }} />
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 relative z-10">
+          <div className="text-center mb-10">
+            <motion.span className="inline-block text-xs font-bold tracking-[0.25em] uppercase px-4 py-1.5 rounded-full border mb-6" style={{ color: ORANGE_LIGHT, borderColor: `${ORANGE}40`, background: `${ORANGE}10` }}>See Our Process</motion.span>
+            <h2 className="text-3xl md:text-5xl font-extrabold text-white">
+              Watch Our Pest Treatment <span style={{ color: ORANGE }}>Process</span>
+            </h2>
+            <p className="text-gray-400 mt-3 max-w-md mx-auto">See how we eliminate pests safely and effectively — from inspection to treatment to prevention</p>
+          </div>
+          <div className="relative w-full aspect-video rounded-2xl overflow-hidden cursor-pointer group">
+            <img
+              src="https://images.unsplash.com/photo-1576919228236-a097c32a5cd4?w=1200&q=80"
+              alt="Pest control technician at work"
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-black/60" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="relative">
+                <motion.div
+                  className="absolute rounded-full"
+                  style={{ background: `${ORANGE}40`, width: 88, height: 88, top: -12, left: -12 }}
+                  animate={{ scale: [1, 1.5, 1], opacity: [0.6, 0, 0.6] }}
+                  transition={{ duration: 2.5, repeat: Infinity, ease: "easeOut" }}
+                />
+                <div className="relative w-16 h-16 rounded-full flex items-center justify-center shadow-lg" style={{ background: ORANGE }}>
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="white" style={{ marginLeft: 3 }}>
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </SectionReveal>
+
+      {/* ──────────── INTERACTIVE QUIZ — What's Invading? ──────────── */}
+      <SectionReveal className="py-24 relative">
+        <div className="absolute inset-0" style={{ background: `radial-gradient(ellipse at 50% 50%, ${ORANGE}06 0%, transparent 50%)` }} />
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10">
+          <div className="text-center mb-10">
+            <motion.span className="inline-block text-xs font-bold tracking-[0.25em] uppercase px-4 py-1.5 rounded-full border mb-6" style={{ color: ORANGE_LIGHT, borderColor: `${ORANGE}40`, background: `${ORANGE}10` }}>Quick Help</motion.span>
+            <h2 className="text-3xl md:text-5xl font-extrabold text-white">
+              What&apos;s Invading <span style={{ color: ORANGE }}>Your Home?</span>
+            </h2>
+            <p className="text-gray-400 mt-3">Select your situation and we&apos;ll give you the fastest path to a pest-free home.</p>
+          </div>
+          <PestQuiz />
         </div>
       </SectionReveal>
 
