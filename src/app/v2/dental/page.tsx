@@ -342,7 +342,7 @@ function CheckupQuiz() {
                 <p className="text-xl font-bold mb-2" style={{ color: opt.color }}>{opt.emoji}</p>
                 <p className="text-slate-600 text-sm mb-4">{opt.cta}</p>
                 <a
-                  href="tel:2065550238"
+                  href="tel:2065923840"
                   className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-white text-sm font-semibold"
                   style={{ background: TEAL }}
                 >
@@ -373,7 +373,7 @@ export default function DentalShowcasePage() {
   ];
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden" style={{ background: CREAM }}>
+    <div className="dental-v2 relative min-h-screen overflow-x-hidden" style={{ background: CREAM }}>
 
       {/* ─── NAV ─── */}
       <nav className="fixed top-0 inset-x-0 z-50 border-b border-slate-200/60 bg-white/80 backdrop-blur-xl">
@@ -390,11 +390,11 @@ export default function DentalShowcasePage() {
               <a key={l.label} href={l.href} className="text-sm font-medium text-slate-600 hover:text-teal-600 transition-colors">{l.label}</a>
             ))}
             <a
-              href="tel:2065550238"
+              href="tel:2065923840"
               className="px-5 py-2 rounded-full text-sm font-semibold text-white transition-transform hover:scale-105"
               style={{ background: TEAL }}
             >
-              (206) 555-0238
+              (206) 592-3840
             </a>
           </div>
           {/* Mobile hamburger */}
@@ -415,8 +415,8 @@ export default function DentalShowcasePage() {
                 {NAV_LINKS.map((l) => (
                   <a key={l.label} href={l.href} onClick={() => setMobileNav(false)} className="block text-slate-700 font-medium">{l.label}</a>
                 ))}
-                <a href="tel:2065550238" className="block text-center px-5 py-3 rounded-full text-white font-semibold" style={{ background: TEAL }}>
-                  Call (206) 555-0238
+                <a href="tel:2065923840" className="block text-center px-5 py-3 rounded-full text-white font-semibold" style={{ background: TEAL }}>
+                  Call (206) 592-3840
                 </a>
               </div>
             </motion.div>
@@ -451,10 +451,10 @@ export default function DentalShowcasePage() {
                   </span>
                 </MagneticButton>
                 <a
-                  href="tel:2065550238"
+                  href="tel:2065923840"
                   className="flex items-center gap-2 px-8 py-4 rounded-full border-2 border-slate-300 text-slate-700 font-semibold hover:border-teal-400 hover:text-teal-700 transition-colors"
                 >
-                  <Phone size={20} weight="bold" /> (206) 555-0238
+                  <Phone size={20} weight="bold" /> (206) 592-3840
                 </a>
               </motion.div>
               {/* Trust pills */}
@@ -590,7 +590,7 @@ export default function DentalShowcasePage() {
               </div>
               <p className="text-sm text-slate-500">
                 Don&apos;t see your carrier? Call us at{" "}
-                <a href="tel:2065550238" className="font-semibold underline" style={{ color: TEAL }}>(206) 555-0238</a>{" "}
+                <a href="tel:2065923840" className="font-semibold underline" style={{ color: TEAL }}>(206) 592-3840</a>{" "}
                 and we will check for you.
               </p>
             </div>
@@ -805,7 +805,7 @@ export default function DentalShowcasePage() {
                 <MagneticButton className="px-8 py-4 rounded-full text-white font-semibold shadow-lg shadow-teal-500/20" style={{ background: TEAL }}>
                   <span className="flex items-center gap-2"><CalendarCheck size={20} weight="bold" /> Claim This Offer</span>
                 </MagneticButton>
-                <a href="tel:2065550238" className="flex items-center gap-2 px-8 py-4 rounded-full border-2 border-slate-300 text-slate-700 font-semibold hover:border-teal-400 transition-colors">
+                <a href="tel:2065923840" className="flex items-center gap-2 px-8 py-4 rounded-full border-2 border-slate-300 text-slate-700 font-semibold hover:border-teal-400 transition-colors">
                   <Phone size={20} weight="bold" /> Call Now
                 </a>
               </div>
@@ -914,7 +914,7 @@ export default function DentalShowcasePage() {
                       value={contactForm.phone}
                       onChange={(e) => setContactForm({ ...contactForm, phone: e.target.value })}
                       className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-500/40 focus:border-teal-400 transition-colors"
-                      placeholder="(206) 555-0000"
+                      placeholder="Your phone number"
                     />
                   </div>
                 </div>
@@ -959,9 +959,9 @@ export default function DentalShowcasePage() {
                     <MapPin size={20} weight="fill" style={{ color: TEAL }} className="shrink-0 mt-0.5" />
                     <span>4215 Stone Way N, Suite 101<br />Seattle, WA 98103</span>
                   </a>
-                  <a href="tel:2065550238" className="flex items-center gap-3 text-slate-600 hover:text-teal-600 transition-colors">
+                  <a href="tel:2065923840" className="flex items-center gap-3 text-slate-600 hover:text-teal-600 transition-colors">
                     <Phone size={20} weight="fill" style={{ color: TEAL }} />
-                    <span>(206) 555-0238</span>
+                    <span>(206) 592-3840</span>
                   </a>
                   <a href="mailto:smile@emeraldcitydental.com" className="flex items-center gap-3 text-slate-600 hover:text-teal-600 transition-colors">
                     <Envelope size={20} weight="fill" style={{ color: TEAL }} />
@@ -997,10 +997,10 @@ export default function DentalShowcasePage() {
                 </div>
                 <p className="text-red-700 text-sm mb-4">Broken tooth, severe pain, or dental trauma? We reserve emergency slots every day.</p>
                 <a
-                  href="tel:2065550238"
+                  href="tel:2065923840"
                   className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-red-600 text-white font-semibold hover:bg-red-700 transition-colors"
                 >
-                  <Phone size={18} weight="bold" /> Call Now - (206) 555-0238
+                  <Phone size={18} weight="bold" /> Call Now - (206) 592-3840
                 </a>
               </div>
             </div>
@@ -1059,9 +1059,9 @@ export default function DentalShowcasePage() {
                   <MapPin size={16} className="shrink-0 mt-0.5" />
                   <span>4215 Stone Way N, Suite 101<br />Seattle, WA 98103</span>
                 </a>
-                <a href="tel:2065550238" className="flex items-center gap-2 hover:text-teal-400 transition-colors">
+                <a href="tel:2065923840" className="flex items-center gap-2 hover:text-teal-400 transition-colors">
                   <Phone size={16} />
-                  <span>(206) 555-0238</span>
+                  <span>(206) 592-3840</span>
                 </a>
                 <a href="mailto:smile@emeraldcitydental.com" className="flex items-center gap-2 hover:text-teal-400 transition-colors">
                   <Envelope size={16} />
