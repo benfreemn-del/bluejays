@@ -22,5 +22,24 @@ export default function GeneralContractorV2Layout({
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  return (
+    <>
+      {/* Barlow Condensed (headings) + Barlow (body) — spec for general contractor trades */}
+      <link
+        href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800;900&family=Barlow:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet"
+      />
+      <style>{`
+        .gc-v2 h1, .gc-v2 h2, .gc-v2 h3, .gc-v2 h4 {
+          font-family: 'Barlow Condensed', sans-serif !important;
+          letter-spacing: 0em;
+        }
+        .gc-v2, .gc-v2 p, .gc-v2 a, .gc-v2 button, .gc-v2 input,
+        .gc-v2 select, .gc-v2 textarea, .gc-v2 label, .gc-v2 span:not(.font-mono) {
+          font-family: 'Barlow', system-ui, -apple-system, sans-serif;
+        }
+      `}</style>
+      {children}
+    </>
+  );
 }

@@ -221,7 +221,7 @@ export default function V2SalonPage() {
   const [quizSelection, setQuizSelection] = useState<number | null>(null);
 
   return (
-    <div className="min-h-[100dvh] overflow-x-hidden" style={{ background: BG, color: TEXT_DARK }}>
+    <div className="salon-v2 min-h-[100dvh] overflow-x-hidden" style={{ background: BG, color: TEXT_DARK }}>
 
       {/* ══════════════ NAVIGATION ══════════════ */}
       <motion.nav
@@ -356,11 +356,11 @@ export default function V2SalonPage() {
                   </span>
                 </SpringButton>
                 <a
-                  href="tel:2065550518"
+                  href="tel:2065418293"
                   className="px-8 py-4 border rounded-xl flex items-center gap-2 text-sm font-medium transition-colors hover:border-rose-300/60"
                   style={{ borderColor: `${ROSE}30`, color: TEXT_DARK }}
                 >
-                  <Phone weight="bold" size={18} style={{ color: ROSE }} /> (206) 555-0518
+                  <Phone weight="bold" size={18} style={{ color: ROSE }} /> (206) 541-8293
                 </a>
               </motion.div>
             </div>
@@ -873,7 +873,7 @@ export default function V2SalonPage() {
             >
               <div className="space-y-6">
                 {[
-                  { icon: Phone, label: "(206) 555-0518", href: "tel:2065550518" },
+                  { icon: Phone, label: "(206) 541-8293", href: "tel:2065418293" },
                   { icon: EnvelopeSimple, label: "book@velvethairsudio.com", href: "mailto:book@velvethairsudio.com" },
                   { icon: MapPin, label: "1924 Pike Place Market, Suite 3, Seattle, WA 98101", href: "https://maps.google.com/?q=1924+Pike+Place+Market+Suite+3+Seattle+WA+98101" },
                   { icon: Clock, label: "Tue - Sat: 9AM - 7PM  |  Closed Sun & Mon", href: undefined },
@@ -1032,7 +1032,7 @@ export default function V2SalonPage() {
                   <TiktokLogo size={18} weight="bold" />
                 </a>
               </div>
-              <a href="tel:2065550518" className="text-sm block mb-1" style={{ color: TEXT_BODY }}>(206) 555-0518</a>
+              <a href="tel:2065418293" className="text-sm block mb-1" style={{ color: TEXT_BODY }}>(206) 541-8293</a>
               <a href="mailto:book@velvethairsudio.com" className="text-sm block" style={{ color: TEXT_BODY }}>book@velvethairsudio.com</a>
             </div>
           </div>

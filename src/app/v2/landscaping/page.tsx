@@ -303,7 +303,7 @@ export default function V2LandscapingPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   return (
-    <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: BG, color: "#f1f5f9" }}>
+    <main className="land-v2 relative min-h-[100dvh] overflow-x-hidden" style={{ background: BG, color: "#f1f5f9" }}>
       <FloatingLeaves />
 
       {/* ═══════════════ NAV ═══════════════ */}
@@ -369,7 +369,7 @@ export default function V2LandscapingPage() {
                   Free Design Consultation <ArrowRight size={18} weight="bold" />
                 </MagneticButton>
                 <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/10 flex items-center gap-2 cursor-pointer">
-                  <Phone size={18} weight="duotone" /> (206) 555-0642
+                  <Phone size={18} weight="duotone" /> (206) 473-8109
                 </MagneticButton>
               </motion.div>
             </div>
@@ -734,7 +734,7 @@ export default function V2LandscapingPage() {
               {quizChoice !== null && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mt-6 text-center">
                   <MagneticButton className="px-8 py-3 rounded-full text-sm font-semibold text-white cursor-pointer" style={{ background: PRIMARY } as React.CSSProperties}>
-                    <span className="flex items-center gap-2"><Phone size={16} weight="duotone" /> Call (206) 555-0642 for a Free Quote</span>
+                    <span className="flex items-center gap-2"><Phone size={16} weight="duotone" /> Call (206) 473-8109 for a Free Quote</span>
                   </MagneticButton>
                 </motion.div>
               )}
@@ -987,7 +987,7 @@ export default function V2LandscapingPage() {
               <div className="space-y-5">
                 {[
                   { icon: MapPin, label: "Office", value: "4520 Sand Point Way NE, Seattle, WA 98105", href: "https://maps.google.com/?q=4520+Sand+Point+Way+NE+Seattle+WA+98105" },
-                  { icon: Phone, label: "Phone", value: "(206) 555-0642", href: "tel:+12065550642" },
+                  { icon: Phone, label: "Phone", value: "(206) 473-8109", href: "tel:+12064738109" },
                   { icon: Envelope, label: "Email", value: "design@cascadelandscapes.com", href: "mailto:design@cascadelandscapes.com" },
                   { icon: Clock, label: "Hours", value: "Mon-Fri 7am-6pm | Sat 8am-4pm" },
                 ].map((item, i) => (
@@ -1156,7 +1156,7 @@ export default function V2LandscapingPage() {
               <div className="space-y-3 text-sm text-slate-500">
                 <p className="flex items-start gap-2">
                   <Phone size={14} weight="duotone" style={{ color: PRIMARY_LIGHT }} className="mt-0.5 shrink-0" />
-                  <a href="tel:+12065550642" className="hover:text-white transition-colors">(206) 555-0642</a>
+                  <a href="tel:+12064738109" className="hover:text-white transition-colors">(206) 473-8109</a>
                 </p>
                 <p className="flex items-start gap-2">
                   <Envelope size={14} weight="duotone" style={{ color: PRIMARY_LIGHT }} className="mt-0.5 shrink-0" />

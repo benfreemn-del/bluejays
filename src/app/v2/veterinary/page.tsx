@@ -293,7 +293,7 @@ export default function V2VeterinaryPage() {
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
 
   return (
-    <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: BG, color: "#1c1917" }}>
+    <main className="vet-v2 relative min-h-[100dvh] overflow-x-hidden" style={{ background: BG, color: "#1c1917" }}>
       <FloatingPawPrints />
 
       {/* ─── NAV ─── */}
@@ -365,7 +365,7 @@ export default function V2VeterinaryPage() {
                 Schedule a Visit <ArrowRight size={18} weight="bold" />
               </MagneticButton>
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-[#1c1917] border border-gray-200 bg-white/60 backdrop-blur-sm flex items-center gap-2 cursor-pointer">
-                <Phone size={18} weight="duotone" style={{ color: GREEN }} /> (425) 555-0196
+                <Phone size={18} weight="duotone" style={{ color: GREEN }} /> (425) 283-7164
               </MagneticButton>
             </motion.div>
           </div>
@@ -663,8 +663,8 @@ export default function V2VeterinaryPage() {
           <motion.div className="grid grid-cols-1 sm:grid-cols-3 gap-4" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
             {[
               { label: "Under 6 Months", color: "#16a34a", bg: "bg-green-50", border: "border-green-200", recommendation: "Great job! You're on track. Keep up with regular wellness visits to maintain your pet's health." },
-              { label: "6 - 12 Months", color: "#d97706", bg: "bg-amber-50", border: "border-amber-200", recommendation: "Time to schedule! Annual exams catch issues early. Call us at (425) 555-0196 to book your pet's checkup." },
-              { label: "Over a Year", color: "#dc2626", bg: "bg-red-50", border: "border-red-200", recommendation: "Your pet needs to be seen soon. Pets age 5-7x faster than humans. Call (425) 555-0196 today for a $49 new patient exam." },
+              { label: "6 - 12 Months", color: "#d97706", bg: "bg-amber-50", border: "border-amber-200", recommendation: "Time to schedule! Annual exams catch issues early. Call us at (425) 283-7164 to book your pet's checkup." },
+              { label: "Over a Year", color: "#dc2626", bg: "bg-red-50", border: "border-red-200", recommendation: "Your pet needs to be seen soon. Pets age 5-7x faster than humans. Call (425) 283-7164 today for a $49 new patient exam." },
             ].map((option, i) => (
               <motion.div key={i} variants={fadeUp}>
                 <button
@@ -828,7 +828,7 @@ export default function V2VeterinaryPage() {
                   <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 1.5, repeat: Infinity }} className="w-3 h-3 rounded-full bg-red-500" />
                   <div>
                     <p className="text-sm font-bold text-red-700">Pet Emergency?</p>
-                    <p className="text-sm text-red-600">Call <a href="tel:4255550196" className="font-bold underline">(425) 555-0196</a> immediately</p>
+                    <p className="text-sm text-red-600">Call <a href="tel:4252837164" className="font-bold underline">(425) 283-7164</a> immediately</p>
                   </div>
                 </div>
               </div>
@@ -836,7 +836,7 @@ export default function V2VeterinaryPage() {
               <div className="space-y-4">
                 {[
                   { icon: MapPin, label: "Location", value: "10234 NE 68th St, Kirkland, WA 98033", href: "https://maps.google.com/?q=10234+NE+68th+St+Kirkland+WA+98033" },
-                  { icon: Phone, label: "Phone", value: "(425) 555-0196", href: "tel:4255550196" },
+                  { icon: Phone, label: "Phone", value: "(425) 283-7164", href: "tel:4252837164" },
                   { icon: Envelope, label: "Email", value: "care@northshorevetclinic.com", href: "mailto:care@northshorevetclinic.com" },
                   { icon: Clock, label: "Hours", value: "Mon-Fri 7am-7pm\nSaturday 8am-5pm\nSunday 10am-4pm (emergencies)" },
                 ].map((item, i) => (
@@ -915,7 +915,7 @@ export default function V2VeterinaryPage() {
             <div>
               <h4 className="text-sm font-semibold text-[#1c1917] mb-4">Contact</h4>
               <div className="space-y-2 text-sm text-[#6b7280]">
-                <a href="tel:4255550196" className="block hover:text-[#1c1917] transition-colors">(425) 555-0196</a>
+                <a href="tel:4252837164" className="block hover:text-[#1c1917] transition-colors">(425) 283-7164</a>
                 <a href="mailto:care@northshorevetclinic.com" className="block hover:text-[#1c1917] transition-colors">care@northshorevetclinic.com</a>
                 <a href="https://maps.google.com/?q=10234+NE+68th+St+Kirkland+WA+98033" target="_blank" rel="noopener noreferrer" className="block hover:text-[#1c1917] transition-colors">10234 NE 68th St<br />Kirkland, WA 98033</a>
               </div>

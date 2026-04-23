@@ -194,7 +194,7 @@ export default function ChurchShowcase() {
   }, []);
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden" style={{ background: CREAM, color: DARK }}>
+    <div className="church-v2 relative min-h-screen overflow-x-hidden" style={{ background: CREAM, color: DARK }}>
 
       {/* ═══════════════ NAVBAR ═══════════════ */}
       <nav className="fixed top-0 inset-x-0 z-50 backdrop-blur-md border-b" style={{ background: "rgba(250,249,246,0.92)", borderColor: CARD_BORDER }}>
@@ -863,7 +863,7 @@ export default function ChurchShowcase() {
                     <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: AMBER_GLOW }}>
                       <Phone size={18} weight="duotone" style={{ color: AMBER }} />
                     </div>
-                    <a href="tel:2065550285" className="text-sm font-medium hover:underline" style={{ color: DARK }}>(206) 555-0285</a>
+                    <a href="tel:2063257841" className="text-sm font-medium hover:underline" style={{ color: DARK }}>(206) 325-7841</a>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: AMBER_GLOW }}>
@@ -958,7 +958,7 @@ export default function ChurchShowcase() {
               <div className="space-y-2 text-sm" style={{ color: BODY }}>
                 <p className="flex items-center gap-2">
                   <Phone size={14} style={{ color: AMBER }} />
-                  <a href="tel:2065550285" className="hover:underline">(206) 555-0285</a>
+                  <a href="tel:2063257841" className="hover:underline">(206) 325-7841</a>
                 </p>
                 <p className="flex items-center gap-2">
                   <Envelope size={14} style={{ color: AMBER }} />

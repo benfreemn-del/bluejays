@@ -22,5 +22,24 @@ export default function SalonV2Layout({
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  return (
+    <>
+      {/* Cormorant Garamond (headings) + Raleway (body) — spec for salon elegant */}
+      <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&family=Raleway:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet"
+      />
+      <style>{`
+        .salon-v2 h1, .salon-v2 h2, .salon-v2 h3, .salon-v2 h4 {
+          font-family: 'Cormorant Garamond', Georgia, serif !important;
+          letter-spacing: 0.01em;
+        }
+        .salon-v2, .salon-v2 p, .salon-v2 a, .salon-v2 button, .salon-v2 input,
+        .salon-v2 select, .salon-v2 textarea, .salon-v2 label, .salon-v2 span:not(.font-mono) {
+          font-family: 'Raleway', system-ui, -apple-system, sans-serif;
+        }
+      `}</style>
+      {children}
+    </>
+  );
 }

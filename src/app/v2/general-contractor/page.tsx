@@ -226,7 +226,7 @@ const faqs = [
   { q: "Do you handle permits and inspections?", a: "Absolutely. We pull all permits through the City of Seattle, coordinate every inspection, and ensure full code compliance. You never need to visit city hall." },
   { q: "What's your warranty on completed work?", a: "All projects come with a comprehensive 5-year workmanship warranty backed by our WA contractor bond. We stand behind every joint, finish, and system we install." },
   { q: "Can you work with my architect's plans?", a: "Yes! We regularly collaborate with local architects and designers. We can also provide in-house design services or connect you with our preferred architects for a full design-build experience." },
-  { q: "What sets you apart from a handyman?", a: "As a licensed general contractor (WA #SUMMIBW891PZ), we carry full liability insurance, pull permits, coordinate licensed subcontractors, and guarantee our work. A handyman legally cannot do most of what we do." },
+  { q: "What sets you apart from a handyman?", a: "As a licensed general contractor (WA #SUMMBW*891QP), we carry full liability insurance, pull permits, coordinate licensed subcontractors, and guarantee our work. A handyman legally cannot do most of what we do." },
 ];
 
 const projectTypes = [
@@ -276,7 +276,7 @@ export default function V2GeneralContractorShowcase() {
   const [quizStep, setQuizStep] = useState<number | null>(null);
 
   return (
-    <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ background: BG, color: "#f1f5f9" }}>
+    <main className="gc-v2 relative min-h-[100dvh] overflow-x-hidden" style={{ background: BG, color: "#f1f5f9" }}>
       <FloatingParticles />
 
       {/* ══════════════════════════════════════════════════
@@ -358,7 +358,7 @@ export default function V2GeneralContractorShowcase() {
 
             {/* Trust pills */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="flex flex-wrap gap-3">
-              {["22 Years Experience", "200+ Projects", "WA #SUMMIBW891PZ"].map((pill) => (
+              {["22 Years Experience", "200+ Projects", "WA #SUMMBW*891QP"].map((pill) => (
                 <span key={pill} className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold border backdrop-blur-md" style={{ color: AMBER, borderColor: `${AMBER}40`, background: `${AMBER}15` }}>
                   <ShieldCheck size={14} weight="fill" /> {pill}
                 </span>
@@ -370,7 +370,7 @@ export default function V2GeneralContractorShowcase() {
                 Get Free Estimate <ArrowRight size={18} weight="bold" />
               </MagneticButton>
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer backdrop-blur-md bg-white/5">
-                <Phone size={18} weight="duotone" /> (206) 555-0456
+                <Phone size={18} weight="duotone" /> (206) 782-9345
               </MagneticButton>
             </motion.div>
 
@@ -675,7 +675,7 @@ export default function V2GeneralContractorShowcase() {
               </div>
               <div className="absolute -bottom-4 -right-4 md:bottom-6 md:-right-6">
                 <div className="px-5 py-3 rounded-xl backdrop-blur-md border text-white font-bold text-sm shadow-lg" style={{ background: `${AMBER}e6`, borderColor: `${AMBER}80` }}>
-                  <ShieldCheck size={16} weight="fill" className="inline mr-2" />WA #SUMMIBW891PZ
+                  <ShieldCheck size={16} weight="fill" className="inline mr-2" />WA #SUMMBW*891QP
                 </div>
               </div>
             </div>
@@ -686,7 +686,7 @@ export default function V2GeneralContractorShowcase() {
                 Chris Dalton has been building in the Pacific Northwest for 22 years. From his first renovation in Ballard to managing multi-unit ADU projects across Seattle, he brings hands-on expertise and old-school accountability to every job.
               </p>
               <p className="text-slate-400 leading-relaxed mb-8">
-                As a licensed general contractor (WA #SUMMIBW891PZ), Chris personally oversees every Summit Builders NW project. He believes every homeowner deserves transparent communication, honest pricing, and craftsmanship that lasts generations.
+                As a licensed general contractor (WA #SUMMBW*891QP), Chris personally oversees every Summit Builders NW project. He believes every homeowner deserves transparent communication, honest pricing, and craftsmanship that lasts generations.
               </p>
               <div className="grid grid-cols-2 gap-4">
                 {[
@@ -787,7 +787,7 @@ export default function V2GeneralContractorShowcase() {
                     <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={spring} className="overflow-hidden">
                       <p className="text-xs text-slate-400 leading-relaxed mt-2 mb-3">{opt.rec}</p>
                       <span className="inline-flex items-center gap-1.5 text-xs font-semibold" style={{ color: AMBER }}>
-                        <Phone size={12} weight="fill" /> Call (206) 555-0456 for a Free Estimate
+                        <Phone size={12} weight="fill" /> Call (206) 782-9345 for a Free Estimate
                       </span>
                     </motion.div>
                   )}
@@ -975,8 +975,8 @@ export default function V2GeneralContractorShowcase() {
           <h2 className="text-3xl md:text-5xl font-black tracking-tight text-white mb-4">Ready to Start Your Project?</h2>
           <p className="text-lg text-white/80 mb-8 max-w-xl mx-auto">Get a free, no-obligation on-site consultation. We&apos;ll discuss your vision, timeline, and budget — then deliver a detailed proposal within 48 hours.</p>
           <div className="flex flex-wrap justify-center gap-4">
-            <a href="tel:+12065550456" className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-white text-black font-bold text-lg hover:bg-white/90 transition-colors">
-              <Phone size={20} weight="fill" /> (206) 555-0456
+            <a href="tel:+12067829345" className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-white text-black font-bold text-lg hover:bg-white/90 transition-colors">
+              <Phone size={20} weight="fill" /> (206) 782-9345
             </a>
             <a href="mailto:build@summitbuildersnw.com" className="inline-flex items-center gap-3 px-8 py-4 rounded-full border-2 border-white/30 text-white font-bold text-lg hover:bg-white/10 transition-colors">
               <Envelope size={20} weight="fill" /> Email Us
@@ -1002,10 +1002,10 @@ export default function V2GeneralContractorShowcase() {
               <div className="space-y-5">
                 {[
                   { icon: MapPin, title: "Office", text: "8901 Roosevelt Way NE, Seattle, WA 98115", href: "https://maps.google.com/?q=8901+Roosevelt+Way+NE+Seattle+WA+98115" },
-                  { icon: Phone, title: "Phone", text: "(206) 555-0456", href: "tel:+12065550456" },
+                  { icon: Phone, title: "Phone", text: "(206) 782-9345", href: "tel:+12067829345" },
                   { icon: Envelope, title: "Email", text: "build@summitbuildersnw.com", href: "mailto:build@summitbuildersnw.com" },
                   { icon: Clock, title: "Hours", text: "Mon-Sat: 7AM-6PM", href: undefined },
-                  { icon: ShieldCheck, title: "License", text: "WA #SUMMIBW891PZ", href: undefined },
+                  { icon: ShieldCheck, title: "License", text: "WA #SUMMBW*891QP", href: undefined },
                 ].map((item) => (
                   <div key={item.title} className="flex items-start gap-4">
                     <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: AMBER_GLOW }}>
@@ -1074,7 +1074,7 @@ export default function V2GeneralContractorShowcase() {
               <p className="text-slate-400 leading-relaxed max-w-2xl mx-auto text-lg mb-4">
                 Every project comes with a 5-year workmanship warranty backed by our Washington State contractor bond. On time. On budget. Built to last.
               </p>
-              <p className="text-sm font-semibold mb-6" style={{ color: AMBER }}>WA License #SUMMIBW891PZ</p>
+              <p className="text-sm font-semibold mb-6" style={{ color: AMBER }}>WA License #SUMMBW*891QP</p>
               <div className="flex flex-wrap justify-center gap-3">
                 {["Licensed Contractor", "Free On-Site Estimates", "5-Year Warranty", "Satisfaction Guaranteed", "Bonded & Insured"].map((item) => (
                   <span key={item} className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border" style={{ color: AMBER, borderColor: `${AMBER}33`, background: `${AMBER}0d` }}>
@@ -1101,7 +1101,7 @@ export default function V2GeneralContractorShowcase() {
                 <span className="text-lg font-bold text-white">Summit Builders NW</span>
               </div>
               <p className="text-sm text-slate-500 leading-relaxed mb-2">Seattle&apos;s trusted general contractor. 22 years of exceptional craftsmanship in the Pacific Northwest.</p>
-              <p className="text-xs text-slate-600">WA License #SUMMIBW891PZ</p>
+              <p className="text-xs text-slate-600">WA License #SUMMBW*891QP</p>
             </div>
             <div>
               <h4 className="text-sm font-semibold text-white mb-3">Quick Links</h4>
@@ -1114,7 +1114,7 @@ export default function V2GeneralContractorShowcase() {
             <div>
               <h4 className="text-sm font-semibold text-white mb-3">Contact</h4>
               <div className="space-y-2 text-sm text-slate-500">
-                <p><a href="tel:+12065550456" className="hover:text-white transition-colors">(206) 555-0456</a></p>
+                <p><a href="tel:+12067829345" className="hover:text-white transition-colors">(206) 782-9345</a></p>
                 <p><a href="mailto:build@summitbuildersnw.com" className="hover:text-white transition-colors">build@summitbuildersnw.com</a></p>
                 <p><a href="https://maps.google.com/?q=8901+Roosevelt+Way+NE+Seattle+WA+98115" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">8901 Roosevelt Way NE, Seattle, WA 98115</a></p>
               </div>
