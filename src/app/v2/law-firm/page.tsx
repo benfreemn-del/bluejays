@@ -508,17 +508,17 @@ export default function V2LawFirmPage() {
 
         <motion.div
           style={{ y: heroParallax }}
-          className="relative z-10 text-center w-full max-w-5xl mx-auto px-4 md:px-6 py-32"
+          className="relative z-10 text-center w-full max-w-5xl mx-auto px-4 md:px-6 py-32 overflow-hidden"
         >
           {/* Bold typography entrance */}
           <motion.div variants={stagger} initial="hidden" animate="show" className="space-y-2 md:space-y-4">
             <motion.div variants={fadeUp}>
-              <span className="block text-5xl sm:text-7xl md:text-8xl lg:text-9xl tracking-tighter leading-[0.9] font-black text-white" style={{ textShadow: "0 4px 20px rgba(0,0,0,0.5)" }}>
+              <span className="block text-4xl sm:text-7xl md:text-8xl lg:text-9xl tracking-tighter leading-[0.9] font-black text-white" style={{ textShadow: "0 4px 20px rgba(0,0,0,0.5)" }}>
                 Fierce Advocacy.
               </span>
             </motion.div>
             <motion.div variants={fadeUp}>
-              <span className="block text-5xl sm:text-7xl md:text-8xl lg:text-9xl tracking-tighter leading-[0.9] font-black" style={{ color: EMERALD, textShadow: `0 4px 20px ${EMERALD}40` }}>
+              <span className="block text-4xl sm:text-7xl md:text-8xl lg:text-9xl tracking-tighter leading-[0.9] font-black" style={{ color: EMERALD, textShadow: `0 4px 20px ${EMERALD}40` }}>
                 Proven Results.
               </span>
             </motion.div>
