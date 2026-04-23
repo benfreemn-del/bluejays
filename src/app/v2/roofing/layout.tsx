@@ -22,5 +22,24 @@ export default function RoofingV2Layout({
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  return (
+    <>
+      {/* Barlow Condensed (headings) + Barlow (body) — spec for roofing trades */}
+      <link
+        href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800;900&family=Barlow:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet"
+      />
+      <style>{`
+        .roof-v2 h1, .roof-v2 h2, .roof-v2 h3, .roof-v2 h4 {
+          font-family: 'Barlow Condensed', sans-serif !important;
+          letter-spacing: 0em;
+        }
+        .roof-v2, .roof-v2 p, .roof-v2 a, .roof-v2 button, .roof-v2 input,
+        .roof-v2 select, .roof-v2 textarea, .roof-v2 label, .roof-v2 span:not(.font-mono) {
+          font-family: 'Barlow', system-ui, -apple-system, sans-serif;
+        }
+      `}</style>
+      {children}
+    </>
+  );
 }

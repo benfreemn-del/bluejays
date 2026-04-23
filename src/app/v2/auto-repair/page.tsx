@@ -419,7 +419,7 @@ export default function V2AutoRepairPage() {
 
   return (
     <main
-      className="relative min-h-[100dvh] overflow-x-hidden"
+      className="auto-v2 relative min-h-[100dvh] overflow-x-hidden"
       style={{ background: DARK, color: "#e2e8f0" }}
     >
       <FloatingParticles />
@@ -452,12 +452,12 @@ export default function V2AutoRepairPage() {
               </a>
             ))}
             <a
-              href="tel:2065550389"
+              href="tel:2068324750"
               className="ml-2 flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition-transform hover:scale-105"
               style={{ background: RED }}
             >
               <Phone size={16} weight="fill" />
-              (206) 555-0389
+              (206) 832-4750
             </a>
           </div>
 
@@ -493,7 +493,7 @@ export default function V2AutoRepairPage() {
                   </a>
                 ))}
                 <a
-                  href="tel:2065550389"
+                  href="tel:2068324750"
                   className="mt-2 flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-white font-semibold"
                   style={{ background: RED }}
                 >
@@ -920,12 +920,12 @@ export default function V2AutoRepairPage() {
                       <div className="mt-3 p-5 rounded-xl border border-white/10 bg-white/[0.02]">
                         <p className="text-sm text-slate-400 leading-relaxed mb-4">{q.answer}</p>
                         <a
-                          href="tel:2065550389"
+                          href="tel:2068324750"
                           className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white"
                           style={{ background: RED }}
                         >
                           <Phone size={16} weight="fill" />
-                          Call (206) 555-0389
+                          Call (206) 832-4750
                         </a>
                       </div>
                     </motion.div>
@@ -1071,7 +1071,7 @@ export default function V2AutoRepairPage() {
                   <ArrowRight size={18} weight="bold" />
                   Apply for Financing
                 </MagneticButton>
-                <a href="tel:2065550389" className="text-sm text-slate-400 hover:text-white transition">
+                <a href="tel:2068324750" className="text-sm text-slate-400 hover:text-white transition">
                   Or call to discuss options
                 </a>
               </div>
@@ -1226,8 +1226,8 @@ export default function V2AutoRepairPage() {
                 {
                   icon: Phone,
                   label: "Call Us",
-                  value: "(206) 555-0389",
-                  href: "tel:2065550389",
+                  value: "(206) 832-4750",
+                  href: "tel:2068324750",
                   sub: "Mon-Fri 7am-6pm, Sat 8am-4pm",
                 },
                 {
@@ -1319,9 +1319,9 @@ export default function V2AutoRepairPage() {
               <h4 className="text-white font-bold mb-4">Contact</h4>
               <ul className="space-y-3">
                 <li>
-                  <a href="tel:2065550389" className="flex items-center gap-2 text-sm text-slate-500 hover:text-white transition">
+                  <a href="tel:2068324750" className="flex items-center gap-2 text-sm text-slate-500 hover:text-white transition">
                     <Phone size={16} style={{ color: RED }} weight="fill" />
-                    (206) 555-0389
+                    (206) 832-4750
                   </a>
                 </li>
                 <li>

@@ -312,7 +312,7 @@ export default function IronAndOakFitness() {
   const [email, setEmail] = useState("");
 
   return (
-    <main className="relative min-h-screen text-white overflow-x-hidden" style={{ background: BLACK }}>
+    <main className="fit-v2 relative min-h-screen text-white overflow-x-hidden" style={{ background: BLACK }}>
       {/* grain overlay */}
       <div className="fixed inset-0 pointer-events-none z-[1] opacity-[0.03]" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E\")", backgroundRepeat: "repeat", backgroundSize: "256px" }} />
       <Particles />
@@ -1105,7 +1105,7 @@ export default function IronAndOakFitness() {
                   </div>
                   <div>
                     <p className="text-sm font-bold text-white">Phone</p>
-                    <a href="tel:+12065550627" className="text-sm text-white/50 hover:text-white/70 transition-colors">(206) 555-0627</a>
+                    <a href="tel:+12066194382" className="text-sm text-white/50 hover:text-white/70 transition-colors">(206) 619-4382</a>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
@@ -1181,7 +1181,7 @@ export default function IronAndOakFitness() {
             <div>
               <p className="text-xs font-bold uppercase tracking-widest text-white/50 mb-4">Contact</p>
               <div className="space-y-2 text-sm text-white/40">
-                <p>(206) 555-0627</p>
+                <p>(206) 619-4382</p>
                 <p>train@ironandoakfitness.com</p>
                 <p>2847 Eastlake Ave E, Seattle, WA 98102</p>
               </div>

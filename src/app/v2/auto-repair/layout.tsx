@@ -22,5 +22,24 @@ export default function AutoRepairV2Layout({
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  return (
+    <>
+      {/* Barlow Condensed (headings) + Barlow (body) — spec for auto repair trades */}
+      <link
+        href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800;900&family=Barlow:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet"
+      />
+      <style>{`
+        .auto-v2 h1, .auto-v2 h2, .auto-v2 h3, .auto-v2 h4 {
+          font-family: 'Barlow Condensed', sans-serif !important;
+          letter-spacing: 0em;
+        }
+        .auto-v2, .auto-v2 p, .auto-v2 a, .auto-v2 button, .auto-v2 input,
+        .auto-v2 select, .auto-v2 textarea, .auto-v2 label, .auto-v2 span:not(.font-mono) {
+          font-family: 'Barlow', system-ui, -apple-system, sans-serif;
+        }
+      `}</style>
+      {children}
+    </>
+  );
 }
