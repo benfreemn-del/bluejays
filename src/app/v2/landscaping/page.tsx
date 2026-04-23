@@ -496,27 +496,6 @@ export default function V2LandscapingPage() {
         </div>
       </SectionReveal>
 
-      {/* ═══════════════ 4. BEFORE / AFTER ═══════════════ */}
-      <SectionReveal className="relative z-10 py-16 md:py-24">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-0 w-full h-px" style={{ background: `linear-gradient(90deg, transparent, ${PRIMARY}40, transparent)` }} />
-        </div>
-        <div className="mx-auto max-w-5xl px-4 md:px-6 relative">
-          <div className="text-center mb-12">
-            <p className="text-sm uppercase tracking-[0.2em] mb-3" style={{ color: EARTH }}>The Cascade Difference</p>
-            <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white">
-              <WordReveal text="Before & After" />
-            </h2>
-          </div>
-          <div className="max-w-4xl mx-auto">
-            <div className="relative rounded-2xl overflow-hidden">
-              <img src="/images/landscaping-before-after.png" alt="Landscape transformation before and after" className="w-full h-auto object-cover" />
-            </div>
-          </div>
-          <p className="text-center text-slate-500 text-sm mt-6">Complete yard transformation — new patio, plantings, lighting, and irrigation.</p>
-        </div>
-      </SectionReveal>
-
       {/* ═══════════════ WHY CASCADE — VALUE PROPS ═══════════════ */}
       <SectionReveal className="relative z-10 py-16 md:py-20">
         <div className="mx-auto max-w-7xl px-4 md:px-6">

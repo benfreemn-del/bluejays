@@ -258,6 +258,29 @@ function AccordionItem({ question, answer, isOpen, onToggle }: { question: strin
   );
 }
 
+/* ───────────────────────── TILT CARD ───────────────────────── */
+function TiltCard({ children, className = "", style }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const rotX = useMotionValue(0);
+  const rotY = useMotionValue(0);
+  const sRotX = useSpring(rotX, springFast);
+  const sRotY = useSpring(rotY, springFast);
+  const handleMove = useCallback((e: React.MouseEvent) => {
+    if (!ref.current) return;
+    const rect = ref.current.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    rotX.set(((e.clientY - cy) / (rect.height / 2)) * -8);
+    rotY.set(((e.clientX - cx) / (rect.width / 2)) * 8);
+  }, [rotX, rotY]);
+  const handleLeave = useCallback(() => { rotX.set(0); rotY.set(0); }, [rotX, rotY]);
+  return (
+    <motion.div ref={ref} style={{ rotateX: sRotX, rotateY: sRotY, transformStyle: "preserve-3d", willChange: "transform", ...style }} onMouseMove={handleMove} onMouseLeave={handleLeave} className={className}>
+      {children}
+    </motion.div>
+  );
+}
+
 /* ───────────────────────── SECTION HEADER ───────────────────────── */
 function SectionHeader({ badge, title, subtitle, accent }: { badge: string; title: string; subtitle?: string; accent: string }) {
   return (
@@ -305,7 +328,8 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
 
 
   const aboutImage = uniquePhotos[2] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 2);
-  const galleryImages = data.photos?.length > 2 ? data.photos.slice(2, 10) : pickGallery(STOCK_GALLERY, data.businessName);
+  // Skip photos[0] (may be a close-up detail/patio shot) — start from photos[1] for gallery and hero cards
+  const galleryImages = data.photos?.length > 1 ? data.photos.slice(1, 10) : pickGallery(STOCK_GALLERY, data.businessName);
 
   const processSteps = [
     { step: "01", title: "Free Consultation", desc: `We visit your property, discuss your vision, and provide a detailed, no-obligation quote.`, icon: Phone },
@@ -449,32 +473,83 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
         </div>
       </nav>
 
-      {/* ══════════════════ 2. HERO ══════════════════ */}
-      <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
+      {/* ══════════════════ 2. HERO — FLOATING CARDS OVER GRADIENT ══════════════════ */}
+      <section className="relative min-h-[100dvh] flex items-center pt-24 pb-12 z-10 overflow-hidden">
+        {/* Rich gradient background — matching portfolio style */}
         <div className="absolute inset-0">
-          <img src={heroImage} alt={`${data.businessName} landscaping`} className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/20" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a1a] via-transparent to-transparent" />
+          <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, #0f1a0f 0%, #0a2a12 30%, #0f1a0f 50%, #1a1a1a 100%)` }} />
+          <div className="absolute top-1/3 left-1/4 w-[500px] h-[500px] rounded-full" style={{ background: `radial-gradient(circle, ${PRIMARY} 0%, transparent 60%)`, opacity: 0.12, filter: "blur(100px)" }} />
+          <div className="absolute bottom-1/4 right-1/3 w-[400px] h-[400px] rounded-full" style={{ background: `radial-gradient(circle, ${EARTH_BROWN} 0%, transparent 60%)`, opacity: 0.08, filter: "blur(80px)" }} />
+          <NaturePattern opacity={0.025} accent={PRIMARY} />
         </div>
 
-        <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full">
-          <div className="max-w-2xl space-y-8">
-            <div>
-              <p className="text-sm uppercase tracking-widest mb-4" style={{ color: PRIMARY }}>Professional Landscaping</p>
-              <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 20px rgba(0,0,0,0.7)" }}>{(data as { heroTagline?: string }).heroTagline || data.tagline}</h1>
+        <div className="mx-auto max-w-7xl px-4 md:px-6 w-full relative">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center min-h-[70vh]">
+            {/* Text — left */}
+            <div className="lg:col-span-5 space-y-6 z-10">
+              <motion.p initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ ...spring, delay: 0.1 }} className="text-sm uppercase tracking-[0.2em]" style={{ color: PRIMARY }}>
+                Professional Landscaping
+              </motion.p>
+              <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.2 }} className="text-4xl md:text-6xl lg:text-7xl tracking-tighter leading-[0.95] font-bold text-white">
+                {(data as { heroTagline?: string }).heroTagline || data.tagline}
+              </motion.h1>
+              <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.4 }} className="text-lg text-slate-400 max-w-md leading-relaxed">
+                {(() => { const t = data.about; if (t.length <= 160) return t; const dot = t.indexOf('.', 60); return dot > 0 && dot < 200 ? t.slice(0, dot + 1) : t.slice(0, 160).trim() + '…'; })()}
+              </motion.p>
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.6 }} className="flex flex-wrap gap-4">
+                <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer" style={{ background: PRIMARY } as React.CSSProperties}>
+                  Free Estimate <ArrowRight size={18} weight="bold" />
+                </MagneticButton>
+                <MagneticButton href={`tel:${data.phone.replace(/\D/g, "")}`} className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/20 flex items-center gap-2 cursor-pointer backdrop-blur-sm">
+                  <Phone size={18} weight="duotone" /><PhoneLink phone={data.phone} />
+                </MagneticButton>
+              </motion.div>
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }} className="flex flex-wrap gap-6 text-sm text-slate-400">
+                <span className="flex items-center gap-2"><MapPin size={16} weight="duotone" style={{ color: PRIMARY }} /><MapLink address={data.address} /></span>
+                <span className="flex items-center gap-2"><Leaf size={16} weight="duotone" style={{ color: PRIMARY }} />Licensed &amp; Insured</span>
+              </motion.div>
             </div>
-            <p className="text-lg text-slate-300 max-w-md leading-relaxed">{(() => { const t = data.about; if (t.length <= 180) return t; const dot = t.indexOf('.', 80); return dot > 0 && dot < 220 ? t.slice(0, dot + 1) : t.slice(0, 180).trim() + '...'; })()}</p>
-            <div className="flex flex-wrap gap-4">
-              <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer" style={{ background: PRIMARY } as React.CSSProperties}>
-                Get Free Estimate <ArrowRight size={18} weight="bold" />
-              </MagneticButton>
-              <MagneticButton href={`tel:${data.phone.replace(/\D/g, "")}`} className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/20 flex items-center gap-2 cursor-pointer backdrop-blur-sm">
-                <Phone size={18} weight="duotone" /><PhoneLink phone={data.phone} />
-              </MagneticButton>
+
+            {/* Floating photo cards — right, desktop only */}
+            <div className="lg:col-span-7 relative hidden md:block" style={{ perspective: 1200 }}>
+              <div className="relative h-[520px]">
+                {galleryImages.slice(0, 3).map((src, i) => {
+                  const positions = [
+                    { top: "0%", left: "5%", rotate: -6, z: 3 },
+                    { top: "12%", left: "35%", rotate: 4, z: 2 },
+                    { top: "30%", left: "10%", rotate: -2, z: 1 },
+                  ];
+                  const p = positions[i];
+                  return (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, y: 60, rotateY: -15 }}
+                      animate={{ opacity: 1, y: 0, rotateY: 0 }}
+                      transition={{ ...spring, delay: 0.3 + i * 0.2 }}
+                      className="absolute"
+                      style={{ top: p.top, left: p.left, zIndex: p.z }}
+                    >
+                      <TiltCard
+                        className="rounded-2xl overflow-hidden border border-white/15 shadow-2xl shadow-black/40"
+                        style={{ transform: `rotate(${p.rotate}deg)` }}
+                      >
+                        <div className="relative w-[280px] h-[200px] md:w-[320px] md:h-[220px]">
+                          <img src={src} alt={`${data.businessName} project`} className="w-full h-full object-cover" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+                          <div className="absolute inset-0 rounded-2xl" style={{ boxShadow: `inset 0 1px 0 rgba(255,255,255,0.15), inset 0 -1px 0 rgba(0,0,0,0.3)` }} />
+                        </div>
+                      </TiltCard>
+                    </motion.div>
+                  );
+                })}
+              </div>
             </div>
-            <div className="flex flex-wrap gap-6 text-sm text-slate-300">
-              <span className="flex items-center gap-2"><MapPin size={16} weight="duotone" style={{ color: PRIMARY }} /><MapLink address={data.address} /></span>
-              <span className="flex items-center gap-2"><Leaf size={16} weight="duotone" style={{ color: PRIMARY }} />Licensed &amp; Insured</span>
+
+            {/* Mobile: prefer a full-yard gallery image over photos[0] which may be a detail shot */}
+            <div className="md:hidden">
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.4 }} className="rounded-2xl overflow-hidden border border-white/15">
+                <img src={galleryImages[0] || heroImage} alt={`${data.businessName} landscaping`} className="w-full h-[250px] object-cover" />
+              </motion.div>
             </div>
           </div>
         </div>
@@ -511,29 +586,8 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 4. BEFORE / AFTER (gated) ══════════════════ */}
-      {/* Only render when data.hideBeforeAfter is not truthy. Per CLAUDE.md,
-          before/after must be a real matched transformation pair — if a
-          prospect doesn't have one yet, hide the section entirely rather
-          than ship a generic placeholder image with their business name. */}
-      {!(data as { hideBeforeAfter?: boolean }).hideBeforeAfter && (
-        <section className="relative z-10 py-16 md:py-24 overflow-hidden">
-          <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0e140d 50%, #1a1a1a 100%)" }} />
-          <NaturePattern opacity={0.02} accent={PRIMARY} />
-          <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[10%] w-[500px] h-[500px] rounded-full blur-[200px]" style={{ background: `${PRIMARY}06` }} /></div>
-
-          <div className="max-w-6xl mx-auto px-6 relative z-10">
-            <SectionHeader badge="Our Work" title="Before & After" subtitle={`See the quality of work ${data.businessName} delivers for our clients.`} accent={PRIMARY} />
-
-            <div className="max-w-4xl mx-auto">
-              <div className="relative rounded-2xl overflow-hidden border border-white/[0.10]">
-                <img src="/images/landscaping-before-after.png" alt="Landscape transformation before and after" className="w-full h-auto object-cover" />
-              </div>
-              <p className="text-center text-sm text-slate-400 mt-4">Complete yard transformation — new patio, plantings, lighting, and irrigation.</p>
-            </div>
-          </div>
-        </section>
-      )}
+      {/* Before/After removed — per CLAUDE.md, only include when a real matched
+          transformation pair exists for the specific business */}
 
       {/* ══════════════════ 5. PORTFOLIO GALLERY ══════════════════ */}
       <section id="portfolio" className="relative z-10 py-16 md:py-20 overflow-hidden">
