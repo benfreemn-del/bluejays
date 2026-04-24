@@ -30,6 +30,11 @@ import {
   CaretDown,
   Envelope,
   CalendarBlank,
+  Play,
+  Gift,
+  HandHeart,
+  ClipboardText,
+  ArrowUpRight,
 } from "@phosphor-icons/react";
 import type { GeneratedSiteData } from "@/lib/generator";
 import BluejayLogo from "../BluejayLogo";
@@ -689,6 +694,118 @@ export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
           </div>
         </div>
       </section>
+
+      {/* ══════════════════ 7b. GET INVOLVED (resources) ══════════════════ */}
+      {/* Renders when data.resources is provided — a grid of big CTA cards
+          linking out to the church's real pages: Watch Online, Connect
+          Card / I'm New, Give, Volunteer, etc. Mirrors what real church
+          sites lead with ("Follow Jesus / Give / Connect"). Falls back
+          to generic defaults if no resources are set so existing church
+          prospects aren't suddenly missing a section. */}
+      {(() => {
+        type Resource = { label: string; description?: string; url: string; icon?: "watch" | "connect" | "give" | "volunteer" | "calendar" | "book" };
+        const resources = ((data as { resources?: Resource[] }).resources) || [];
+        if (resources.length === 0) return null;
+        const ICON_MAP: Record<NonNullable<Resource["icon"]>, typeof Play> = {
+          watch: Play,
+          connect: ClipboardText,
+          give: Gift,
+          volunteer: HandHeart,
+          calendar: CalendarBlank,
+          book: BookOpen,
+        };
+        return (
+          <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+            <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #141425 50%, ${NAVY} 100%)` }} />
+            <CrossPattern opacity={0.02} accent={GOLD} />
+            <div className="absolute inset-0 pointer-events-none">
+              <div className="absolute top-[20%] right-[15%] w-[500px] h-[500px] rounded-full blur-[200px]" style={{ background: `${GOLD}08` }} />
+            </div>
+            <div className="max-w-6xl mx-auto px-6 relative z-10">
+              <AnimatedSection>          <SectionHeader badge="Next Step" title="Take the Next Step" subtitle={`Every way to connect, grow, and give with ${data.businessName}.`} accent={GOLD} /></AnimatedSection>
+              <div className={`grid gap-4 md:gap-6 ${resources.length === 1 ? "grid-cols-1 max-w-md mx-auto" : resources.length === 2 ? "md:grid-cols-2 max-w-3xl mx-auto" : resources.length === 3 ? "md:grid-cols-3" : "md:grid-cols-2 lg:grid-cols-4"}`}>
+                {resources.map((r, i) => {
+                  const tile = pickPaletteColor(i + 1);
+                  const Icon = r.icon ? ICON_MAP[r.icon] : ArrowRight;
+                  return (
+                    <a
+                      key={r.url + i}
+                      href={r.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group relative p-6 md:p-7 rounded-2xl border overflow-hidden transition-all duration-500 hover:-translate-y-1"
+                      style={{ background: `linear-gradient(135deg, ${tile}18 0%, ${tile}08 60%, transparent 100%)`, borderColor: `${tile}4d` }}
+                    >
+                      <div className="absolute -top-px -left-px -right-px h-[2px]" style={{ background: `linear-gradient(to right, transparent, ${tile}, transparent)` }} />
+                      <div className="relative z-10">
+                        <div className="flex items-start justify-between mb-4">
+                          <div className="w-14 h-14 rounded-2xl flex items-center justify-center border" style={{ background: `${tile}22`, borderColor: `${tile}55` }}>
+                            <Icon size={26} weight="duotone" style={{ color: tile }} />
+                          </div>
+                          <ArrowUpRight size={18} weight="bold" className="opacity-40 group-hover:opacity-100 group-hover:translate-x-1 group-hover:-translate-y-1 transition-all duration-300" style={{ color: tile }} />
+                        </div>
+                        <h3 className="text-lg font-bold text-white mb-1.5">{r.label}</h3>
+                        {r.description && <p className="text-sm text-slate-400 leading-relaxed">{r.description}</p>}
+                      </div>
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+        );
+      })()}
+
+      {/* ══════════════════ 7c. MEET THE TEAM ══════════════════ */}
+      {(() => {
+        type TeamMember = { name: string; role: string; bio?: string; quote?: string; photoUrl?: string };
+        const team = ((data as { teamMembers?: TeamMember[] }).teamMembers) || [];
+        if (team.length === 0) return null;
+        // Initials for the photo-less fallback avatar
+        const getInitials = (name: string) =>
+          name.split(" ").filter(Boolean).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
+        return (
+          <section className="relative z-10 py-24 md:py-32 overflow-hidden">
+            <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #171728 50%, ${NAVY} 100%)` }} />
+            <CrossPattern opacity={0.02} accent={GOLD} />
+            <div className="max-w-6xl mx-auto px-6 relative z-10">
+              <AnimatedSection>          <SectionHeader badge="Our People" title="Meet Our Team" subtitle={`The leaders serving the ${data.businessName} family.`} accent={GOLD} /></AnimatedSection>
+              <div className={`grid gap-6 ${team.length === 1 ? "grid-cols-1 max-w-md mx-auto" : team.length === 2 ? "md:grid-cols-2 max-w-3xl mx-auto" : "md:grid-cols-2 lg:grid-cols-3"}`}>
+                {team.map((m, i) => {
+                  const tile = pickPaletteColor(i + 2);
+                  return (
+                    <div key={m.name + i} className="relative p-7 rounded-2xl border border-white/[0.10] bg-white/[0.05] overflow-hidden group hover:border-white/20 transition-all duration-500">
+                      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `radial-gradient(circle at 50% 0%, ${tile}18, transparent 70%)` }} />
+                      <div className="relative z-10 flex items-start gap-4 mb-4">
+                        {m.photoUrl ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={m.photoUrl} alt={`${m.name}, ${m.role}`} className="w-16 h-16 rounded-full object-cover object-top border-2" style={{ borderColor: `${tile}66` }} />
+                        ) : (
+                          <div className="w-16 h-16 rounded-full flex items-center justify-center font-bold text-xl border-2" style={{ background: `${tile}22`, borderColor: `${tile}66`, color: tile }}>
+                            {getInitials(m.name)}
+                          </div>
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-lg font-bold text-white leading-tight">{m.name}</h3>
+                          <p className="text-sm font-medium" style={{ color: tile }}>{m.role}</p>
+                        </div>
+                      </div>
+                      {m.quote && (
+                        <p className="relative z-10 text-sm text-slate-300 leading-relaxed italic border-l-2 pl-3" style={{ borderColor: `${tile}55` }}>
+                          &ldquo;{m.quote}&rdquo;
+                        </p>
+                      )}
+                      {m.bio && !m.quote && (
+                        <p className="relative z-10 text-sm text-slate-400 leading-relaxed">{m.bio}</p>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+        );
+      })()}
 
       {/* ══════════════════ 8. GALLERY ══════════════════ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">

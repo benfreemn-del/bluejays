@@ -144,7 +144,14 @@ export default function PreviewClientPage({
   // Embedded inside the claim page Before/After iframe — render the preview
   // directly at iframe width (no phone-frame wrapper, no top banner, no
   // floating toggles). The parent iframe controls sizing.
-  if (isEmbedded) {
+  //
+  // Same bare-render path when a prospect opts out of the claim UI via
+  // `site_data.suppressClaimUi = true`. Used for gifted / custom-built /
+  // non-sales-funnel previews where the floating "Claim this site →" CTA
+  // and "will be customized with your real business photos" banner don't
+  // make sense (e.g. a church preview gifted to the client).
+  const suppressClaimUi = Boolean((siteData as { suppressClaimUi?: boolean }).suppressClaimUi);
+  if (isEmbedded || suppressClaimUi) {
     return (
       <div>
         <PreviewContent id={id} siteData={siteData} selectedTheme={selectedTheme} version={resolvedVersion} />

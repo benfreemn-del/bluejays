@@ -170,6 +170,42 @@ async function main() {
     hours: scrapedData.hours,
     brandColorSource: "official-site",
     hideBeforeAfter: true,
+
+    // Drop the "Claim this site / will be customized with your real photos"
+    // UI for Thrive — this is a gift-preview, not a sales-funnel pitch.
+    suppressClaimUi: true,
+
+    // Real resource pages from thrivesequim.com — rendered as the
+    // "Take the Next Step" grid of colorful CTA cards.
+    resources: [
+      { label: "Watch Online", description: "Missed a Sunday? Catch up on past messages and follow along online.", url: "https://thrivesequim.com/thrive-online-1", icon: "watch" as const },
+      { label: "Connection Card", description: "First time here or wanting to get more connected? Say hi — we'd love to meet you.", url: "https://thrivesequim.com/connection-card", icon: "connect" as const },
+      { label: "Thrive Groups", description: "Find your people. Small groups meeting across Sequim throughout the week.", url: "https://thrivesequim.com/groups", icon: "volunteer" as const },
+      { label: "Give Outrageously", description: "Partner with the mission. Every gift goes further than you think.", url: "https://thrivesequim.com/generosity", icon: "give" as const },
+      { label: "Thrive Preschool", description: "Now enrolling for the 2025–2026 year. Christ-centered, Sequim-local.", url: "https://thrivesequim.com/thrive-preschool", icon: "book" as const },
+      { label: "Thrive Kids", description: "Safe, fun, Jesus-centered Sunday mornings for birth through 5th grade.", url: "https://thrivesequim.com/kids-ministry-1", icon: "connect" as const },
+      { label: "Table of Grace", description: "Our weekly community meal — everyone welcome, no questions asked.", url: "https://thrivesequim.com/table-of-grace", icon: "volunteer" as const },
+      { label: "Missional Giving", description: "Walk alongside missionaries bringing hope and healing around the world.", url: "https://thrivesequim.com/around-the-world", icon: "give" as const },
+    ],
+
+    // Leadership team — real pastors from thrivesequim.com/leadership-team
+    teamMembers: [
+      {
+        name: "David Lyke",
+        role: "Lead Pastor",
+        quote: "Live your life in such a way, that if God didn't exist, life wouldn't make sense.",
+      },
+      {
+        name: "Megan Lyke",
+        role: "Thrive Kids Volunteer Coordinator",
+        quote: "If the light shining on you is brighter than the light shining in you — it's not genuine.",
+      },
+      {
+        name: "Gina Rocha",
+        role: "Worship Team Leader",
+        bio: "Leading worship every Sunday and pouring into the Thrive Church music team.",
+      },
+    ],
   };
 
   if (dryRun) {
