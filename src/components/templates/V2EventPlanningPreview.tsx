@@ -60,6 +60,9 @@ function getAccent(accentColor?: string) {
   };
 }
 
+const PALETTE = ["#d4a853", "#7c3aed", "#f43f5e", "#10b981", "#0ea5e9", "#f59e0b"];
+const pickPaletteColor = (i: number) => PALETTE[i % PALETTE.length];
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SERVICE_ICON_MAP: Record<string, any> = {
   wedding: Champagne,
@@ -956,8 +959,9 @@ export default function V2EventPlanningPreview({
             accent={ACCENT}
           />
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {EVENT_TYPES.map((evt) => {
+            {EVENT_TYPES.map((evt, i) => {
               const Icon = evt.icon;
+              const tile = pickPaletteColor(i);
               return (
                 <GlassCard
                   key={evt.title}
@@ -966,14 +970,14 @@ export default function V2EventPlanningPreview({
                   <div
                     className="w-14 h-14 rounded-xl flex items-center justify-center mb-5 border"
                     style={{
-                      background: ACCENT_GLOW,
-                      borderColor: `${ACCENT}33`,
+                      background: `${tile}22`,
+                      borderColor: `${tile}55`,
                     }}
                   >
                     <Icon
                       size={28}
                       weight="duotone"
-                      style={{ color: ACCENT }}
+                      style={{ color: tile }}
                     />
                   </div>
                   <h3 className="text-lg font-bold text-white mb-2">
@@ -1020,6 +1024,7 @@ export default function V2EventPlanningPreview({
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {data.services.map((service, i) => {
               const Icon = getServiceIcon(service.name);
+              const tile = pickPaletteColor(i + 2);
               return (
                 <div
                   key={service.name}
@@ -1042,17 +1047,17 @@ export default function V2EventPlanningPreview({
                       <div
                         className="w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 border"
                         style={{
-                          background: ACCENT_GLOW,
-                          borderColor: `${ACCENT}33`,
+                          background: `${tile}22`,
+                          borderColor: `${tile}55`,
                         }}
                       >
                         <Icon
                           size={24}
                           weight="duotone"
-                          style={{ color: ACCENT }}
+                          style={{ color: tile }}
                         />
                       </div>
-                      <span className="text-xs font-mono text-slate-600">
+                      <span className="text-xs font-mono" style={{ color: `${tile}99` }}>
                         {String(i + 1).padStart(2, "0")}
                       </span>
                     </div>

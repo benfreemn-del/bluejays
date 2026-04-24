@@ -47,6 +47,11 @@ function getAccent(accentColor?: string) {
   return { ACCENT: c, ACCENT_GLOW: `${c}26`, AMBER, DARK: DARK_RED };
 }
 
+// Rotating palette so service/vehicle card tiles feel alive instead of
+// monochrome. Brand ACCENT still drives headers, CTAs, borders.
+const PALETTE = ["#ef4444", "#f59e0b", "#64748b", "#10b981", "#f97316", "#dc2626"];
+const pickPaletteColor = (i: number) => PALETTE[i % PALETTE.length];
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SERVICE_ICON_MAP: Record<string, any> = {
   tow: Truck, flatbed: Truck, heavy: Truck, roadside: Car, jump: Car,
@@ -417,16 +422,17 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
           <SectionHeader badge="Our Services" title="Towing & Roadside Solutions" subtitle={`${data.businessName} provides professional towing and roadside assistance you can count on.`} accent={ACCENT} />
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {data.services.map((service, i) => {
+              const tile = pickPaletteColor(i);
               const Icon = getServiceIcon(service.name);
               return (
                 <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]">
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${ACCENT}15, transparent 70%)` }} />
                   <div className="relative z-10">
                     <div className="flex items-start justify-between mb-5">
-                      <div className="w-12 h-12 rounded-xl flex items-center justify-center border" style={{ background: ACCENT_GLOW, borderColor: `${ACCENT}33` }}>
-                        <Icon size={24} weight="duotone" style={{ color: ACCENT }} />
+                      <div className="w-12 h-12 rounded-xl flex items-center justify-center border" style={{ background: `${tile}22`, borderColor: `${tile}55` }}>
+                        <Icon size={24} weight="duotone" style={{ color: tile }} />
                       </div>
-                      <span className="text-xs font-mono text-slate-600">{String(i + 1).padStart(2, "0")}</span>
+                      <span className="text-xs font-mono" style={{ color: `${tile}99` }}>{String(i + 1).padStart(2, "0")}</span>
                     </div>
                     <h3 className="text-lg font-bold text-white mb-2">{service.name}</h3>
                     <p className="text-sm text-slate-400 leading-relaxed">{service.description || ""}</p>
@@ -448,15 +454,18 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
             <SectionHeader badge="What We Tow" title="Vehicle Types We Handle" accent={ACCENT} />
           </AnimatedSection>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-            {VEHICLE_TYPES.map((vt) => (
+            {VEHICLE_TYPES.map((vt, i) => {
+              const tile = pickPaletteColor(i + 2);
+              return (
               <GlassCard key={vt.name} className="p-6">
-                <div className="w-12 h-12 rounded-xl mb-4 flex items-center justify-center" style={{ background: ACCENT_GLOW, border: `1px solid ${ACCENT}33` }}>
-                  <Truck size={24} weight="duotone" style={{ color: ACCENT }} />
+                <div className="w-12 h-12 rounded-xl mb-4 flex items-center justify-center" style={{ background: `${tile}22`, border: `1px solid ${tile}55` }}>
+                  <Truck size={24} weight="duotone" style={{ color: tile }} />
                 </div>
                 <h3 className="text-base font-bold text-white mb-1">{vt.name}</h3>
                 <p className="text-sm text-slate-400">{vt.desc}</p>
               </GlassCard>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>

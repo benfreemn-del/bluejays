@@ -58,6 +58,11 @@ function getAccent(accentColor?: string) {
   };
 }
 
+// Rotating palette so service/type card tiles feel alive instead of
+// monochrome. Brand ACCENT still drives headers, CTAs, borders.
+const PALETTE = ["#eab308", "#10b981", "#ef4444", "#64748b", "#b45309", "#f59e0b"];
+const pickPaletteColor = (i: number) => PALETTE[i % PALETTE.length];
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SERVICE_ICON_MAP: Record<string, any> = {
   lockout: LockKey,
@@ -488,16 +493,17 @@ export default function V2LocksmithPreview({ data }: { data: GeneratedSiteData }
           <SectionHeader badge="Our Services" title="Locksmith Services" subtitle={`${data.businessName} provides expert lock and key services for every situation.`} accent={ACCENT} />
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {data.services.length > 0 ? data.services.map((service, i) => {
+              const tile = pickPaletteColor(i);
               const Icon = getServiceIcon(service.name);
               return (
                 <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]">
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${ACCENT}15, transparent 70%)` }} />
                   <div className="relative z-10">
                     <div className="flex items-start justify-between mb-5">
-                      <div className="w-12 h-12 rounded-xl flex items-center justify-center border" style={{ background: ACCENT_GLOW, borderColor: `${ACCENT}33` }}>
-                        <Icon size={24} weight="duotone" style={{ color: ACCENT }} />
+                      <div className="w-12 h-12 rounded-xl flex items-center justify-center border" style={{ background: `${tile}22`, borderColor: `${tile}55` }}>
+                        <Icon size={24} weight="duotone" style={{ color: tile }} />
                       </div>
-                      <span className="text-xs font-mono text-slate-600">{String(i + 1).padStart(2, "0")}</span>
+                      <span className="text-xs font-mono" style={{ color: `${tile}99` }}>{String(i + 1).padStart(2, "0")}</span>
                     </div>
                     <h3 className="text-lg font-bold text-white mb-2">{service.name}</h3>
                     <p className="text-sm text-slate-400 leading-relaxed">{service.description || ""}</p>
@@ -506,16 +512,17 @@ export default function V2LocksmithPreview({ data }: { data: GeneratedSiteData }
                 </div>
               );
             }) : LOCK_SERVICES.map((service, i) => {
+              const tile = pickPaletteColor(i);
               const Icon = service.icon;
               return (
                 <div key={service.title} className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]">
                   <div className="relative z-10">
                     {service.urgent && <div className="absolute top-0 right-0 px-2 py-0.5 rounded-bl-lg rounded-tr-xl text-[10px] font-bold bg-red-500/20 text-red-400 border-b border-l border-red-500/30">24/7</div>}
                     <div className="flex items-start justify-between mb-5">
-                      <div className="w-12 h-12 rounded-xl flex items-center justify-center border" style={{ background: ACCENT_GLOW, borderColor: `${ACCENT}33` }}>
-                        <Icon size={24} weight="duotone" style={{ color: ACCENT }} />
+                      <div className="w-12 h-12 rounded-xl flex items-center justify-center border" style={{ background: `${tile}22`, borderColor: `${tile}55` }}>
+                        <Icon size={24} weight="duotone" style={{ color: tile }} />
                       </div>
-                      <span className="text-xs font-mono text-slate-600">{String(i + 1).padStart(2, "0")}</span>
+                      <span className="text-xs font-mono" style={{ color: `${tile}99` }}>{String(i + 1).padStart(2, "0")}</span>
                     </div>
                     <h3 className="text-lg font-bold text-white mb-2">{service.title}</h3>
                     <p className="text-sm text-slate-400 leading-relaxed">{service.desc}</p>

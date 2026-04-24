@@ -61,6 +61,9 @@ function getAccent(accentColor?: string) {
   };
 }
 
+const PALETTE = ["#f59e0b", "#3b82f6", "#10b981", "#ef4444", "#facc15", "#f97316"];
+const pickPaletteColor = (i: number) => PALETTE[i % PALETTE.length];
+
 /* ───────────────────────── SERVICE ICON MAP ───────────────────────── */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SERVICE_ICON_MAP: Record<string, any> = {
@@ -694,28 +697,29 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {data.services.map((service, i) => {
               const Icon = getServiceIcon(service.name);
+              const tile = pickPaletteColor(i);
               return (
                 <div
                   key={service.name}
                   className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]"
-                  style={{ ["--hover-border" as string]: `${AMBER}4d` }}
+                  style={{ ["--hover-border" as string]: `${tile}66` }}
                 >
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${AMBER}15, transparent 70%)` }} />
-                  <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${AMBER}4d, transparent)` }} />
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${tile}22, transparent 70%)` }} />
+                  <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${tile}66, transparent)` }} />
                   <div className="relative z-10">
                     <div className="flex items-start justify-between mb-5">
                       <div
                         className="w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 border"
-                        style={{ background: AMBER_GLOW, borderColor: `${AMBER}33` }}
+                        style={{ background: `${tile}22`, borderColor: `${tile}55` }}
                       >
-                        <Icon size={24} weight="duotone" style={{ color: AMBER }} />
+                        <Icon size={24} weight="duotone" style={{ color: tile }} />
                       </div>
-                      <span className="text-xs font-mono text-slate-600">{String(i + 1).padStart(2, "0")}</span>
+                      <span className="text-xs font-mono" style={{ color: `${tile}99` }}>{String(i + 1).padStart(2, "0")}</span>
                     </div>
                     <h3 className="text-lg font-bold text-white mb-2">{service.name}</h3>
                     <p className="text-sm text-slate-400 leading-relaxed">{service.description || ""}</p>
                     {service.price && (
-                      <p className="text-sm font-semibold mt-3" style={{ color: AMBER }}>{service.price}</p>
+                      <p className="text-sm font-semibold mt-3" style={{ color: tile }}>{service.price}</p>
                     )}
                   </div>
                 </div>
@@ -773,17 +777,20 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
             accent={AMBER}
           />
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {CAPABILITIES.map((cap) => (
-              <GlassCard key={cap.name} className="p-5 text-center group hover:border-opacity-30 transition-all duration-300" style={{ ["--hover-border" as string]: `${AMBER}4d` }}>
-                <div
-                  className="w-12 h-12 rounded-xl mx-auto mb-3 flex items-center justify-center border"
-                  style={{ background: `${AMBER}15`, borderColor: `${AMBER}33` }}
-                >
-                  <cap.icon size={24} weight="duotone" style={{ color: AMBER }} />
-                </div>
-                <p className="text-sm font-semibold text-white">{cap.name}</p>
-              </GlassCard>
-            ))}
+            {CAPABILITIES.map((cap, i) => {
+              const tile = pickPaletteColor(i + 2);
+              return (
+                <GlassCard key={cap.name} className="p-5 text-center group hover:border-opacity-30 transition-all duration-300" style={{ ["--hover-border" as string]: `${tile}66` }}>
+                  <div
+                    className="w-12 h-12 rounded-xl mx-auto mb-3 flex items-center justify-center border"
+                    style={{ background: `${tile}22`, borderColor: `${tile}55` }}
+                  >
+                    <cap.icon size={24} weight="duotone" style={{ color: tile }} />
+                  </div>
+                  <p className="text-sm font-semibold text-white">{cap.name}</p>
+                </GlassCard>
+              );
+            })}
           </div>
         </div>
       </section>

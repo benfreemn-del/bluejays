@@ -191,6 +191,8 @@ export default function V2PetServicesPreview({ data }: { data: GeneratedSiteData
   const [activePetType, setActivePetType] = useState("dogs");
   const [quizAnswer, setQuizAnswer] = useState<number | null>(null);
   const { ACCENT, ACCENT_GLOW } = getAccent(data.accentColor);
+  const PALETTE = ["#f59e0b", "#0d9488", "#e11d48", "#d97706", "#10b981", "#fb7185"];
+  const pickPaletteColor = (i: number) => PALETTE[i % PALETTE.length];
   const uniquePhotos = data.photos ? [...new Set(data.photos)] : [];
 
   const heroImage = uniquePhotos[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
@@ -363,15 +365,16 @@ export default function V2PetServicesPreview({ data }: { data: GeneratedSiteData
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {data.services.map((svc, i) => {
               const Icon = getServiceIcon(svc.name);
+              const tile = pickPaletteColor(i);
               return (
                 <div key={svc.name} className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]">
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${ACCENT}15, transparent 70%)` }} />
                   <div className="relative z-10">
                     <div className="flex items-start justify-between mb-5">
-                      <div className="w-12 h-12 rounded-xl flex items-center justify-center border" style={{ background: ACCENT_GLOW, borderColor: `${ACCENT}33` }}>
-                        <Icon size={24} weight="duotone" style={{ color: ACCENT }} />
+                      <div className="w-12 h-12 rounded-xl flex items-center justify-center border" style={{ background: `${tile}22`, borderColor: `${tile}55` }}>
+                        <Icon size={24} weight="duotone" style={{ color: tile }} />
                       </div>
-                      <span className="text-xs font-mono text-slate-600">{String(i + 1).padStart(2, "0")}</span>
+                      <span className="text-xs font-mono" style={{ color: `${tile}99` }}>{String(i + 1).padStart(2, "0")}</span>
                     </div>
                     <h3 className="text-lg font-bold text-white mb-2">{svc.name}</h3>
                     <p className="text-sm text-slate-400 leading-relaxed">{svc.description || ""}</p>
@@ -729,15 +732,18 @@ export default function V2PetServicesPreview({ data }: { data: GeneratedSiteData
               { title: "Nap Rooms", desc: "Quiet rest areas with cozy beds and calming music", icon: Heart },
               { title: "Splash Pool", desc: "Supervised water play for water-loving breeds", icon: PawPrint },
               { title: "Webcam Access", desc: "Watch your pet play live from anywhere on your phone", icon: Star },
-            ].map((item) => (
+            ].map((item, i) => {
+              const tile = pickPaletteColor(i + 2);
+              return (
               <GlassCard key={item.title} className="p-5 text-center">
-                <div className="w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center" style={{ background: `${ACCENT}15`, border: `1px solid ${ACCENT}22` }}>
-                  <item.icon size={22} weight="duotone" style={{ color: ACCENT }} />
+                <div className="w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center" style={{ background: `${tile}22`, border: `1px solid ${tile}55` }}>
+                  <item.icon size={22} weight="duotone" style={{ color: tile }} />
                 </div>
                 <h4 className="text-sm font-bold text-white mb-1">{item.title}</h4>
                 <p className="text-xs text-slate-400 leading-relaxed">{item.desc}</p>
               </GlassCard>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>

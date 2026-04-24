@@ -21,6 +21,13 @@ const WOOD_ACCENT = "#92400e";
 
 function getAccent(accentColor?: string) { const c = accentColor || DEFAULT_STONE; return { ACCENT: c, ACCENT_GLOW: `${c}26`, ACCENT_LIGHT: STONE_LIGHT, WOOD: WOOD_ACCENT }; }
 
+// Rotating palette for service/material card tiles so the grid feels
+// alive instead of monochrome. Primary brand accent (ACCENT) still
+// drives section headers, CTAs, borders — palette only applies to
+// iconography and secondary highlights.
+const PALETTE = ["#78716c", "#92400e", "#15803d", "#6b7f5e", "#d2b48c", "#57534e"];
+const pickPaletteColor = (i: number) => PALETTE[i % PALETTE.length];
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SERVICE_ICON_MAP: Record<string, any> = {
   wood: TreeStructure, cedar: TreeStructure, privacy: Wall, chain: Wall, vinyl: Wall, aluminum: Wall, iron: Wall, metal: Wall, gate: Wall, commercial: Buildings, residential: HouseLine, repair: Wrench, install: Hammer, custom: Ruler, deck: TreeStructure, ranch: Wall, picket: Wall,
@@ -281,14 +288,15 @@ export default function V2FencingPreview({ data }: { data: GeneratedSiteData }) 
           <SectionHeader badge="Our Services" title="Fencing Solutions" subtitle={`${data.businessName} installs and repairs all types of fencing for residential and commercial properties.`} accent={ACCENT} />
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {data.services.map((service, i) => {
+              const tile = pickPaletteColor(i);
               const Icon = getServiceIcon(service.name);
               return (
                 <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]">
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${ACCENT}15, transparent 70%)` }} />
                   <div className="relative z-10">
                     <div className="flex items-start justify-between mb-5">
-                      <div className="w-12 h-12 rounded-xl flex items-center justify-center border" style={{ background: ACCENT_GLOW, borderColor: `${ACCENT}33` }}><Icon size={24} weight="duotone" style={{ color: ACCENT }} /></div>
-                      <span className="text-xs font-mono text-slate-600">{String(i + 1).padStart(2, "0")}</span>
+                      <div className="w-12 h-12 rounded-xl flex items-center justify-center border" style={{ background: `${tile}22`, borderColor: `${tile}55` }}><Icon size={24} weight="duotone" style={{ color: tile }} /></div>
+                      <span className="text-xs font-mono" style={{ color: `${tile}99` }}>{String(i + 1).padStart(2, "0")}</span>
                     </div>
                     <h3 className="text-lg font-bold text-white mb-2">{service.name}</h3>
                     <p className="text-sm text-slate-400 leading-relaxed">{service.description || ""}</p>
@@ -309,10 +317,12 @@ export default function V2FencingPreview({ data }: { data: GeneratedSiteData }) 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <SectionHeader badge="Materials" title="Fence Material Guide" subtitle="Choose the right material for your property, budget, and style." accent={ACCENT} />
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {FENCE_MATERIALS.map((mat) => (
+            {FENCE_MATERIALS.map((mat, i) => {
+              const tile = pickPaletteColor(i + 2);
+              return (
               <GlassCard key={mat.name} className="p-6 h-full flex flex-col">
                 <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 rounded-xl flex items-center justify-center border" style={{ background: ACCENT_GLOW, borderColor: `${ACCENT}33` }}><mat.icon size={24} weight="duotone" style={{ color: ACCENT }} /></div>
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center border" style={{ background: `${tile}22`, borderColor: `${tile}55` }}><mat.icon size={24} weight="duotone" style={{ color: tile }} /></div>
                   <span className="text-xs font-mono px-2 py-1 rounded-md bg-white/5 text-slate-400">{mat.price}</span>
                 </div>
                 <h3 className="text-lg font-bold text-white mb-2">{mat.name}</h3>
@@ -322,7 +332,8 @@ export default function V2FencingPreview({ data }: { data: GeneratedSiteData }) 
                   <span className="text-sm font-medium text-white">{mat.warranty} Warranty</span>
                 </div>
               </GlassCard>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>

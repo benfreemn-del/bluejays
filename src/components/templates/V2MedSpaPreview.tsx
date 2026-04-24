@@ -18,6 +18,13 @@ const DEFAULT_BLUSH = "#f9a8d4";
 const GOLD = "#d4a853";
 function getAccent(accentColor?: string) { const c = accentColor || DEFAULT_BLUSH; return { ACCENT: c, ACCENT_GLOW: `${c}26` }; }
 
+// Rotating color palette for treatment/service icon tiles. The primary
+// brand accent (ACCENT) stays on section headers, CTAs, and nav — the
+// palette only colors iconography and highlight accents so the grid
+// feels alive without fighting the brand.
+const PALETTE = ["#f9a8d4", "#d4a853", "#6b7f5e", "#e11d48", "#f59e0b", "#a78bfa"];
+const pickPaletteColor = (i: number) => PALETTE[i % PALETTE.length];
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SERVICE_ICON_MAP: Record<string, any> = { botox: Syringe, filler: Syringe, laser: Sparkle, peel: Drop, facial: Heart, body: Sparkle, skin: Heart, injection: Syringe, hydra: Drop, micro: Sparkle, led: Sparkle, wellness: Leaf, lip: Syringe, contour: Eyedropper, chemical: Drop, dermaplaning: Sparkle, rf: Sparkle, prp: Syringe };
 function getServiceIcon(n: string) { const l = n.toLowerCase(); for (const [k, I] of Object.entries(SERVICE_ICON_MAP)) { if (l.includes(k)) return I; } return Sparkle; }
@@ -350,22 +357,23 @@ export default function V2MedSpaPreview({ data }: { data: GeneratedSiteData }) {
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredServices.map((service, i) => {
+              const tile = pickPaletteColor(i);
               const Icon = getServiceIcon(service.name);
               return (
                 <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]">
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${ACCENT}15, transparent 70%)` }} />
-                  <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${ACCENT}4d, transparent)` }} />
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${tile}15, transparent 70%)` }} />
+                  <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${tile}4d, transparent)` }} />
                   <div className="relative z-10">
                     <div className="flex items-start justify-between mb-5">
-                      <div className="w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 border" style={{ background: ACCENT_GLOW, borderColor: `${ACCENT}33` }}>
-                        <Icon size={24} weight="duotone" style={{ color: ACCENT }} />
+                      <div className="w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 border" style={{ background: `${tile}22`, borderColor: `${tile}55` }}>
+                        <Icon size={24} weight="duotone" style={{ color: tile }} />
                       </div>
-                      <span className="text-xs font-mono text-slate-600">{String(i + 1).padStart(2, "0")}</span>
+                      <span className="text-xs font-mono" style={{ color: `${tile}99` }}>{String(i + 1).padStart(2, "0")}</span>
                     </div>
                     <span className="inline-block text-[10px] font-bold uppercase tracking-widest mb-2 px-2 py-0.5 rounded-full" style={{ color: GOLD, background: `${GOLD}15` }}>{categorizeService(service.name)}</span>
                     <h3 className="text-lg font-bold text-white mb-2">{service.name}</h3>
                     <p className="text-sm text-slate-400 leading-relaxed">{service.description || ""}</p>
-                    {service.price && <p className="text-sm font-semibold mt-3" style={{ color: ACCENT }}>{service.price}</p>}
+                    {service.price && <p className="text-sm font-semibold mt-3" style={{ color: tile }}>{service.price}</p>}
                   </div>
                 </div>
               );

@@ -144,6 +144,8 @@ export default function V2TattooPreview({ data }: { data: GeneratedSiteData }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const { ACCENT, ACCENT_GLOW } = getAccent(data.accentColor);
+  const PALETTE = ["#b91c1c", "#d97706", "#0a0a0a", "#b45309", "#6d28d9", "#78350f"];
+  const pickPaletteColor = (i: number) => PALETTE[i % PALETTE.length];
 
   const uniquePhotos = data.photos ? [...new Set(data.photos)] : [];
 
@@ -286,12 +288,12 @@ export default function V2TattooPreview({ data }: { data: GeneratedSiteData }) {
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <SectionHeader badge="Our Services" title="What We Offer" subtitle={`From custom designs to cover-ups, ${data.businessName} brings your vision to life.`} accent={ACCENT} />
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {data.services.map((service, i) => { const Icon = getServiceIcon(service.name); return (
+            {data.services.map((service, i) => { const Icon = getServiceIcon(service.name); const tile = pickPaletteColor(i); return (
               <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]">
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${ACCENT}15, transparent 70%)` }} />
                 <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${ACCENT}4d, transparent)` }} />
                 <div className="relative z-10">
-                  <div className="flex items-start justify-between mb-5"><div className="w-12 h-12 rounded-xl flex items-center justify-center border" style={{ background: ACCENT_GLOW, borderColor: `${ACCENT}33` }}><Icon size={24} weight="duotone" style={{ color: ACCENT }} /></div><span className="text-xs font-mono text-slate-600">{String(i + 1).padStart(2, "0")}</span></div>
+                  <div className="flex items-start justify-between mb-5"><div className="w-12 h-12 rounded-xl flex items-center justify-center border" style={{ background: `${tile}22`, borderColor: `${tile}55` }}><Icon size={24} weight="duotone" style={{ color: tile }} /></div><span className="text-xs font-mono" style={{ color: `${tile}99` }}>{String(i + 1).padStart(2, "0")}</span></div>
                   <h3 className="text-lg font-bold text-white mb-2">{service.name}</h3><p className="text-sm text-slate-400 leading-relaxed">{service.description || ""}</p>
                   {service.price && <p className="text-sm font-semibold mt-3" style={{ color: ACCENT }}>{service.price}</p>}
                 </div>
@@ -332,12 +334,15 @@ export default function V2TattooPreview({ data }: { data: GeneratedSiteData }) {
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <AnimatedSection>          <SectionHeader badge="Tattoo Styles" title="Styles We Master" accent={ACCENT} /></AnimatedSection>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {styles.map((st) => (
+            {styles.map((st, i) => {
+              const tile = pickPaletteColor(i + 2);
+              return (
               <GlassCard key={st} className="p-5 text-center group hover:border-opacity-30 transition-all duration-300">
-                <PenNib size={24} weight="duotone" style={{ color: ACCENT }} className="mx-auto mb-3" />
+                <PenNib size={24} weight="duotone" style={{ color: tile }} className="mx-auto mb-3" />
                 <span className="text-sm font-semibold text-white">{st}</span>
               </GlassCard>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>

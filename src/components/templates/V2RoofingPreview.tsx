@@ -65,6 +65,11 @@ function getAccent(accentColor?: string) {
   return { ACCENT: c, ACCENT_GLOW: `${c}26`, BRICK, BRICK_LIGHT, BRICK_GLOW, SLATE: DEFAULT_SLATE, SLATE_GLOW };
 }
 
+// Rotating palette applied to service/feature grid icon tiles so each
+// card reads as a distinct slot. Brand ACCENT still owns headers + CTAs.
+const PALETTE = ["#dc2626", "#475569", "#f59e0b", "#10b981", "#ca8a04", "#ef4444"];
+const pickPaletteColor = (i: number) => PALETTE[i % PALETTE.length];
+
 /* ───────────────────────── SERVICE ICON MAP ───────────────────────── */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SERVICE_ICON_MAP: Record<string, any> = {
@@ -432,16 +437,17 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {data.services.map((service, i) => {
               const Icon = getServiceIcon(service.name);
+              const tile = pickPaletteColor(i);
               return (
                 <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]">
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${ACCENT}15, transparent 70%)` }} />
-                  <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${ACCENT}4d, transparent)` }} />
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${tile}15, transparent 70%)` }} />
+                  <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${tile}4d, transparent)` }} />
                   <div className="relative z-10">
                     <div className="flex items-start justify-between mb-5">
-                      <div className="w-12 h-12 rounded-xl flex items-center justify-center border" style={{ background: ACCENT_GLOW, borderColor: `${ACCENT}33` }}>
-                        <Icon size={24} weight="duotone" style={{ color: ACCENT }} />
+                      <div className="w-12 h-12 rounded-xl flex items-center justify-center border" style={{ background: `${tile}22`, borderColor: `${tile}55` }}>
+                        <Icon size={24} weight="duotone" style={{ color: tile }} />
                       </div>
-                      <span className="text-xs font-mono text-slate-600">{String(i + 1).padStart(2, "0")}</span>
+                      <span className="text-xs font-mono" style={{ color: `${tile}99` }}>{String(i + 1).padStart(2, "0")}</span>
                     </div>
                     <h3 className="text-lg font-bold text-white mb-2">{service.name}</h3>
                     <p className="text-sm text-slate-400 leading-relaxed">{service.description || ""}</p>
@@ -569,15 +575,18 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <SectionHeader badge="Premium Materials" title="Quality You Can Trust" subtitle="We use only the finest roofing materials backed by industry-leading manufacturer warranties." accent={ACCENT} />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {ROOFING_MATERIALS.map((mat) => (
-              <GlassCard key={mat.name} className="p-6 text-center group hover:border-white/20 transition-all duration-300">
-                <div className="w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center" style={{ background: ACCENT_GLOW, border: `1px solid ${ACCENT}33` }}>
-                  <mat.icon size={28} weight="duotone" style={{ color: ACCENT }} />
-                </div>
-                <h3 className="text-base font-bold text-white mb-2">{mat.name}</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">{mat.desc}</p>
-              </GlassCard>
-            ))}
+            {ROOFING_MATERIALS.map((mat, i) => {
+              const tile = pickPaletteColor(i + 2);
+              return (
+                <GlassCard key={mat.name} className="p-6 text-center group hover:border-white/20 transition-all duration-300">
+                  <div className="w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center" style={{ background: `${tile}22`, border: `1px solid ${tile}55` }}>
+                    <mat.icon size={28} weight="duotone" style={{ color: tile }} />
+                  </div>
+                  <h3 className="text-base font-bold text-white mb-2">{mat.name}</h3>
+                  <p className="text-xs text-slate-400 leading-relaxed">{mat.desc}</p>
+                </GlassCard>
+              );
+            })}
           </div>
         </div>
       </section>

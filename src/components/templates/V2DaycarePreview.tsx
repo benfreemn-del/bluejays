@@ -281,6 +281,8 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [quizAnswer, setQuizAnswer] = useState<number | null>(null);
   const { ACCENT, ACCENT_GLOW } = getAccent(data.accentColor);
+  const PALETTE = ["#7c3aed", "#ec4899", "#eab308", "#0ea5e9", "#10b981", "#fb923c"];
+  const pickPaletteColor = (i: number) => PALETTE[i % PALETTE.length];
 
   const uniquePhotos = data.photos ? [...new Set(data.photos)] : [];
 
@@ -479,16 +481,17 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {data.services.map((service, i) => {
               const Icon = getServiceIcon(service.name);
+              const tile = pickPaletteColor(i);
               return (
                 <div key={service.name} className="group relative p-7 rounded-2xl border border-gray-200/60 hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/60">
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${ACCENT}15, transparent 70%)` }} />
                   <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${ACCENT}4d, transparent)` }} />
                   <div className="relative z-10">
                     <div className="flex items-start justify-between mb-5">
-                      <div className="w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 border" style={{ background: ACCENT_GLOW, borderColor: `${ACCENT}33` }}>
-                        <Icon size={24} weight="duotone" style={{ color: ACCENT }} />
+                      <div className="w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 border" style={{ background: `${tile}22`, borderColor: `${tile}55` }}>
+                        <Icon size={24} weight="duotone" style={{ color: tile }} />
                       </div>
-                      <span className="text-xs font-mono text-[#6b7280]">{String(i + 1).padStart(2, "0")}</span>
+                      <span className="text-xs font-mono" style={{ color: `${tile}99` }}>{String(i + 1).padStart(2, "0")}</span>
                     </div>
                     <h3 className="text-lg font-bold text-[#1c1917] mb-2">{service.name}</h3>
                     <p className="text-sm text-[#6b7280] leading-relaxed">{service.description || ""}</p>
@@ -894,13 +897,16 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
               { area: "Art & Creativity", desc: "Painting, drawing, sculpting, music, and dramatic play" },
               { area: "Social-Emotional", desc: "Sharing, empathy, conflict resolution, and self-regulation skills" },
               { area: "Physical Development", desc: "Gross motor play, fine motor activities, yoga, and movement" },
-            ].map((c) => (
+            ].map((c, i) => {
+              const tile = pickPaletteColor(i + 2);
+              return (
               <div key={c.area} className="rounded-2xl border border-purple-100 p-6" style={{ background: "rgba(255,255,255,0.7)" }}>
-                <Smiley size={24} weight="duotone" style={{ color: ACCENT }} className="mb-3" />
+                <Smiley size={24} weight="duotone" style={{ color: tile }} className="mb-3" />
                 <h3 className="text-lg font-bold mb-2" style={{ color: "#1e1b4b" }}>{c.area}</h3>
                 <p className="text-sm text-slate-500 leading-relaxed">{c.desc}</p>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>

@@ -53,6 +53,13 @@ function getAccent(accentColor?: string) {
   return { ROSE: c, ROSE_GLOW: `${c}26` };
 }
 
+// Rotating color palette for service/feature icon tiles. The primary
+// brand accent (ROSE) stays on section headers, CTAs, and nav — the
+// palette only colors iconography and highlight accents so the grid
+// feels alive without fighting the brand.
+const PALETTE = ["#e11d48", "#d4a853", "#fb7185", "#a78bfa", "#6b7f5e", "#fce7f3"];
+const pickPaletteColor = (i: number) => PALETTE[i % PALETTE.length];
+
 /* ───────────────────────── SERVICE ICON MAP ───────────────────────── */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SERVICE_ICON_MAP: Record<string, any> = {
@@ -529,21 +536,22 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
           <SectionHeader badge="Our Services" title="Beauty Services" subtitle={`From precision cuts to luxurious treatments, ${data.businessName} delivers an elevated beauty experience.`} accent={ROSE} />
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {data.services.map((service, i) => {
+              const tile = pickPaletteColor(i);
               const Icon = getServiceIcon(service.name);
               return (
                 <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]">
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${ROSE}15, transparent 70%)` }} />
-                  <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${ROSE}4d, transparent)` }} />
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${tile}15, transparent 70%)` }} />
+                  <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${tile}4d, transparent)` }} />
                   <div className="relative z-10">
                     <div className="flex items-start justify-between mb-5">
-                      <div className="w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 border" style={{ background: ROSE_GLOW, borderColor: `${ROSE}33` }}>
-                        <Icon size={24} weight="duotone" style={{ color: ROSE }} />
+                      <div className="w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 border" style={{ background: `${tile}22`, borderColor: `${tile}55` }}>
+                        <Icon size={24} weight="duotone" style={{ color: tile }} />
                       </div>
-                      <span className="text-xs font-mono text-slate-600">{String(i + 1).padStart(2, "0")}</span>
+                      <span className="text-xs font-mono" style={{ color: `${tile}99` }}>{String(i + 1).padStart(2, "0")}</span>
                     </div>
                     <h3 className="text-lg font-bold text-white mb-2">{service.name}</h3>
                     <p className="text-sm text-slate-400 leading-relaxed">{service.description || ""}</p>
-                    {service.price && <p className="text-sm font-semibold mt-3" style={{ color: ROSE }}>{service.price}</p>}
+                    {service.price && <p className="text-sm font-semibold mt-3" style={{ color: tile }}>{service.price}</p>}
                   </div>
                 </div>
               );
@@ -560,16 +568,19 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
         <div className="max-w-5xl mx-auto px-6 relative z-10">
           <SectionHeader badge="Pricing" title="Service Menu" subtitle="Transparent pricing for our most popular services. Custom quotes available for specialized treatments." accent={ROSE} />
           <div className="grid md:grid-cols-3 gap-6">
-            {serviceMenuItems.map((item, i) => (
-              <GlassCard key={item.title} className="p-7 text-center group hover:border-opacity-30 transition-all duration-500">
-                <div className="w-14 h-14 rounded-full mx-auto mb-5 flex items-center justify-center" style={{ background: `${ROSE}15`, border: `1px solid ${ROSE}33` }}>
-                  <item.icon size={26} weight="duotone" style={{ color: ROSE }} />
-                </div>
-                <h3 className="text-lg font-bold text-white mb-1">{item.title}</h3>
-                <p className="text-2xl font-extrabold mb-3" style={{ color: ROSE }}>{item.price}</p>
-                <p className="text-sm text-slate-400 leading-relaxed">{item.desc}</p>
-              </GlassCard>
-            ))}
+            {serviceMenuItems.map((item, i) => {
+              const tile = pickPaletteColor(i + 2);
+              return (
+                <GlassCard key={item.title} className="p-7 text-center group hover:border-opacity-30 transition-all duration-500">
+                  <div className="w-14 h-14 rounded-full mx-auto mb-5 flex items-center justify-center" style={{ background: `${tile}22`, border: `1px solid ${tile}55` }}>
+                    <item.icon size={26} weight="duotone" style={{ color: tile }} />
+                  </div>
+                  <h3 className="text-lg font-bold text-white mb-1">{item.title}</h3>
+                  <p className="text-2xl font-extrabold mb-3" style={{ color: tile }}>{item.price}</p>
+                  <p className="text-sm text-slate-400 leading-relaxed">{item.desc}</p>
+                </GlassCard>
+              );
+            })}
           </div>
           <p className="text-center text-slate-500 text-sm mt-8">Prices vary based on hair length, thickness, and desired results. Contact us for a personalized quote.</p>
         </div>

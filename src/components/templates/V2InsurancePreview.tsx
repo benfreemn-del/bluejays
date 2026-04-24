@@ -56,6 +56,9 @@ function getAccent(accentColor?: string) {
   return { ACCENT: c, ACCENT_GLOW: `${c}26`, ACCENT_LIGHT: BLUE_LIGHT, EMERALD };
 }
 
+const PALETTE = ["#1d4ed8", "#059669", "#d4a017", "#64748b", "#f59e0b", "#7c3aed"];
+const pickPaletteColor = (i: number) => PALETTE[i % PALETTE.length];
+
 /* ───────────────────────── SERVICE ICON MAP ───────────────────────── */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SERVICE_ICON_MAP: Record<string, any> = {
@@ -517,16 +520,17 @@ export default function V2InsurancePreview({ data }: { data: GeneratedSiteData }
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {data.services.map((service, i) => {
               const Icon = getServiceIcon(service.name);
+              const tile = pickPaletteColor(i);
               return (
                 <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]">
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${ACCENT}15, transparent 70%)` }} />
                   <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${ACCENT}4d, transparent)` }} />
                   <div className="relative z-10">
                     <div className="flex items-start justify-between mb-5">
-                      <div className="w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 border" style={{ background: ACCENT_GLOW, borderColor: `${ACCENT}33` }}>
-                        <Icon size={24} weight="duotone" style={{ color: ACCENT }} />
+                      <div className="w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 border" style={{ background: `${tile}22`, borderColor: `${tile}55` }}>
+                        <Icon size={24} weight="duotone" style={{ color: tile }} />
                       </div>
-                      <span className="text-xs font-mono text-slate-600">{String(i + 1).padStart(2, "0")}</span>
+                      <span className="text-xs font-mono" style={{ color: `${tile}99` }}>{String(i + 1).padStart(2, "0")}</span>
                     </div>
                     <h3 className="text-lg font-bold text-white mb-2">{service.name}</h3>
                     <p className="text-sm text-slate-400 leading-relaxed">{service.description || ""}</p>
@@ -585,12 +589,14 @@ export default function V2InsurancePreview({ data }: { data: GeneratedSiteData }
         <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
           <SectionHeader badge="The Difference" title="Why Independent Agents Win" subtitle="Unlike online-only insurance companies, an independent agent works for YOU — not the carrier." accent={ACCENT} />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {agentPillars.map((pillar, i) => (
+            {agentPillars.map((pillar, i) => {
+              const tile = pickPaletteColor(i + 2);
+              return (
               <GlassCard key={pillar.title} className="p-7 group hover:border-white/20 transition-all duration-500 relative overflow-hidden">
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${ACCENT}12, transparent 70%)` }} />
                 <div className="relative z-10 flex gap-5">
-                  <div className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0" style={{ background: `${ACCENT}15`, border: `1px solid ${ACCENT}33` }}>
-                    <pillar.icon size={26} weight="duotone" style={{ color: ACCENT }} />
+                  <div className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0" style={{ background: `${tile}22`, border: `1px solid ${tile}55` }}>
+                    <pillar.icon size={26} weight="duotone" style={{ color: tile }} />
                   </div>
                   <div>
                     <h3 className="text-lg font-bold text-white mb-2">{pillar.title}</h3>
@@ -598,7 +604,8 @@ export default function V2InsurancePreview({ data }: { data: GeneratedSiteData }
                   </div>
                 </div>
               </GlassCard>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>

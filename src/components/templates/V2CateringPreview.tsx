@@ -24,6 +24,11 @@ function getAccent(accentColor?: string) {
   return { ACCENT: c, ACCENT_GLOW: `${c}26`, GOLD };
 }
 
+// Rotating palette so service/event card tiles feel alive instead of
+// monochrome. Brand ACCENT still drives headers, CTAs, borders.
+const PALETTE = ["#7f1d1d", "#c2703e", "#fef3c7", "#92400e", "#6b7f5e", "#d4a853"];
+const pickPaletteColor = (i: number) => PALETTE[i % PALETTE.length];
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SERVICE_ICON_MAP: Record<string, any> = {
   wedding: Champagne, bridal: Champagne, corporate: Users, conference: Users, gala: Users,
@@ -343,19 +348,22 @@ export default function V2CateringPreview({ data }: { data: GeneratedSiteData })
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <SectionHeader badge="Event Types" title="Catering for Every Occasion" subtitle={`${data.businessName} creates unforgettable culinary experiences for any event.`} accent={ACCENT} />
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {EVENT_TYPES.map((evt, i) => (
+            {EVENT_TYPES.map((evt, i) => {
+              const tile = pickPaletteColor(i);
+              return (
               <div key={evt.name} className="group relative p-7 rounded-2xl border border-gray-200/60 hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/60">
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${ACCENT}15, transparent 70%)` }} />
                 <div className="relative z-10">
                   <div className="flex items-start justify-between mb-5">
-                    <div className="w-12 h-12 rounded-xl flex items-center justify-center border" style={{ background: ACCENT_GLOW, borderColor: `${ACCENT}33` }}><evt.icon size={24} weight="duotone" style={{ color: ACCENT }} /></div>
-                    <span className="text-xs font-mono text-[#6b7280]">{String(i + 1).padStart(2, "0")}</span>
+                    <div className="w-12 h-12 rounded-xl flex items-center justify-center border" style={{ background: `${tile}22`, borderColor: `${tile}55` }}><evt.icon size={24} weight="duotone" style={{ color: tile }} /></div>
+                    <span className="text-xs font-mono" style={{ color: `${tile}99` }}>{String(i + 1).padStart(2, "0")}</span>
                   </div>
                   <h3 className="text-lg font-bold text-[#1c1917] mb-2">{evt.name}</h3>
                   <p className="text-sm text-[#6b7280] leading-relaxed">{evt.desc}</p>
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -368,14 +376,15 @@ export default function V2CateringPreview({ data }: { data: GeneratedSiteData })
           <SectionHeader badge="Our Services" title="What We Offer" accent={ACCENT} />
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {data.services.map((service, i) => {
+              const tile = pickPaletteColor(i + 2);
               const Icon = getServiceIcon(service.name);
               return (
                 <div key={service.name} className="group relative p-7 rounded-2xl border border-gray-200/60 hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/60">
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${ACCENT}15, transparent 70%)` }} />
                   <div className="relative z-10">
                     <div className="flex items-start justify-between mb-5">
-                      <div className="w-12 h-12 rounded-xl flex items-center justify-center border" style={{ background: ACCENT_GLOW, borderColor: `${ACCENT}33` }}><Icon size={24} weight="duotone" style={{ color: ACCENT }} /></div>
-                      <span className="text-xs font-mono text-[#6b7280]">{String(i + 1).padStart(2, "0")}</span>
+                      <div className="w-12 h-12 rounded-xl flex items-center justify-center border" style={{ background: `${tile}22`, borderColor: `${tile}55` }}><Icon size={24} weight="duotone" style={{ color: tile }} /></div>
+                      <span className="text-xs font-mono" style={{ color: `${tile}99` }}>{String(i + 1).padStart(2, "0")}</span>
                     </div>
                     <h3 className="text-lg font-bold text-[#1c1917] mb-2">{service.name}</h3>
                     <p className="text-sm text-[#6b7280] leading-relaxed">{service.description || ""}</p>

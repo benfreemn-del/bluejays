@@ -25,6 +25,13 @@ const ROSE_LIGHT = "#fb7185";
 
 function getAccent(accentColor?: string) { const c = accentColor || DEFAULT_ROSE; return { ACCENT: c, ACCENT_GLOW: `${c}26`, SAGE, ROSE_LIGHT }; }
 
+// Rotating color palette for occasion/service icon tiles. The primary
+// brand accent (ACCENT) stays on section headers, CTAs, and nav — the
+// palette only colors iconography and highlight accents so the grid
+// feels alive without fighting the brand.
+const PALETTE = ["#e11d48", "#fb7185", "#6b8f71", "#854d0e", "#a78bfa", "#fb923c"];
+const pickPaletteColor = (i: number) => PALETTE[i % PALETTE.length];
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SERVICE_ICON_MAP: Record<string, any> = {
   wedding: Heart, bridal: Heart, bouquet: Flower, arrangement: Flower,
@@ -315,19 +322,22 @@ export default function V2FloristPreview({ data }: { data: GeneratedSiteData }) 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <SectionHeader badge="Occasions" title="Flowers for Every Moment" subtitle={`${data.businessName} creates beautiful arrangements for life's most important moments.`} accent={ACCENT} />
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {OCCASION_TYPES.map((occ, i) => (
-              <div key={occ.name} className="group relative p-7 rounded-2xl border border-gray-200/60 hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/60">
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${ACCENT}15, transparent 70%)` }} />
-                <div className="relative z-10">
-                  <div className="flex items-start justify-between mb-5">
-                    <div className="w-12 h-12 rounded-xl flex items-center justify-center border" style={{ background: ACCENT_GLOW, borderColor: `${ACCENT}33` }}><occ.icon size={24} weight="duotone" style={{ color: ACCENT }} /></div>
-                    <span className="text-xs font-mono text-[#6b7280]">{String(i + 1).padStart(2, "0")}</span>
+            {OCCASION_TYPES.map((occ, i) => {
+              const tile = pickPaletteColor(i);
+              return (
+                <div key={occ.name} className="group relative p-7 rounded-2xl border border-gray-200/60 hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/60">
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${tile}15, transparent 70%)` }} />
+                  <div className="relative z-10">
+                    <div className="flex items-start justify-between mb-5">
+                      <div className="w-12 h-12 rounded-xl flex items-center justify-center border" style={{ background: `${tile}22`, borderColor: `${tile}55` }}><occ.icon size={24} weight="duotone" style={{ color: tile }} /></div>
+                      <span className="text-xs font-mono" style={{ color: `${tile}99` }}>{String(i + 1).padStart(2, "0")}</span>
+                    </div>
+                    <h3 className="text-lg font-bold text-[#1c1917] mb-2">{occ.name}</h3>
+                    <p className="text-sm text-[#6b7280] leading-relaxed">{occ.desc}</p>
                   </div>
-                  <h3 className="text-lg font-bold text-[#1c1917] mb-2">{occ.name}</h3>
-                  <p className="text-sm text-[#6b7280] leading-relaxed">{occ.desc}</p>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -340,18 +350,19 @@ export default function V2FloristPreview({ data }: { data: GeneratedSiteData }) 
           <SectionHeader badge="Our Services" title="What We Offer" accent={ACCENT} />
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {data.services.map((service, i) => {
+              const tile = pickPaletteColor(i + 2);
               const Icon = getServiceIcon(service.name);
               return (
                 <div key={service.name} className="group relative p-7 rounded-2xl border border-gray-200/60 hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/60">
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${ACCENT}15, transparent 70%)` }} />
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${tile}15, transparent 70%)` }} />
                   <div className="relative z-10">
                     <div className="flex items-start justify-between mb-5">
-                      <div className="w-12 h-12 rounded-xl flex items-center justify-center border" style={{ background: ACCENT_GLOW, borderColor: `${ACCENT}33` }}><Icon size={24} weight="duotone" style={{ color: ACCENT }} /></div>
-                      <span className="text-xs font-mono text-[#6b7280]">{String(i + 1).padStart(2, "0")}</span>
+                      <div className="w-12 h-12 rounded-xl flex items-center justify-center border" style={{ background: `${tile}22`, borderColor: `${tile}55` }}><Icon size={24} weight="duotone" style={{ color: tile }} /></div>
+                      <span className="text-xs font-mono" style={{ color: `${tile}99` }}>{String(i + 1).padStart(2, "0")}</span>
                     </div>
                     <h3 className="text-lg font-bold text-[#1c1917] mb-2">{service.name}</h3>
                     <p className="text-sm text-[#6b7280] leading-relaxed">{service.description || ""}</p>
-                    {service.price && <p className="text-sm font-semibold mt-3" style={{ color: ACCENT }}>{service.price}</p>}
+                    {service.price && <p className="text-sm font-semibold mt-3" style={{ color: tile }}>{service.price}</p>}
                   </div>
                 </div>
               );

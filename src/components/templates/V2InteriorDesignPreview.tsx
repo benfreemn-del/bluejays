@@ -64,6 +64,13 @@ function getAccent(accentColor?: string) {
   };
 }
 
+// Rotating color palette for service/room icon tiles. The primary
+// brand accent (PRIMARY) stays on section headers, CTAs, and nav — the
+// palette only colors iconography and highlight accents so the grid
+// feels alive without fighting the brand.
+const PALETTE = ["#b8860b", "#8b6f47", "#2d2d2d", "#6b7f5e", "#3a5a7c", "#d2691e"];
+const pickPaletteColor = (i: number) => PALETTE[i % PALETTE.length];
+
 /* ───────────────────────── SERVICE ICON MAP ───────────────────────── */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SERVICE_ICON_MAP: Record<string, any> = {
@@ -537,19 +544,20 @@ export default function V2InteriorDesignPreview({ data }: { data: GeneratedSiteD
           <SectionHeader badge="Services" title="Design Services" subtitle={`From concept to completion, ${data.businessName} transforms your space into something extraordinary.`} accent={PRIMARY} />
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {data.services.map((service, i) => {
+              const tile = pickPaletteColor(i);
               const Icon = getServiceIcon(service.name);
               return (
                 <div key={service.name} className="group relative p-7 rounded-2xl border border-gray-200/60 hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/60">
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${PRIMARY}15, transparent 70%)` }} />
-                  <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${PRIMARY}4d, transparent)` }} />
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${tile}15, transparent 70%)` }} />
+                  <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${tile}4d, transparent)` }} />
                   <div className="relative z-10">
                     <div className="flex items-start justify-between mb-5">
-                      <div className="w-12 h-12 rounded-xl flex items-center justify-center border" style={{ background: PRIMARY_GLOW, borderColor: `${PRIMARY}33` }}><Icon size={24} weight="duotone" style={{ color: PRIMARY }} /></div>
-                      <span className="text-xs font-mono text-[#6b7280]">{String(i + 1).padStart(2, "0")}</span>
+                      <div className="w-12 h-12 rounded-xl flex items-center justify-center border" style={{ background: `${tile}22`, borderColor: `${tile}55` }}><Icon size={24} weight="duotone" style={{ color: tile }} /></div>
+                      <span className="text-xs font-mono" style={{ color: `${tile}99` }}>{String(i + 1).padStart(2, "0")}</span>
                     </div>
                     <h3 className="text-lg font-bold text-[#1c1917] mb-2">{service.name}</h3>
                     <p className="text-sm text-[#6b7280] leading-relaxed">{service.description || ""}</p>
-                    {service.price && <p className="text-sm font-semibold mt-3" style={{ color: PRIMARY }}>{service.price}</p>}
+                    {service.price && <p className="text-sm font-semibold mt-3" style={{ color: tile }}>{service.price}</p>}
                   </div>
                 </div>
               );
@@ -565,14 +573,17 @@ export default function V2InteriorDesignPreview({ data }: { data: GeneratedSiteD
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <SectionHeader badge="Spaces" title="Room Types We Design" subtitle="From intimate bedrooms to grand commercial lobbies, we design every type of space." accent={PRIMARY} />
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {ROOM_TYPES.map((room) => (
-              <GlassCard key={room.name} className="p-6 text-center group hover:shadow-md transition-all duration-300">
-                <div className="w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center transition-colors duration-300" style={{ background: `${PRIMARY}15`, border: `1px solid ${PRIMARY}22` }}>
-                  <room.icon size={28} weight="duotone" style={{ color: PRIMARY }} />
-                </div>
-                <h3 className="text-sm font-bold text-[#1c1917]">{room.name}</h3>
-              </GlassCard>
-            ))}
+            {ROOM_TYPES.map((room, i) => {
+              const tile = pickPaletteColor(i + 2);
+              return (
+                <GlassCard key={room.name} className="p-6 text-center group hover:shadow-md transition-all duration-300">
+                  <div className="w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center transition-colors duration-300" style={{ background: `${tile}22`, border: `1px solid ${tile}55` }}>
+                    <room.icon size={28} weight="duotone" style={{ color: tile }} />
+                  </div>
+                  <h3 className="text-sm font-bold text-[#1c1917]">{room.name}</h3>
+                </GlassCard>
+              );
+            })}
           </div>
         </div>
       </section>

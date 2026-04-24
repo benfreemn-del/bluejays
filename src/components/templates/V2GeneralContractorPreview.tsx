@@ -55,6 +55,11 @@ function getAccent(accentColor?: string) {
   return { ACCENT: c, ACCENT_GLOW: `${c}26`, STEEL };
 }
 
+// Rotating palette applied to service/feature grid icon tiles so each
+// card reads as a distinct slot. Brand ACCENT still owns headers + CTAs.
+const PALETTE = ["#ea580c", "#64748b", "#d4a017", "#10b981", "#78716c", "#f59e0b"];
+const pickPaletteColor = (i: number) => PALETTE[i % PALETTE.length];
+
 /* ───────────────── SERVICE ICON MAP ───────────────── */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SERVICE_ICON_MAP: Record<string, any> = {
@@ -518,15 +523,16 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {data.services.map((service, i) => {
               const Icon = getServiceIcon(service.name);
+              const tile = pickPaletteColor(i);
               return (
                 <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]">
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${ACCENT}15, transparent 70%)` }} />
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${tile}15, transparent 70%)` }} />
                   <div className="relative z-10">
                     <div className="flex items-start justify-between mb-5">
-                      <div className="w-12 h-12 rounded-xl flex items-center justify-center border" style={{ background: ACCENT_GLOW, borderColor: `${ACCENT}33` }}>
-                        <Icon size={24} weight="duotone" style={{ color: ACCENT }} />
+                      <div className="w-12 h-12 rounded-xl flex items-center justify-center border" style={{ background: `${tile}22`, borderColor: `${tile}55` }}>
+                        <Icon size={24} weight="duotone" style={{ color: tile }} />
                       </div>
-                      <span className="text-xs font-mono text-slate-600">{String(i + 1).padStart(2, "0")}</span>
+                      <span className="text-xs font-mono" style={{ color: `${tile}99` }}>{String(i + 1).padStart(2, "0")}</span>
                     </div>
                     <h3 className="text-lg font-bold text-white mb-2">{service.name}</h3>
                     <p className="text-sm text-slate-400 leading-relaxed">{service.description || ""}</p>
@@ -657,14 +663,17 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <SectionHeader badge="What We Build" title="Project Types We Handle" subtitle={`From small remodels to ground-up construction, ${data.businessName} has the experience to deliver.`} accent={ACCENT} />
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {projectTypesGrid.map((pt) => (
-              <GlassCard key={pt.name} className="p-5 text-center group hover:border-opacity-30 transition-all duration-300">
-                <div className="w-12 h-12 rounded-xl mx-auto mb-3 flex items-center justify-center" style={{ background: ACCENT_GLOW, border: `1px solid ${ACCENT}33` }}>
-                  <pt.icon size={24} weight="duotone" style={{ color: ACCENT }} />
-                </div>
-                <span className="text-sm font-semibold text-white">{pt.name}</span>
-              </GlassCard>
-            ))}
+            {projectTypesGrid.map((pt, i) => {
+              const tile = pickPaletteColor(i + 2);
+              return (
+                <GlassCard key={pt.name} className="p-5 text-center group hover:border-opacity-30 transition-all duration-300">
+                  <div className="w-12 h-12 rounded-xl mx-auto mb-3 flex items-center justify-center" style={{ background: `${tile}22`, border: `1px solid ${tile}55` }}>
+                    <pt.icon size={24} weight="duotone" style={{ color: tile }} />
+                  </div>
+                  <span className="text-sm font-semibold text-white">{pt.name}</span>
+                </GlassCard>
+              );
+            })}
           </div>
         </div>
       </section>

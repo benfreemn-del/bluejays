@@ -28,6 +28,9 @@ function getAccent(accentColor?: string) {
   return { ACCENT: c, ACCENT_GLOW: `${c}26`, GOLD, GOLD_LIGHT };
 }
 
+const PALETTE = ["#0f172a", "#d4a017", "#059669", "#64748b", "#b45309", "#0ea5e9"];
+const pickPaletteColor = (i: number) => PALETTE[i % PALETTE.length];
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SERVICE_ICON_MAP: Record<string, any> = {
   tax: FileText, bookkeep: Calculator, payroll: CurrencyDollar, audit: Scales,
@@ -327,12 +330,12 @@ export default function V2AccountingPreview({ data }: { data: GeneratedSiteData 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <SectionHeader badge="Our Services" title="Expert Financial Services" subtitle={`From tax preparation to strategic advisory, ${data.businessName} helps you maximize every dollar.`} accent={ACCENT} />
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {data.services.map((service, i) => { const Icon = getServiceIcon(service.name); return (
+            {data.services.map((service, i) => { const Icon = getServiceIcon(service.name); const tile = pickPaletteColor(i); return (
               <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]">
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${GOLD}15, transparent 70%)` }} />
                 <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${GOLD}4d, transparent)` }} />
                 <div className="relative z-10">
-                  <div className="flex items-start justify-between mb-5"><div className="w-12 h-12 rounded-xl flex items-center justify-center border" style={{ background: ACCENT_GLOW, borderColor: `${GOLD}33` }}><Icon size={24} weight="duotone" style={{ color: GOLD }} /></div><span className="text-xs font-mono text-slate-600">{String(i + 1).padStart(2, "0")}</span></div>
+                  <div className="flex items-start justify-between mb-5"><div className="w-12 h-12 rounded-xl flex items-center justify-center border" style={{ background: `${tile}22`, borderColor: `${tile}55` }}><Icon size={24} weight="duotone" style={{ color: tile }} /></div><span className="text-xs font-mono" style={{ color: `${tile}99` }}>{String(i + 1).padStart(2, "0")}</span></div>
                   <h3 className="text-lg font-bold text-white mb-2">{service.name}</h3><p className="text-sm text-slate-400 leading-relaxed">{service.description || ""}</p>
                   {service.price && <p className="text-sm font-semibold mt-3" style={{ color: GOLD }}>{service.price}</p>}
                 </div>
@@ -440,18 +443,21 @@ export default function V2AccountingPreview({ data }: { data: GeneratedSiteData 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <SectionHeader badge="CPA Advantage" title="Why Choose a CPA?" subtitle="A licensed CPA offers expertise and protection that DIY software simply cannot match." accent={ACCENT} />
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {CPA_PILLARS.map((pillar) => (
+            {CPA_PILLARS.map((pillar, i) => {
+              const tile = pickPaletteColor(i + 2);
+              return (
               <GlassCard key={pillar.title} className="p-6 text-center group hover:border-opacity-30 transition-all duration-500 relative overflow-hidden">
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${GOLD}15, transparent 70%)` }} />
                 <div className="relative z-10">
-                  <div className="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${GOLD}22, ${GOLD}0a)`, border: `1px solid ${GOLD}33` }}>
-                    <pillar.icon size={26} weight="duotone" style={{ color: GOLD }} />
+                  <div className="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${tile}22, ${tile}0a)`, border: `1px solid ${tile}55` }}>
+                    <pillar.icon size={26} weight="duotone" style={{ color: tile }} />
                   </div>
                   <h3 className="text-base font-bold text-white mb-2">{pillar.title}</h3>
                   <p className="text-sm text-slate-400 leading-relaxed">{pillar.desc}</p>
                 </div>
               </GlassCard>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>

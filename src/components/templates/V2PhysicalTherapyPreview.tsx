@@ -20,6 +20,12 @@ const BG = "#0a0f1a";
 
 function getAccent(c?: string) { const a = c || DEFAULT_BLUE; return { ACCENT: a, ACCENT_GLOW: `${a}26` }; }
 
+// Rotating palette for service tile iconography — the brand ACCENT stays on
+// section headers, CTAs, and structural accents. Each service card gets a
+// different color so the grid feels alive.
+const PALETTE = ["#1e40af", "#f97316", "#10b981", "#f59e0b", "#64748b", "#0ea5e9"];
+const pickPaletteColor = (i: number) => PALETTE[i % PALETTE.length];
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const ICON_MAP: Record<string, any> = { sport: PersonSimpleRun, athlet: PersonSimpleRun, surger: FirstAidKit, post: FirstAidKit, pain: Heartbeat, chronic: Heartbeat, pediatr: HandHeart, child: HandHeart, geriatr: Users, senior: Users, manual: Brain, hands: Brain, strength: Barbell, rehab: Heartbeat };
 function getServiceIcon(n: string) { const l = n.toLowerCase(); for (const [k, I] of Object.entries(ICON_MAP)) { if (l.includes(k)) return I; } return Heartbeat; }
@@ -280,7 +286,7 @@ export default function V2PhysicalTherapyPreview({ data }: { data: GeneratedSite
         <WavePattern accent={ACCENT} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <SectionHeader badge="Our Services" title="Specialized Physical Therapy" subtitle={`${data.businessName} provides expert rehabilitation for a full range of conditions.`} accent={ACCENT} />
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">{data.services.map((svc, i) => { const Icon = getServiceIcon(svc.name); return <div key={svc.name} className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]"><div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${ACCENT}15, transparent 70%)` }} /><div className="relative z-10"><div className="flex items-start justify-between mb-5"><div className="w-12 h-12 rounded-xl flex items-center justify-center border" style={{ background: ACCENT_GLOW, borderColor: `${ACCENT}33` }}><Icon size={24} weight="duotone" style={{ color: ACCENT }} /></div><span className="text-xs font-mono text-slate-600">{String(i + 1).padStart(2, "0")}</span></div><h3 className="text-lg font-bold text-white mb-2">{svc.name}</h3><p className="text-sm text-slate-400 leading-relaxed">{svc.description || ""}</p>{svc.price && <p className="text-sm font-semibold mt-3" style={{ color: ACCENT }}>{svc.price}</p>}</div></div>; })}</div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">{data.services.map((svc, i) => { const Icon = getServiceIcon(svc.name); const tile = pickPaletteColor(i); return <div key={svc.name} className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]"><div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${tile}22, transparent 70%)` }} /><div className="relative z-10"><div className="flex items-start justify-between mb-5"><div className="w-12 h-12 rounded-xl flex items-center justify-center border" style={{ background: `${tile}22`, borderColor: `${tile}55` }}><Icon size={24} weight="duotone" style={{ color: tile }} /></div><span className="text-xs font-mono" style={{ color: `${tile}99` }}>{String(i + 1).padStart(2, "0")}</span></div><h3 className="text-lg font-bold text-white mb-2">{svc.name}</h3><p className="text-sm text-slate-400 leading-relaxed">{svc.description || ""}</p>{svc.price && <p className="text-sm font-semibold mt-3" style={{ color: tile }}>{svc.price}</p>}</div></div>; })}</div>
         </div>
       </section>
 

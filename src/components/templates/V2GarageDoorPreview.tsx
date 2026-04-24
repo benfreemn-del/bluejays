@@ -58,6 +58,9 @@ function getAccent(accentColor?: string) {
   };
 }
 
+const PALETTE = ["#eab308", "#ef4444", "#64748b", "#0d9488", "#f97316", "#92400e"];
+const pickPaletteColor = (i: number) => PALETTE[i % PALETTE.length];
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SERVICE_ICON_MAP: Record<string, any> = {
   install: Wrench,
@@ -909,19 +912,20 @@ export default function V2GarageDoorPreview({
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {data.services.map((service, i) => {
               const Icon = getServiceIcon(service.name);
+              const tile = pickPaletteColor(i);
               return (
                 <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]">
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${ACCENT}15, transparent 70%)` }} />
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${tile}22, transparent 70%)` }} />
                   <div className="relative z-10">
                     <div className="flex items-start justify-between mb-5">
-                      <div className="w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 border" style={{ background: ACCENT_GLOW, borderColor: `${ACCENT}33` }}>
-                        <Icon size={24} weight="duotone" style={{ color: ACCENT }} />
+                      <div className="w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 border" style={{ background: `${tile}22`, borderColor: `${tile}55` }}>
+                        <Icon size={24} weight="duotone" style={{ color: tile }} />
                       </div>
-                      <span className="text-xs font-mono text-slate-600">{String(i + 1).padStart(2, "0")}</span>
+                      <span className="text-xs font-mono" style={{ color: `${tile}99` }}>{String(i + 1).padStart(2, "0")}</span>
                     </div>
                     <h3 className="text-lg font-bold text-white mb-2">{service.name}</h3>
                     <p className="text-sm text-slate-400 leading-relaxed">{service.description || ""}</p>
-                    {service.price && <p className="text-sm font-semibold mt-3" style={{ color: ACCENT }}>{service.price}</p>}
+                    {service.price && <p className="text-sm font-semibold mt-3" style={{ color: tile }}>{service.price}</p>}
                   </div>
                 </div>
               );
@@ -937,8 +941,9 @@ export default function V2GarageDoorPreview({
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <SectionHeader badge="Repair Specialists" title="Spring & Opener Experts" subtitle="The two most common garage door failures — and we fix both same-day." accent={ACCENT} />
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {REPAIR_TYPES.map((repair) => {
+            {REPAIR_TYPES.map((repair, i) => {
               const Icon = repair.icon;
+              const tile = pickPaletteColor(i + 2);
               return (
                 <GlassCard key={repair.title} className="p-6 relative overflow-hidden">
                   {repair.urgent && (
@@ -946,8 +951,8 @@ export default function V2GarageDoorPreview({
                       URGENT
                     </div>
                   )}
-                  <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 border" style={{ background: ACCENT_GLOW, borderColor: `${ACCENT}33` }}>
-                    <Icon size={24} weight="duotone" style={{ color: ACCENT }} />
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 border" style={{ background: `${tile}22`, borderColor: `${tile}55` }}>
+                    <Icon size={24} weight="duotone" style={{ color: tile }} />
                   </div>
                   <h3 className="text-white font-bold mb-2">{repair.title}</h3>
                   <p className="text-sm text-slate-400 leading-relaxed">{repair.desc}</p>

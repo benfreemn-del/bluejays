@@ -62,6 +62,9 @@ const RED_GLOW = "rgba(220, 38, 38, 0.15)";
 const SILVER = "#94a3b8";
 const DARK_CARD = "#1a1a1a";
 
+const PALETTE = ["#dc2626", "#94a3b8", "#f59e0b", "#1e293b", "#3b82f6", "#f97316"];
+const pickPaletteColor = (i: number) => PALETTE[i % PALETTE.length];
+
 function getAccent(accentColor?: string) {
   const c = accentColor || RED;
   return { ACCENT: c, ACCENT_GLOW: `${c}26`, SILVER };
@@ -467,20 +470,21 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {data.services.map((service, i) => {
               const Icon = getServiceIcon(service.name);
+              const tile = pickPaletteColor(i);
               return (
                 <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]">
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${ACCENT}15, transparent 70%)` }} />
-                  <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${ACCENT}4d, transparent)` }} />
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${tile}22, transparent 70%)` }} />
+                  <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${tile}66, transparent)` }} />
                   <div className="relative z-10">
                     <div className="flex items-start justify-between mb-5">
-                      <div className="w-12 h-12 rounded-xl flex items-center justify-center border" style={{ background: ACCENT_GLOW, borderColor: `${ACCENT}33` }}>
-                        <Icon size={24} weight="duotone" style={{ color: ACCENT }} />
+                      <div className="w-12 h-12 rounded-xl flex items-center justify-center border" style={{ background: `${tile}22`, borderColor: `${tile}55` }}>
+                        <Icon size={24} weight="duotone" style={{ color: tile }} />
                       </div>
-                      <span className="text-xs font-mono text-slate-600">{String(i + 1).padStart(2, "0")}</span>
+                      <span className="text-xs font-mono" style={{ color: `${tile}99` }}>{String(i + 1).padStart(2, "0")}</span>
                     </div>
                     <h3 className="text-lg font-bold text-white mb-2">{service.name}</h3>
                     <p className="text-sm text-slate-400 leading-relaxed">{service.description || ""}</p>
-                    {service.price && <p className="text-sm font-semibold mt-3" style={{ color: ACCENT }}>{service.price}</p>}
+                    {service.price && <p className="text-sm font-semibold mt-3" style={{ color: tile }}>{service.price}</p>}
                   </div>
                 </div>
               );
@@ -520,14 +524,17 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <SectionHeader badge="Capability" title="What We Service" subtitle="From everyday sedans to heavy-duty trucks — our certified technicians handle it all." accent={ACCENT} />
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {VEHICLE_TYPES.map((v) => (
-              <GlassCard key={v.label} className="p-5 text-center group hover:border-opacity-30 transition-all duration-500">
-                <div className="w-12 h-12 rounded-xl mx-auto mb-3 flex items-center justify-center border" style={{ background: ACCENT_GLOW, borderColor: `${ACCENT}33` }}>
-                  <v.icon size={24} weight="duotone" style={{ color: ACCENT }} />
-                </div>
-                <span className="text-sm font-semibold text-white">{v.label}</span>
-              </GlassCard>
-            ))}
+            {VEHICLE_TYPES.map((v, i) => {
+              const tile = pickPaletteColor(i + 2);
+              return (
+                <GlassCard key={v.label} className="p-5 text-center group hover:border-opacity-30 transition-all duration-500">
+                  <div className="w-12 h-12 rounded-xl mx-auto mb-3 flex items-center justify-center border" style={{ background: `${tile}22`, borderColor: `${tile}55` }}>
+                    <v.icon size={24} weight="duotone" style={{ color: tile }} />
+                  </div>
+                  <span className="text-sm font-semibold text-white">{v.label}</span>
+                </GlassCard>
+              );
+            })}
           </div>
         </div>
       </section>
