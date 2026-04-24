@@ -207,8 +207,8 @@ const portfolioImages = [
   "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=600&q=80",
   "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=600&q=80",
   "https://images.unsplash.com/photo-1429497419816-9ca5cfb4571a?w=600&q=80",
-  "https://images.unsplash.com/photo-1590644365607-1c5e52a0baa7?w=600&q=80",
-  "https://images.unsplash.com/photo-1590856029826-c7a73142bbf1?w=600&q=80",
+  "https://images.unsplash.com/photo-1504149269576-9900c81eb84d?w=600&q=80",
+  "https://images.unsplash.com/photo-1504149730145-54e4ebcaf03e?w=600&q=80",
 ];
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -264,7 +264,7 @@ export default function V2ConstructionPage() {
       {/* ─── 1. HERO ─── */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10">
         <div className="absolute inset-0 z-0">
-          <img src="https://images.unsplash.com/photo-1621905251918-48416bd8575a?w=1600&q=80" alt="" className="w-full h-full object-cover object-center" />
+          <img src="https://images.unsplash.com/photo-1516216628859-9bccecab13ca?w=1600&q=80" alt="" className="w-full h-full object-cover object-center" />
           <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${BG}f0 0%, ${BG}dd 50%, ${BG}aa 100%)` }} />
         </div>
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -650,7 +650,7 @@ export default function V2ConstructionPage() {
             <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white"><WordReveal text="Tour A Recent Build" /></h2>
           </div>
           <div className="relative rounded-2xl overflow-hidden aspect-video group cursor-pointer">
-            <img src="https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=1600&q=80" alt="Construction crew at job site" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <img src="https://images.unsplash.com/photo-1742112125567-3e8967bad60f?w=1600&q=80" alt="Construction crew at job site" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
             <div className="absolute inset-0 flex items-center justify-center">
               <motion.div className="w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center shadow-2xl" style={{ background: ACCENT }} animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}>
@@ -799,7 +799,7 @@ export default function V2ConstructionPage() {
           <motion.div className="grid grid-cols-1 md:grid-cols-3 gap-6" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true }}>
             {[
               { title: "Modern Farmhouse Build", scope: "4,200 sq ft new build", duration: "9 months", src: "https://images.unsplash.com/photo-1521783988139-89397d761dce?w=800&q=80" },
-              { title: "Whole-Home Remodel", scope: "1920s craftsman gut renovation", duration: "6 months", src: "https://images.unsplash.com/photo-1523294587484-bae6cc870010?w=800&q=80" },
+              { title: "Whole-Home Remodel", scope: "1920s craftsman gut renovation", duration: "6 months", src: "https://images.unsplash.com/photo-1723107638858-331404b1a09a?w=800&q=80" },
               { title: "Primary Suite Addition", scope: "Second-story 700 sq ft addition", duration: "4 months", src: "https://images.unsplash.com/photo-1502005097973-6a7082348e28?w=800&q=80" },
             ].map((proj, i) => (
               <motion.div key={i} variants={fadeUp} className="group relative rounded-2xl overflow-hidden aspect-[4/5] cursor-pointer">

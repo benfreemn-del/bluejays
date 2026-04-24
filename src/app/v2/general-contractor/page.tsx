@@ -241,10 +241,10 @@ const projectTypes = [
 ];
 
 const portfolioProjects = [
-  { title: "Modern Wallingford Kitchen", neighborhood: "Wallingford", image: "https://images.unsplash.com/photo-1600210491369-e753d80a41f3?w=600&q=80", type: "Kitchen Remodel" },
+  { title: "Modern Wallingford Kitchen", neighborhood: "Wallingford", image: "https://images.unsplash.com/photo-1765277789236-18b14cb7869f?w=600&q=80", type: "Kitchen Remodel" },
   { title: "Green Lake ADU", neighborhood: "Green Lake", image: "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=600&q=80", type: "ADU Construction" },
   { title: "Ballard Loft Conversion", neighborhood: "Ballard", image: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=600&q=80", type: "Addition" },
-  { title: "Capitol Hill Townhome", neighborhood: "Capitol Hill", image: "https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=600&q=80", type: "New Construction" },
+  { title: "Capitol Hill Townhome", neighborhood: "Capitol Hill", image: "https://images.unsplash.com/photo-1768926968986-a88590ce5025?w=600&q=80", type: "New Construction" },
   { title: "Ravenna Master Suite", neighborhood: "Ravenna", image: "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=600&q=80", type: "Bathroom Renovation" },
   { title: "Fremont Open Concept", neighborhood: "Fremont", image: "https://images.unsplash.com/photo-1556912998-c57cc6b63cd7?w=600&q=80", type: "Whole-Home Renovation" },
 ];
@@ -382,7 +382,7 @@ export default function V2GeneralContractorShowcase() {
 
           {/* Mobile hero image (no 3D tilt on mobile) */}
           <div className="lg:hidden mt-8 rounded-2xl overflow-hidden border border-white/15">
-            <img src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=900&q=80" alt="Stunning custom home exterior" className="w-full h-72 object-cover" />
+            <img src="https://images.unsplash.com/photo-1747192904662-e03e8da1e0ab?w=900&q=80" alt="Stunning custom home exterior" className="w-full h-72 object-cover" />
           </div>
         </div>
       </section>
@@ -671,7 +671,7 @@ export default function V2GeneralContractorShowcase() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="relative">
               <div className="rounded-2xl overflow-hidden border border-white/15">
-                <img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=600&q=80" alt="Chris Dalton on job site" className="w-full h-[420px] object-cover object-top" />
+                <img src="https://images.unsplash.com/photo-1772300164438-f73307d3b645?w=600&q=80" alt="Chris Dalton on job site" className="w-full h-[420px] object-cover object-top" />
               </div>
               <div className="absolute -bottom-4 -right-4 md:bottom-6 md:-right-6">
                 <div className="px-5 py-3 rounded-xl backdrop-blur-md border text-white font-bold text-sm shadow-lg" style={{ background: `${AMBER}e6`, borderColor: `${AMBER}80` }}>

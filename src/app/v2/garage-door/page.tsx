@@ -356,7 +356,7 @@ export default function V2GarageDoorPage() {
           </div>
           <motion.div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
             {[
-              "https://images.unsplash.com/photo-1502005229762-cf1b2da7c5d6?w=600&q=80",
+              "https://images.unsplash.com/photo-1675747158954-4a32e28812c0?w=600&q=80",
               "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=600&q=80",
               "https://images.unsplash.com/photo-1600577916048-804c9191e36c?w=600&q=80",
               "https://images.unsplash.com/photo-1599809275671-b5942cabc7a2?w=600&q=80",
@@ -539,7 +539,7 @@ export default function V2GarageDoorPage() {
               </div>
             </div>
             <div className="relative rounded-2xl overflow-hidden aspect-[4/5]">
-              <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=900&q=80" alt="Modern garage door opener install" className="w-full h-full object-cover" />
+              <img src="https://images.unsplash.com/photo-1586582636676-9ca2d4cedb9a?w=900&q=80" alt="Modern garage door opener install" className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
               <div className="absolute bottom-6 left-6 right-6">
                 <p className="text-xs uppercase tracking-widest" style={{ color: ACCENT_LIGHT }}>Featured Install</p>

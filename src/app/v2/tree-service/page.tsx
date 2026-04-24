@@ -295,11 +295,11 @@ const stats = [
 ];
 
 const galleryPhotos = [
-  { src: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=600&q=80", alt: "Large tree trimming" },
+  { src: "https://images.unsplash.com/photo-1754321871548-61bdbc6f1506?w=600&q=80", alt: "Large tree trimming" },
   { src: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=600&q=80", alt: "Healthy trees in landscape" },
-  { src: "https://images.unsplash.com/photo-1473448912268-2022ce9509d8?w=600&q=80", alt: "Forest canopy care" },
+  { src: "https://images.unsplash.com/photo-1754321902809-5c21cbc67228?w=600&q=80", alt: "Forest canopy care" },
   { src: "https://images.unsplash.com/photo-1518495973542-4542c06a5843?w=600&q=80", alt: "Sunlight through trees" },
-  { src: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=600&q=80", alt: "Professional tree work" },
+  { src: "https://images.unsplash.com/photo-1754322449185-31f56117ed87?w=600&q=80", alt: "Professional tree work" },
   { src: "https://images.unsplash.com/photo-1476231682828-37e571bc172f?w=600&q=80", alt: "Managed tree landscape" },
 ];
 
@@ -522,7 +522,7 @@ export default function V2TreeServicePage() {
               </div>
             </div>
             <div className="rounded-2xl overflow-hidden aspect-[4/5]">
-              <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=700&q=80" alt="Tree care team at work" className="w-full h-full object-cover object-center" />
+              <img src="https://images.unsplash.com/photo-1754321895426-68b04ba453e3?w=700&q=80" alt="Tree care team at work" className="w-full h-full object-cover object-center" />
             </div>
           </div>
         </div>
@@ -678,7 +678,7 @@ export default function V2TreeServicePage() {
             <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white"><WordReveal text="Watch A Tree Removal" /></h2>
           </div>
           <div className="relative rounded-2xl overflow-hidden aspect-video group cursor-pointer">
-            <img src="https://images.unsplash.com/photo-1511497584788-876760111969?w=1600&q=80" alt="Arborist climbing for tree removal" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <img src="https://images.unsplash.com/photo-1754321889123-0485c7fea5f1?w=1600&q=80" alt="Arborist climbing for tree removal" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
             <div className="absolute inset-0 flex items-center justify-center">
               <motion.div className="w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center shadow-2xl" style={{ background: GREEN } as React.CSSProperties} animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}>

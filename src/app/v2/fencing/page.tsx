@@ -255,10 +255,10 @@ const stats = [
 ];
 
 const galleryPhotos = [
-  { src: "https://images.unsplash.com/photo-1595356700395-6f14b5c1f33f?w=600&q=80", alt: "Cedar privacy fence installation" },
-  { src: "https://images.unsplash.com/photo-1622372738946-62e02505feb3?w=600&q=80", alt: "White vinyl fence with gate" },
-  { src: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&q=80", alt: "Ornamental iron fencing" },
-  { src: "https://images.unsplash.com/photo-1505843490538-5133c6c7d0e1?w=600&q=80", alt: "Wood fence in backyard" },
+  { src: "https://images.unsplash.com/photo-1773430272567-a7c49118505e?w=600&q=80", alt: "Cedar privacy fence installation" },
+  { src: "https://images.unsplash.com/photo-1720116981234-59b667e5eb26?w=600&q=80", alt: "White vinyl fence with gate" },
+  { src: "https://images.unsplash.com/photo-1668682489574-747d6e472324?w=600&q=80", alt: "Ornamental iron fencing" },
+  { src: "https://images.unsplash.com/photo-1722881445875-bdd5f4d9e6fa?w=600&q=80", alt: "Wood fence in backyard" },
   { src: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600&q=80", alt: "Beautiful home with fence" },
   { src: "https://images.unsplash.com/photo-1558882224-dda166733046?w=600&q=80", alt: "Property with iron gate" },
 ];
@@ -636,7 +636,7 @@ export default function V2FencingPage() {
             <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white"><WordReveal text="Watch a Full Fence Install" /></h2>
           </div>
           <div className="relative rounded-2xl overflow-hidden aspect-video group cursor-pointer">
-            <img src="https://images.unsplash.com/photo-1459411552884-841db9b3cc2a?w=1600&q=80" alt="Fencing crew installation" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <img src="https://images.unsplash.com/photo-1748908271592-d9d5690b288b?w=1600&q=80" alt="Fencing crew installation" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
             <div className="absolute inset-0 flex items-center justify-center">
               <motion.div className="w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center shadow-2xl" style={{ background: WOOD } as React.CSSProperties} animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}>
