@@ -236,12 +236,18 @@ const processSteps = [
   { step: "05", title: "Ongoing Care", desc: "Maintenance programs keep your investment thriving season after season. We are partners for the long haul.", icon: Heart },
 ];
 
+// Every image below was visually verified as landscape/yard content.
+// Previous URLs pointed at a Mercedes hood ornament, a dirt scoop, and
+// a tractor — all scraped under "zen garden / native plant / rain garden"
+// search queries that returned junk on the day they were pulled.
+// Per CLAUDE.md's visually-inspect-every-photo rule, download any
+// replacement and look at it before committing.
 const projects = [
-  { title: "Japanese Zen Garden", location: "Capitol Hill", scope: "Stone paths, koi pond, bamboo fencing, moss beds", image: "https://images.unsplash.com/photo-1563694983011-6f4d90358083?w=600&q=80" },
+  { title: "Japanese Zen Garden", location: "Capitol Hill", scope: "Stone paths, koi pond, bamboo fencing, moss beds", image: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=600&q=80" },
   { title: "Modern Patio", location: "Bellevue", scope: "600 sq ft paver patio, fire pit, built-in seating", image: "https://images.unsplash.com/photo-1600573472592-401b489a3cdc?w=600&q=80" },
-  { title: "Native Plant Restoration", location: "Magnolia", scope: "Full yard native conversion, pollinator garden, rain garden", image: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&q=80" },
+  { title: "Native Plant Restoration", location: "Magnolia", scope: "Full yard native conversion, pollinator garden, rain garden", image: "https://images.unsplash.com/photo-1598902108854-10e335adac99?w=600&q=80" },
   { title: "Outdoor Kitchen", location: "Mercer Island", scope: "Built-in grill, bar counter, pergola, landscape lighting", image: "/images/landscaping-outdoor-grill.png" },
-  { title: "Rain Garden", location: "Fremont", scope: "Bioswale, native plantings, permeable pavers, downspout capture", image: "https://images.unsplash.com/photo-1615811361523-6bd03d7748e7?w=600&q=80" },
+  { title: "Rain Garden", location: "Fremont", scope: "Bioswale, native plantings, permeable pavers, downspout capture", image: "https://images.unsplash.com/photo-1588880331179-bc9b93a8cb5e?w=600&q=80" },
   { title: "Fire Pit Lounge", location: "Kirkland", scope: "Natural stone fire pit, curved seating wall, accent lighting", image: "/images/landscaping-fire-pit.png" },
 ];
 
@@ -252,12 +258,16 @@ const seasonalData = [
   { season: "Winter", color: PRIMARY, icon: Snowflake, tasks: ["Structural pruning", "Design planning for spring", "Hardscape repairs", "Holiday lighting install"] },
 ];
 
+// All testimonial photos are the CLIENT'S YARD, not a face or random decor.
+// Previous URLs pointed at a wine glass, a glass prism, autumn leaves on
+// a string, and a Monstera houseplant — none of which read as a landscape
+// project. Replacements are all verified yard/garden photography.
 const testimonials = [
-  { name: "The Watsons", text: "Diego turned our mud pit into a Japanese garden. The neighbors stop to take photos every time they walk by.", image: "https://images.unsplash.com/photo-1477414348463-c0eb7f1359b6?w=600&q=80" },
-  { name: "Jen & Mike R.", text: "Our backyard is now the reason we don't go on vacation. Why leave paradise?", image: "https://images.unsplash.com/photo-1525498128493-380d1990a112?w=600&q=80" },
-  { name: "Dr. Sarah Kim", text: "The native plant rain garden handles all our runoff AND looks beautiful year-round.", image: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&q=80" },
-  { name: "The Andersons", text: "From bare dirt to outdoor kitchen with dining for 12. Diego is a magician.", image: "https://images.unsplash.com/photo-1597600159211-d6c104f408d1?w=600&q=80" },
-  { name: "Paul T.", text: "We hired 3 landscapers before Diego. He's the only one who actually DESIGNED something.", image: "https://images.unsplash.com/photo-1553361371-9b22f78e8b1d?w=600&q=80" },
+  { name: "The Watsons", text: "Diego turned our mud pit into a Japanese garden. The neighbors stop to take photos every time they walk by.", image: "https://images.unsplash.com/photo-1560749003-f4b1e17e2dff?w=600&q=80" },
+  { name: "Jen & Mike R.", text: "Our backyard is now the reason we don't go on vacation. Why leave paradise?", image: "https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?w=600&q=80" },
+  { name: "Dr. Sarah Kim", text: "The native plant rain garden handles all our runoff AND looks beautiful year-round.", image: "https://images.unsplash.com/photo-1558904541-efa843a96f01?w=600&q=80" },
+  { name: "The Andersons", text: "From bare dirt to outdoor kitchen with dining for 12. Diego is a magician.", image: "https://images.unsplash.com/photo-1713936025889-e7920f0fb952?w=600&q=80" },
+  { name: "Paul T.", text: "We hired 3 landscapers before Diego. He's the only one who actually DESIGNED something.", image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80" },
 ];
 
 const comparisonRows = [
@@ -289,7 +299,7 @@ const faqs = [
 /* hero floating card images — full-yard landscape designs, all unique */
 const heroCards = [
   { src: "https://images.unsplash.com/photo-1584738766473-61c083514bf4?w=600&q=80", alt: "Lush garden pathway" },
-  { src: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80", alt: "Designed backyard with lush plantings" },
+  { src: "https://images.unsplash.com/photo-1764070140879-1120c0a9e9eb?w=600&q=80", alt: "Designed backyard with lush plantings" },
   { src: "https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?w=600&q=80", alt: "Premium outdoor living space" },
 ];
 
@@ -810,7 +820,7 @@ export default function V2LandscapingPage() {
               </motion.div>
             </div>
             <div className="relative rounded-2xl overflow-hidden aspect-[4/3]">
-              <img src="https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?w=800&q=80" alt="Sustainable native plant garden" className="w-full h-full object-cover" />
+              <img src="https://images.unsplash.com/photo-1764173040234-947b88cb6975?w=800&q=80" alt="Sustainable native plant garden" className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0f1a0f]/70 to-transparent" />
               <div className="absolute bottom-6 left-6">
                 <div className="px-4 py-2 rounded-full backdrop-blur-md border border-green-500/30 bg-black/40 flex items-center gap-2">
@@ -934,7 +944,7 @@ export default function V2LandscapingPage() {
       <SectionReveal className="relative z-10 py-16 md:py-24">
         <div className="mx-auto max-w-4xl px-4 md:px-6">
           <div className="relative rounded-2xl overflow-hidden aspect-video border border-white/15 group cursor-pointer">
-            <img src="https://images.unsplash.com/photo-1523712999610-f77fbcfc3843?w=1200&q=80" alt="Beautiful landscaped backyard" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <img src="https://images.unsplash.com/photo-1617850687395-620757feb1f3?w=1200&q=80" alt="Beautiful landscaped backyard" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
             <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
               <div className="w-20 h-20 rounded-full flex items-center justify-center backdrop-blur-md bg-white/10 border border-white/20 group-hover:scale-110 transition-transform">
                 <PlayCircle size={48} weight="fill" style={{ color: PRIMARY_LIGHT }} />
