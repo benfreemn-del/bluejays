@@ -172,6 +172,14 @@ function dbToProspect(row: Record<string, unknown>): Prospect {
     welcomeEmailSentAt: row.welcome_email_sent_at as string | undefined,
     onboardingReminderSentAt: row.onboarding_reminder_sent_at as string | undefined,
     short_code: (row.short_code as string | null) || undefined,
+    assignedDomain: (row.assigned_domain as string | null) || undefined,
+    domainCostUsd:
+      row.domain_cost_usd == null
+        ? undefined
+        : Number(row.domain_cost_usd),
+    domainRegistrar: (row.domain_registrar as string | null) || undefined,
+    domainRegisteredAt: (row.domain_registered_at as string | null) || undefined,
+    siteLiveAt: (row.site_live_at as string | null) || undefined,
     createdAt: row.created_at as string,
     updatedAt: row.updated_at as string,
   });
@@ -217,6 +225,11 @@ function prospectToDb(p: Prospect) {
     admin_notes_submitted_at: sanitized.adminNotesSubmittedAt || null,
     last_submitted_admin_notes: sanitized.lastSubmittedAdminNotes || null,
     last_submitted_theme: sanitized.lastSubmittedTheme || null,
+    assigned_domain: sanitized.assignedDomain || null,
+    domain_cost_usd: sanitized.domainCostUsd ?? null,
+    domain_registrar: sanitized.domainRegistrar || null,
+    domain_registered_at: sanitized.domainRegisteredAt || null,
+    site_live_at: sanitized.siteLiveAt || null,
   };
 }
 
@@ -399,6 +412,11 @@ export async function updateProspect(
     if (sanitizedUpdates.lastSubmittedTheme !== undefined) dbUpdates.last_submitted_theme = sanitizedUpdates.lastSubmittedTheme || null;
     if (sanitizedUpdates.welcomeEmailSentAt !== undefined) dbUpdates.welcome_email_sent_at = sanitizedUpdates.welcomeEmailSentAt || null;
     if (sanitizedUpdates.onboardingReminderSentAt !== undefined) dbUpdates.onboarding_reminder_sent_at = sanitizedUpdates.onboardingReminderSentAt || null;
+    if (sanitizedUpdates.assignedDomain !== undefined) dbUpdates.assigned_domain = sanitizedUpdates.assignedDomain || null;
+    if (sanitizedUpdates.domainCostUsd !== undefined) dbUpdates.domain_cost_usd = sanitizedUpdates.domainCostUsd ?? null;
+    if (sanitizedUpdates.domainRegistrar !== undefined) dbUpdates.domain_registrar = sanitizedUpdates.domainRegistrar || null;
+    if (sanitizedUpdates.domainRegisteredAt !== undefined) dbUpdates.domain_registered_at = sanitizedUpdates.domainRegisteredAt || null;
+    if (sanitizedUpdates.siteLiveAt !== undefined) dbUpdates.site_live_at = sanitizedUpdates.siteLiveAt || null;
 
     let previousStatus: string | null = null;
     if (sanitizedUpdates.status) {

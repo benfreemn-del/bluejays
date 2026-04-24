@@ -156,6 +156,16 @@ export interface Prospect {
   handoffSentAt?: string;
   /** ISO timestamp when last monthly report email was sent to client */
   lastReportSentAt?: string;
+  /** Hosted-domain fields — populated when Ben registers a domain
+   *  on behalf of the client and flips their preview to go live at
+   *  that domain. The domain lives on Ben's servers; Ben manages
+   *  DNS + renewal. Cost is deducted from the $100/yr mgmt sub so
+   *  net profit stays accurate (see `/api/prospects/[id]/domain`). */
+  assignedDomain?: string;           // e.g. "meyerelectric.com"
+  domainCostUsd?: number;            // annual cost Ben paid, e.g. 12.98
+  domainRegistrar?: string;          // "namecheap" | "porkbun" | "godaddy" | ...
+  domainRegisteredAt?: string;       // ISO timestamp of registration
+  siteLiveAt?: string;               // ISO timestamp when DNS is live + pointing at us
   createdAt: string;
   updatedAt: string;
 }

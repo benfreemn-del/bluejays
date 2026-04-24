@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import type { Prospect } from "@/lib/types";
 import { CATEGORY_CONFIG } from "@/lib/types";
 import StatusBadge from "@/components/dashboard/StatusBadge";
+import DomainCard from "@/components/dashboard/DomainCard";
 
 interface TimelineEvent {
   id: string;
@@ -585,6 +586,9 @@ export default function LeadPage() {
               </div>
             )}
           </div>
+
+          {/* Domain & Hosting */}
+          <DomainCard prospect={prospect} onChange={loadData} />
 
           {/* Quick Status */}
           <div className="p-4 rounded-xl bg-surface border border-border">

@@ -96,11 +96,13 @@ export default function ProspectTable({
 
   const [currentPage, setCurrentPage] = useState(1);
   const PAGE_SIZE = 100;
+  const [liveOnly, setLiveOnly] = useState(false);
 
   const filtered = prospects.filter((p) => {
     if (categoryFilter && p.category !== categoryFilter) return false;
     if (statusFilter && p.status !== statusFilter) return false;
     if (!statusFilter && p.status === "dismissed") return false;
+    if (liveOnly && !p.siteLiveAt) return false;
     return true;
   });
 
@@ -108,7 +110,7 @@ export default function ProspectTable({
   const paginatedFiltered = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
   // Reset to page 1 when filters change
-  useEffect(() => { setCurrentPage(1); }, [categoryFilter, statusFilter]);
+  useEffect(() => { setCurrentPage(1); }, [categoryFilter, statusFilter, liveOnly]);
 
   const isSelected = (id: string) => selectedIds.includes(id);
 
@@ -435,6 +437,20 @@ export default function ProspectTable({
         >
           📷 Select Images Done
         </button>
+        <button
+          onClick={() => setLiveOnly((v) => !v)}
+          className={
+            liveOnly
+              ? "h-10 px-3 rounded-lg bg-emerald-500/20 border border-emerald-500/50 text-emerald-300 text-sm font-medium flex items-center gap-1.5 cursor-pointer shadow-[0_0_8px_rgba(16,185,129,0.4)]"
+              : "h-10 px-3 rounded-lg bg-white/5 border border-white/10 text-sm text-muted hover:text-foreground hover:border-white/20 transition-colors flex items-center gap-1.5 cursor-pointer"
+          }
+          title="Show only prospects whose site is live at a custom domain"
+        >
+          ✓ Live Sites
+          {liveOnly && (
+            <span className="text-xs opacity-70">(on)</span>
+          )}
+        </button>
       </div>
 
       {selectedIds.length > 0 && (
@@ -628,6 +644,14 @@ export default function ProspectTable({
                       <p className="font-medium text-blue-electric hover:underline">{prospect.businessName}</p>
                       {((prospect.scrapedData as { imageMapping?: { selectionStatus?: string } } | undefined)?.imageMapping?.selectionStatus === "completed") && (
                         <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-green-500/20 text-green-400 font-bold" title="Images completed">📷</span>
+                      )}
+                      {prospect.siteLiveAt && (
+                        <span
+                          className="text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-500/25 text-emerald-300 font-bold border border-emerald-400/50 shadow-[0_0_8px_rgba(16,185,129,0.6)] animate-pulse"
+                          title={`Live at ${prospect.assignedDomain || "assigned domain"} since ${new Date(prospect.siteLiveAt).toLocaleDateString()}`}
+                        >
+                          ✓ LIVE
+                        </span>
                       )}
                       {prospect.pricingTier === "free" && (
                         <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold tracking-wide border border-emerald-500/30">Free</span>
