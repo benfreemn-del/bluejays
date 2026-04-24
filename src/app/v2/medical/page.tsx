@@ -647,7 +647,7 @@ export default function V2MedicalPage() {
                 <img
                   src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=500&q=80"
                   alt="Doctor consulting with patient"
-                  className="w-full h-full object-cover object-center"
+                  className="w-full h-full object-cover object-top"
                 />
               </div>
               <div className="rounded-2xl overflow-hidden aspect-[3/4] mt-8">

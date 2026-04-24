@@ -743,7 +743,7 @@ export default function V2CateringShowcase() {
             <SectionHeading>Watch Our Team in Action</SectionHeading>
           </div>
           <div className="relative rounded-2xl overflow-hidden border border-white/[0.13] group cursor-pointer">
-            <img src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=900&q=80" alt="Chef team preparing an event" className="w-full h-[400px] object-cover transition-transform duration-700 group-hover:scale-105" />
+            <img src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=900&q=80" alt="Chef team preparing an event" className="w-full h-[400px] object-cover object-top transition-transform duration-700 group-hover:scale-105" />
             <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
               <motion.div className="w-20 h-20 rounded-full flex items-center justify-center" style={{ background: `${COPPER}dd` }} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
                 <Play size={32} weight="fill" className="text-white ml-1" />

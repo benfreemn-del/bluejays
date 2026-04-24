@@ -608,7 +608,7 @@ export default function V2RestaurantPage() {
               <img
                 src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=700&q=80"
                 alt="Head Chef in kitchen"
-                className="w-full h-full object-cover object-center"
+                className="w-full h-full object-cover object-top"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
               <div className="absolute bottom-6 left-6">

@@ -636,7 +636,7 @@ export default function V2FencingPage() {
             <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white"><WordReveal text="Watch a Full Fence Install" /></h2>
           </div>
           <div className="relative rounded-2xl overflow-hidden aspect-video group cursor-pointer">
-            <img src="https://images.unsplash.com/photo-1748908271592-d9d5690b288b?w=1600&q=80" alt="Fencing crew installation" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <img src="https://images.unsplash.com/photo-1748908271592-d9d5690b288b?w=1600&q=80" alt="Fencing crew installation" className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
             <div className="absolute inset-0 flex items-center justify-center">
               <motion.div className="w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center shadow-2xl" style={{ background: WOOD } as React.CSSProperties} animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}>
