@@ -55,6 +55,23 @@ function getAccent(accentColor?: string) {
   };
 }
 
+// Harmonious multi-color palette for service/ministry cards and rotating
+// icon tiles. Brings the same warm life as a Lewis County Autism style
+// "every section a different color" site without breaking the primary
+// accent (GOLD/teal/whatever the prospect's brand is) — the brand accent
+// is still used for CTAs, borders, section headers. The palette is only
+// applied to iconography and highlight accents so it feels joyful
+// without fighting the primary color.
+const MINISTRY_PALETTE = [
+  "#ef4444", // coral red
+  "#f59e0b", // amber
+  "#10b981", // emerald
+  "#06b6d4", // cyan
+  "#8b5cf6", // violet
+  "#ec4899", // pink
+];
+const pickPaletteColor = (i: number) => MINISTRY_PALETTE[i % MINISTRY_PALETTE.length];
+
 /* ───────────────────────── SERVICE ICON MAP ───────────────────────── */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SERVICE_ICON_MAP: Record<string, any> = {
@@ -363,6 +380,47 @@ export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ fontFamily: "Lato, system-ui, sans-serif", background: NAVY, color: "#f1f5f9" }}>
       <FloatingParticles />
 
+      {/* ══════════════════ SCROLL PROGRESS BAR ══════════════════ */}
+      {/* Fixed 3px bar at the very top of the page that fills left-to-right
+          as the visitor scrolls. Uses the full ministry palette as a moving
+          gradient — adds the "every section alive" energy without being
+          loud. Updates via CSS custom property driven by a scroll listener. */}
+      <div
+        className="fixed top-0 left-0 right-0 z-[60] h-[3px] pointer-events-none"
+        style={{ background: "rgba(255,255,255,0.04)" }}
+      >
+        <div
+          id="scroll-progress-bar"
+          className="h-full origin-left"
+          style={{
+            transform: "scaleX(0)",
+            transition: "transform 0.1s linear",
+            background: `linear-gradient(to right, ${MINISTRY_PALETTE.join(", ")})`,
+          }}
+        />
+      </div>
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `
+            (function(){
+              var bar = document.getElementById('scroll-progress-bar');
+              if (!bar) return;
+              var ticking = false;
+              function update() {
+                var h = document.documentElement;
+                var scrolled = h.scrollTop / Math.max(1, (h.scrollHeight - h.clientHeight));
+                bar.style.transform = 'scaleX(' + Math.min(1, Math.max(0, scrolled)) + ')';
+                ticking = false;
+              }
+              document.addEventListener('scroll', function() {
+                if (!ticking) { window.requestAnimationFrame(update); ticking = true; }
+              }, { passive: true });
+              update();
+            })();
+          `,
+        }}
+      />
+
       {/* ══════════════════ 1. NAV ══════════════════ */}
       <nav className="fixed top-0 left-0 right-0 z-50">
         <div className="mx-auto max-w-7xl px-4 md:px-6 py-4">
@@ -539,20 +597,24 @@ export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {data.services.map((service, i) => {
               const Icon = getServiceIcon(service.name);
+              // Each service/program gets a different accent color from
+              // the ministry palette so the grid feels alive. The primary
+              // brand accent (GOLD) stays in section headers and CTAs.
+              const tileColor = pickPaletteColor(i);
               return (
                 <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]">
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${GOLD}15, transparent 70%)` }} />
-                  <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${GOLD}4d, transparent)` }} />
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${tileColor}22, transparent 70%)` }} />
+                  <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${tileColor}66, transparent)` }} />
                   <div className="relative z-10">
                     <div className="flex items-start justify-between mb-5">
-                      <div className="w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 border" style={{ background: GOLD_GLOW, borderColor: `${GOLD}33` }}>
-                        <Icon size={24} weight="duotone" style={{ color: GOLD }} />
+                      <div className="w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 border" style={{ background: `${tileColor}22`, borderColor: `${tileColor}55` }}>
+                        <Icon size={24} weight="duotone" style={{ color: tileColor }} />
                       </div>
-                      <span className="text-xs font-mono text-slate-600">{String(i + 1).padStart(2, "0")}</span>
+                      <span className="text-xs font-mono" style={{ color: `${tileColor}99` }}>{String(i + 1).padStart(2, "0")}</span>
                     </div>
                     <h3 className="text-lg font-bold text-white mb-2">{service.name}</h3>
                     <p className="text-sm text-slate-400 leading-relaxed">{service.description || ""}</p>
-                    {service.price && <p className="text-sm font-semibold mt-3" style={{ color: GOLD }}>{service.price}</p>}
+                    {service.price && <p className="text-sm font-semibold mt-3" style={{ color: tileColor }}>{service.price}</p>}
                   </div>
                 </div>
               );
@@ -605,21 +667,25 @@ export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
           <SectionHeader badge="Get Involved" title="Our Ministries" subtitle={`There are many ways to connect and grow at ${data.businessName}.`} accent={GOLD} />
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {ministries.map((m, i) => (
-              <div key={m.title} className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]">
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${GOLD}15, transparent 70%)` }} />
-                <div className="relative z-10">
-                  <div className="flex items-start justify-between mb-5">
-                    <div className="w-12 h-12 rounded-xl flex items-center justify-center border" style={{ background: GOLD_GLOW, borderColor: `${GOLD}33` }}>
-                      <m.icon size={24} weight="duotone" style={{ color: GOLD }} />
+            {ministries.map((m, i) => {
+              const tile = pickPaletteColor(i + 3); // offset 3 so services+ministries grids show different orderings
+              return (
+                <div key={m.title} className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]">
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${tile}22, transparent 70%)` }} />
+                  <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${tile}66, transparent)` }} />
+                  <div className="relative z-10">
+                    <div className="flex items-start justify-between mb-5">
+                      <div className="w-12 h-12 rounded-xl flex items-center justify-center border" style={{ background: `${tile}22`, borderColor: `${tile}55` }}>
+                        <m.icon size={24} weight="duotone" style={{ color: tile }} />
+                      </div>
+                      <span className="text-xs font-mono" style={{ color: `${tile}99` }}>{String(i + 1).padStart(2, "0")}</span>
                     </div>
-                    <span className="text-xs font-mono text-slate-600">{String(i + 1).padStart(2, "0")}</span>
+                    <h3 className="text-lg font-bold text-white mb-2">{m.title}</h3>
+                    <p className="text-sm text-slate-400 leading-relaxed">{m.desc}</p>
                   </div>
-                  <h3 className="text-lg font-bold text-white mb-2">{m.title}</h3>
-                  <p className="text-sm text-slate-400 leading-relaxed">{m.desc}</p>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
