@@ -2665,3 +2665,273 @@ route now resolves for everyone.
 | Direct mail postcard | No regulation | ~$1.20 | code ✓ / account pending |
 | Personalized video | N/A (asset) | ~$0.30/video at Browserless | code ✓ / account pending |
 | Retargeting ad | Pixel consent in privacy policy | ~$0.01/impression | pending |
+
+---
+
+## Locked-In Rules — Session 2026-04-23 (post-launch hardening)
+
+This section captures rules derived from bugs caught and patterns established
+in the 2026-04-22/23 session. Every rule here prevents a real bug we shipped
+or catches a pattern that took hours to discover. **Treat as non-negotiable
+for future agents.**
+
+### 1. Short URL Generation — NEVER build from UUID prefix
+
+The `/p/[code]`, `/u/[code]`, and `/b/[code]` routes resolve by
+`prospects.short_code`, which is `md5(id).slice(0,8)` — **NOT** the first 8
+chars of the UUID. Those are two different values.
+
+```ts
+// ❌ WRONG — silently 404s for every prospect
+const previewUrl = `${BASE_URL}/p/${prospect.id.slice(0, 8)}`;
+
+// ✅ CORRECT
+import { getShortPreviewUrl, getShortUnsubUrl, getShortBookUrl } from "@/lib/short-urls";
+const previewUrl = getShortPreviewUrl(prospect);
+```
+
+**This bug shipped broken links for a week.** Every outreach email hit a 404
+page until 2026-04-23. Any future outreach surface MUST use the helper — no
+exceptions. The short URL helpers live in `src/lib/short-urls.ts`; extend
+there if a new short route is added (e.g. `/c/[code]`).
+
+### 2. Supabase Pagination — default cap is 1000, and it drops rows silently
+
+PostgREST caps `.select("*")` at 1000 rows by default. There is no error, no
+warning — rows past 1000 just vanish. The dashboard's Contacted/Approved
+tiles shrank day over day for weeks because `getAllProspects()` was returning
+the 1000 most recent and every new scout pushed an old contacted prospect off
+the end.
+
+**Rule:** Any `.select("*")` or `.select("X,Y,Z")` against a table that may
+cross 1000 rows MUST paginate in 1000-row chunks with `.range(from, from + 999)`
+until a short page returns. `getAllProspects()` in `src/lib/store.ts` is the
+canonical example. Safety rail: abort after 50k rows (different conversation at
+that scale — switch to server-side aggregate counts).
+
+### 3. Image Proxy Allowlist — suffix matching for tenant-per-subdomain CDNs
+
+Squarespace, Wix, and the like use one CDN domain for everyone. AWS
+Cloudfront gives each tenant their own subdomain (`d14f1v6bh52agh.cloudfront.net`,
+`d3abcdefg.cloudfront.net`, etc). When a prospect uses such a CDN, exact-
+hostname allowlisting doesn't match anything.
+
+**Rule:** `src/app/api/image-proxy/route.ts` has BOTH `ALLOWED_DOMAINS` (exact
+hostname) and `ALLOWED_HOST_SUFFIXES` (suffix match via `endsWith`). When
+adding a new image host, use suffix matching iff the subdomain is dynamic
+per tenant.
+
+Currently suffix-allowed: `.cloudfront.net`, `.amazonaws.com`. Add more
+as prospects surface new CDNs.
+
+### 4. Scraped Image URLs — copy verbatim, NEVER swap size segments
+
+CDNs like Cloudfront pre-generate a per-variant hash in the URL. The URL
+`.../DuCZykL4UDVfSxG8c9AH4OkkwZc=/fit-in/2800xorig/...` is signed for
+`2800xorig`. Changing to `/fit-in/1600xorig/` with the same hash returns
+**400 Bad Request**.
+
+**Rule:** Scraped image URLs MUST be used verbatim from the source page's
+HTML. Never fabricate resize variants. Never swap `800xorig` → `1600xorig`
+etc. If you need a different size, scrape the page fresh to find the
+variant with that size's real hash.
+
+### 5. Deduplicate photos by underlying asset ID
+
+Same underlying image at two different CDN resize variants counts as a
+duplicate for rendering purposes — the template will render both and prospects
+see the exact same photo twice. Templates consume `data.photos[0]` hero,
+`[1]` hero-card, `[2]` about, `[2..9]` gallery — overlap in the indices
+guarantees a duplicate if the array contains two sizes of the same image.
+
+**Rule:** Prospect photos arrays MUST be de-duplicated by the underlying
+asset ID (the path segment after `/uploads/` for Squarespace, or equivalent
+opaque ID for other CDNs), not by full URL. One entry per underlying image.
+
+### 6. PreviewImageGuard — retry proxied URLs once before falling back
+
+Cloudfront returns transient 502s that resolve immediately on retry
+(measured: 502 → 200 → 200 across 3 attempts, ~200ms apart). The old
+`onErrorCapture` handler swapped to a stock Unsplash fallback on the first
+error — permanently losing real photos to a 300ms CDN hiccup.
+
+**Rule:** `src/components/preview/PreviewImageGuard.tsx` now retries proxied
+URLs (those containing `/api/image-proxy`) ONCE with a 400ms delay and a
+cache-buster query string before falling back. Bounded to 1 retry per image
+so it can't loop. Don't remove this guard without replacing it with a
+backoff-retry wrapper inside the image-proxy itself.
+
+### 7. V2 Templates — category-specific color palette is mandatory
+
+Every V2 preview template MUST have a `PALETTE` constant (4–6 harmonious
+category-appropriate colors) plus a `pickPaletteColor(i)` helper, and MUST
+rotate the palette through service/feature/ministry card icon tiles. The
+single-accent-everywhere look reads templated the moment a prospect scrolls
+past the fold.
+
+**The pattern** (copied verbatim from V2ChurchPreview.tsx):
+
+```tsx
+const PALETTE = ["#hex", "#hex", "#hex", "#hex", "#hex", "#hex"];
+const pickPaletteColor = (i: number) => PALETTE[i % PALETTE.length];
+
+// Inside the service/feature map:
+{data.services.map((service, i) => {
+  const tile = pickPaletteColor(i);
+  return (
+    <div ...>
+      <div style={{ background: `${tile}22`, borderColor: `${tile}55` }}>
+        <Icon style={{ color: tile }} />
+      </div>
+      <span style={{ color: `${tile}99` }}>{String(i + 1).padStart(2, "0")}</span>
+      ...
+    </div>
+  );
+})}
+```
+
+Brand accent (ACCENT / PRIMARY / GOLD / TEAL / whichever the template uses)
+stays on section headers, CTAs, nav, stats — palette ONLY touches card-level
+iconography. If a template has a second icon grid, use `pickPaletteColor(i + 2)`
+offset so the two grids don't render the same color order.
+
+Palettes should feel like the category. Tattoo = crimson + gold + ink. Florist
+= rose + blush + sage. HVAC = sky + orange (hot/cold). Don't use gray/beige
+in palettes (see existing "No Boring Colors Rule" above).
+
+### 8. V2 Site Data — flexible optional fields (2026-04-23)
+
+The V2 renderers honor several optional flags/arrays on `generated_sites.site_data`.
+Populate these per prospect to tailor the rendered site:
+
+| Field | Type | Effect |
+|---|---|---|
+| `hideBeforeAfter` | `boolean` | Hides the Before/After section (for prospects without a real transformation pair — the generic placeholder image is not a Hector- or Thrive-owned visual) |
+| `suppressClaimUi` | `boolean` | Hides the floating "Claim this site →" CTA, the "Preview — will be customized" disclaimer banner, and the TextMeBack widget. Use for gifted / custom-built previews that shouldn't read as a sales pitch |
+| `serviceAreas` | `string[]` | Rendered as city chips in the V2 "Areas We Serve" section. Landscaping template uses this today; pattern extends to any category |
+| `resources` | `{label, description?, url, icon?}[]` | V2 church "Take the Next Step" grid. Links out to real pages on the prospect's own site (Watch Online / Connection Card / Give / Volunteer, etc.). icon: `watch` / `connect` / `give` / `volunteer` / `calendar` / `book` |
+| `teamMembers` | `{name, role, bio?, quote?, photoUrl?}[]` | V2 church "Meet Our Team" grid. Initials avatar falls back when no photoUrl |
+| `heroTagline` | `string` | Short hero h1 override. The longer scraped tagline stays in `data.tagline` for SEO / about usage, but the hero displays this short version (5–10 words). Used to satisfy CLAUDE.md's "hero copy short" rule without overwriting the preserved scraped tagline |
+| `service.signupPath` | `string` (per-service) | When set on a service, the V2 card renders as an `<a>` link (click-through affordance + hover lift + tile-color "Learn more →" indicator) instead of a plain div. Route to `/inquire/[code]?program=slug&label=X` to open the inquiry form that emails the prospect's office |
+
+### 9. /inquire/[code] form — contract
+
+`/inquire/[code]?program=slug&label=Human+Readable` renders a public form that
+collects name/email/phone/message and POSTs to `/api/inquire/[code]`. The
+handler emails the prospect's contact email with `Reply-To` set to the
+visitor's email (so the business replies directly to the inquirer), CCs
+`bluejaycontactme@gmail.com` so Ben sees inquiry volume, and rate-limits
+to 3 inquiries per prospect per minute.
+
+**Rule:** any "Learn more" / "Sign up for program" / "Contact about event"
+affordance on a V2 template should wire to `/inquire/[code]` via
+`service.signupPath` or an equivalent href in a resource card. Don't build
+per-category inquiry forms — this one handles all categories uniformly.
+
+### 10. Pipeline batch loop — MUST thread Google Places pageTokens
+
+`scout()` deduplicates against every active-pipeline prospect. Without
+pagination across batches, batch N+1 re-queries Google Places for the same
+`(location, category)` tuple and receives the same top-20 results, all of
+which are now in-pipeline → dedup returns 0 → client's dry-batch circuit
+breaker stops after 2 empty rounds. Symptom: "Run Pipeline always stops at
+CHUNK_SIZE sites."
+
+**Rule:** `/api/pipeline/batch` accepts and returns `pageTokens: Record<category, token>`.
+`PipelineDashboard.tsx` carries the map across loop iterations and sends it
+with every batch. Don't remove this without replacing with a different
+de-duplication strategy (e.g. rotating cities per batch).
+
+### 11. Client-side batch loop — resilience, not break-on-first-error
+
+`PipelineDashboard.handleRunPipeline` MUST:
+- Use `AbortController` with a <5min timeout per batch fetch (Vercel's function
+  cap). Hangs without a timeout wedge the entire loop forever.
+- Count consecutive failures and stop only after 3 in a row (circuit breaker).
+  One flaky batch mid-run shouldn't kill the next 10.
+- Parse non-JSON responses defensively (try/catch `res.json()`). A server-side
+  HTML error page can crash a `.json()` call and exit the loop.
+- Show the last error state in `loopState.lastMessage` on every failure so the
+  user sees "Batch N timed out, continuing…" instead of a silent stall.
+
+### 12. Image-mapper save shrink-guard
+
+`/api/image-mapper/save/[id]` rejects saves that would reduce
+`scraped_data.photos` by more than 5 items or 25% — whichever is stricter.
+Returns 409 with a clear error. Prevents the drag-drop UI's stashed photos
+array from clobbering fresh scripted updates (fix scripts, auto-enrichment,
+bulk operations).
+
+Don't loosen this guard without a replacement concurrency strategy.
+
+### 13. Recovery/bulk-send scripts — dynamic-import to avoid mock-mode trap
+
+`src/lib/email-sender.ts` captures `SENDGRID_API_KEY` at module-evaluation
+time. ES static imports hoist to the top of a file, BEFORE any `.env.local`
+loader the script runs. In tsx scripts, a static import of `sendEmail`
+captures `SENDGRID_API_KEY` as `undefined` → silent fall through to
+mock mode → "Sent 48 emails!" with zero actual delivery.
+
+**Rule:** scripts that invoke `sendEmail` (or any module that captures env at
+module-level) MUST use `await import("...")` inside `main()`, AFTER the dotenv
+loader has populated `process.env`. And bulk-send scripts MUST explicitly check
+`process.env.SENDGRID_API_KEY` and exit 1 if missing — silent mock mode is
+worse than a crash.
+
+### 14. Scraper garbage email filter — always run before bulk sends
+
+The scraper sometimes pulls mailto-like strings from page HTML that aren't
+real addresses: image filenames (`flags@2x.webp`), placeholder domains
+(`user@domain.com`, `example@mysite.com`, `contact@sansoxygen.com`), generic
+demos. Hard-bouncing those during warming drags reputation for days.
+
+**Rule:** Any bulk-send script MUST filter recipients through an
+`isRealEmail()` check before hitting SendGrid:
+
+```ts
+function isRealEmail(email: string): boolean {
+  const e = (email || "").toLowerCase().trim();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)) return false;
+  if (/\.(webp|png|jpg|jpeg|svg|gif)$/.test(e)) return false; // image filenames
+  const host = e.split("@")[1];
+  if (["domain.com", "example.com", "mysite.com", "mail.com", "yoursite.com", "yourdomain.com"].includes(host)) return false;
+  const local = e.split("@")[0];
+  if (/^(user|email|example|info|contact|admin|test|demo|sample)$/.test(local)
+      && /^(domain|example|mysite|sample)\./.test(host)) return false;
+  return true;
+}
+```
+
+Reference implementation in `scripts/recover-broken-link-sends.ts`.
+
+### 15. SendGrid activity shows metadata only — bodies live in the `emails` table
+
+The SendGrid Activity Feed shows subject/from/to/event timeline but NOT the
+actual body text. If a prospect replies "what was in that email?" or Ben
+wants to audit what went out, query the `emails` Supabase table which logs
+every `sendEmail()` call with the full body.
+
+Helper script: `scripts/show-last-sends.ts` (dumps the last N with full
+body text). Table columns: `id, prospect_id, to_address, from_address,
+subject, body, sequence, method, sent_at` — note `to_address`/`from_address`,
+not `to`/`from`.
+
+### 16. Hardcoded baseUrl for outreach email footers
+
+`email-templates.ts` and `retargeting-emails.ts` MUST use hardcoded
+`https://bluejayportfolio.com` for the unsubscribe + book URLs. Reading
+`process.env.NEXT_PUBLIC_BASE_URL` is a trap — that variable on Vercel has
+historically been set to a stale preview domain (`bluejays-three.vercel.app`),
+which pointed the opt-out link in every sent email at a throwaway URL. Same
+rule as `stripe.ts` `baseUrl` and `email-sender.ts` `FROM_EMAIL`.
+
+### 17. Status-transition log is the only answer to "why did this number drop?"
+
+The `prospect_status_changes` table (migration 20260421) logs every
+`updateProspect({ status })` call with from/to/timestamp/source. When any
+dashboard tile changes unexpectedly, query this table before speculating —
+the answer is in the log. Dashboard component: `StatusTransitionsToday.tsx`
+surfaces today's moves. For older investigations, query the table directly.
+
+---
+
