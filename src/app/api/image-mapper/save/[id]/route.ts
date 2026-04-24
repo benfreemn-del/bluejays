@@ -46,31 +46,55 @@ export async function POST(
     mapping.lastUpdated = new Date().toISOString();
   }
 
-  // Build updated photos array preserving TWO things:
-  // 1. Slot ordering — the rendered template reads photos[0]=hero,
-  //    photos[1]=hero-card, photos[2]=about, etc., so the mapping slots
-  //    must come first in the stored array and in mapping-slot order.
-  // 2. Pool extras — scraped_data.photos often contains MORE photos
-  //    than the template has slots for (e.g. the Meyer enrichment
-  //    script added 10 fresh Google photos on top of the 3 scanned
-  //    slots). Those extras stay available in the image-mapper's
-  //    drag-source library. Appending them at the end preserves the
-  //    pool without breaking slot ordering.
+  // Build updated photos array by applying slot replacements IN-PLACE
+  // over the existing photo pool.
   //
-  // This replaces a prior "shrink-guard" that rejected saves when the
-  // mapping slot count was smaller than the full pool — false-positive
-  // every time the operator added photos outside the mapper (fix
-  // scripts, Google enrichment, bulk refreshes).
-  const slotDrivenPhotos: string[] = mapping.images.map((img) => {
+  // Why in-place by URL match (and not by position, and not by
+  // rebuilding from slots + appending extras):
+  //
+  // 1. Indices must be stable. V2 templates read photos[0]=hero,
+  //    [1]=about/hero-card, [2..9]=gallery. If we append anything,
+  //    every gallery position shifts by one and the operator's
+  //    single-slot replacement visually reorders the whole page.
+  // 2. The mapping was scanned against whatever photos existed at
+  //    scan time; the pool may have grown since (fix scripts,
+  //    enrichment, Google photo scrapes). The safest identity is
+  //    the URL itself, not the slot position.
+  // 3. Pool extras beyond the scanned slots must stay at their
+  //    original indices too — they're the drag-source library for
+  //    the next mapping session and the template may render them.
+  //
+  // Algorithm:
+  //   - Build a URL→URL replacement map from replaced slots.
+  //   - Walk currentPhotos; for each url, substitute the replacement
+  //     if one exists, otherwise keep the url unchanged.
+  //   - If a slot's originalUrl isn't in currentPhotos (rare edge —
+  //     mapping out of sync with pool), append the replacement at
+  //     the tail so the operator's choice isn't silently dropped.
+  const replacementsByUrl = new Map<string, string>();
+  for (const img of mapping.images) {
     if (img.status === "replaced" && img.replacementUrl) {
-      return img.replacementUrl;
+      replacementsByUrl.set(img.originalUrl, img.replacementUrl);
     }
-    return img.originalUrl;
-  });
+  }
   const currentPhotos = (sd.photos as string[] | undefined) || [];
-  const slotSet = new Set(slotDrivenPhotos);
-  const poolExtras = currentPhotos.filter((url) => !slotSet.has(url));
-  const updatedPhotos: string[] = [...slotDrivenPhotos, ...poolExtras];
+  const handledOriginals = new Set<string>();
+  const updatedPhotos: string[] = currentPhotos.map((url) => {
+    const replacement = replacementsByUrl.get(url);
+    if (replacement) {
+      handledOriginals.add(url);
+      return replacement;
+    }
+    return url;
+  });
+  // Edge case: mapping references an originalUrl that's no longer in
+  // the pool. Append any such replacements at the tail so the
+  // operator's work isn't silently lost.
+  for (const [origUrl, replUrl] of replacementsByUrl) {
+    if (!handledOriginals.has(origUrl) && !updatedPhotos.includes(replUrl)) {
+      updatedPhotos.push(replUrl);
+    }
+  }
 
   // Save mapping + updated photos back to prospect's scrapedData
   await updateProspect(id, {

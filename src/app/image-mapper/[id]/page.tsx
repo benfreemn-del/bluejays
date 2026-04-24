@@ -744,21 +744,45 @@ export default function ImageMapDetailPage() {
     }
   };
 
-  /* ─── File Upload (for Upload tab) ─── */
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  /* ─── File Upload (for Upload tab) ───
+   * Uploads the file to Supabase Storage via /api/image-mapper/upload/[id]
+   * and adds the returned stable public URL to `uploadedImages`.
+   *
+   * Previously used FileReader.readAsDataURL to stash files as
+   * base64 data: URIs in component state. That worked locally but
+   * broke save: the data URIs were POSTed to scraped_data.photos,
+   * hit Supabase JSONB row-size limits, and surfaced as generic
+   * 409 "conflict" errors. Also violates QC rule 25 (no data: URIs).
+   */
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
-    Array.from(files).forEach((file) => {
-      const reader = new FileReader();
-      reader.onload = () => {
+    const fileArray = Array.from(files);
+    e.target.value = "";
+
+    for (const file of fileArray) {
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+        const res = await fetch(`/api/image-mapper/upload/${id}`, {
+          method: "POST",
+          body: formData,
+        });
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({ error: "Upload failed" }));
+          alert(`Upload failed for "${file.name}": ${err.error || res.statusText}`);
+          continue;
+        }
+        const data = (await res.json()) as { url: string };
         setUploadedImages((prev) => [
           ...prev,
-          { url: reader.result as string, name: file.name },
+          { url: data.url, name: file.name },
         ]);
-      };
-      reader.readAsDataURL(file);
-    });
-    e.target.value = "";
+      } catch (err) {
+        console.error("Upload error for", file.name, err);
+        alert(`Upload failed for "${file.name}". Check the console for details.`);
+      }
+    }
   };
 
   /* ─── Load saved fallbacks from localStorage ─── */
