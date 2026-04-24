@@ -171,18 +171,10 @@ export default function DashboardPage() {
               <h1 className="truncate text-lg font-semibold sm:text-xl">Dashboard</h1>
             </div>
           </div>
-          <div className="flex flex-wrap items-center gap-2 lg:justify-end lg:gap-3 [&_a]:lg:text-base [&_a]:lg:px-4 [&_a]:lg:py-2.5 [&_button]:lg:text-base [&_button]:lg:px-4 lg:[&_.h-9]:h-11">
+          <div className="flex flex-wrap items-center gap-2 lg:justify-end lg:gap-3">
+            {/* Primary routes — the pages Ben visits most */}
             <Link href="/" className="rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-background hover:text-foreground">
               Home
-            </Link>
-            <Link href="/scripts" className="rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-background hover:text-foreground">
-              AI
-            </Link>
-            <a href="/spending" className="rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-background hover:text-foreground">
-              Spend
-            </a>
-            <Link href="/funnel-tracker" className="rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-background hover:text-foreground">
-              Funnel
             </Link>
             <Link
               href="/dashboard/customers"
@@ -191,52 +183,71 @@ export default function DashboardPage() {
             >
               Customers
             </Link>
-            <a href="/deliverability" className="rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-background hover:text-foreground">
-              Email
-            </a>
-            <a href="/analytics" className="rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-background hover:text-foreground">
-              Stats
-            </a>
             <Link href="/image-mapper" className="rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-background hover:text-foreground">
               Images
             </Link>
-            <a
-              href="/api/call-lists?type=all&format=csv"
-              className="flex h-9 items-center rounded-lg border border-border px-3 text-sm font-medium text-muted transition-colors hover:border-blue-electric/40 hover:text-foreground"
-            >
-              Phones
-            </a>
-            <a
-              href="/api/call-lists?type=priority&format=csv"
-              className="flex h-9 items-center rounded-lg border border-orange-500/30 px-3 text-sm font-medium text-orange-400 transition-colors hover:border-orange-500/60"
-            >
-              Priority
-            </a>
-            <button
-              onClick={handleStartFunnelForSelected}
-              disabled={!selectedProspect}
-              className="h-9 rounded-lg border border-sky-500/30 px-3 text-sm font-medium text-sky-400 transition-colors hover:border-sky-500/60 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              Funnel
-            </button>
-            <button
-              onClick={async () => {
-                if (!confirm("Send test funnel to benfreemn@gmail.com? This will send 2 real emails.")) return;
-                try {
-                  const res = await fetch("/api/test-funnel", { method: "POST", credentials: "include" });
-                  const data = await res.json();
-                  alert(data.message || data.error);
-                } catch { alert("Error sending test funnel"); }
-              }}
-              className="h-9 rounded-lg border border-purple-500/30 px-3 text-sm font-medium text-purple-400 transition-colors hover:border-purple-500/60"
-            >
-              Test
-            </button>
+
+            {/* Reports dropdown — all the stats/analytics/tracking pages */}
+            <details className="relative group">
+              <summary className="h-9 list-none rounded-lg border border-border px-3 text-sm text-muted transition-colors hover:border-white/20 hover:text-foreground cursor-pointer flex items-center gap-1.5 select-none">
+                Reports <span className="text-xs opacity-60">▾</span>
+              </summary>
+              <div className="absolute right-0 mt-2 w-56 rounded-lg border border-border bg-surface shadow-xl z-50 py-1">
+                <a href="/analytics" className="block px-3 py-2 text-sm text-muted hover:bg-background hover:text-foreground">Stats</a>
+                <a href="/spending" className="block px-3 py-2 text-sm text-muted hover:bg-background hover:text-foreground">Spending</a>
+                <a href="/deliverability" className="block px-3 py-2 text-sm text-muted hover:bg-background hover:text-foreground">Email Deliverability</a>
+                <Link href="/funnel-tracker" className="block px-3 py-2 text-sm text-muted hover:bg-background hover:text-foreground">Funnel Tracker</Link>
+                <Link href="/scripts" className="block px-3 py-2 text-sm text-muted hover:bg-background hover:text-foreground">AI Scripts</Link>
+              </div>
+            </details>
+
+            {/* Call Lists dropdown — CSV downloads for phone-dialing */}
+            <details className="relative group">
+              <summary className="h-9 list-none rounded-lg border border-border px-3 text-sm text-muted transition-colors hover:border-white/20 hover:text-foreground cursor-pointer flex items-center gap-1.5 select-none">
+                Call Lists <span className="text-xs opacity-60">▾</span>
+              </summary>
+              <div className="absolute right-0 mt-2 w-52 rounded-lg border border-border bg-surface shadow-xl z-50 py-1">
+                <a href="/api/call-lists?type=all&format=csv" className="block px-3 py-2 text-sm text-muted hover:bg-background hover:text-foreground">All Phones (CSV)</a>
+                <a href="/api/call-lists?type=priority&format=csv" className="block px-3 py-2 text-sm text-orange-400 hover:bg-background">Priority (CSV)</a>
+              </div>
+            </details>
+
+            {/* Actions dropdown — low-frequency but useful ops */}
+            <details className="relative group">
+              <summary className="h-9 list-none rounded-lg border border-border px-3 text-sm text-muted transition-colors hover:border-white/20 hover:text-foreground cursor-pointer flex items-center gap-1.5 select-none">
+                Actions <span className="text-xs opacity-60">▾</span>
+              </summary>
+              <div className="absolute right-0 mt-2 w-56 rounded-lg border border-border bg-surface shadow-xl z-50 py-1">
+                <button
+                  onClick={handleStartFunnelForSelected}
+                  disabled={!selectedProspect}
+                  className="w-full text-left px-3 py-2 text-sm text-sky-400 hover:bg-background disabled:opacity-40 disabled:cursor-not-allowed"
+                  title={selectedProspect ? "Enroll the selected prospect in the outreach funnel" : "Select a prospect first"}
+                >
+                  Enroll Selected in Funnel
+                </button>
+                <button
+                  onClick={async () => {
+                    if (!confirm("Send test funnel to benfreemn@gmail.com? This will send 2 real emails.")) return;
+                    try {
+                      const res = await fetch("/api/test-funnel", { method: "POST", credentials: "include" });
+                      const data = await res.json();
+                      alert(data.message || data.error);
+                    } catch { alert("Error sending test funnel"); }
+                  }}
+                  className="w-full text-left px-3 py-2 text-sm text-purple-400 hover:bg-background"
+                >
+                  Send Test Funnel
+                </button>
+              </div>
+            </details>
+
+            {/* Primary right-side actions — high-frequency + always visible */}
             <button
               onClick={() => setAddLeadOpen(true)}
               className="h-9 rounded-lg border border-green-500/30 px-3 text-sm font-medium text-green-400 transition-colors hover:border-green-500/60"
             >
-              Lead
+              + Lead
             </button>
             <button
               onClick={() => setAutoScoutOpen(!autoScoutOpen)}
