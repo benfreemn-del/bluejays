@@ -661,7 +661,7 @@ export default function ChurchShowcase() {
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1, ...spring }}
               >
-                <img src={t.img} alt={t.author} className="absolute inset-0 w-full h-full object-cover" />
+                <img src={t.img} alt={t.author} className="absolute inset-0 w-full h-full object-cover object-top" />
                 <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(28,25,23,0.85) 0%, rgba(28,25,23,0.3) 100%)" }} />
                 <div className="relative z-10 flex flex-col justify-end h-full p-6">
                   <Quotes size={28} weight="fill" className="mb-3" style={{ color: AMBER_LIGHT }} />
@@ -684,7 +684,7 @@ export default function ChurchShowcase() {
                 exit={{ opacity: 0, x: -30 }}
                 transition={{ duration: 0.3 }}
               >
-                <img src={testimonials[activeTestimonial].img} alt={testimonials[activeTestimonial].author} className="absolute inset-0 w-full h-full object-cover" />
+                <img src={testimonials[activeTestimonial].img} alt={testimonials[activeTestimonial].author} className="absolute inset-0 w-full h-full object-cover object-top" />
                 <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(28,25,23,0.85) 0%, rgba(28,25,23,0.3) 100%)" }} />
                 <div className="relative z-10 flex flex-col justify-end h-full p-6">
                   <Quotes size={28} weight="fill" className="mb-3" style={{ color: AMBER_LIGHT }} />

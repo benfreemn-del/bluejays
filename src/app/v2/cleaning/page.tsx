@@ -664,7 +664,7 @@ export default function V2CleaningPage() {
               </div>
             </div>
             <div className="relative rounded-2xl overflow-hidden aspect-[4/3]">
-              <img src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&q=80" alt="Professional cleaning team" className="w-full h-full object-cover" />
+              <img src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&q=80" alt="Professional cleaning team" className="w-full h-full object-cover object-top" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
               <div className="absolute bottom-6 left-6 right-6">
                 <GlassCard className="px-4 py-3 inline-flex items-center gap-3">

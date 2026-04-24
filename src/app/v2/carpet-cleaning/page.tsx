@@ -715,7 +715,7 @@ export default function V2CarpetCleaningPage() {
         {/* ═══════════════ 13. ABOUT — DAN & LISA ═══════════════ */}
         <SectionReveal id="about" className="py-20 grid md:grid-cols-2 gap-12 items-center">
           <div className="relative rounded-2xl overflow-hidden aspect-[4/3]">
-            <img src="https://plus.unsplash.com/premium_photo-1683141112334-d7d404f6e716?w=700&q=80" alt="Dan and Lisa Kowalski — FreshStart founders" className="w-full h-full object-cover object-center" />
+            <img src="https://plus.unsplash.com/premium_photo-1683141112334-d7d404f6e716?w=700&q=80" alt="Dan and Lisa Kowalski — FreshStart founders" className="w-full h-full object-cover object-top" />
             <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${BG}, transparent 50%)` }} />
             <div className="absolute bottom-4 left-4"><span className="px-3 py-1 rounded-full text-xs font-bold text-white" style={{ background: ACCENT }}>Family-Owned Since 2012</span></div>
           </div>

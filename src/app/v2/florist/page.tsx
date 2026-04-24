@@ -467,7 +467,7 @@ export default function V2FloristPage() {
             </div>
           </div>
           <div className="relative rounded-2xl overflow-hidden aspect-[4/3]">
-            <img src="https://images.unsplash.com/photo-1525310072745-f49212b5ac6d?w=800&q=80" alt="Florist crafting a beautiful arrangement" className="w-full h-full object-cover" />
+            <img src="https://images.unsplash.com/photo-1525310072745-f49212b5ac6d?w=800&q=80" alt="Florist crafting a beautiful arrangement" className="w-full h-full object-cover object-top" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
           </div>
         </div>
@@ -622,7 +622,7 @@ export default function V2FloristPage() {
             <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-[#1c1917]"><WordReveal text="Step Inside Our Shop" /></h2>
           </div>
           <div className="relative rounded-2xl overflow-hidden aspect-video group cursor-pointer">
-            <img src="https://images.unsplash.com/photo-1526047932273-341f2a7631f9?w=1600&q=80" alt="Florist studio and design team" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <img src="https://images.unsplash.com/photo-1526047932273-341f2a7631f9?w=1600&q=80" alt="Florist studio and design team" className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
             <div className="absolute inset-0 flex items-center justify-center">
               <motion.div className="w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center shadow-2xl" style={{ background: ROSE }} animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}>

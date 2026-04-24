@@ -526,7 +526,7 @@ export default function V2PaintingPage() {
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="rounded-2xl overflow-hidden aspect-[4/5]">
-              <img src="https://plus.unsplash.com/premium_photo-1723867371537-a185781be154?w=700&q=80" alt="Painting team at work" className="w-full h-full object-cover object-center" />
+              <img src="https://plus.unsplash.com/premium_photo-1723867371537-a185781be154?w=700&q=80" alt="Painting team at work" className="w-full h-full object-cover object-top" />
             </div>
             <div>
               <p className="text-sm uppercase tracking-widest mb-3" style={{ color: PURPLE }}>About Spectrum</p>
