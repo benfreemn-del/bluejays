@@ -270,7 +270,7 @@ const petTypes = [
     name: "Dogs",
     desc: "From energetic puppies to mellow seniors, we match our care to your dog's breed, size, and personality. Group play or solo walks — whatever suits your pup best.",
     icon: Dog,
-    img: "https://images.unsplash.com/photo-1536323760109-ca8c07450053?w=600&q=80",
+    img: "https://images.unsplash.com/photo-1568572933382-74d440642117?w=600&q=80",
     features: ["Group & solo play", "Breed-specific exercise", "Puppy socialization", "Senior gentle care"],
   },
   {
@@ -284,7 +284,7 @@ const petTypes = [
     name: "Small Animals",
     desc: "Rabbits, hamsters, guinea pigs, and ferrets — we know the special handling, diet, and habitat needs that keep each species happy and healthy.",
     icon: Fish,
-    img: "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=600&q=80",
+    img: "https://images.unsplash.com/photo-1548767797-d8c844163c4c?w=600&q=80",
     features: ["Species-specific diets", "Habitat cleaning", "Gentle handling", "Exercise supervision"],
   },
   {
@@ -347,35 +347,35 @@ const pricingPlans = [
 const galleryImages = [
   {
     src: "https://images.unsplash.com/photo-1601758003122-53c40e686a19?w=600&q=80",
-    alt: "Golden retriever playing fetch",
+    alt: "Happy beagle puppy outdoors",
   },
   {
     src: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=600&q=80",
-    alt: "Happy pug portrait",
+    alt: "Ginger kitten portrait",
   },
   {
-    src: "https://images.unsplash.com/photo-1615497001839-b0a0eac3274c?w=600&q=80",
-    alt: "Cat napping in sunshine",
+    src: "https://images.unsplash.com/photo-1548802673-380ab8ebc7b7?w=600&q=80",
+    alt: "Ginger cat napping",
   },
   {
-    src: "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&q=80",
-    alt: "Puppy bath time grooming",
+    src: "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=600&q=80",
+    alt: "French bulldog in a sweater",
   },
   {
     src: "https://images.unsplash.com/photo-1596492784531-6e6eb5ea9993?w=600&q=80",
-    alt: "Fluffy white dog smiling",
+    alt: "Bowtie puppy portrait",
   },
   {
-    src: "https://images.unsplash.com/photo-1583511666445-775f1f2116f5?w=600&q=80",
-    alt: "Two dogs playing together",
+    src: "https://images.unsplash.com/photo-1623387641168-d9803ddd3f35?w=600&q=80",
+    alt: "Cat and dog lounging together outdoors",
   },
   {
-    src: "https://images.unsplash.com/photo-1561037404-61cd46aa615b?w=600&q=80",
-    alt: "Dog with bandana outdoors",
+    src: "https://images.unsplash.com/photo-1601758177266-bc599de87707?w=600&q=80",
+    alt: "Kittens cuddled together",
   },
   {
-    src: "https://images.unsplash.com/photo-1560743641-3914f2c45636?w=600&q=80",
-    alt: "Sleeping kitten on blanket",
+    src: "https://images.unsplash.com/photo-1518791841217-8f162f1e1131?w=600&q=80",
+    alt: "Sleepy tabby cat",
   },
 ];
 
@@ -494,17 +494,17 @@ const faqs = [
 
 const heroCards = [
   {
-    img: "https://images.unsplash.com/photo-1530281700549-e82e7bf110d6?w=600&q=80",
+    img: "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600&q=80",
     label: "Dogs",
     accent: TEAL,
   },
   {
-    img: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=600&q=80",
+    img: "https://images.unsplash.com/photo-1513360371669-4adf3dd7dff8?w=600&q=80",
     label: "Cats",
     accent: CORAL,
   },
   {
-    img: "https://images.unsplash.com/photo-1560807707-8cc77767d783?w=600&q=80",
+    img: "https://images.unsplash.com/photo-1535241749838-299277b6305f?w=600&q=80",
     label: "Small Pets",
     accent: AMBER,
   },
@@ -1371,9 +1371,9 @@ export default function V2PetServicesShowcase() {
             <div className="relative">
               <div className="rounded-2xl overflow-hidden shadow-lg border-2 border-white">
                 <img
-                  src="https://images.unsplash.com/photo-1544568100-847a948585b9?w=700&q=80"
+                  src="https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?w=700&q=80"
                   alt="Happy Tails team with adorable pets"
-                  className="w-full h-[420px] object-cover"
+                  className="w-full h-[420px] object-cover object-top"
                 />
               </div>
               <div className="absolute -bottom-4 -right-4 md:bottom-6 md:-right-6">
@@ -1790,7 +1790,7 @@ export default function V2PetServicesShowcase() {
           </h2>
           <div className="relative rounded-2xl overflow-hidden shadow-xl border-2 border-white group cursor-pointer">
             <img
-              src="https://images.unsplash.com/photo-1587764379873-97837921fd44?w=1200&q=80"
+              src="https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=1200&q=80"
               alt="Tour the Happy Tails facility"
               className="w-full h-[400px] object-cover group-hover:scale-105 transition-transform duration-700"
             />

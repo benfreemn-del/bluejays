@@ -128,9 +128,9 @@ const subjects = [
 
 const tutors = [
   { name: "Dr. Rachel Torres", role: "Founder & Lead Educator", specialty: "Math & SAT Prep", bio: "PhD in Education, 11 years of AP teaching experience. Former curriculum developer for Seattle Public Schools.", img: "https://images.unsplash.com/photo-1544717305-2782549b5136?w=400&q=80" },
-  { name: "Marcus Chen", role: "Science & AP Instructor", specialty: "Physics & Chemistry", bio: "MS in Physics from UW. Makes complex concepts click with real-world experiments and visual learning.", img: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80" },
-  { name: "Priya Patel", role: "Reading & Writing Specialist", specialty: "English & College Essays", bio: "MFA in Creative Writing. Published author who transforms reluctant writers into confident communicators.", img: "https://images.unsplash.com/photo-1594744803329-e58b31de8bf5?w=400&q=80" },
-  { name: "James Okafor", role: "Test Prep Strategist", specialty: "SAT/ACT & Study Skills", bio: "Perfect SAT scorer. Developed a test-taking methodology that has helped 500+ students improve by 200+ points.", img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&q=80" },
+  { name: "Marcus Chen", role: "Science & AP Instructor", specialty: "Physics & Chemistry", bio: "MS in Physics from UW. Makes complex concepts click with real-world experiments and visual learning.", img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80" },
+  { name: "Priya Patel", role: "Reading & Writing Specialist", specialty: "English & College Essays", bio: "MFA in Creative Writing. Published author who transforms reluctant writers into confident communicators.", img: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80" },
+  { name: "James Okafor", role: "Test Prep Strategist", specialty: "SAT/ACT & Study Skills", bio: "Perfect SAT scorer. Developed a test-taking methodology that has helped 500+ students improve by 200+ points.", img: "https://images.unsplash.com/photo-1507537297725-24a1c029d3ca?w=400&q=80" },
 ];
 
 const gradeLevels = [
@@ -390,7 +390,7 @@ export default function V2TutoringShowcase() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="relative">
               <div className="rounded-2xl overflow-hidden border shadow-lg" style={{ borderColor: `${PURPLE}20` }}>
-                <img src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=600&q=80" alt="Dr. Rachel Torres teaching students" className="w-full h-[420px] object-cover" />
+                <img src="https://images.unsplash.com/photo-1573497019418-b400bb3ab074?w=600&q=80" alt="Dr. Rachel Torres teaching students" className="w-full h-[420px] object-cover object-top" />
               </div>
               <div className="absolute -bottom-4 -right-4 md:bottom-6 md:-right-6">
                 <div className="px-5 py-3 rounded-xl border text-white font-bold text-sm shadow-lg" style={{ background: PURPLE, borderColor: `${PURPLE}80` }}>
@@ -566,7 +566,7 @@ export default function V2TutoringShowcase() {
             {[
               { src: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=500&q=80", alt: "Student studying at desk", span: "col-span-2 md:col-span-1 row-span-2" },
               { src: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=500&q=80", alt: "Group study session", span: "" },
-              { src: "https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?w=500&q=80", alt: "Tutoring library corner", span: "" },
+              { src: "https://images.unsplash.com/photo-1503676382389-4809596d5290?w=500&q=80", alt: "Student with study materials", span: "" },
               { src: "https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=500&q=80", alt: "Students collaborating", span: "col-span-2 md:col-span-1" },
               { src: "https://images.unsplash.com/photo-1577896851231-70ef18881754?w=500&q=80", alt: "One-on-one tutoring session", span: "col-span-2 md:col-span-2" },
             ].map((img, i) => (

@@ -785,7 +785,7 @@ export default function V2ChiropracticPage() {
         <div className="mx-auto max-w-7xl px-4 md:px-6 relative">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="relative rounded-2xl overflow-hidden aspect-[4/3]">
-              <img src="https://images.unsplash.com/photo-1519824145371-296894a0daa9?w=800&q=80" alt="Chiropractic office" className="w-full h-full object-cover" />
+              <img src="https://images.unsplash.com/photo-1706353399656-210cca727a33?w=800&q=80" alt="Chiropractic office" className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
               <div className="absolute bottom-6 left-6 right-6">
                 <GlassCard className="px-4 py-3 inline-flex items-center gap-3">

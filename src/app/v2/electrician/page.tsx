@@ -99,7 +99,7 @@ const PROJECTS = [
     title: "200-Amp Panel Upgrade",
     location: "Ballard Craftsman",
     desc: "Replaced a 1962 Federal Pacific panel with a new Square D 200A panel, 42-circuit capacity. Full inspection passed same day.",
-    img: "https://images.unsplash.com/photo-1565608438257-fac3c27beb36?w=800&q=80",
+    img: "https://images.unsplash.com/photo-1660330589487-39cc0177ba89?w=800&q=80",
   },
   {
     title: "Tesla Wall Connector",
@@ -111,7 +111,7 @@ const PROJECTS = [
     title: "Commercial Rewire",
     location: "Fremont Brewery",
     desc: "Full 3-phase 400A service upgrade for new brewing equipment. Zero downtime — phased installation over 3 weekends.",
-    img: "https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=800&q=80",
+    img: "https://images.unsplash.com/photo-1660330589693-99889d60181e?w=800&q=80",
   },
   {
     title: "Smart Home System",
@@ -952,7 +952,7 @@ export default function ElectricianV2Showcase() {
             transition={spring}
           >
             <img
-              src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=1200&q=80"
+              src="https://images.unsplash.com/photo-1621905251918-48416bd8575a?w=1200&q=80"
               alt="See our work in action"
               className="w-full aspect-video object-cover group-hover:scale-105 transition-transform duration-700"
             />

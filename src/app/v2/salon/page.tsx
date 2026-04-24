@@ -158,7 +158,7 @@ const stylists = [
   { name: "Ava Laurent", role: "Owner & Color Specialist", years: "14 years", specialty: "Vidal Sassoon trained. Celebrity colorist known for dimensional brunettes and lived-in blondes.", photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=500&q=80" },
   { name: "Marcus Chen", role: "Precision Cut Specialist", years: "9 years", specialty: "Master of clean fades, textured bobs, and architectural cuts. Trained in Tokyo.", photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&q=80" },
   { name: "Sofia Rivera", role: "Bridal & Events Lead", years: "11 years", specialty: "Over 300 weddings styled. Expert in updos, braids, and vintage Hollywood waves.", photo: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=500&q=80" },
-  { name: "Jess Kim", role: "Extensions & Texture Specialist", years: "7 years", specialty: "Certified Great Lengths and Bellami pro. Specializes in curly, coily, and natural hair.", photo: "https://images.unsplash.com/photo-1601412436009-d964bd02edbc?w=500&q=80" },
+  { name: "Jess Kim", role: "Extensions & Texture Specialist", years: "7 years", specialty: "Certified Great Lengths and Bellami pro. Specializes in curly, coily, and natural hair.", photo: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=500&q=80" },
 ];
 
 /* ─── velvet experience steps ─── */
@@ -181,9 +181,9 @@ const quizOptions = [
 /* ─── gallery data ─── */
 const galleryItems = [
   { title: "Rose Gold Balayage", stylist: "Ava Laurent", service: "Balayage", image: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600&q=80", tall: true },
-  { title: "Textured Lob", stylist: "Marcus Chen", service: "Cut & Style", image: "https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?w=600&q=80", tall: false },
+  { title: "Textured Lob", stylist: "Marcus Chen", service: "Cut & Style", image: "https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=600&q=80", tall: false },
   { title: "Bridal Updo", stylist: "Sofia Rivera", service: "Bridal", image: "https://images.unsplash.com/photo-1519699047748-de8e457a634e?w=600&q=80", tall: true },
-  { title: "Copper Highlights", stylist: "Ava Laurent", service: "Full Color", image: "https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=600&q=80", tall: false },
+  { title: "Copper Highlights", stylist: "Ava Laurent", service: "Full Color", image: "https://plus.unsplash.com/premium_photo-1664048713258-a1844e3d337f?w=600&q=80", tall: false },
   { title: "Natural Curls Defined", stylist: "Jess Kim", service: "Keratin Treatment", image: "https://images.unsplash.com/photo-1580618672591-eb180b1a973f?w=600&q=80", tall: false },
   { title: "Platinum Transformation", stylist: "Ava Laurent", service: "Full Color", image: "https://images.unsplash.com/photo-1492106087820-71f1a00d2b11?w=600&q=80", tall: true },
 ];
@@ -405,7 +405,7 @@ export default function V2SalonPage() {
                 className="absolute top-6 right-4 md:right-8 w-[30%] md:w-[28%] h-[35%] rounded-xl overflow-hidden shadow-xl z-30 border-4 border-white"
               >
                 <img
-                  src="https://images.unsplash.com/photo-1580618864180-f6d7d39b8ff6?w=400&q=80"
+                  src="https://images.unsplash.com/photo-1554519515-242161756769?w=400&q=80"
                   alt="Beautiful hair result"
                   className="w-full h-full object-cover"
                 />

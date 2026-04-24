@@ -593,7 +593,7 @@ export default function V2LocksmithPage() {
             <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white"><WordReveal text="Meet Our Locksmiths" /></h2>
           </div>
           <div className="relative rounded-2xl overflow-hidden aspect-video group cursor-pointer">
-            <img src="https://images.unsplash.com/photo-1528747045269-390fe33c19f2?w=1600&q=80" alt="Locksmith van and shop tour" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <img src="https://plus.unsplash.com/premium_photo-1683133675826-09631f7e36e2?w=1600&q=80" alt="Locksmith van and shop tour" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
             <div className="absolute inset-0 flex items-center justify-center">
               <motion.div className="w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center shadow-2xl" style={{ background: ACCENT } as React.CSSProperties} animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}>
@@ -951,7 +951,7 @@ export default function V2LocksmithPage() {
               </div>
             </div>
             <div className="relative rounded-2xl overflow-hidden aspect-[4/5]">
-              <img src="https://images.unsplash.com/photo-1563986768609-322da13575f3?w=900&q=80" alt="Commercial lock and security panel install" className="w-full h-full object-cover" />
+              <img src="https://images.unsplash.com/photo-1641209678164-a2eb4b565f60?w=900&q=80" alt="Commercial lock and security panel install" className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
               <div className="absolute bottom-6 left-6 right-6">
                 <p className="text-xs uppercase tracking-widest" style={{ color: ACCENT_LIGHT }}>Commercial Project</p>

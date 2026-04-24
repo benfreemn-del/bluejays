@@ -757,8 +757,8 @@ export default function ChurchShowcase() {
               {/* Map placeholder */}
               <div className="relative aspect-[4/3] lg:aspect-auto overflow-hidden" style={{ background: "#e7e5e4", minHeight: 320 }}>
                 <img
-                  src="https://images.unsplash.com/photo-1470004914212-05527e49370b?w=800&q=80"
-                  alt="Ballard, Seattle aerial view"
+                  src="https://images.unsplash.com/photo-1438032005730-c779502df39b?w=800&q=80"
+                  alt="Grace Community Church sanctuary interior"
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 flex items-center justify-center" style={{ background: "rgba(28,25,23,0.25)" }}>

@@ -203,7 +203,7 @@ const galleryImages = [
   {
     src: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=80",
     caption: "Chef Preparation",
-    desc: "Chef Adriana plating in our kitchen",
+    desc: "Chef Adrian plating in our kitchen",
   },
   {
     src: "https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=600&q=80",
@@ -223,9 +223,9 @@ const galleryImages = [
 ];
 
 const testimonials = [
-  { name: "Amanda & James W.", role: "Wedding, 320 Guests", text: "Chef Adriana catered our wedding and every single dish was perfection. Our guests are still raving about the food months later. The truffle risotto was unforgettable.", rating: 5 },
+  { name: "Amanda & James W.", role: "Wedding, 320 Guests", text: "Chef Adrian catered our wedding and every single dish was perfection. Our guests are still raving about the food months later. The truffle risotto was unforgettable.", rating: 5 },
   { name: "Robert Chen", role: "Tech Summit, 200 Guests", text: "We have used Ember & Oak for three corporate galas now. The presentation is stunning and the food is consistently exceptional. True professionals who understand the corporate event world.", rating: 5 },
-  { name: "Lisa Martinez", role: "Anniversary Dinner, 12 Guests", text: "The private dinner party they did for our anniversary was magical. It felt like having a Michelin-star restaurant in our home. Chef Adriana personally designed every course.", rating: 5 },
+  { name: "Lisa Martinez", role: "Anniversary Dinner, 12 Guests", text: "The private dinner party they did for our anniversary was magical. It felt like having a Michelin-star restaurant in our home. Chef Adrian personally designed every course.", rating: 5 },
   { name: "David Nakamura", role: "Non-Profit Gala, 400 Guests", text: "Ember & Oak elevated our annual fundraiser to another level. The passed appetizers, the plated dinner, the dessert bar — every detail was flawless. Our donors were thrilled.", rating: 5 },
 ];
 
@@ -245,7 +245,7 @@ const packages = [
 
 const processSteps = [
   { step: "01", title: "Tasting Consultation", desc: "We meet to discuss your vision, sample dishes, and design a menu that reflects your style and palette." },
-  { step: "02", title: "Menu Design", desc: "Chef Adriana crafts a custom menu with seasonal ingredients, dietary accommodations, and beautiful presentation." },
+  { step: "02", title: "Menu Design", desc: "Chef Adrian crafts a custom menu with seasonal ingredients, dietary accommodations, and beautiful presentation." },
   { step: "03", title: "Event Coordination", desc: "We handle staffing, rentals, timing, and logistics so you can focus on enjoying your event." },
   { step: "04", title: "Flawless Execution", desc: "Our team delivers an impeccable experience from setup to the last plate, leaving your guests amazed." },
 ];
@@ -269,7 +269,7 @@ const quizOptions = [
 
 const faqs = [
   { q: "How far in advance should I book?", a: "We recommend booking 3-6 months in advance for weddings and large events. Corporate events can often be arranged with 2-4 weeks notice depending on scale." },
-  { q: "Do you accommodate dietary restrictions?", a: "Absolutely. Chef Adriana specializes in crafting menus that accommodate vegan, gluten-free, kosher, halal, and allergy-specific needs without compromising flavor or presentation." },
+  { q: "Do you accommodate dietary restrictions?", a: "Absolutely. Chef Adrian specializes in crafting menus that accommodate vegan, gluten-free, kosher, halal, and allergy-specific needs without compromising flavor or presentation." },
   { q: "What is included in your catering packages?", a: "Our packages include menu planning, food preparation, professional service staff, setup, cleanup, and all necessary equipment. Premium packages add wine service and tableside preparations." },
   { q: "Can we schedule a tasting?", a: "Yes! We offer complimentary tastings for events over 50 guests. Smaller events can arrange tastings for a nominal fee that is applied to your final booking." },
   { q: "Do you provide bar service?", a: "We offer full bar service including signature cocktails, wine pairings, and craft beverage stations. Our sommelier can curate a wine menu to complement your courses." },
@@ -357,7 +357,7 @@ export default function V2CateringShowcase() {
               <WordReveal text="Elevated Dining, Anywhere You Want It" />
             </h1>
             <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.4 }} className="text-lg mb-8 leading-relaxed" style={{ color: WARM_GRAY, fontFamily: "system-ui, sans-serif" }}>
-              From intimate dinner parties to 500-guest galas, Chef Adriana Reyes and our team craft unforgettable culinary experiences with the finest Pacific Northwest ingredients.
+              From intimate dinner parties to 500-guest galas, Chef Adrian Reyes and our team craft unforgettable culinary experiences with the finest Pacific Northwest ingredients.
             </motion.p>
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.6 }} className="flex flex-wrap gap-4 mb-10">
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer" style={{ background: COPPER }}>
@@ -461,7 +461,7 @@ export default function V2CateringShowcase() {
             </motion.div>
           </AnimatePresence>
           <p className="text-center mt-8 text-sm" style={{ color: WARM_GRAY, fontFamily: "system-ui, sans-serif" }}>
-            All menus are fully customizable. Chef Adriana designs each course around your preferences, dietary needs, and seasonal availability.
+            All menus are fully customizable. Chef Adrian designs each course around your preferences, dietary needs, and seasonal availability.
           </p>
         </div>
       </SectionReveal>
@@ -474,7 +474,7 @@ export default function V2CateringShowcase() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="relative">
               <div className="rounded-2xl overflow-hidden border border-white/[0.13]">
-                <img src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=600&q=80" alt="Chef Adriana Reyes" className="w-full h-[450px] object-cover object-top" />
+                <img src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=600&q=80" alt="Chef Adrian Reyes" className="w-full h-[450px] object-cover object-top" />
               </div>
               <div className="absolute -bottom-4 -right-4 md:bottom-6 md:-right-6">
                 <div className="px-5 py-3 rounded-xl backdrop-blur-md border text-white font-bold text-sm shadow-lg" style={{ background: `${COPPER}dd`, borderColor: `${COPPER}80` }}>
@@ -490,12 +490,12 @@ export default function V2CateringShowcase() {
             </div>
             <div>
               <SectionBadge text="Meet the Chef" />
-              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-6" style={{ color: CREAM }}>Chef Adriana Reyes</h2>
+              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-6" style={{ color: CREAM }}>Chef Adrian Reyes</h2>
               <p className="leading-relaxed mb-4" style={{ color: WARM_GRAY, fontFamily: "system-ui, sans-serif" }}>
-                With 12 years of culinary mastery, Chef Adriana brings Le Cordon Bleu training and her experience as sous chef at Seattle&apos;s legendary Canlis restaurant to every event she touches.
+                With 12 years of culinary mastery, Chef Adrian brings Le Cordon Bleu training and his experience as sous chef at Seattle&apos;s legendary Canlis restaurant to every event he touches.
               </p>
               <p className="leading-relaxed mb-8" style={{ color: WARM_GRAY, fontFamily: "system-ui, sans-serif" }}>
-                Her philosophy is simple: honor the ingredient, elevate the experience, and craft menus that tell a story. Every dish at Ember &amp; Oak reflects her commitment to seasonal Pacific Northwest sourcing and global culinary technique.
+                His philosophy is simple: honor the ingredient, elevate the experience, and craft menus that tell a story. Every dish at Ember &amp; Oak reflects his commitment to seasonal Pacific Northwest sourcing and global culinary technique.
               </p>
               <div className="grid grid-cols-2 gap-4">
                 {[
@@ -751,7 +751,7 @@ export default function V2CateringShowcase() {
             </div>
             <div className="absolute bottom-6 left-6 right-6">
               <p className="text-lg font-bold text-white">From Kitchen to Table</p>
-              <p className="text-sm text-white/70" style={{ fontFamily: "system-ui, sans-serif" }}>See how Chef Adriana and our team prepare for a 300-guest gala event</p>
+              <p className="text-sm text-white/70" style={{ fontFamily: "system-ui, sans-serif" }}>See how Chef Adrian and our team prepare for a 300-guest gala event</p>
             </div>
           </div>
         </div>
@@ -874,7 +874,7 @@ export default function V2CateringShowcase() {
             {[
               { icon: Leaf, title: "Pacific NW Sourced", desc: "We partner with local farms, fisheries, and artisan producers to bring the freshest seasonal ingredients to your event. Every dish tells a story of our region." },
               { icon: Wine, title: "Sommelier Wine Service", desc: "Our in-house sommelier curates wine pairings for every course, sourcing from Washington and Oregon vineyards alongside international selections." },
-              { icon: CookingPot, title: "On-Site Chef Experience", desc: "Chef Adriana or a senior chef is always on-site at your event, overseeing every plate and providing a live culinary experience for your guests." },
+              { icon: CookingPot, title: "On-Site Chef Experience", desc: "Chef Adrian or a senior chef is always on-site at your event, overseeing every plate and providing a live culinary experience for your guests." },
               { icon: Users, title: "Dedicated Event Team", desc: "Every event gets a dedicated coordinator, from initial consultation through the last plate. One point of contact who knows your vision inside and out." },
               { icon: Star, title: "Custom Everything", desc: "No template menus. Every dish, presentation style, and service detail is designed from scratch around your preferences, dietary needs, and budget." },
               { icon: ShieldCheck, title: "Full-Service Execution", desc: "We handle staffing, rentals, setup, service, and complete cleanup. You show up to your own event as a guest, not a coordinator." },
@@ -1013,7 +1013,7 @@ export default function V2CateringShowcase() {
             ))}
           </div>
           <p className="text-center mt-8 text-sm" style={{ color: WARM_GRAY, fontFamily: "system-ui, sans-serif" }}>
-            Chef Adriana sources ingredients at their peak, building each menu around what the Pacific Northwest offers that season.
+            Chef Adrian sources ingredients at their peak, building each menu around what the Pacific Northwest offers that season.
           </p>
         </div>
       </SectionReveal>
@@ -1053,7 +1053,7 @@ export default function V2CateringShowcase() {
         <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
           <Champagne size={48} weight="fill" className="mx-auto mb-6 text-white/70" />
           <h2 className="text-3xl md:text-5xl font-black tracking-tight text-white mb-4">Let&apos;s Create Something Delicious</h2>
-          <p className="text-lg text-white/80 mb-8 max-w-xl mx-auto" style={{ fontFamily: "system-ui, sans-serif" }}>Book your complimentary tasting consultation today and let Chef Adriana design the perfect menu for your event.</p>
+          <p className="text-lg text-white/80 mb-8 max-w-xl mx-auto" style={{ fontFamily: "system-ui, sans-serif" }}>Book your complimentary tasting consultation today and let Chef Adrian design the perfect menu for your event.</p>
           <div className="flex flex-wrap justify-center gap-4">
             <a href="tel:+12065550731" className="inline-flex items-center gap-3 px-8 py-4 rounded-full font-bold text-lg hover:bg-white/90 transition-colors" style={{ background: "white", color: COPPER }}>
               <Phone size={20} weight="fill" /> (206) 555-0731
@@ -1074,7 +1074,7 @@ export default function V2CateringShowcase() {
             <div>
               <SectionBadge text="Book Your Event" />
               <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-6" style={{ color: CREAM }}>Request a Tasting</h2>
-              <p className="leading-relaxed mb-8" style={{ color: WARM_GRAY, fontFamily: "system-ui, sans-serif" }}>Ready to create an unforgettable culinary experience? Tell us about your event and Chef Adriana will craft a personalized proposal.</p>
+              <p className="leading-relaxed mb-8" style={{ color: WARM_GRAY, fontFamily: "system-ui, sans-serif" }}>Ready to create an unforgettable culinary experience? Tell us about your event and Chef Adrian will craft a personalized proposal.</p>
               <div className="space-y-5">
                 {[
                   { icon: MapPin, title: "Location", text: "2340 Western Ave, Seattle, WA 98121", href: "https://maps.google.com/?q=2340+Western+Ave+Seattle+WA+98121" },

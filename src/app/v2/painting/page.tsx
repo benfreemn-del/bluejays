@@ -329,12 +329,12 @@ const stats = [
 ];
 
 const galleryPhotos = [
-  { src: "https://images.unsplash.com/photo-1572981779307-38b8cabb2407?w=600&q=80", alt: "Freshly painted living room" },
-  { src: "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=600&q=80", alt: "Exterior house painting" },
-  { src: "https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=600&q=80", alt: "Modern kitchen cabinets painted white" },
-  { src: "https://images.unsplash.com/photo-1534430480872-3498386e7856?w=600&q=80", alt: "Paint color samples on wall" },
-  { src: "https://images.unsplash.com/photo-1576153192396-180ecef2a715?w=600&q=80", alt: "Professional painter at work" },
-  { src: "https://images.unsplash.com/photo-1525909002-1b05e0c869d8?w=600&q=80", alt: "Beautiful bedroom accent wall" },
+  { src: "https://images.unsplash.com/photo-1717281234297-3def5ae3eee1?w=600&q=80", alt: "Painter rolling fresh coat on wall" },
+  { src: "https://images.unsplash.com/photo-1574359411659-15573a27fd0c?w=600&q=80", alt: "Exterior house painting" },
+  { src: "https://images.unsplash.com/photo-1671681739893-e8d027788284?w=600&q=80", alt: "Painter finishing a colored wall" },
+  { src: "https://images.unsplash.com/photo-1613844044163-1ad2f2d0b152?w=600&q=80", alt: "Painter on ladder on exterior" },
+  { src: "https://images.unsplash.com/photo-1688372198189-de6a51777a81?w=600&q=80", alt: "Professional painter at work" },
+  { src: "https://images.unsplash.com/photo-1742900280864-bcc27353ceba?w=600&q=80", alt: "Exterior painter with roller pole" },
 ];
 
 const processSteps = [
@@ -411,7 +411,7 @@ export default function V2PaintingPage() {
       {/* ─── 1. HERO ─── */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10">
         <div className="absolute inset-0 z-0">
-          <img src="https://images.unsplash.com/photo-1507652955-f3dcef5a3be5?w=1400&q=80" alt="Beautiful painted interior" className="w-full h-full object-cover object-center" />
+          <img src="https://images.unsplash.com/photo-1595640115473-714d7e80cb48?w=1400&q=80" alt="Professional painter at work" className="w-full h-full object-cover object-center" />
           <div className="absolute inset-0" style={{ background: `linear-gradient(to right, ${BG} 45%, transparent 100%)` }} />
           <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${BG} 10%, transparent 50%)` }} />
         </div>
@@ -503,10 +503,10 @@ export default function V2PaintingPage() {
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
             <div className="rounded-2xl overflow-hidden">
-              <img src="https://images.unsplash.com/photo-1513694203232-719a280e022f?w=800&q=80" alt="Interior painting project" className="w-full aspect-[16/10] object-cover" />
+              <img src="https://images.unsplash.com/photo-1655665151765-98a95126ba41?w=800&q=80" alt="Interior painting project" className="w-full aspect-[16/10] object-cover" />
             </div>
             <div className="rounded-2xl overflow-hidden">
-              <img src="https://images.unsplash.com/photo-1600210492493-0946911123ea?w=800&q=80" alt="Exterior painting project" className="w-full aspect-[16/10] object-cover" />
+              <img src="https://images.unsplash.com/photo-1761986757577-140af8859587?w=800&q=80" alt="Exterior painting project" className="w-full aspect-[16/10] object-cover" />
             </div>
           </div>
           <motion.div className="grid grid-cols-2 md:grid-cols-3 gap-4" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
@@ -526,7 +526,7 @@ export default function V2PaintingPage() {
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="rounded-2xl overflow-hidden aspect-[4/5]">
-              <img src="https://images.unsplash.com/photo-1618220179428-22790b461013?w=700&q=80" alt="Painting team at work" className="w-full h-full object-cover object-center" />
+              <img src="https://plus.unsplash.com/premium_photo-1723867371537-a185781be154?w=700&q=80" alt="Painting team at work" className="w-full h-full object-cover object-center" />
             </div>
             <div>
               <p className="text-sm uppercase tracking-widest mb-3" style={{ color: PURPLE }}>About Spectrum</p>
@@ -715,7 +715,7 @@ export default function V2PaintingPage() {
             <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white"><WordReveal text="See A Project Transformation" /></h2>
           </div>
           <div className="relative rounded-2xl overflow-hidden aspect-video group cursor-pointer">
-            <img src="https://images.unsplash.com/photo-1541123437800-1bb1317badc2?w=1600&q=80" alt="Painting crew at work" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <img src="https://images.unsplash.com/photo-1700588080759-fcc5f249c321?w=1600&q=80" alt="Freshly painted interior" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
             <div className="absolute inset-0 flex items-center justify-center">
               <motion.div className="w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center shadow-2xl" style={{ background: PURPLE } as React.CSSProperties} animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}>

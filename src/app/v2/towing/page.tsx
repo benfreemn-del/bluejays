@@ -325,7 +325,7 @@ export default function V2TowingPage() {
       {/* ─── 1. HERO (with urgency) ─── */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10">
         <div className="absolute inset-0 z-0">
-          <img src="https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=1600&q=80" alt="" className="w-full h-full object-cover object-center" />
+          <img src="https://plus.unsplash.com/premium_photo-1661964084829-69f889505c00?w=1600&q=80" alt="" className="w-full h-full object-cover object-center" />
           <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${BG}f2 0%, ${BG}dd 50%, ${BG}bb 100%)` }} />
         </div>
         {/* Pulsing emergency bar */}
@@ -636,7 +636,7 @@ export default function V2TowingPage() {
             <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white"><WordReveal text="Meet The Fleet" /></h2>
           </div>
           <div className="relative rounded-2xl overflow-hidden aspect-video group cursor-pointer">
-            <img src="https://images.unsplash.com/photo-1550355291-bbee04a92027?w=1600&q=80" alt="Tow truck fleet yard" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <img src="https://images.unsplash.com/photo-1686966933735-305bd8fe0a77?w=1600&q=80" alt="Tow truck fleet yard" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
             <div className="absolute inset-0 flex items-center justify-center">
               <motion.div className="w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center shadow-2xl" style={{ background: ACCENT } as React.CSSProperties} animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}>

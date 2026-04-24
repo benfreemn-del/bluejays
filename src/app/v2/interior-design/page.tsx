@@ -86,10 +86,10 @@ const PROCESS_STEPS = [
 const PORTFOLIO_ITEMS = [
   { title: "Capitol Hill Loft", type: "Modern Minimalist", img: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=800&h=600&fit=crop", desc: "1,200 sq ft open concept loft transformed with clean lines and warm neutrals" },
   { title: "Queen Anne Victorian", type: "Traditional Revival", img: "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=800&h=600&fit=crop", desc: "Full home restoration honoring original architectural details with modern comfort" },
-  { title: "Bellevue Kitchen", type: "Contemporary Kitchen", img: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=600&fit=crop", desc: "Chef-grade kitchen with waterfall island and custom walnut cabinetry" },
+  { title: "Bellevue Kitchen", type: "Contemporary Kitchen", img: "https://images.unsplash.com/photo-1565538810643-b5bdb714032a?w=800&h=600&fit=crop", desc: "Chef-grade kitchen with waterfall island and custom walnut cabinetry" },
   { title: "Mercer Island Estate", type: "Luxury Residential", img: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=600&fit=crop", desc: "5,000 sq ft lakefront estate with bespoke furnishings throughout" },
   { title: "Ballard Studio", type: "Creative Workspace", img: "https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=800&h=600&fit=crop", desc: "Design studio conversion balancing productivity with Nordic calm" },
-  { title: "Fremont Bungalow", type: "Bohemian Eclectic", img: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=600&fit=crop", desc: "Craftsman bungalow layered with global textiles and vintage finds" },
+  { title: "Fremont Bungalow", type: "Bohemian Eclectic", img: "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=800&h=600&fit=crop", desc: "Craftsman bungalow layered with global textiles and vintage finds" },
 ];
 
 const TESTIMONIALS = [
@@ -297,11 +297,11 @@ const MAGAZINE_FEATURES = [
 // ─── MOOD BOARD SWATCH DATA ────────────────────────────────────────────────
 const MOOD_SWATCHES = [
   { type: "circle", size: 140, color: "#d4a853", label: "Brushed Gold", x: 8, y: 15, rotation: -5, img: "https://images.unsplash.com/photo-1567016432779-094069958ea5?w=300&h=300&fit=crop" },
-  { type: "rect", width: 180, height: 120, color: "#6b7f5e", label: "Sage Linen", x: 55, y: 5, rotation: 3, img: "https://images.unsplash.com/photo-1528459105426-b9548367069b?w=400&h=300&fit=crop" },
+  { type: "rect", width: 180, height: 120, color: "#6b7f5e", label: "Sage Linen", x: 55, y: 5, rotation: 3, img: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&h=300&fit=crop" },
   { type: "square", size: 120, color: "#f5f0e8", label: "Warm Ivory", x: 30, y: 55, rotation: -8, img: "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=300&h=300&fit=crop" },
   { type: "rect", width: 160, height: 100, color: "#1a1a1a", label: "Charcoal Velvet", x: 65, y: 50, rotation: 5, img: "https://images.unsplash.com/photo-1615873968403-89e068629265?w=400&h=300&fit=crop" },
-  { type: "circle", size: 100, color: "#b8860b", label: "Amber Marble", x: 10, y: 70, rotation: 12, img: "https://images.unsplash.com/photo-1600585152220-90363fe7e115?w=300&h=300&fit=crop" },
-  { type: "square", size: 110, color: "#8B7355", label: "Walnut Grain", x: 78, y: 25, rotation: -3, img: "https://images.unsplash.com/photo-1449247709967-d4461a6a6103?w=300&h=300&fit=crop" },
+  { type: "circle", size: 100, color: "#b8860b", label: "Amber Marble", x: 10, y: 70, rotation: 12, img: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=300&h=300&fit=crop" },
+  { type: "square", size: 110, color: "#8B7355", label: "Walnut Grain", x: 78, y: 25, rotation: -3, img: "https://images.unsplash.com/photo-1610701596061-2ecf227e85b2?w=300&h=300&fit=crop" },
 ];
 
 // ─── HELPER COMPONENTS ──────────────────────────────────────────────────────
@@ -648,7 +648,7 @@ export default function InteriorDesignShowcase() {
           >
             <div className="relative">
               <img
-                src="https://images.unsplash.com/photo-1548142813-c348350df52b?w=600&h=750&fit=crop&crop=top"
+                src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=600&h=750&fit=crop&crop=top"
                 alt="Elena Vasquez, Principal Designer"
                 className="rounded-2xl shadow-xl w-full object-cover object-top"
                 style={{ maxHeight: 500 }}

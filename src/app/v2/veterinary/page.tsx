@@ -275,7 +275,7 @@ const comparisonRows = [
 const collagePhotos = [
   { src: "/images/vet-hero-dog.png", alt: "Australian Shepherd at Northshore Vet", z: 30, x: 0, y: 0, w: "w-64 md:w-80", speed: 0.15, rotate: -3 },
   { src: "https://images.unsplash.com/photo-1573865526739-10659fec78a5?w=500&q=80", alt: "Orange cat relaxing", z: 20, x: 55, y: 15, w: "w-44 md:w-56", speed: 0.25, rotate: 4 },
-  { src: "https://images.unsplash.com/photo-1596463059283-da257325bab8?w=500&q=80", alt: "Cute rabbit", z: 25, x: 10, y: 55, w: "w-40 md:w-48", speed: 0.2, rotate: -2 },
+  { src: "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=500&q=80", alt: "Two happy dogs", z: 25, x: 10, y: 55, w: "w-40 md:w-48", speed: 0.2, rotate: -2 },
   { src: "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=500&q=80", alt: "Two happy dogs", z: 15, x: 50, y: 60, w: "w-44 md:w-52", speed: 0.3, rotate: 3 },
   { src: "https://images.unsplash.com/photo-1592194996308-7b43878e84a6?w=500&q=80", alt: "Puppy portrait", z: 22, x: 70, y: -5, w: "w-36 md:w-44", speed: 0.18, rotate: -5 },
 ];
@@ -548,7 +548,7 @@ export default function V2VeterinaryPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="relative">
               <div className="rounded-2xl overflow-hidden aspect-[3/4] max-w-md mx-auto lg:mx-0 shadow-xl">
-                <img src="https://images.unsplash.com/photo-1609505848912-b7c3b8b4beda?w=600&q=80" alt="Dr. Lisa Nakamura, DVM" className="w-full h-full object-cover object-top" />
+                <img src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=600&q=80" alt="Dr. Lisa Nakamura, DVM" className="w-full h-full object-cover object-top" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                 <div className="absolute bottom-6 left-6 right-6">
                   <GlassCard className="px-4 py-3 inline-flex items-center gap-3">
@@ -772,7 +772,7 @@ export default function V2VeterinaryPage() {
       <SectionReveal className="relative z-10 py-16 md:py-24">
         <div className="mx-auto max-w-5xl px-4 md:px-6">
           <div className="relative rounded-2xl overflow-hidden aspect-video shadow-xl cursor-pointer group">
-            <img src="https://images.unsplash.com/photo-1597764690523-15bea4c581c9?w=1200&q=80" alt="Tour Northshore Vet Clinic" className="w-full h-full object-cover" />
+            <img src="https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=1200&q=80" alt="Tour Northshore Vet Clinic" className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors flex items-center justify-center">
               <motion.div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-xl" whileHover={{ scale: 1.1 }} transition={springFast}>
                 <Play size={36} weight="fill" style={{ color: GREEN }} className="ml-1" />

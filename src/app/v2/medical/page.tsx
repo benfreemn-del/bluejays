@@ -652,7 +652,7 @@ export default function V2MedicalPage() {
               </div>
               <div className="rounded-2xl overflow-hidden aspect-[3/4] mt-8">
                 <img
-                  src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=500&q=80"
+                  src="https://images.unsplash.com/photo-1504439468489-c8920d796a29?w=500&q=80"
                   alt="Modern medical equipment"
                   className="w-full h-full object-cover object-center"
                 />

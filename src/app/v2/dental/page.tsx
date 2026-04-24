@@ -420,7 +420,7 @@ export default function DentalShowcasePage() {
             >
               <div className="relative rounded-3xl overflow-hidden shadow-2xl shadow-teal-500/10">
                 <img
-                  src="https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=700&q=80"
+                  src="https://images.unsplash.com/photo-1588776813941-dcf9c55e84d2?w=700&q=80"
                   alt="Beautiful confident smile from Emerald City Dental patient"
                   className="w-full aspect-[4/5] object-cover object-top"
                 />

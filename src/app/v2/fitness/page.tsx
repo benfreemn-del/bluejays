@@ -111,15 +111,15 @@ const PROGRAMS = [
 ];
 
 const TRANSFORMATIONS = [
-  { name: "Jake", result: "Lost 47 lbs in 6 months", program: "HIIT + Nutrition Coaching", timeline: "6 months", stat: 47, suffix: "lbs lost", image: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=500&h=600&fit=crop" },
+  { name: "Jake", result: "Lost 47 lbs in 6 months", program: "HIIT + Nutrition Coaching", timeline: "6 months", stat: 47, suffix: "lbs lost", image: "https://images.unsplash.com/photo-1549476464-37392f717541?w=500&h=600&fit=crop" },
   { name: "Maria", result: "Gained 15 lbs of muscle", program: "Strength & Power", timeline: "8 months", stat: 15, suffix: "lbs gained", image: "https://images.unsplash.com/photo-1550345332-09e3ac987658?w=500&h=600&fit=crop" },
-  { name: "Tom", result: "Marathon-ready in 16 weeks", program: "HIIT + Personal Training", timeline: "16 weeks", stat: 16, suffix: "weeks", image: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=500&h=600&fit=crop" },
+  { name: "Tom", result: "Marathon-ready in 16 weeks", program: "HIIT + Personal Training", timeline: "16 weeks", stat: 16, suffix: "weeks", image: "https://images.unsplash.com/photo-1547483238-f400e65ccd56?w=500&h=600&fit=crop" },
 ];
 
 const TRAINERS = [
   { name: "Coach Dre Washington", specialty: "Strength & Powerlifting", cert: "CSCS, USA Weightlifting L2", years: 12, image: "https://images.unsplash.com/photo-1567013127542-490d757e51fc?w=400&h=500&fit=crop" },
   { name: "Coach Priya Shah", specialty: "HIIT & Conditioning", cert: "NASM-CPT, CrossFit L2", years: 8, image: "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400&h=500&fit=crop" },
-  { name: "Lena Kowalski", specialty: "Yoga & Mobility", cert: "RYT-500, FMS", years: 10, image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400&h=500&fit=crop" },
+  { name: "Lena Kowalski", specialty: "Yoga & Mobility", cert: "RYT-500, FMS", years: 10, image: "https://images.unsplash.com/photo-1575052814086-f385e2e2ad1b?w=400&h=500&fit=crop" },
   { name: "Coach Dre Mitchell", specialty: "Boxing & Martial Arts", cert: "USA Boxing Coach, ACE-CPT", years: 14, image: "https://images.unsplash.com/photo-1517438322307-e67111335449?w=400&h=500&fit=crop" },
 ];
 
@@ -799,12 +799,12 @@ export default function IronAndOakFitness() {
               {
                 title: "Functional Training Zone",
                 desc: "Battle ropes, sleds, plyo boxes, TRX, assault bikes. The corner where excuses go to die.",
-                image: "https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=500&h=350&fit=crop",
+                image: "https://images.unsplash.com/photo-1599058917212-d750089bc07e?w=500&h=350&fit=crop",
               },
               {
                 title: "Heavy Bag Room",
                 desc: "6 Everlast heavy bags, double-end bags, and speed bags. Full boxing and kickboxing setup.",
-                image: "https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=500&h=350&fit=crop",
+                image: "https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?w=500&h=350&fit=crop",
               },
               {
                 title: "Yoga & Mobility Studio",
@@ -814,7 +814,7 @@ export default function IronAndOakFitness() {
               {
                 title: "Sauna & Recovery",
                 desc: "Infrared sauna, cold plunge, and foam rolling station. Recovery is half the battle.",
-                image: "https://images.unsplash.com/photo-1540497077202-7c8a3999166f?w=500&h=350&fit=crop",
+                image: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=500&h=350&fit=crop",
               },
             ].map((item) => (
               <GlassCard key={item.title}>
@@ -1078,8 +1078,8 @@ export default function IronAndOakFitness() {
             <GlassCard>
               <div className="rounded-xl overflow-hidden h-72 bg-white/[0.07]">
                 <img
-                  src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=800&h=500&fit=crop"
-                  alt="Seattle Eastlake neighborhood"
+                  src="https://images.unsplash.com/photo-1460353581641-37baddab0fa2?w=800&h=500&fit=crop"
+                  alt="Iron & Oak Fitness location in Seattle Eastlake"
                   className="w-full h-full object-cover opacity-60"
                 />
               </div>

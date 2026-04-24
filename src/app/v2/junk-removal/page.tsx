@@ -807,7 +807,7 @@ export default function V2JunkRemovalPage() {
         <div className="mx-auto max-w-4xl px-4 md:px-6">
           <div className="relative aspect-video rounded-2xl overflow-hidden group cursor-pointer">
             <img
-              src="https://images.unsplash.com/photo-1609234656388-0ff363383899?w=1200&q=80"
+              src="https://images.unsplash.com/photo-1614201991207-765637dd6183?w=1200&q=80"
               alt="CleanSlate crew at work"
               className="w-full h-full object-cover"
             />
@@ -838,12 +838,12 @@ export default function V2JunkRemovalPage() {
           </div>
           <motion.div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
             {[
-              { src: "https://images.unsplash.com/photo-1607400201515-c2c41c07d307?w=600&q=80", label: "Garage Cleanout — Ballard" },
-              { src: "https://images.unsplash.com/photo-1590247813693-5541d1c609fd?w=600&q=80", label: "Estate Cleanout — Capitol Hill" },
-              { src: "https://images.unsplash.com/photo-1603807008857-ad66b70431aa?w=600&q=80", label: "Office Furniture Removal — SoDo" },
-              { src: "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=600&q=80", label: "Renovation Debris — Fremont" },
-              { src: "https://images.unsplash.com/photo-1615529151169-7b1ff50dc7f2?w=600&q=80", label: "Appliance Haul — Green Lake" },
-              { src: "https://images.unsplash.com/photo-1590496793929-36417d3117de?w=600&q=80", label: "Full Property Clear — Beacon Hill" },
+              { src: "https://images.unsplash.com/photo-1635510952461-1fc1b7c96314?w=600&q=80", label: "Garage Cleanout — Ballard" },
+              { src: "https://images.unsplash.com/photo-1667318243261-af1026f4195b?w=600&q=80", label: "Estate Cleanout — Capitol Hill" },
+              { src: "https://images.unsplash.com/photo-1712252036653-fe3a6c503692?w=600&q=80", label: "Office Furniture Removal — SoDo" },
+              { src: "https://images.unsplash.com/photo-1588829297835-5f3492a4cf9d?w=600&q=80", label: "Renovation Debris — Fremont" },
+              { src: "https://images.unsplash.com/photo-1706773184955-c45fac9e0528?w=600&q=80", label: "Appliance Haul — Green Lake" },
+              { src: "https://plus.unsplash.com/premium_photo-1683141120496-f5921a97f5c4?w=600&q=80", label: "Full Property Clear — Beacon Hill" },
             ].map((img, i) => (
               <motion.div key={i} variants={fadeUp} className="aspect-[4/3] rounded-xl overflow-hidden relative group">
                 <motion.img src={img.src} alt={img.label} className="w-full h-full object-cover" whileHover={{ scale: 1.05 }} transition={{ duration: 0.4 }} />

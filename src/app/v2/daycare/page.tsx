@@ -314,9 +314,9 @@ const faqs = [
 const galleryImages = [
   { src: "https://images.unsplash.com/photo-1587616211892-f743fcca64f9?w=600&q=80", alt: "Children painting in art class" },
   { src: "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=600&q=80", alt: "Child playing outdoors" },
-  { src: "https://images.unsplash.com/photo-1544776193-352d25ca82cd?w=600&q=80", alt: "Reading circle time" },
-  { src: "https://images.unsplash.com/photo-1560969184-10fe8719e047?w=600&q=80", alt: "Playground fun" },
-  { src: "https://images.unsplash.com/photo-1596464716127-f2a82984de30?w=600&q=80", alt: "Creative arts and crafts" },
+  { src: "https://images.unsplash.com/photo-1526634332515-d56c5fd16991?w=600&q=80", alt: "Reading circle time" },
+  { src: "https://images.unsplash.com/photo-1541692641319-981cc79ee10a?w=600&q=80", alt: "Playground fun" },
+  { src: "https://images.unsplash.com/photo-1516627145497-ae6968895b74?w=600&q=80", alt: "Creative arts and crafts" },
   { src: "https://images.unsplash.com/photo-1565538810643-b5bdb714032a?w=600&q=80", alt: "Learning and discovery" },
 ];
 
@@ -369,7 +369,7 @@ export default function V2DaycarePage() {
       {/* ─── HERO ─── */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10">
         <div className="absolute inset-0 z-0">
-          <img src="https://images.unsplash.com/photo-1600132806370-bf17e65e942f?w=1600&q=80" alt="" className="w-full h-full object-cover opacity-12" />
+          <img src="https://images.unsplash.com/photo-1602030028438-4cf153cbae9e?w=1600&q=80" alt="" className="w-full h-full object-cover opacity-12" />
           <div className="absolute inset-0" style={{ background: `linear-gradient(to bottom, ${BG}, transparent 30%, ${BG})` }} />
         </div>
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-4 items-center">
@@ -452,7 +452,7 @@ export default function V2DaycarePage() {
       {/* ─── ABOUT / PHILOSOPHY ─── */}
       <SectionReveal className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0 opacity-8">
-          <img src="https://images.unsplash.com/photo-1587351021355-a479a299d2f9?w=1600&q=80" alt="" className="w-full h-full object-cover" />
+          <img src="https://images.unsplash.com/photo-1476703993599-0035a21b17a9?w=1600&q=80" alt="" className="w-full h-full object-cover" />
         </div>
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div>
@@ -669,7 +669,7 @@ export default function V2DaycarePage() {
             <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-[#1c1917]"><WordReveal text="Take A Tour From Home" /></h2>
           </div>
           <div className="relative rounded-2xl overflow-hidden aspect-video group cursor-pointer">
-            <img src="https://images.unsplash.com/photo-1541976590-713941681591?w=1600&q=80" alt="Daycare classroom tour" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <img src="https://images.unsplash.com/photo-1502086223501-7ea6ecd79368?w=1600&q=80" alt="Daycare classroom tour" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
             <div className="absolute inset-0 flex items-center justify-center">
               <motion.div className="w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center shadow-2xl" style={{ background: PURPLE }} animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}>

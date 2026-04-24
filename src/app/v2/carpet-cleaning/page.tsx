@@ -219,12 +219,12 @@ const cleaningChecklist = [
 ];
 
 const galleryImages = [
-  "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=600&q=80",
-  "https://images.unsplash.com/photo-1628260412297-a3377e45006f?w=600&q=80",
-  "https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?w=600&q=80",
-  "https://images.unsplash.com/photo-1632823469850-2f77dd9c7f93?w=600&q=80",
-  "https://images.unsplash.com/photo-1560185127-6ed189bf02f4?w=600&q=80",
-  "https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?w=600&q=80",
+  "https://images.unsplash.com/photo-1558317374-067fb5f30001?w=600&q=80",
+  "https://plus.unsplash.com/premium_photo-1678118776730-69c211336de1?w=600&q=80",
+  "https://images.unsplash.com/photo-1580256081112-e49377338b7f?w=600&q=80",
+  "https://images.unsplash.com/photo-1720772569819-b18d48a77ca9?w=600&q=80",
+  "https://images.unsplash.com/photo-1616450088319-ff2ea6e7cc68?w=600&q=80",
+  "https://images.unsplash.com/photo-1701651547523-4c96acc8265f?w=600&q=80",
 ];
 
 const howOftenOptions = [
@@ -715,7 +715,7 @@ export default function V2CarpetCleaningPage() {
         {/* ═══════════════ 13. ABOUT — DAN & LISA ═══════════════ */}
         <SectionReveal id="about" className="py-20 grid md:grid-cols-2 gap-12 items-center">
           <div className="relative rounded-2xl overflow-hidden aspect-[4/3]">
-            <img src="https://images.unsplash.com/photo-1616627451515-cbc80e5ece35?w=700&q=80" alt="Dan and Lisa Kowalski — FreshStart founders" className="w-full h-full object-cover object-center" />
+            <img src="https://plus.unsplash.com/premium_photo-1683141112334-d7d404f6e716?w=700&q=80" alt="Dan and Lisa Kowalski — FreshStart founders" className="w-full h-full object-cover object-center" />
             <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${BG}, transparent 50%)` }} />
             <div className="absolute bottom-4 left-4"><span className="px-3 py-1 rounded-full text-xs font-bold text-white" style={{ background: ACCENT }}>Family-Owned Since 2012</span></div>
           </div>
@@ -763,7 +763,7 @@ export default function V2CarpetCleaningPage() {
         {/* ═══════════════ VIDEO PLACEHOLDER ═══════════════ */}
         <SectionReveal className="py-20">
           <div className="relative rounded-3xl overflow-hidden aspect-video max-w-4xl mx-auto">
-            <img src="https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?w=1200&q=80" alt="Professional carpet cleaning" className="w-full h-full object-cover" />
+            <img src="https://images.unsplash.com/photo-1742483359033-13315b247c74?w=1200&q=80" alt="Professional carpet cleaning" className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
               <motion.div className="w-20 h-20 rounded-full flex items-center justify-center cursor-pointer" style={{ background: ACCENT }} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="white"><polygon points="8,5 19,12 8,19" /></svg>

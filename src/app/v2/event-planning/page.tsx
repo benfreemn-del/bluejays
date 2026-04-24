@@ -254,9 +254,9 @@ function ShimmerBorder({ children, className = "" }: { children: React.ReactNode
 /* ───────────────────────── DATA ───────────────────────── */
 const eventTypes = [
   { title: "Weddings", description: "From intimate elopements to lavish ballroom affairs, we craft every detail of your love story into an unforgettable celebration.", icon: Heart, image: "https://images.unsplash.com/photo-1525772764200-be829a350797?w=600&q=80" },
-  { title: "Corporate Galas", description: "Black-tie fundraisers, award ceremonies, and annual galas that elevate your brand and leave lasting impressions on every guest.", icon: Buildings, image: "https://images.unsplash.com/photo-1464746133101-a2c3f88e0dd9?w=600&q=80" },
+  { title: "Corporate Galas", description: "Black-tie fundraisers, award ceremonies, and annual galas that elevate your brand and leave lasting impressions on every guest.", icon: Buildings, image: "https://images.unsplash.com/photo-1511578314322-379afb476865?w=600&q=80" },
   { title: "Private Parties", description: "Milestone birthdays, anniversaries, and intimate soirees designed around your personality and your guest list.", icon: Gift, image: "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=600&q=80" },
-  { title: "Non-Profit Fundraisers", description: "Charity galas, silent auctions, and benefit dinners that inspire generosity and maximize your mission's impact.", icon: Handshake, image: "https://images.unsplash.com/photo-1540574163026-643ea20ade25?w=600&q=80" },
+  { title: "Non-Profit Fundraisers", description: "Charity galas, silent auctions, and benefit dinners that inspire generosity and maximize your mission's impact.", icon: Handshake, image: "https://images.unsplash.com/photo-1504196606672-aef5c9cefc92?w=600&q=80" },
   { title: "Product Launches", description: "High-energy brand reveals, media events, and experiential activations that generate buzz and media coverage.", icon: Rocket, image: "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=600&q=80" },
   { title: "Milestone Celebrations", description: "Retirement parties, graduations, and once-in-a-lifetime occasions that deserve a truly spectacular setting.", icon: Trophy, image: "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=600&q=80" },
 ];
@@ -286,9 +286,9 @@ const packages = [
 
 const portfolioImages = [
   { src: "https://images.unsplash.com/photo-1527529482837-4698179dc6ce?w=700&q=80", label: "Waterfront Wedding" },
-  { src: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=700&q=80", label: "Corporate Gala" },
-  { src: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=700&q=80", label: "Charity Benefit" },
-  { src: "https://images.unsplash.com/photo-1478146896981-b80fe463b330?w=700&q=80", label: "Garden Party" },
+  { src: "https://images.unsplash.com/photo-1544531585-f14f463149ec?w=700&q=80", label: "Corporate Gala" },
+  { src: "https://images.unsplash.com/photo-1540574163026-643ea20ade25?w=700&q=80", label: "Charity Benefit" },
+  { src: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=700&q=80", label: "Celebration Moment" },
   { src: "https://images.unsplash.com/photo-1629909615184-74f495363b67?w=700&q=80", label: "Product Launch" },
   { src: "https://images.unsplash.com/photo-1551818255-e6e10975bc17?w=700&q=80", label: "Milestone Celebration" },
 ];

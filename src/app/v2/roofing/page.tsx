@@ -1102,19 +1102,19 @@ export default function RoofingShowcase() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
               {
-                src: "https://images.unsplash.com/photo-1632759145351-1d592919f522?w=600&h=500&fit=crop&q=80",
+                src: "https://images.unsplash.com/photo-1633759593085-1eaeb724fc88?w=600&h=500&fit=crop&q=80",
                 label: "Roof Inspection",
               },
               {
-                src: "https://images.unsplash.com/photo-1643509867448-57001e0c333d?w=600&h=500&fit=crop&q=80",
+                src: "https://images.unsplash.com/photo-1635424824800-692767998d07?w=600&h=500&fit=crop&q=80",
                 label: "Shingle Installation",
               },
               {
-                src: "https://images.unsplash.com/photo-1631639324100-2ed305cb32a4?w=600&h=500&fit=crop&q=80",
+                src: "https://images.unsplash.com/photo-1635424824849-1b09bdcc55b1?w=600&h=500&fit=crop&q=80",
                 label: "New Construction",
               },
               {
-                src: "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=600&h=500&fit=crop&q=80",
+                src: "https://images.unsplash.com/photo-1635424709870-cdc6e64f0e20?w=600&h=500&fit=crop&q=80",
                 label: "Completed Project",
               },
             ].map((project) => (
@@ -1206,7 +1206,7 @@ export default function RoofingShowcase() {
             <div className="flex justify-center">
               <GlassCard className="p-8 text-center max-w-sm w-full">
                 <img
-                  src="https://images.unsplash.com/photo-1627591637320-fcfe8c34b62d?w=400&h=400&fit=crop&crop=faces&q=80"
+                  src="https://images.unsplash.com/photo-1635424825057-7fb6dcd651ef?w=400&h=400&fit=crop&crop=faces&q=80"
                   alt="Jake Morrison — roofing team leader"
                   className="w-24 h-24 rounded-full mx-auto mb-4 object-cover object-top"
                 />
@@ -1627,7 +1627,7 @@ export default function RoofingShowcase() {
           />
           <GlassCard className="aspect-video relative overflow-hidden group cursor-pointer">
             <div className="absolute inset-0 flex items-center justify-center">
-              <img src="https://images.unsplash.com/photo-1588854337236-6889d631faa8?w=1200&q=80" alt="Summit Roofing NW shingle installation in progress" className="absolute inset-0 w-full h-full object-cover" />
+              <img src="https://images.unsplash.com/photo-1755168648692-ef8937b7e63e?w=1200&q=80" alt="Summit Roofing NW shingle installation in progress" className="absolute inset-0 w-full h-full object-cover" />
               <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors" />
               <motion.div
                 className="w-20 h-20 rounded-full flex items-center justify-center relative z-10"

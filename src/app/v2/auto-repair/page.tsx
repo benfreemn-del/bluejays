@@ -609,8 +609,8 @@ export default function V2AutoRepairPage() {
             style={{ y: imageY }}
           >
             <img
-              src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1920&q=85"
-              alt="Classic car in dramatic lighting"
+              src="https://images.unsplash.com/photo-1727893119356-1702fe921cf9?w=1920&q=85"
+              alt="Auto repair shop bay with lifts and mechanics working"
               className="w-full h-full object-cover"
             />
           </motion.div>
@@ -793,7 +793,7 @@ export default function V2AutoRepairPage() {
             <div className="relative">
               <div className="relative rounded-2xl overflow-hidden border border-white/15">
                 <img
-                  src="https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=800&q=80"
+                  src="https://images.unsplash.com/photo-1711386689622-1cda23e10217?w=800&q=80"
                   alt="Tony Reeves — ASE Master Technician"
                   className="w-full h-[480px] object-cover object-top"
                 />

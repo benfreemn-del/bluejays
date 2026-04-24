@@ -790,7 +790,7 @@ export default function V2PhysicalTherapyShowcase() {
       <SectionReveal className="relative z-10 py-24 md:py-32" style={{ background: BG }}>
         <div className="max-w-4xl mx-auto px-6">
           <div className="relative rounded-2xl overflow-hidden border border-slate-200 shadow-lg">
-            <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=1000&q=80" alt="Summit PT clinic interior" className="w-full h-[400px] object-cover" />
+            <img src="https://images.unsplash.com/photo-1513224502586-d1e602410265?w=1000&q=80" alt="Summit PT clinic interior" className="w-full h-[400px] object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent flex items-center justify-center">
               <div className="text-center">
                 <div className="w-20 h-20 rounded-full bg-white/90 flex items-center justify-center mx-auto mb-4 shadow-xl cursor-pointer hover:bg-white transition-colors">
@@ -817,10 +817,10 @@ export default function V2PhysicalTherapyShowcase() {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { label: "Treatment Room", img: "https://images.unsplash.com/photo-1517581177682-a085bb7ffb15?w=400&q=80" },
+              { label: "Treatment Room", img: "https://images.unsplash.com/photo-1586771107445-d3ca888129ff?w=400&q=80" },
               { label: "Exercise Area", img: "https://images.unsplash.com/photo-1574680178050-55c6a6a96e0a?w=400&q=80" },
-              { label: "Aquatic Therapy", img: "https://images.unsplash.com/photo-1575052814086-f385e2e2ad1b?w=400&q=80" },
-              { label: "Reception", img: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&q=80" },
+              { label: "Aquatic Therapy", img: "https://images.unsplash.com/photo-1530549387789-4c1017266635?w=400&q=80" },
+              { label: "Reception", img: "https://images.unsplash.com/photo-1516841273335-e39b37888115?w=400&q=80" },
             ].map((room) => (
               <div key={room.label} className="relative rounded-xl overflow-hidden group">
                 <img src={room.img} alt={room.label} className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500" />

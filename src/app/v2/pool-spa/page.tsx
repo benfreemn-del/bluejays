@@ -217,9 +217,9 @@ const galleryImages = [
   { src: "https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?w=600&q=80", alt: "Luxury infinity pool" },
   { src: "https://images.unsplash.com/photo-1575429198097-0414ec08e8cd?w=600&q=80", alt: "Pool with water feature" },
   { src: "https://images.unsplash.com/photo-1562778612-e1e0cda9915c?w=600&q=80", alt: "Evening pool lighting" },
-  { src: "https://images.unsplash.com/photo-1540539234-c14a20fb7c7b?w=600&q=80", alt: "Resort-style backyard pool" },
-  { src: "https://images.unsplash.com/photo-1583922606661-0822ed0bd916?w=600&q=80", alt: "Modern pool design" },
-  { src: "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=600&q=80", alt: "Outdoor spa and hot tub" },
+  { src: "https://images.unsplash.com/photo-1694885190541-40037b8a6b13?w=600&q=80", alt: "Resort-style backyard pool" },
+  { src: "https://images.unsplash.com/photo-1694885090746-d90472e11c0e?w=600&q=80", alt: "Modern pool design" },
+  { src: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600&q=80", alt: "Outdoor spa and hot tub" },
 ];
 
 const faqs = [
@@ -577,7 +577,7 @@ export default function V2PoolSpaPage() {
               </div>
             </div>
             <div className="relative rounded-2xl overflow-hidden aspect-[4/5]">
-              <img src="https://images.unsplash.com/photo-1582719508461-905c673771fd?w=900&q=80" alt="Luxury pool installation project" className="w-full h-full object-cover" />
+              <img src="https://plus.unsplash.com/premium_photo-1733514692229-8aaede3df1ba?w=900&q=80" alt="Luxury pool installation project" className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
               <div className="absolute bottom-6 left-6 right-6">
                 <p className="text-xs uppercase tracking-widest" style={{ color: CYAN_LIGHT }}>Featured Build</p>
@@ -597,7 +597,7 @@ export default function V2PoolSpaPage() {
             <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white"><WordReveal text="See Our Crew In Action" /></h2>
           </div>
           <div className="relative rounded-2xl overflow-hidden aspect-video group cursor-pointer">
-            <img src="https://images.unsplash.com/photo-1540541338287-41700207dee6?w=1600&q=80" alt="Pool service crew workshop" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <img src="https://images.unsplash.com/photo-1774109556498-652c0458d4af?w=1600&q=80" alt="Pool service crew workshop" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-black/20" />
             <div className="absolute inset-0 flex items-center justify-center">
               <motion.div className="w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center shadow-2xl" style={{ background: CYAN }} animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}>
@@ -856,7 +856,7 @@ export default function V2PoolSpaPage() {
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="relative rounded-2xl overflow-hidden aspect-[4/5]">
-              <img src="https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=900&q=80" alt="Luxury outdoor spa and hot tub installation" className="w-full h-full object-cover" />
+              <img src="https://images.unsplash.com/photo-1603077864615-538e955d1ad1?w=900&q=80" alt="Luxury outdoor spa and hot tub installation" className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
               <div className="absolute bottom-6 left-6 right-6">
                 <p className="text-xs uppercase tracking-widest" style={{ color: SAND }}>Spa Collection</p>

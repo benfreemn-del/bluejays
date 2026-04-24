@@ -137,14 +137,14 @@ const neighborhoods = [
     vibe: "Urban & Vibrant",
     avgPrice: "$620K",
     detail: "Walk Score 94",
-    image: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=600&h=400&fit=crop",
+    image: "https://images.unsplash.com/photo-1515162305285-0293e4767cc2?w=600&h=400&fit=crop",
   },
   {
     name: "Bellevue",
     vibe: "Tech Hub Living",
     avgPrice: "$1.1M",
     detail: "Top-Rated Schools",
-    image: "https://images.unsplash.com/photo-1496568816309-51d7c20e3b21?w=600&h=400&fit=crop",
+    image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=600&h=400&fit=crop",
   },
   {
     name: "Mercer Island",
@@ -158,7 +158,7 @@ const neighborhoods = [
     vibe: "Lakeside Charm",
     avgPrice: "$890K",
     detail: "Growing Market",
-    image: "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=600&h=400&fit=crop",
+    image: "https://images.unsplash.com/photo-1470770903676-69b98201ea1c?w=600&h=400&fit=crop",
   },
 ];
 

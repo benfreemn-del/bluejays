@@ -155,7 +155,7 @@ const ATTORNEYS = [
     years: "16 Years Experience",
     bio: "A former public defender with over 150 jury trials, David is a courtroom veteran who thrives under pressure. He has secured not-guilty verdicts in high-profile felony cases across Washington State.",
     credentials: ["150+ Jury Trials", "Former Public Defender", "National Trial Lawyers Top 100", "Fluent Yoruba"],
-    img: "https://images.unsplash.com/photo-1618077360395-f3068be8e001?w=600&q=80",
+    img: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=600&q=80",
   },
 ];
 
@@ -916,7 +916,7 @@ export default function V2LawFirmPage() {
           >
             <GlassCard className="relative overflow-hidden aspect-video cursor-pointer group">
               <img
-                src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=1200&q=80"
+                src="https://images.unsplash.com/photo-1521791136064-7986c2920216?w=1200&q=80"
                 alt="Pacific Law Group office"
                 className="w-full h-full object-cover"
               />

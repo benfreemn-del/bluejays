@@ -829,7 +829,7 @@ export default function V2ApplianceRepairPage() {
           <SectionHeader label="See Our Work" title="Watch ProFix" accent="In Action" />
           <div className="relative rounded-2xl overflow-hidden aspect-video cursor-pointer group" style={{ background: `linear-gradient(135deg, #1a1a1a, #222)` }}>
             <img
-              src="https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=900&q=80"
+              src="https://images.unsplash.com/photo-1556909172-54557c7e4fb7?w=900&q=80"
               alt="Appliance repair technician at work"
               className="w-full h-full object-cover opacity-60 group-hover:opacity-70 transition-opacity duration-300"
             />

@@ -365,11 +365,11 @@ const packages = [
 /* ───────────────────────── BEFORE/AFTER DATA ───────────────────────── */
 const galleryItems = [
   {
-    image: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1707897283727-31befe824066?w=800&q=80",
     label: "House Exterior",
   },
   {
-    image: "https://images.unsplash.com/photo-1574362848149-11496d93a7c7?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1707897283710-4beef9a1b066?w=800&q=80",
     label: "Driveway Clean",
   },
 ];
@@ -431,7 +431,7 @@ export default function V2PressureWashingPage() {
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10">
         {/* Background image overlay */}
         <div className="absolute inset-0 z-0">
-          <img src="https://images.unsplash.com/photo-1438401171849-74ac270044ee?w=1600&q=80" alt="" className="w-full h-full object-cover object-center" />
+          <img src="https://images.unsplash.com/photo-1774031159721-aec9230f38db?w=1600&q=80" alt="" className="w-full h-full object-cover object-center" />
           <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${BG}ee 0%, ${BG}cc 50%, ${BG}99 100%)` }} />
         </div>
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -748,7 +748,7 @@ export default function V2PressureWashingPage() {
             <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white"><WordReveal text="Watch A Full Job" /></h2>
           </div>
           <div className="relative rounded-2xl overflow-hidden aspect-video group cursor-pointer">
-            <img src="https://images.unsplash.com/photo-1599707367072-cd6ada2bc375?w=1600&q=80" alt="Pressure washing crew at work" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <img src="https://images.unsplash.com/photo-1769641156615-5d561513b3fa?w=1600&q=80" alt="Pressure washing crew at work" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
             <div className="absolute inset-0 flex items-center justify-center">
               <motion.div className="w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center shadow-2xl" style={{ background: ACCENT } as React.CSSProperties} animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}>

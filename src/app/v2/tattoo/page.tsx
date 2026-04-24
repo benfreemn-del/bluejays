@@ -239,11 +239,11 @@ function TattooMachineSVG() {
 /* ───────────────────────── GALLERY DATA ───────────────────────── */
 const galleryImages = [
   { src: "https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?w=600&q=80", alt: "Intricate sleeve tattoo with black and gray shading", span: "col-span-2 row-span-2" },
-  { src: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&q=80", alt: "Geometric mandala tattoo on forearm", span: "col-span-1 row-span-1" },
+  { src: "https://images.unsplash.com/photo-1598371839696-5c5bb00bdc28?w=400&q=80", alt: "Geometric mandala tattoo on forearm", span: "col-span-1 row-span-1" },
   { src: "https://images.unsplash.com/photo-1565058379802-bbe93b2f703a?w=400&q=80", alt: "Watercolor style floral tattoo", span: "col-span-1 row-span-1" },
   { src: "https://images.unsplash.com/photo-1562962230-16e4623d36e6?w=400&q=80", alt: "Traditional American tattoo design", span: "col-span-1 row-span-1" },
-  { src: "https://images.unsplash.com/photo-1562259929-b4e1fd3aef09?w=400&q=80", alt: "Fine line minimalist tattoo work", span: "col-span-1 row-span-1" },
-  { src: "https://images.unsplash.com/photo-1605379399642-870262d3d051?w=600&q=80", alt: "Full back piece Japanese style tattoo", span: "col-span-2 row-span-1" },
+  { src: "https://images.unsplash.com/photo-1665085326630-b01fea9a613d?w=400&q=80", alt: "Fine line minimalist tattoo work", span: "col-span-1 row-span-1" },
+  { src: "https://images.unsplash.com/photo-1482328177731-274399da39f0?w=600&q=80", alt: "Full back piece Japanese style tattoo", span: "col-span-2 row-span-1" },
 ];
 
 /* ───────────────────────── STYLES DATA ───────────────────────── */
@@ -583,7 +583,7 @@ export default function V2TattooPage() {
             <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white"><WordReveal text="Step Inside The Studio" /></h2>
           </div>
           <div className="relative rounded-2xl overflow-hidden aspect-video group cursor-pointer">
-            <img src="https://images.unsplash.com/photo-1536520002442-39764a41e987?w=1600&q=80" alt="Tattoo studio private booth tour" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <img src="https://plus.unsplash.com/premium_photo-1661714220704-711551e73799?w=1600&q=80" alt="Tattoo studio private booth tour" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
             <div className="absolute inset-0 flex items-center justify-center">
               <motion.div className="w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center shadow-2xl" style={{ background: CRIMSON }} animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}>
@@ -780,12 +780,12 @@ export default function V2TattooPage() {
             </div>
             <motion.div className="lg:col-span-3 grid grid-cols-2 sm:grid-cols-3 gap-3" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true }}>
               {[
-                { name: "Serpent & Rose", price: "$280", src: "https://images.unsplash.com/photo-1552234994-66ba234fd567?w=400&q=80" },
-                { name: "Moth & Moon", price: "$220", src: "https://images.unsplash.com/photo-1542856391-010fb87dcfed?w=400&q=80" },
-                { name: "Dagger Script", price: "$180", src: "https://images.unsplash.com/photo-1612459284970-e8f027596582?w=400&q=80" },
-                { name: "Ocean Wave", price: "$240", src: "https://images.unsplash.com/photo-1531123414780-f74242c2b052?w=400&q=80" },
-                { name: "Raven & Keys", price: "$320", src: "https://images.unsplash.com/photo-1512495039889-52a3b799c9bc?w=400&q=80" },
-                { name: "Traditional Heart", price: "$160", src: "https://images.unsplash.com/photo-1516914943479-89db7d9ae7f2?w=400&q=80" },
+                { name: "Serpent & Rose", price: "$280", src: "https://images.unsplash.com/photo-1665085326709-8ae5245e535a?w=400&q=80" },
+                { name: "Moth & Moon", price: "$220", src: "https://plus.unsplash.com/premium_photo-1707398404766-18c038bea96a?w=400&q=80" },
+                { name: "Dagger Script", price: "$180", src: "https://images.unsplash.com/photo-1758404255679-9afd847ede1c?w=400&q=80" },
+                { name: "Ocean Wave", price: "$240", src: "https://images.unsplash.com/photo-1775134061575-80f4bbd1a189?w=400&q=80" },
+                { name: "Raven & Keys", price: "$320", src: "https://plus.unsplash.com/premium_photo-1707398501439-e329b6908ba5?w=400&q=80" },
+                { name: "Traditional Heart", price: "$160", src: "https://images.unsplash.com/photo-1665612077377-0efb41c418cd?w=400&q=80" },
               ].map((flash, i) => (
                 <motion.div key={i} variants={fadeUp} whileHover={{ scale: 1.03 }} className="relative aspect-square rounded-2xl overflow-hidden group cursor-pointer">
                   <img src={flash.src} alt={flash.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />

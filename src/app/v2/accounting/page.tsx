@@ -541,7 +541,7 @@ export default function V2AccountingPage() {
         <div className="absolute inset-0 pointer-events-none" style={{ background: `radial-gradient(ellipse 50% 50% at 80% 50%, ${NAVY_GLOW} 0%, transparent 70%)` }} />
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="relative rounded-2xl overflow-hidden aspect-[4/3]">
-            <img src="https://images.unsplash.com/photo-1556157382-97eda2d62296?w=800&q=80" alt="Robert Chen CPA in professional office setting" className="w-full h-full object-cover object-top" />
+            <img src="https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=800&q=80" alt="Robert Chen CPA in professional office setting" className="w-full h-full object-cover object-top" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
             <div className="absolute bottom-4 left-4 right-4">
               <GlassCard className="p-4 flex items-center gap-3">
@@ -886,7 +886,7 @@ export default function V2AccountingPage() {
       <SectionReveal className="relative z-10 py-16 md:py-24">
         <div className="mx-auto max-w-4xl px-4 md:px-6">
           <div className="relative rounded-2xl overflow-hidden aspect-video cursor-pointer group">
-            <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=1000&q=80" alt="Modern accounting office interior" className="w-full h-full object-cover" />
+            <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=1000&q=80" alt="Modern accounting office interior" className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors flex items-center justify-center">
               <motion.div className="w-20 h-20 rounded-full flex items-center justify-center" style={{ background: `${GOLD}dd` }} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
                 <svg viewBox="0 0 24 24" className="w-8 h-8 ml-1" fill="white"><path d="M8 5v14l11-7z" /></svg>

@@ -244,9 +244,9 @@ const galleryImages = [
   { src: "https://images.unsplash.com/photo-1487530811176-3780de880c2d?w=800&q=80", alt: "Lush bridal bouquet with roses and peonies", span: "col-span-2 row-span-2" },
   { src: "https://images.unsplash.com/photo-1561181286-d3fee7d55364?w=400&q=80", alt: "Elegant centerpiece arrangement", span: "col-span-1 row-span-1" },
   { src: "https://images.unsplash.com/photo-1563241527-3004b7be0ffd?w=400&q=80", alt: "Spring wildflower bouquet", span: "col-span-1 row-span-1" },
-  { src: "https://images.unsplash.com/photo-1508610048659-a06b669e3321?w=400&q=80", alt: "Funeral tribute wreath", span: "col-span-1 row-span-1" },
-  { src: "https://images.unsplash.com/photo-1517423440428-a5a00ad493e8?w=400&q=80", alt: "Modern minimalist arrangement", span: "col-span-1 row-span-1" },
-  { src: "https://images.unsplash.com/photo-1526047932273-341f2a7631f9?w=600&q=80", alt: "Wedding arch floral installation", span: "col-span-2 row-span-1" },
+  { src: "https://images.unsplash.com/photo-1455659817273-f96807779a8a?w=400&q=80", alt: "Sunflower bouquet", span: "col-span-1 row-span-1" },
+  { src: "https://images.unsplash.com/photo-1519741497674-611481863552?w=400&q=80", alt: "Bridal bouquet on wedding day", span: "col-span-1 row-span-1" },
+  { src: "https://images.unsplash.com/photo-1469371670807-013ccf25f16a?w=600&q=80", alt: "Wedding arch floral installation", span: "col-span-2 row-span-1" },
 ];
 
 /* ───────────────────────── DATA ───────────────────────── */
@@ -622,7 +622,7 @@ export default function V2FloristPage() {
             <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-[#1c1917]"><WordReveal text="Step Inside Our Shop" /></h2>
           </div>
           <div className="relative rounded-2xl overflow-hidden aspect-video group cursor-pointer">
-            <img src="https://images.unsplash.com/photo-1587574293340-e0011c4e8ecf?w=1600&q=80" alt="Florist studio and design team" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <img src="https://images.unsplash.com/photo-1526047932273-341f2a7631f9?w=1600&q=80" alt="Florist studio and design team" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
             <div className="absolute inset-0 flex items-center justify-center">
               <motion.div className="w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center shadow-2xl" style={{ background: ROSE }} animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}>
