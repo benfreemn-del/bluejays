@@ -102,8 +102,29 @@ export default function PreviewImageGuard({
       return;
     }
 
-    const section = inferSection(image, knownPhotos);
     const currentSrc = image.currentSrc || image.src || image.getAttribute("src") || "";
+
+    // Retry the original URL once before giving up on it. Upstream CDNs
+    // (Cloudfront especially) occasionally return a transient 502/503
+    // and then serve 200 on the very next request a fraction of a second
+    // later. Jumping straight to a stock fallback on the first error
+    // throws away perfectly good real photos. We only retry proxied URLs
+    // (the /api/image-proxy path) and only once — if it still fails after
+    // the retry, we fall through to the category fallback below.
+    const retryKey = "imageRetryAttempt";
+    const retryCount = Number(image.dataset[retryKey] || "0");
+    const isProxied = currentSrc.includes("/api/image-proxy");
+    if (isProxied && retryCount === 0) {
+      image.dataset[retryKey] = "1";
+      // Force reload by re-setting src with a cache-buster
+      const sep = currentSrc.includes("?") ? "&" : "?";
+      const retryUrl = `${currentSrc}${sep}_retry=1`;
+      // Small delay so we don't hammer the proxy during a cold-start burst
+      setTimeout(() => { image.src = retryUrl; }, 400);
+      return;
+    }
+
+    const section = inferSection(image, knownPhotos);
     const fallbackSrc = getCategoryFallbackImage(category, section, businessName, attempt, [currentSrc]);
     if (!fallbackSrc) {
       return;

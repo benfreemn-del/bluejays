@@ -34,6 +34,15 @@ const ALLOWED_DOMAINS = [
   "s3.amazonaws.com",
 ];
 
+// Host-suffix allowlist for CDNs where the customer-specific subdomain
+// is dynamic (AWS Cloudfront uses one per tenant, e.g.
+// d14f1v6bh52agh.cloudfront.net). Matched via endsWith so every
+// customer-specific subdomain is covered without listing each.
+const ALLOWED_HOST_SUFFIXES = [
+  ".cloudfront.net",
+  ".amazonaws.com",
+];
+
 /**
  * Look up the prospect's currentWebsite domain from Supabase.
  * Used to dynamically allow images from a prospect's own site
@@ -139,7 +148,9 @@ export async function GET(request: NextRequest) {
     // scraped business (e.g. Pro Decks NW at prodecksnw.com) has high-quality
     // photos on their own CDN that we want to display in the preview without
     // hardcoding every possible business domain into ALLOWED_DOMAINS.
-    let allowed = ALLOWED_DOMAINS.includes(parsedHostname);
+    let allowed =
+      ALLOWED_DOMAINS.includes(parsedHostname) ||
+      ALLOWED_HOST_SUFFIXES.some((suffix) => parsedHostname.endsWith(suffix));
     let prospectDomainsResolved: string[] = [];
     if (!allowed && prospectId) {
       prospectDomainsResolved = await getProspectDomains(prospectId);
