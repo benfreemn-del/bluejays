@@ -485,7 +485,7 @@ export default function V2SalonPage() {
                     <img
                       src={stylist.photo}
                       alt={stylist.name}
-                      className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700"
+                      className="w-full h-full object-cover object-[center_15%] group-hover:scale-105 transition-transform duration-700"
                     />
                   </div>
                   <div className="p-6">
