@@ -301,7 +301,7 @@ export default function V2JunkRemovalPage() {
         {/* BEFORE side — cluttered garage */}
         <div className="absolute inset-0 z-0">
           <img
-            src="https://images.unsplash.com/photo-1616627547584-bf28cee262db?w=1600&q=80"
+            src="https://images.unsplash.com/photo-1530587191325-3db32d826c18?w=1600&q=80"
             alt="Cluttered garage before cleanup"
             className="w-full h-full object-cover"
           />
@@ -316,7 +316,7 @@ export default function V2JunkRemovalPage() {
           transition={{ duration: 1.6, delay: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
           <img
-            src="https://images.unsplash.com/photo-1530587191325-3db32d826c18?w=1600&q=80"
+            src="https://images.unsplash.com/photo-1616627547584-bf28cee262db?w=1600&q=80"
             alt="Clean empty garage after cleanup"
             className="w-full h-full object-cover"
           />
