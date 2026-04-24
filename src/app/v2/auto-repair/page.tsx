@@ -534,7 +534,7 @@ export default function V2AutoRepairPage() {
       </motion.nav>
 
       {/* ────────────────────── 1. HERO — SCROLL-DRIVEN PARALLAX REVEAL ────────────────────── */}
-      <div ref={heroContainerRef} className="relative h-[160vh]">
+      <div ref={heroContainerRef} className="relative h-screen md:h-[160vh]">
         {/* Sticky text layer */}
         <div className="sticky top-0 h-screen flex items-center justify-center z-20">
           <motion.div

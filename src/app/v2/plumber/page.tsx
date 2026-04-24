@@ -528,12 +528,12 @@ export default function V2PlumberPage() {
             </div>
             <div className="flex items-center gap-3">
               <MagneticButton
-                className="px-4 md:px-5 py-2 rounded-full text-sm font-semibold text-white cursor-pointer"
+                className="px-3 md:px-5 py-2 rounded-full text-sm font-semibold text-white cursor-pointer"
                 style={{ background: TEAL } as React.CSSProperties}
               >
                 <span className="flex items-center gap-2">
                   <Phone size={16} weight="bold" />
-                  (206) 555-0893
+                  <span className="hidden md:inline">(206) 555-0893</span>
                 </span>
               </MagneticButton>
               <button
