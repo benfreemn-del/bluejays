@@ -114,6 +114,7 @@ const PUBLIC_API_PATHS = [
   "/api/funnel/run",                   // Vercel cron (daily 08:00 UTC) — gated by CRON_SECRET
   "/api/replies/process",              // Vercel cron (per minute) — gated by CRON_SECRET
   "/api/postcards/html/",              // Lob's renderer fetches these; public (just pre-rendered preview HTML)
+  "/api/inquire/",                     // Public form submission from /inquire/[code]
 ];
 
 export async function middleware(request: NextRequest) {

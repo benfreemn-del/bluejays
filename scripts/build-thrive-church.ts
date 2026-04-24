@@ -31,14 +31,17 @@ import { createClient } from "@supabase/supabase-js";
 // the matching hash returns 400. Rebuild by re-curl'ing
 // thrivesequim.com if any of these ever start 4xx'ing.
 const THRIVE_PHOTOS = [
-  // Hero: unity hands, 2800xorig
+  // [0] Hero background: unity hands, 2800xorig
   "https://d14f1v6bh52agh.cloudfront.net/DuCZykL4UDVfSxG8c9AH4OkkwZc=/fit-in/2800xorig/filters:format(jpeg)/uploads/8MFHI6DPgjtZPpNgAsYoyFY7ET1TlwGvkoXonzB4.jpeg",
-  // Thrive Groups
-  "https://d14f1v6bh52agh.cloudfront.net/4ZtPc_fx2xud5CWkh8V1eOL0Mkk=/fit-in/1080xorig/filters:format(jpeg)/uploads/sO3Yk8zNCXKS5P5UDJZLDGuaitOvi6eOxCBRmAOt.jpeg",
-  // Thrive Preschool (colored pencils)
-  "https://d14f1v6bh52agh.cloudfront.net/1SLqPHuW5AsQnOCZu6Ou0LTC0QE=/fit-in/1080xorig/filters:format(jpeg)/uploads/xmKv1KhEPWemy1KKN7FZGoKrLTVQXvwvQBsAm0hp.png",
-  // Worship (B&W hands raised)
+  // [1] Hero CARD (side image next to the headline) — B&W worship hands
+  // raised. Replaces the earlier "WELCOME HERE / GRACE FOR ALL"
+  // slide graphic which was a Sunday announcement card, not a hero.
   "https://d14f1v6bh52agh.cloudfront.net/TSlsP9hoYUTQVx07RacX7McteBQ=/fit-in/800xorig/filters:format(jpeg)/uploads/h58dH5ysNGE6gTtAy2jcfM8aaSsbeL9kdvCN52q5.jpeg",
+  // [2] About image — Thrive Preschool (colored pencils)
+  "https://d14f1v6bh52agh.cloudfront.net/1SLqPHuW5AsQnOCZu6Ou0LTC0QE=/fit-in/1080xorig/filters:format(jpeg)/uploads/xmKv1KhEPWemy1KKN7FZGoKrLTVQXvwvQBsAm0hp.png",
+  // [3+] Gallery — community / ministries / outreach imagery
+  // Thrive Groups (demoted from slot [1])
+  "https://d14f1v6bh52agh.cloudfront.net/4ZtPc_fx2xud5CWkh8V1eOL0Mkk=/fit-in/1080xorig/filters:format(jpeg)/uploads/sO3Yk8zNCXKS5P5UDJZLDGuaitOvi6eOxCBRmAOt.jpeg",
   // Across the Street outreach
   "https://d14f1v6bh52agh.cloudfront.net/UFDQgJLcdrTtNh6ErRMUYFDiXC0=/fit-in/800xorig/filters:format(jpeg)/uploads/Hzhb1sg37QNZ5kNkVOYhR3Ib2rDyqXF4c73QCbJ2.png",
   // Leadership/teaching
@@ -90,15 +93,21 @@ async function main() {
     brandColorSource: "official-site",
     logoUrl: THRIVE_LOGO,
     photos: THRIVE_PHOTOS,
+    // Services with a `signupPath` render as clickable cards that open the
+    // BlueJays inquiry form (/inquire/[short-code]?program=slug&label=X).
+    // The visitor fills in name/email/message and the church office gets
+    // an email. Only programs that have a dedicated page on their real
+    // site get a signupPath — generic offerings (e.g. "Sunday Gatherings")
+    // stay as non-clickable info cards.
     services: [
       { name: "Sunday Gatherings", description: "In-person worship every Sunday at 10:30am. Come as you are — we save a seat for you." },
-      { name: "Thrive Groups", description: "Small groups meeting throughout the week across Sequim. This is where life change happens around real conversations, real meals, real people." },
-      { name: "Thrive Kids", description: "A safe, fun, Jesus-centered experience for kids from birth through 5th grade every Sunday morning — led by Megan Lyke and our volunteer team." },
-      { name: "Thrive Preschool", description: "Christ-centered preschool education now enrolling for the 2025-2026 year. Helping your child grow academically, socially, and spiritually." },
-      { name: "Table of Grace", description: "Our weekly community meal meeting real needs for real neighbors — everyone welcome at the table, no questions asked." },
+      { name: "Thrive Groups", description: "Small groups meeting throughout the week across Sequim. This is where life change happens around real conversations, real meals, real people.", signupPath: `/inquire/${shortCode}?program=thrive-groups&label=Thrive+Groups` },
+      { name: "Thrive Kids", description: "A safe, fun, Jesus-centered experience for kids from birth through 5th grade every Sunday morning — led by Megan Lyke and our volunteer team.", signupPath: `/inquire/${shortCode}?program=thrive-kids&label=Thrive+Kids` },
+      { name: "Thrive Preschool", description: "Christ-centered preschool education now enrolling for the 2025-2026 year. Helping your child grow academically, socially, and spiritually.", signupPath: `/inquire/${shortCode}?program=thrive-preschool&label=Thrive+Preschool` },
+      { name: "Table of Grace", description: "Our weekly community meal meeting real needs for real neighbors — everyone welcome at the table, no questions asked.", signupPath: `/inquire/${shortCode}?program=table-of-grace&label=Table+of+Grace` },
       { name: "Across the Street", description: "Local outreach into the Sequim community — serving our neighbors right here on the Olympic Peninsula." },
-      { name: "Missional Giving", description: "Partnering with missionaries and organizations bringing hope and healing around the world." },
-      { name: "Thrive Online", description: "Can't make it in person? Watch past messages and follow along with our teaching online." },
+      { name: "Missional Giving", description: "Partnering with missionaries and organizations bringing hope and healing around the world.", signupPath: `/inquire/${shortCode}?program=missional-giving&label=Missional+Giving` },
+      { name: "Thrive Online", description: "Can't make it in person? Watch past messages and follow along with our teaching online.", signupPath: `/inquire/${shortCode}?program=thrive-online&label=Thrive+Online` },
     ],
     stats: [
       { label: "Sunday Service", value: "10:30am" },

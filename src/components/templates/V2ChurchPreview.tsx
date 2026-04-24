@@ -606,8 +606,17 @@ export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
               // the ministry palette so the grid feels alive. The primary
               // brand accent (GOLD) stays in section headers and CTAs.
               const tileColor = pickPaletteColor(i);
-              return (
-                <div key={service.name} className="group relative p-7 rounded-2xl border border-white/[0.10] hover:border-opacity-30 transition-all duration-500 overflow-hidden bg-white/[0.07]">
+
+              // Programs that the church/business operates as real pages
+              // on their site can set `service.signupPath` so a click
+              // opens the BlueJays inquiry form (learn-more email that
+              // goes direct to their office). Cards without a signupPath
+              // render as plain divs so only ministries with a real
+              // dedicated page become clickable.
+              const svcExt = service as { signupPath?: string };
+              const signupPath = svcExt.signupPath || "";
+              const content = (
+                <>
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 0%, ${tileColor}22, transparent 70%)` }} />
                   <div className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to right, transparent, ${tileColor}66, transparent)` }} />
                   <div className="relative z-10">
@@ -620,7 +629,33 @@ export default function V2ChurchPreview({ data }: { data: GeneratedSiteData }) {
                     <h3 className="text-lg font-bold text-white mb-2">{service.name}</h3>
                     <p className="text-sm text-slate-400 leading-relaxed">{service.description || ""}</p>
                     {service.price && <p className="text-sm font-semibold mt-3" style={{ color: tileColor }}>{service.price}</p>}
+                    {signupPath && (
+                      <div className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold transition-all group-hover:gap-2" style={{ color: tileColor }}>
+                        Learn more
+                        <ArrowUpRight size={15} weight="bold" className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                      </div>
+                    )}
                   </div>
+                </>
+              );
+
+              const baseClass = "group relative p-7 rounded-2xl border transition-all duration-500 overflow-hidden block";
+              const interactiveClass = signupPath ? "cursor-pointer hover:-translate-y-0.5 hover:shadow-2xl" : "";
+              const styleBase = {
+                background: "rgba(255,255,255,0.07)",
+                borderColor: signupPath ? `${tileColor}4d` : "rgba(255,255,255,0.10)",
+              } as React.CSSProperties;
+
+              if (signupPath) {
+                return (
+                  <a key={service.name} href={signupPath} className={`${baseClass} ${interactiveClass}`} style={styleBase}>
+                    {content}
+                  </a>
+                );
+              }
+              return (
+                <div key={service.name} className={baseClass} style={styleBase}>
+                  {content}
                 </div>
               );
             })}
