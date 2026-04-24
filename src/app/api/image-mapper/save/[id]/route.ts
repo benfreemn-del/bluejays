@@ -46,46 +46,31 @@ export async function POST(
     mapping.lastUpdated = new Date().toISOString();
   }
 
-  // Build updated photos array using the ORIGINAL urls as the base,
-  // then apply replacements on top. This preserves correct ordering.
-  const updatedPhotos: string[] = mapping.images.map((img) => {
+  // Build updated photos array preserving TWO things:
+  // 1. Slot ordering — the rendered template reads photos[0]=hero,
+  //    photos[1]=hero-card, photos[2]=about, etc., so the mapping slots
+  //    must come first in the stored array and in mapping-slot order.
+  // 2. Pool extras — scraped_data.photos often contains MORE photos
+  //    than the template has slots for (e.g. the Meyer enrichment
+  //    script added 10 fresh Google photos on top of the 3 scanned
+  //    slots). Those extras stay available in the image-mapper's
+  //    drag-source library. Appending them at the end preserves the
+  //    pool without breaking slot ordering.
+  //
+  // This replaces a prior "shrink-guard" that rejected saves when the
+  // mapping slot count was smaller than the full pool — false-positive
+  // every time the operator added photos outside the mapper (fix
+  // scripts, Google enrichment, bulk refreshes).
+  const slotDrivenPhotos: string[] = mapping.images.map((img) => {
     if (img.status === "replaced" && img.replacementUrl) {
       return img.replacementUrl;
     }
     return img.originalUrl;
   });
-
-  // Shrink-guard: the mapper builds `updatedPhotos` from its own stashed
-  // slot snapshot. If ANY other codepath (a fix script, a regenerate, a
-  // bulk refresh) writes to `scrapedData.photos` after the mapper loaded,
-  // the mapper's snapshot is stale and this save would clobber that
-  // external work with an older photo set.
-  //
-  // The existing expectedVersion check only tracks mapping.lastUpdated,
-  // which doesn't change when photos are edited outside the mapper. This
-  // extra guard catches the gap: if the save would meaningfully shrink
-  // the stored photo count, refuse and tell the client to refresh.
-  //
-  // Threshold: >25% shrink OR dropping >5 photos, whichever is stricter.
-  // A small shrink (delete one broken slot) still goes through.
   const currentPhotos = (sd.photos as string[] | undefined) || [];
-  const shrinkCount = currentPhotos.length - updatedPhotos.length;
-  const shrinkPct = currentPhotos.length > 0 ? shrinkCount / currentPhotos.length : 0;
-  if (shrinkCount > 5 || shrinkPct > 0.25) {
-    return NextResponse.json(
-      {
-        error:
-          `Refusing save — would reduce photos from ${currentPhotos.length} ` +
-          `to ${updatedPhotos.length} (${Math.round(shrinkPct * 100)}% drop). ` +
-          `Photos were likely updated outside the image-mapper since you ` +
-          `loaded it. Refresh the page to pick up the current state, then ` +
-          `re-apply your changes.`,
-        currentCount: currentPhotos.length,
-        wouldBeCount: updatedPhotos.length,
-      },
-      { status: 409 },
-    );
-  }
+  const slotSet = new Set(slotDrivenPhotos);
+  const poolExtras = currentPhotos.filter((url) => !slotSet.has(url));
+  const updatedPhotos: string[] = [...slotDrivenPhotos, ...poolExtras];
 
   // Save mapping + updated photos back to prospect's scrapedData
   await updateProspect(id, {

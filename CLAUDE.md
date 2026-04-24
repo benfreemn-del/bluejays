@@ -2854,15 +2854,31 @@ de-duplication strategy (e.g. rotating cities per batch).
 - Show the last error state in `loopState.lastMessage` on every failure so the
   user sees "Batch N timed out, continuing…" instead of a silent stall.
 
-### 12. Image-mapper save shrink-guard
+### 12. Image-mapper save preserves pool extras beyond mapped slots
 
-`/api/image-mapper/save/[id]` rejects saves that would reduce
-`scraped_data.photos` by more than 5 items or 25% — whichever is stricter.
-Returns 409 with a clear error. Prevents the drag-drop UI's stashed photos
-array from clobbering fresh scripted updates (fix scripts, auto-enrichment,
-bulk operations).
+`/api/image-mapper/save/[id]` builds the saved `scraped_data.photos`
+array as:
+1. **Slot-driven photos first** (in template-slot order — photos[0]
+   is hero, [1] is hero-card, [2] is about, etc.), applying any
+   replacements the operator made in the mapper.
+2. **Pool extras appended after** — any URL already in
+   `scraped_data.photos` that wasn't one of the mapper's scanned slots
+   is preserved at the tail of the array.
 
-Don't loosen this guard without a replacement concurrency strategy.
+This preserves scripted enrichment (Google Places photo scrapes, fix
+scripts, bulk refreshes) even when the mapper was loaded before that
+enrichment ran. The image-mapper UI still sees the extras in its
+drag-source library.
+
+**A prior implementation used a 409-shrink-guard** (reject if save
+would reduce `photos.length` by >5 or >25%) — that guard surfaced as
+"Conflict — mapping was modified by another session. Refreshing..."
+for every operator who added photos outside the mapper. Removed
+because preserving pool extras at save time is a strictly better
+fix: no false positives, no information loss, no operator confusion.
+
+The optimistic-concurrency check on `mapping.lastUpdated` is still
+there — that one's a real concern and stays.
 
 ### 13. Recovery/bulk-send scripts — dynamic-import to avoid mock-mode trap
 
