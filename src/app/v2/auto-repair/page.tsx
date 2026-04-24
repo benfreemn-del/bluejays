@@ -428,13 +428,22 @@ export default function V2AutoRepairPage() {
 
   /* ── Scroll-driven parallax hero ── */
   const heroContainerRef = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    setIsMobile(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
   const { scrollYProgress } = useScroll({
     target: heroContainerRef,
     offset: ["start start", "end start"],
   });
-  const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "40%"]);
-  const overlayOpacity = useTransform(scrollYProgress, [0, 0.5], [0.85, 0.2]);
-  const textOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
+  // On mobile the container is only h-screen so disable scroll-driven fades
+  const imageY = useTransform(scrollYProgress, [0, 1], isMobile ? ["0%", "0%"] : ["0%", "40%"]);
+  const overlayOpacity = useTransform(scrollYProgress, [0, 0.5], isMobile ? [0.85, 0.85] : [0.85, 0.2]);
+  const textOpacity = useTransform(scrollYProgress, [0, 0.6], isMobile ? [1, 1] : [1, 0]);
 
   const navLinks = [
     { label: "Services", href: "#services" },
@@ -534,9 +543,9 @@ export default function V2AutoRepairPage() {
       </motion.nav>
 
       {/* ────────────────────── 1. HERO — SCROLL-DRIVEN PARALLAX REVEAL ────────────────────── */}
-      <div ref={heroContainerRef} className="relative h-screen md:h-[160vh]">
+      <div ref={heroContainerRef} className="relative h-screen md:h-[160vh] overflow-hidden">
         {/* Sticky text layer */}
-        <div className="sticky top-0 h-screen flex items-center justify-center z-20">
+        <div className="sticky top-0 h-screen flex items-center justify-center z-20 overflow-hidden">
           <motion.div
             style={{ opacity: textOpacity }}
             className="relative z-30 text-center px-5 max-w-4xl mx-auto"
