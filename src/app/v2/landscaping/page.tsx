@@ -237,11 +237,11 @@ const processSteps = [
 ];
 
 const projects = [
-  { title: "Japanese Zen Garden", location: "Capitol Hill", scope: "Stone paths, koi pond, bamboo fencing, moss beds", image: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=600&q=80" },
+  { title: "Japanese Zen Garden", location: "Capitol Hill", scope: "Stone paths, koi pond, bamboo fencing, moss beds", image: "https://images.unsplash.com/photo-1563694983011-6f4d90358083?w=600&q=80" },
   { title: "Modern Patio", location: "Bellevue", scope: "600 sq ft paver patio, fire pit, built-in seating", image: "https://images.unsplash.com/photo-1600573472592-401b489a3cdc?w=600&q=80" },
   { title: "Native Plant Restoration", location: "Magnolia", scope: "Full yard native conversion, pollinator garden, rain garden", image: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&q=80" },
   { title: "Outdoor Kitchen", location: "Mercer Island", scope: "Built-in grill, bar counter, pergola, landscape lighting", image: "/images/landscaping-outdoor-grill.png" },
-  { title: "Rain Garden", location: "Fremont", scope: "Bioswale, native plantings, permeable pavers, downspout capture", image: "https://images.unsplash.com/photo-1558904541-efa843a96f01?w=600&q=80" },
+  { title: "Rain Garden", location: "Fremont", scope: "Bioswale, native plantings, permeable pavers, downspout capture", image: "https://images.unsplash.com/photo-1615811361523-6bd03d7748e7?w=600&q=80" },
   { title: "Fire Pit Lounge", location: "Kirkland", scope: "Natural stone fire pit, curved seating wall, accent lighting", image: "/images/landscaping-fire-pit.png" },
 ];
 
@@ -253,11 +253,11 @@ const seasonalData = [
 ];
 
 const testimonials = [
-  { name: "The Watsons", text: "Diego turned our mud pit into a Japanese garden. The neighbors stop to take photos every time they walk by.", image: "https://images.unsplash.com/photo-1588880331179-bc9b93a8cb5e?w=400&q=80" },
-  { name: "Jen & Mike R.", text: "Our backyard is now the reason we don't go on vacation. Why leave paradise?", image: "https://images.unsplash.com/photo-1598902108854-10e335adac99?w=400&q=80" },
-  { name: "Dr. Sarah Kim", text: "The native plant rain garden handles all our runoff AND looks beautiful year-round.", image: "https://images.unsplash.com/photo-1557428894-56bcc97113fe?w=400&q=80" },
-  { name: "The Andersons", text: "From bare dirt to outdoor kitchen with dining for 12. Diego is a magician.", image: "https://images.unsplash.com/photo-1523301343968-6a6ebf63c672?w=400&q=80" },
-  { name: "Paul T.", text: "We hired 3 landscapers before Diego. He's the only one who actually DESIGNED something.", image: "https://images.unsplash.com/photo-1560749003-f4b1e17e2dff?w=400&q=80" },
+  { name: "The Watsons", text: "Diego turned our mud pit into a Japanese garden. The neighbors stop to take photos every time they walk by.", image: "https://images.unsplash.com/photo-1477414348463-c0eb7f1359b6?w=600&q=80" },
+  { name: "Jen & Mike R.", text: "Our backyard is now the reason we don't go on vacation. Why leave paradise?", image: "https://images.unsplash.com/photo-1525498128493-380d1990a112?w=600&q=80" },
+  { name: "Dr. Sarah Kim", text: "The native plant rain garden handles all our runoff AND looks beautiful year-round.", image: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&q=80" },
+  { name: "The Andersons", text: "From bare dirt to outdoor kitchen with dining for 12. Diego is a magician.", image: "https://images.unsplash.com/photo-1597600159211-d6c104f408d1?w=600&q=80" },
+  { name: "Paul T.", text: "We hired 3 landscapers before Diego. He's the only one who actually DESIGNED something.", image: "https://images.unsplash.com/photo-1553361371-9b22f78e8b1d?w=600&q=80" },
 ];
 
 const comparisonRows = [
@@ -286,11 +286,11 @@ const faqs = [
   { q: "Can you work with my existing landscape?", a: "Absolutely. Many of our projects involve refreshing or enhancing existing landscapes rather than starting from scratch. Diego can assess what is working, what needs attention, and create a phased plan that respects your budget and existing plantings." },
 ];
 
-/* hero floating card images — all unique */
+/* hero floating card images — full-yard landscape designs, all unique */
 const heroCards = [
   { src: "https://images.unsplash.com/photo-1584738766473-61c083514bf4?w=600&q=80", alt: "Lush garden pathway" },
-  { src: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80", alt: "Stone patio with furniture" },
-  { src: "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=600&q=80", alt: "Beautiful garden design" },
+  { src: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80", alt: "Designed backyard with lush plantings" },
+  { src: "https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?w=600&q=80", alt: "Premium outdoor living space" },
 ];
 
 /* ═══════════════════════════════════════════════════════════════
