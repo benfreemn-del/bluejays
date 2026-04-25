@@ -218,8 +218,8 @@ const galleryImages = [
   { src: "https://images.unsplash.com/photo-1575429198097-0414ec08e8cd?w=600&q=80", alt: "Pool with water feature" },
   { src: "https://images.unsplash.com/photo-1562778612-e1e0cda9915c?w=600&q=80", alt: "Evening pool lighting" },
   { src: "https://images.unsplash.com/photo-1694885190541-40037b8a6b13?w=600&q=80", alt: "Resort-style backyard pool" },
-  { src: "https://images.unsplash.com/photo-1694885090746-d90472e11c0e?w=600&q=80", alt: "Modern pool design" },
-  { src: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600&q=80", alt: "Outdoor spa and hot tub" },
+  { src: "https://images.unsplash.com/photo-1694885090746-d90472e11c0e?w=600&q=80", alt: "Outdoor entertaining space" },
+  { src: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600&q=80", alt: "Backyard pool installation" },
 ];
 
 const faqs = [

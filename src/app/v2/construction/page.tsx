@@ -203,7 +203,7 @@ const faqData = [
 ];
 
 const portfolioImages = [
-  "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=600&q=80",
+  "https://images.unsplash.com/photo-1531834685032-c34bf0d84c77?w=600&q=80",
   "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=600&q=80",
   "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=600&q=80",
   "https://images.unsplash.com/photo-1429497419816-9ca5cfb4571a?w=600&q=80",
@@ -800,7 +800,7 @@ export default function V2ConstructionPage() {
             {[
               { title: "Modern Farmhouse Build", scope: "4,200 sq ft new build", duration: "9 months", src: "https://images.unsplash.com/photo-1521783988139-89397d761dce?w=800&q=80" },
               { title: "Whole-Home Remodel", scope: "1920s craftsman gut renovation", duration: "6 months", src: "https://images.unsplash.com/photo-1723107638858-331404b1a09a?w=800&q=80" },
-              { title: "Primary Suite Addition", scope: "Second-story 700 sq ft addition", duration: "4 months", src: "https://images.unsplash.com/photo-1502005097973-6a7082348e28?w=800&q=80" },
+              { title: "Master Bedroom Finish-Out", scope: "Second-story 700 sq ft addition", duration: "4 months", src: "https://images.unsplash.com/photo-1502005097973-6a7082348e28?w=800&q=80" },
             ].map((proj, i) => (
               <motion.div key={i} variants={fadeUp} className="group relative rounded-2xl overflow-hidden aspect-[4/5] cursor-pointer">
                 <img src={proj.src} alt={proj.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />

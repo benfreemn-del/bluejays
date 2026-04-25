@@ -1372,7 +1372,7 @@ export default function V2PetServicesShowcase() {
               <div className="rounded-2xl overflow-hidden shadow-lg border-2 border-white">
                 <img
                   src="https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?w=700&q=80"
-                  alt="Happy Tails team with adorable pets"
+                  alt="Featured pet care moment"
                   className="w-full h-[420px] object-cover object-top"
                 />
               </div>

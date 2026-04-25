@@ -300,7 +300,7 @@ const galleryPhotos = [
   { src: "https://images.unsplash.com/photo-1754321902809-5c21cbc67228?w=600&q=80", alt: "Forest canopy care" },
   { src: "https://images.unsplash.com/photo-1518495973542-4542c06a5843?w=600&q=80", alt: "Sunlight through trees" },
   { src: "https://images.unsplash.com/photo-1754322449185-31f56117ed87?w=600&q=80", alt: "Professional tree work" },
-  { src: "https://images.unsplash.com/photo-1476231682828-37e571bc172f?w=600&q=80", alt: "Managed tree landscape" },
+  { src: "https://images.unsplash.com/photo-1476231682828-37e571bc172f?w=600&q=80", alt: "Pacific Northwest forest landscape" },
 ];
 
 const processSteps = [
