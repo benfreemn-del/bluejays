@@ -359,39 +359,66 @@ function LeadsTab({
               <thead className="bg-slate-50 text-slate-600">
                 <tr>
                   <Th>Caller</Th>
+                  <Th>Location</Th>
                   <Th>When</Th>
-                  <Th>Auto-text sent</Th>
+                  <Th>Auto-text</Th>
+                  <Th>Reply</Th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {missedCalls.map((m) => (
-                  <tr key={m.id} className="hover:bg-slate-50">
-                    <Td>
-                      {m.caller_number ? (
-                        <a
-                          href={`tel:${m.caller_number.replace(/\D/g, "")}`}
-                          className="text-sky-600 hover:underline"
-                        >
-                          {formatPhone(m.caller_number)}
-                        </a>
-                      ) : (
-                        "—"
-                      )}
-                    </Td>
-                    <Td className="text-slate-500 whitespace-nowrap">
-                      {formatRelative(m.occurred_at)}
-                    </Td>
-                    <Td>
-                      {m.auto_sms_sent ? (
-                        <span className="inline-flex items-center gap-1 text-emerald-700 text-xs font-medium">
-                          <span>✓</span> Sent
-                        </span>
-                      ) : (
-                        <span className="text-slate-400 text-xs">No</span>
-                      )}
-                    </Td>
-                  </tr>
-                ))}
+                {missedCalls.map((m) => {
+                  const phoneDigits = (m.caller_phone || "").replace(/\D/g, "");
+                  const location = [m.caller_city, m.caller_state]
+                    .filter(Boolean)
+                    .join(", ");
+                  return (
+                    <tr key={m.id} className="hover:bg-slate-50">
+                      <Td>
+                        {m.caller_phone ? (
+                          <a
+                            href={`tel:${phoneDigits}`}
+                            className="text-sky-600 hover:underline"
+                          >
+                            {formatPhone(m.caller_phone)}
+                          </a>
+                        ) : (
+                          "—"
+                        )}
+                      </Td>
+                      <Td className="text-slate-600 whitespace-nowrap">
+                        {location || (
+                          <span className="text-slate-300">—</span>
+                        )}
+                      </Td>
+                      <Td className="text-slate-500 whitespace-nowrap">
+                        {formatRelative(m.occurred_at)}
+                      </Td>
+                      <Td>
+                        {m.auto_sms_sent ? (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-xs font-medium">
+                            <span>✓</span> Auto-SMS sent
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 text-xs font-medium">
+                            SMS failed
+                          </span>
+                        )}
+                      </Td>
+                      <Td>
+                        {phoneDigits ? (
+                          <a
+                            href={`sms:${phoneDigits}`}
+                            className="inline-block px-2.5 py-1 rounded-md bg-sky-600 text-white text-xs font-medium hover:bg-sky-700"
+                          >
+                            Reply via SMS
+                          </a>
+                        ) : (
+                          <span className="text-slate-300">—</span>
+                        )}
+                      </Td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

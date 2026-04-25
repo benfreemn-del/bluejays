@@ -4052,3 +4052,54 @@ per prospect before sending).
   pad the per-customer report with content that's identical to
   every other customer's email.
 
+## Rule 43: Persist Before You Touch (NON-NEGOTIABLE — added 2026-04-24)
+
+Every customer-facing event handler that fires an automated touch
+(SMS, email, voicemail, postcard, call) MUST persist a log row to
+the appropriate Supabase table BEFORE the touch fires. The
+persistence is the source of truth for the customer portal +
+monthly report metrics. The touch itself is a side effect — losing
+it is bad, but losing the count of how many we've delivered is
+worse because it silently turns the portal into a liar.
+
+**Concrete examples (in-tree):**
+- `/api/missed-call/callback` — inserts into `missed_call_logs`
+  BEFORE calling Twilio's Messages.json. Wraps the insert in
+  try/catch so a Supabase outage never blocks the SMS, and flips
+  `auto_sms_sent=true` only after the SMS dispatches successfully.
+  Idempotent on Twilio retries via UNIQUE(twilio_call_sid).
+- `/api/contact-form/[id]` — inserts into
+  `contact_form_submissions` BEFORE firing the auto-SMS + owner
+  email.
+- `/api/review/submit` — inserts into `client_reviews` BEFORE
+  emailing the owner about a <5-star feedback.
+- `/api/schedule/book/[id]` — inserts into `schedule_bookings`
+  BEFORE confirmation email/SMS.
+
+**The rules:**
+1. Order matters. INSERT first, then dispatch. Never dispatch and
+   then "log if I have time" — the log row is the contract with
+   the customer portal, not an afterthought.
+2. Wrap the INSERT in try/catch. Log the error but do NOT block
+   the dispatch. The auto-touch reaching the caller/customer is a
+   higher-priority side effect than the metric.
+3. Use UPSERT with a UNIQUE constraint on a provider-supplied id
+   (Twilio CallSid, Stripe session id, etc.) when the upstream
+   webhook may retry. Idempotency by primary key is non-negotiable.
+4. Set the dispatch-confirmation flag (`auto_sms_sent`,
+   `email_sent`, etc.) in a separate UPDATE AFTER the dispatch
+   resolves. Never set it preemptively.
+5. When adding a new automated-touch handler, add the persistence
+   table in the SAME commit. Code that touches a customer with no
+   audit row is a regression.
+
+**This rule's existence:** Wave 4A built `customer-metrics.ts` to
+power the customer portal. Three of the four metrics (leads,
+reviews, bookings) had backing tables. The fourth (missed-call
+recovery) didn't — the callback fired the SMS and threw the event
+on the floor. The portal showed 0 missed calls forever and the
+customer had no idea Ben's auto-texter was actually working for
+them. Migration 20260424_missed_call_logs.sql + the callback
+update (this rule's catalyst) closed the gap. The next gap of
+this shape is forbidden.
+

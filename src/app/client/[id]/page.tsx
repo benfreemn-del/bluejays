@@ -135,7 +135,7 @@ export default async function ClientPortalPage({
 
   const [leads, missedCalls, reviews, appointments, renewal] = await Promise.all([
     listRecentLeads(id, 50),
-    listRecentMissedCalls(id, 50),
+    listRecentMissedCalls(id, 20),
     listRecentReviews(id, 50),
     listRecentAppointments(id, 50),
     getRenewalInfo(prospect.mgmtSubscriptionId),

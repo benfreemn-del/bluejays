@@ -15,12 +15,12 @@
  *   schedule_bookings          (POST /api/schedule/book/[id])
  *
  * Notes on the missed-call source:
- *   The Twilio status callback at /api/missed-call/callback currently
- *   sends the auto-SMS but does NOT persist a row to a missed-call
- *   table — that is on the backlog. To stay forward-compatible the
- *   metrics function tries `missed_call_logs` first and falls back to
- *   zero if the table doesn't exist. Once the table lands the report
- *   numbers light up automatically without another deploy.
+ *   The Twilio status callback at /api/missed-call/callback persists
+ *   a row to `missed_call_logs` BEFORE the auto-SMS dispatches (see
+ *   migration 20260424_missed_call_logs.sql + CLAUDE.md Rule 43). The
+ *   metrics function counts those rows directly. safeCount still
+ *   wraps the query in try/catch so a missing table on a fresh
+ *   environment falls back to zero instead of crashing the report.
  *
  * IMPORTANT: All queries are wrapped in try/catch so a missing table
  * returns 0 instead of crashing the whole report run. Mock-mode safe
@@ -108,8 +108,8 @@ export async function getCustomerMonthMetrics(
   const [leads, missedCallsRecovered, fiveStarReviews, totalReviews, appointments] =
     await Promise.all([
       safeCount("contact_form_submissions", prospectId, startIso, endIso, "submitted_at"),
-      // missed_call_logs is on the backlog — table may not exist yet, in which
-      // case safeCount returns 0 silently.
+      // missed_call_logs lands via /api/missed-call/callback (see Rule 43).
+      // safeCount falls back to 0 if the table is missing on a fresh env.
       safeCount("missed_call_logs", prospectId, startIso, endIso, "occurred_at"),
       safeCount("client_reviews", prospectId, startIso, endIso, "submitted_at", {
         column: "rating",
@@ -192,24 +192,36 @@ export async function listRecentLeads(
 
 /**
  * List missed-call entries for the portal Leads tab. Returns [] if the
- * table doesn't exist yet (tracked but on backlog — see file header).
+ * table doesn't exist yet (table created by migration
+ * 20260424_missed_call_logs.sql).
+ *
+ * Columns match the actual `missed_call_logs` schema — `caller_phone`
+ * (NOT `caller_number`), plus `caller_city`/`caller_state` from
+ * Twilio's FromCity/FromState webhook fields.
  */
 export interface MissedCallRow {
   id: string;
-  caller_number: string | null;
+  caller_phone: string | null;
+  caller_city: string | null;
+  caller_state: string | null;
+  call_status: string | null;
+  call_duration_seconds: number | null;
   occurred_at: string;
   auto_sms_sent: boolean | null;
+  auto_sms_body: string | null;
 }
 
 export async function listRecentMissedCalls(
   prospectId: string,
-  limit = 50,
+  limit = 20,
 ): Promise<MissedCallRow[]> {
   if (!isSupabaseConfigured()) return [];
   try {
     const { data, error } = await supabase
       .from("missed_call_logs")
-      .select("id, caller_number, occurred_at, auto_sms_sent")
+      .select(
+        "id, caller_phone, caller_city, caller_state, call_status, call_duration_seconds, occurred_at, auto_sms_sent, auto_sms_body",
+      )
       .eq("prospect_id", prospectId)
       .order("occurred_at", { ascending: false })
       .limit(limit);
