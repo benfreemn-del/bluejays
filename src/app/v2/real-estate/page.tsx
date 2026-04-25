@@ -75,7 +75,7 @@ const properties = [
     beds: 3,
     baths: 2,
     sqft: "2,100",
-    image: "https://images.unsplash.com/photo-1613977257363-707ba9348227?w=800&h=500&fit=crop",
+    image: "https://images.unsplash.com/photo-1518780664697-55e3ad937233?w=800&h=500&fit=crop",
     tag: "New Listing",
   },
   {
@@ -85,7 +85,7 @@ const properties = [
     beds: 5,
     baths: 4,
     sqft: "4,800",
-    image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=500&fit=crop",
+    image: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=800&h=500&fit=crop",
     tag: "Open House",
   },
   {
@@ -105,7 +105,7 @@ const properties = [
     beds: 4,
     baths: 3,
     sqft: "3,600",
-    image: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800&h=500&fit=crop",
+    image: "https://images.unsplash.com/photo-1564013434775-f71db0030976?w=800&h=500&fit=crop",
     tag: "Under Contract",
   },
   {
@@ -119,13 +119,13 @@ const properties = [
     tag: "New Listing",
   },
   {
-    title: "Fremont Townhome",
+    title: "Fremont Modern Single-Family Home",
     price: "$725,000",
     address: "3818 Fremont Ave N, Seattle, WA 98103",
     beds: 3,
     baths: 2,
     sqft: "1,800",
-    image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=500&fit=crop",
+    image: "https://images.unsplash.com/photo-1591474204534-44c50b1cb88e?w=800&h=500&fit=crop",
     tag: "Open House",
   },
 ];
@@ -137,7 +137,7 @@ const neighborhoods = [
     vibe: "Urban & Vibrant",
     avgPrice: "$620K",
     detail: "Walk Score 94",
-    image: "https://images.unsplash.com/photo-1515162305285-0293e4767cc2?w=600&h=400&fit=crop",
+    image: "https://images.unsplash.com/photo-1527030280862-64139fba04ca?w=600&h=400&fit=crop",
   },
   {
     name: "Bellevue",
@@ -158,7 +158,7 @@ const neighborhoods = [
     vibe: "Lakeside Charm",
     avgPrice: "$890K",
     detail: "Growing Market",
-    image: "https://images.unsplash.com/photo-1470770903676-69b98201ea1c?w=600&h=400&fit=crop",
+    image: "https://images.unsplash.com/photo-1418065460487-3e41a6c84dc5?w=600&h=400&fit=crop",
   },
 ];
 
@@ -502,7 +502,7 @@ export default function V2RealEstatePage() {
             className="absolute inset-0"
           >
             <img
-              src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=1920&h=1080&fit=crop"
+              src="https://images.unsplash.com/photo-1600210491892-03d54c0aaf87?w=1920&h=1080&fit=crop"
               alt="Luxury Seattle home interior"
               className="w-full h-full object-cover"
             />
@@ -860,7 +860,7 @@ export default function V2RealEstatePage() {
               <div className="relative rounded-2xl overflow-hidden aspect-[3/4]">
                 <img
                   src="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=600&h=800&fit=crop"
-                  alt="Sarah Chen, Lead Agent"
+                  alt="Sarah Mitchell, Lead Agent"
                   className="w-full h-full object-cover object-top"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#09090b]/60 to-transparent" />
@@ -895,7 +895,7 @@ export default function V2RealEstatePage() {
               <h2 className="text-4xl md:text-5xl font-black tracking-tighter leading-none mb-2">
                 Sarah
                 <br />
-                <span className="text-zinc-600">Chen</span>
+                <span className="text-zinc-600">Mitchell</span>
               </h2>
               <p className="text-sm text-zinc-500 mb-6">Lead Broker | Puget Sound Realty</p>
               <div className="h-px w-16 mb-6" style={{ backgroundColor: GOLD }} />
