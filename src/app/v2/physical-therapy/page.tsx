@@ -107,10 +107,10 @@ const timelineSteps = [
 ];
 
 const testimonials = [
-  { name: "Marcus T.", result: "Back to running in 8 weeks", text: "After my ACL reconstruction I was terrified of a long recovery. Dr. Chen had me running pain-free in just eight weeks. Her approach is unlike anything I have experienced.", rating: 5 },
+  { name: "Marcus T.", result: "Back to running in 8 weeks", text: "After my ACL reconstruction I was terrified of a long recovery. Dr. Reyes had me running pain-free in just eight weeks. Her approach is unlike anything I have experienced.", rating: 5 },
   { name: "Linda K.", result: "Pain-free after 3 years of chronic back pain", text: "I tried everything for my lower back pain. Summit PT was my last hope and it changed my life. The manual therapy and dry needling combination worked when nothing else did.", rating: 5 },
   { name: "David R.", result: "Full shoulder mobility restored", text: "After rotator cuff surgery I could barely lift my arm. The aquatic therapy program got me back to full range of motion ahead of schedule. Outstanding care.", rating: 5 },
-  { name: "Sarah M.", result: "Back on the tennis court in 10 weeks", text: "As a competitive tennis player my knee injury felt career-ending. Dr. Chen understood my urgency and got me tournament-ready faster than I thought possible.", rating: 5 },
+  { name: "Sarah M.", result: "Back on the tennis court in 10 weeks", text: "As a competitive tennis player my knee injury felt career-ending. Dr. Reyes understood my urgency and got me tournament-ready faster than I thought possible.", rating: 5 },
 ];
 
 const bodyMapAreas = [
@@ -124,7 +124,7 @@ const bodyMapAreas = [
 
 const faqs = [
   { q: "Do I need a referral from my doctor?", a: "Washington state allows Direct Access, meaning you can see a physical therapist without a referral. Some insurance plans may require one for coverage. We will help you navigate this during your first call." },
-  { q: "How long does each session last?", a: "Initial evaluations are 60 minutes of dedicated one-on-one time with Dr. Chen. Follow-up sessions are typically 45 to 60 minutes." },
+  { q: "How long does each session last?", a: "Initial evaluations are 60 minutes of dedicated one-on-one time with Dr. Reyes. Follow-up sessions are typically 45 to 60 minutes." },
   { q: "What should I wear to my appointment?", a: "Comfortable, loose-fitting clothing that allows easy movement. Athletic wear is ideal. We will need access to the area being treated." },
   { q: "How many sessions will I need?", a: "Most patients see significant improvement within 6 to 12 sessions. We create a personalized plan during your evaluation and adjust as you progress." },
   { q: "Do you accept my insurance?", a: "We accept most major insurance plans including Blue Cross Blue Shield, Aetna, UnitedHealthcare, Cigna, Medicare, Premera, and Regence. Call us to verify your specific plan." },
@@ -293,7 +293,7 @@ export default function V2PhysicalTherapyShowcase() {
             </div>
             <div className="flex-1 text-center md:text-left">
               <h3 className="text-xl md:text-2xl font-extrabold mb-1" style={{ color: DARK_TEXT }}>New Patient Special: $175 Comprehensive Evaluation</h3>
-              <p style={{ color: MUTED }}>Includes a 60-minute assessment with Dr. Chen, personalized treatment plan, and your first hands-on therapy session. No referral needed.</p>
+              <p style={{ color: MUTED }}>Includes a 60-minute assessment with Dr. Reyes, personalized treatment plan, and your first hands-on therapy session. No referral needed.</p>
             </div>
             <MagneticButton className="px-6 py-3 rounded-full text-sm font-bold text-white cursor-pointer shrink-0 inline-flex items-center gap-2" style={{ background: ORANGE }}>
               Book Now <ArrowRight size={16} weight="bold" />
@@ -415,7 +415,7 @@ export default function V2PhysicalTherapyShowcase() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="relative">
               <div className="rounded-2xl overflow-hidden border border-slate-200 shadow-lg">
-                <img src="https://images.unsplash.com/photo-1586297135537-94bc9ba060aa?w=700&q=80" alt="Dr. Amanda Chen, DPT" className="w-full h-[480px] object-cover object-top" />
+                <img src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=700&q=80" alt="Dr. Sofia Reyes, DPT" className="w-full h-[480px] object-cover object-top" />
               </div>
               <div className="absolute -bottom-4 -right-4 md:bottom-6 md:-right-6">
                 <div className="px-5 py-3 rounded-xl shadow-lg border border-white text-white font-bold text-sm" style={{ background: BLUE }}>
@@ -425,13 +425,13 @@ export default function V2PhysicalTherapyShowcase() {
             </div>
             <div>
               <span className="inline-block text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border" style={{ color: ORANGE, borderColor: `${ORANGE}33`, background: `${ORANGE}0d` }}>Meet Your Provider</span>
-              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-2" style={{ color: DARK_TEXT }}>Dr. Amanda Chen, DPT</h2>
+              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-2" style={{ color: DARK_TEXT }}>Dr. Sofia Reyes, DPT</h2>
               <p className="text-lg font-medium mb-6" style={{ color: ORANGE }}>Doctor of Physical Therapy &bull; Orthopedic Clinical Specialist</p>
               <p className="leading-relaxed mb-6" style={{ color: MUTED }}>
-                With 14 years of clinical experience and board certification in orthopedic physical therapy, Dr. Chen founded Summit PT &amp; Rehab in Seattle to deliver the kind of care she believes every patient deserves: one-on-one, evidence-based, and deeply personalized.
+                With 14 years of clinical experience and board certification in orthopedic physical therapy, Dr. Reyes founded Summit PT &amp; Rehab in Seattle to deliver the kind of care she believes every patient deserves: one-on-one, evidence-based, and deeply personalized.
               </p>
               <p className="leading-relaxed mb-8" style={{ color: MUTED }}>
-                Her approach combines hands-on manual therapy with progressive exercise prescription to get you moving better and living better. Whether you are recovering from surgery, managing chronic pain, or rehabbing a sports injury, Dr. Chen is with you every step of the way.
+                Her approach combines hands-on manual therapy with progressive exercise prescription to get you moving better and living better. Whether you are recovering from surgery, managing chronic pain, or rehabbing a sports injury, Dr. Reyes is with you every step of the way.
               </p>
               <div className="grid grid-cols-2 gap-3">
                 {[
@@ -468,7 +468,7 @@ export default function V2PhysicalTherapyShowcase() {
                 step: "01",
                 icon: Stethoscope,
                 title: "Health History",
-                desc: "Dr. Chen reviews your medical history, prior treatments, imaging results, and current medications to understand the full picture.",
+                desc: "Dr. Reyes reviews your medical history, prior treatments, imaging results, and current medications to understand the full picture.",
               },
               {
                 step: "02",
@@ -480,7 +480,7 @@ export default function V2PhysicalTherapyShowcase() {
                 step: "03",
                 icon: Target,
                 title: "Diagnosis & Plan",
-                desc: "Dr. Chen explains exactly what is causing your pain, how long recovery will take, and what your personalized treatment plan looks like.",
+                desc: "Dr. Reyes explains exactly what is causing your pain, how long recovery will take, and what your personalized treatment plan looks like.",
               },
               {
                 step: "04",
@@ -580,7 +580,7 @@ export default function V2PhysicalTherapyShowcase() {
                     {selectedBodyPart} pain is one of the most common conditions we treat.
                   </p>
                   <p className="mb-4" style={{ color: MUTED }}>
-                    Dr. Chen specializes in {selectedBodyPart.toLowerCase()} rehabilitation using manual therapy and targeted exercise. Most patients see significant improvement within 4 to 8 visits.
+                    Dr. Reyes specializes in {selectedBodyPart.toLowerCase()} rehabilitation using manual therapy and targeted exercise. Most patients see significant improvement within 4 to 8 visits.
                   </p>
                   <MagneticButton className="px-6 py-3 rounded-full text-sm font-bold text-white cursor-pointer inline-flex items-center gap-2" style={{ background: ORANGE }}>
                     Book {selectedBodyPart} Evaluation <ArrowRight size={16} weight="bold" />
@@ -647,7 +647,7 @@ export default function V2PhysicalTherapyShowcase() {
           </div>
           <div className="grid md:grid-cols-3 gap-6">
             {[
-              { title: "Initial Evaluation", price: "$175", desc: "60-minute comprehensive assessment with Dr. Chen, personalized treatment plan, and first session of hands-on care.", badge: "Start Here", popular: false },
+              { title: "Initial Evaluation", price: "$175", desc: "60-minute comprehensive assessment with Dr. Reyes, personalized treatment plan, and first session of hands-on care.", badge: "Start Here", popular: false },
               { title: "Follow-Up Visit", price: "$125", desc: "45-60 minutes of one-on-one therapy including manual techniques, exercise progression, and home program updates.", badge: "Most Common", popular: true },
               { title: "Insurance Billed", price: "$0*", desc: "We accept most major insurance and bill directly. Your out-of-pocket cost depends on your plan. Call to verify.", badge: "Preferred", popular: false },
             ].map((pkg) => (
@@ -767,7 +767,7 @@ export default function V2PhysicalTherapyShowcase() {
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               { icon: HandHeart, title: "Gentle Approach", desc: "We never push beyond your comfort zone. Every technique is explained before we begin." },
-              { icon: Users, title: "One-on-One Always", desc: "No aides, no group sessions. Dr. Chen works with you directly for the entire visit." },
+              { icon: Users, title: "One-on-One Always", desc: "No aides, no group sessions. Dr. Reyes works with you directly for the entire visit." },
               { icon: Brain, title: "Patient Education", desc: "We teach you why, not just what. Understanding your body empowers lasting recovery." },
               { icon: CalendarCheck, title: "Flexible Scheduling", desc: "Early morning and evening appointments available to fit your life and work schedule." },
             ].map((item, i) => {
@@ -790,7 +790,7 @@ export default function V2PhysicalTherapyShowcase() {
       <SectionReveal className="relative z-10 py-24 md:py-32" style={{ background: BG }}>
         <div className="max-w-4xl mx-auto px-6">
           <div className="relative rounded-2xl overflow-hidden border border-slate-200 shadow-lg">
-            <img src="https://images.unsplash.com/photo-1513224502586-d1e602410265?w=1000&q=80" alt="Summit PT clinic interior" className="w-full h-[400px] object-cover" />
+            <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1000&q=80" alt="Summit PT clinic interior" className="w-full h-[400px] object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent flex items-center justify-center">
               <div className="text-center">
                 <div className="w-20 h-20 rounded-full bg-white/90 flex items-center justify-center mx-auto mb-4 shadow-xl cursor-pointer hover:bg-white transition-colors">
@@ -813,14 +813,14 @@ export default function V2PhysicalTherapyShowcase() {
             <span className="inline-block text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border" style={{ color: BLUE, borderColor: `${BLUE}33`, background: `${BLUE}0d` }}>Our Space</span>
             <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight" style={{ color: DARK_TEXT }}>A Clinic Built for Recovery</h2>
             <div className="h-1 w-16 mx-auto mt-4 rounded-full" style={{ background: `linear-gradient(to right, ${BLUE}, ${ORANGE})` }} />
-            <p className="mt-4 max-w-xl mx-auto" style={{ color: MUTED }}>Our Sand Point clinic features state-of-the-art equipment, private treatment rooms, and an on-site aquatic therapy pool.</p>
+            <p className="mt-4 max-w-xl mx-auto" style={{ color: MUTED }}>Our Sand Point clinic features state-of-the-art equipment, private assessment rooms, and a dedicated recovery suite.</p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { label: "Treatment Room", img: "https://images.unsplash.com/photo-1586771107445-d3ca888129ff?w=400&q=80" },
-              { label: "Exercise Area", img: "https://images.unsplash.com/photo-1574680178050-55c6a6a96e0a?w=400&q=80" },
-              { label: "Aquatic Therapy", img: "https://images.unsplash.com/photo-1530549387789-4c1017266635?w=400&q=80" },
-              { label: "Reception", img: "https://images.unsplash.com/photo-1516841273335-e39b37888115?w=400&q=80" },
+              { label: "Assessment Room", img: "https://images.unsplash.com/photo-1631815589968-fdb09a223b1e?w=400&q=80" },
+              { label: "Exercise Area", img: "https://images.unsplash.com/photo-1540497077202-7c8a3999166f?w=400&q=80" },
+              { label: "Recovery Room", img: "https://images.unsplash.com/photo-1551601651-bc60f254d532?w=400&q=80" },
+              { label: "Reception", img: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=400&q=80" },
             ].map((room) => (
               <div key={room.label} className="relative rounded-xl overflow-hidden group">
                 <img src={room.img} alt={room.label} className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500" />
@@ -946,7 +946,7 @@ export default function V2PhysicalTherapyShowcase() {
         <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
           <Heartbeat size={48} weight="fill" className="mx-auto mb-6 text-white/70" />
           <h2 className="text-3xl md:text-5xl font-black tracking-tight text-white mb-4">Start Moving Better Today</h2>
-          <p className="text-lg text-white/80 mb-8 max-w-xl mx-auto">No referral needed. Schedule your evaluation with Dr. Chen and take the first step toward living without pain.</p>
+          <p className="text-lg text-white/80 mb-8 max-w-xl mx-auto">No referral needed. Schedule your evaluation with Dr. Reyes and take the first step toward living without pain.</p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <a href="tel:+12065550293" className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-white font-bold text-lg hover:bg-white/90 transition-colors" style={{ color: BLUE }}>
               <Phone size={20} weight="fill" /> (206) 555-0293
@@ -965,7 +965,7 @@ export default function V2PhysicalTherapyShowcase() {
             <div>
               <span className="inline-block text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border" style={{ color: ORANGE, borderColor: `${ORANGE}33`, background: `${ORANGE}0d` }}>Contact Us</span>
               <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-6" style={{ color: DARK_TEXT }}>Schedule Your Evaluation</h2>
-              <p className="leading-relaxed mb-8" style={{ color: MUTED }}>Take the first step toward recovery. Contact us to schedule your initial evaluation with Dr. Chen.</p>
+              <p className="leading-relaxed mb-8" style={{ color: MUTED }}>Take the first step toward recovery. Contact us to schedule your initial evaluation with Dr. Reyes.</p>
               <div className="space-y-5">
                 {[
                   { icon: MapPin, title: "Address", text: "5423 Sand Point Way NE, Seattle, WA 98105", href: "https://maps.google.com/?q=5423+Sand+Point+Way+NE+Seattle+WA+98105" },
@@ -1035,7 +1035,7 @@ export default function V2PhysicalTherapyShowcase() {
               <ShieldCheck size={48} weight="fill" style={{ color: BLUE }} className="mx-auto mb-4" />
               <h2 className="text-2xl md:text-4xl font-extrabold mb-4" style={{ color: DARK_TEXT }}>Our Patient Promise</h2>
               <p className="leading-relaxed max-w-2xl mx-auto text-lg" style={{ color: MUTED }}>
-                One-on-one care with a Doctor of Physical Therapy at every visit. No aides, no group sessions, no shortcuts. Just you, Dr. Chen, and a plan to get you back to the life you love.
+                One-on-one care with a Doctor of Physical Therapy at every visit. No aides, no group sessions, no shortcuts. Just you, Dr. Reyes, and a plan to get you back to the life you love.
               </p>
               <div className="flex flex-wrap justify-center gap-3 mt-8">
                 {["Board Certified", "Direct Access", "One-on-One Care", "Insurance Accepted"].map((item) => (
