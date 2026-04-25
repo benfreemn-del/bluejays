@@ -321,6 +321,351 @@ export function getSmartQueries(category: Category, maxQueries: number = 3): str
   return queries.slice(0, maxQueries);
 }
 
+// ==================== CHAIN / FRANCHISE BLOCKLIST ====================
+
+/**
+ * Patterns matching the most-spammy national US chain brands.
+ * Each pattern is a /flag/i regex that runs against `businessName` at scout intake.
+ *
+ * Goal: prevent wasting ~$0.10/lead generation cycles on McDonald's, Subway,
+ * Jiffy Lube #1234, Great Clips locations, etc. These businesses don't buy
+ * custom websites — they have corporate-owned franchise sites.
+ *
+ * Grouped by category for readability, not enforcement (we test them all
+ * against every prospect because Google Places can mis-categorize).
+ */
+export const KNOWN_CHAINS: RegExp[] = [
+  // Auto repair / oil change / tires
+  /\bjiffy lube\b/i,
+  /\bvalvoline\b/i,
+  /\bmidas\b/i,
+  /\bmeineke\b/i,
+  /\bfirestone\b/i,
+  /\bgoodyear\b/i,
+  /\bdiscount tire\b/i,
+  /\bles schwab\b/i,
+  /\baamco\b/i,
+  /\bpep boys\b/i,
+  /\bbig o tires\b/i,
+  /\btake 5 oil/i,
+  /\bgrease monkey\b/i,
+  /\bmaaco\b/i,
+  /\bmonro/i,
+  /\bauto zone\b/i,
+  /\bautozone\b/i,
+  /\bo'?reilly\b/i,
+  /\bnapa auto/i,
+  /\badvance auto/i,
+
+  // Salons / barbers
+  /\bgreat clips\b/i,
+  /\bsupercuts\b/i,
+  /\bsport clips\b/i,
+  /\bfantastic sams\b/i,
+  /\bcost cutters\b/i,
+  /\bhair cuttery\b/i,
+  /\bregis salon/i,
+  /\bsmartstyle\b/i,
+  /\bultacuts\b/i,
+  /\bjcpenney salon/i,
+  /\bmastercuts\b/i,
+  /\bfirst choice haircutters\b/i,
+  /\bfloyd'?s 99/i,
+
+  // Fast food / restaurants
+  /\bmcdonald'?s?\b/i,
+  /\bsubway\b/i,
+  /\bburger king\b/i,
+  /\btaco bell\b/i,
+  /\bkfc\b/i,
+  /\bwendy'?s\b/i,
+  /\barby'?s\b/i,
+  /\bchipotle\b/i,
+  /\bpanera\b/i,
+  /\bjimmy john'?s\b/i,
+  /\bjersey mike'?s\b/i,
+  /\bfirehouse subs\b/i,
+  /\bquiznos\b/i,
+  /\bdomino'?s\b/i,
+  /\bpizza hut\b/i,
+  /\bpapa john'?s\b/i,
+  /\blittle caesars\b/i,
+  /\bmarco'?s pizza\b/i,
+  /\bpapa murphy'?s\b/i,
+  /\bround table pizza\b/i,
+  /\bblaze pizza\b/i,
+  /\bmod pizza\b/i,
+  /\bdairy queen\b/i,
+  /\bsonic drive/i,
+  /\bculver'?s\b/i,
+  /\bin[- ]n[- ]out\b/i,
+  /\bfive guys\b/i,
+  /\bshake shack\b/i,
+  /\bwhataburger\b/i,
+  /\bjack in the box\b/i,
+  /\bcarl'?s jr\b/i,
+  /\bhardee'?s\b/i,
+  /\bchick[- ]?fil[- ]?a\b/i,
+  /\bpopeyes\b/i,
+  /\bzaxby'?s\b/i,
+  /\braising cane'?s\b/i,
+  /\bbojangles\b/i,
+  /\bel pollo loco\b/i,
+  /\bdel taco\b/i,
+  /\bqdoba\b/i,
+  /\bmoe'?s southwest\b/i,
+  /\bbaja fresh\b/i,
+  /\brubio'?s\b/i,
+  /\bapplebee'?s\b/i,
+  /\bchili'?s\b/i,
+  /\bolive garden\b/i,
+  /\bred lobster\b/i,
+  /\bouback steakhouse\b/i,
+  /\boutback steakhouse\b/i,
+  /\btexas roadhouse\b/i,
+  /\blonghorn steakhouse\b/i,
+  /\bcracker barrel\b/i,
+  /\bdenny'?s\b/i,
+  /\bihop\b/i,
+  /\bperkins\b/i,
+  /\bwaffle house\b/i,
+  /\bbob evans\b/i,
+  /\bred robin\b/i,
+  /\bbuffalo wild wings\b/i,
+  /\bhooters\b/i,
+  /\btgi friday'?s\b/i,
+  /\bruby tuesday\b/i,
+  /\bcheesecake factory\b/i,
+  /\bp\.?f\.? chang'?s\b/i,
+  /\bbenihana\b/i,
+  /\bpanda express\b/i,
+  /\bsizzler\b/i,
+  /\bgolden corral\b/i,
+  /\bryan'?s\b/i,
+  /\bhomedepot\b/i,
+
+  // Coffee / bakeries
+  /\bstarbucks\b/i,
+  /\bdutch bros\b/i,
+  /\bdunkin\b/i,
+  /\btim hortons\b/i,
+  /\bpeet'?s coffee\b/i,
+  /\bcaribou coffee\b/i,
+  /\bbiggby coffee\b/i,
+  /\btully'?s coffee\b/i,
+  /\bcorner bakery\b/i,
+  /\bgreat harvest\b/i,
+  /\bcinnabon\b/i,
+
+  // Pharmacy / retail / big box
+  /\bwalgreens\b/i,
+  /\bcvs\b/i,
+  /\brite aid\b/i,
+  /\bwalmart\b/i,
+  /\btarget\b/i,
+  /\bcostco\b/i,
+  /\bsam'?s club\b/i,
+  /\bhome depot\b/i,
+  /\blowe'?s\b/i,
+  /\bmenards\b/i,
+  /\bace hardware\b/i,
+  /\btrue value\b/i,
+  /\bharbor freight\b/i,
+  /\bbest buy\b/i,
+  /\bdollar tree\b/i,
+  /\bdollar general\b/i,
+  /\bfamily dollar\b/i,
+  /\bfive below\b/i,
+  /\bbig lots\b/i,
+  /\bross dress for less\b/i,
+  /\btj maxx\b/i,
+  /\bmarshalls\b/i,
+  /\bhomegoods\b/i,
+  /\bkohl'?s\b/i,
+  /\bjcpenney\b/i,
+  /\bmacy'?s\b/i,
+  /\bnordstrom\b/i,
+  /\bdick'?s sporting\b/i,
+  /\bacademy sports\b/i,
+  /\brei\b/i,
+  /\bbass pro\b/i,
+  /\bcabela'?s\b/i,
+  /\bpetco\b/i,
+  /\bpetsmart\b/i,
+  /\btractor supply\b/i,
+  /\bbooks-a-million\b/i,
+  /\bbarnes ?& ?noble\b/i,
+
+  // Fitness / health
+  /\bplanet fitness\b/i,
+  /\banytime fitness\b/i,
+  /\b24 hour fitness\b/i,
+  /\bla fitness\b/i,
+  /\bgold'?s gym\b/i,
+  /\bsnap fitness\b/i,
+  /\bcrunch fitness\b/i,
+  /\borangetheory\b/i,
+  /\bf45\b/i,
+  /\bcurves\b/i,
+  /\bworkout anytime\b/i,
+  /\beos fitness\b/i,
+  /\b9round\b/i,
+  /\byouFit\b/i,
+  /\bfitness 19\b/i,
+
+  // Insurance / financial
+  /\bstate farm\b/i,
+  /\bgeico\b/i,
+  /\ballstate\b/i,
+  /\bprogressive\b/i,
+  /\bfarmers insurance\b/i,
+  /\bnationwide\b/i,
+  /\bliberty mutual\b/i,
+  /\baaa\b/i,
+  /\bh&r block\b/i,
+  /\bjackson hewitt\b/i,
+  /\bliberty tax\b/i,
+  /\bedward jones\b/i,
+  /\bmerrill lynch\b/i,
+  /\bchase\b/i,
+  /\bwells fargo\b/i,
+  /\bbank of america\b/i,
+  /\bus bank\b/i,
+  /\bcapital one\b/i,
+  /\bpnc bank\b/i,
+
+  // Real estate (brand-name brokerages)
+  /\bre\/max\b/i,
+  /\bcoldwell banker\b/i,
+  /\bkeller williams\b/i,
+  /\bcentury 21\b/i,
+  /\bberkshire hathaway\b/i,
+  /\bsotheby'?s\b/i,
+  /\bwindermere\b/i,
+  /\bjohn l scott\b/i,
+  /\bredfin\b/i,
+  /\bcompass\b/i,
+  /\bex realty\b/i,
+  /\bexp realty\b/i,
+
+  // Cleaning / home services chains
+  /\bservpro\b/i,
+  /\bservicemaster\b/i,
+  /\bstanley steemer\b/i,
+  /\bchem-?dry\b/i,
+  /\bcoit\b/i,
+  /\bmolly maid\b/i,
+  /\bmaid brigade\b/i,
+  /\bmerry maids\b/i,
+  /\btwo maids\b/i,
+  /\bthe maids\b/i,
+  /\bcleaning authority\b/i,
+
+  // Pest control chains
+  /\borkin\b/i,
+  /\bterminix\b/i,
+  /\baptive environmental\b/i,
+  /\btruly nolen\b/i,
+  /\barrow exterminators\b/i,
+  /\bmosquito joe\b/i,
+  /\bmosquito squad\b/i,
+
+  // Trades chains / franchises
+  /\broto-?rooter\b/i,
+  /\bmr\.? rooter\b/i,
+  /\bbenjamin franklin plumbing\b/i,
+  /\bbenjamin franklin (plumbing|electric)\b/i,
+  /\bone hour heating\b/i,
+  /\bmister sparky\b/i,
+  /\bmr\.? electric\b/i,
+  /\bgeneral aire\b/i,
+  /\bara/i,
+  /\babc home/i,
+  /\baire serv\b/i,
+  /\baqua plumbing\b/i,
+  /\bservice experts\b/i,
+  /\bcomfort experts\b/i,
+  /\b1-800-plumber\b/i,
+  /\b1-800-flowers\b/i,
+  /\bproflowers\b/i,
+  /\bteleflora\b/i,
+  /\bftd\b/i,
+
+  // Daycare / childcare / education
+  /\bkindercare\b/i,
+  /\bgoddard school\b/i,
+  /\bla petite academy\b/i,
+  /\bbright horizons\b/i,
+  /\bprimrose schools?\b/i,
+  /\bthe learning experience\b/i,
+  /\bmathnasium\b/i,
+  /\bkumon\b/i,
+  /\bsylvan learning\b/i,
+  /\bhuntington learning\b/i,
+  /\bclub z!\b/i,
+  /\bthe little gym\b/i,
+  /\bgymboree\b/i,
+
+  // Medical / dental chains
+  /\baspen dental\b/i,
+  /\bgentle dental\b/i,
+  /\bwestern dental\b/i,
+  /\bbright now dental\b/i,
+  /\bsmile direct\b/i,
+  /\bheartland dental\b/i,
+  /\bpacific dental\b/i,
+  /\bfamily first dental\b/i,
+  /\bminuteclinic\b/i,
+  /\bconcentra\b/i,
+  /\bmedexpress\b/i,
+  /\bcareNow\b/i,
+
+  // Moving / storage
+  /\btwo men and a truck\b/i,
+  /\b2 men and a truck\b/i,
+  /\bcollege hunks\b/i,
+  /\bu-?haul\b/i,
+  /\bpenske\b/i,
+  /\bbudget truck\b/i,
+  /\bextra space storage\b/i,
+  /\bpublic storage\b/i,
+  /\bcubesmart\b/i,
+  /\blife storage\b/i,
+  /\b1-800-got-junk\b/i,
+  /\bjunk king\b/i,
+  /\bcollege hunks hauling\b/i,
+];
+
+/**
+ * Tests a business name against `KNOWN_CHAINS` plus structural patterns
+ * that strongly suggest a chain/franchise location.
+ *
+ * Returns `true` if the business is likely a chain/franchise we should skip.
+ */
+export function isLikelyChain(businessName: string): boolean {
+  if (!businessName) return false;
+  const name = businessName.trim();
+  if (!name) return false;
+
+  // 1) Direct match against KNOWN_CHAINS
+  for (const pattern of KNOWN_CHAINS) {
+    if (pattern.test(name)) return true;
+  }
+
+  // 2) Structural signal: store number suffix (e.g. "Jiffy Lube #1234", "Subway #7890")
+  if (/#\s*\d{2,}\b/.test(name)) return true;
+
+  // 3) Structural signal: contains a corporate name with "of" + city ("Smith Insurance of Seattle, Inc.")
+  //    only flag when both "Inc." (or "Inc") AND " of " are present
+  if (/\bInc\.?\b/i.test(name) && /\bof\s+[A-Z][a-z]+/.test(name)) return true;
+
+  // 4) Structural signal: "<Brand> LLC <Number>" — common franchise shell entity pattern
+  //    "Sparkle Wash LLC 0042" → flag
+  if (/\bLLC\b/i.test(name) && /\b\d{3,}\b/.test(name)) return true;
+
+  return false;
+}
+
 // ==================== WEBSITE QUALITY CHECK ====================
 
 /**

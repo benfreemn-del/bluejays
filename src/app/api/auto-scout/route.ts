@@ -12,8 +12,40 @@ import {
 
 export const maxDuration = 300; // 5 min for Vercel
 
-/** GET — current status + progress */
-export async function GET() {
+/** GET — current status + progress, OR triggers a run when called by Vercel cron.
+ *
+ * NOTE — Vercel cron jobs invoke endpoints with a GET request, NOT POST.
+ * When Authorization: Bearer <CRON_SECRET> is present, we treat the call
+ * as a cron invocation and trigger a run via runAutoScout(). The run is
+ * gated internally by config.enabled, so it's safe to leave on a cron
+ * always — disabled config makes it a no-op.
+ *
+ * Without the bearer (dashboard fetch / manual GET), it stays read-only
+ * and just returns status + progress.
+ */
+export async function GET(request: NextRequest) {
+  const authHeader = request.headers.get("authorization");
+  const cronSecret = process.env.CRON_SECRET;
+  const isCronInvocation = cronSecret && authHeader === `Bearer ${cronSecret}`;
+
+  // Cron path: trigger the run. runAutoScout() respects config.enabled internally.
+  if (isCronInvocation) {
+    try {
+      console.log("[auto-scout] Cron invocation — running runAutoScout()");
+      const result = await runAutoScout();
+      return NextResponse.json({
+        message: `Auto-scout cron completed: ${result.leadsFound} leads found (stopped: ${result.stoppedReason})`,
+        result,
+      });
+    } catch (error) {
+      return NextResponse.json(
+        { error: (error as Error).message },
+        { status: 500 },
+      );
+    }
+  }
+
+  // Read-only status path (dashboard fetch)
   try {
     const config = await getAutoScoutConfig();
     const counties = getCountiesForState(config.state);

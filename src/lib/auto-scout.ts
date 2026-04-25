@@ -78,7 +78,10 @@ const DEFAULT_CONFIG: AutoScoutConfig = {
   state: "WA",
   dailyLimit: 100,
   categoriesPerCounty: ACTIVE_CATEGORIES.length,
-  prospectsPerCategory: 5,
+  // Bumped 5 → 20 (Fix 1): a single Google Places page returns up to 20 results.
+  // Combined with nextPageToken pagination (up to 3 pages = 60 results), we now
+  // capture ~4-12× the lead volume per (county, category) combo.
+  prospectsPerCategory: 20,
 };
 
 // ---------- Config helpers ----------
@@ -443,18 +446,41 @@ export async function runAutoScout(): Promise<AutoScoutRunResult> {
       countyHadWork = true;
 
       try {
-        const result = await scout({
-          city: `${county} County, ${config.state}`,
-          category: category as Category,
-          limit: config.prospectsPerCategory,
-        });
+        // Fix 1 — Thread nextPageToken across pages.
+        // Google Places returns up to 60 results across 3 pages per text-search.
+        // We loop up to 3 pages per (county, category) combo, with the required
+        // 2.5s delay between pageToken calls baked into scoutWithGoogle.
+        const MAX_PAGES = 3;
+        const TARGET_LEADS = config.prospectsPerCategory * 3; // up to 60 from Google
+        const allPageProspects: Awaited<ReturnType<typeof scout>>["prospects"] = [];
+        let pageToken: string | undefined = undefined;
+        let prospectCount = 0;
 
-        const prospectCount = result.prospects.length;
+        for (let pageNum = 0; pageNum < MAX_PAGES; pageNum++) {
+          const result: Awaited<ReturnType<typeof scout>> = await scout({
+            city: `${county} County, ${config.state}`,
+            category: category as Category,
+            limit: config.prospectsPerCategory,
+            pageToken,
+          });
 
-        // Generate preview sites for each scouted prospect
+          allPageProspects.push(...result.prospects);
+          prospectCount += result.prospects.length;
+          // Rough cost estimate per scout call (search + details per result)
+          estimatedCost += 0.032 + 0.017 * result.prospects.length;
+
+          // Stop when no further page available, we've hit our target, or no results were returned this page
+          if (!result.nextPageToken) break;
+          if (prospectCount >= TARGET_LEADS) break;
+          if (result.prospects.length === 0) break;
+
+          pageToken = result.nextPageToken;
+        }
+
+        // Generate preview sites for each scouted prospect across all pages
         const baseUrl =
           process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-        for (const p of result.prospects) {
+        for (const p of allPageProspects) {
           try {
             await fetch(`${baseUrl}/api/generate/${p.id}`, {
               method: "POST",
@@ -468,10 +494,6 @@ export async function runAutoScout(): Promise<AutoScoutRunResult> {
 
         totalFound += prospectCount;
         categoriesProcessed++;
-
-        // Rough cost estimate per scout call (search + details per result)
-        // ~$0.032 per search + $0.017 per detail * prospectCount
-        estimatedCost += 0.032 + 0.017 * prospectCount;
 
         await logScoutCombo(county, config.state, category, prospectCount);
 
