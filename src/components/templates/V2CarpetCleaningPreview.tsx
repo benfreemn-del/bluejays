@@ -41,11 +41,11 @@ import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
 import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
 
-/* ───────────────────────── SPRING CONFIGS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SPRING CONFIGS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
 
-/* ───────────────────────── COLORS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ COLORS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const CHARCOAL = "#0f172a";
 const DEFAULT_CYAN = "#06b6d4";
 const CYAN_LIGHT = "#67e8f9";
@@ -56,12 +56,12 @@ function getAccent(accentColor?: string) {
   return { ACCENT: c, ACCENT_GLOW: `${c}26`, ACCENT_LIGHT: CYAN_LIGHT, TEAL };
 }
 
-// Rotating palette for service/feature card icon tiles — brings the grid
+// Rotating palette for service/feature card icon tiles â€” brings the grid
 // to life while the primary ACCENT stays on section headers, CTAs, nav.
 const PALETTE = ["#06b6d4", "#0d9488", "#34d399", "#64748b", "#f59e0b", "#a78bfa"];
 const pickPaletteColor = (i: number) => PALETTE[i % PALETTE.length];
 
-/* ───────────────────────── SERVICE ICON MAP ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SERVICE ICON MAP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SERVICE_ICON_MAP: Record<string, any> = {
   carpet: Broom,
@@ -88,7 +88,7 @@ function getServiceIcon(serviceName: string) {
   return Drop;
 }
 
-/* ───────────────────────── STOCK FALLBACK IMAGES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ STOCK FALLBACK IMAGES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const STOCK_HERO_POOL = [
   "https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?w=1400&q=80",
   "https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?w=1400&q=80",
@@ -108,7 +108,7 @@ const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1585421514284-efb74c2b69ba?w=600&q=80",
 ];
 
-/* ───────────────────────── TRUST BADGES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ TRUST BADGES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const TRUST_BADGES = [
   { icon: ShieldCheck, label: "Licensed & Insured", desc: "Full liability coverage for your peace of mind" },
   { icon: Leaf, label: "Eco-Friendly Products", desc: "Non-toxic, pet & child safe cleaning solutions" },
@@ -116,7 +116,7 @@ const TRUST_BADGES = [
   { icon: Star, label: "Satisfaction Guaranteed", desc: "Not happy? We re-clean for free, no questions asked" },
 ];
 
-/* ───────────────────────── PRICING PLANS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ PRICING PLANS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const PRICING_PLANS = [
   {
     name: "Single Room",
@@ -144,7 +144,7 @@ const PRICING_PLANS = [
   },
 ];
 
-/* ───────────────────────── STAIN TYPES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ STAIN TYPES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const STAIN_TYPES = [
   { name: "Pet Stains & Odor", icon: PawPrint, desc: "Enzyme-based treatment eliminates stains and odors at the source" },
   { name: "Red Wine & Food", icon: Drop, desc: "Specialized solutions break down tannins and pigments" },
@@ -154,15 +154,15 @@ const STAIN_TYPES = [
   { name: "Grease & Oil", icon: Wind, desc: "Degreasing agents dissolve stubborn oil-based stains" },
 ];
 
-/* ───────────────────────── ECO-FRIENDLY SECTION ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ECO-FRIENDLY SECTION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const ECO_FEATURES = [
   { icon: Leaf, title: "Plant-Based Formulas", desc: "Our cleaning solutions are derived from natural, plant-based ingredients" },
-  { icon: PawPrint, title: "Pet & Child Safe", desc: "Zero harsh chemicals — safe for crawling babies and furry friends" },
+  { icon: PawPrint, title: "Pet & Child Safe", desc: "Zero harsh chemicals â€” safe for crawling babies and furry friends" },
   { icon: ShieldCheck, title: "Green Seal Certified", desc: "Our products meet the highest environmental and safety standards" },
   { icon: Drop, title: "No Toxic Residue", desc: "Leaves nothing behind but clean, fresh-smelling carpet fibers" },
 ];
 
-/* ───────────────────────── COMPARISON TABLE ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ COMPARISON TABLE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const COMPARISON_ROWS = [
   { feature: "Hot Water Extraction", us: true, them: "Dry Chem Only" },
   { feature: "Eco-Friendly Products", us: true, them: "Harsh Chemicals" },
@@ -173,14 +173,14 @@ const COMPARISON_ROWS = [
   { feature: "Free Re-Clean", us: true, them: "Never" },
 ];
 
-/* ───────────────────────── QUIZ OPTIONS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ QUIZ OPTIONS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const QUIZ_OPTIONS = [
-  { label: "Heavy Traffic & Stains", color: "#ef4444", desc: "Your carpets see a lot of action — pets, kids, or high traffic areas with visible staining.", tag: "Deep Clean Needed" },
+  { label: "Heavy Traffic & Stains", color: "#ef4444", desc: "Your carpets see a lot of action â€” pets, kids, or high traffic areas with visible staining.", tag: "Deep Clean Needed" },
   { label: "Regular Maintenance", color: "#3b82f6", desc: "Carpets look okay but could use a refresh. Great for keeping them in top shape.", tag: "Most Popular" },
   { label: "Just Moved In/Out", color: "#22c55e", desc: "Need a thorough cleaning for a fresh start in your new home or to get your deposit back.", tag: "Move Special" },
 ];
 
-/* ───────────────────────── FLOATING PARTICLES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ FLOATING PARTICLES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function FloatingParticles({ accent }: { accent: string }) {
   const particles = Array.from({ length: 18 }, (_, i) => ({
     id: i,
@@ -209,7 +209,7 @@ function FloatingParticles({ accent }: { accent: string }) {
   );
 }
 
-/* ───────────────────────── BUBBLE PATTERN ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ BUBBLE PATTERN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function BubblePattern({ opacity = 0.03, accent }: { opacity?: number; accent: string }) {
   const patternId = `bubbleCarpetV2-${accent.replace("#", "")}`;
   return (
@@ -230,7 +230,7 @@ function BubblePattern({ opacity = 0.03, accent }: { opacity?: number; accent: s
   );
 }
 
-/* ───────────────────────── WATER FLOW ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ WATER FLOW â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function WaterFlow({ opacity = 0.03, accent }: { opacity?: number; accent: string }) {
   return (
     <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity }} viewBox="0 0 1000 600" preserveAspectRatio="none">
@@ -244,7 +244,7 @@ function WaterFlow({ opacity = 0.03, accent }: { opacity?: number; accent: strin
   );
 }
 
-/* ───────────────────────── GLASS CARD ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ GLASS CARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
@@ -253,7 +253,7 @@ function GlassCard({ children, className = "" }: { children: React.ReactNode; cl
   );
 }
 
-/* ───────────────────────── MAGNETIC BUTTON ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ MAGNETIC BUTTON â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function MagneticButton({ children, className = "", onClick, style, href }: {
   children: React.ReactNode; className?: string; onClick?: () => void; style?: React.CSSProperties; href?: string;
 }) {
@@ -289,7 +289,7 @@ function MagneticButton({ children, className = "", onClick, style, href }: {
   );
 }
 
-/* ───────────────────────── SHIMMER BORDER ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SHIMMER BORDER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function ShimmerBorder({ children, className = "", accent }: { children: React.ReactNode; className?: string; accent: string }) {
   return (
     <div className={`relative rounded-2xl p-[1px] overflow-hidden ${className}`}>
@@ -301,7 +301,7 @@ function ShimmerBorder({ children, className = "", accent }: { children: React.R
   );
 }
 
-/* ───────────────────────── ACCORDION ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ACCORDION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AccordionItem({ question, answer, isOpen, onToggle }: { question: string; answer: string; isOpen: boolean; onToggle: () => void }) {
   return (
     <GlassCard className="overflow-hidden">
@@ -323,7 +323,7 @@ function AccordionItem({ question, answer, isOpen, onToggle }: { question: strin
   );
 }
 
-/* ───────────────────────── SECTION HEADER ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SECTION HEADER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function SectionHeader({ badge, title, subtitle, accent }: { badge: string; title: string; subtitle?: string; accent: string }) {
   return (
     <div className="text-center mb-16">
@@ -336,7 +336,7 @@ function SectionHeader({ badge, title, subtitle, accent }: { badge: string; titl
   );
 }
 
-/* ───────────────────────── ANIMATED SECTION ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ANIMATED SECTION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <motion.div initial={{ opacity: 1, x: -50 }} whileInView={{ opacity: 1, x: 0 }}
@@ -347,9 +347,9 @@ function AnimatedSection({ children, className = "" }: { children: React.ReactNo
   );
 }
 
-/* ═══════════════════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    MAIN COMPONENT
-   ═══════════════════════════════════════════════════════════════════ */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 export default function V2CarpetCleaningPreview({ data }: { data: GeneratedSiteData }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -400,7 +400,7 @@ export default function V2CarpetCleaningPreview({ data }: { data: GeneratedSiteD
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ fontFamily: "Poppins, system-ui, sans-serif", background: CHARCOAL, color: "#f1f5f9" }}>
       <FloatingParticles accent={ACCENT} />
 
-      {/* ══════════════════ 1. NAV ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 1. NAV â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <nav className="fixed top-0 left-0 right-0 z-50">
         <div className="mx-auto max-w-7xl px-4 md:px-6 py-4">
           <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
@@ -443,7 +443,7 @@ export default function V2CarpetCleaningPreview({ data }: { data: GeneratedSiteD
         </div>
       </nav>
 
-      {/* ══════════════════ 2. HERO ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 2. HERO â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
         <div className="absolute inset-0">
           <img src={heroImage} alt={data.businessName} className="w-full h-full object-cover object-center" />
@@ -503,7 +503,7 @@ export default function V2CarpetCleaningPreview({ data }: { data: GeneratedSiteD
         </div>
       </section>
 
-      {/* ══════════════════ 3. STATS BAR ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 3. STATS BAR â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden border-y" style={{ borderColor: `${ACCENT}1a` }}>
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a1020 0%, #0f172a 100%)" }} />
         <BubblePattern opacity={0.02} accent={ACCENT} />
@@ -529,13 +529,13 @@ export default function V2CarpetCleaningPreview({ data }: { data: GeneratedSiteD
         </div>
       </section>
 
-      {/* ══════════════════ 4. NEW CLIENT SPECIAL ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 4. NEW CLIENT SPECIAL â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-12 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT}dd)` }} />
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='40' height='40' fill='none'/%3E%3Cpath d='M0 0L40 40M40 0L0 40' stroke='%23000' stroke-width='0.5'/%3E%3C/svg%3E\")" }} />
         <div className="max-w-4xl mx-auto px-6 relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
-            <h3 className="text-xl md:text-2xl font-black text-white">3 Rooms for $179 — Limited Time Offer</h3>
+            <h3 className="text-xl md:text-2xl font-black text-white">3 Rooms for $179 â€” Limited Time Offer</h3>
             <p className="text-white/80 text-sm">Includes pre-treatment, hot water extraction, deodorizing, and a hallway free.</p>
           </div>
           <PhoneLink phone={data.phone} className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-white text-black font-bold hover:bg-white/90 transition-colors whitespace-nowrap">
@@ -544,7 +544,7 @@ export default function V2CarpetCleaningPreview({ data }: { data: GeneratedSiteD
         </div>
       </section>
 
-      {/* ══════════════════ 5. SERVICES ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 5. SERVICES â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0a1020 50%, #0f172a 100%)" }} />
         <BubblePattern accent={ACCENT} />
@@ -584,7 +584,7 @@ export default function V2CarpetCleaningPreview({ data }: { data: GeneratedSiteD
         </div>
       </section>
 
-      {/* ══════════════════ 6. ABOUT ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 6. ABOUT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0a1020 50%, #0f172a 100%)" }} />
         <WaterFlow opacity={0.02} accent={ACCENT} />
@@ -624,7 +624,7 @@ export default function V2CarpetCleaningPreview({ data }: { data: GeneratedSiteD
         </div>
       </section>
 
-      {/* ══════════════════ 7. PROCESS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 7. PROCESS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0a1020 50%, #0f172a 100%)" }} />
         <BubblePattern opacity={0.025} accent={ACCENT} />
@@ -653,7 +653,7 @@ export default function V2CarpetCleaningPreview({ data }: { data: GeneratedSiteD
         </div>
       </section>
 
-      {/* ══════════════════ 8. PRICING TIERS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 8. PRICING TIERS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0a1020 50%, #0f172a 100%)" }} />
         <WaterFlow opacity={0.02} accent={ACCENT} />
@@ -714,7 +714,7 @@ export default function V2CarpetCleaningPreview({ data }: { data: GeneratedSiteD
         </div>
       </section>
 
-      {/* ══════════════════ 9. STAIN TYPES ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 9. STAIN TYPES â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0a1020 50%, #0f172a 100%)" }} />
         <BubblePattern opacity={0.02} accent={ACCENT} />
@@ -737,7 +737,7 @@ export default function V2CarpetCleaningPreview({ data }: { data: GeneratedSiteD
         </div>
       </section>
 
-      {/* ══════════════════ 10. BEFORE / AFTER ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 10. BEFORE / AFTER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0a1020 50%, #0f172a 100%)" }} />
         <WaterFlow opacity={0.02} accent={ACCENT} />
@@ -748,11 +748,11 @@ export default function V2CarpetCleaningPreview({ data }: { data: GeneratedSiteD
           <div className="relative rounded-2xl overflow-hidden border border-white/[0.10]">
             <img src="/images/carpet-before-after.png" alt="Carpet cleaning before and after" className="w-full h-auto object-cover" />
           </div>
-          <p className="text-center text-sm text-slate-400 mt-4">Living room deep clean — stains removed, fibers restored, fresh and bright.</p>
+          <p className="text-center text-sm text-slate-400 mt-4">Living room deep clean â€” stains removed, fibers restored, fresh and bright.</p>
         </div>
       </section>
 
-      {/* ══════════════════ 11. COMPARISON TABLE ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 11. COMPARISON TABLE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0a1020 50%, #0f172a 100%)" }} />
         <BubblePattern opacity={0.02} accent={ACCENT} />
@@ -787,7 +787,7 @@ export default function V2CarpetCleaningPreview({ data }: { data: GeneratedSiteD
         </div>
       </section>
 
-      {/* ══════════════════ 12. ECO-FRIENDLY ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 12. ECO-FRIENDLY â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-20 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0a1020 50%, #0f172a 100%)" }} />
         <WaterFlow opacity={0.02} accent={ACCENT} />
@@ -810,7 +810,7 @@ export default function V2CarpetCleaningPreview({ data }: { data: GeneratedSiteD
         </div>
       </section>
 
-      {/* ══════════════════ 13. GOOGLE REVIEWS + TESTIMONIALS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 13. GOOGLE REVIEWS + TESTIMONIALS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="reviews" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0a1020 50%, #0f172a 100%)" }} />
         <BubblePattern opacity={0.02} accent={ACCENT} />
@@ -852,7 +852,7 @@ export default function V2CarpetCleaningPreview({ data }: { data: GeneratedSiteD
         </div>
       </section>
 
-      {/* ══════════════════ 14. CLEANING QUIZ ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 14. CLEANING QUIZ â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0a1020 50%, #0f172a 100%)" }} />
         <BubblePattern opacity={0.02} accent={ACCENT} />
@@ -898,7 +898,7 @@ export default function V2CarpetCleaningPreview({ data }: { data: GeneratedSiteD
         </div>
       </section>
 
-      {/* ══════════════════ 15. VIDEO PLACEHOLDER ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 15. VIDEO PLACEHOLDER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0a1020 50%, #0f172a 100%)" }} />
         <WaterFlow opacity={0.02} accent={ACCENT} />
@@ -921,7 +921,7 @@ export default function V2CarpetCleaningPreview({ data }: { data: GeneratedSiteD
         </div>
       </section>
 
-      {/* ══════════════════ 16. GALLERY ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 16. GALLERY â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="gallery" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0a1020 50%, #0f172a 100%)" }} />
         <BubblePattern opacity={0.02} accent={ACCENT} />
@@ -946,7 +946,7 @@ export default function V2CarpetCleaningPreview({ data }: { data: GeneratedSiteD
         </div>
       </section>
 
-      {/* ══════════════════ 17. FAQ ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 17. FAQ â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0a1020 50%, #0f172a 100%)" }} />
         <BubblePattern opacity={0.02} accent={ACCENT} />
@@ -963,7 +963,7 @@ export default function V2CarpetCleaningPreview({ data }: { data: GeneratedSiteD
         </div>
       </section>
 
-      {/* ══════════════════ 18. SERVICE AREA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 18. SERVICE AREA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0a1020 50%, #0f172a 100%)" }} />
         <BubblePattern opacity={0.02} accent={ACCENT} />
@@ -983,7 +983,7 @@ export default function V2CarpetCleaningPreview({ data }: { data: GeneratedSiteD
         </div>
       </section>
 
-      {/* ══════════════════ 19. MID-PAGE CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 19. MID-PAGE CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT}cc, ${ACCENT})` }} />
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='40' height='40' fill='none'/%3E%3Cpath d='M0 0L40 40M40 0L0 40' stroke='%23000' stroke-width='0.5'/%3E%3C/svg%3E\")" }} />
@@ -997,7 +997,7 @@ export default function V2CarpetCleaningPreview({ data }: { data: GeneratedSiteD
         </div>
       </section>
 
-      {/* ══════════════════ 20. HOURS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 20. HOURS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       {data.hours && (
         <section className="relative z-10 py-24 md:py-32 overflow-hidden">
           <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0a1020 50%, #0f172a 100%)" }} />
@@ -1018,7 +1018,7 @@ export default function V2CarpetCleaningPreview({ data }: { data: GeneratedSiteD
         </section>
       )}
 
-      {/* ══════════════════ 21. CONTACT FORM ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 21. CONTACT FORM â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="contact" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0a1020 50%, #0f172a 100%)" }} />
         <BubblePattern opacity={0.02} accent={ACCENT} />
@@ -1062,7 +1062,7 @@ export default function V2CarpetCleaningPreview({ data }: { data: GeneratedSiteD
                     <input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="Doe" /></div>
                 </div>
                 <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label>
-                  <input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
+                  <input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(206) 287-2304" /></div>
                 <div><label className="block text-sm text-slate-400 mb-1.5">Number of Rooms</label>
                   <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none text-sm">
                     <option value="" className="bg-neutral-900">Select rooms</option>
@@ -1082,7 +1082,7 @@ export default function V2CarpetCleaningPreview({ data }: { data: GeneratedSiteD
         </div>
       </section>
 
-      {/* ══════════════════ 22. PROMISE ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 22. PROMISE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0a1020 100%)" }} />
         <BubblePattern opacity={0.015} accent={ACCENT} />
@@ -1107,7 +1107,7 @@ export default function V2CarpetCleaningPreview({ data }: { data: GeneratedSiteD
         </div>
       </section>
 
-      {/* ══════════════════ 23. FOOTER ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 23. FOOTER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0a0f1a 100%)" }} />
         <BubblePattern opacity={0.015} accent={ACCENT} />

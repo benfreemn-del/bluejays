@@ -42,11 +42,11 @@ import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
 import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
 
-/* ───────────────────────── SPRING CONFIGS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SPRING CONFIGS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
 
-/* ───────────────────────── COLORS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ COLORS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const CHARCOAL = "#1a1a1a";
 const DEFAULT_TEAL = "#0f766e";
 const WARM_AMBER = "#d97706";
@@ -60,13 +60,13 @@ function getAccent(accentColor?: string) {
   };
 }
 
-// Rotating palette for service tile iconography — the brand PRIMARY stays
+// Rotating palette for service tile iconography â€” the brand PRIMARY stays
 // on section headers, CTAs, and structural accents. Each service card gets
 // a different color so the grid feels alive.
 const PALETTE = ["#0f766e", "#d97706", "#6b7f5e", "#e11d48", "#64748b", "#0ea5e9"];
 const pickPaletteColor = (i: number) => PALETTE[i % PALETTE.length];
 
-/* ───────────────────────── SERVICE ICON MAP ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SERVICE ICON MAP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SERVICE_ICON_MAP: Record<string, any> = {
   adjust: Bone,
@@ -94,7 +94,7 @@ function getServiceIcon(serviceName: string) {
   return Bone;
 }
 
-/* ───────────────────────── TREATMENT TYPE BADGES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ TREATMENT TYPE BADGES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const TREATMENT_BADGES = [
   "Spinal Adjustments",
   "Sports Injuries",
@@ -104,7 +104,7 @@ const TREATMENT_BADGES = [
   "Wellness Care",
 ];
 
-/* ───────────────────────── CONDITIONS WE TREAT ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ CONDITIONS WE TREAT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const CONDITIONS = [
   { name: "Back Pain", icon: Bone },
   { name: "Neck Pain", icon: Person },
@@ -116,42 +116,42 @@ const CONDITIONS = [
   { name: "Joint Pain", icon: Bone },
 ];
 
-/* ───────────────────────── CHIROPRACTIC PROCESS STEPS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ CHIROPRACTIC PROCESS STEPS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const CHIRO_PROCESS_STEPS = [
   { step: "01", title: "Consultation & Exam", desc: "We listen to your concerns, review your health history, and perform a thorough hands-on evaluation to understand your unique needs." },
   { step: "02", title: "Digital X-Rays", desc: "Advanced imaging helps us see exactly what's happening with your spine so we can create the most effective treatment plan." },
-  { step: "03", title: "Personalized Treatment Plan", desc: "Your custom care plan is designed around your specific condition, lifestyle, and wellness goals — no cookie-cutter approach." },
+  { step: "03", title: "Personalized Treatment Plan", desc: "Your custom care plan is designed around your specific condition, lifestyle, and wellness goals â€” no cookie-cutter approach." },
   { step: "04", title: "Feel the Difference", desc: "Many patients experience relief from their very first visit. We'll track your progress and adjust your plan for lasting results." },
 ];
 
-/* ───────────────────────── PATIENT COMFORT FEATURES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ PATIENT COMFORT FEATURES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const COMFORT_FEATURES = [
-  { icon: Heart, title: "Gentle Techniques", desc: "Our doctors use low-force methods that are comfortable and effective — no surprises." },
+  { icon: Heart, title: "Gentle Techniques", desc: "Our doctors use low-force methods that are comfortable and effective â€” no surprises." },
   { icon: ShieldCheck, title: "No Cracking Required", desc: "We offer instrument-assisted and drop-table techniques for patients who prefer a gentler approach." },
   { icon: Timer, title: "Same-Day Relief", desc: "Many patients walk out feeling better after their very first adjustment session." },
-  { icon: UserCircle, title: "Family-Friendly", desc: "We treat patients of all ages — from infants to seniors. The whole family is welcome." },
+  { icon: UserCircle, title: "Family-Friendly", desc: "We treat patients of all ages â€” from infants to seniors. The whole family is welcome." },
 ];
 
-/* ───────────────────────── COMPETITOR COMPARISON ROWS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ COMPETITOR COMPARISON ROWS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const COMPARISON_ROWS = [
-  { feature: "Treats Root Cause", us: true, them: "No — masks symptoms" },
+  { feature: "Treats Root Cause", us: true, them: "No â€” masks symptoms" },
   { feature: "No Side Effects", us: true, them: "Drowsiness, dependency" },
   { feature: "Long-Term Results", us: true, them: "Temporary relief only" },
   { feature: "Covered by Insurance", us: true, them: "Varies" },
-  { feature: "Natural Approach", us: true, them: "No — synthetic chemicals" },
-  { feature: "Personalized Care", us: true, them: "No — one-size-fits-all" },
+  { feature: "Natural Approach", us: true, them: "No â€” synthetic chemicals" },
+  { feature: "Personalized Care", us: true, them: "No â€” one-size-fits-all" },
   { feature: "Preventive Benefits", us: true, them: "No" },
 ];
 
-/* ───────────────────────── QUIZ OPTIONS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ QUIZ OPTIONS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const QUIZ_OPTIONS = [
   { label: "Back & Spine", desc: "The most common reason people visit a chiropractor", color: "#0f766e", icon: Bone },
-  { label: "Neck & Shoulders", desc: "Desk workers and tech neck sufferers — we see you", color: "#2563eb", icon: Person },
-  { label: "Headaches", desc: "Often caused by spinal misalignment — not just stress", color: "#7c3aed", icon: Brain },
+  { label: "Neck & Shoulders", desc: "Desk workers and tech neck sufferers â€” we see you", color: "#2563eb", icon: Person },
+  { label: "Headaches", desc: "Often caused by spinal misalignment â€” not just stress", color: "#7c3aed", icon: Brain },
   { label: "Other / Multiple Areas", desc: "Full evaluation to find the source of your discomfort", color: "#d97706", icon: FirstAidKit },
 ];
 
-/* ───────────────────────── STOCK FALLBACK IMAGES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ STOCK FALLBACK IMAGES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1609220136736-443140cffec6?w=1400&q=80"];
 const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1537202108838-e7072bad1927?w=600&q=80"];
 const STOCK_GALLERY = [
@@ -165,7 +165,7 @@ const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1559757175-5700dde675bc?w=800&q=80",
 ];
 
-/* ───────────────────────── FLOATING PARTICLES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ FLOATING PARTICLES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function FloatingParticles({ accent }: { accent: string }) {
   const particles = Array.from({ length: 20 }, (_, i) => ({
     id: i,
@@ -204,7 +204,7 @@ function FloatingParticles({ accent }: { accent: string }) {
   );
 }
 
-/* ───────────────────────── SPINE SVG PATTERN ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SPINE SVG PATTERN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function SpinePattern({ opacity = 0.03, accent }: { opacity?: number; accent: string }) {
   const patternId = `spinePatternV2Prev-${accent.replace("#", "")}`;
   return (
@@ -226,7 +226,7 @@ function SpinePattern({ opacity = 0.03, accent }: { opacity?: number; accent: st
   );
 }
 
-/* ───────────────────────── WELLNESS WAVE SVG ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ WELLNESS WAVE SVG â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function WellnessWave({ opacity = 0.03, accent }: { opacity?: number; accent: string }) {
   return (
     <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity }} viewBox="0 0 1000 600" preserveAspectRatio="none">
@@ -236,7 +236,7 @@ function WellnessWave({ opacity = 0.03, accent }: { opacity?: number; accent: st
   );
 }
 
-/* ───────────────────────── HERO WELLNESS SVG ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ HERO WELLNESS SVG â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function HeroWellnessSVG({ accent }: { accent: string }) {
   return (
     <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 1200 800" preserveAspectRatio="none" style={{ opacity: 0.05 }}>
@@ -248,7 +248,7 @@ function HeroWellnessSVG({ accent }: { accent: string }) {
   );
 }
 
-/* ───────────────────────── GLASS CARD ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ GLASS CARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
@@ -257,7 +257,7 @@ function GlassCard({ children, className = "" }: { children: React.ReactNode; cl
   );
 }
 
-/* ───────────────────────── MAGNETIC BUTTON ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ MAGNETIC BUTTON â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function MagneticButton({ children, className = "", onClick, style, href }: {
   children: React.ReactNode;
   className?: string;
@@ -318,7 +318,7 @@ function MagneticButton({ children, className = "", onClick, style, href }: {
   );
 }
 
-/* ───────────────────────── SHIMMER BORDER ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SHIMMER BORDER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function ShimmerBorder({ children, className = "", accent }: { children: React.ReactNode; className?: string; accent: string }) {
   return (
     <div className={`relative rounded-2xl p-[1px] overflow-hidden ${className}`}>
@@ -336,7 +336,7 @@ function ShimmerBorder({ children, className = "", accent }: { children: React.R
   );
 }
 
-/* ───────────────────────── ACCORDION ITEM ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ACCORDION ITEM â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AccordionItem({ question, answer, isOpen, onToggle }: {
   question: string;
   answer: string;
@@ -368,7 +368,7 @@ function AccordionItem({ question, answer, isOpen, onToggle }: {
   );
 }
 
-/* ───────────────────────── SECTION HEADER ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SECTION HEADER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function SectionHeader({ badge, title, subtitle, accent }: {
   badge: string;
   title: string;
@@ -391,10 +391,10 @@ function SectionHeader({ badge, title, subtitle, accent }: {
 }
 
 
-/* ═══════════════════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    MAIN PREVIEW COMPONENT
-   ═══════════════════════════════════════════════════════════════════ */
-/* ───────────────────────── ANIMATED SECTION ───────────────────────── */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ANIMATED SECTION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <motion.div
@@ -456,7 +456,7 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ fontFamily: "Lato, system-ui, sans-serif", background: CHARCOAL, color: "#f1f5f9" }}>
       <FloatingParticles accent={PRIMARY} />
 
-      {/* ══════════════════ 1. NAV ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 1. NAV â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <nav className="fixed top-0 left-0 right-0 z-50">
         <div className="mx-auto max-w-7xl px-4 md:px-6 py-4">
           <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
@@ -512,7 +512,7 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
         </div>
       </nav>
 
-      {/* ══════════════════ 2. HERO ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 2. HERO â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
 
         <div className="absolute inset-0">
@@ -578,7 +578,7 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
         </div>
       </section>
 
-      {/* ══════════════════ 3. STATS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 3. STATS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden border-y" style={{ borderColor: `${PRIMARY}1a` }}>
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #121514 0%, #1a1a1a 100%)" }} />
         <SpinePattern opacity={0.02} accent={PRIMARY} />
@@ -604,7 +604,7 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
         </div>
       </section>
 
-      {/* ══════════════════ TREATMENT TYPE BADGES ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• TREATMENT TYPE BADGES â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #151917 100%)" }} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -623,7 +623,7 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
         </div>
       </section>
 
-      {/* ══════════════════ NEW PATIENT SPECIAL ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• NEW PATIENT SPECIAL â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${WARM_AMBER}15, ${WARM_AMBER}08)` }} />
         <div className="absolute inset-0 pointer-events-none">
@@ -661,7 +661,7 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
         </div>
       </section>
 
-      {/* ══════════════════ 4. SERVICES ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 4. SERVICES â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f1512 50%, #1a1a1a 100%)" }} />
         <SpinePattern accent={PRIMARY} />
@@ -710,7 +710,7 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
         </div>
       </section>
 
-      {/* ══════════════════ CONDITIONS WE TREAT ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• CONDITIONS WE TREAT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #121514 50%, #1a1a1a 100%)" }} />
         <WellnessWave opacity={0.02} accent={PRIMARY} />
@@ -721,7 +721,7 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
           <SectionHeader
             badge="Conditions"
             title="Conditions We Treat"
-            subtitle="People search for relief by condition — here are the most common issues we help with every day."
+            subtitle="People search for relief by condition â€” here are the most common issues we help with every day."
             accent={PRIMARY}
           />
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
@@ -740,7 +740,7 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
         </div>
       </section>
 
-      {/* ══════════════════ 5. WHY CHOOSE US / ABOUT ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 5. WHY CHOOSE US / ABOUT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0d1210 50%, #1a1a1a 100%)" }} />
         <WellnessWave opacity={0.02} accent={PRIMARY} />
@@ -790,7 +790,7 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
         </div>
       </section>
 
-      {/* ══════════════════ PATIENT COMFORT — YOUR FIRST VISIT ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• PATIENT COMFORT â€” YOUR FIRST VISIT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f1512 50%, #1a1a1a 100%)" }} />
         <SpinePattern opacity={0.02} accent={PRIMARY} />
@@ -821,7 +821,7 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
         </div>
       </section>
 
-      {/* ══════════════════ 6. PROCESS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 6. PROCESS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #121514 50%, #1a1a1a 100%)" }} />
         <SpinePattern opacity={0.025} accent={PRIMARY} />
@@ -830,7 +830,7 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
         </div>
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <AnimatedSection>          <SectionHeader badge="The Chiropractic Process" title="Your Path to Relief" subtitle="A clear, reassuring process designed to get you feeling better — starting from day one." accent={PRIMARY} /></AnimatedSection>
+          <AnimatedSection>          <SectionHeader badge="The Chiropractic Process" title="Your Path to Relief" subtitle="A clear, reassuring process designed to get you feeling better â€” starting from day one." accent={PRIMARY} /></AnimatedSection>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {CHIRO_PROCESS_STEPS.map((step, i) => (
@@ -851,7 +851,7 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
         </div>
       </section>
 
-      {/* ══════════════════ 7. GALLERY ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 7. GALLERY â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="gallery" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0d1210 50%, #1a1a1a 100%)" }} />
         <WellnessWave opacity={0.02} accent={PRIMARY} />
@@ -881,7 +881,7 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
         </div>
       </section>
 
-      {/* ══════════════════ COMPETITOR COMPARISON TABLE ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• COMPETITOR COMPARISON TABLE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #121514 50%, #1a1a1a 100%)" }} />
         <SpinePattern opacity={0.02} accent={PRIMARY} />
@@ -922,7 +922,7 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
         </div>
       </section>
 
-      {/* ══════════════════ VIDEO PLACEHOLDER ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• VIDEO PLACEHOLDER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0d1210 50%, #1a1a1a 100%)" }} />
         <WellnessWave opacity={0.02} accent={PRIMARY} />
@@ -953,7 +953,7 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
         </div>
       </section>
 
-      {/* ══════════════════ WHERE DOES IT HURT QUIZ ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• WHERE DOES IT HURT QUIZ â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #121514 50%, #1a1a1a 100%)" }} />
         <SpinePattern opacity={0.025} accent={PRIMARY} />
@@ -1008,7 +1008,7 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
         </div>
       </section>
 
-      {/* ══════════════════ 8. TESTIMONIALS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 8. TESTIMONIALS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #121514 50%, #1a1a1a 100%)" }} />
         <SpinePattern opacity={0.02} accent={PRIMARY} />
@@ -1054,7 +1054,7 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
         </div>
       </section>
 
-      {/* ══════════════════ 9. WELLNESS CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 9. WELLNESS CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${PRIMARY}, ${PRIMARY}cc, ${PRIMARY})` }} />
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='40' height='40' fill='none'/%3E%3Cpath d='M0 0L40 40M40 0L0 40' stroke='%23000' stroke-width='0.5'/%3E%3C/svg%3E\")" }} />
@@ -1078,7 +1078,7 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
         </div>
       </section>
 
-      {/* ══════════════════ 10. SERVICE AREAS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 10. SERVICE AREAS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0d1210 50%, #1a1a1a 100%)" }} />
         <SpinePattern opacity={0.02} accent={PRIMARY} />
@@ -1100,7 +1100,7 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
         </div>
       </section>
 
-      {/* ══════════════════ 11. HOURS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 11. HOURS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       {data.hours && (
         <section className="relative z-10 py-24 md:py-32 overflow-hidden">
           <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #121514 50%, #1a1a1a 100%)" }} />
@@ -1125,7 +1125,7 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
       )}
 
       
-      {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• MID-PAGE CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${PRIMARY}15, ${PRIMARY}08)` }} />
         <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
@@ -1136,7 +1136,7 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
             Ready to Get Started?
           </h2>
           <p className="text-slate-400 mb-6 text-sm sm:text-base">
-            Limited time — claim your free professional website today before it&apos;s offered to a competitor.
+            Limited time â€” claim your free professional website today before it&apos;s offered to a competitor.
           </p>
           <a
             href={`/claim/${data.id}`}
@@ -1151,7 +1151,7 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
         </div>
       </section>
 
-      {/* ══════════════════ 12. FAQ ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 12. FAQ â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #121514 50%, #1a1a1a 100%)" }} />
         <WellnessWave opacity={0.02} accent={PRIMARY} />
@@ -1169,7 +1169,7 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
         </div>
       </section>
 
-      {/* ══════════════════ 13. CONTACT ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 13. CONTACT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="contact" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0d1210 50%, #1a1a1a 100%)" }} />
         <SpinePattern opacity={0.02} accent={PRIMARY} />
@@ -1247,7 +1247,7 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
                 </div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-1.5">Phone</label>
-                  <input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="(555) 123-4567" />
+                  <input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="(206) 287-2304" />
                 </div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-1.5">Service Needed</label>
@@ -1275,7 +1275,7 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
         </div>
       </section>
 
-      {/* ══════════════════ 14. PAIN-FREE GUARANTEE CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 14. PAIN-FREE GUARANTEE CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #121514 100%)" }} />
         <SpinePattern opacity={0.015} accent={PRIMARY} />
@@ -1291,7 +1291,7 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
                 Start Your Journey to Pain-Free Living
               </h2>
               <p className="text-slate-400 leading-relaxed max-w-2xl mx-auto text-lg mb-2">
-                At {data.businessName}, your health and comfort come first. We use gentle, evidence-based techniques to help you feel your best — naturally.
+                At {data.businessName}, your health and comfort come first. We use gentle, evidence-based techniques to help you feel your best â€” naturally.
               </p>
               <p className="text-2xl md:text-3xl font-black mb-6" style={{ color: WARM_AMBER }}>
                 Your First Visit is Just $49
@@ -1317,7 +1317,7 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
         </div>
       </section>
 
-      {/* ══════════════════ 15. FOOTER ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 15. FOOTER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111 100%)" }} />
         <SpinePattern opacity={0.015} accent={PRIMARY} />

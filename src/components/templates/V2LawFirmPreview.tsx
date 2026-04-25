@@ -38,11 +38,11 @@ import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
 import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
 
-/* ───────────────────────── SPRING CONFIGS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SPRING CONFIGS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
 
-/* ───────────────────────── COLORS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ COLORS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const DARK = "#0f172a";
 const DEFAULT_EMERALD = "#059669";
 const EMERALD_LIGHT = "#34d399";
@@ -53,7 +53,7 @@ function getAccent(accentColor?: string) {
   return { EMERALD: c, EMERALD_GLOW: `${c}26` };
 }
 
-/* ───────────────────────── SERVICE ICON MAP ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SERVICE ICON MAP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SERVICE_ICON_MAP: Record<string, any> = {
   criminal: Gavel,
@@ -82,7 +82,7 @@ function getServiceIcon(serviceName: string) {
   return Scales;
 }
 
-/* ───────────────────────── STOCK FALLBACK IMAGES (UNIQUE TO LAW) ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ STOCK FALLBACK IMAGES (UNIQUE TO LAW) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=1400&q=80"];
 const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=600&q=80"];
 const STOCK_GALLERY = [
@@ -92,7 +92,7 @@ const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80",
 ];
 
-/* ───────────────────────── FLOATING DOCUMENT PARTICLES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ FLOATING DOCUMENT PARTICLES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function FloatingDocs({ accent }: { accent: string }) {
   const docs = Array.from({ length: 10 }, (_, i) => ({
     id: i,
@@ -134,7 +134,7 @@ function FloatingDocs({ accent }: { accent: string }) {
   );
 }
 
-/* ───────────────────────── ANIMATED SCALE SVG ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ANIMATED SCALE SVG â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AnimatedScales({ accent }: { accent: string }) {
   const tilt = useMotionValue(0);
   const smoothTilt = useSpring(tilt, { stiffness: 40, damping: 12 });
@@ -173,7 +173,7 @@ function AnimatedScales({ accent }: { accent: string }) {
   );
 }
 
-/* ───────────────────────── LAW PATTERN ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ LAW PATTERN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function LawPattern({ opacity = 0.03, accent }: { opacity?: number; accent: string }) {
   const pid = `lawPatPrev-${accent.replace("#", "")}`;
   return (
@@ -192,7 +192,7 @@ function LawPattern({ opacity = 0.03, accent }: { opacity?: number; accent: stri
   );
 }
 
-/* ───────────────────────── GLASS CARD ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ GLASS CARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
@@ -201,7 +201,7 @@ function GlassCard({ children, className = "" }: { children: React.ReactNode; cl
   );
 }
 
-/* ───────────────────────── MAGNETIC BUTTON ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ MAGNETIC BUTTON â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function MagneticButton({ children, className = "", onClick, style, href }: {
   children: React.ReactNode;
   className?: string;
@@ -243,7 +243,7 @@ function MagneticButton({ children, className = "", onClick, style, href }: {
   );
 }
 
-/* ───────────────────────── SHIMMER BORDER ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SHIMMER BORDER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function ShimmerBorder({ children, className = "", accent }: { children: React.ReactNode; className?: string; accent: string }) {
   return (
     <div className={`relative rounded-2xl p-[1px] overflow-hidden ${className}`}>
@@ -253,7 +253,7 @@ function ShimmerBorder({ children, className = "", accent }: { children: React.R
   );
 }
 
-/* ───────────────────────── ACCORDION ITEM ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ACCORDION ITEM â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AccordionItem({ question, answer, isOpen, onToggle }: { question: string; answer: string; isOpen: boolean; onToggle: () => void }) {
   return (
     <GlassCard className="overflow-hidden">
@@ -274,7 +274,7 @@ function AccordionItem({ question, answer, isOpen, onToggle }: { question: strin
   );
 }
 
-/* ───────────────────────── SECTION HEADER ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SECTION HEADER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function SectionHeader({ badge, title, subtitle, accent }: { badge: string; title: string; subtitle?: string; accent: string }) {
   return (
     <div className="text-center mb-16">
@@ -287,10 +287,10 @@ function SectionHeader({ badge, title, subtitle, accent }: { badge: string; titl
 }
 
 
-/* ═══════════════════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    MAIN PREVIEW COMPONENT
-   ═══════════════════════════════════════════════════════════════════ */
-/* ───────────────────────── ANIMATED SECTION ───────────────────────── */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ANIMATED SECTION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <motion.div
@@ -370,9 +370,9 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
   ];
 
   const quizOptions = [
-    { label: "Injured in an Accident", desc: "Get a free case review — you may be entitled to compensation.", icon: ShieldCheck, color: "#ef4444" },
-    { label: "Family Matter", desc: "Divorce, custody, support — we protect what matters most.", icon: Handshake, color: "#3b82f6" },
-    { label: "Criminal Charges", desc: "Your freedom is at stake — get defense counsel now.", icon: Gavel, color: "#f59e0b" },
+    { label: "Injured in an Accident", desc: "Get a free case review â€” you may be entitled to compensation.", icon: ShieldCheck, color: "#ef4444" },
+    { label: "Family Matter", desc: "Divorce, custody, support â€” we protect what matters most.", icon: Handshake, color: "#3b82f6" },
+    { label: "Criminal Charges", desc: "Your freedom is at stake â€” get defense counsel now.", icon: Gavel, color: "#f59e0b" },
     { label: "Business / Employment", desc: "Protect your rights as an employee or business owner.", icon: Briefcase, color: "#8b5cf6" },
   ];
 
@@ -395,7 +395,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ fontFamily: "Source Sans 3, system-ui, sans-serif", background: DARK, color: "#f1f5f9" }}>
       <FloatingDocs accent={EMERALD} />
 
-      {/* ══════════════════ 1. NAV ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 1. NAV â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <nav className="fixed top-0 left-0 right-0 z-50">
         <div className="mx-auto max-w-7xl px-4 md:px-6 py-4">
           <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
@@ -433,7 +433,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </nav>
 
-      {/* ══════════════════ 2. HERO ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 2. HERO â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
 
         <div className="absolute inset-0">
@@ -473,7 +473,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 3. STATS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 3. STATS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden border-y" style={{ borderColor: `${EMERALD}1a` }}>
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0c1320 0%, #0f172a 100%)" }} />
         <LawPattern opacity={0.02} accent={EMERALD} />
@@ -497,7 +497,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ PRACTICE AREA BADGES ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• PRACTICE AREA BADGES â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-12 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1522 50%, #0f172a 100%)" }} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -511,7 +511,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ CASE RESULTS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• CASE RESULTS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0b1320 50%, #0f172a 100%)" }} />
         <LawPattern opacity={0.02} accent={EMERALD} />
@@ -538,7 +538,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ BEAST MODE: CASE RESULTS TICKER ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• BEAST MODE: CASE RESULTS TICKER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-6 overflow-hidden" style={{ background: "#0a0f1a" }}>
         <div className="absolute inset-0 pointer-events-none" style={{ background: `linear-gradient(90deg, #0a0f1a 0%, transparent 10%, transparent 90%, #0a0f1a 100%)` }} />
         <div className="relative">
@@ -563,7 +563,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
         `}</style>
       </section>
 
-      {/* ══════════════════ 4. SERVICES ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 4. SERVICES â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1522 50%, #0f172a 100%)" }} />
         <LawPattern accent={EMERALD} />
@@ -598,7 +598,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ BEAST MODE: PRACTICE AREA ACCORDIONS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• BEAST MODE: PRACTICE AREA ACCORDIONS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0b1320 50%, #0f172a 100%)" }} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute bottom-[10%] left-[5%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${GOLD}06` }} /></div>
@@ -639,7 +639,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 5. WHY CHOOSE US / ABOUT ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 5. WHY CHOOSE US / ABOUT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0b1320 50%, #0f172a 100%)" }} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${EMERALD}06` }} /></div>
@@ -681,7 +681,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 6. PROCESS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 6. PROCESS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1522 50%, #0f172a 100%)" }} />
         <LawPattern opacity={0.025} accent={EMERALD} />
@@ -713,7 +713,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 7. GALLERY ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 7. GALLERY â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0b1320 50%, #0f172a 100%)" }} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] left-[20%] w-[500px] h-[500px] rounded-full blur-[200px]" style={{ background: `${EMERALD}06` }} /></div>
@@ -737,7 +737,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ COMPETITOR COMPARISON ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• COMPETITOR COMPARISON â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1522 50%, #0f172a 100%)" }} />
         <LawPattern opacity={0.02} accent={EMERALD} />
@@ -771,7 +771,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ VIDEO PLACEHOLDER ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• VIDEO PLACEHOLDER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0b1320 50%, #0f172a 100%)" }} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${GOLD}06` }} /></div>
@@ -791,7 +791,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ LEGAL HELP QUIZ ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• LEGAL HELP QUIZ â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1522 50%, #0f172a 100%)" }} />
         <LawPattern opacity={0.02} accent={EMERALD} />
@@ -824,8 +824,8 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ GOOGLE REVIEWS HEADER + TESTIMONIALS ══════════════════ */}
-      {/* ══════════════════ 8. TESTIMONIALS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• GOOGLE REVIEWS HEADER + TESTIMONIALS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 8. TESTIMONIALS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="testimonials" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1522 50%, #0f172a 100%)" }} />
         <LawPattern opacity={0.02} accent={EMERALD} />
@@ -857,7 +857,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 9. FREE CONSULTATION CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 9. FREE CONSULTATION CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0b1320 50%, #0f172a 100%)" }} />
         <LawPattern opacity={0.02} accent={EMERALD} />
@@ -892,7 +892,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 10. SERVICE AREAS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 10. SERVICE AREAS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0b1320 50%, #0f172a 100%)" }} />
         <LawPattern opacity={0.02} accent={EMERALD} />
@@ -909,7 +909,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 11. HOURS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 11. HOURS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       {data.hours && (
         <section className="relative z-10 py-24 md:py-32 overflow-hidden">
           <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1522 50%, #0f172a 100%)" }} />
@@ -924,7 +924,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
       )}
 
       
-      {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• MID-PAGE CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${EMERALD}15, ${EMERALD}08)` }} />
         <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
@@ -935,7 +935,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
             Ready to Get Started?
           </h2>
           <p className="text-slate-400 mb-6 text-sm sm:text-base">
-            Limited time — claim your free professional website today before it&apos;s offered to a competitor.
+            Limited time â€” claim your free professional website today before it&apos;s offered to a competitor.
           </p>
           <a
             href={`/claim/${data.id}`}
@@ -950,7 +950,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 12. FAQ ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 12. FAQ â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1522 50%, #0f172a 100%)" }} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${EMERALD}06` }} /></div>
@@ -964,7 +964,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 13. CONTACT ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 13. CONTACT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="contact" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0b1320 50%, #0f172a 100%)" }} />
         <LawPattern opacity={0.02} accent={EMERALD} />
@@ -990,7 +990,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
                   <div><label className="block text-sm text-slate-400 mb-1.5">First Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="John" /></div>
                   <div><label className="block text-sm text-slate-400 mb-1.5">Last Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="Doe" /></div>
                 </div>
-                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="(555) 123-4567" /></div>
+                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="(206) 287-2304" /></div>
                 <div><label className="block text-sm text-slate-400 mb-1.5">Legal Matter</label>
                   <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none transition-colors text-sm">
                     <option value="" className="bg-slate-900">Select a practice area</option>
@@ -1007,7 +1007,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 14. GUARANTEE ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 14. GUARANTEE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1522 100%)" }} />
         <LawPattern opacity={0.015} accent={EMERALD} />
@@ -1032,7 +1032,7 @@ export default function V2LawFirmPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 15. FOOTER ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 15. FOOTER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0a1018 100%)" }} />
         <LawPattern opacity={0.015} accent={EMERALD} />

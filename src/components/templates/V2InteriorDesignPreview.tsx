@@ -46,11 +46,11 @@ import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
 import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
 
-/* ───────────────────────── SPRING CONFIGS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SPRING CONFIGS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
 
-/* ───────────────────────── COLORS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ COLORS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const CHARCOAL = "#faf9f7";
 const DEFAULT_GOLD = "#b8860b";
 const CREAM = "#d4c5a9";
@@ -65,13 +65,13 @@ function getAccent(accentColor?: string) {
 }
 
 // Rotating color palette for service/room icon tiles. The primary
-// brand accent (PRIMARY) stays on section headers, CTAs, and nav — the
+// brand accent (PRIMARY) stays on section headers, CTAs, and nav â€” the
 // palette only colors iconography and highlight accents so the grid
 // feels alive without fighting the brand.
 const PALETTE = ["#b8860b", "#8b6f47", "#2d2d2d", "#6b7f5e", "#3a5a7c", "#d2691e"];
 const pickPaletteColor = (i: number) => PALETTE[i % PALETTE.length];
 
-/* ───────────────────────── SERVICE ICON MAP ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SERVICE ICON MAP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SERVICE_ICON_MAP: Record<string, any> = {
   kitchen: House,
@@ -100,7 +100,7 @@ function getServiceIcon(serviceName: string) {
   return Palette;
 }
 
-/* ───────────────────────── STOCK FALLBACK IMAGES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ STOCK FALLBACK IMAGES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=1400&q=80"];
 const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&q=80"];
 const STOCK_GALLERY = [
@@ -114,7 +114,7 @@ const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1617806118233-18e1de247200?w=800&q=80",
 ];
 
-/* ───────────────────────── DESIGN STYLE BADGES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ DESIGN STYLE BADGES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const DESIGN_STYLE_BADGES = [
   "Residential Design",
   "Commercial Spaces",
@@ -122,7 +122,7 @@ const DESIGN_STYLE_BADGES = [
   "Award-Winning",
 ];
 
-/* ───────────────────────── DESIGN PACKAGES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ DESIGN PACKAGES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const DESIGN_PACKAGES = [
   {
     title: "Design Consultation",
@@ -134,7 +134,7 @@ const DESIGN_PACKAGES = [
   {
     title: "Room Makeover",
     price: "from $2,500",
-    description: "A complete transformation of a single room — from concept and sourcing to installation and styling, delivered turnkey.",
+    description: "A complete transformation of a single room â€” from concept and sourcing to installation and styling, delivered turnkey.",
     features: ["Full Concept Design", "Mood Board & 3D Rendering", "Furniture & Decor Sourcing", "Professional Installation", "Two Revision Rounds"],
     featured: true,
   },
@@ -147,16 +147,16 @@ const DESIGN_PACKAGES = [
   },
 ];
 
-/* ───────────────────────── DESIGN PROCESS TIMELINE (5-step) ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ DESIGN PROCESS TIMELINE (5-step) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const DESIGN_TIMELINE = [
   { step: "01", title: "Discovery Call", desc: "We learn about your vision, lifestyle, and goals for the space.", icon: Phone },
   { step: "02", title: "Concept & Mood Board", desc: "Curated mood boards, color palettes, and material selections for your approval.", icon: Palette },
   { step: "03", title: "Design Development", desc: "Detailed floor plans, 3D renderings, and specifications brought to life.", icon: Blueprint },
-  { step: "04", title: "Procurement & Installation", desc: "We source, order, and coordinate delivery of every piece — down to the last throw pillow.", icon: Armchair },
+  { step: "04", title: "Procurement & Installation", desc: "We source, order, and coordinate delivery of every piece â€” down to the last throw pillow.", icon: Armchair },
   { step: "05", title: "Final Reveal", desc: "The moment you walk into your newly designed space for the very first time.", icon: Eye },
 ];
 
-/* ───────────────────────── ROOM TYPES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ROOM TYPES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const ROOM_TYPES = [
   { name: "Living Rooms", icon: Armchair },
   { name: "Kitchens", icon: CookingPot },
@@ -168,15 +168,15 @@ const ROOM_TYPES = [
   { name: "Restaurants", icon: ForkKnife },
 ];
 
-/* ───────────────────────── DESIGN PHILOSOPHY PILLARS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ DESIGN PHILOSOPHY PILLARS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const DESIGN_PILLARS = [
-  { title: "Personalized Design", desc: "Every project begins with your unique story — no cookie-cutter solutions, ever.", icon: PaintBrush },
+  { title: "Personalized Design", desc: "Every project begins with your unique story â€” no cookie-cutter solutions, ever.", icon: PaintBrush },
   { title: "Quality Craftsmanship", desc: "We partner with the finest artisans and craftspeople to ensure lasting beauty.", icon: Ruler },
   { title: "Timeless Aesthetics", desc: "Designs that transcend trends and feel just as relevant a decade from now.", icon: Palette },
   { title: "Sustainable Materials", desc: "Thoughtfully sourced materials that honor both beauty and the environment.", icon: Tree },
 ];
 
-/* ───────────────────────── COMPETITOR COMPARISON ROWS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ COMPETITOR COMPARISON ROWS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const COMPARISON_ROWS = [
   "Personalized Design Plan",
   "Trade-Only Pricing",
@@ -187,7 +187,7 @@ const COMPARISON_ROWS = [
   "3D Renderings",
 ];
 
-/* ───────────────────────── DESIGN STYLE QUIZ OPTIONS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ DESIGN STYLE QUIZ OPTIONS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const QUIZ_OPTIONS = [
   { style: "Modern & Minimalist", color: "#2d2d2d", desc: "Clean lines, neutral palettes, and curated simplicity." },
   { style: "Traditional & Timeless", color: "#8b6f47", desc: "Rich textures, warm woods, and classic elegance." },
@@ -195,7 +195,7 @@ const QUIZ_OPTIONS = [
   { style: "Contemporary & Bold", color: "#3a5a7c", desc: "Statement pieces, dramatic contrasts, and artistic flair." },
 ];
 
-/* ───────────────────────── FLOATING PARTICLES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ FLOATING PARTICLES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function FloatingGoldDust({ accent }: { accent: string }) {
   const particles = Array.from({ length: 16 }, (_, i) => ({
     id: i,
@@ -225,7 +225,7 @@ function FloatingGoldDust({ accent }: { accent: string }) {
   );
 }
 
-/* ───────────────────────── ELEGANT PATTERN ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ELEGANT PATTERN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function ElegantPattern({ opacity = 0.03, accent }: { opacity?: number; accent: string }) {
   const patternId = `elegantPatternV2Prev-${accent.replace("#", "")}`;
   return (
@@ -246,7 +246,7 @@ function ElegantPattern({ opacity = 0.03, accent }: { opacity?: number; accent: 
   );
 }
 
-/* ───────────────────────── LUXURY LINE SVG ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ LUXURY LINE SVG â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function LuxuryLines({ opacity = 0.03, accent }: { opacity?: number; accent: string }) {
   return (
     <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity }} viewBox="0 0 1000 600" preserveAspectRatio="none">
@@ -260,7 +260,7 @@ function LuxuryLines({ opacity = 0.03, accent }: { opacity?: number; accent: str
   );
 }
 
-/* ───────────────────────── HERO SVG ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ HERO SVG â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function HeroDesignSVG({ accent }: { accent: string }) {
   return (
     <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 1200 800" preserveAspectRatio="none" style={{ opacity: 0.04 }}>
@@ -271,7 +271,7 @@ function HeroDesignSVG({ accent }: { accent: string }) {
   );
 }
 
-/* ───────────────────────── GLASS CARD ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ GLASS CARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <div className={`rounded-2xl border border-gray-200 bg-white/70 backdrop-blur-xl shadow-sm ${className}`}>
@@ -280,7 +280,7 @@ function GlassCard({ children, className = "" }: { children: React.ReactNode; cl
   );
 }
 
-/* ───────────────────────── MAGNETIC BUTTON ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ MAGNETIC BUTTON â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function MagneticButton({ children, className = "", onClick, style, href }: {
   children: React.ReactNode; className?: string; onClick?: () => void; style?: React.CSSProperties; href?: string;
 }) {
@@ -304,7 +304,7 @@ function MagneticButton({ children, className = "", onClick, style, href }: {
   return (<motion.button ref={ref} style={{ x: springX, y: springY, willChange: "transform", ...style }} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave} onClick={onClick} className={className} whileTap={{ scale: 0.97 }}>{children}</motion.button>);
 }
 
-/* ───────────────────────── SHIMMER BORDER ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SHIMMER BORDER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function ShimmerBorder({ children, className = "", accent }: { children: React.ReactNode; className?: string; accent: string }) {
   return (
     <div className={`relative rounded-2xl p-[1px] overflow-hidden ${className}`}>
@@ -314,7 +314,7 @@ function ShimmerBorder({ children, className = "", accent }: { children: React.R
   );
 }
 
-/* ───────────────────────── ACCORDION ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ACCORDION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AccordionItem({ question, answer, isOpen, onToggle }: { question: string; answer: string; isOpen: boolean; onToggle: () => void }) {
   return (
     <GlassCard className="overflow-hidden">
@@ -329,7 +329,7 @@ function AccordionItem({ question, answer, isOpen, onToggle }: { question: strin
   );
 }
 
-/* ───────────────────────── SECTION HEADER ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SECTION HEADER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function SectionHeader({ badge, title, subtitle, accent }: { badge: string; title: string; subtitle?: string; accent: string }) {
   return (
     <div className="text-center mb-16">
@@ -342,10 +342,10 @@ function SectionHeader({ badge, title, subtitle, accent }: { badge: string; titl
 }
 
 
-/* ═══════════════════════════════════════════════════════════════════
-   MAIN PREVIEW COMPONENT — GALLERY-HEAVY INTERIOR DESIGN
-   ═══════════════════════════════════════════════════════════════════ */
-/* ───────────────────────── ANIMATED SECTION ───────────────────────── */
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   MAIN PREVIEW COMPONENT â€” GALLERY-HEAVY INTERIOR DESIGN
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ANIMATED SECTION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <motion.div
@@ -408,7 +408,7 @@ export default function V2InteriorDesignPreview({ data }: { data: GeneratedSiteD
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ fontFamily: "Montserrat, system-ui, sans-serif", background: CHARCOAL, color: "#1c1917" }}>
       <FloatingGoldDust accent={PRIMARY} />
 
-      {/* ══════════════════ 1. NAV ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 1. NAV â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <nav className="fixed top-0 left-0 right-0 z-50">
         <div className="mx-auto max-w-7xl px-4 md:px-6 py-4">
           <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
@@ -445,7 +445,7 @@ export default function V2InteriorDesignPreview({ data }: { data: GeneratedSiteD
         </div>
       </nav>
 
-      {/* ══════════════════ 2. HERO — FULL-BLEED ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 2. HERO â€” FULL-BLEED â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
         <div className="absolute inset-0">
           <img src={heroImage} alt={`${data.businessName} interior design`} className="w-full h-full object-cover" />
@@ -476,7 +476,7 @@ export default function V2InteriorDesignPreview({ data }: { data: GeneratedSiteD
         </div>
       </section>
 
-      {/* ══════════════════ DESIGN STYLE BADGES ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• DESIGN STYLE BADGES â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-6 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #f5f3ef 100%)" }} />
         <div className="max-w-5xl mx-auto px-4 md:px-6 relative z-10">
@@ -491,7 +491,7 @@ export default function V2InteriorDesignPreview({ data }: { data: GeneratedSiteD
         </div>
       </section>
 
-      {/* ══════════════════ 3. STATS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 3. STATS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden border-y" style={{ borderColor: `${PRIMARY}1a` }}>
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #f5f3ef 0%, #faf9f7 100%)" }} />
         <ElegantPattern opacity={0.02} accent={PRIMARY} />
@@ -507,7 +507,7 @@ export default function V2InteriorDesignPreview({ data }: { data: GeneratedSiteD
         </div>
       </section>
 
-      {/* ══════════════════ 4. PORTFOLIO GALLERY ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 4. PORTFOLIO GALLERY â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="portfolio" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #f5f3ef 50%, #faf9f7 100%)" }} />
         <ElegantPattern opacity={0.02} accent={PRIMARY} />
@@ -529,7 +529,7 @@ export default function V2InteriorDesignPreview({ data }: { data: GeneratedSiteD
         </div>
       </section>
 
-      {/* ══════════════════ BEFORE/AFTER TRANSFORMATION ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• BEFORE/AFTER TRANSFORMATION â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #f5f3ef 50%, #faf9f7 100%)" }} />
         <LuxuryLines opacity={0.02} accent={PRIMARY} />
@@ -542,7 +542,7 @@ export default function V2InteriorDesignPreview({ data }: { data: GeneratedSiteD
         </div>
       </section>
 
-      {/* ══════════════════ 5. SERVICES ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 5. SERVICES â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #f5f3ef 50%, #faf9f7 100%)" }} />
         <LuxuryLines opacity={0.025} accent={PRIMARY} />
@@ -576,7 +576,7 @@ export default function V2InteriorDesignPreview({ data }: { data: GeneratedSiteD
         </div>
       </section>
 
-      {/* ══════════════════ ROOM TYPES WE DESIGN ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• ROOM TYPES WE DESIGN â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #f5f3ef 50%, #faf9f7 100%)" }} />
         <ElegantPattern opacity={0.02} accent={PRIMARY} />
@@ -598,13 +598,13 @@ export default function V2InteriorDesignPreview({ data }: { data: GeneratedSiteD
         </div>
       </section>
 
-      {/* ══════════════════ DESIGN PACKAGES / PRICING ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• DESIGN PACKAGES / PRICING â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #f5f3ef 50%, #faf9f7 100%)" }} />
         <LuxuryLines opacity={0.025} accent={PRIMARY} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] left-[10%] w-[500px] h-[500px] rounded-full blur-[200px]" style={{ background: `${PRIMARY}06` }} /></div>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Investment" title="Design Packages" subtitle="Thoughtful tiers to match every scope — from a single room refresh to a complete home transformation." accent={PRIMARY} />
+          <SectionHeader badge="Investment" title="Design Packages" subtitle="Thoughtful tiers to match every scope â€” from a single room refresh to a complete home transformation." accent={PRIMARY} />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {DESIGN_PACKAGES.map((pkg) => (
               <div key={pkg.title} className={`relative rounded-2xl border overflow-hidden transition-all duration-300 ${pkg.featured ? "shadow-lg scale-[1.02] md:scale-105" : "hover:shadow-md"}`} style={{ borderColor: pkg.featured ? `${PRIMARY}55` : "rgba(229,231,235,0.6)", background: pkg.featured ? `linear-gradient(180deg, ${PRIMARY}08, white)` : "rgba(255,255,255,0.7)" }}>
@@ -636,7 +636,7 @@ export default function V2InteriorDesignPreview({ data }: { data: GeneratedSiteD
         </div>
       </section>
 
-      {/* ══════════════════ 6. ABOUT ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 6. ABOUT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #f5f3ef 50%, #faf9f7 100%)" }} />
         <LuxuryLines opacity={0.02} accent={PRIMARY} />
@@ -669,7 +669,7 @@ export default function V2InteriorDesignPreview({ data }: { data: GeneratedSiteD
         </div>
       </section>
 
-      {/* ══════════════════ DESIGN PHILOSOPHY ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• DESIGN PHILOSOPHY â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #f5f3ef 50%, #faf9f7 100%)" }} />
         <ElegantPattern opacity={0.02} accent={PRIMARY} />
@@ -692,7 +692,7 @@ export default function V2InteriorDesignPreview({ data }: { data: GeneratedSiteD
         </div>
       </section>
 
-      {/* ══════════════════ 7. PROCESS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 7. PROCESS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #f5f3ef 50%, #faf9f7 100%)" }} />
         <ElegantPattern opacity={0.025} accent={PRIMARY} />
@@ -725,7 +725,7 @@ export default function V2InteriorDesignPreview({ data }: { data: GeneratedSiteD
         </div>
       </section>
 
-      {/* ══════════════════ 8. TESTIMONIALS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 8. TESTIMONIALS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #f5f3ef 50%, #faf9f7 100%)" }} />
         <ElegantPattern opacity={0.02} accent={PRIMARY} />
@@ -756,7 +756,7 @@ export default function V2InteriorDesignPreview({ data }: { data: GeneratedSiteD
         </div>
       </section>
 
-      {/* ══════════════════ COMPETITOR COMPARISON ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• COMPETITOR COMPARISON â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #f5f3ef 50%, #faf9f7 100%)" }} />
         <LuxuryLines opacity={0.02} accent={PRIMARY} />
@@ -787,7 +787,7 @@ export default function V2InteriorDesignPreview({ data }: { data: GeneratedSiteD
         </div>
       </section>
 
-      {/* ══════════════════ 9. CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 9. CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${PRIMARY}, ${PRIMARY}cc, ${PRIMARY})` }} />
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='40' height='40' fill='none'/%3E%3Cpath d='M0 0L40 40M40 0L0 40' stroke='%23000' stroke-width='0.5'/%3E%3C/svg%3E\")" }} />
@@ -801,7 +801,7 @@ export default function V2InteriorDesignPreview({ data }: { data: GeneratedSiteD
         </div>
       </section>
 
-      {/* ══════════════════ 10. SERVICE AREAS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 10. SERVICE AREAS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #f5f3ef 50%, #faf9f7 100%)" }} />
         <ElegantPattern opacity={0.02} accent={PRIMARY} />
@@ -816,7 +816,7 @@ export default function V2InteriorDesignPreview({ data }: { data: GeneratedSiteD
         </div>
       </section>
 
-      {/* ══════════════════ 11. HOURS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 11. HOURS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       {data.hours && (
         <section className="relative z-10 py-24 md:py-32 overflow-hidden">
           <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #f5f3ef 50%, #faf9f7 100%)" }} />
@@ -831,7 +831,7 @@ export default function V2InteriorDesignPreview({ data }: { data: GeneratedSiteD
       )}
 
       
-      {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• MID-PAGE CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${PRIMARY}15, ${PRIMARY}08)` }} />
         <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
@@ -842,7 +842,7 @@ export default function V2InteriorDesignPreview({ data }: { data: GeneratedSiteD
             Ready to Get Started?
           </h2>
           <p className="text-slate-400 mb-6 text-sm sm:text-base">
-            Limited time — claim your free professional website today before it&apos;s offered to a competitor.
+            Limited time â€” claim your free professional website today before it&apos;s offered to a competitor.
           </p>
           <a
             href={`/claim/${data.id}`}
@@ -857,7 +857,7 @@ export default function V2InteriorDesignPreview({ data }: { data: GeneratedSiteD
         </div>
       </section>
 
-      {/* ══════════════════ 12. FAQ ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 12. FAQ â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #f5f3ef 50%, #faf9f7 100%)" }} />
         <LuxuryLines opacity={0.02} accent={PRIMARY} />
@@ -869,7 +869,7 @@ export default function V2InteriorDesignPreview({ data }: { data: GeneratedSiteD
         </div>
       </section>
 
-      {/* ══════════════════ DESIGN STYLE QUIZ ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• DESIGN STYLE QUIZ â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #f5f3ef 50%, #faf9f7 100%)" }} />
         <ElegantPattern opacity={0.02} accent={PRIMARY} />
@@ -911,7 +911,7 @@ export default function V2InteriorDesignPreview({ data }: { data: GeneratedSiteD
         </div>
       </section>
 
-      {/* ══════════════════ 13. CONTACT ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 13. CONTACT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="contact" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #f5f3ef 50%, #faf9f7 100%)" }} />
         <ElegantPattern opacity={0.02} accent={PRIMARY} />
@@ -935,7 +935,7 @@ export default function V2InteriorDesignPreview({ data }: { data: GeneratedSiteD
                   <div><label className="block text-sm text-[#6b7280] mb-1.5">First Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[#1c1917] placeholder-gray-400 focus:outline-none text-sm" placeholder="Jane" /></div>
                   <div><label className="block text-sm text-[#6b7280] mb-1.5">Last Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[#1c1917] placeholder-gray-400 focus:outline-none text-sm" placeholder="Smith" /></div>
                 </div>
-                <div><label className="block text-sm text-[#6b7280] mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[#1c1917] placeholder-gray-400 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
+                <div><label className="block text-sm text-[#6b7280] mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[#1c1917] placeholder-gray-400 focus:outline-none text-sm" placeholder="(206) 287-2304" /></div>
                 <div><label className="block text-sm text-[#6b7280] mb-1.5">Project Type</label>
                   <select className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[#1c1917] focus:outline-none text-sm">
                     <option value="" className="bg-white">Select a service</option>
@@ -952,7 +952,7 @@ export default function V2InteriorDesignPreview({ data }: { data: GeneratedSiteD
         </div>
       </section>
 
-      {/* ══════════════════ 14. GUARANTEE ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 14. GUARANTEE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #f5f3ef 100%)" }} />
         <ElegantPattern opacity={0.015} accent={PRIMARY} />
@@ -972,7 +972,7 @@ export default function V2InteriorDesignPreview({ data }: { data: GeneratedSiteD
         </div>
       </section>
 
-      {/* ══════════════════ COMPLIMENTARY CONSULTATION CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• COMPLIMENTARY CONSULTATION CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-20 md:py-28 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #f5f3ef 0%, #faf9f7 100%)" }} />
         <ElegantPattern opacity={0.02} accent={PRIMARY} />
@@ -996,7 +996,7 @@ export default function V2InteriorDesignPreview({ data }: { data: GeneratedSiteD
         </div>
       </section>
 
-      {/* ══════════════════ 15. FOOTER ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 15. FOOTER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <footer className="relative z-10 border-t border-gray-100 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #f5f3ef 100%)" }} />
         <ElegantPattern opacity={0.015} accent={PRIMARY} />

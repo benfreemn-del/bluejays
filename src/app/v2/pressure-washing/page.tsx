@@ -452,7 +452,7 @@ export default function V2PressureWashingPage() {
                 Get Free Estimate <ArrowRight size={18} weight="bold" />
               </MagneticButton>
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
-                <Phone size={18} weight="duotone" /> (555) 876-3200
+                <Phone size={18} weight="duotone" /> (206) 876-3200
               </MagneticButton>
             </motion.div>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ ...spring, delay: 0.95 }} className="flex flex-wrap gap-3">
@@ -1009,7 +1009,7 @@ export default function V2PressureWashingPage() {
                   <Phone size={20} weight="duotone" style={{ color: ACCENT }} className="mt-0.5 shrink-0" />
                   <div>
                     <p className="text-sm font-semibold text-white">Phone</p>
-                    <p className="text-sm text-slate-400">(555) 876-3200</p>
+                    <p className="text-sm text-slate-400">(206) 876-3200</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">

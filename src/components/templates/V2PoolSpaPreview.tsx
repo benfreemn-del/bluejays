@@ -34,11 +34,11 @@ import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
 import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
 
-/* ───────────────────────── SPRING CONFIGS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SPRING CONFIGS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
 
-/* ───────────────────────── COLORS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ COLORS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const CHARCOAL = "#1a1a1a";
 const DEFAULT_CYAN = "#0891b2";
 const CYAN_LIGHT = "#22d3ee";
@@ -54,7 +54,7 @@ function getAccent(accentColor?: string) {
 const PALETTE = ["#0891b2", "#fb7185", "#d4a853", "#10b981", "#22d3ee", "#f97316"];
 const pickPaletteColor = (i: number) => PALETTE[i % PALETTE.length];
 
-/* ───────────────────────── SERVICE ICON MAP ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SERVICE ICON MAP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SERVICE_ICON_MAP: Record<string, any> = {
   clean: Drop,
@@ -79,7 +79,7 @@ function getServiceIcon(serviceName: string) {
   return Drop;
 }
 
-/* ───────────────────────── STOCK FALLBACK IMAGES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ STOCK FALLBACK IMAGES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1575429198097-0414ec08e8cd?w=1400&q=80"];
 const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1575429198097-0414ec08e8cd?w=600&q=80"];
 const STOCK_PROJECTS = [
@@ -89,7 +89,7 @@ const STOCK_PROJECTS = [
   "https://images.unsplash.com/photo-1519449556851-5720b33024e7?w=800&q=80",
 ];
 
-/* ───────────────────────── FLOATING SPARKLE PARTICLES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ FLOATING SPARKLE PARTICLES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function FloatingSparkles({ accent }: { accent: string }) {
   const particles = Array.from({ length: 22 }, (_, i) => ({
     id: i,
@@ -118,7 +118,7 @@ function FloatingSparkles({ accent }: { accent: string }) {
   );
 }
 
-/* ───────────────────────── SPARKLE / BUBBLE SVG PATTERN ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SPARKLE / BUBBLE SVG PATTERN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function SparklePattern({ opacity = 0.03, accent }: { opacity?: number; accent: string }) {
   const patternId = `sparklePatternV2-${accent.replace("#", "")}`;
   return (
@@ -140,7 +140,7 @@ function SparklePattern({ opacity = 0.03, accent }: { opacity?: number; accent: 
   );
 }
 
-/* ───────────────────────── WATER DROP SVG ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ WATER DROP SVG â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function WaterDropBackground({ opacity = 0.03, accent }: { opacity?: number; accent: string }) {
   return (
     <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity }} viewBox="0 0 1000 600" preserveAspectRatio="none">
@@ -153,7 +153,7 @@ function WaterDropBackground({ opacity = 0.03, accent }: { opacity?: number; acc
   );
 }
 
-/* ───────────────────────── GLASS CARD ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ GLASS CARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function GlassCard({ children, className = "", style }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) {
   return (
     <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`} style={style}>
@@ -162,7 +162,7 @@ function GlassCard({ children, className = "", style }: { children: React.ReactN
   );
 }
 
-/* ───────────────────────── MAGNETIC BUTTON ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ MAGNETIC BUTTON â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function MagneticButton({ children, className = "", onClick, style, href }: {
   children: React.ReactNode; className?: string; onClick?: () => void; style?: React.CSSProperties; href?: string;
 }) {
@@ -195,7 +195,7 @@ function MagneticButton({ children, className = "", onClick, style, href }: {
   );
 }
 
-/* ───────────────────────── SHIMMER BORDER ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SHIMMER BORDER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function ShimmerBorder({ children, className = "", accent }: { children: React.ReactNode; className?: string; accent: string }) {
   return (
     <div className={`relative rounded-2xl p-[1px] overflow-hidden ${className}`}>
@@ -206,7 +206,7 @@ function ShimmerBorder({ children, className = "", accent }: { children: React.R
   );
 }
 
-/* ───────────────────────── ACCORDION ITEM ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ACCORDION ITEM â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AccordionItem({ question, answer, isOpen, onToggle }: { question: string; answer: string; isOpen: boolean; onToggle: () => void }) {
   return (
     <GlassCard className="overflow-hidden">
@@ -225,7 +225,7 @@ function AccordionItem({ question, answer, isOpen, onToggle }: { question: strin
   );
 }
 
-/* ───────────────────────── SECTION HEADER ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SECTION HEADER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function SectionHeader({ badge, title, subtitle, accent }: { badge: string; title: string; subtitle?: string; accent: string }) {
   return (
     <div className="text-center mb-16">
@@ -239,10 +239,10 @@ function SectionHeader({ badge, title, subtitle, accent }: { badge: string; titl
 }
 
 
-/* ═══════════════════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    MAIN COMPONENT
-   ═══════════════════════════════════════════════════════════════════ */
-/* ───────────────────────── ANIMATED SECTION ───────────────────────── */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ANIMATED SECTION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <motion.div
@@ -334,7 +334,7 @@ export default function V2PoolSpaPreview({ data }: { data: GeneratedSiteData }) 
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ fontFamily: "Lato, system-ui, sans-serif", background: CHARCOAL, color: "#f1f5f9" }}>
       <FloatingSparkles accent={ACCENT} />
 
-      {/* ══════════════════ 1. NAV ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 1. NAV â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <nav className="fixed top-0 left-0 right-0 z-50">
         <div className="mx-auto max-w-7xl px-4 md:px-6 py-4">
           <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
@@ -371,7 +371,7 @@ export default function V2PoolSpaPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </nav>
 
-      {/* ══════════════════ 2. HERO ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 2. HERO â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
 
         <div className="absolute inset-0">
@@ -419,7 +419,7 @@ export default function V2PoolSpaPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 3. STATS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 3. STATS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden border-y" style={{ borderColor: `${ACCENT}1a` }}>
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a1520 0%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
@@ -443,7 +443,7 @@ export default function V2PoolSpaPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 4. SERVICES ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 4. SERVICES â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1520 50%, #1a1a1a 100%)" }} />
         <SparklePattern accent={ACCENT} />
@@ -480,7 +480,7 @@ export default function V2PoolSpaPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 5. WHY CHOOSE US / ABOUT ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 5. WHY CHOOSE US / ABOUT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #051a20 50%, #1a1a1a 100%)" }} />
         <WaterDropBackground opacity={0.02} accent={ACCENT} />
@@ -516,7 +516,7 @@ export default function V2PoolSpaPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 6. PROCESS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 6. PROCESS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1520 50%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.025} accent={ACCENT} />
@@ -540,7 +540,7 @@ export default function V2PoolSpaPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 7. GALLERY ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 7. GALLERY â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="gallery" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #051a20 50%, #1a1a1a 100%)" }} />
         <WaterDropBackground opacity={0.02} accent={ACCENT} />
@@ -566,7 +566,7 @@ export default function V2PoolSpaPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 8. COMPARISON TABLE ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 8. COMPARISON TABLE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1520 50%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
@@ -591,7 +591,7 @@ export default function V2PoolSpaPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 8b. PRICING TIERS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 8b. PRICING TIERS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1520 50%, #1a1a1a 100%)" }} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -611,7 +611,7 @@ export default function V2PoolSpaPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 8c. POOL QUIZ ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 8c. POOL QUIZ â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1520 50%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
@@ -635,7 +635,7 @@ export default function V2PoolSpaPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 8d. VIDEO PLACEHOLDER ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 8d. VIDEO PLACEHOLDER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1520 50%, #1a1a1a 100%)" }} />
         <div className="max-w-4xl mx-auto px-6 relative z-10">
@@ -650,7 +650,7 @@ export default function V2PoolSpaPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 8e. CERTIFICATIONS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 8e. CERTIFICATIONS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1520 100%)" }} />
         <div className="max-w-5xl mx-auto px-6 relative z-10">
@@ -662,7 +662,7 @@ export default function V2PoolSpaPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 9. TESTIMONIALS (with Google Reviews) ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 9. TESTIMONIALS (with Google Reviews) â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1520 50%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
@@ -689,7 +689,7 @@ export default function V2PoolSpaPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 10. FRESH HOME CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 10. FRESH HOME CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT}cc, ${ACCENT})` }} />
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='40' height='40' fill='none'/%3E%3Cpath d='M0 0L40 40M40 0L0 40' stroke='%23000' stroke-width='0.5'/%3E%3C/svg%3E\")" }} />
@@ -704,7 +704,7 @@ export default function V2PoolSpaPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 10. CHECKLIST / WHAT WE CLEAN ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 10. CHECKLIST / WHAT WE CLEAN â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #051a20 50%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
@@ -722,7 +722,7 @@ export default function V2PoolSpaPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 11. SERVICE AREAS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 11. SERVICE AREAS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1520 50%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
@@ -738,7 +738,7 @@ export default function V2PoolSpaPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 12. HOURS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 12. HOURS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       {data.hours && (
         <section className="relative z-10 py-24 md:py-32 overflow-hidden">
           <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #051a20 50%, #1a1a1a 100%)" }} />
@@ -759,7 +759,7 @@ export default function V2PoolSpaPreview({ data }: { data: GeneratedSiteData }) 
       )}
 
       
-      {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• MID-PAGE CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15, ${ACCENT}08)` }} />
         <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
@@ -770,7 +770,7 @@ export default function V2PoolSpaPreview({ data }: { data: GeneratedSiteData }) 
             Ready to Get Started?
           </h2>
           <p className="text-slate-400 mb-6 text-sm sm:text-base">
-            Limited time — claim your free professional website today before it&apos;s offered to a competitor.
+            Limited time â€” claim your free professional website today before it&apos;s offered to a competitor.
           </p>
           <a
             href={`/claim/${data.id}`}
@@ -785,7 +785,7 @@ export default function V2PoolSpaPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 13. FAQ ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 13. FAQ â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1520 50%, #1a1a1a 100%)" }} />
         <WaterDropBackground opacity={0.02} accent={ACCENT} />
@@ -800,7 +800,7 @@ export default function V2PoolSpaPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 14. CONTACT ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 14. CONTACT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="contact" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #051a20 50%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
@@ -839,7 +839,7 @@ export default function V2PoolSpaPreview({ data }: { data: GeneratedSiteData }) 
                   <div><label className="block text-sm text-slate-400 mb-1.5">First Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="John" /></div>
                   <div><label className="block text-sm text-slate-400 mb-1.5">Last Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="Doe" /></div>
                 </div>
-                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="(555) 123-4567" /></div>
+                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="(206) 287-2304" /></div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-1.5">Service Type</label>
                   <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none transition-colors text-sm">
@@ -857,7 +857,7 @@ export default function V2PoolSpaPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ MAINTENANCE CALENDAR ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• MAINTENANCE CALENDAR â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111 50%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.01} accent={ACCENT} />
@@ -883,7 +883,7 @@ export default function V2PoolSpaPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ EQUIPMENT BRANDS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• EQUIPMENT BRANDS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #111 0%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.012} accent={ACCENT} />
@@ -904,7 +904,7 @@ export default function V2PoolSpaPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ WATER CHEMISTRY GUIDE ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• WATER CHEMISTRY GUIDE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111 100%)" }} />
         <SparklePattern opacity={0.01} accent={ACCENT} />
@@ -916,9 +916,9 @@ export default function V2PoolSpaPreview({ data }: { data: GeneratedSiteData }) 
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { param: "pH Level", range: "7.2 – 7.6", desc: "Keeps water comfortable and prevents equipment corrosion. Test twice a week." },
-              { param: "Free Chlorine", range: "1 – 3 ppm", desc: "Sanitizes water and eliminates bacteria. Adjust after heavy use or rain." },
-              { param: "Total Alkalinity", range: "80 – 120 ppm", desc: "Buffers pH fluctuations. Test weekly and adjust with baking soda or muriatic acid." },
+              { param: "pH Level", range: "7.2 â€“ 7.6", desc: "Keeps water comfortable and prevents equipment corrosion. Test twice a week." },
+              { param: "Free Chlorine", range: "1 â€“ 3 ppm", desc: "Sanitizes water and eliminates bacteria. Adjust after heavy use or rain." },
+              { param: "Total Alkalinity", range: "80 â€“ 120 ppm", desc: "Buffers pH fluctuations. Test weekly and adjust with baking soda or muriatic acid." },
             ].map((c) => (
               <div key={c.param} className="rounded-2xl border border-white/15 p-6" style={{ background: "rgba(255,255,255,0.06)" }}>
                 <h3 className="text-lg font-bold text-white mb-1">{c.param}</h3>
@@ -930,7 +930,7 @@ export default function V2PoolSpaPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• MID-PAGE CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15 0%, #1a1a1a 50%, ${ACCENT}08 100%)` }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
@@ -946,7 +946,7 @@ export default function V2PoolSpaPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ WHY CHOOSE US ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• WHY CHOOSE US â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #111 0%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.01} accent={ACCENT} />
@@ -957,9 +957,9 @@ export default function V2PoolSpaPreview({ data }: { data: GeneratedSiteData }) 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
             {[
               { title: "Certified Technicians", desc: "Factory-trained and certified pool professionals with years of hands-on experience" },
-              { title: "All Brands Serviced", desc: "We work on every major pool and spa brand — no need to call multiple companies" },
+              { title: "All Brands Serviced", desc: "We work on every major pool and spa brand â€” no need to call multiple companies" },
               { title: "Transparent Pricing", desc: "Upfront quotes with no hidden fees. You approve the price before we start any work" },
-              { title: "Satisfaction Guaranteed", desc: "If your water isn't crystal clear, we come back and make it right — guaranteed" },
+              { title: "Satisfaction Guaranteed", desc: "If your water isn't crystal clear, we come back and make it right â€” guaranteed" },
             ].map((card) => (
               <div key={card.title} className="rounded-2xl border border-white/15 p-6 text-center" style={{ background: "rgba(255,255,255,0.06)" }}>
                 <CheckCircle size={28} weight="fill" style={{ color: ACCENT }} className="mx-auto mb-3" />
@@ -971,7 +971,7 @@ export default function V2PoolSpaPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ CERTIFICATIONS ROW ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• CERTIFICATIONS ROW â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-12 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #111 0%, #1a1a1a 100%)" }} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -996,7 +996,7 @@ export default function V2PoolSpaPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 15. FOOTER ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 15. FOOTER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111 100%)" }} />
         <SparklePattern opacity={0.015} accent={ACCENT} />

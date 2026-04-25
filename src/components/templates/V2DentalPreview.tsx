@@ -44,12 +44,12 @@ import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
 import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
 
-/* ───────────────────────── SPRING CONFIGS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SPRING CONFIGS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
 
-/* ───────────────────────── COLORS ───────────────────────── */
-const SLATE = "#faf9f6";  /* warm off-white base — friendly, not clinical */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ COLORS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+const SLATE = "#faf9f6";  /* warm off-white base â€” friendly, not clinical */
 const DEFAULT_TEAL = "#0d9488";
 const TEAL_LIGHT = "#14b8a6";
 
@@ -62,13 +62,13 @@ function getAccent(accentColor?: string) {
   };
 }
 
-// Rotating palette for service tile iconography — the brand TEAL stays on
+// Rotating palette for service tile iconography â€” the brand TEAL stays on
 // section headers, CTAs, and structural accents. Each service card gets a
 // different color so the grid feels alive.
 const PALETTE = ["#0d9488", "#34d399", "#0ea5e9", "#a78bfa", "#fb7185", "#5eead4"];
 const pickPaletteColor = (i: number) => PALETTE[i % PALETTE.length];
 
-/* ───────────────────────── SERVICE ICON MAP ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SERVICE ICON MAP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SERVICE_ICON_MAP: Record<string, any> = {
   cleaning: Sparkle,
@@ -97,7 +97,7 @@ function getServiceIcon(serviceName: string) {
   return Tooth;
 }
 
-/* ───────────────────────── INSURANCE BADGES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ INSURANCE BADGES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const INSURANCE_BADGES = [
   { icon: CheckCircle, label: "Most Insurance Accepted" },
   { icon: CurrencyDollar, label: "Flexible Payment Plans" },
@@ -105,14 +105,14 @@ const INSURANCE_BADGES = [
   { icon: Heart, label: "In-House Savings Plan" },
 ];
 
-/* ───────────────────────── PRICING CARDS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ PRICING CARDS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const PRICING_CARDS = [
   { title: "Basic Cleaning", price: "$99", desc: "Professional cleaning, exam & polish", featured: false },
   { title: "Cosmetic Consult", price: "Free", desc: "Explore your smile transformation options", featured: true },
   { title: "Payment Plans", price: "From $49/mo", desc: "Flexible financing for any treatment", featured: false },
 ];
 
-/* ───────────────────────── DENTAL TECHNOLOGY ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ DENTAL TECHNOLOGY â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const DENTAL_TECH = [
   { icon: Scan, title: "Digital X-Rays", desc: "Up to 90% less radiation than traditional film" },
   { icon: Eyeglasses, title: "Intraoral Cameras", desc: "See exactly what we see in real time" },
@@ -120,7 +120,7 @@ const DENTAL_TECH = [
   { icon: Monitor, title: "3D Imaging", desc: "Precise treatment planning with CBCT technology" },
 ];
 
-/* ───────────────────────── COMFORT FEATURES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ COMFORT FEATURES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const COMFORT_FEATURES = [
   { icon: Smiley, title: "Sedation Options", desc: "Oral and nitrous oxide sedation available for anxious patients" },
   { icon: Heart, title: "Gentle Techniques", desc: "Our team is trained in the latest comfort-focused methods" },
@@ -128,7 +128,7 @@ const COMFORT_FEATURES = [
   { icon: Timer, title: "No-Rush Appointments", desc: "We take our time so you never feel hurried through care" },
 ];
 
-/* ───────────────────────── COMPARISON ROWS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ COMPARISON ROWS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const COMPARISON_ROWS = [
   { feature: "Same-Day Emergency", us: true, them: "Sometimes" },
   { feature: "Insurance Filing Help", us: true, them: "Varies" },
@@ -139,15 +139,15 @@ const COMPARISON_ROWS = [
   { feature: "New Patient Specials", us: true, them: "Rarely" },
 ];
 
-/* ───────────────────────── CHECKUP QUIZ OPTIONS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ CHECKUP QUIZ OPTIONS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const QUIZ_OPTIONS = [
   { label: "Less than 6 months", color: "#22c55e", bg: "#22c55e15", border: "#22c55e33", response: "Great! Keep up the good work." },
   { label: "6-12 months ago", color: "#f59e0b", bg: "#f59e0b15", border: "#f59e0b33", response: "Time to schedule your next visit!" },
   { label: "Over a year ago", color: "#ef4444", bg: "#ef444415", border: "#ef444433", response: "Don\u2019t wait \u2014 book today!" },
 ];
 
-/* ───────────────────────── STOCK FALLBACK IMAGES (UNIQUE TO DENTAL) ───────────────────────── */
-/* Dental-specific stock images — 5 hero, 5 about, 10 gallery (no cross-category overlap) */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ STOCK FALLBACK IMAGES (UNIQUE TO DENTAL) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* Dental-specific stock images â€” 5 hero, 5 about, 10 gallery (no cross-category overlap) */
 const STOCK_HERO_POOL = [
   "https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=1400&q=80",   // dental chair modern
   "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=1400&q=80",   // dentist with patient
@@ -175,7 +175,7 @@ const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1628771065518-0d82f1938462?w=600&q=80",    // whitening
 ];
 
-/* ───────────────────────── FLOATING SPARKLE PARTICLES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ FLOATING SPARKLE PARTICLES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function FloatingSparkles({ accent }: { accent: string }) {
   const particles = Array.from({ length: 24 }, (_, i) => ({
     id: i,
@@ -218,7 +218,7 @@ function FloatingSparkles({ accent }: { accent: string }) {
   );
 }
 
-/* ───────────────────────── ROTATING TOOTH SVG ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ROTATING TOOTH SVG â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function RotatingTooth({ accent }: { accent: string }) {
   return (
     <motion.div
@@ -273,7 +273,7 @@ function RotatingTooth({ accent }: { accent: string }) {
   );
 }
 
-/* ───────────────────────── DENTAL PATTERN SVG ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ DENTAL PATTERN SVG â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function DentalPattern({ opacity = 0.03, accent }: { opacity?: number; accent: string }) {
   const pid = `dentalPatPrev-${accent.replace("#", "")}`;
   return (
@@ -290,7 +290,7 @@ function DentalPattern({ opacity = 0.03, accent }: { opacity?: number; accent: s
   );
 }
 
-/* ───────────────────────── GLASS CARD ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ GLASS CARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <div className={`rounded-2xl border border-slate-200 bg-white/80 backdrop-blur-xl shadow-sm ${className}`}>
@@ -299,7 +299,7 @@ function GlassCard({ children, className = "" }: { children: React.ReactNode; cl
   );
 }
 
-/* ───────────────────────── MAGNETIC BUTTON ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ MAGNETIC BUTTON â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function MagneticButton({ children, className = "", onClick, style, href }: {
   children: React.ReactNode;
   className?: string;
@@ -360,7 +360,7 @@ function MagneticButton({ children, className = "", onClick, style, href }: {
   );
 }
 
-/* ───────────────────────── SHIMMER BORDER ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SHIMMER BORDER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function ShimmerBorder({ children, className = "", accent }: { children: React.ReactNode; className?: string; accent: string }) {
   return (
     <div className={`relative rounded-2xl p-[1px] overflow-hidden ${className}`}>
@@ -378,7 +378,7 @@ function ShimmerBorder({ children, className = "", accent }: { children: React.R
   );
 }
 
-/* ───────────────────────── ACCORDION ITEM ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ACCORDION ITEM â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AccordionItem({ question, answer, isOpen, onToggle }: {
   question: string;
   answer: string;
@@ -410,7 +410,7 @@ function AccordionItem({ question, answer, isOpen, onToggle }: {
   );
 }
 
-/* ───────────────────────── SECTION HEADER ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SECTION HEADER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function SectionHeader({ badge, title, subtitle, accent }: {
   badge: string;
   title: string;
@@ -435,10 +435,10 @@ function SectionHeader({ badge, title, subtitle, accent }: {
 }
 
 
-/* ═══════════════════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    MAIN PREVIEW COMPONENT
-   ═══════════════════════════════════════════════════════════════════ */
-/* ───────────────────────── ANIMATED SECTION ───────────────────────── */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ANIMATED SECTION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <motion.div
@@ -463,7 +463,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
 
   const { TEAL, TEAL_GLOW } = getAccent(data.accentColor);
 
-  /* Deduplicate scraped photos — ensure hero, card, and about are NEVER the same */
+  /* Deduplicate scraped photos â€” ensure hero, card, and about are NEVER the same */
   const uniquePhotos = data.photos ? [...new Set(data.photos)] : [];
   const heroImage = uniquePhotos[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
   const heroCardImage = uniquePhotos[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 1);
@@ -541,7 +541,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
     >
       <FloatingSparkles accent={TEAL} />
 
-      {/* ══════════════════ 1. NAV ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 1. NAV â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <nav className="fixed top-0 left-0 right-0 z-50">
         <div className="mx-auto max-w-7xl px-4 md:px-6 py-4">
           <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
@@ -605,7 +605,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </nav>
 
-      {/* ══════════════════ 2. HERO ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 2. HERO â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
         {/* Clean white-dominant hero with subtle image peek */}
         <div className="absolute inset-0 bg-gradient-to-br from-white via-white to-slate-50" />
@@ -679,7 +679,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 3. STATS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 3. STATS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden border-y" style={{ borderColor: `${TEAL}1a` }}>
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, ${TEAL}06 100%)` }} />
         <DentalPattern opacity={0.02} accent={TEAL} />
@@ -705,7 +705,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ NEW PATIENT SPECIAL BANNER ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• NEW PATIENT SPECIAL BANNER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-6 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${TEAL}15, ${TEAL}08)` }} />
         <div className="max-w-5xl mx-auto px-4 sm:px-6 relative z-10">
@@ -716,9 +716,9 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
               </div>
               <div>
                 <h3 className="text-lg sm:text-xl font-extrabold text-slate-900">
-                  New Patient Special: Exam, X-Rays &amp; Cleaning — <span style={{ color: TEAL }}>$99</span>
+                  New Patient Special: Exam, X-Rays &amp; Cleaning â€” <span style={{ color: TEAL }}>$99</span>
                 </h3>
-                <p className="text-sm text-slate-500">Limited availability this month — schedule now before spots fill up</p>
+                <p className="text-sm text-slate-500">Limited availability this month â€” schedule now before spots fill up</p>
               </div>
             </div>
             <MagneticButton
@@ -733,7 +733,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 4. SERVICES ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 4. SERVICES â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="services" className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, ${TEAL}08 50%, #faf9f6 100%)` }} />
         <DentalPattern accent={TEAL} />
@@ -786,7 +786,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ INSURANCE ACCEPTED ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• INSURANCE ACCEPTED â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, #f5f0eb 50%, #faf9f6 100%)` }} />
         <div className="max-w-5xl mx-auto px-4 sm:px-6 relative z-10">
@@ -807,12 +807,12 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ FINANCING / PAYMENT PLANS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FINANCING / PAYMENT PLANS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, ${TEAL}06 50%, #faf9f6 100%)` }} />
         <DentalPattern opacity={0.02} accent={TEAL} />
         <div className="max-w-5xl mx-auto px-4 sm:px-6 relative z-10">
-          <SectionHeader badge="Pricing" title="Transparent & Affordable" subtitle="No surprises — just honest pricing and flexible options to fit your budget." accent={TEAL} />
+          <SectionHeader badge="Pricing" title="Transparent & Affordable" subtitle="No surprises â€” just honest pricing and flexible options to fit your budget." accent={TEAL} />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {PRICING_CARDS.map((card) => (
               <div key={card.title}>
@@ -854,7 +854,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 5. WHY CHOOSE US / ABOUT ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 5. WHY CHOOSE US / ABOUT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="about" className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, #f5f0eb 50%, #faf9f6 100%)` }} />
         <div className="absolute inset-0 pointer-events-none">
@@ -908,11 +908,11 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ SMILE TRANSFORMATION BEFORE/AFTER ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SMILE TRANSFORMATION BEFORE/AFTER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, ${TEAL}06 50%, #faf9f6 100%)` }} />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 relative z-10">
-          <SectionHeader badge="Transformations" title="Smile Makeover Results" subtitle="Real results from cosmetic dental treatments — the confidence boost is priceless." accent={TEAL} />
+          <SectionHeader badge="Transformations" title="Smile Makeover Results" subtitle="Real results from cosmetic dental treatments â€” the confidence boost is priceless." accent={TEAL} />
           <div className="relative rounded-2xl overflow-hidden border border-slate-200 shadow-lg">
             <img src="/images/dental-before-after.png" alt="Smile transformation before and after" className="w-full h-auto" />
             <div className="absolute bottom-0 left-0 right-0 flex">
@@ -927,7 +927,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ PATIENT COMFORT ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• PATIENT COMFORT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #f5f0eb 0%, #faf9f6 50%, #f5f0eb 100%)` }} />
         <DentalPattern opacity={0.02} accent={TEAL} />
@@ -952,7 +952,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 6. PROCESS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 6. PROCESS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, ${TEAL}08 50%, #faf9f6 100%)` }} />
         <DentalPattern opacity={0.025} accent={TEAL} />
@@ -985,7 +985,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ DENTAL TECHNOLOGY ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• DENTAL TECHNOLOGY â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, ${TEAL}06 50%, #faf9f6 100%)` }} />
         <DentalPattern opacity={0.02} accent={TEAL} />
@@ -1008,7 +1008,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ COMPETITOR COMPARISON TABLE ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• COMPETITOR COMPARISON TABLE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #f5f0eb 0%, #faf9f6 50%, #f5f0eb 100%)` }} />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 relative z-10">
@@ -1040,7 +1040,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ VIDEO TOUR PLACEHOLDER ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• VIDEO TOUR PLACEHOLDER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, ${TEAL}06 50%, #faf9f6 100%)` }} />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 relative z-10">
@@ -1065,7 +1065,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 7. GALLERY ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 7. GALLERY â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="gallery" className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, #f5f0eb 50%, #faf9f6 100%)` }} />
         <div className="absolute inset-0 pointer-events-none">
@@ -1092,7 +1092,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 8. TESTIMONIALS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 8. TESTIMONIALS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, ${TEAL}08 50%, #faf9f6 100%)` }} />
         <DentalPattern opacity={0.02} accent={TEAL} />
@@ -1135,7 +1135,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ CHECKUP QUIZ ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• CHECKUP QUIZ â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #f5f0eb 0%, #faf9f6 50%, #f5f0eb 100%)` }} />
         <div className="absolute inset-0 pointer-events-none">
@@ -1179,7 +1179,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 9. NEW PATIENT CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 9. NEW PATIENT CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${TEAL}, ${TEAL}cc, ${TEAL})` }} />
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='40' height='40' fill='none'/%3E%3Cpath d='M0 0L40 40M40 0L0 40' stroke='%23000' stroke-width='0.5'/%3E%3C/svg%3E\")" }} />
@@ -1202,7 +1202,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 10. SERVICE AREAS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 10. SERVICE AREAS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, #f5f0eb 50%, #faf9f6 100%)` }} />
         <DentalPattern opacity={0.02} accent={TEAL} />
@@ -1225,7 +1225,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 11. HOURS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 11. HOURS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       {data.hours && (
         <section className="relative z-10 py-16 md:py-24 overflow-hidden">
           <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, ${TEAL}08 50%, #faf9f6 100%)` }} />
@@ -1249,7 +1249,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
       )}
 
       
-      {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• MID-PAGE CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${TEAL}15, ${TEAL}08)` }} />
         <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
@@ -1260,7 +1260,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
             Ready to Get Started?
           </h2>
           <p className="text-slate-500 mb-6 text-sm sm:text-base">
-            Limited time — claim your free professional website today before it&apos;s offered to a competitor.
+            Limited time â€” claim your free professional website today before it&apos;s offered to a competitor.
           </p>
           <a
             href={`/claim/${data.id}`}
@@ -1275,7 +1275,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 12. FAQ ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 12. FAQ â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, ${TEAL}08 50%, #faf9f6 100%)` }} />
         <div className="absolute inset-0 pointer-events-none">
@@ -1299,7 +1299,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 13. CONTACT ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 13. CONTACT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="contact" className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, #f5f0eb 50%, #faf9f6 100%)` }} />
         <DentalPattern opacity={0.02} accent={TEAL} />
@@ -1371,7 +1371,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
                 </div>
                 <div>
                   <label className="block text-sm text-slate-500 mb-1.5">Phone</label>
-                  <input type="tel" className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 placeholder-slate-400 focus:outline-none transition-colors text-sm" placeholder="(555) 123-4567" />
+                  <input type="tel" className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 placeholder-slate-400 focus:outline-none transition-colors text-sm" placeholder="(206) 287-2304" />
                 </div>
                 <div>
                   <label className="block text-sm text-slate-500 mb-1.5">Service Needed</label>
@@ -1401,7 +1401,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 14. GUARANTEE / TRUST ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 14. GUARANTEE / TRUST â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, ${TEAL}06 100%)` }} />
         <DentalPattern opacity={0.015} accent={TEAL} />
@@ -1434,7 +1434,7 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 15. FOOTER ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 15. FOOTER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #faf9f6 0%, #f0ede8 100%)` }} />
         <DentalPattern opacity={0.015} accent={TEAL} />

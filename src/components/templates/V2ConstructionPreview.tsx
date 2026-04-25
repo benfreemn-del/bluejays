@@ -38,11 +38,11 @@ import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
 import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
 
-/* ───────────────────────── SPRING CONFIGS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SPRING CONFIGS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
 
-/* ───────────────────────── COLORS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ COLORS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const CHARCOAL = "#1a1a1a";
 const DEFAULT_ORANGE = "#ea580c";
 const ORANGE_LIGHT = "#fb923c";
@@ -56,7 +56,7 @@ function getAccent(accentColor?: string) {
   return { ACCENT: c, ACCENT_GLOW: `${c}26`, ACCENT_LIGHT: ORANGE_LIGHT, AMBER };
 }
 
-/* ───────────────────────── SERVICE ICON MAP ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SERVICE ICON MAP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SERVICE_ICON_MAP: Record<string, any> = {
   remodel: Hammer,
@@ -89,7 +89,7 @@ function getServiceIcon(serviceName: string) {
   return HardHat;
 }
 
-/* ───────────────────────── STOCK FALLBACK IMAGES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ STOCK FALLBACK IMAGES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const STOCK_HERO_POOL = [
   "https://images.unsplash.com/photo-1522770179533-24471fcdba45?w=1400&q=80",
   "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1400&q=80",
@@ -109,15 +109,15 @@ const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1520975916090-3105956dac38?w=600&q=80",
 ];
 
-/* ───────────────────────── TRUST BADGES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ TRUST BADGES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const TRUST_BADGES = [
   { icon: ShieldCheck, label: "Licensed & Bonded", desc: "Fully licensed general contractor with complete bonding" },
-  { icon: Certificate, label: "Permit Handling", desc: "We manage all permits and inspections — stress-free for you" },
+  { icon: Certificate, label: "Permit Handling", desc: "We manage all permits and inspections â€” stress-free for you" },
   { icon: CheckCircle, label: "On-Time Guarantee", desc: "We stick to timelines and keep you updated every step" },
   { icon: Star, label: "Quality Craftsmanship", desc: "Premium materials and meticulous attention to detail" },
 ];
 
-/* ───────────────────────── PRICING TIERS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ PRICING TIERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const PRICING_PLANS = [
   {
     name: "Kitchen & Bath",
@@ -145,7 +145,7 @@ const PRICING_PLANS = [
   },
 ];
 
-/* ───────────────────────── PROJECT TYPES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ PROJECT TYPES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const PROJECT_TYPES = [
   { name: "Kitchen Remodels", icon: HouseLine, desc: "Custom cabinetry, countertops, flooring, and modern layouts" },
   { name: "Bathroom Renovations", icon: Wrench, desc: "Tile, fixtures, vanities, and spa-like upgrades" },
@@ -157,13 +157,13 @@ const PROJECT_TYPES = [
   { name: "Whole-Home Renovations", icon: PencilSimpleLine, desc: "Complete interior transformations from floor to ceiling" },
 ];
 
-/* ───────────────────────── MATERIALS SECTION ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ MATERIALS SECTION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const MATERIALS = [
   "Hardwood Flooring", "Quartz Countertops", "Custom Cabinetry", "Porcelain Tile",
   "Standing Seam Metal", "Composite Decking", "Engineered Stone", "Smart Home Systems",
 ];
 
-/* ───────────────────────── COMPARISON TABLE ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ COMPARISON TABLE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const COMPARISON_ROWS = [
   { feature: "Licensed General Contractor", us: true, them: "Sometimes" },
   { feature: "All Permits Handled", us: true, them: "Your Problem" },
@@ -174,14 +174,14 @@ const COMPARISON_ROWS = [
   { feature: "Transparent Change Orders", us: true, them: "Surprise Costs" },
 ];
 
-/* ───────────────────────── QUIZ OPTIONS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ QUIZ OPTIONS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const QUIZ_OPTIONS = [
   { label: "Kitchen or Bathroom", color: "#3b82f6", desc: "Remodel or full renovation of your kitchen or bathroom. Most common project type.", tag: "Most Popular" },
   { label: "Addition or New Build", color: "#f59e0b", desc: "Expanding your home with a room addition or building a custom home from scratch.", tag: "Major Project" },
   { label: "Commercial / Tenant", color: "#22c55e", desc: "Office buildout, retail space, restaurant, or commercial tenant improvement.", tag: "Commercial" },
 ];
 
-/* ───────────────────────── FLOATING PARTICLES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ FLOATING PARTICLES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function FloatingParticles({ accent }: { accent: string }) {
   const particles = Array.from({ length: 18 }, (_, i) => ({
     id: i,
@@ -210,7 +210,7 @@ function FloatingParticles({ accent }: { accent: string }) {
   );
 }
 
-/* ───────────────────────── BLUEPRINT GRID ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ BLUEPRINT GRID â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function BlueprintGrid({ opacity = 0.03, accent }: { opacity?: number; accent: string }) {
   const patternId = `bpConstructionV2-${accent.replace("#", "")}`;
   return (
@@ -231,7 +231,7 @@ function BlueprintGrid({ opacity = 0.03, accent }: { opacity?: number; accent: s
   );
 }
 
-/* ───────────────────────── STRUCTURE BG ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ STRUCTURE BG â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function StructureBg({ opacity = 0.03, accent }: { opacity?: number; accent: string }) {
   return (
     <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity }} viewBox="0 0 1000 600" preserveAspectRatio="none">
@@ -245,7 +245,7 @@ function StructureBg({ opacity = 0.03, accent }: { opacity?: number; accent: str
   );
 }
 
-/* ───────────────────────── GLASS CARD ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ GLASS CARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
@@ -254,7 +254,7 @@ function GlassCard({ children, className = "" }: { children: React.ReactNode; cl
   );
 }
 
-/* ───────────────────────── MAGNETIC BUTTON ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ MAGNETIC BUTTON â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function MagneticButton({ children, className = "", onClick, style, href }: {
   children: React.ReactNode; className?: string; onClick?: () => void; style?: React.CSSProperties; href?: string;
 }) {
@@ -290,7 +290,7 @@ function MagneticButton({ children, className = "", onClick, style, href }: {
   );
 }
 
-/* ───────────────────────── SHIMMER BORDER ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SHIMMER BORDER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function ShimmerBorder({ children, className = "", accent }: { children: React.ReactNode; className?: string; accent: string }) {
   return (
     <div className={`relative rounded-2xl p-[1px] overflow-hidden ${className}`}>
@@ -302,7 +302,7 @@ function ShimmerBorder({ children, className = "", accent }: { children: React.R
   );
 }
 
-/* ───────────────────────── ACCORDION ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ACCORDION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AccordionItem({ question, answer, isOpen, onToggle }: { question: string; answer: string; isOpen: boolean; onToggle: () => void }) {
   return (
     <GlassCard className="overflow-hidden">
@@ -324,7 +324,7 @@ function AccordionItem({ question, answer, isOpen, onToggle }: { question: strin
   );
 }
 
-/* ───────────────────────── SECTION HEADER ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SECTION HEADER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function SectionHeader({ badge, title, subtitle, accent }: { badge: string; title: string; subtitle?: string; accent: string }) {
   return (
     <div className="text-center mb-16">
@@ -337,7 +337,7 @@ function SectionHeader({ badge, title, subtitle, accent }: { badge: string; titl
   );
 }
 
-/* ───────────────────────── ANIMATED SECTION ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ANIMATED SECTION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <motion.div initial={{ opacity: 1, x: -50 }} whileInView={{ opacity: 1, x: 0 }}
@@ -348,9 +348,9 @@ function AnimatedSection({ children, className = "" }: { children: React.ReactNo
   );
 }
 
-/* ═══════════════════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    MAIN COMPONENT
-   ═══════════════════════════════════════════════════════════════════ */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 export default function V2ConstructionPreview({ data }: { data: GeneratedSiteData }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -384,7 +384,7 @@ export default function V2ConstructionPreview({ data }: { data: GeneratedSiteDat
 
   const faqs = [
     { q: `Is ${data.businessName} a licensed general contractor?`, a: `Yes. ${data.businessName} is a fully licensed, bonded, and insured general contractor. We carry all required state and local licenses and maintain comprehensive liability and workers' compensation coverage.` },
-    { q: "Do you handle permits and inspections?", a: "Absolutely. We manage the entire permit process from application through final inspection. You don't have to worry about building codes, zoning, or scheduling inspector visits — we handle it all." },
+    { q: "Do you handle permits and inspections?", a: "Absolutely. We manage the entire permit process from application through final inspection. You don't have to worry about building codes, zoning, or scheduling inspector visits â€” we handle it all." },
     { q: "How long does a typical renovation take?", a: "Timelines vary by project scope. A kitchen remodel typically takes 4-8 weeks, a bathroom 2-4 weeks, and room additions 8-16 weeks. We provide a detailed timeline during the planning phase and keep you updated throughout." },
     { q: "What happens if something unexpected comes up?", a: "We never surprise you with costs. If we discover anything unexpected (like hidden water damage or outdated wiring), we document it, present options with pricing, and get your approval before proceeding." },
     { q: "Do you offer financing?", a: "Yes, we work with several financing partners to offer flexible payment plans. We also accept phased payment schedules tied to project milestones, so you only pay as work is completed." },
@@ -402,7 +402,7 @@ export default function V2ConstructionPreview({ data }: { data: GeneratedSiteDat
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ fontFamily: "Barlow, system-ui, sans-serif", background: CHARCOAL, color: "#f1f5f9" }}>
       <FloatingParticles accent={ACCENT} />
 
-      {/* ══════════════════ 1. NAV ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 1. NAV â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <nav className="fixed top-0 left-0 right-0 z-50">
         <div className="mx-auto max-w-7xl px-4 md:px-6 py-4">
           <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
@@ -445,7 +445,7 @@ export default function V2ConstructionPreview({ data }: { data: GeneratedSiteDat
         </div>
       </nav>
 
-      {/* ══════════════════ 2. HERO ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 2. HERO â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
         <div className="absolute inset-0">
           <img src={heroImage} alt={data.businessName} className="w-full h-full object-cover object-center" />
@@ -505,7 +505,7 @@ export default function V2ConstructionPreview({ data }: { data: GeneratedSiteDat
         </div>
       </section>
 
-      {/* ══════════════════ 3. STATS BAR ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 3. STATS BAR â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden border-y" style={{ borderColor: `${ACCENT}1a` }}>
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #14100a 0%, #1a1a1a 100%)" }} />
         <BlueprintGrid opacity={0.02} accent={ACCENT} />
@@ -531,7 +531,7 @@ export default function V2ConstructionPreview({ data }: { data: GeneratedSiteDat
         </div>
       </section>
 
-      {/* ══════════════════ 4. FREE CONSULTATION CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 4. FREE CONSULTATION CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-12 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT}dd)` }} />
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='40' height='40' fill='none'/%3E%3Cpath d='M0 0L40 40M40 0L0 40' stroke='%23000' stroke-width='0.5'/%3E%3C/svg%3E\")" }} />
@@ -546,7 +546,7 @@ export default function V2ConstructionPreview({ data }: { data: GeneratedSiteDat
         </div>
       </section>
 
-      {/* ══════════════════ 5. PROJECT TYPES ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 5. PROJECT TYPES â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #120c06 50%, #1a1a1a 100%)" }} />
         <BlueprintGrid accent={ACCENT} />
@@ -575,7 +575,7 @@ export default function V2ConstructionPreview({ data }: { data: GeneratedSiteDat
         </div>
       </section>
 
-      {/* ══════════════════ 6. SERVICES GRID ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 6. SERVICES GRID â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1218 50%, #1a1a1a 100%)" }} />
         <StructureBg opacity={0.02} accent={ACCENT} />
@@ -611,7 +611,7 @@ export default function V2ConstructionPreview({ data }: { data: GeneratedSiteDat
         </div>
       </section>
 
-      {/* ══════════════════ 7. ABOUT ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 7. ABOUT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #120c06 50%, #1a1a1a 100%)" }} />
         <StructureBg opacity={0.02} accent={ACCENT} />
@@ -651,7 +651,7 @@ export default function V2ConstructionPreview({ data }: { data: GeneratedSiteDat
         </div>
       </section>
 
-      {/* ══════════════════ 8. PROCESS / TIMELINE ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 8. PROCESS / TIMELINE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1218 50%, #1a1a1a 100%)" }} />
         <BlueprintGrid opacity={0.025} accent={ACCENT} />
@@ -679,7 +679,7 @@ export default function V2ConstructionPreview({ data }: { data: GeneratedSiteDat
         </div>
       </section>
 
-      {/* ══════════════════ 9. PRICING TIERS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 9. PRICING TIERS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #120c06 50%, #1a1a1a 100%)" }} />
         <StructureBg opacity={0.02} accent={ACCENT} />
@@ -740,7 +740,7 @@ export default function V2ConstructionPreview({ data }: { data: GeneratedSiteDat
         </div>
       </section>
 
-      {/* ══════════════════ 10. COMPARISON TABLE ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 10. COMPARISON TABLE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1218 50%, #1a1a1a 100%)" }} />
         <BlueprintGrid opacity={0.02} accent={ACCENT} />
@@ -775,7 +775,7 @@ export default function V2ConstructionPreview({ data }: { data: GeneratedSiteDat
         </div>
       </section>
 
-      {/* ══════════════════ 11. MATERIALS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 11. MATERIALS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-20 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #120c06 50%, #1a1a1a 100%)" }} />
         <StructureBg opacity={0.02} accent={ACCENT} />
@@ -793,7 +793,7 @@ export default function V2ConstructionPreview({ data }: { data: GeneratedSiteDat
         </div>
       </section>
 
-      {/* ══════════════════ 12. GOOGLE REVIEWS + TESTIMONIALS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 12. GOOGLE REVIEWS + TESTIMONIALS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="reviews" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1218 50%, #1a1a1a 100%)" }} />
         <BlueprintGrid opacity={0.02} accent={ACCENT} />
@@ -835,7 +835,7 @@ export default function V2ConstructionPreview({ data }: { data: GeneratedSiteDat
         </div>
       </section>
 
-      {/* ══════════════════ 13. PROJECT QUIZ ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 13. PROJECT QUIZ â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #120c06 50%, #1a1a1a 100%)" }} />
         <BlueprintGrid opacity={0.02} accent={ACCENT} />
@@ -863,7 +863,7 @@ export default function V2ConstructionPreview({ data }: { data: GeneratedSiteDat
                 <ShimmerBorder accent={ACCENT}>
                   <div className="p-6 text-center">
                     <h4 className="text-lg font-bold text-white mb-2">
-                      {quizAnswer === 0 ? "Great — We Love Kitchen & Bath Projects" : quizAnswer === 1 ? "Big Vision? Let's Make It Happen" : "Commercial Projects Are Our Specialty"}
+                      {quizAnswer === 0 ? "Great â€” We Love Kitchen & Bath Projects" : quizAnswer === 1 ? "Big Vision? Let's Make It Happen" : "Commercial Projects Are Our Specialty"}
                     </h4>
                     <p className="text-slate-400 text-sm mb-4">
                       {quizAnswer === 0 ? "Kitchen and bath remodels are our bread and butter. We'll design a space you'll love coming home to." : quizAnswer === 1 ? "Whether it's an addition or custom build, we handle permits, design, and construction from A to Z." : "From tenant buildouts to full commercial renovations, we deliver on-time and on-budget."}
@@ -881,7 +881,7 @@ export default function V2ConstructionPreview({ data }: { data: GeneratedSiteDat
         </div>
       </section>
 
-      {/* ══════════════════ 14. VIDEO PLACEHOLDER ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 14. VIDEO PLACEHOLDER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1218 50%, #1a1a1a 100%)" }} />
         <StructureBg opacity={0.02} accent={ACCENT} />
@@ -904,7 +904,7 @@ export default function V2ConstructionPreview({ data }: { data: GeneratedSiteDat
         </div>
       </section>
 
-      {/* ══════════════════ 15. GALLERY ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 15. GALLERY â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="projects" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #120c06 50%, #1a1a1a 100%)" }} />
         <BlueprintGrid opacity={0.02} accent={ACCENT} />
@@ -929,7 +929,7 @@ export default function V2ConstructionPreview({ data }: { data: GeneratedSiteDat
         </div>
       </section>
 
-      {/* ══════════════════ 16. FAQ ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 16. FAQ â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1218 50%, #1a1a1a 100%)" }} />
         <BlueprintGrid opacity={0.02} accent={ACCENT} />
@@ -946,7 +946,7 @@ export default function V2ConstructionPreview({ data }: { data: GeneratedSiteDat
         </div>
       </section>
 
-      {/* ══════════════════ 17. SERVICE AREA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 17. SERVICE AREA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #120c06 50%, #1a1a1a 100%)" }} />
         <BlueprintGrid opacity={0.02} accent={ACCENT} />
@@ -966,7 +966,7 @@ export default function V2ConstructionPreview({ data }: { data: GeneratedSiteDat
         </div>
       </section>
 
-      {/* ══════════════════ 18. MID-PAGE CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 18. MID-PAGE CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT}cc, ${ACCENT})` }} />
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='40' height='40' fill='none'/%3E%3Cpath d='M0 0L40 40M40 0L0 40' stroke='%23000' stroke-width='0.5'/%3E%3C/svg%3E\")" }} />
@@ -980,7 +980,7 @@ export default function V2ConstructionPreview({ data }: { data: GeneratedSiteDat
         </div>
       </section>
 
-      {/* ══════════════════ 19. HOURS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 19. HOURS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       {data.hours && (
         <section className="relative z-10 py-24 md:py-32 overflow-hidden">
           <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1218 50%, #1a1a1a 100%)" }} />
@@ -1001,7 +1001,7 @@ export default function V2ConstructionPreview({ data }: { data: GeneratedSiteDat
         </section>
       )}
 
-      {/* ══════════════════ 20. CONTACT FORM ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 20. CONTACT FORM â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="contact" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #120c06 50%, #1a1a1a 100%)" }} />
         <BlueprintGrid opacity={0.02} accent={ACCENT} />
@@ -1045,7 +1045,7 @@ export default function V2ConstructionPreview({ data }: { data: GeneratedSiteDat
                     <input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="Doe" /></div>
                 </div>
                 <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label>
-                  <input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
+                  <input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(206) 287-2304" /></div>
                 <div><label className="block text-sm text-slate-400 mb-1.5">Project Type</label>
                   <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none text-sm">
                     <option value="" className="bg-neutral-900">Select a project type</option>
@@ -1065,7 +1065,7 @@ export default function V2ConstructionPreview({ data }: { data: GeneratedSiteDat
         </div>
       </section>
 
-      {/* ══════════════════ 21. PROMISE ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 21. PROMISE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1218 100%)" }} />
         <BlueprintGrid opacity={0.015} accent={ACCENT} />
@@ -1090,7 +1090,7 @@ export default function V2ConstructionPreview({ data }: { data: GeneratedSiteDat
         </div>
       </section>
 
-      {/* ══════════════════ 22. FOOTER ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 22. FOOTER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111 100%)" }} />
         <BlueprintGrid opacity={0.015} accent={ACCENT} />

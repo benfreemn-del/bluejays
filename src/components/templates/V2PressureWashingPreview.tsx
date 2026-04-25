@@ -36,7 +36,7 @@ import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
 import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
 
-/* ─── CONSTANTS ─── */
+/* â”€â”€â”€ CONSTANTS â”€â”€â”€ */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
 const CHARCOAL = "#1a1a1a";
@@ -49,7 +49,7 @@ function getAccent(accentColor?: string) {
   return { ACCENT: c, ACCENT_GLOW: `${c}26`, AMBER, CYAN: CYAN_ACCENT };
 }
 
-// Rotating palette for service/feature card icon tiles — brings the grid
+// Rotating palette for service/feature card icon tiles â€” brings the grid
 // to life while the primary ACCENT stays on section headers, CTAs, nav.
 const PALETTE = ["#06b6d4", "#f97316", "#f59e0b", "#64748b", "#10b981", "#0ea5e9"];
 const pickPaletteColor = (i: number) => PALETTE[i % PALETTE.length];
@@ -105,7 +105,7 @@ const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1600585152220-90363fe7e115?w=600&q=80",
 ];
 
-/* ─── SURFACE TYPES ─── */
+/* â”€â”€â”€ SURFACE TYPES â”€â”€â”€ */
 const SURFACE_TYPES = [
   { name: "Driveways & Walkways", icon: HouseLine, psi: "3,000+", desc: "Concrete and paver restoration" },
   { name: "House Siding", icon: HouseLine, psi: "1,500", desc: "Soft wash for vinyl, wood & stucco" },
@@ -115,7 +115,7 @@ const SURFACE_TYPES = [
   { name: "Commercial", icon: Buildings, psi: "4,000+", desc: "Storefronts, parking & loading zones" },
 ];
 
-/* ─── COMPARISON TABLE ─── */
+/* â”€â”€â”€ COMPARISON TABLE â”€â”€â”€ */
 const COMPARISON_ROWS = [
   { feature: "Commercial-Grade Equipment", us: true, them: "Sometimes" },
   { feature: "Eco-Friendly Solutions", us: true, them: "Rarely" },
@@ -126,7 +126,7 @@ const COMPARISON_ROWS = [
   { feature: "Same-Week Scheduling", us: true, them: "2-3 Weeks" },
 ];
 
-/* ─── ECO CLEANERS ─── */
+/* â”€â”€â”€ ECO CLEANERS â”€â”€â”€ */
 const ECO_FEATURES = [
   { title: "Biodegradable Solutions", desc: "Plant-based formulas that break down safely in the environment." },
   { title: "Safe for Landscaping", desc: "Our products protect your plants, lawn, and garden beds." },
@@ -134,7 +134,7 @@ const ECO_FEATURES = [
   { title: "EPA Compliant", desc: "All solutions meet or exceed environmental safety standards." },
 ];
 
-/* ─── PARTICLES ─── */
+/* â”€â”€â”€ PARTICLES â”€â”€â”€ */
 function FloatingParticles({ accent }: { accent: string }) {
   const particles = Array.from({ length: 18 }, (_, i) => ({
     id: i,
@@ -232,7 +232,7 @@ function WaterStreamBackground({ opacity = 0.03, accent }: { opacity?: number; a
   );
 }
 
-/* ─── SHARED UI COMPONENTS ─── */
+/* â”€â”€â”€ SHARED UI COMPONENTS â”€â”€â”€ */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <div
@@ -414,9 +414,9 @@ function AnimatedSection({ children, className = "" }: { children: React.ReactNo
   );
 }
 
-/* ═══════════════════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    MAIN COMPONENT
-   ═══════════════════════════════════════════════════════════════════ */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 export default function V2PressureWashingPreview({ data }: { data: GeneratedSiteData }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -455,7 +455,7 @@ export default function V2PressureWashingPreview({ data }: { data: GeneratedSite
   ];
 
   const fallbackTestimonials = [
-    { name: "Larry D.", text: "Our driveway looks brand new. The difference is absolutely incredible — like night and day.", rating: 5 },
+    { name: "Larry D.", text: "Our driveway looks brand new. The difference is absolutely incredible â€” like night and day.", rating: 5 },
     { name: "Beth R.", text: "They pressure washed our entire house exterior and it looks like we just painted it. Amazing.", rating: 5 },
     { name: "Phil T.", text: "Deck was covered in algae and now it's spotless. Professional service and great results.", rating: 5 },
   ];
@@ -464,7 +464,7 @@ export default function V2PressureWashingPreview({ data }: { data: GeneratedSite
   const pricingTiers = [
     { name: "Driveway & Walkway", price: "$149", desc: "Up to 800 sq ft of concrete or paver cleaning" },
     { name: "Full House Wash", price: "$349", desc: "Complete exterior siding, soffit, and trim wash" },
-    { name: "Property Package", price: "$599", desc: "House, driveway, deck, fence — the works" },
+    { name: "Property Package", price: "$599", desc: "House, driveway, deck, fence â€” the works" },
   ];
 
   const quizOptions = [
@@ -474,17 +474,17 @@ export default function V2PressureWashingPreview({ data }: { data: GeneratedSite
   ];
 
   const seasonalSchedule = [
-    { season: "Spring", task: "Post-winter cleanup — remove grime, pollen, and debris", icon: Leaf },
-    { season: "Summer", task: "Deck and patio prep — entertain on spotless surfaces", icon: Drop },
-    { season: "Fall", task: "Pre-winter wash — prevent mold growth under leaves", icon: Leaf },
-    { season: "Winter", task: "Commercial maintenance — keep walkways safe and clean", icon: Buildings },
+    { season: "Spring", task: "Post-winter cleanup â€” remove grime, pollen, and debris", icon: Leaf },
+    { season: "Summer", task: "Deck and patio prep â€” entertain on spotless surfaces", icon: Drop },
+    { season: "Fall", task: "Pre-winter wash â€” prevent mold growth under leaves", icon: Leaf },
+    { season: "Winter", task: "Commercial maintenance â€” keep walkways safe and clean", icon: Buildings },
   ];
 
   return (
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ fontFamily: "Barlow, system-ui, sans-serif", background: CHARCOAL, color: "#f1f5f9" }}>
       <FloatingParticles accent={ACCENT} />
 
-      {/* ─── NAV ─── */}
+      {/* â”€â”€â”€ NAV â”€â”€â”€ */}
       <nav className="fixed top-0 left-0 right-0 z-50">
         <div className="mx-auto max-w-7xl px-4 md:px-6 py-4">
           <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
@@ -541,7 +541,7 @@ export default function V2PressureWashingPreview({ data }: { data: GeneratedSite
         </div>
       </nav>
 
-      {/* ─── HERO ─── */}
+      {/* â”€â”€â”€ HERO â”€â”€â”€ */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
         <div className="absolute inset-0">
           <img src={heroImage} alt={data.businessName} className="w-full h-full object-cover object-center" />
@@ -617,7 +617,7 @@ export default function V2PressureWashingPreview({ data }: { data: GeneratedSite
         </div>
       </section>
 
-      {/* ─── STATS ─── */}
+      {/* â”€â”€â”€ STATS â”€â”€â”€ */}
       <section className="relative z-10 py-16 overflow-hidden border-y" style={{ borderColor: `${ACCENT}1a` }}>
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a1218 0%, #1a1a1a 100%)" }} />
         <WaterSprayPattern opacity={0.02} accent={ACCENT} />
@@ -640,7 +640,7 @@ export default function V2PressureWashingPreview({ data }: { data: GeneratedSite
         </div>
       </section>
 
-      {/* ─── SERVICES ─── */}
+      {/* â”€â”€â”€ SERVICES â”€â”€â”€ */}
       <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1218 50%, #1a1a1a 100%)" }} />
         <WaterSprayPattern accent={ACCENT} />
@@ -678,7 +678,7 @@ export default function V2PressureWashingPreview({ data }: { data: GeneratedSite
         </div>
       </section>
 
-      {/* ─── SURFACE TYPES GRID ─── */}
+      {/* â”€â”€â”€ SURFACE TYPES GRID â”€â”€â”€ */}
       <section id="surfaces" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0d1520 50%, #1a1a1a 100%)" }} />
         <WaterStreamBackground opacity={0.02} accent={ACCENT} />
@@ -703,7 +703,7 @@ export default function V2PressureWashingPreview({ data }: { data: GeneratedSite
         </div>
       </section>
 
-      {/* ─── ABOUT ─── */}
+      {/* â”€â”€â”€ ABOUT â”€â”€â”€ */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #081820 50%, #1a1a1a 100%)" }} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -742,7 +742,7 @@ export default function V2PressureWashingPreview({ data }: { data: GeneratedSite
         </div>
       </section>
 
-      {/* ─── ECO-FRIENDLY SECTION ─── */}
+      {/* â”€â”€â”€ ECO-FRIENDLY SECTION â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1812 50%, #1a1a1a 100%)" }} />
         <WaterSprayPattern opacity={0.02} accent={ACCENT} />
@@ -764,7 +764,7 @@ export default function V2PressureWashingPreview({ data }: { data: GeneratedSite
         </div>
       </section>
 
-      {/* ─── PROCESS ─── */}
+      {/* â”€â”€â”€ PROCESS â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1218 50%, #1a1a1a 100%)" }} />
         <WaterStreamBackground opacity={0.02} accent={ACCENT} />
@@ -791,7 +791,7 @@ export default function V2PressureWashingPreview({ data }: { data: GeneratedSite
         </div>
       </section>
 
-      {/* ─── SEASONAL SCHEDULING ─── */}
+      {/* â”€â”€â”€ SEASONAL SCHEDULING â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0d1520 50%, #1a1a1a 100%)" }} />
         <WaterSprayPattern opacity={0.02} accent={ACCENT} />
@@ -815,7 +815,7 @@ export default function V2PressureWashingPreview({ data }: { data: GeneratedSite
         </div>
       </section>
 
-      {/* ─── PROJECTS / GALLERY ─── */}
+      {/* â”€â”€â”€ PROJECTS / GALLERY â”€â”€â”€ */}
       <section id="projects" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #081820 50%, #1a1a1a 100%)" }} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -839,7 +839,7 @@ export default function V2PressureWashingPreview({ data }: { data: GeneratedSite
         </div>
       </section>
 
-      {/* ─── VIDEO PLACEHOLDER ─── */}
+      {/* â”€â”€â”€ VIDEO PLACEHOLDER â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1218 50%, #1a1a1a 100%)" }} />
         <div className="max-w-4xl mx-auto px-6 relative z-10">
@@ -857,7 +857,7 @@ export default function V2PressureWashingPreview({ data }: { data: GeneratedSite
         </div>
       </section>
 
-      {/* ─── PRICING ─── */}
+      {/* â”€â”€â”€ PRICING â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0d1520 50%, #1a1a1a 100%)" }} />
         <WaterSprayPattern opacity={0.02} accent={ACCENT} />
@@ -888,7 +888,7 @@ export default function V2PressureWashingPreview({ data }: { data: GeneratedSite
         </div>
       </section>
 
-      {/* ─── COMPARISON TABLE ─── */}
+      {/* â”€â”€â”€ COMPARISON TABLE â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1218 50%, #1a1a1a 100%)" }} />
         <WaterStreamBackground opacity={0.02} accent={ACCENT} />
@@ -923,7 +923,7 @@ export default function V2PressureWashingPreview({ data }: { data: GeneratedSite
         </div>
       </section>
 
-      {/* ─── QUIZ ─── */}
+      {/* â”€â”€â”€ QUIZ â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0d1520 50%, #1a1a1a 100%)" }} />
         <WaterSprayPattern opacity={0.02} accent={ACCENT} />
@@ -964,7 +964,7 @@ export default function V2PressureWashingPreview({ data }: { data: GeneratedSite
         </div>
       </section>
 
-      {/* ─── GOOGLE REVIEWS HEADER + TESTIMONIALS ─── */}
+      {/* â”€â”€â”€ GOOGLE REVIEWS HEADER + TESTIMONIALS â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1218 50%, #1a1a1a 100%)" }} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -1004,7 +1004,7 @@ export default function V2PressureWashingPreview({ data }: { data: GeneratedSite
         </div>
       </section>
 
-      {/* ─── SERVICE AREA ─── */}
+      {/* â”€â”€â”€ SERVICE AREA â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #081820 50%, #1a1a1a 100%)" }} />
         <WaterStreamBackground opacity={0.02} accent={ACCENT} />
@@ -1033,7 +1033,7 @@ export default function V2PressureWashingPreview({ data }: { data: GeneratedSite
         </div>
       </section>
 
-      {/* ─── CTA ─── */}
+      {/* â”€â”€â”€ CTA â”€â”€â”€ */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT}cc)` }} />
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='40' height='40' fill='none'/%3E%3Cpath d='M0 0L40 40M40 0L0 40' stroke='%23000' stroke-width='0.5'/%3E%3C/svg%3E\")" }} />
@@ -1050,7 +1050,7 @@ export default function V2PressureWashingPreview({ data }: { data: GeneratedSite
         </div>
       </section>
 
-      {/* ─── FAQ ─── */}
+      {/* â”€â”€â”€ FAQ â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1218 50%, #1a1a1a 100%)" }} />
         <WaterSprayPattern opacity={0.02} accent={ACCENT} />
@@ -1072,7 +1072,7 @@ export default function V2PressureWashingPreview({ data }: { data: GeneratedSite
         </div>
       </section>
 
-      {/* ─── CONTACT ─── */}
+      {/* â”€â”€â”€ CONTACT â”€â”€â”€ */}
       <section id="contact" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #081820 50%, #1a1a1a 100%)" }} />
         <WaterSprayPattern opacity={0.02} accent={ACCENT} />
@@ -1129,7 +1129,7 @@ export default function V2PressureWashingPreview({ data }: { data: GeneratedSite
                 </div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-1.5">Phone</label>
-                  <input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(555) 123-4567" />
+                  <input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(206) 287-2304" />
                 </div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-1.5">Service Needed</label>
@@ -1156,7 +1156,7 @@ export default function V2PressureWashingPreview({ data }: { data: GeneratedSite
         </div>
       </section>
 
-      {/* ─── CERTIFICATIONS BADGES ─── */}
+      {/* â”€â”€â”€ CERTIFICATIONS BADGES â”€â”€â”€ */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0d1520 50%, #1a1a1a 100%)" }} />
         <div className="max-w-4xl mx-auto px-6 relative z-10">
@@ -1170,7 +1170,7 @@ export default function V2PressureWashingPreview({ data }: { data: GeneratedSite
         </div>
       </section>
 
-      {/* ─── GUARANTEE ─── */}
+      {/* â”€â”€â”€ GUARANTEE â”€â”€â”€ */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1218 100%)" }} />
         <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
@@ -1193,7 +1193,7 @@ export default function V2PressureWashingPreview({ data }: { data: GeneratedSite
         </div>
       </section>
 
-      {/* ─── FOOTER ─── */}
+      {/* â”€â”€â”€ FOOTER â”€â”€â”€ */}
       <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111 100%)" }} />
         <div className="mx-auto max-w-6xl px-6 relative z-10">

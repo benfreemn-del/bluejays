@@ -354,7 +354,7 @@ export default function V2MartialArtsPage() {
                 Claim Free Trial <ArrowRight size={18} weight="bold" />
               </MagneticButton>
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
-                <Phone size={18} weight="duotone" /> (555) 741-8520
+                <Phone size={18} weight="duotone" /> (206) 741-8520
               </MagneticButton>
             </motion.div>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ ...spring, delay: 0.95 }} className="flex flex-wrap gap-3">
@@ -364,7 +364,7 @@ export default function V2MartialArtsPage() {
               <span className="px-4 py-2 rounded-full text-xs font-semibold text-white flex items-center gap-2" style={{ background: "rgba(255,255,255,0.05)", border: `1px solid ${GOLD}50` }}><ShieldCheck size={14} weight="duotone" style={{ color: GOLD_LIGHT }} />All Ages Welcome</span>
             </motion.div>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ ...spring, delay: 1 }} className="flex flex-wrap gap-6 text-sm text-slate-400">
-              <span className="flex items-center gap-2"><MapPin size={16} weight="duotone" style={{ color: RED_LIGHT }} />1200 Dragon Way</span>
+              <span className="flex items-center gap-2"><MapPin size={16} weight="duotone" style={{ color: RED_LIGHT }} />2390 Eastlake Ave E, Seattle</span>
               <span className="flex items-center gap-2"><Clock size={16} weight="duotone" style={{ color: RED_LIGHT }} />Mon-Sat 6am-9pm</span>
             </motion.div>
           </div>
@@ -707,7 +707,7 @@ export default function V2MartialArtsPage() {
                 <MapPin size={26} weight="duotone" style={{ color: RED_LIGHT }} />
               </div>
               <p className="text-xs uppercase tracking-widest mb-2" style={{ color: GOLD_LIGHT }}>Location</p>
-              <p className="text-xl font-black text-white">Dragon Way</p>
+              <p className="text-xl font-black text-white">Eastlake</p>
               <p className="text-sm text-slate-400 mt-2">Ground-floor studio with free parking, family viewing area, and showers on site.</p>
             </GlassCard>
             <GlassCard className="p-6 text-center">
@@ -834,14 +834,14 @@ export default function V2MartialArtsPage() {
                   <MapPin size={20} weight="duotone" style={{ color: RED_LIGHT }} className="mt-0.5 shrink-0" />
                   <div>
                     <p className="text-sm font-semibold text-white">Location</p>
-                    <p className="text-sm text-slate-400">1200 Dragon Way<br />Portland, OR 97205</p>
+                    <p className="text-sm text-slate-400">2390 Eastlake Ave E<br />Seattle, WA 98102</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
                   <Phone size={20} weight="duotone" style={{ color: RED_LIGHT }} className="mt-0.5 shrink-0" />
                   <div>
                     <p className="text-sm font-semibold text-white">Phone</p>
-                    <p className="text-sm text-slate-400">(555) 741-8520</p>
+                    <p className="text-sm text-slate-400">(206) 741-8520</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">

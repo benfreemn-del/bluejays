@@ -370,7 +370,7 @@ export default function V2GeneralContractorShowcase() {
                 Get Free Estimate <ArrowRight size={18} weight="bold" />
               </MagneticButton>
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer backdrop-blur-md bg-white/5">
-                <Phone size={18} weight="duotone" /> (206) 555-0456
+                <Phone size={18} weight="duotone" /> (206) 287-0456
               </MagneticButton>
             </motion.div>
 
@@ -787,7 +787,7 @@ export default function V2GeneralContractorShowcase() {
                     <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={spring} className="overflow-hidden">
                       <p className="text-xs text-slate-400 leading-relaxed mt-2 mb-3">{opt.rec}</p>
                       <span className="inline-flex items-center gap-1.5 text-xs font-semibold" style={{ color: AMBER }}>
-                        <Phone size={12} weight="fill" /> Call (206) 555-0456 for a Free Estimate
+                        <Phone size={12} weight="fill" /> Call (206) 287-0456 for a Free Estimate
                       </span>
                     </motion.div>
                   )}
@@ -975,8 +975,8 @@ export default function V2GeneralContractorShowcase() {
           <h2 className="text-3xl md:text-5xl font-black tracking-tight text-white mb-4">Ready to Start Your Project?</h2>
           <p className="text-lg text-white/80 mb-8 max-w-xl mx-auto">Get a free, no-obligation on-site consultation. We&apos;ll discuss your vision, timeline, and budget — then deliver a detailed proposal within 48 hours.</p>
           <div className="flex flex-wrap justify-center gap-4">
-            <a href="tel:+12065550456" className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-white text-black font-bold text-lg hover:bg-white/90 transition-colors">
-              <Phone size={20} weight="fill" /> (206) 555-0456
+            <a href="tel:+12062870456" className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-white text-black font-bold text-lg hover:bg-white/90 transition-colors">
+              <Phone size={20} weight="fill" /> (206) 287-0456
             </a>
             <a href="mailto:build@summitbuildersnw.com" className="inline-flex items-center gap-3 px-8 py-4 rounded-full border-2 border-white/30 text-white font-bold text-lg hover:bg-white/10 transition-colors">
               <Envelope size={20} weight="fill" /> Email Us
@@ -1002,7 +1002,7 @@ export default function V2GeneralContractorShowcase() {
               <div className="space-y-5">
                 {[
                   { icon: MapPin, title: "Office", text: "8901 Roosevelt Way NE, Seattle, WA 98115", href: "https://maps.google.com/?q=8901+Roosevelt+Way+NE+Seattle+WA+98115" },
-                  { icon: Phone, title: "Phone", text: "(206) 555-0456", href: "tel:+12065550456" },
+                  { icon: Phone, title: "Phone", text: "(206) 287-0456", href: "tel:+12062870456" },
                   { icon: Envelope, title: "Email", text: "build@summitbuildersnw.com", href: "mailto:build@summitbuildersnw.com" },
                   { icon: Clock, title: "Hours", text: "Mon-Sat: 7AM-6PM", href: undefined },
                   { icon: ShieldCheck, title: "License", text: "WA #SUMMIBW891PZ", href: undefined },
@@ -1038,7 +1038,7 @@ export default function V2GeneralContractorShowcase() {
                 </div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-1.5">Phone</label>
-                  <input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(206) 555-1234" />
+                  <input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(206) 287-2304" />
                 </div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-1.5">Project Type</label>
@@ -1114,7 +1114,7 @@ export default function V2GeneralContractorShowcase() {
             <div>
               <h4 className="text-sm font-semibold text-white mb-3">Contact</h4>
               <div className="space-y-2 text-sm text-slate-500">
-                <p><a href="tel:+12065550456" className="hover:text-white transition-colors">(206) 555-0456</a></p>
+                <p><a href="tel:+12062870456" className="hover:text-white transition-colors">(206) 287-0456</a></p>
                 <p><a href="mailto:build@summitbuildersnw.com" className="hover:text-white transition-colors">build@summitbuildersnw.com</a></p>
                 <p><a href="https://maps.google.com/?q=8901+Roosevelt+Way+NE+Seattle+WA+98115" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">8901 Roosevelt Way NE, Seattle, WA 98115</a></p>
               </div>

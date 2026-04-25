@@ -1109,7 +1109,7 @@ export default function V2CateringShowcase() {
                   </div>
                   <div>
                     <label className="block text-sm mb-1.5" style={{ color: WARM_GRAY, fontFamily: "system-ui, sans-serif" }}>Phone</label>
-                    <input type="tel" className="w-full px-4 py-3 rounded-xl border text-sm focus:outline-none" style={{ background: `${BG}`, borderColor: `${COPPER}22`, color: CREAM }} placeholder="(555) 123-4567" />
+                    <input type="tel" className="w-full px-4 py-3 rounded-xl border text-sm focus:outline-none" style={{ background: `${BG}`, borderColor: `${COPPER}22`, color: CREAM }} placeholder="(206) 287-2304" />
                   </div>
                 </div>
                 <div>

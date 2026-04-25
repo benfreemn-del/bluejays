@@ -40,11 +40,11 @@ import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
 import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
 
-/* ───────────────────────── SPRING CONFIGS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SPRING CONFIGS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
 
-/* ───────────────────────── COLORS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ COLORS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const CHARCOAL = "#1a1a1a";
 const DEFAULT_BLUE = "#0284c7";
 const BLUE_LIGHT = "#38bdf8";
@@ -55,12 +55,12 @@ function getAccent(accentColor?: string) {
   return { ACCENT: c, ACCENT_GLOW: `${c}26`, ACCENT_LIGHT: BLUE_LIGHT, MINT };
 }
 
-// Rotating palette for service/feature card icon tiles — brings the grid
+// Rotating palette for service/feature card icon tiles â€” brings the grid
 // to life while the primary ACCENT stays on section headers, CTAs, nav.
 const PALETTE = ["#0284c7", "#34d399", "#64748b", "#f59e0b", "#a78bfa", "#06b6d4"];
 const pickPaletteColor = (i: number) => PALETTE[i % PALETTE.length];
 
-/* ───────────────────────── SERVICE ICON MAP ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SERVICE ICON MAP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SERVICE_ICON_MAP: Record<string, any> = {
   residential: House,
@@ -85,7 +85,7 @@ function getServiceIcon(serviceName: string) {
   return Sparkle;
 }
 
-/* ───────────────────────── STOCK FALLBACK IMAGES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ STOCK FALLBACK IMAGES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=1400&q=80"];
 const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?w=600&q=80"];
 const STOCK_PROJECTS = [
@@ -95,7 +95,7 @@ const STOCK_PROJECTS = [
   "https://images.unsplash.com/photo-1528740561666-dc2479dc08ab?w=800&q=80",
 ];
 
-/* ───────────────────────── TRUST & SAFETY BADGES DATA ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ TRUST & SAFETY BADGES DATA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const TRUST_BADGES = [
   { icon: ShieldCheck, label: "Background-Checked Staff", desc: "Every team member passes rigorous background screening" },
   { icon: CheckCircle, label: "Bonded & Insured", desc: "Full liability coverage for your peace of mind" },
@@ -103,14 +103,14 @@ const TRUST_BADGES = [
   { icon: Star, label: "Satisfaction Guaranteed", desc: "Not happy? We re-clean for free, no questions asked" },
 ];
 
-/* ───────────────────────── PRICING PLANS DATA ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ PRICING PLANS DATA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const PRICING_PLANS = [
   { name: "Standard Clean", price: "$149", period: "starting at", features: ["All rooms dusted & vacuumed", "Kitchen & bathroom wipe-down", "Floors mopped", "Trash removed", "Beds made"], icon: SprayBottle, featured: false },
   { name: "Deep Clean", price: "$249", period: "starting at", features: ["Everything in Standard", "Inside appliances cleaned", "Baseboards & vents scrubbed", "Light fixtures dusted", "Cabinet fronts wiped", "Grout & tile scrubbed"], icon: Broom, featured: true },
   { name: "Move-In/Move-Out", price: "$349", period: "starting at", features: ["Everything in Deep Clean", "Inside all cabinets & drawers", "Oven & fridge deep clean", "Garage sweep", "Window tracks cleaned", "Wall spot cleaning"], icon: House, featured: false },
 ];
 
-/* ───────────────────────── WHAT WE CLEAN AREAS DATA ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ WHAT WE CLEAN AREAS DATA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const CLEANING_AREAS = [
   { name: "Kitchens", icon: SprayBottle, desc: "Counters degreased, appliances wiped, sinks sanitized" },
   { name: "Bathrooms", icon: Drop, desc: "Toilets, showers, tubs scrubbed and disinfected" },
@@ -122,7 +122,7 @@ const CLEANING_AREAS = [
   { name: "Offices", icon: Buildings, desc: "Desks sanitized, floors cleaned, trash emptied" },
 ];
 
-/* ───────────────────────── CLEANING CHECKLIST DATA ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ CLEANING CHECKLIST DATA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const CLEANING_CHECKLIST = [
   "All surfaces wiped & sanitized",
   "Floors vacuumed & mopped",
@@ -136,15 +136,15 @@ const CLEANING_CHECKLIST = [
   "Cobwebs removed from corners",
 ];
 
-/* ───────────────────────── ECO-FRIENDLY FEATURES DATA ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ECO-FRIENDLY FEATURES DATA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const ECO_FEATURES = [
   { icon: Leaf, title: "Non-Toxic Products", desc: "Plant-based formulas that clean powerfully without harmful chemicals" },
   { icon: ShieldCheck, title: "Allergen Reduction", desc: "HEPA filtration and hypoallergenic products reduce airborne irritants" },
   { icon: CheckCircle, title: "Green Seal Certified", desc: "Our products meet the highest environmental safety standards" },
-  { icon: Drop, title: "No Harsh Residue", desc: "Zero chemical residue left behind — safe for crawling babies and pets" },
+  { icon: Drop, title: "No Harsh Residue", desc: "Zero chemical residue left behind â€” safe for crawling babies and pets" },
 ];
 
-/* ───────────────────────── COMPETITOR COMPARISON DATA ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ COMPETITOR COMPARISON DATA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const COMPARISON_ROWS = [
   { feature: "Background-Checked Staff", us: true, them: "Sometimes" },
   { feature: "Satisfaction Guarantee", us: true, them: "No" },
@@ -155,14 +155,14 @@ const COMPARISON_ROWS = [
   { feature: "Supplies Included", us: true, them: "Sometimes" },
 ];
 
-/* ───────────────────────── CLEANING FREQUENCY QUIZ DATA ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ CLEANING FREQUENCY QUIZ DATA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const FREQUENCY_OPTIONS = [
   { freq: "Weekly", color: "#22c55e", desc: "Best for families with kids & pets. Keeps your home consistently spotless.", tag: "Best for Families" },
   { freq: "Bi-Weekly", color: "#3b82f6", desc: "Our most popular option. Great balance of clean and budget-friendly.", tag: "Most Popular" },
   { freq: "Monthly", color: "#a855f7", desc: "Ideal for low-traffic homes or as a maintenance refresh between deep cleans.", tag: "Great for Maintenance" },
 ];
 
-/* ───────────────────────── FLOATING SPARKLE PARTICLES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ FLOATING SPARKLE PARTICLES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function FloatingSparkles({ accent }: { accent: string }) {
   const particles = Array.from({ length: 22 }, (_, i) => ({
     id: i,
@@ -191,7 +191,7 @@ function FloatingSparkles({ accent }: { accent: string }) {
   );
 }
 
-/* ───────────────────────── SPARKLE / BUBBLE SVG PATTERN ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SPARKLE / BUBBLE SVG PATTERN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function SparklePattern({ opacity = 0.03, accent }: { opacity?: number; accent: string }) {
   const patternId = `sparklePatternV2-${accent.replace("#", "")}`;
   return (
@@ -213,7 +213,7 @@ function SparklePattern({ opacity = 0.03, accent }: { opacity?: number; accent: 
   );
 }
 
-/* ───────────────────────── WATER DROP SVG ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ WATER DROP SVG â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function WaterDropBackground({ opacity = 0.03, accent }: { opacity?: number; accent: string }) {
   return (
     <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity }} viewBox="0 0 1000 600" preserveAspectRatio="none">
@@ -226,7 +226,7 @@ function WaterDropBackground({ opacity = 0.03, accent }: { opacity?: number; acc
   );
 }
 
-/* ───────────────────────── GLASS CARD ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ GLASS CARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
@@ -235,7 +235,7 @@ function GlassCard({ children, className = "" }: { children: React.ReactNode; cl
   );
 }
 
-/* ───────────────────────── MAGNETIC BUTTON ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ MAGNETIC BUTTON â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function MagneticButton({ children, className = "", onClick, style, href }: {
   children: React.ReactNode; className?: string; onClick?: () => void; style?: React.CSSProperties; href?: string;
 }) {
@@ -268,7 +268,7 @@ function MagneticButton({ children, className = "", onClick, style, href }: {
   );
 }
 
-/* ───────────────────────── SHIMMER BORDER ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SHIMMER BORDER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function ShimmerBorder({ children, className = "", accent }: { children: React.ReactNode; className?: string; accent: string }) {
   return (
     <div className={`relative rounded-2xl p-[1px] overflow-hidden ${className}`}>
@@ -279,7 +279,7 @@ function ShimmerBorder({ children, className = "", accent }: { children: React.R
   );
 }
 
-/* ───────────────────────── ACCORDION ITEM ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ACCORDION ITEM â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AccordionItem({ question, answer, isOpen, onToggle }: { question: string; answer: string; isOpen: boolean; onToggle: () => void }) {
   return (
     <GlassCard className="overflow-hidden">
@@ -298,7 +298,7 @@ function AccordionItem({ question, answer, isOpen, onToggle }: { question: strin
   );
 }
 
-/* ───────────────────────── SECTION HEADER ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SECTION HEADER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function SectionHeader({ badge, title, subtitle, accent }: { badge: string; title: string; subtitle?: string; accent: string }) {
   return (
     <div className="text-center mb-16">
@@ -312,10 +312,10 @@ function SectionHeader({ badge, title, subtitle, accent }: { badge: string; titl
 }
 
 
-/* ═══════════════════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    MAIN COMPONENT
-   ═══════════════════════════════════════════════════════════════════ */
-/* ───────────────────────── ANIMATED SECTION ───────────────────────── */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ANIMATED SECTION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <motion.div
@@ -377,7 +377,7 @@ export default function V2CleaningPreview({ data }: { data: GeneratedSiteData })
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ fontFamily: "Poppins, system-ui, sans-serif", background: CHARCOAL, color: "#f1f5f9" }}>
       <FloatingSparkles accent={ACCENT} />
 
-      {/* ══════════════════ 1. NAV ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 1. NAV â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <nav className="fixed top-0 left-0 right-0 z-50">
         <div className="mx-auto max-w-7xl px-4 md:px-6 py-4">
           <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
@@ -414,7 +414,7 @@ export default function V2CleaningPreview({ data }: { data: GeneratedSiteData })
         </div>
       </nav>
 
-      {/* ══════════════════ 2. HERO ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 2. HERO â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
 
         <div className="absolute inset-0">
@@ -462,7 +462,7 @@ export default function V2CleaningPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
-      {/* ══════════════════ 3. STATS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 3. STATS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden border-y" style={{ borderColor: `${ACCENT}1a` }}>
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
@@ -486,7 +486,7 @@ export default function V2CleaningPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
-      {/* ══════════════════ TRUST & SAFETY BADGES ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• TRUST & SAFETY BADGES â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-20 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0c1929 50%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
@@ -507,7 +507,7 @@ export default function V2CleaningPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
-      {/* ══════════════════ 4. SERVICES ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 4. SERVICES â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f172a 50%, #1a1a1a 100%)" }} />
         <SparklePattern accent={ACCENT} />
@@ -544,7 +544,7 @@ export default function V2CleaningPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
-      {/* ══════════════════ CLEANING PRICING PLANS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• CLEANING PRICING PLANS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0c1929 50%, #1a1a1a 100%)" }} />
         <WaterDropBackground opacity={0.025} accent={ACCENT} />
@@ -615,7 +615,7 @@ export default function V2CleaningPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
-      {/* ══════════════════ 5. WHY CHOOSE US / ABOUT ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 5. WHY CHOOSE US / ABOUT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0c1929 50%, #1a1a1a 100%)" }} />
         <WaterDropBackground opacity={0.02} accent={ACCENT} />
@@ -651,7 +651,7 @@ export default function V2CleaningPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
-      {/* ══════════════════ 6. PROCESS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 6. PROCESS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f172a 50%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.025} accent={ACCENT} />
@@ -675,7 +675,7 @@ export default function V2CleaningPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
-      {/* ══════════════════ 7. GALLERY ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 7. GALLERY â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="gallery" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0c1929 50%, #1a1a1a 100%)" }} />
         <WaterDropBackground opacity={0.02} accent={ACCENT} />
@@ -701,7 +701,7 @@ export default function V2CleaningPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
-      {/* ══════════════════ ECO-FRIENDLY / GREEN CLEANING ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• ECO-FRIENDLY / GREEN CLEANING â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1f15 50%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.02} accent={MINT} />
@@ -724,7 +724,7 @@ export default function V2CleaningPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
-      {/* ══════════════════ OUR RESULTS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• OUR RESULTS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f172a 50%, #1a1a1a 100%)" }} />
         <WaterDropBackground opacity={0.02} accent={ACCENT} />
@@ -762,7 +762,7 @@ export default function V2CleaningPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
-      {/* ══════════════════ 8. TESTIMONIALS (WITH GOOGLE REVIEWS HEADER) ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 8. TESTIMONIALS (WITH GOOGLE REVIEWS HEADER) â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f172a 50%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
@@ -804,7 +804,7 @@ export default function V2CleaningPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
-      {/* ══════════════════ 9. FRESH HOME CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 9. FRESH HOME CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT}cc, ${ACCENT})` }} />
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='40' height='40' fill='none'/%3E%3Cpath d='M0 0L40 40M40 0L0 40' stroke='%23000' stroke-width='0.5'/%3E%3C/svg%3E\")" }} />
@@ -819,7 +819,7 @@ export default function V2CleaningPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
-      {/* ══════════════════ COMPETITOR COMPARISON TABLE ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• COMPETITOR COMPARISON TABLE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f172a 50%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
@@ -853,7 +853,7 @@ export default function V2CleaningPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
-      {/* ══════════════════ HOW OFTEN SHOULD YOU CLEAN? QUIZ ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• HOW OFTEN SHOULD YOU CLEAN? QUIZ â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0c1929 50%, #1a1a1a 100%)" }} />
         <WaterDropBackground opacity={0.02} accent={ACCENT} />
@@ -881,7 +881,7 @@ export default function V2CleaningPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
-      {/* ══════════════════ WHAT WE CLEAN (ENHANCED) ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• WHAT WE CLEAN (ENHANCED) â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0c1929 50%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
@@ -902,7 +902,7 @@ export default function V2CleaningPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
-      {/* ══════════════════ CLEANING CHECKLIST ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• CLEANING CHECKLIST â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f172a 50%, #1a1a1a 100%)" }} />
         <WaterDropBackground opacity={0.02} accent={ACCENT} />
@@ -922,7 +922,7 @@ export default function V2CleaningPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
-      {/* ══════════════════ 11. SERVICE AREAS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 11. SERVICE AREAS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f172a 50%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
@@ -938,7 +938,7 @@ export default function V2CleaningPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
-      {/* ══════════════════ 12. HOURS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 12. HOURS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       {data.hours && (
         <section className="relative z-10 py-24 md:py-32 overflow-hidden">
           <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0c1929 50%, #1a1a1a 100%)" }} />
@@ -959,7 +959,7 @@ export default function V2CleaningPreview({ data }: { data: GeneratedSiteData })
       )}
 
       
-      {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• MID-PAGE CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15, ${ACCENT}08)` }} />
         <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
@@ -970,7 +970,7 @@ export default function V2CleaningPreview({ data }: { data: GeneratedSiteData })
             Ready to Get Started?
           </h2>
           <p className="text-slate-400 mb-6 text-sm sm:text-base">
-            Limited time — claim your free professional website today before it&apos;s offered to a competitor.
+            Limited time â€” claim your free professional website today before it&apos;s offered to a competitor.
           </p>
           <a
             href={`/claim/${data.id}`}
@@ -985,7 +985,7 @@ export default function V2CleaningPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
-      {/* ══════════════════ SPOTLESS GUARANTEE CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SPOTLESS GUARANTEE CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-20 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0c1929 50%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
@@ -998,7 +998,7 @@ export default function V2CleaningPreview({ data }: { data: GeneratedSiteData })
                 Not Satisfied? We&apos;ll Re-Clean for Free.
               </h2>
               <p className="text-slate-400 mb-6 max-w-lg mx-auto leading-relaxed">
-                Our Spotless Guarantee means you never pay for a clean that doesn&apos;t meet your standards. If anything is missed, we come back and make it right — no questions asked.
+                Our Spotless Guarantee means you never pay for a clean that doesn&apos;t meet your standards. If anything is missed, we come back and make it right â€” no questions asked.
               </p>
               <div className="flex flex-wrap justify-center gap-3 mb-6">
                 {[{ icon: ShieldCheck, label: "100% Guaranteed" }, { icon: Users, label: "Consistent Teams" }, { icon: Leaf, label: "Eco-Friendly" }, { icon: CheckCircle, label: "Background-Checked" }].map((b) => (
@@ -1016,7 +1016,7 @@ export default function V2CleaningPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
-      {/* ══════════════════ 13. FAQ ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 13. FAQ â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f172a 50%, #1a1a1a 100%)" }} />
         <WaterDropBackground opacity={0.02} accent={ACCENT} />
@@ -1031,7 +1031,7 @@ export default function V2CleaningPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
-      {/* ══════════════════ 14. CONTACT ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 14. CONTACT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="contact" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0c1929 50%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
@@ -1070,7 +1070,7 @@ export default function V2CleaningPreview({ data }: { data: GeneratedSiteData })
                   <div><label className="block text-sm text-slate-400 mb-1.5">First Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="John" /></div>
                   <div><label className="block text-sm text-slate-400 mb-1.5">Last Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="Doe" /></div>
                 </div>
-                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="(555) 123-4567" /></div>
+                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="(206) 287-2304" /></div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-1.5">Service Needed</label>
                   <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none transition-colors text-sm">
@@ -1088,7 +1088,7 @@ export default function V2CleaningPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
-      {/* ══════════════════ 15. FOOTER ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 15. FOOTER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111 100%)" }} />
         <SparklePattern opacity={0.015} accent={ACCENT} />

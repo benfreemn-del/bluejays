@@ -41,11 +41,11 @@ import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
 import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
 
-/* ───────────────── SPRING ───────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SPRING â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
 
-/* ───────────────── COLORS ───────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ COLORS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const BG = "#1a2030";
 const DEFAULT_ORANGE = "#ea580c";
 const STEEL = "#475569";
@@ -60,7 +60,7 @@ function getAccent(accentColor?: string) {
 const PALETTE = ["#ea580c", "#64748b", "#d4a017", "#10b981", "#78716c", "#f59e0b"];
 const pickPaletteColor = (i: number) => PALETTE[i % PALETTE.length];
 
-/* ───────────────── SERVICE ICON MAP ───────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SERVICE ICON MAP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SERVICE_ICON_MAP: Record<string, any> = {
   remodel: Wrench, kitchen: Wrench, bath: Wrench, renovation: Wrench,
@@ -79,20 +79,20 @@ function getServiceIcon(serviceName: string) {
   return Hammer;
 }
 
-/* ───────────────── STOCK IMAGES ─────────────────
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ STOCK IMAGES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
  * Curated GC-specific Unsplash photos. Every URL has been HEAD-verified
- * (HTTP 200) AND visually inspected — the showcase labels were lying on
+ * (HTTP 200) AND visually inspected â€” the showcase labels were lying on
  * at least one photo (`1581094794329-c8112a89af12` was labeled "Chris on
  * job site" but actually shows a software developer at a monitor), so
  * never trust label text, only the pixels.
  *
  * Cross-category audit (2026-04-21): every photo below appears ONLY in
  * GC-related templates (V2 GC preview, V1 GC legacy, /v2/general-contractor
- * showcase) — no overlap with other category templates per CLAUDE.md rule
+ * showcase) â€” no overlap with other category templates per CLAUDE.md rule
  * 1.5 ("NEVER share the same Unsplash URL between two different category
  * templates").
  *
- * Pool sizing: HERO meets the ≥8 minimum. ABOUT is 5 (tight — TODO: add
+ * Pool sizing: HERO meets the â‰¥8 minimum. ABOUT is 5 (tight â€” TODO: add
  * 3 more GC-only headshot/worksite interior photos to hit 8).
  */
 const STOCK_HERO_POOL = [
@@ -114,7 +114,7 @@ const STOCK_ABOUT_POOL = [
   "https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?w=600&q=80", // finished dining nook with white table + chairs
 ];
 
-// Gallery pool — finished projects from builds. 7 entries (was 8, removed
+// Gallery pool â€” finished projects from builds. 7 entries (was 8, removed
 // `1581094794329-c8112a89af12` which was a developer-at-monitor photo
 // mistakenly labeled as a job site). Most entries overlap with HERO/ABOUT
 // pools to keep gallery imagery dense without adding more URLs; the slice
@@ -130,7 +130,7 @@ const STOCK_PROJECTS = [
   "https://images.unsplash.com/photo-1613545325278-f24b0cae1224?w=600&q=80",
 ];
 
-/* ───────────────── PARTICLES ───────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ PARTICLES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function FloatingSparks({ accent }: { accent: string }) {
   const particles = Array.from({ length: 18 }, (_, i) => ({
     id: i, x: Math.random() * 100, delay: Math.random() * 8, duration: 5 + Math.random() * 7, size: 2 + Math.random() * 3, opacity: 0.12 + Math.random() * 0.3, isSteel: Math.random() > 0.6,
@@ -147,7 +147,7 @@ function FloatingSparks({ accent }: { accent: string }) {
   );
 }
 
-/* ───────────────── BLUEPRINT GRID ───────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ BLUEPRINT GRID â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function BlueprintGrid({ opacity = 0.03, accent }: { opacity?: number; accent: string }) {
   const pid = `blueprintV2Prev-${accent.replace("#", "")}`;
   return (
@@ -165,7 +165,7 @@ function BlueprintGrid({ opacity = 0.03, accent }: { opacity?: number; accent: s
   );
 }
 
-/* ───────────────── CONSTRUCTION BEAMS ───────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ CONSTRUCTION BEAMS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function ConstructionBeams({ opacity = 0.04, accent }: { opacity?: number; accent: string }) {
   return (
     <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity }} viewBox="0 0 1000 600" preserveAspectRatio="none">
@@ -176,14 +176,14 @@ function ConstructionBeams({ opacity = 0.04, accent }: { opacity?: number; accen
   );
 }
 
-/* ───────────────── GLASS CARD ───────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ GLASS CARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>
   );
 }
 
-/* ───────────────── MAGNETIC BUTTON ───────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ MAGNETIC BUTTON â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function MagneticButton({ children, className = "", onClick, style, href }: { children: React.ReactNode; className?: string; onClick?: () => void; style?: React.CSSProperties; href?: string }) {
   const ref = useRef<HTMLButtonElement>(null);
   const x = useMotionValue(0);
@@ -213,7 +213,7 @@ function MagneticButton({ children, className = "", onClick, style, href }: { ch
   );
 }
 
-/* ───────────────── SHIMMER BORDER ───────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SHIMMER BORDER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function ShimmerBorder({ children, className = "", accent }: { children: React.ReactNode; className?: string; accent: string }) {
   return (
     <div className={`relative rounded-2xl p-[1px] overflow-hidden ${className}`}>
@@ -223,7 +223,7 @@ function ShimmerBorder({ children, className = "", accent }: { children: React.R
   );
 }
 
-/* ───────────────── ACCORDION ───────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ACCORDION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AccordionItem({ question, answer, isOpen, onToggle }: { question: string; answer: string; isOpen: boolean; onToggle: () => void }) {
   return (
     <GlassCard className="overflow-hidden">
@@ -242,7 +242,7 @@ function AccordionItem({ question, answer, isOpen, onToggle }: { question: strin
   );
 }
 
-/* ───────────────── SECTION HEADER ───────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SECTION HEADER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function SectionHeader({ badge, title, subtitle, accent }: { badge: string; title: string; subtitle?: string; accent: string }) {
   return (
     <div className="text-center mb-16">
@@ -255,10 +255,10 @@ function SectionHeader({ badge, title, subtitle, accent }: { badge: string; titl
 }
 
 
-/* ═══════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    MAIN PREVIEW COMPONENT
-   ═══════════════════════════════════════════════════ */
-/* ───────────────────────── ANIMATED SECTION ───────────────────────── */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ANIMATED SECTION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <div className={className}>
@@ -273,13 +273,13 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
 
   const { ACCENT, ACCENT_GLOW } = getAccent(data.accentColor);
 
-  // Photo allocation — uniquePhotos is the deduped real-business photo list
+  // Photo allocation â€” uniquePhotos is the deduped real-business photo list
   // (scraped from their website + Google Places). Each slot below MUST be a
   // distinct photo; duplicates kill trust on the preview page. Layout:
   //   [0] hero background (full-bleed)
   //   [1] hero overlapping card
   //   [2] about section
-  //   [3..10] project gallery (up to 8 — stays responsive on mobile)
+  //   [3..10] project gallery (up to 8 â€” stays responsive on mobile)
   //   [last] video placeholder (always different from gallery)
   const uniquePhotos = data.photos ? [...new Set(data.photos)] : [];
 
@@ -307,7 +307,7 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
 
   const processSteps = [
     { step: "01", title: "Free Consultation", desc: `We visit your site, discuss your vision, timeline, and budget at no cost.` },
-    { step: "02", title: "Design & Planning", desc: `Detailed plans, 3D renderings, permits — we handle it all.` },
+    { step: "02", title: "Design & Planning", desc: `Detailed plans, 3D renderings, permits â€” we handle it all.` },
     { step: "03", title: "Construction", desc: `Expert crews execute with precision, daily updates, and clean job sites.` },
     { step: "04", title: "Final Walkthrough", desc: `We walk every inch together. We don't finish until you're 100% satisfied.` },
   ];
@@ -327,37 +327,37 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
   ];
   const testimonials = data.testimonials?.length > 0 ? data.testimonials : fallbackTestimonials;
 
-  /* ───────── FEATURE DATA: Project Type Badges ───────── */
+  /* â”€â”€â”€â”€â”€â”€â”€â”€â”€ FEATURE DATA: Project Type Badges â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   const projectTypeBadges = [
     "Kitchen Remodels", "Bathroom Renovations", "Additions",
     "New Construction", "Commercial", "Outdoor Living",
   ];
 
-  /* ───────── FEATURE DATA: Project Investment Guide ───────── */
+  /* â”€â”€â”€â”€â”€â”€â”€â”€â”€ FEATURE DATA: Project Investment Guide â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   const investmentCards = [
     { title: "Bathroom Remodel", price: "From $15K", desc: "Complete tear-out and rebuild with premium finishes, modern fixtures, and expert tile work.", icon: Wrench },
     { title: "Kitchen Renovation", price: "From $35K", desc: "Custom cabinetry, countertops, appliances, and layouts designed for how you actually live.", icon: HouseSimple },
-    { title: "Home Addition", price: "From $75K+", desc: "Expand your living space with a seamless addition — permitted, engineered, and built to last.", icon: Buildings },
+    { title: "Home Addition", price: "From $75K+", desc: "Expand your living space with a seamless addition â€” permitted, engineered, and built to last.", icon: Buildings },
   ];
 
-  /* ───────── FEATURE DATA: Build Process (5-step) ───────── */
+  /* â”€â”€â”€â”€â”€â”€â”€â”€â”€ FEATURE DATA: Build Process (5-step) â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   const buildProcess = [
     { step: "01", title: "Free Consultation", desc: "We meet on-site, discuss your vision, evaluate the scope, and provide an honest assessment.", icon: Phone },
-    { step: "02", title: "Design & Planning", desc: "Detailed plans, material selections, 3D renderings, and a locked-in budget — no surprises.", icon: Blueprint },
+    { step: "02", title: "Design & Planning", desc: "Detailed plans, material selections, 3D renderings, and a locked-in budget â€” no surprises.", icon: Blueprint },
     { step: "03", title: "Permits & Approvals", desc: "We handle all permit applications, engineering reviews, and municipal approvals.", icon: ClipboardText },
     { step: "04", title: "Quality Construction", desc: "Expert crews execute with precision. Daily updates, clean job sites, and zero shortcuts.", icon: HardHat },
     { step: "05", title: "Final Walkthrough", desc: "We walk every inch together. Your project isn't done until you're 100% satisfied.", icon: CalendarCheck },
   ];
 
-  /* ───────── FEATURE DATA: Why Licensed GC ───────── */
+  /* â”€â”€â”€â”€â”€â”€â”€â”€â”€ FEATURE DATA: Why Licensed GC â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   const licensedPillars = [
     { icon: ShieldCheck, title: "Licensed, Bonded & Insured", desc: "Full liability coverage and state licensing protects your investment from day one." },
     { icon: ClipboardText, title: "Permit Management", desc: "We pull every permit, schedule every inspection, and ensure full code compliance." },
-    { icon: Users, title: "Subcontractor Coordination", desc: "We vet, hire, and manage all trades — electrical, plumbing, HVAC, and more." },
+    { icon: Users, title: "Subcontractor Coordination", desc: "We vet, hire, and manage all trades â€” electrical, plumbing, HVAC, and more." },
     { icon: CheckCircle, title: "Warranty Protection", desc: "Comprehensive workmanship warranty on every project. We stand behind our work." },
   ];
 
-  /* ───────── FEATURE DATA: Project Types Grid ───────── */
+  /* â”€â”€â”€â”€â”€â”€â”€â”€â”€ FEATURE DATA: Project Types Grid â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   const projectTypesGrid = [
     { name: "Kitchen Remodels", icon: Wrench },
     { name: "Bathroom Renovations", icon: HouseSimple },
@@ -369,7 +369,7 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
     { name: "Structural Repairs", icon: HardHat },
   ];
 
-  /* ───────── FEATURE DATA: Competitor Comparison ───────── */
+  /* â”€â”€â”€â”€â”€â”€â”€â”€â”€ FEATURE DATA: Competitor Comparison â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   const comparisonRows = [
     { label: "Licensed & Bonded", us: true, them: "No / Unknown" },
     { label: "Permit Management", us: true, them: "Risk" },
@@ -380,11 +380,11 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
     { label: "Code Compliance Guarantee", us: true, them: "Risk" },
   ];
 
-  /* ───────── FEATURE DATA: Project Quiz ───────── */
+  /* â”€â”€â”€â”€â”€â”€â”€â”€â”€ FEATURE DATA: Project Quiz â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   const quizOptions = [
     { label: "Kitchen or Bath Remodel", tag: "Most Popular", desc: "Update the heart of your home with modern design and premium finishes.", icon: Wrench },
     { label: "Addition or ADU", tag: "Add Space", desc: "Expand your living area with a permitted, professionally built addition.", icon: Buildings },
-    { label: "Whole Home Renovation", tag: "Transform Everything", desc: "Reimagine your entire home — layout, finishes, systems, and more.", icon: HouseSimple },
+    { label: "Whole Home Renovation", tag: "Transform Everything", desc: "Reimagine your entire home â€” layout, finishes, systems, and more.", icon: HouseSimple },
     { label: "Commercial Build-Out", tag: "Business Space", desc: "Professional tenant improvements and commercial construction.", icon: Warehouse },
   ];
 
@@ -392,7 +392,7 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ fontFamily: "Barlow, system-ui, sans-serif", background: BG, color: "#f1f5f9" }}>
       <FloatingSparks accent={ACCENT} />
 
-      {/* ══════ 1. NAV ══════ */}
+      {/* â•â•â•â•â•â• 1. NAV â•â•â•â•â•â• */}
       <nav className="fixed top-0 left-0 right-0 z-50">
         <div className="mx-auto max-w-7xl px-4 md:px-6 py-4">
           <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
@@ -430,7 +430,7 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
         </div>
       </nav>
 
-      {/* ══════ 2. HERO ══════ */}
+      {/* â•â•â•â•â•â• 2. HERO â•â•â•â•â•â• */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
 
         <div className="absolute inset-0">
@@ -476,7 +476,7 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
         </div>
       </section>
 
-      {/* ══════ 3. STATS ══════ */}
+      {/* â•â•â•â•â•â• 3. STATS â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden border-y" style={{ borderColor: `${ACCENT}1a` }}>
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #12141a 0%, ${BG} 100%)` }} />
         <BlueprintGrid opacity={0.02} accent={ACCENT} />
@@ -499,7 +499,7 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
         </div>
       </section>
 
-      {/* ══════ 3b. PROJECT TYPE BADGES ══════ */}
+      {/* â•â•â•â•â•â• 3b. PROJECT TYPE BADGES â•â•â•â•â•â• */}
       <section className="relative z-10 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #12141a 100%)` }} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -513,7 +513,7 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
         </div>
       </section>
 
-      {/* ══════ 4. SERVICES ══════ */}
+      {/* â•â•â•â•â•â• 4. SERVICES â•â•â•â•â•â• */}
       <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #12141a 50%, ${BG} 100%)` }} />
         <BlueprintGrid accent={ACCENT} />
@@ -545,7 +545,7 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
         </div>
       </section>
 
-      {/* ══════ 4b. PROJECT INVESTMENT GUIDE ══════ */}
+      {/* â•â•â•â•â•â• 4b. PROJECT INVESTMENT GUIDE â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #12141a 0%, ${BG} 50%, #12141a 100%)` }} />
         <BlueprintGrid opacity={0.02} accent={ACCENT} />
@@ -566,11 +566,11 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
               </GlassCard>
             ))}
           </div>
-          <p className="text-center text-slate-500 text-sm mt-6">Every project is unique — contact us for a detailed, no-obligation estimate tailored to your home.</p>
+          <p className="text-center text-slate-500 text-sm mt-6">Every project is unique â€” contact us for a detailed, no-obligation estimate tailored to your home.</p>
         </div>
       </section>
 
-      {/* ══════ 5. ABOUT ══════ */}
+      {/* â•â•â•â•â•â• 5. ABOUT â•â•â•â•â•â• */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #10121a 50%, ${BG} 100%)` }} />
         <ConstructionBeams opacity={0.02} accent={ACCENT} />
@@ -610,7 +610,7 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
         </div>
       </section>
 
-      {/* ══════ 5b. WHY CHOOSE A LICENSED GC ══════ */}
+      {/* â•â•â•â•â•â• 5b. WHY CHOOSE A LICENSED GC â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #12141a 50%, ${BG} 100%)` }} />
         <ConstructionBeams opacity={0.025} accent={ACCENT} />
@@ -632,7 +632,7 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
         </div>
       </section>
 
-      {/* ══════ 6. PROCESS ══════ */}
+      {/* â•â•â•â•â•â• 6. PROCESS â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #12141a 50%, ${BG} 100%)` }} />
         <BlueprintGrid opacity={0.025} accent={ACCENT} />
@@ -656,7 +656,7 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
         </div>
       </section>
 
-      {/* ══════ 6b. PROJECT TYPES WE HANDLE ══════ */}
+      {/* â•â•â•â•â•â• 6b. PROJECT TYPES WE HANDLE â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #12141a 0%, ${BG} 50%, #12141a 100%)` }} />
         <ConstructionBeams opacity={0.02} accent={ACCENT} />
@@ -678,10 +678,10 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
         </div>
       </section>
 
-      {/* ══════ 6c. MEET THE TEAM ══════
+      {/* â•â•â•â•â•â• 6c. MEET THE TEAM â•â•â•â•â•â•
          Renders only when `data.team` is provided. Each team member shows
          a portrait, name, role, and short bio. Trade businesses live or
-         die on trust — putting the actual humans on the site closes more
+         die on trust â€” putting the actual humans on the site closes more
          jobs than any comparison table. Keeping the section conditional
          means prospects without a team array don't show an empty block.
       */}
@@ -694,7 +694,7 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
               <SectionHeader
                 badge="Meet the Team"
                 title="The People Behind Every Build"
-                subtitle={`The ${data.businessName} crew — decades of combined craftsmanship, on your project from day one to final walkthrough.`}
+                subtitle={`The ${data.businessName} crew â€” decades of combined craftsmanship, on your project from day one to final walkthrough.`}
                 accent={ACCENT}
               />
             </AnimatedSection>
@@ -706,7 +706,7 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
             }`}>
               {data.team.map((member: { name: string; title?: string; photo?: string; bio?: string }, i: number) => (
                 <GlassCard key={i} className="p-6 text-center group hover:border-opacity-40 transition-all duration-300">
-                  {/* Portrait — object-top keeps faces from being cropped at the forehead */}
+                  {/* Portrait â€” object-top keeps faces from being cropped at the forehead */}
                   <div
                     className="w-32 h-32 mx-auto mb-5 rounded-full overflow-hidden border-2 relative"
                     style={{ borderColor: `${ACCENT}66` }}
@@ -749,7 +749,7 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
         </section>
       )}
 
-      {/* ══════ 7. PROJECTS GALLERY ══════ */}
+      {/* â•â•â•â•â•â• 7. PROJECTS GALLERY â•â•â•â•â•â• */}
       <section id="projects" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #10121a 50%, ${BG} 100%)` }} />
         <ConstructionBeams opacity={0.02} accent={ACCENT} />
@@ -759,8 +759,8 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
             Responsive grid: 1 col mobile, 2 col tablet, 3 col desktop so
             up to 8 gallery photos render nicely on every screen size.
             Titles rotate through neutral descriptors that work for any
-            general-contractor subtype — kitchen remodelers, deck builders,
-            home builders, commercial GCs — without hardcoding "Kitchen
+            general-contractor subtype â€” kitchen remodelers, deck builders,
+            home builders, commercial GCs â€” without hardcoding "Kitchen
             Remodel" to a deck-company gallery.
           */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -784,7 +784,7 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
         </div>
       </section>
 
-      {/* ══════ 7b. COMPETITOR COMPARISON TABLE ══════ */}
+      {/* â•â•â•â•â•â• 7b. COMPETITOR COMPARISON TABLE â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #12141a 50%, ${BG} 100%)` }} />
         <BlueprintGrid opacity={0.02} accent={ACCENT} />
@@ -817,7 +817,7 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
         </div>
       </section>
 
-      {/* ══════ 7c. VIDEO PLACEHOLDER ══════ */}
+      {/* â•â•â•â•â•â• 7c. VIDEO PLACEHOLDER â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #12141a 0%, ${BG} 50%, #12141a 100%)` }} />
         <ConstructionBeams opacity={0.02} accent={ACCENT} />
@@ -838,7 +838,7 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
         </div>
       </section>
 
-      {/* ══════ 8. TESTIMONIALS ══════ */}
+      {/* â•â•â•â•â•â• 8. TESTIMONIALS â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #12141a 50%, ${BG} 100%)` }} />
         <BlueprintGrid opacity={0.02} accent={ACCENT} />
@@ -860,7 +860,7 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {testimonials.map((t, i) => {
-              // Defensive field resolution — accept either {text,name} (type spec)
+              // Defensive field resolution â€” accept either {text,name} (type spec)
               // OR {quote,author} (how some scrapers/enrichment scripts save them).
               // Silently rendering undefined produced empty quote marks + blank
               // names on Titan/Meyer until this was hardened.
@@ -890,7 +890,7 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
       </section>
 
       
-      {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• MID-PAGE CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15, ${ACCENT}08)` }} />
         <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
@@ -901,7 +901,7 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
             Ready to Get Started?
           </h2>
           <p className="text-slate-400 mb-6 text-sm sm:text-base">
-            Limited time — claim your free professional website today before it&apos;s offered to a competitor.
+            Limited time â€” claim your free professional website today before it&apos;s offered to a competitor.
           </p>
           <a
             href={`/claim/${data.id}`}
@@ -916,7 +916,7 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
         </div>
       </section>
 
-      {/* ══════ 8b. "WHAT'S YOUR PROJECT?" QUIZ ══════ */}
+      {/* â•â•â•â•â•â• 8b. "WHAT'S YOUR PROJECT?" QUIZ â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #10121a 50%, ${BG} 100%)` }} />
         <BlueprintGrid opacity={0.02} accent={ACCENT} />
@@ -945,7 +945,7 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
         </div>
       </section>
 
-      {/* ══════ 9. FAQ ══════ */}
+      {/* â•â•â•â•â•â• 9. FAQ â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #12141a 50%, ${BG} 100%)` }} />
         <ConstructionBeams opacity={0.02} accent={ACCENT} />
@@ -957,7 +957,7 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
         </div>
       </section>
 
-      {/* ══════ 10. CONTACT ══════ */}
+      {/* â•â•â•â•â•â• 10. CONTACT â•â•â•â•â•â• */}
       <section id="contact" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #10121a 50%, ${BG} 100%)` }} />
         <BlueprintGrid opacity={0.02} accent={ACCENT} />
@@ -991,7 +991,7 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
                   <div><label className="block text-sm text-slate-400 mb-1.5">First Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="John" /></div>
                   <div><label className="block text-sm text-slate-400 mb-1.5">Last Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="Doe" /></div>
                 </div>
-                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
+                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(206) 287-2304" /></div>
                 <div><label className="block text-sm text-slate-400 mb-1.5">Project Type</label>
                   <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none text-sm">
                     <option value="" className="bg-neutral-900">Select a service</option>
@@ -1008,7 +1008,7 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
         </div>
       </section>
 
-      {/* ══════ 11. PROJECT GUARANTEE CTA ══════ */}
+      {/* â•â•â•â•â•â• 11. PROJECT GUARANTEE CTA â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #12141a 100%)` }} />
         <BlueprintGrid opacity={0.015} accent={ACCENT} />
@@ -1039,7 +1039,7 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
         </div>
       </section>
 
-      {/* ══════ PROJECT GALLERY EXPANDED ══════ */}
+      {/* â•â•â•â•â•â• PROJECT GALLERY EXPANDED â•â•â•â•â•â• */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #141c28 50%, ${BG} 100%)` }} />
         <BlueprintGrid opacity={0.01} accent={ACCENT} />
@@ -1070,7 +1070,7 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
         </div>
       </section>
 
-      {/* ══════ WARRANTY SECTION ══════ */}
+      {/* â•â•â•â•â•â• WARRANTY SECTION â•â•â•â•â•â• */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #141c28 0%, ${BG} 100%)` }} />
         <BlueprintGrid opacity={0.012} accent={ACCENT} />
@@ -1082,7 +1082,7 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { title: "Workmanship Warranty", desc: "Every project backed by our comprehensive workmanship warranty. If something isn't right, we come back and fix it — no questions asked." },
+              { title: "Workmanship Warranty", desc: "Every project backed by our comprehensive workmanship warranty. If something isn't right, we come back and fix it â€” no questions asked." },
               { title: "Material Guarantees", desc: "We only use premium materials from trusted manufacturers. All materials carry the manufacturer's full warranty and we handle any claims for you." },
               { title: "On-Time Completion", desc: "We commit to a completion date in writing. If we miss our deadline through any fault of our own, we'll make it right with a project discount." },
             ].map((w) => (
@@ -1096,7 +1096,7 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
         </div>
       </section>
 
-      {/* ══════ MID-PAGE CTA ══════ */}
+      {/* â•â•â•â•â•â• MID-PAGE CTA â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15 0%, ${BG} 50%, ${ACCENT}08 100%)` }} />
         <BlueprintGrid opacity={0.02} accent={ACCENT} />
@@ -1112,7 +1112,7 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
         </div>
       </section>
 
-      {/* ══════ WHY CHOOSE US ══════ */}
+      {/* â•â•â•â•â•â• WHY CHOOSE US â•â•â•â•â•â• */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #141c28 100%)` }} />
         <BlueprintGrid opacity={0.01} accent={ACCENT} />
@@ -1137,7 +1137,7 @@ export default function V2GeneralContractorPreview({ data }: { data: GeneratedSi
         </div>
       </section>
 
-      {/* ══════ 12. FOOTER ══════ */}
+      {/* â•â•â•â•â•â• 12. FOOTER â•â•â•â•â•â• */}
       <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #141c28 100%)` }} />
         <BlueprintGrid opacity={0.015} accent={ACCENT} />

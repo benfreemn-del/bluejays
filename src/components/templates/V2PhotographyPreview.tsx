@@ -44,11 +44,11 @@ import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
 import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
 
-/* ───────────────────────── SPRING CONFIGS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SPRING CONFIGS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
 
-/* ───────────────────────── COLORS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ COLORS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const CHARCOAL = "#faf9f7";
 const DEFAULT_GOLD = "#ca8a04";
 const COOL_SLATE = "#64748b";
@@ -63,13 +63,13 @@ function getAccent(accentColor?: string) {
 }
 
 // Rotating color palette for service/feature icon tiles. The primary
-// brand accent (PRIMARY) stays on section headers, CTAs, and nav — the
+// brand accent (PRIMARY) stays on section headers, CTAs, and nav â€” the
 // palette only colors iconography and highlight accents so the grid
 // feels alive without fighting the brand.
 const PALETTE = ["#ca8a04", "#64748b", "#e11d48", "#6b7f5e", "#0d9488", "#b45309"];
 const pickPaletteColor = (i: number) => PALETTE[i % PALETTE.length];
 
-/* ───────────────────────── SERVICE ICON MAP ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SERVICE ICON MAP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SERVICE_ICON_MAP: Record<string, any> = {
   wedding: SunHorizon,
@@ -97,7 +97,7 @@ function getServiceIcon(serviceName: string) {
   return Camera;
 }
 
-/* ───────────────────────── STOCK FALLBACK IMAGES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ STOCK FALLBACK IMAGES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1471341971476-ae15ff5dd4ea?w=1400&q=80"];
 const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1554048612-b6a482bc67e5?w=600&q=80"];
 const STOCK_GALLERY = [
@@ -111,7 +111,7 @@ const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1493246507139-91e8fad9978e?w=800&q=80",
 ];
 
-/* ───────────────────────── PHOTOGRAPHY STYLES DATA ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ PHOTOGRAPHY STYLES DATA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const PHOTOGRAPHY_STYLES = [
   { label: "Portraits", icon: User },
   { label: "Weddings", icon: Heart },
@@ -121,7 +121,7 @@ const PHOTOGRAPHY_STYLES = [
   { label: "Headshots", icon: Aperture },
 ];
 
-/* ───────────────────────── SESSION PRICING DATA ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SESSION PRICING DATA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const SESSION_PACKAGES = [
   {
     name: "Mini Session",
@@ -133,7 +133,7 @@ const SESSION_PACKAGES = [
   {
     name: "Standard Session",
     price: "From $499",
-    duration: "1–2 hours",
+    duration: "1â€“2 hours",
     details: ["30+ edited photos", "Multiple outfits & locations", "Online gallery with download", "Full print rights", "Social media crops"],
     featured: true,
   },
@@ -146,27 +146,27 @@ const SESSION_PACKAGES = [
   },
 ];
 
-/* ───────────────────────── SESSION PROCESS STEPS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SESSION PROCESS STEPS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const SESSION_PROCESS = [
   { step: "01", title: "Consultation & Vision", desc: "We discuss your style, mood, and creative direction to plan the perfect session.", icon: Eye },
-  { step: "02", title: "Location Scouting", desc: "We find or recommend the ideal setting — golden hour meadow, urban backdrop, or studio.", icon: MapPin },
+  { step: "02", title: "Location Scouting", desc: "We find or recommend the ideal setting â€” golden hour meadow, urban backdrop, or studio.", icon: MapPin },
   { step: "03", title: "The Session", desc: "A relaxed, guided experience where we capture authentic moments and stunning compositions.", icon: Camera },
   { step: "04", title: "Artful Editing", desc: "Each image is carefully retouched and color-graded to match your unique aesthetic.", icon: Sparkle },
-  { step: "05", title: "Gallery Delivery", desc: "Your curated gallery is delivered online — ready to download, share, and print.", icon: Folder },
+  { step: "05", title: "Gallery Delivery", desc: "Your curated gallery is delivered online â€” ready to download, share, and print.", icon: Folder },
 ];
 
-/* ───────────────────────── GALLERY SESSION TYPES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ GALLERY SESSION TYPES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const GALLERY_SESSION_TYPES = ["Portrait Session", "Wedding Day", "Family Session", "Editorial", "Engagement", "Event Coverage"];
 
-/* ───────────────────────── WHAT MAKES US DIFFERENT ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ WHAT MAKES US DIFFERENT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const DIFFERENTIATORS = [
-  { title: "Artistic Eye", desc: "Every frame is composed with intention — capturing emotion, light, and story in a single click.", icon: Eye },
+  { title: "Artistic Eye", desc: "Every frame is composed with intention â€” capturing emotion, light, and story in a single click.", icon: Eye },
   { title: "Natural Light Specialist", desc: "We chase the golden hour and know how to harness beautiful, soft light in any environment.", icon: SunDim },
-  { title: "Fast Turnaround", desc: "Your gallery is delivered within 2 weeks — because you shouldn't have to wait months for memories.", icon: RocketLaunch },
+  { title: "Fast Turnaround", desc: "Your gallery is delivered within 2 weeks â€” because you shouldn't have to wait months for memories.", icon: RocketLaunch },
   { title: "Full Print Rights", desc: "Every package includes a print release so you can print, share, and display your images freely.", icon: Printer },
 ];
 
-/* ───────────────────────── INVESTMENT GUIDE DELIVERABLES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ INVESTMENT GUIDE DELIVERABLES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const INVESTMENT_DELIVERABLES = [
   { item: "Professionally Edited Images", icon: Image },
   { item: "Online Gallery with Download", icon: Folder },
@@ -176,7 +176,7 @@ const INVESTMENT_DELIVERABLES = [
   { item: "Rush Delivery Available", icon: Lightning },
 ];
 
-/* ───────────────────────── COMPARISON TABLE ROWS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ COMPARISON TABLE ROWS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const COMPARISON_ROWS = [
   { feature: "Full Print Rights", us: true, them: "Extra Cost" },
   { feature: "Online Gallery", us: true, them: "Sometimes" },
@@ -187,15 +187,15 @@ const COMPARISON_ROWS = [
   { feature: "Backup Camera Equipment", us: true, them: "Sometimes" },
 ];
 
-/* ───────────────────────── SESSION TYPE QUIZ OPTIONS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SESSION TYPE QUIZ OPTIONS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const SESSION_QUIZ_OPTIONS = [
   { type: "Portraits & Headshots", desc: "Perfect for personal branding, LinkedIn, or creative expression.", icon: User, cta: "Book a Portrait Session" },
   { type: "Family & Kids", desc: "Capture milestones, holidays, and the moments that matter most.", icon: Heart, cta: "Book a Family Session" },
-  { type: "Wedding & Engagement", desc: "Timeless coverage of your love story — from proposal to reception.", icon: SunHorizon, cta: "Book Wedding Coverage" },
+  { type: "Wedding & Engagement", desc: "Timeless coverage of your love story â€” from proposal to reception.", icon: SunHorizon, cta: "Book Wedding Coverage" },
   { type: "Commercial & Product", desc: "Elevate your brand with stunning product, food, or corporate photography.", icon: Camera, cta: "Book a Commercial Shoot" },
 ];
 
-/* ───────────────────────── FLOATING PARTICLES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ FLOATING PARTICLES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function FloatingBokeh({ accent }: { accent: string }) {
   const particles = Array.from({ length: 16 }, (_, i) => ({
     id: i,
@@ -234,7 +234,7 @@ function FloatingBokeh({ accent }: { accent: string }) {
   );
 }
 
-/* ───────────────────────── APERTURE SVG PATTERN ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ APERTURE SVG PATTERN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AperturePattern({ opacity = 0.03, accent }: { opacity?: number; accent: string }) {
   const patternId = `aperturePatternV2Prev-${accent.replace("#", "")}`;
   return (
@@ -258,7 +258,7 @@ function AperturePattern({ opacity = 0.03, accent }: { opacity?: number; accent:
   );
 }
 
-/* ───────────────────────── FILM STRIP SVG ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ FILM STRIP SVG â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function FilmStripBG({ opacity = 0.03, accent }: { opacity?: number; accent: string }) {
   return (
     <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity }} viewBox="0 0 1000 600" preserveAspectRatio="none">
@@ -276,7 +276,7 @@ function FilmStripBG({ opacity = 0.03, accent }: { opacity?: number; accent: str
   );
 }
 
-/* ───────────────────────── HERO SVG ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ HERO SVG â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function HeroCameraSVG({ accent }: { accent: string }) {
   return (
     <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 1200 800" preserveAspectRatio="none" style={{ opacity: 0.04 }}>
@@ -288,7 +288,7 @@ function HeroCameraSVG({ accent }: { accent: string }) {
   );
 }
 
-/* ───────────────────────── GLASS CARD ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ GLASS CARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <div className={`rounded-2xl border border-gray-200 bg-white/70 backdrop-blur-xl shadow-sm ${className}`}>
@@ -297,7 +297,7 @@ function GlassCard({ children, className = "" }: { children: React.ReactNode; cl
   );
 }
 
-/* ───────────────────────── MAGNETIC BUTTON ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ MAGNETIC BUTTON â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function MagneticButton({ children, className = "", onClick, style, href }: {
   children: React.ReactNode;
   className?: string;
@@ -342,7 +342,7 @@ function MagneticButton({ children, className = "", onClick, style, href }: {
   );
 }
 
-/* ───────────────────────── SHIMMER BORDER ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SHIMMER BORDER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function ShimmerBorder({ children, className = "", accent }: { children: React.ReactNode; className?: string; accent: string }) {
   return (
     <div className={`relative rounded-2xl p-[1px] overflow-hidden ${className}`}>
@@ -352,7 +352,7 @@ function ShimmerBorder({ children, className = "", accent }: { children: React.R
   );
 }
 
-/* ───────────────────────── ACCORDION ITEM ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ACCORDION ITEM â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AccordionItem({ question, answer, isOpen, onToggle }: { question: string; answer: string; isOpen: boolean; onToggle: () => void }) {
   return (
     <GlassCard className="overflow-hidden">
@@ -371,7 +371,7 @@ function AccordionItem({ question, answer, isOpen, onToggle }: { question: strin
   );
 }
 
-/* ───────────────────────── SECTION HEADER ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SECTION HEADER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function SectionHeader({ badge, title, subtitle, accent }: { badge: string; title: string; subtitle?: string; accent: string }) {
   return (
     <div className="text-center mb-16">
@@ -384,10 +384,10 @@ function SectionHeader({ badge, title, subtitle, accent }: { badge: string; titl
 }
 
 
-/* ═══════════════════════════════════════════════════════════════════
-   MAIN PREVIEW COMPONENT — GALLERY-HEAVY PHOTOGRAPHY
-   ═══════════════════════════════════════════════════════════════════ */
-/* ───────────────────────── ANIMATED SECTION ───────────────────────── */
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   MAIN PREVIEW COMPONENT â€” GALLERY-HEAVY PHOTOGRAPHY
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ANIMATED SECTION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <motion.div
@@ -449,7 +449,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ fontFamily: "Raleway, system-ui, sans-serif", background: CHARCOAL, color: "#1c1917" }}>
       <FloatingBokeh accent={PRIMARY} />
 
-      {/* ══════════════════ 1. NAV ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 1. NAV â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <nav className="fixed top-0 left-0 right-0 z-50">
         <div className="mx-auto max-w-7xl px-4 md:px-6 py-4">
           <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
@@ -486,7 +486,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
         </div>
       </nav>
 
-      {/* ══════════════════ 2. HERO — FULL-BLEED IMAGE ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 2. HERO â€” FULL-BLEED IMAGE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
         <div className="absolute inset-0">
           <img src={heroImage} alt={`${data.businessName} photography`} className="w-full h-full object-cover" />
@@ -529,7 +529,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 3. STATS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 3. STATS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden border-y" style={{ borderColor: `${PRIMARY}1a` }}>
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #151310 0%, #faf9f7 100%)" }} />
         <AperturePattern opacity={0.02} accent={PRIMARY} />
@@ -555,12 +555,12 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ PHOTOGRAPHY STYLES SHOWCASE ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• PHOTOGRAPHY STYLES SHOWCASE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 md:py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #f5f3ef 100%)" }} />
         <AperturePattern opacity={0.02} accent={PRIMARY} />
         <div className="max-w-5xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Specialties" title="Photography We Love" subtitle="From intimate portraits to grand celebrations — we bring artistry to every genre." accent={PRIMARY} />
+          <SectionHeader badge="Specialties" title="Photography We Love" subtitle="From intimate portraits to grand celebrations â€” we bring artistry to every genre." accent={PRIMARY} />
           <div className="flex flex-wrap justify-center gap-3 md:gap-4">
             {PHOTOGRAPHY_STYLES.map((s) => (
               <div key={s.label} className="flex items-center gap-2.5 px-5 py-3 rounded-full border bg-white/70 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-md" style={{ borderColor: `${PRIMARY}33` }}>
@@ -572,7 +572,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 4. PORTFOLIO GALLERY — PRIMARY SECTION ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 4. PORTFOLIO GALLERY â€” PRIMARY SECTION â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="portfolio" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #12100e 50%, #faf9f7 100%)" }} />
         <AperturePattern opacity={0.02} accent={PRIMARY} />
@@ -606,7 +606,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 5. TESTIMONIALS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 5. TESTIMONIALS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #141210 50%, #faf9f7 100%)" }} />
         <AperturePattern opacity={0.02} accent={PRIMARY} />
@@ -628,7 +628,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
               {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
               <span className="text-lg font-bold text-[#1c1917]">{(data as any).googleRating || "5.0"}</span>
               <span className="text-[#6b7280] text-sm ml-1.5">out of 5</span>
-              <span className="text-[#9ca3af] text-sm ml-2">·</span>
+              <span className="text-[#9ca3af] text-sm ml-2">Â·</span>
               {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
               <span className="text-[#6b7280] text-sm ml-2">{(data as any).reviewCount || "50"}+ reviews on Google</span>
             </div>
@@ -652,7 +652,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 6. SERVICES ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 6. SERVICES â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #141210 50%, #faf9f7 100%)" }} />
         <FilmStripBG opacity={0.025} accent={PRIMARY} />
@@ -689,7 +689,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ THE EXPERIENCE — SESSION PROCESS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• THE EXPERIENCE â€” SESSION PROCESS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #12100e 50%, #faf9f7 100%)" }} />
         <AperturePattern opacity={0.02} accent={PRIMARY} />
@@ -698,10 +698,10 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
         </div>
 
         <div className="max-w-5xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="The Experience" title="Your Session Journey" subtitle="From first conversation to final gallery — every step is designed to feel effortless and exciting." accent={PRIMARY} />
+          <SectionHeader badge="The Experience" title="Your Session Journey" subtitle="From first conversation to final gallery â€” every step is designed to feel effortless and exciting." accent={PRIMARY} />
 
           <div className="relative">
-            {/* Vertical timeline line — desktop only */}
+            {/* Vertical timeline line â€” desktop only */}
             <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2" style={{ background: `linear-gradient(to bottom, transparent, ${PRIMARY}33, transparent)` }} />
 
             <div className="space-y-8 md:space-y-0">
@@ -736,7 +736,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 7. ABOUT ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 7. ABOUT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #0f0e0c 50%, #faf9f7 100%)" }} />
         <FilmStripBG opacity={0.02} accent={PRIMARY} />
@@ -780,7 +780,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ WHAT MAKES US DIFFERENT ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• WHAT MAKES US DIFFERENT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #141210 50%, #faf9f7 100%)" }} />
         <FilmStripBG opacity={0.02} accent={PRIMARY} />
@@ -789,7 +789,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
         </div>
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Why Us" title="What Sets Us Apart" subtitle={`${data.businessName} delivers more than just photos — we deliver an experience.`} accent={PRIMARY} />
+          <SectionHeader badge="Why Us" title="What Sets Us Apart" subtitle={`${data.businessName} delivers more than just photos â€” we deliver an experience.`} accent={PRIMARY} />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {DIFFERENTIATORS.map((d, i) => {
               const tile = pickPaletteColor(i + 2);
@@ -807,7 +807,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 8. FEATURED GALLERY ROW ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 8. FEATURED GALLERY ROW â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #12100e 50%, #faf9f7 100%)" }} />
         <AperturePattern opacity={0.02} accent={PRIMARY} />
@@ -830,7 +830,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ SESSION PRICING PACKAGES ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SESSION PRICING PACKAGES â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #12100e 50%, #faf9f7 100%)" }} />
         <AperturePattern opacity={0.02} accent={PRIMARY} />
@@ -887,7 +887,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ INVESTMENT GUIDE ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• INVESTMENT GUIDE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #0f0e0c 50%, #faf9f7 100%)" }} />
         <FilmStripBG opacity={0.02} accent={PRIMARY} />
@@ -896,7 +896,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
         </div>
 
         <div className="max-w-4xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="What You Get" title="Every Session Includes" subtitle="No hidden fees, no surprise costs — just beautiful images and an incredible experience." accent={PRIMARY} />
+          <SectionHeader badge="What You Get" title="Every Session Includes" subtitle="No hidden fees, no surprise costs â€” just beautiful images and an incredible experience." accent={PRIMARY} />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {INVESTMENT_DELIVERABLES.map((d) => (
               <GlassCard key={d.item} className="p-5 flex items-center gap-4">
@@ -910,7 +910,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ COMPETITOR COMPARISON TABLE ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• COMPETITOR COMPARISON TABLE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #141210 50%, #faf9f7 100%)" }} />
         <AperturePattern opacity={0.02} accent={PRIMARY} />
@@ -947,7 +947,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ SESSION TYPE QUIZ ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SESSION TYPE QUIZ â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #12100e 50%, #faf9f7 100%)" }} />
         <FilmStripBG opacity={0.02} accent={PRIMARY} />
@@ -956,7 +956,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
         </div>
 
         <div className="max-w-5xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Find Your Session" title="What Type of Session Are You Looking For?" subtitle="Select the style that best matches your vision — we'll take it from there." accent={PRIMARY} />
+          <SectionHeader badge="Find Your Session" title="What Type of Session Are You Looking For?" subtitle="Select the style that best matches your vision â€” we'll take it from there." accent={PRIMARY} />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             {SESSION_QUIZ_OPTIONS.map((opt) => (
               <GlassCard key={opt.type} className="p-6 group hover:shadow-md transition-all duration-300 cursor-pointer">
@@ -979,7 +979,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 9. LIMITED AVAILABILITY CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 9. LIMITED AVAILABILITY CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${PRIMARY}, ${PRIMARY}cc, ${PRIMARY})` }} />
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='40' height='40' fill='none'/%3E%3Cpath d='M0 0L40 40M40 0L0 40' stroke='%23000' stroke-width='0.5'/%3E%3C/svg%3E\")" }} />
@@ -998,7 +998,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
             Now Booking {new Date().getMonth() < 5 ? "Spring & Summer" : new Date().getMonth() < 8 ? "Summer & Fall" : "Fall & Winter"} Sessions
           </h2>
           <p className="text-lg text-black/70 mb-3 max-w-xl mx-auto">
-            Limited spots available — {data.businessName} books up fast during peak season.
+            Limited spots available â€” {data.businessName} books up fast during peak season.
           </p>
           <p className="text-sm text-black/50 mb-8">
             Secure your date before the calendar fills up.
@@ -1010,7 +1010,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 10. SERVICE AREAS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 10. SERVICE AREAS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #0f0e0c 50%, #faf9f7 100%)" }} />
         <AperturePattern opacity={0.02} accent={PRIMARY} />
@@ -1032,7 +1032,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 11. HOURS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 11. HOURS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       {data.hours && (
         <section className="relative z-10 py-24 md:py-32 overflow-hidden">
           <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #141210 50%, #faf9f7 100%)" }} />
@@ -1056,7 +1056,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
       )}
 
       
-      {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• MID-PAGE CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${PRIMARY}15, ${PRIMARY}08)` }} />
         <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
@@ -1067,7 +1067,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
             Ready to Get Started?
           </h2>
           <p className="text-slate-400 mb-6 text-sm sm:text-base">
-            Limited time — claim your free professional website today before it&apos;s offered to a competitor.
+            Limited time â€” claim your free professional website today before it&apos;s offered to a competitor.
           </p>
           <a
             href={`/claim/${data.id}`}
@@ -1082,7 +1082,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 12. FAQ ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 12. FAQ â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #141210 50%, #faf9f7 100%)" }} />
         <FilmStripBG opacity={0.02} accent={PRIMARY} />
@@ -1099,7 +1099,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 13. CONTACT ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 13. CONTACT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="contact" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #0f0e0c 50%, #faf9f7 100%)" }} />
         <AperturePattern opacity={0.02} accent={PRIMARY} />
@@ -1144,7 +1144,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
                   <div><label className="block text-sm text-[#6b7280] mb-1.5">First Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[#1c1917] placeholder-gray-400 focus:outline-none text-sm" placeholder="Jane" /></div>
                   <div><label className="block text-sm text-[#6b7280] mb-1.5">Last Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[#1c1917] placeholder-gray-400 focus:outline-none text-sm" placeholder="Smith" /></div>
                 </div>
-                <div><label className="block text-sm text-[#6b7280] mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[#1c1917] placeholder-gray-400 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
+                <div><label className="block text-sm text-[#6b7280] mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[#1c1917] placeholder-gray-400 focus:outline-none text-sm" placeholder="(206) 287-2304" /></div>
                 <div>
                   <label className="block text-sm text-[#6b7280] mb-1.5">Service</label>
                   <select className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[#1c1917] focus:outline-none text-sm">
@@ -1163,7 +1163,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 14. GUARANTEE ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 14. GUARANTEE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #141210 100%)" }} />
         <AperturePattern opacity={0.015} accent={PRIMARY} />
@@ -1191,7 +1191,7 @@ export default function V2PhotographyPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 15. FOOTER ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 15. FOOTER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <footer className="relative z-10 border-t border-gray-100 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9f7 0%, #f5f3ef 100%)" }} />
         <AperturePattern opacity={0.015} accent={PRIMARY} />

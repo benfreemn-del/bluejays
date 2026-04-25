@@ -255,17 +255,18 @@ export default function V2GarageDoorPage() {
                 Request Service <ArrowRight size={18} weight="bold" />
               </MagneticButton>
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
-                <Phone size={18} weight="duotone" /> (555) 439-2100
+                <Phone size={18} weight="duotone" /> (425) 439-2100
               </MagneticButton>
             </motion.div>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ ...spring, delay: 0.95 }} className="flex flex-wrap gap-3">
-              <span className="px-4 py-2 rounded-full text-xs font-semibold text-white flex items-center gap-2" style={{ background: "rgba(255,255,255,0.05)", border: `1px solid ${ACCENT}40` }}><ShieldCheck size={14} weight="duotone" style={{ color: ACCENT }} />Licensed &amp; Insured</span>
+              {/* fictional license — replace per-prospect on signup */}
+              <span className="px-4 py-2 rounded-full text-xs font-semibold text-white flex items-center gap-2" style={{ background: "rgba(255,255,255,0.05)", border: `1px solid ${ACCENT}40` }}><ShieldCheck size={14} weight="duotone" style={{ color: ACCENT }} />WA L&amp;I #GARAGED641HK</span>
               <span className="px-4 py-2 rounded-full text-xs font-semibold text-white flex items-center gap-2" style={{ background: "rgba(255,255,255,0.05)", border: `1px solid ${ACCENT_LIGHT}40` }}><Star size={14} weight="fill" style={{ color: ACCENT_LIGHT }} />4.9-Star Rated</span>
               <span className="px-4 py-2 rounded-full text-xs font-semibold text-white flex items-center gap-2" style={{ background: "rgba(255,255,255,0.05)", border: `1px solid ${ACCENT}40` }}><CheckCircle size={14} weight="duotone" style={{ color: ACCENT }} />Free Estimates</span>
               <span className="px-4 py-2 rounded-full text-xs font-semibold text-white flex items-center gap-2" style={{ background: "rgba(255,255,255,0.05)", border: `1px solid ${ACCENT_LIGHT}40` }}><Timer size={14} weight="duotone" style={{ color: ACCENT_LIGHT }} />Same-Day Service</span>
             </motion.div>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ ...spring, delay: 1 }} className="flex flex-wrap gap-6 text-sm text-slate-400">
-              <span className="flex items-center gap-2"><MapPin size={16} weight="duotone" style={{ color: ACCENT }} />Serving the Tri-County Area</span>
+              <span className="flex items-center gap-2"><MapPin size={16} weight="duotone" style={{ color: ACCENT }} />Serving Bellevue &amp; the Eastside</span>
               <span className="flex items-center gap-2"><Clock size={16} weight="duotone" style={{ color: ACCENT }} />24/7 Emergency Available</span>
             </motion.div>
           </div>
@@ -381,7 +382,7 @@ export default function V2GarageDoorPage() {
                 <WordReveal text="Strength You Can Trust" />
               </h2>
               <p className="text-slate-400 leading-relaxed mb-6">
-                For over 15 years, IronGate Doors has been the go-to garage door company for homeowners and businesses across the tri-county area. We are factory-certified installers for every major brand and carry a massive parts inventory for fast same-day repairs.
+                For over 15 years, IronGate Doors has been the go-to garage door company for homeowners and businesses across Bellevue, Kirkland, Redmond, and the greater Eastside. We are factory-certified installers for every major brand and carry a massive parts inventory for fast same-day repairs.
               </p>
               <p className="text-slate-400 leading-relaxed">
                 Every technician is background-checked, drug-tested, and continuously trained on the latest products and safety standards. Your home and family are in good hands.
@@ -848,7 +849,7 @@ export default function V2GarageDoorPage() {
                     <CalendarCheck size={20} weight="duotone" /> Book Service
                   </MagneticButton>
                   <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 inline-flex items-center gap-2 cursor-pointer">
-                    <Phone size={18} weight="duotone" /> (555) 439-2100
+                    <Phone size={18} weight="duotone" /> (425) 439-2100
                   </MagneticButton>
                 </div>
               </motion.div>
@@ -874,11 +875,11 @@ export default function V2GarageDoorPage() {
               <div className="space-y-4">
                 <div className="flex items-start gap-4">
                   <MapPin size={20} weight="duotone" style={{ color: ACCENT }} className="mt-0.5 shrink-0" />
-                  <div><p className="text-sm font-semibold text-white">Location</p><p className="text-sm text-slate-400">456 Industrial Blvd, Suite 100<br />Austin, TX 78701</p></div>
+                  <div><p className="text-sm font-semibold text-white">Location</p><p className="text-sm text-slate-400">1100 124th Ave NE<br />Bellevue, WA 98005</p></div>
                 </div>
                 <div className="flex items-start gap-4">
                   <Phone size={20} weight="duotone" style={{ color: ACCENT }} className="mt-0.5 shrink-0" />
-                  <div><p className="text-sm font-semibold text-white">Phone</p><p className="text-sm text-slate-400">(555) 439-2100</p></div>
+                  <div><p className="text-sm font-semibold text-white">Phone</p><p className="text-sm text-slate-400">(425) 439-2100</p></div>
                 </div>
                 <div className="flex items-start gap-4">
                   <Clock size={20} weight="duotone" style={{ color: ACCENT }} className="mt-0.5 shrink-0" />
@@ -989,7 +990,7 @@ export default function V2GarageDoorPage() {
                 <CalendarCheck size={20} weight="duotone" /> Book Service
               </MagneticButton>
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 inline-flex items-center gap-2 cursor-pointer">
-                <Phone size={18} weight="duotone" /> (555) 439-2100
+                <Phone size={18} weight="duotone" /> (425) 439-2100
               </MagneticButton>
             </div>
           </GlassCard>

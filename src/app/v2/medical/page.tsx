@@ -545,7 +545,7 @@ export default function V2MedicalPage() {
               </MagneticButton>
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
                 <Phone size={18} weight="duotone" />
-                (555) 412-7890
+                (206) 412-7890
               </MagneticButton>
             </motion.div>
           </div>
@@ -871,7 +871,7 @@ export default function V2MedicalPage() {
                   <Phone size={20} weight="duotone" style={{ color: TEAL }} className="mt-0.5 shrink-0" />
                   <div>
                     <p className="text-sm font-semibold text-white">Phone</p>
-                    <p className="text-sm text-slate-400">(555) 412-7890</p>
+                    <p className="text-sm text-slate-400">(206) 412-7890</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">

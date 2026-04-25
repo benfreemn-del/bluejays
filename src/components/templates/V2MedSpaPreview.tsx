@@ -19,7 +19,7 @@ const GOLD = "#d4a853";
 function getAccent(accentColor?: string) { const c = accentColor || DEFAULT_BLUSH; return { ACCENT: c, ACCENT_GLOW: `${c}26` }; }
 
 // Rotating color palette for treatment/service icon tiles. The primary
-// brand accent (ACCENT) stays on section headers, CTAs, and nav — the
+// brand accent (ACCENT) stays on section headers, CTAs, and nav â€” the
 // palette only colors iconography and highlight accents so the grid
 // feels alive without fighting the brand.
 const PALETTE = ["#f9a8d4", "#d4a853", "#6b7f5e", "#e11d48", "#f59e0b", "#a78bfa"];
@@ -48,7 +48,7 @@ const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=600&q=80",
 ];
 
-/* ─── Decorative helpers ─── */
+/* â”€â”€â”€ Decorative helpers â”€â”€â”€ */
 
 function FloatingParticles({ accent }: { accent: string }) {
   const particles = Array.from({ length: 18 }, (_, i) => ({ id: i, x: Math.random() * 100, delay: Math.random() * 8, duration: 5 + Math.random() * 7, size: 2 + Math.random() * 3, opacity: 0.12 + Math.random() * 0.25, isGold: Math.random() > 0.6 }));
@@ -92,7 +92,7 @@ function FlowingCurves({ opacity = 0.03, accent }: { opacity?: number; accent: s
   );
 }
 
-/* ─── Shared UI components ─── */
+/* â”€â”€â”€ Shared UI components â”€â”€â”€ */
 
 function GlassCard({ children, className = "", style }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) {
   return <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>;
@@ -155,27 +155,27 @@ function AnimatedSection({ children, className = "" }: { children: React.ReactNo
   );
 }
 
-/* ─── Treatment categories for filter ─── */
+/* â”€â”€â”€ Treatment categories for filter â”€â”€â”€ */
 const TREATMENT_CATEGORIES = ["All", "Face", "Body", "Skin", "Injectables"];
 
-/* ─── Skin concern quiz options ─── */
+/* â”€â”€â”€ Skin concern quiz options â”€â”€â”€ */
 const SKIN_CONCERNS = [
   { label: "Fine Lines & Wrinkles", icon: Sparkle, color: "#f9a8d4", recommendation: "Botox, dermal fillers, or microneedling can smooth and rejuvenate." },
   { label: "Acne & Scarring", icon: Drop, color: "#a78bfa", recommendation: "Chemical peels, laser therapy, or PRP can restore clear, smooth skin." },
   { label: "Sun Damage & Pigmentation", icon: Flower, color: "#fbbf24", recommendation: "IPL photofacial or laser treatments can even your skin tone beautifully." },
 ];
 
-/* ─── Membership tiers ─── */
+/* â”€â”€â”€ Membership tiers â”€â”€â”€ */
 const MEMBERSHIP_TIERS = [
   { name: "Gold", price: "$99/mo", perks: ["10% off all treatments", "Monthly facial or peel", "Priority booking", "Birthday special"], popular: false },
   { name: "Platinum", price: "$199/mo", perks: ["15% off all treatments", "Monthly premium treatment", "Free skin analysis quarterly", "VIP event access", "Complimentary add-ons"], popular: true },
   { name: "Diamond", price: "$349/mo", perks: ["20% off all treatments", "Two premium treatments/mo", "Free products monthly", "Concierge booking", "Exclusive member pricing", "Annual renewal gift"], popular: false },
 ];
 
-/* ─── Product/certification badges ─── */
+/* â”€â”€â”€ Product/certification badges â”€â”€â”€ */
 const PRODUCT_BADGES = ["Allergan", "Galderma", "SkinCeuticals", "Obagi", "ZO Skin Health", "Juvederm"];
 
-/* ─── Comparison table ─── */
+/* â”€â”€â”€ Comparison table â”€â”€â”€ */
 const COMPARISON_ROWS = [
   { feature: "Board-Certified Providers", us: true, them: "Sometimes" },
   { feature: "Personalized Treatment Plans", us: true, them: "Rarely" },
@@ -186,7 +186,7 @@ const COMPARISON_ROWS = [
   { feature: "Follow-Up Care Included", us: true, them: "Extra Cost" },
 ];
 
-/* ─────────────────── MAIN COMPONENT ─────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ MAIN COMPONENT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 export default function V2MedSpaPreview({ data }: { data: GeneratedSiteData }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -248,7 +248,7 @@ export default function V2MedSpaPreview({ data }: { data: GeneratedSiteData }) {
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ fontFamily: "Jost, system-ui, sans-serif", background: BG, color: "#f1f5f9" }}>
       <FloatingParticles accent={ACCENT} />
 
-      {/* ─── 1. NAV ─── */}
+      {/* â”€â”€â”€ 1. NAV â”€â”€â”€ */}
       <nav className="fixed top-0 left-0 right-0 z-50">
         <div className="mx-auto max-w-7xl px-4 md:px-6 py-4">
           <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
@@ -281,7 +281,7 @@ export default function V2MedSpaPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </nav>
 
-      {/* ─── 2. HERO ─── */}
+      {/* â”€â”€â”€ 2. HERO â”€â”€â”€ */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
         <div className="absolute inset-0">
           <img src={heroImage} alt={data.businessName} className="w-full h-full object-cover object-center" />
@@ -325,7 +325,7 @@ export default function V2MedSpaPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ─── 3. STATS ─── */}
+      {/* â”€â”€â”€ 3. STATS â”€â”€â”€ */}
       <section className="relative z-10 py-16 overflow-hidden border-y" style={{ borderColor: `${ACCENT}1a` }}>
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #0e0a0c 0%, ${BG} 100%)` }} />
         <SpaWavePattern opacity={0.02} accent={ACCENT} />
@@ -349,7 +349,7 @@ export default function V2MedSpaPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ─── 4. TREATMENT MENU (with category filter) ─── */}
+      {/* â”€â”€â”€ 4. TREATMENT MENU (with category filter) â”€â”€â”€ */}
       <section id="treatments" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0e0a0c 50%, ${BG} 100%)` }} />
         <SpaWavePattern accent={ACCENT} />
@@ -392,7 +392,7 @@ export default function V2MedSpaPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ─── 5. SKIN CONCERN QUIZ ─── */}
+      {/* â”€â”€â”€ 5. SKIN CONCERN QUIZ â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #100a0e 50%, ${BG} 100%)` }} />
         <FlowingCurves opacity={0.02} accent={ACCENT} />
@@ -426,7 +426,7 @@ export default function V2MedSpaPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ─── 6. BEFORE & AFTER ─── */}
+      {/* â”€â”€â”€ 6. BEFORE & AFTER â”€â”€â”€ */}
       <section id="results" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0e0a0c 50%, ${BG} 100%)` }} />
         <SpaWavePattern opacity={0.02} accent={ACCENT} />
@@ -454,7 +454,7 @@ export default function V2MedSpaPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ─── 7. ABOUT ─── */}
+      {/* â”€â”€â”€ 7. ABOUT â”€â”€â”€ */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #100a0e 50%, ${BG} 100%)` }} />
         <FlowingCurves opacity={0.02} accent={ACCENT} />
@@ -490,7 +490,7 @@ export default function V2MedSpaPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ─── 8. PROCESS ─── */}
+      {/* â”€â”€â”€ 8. PROCESS â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0e0a0c 50%, ${BG} 100%)` }} />
         <SpaWavePattern opacity={0.025} accent={ACCENT} />
@@ -512,7 +512,7 @@ export default function V2MedSpaPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ─── 9. MEMBERSHIP TIERS ─── */}
+      {/* â”€â”€â”€ 9. MEMBERSHIP TIERS â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #100a0e 50%, ${BG} 100%)` }} />
         <FlowingCurves opacity={0.02} accent={ACCENT} />
@@ -549,7 +549,7 @@ export default function V2MedSpaPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ─── 10. PRODUCT BADGES ─── */}
+      {/* â”€â”€â”€ 10. PRODUCT BADGES â”€â”€â”€ */}
       <section className="relative z-10 py-16 overflow-hidden border-y" style={{ borderColor: `${ACCENT}1a` }}>
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #0e0a0c 0%, ${BG} 100%)` }} />
         <div className="max-w-5xl mx-auto px-6 relative z-10">
@@ -564,7 +564,7 @@ export default function V2MedSpaPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ─── 11. GALLERY ─── */}
+      {/* â”€â”€â”€ 11. GALLERY â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0e0a0c 50%, ${BG} 100%)` }} />
         <SpaWavePattern opacity={0.02} accent={ACCENT} />
@@ -588,7 +588,7 @@ export default function V2MedSpaPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ─── 12. COMPARISON TABLE ─── */}
+      {/* â”€â”€â”€ 12. COMPARISON TABLE â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #100a0e 50%, ${BG} 100%)` }} />
         <FlowingCurves opacity={0.02} accent={ACCENT} />
@@ -619,7 +619,7 @@ export default function V2MedSpaPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ─── 13. GOOGLE REVIEWS HEADER + TESTIMONIALS ─── */}
+      {/* â”€â”€â”€ 13. GOOGLE REVIEWS HEADER + TESTIMONIALS â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0e0a0c 50%, ${BG} 100%)` }} />
         <SpaWavePattern opacity={0.02} accent={ACCENT} />
@@ -653,7 +653,7 @@ export default function V2MedSpaPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ─── 14. VIDEO PLACEHOLDER ─── */}
+      {/* â”€â”€â”€ 14. VIDEO PLACEHOLDER â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #100a0e 50%, ${BG} 100%)` }} />
         <div className="max-w-4xl mx-auto px-6 relative z-10">
@@ -673,7 +673,7 @@ export default function V2MedSpaPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ─── 15. CTA ─── */}
+      {/* â”€â”€â”€ 15. CTA â”€â”€â”€ */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT}cc, ${ACCENT})` }} />
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='40' height='40' fill='none'/%3E%3Cpath d='M0 0L40 40M40 0L0 40' stroke='%23000' stroke-width='0.5'/%3E%3C/svg%3E\")" }} />
@@ -687,7 +687,7 @@ export default function V2MedSpaPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ─── 16. SERVICE AREA ─── */}
+      {/* â”€â”€â”€ 16. SERVICE AREA â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0e0a0c 50%, ${BG} 100%)` }} />
         <SpaWavePattern opacity={0.02} accent={ACCENT} />
@@ -709,7 +709,7 @@ export default function V2MedSpaPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ─── 17. HOURS ─── */}
+      {/* â”€â”€â”€ 17. HOURS â”€â”€â”€ */}
       {data.hours && (
         <section className="relative z-10 py-24 md:py-32 overflow-hidden">
           <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #100a0e 50%, ${BG} 100%)` }} />
@@ -728,7 +728,7 @@ export default function V2MedSpaPreview({ data }: { data: GeneratedSiteData }) {
         </section>
       )}
 
-      {/* ─── 18. FAQ ─── */}
+      {/* â”€â”€â”€ 18. FAQ â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0e0a0c 50%, ${BG} 100%)` }} />
         <SpaWavePattern opacity={0.02} accent={ACCENT} />
@@ -742,7 +742,7 @@ export default function V2MedSpaPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ─── 19. CONTACT ─── */}
+      {/* â”€â”€â”€ 19. CONTACT â”€â”€â”€ */}
       <section id="contact" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #100a0e 50%, ${BG} 100%)` }} />
         <SpaWavePattern opacity={0.02} accent={ACCENT} />
@@ -766,7 +766,7 @@ export default function V2MedSpaPreview({ data }: { data: GeneratedSiteData }) {
                   <div><label className="block text-sm text-slate-400 mb-1.5">First Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="Jane" /></div>
                   <div><label className="block text-sm text-slate-400 mb-1.5">Last Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="Doe" /></div>
                 </div>
-                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
+                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(206) 287-2304" /></div>
                 <div><label className="block text-sm text-slate-400 mb-1.5">Treatment Interest</label>
                   <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none text-sm">
                     <option value="" className="bg-neutral-900">Select a treatment</option>
@@ -781,7 +781,7 @@ export default function V2MedSpaPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ─── 20. GUARANTEE ─── */}
+      {/* â”€â”€â”€ 20. GUARANTEE â”€â”€â”€ */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0e0a0c 100%)` }} />
         <SpaWavePattern opacity={0.015} accent={ACCENT} />
@@ -806,7 +806,7 @@ export default function V2MedSpaPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ─── PRODUCT SHOWCASE ─── */}
+      {/* â”€â”€â”€ PRODUCT SHOWCASE â”€â”€â”€ */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0d0d0d 100%)` }} />
         <SpaWavePattern opacity={0.012} accent={ACCENT} />
@@ -827,7 +827,7 @@ export default function V2MedSpaPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ─── SKINCARE TIPS ─── */}
+      {/* â”€â”€â”€ SKINCARE TIPS â”€â”€â”€ */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #0d0d0d 0%, ${BG} 100%)` }} />
         <SpaWavePattern opacity={0.01} accent={ACCENT} />
@@ -853,7 +853,7 @@ export default function V2MedSpaPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ─── MEMBERSHIP BENEFITS ─── */}
+      {/* â”€â”€â”€ MEMBERSHIP BENEFITS â”€â”€â”€ */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0d0d0d 100%)` }} />
         <SpaWavePattern opacity={0.015} accent={ACCENT} />
@@ -886,7 +886,7 @@ export default function V2MedSpaPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ─── MID-PAGE CTA ─── */}
+      {/* â”€â”€â”€ MID-PAGE CTA â”€â”€â”€ */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15 0%, ${BG} 50%, ${ACCENT}08 100%)` }} />
         <SpaWavePattern opacity={0.02} accent={ACCENT} />
@@ -902,7 +902,7 @@ export default function V2MedSpaPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ─── ENHANCED CERTIFICATIONS ─── */}
+      {/* â”€â”€â”€ ENHANCED CERTIFICATIONS â”€â”€â”€ */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0d0d0d 100%)` }} />
         <SpaWavePattern opacity={0.01} accent={ACCENT} />
@@ -936,7 +936,7 @@ export default function V2MedSpaPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ─── WHY CHOOSE US ─── */}
+      {/* â”€â”€â”€ WHY CHOOSE US â”€â”€â”€ */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #0d0d0d 0%, ${BG} 100%)` }} />
         <SpaWavePattern opacity={0.012} accent={ACCENT} />
@@ -960,7 +960,7 @@ export default function V2MedSpaPreview({ data }: { data: GeneratedSiteData }) {
               },
               {
                 title: "Natural-Looking Results",
-                desc: "We enhance your natural beauty — our goal is results that look refreshed, never overdone",
+                desc: "We enhance your natural beauty â€” our goal is results that look refreshed, never overdone",
               },
             ].map((card) => (
               <div key={card.title} className="rounded-2xl border border-white/15 p-6 text-center" style={{ background: "rgba(255,255,255,0.06)" }}>
@@ -973,7 +973,7 @@ export default function V2MedSpaPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ─── 21. FOOTER ─── */}
+      {/* â”€â”€â”€ 21. FOOTER â”€â”€â”€ */}
       <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #060606 100%)` }} />
         <SpaWavePattern opacity={0.015} accent={ACCENT} />

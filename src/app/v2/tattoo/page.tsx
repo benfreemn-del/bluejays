@@ -883,7 +883,7 @@ export default function V2TattooPage() {
               <h3 className="text-xl font-semibold text-white mb-6">Studio Info</h3>
               <div className="space-y-4">
                 <div className="flex items-start gap-4"><MapPin size={20} weight="duotone" style={{ color: CRIMSON }} className="mt-0.5 shrink-0" /><div><p className="text-sm font-semibold text-white">Location</p><p className="text-sm text-slate-400">321 Ink Boulevard<br />Austin, TX 78701</p></div></div>
-                <div className="flex items-start gap-4"><Phone size={20} weight="duotone" style={{ color: CRIMSON }} className="mt-0.5 shrink-0" /><div><p className="text-sm font-semibold text-white">Phone</p><p className="text-sm text-slate-400">(555) 654-3210</p></div></div>
+                <div className="flex items-start gap-4"><Phone size={20} weight="duotone" style={{ color: CRIMSON }} className="mt-0.5 shrink-0" /><div><p className="text-sm font-semibold text-white">Phone</p><p className="text-sm text-slate-400">(206) 654-3210</p></div></div>
                 <div className="flex items-start gap-4"><Clock size={20} weight="duotone" style={{ color: CRIMSON }} className="mt-0.5 shrink-0" /><div><p className="text-sm font-semibold text-white">Hours</p><p className="text-sm text-slate-400">Tuesday - Saturday: 11:00 AM - 9:00 PM<br />Sunday: 12:00 PM - 6:00 PM<br />Monday: Closed</p></div></div>
                 <div className="flex items-start gap-4"><InstagramLogo size={20} weight="duotone" style={{ color: CRIMSON }} className="mt-0.5 shrink-0" /><div><p className="text-sm font-semibold text-white">Social</p><p className="text-sm text-slate-400">@ironandink<br />Daily portfolio updates & flash drops</p></div></div>
               </div>

@@ -49,7 +49,7 @@ function getAccent(accentColor?: string) {
   return { ACCENT: c, ACCENT_GLOW: `${c}26`, ACCENT_LIGHT: TEAL_LIGHT, MINT };
 }
 
-// Rotating palette for service tile iconography — the brand ACCENT stays on
+// Rotating palette for service tile iconography â€” the brand ACCENT stays on
 // section headers, CTAs, and structural accents. Each service card gets a
 // different color so the grid feels alive.
 const PALETTE = ["#0891b2", "#34d399", "#0ea5e9", "#10b981", "#fb7185", "#a78bfa"];
@@ -182,7 +182,7 @@ function SectionHeader({ badge, title, subtitle, accent }: { badge: string; titl
 }
 
 
-/* ───────────────────────── ANIMATED SECTION ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ANIMATED SECTION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <motion.div
@@ -584,7 +584,7 @@ export default function V2MedicalPreview({ data }: { data: GeneratedSiteData }) 
         <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
           <Heartbeat size={48} weight="fill" className="mx-auto mb-6 text-white/70" />
           <h2 className="text-3xl md:text-5xl font-black tracking-tight text-white mb-4">Your Health Is Our Priority</h2>
-          <p className="text-lg text-white/80 mb-8 max-w-xl mx-auto">Schedule your appointment today. New patients welcome — experience the difference of personalized, compassionate care.</p>
+          <p className="text-lg text-white/80 mb-8 max-w-xl mx-auto">Schedule your appointment today. New patients welcome â€” experience the difference of personalized, compassionate care.</p>
           <PhoneLink phone={data.phone} className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-white text-black font-bold text-lg hover:bg-white/90 transition-colors"><Phone size={22} weight="fill" /> Call {data.phone}</PhoneLink>
         </div>
       </section>
@@ -820,7 +820,7 @@ export default function V2MedicalPreview({ data }: { data: GeneratedSiteData }) 
                   "Flexible payment plans for larger procedures",
                   "CareCredit and medical financing accepted",
                   "Sliding scale fees for qualifying patients",
-                  "No surprise billing — transparent cost estimates",
+                  "No surprise billing â€” transparent cost estimates",
                   "Insurance claim filing assistance included",
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-2 text-sm text-slate-400">
@@ -940,7 +940,7 @@ export default function V2MedicalPreview({ data }: { data: GeneratedSiteData }) 
                   <div><label className="block text-sm text-slate-400 mb-1.5">First Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="John" /></div>
                   <div><label className="block text-sm text-slate-400 mb-1.5">Last Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="Doe" /></div>
                 </div>
-                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="(555) 123-4567" /></div>
+                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="(206) 287-2304" /></div>
                 <div><label className="block text-sm text-slate-400 mb-1.5">Reason for Visit</label><select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none transition-colors text-sm"><option value="" className="bg-neutral-900">Select a service</option>{data.services.map((s) => <option key={s.name} value={s.name.toLowerCase().replace(/\s+/g, "-")} className="bg-neutral-900">{s.name}</option>)}</select></div>
                 <div><label className="block text-sm text-slate-400 mb-1.5">Additional Notes</label><textarea rows={3} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm resize-none" placeholder="Describe your symptoms or questions..." /></div>
                 <MagneticButton className="w-full py-4 rounded-xl text-base font-semibold text-white flex items-center justify-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>Request Appointment <ArrowRight size={18} weight="bold" /></MagneticButton>

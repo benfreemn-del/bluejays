@@ -46,11 +46,11 @@ import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
 import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
 
-/* ───────────────────────── SPRING CONFIGS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SPRING CONFIGS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
 
-/* ───────────────────────── COLORS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ COLORS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const SLATE = "#0f172a";
 const DEFAULT_BLUE = "#1e40af";
 const TEAL = "#0d9488";
@@ -66,7 +66,7 @@ function getAccent(accentColor?: string) {
 const PALETTE = ["#0d9488", "#1e40af", "#f59e0b", "#10b981", "#06b6d4", "#14b8a6"];
 const pickPaletteColor = (i: number) => PALETTE[i % PALETTE.length];
 
-/* ───────────────────────── SERVICE ICON MAP ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SERVICE ICON MAP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SERVICE_ICON_MAP: Record<string, any> = {
   drain: Pipe, pipe: Pipe, water: Drop, heater: Flame, hot: Flame,
@@ -82,7 +82,7 @@ function getServiceIcon(serviceName: string) {
   return Wrench;
 }
 
-/* ───────────────────────── SERVICE TYPE BADGES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SERVICE TYPE BADGES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const SERVICE_TYPE_BADGES = [
   { label: "Emergency Plumbing", icon: Warning },
   { label: "Drain Cleaning", icon: Funnel },
@@ -92,14 +92,14 @@ const SERVICE_TYPE_BADGES = [
   { label: "Leak Detection", icon: Drop },
 ];
 
-/* ───────────────────────── UPFRONT PRICING ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ UPFRONT PRICING â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const PRICING_CARDS = [
   { service: "Drain Cleaning", price: "from $99", icon: Funnel, desc: "Clogged sink, shower, or main line cleared fast." },
-  { service: "Water Heater Install", price: "from $1,200", icon: Flame, desc: "Tank or tankless — expert installation with warranty." },
+  { service: "Water Heater Install", price: "from $1,200", icon: Flame, desc: "Tank or tankless â€” expert installation with warranty." },
   { service: "Leak Repair", price: "from $149", icon: Drop, desc: "Stop leaks before they cause major damage." },
 ];
 
-/* ───────────────────────── WHAT WE FIX ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ WHAT WE FIX â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const WHAT_WE_FIX = [
   { label: "Clogged Drains", icon: Funnel },
   { label: "Leaking Pipes", icon: Drop },
@@ -111,15 +111,15 @@ const WHAT_WE_FIX = [
   { label: "Water Filtration", icon: Drop },
 ];
 
-/* ───────────────────────── PLUMBING PROCESS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ PLUMBING PROCESS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const PLUMBING_PROCESS_STEPS = [
   { num: "01", title: "Call 24/7", desc: "Reach us any time, day or night.", icon: Phone },
   { num: "02", title: "Fast Diagnosis", desc: "Licensed plumber inspects the issue on-site.", icon: Wrench },
-  { num: "03", title: "Upfront Price", desc: "No surprises — you approve the cost before we start.", icon: CurrencyDollar },
+  { num: "03", title: "Upfront Price", desc: "No surprises â€” you approve the cost before we start.", icon: CurrencyDollar },
   { num: "04", title: "Problem Solved", desc: "Fixed right the first time, guaranteed.", icon: CheckCircle },
 ];
 
-/* ───────────────────────── WHY CHOOSE US PILLARS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ WHY CHOOSE US PILLARS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const WHY_CHOOSE_PILLARS = [
   { title: "Licensed Master Plumber", desc: "Trained, certified, code-compliant.", icon: Certificate },
   { title: "24/7 Emergency Service", desc: "Burst pipes at 3 AM? We are on the way.", icon: Clock },
@@ -127,7 +127,7 @@ const WHY_CHOOSE_PILLARS = [
   { title: "Satisfaction Guaranteed", desc: "If you are not happy, we make it right.", icon: Trophy },
 ];
 
-/* ───────────────────────── COMPETITOR COMPARISON ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ COMPETITOR COMPARISON â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const COMPARISON_ROWS = [
   { feature: "Licensed & Insured", us: true, them: "Varies" },
   { feature: "Pulls Permits", us: true, them: "Rarely" },
@@ -138,15 +138,15 @@ const COMPARISON_ROWS = [
   { feature: "Upfront Pricing", us: true, them: "Sometimes" },
 ];
 
-/* ───────────────────────── QUIZ OPTIONS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ QUIZ OPTIONS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const QUIZ_OPTIONS = [
-  { label: "Clogged Drain", note: "Common fix — we clear it fast", icon: Funnel, color: "#22c55e" },
+  { label: "Clogged Drain", note: "Common fix â€” we clear it fast", icon: Funnel, color: "#22c55e" },
   { label: "Leak or Burst Pipe", note: "Emergency! Call now", icon: Drop, color: "#ef4444" },
   { label: "Water Heater Problem", note: "No hot water? We can help", icon: Flame, color: "#f59e0b" },
-  { label: "Sewer / Main Line", note: "Serious — call now", icon: Pipe, color: "#ef4444" },
+  { label: "Sewer / Main Line", note: "Serious â€” call now", icon: Pipe, color: "#ef4444" },
 ];
 
-/* ───────────────────────── STOCK FALLBACK IMAGES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ STOCK FALLBACK IMAGES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=1400&q=80"];
 const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?w=800&q=80"];
 const STOCK_PROJECTS = [
@@ -156,7 +156,7 @@ const STOCK_PROJECTS = [
   "https://images.unsplash.com/photo-1583907659441-addbe699e921?w=600&q=80",
 ];
 
-/* ───────────────────────── FLOATING WATER DROPS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ FLOATING WATER DROPS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function FloatingWaterDrops() {
   const particles = Array.from({ length: 20 }, (_, i) => ({
     id: i, x: Math.random() * 100, delay: Math.random() * 10,
@@ -181,7 +181,7 @@ function FloatingWaterDrops() {
   );
 }
 
-/* ───────────────────────── WATER FLOW SVG ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ WATER FLOW SVG â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function WaterFlowSVG({ opacity = 0.04, accent }: { opacity?: number; accent: string }) {
   return (
     <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity }} viewBox="0 0 1000 600" preserveAspectRatio="none">
@@ -192,7 +192,7 @@ function WaterFlowSVG({ opacity = 0.04, accent }: { opacity?: number; accent: st
   );
 }
 
-/* ───────────────────────── PIPE PATTERN ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ PIPE PATTERN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function PipePattern({ opacity = 0.03, accent }: { opacity?: number; accent: string }) {
   const patternId = `pipeGridV2Prev-${accent.replace("#", "")}`;
   return (
@@ -210,7 +210,7 @@ function PipePattern({ opacity = 0.03, accent }: { opacity?: number; accent: str
   );
 }
 
-/* ───────────────────────── GLASS CARD ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ GLASS CARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
@@ -219,7 +219,7 @@ function GlassCard({ children, className = "" }: { children: React.ReactNode; cl
   );
 }
 
-/* ───────────────────────── MAGNETIC BUTTON ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ MAGNETIC BUTTON â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function MagneticButton({ children, className = "", onClick, style, href }: {
   children: React.ReactNode; className?: string; onClick?: () => void; style?: React.CSSProperties; href?: string;
 }) {
@@ -248,7 +248,7 @@ function MagneticButton({ children, className = "", onClick, style, href }: {
   );
 }
 
-/* ───────────────────────── SHIMMER BORDER ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SHIMMER BORDER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function ShimmerBorder({ children, className = "", accent }: { children: React.ReactNode; className?: string; accent: string }) {
   return (
     <div className={`relative rounded-2xl p-[1px] overflow-hidden ${className}`}>
@@ -258,7 +258,7 @@ function ShimmerBorder({ children, className = "", accent }: { children: React.R
   );
 }
 
-/* ───────────────────────── ACCORDION ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ACCORDION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AccordionItem({ question, answer, isOpen, onToggle }: { question: string; answer: string; isOpen: boolean; onToggle: () => void }) {
   return (
     <GlassCard className="overflow-hidden">
@@ -277,7 +277,7 @@ function AccordionItem({ question, answer, isOpen, onToggle }: { question: strin
   );
 }
 
-/* ───────────────────────── SECTION HEADER ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SECTION HEADER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function SectionHeader({ badge, title, subtitle, accent }: { badge: string; title: string; subtitle?: string; accent: string }) {
   return (
     <div className="text-center mb-16">
@@ -290,10 +290,10 @@ function SectionHeader({ badge, title, subtitle, accent }: { badge: string; titl
 }
 
 
-/* ═══════════════════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    MAIN PREVIEW COMPONENT
-   ═══════════════════════════════════════════════════════════════════ */
-/* ───────────────────────── ANIMATED SECTION ───────────────────────── */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ANIMATED SECTION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <motion.div
@@ -339,14 +339,14 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
 
   const processSteps = [
     { step: "01", title: "Call or Book Online", desc: `Contact ${data.businessName} any time. We will discuss your issue and schedule a visit that works for you.` },
-    { step: "02", title: "On-Site Diagnosis", desc: "Our licensed plumber inspects the problem, explains what's happening, and gives you an upfront price — no surprises." },
+    { step: "02", title: "On-Site Diagnosis", desc: "Our licensed plumber inspects the problem, explains what's happening, and gives you an upfront price â€” no surprises." },
     { step: "03", title: "Expert Repair", desc: "We fix it right the first time using quality parts and proven techniques. Clean, professional work every time." },
     { step: "04", title: "Satisfaction Guaranteed", desc: "We clean up after ourselves and back every job with our satisfaction guarantee. Your peace of mind is our priority." },
   ];
 
   const faqs = [
     { q: `What plumbing services does ${data.businessName} offer?`, a: `We provide a full range of plumbing services including ${data.services.slice(0, 3).map(s => s.name).join(", ")}, and more. Contact us for a free estimate.` },
-    { q: "Do you offer emergency plumbing service?", a: `Yes! ${data.businessName} offers 24/7 emergency plumbing service. Burst pipes, overflowing toilets, major leaks — we respond fast to protect your home.` },
+    { q: "Do you offer emergency plumbing service?", a: `Yes! ${data.businessName} offers 24/7 emergency plumbing service. Burst pipes, overflowing toilets, major leaks â€” we respond fast to protect your home.` },
     { q: "How much does a plumber cost?", a: "We provide upfront pricing before any work begins. No hidden fees, no surprises. Call for a free estimate on your specific issue." },
     { q: "Are your plumbers licensed and insured?", a: `Every plumber at ${data.businessName} is fully licensed, bonded, and insured. We are committed to professional, code-compliant work on every job.` },
   ];
@@ -363,7 +363,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ fontFamily: "Inter, system-ui, sans-serif", background: SLATE, color: "#f1f5f9" }}>
       <FloatingWaterDrops />
 
-      {/* ══════════════════ 1. NAV ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 1. NAV â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <nav className="fixed top-0 left-0 right-0 z-50">
         <div className="mx-auto max-w-7xl px-4 md:px-6 py-4">
           <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
@@ -400,7 +400,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </nav>
 
-      {/* ══════════════════ BEAST MODE: EMERGENCY RESPONSE STRIP ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• BEAST MODE: EMERGENCY RESPONSE STRIP â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <div className="fixed top-0 left-0 right-0 z-[60] py-2 text-center" style={{ background: `linear-gradient(90deg, ${TEAL} 0%, #0f766e 50%, ${TEAL} 100%)` }}>
         <div className="flex items-center justify-center gap-3 text-sm font-bold text-white">
           <span className="relative flex h-3 w-3">
@@ -408,7 +408,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
             <span className="relative inline-flex rounded-full h-3 w-3 bg-white" />
           </span>
           <span>Burst Pipe? We&apos;re There in 60 Minutes</span>
-          <span className="hidden sm:inline">—</span>
+          <span className="hidden sm:inline">â€”</span>
           <a href={`tel:${phoneDigits}`} className="underline underline-offset-2 hover:no-underline hidden sm:inline">
             Call {data.phone}
           </a>
@@ -416,7 +416,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </div>
 
-      {/* ══════════════════ 2. HERO ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 2. HERO â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative min-h-[100dvh] flex items-center pt-32 z-10 overflow-hidden">
 
         <div className="absolute inset-0">
@@ -462,7 +462,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ FEATURE 1: SERVICE TYPE BADGES ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FEATURE 1: SERVICE TYPE BADGES â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-8 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0c1222 0%, #0f172a 100%)" }} />
         <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
@@ -477,7 +477,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 3. STATS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 3. STATS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden border-y" style={{ borderColor: `${TEAL}1a` }}>
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0c1222 0%, #0f172a 100%)" }} />
         <PipePattern opacity={0.02} accent={BLUE} />
@@ -498,7 +498,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 4. SERVICES ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 4. SERVICES â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1222 50%, #0f172a 100%)" }} />
         <PipePattern accent={BLUE} />
@@ -537,7 +537,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ FEATURE 3: WHAT WE FIX ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FEATURE 3: WHAT WE FIX â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1222 50%, #0f172a 100%)" }} />
         <WaterFlowSVG opacity={0.02} accent={BLUE} />
@@ -560,7 +560,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ FEATURE 2: UPFRONT PRICING ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FEATURE 2: UPFRONT PRICING â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1830 50%, #0f172a 100%)" }} />
         <PipePattern opacity={0.02} accent={BLUE} />
@@ -586,7 +586,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ FEATURE 4: PLUMBING PROCESS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FEATURE 4: PLUMBING PROCESS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1222 50%, #0f172a 100%)" }} />
         <PipePattern opacity={0.025} accent={BLUE} />
@@ -615,7 +615,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 5. PROCESS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 5. PROCESS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1222 50%, #0f172a 100%)" }} />
         <PipePattern opacity={0.025} accent={BLUE} />
@@ -638,7 +638,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 6. ABOUT ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 6. ABOUT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1830 50%, #0f172a 100%)" }} />
         <WaterFlowSVG opacity={0.02} accent={BLUE} />
@@ -680,7 +680,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ FEATURE 5: WHY CHOOSE US ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FEATURE 5: WHY CHOOSE US â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1222 50%, #0f172a 100%)" }} />
         <WaterFlowSVG opacity={0.02} accent={BLUE} />
@@ -701,16 +701,16 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ BEAST MODE: HONEST PLUMBER PROMISE ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• BEAST MODE: HONEST PLUMBER PROMISE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0a1020 50%, #0f172a 100%)" }} />
         <PipePattern opacity={0.02} accent={BLUE} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] left-[20%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${TEAL}08` }} /></div>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Our Promise" title="The Honest Plumber Promise" subtitle={`${data.businessName} believes you deserve a plumber you can trust — every single time.`} accent={TEAL} />
+          <SectionHeader badge="Our Promise" title="The Honest Plumber Promise" subtitle={`${data.businessName} believes you deserve a plumber you can trust â€” every single time.`} accent={TEAL} />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { title: "We Show You the Problem", desc: "Before we touch a wrench, we show you exactly what is wrong — no mystery, no guesswork.", icon: Wrench },
+              { title: "We Show You the Problem", desc: "Before we touch a wrench, we show you exactly what is wrong â€” no mystery, no guesswork.", icon: Wrench },
               { title: "Upfront Pricing", desc: "You get the full cost before work begins. No surprise charges, no hidden fees. Ever.", icon: CurrencyDollar },
               { title: "Clean Up After Every Job", desc: "We treat your home like our own. Drop cloths down, mess cleaned up, shoes off.", icon: ThumbsUp },
               { title: "Can't Fix It = You Don't Pay", desc: "If we cannot solve your plumbing problem, you owe us nothing. That is our guarantee.", icon: SealCheck },
@@ -727,7 +727,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 7. PROJECTS GALLERY ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 7. PROJECTS GALLERY â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="projects" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1830 50%, #0f172a 100%)" }} />
         <WaterFlowSVG opacity={0.02} accent={BLUE} />
@@ -754,7 +754,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ FEATURE 6: COMPETITOR COMPARISON ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FEATURE 6: COMPETITOR COMPARISON â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1222 50%, #0f172a 100%)" }} />
         <PipePattern opacity={0.02} accent={BLUE} />
@@ -788,7 +788,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ FEATURE 7: VIDEO PLACEHOLDER ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FEATURE 7: VIDEO PLACEHOLDER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1830 50%, #0f172a 100%)" }} />
         <WaterFlowSVG opacity={0.02} accent={BLUE} />
@@ -810,7 +810,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ FEATURE 8: PLUMBING ISSUE QUIZ ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FEATURE 8: PLUMBING ISSUE QUIZ â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1222 50%, #0f172a 100%)" }} />
         <PipePattern opacity={0.02} accent={BLUE} />
@@ -841,8 +841,8 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ FEATURE 9: GOOGLE REVIEWS HEADER ══════════════════ */}
-      {/* ══════════════════ 8. TESTIMONIALS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FEATURE 9: GOOGLE REVIEWS HEADER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 8. TESTIMONIALS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1222 50%, #0f172a 100%)" }} />
         <PipePattern opacity={0.02} accent={BLUE} />
@@ -870,7 +870,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 9. EMERGENCY CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 9. EMERGENCY CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${TEAL}, ${TEAL}cc, ${TEAL})` }} />
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='40' height='40' fill='none'/%3E%3Cpath d='M0 0L40 40M40 0L0 40' stroke='%23000' stroke-width='0.5'/%3E%3C/svg%3E\")" }} />
@@ -878,7 +878,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
         <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
           <Warning size={48} weight="fill" className="mx-auto mb-6 text-black/70" />
           <h2 className="text-3xl md:text-5xl font-black tracking-tight text-black mb-4">Plumbing Emergency? We&apos;re Here 24/7</h2>
-          <p className="text-lg text-black/70 mb-8 max-w-xl mx-auto">Burst pipes, overflowing drains, major leaks — do not wait. Our emergency plumbers respond fast to protect your home.</p>
+          <p className="text-lg text-black/70 mb-8 max-w-xl mx-auto">Burst pipes, overflowing drains, major leaks â€” do not wait. Our emergency plumbers respond fast to protect your home.</p>
           <PhoneLink phone={data.phone} className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-black text-white font-bold text-lg hover:bg-black/80 transition-colors">
             <span className="relative flex h-3 w-3"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75" /><span className="relative inline-flex rounded-full h-3 w-3 bg-red-600" /></span>
             {data.phone}
@@ -886,7 +886,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 10. SERVICE AREAS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 10. SERVICE AREAS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1830 50%, #0f172a 100%)" }} />
         <PipePattern opacity={0.02} accent={BLUE} />
@@ -903,7 +903,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 11. HOURS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 11. HOURS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       {data.hours && (
         <section className="relative z-10 py-24 md:py-32 overflow-hidden">
           <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1222 50%, #0f172a 100%)" }} />
@@ -925,7 +925,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
       )}
 
       
-      {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• MID-PAGE CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${TEAL}15, ${TEAL}08)` }} />
         <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
@@ -936,7 +936,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
             Ready to Get Started?
           </h2>
           <p className="text-slate-400 mb-6 text-sm sm:text-base">
-            Limited time — claim your free professional website today before it&apos;s offered to a competitor.
+            Limited time â€” claim your free professional website today before it&apos;s offered to a competitor.
           </p>
           <a
             href={`/claim/${data.id}`}
@@ -951,7 +951,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 12. FAQ ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 12. FAQ â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1222 50%, #0f172a 100%)" }} />
         <PipePattern opacity={0.02} accent={BLUE} />
@@ -964,7 +964,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 13. CONTACT ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 13. CONTACT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="contact" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1830 50%, #0f172a 100%)" }} />
         <PipePattern opacity={0.02} accent={BLUE} />
@@ -1008,7 +1008,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
                   <div><label className="block text-sm text-slate-400 mb-1.5">First Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="John" /></div>
                   <div><label className="block text-sm text-slate-400 mb-1.5">Last Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="Doe" /></div>
                 </div>
-                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
+                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(206) 287-2304" /></div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-1.5">Service Needed</label>
                   <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none text-sm">
@@ -1026,7 +1026,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ FEATURE 10: GUARANTEE CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FEATURE 10: GUARANTEE CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0c1222 100%)" }} />
         <PipePattern opacity={0.015} accent={BLUE} />
@@ -1053,7 +1053,7 @@ export default function V2PlumberPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 15. FOOTER ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 15. FOOTER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #0a1020 100%)" }} />
         <PipePattern opacity={0.015} accent={BLUE} />

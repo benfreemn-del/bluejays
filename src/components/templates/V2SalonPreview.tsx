@@ -39,11 +39,11 @@ import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
 import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
 
-/* ───────────────────────── SPRING CONFIGS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SPRING CONFIGS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
 
-/* ───────────────────────── COLORS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ COLORS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const DARK = "#1a0a10";
 const DEFAULT_ROSE = "#e11d48";
 const ROSE_LIGHT = "#fb7185";
@@ -54,13 +54,13 @@ function getAccent(accentColor?: string) {
 }
 
 // Rotating color palette for service/feature icon tiles. The primary
-// brand accent (ROSE) stays on section headers, CTAs, and nav — the
+// brand accent (ROSE) stays on section headers, CTAs, and nav â€” the
 // palette only colors iconography and highlight accents so the grid
 // feels alive without fighting the brand.
 const PALETTE = ["#e11d48", "#d4a853", "#fb7185", "#a78bfa", "#6b7f5e", "#fce7f3"];
 const pickPaletteColor = (i: number) => PALETTE[i % PALETTE.length];
 
-/* ───────────────────────── SERVICE ICON MAP ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SERVICE ICON MAP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SERVICE_ICON_MAP: Record<string, any> = {
   cut: Scissors,
@@ -91,7 +91,7 @@ function getServiceIcon(serviceName: string) {
   return Scissors;
 }
 
-/* ───────────────────────── STOCK FALLBACK IMAGES (UNIQUE TO SALON) ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ STOCK FALLBACK IMAGES (UNIQUE TO SALON) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1560066984-138dadb4c035?w=1400&q=80"];
 const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600&q=80"];
 const STOCK_GALLERY = [
@@ -101,7 +101,7 @@ const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1562322140-8baeececf3df?w=800&q=80",
 ];
 
-/* ───────────────────────── FLOWING GRADIENT ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ FLOWING GRADIENT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function FlowingGradient({ accent }: { accent: string }) {
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden hidden md:block">
@@ -121,7 +121,7 @@ function FlowingGradient({ accent }: { accent: string }) {
   );
 }
 
-/* ───────────────────────── MORPHING BLOB ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ MORPHING BLOB â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function MorphingBlob({ accent }: { accent: string }) {
   return (
     <div className="relative w-full max-w-lg mx-auto aspect-square flex items-center justify-center">
@@ -154,7 +154,7 @@ function MorphingBlob({ accent }: { accent: string }) {
   );
 }
 
-/* ───────────────────────── ROSE PATTERN ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ROSE PATTERN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function RosePattern({ opacity = 0.03, accent }: { opacity?: number; accent: string }) {
   const pid = `rosePatPrev-${accent.replace("#", "")}`;
   return (
@@ -173,7 +173,7 @@ function RosePattern({ opacity = 0.03, accent }: { opacity?: number; accent: str
   );
 }
 
-/* ───────────────────────── GLASS CARD ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ GLASS CARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
@@ -182,7 +182,7 @@ function GlassCard({ children, className = "" }: { children: React.ReactNode; cl
   );
 }
 
-/* ───────────────────────── MAGNETIC BUTTON ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ MAGNETIC BUTTON â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function MagneticButton({ children, className = "", onClick, style, href }: {
   children: React.ReactNode; className?: string; onClick?: () => void; style?: React.CSSProperties; href?: string;
 }) {
@@ -208,7 +208,7 @@ function MagneticButton({ children, className = "", onClick, style, href }: {
   return <motion.button ref={ref} style={{ x: springX, y: springY, willChange: "transform", ...style }} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave} onClick={onClick} className={className} whileTap={{ scale: 0.97 }}>{children}</motion.button>;
 }
 
-/* ───────────────────────── SHIMMER BORDER ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SHIMMER BORDER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function ShimmerBorder({ children, className = "", accent }: { children: React.ReactNode; className?: string; accent: string }) {
   return (
     <div className={`relative rounded-2xl p-[1px] overflow-hidden ${className}`}>
@@ -218,7 +218,7 @@ function ShimmerBorder({ children, className = "", accent }: { children: React.R
   );
 }
 
-/* ───────────────────────── ACCORDION ITEM ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ACCORDION ITEM â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AccordionItem({ question, answer, isOpen, onToggle }: { question: string; answer: string; isOpen: boolean; onToggle: () => void }) {
   return (
     <GlassCard className="overflow-hidden">
@@ -233,7 +233,7 @@ function AccordionItem({ question, answer, isOpen, onToggle }: { question: strin
   );
 }
 
-/* ───────────────────────── SECTION HEADER ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SECTION HEADER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function SectionHeader({ badge, title, subtitle, accent }: { badge: string; title: string; subtitle?: string; accent: string }) {
   return (
     <div className="text-center mb-16">
@@ -246,10 +246,10 @@ function SectionHeader({ badge, title, subtitle, accent }: { badge: string; titl
 }
 
 
-/* ═══════════════════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    MAIN PREVIEW COMPONENT
-   ═══════════════════════════════════════════════════════════════════ */
-/* ───────────────────────── ANIMATED SECTION ───────────────────────── */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ANIMATED SECTION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <motion.div
@@ -315,7 +315,7 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
   ];
   const testimonials = data.testimonials?.length > 0 ? data.testimonials : fallbackTestimonials;
 
-  /* ── Service category badges ── */
+  /* â”€â”€ Service category badges â”€â”€ */
   const serviceBadges = [
     { label: "Haircuts & Styling", icon: Scissors },
     { label: "Color & Highlights", icon: PaintBrush },
@@ -325,14 +325,14 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
     { label: "Treatments", icon: Sparkle },
   ];
 
-  /* ── Service menu pricing ── */
+  /* â”€â”€ Service menu pricing â”€â”€ */
   const serviceMenuItems = [
     { title: "Haircut & Style", price: "from $55", desc: "Precision cut tailored to your face shape, finished with a professional blowout.", icon: Scissors },
     { title: "Full Color", price: "from $120", desc: "Rich, vibrant color using premium salon-grade products for lasting results.", icon: PaintBrush },
     { title: "Balayage", price: "from $200+", desc: "Hand-painted, sun-kissed highlights for a natural, radiant look.", icon: Palette },
   ];
 
-  /* ── Stylist profiles ── */
+  /* â”€â”€ Stylist profiles â”€â”€ */
   const stylistProfiles = [
     { name: "Color Specialist", specialty: "Precision color, balayage, and vivid fashion shades", icon: PaintBrush },
     { name: "Balayage Expert", specialty: "Natural, hand-painted highlights and dimensional color", icon: Palette },
@@ -340,7 +340,7 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
     { name: "Texture & Curly Hair", specialty: "Curl-specific cuts, treatments, and styling techniques", icon: MagicWand },
   ];
 
-  /* ── Salon experience steps ── */
+  /* â”€â”€ Salon experience steps â”€â”€ */
   const salonExperience = [
     { step: "01", title: "Book Your Appointment", desc: "Choose your service and preferred stylist online or by phone.", icon: CalendarCheck },
     { step: "02", title: "Consultation & Vision", desc: "Share your goals and inspirations. Your stylist crafts the perfect plan.", icon: Heart },
@@ -348,7 +348,7 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
     { step: "04", title: "Love Your New Look", desc: "Walk out feeling radiant, confident, and absolutely beautiful.", icon: Sparkle },
   ];
 
-  /* ── Why choose us pillars ── */
+  /* â”€â”€ Why choose us pillars â”€â”€ */
   const whyChooseUs = [
     { title: "Award-Winning Stylists", desc: "Our team brings years of training and a passion for beauty to every appointment.", icon: Crown },
     { title: "Premium Products", desc: "We use only the finest professional-grade products for healthy, lasting results.", icon: Sparkle },
@@ -356,7 +356,7 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
     { title: "Complimentary Consultation", desc: "Every visit begins with a personalized consultation to understand your unique style.", icon: Heart },
   ];
 
-  /* ── Competitor comparison rows ── */
+  /* â”€â”€ Competitor comparison rows â”€â”€ */
   const comparisonRows = [
     { feature: "Personal Consultation", us: true, them: "Rarely" },
     { feature: "Premium Products", us: true, them: "Generic" },
@@ -367,10 +367,10 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
     { feature: "Custom Color Mixing", us: true, them: "No" },
   ];
 
-  /* ── Quiz options ── */
+  /* â”€â”€ Quiz options â”€â”€ */
   const quizOptions = [
-    { title: "Haircut & Refresh", desc: "A quick transformation — new cut, fresh style", icon: Scissors, color: ROSE },
-    { title: "Color Change", desc: "Bold or subtle — discover your perfect shade", icon: PaintBrush, color: ROSE_LIGHT },
+    { title: "Haircut & Refresh", desc: "A quick transformation â€” new cut, fresh style", icon: Scissors, color: ROSE },
+    { title: "Color Change", desc: "Bold or subtle â€” discover your perfect shade", icon: PaintBrush, color: ROSE_LIGHT },
     { title: "Special Occasion", desc: "Weddings, events, and unforgettable moments", icon: Crown, color: ROSE },
     { title: "Hair Repair", desc: "Deep treatments and restoration for healthy hair", icon: Sparkle, color: ROSE_LIGHT },
   ];
@@ -379,7 +379,7 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ fontFamily: "Raleway, system-ui, sans-serif", background: DARK, color: "#f1f5f9" }}>
       <FlowingGradient accent={ROSE} />
 
-      {/* ══════════════════ 1. NAV ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 1. NAV â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <nav className="fixed top-0 left-0 right-0 z-50">
         <div className="mx-auto max-w-7xl px-4 md:px-6 py-4">
           <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
@@ -417,7 +417,7 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </nav>
 
-      {/* ══════════════════ 2. HERO ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 2. HERO â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
 
         <div className="absolute inset-0">
@@ -460,7 +460,7 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 3. STATS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 3. STATS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden border-y" style={{ borderColor: `${ROSE}1a` }}>
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #150810 0%, ${DARK} 100%)` }} />
         <RosePattern opacity={0.02} accent={ROSE} />
@@ -484,7 +484,7 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ FEATURE 1: SERVICE CATEGORY BADGES ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FEATURE 1: SERVICE CATEGORY BADGES â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #150810 100%)` }} />
         <div className="max-w-5xl mx-auto px-6 relative z-10">
@@ -499,7 +499,7 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ FEATURE 9: GOOGLE REVIEWS HEADER ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FEATURE 9: GOOGLE REVIEWS HEADER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       {(data.googleRating || data.reviewCount) && (
         <section className="relative z-10 py-10 overflow-hidden">
           <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #150810 0%, ${DARK} 100%)` }} />
@@ -517,7 +517,7 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
         </section>
       )}
 
-      {/* ══════════════════ 4. TESTIMONIALS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 4. TESTIMONIALS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #150810 50%, ${DARK} 100%)` }} />
         <RosePattern opacity={0.02} accent={ROSE} />
@@ -536,7 +536,7 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 5. SERVICES ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 5. SERVICES â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #150810 50%, ${DARK} 100%)` }} />
         <RosePattern accent={ROSE} />
@@ -570,7 +570,7 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ FEATURE 2: SERVICE MENU / PRICING ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FEATURE 2: SERVICE MENU / PRICING â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #120910 50%, ${DARK} 100%)` }} />
         <RosePattern opacity={0.02} accent={ROSE} />
@@ -596,7 +596,7 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ FEATURE 3: STYLIST PROFILES ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FEATURE 3: STYLIST PROFILES â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #150810 50%, ${DARK} 100%)` }} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] right-[10%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${ROSE_LIGHT}06` }} /></div>
@@ -616,7 +616,7 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 6. ABOUT ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 6. ABOUT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #120910 50%, ${DARK} 100%)` }} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${ROSE}06` }} /></div>
@@ -650,7 +650,7 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ FEATURE 4: THE SALON EXPERIENCE ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FEATURE 4: THE SALON EXPERIENCE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #150810 50%, ${DARK} 100%)` }} />
         <RosePattern opacity={0.025} accent={ROSE} />
@@ -675,7 +675,7 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 8. GALLERY ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 8. GALLERY â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="gallery" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #120910 50%, ${DARK} 100%)` }} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] left-[20%] w-[500px] h-[500px] rounded-full blur-[200px]" style={{ background: `${ROSE}06` }} /></div>
@@ -696,7 +696,7 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ FEATURE 5: WHY CHOOSE US ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FEATURE 5: WHY CHOOSE US â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #150810 50%, ${DARK} 100%)` }} />
         <RosePattern opacity={0.02} accent={ROSE} />
@@ -719,7 +719,7 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ FEATURE 6: COMPETITOR COMPARISON ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FEATURE 6: COMPETITOR COMPARISON â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #120910 50%, ${DARK} 100%)` }} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] right-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${ROSE_LIGHT}06` }} /></div>
@@ -752,7 +752,7 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ FEATURE 7: VIDEO PLACEHOLDER ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FEATURE 7: VIDEO PLACEHOLDER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #150810 50%, ${DARK} 100%)` }} />
         <div className="max-w-4xl mx-auto px-6 relative z-10">
@@ -771,7 +771,7 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ FEATURE 8: SERVICE QUIZ ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FEATURE 8: SERVICE QUIZ â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #120910 50%, ${DARK} 100%)` }} />
         <RosePattern opacity={0.02} accent={ROSE} />
@@ -803,7 +803,7 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 9. BOOKING CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 9. BOOKING CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ROSE}, ${ROSE}cc, ${ROSE})` }} />
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='40' height='40' fill='none'/%3E%3Cpath d='M0 0L40 40M40 0L0 40' stroke='%23000' stroke-width='0.5'/%3E%3C/svg%3E\")" }} />
@@ -817,7 +817,7 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 10. INSTAGRAM / SOCIAL ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 10. INSTAGRAM / SOCIAL â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #120910 50%, ${DARK} 100%)` }} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[40%] right-[20%] w-[400px] h-[400px] rounded-full blur-[180px]" style={{ background: `${ROSE_LIGHT}06` }} /></div>
@@ -838,7 +838,7 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 11. HOURS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 11. HOURS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       {data.hours && (
         <section className="relative z-10 py-24 md:py-32 overflow-hidden">
           <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #150810 50%, ${DARK} 100%)` }} />
@@ -853,7 +853,7 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
       )}
 
       
-      {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• MID-PAGE CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ROSE}15, ${ROSE}08)` }} />
         <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
@@ -864,7 +864,7 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
             Ready to Get Started?
           </h2>
           <p className="text-slate-400 mb-6 text-sm sm:text-base">
-            Limited time — claim your free professional website today before it&apos;s offered to a competitor.
+            Limited time â€” claim your free professional website today before it&apos;s offered to a competitor.
           </p>
           <a
             href={`/claim/${data.id}`}
@@ -879,7 +879,7 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 12. FAQ ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 12. FAQ â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #150810 50%, ${DARK} 100%)` }} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[15%] w-[400px] h-[400px] rounded-full blur-[160px]" style={{ background: `${ROSE}06` }} /></div>
@@ -889,7 +889,7 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 13. CONTACT ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 13. CONTACT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="contact" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #120910 50%, ${DARK} 100%)` }} />
         <RosePattern opacity={0.02} accent={ROSE} />
@@ -911,7 +911,7 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
               <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div><label className="block text-sm text-slate-400 mb-1.5">Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="Your name" /></div>
-                  <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="(555) 123-4567" /></div>
+                  <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="(206) 287-2304" /></div>
                 </div>
                 <div><label className="block text-sm text-slate-400 mb-1.5">Service</label>
                   <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none transition-colors text-sm">
@@ -929,7 +929,7 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ FEATURE 10: NEW CLIENT SPECIAL CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FEATURE 10: NEW CLIENT SPECIAL CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #150810 100%)` }} />
         <RosePattern opacity={0.02} accent={ROSE} />
@@ -949,7 +949,7 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 14. TRUST ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 14. TRUST â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #150810 100%)` }} />
         <RosePattern opacity={0.015} accent={ROSE} />
@@ -970,7 +970,7 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ HAIR CARE TIPS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• HAIR CARE TIPS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #0f0710 50%, ${DARK} 100%)` }} />
         <RosePattern opacity={0.01} accent={ROSE} />
@@ -996,7 +996,7 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• MID-PAGE CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ROSE}15 0%, ${DARK} 50%, ${ROSE}08 100%)` }} />
         <RosePattern opacity={0.02} accent={ROSE} />
@@ -1012,7 +1012,7 @@ export default function V2SalonPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 15. FOOTER ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 15. FOOTER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #0f0710 100%)` }} />
         <RosePattern opacity={0.015} accent={ROSE} />

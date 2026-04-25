@@ -40,11 +40,11 @@ import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
 import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
 
-/* ───────────────────────── SPRING CONFIGS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SPRING CONFIGS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
 
-/* ───────────────────────── COLORS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ COLORS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const CHARCOAL = "#1a1a1a";
 const DEFAULT_ORANGE = "#f97316";
 const ORANGE_LIGHT = "#fb923c";
@@ -55,12 +55,12 @@ function getAccent(accentColor?: string) {
   return { ACCENT: c, ACCENT_GLOW: `${c}26`, ACCENT_LIGHT: ORANGE_LIGHT, BROWN };
 }
 
-// Rotating palette for service/feature card icon tiles — brings the grid
+// Rotating palette for service/feature card icon tiles â€” brings the grid
 // to life while the primary ACCENT stays on section headers, CTAs, nav.
 const PALETTE = ["#f97316", "#92400e", "#64748b", "#10b981", "#f59e0b", "#3b82f6"];
 const pickPaletteColor = (i: number) => PALETTE[i % PALETTE.length];
 
-/* ───────────────────────── SERVICE ICON MAP ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SERVICE ICON MAP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SERVICE_ICON_MAP: Record<string, any> = {
   local: Truck,
@@ -85,8 +85,8 @@ function getServiceIcon(serviceName: string) {
   return Truck;
 }
 
-/* ───────────────────────── STOCK FALLBACK IMAGES ───────────────────────── */
-/* Moving-relevant stock photos — movers, trucks, boxes, packing */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ STOCK FALLBACK IMAGES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* Moving-relevant stock photos â€” movers, trucks, boxes, packing */
 const STOCK_HERO_POOL = [
   "https://images.unsplash.com/photo-1581573950452-5a438c5f390f?w=1400&q=80",    // family unpacking in new home
   "https://images.unsplash.com/photo-1614359835514-92f8ba196357?w=1400&q=80",    // movers loading furniture onto truck
@@ -112,7 +112,7 @@ const STOCK_PROJECTS = [
   "https://images.unsplash.com/photo-1581573950452-5a438c5f390f?w=600&q=80",     // family settling into new home
 ];
 
-/* ───────────────────────── FLOATING SPARKLE PARTICLES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ FLOATING SPARKLE PARTICLES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function FloatingSparkles({ accent }: { accent: string }) {
   const particles = Array.from({ length: 22 }, (_, i) => ({
     id: i,
@@ -141,7 +141,7 @@ function FloatingSparkles({ accent }: { accent: string }) {
   );
 }
 
-/* ───────────────────────── SPARKLE / BUBBLE SVG PATTERN ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SPARKLE / BUBBLE SVG PATTERN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function SparklePattern({ opacity = 0.03, accent }: { opacity?: number; accent: string }) {
   const patternId = `sparklePatternV2-${accent.replace("#", "")}`;
   return (
@@ -163,7 +163,7 @@ function SparklePattern({ opacity = 0.03, accent }: { opacity?: number; accent: 
   );
 }
 
-/* ───────────────────────── WATER DROP SVG ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ WATER DROP SVG â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function WaterDropBackground({ opacity = 0.03, accent }: { opacity?: number; accent: string }) {
   return (
     <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity }} viewBox="0 0 1000 600" preserveAspectRatio="none">
@@ -176,7 +176,7 @@ function WaterDropBackground({ opacity = 0.03, accent }: { opacity?: number; acc
   );
 }
 
-/* ───────────────────────── GLASS CARD ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ GLASS CARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <div className={`rounded-2xl border border-white/15 bg-white/[0.06] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.08)] ${className}`}>
@@ -185,7 +185,7 @@ function GlassCard({ children, className = "" }: { children: React.ReactNode; cl
   );
 }
 
-/* ───────────────────────── MAGNETIC BUTTON ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ MAGNETIC BUTTON â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function MagneticButton({ children, className = "", onClick, style, href }: {
   children: React.ReactNode; className?: string; onClick?: () => void; style?: React.CSSProperties; href?: string;
 }) {
@@ -218,7 +218,7 @@ function MagneticButton({ children, className = "", onClick, style, href }: {
   );
 }
 
-/* ───────────────────────── SHIMMER BORDER ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SHIMMER BORDER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function ShimmerBorder({ children, className = "", accent }: { children: React.ReactNode; className?: string; accent: string }) {
   return (
     <div className={`relative rounded-2xl p-[1px] overflow-hidden ${className}`}>
@@ -229,7 +229,7 @@ function ShimmerBorder({ children, className = "", accent }: { children: React.R
   );
 }
 
-/* ───────────────────────── ACCORDION ITEM ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ACCORDION ITEM â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AccordionItem({ question, answer, isOpen, onToggle }: { question: string; answer: string; isOpen: boolean; onToggle: () => void }) {
   return (
     <GlassCard className="overflow-hidden">
@@ -248,7 +248,7 @@ function AccordionItem({ question, answer, isOpen, onToggle }: { question: strin
   );
 }
 
-/* ───────────────────────── SECTION HEADER ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SECTION HEADER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function SectionHeader({ badge, title, subtitle, accent }: { badge: string; title: string; subtitle?: string; accent: string }) {
   return (
     <div className="text-center mb-16">
@@ -262,10 +262,10 @@ function SectionHeader({ badge, title, subtitle, accent }: { badge: string; titl
 }
 
 
-/* ═══════════════════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    MAIN COMPONENT
-   ═══════════════════════════════════════════════════════════════════ */
-/* ───────────────────────── ANIMATED SECTION ───────────────────────── */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ANIMATED SECTION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <motion.div
@@ -285,7 +285,7 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const { ACCENT, ACCENT_GLOW } = getAccent(data.accentColor);
 
-  /* Deduplicate scraped photos — ensure hero, card, and about are NEVER the same */
+  /* Deduplicate scraped photos â€” ensure hero, card, and about are NEVER the same */
   const uniquePhotos = data.photos ? [...new Set(data.photos)] : [];
   const heroImage = uniquePhotos[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
   const heroCardImage = uniquePhotos[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 1);
@@ -311,7 +311,7 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
     { step: "04", title: "Safe Delivery", desc: "We unload and place everything exactly where you want it in your new space." },
   ];
 
-  /* ── Licensed & Insured Badges ── */
+  /* â”€â”€ Licensed & Insured Badges â”€â”€ */
   const trustBadges = [
     { icon: ShieldCheck, label: "Licensed & Bonded" },
     { icon: ShieldCheck, label: "Full Insurance Coverage" },
@@ -319,14 +319,14 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
     { icon: CheckCircle, label: "Background-Checked Crews" },
   ];
 
-  /* ── Moving Pricing Estimates ── */
+  /* â”€â”€ Moving Pricing Estimates â”€â”€ */
   const pricingTiers = [
     { title: "Studio / 1BR", price: "From $349", desc: "Small moves, apartments, and studios. Includes 2 movers and a truck.", featured: false },
     { title: "2-3 Bedroom", price: "From $599", desc: "Standard home moves with full packing and furniture protection.", featured: true },
     { title: "4BR+ / Large", price: "From $999", desc: "Large homes, multi-story, or long-distance relocations.", featured: false },
   ];
 
-  /* ── Moving Day Checklist ── */
+  /* â”€â”€ Moving Day Checklist â”€â”€ */
   const movingChecklist = [
     "Book 4-6 weeks ahead",
     "Declutter before packing",
@@ -336,7 +336,7 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
     "Walk through your old home",
   ];
 
-  /* ── Truck Size Calculator ── */
+  /* â”€â”€ Truck Size Calculator â”€â”€ */
   const truckSizes = [
     { size: "Studio / 1BR", truck: "16 ft truck", icon: House, desc: "Perfect for studio apartments and small 1-bedroom moves." },
     { size: "2 Bedroom", truck: "20 ft truck", icon: House, desc: "Ideal for average 2-bedroom homes and apartments." },
@@ -344,13 +344,13 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
     { size: "4BR+", truck: "Multiple trucks", icon: Warehouse, desc: "Large homes requiring multiple trips or trucks." },
   ];
 
-  /* ── What We Move ── */
+  /* â”€â”€ What We Move â”€â”€ */
   const whatWeMove = [
     "Furniture", "Electronics", "Pianos", "Antiques",
     "Fragile Items", "Office Equipment", "Storage Units", "Appliances",
   ];
 
-  /* ── Competitor Comparison ── */
+  /* â”€â”€ Competitor Comparison â”€â”€ */
   const comparisonRows = [
     { feature: "Licensed & Insured", us: true, them: "Sometimes" },
     { feature: "No Hidden Fees", us: true, them: "No" },
@@ -361,7 +361,7 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
     { feature: "Background-Checked", us: true, them: "No" },
   ];
 
-  /* ── Moving Quiz Options ── */
+  /* â”€â”€ Moving Quiz Options â”€â”€ */
   const quizOptions = [
     { label: "This Week", sublabel: "Rush service available!", color: "#ef4444", icon: Timer },
     { label: "This Month", sublabel: "Great timing \u2014 book now", color: ACCENT, icon: CalendarCheck },
@@ -387,7 +387,7 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ fontFamily: "Barlow, system-ui, sans-serif", background: CHARCOAL, color: "#f1f5f9" }}>
       <FloatingSparkles accent={ACCENT} />
 
-      {/* ══════════════════ 1. NAV ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 1. NAV â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <nav className="fixed top-0 left-0 right-0 z-50">
         <div className="mx-auto max-w-7xl px-4 md:px-6 py-4">
           <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
@@ -424,7 +424,7 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </nav>
 
-      {/* ══════════════════ 2. HERO ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 2. HERO â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
 
         <div className="absolute inset-0">
@@ -472,7 +472,7 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 3. STATS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 3. STATS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden border-y" style={{ borderColor: `${ACCENT}1a` }}>
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f0d08 0%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
@@ -496,7 +496,7 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 4. SERVICES ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 4. SERVICES â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="services" className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f0d08 50%, #1a1a1a 100%)" }} />
         <SparklePattern accent={ACCENT} />
@@ -533,7 +533,7 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 4B. LICENSED & INSURED BADGES ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 4B. LICENSED & INSURED BADGES â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-12 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f0d08 50%, #1a1a1a 100%)" }} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -550,7 +550,7 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 4C. MOVING PRICING ESTIMATES ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 4C. MOVING PRICING ESTIMATES â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #1a1005 50%, #1a1a1a 100%)" }} />
         <WaterDropBackground opacity={0.02} accent={ACCENT} />
@@ -581,7 +581,7 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 4D. TRUCK SIZE CALCULATOR ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 4D. TRUCK SIZE CALCULATOR â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f0d08 50%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
@@ -603,7 +603,7 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 5. WHY CHOOSE US / ABOUT ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 5. WHY CHOOSE US / ABOUT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="about" className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #1a1005 50%, #1a1a1a 100%)" }} />
         <WaterDropBackground opacity={0.02} accent={ACCENT} />
@@ -639,7 +639,7 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 6. PROCESS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 6. PROCESS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f0d08 50%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.025} accent={ACCENT} />
@@ -663,7 +663,7 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 7. GALLERY ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 7. GALLERY â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="gallery" className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #1a1005 50%, #1a1a1a 100%)" }} />
         <WaterDropBackground opacity={0.02} accent={ACCENT} />
@@ -689,7 +689,7 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 7B. VIDEO PLACEHOLDER ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 7B. VIDEO PLACEHOLDER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f0d08 50%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
@@ -711,7 +711,7 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 7C. COMPETITOR COMPARISON TABLE ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 7C. COMPETITOR COMPARISON TABLE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #1a1005 50%, #1a1a1a 100%)" }} />
         <WaterDropBackground opacity={0.02} accent={ACCENT} />
@@ -743,8 +743,8 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 7D. GOOGLE REVIEWS HEADER + TESTIMONIALS ══════════════════ */}
-      {/* ══════════════════ 8. TESTIMONIALS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 7D. GOOGLE REVIEWS HEADER + TESTIMONIALS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 8. TESTIMONIALS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f0d08 50%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
@@ -781,7 +781,7 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 9. FRESH HOME CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 9. FRESH HOME CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT}cc, ${ACCENT})` }} />
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='40' height='40' fill='none'/%3E%3Cpath d='M0 0L40 40M40 0L0 40' stroke='%23000' stroke-width='0.5'/%3E%3C/svg%3E\")" }} />
@@ -796,7 +796,7 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 9B. WHEN ARE YOU MOVING? QUIZ ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 9B. WHEN ARE YOU MOVING? QUIZ â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f0d08 50%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
@@ -826,7 +826,7 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 10. WHAT WE MOVE (ENHANCED) ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 10. WHAT WE MOVE (ENHANCED) â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #1a1005 50%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
@@ -844,7 +844,7 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 10B. MOVING DAY CHECKLIST ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 10B. MOVING DAY CHECKLIST â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f0d08 50%, #1a1a1a 100%)" }} />
         <WaterDropBackground opacity={0.02} accent={ACCENT} />
@@ -866,7 +866,7 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 11. SERVICE AREAS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 11. SERVICE AREAS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f0d08 50%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
@@ -882,7 +882,7 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 12. HOURS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 12. HOURS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       {data.hours && (
         <section className="relative z-10 py-16 md:py-24 overflow-hidden">
           <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #1a1005 50%, #1a1a1a 100%)" }} />
@@ -903,7 +903,7 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
       )}
 
       
-      {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• MID-PAGE CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15, ${ACCENT}15)` }} />
         <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
@@ -914,7 +914,7 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
             Ready to Get Started?
           </h2>
           <p className="text-slate-400 mb-6 text-sm sm:text-base">
-            Limited time — claim your free professional website today before it&apos;s offered to a competitor.
+            Limited time â€” claim your free professional website today before it&apos;s offered to a competitor.
           </p>
           <a
             href={`/claim/${data.id}`}
@@ -929,14 +929,14 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 12B. MOVING DAY GUARANTEE CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 12B. MOVING DAY GUARANTEE CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 md:py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15, ${ACCENT}08)` }} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full blur-[200px]" style={{ background: `${ACCENT}12` }} /></div>
         <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
           <ShieldCheck size={48} weight="fill" style={{ color: ACCENT }} className="mx-auto mb-6" />
           <h2 className="text-2xl md:text-4xl font-extrabold tracking-tight text-white mb-4">
-            Our Promise: On Time, No Hidden Fees, No Damage — Guaranteed
+            Our Promise: On Time, No Hidden Fees, No Damage â€” Guaranteed
           </h2>
           <p className="text-slate-400 text-lg mb-8 max-w-2xl mx-auto">
             We stand behind every move. If anything goes wrong, we make it right. That&apos;s the {data.businessName} guarantee.
@@ -954,7 +954,7 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 13. FAQ ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 13. FAQ â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f0d08 50%, #1a1a1a 100%)" }} />
         <WaterDropBackground opacity={0.02} accent={ACCENT} />
@@ -969,7 +969,7 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 14. CONTACT ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 14. CONTACT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="contact" className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #1a1005 50%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
@@ -1008,7 +1008,7 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
                   <div><label className="block text-sm text-slate-400 mb-1.5">First Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="John" /></div>
                   <div><label className="block text-sm text-slate-400 mb-1.5">Last Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="Doe" /></div>
                 </div>
-                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="(555) 123-4567" /></div>
+                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="(206) 287-2304" /></div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-1.5">Service Needed</label>
                   <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none transition-colors text-sm">
@@ -1026,7 +1026,7 @@ export default function V2MovingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 15. FOOTER ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 15. FOOTER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111 100%)" }} />
         <SparklePattern opacity={0.015} accent={ACCENT} />

@@ -48,11 +48,11 @@ import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
 import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
 
-/* ───────────────────────── SPRING CONFIGS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SPRING CONFIGS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
 
-/* ───────────────────────── COLORS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ COLORS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const CHARCOAL = "#111827";
 const DEFAULT_SLATE = "#475569";
 const BRICK = "#dc2626";
@@ -70,7 +70,7 @@ function getAccent(accentColor?: string) {
 const PALETTE = ["#dc2626", "#475569", "#f59e0b", "#10b981", "#ca8a04", "#ef4444"];
 const pickPaletteColor = (i: number) => PALETTE[i % PALETTE.length];
 
-/* ───────────────────────── SERVICE ICON MAP ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SERVICE ICON MAP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SERVICE_ICON_MAP: Record<string, any> = {
   shingle: House, roof: House, repair: Wrench, leak: Drop, storm: Lightning,
@@ -87,7 +87,7 @@ function getServiceIcon(serviceName: string) {
   return House;
 }
 
-/* ───────────────────────── STOCK FALLBACK IMAGES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ STOCK FALLBACK IMAGES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const STOCK_HERO_POOL = [
   "https://images.unsplash.com/photo-1558036117-15d82a90b9b1?w=1400&q=80",   // aerial view new roof
   "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1400&q=80", // roofer working
@@ -111,7 +111,7 @@ const STOCK_PROJECTS = [
   "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=600&q=80",  // residential roofing
 ];
 
-/* ───────────────────────── ROOFING MATERIALS DATA ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ROOFING MATERIALS DATA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const ROOFING_MATERIALS = [
   { name: "Architectural Shingles", desc: "30-50 year warranty, wind-resistant up to 130mph", icon: House },
   { name: "Standing Seam Metal", desc: "50+ year lifespan, energy-efficient, fireproof", icon: ShieldCheck },
@@ -119,15 +119,15 @@ const ROOFING_MATERIALS = [
   { name: "Composite Tile", desc: "Lightweight, impact-resistant, versatile styles", icon: HardHat },
 ];
 
-/* ───────────────────────── INSURANCE CLAIMS STEPS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ INSURANCE CLAIMS STEPS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const INSURANCE_STEPS = [
   { step: "1", title: "Free Damage Assessment", desc: "We inspect your roof and document all storm damage with photos and measurements.", icon: Eye },
-  { step: "2", title: "File Your Claim", desc: "We help you file the insurance claim with complete documentation — no paperwork headaches.", icon: ClipboardText },
+  { step: "2", title: "File Your Claim", desc: "We help you file the insurance claim with complete documentation â€” no paperwork headaches.", icon: ClipboardText },
   { step: "3", title: "Meet the Adjuster", desc: "We meet the insurance adjuster on-site to ensure nothing is missed in their assessment.", icon: Handshake },
-  { step: "4", title: "Roof Installed — $0 Out of Pocket", desc: "Once approved, we install your new roof. Most homeowners pay only their deductible.", icon: House },
+  { step: "4", title: "Roof Installed â€” $0 Out of Pocket", desc: "Once approved, we install your new roof. Most homeowners pay only their deductible.", icon: House },
 ];
 
-/* ───────────────────────── COMPETITOR COMPARISON ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ COMPETITOR COMPARISON â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const COMPARISON_ROWS = [
   { feature: "Free Roof Inspection", us: true, them: "Sometimes" },
   { feature: "Insurance Claims Help", us: true, them: "Rarely" },
@@ -138,7 +138,7 @@ const COMPARISON_ROWS = [
   { feature: "Financing Available", us: true, them: "Rarely" },
 ];
 
-/* ───────────────────────── FLOATING RAIN PARTICLES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ FLOATING RAIN PARTICLES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function FloatingParticles({ accent }: { accent: string }) {
   const particles = Array.from({ length: 30 }, (_, i) => ({
     id: i, x: Math.random() * 100, delay: Math.random() * 6,
@@ -161,7 +161,7 @@ function FloatingParticles({ accent }: { accent: string }) {
   );
 }
 
-/* ───────────────────────── ROOFLINE SVG PATTERN ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ROOFLINE SVG PATTERN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function RooflinePattern({ opacity = 0.06 }: { opacity?: number }) {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ opacity }}>
@@ -178,7 +178,7 @@ function RooflinePattern({ opacity = 0.06 }: { opacity?: number }) {
   );
 }
 
-/* ───────────────────────── STORM SVG ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ STORM SVG â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function StormBackground({ opacity = 0.03, accent }: { opacity?: number; accent: string }) {
   return (
     <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity }} viewBox="0 0 1000 600" preserveAspectRatio="none">
@@ -188,12 +188,12 @@ function StormBackground({ opacity = 0.03, accent }: { opacity?: number; accent:
   );
 }
 
-/* ───────────────────────── GLASS CARD ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ GLASS CARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function GlassCard({ children, className = "", style }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) {
   return <div className={`rounded-2xl border border-white/15 bg-white/[0.06] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.08)] ${className}`}>{children}</div>;
 }
 
-/* ───────────────────────── MAGNETIC BUTTON ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ MAGNETIC BUTTON â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function MagneticButton({ children, className = "", onClick, style, href }: {
   children: React.ReactNode; className?: string; onClick?: () => void; style?: React.CSSProperties; href?: string;
 }) {
@@ -215,7 +215,7 @@ function MagneticButton({ children, className = "", onClick, style, href }: {
   return <motion.button ref={ref} style={{ x: springX, y: springY, willChange: "transform", ...style }} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave} onClick={onClick} className={className} whileTap={{ scale: 0.97 }}>{children}</motion.button>;
 }
 
-/* ───────────────────────── SHIMMER BORDER ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SHIMMER BORDER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function ShimmerBorder({ children, className = "", accent }: { children: React.ReactNode; className?: string; accent: string }) {
   return (
     <div className={`relative rounded-2xl p-[1px] overflow-hidden ${className}`}>
@@ -225,7 +225,7 @@ function ShimmerBorder({ children, className = "", accent }: { children: React.R
   );
 }
 
-/* ───────────────────────── ACCORDION ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ACCORDION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AccordionItem({ question, answer, isOpen, onToggle, accent }: { question: string; answer: string; isOpen: boolean; onToggle: () => void; accent: string }) {
   return (
     <GlassCard className="overflow-hidden">
@@ -249,7 +249,7 @@ function AccordionItem({ question, answer, isOpen, onToggle, accent }: { questio
   );
 }
 
-/* ───────────────────────── SECTION HEADER ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SECTION HEADER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function SectionHeader({ badge, title, subtitle, accent }: { badge: string; title: string; subtitle?: string; accent: string }) {
   return (
     <div className="text-center mb-16">
@@ -262,9 +262,9 @@ function SectionHeader({ badge, title, subtitle, accent }: { badge: string; titl
 }
 
 
-/* ═══════════════════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    MAIN PREVIEW COMPONENT
-   ═══════════════════════════════════════════════════════════════════ */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -315,7 +315,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ fontFamily: "Barlow, system-ui, sans-serif", background: CHARCOAL, color: "#f1f5f9" }}>
       <FloatingParticles accent={ACCENT} />
 
-      {/* ══════════════════ 1. NAV ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 1. NAV â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <nav className="fixed top-0 left-0 right-0 z-50">
         <div className="mx-auto max-w-7xl px-4 md:px-6 py-4">
           <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
@@ -350,7 +350,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </nav>
 
-      {/* ══════════════════ 2. HERO ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 2. HERO â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
 
         <div className="absolute inset-0">
@@ -412,7 +412,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 3. STATS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 3. STATS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden border-y" style={{ borderColor: `${ACCENT}1a` }}>
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f1520 0%, #111827 100%)" }} />
         <RooflinePattern opacity={0.03} />
@@ -433,7 +433,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 4. SERVICES ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 4. SERVICES â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="services" className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${CHARCOAL} 0%, #0f1520 50%, ${CHARCOAL} 100%)` }} />
         <RooflinePattern opacity={0.04} />
@@ -471,7 +471,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 5. PROCESS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 5. PROCESS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${CHARCOAL} 0%, #0f1520 50%, ${CHARCOAL} 100%)` }} />
         <RooflinePattern opacity={0.03} />
@@ -493,7 +493,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 6. ABOUT ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 6. ABOUT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="about" className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${CHARCOAL} 0%, #0f1520 50%, ${CHARCOAL} 100%)` }} />
         <StormBackground opacity={0.02} accent={ACCENT} />
@@ -533,13 +533,13 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 6B. BEFORE/AFTER ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 6B. BEFORE/AFTER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-20 md:py-28 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${CHARCOAL} 0%, #0f1520 50%, ${CHARCOAL} 100%)` }} />
         <RooflinePattern opacity={0.03} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] right-[15%] w-[500px] h-[500px] rounded-full blur-[200px]" style={{ background: `${ACCENT}18` }} /></div>
         <div className="max-w-4xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="See The Difference" title="Before & After" subtitle="Real results from our roofing projects — quality you can see." accent={ACCENT} />
+          <SectionHeader badge="See The Difference" title="Before & After" subtitle="Real results from our roofing projects â€” quality you can see." accent={ACCENT} />
           <div className="relative rounded-2xl overflow-hidden border border-white/15 shadow-2xl">
             <img src="/images/roofing-before-after.jpg" alt="Before and after roof replacement" className="w-full h-auto" />
             <div className="absolute bottom-0 left-0 right-0 flex">
@@ -554,7 +554,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 7. PROJECTS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 7. PROJECTS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="projects" className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${CHARCOAL} 0%, #0f1520 50%, ${CHARCOAL} 100%)` }} />
         <StormBackground opacity={0.02} accent={ACCENT} />
@@ -577,7 +577,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 7B. PREMIUM MATERIALS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 7B. PREMIUM MATERIALS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-20 md:py-28 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${CHARCOAL} 0%, #0f1520 50%, ${CHARCOAL} 100%)` }} />
         <StormBackground opacity={0.02} accent={ACCENT} />
@@ -601,7 +601,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 8. TESTIMONIALS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 8. TESTIMONIALS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${CHARCOAL} 0%, #0f1520 50%, ${CHARCOAL} 100%)` }} />
         <RooflinePattern opacity={0.03} />
@@ -630,7 +630,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 9. CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 9. CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT}cc, ${ACCENT})` }} />
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='40' height='40' fill='none'/%3E%3Cpath d='M0 0L40 40M40 0L0 40' stroke='%23000' stroke-width='0.5'/%3E%3C/svg%3E\")" }} />
@@ -638,7 +638,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
         <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
           <Warning size={48} weight="fill" className="mx-auto mb-6 text-black/70" />
           <h2 className="text-3xl md:text-5xl font-black tracking-tight text-white mb-4">Storm Damage? We Respond Fast</h2>
-          <p className="text-lg text-white/80 mb-8 max-w-xl mx-auto">Hail, wind, fallen trees — do not wait. Our emergency roofing team assesses damage and begins repairs immediately.</p>
+          <p className="text-lg text-white/80 mb-8 max-w-xl mx-auto">Hail, wind, fallen trees â€” do not wait. Our emergency roofing team assesses damage and begins repairs immediately.</p>
           <PhoneLink phone={data.phone} className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-black text-white font-bold text-lg hover:bg-black/80 transition-colors">
             <span className="relative flex h-3 w-3"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75" /><span className="relative inline-flex rounded-full h-3 w-3 bg-yellow-500" /></span>
             {data.phone}
@@ -646,7 +646,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 9B. INSURANCE CLAIMS PROCESS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 9B. INSURANCE CLAIMS PROCESS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${CHARCOAL} 0%, #0f1520 50%, ${CHARCOAL} 100%)` }} />
         <RooflinePattern opacity={0.03} />
@@ -677,7 +677,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 9C. FINANCING ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 9C. FINANCING â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${CHARCOAL} 0%, #0f1520 50%, ${CHARCOAL} 100%)` }} />
         <StormBackground opacity={0.02} accent={ACCENT} />
@@ -705,7 +705,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 9D. CERTIFICATIONS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 9D. CERTIFICATIONS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-12 overflow-hidden border-y" style={{ borderColor: `${ACCENT}1a` }}>
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #0f1520 0%, ${CHARCOAL} 100%)` }} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -727,7 +727,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 9E. COMPETITOR COMPARISON ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 9E. COMPETITOR COMPARISON â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${CHARCOAL} 0%, #0f1520 50%, ${CHARCOAL} 100%)` }} />
         <RooflinePattern opacity={0.02} />
@@ -753,7 +753,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 9F. VIDEO TESTIMONIAL ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 9F. VIDEO TESTIMONIAL â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${CHARCOAL} 0%, #0f1520 50%, ${CHARCOAL} 100%)` }} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[10%] w-[500px] h-[500px] rounded-full blur-[200px]" style={{ background: `${ACCENT}12` }} /></div>
@@ -768,14 +768,14 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
               </div>
             </div>
             <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between">
-              <p className="text-white font-semibold text-sm">Project Showcase — {data.businessName}</p>
+              <p className="text-white font-semibold text-sm">Project Showcase â€” {data.businessName}</p>
               <span className="text-xs text-white/60">Click to play</span>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ══════════════════ 9G. ROOF AGE QUIZ ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 9G. ROOF AGE QUIZ â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}20, ${ACCENT}08)` }} />
         <div className="max-w-3xl mx-auto px-6 relative z-10 text-center">
@@ -783,8 +783,8 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {[
               { age: "Under 10 Years", recommendation: "Schedule a maintenance check", color: "bg-green-500/20 border-green-500/30 text-green-400", icon: CheckCircle },
-              { age: "10-20 Years", recommendation: "Book a free inspection — repairs may be needed", color: "bg-amber-500/20 border-amber-500/30 text-amber-400", icon: Eye },
-              { age: "20+ Years", recommendation: "Replacement recommended — call today", color: "bg-red-500/20 border-red-500/30 text-red-400", icon: Warning },
+              { age: "10-20 Years", recommendation: "Book a free inspection â€” repairs may be needed", color: "bg-amber-500/20 border-amber-500/30 text-amber-400", icon: Eye },
+              { age: "20+ Years", recommendation: "Replacement recommended â€” call today", color: "bg-red-500/20 border-red-500/30 text-red-400", icon: Warning },
             ].map((option) => (
               <GlassCard key={option.age} className="p-6 text-center group hover:border-white/20 transition-all cursor-pointer">
                 <div className={`w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center border ${option.color}`}>
@@ -803,7 +803,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 10. SERVICE AREAS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 10. SERVICE AREAS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${CHARCOAL} 0%, #0f1520 50%, ${CHARCOAL} 100%)` }} />
         <RooflinePattern opacity={0.03} />
@@ -843,7 +843,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 11. HOURS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 11. HOURS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       {data.hours && (
         <section className="relative z-10 py-16 md:py-24 overflow-hidden">
           <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${CHARCOAL} 0%, #0f1520 50%, ${CHARCOAL} 100%)` }} />
@@ -864,7 +864,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
       )}
 
       
-      {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• MID-PAGE CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15, ${ACCENT}18)` }} />
         <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
@@ -875,7 +875,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
             Ready to Get Started?
           </h2>
           <p className="text-slate-400 mb-6 text-sm sm:text-base">
-            Limited time — claim your free professional website today before it&apos;s offered to a competitor.
+            Limited time â€” claim your free professional website today before it&apos;s offered to a competitor.
           </p>
           <a
             href={`/claim/${data.id}`}
@@ -890,7 +890,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 12. FAQ ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 12. FAQ â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${CHARCOAL} 0%, #0f1520 50%, ${CHARCOAL} 100%)` }} />
         <RooflinePattern opacity={0.02} />
@@ -902,7 +902,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 13. CONTACT ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 13. CONTACT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="contact" className="relative z-10 py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${CHARCOAL} 0%, #0f1520 50%, ${CHARCOAL} 100%)` }} />
         <RooflinePattern opacity={0.02} />
@@ -946,7 +946,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
                   <div><label className="block text-sm text-slate-400 mb-1.5">First Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="John" /></div>
                   <div><label className="block text-sm text-slate-400 mb-1.5">Last Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="Doe" /></div>
                 </div>
-                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
+                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(206) 287-2304" /></div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-1.5">Service Needed</label>
                   <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none text-sm">
@@ -964,7 +964,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 14. GUARANTEE ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 14. GUARANTEE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${CHARCOAL} 0%, #0f1520 100%)` }} />
         <RooflinePattern opacity={0.015} />
@@ -987,7 +987,7 @@ export default function V2RoofingPreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 15. FOOTER ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 15. FOOTER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${CHARCOAL} 0%, #0a0f1a 100%)` }} />
         <RooflinePattern opacity={0.015} />

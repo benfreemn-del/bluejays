@@ -521,7 +521,8 @@ export default function ElectricianV2Showcase() {
               { label: "Master Electrician", value: <Certificate size={28} style={{ color: AMBER }} weight="fill" /> },
               { label: "Years Experience", value: <AnimatedCounter target={18} /> },
               { label: "Projects Completed", value: <><AnimatedCounter target={2500} suffix="+" /></> },
-              { label: "WA License", value: <span className="text-xs" style={{ color: AMBER }}>#CASCAEC789QZ</span> },
+              // fictional license — replace per-prospect on signup
+              { label: "WA License", value: <span className="text-xs" style={{ color: AMBER }}>#CSCDEC892PL</span> },
               { label: "Google Rating", value: <span className="flex items-center justify-center gap-1"><AnimatedCounter target={4} suffix=".9" /> <Star size={18} weight="fill" style={{ color: AMBER }} /></span> },
             ].map((stat, i) => (
               <motion.div
@@ -665,7 +666,7 @@ export default function ElectricianV2Showcase() {
                 style={{ background: "rgba(26,26,26,0.9)", backdropFilter: "blur(12px)" }}
               >
                 <div className="text-xs text-white/40 uppercase tracking-wider">WA License</div>
-                <div className="text-sm font-bold" style={{ color: AMBER }}>#CASCAEC789QZ</div>
+                <div className="text-sm font-bold" style={{ color: AMBER }}>#CSCDEC892PL</div>
               </div>
             </motion.div>
 
@@ -1029,7 +1030,7 @@ export default function ElectricianV2Showcase() {
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                       className="w-full px-4 py-3 rounded-xl border border-white/[0.13] bg-white/[0.07] text-white text-sm focus:outline-none focus:border-amber-500/40 transition-colors"
-                      placeholder="(206) 555-0000"
+                      placeholder="(206) 287-2304"
                     />
                   </div>
                   <div>
@@ -1127,7 +1128,7 @@ export default function ElectricianV2Showcase() {
               {/* License callout */}
               <div className="rounded-xl border-2 p-4 text-center" style={{ borderColor: `${AMBER}40`, background: `${AMBER}08` }}>
                 <div className="text-xs text-white/40 uppercase tracking-wider mb-1">Licensed in Washington State</div>
-                <div className="text-lg font-black" style={{ color: AMBER }}>#CASCAEC789QZ</div>
+                <div className="text-lg font-black" style={{ color: AMBER }}>#CSCDEC892PL</div>
                 <div className="text-xs text-white/30 mt-1">Bonded &amp; Insured — $2M Liability Coverage</div>
               </div>
             </div>
@@ -1150,7 +1151,7 @@ export default function ElectricianV2Showcase() {
               <p className="text-sm text-white/40 leading-relaxed max-w-md">
                 Powering Seattle&apos;s homes and businesses since 2007. Master Electrician Mike Torres and his licensed crew deliver safe, code-compliant electrical work with a lifetime warranty on labor.
               </p>
-              <div className="mt-4 text-xs text-white/25">WA License #CASCAEC789QZ | Bonded &amp; Insured</div>
+              <div className="mt-4 text-xs text-white/25">WA License #CSCDEC892PL | Bonded &amp; Insured</div>
             </div>
 
             {/* Quick links */}

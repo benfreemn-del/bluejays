@@ -299,7 +299,7 @@ export default function V2PoolSpaPage() {
                 Free Consultation <ArrowRight size={18} weight="bold" />
               </MagneticButton>
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
-                <Phone size={18} weight="duotone" /> (555) 852-9630
+                <Phone size={18} weight="duotone" /> (425) 852-9630
               </MagneticButton>
             </motion.div>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ ...spring, delay: 1 }} className="flex flex-wrap gap-3">
@@ -309,7 +309,7 @@ export default function V2PoolSpaPage() {
               <span className="px-4 py-2 rounded-full text-xs font-semibold text-white flex items-center gap-2" style={{ background: "rgba(255,255,255,0.05)", border: `1px solid ${SAND}40` }}><Leaf size={14} weight="duotone" style={{ color: SAND }} />Eco-Friendly</span>
             </motion.div>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ ...spring, delay: 1.1 }} className="flex flex-wrap gap-6 text-sm text-slate-400">
-              <span className="flex items-center gap-2"><MapPin size={16} weight="duotone" style={{ color: CYAN }} />456 Poolside Drive</span>
+              <span className="flex items-center gap-2"><MapPin size={16} weight="duotone" style={{ color: CYAN }} />12047 NE 1st St, Bellevue</span>
               <span className="flex items-center gap-2"><Clock size={16} weight="duotone" style={{ color: CYAN }} />Mon-Sat 7am-6pm</span>
             </motion.div>
           </div>
@@ -979,7 +979,7 @@ export default function V2PoolSpaPage() {
                   <CalendarCheck size={20} weight="duotone" /> Schedule Free Consult
                 </MagneticButton>
                 <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 inline-flex items-center gap-2 cursor-pointer">
-                  <Phone size={18} weight="duotone" /> (555) 852-9630
+                  <Phone size={18} weight="duotone" /> (425) 852-9630
                 </MagneticButton>
               </div>
               <div className="mt-8 flex flex-wrap justify-center gap-3">

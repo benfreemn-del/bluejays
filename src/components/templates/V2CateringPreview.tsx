@@ -165,7 +165,7 @@ function AnimatedSection({ children, className = "" }: { children: React.ReactNo
   );
 }
 
-/* ═══════════════════════════════════════════════════ */
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 const EVENT_TYPES = [
   { icon: Champagne, name: "Weddings", desc: "Elegant multi-course menus tailored to your celebration" },
@@ -313,7 +313,7 @@ export default function V2CateringPreview({ data }: { data: GeneratedSiteData })
           <div className="space-y-8 rounded-2xl bg-black/50 backdrop-blur-md p-6 md:p-8 border border-white/8">
             <div>
               <p className="text-sm uppercase tracking-widest mb-4" style={{ color: GOLD }}>Premium Catering</p>
-              <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 20px rgba(0,0,0,0.8)" }}>{data.tagline || `${data.businessName} — Exceptional Cuisine`}</h1>
+              <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 20px rgba(0,0,0,0.8)" }}>{data.tagline || `${data.businessName} â€” Exceptional Cuisine`}</h1>
             </div>
             <p className="text-lg text-white/70 max-w-md leading-relaxed">{(() => { const t = data.about; if (t.length <= 180) return t; const dot = t.indexOf('.', 80); return dot > 0 && dot < 220 ? t.slice(0, dot + 1) : t.slice(0, 180).trim() + '...'; })()}</p>
             <div className="flex flex-wrap gap-4">
@@ -793,7 +793,7 @@ export default function V2CateringPreview({ data }: { data: GeneratedSiteData })
                   {[
                     "Locally sourced, seasonal ingredients",
                     "Executive chef with 15+ years experience",
-                    "Made from scratch — no pre-packaged shortcuts",
+                    "Made from scratch â€” no pre-packaged shortcuts",
                     "Commercial kitchen with health department A-rating",
                     "Sustainable packaging and waste-reduction practices",
                     "Custom menu development for every event",
@@ -832,7 +832,7 @@ export default function V2CateringPreview({ data }: { data: GeneratedSiteData })
             {[
               { icon: Trophy, title: "Award-Winning", desc: "Recognized by local culinary publications for excellence." },
               { icon: Users, title: "Full-Service Staff", desc: "Professional servers, bartenders, and event coordinators." },
-              { icon: Leaf, title: "Dietary Inclusive", desc: "Vegan, gluten-free, kosher, halal — we accommodate all needs." },
+              { icon: Leaf, title: "Dietary Inclusive", desc: "Vegan, gluten-free, kosher, halal â€” we accommodate all needs." },
               { icon: Timer, title: "On-Time Delivery", desc: "Military precision timing so your event runs flawlessly." },
             ].map((item) => (
               <GlassCard key={item.title} className="p-6 text-center">
@@ -896,7 +896,7 @@ export default function V2CateringPreview({ data }: { data: GeneratedSiteData })
               <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div><label className="block text-sm text-[#6b7280] mb-1.5">Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[#1c1917] placeholder-gray-400 focus:outline-none text-sm" placeholder="Your name" /></div>
-                  <div><label className="block text-sm text-[#6b7280] mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[#1c1917] placeholder-gray-400 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
+                  <div><label className="block text-sm text-[#6b7280] mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[#1c1917] placeholder-gray-400 focus:outline-none text-sm" placeholder="(206) 287-2304" /></div>
                 </div>
                 <div><label className="block text-sm text-[#6b7280] mb-1.5">Event Type</label><select className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[#1c1917] focus:outline-none text-sm"><option value="" className="bg-white">Select event type</option>{EVENT_TYPES.map((e) => <option key={e.name} value={e.name.toLowerCase()} className="bg-white">{e.name}</option>)}</select></div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

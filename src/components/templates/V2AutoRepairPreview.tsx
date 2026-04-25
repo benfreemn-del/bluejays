@@ -50,11 +50,11 @@ import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
 import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
 
-/* ───────────────────────── SPRING CONFIGS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SPRING CONFIGS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
 
-/* ───────────────────────── COLORS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ COLORS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const DARK = "#111111";
 const RED = "#dc2626";
 const RED_LIGHT = "#ef4444";
@@ -70,7 +70,7 @@ function getAccent(accentColor?: string) {
   return { ACCENT: c, ACCENT_GLOW: `${c}26`, SILVER };
 }
 
-/* ───────────────────────── SERVICE ICON MAP ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SERVICE ICON MAP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SERVICE_ICON_MAP: Record<string, any> = {
   oil: Drop, brake: Gauge, engine: Gear, transmission: Gear,
@@ -88,7 +88,7 @@ function getServiceIcon(serviceName: string) {
   return Wrench;
 }
 
-/* ───────────────────────── STOCK FALLBACK IMAGES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ STOCK FALLBACK IMAGES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1487754180451-c456f719a1fc?w=1400&q=80"];
 const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=600&q=80"];
 const STOCK_PROJECTS = [
@@ -98,7 +98,7 @@ const STOCK_PROJECTS = [
   "https://images.unsplash.com/photo-1603386329225-868f9b1ee6c9?w=800&q=80",
 ];
 
-/* ───────────────────────── SERVICE TYPE BADGES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SERVICE TYPE BADGES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const SERVICE_BADGES = [
   { label: "Oil Changes", icon: Drop },
   { label: "Brake Service", icon: Gauge },
@@ -108,14 +108,14 @@ const SERVICE_BADGES = [
   { label: "A/C Service", icon: Fan },
 ];
 
-/* ───────────────────────── TRANSPARENT PRICING ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ TRANSPARENT PRICING â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const PRICING_CARDS = [
-  { service: "Oil Change", price: "From $39.99", desc: "Conventional or synthetic — quick and affordable", icon: Drop },
-  { service: "Brake Service", price: "From $149", desc: "Pads, rotors, calipers — stop safely every time", icon: Gauge },
+  { service: "Oil Change", price: "From $39.99", desc: "Conventional or synthetic â€” quick and affordable", icon: Drop },
+  { service: "Brake Service", price: "From $149", desc: "Pads, rotors, calipers â€” stop safely every time", icon: Gauge },
   { service: "Full Diagnostic", price: "$89", desc: "Computer scan, visual inspection, written report", icon: Speedometer },
 ];
 
-/* ───────────────────────── WHAT WE SERVICE ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ WHAT WE SERVICE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const VEHICLE_TYPES = [
   { label: "Domestic Cars", icon: CarSimple },
   { label: "Import / Foreign", icon: CarSimple },
@@ -127,7 +127,7 @@ const VEHICLE_TYPES = [
   { label: "Suspension", icon: CarSimple },
 ];
 
-/* ───────────────────────── HONESTY GUARANTEE PILLARS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ HONESTY GUARANTEE PILLARS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const HONESTY_PILLARS = [
   { title: "No Unnecessary Repairs", desc: "We only fix what actually needs fixing. Period.", icon: ShieldCheck },
   { title: "Free Estimates", desc: "Know the cost before we start. No obligation, no pressure.", icon: CurrencyDollar },
@@ -135,7 +135,7 @@ const HONESTY_PILLARS = [
   { title: "We Show You the Problem", desc: "We walk you through the issue so you understand exactly what's going on.", icon: Eye },
 ];
 
-/* ───────────────────────── COMPETITOR COMPARISON ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ COMPETITOR COMPARISON â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const COMPARISON_ROWS = [
   { feature: "Honest, Transparent Pricing", us: true, them: "$$$" },
   { feature: "Free Estimates", us: true, them: "No" },
@@ -146,15 +146,15 @@ const COMPARISON_ROWS = [
   { feature: "Owner On-Site", us: true, them: "No" },
 ];
 
-/* ───────────────────────── CAR NEEDS QUIZ ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ CAR NEEDS QUIZ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const QUIZ_OPTIONS = [
   { label: "Routine Maintenance", desc: "Oil changes, filters, fluids, tune-ups", icon: Drop, color: "#22c55e" },
-  { label: "Something Sounds Wrong", desc: "Noises, vibrations, pulling — we'll diagnose it", icon: Warning, color: "#f59e0b" },
-  { label: "Brakes Feel Off", desc: "Grinding, squealing, soft pedal — safety first", icon: Gauge, color: "#ef4444" },
-  { label: "Check Engine Light", desc: "Don't ignore it — let us read the code", icon: Engine, color: "#3b82f6" },
+  { label: "Something Sounds Wrong", desc: "Noises, vibrations, pulling â€” we'll diagnose it", icon: Warning, color: "#f59e0b" },
+  { label: "Brakes Feel Off", desc: "Grinding, squealing, soft pedal â€” safety first", icon: Gauge, color: "#ef4444" },
+  { label: "Check Engine Light", desc: "Don't ignore it â€” let us read the code", icon: Engine, color: "#3b82f6" },
 ];
 
-/* ───────────────────────── FLOATING PARTICLES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ FLOATING PARTICLES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function FloatingParticles({ accent }: { accent: string }) {
   const particles = Array.from({ length: 20 }, (_, i) => ({
     id: i, x: Math.random() * 100, delay: Math.random() * 8,
@@ -177,7 +177,7 @@ function FloatingParticles({ accent }: { accent: string }) {
   );
 }
 
-/* ───────────────────────── GEAR PATTERN ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ GEAR PATTERN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function GearPattern({ opacity = 0.03, accent }: { opacity?: number; accent: string }) {
   const patternId = `gearPatV2Prev-${accent.replace("#", "")}`;
   return (
@@ -197,7 +197,7 @@ function GearPattern({ opacity = 0.03, accent }: { opacity?: number; accent: str
   );
 }
 
-/* ───────────────────────── RACING STRIPE SVG ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ RACING STRIPE SVG â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function RacingStripes({ opacity = 0.04, accent }: { opacity?: number; accent: string }) {
   return (
     <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity }} viewBox="0 0 1000 600" preserveAspectRatio="none">
@@ -207,12 +207,12 @@ function RacingStripes({ opacity = 0.04, accent }: { opacity?: number; accent: s
   );
 }
 
-/* ───────────────────────── GLASS CARD ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ GLASS CARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>;
 }
 
-/* ───────────────────────── MAGNETIC BUTTON ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ MAGNETIC BUTTON â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function MagneticButton({ children, className = "", onClick, style, href }: {
   children: React.ReactNode; className?: string; onClick?: () => void; style?: React.CSSProperties; href?: string;
 }) {
@@ -234,7 +234,7 @@ function MagneticButton({ children, className = "", onClick, style, href }: {
   return <motion.button ref={ref} style={{ x: springX, y: springY, willChange: "transform", ...style }} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave} onClick={onClick} className={className} whileTap={{ scale: 0.97 }}>{children}</motion.button>;
 }
 
-/* ───────────────────────── SHIMMER BORDER ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SHIMMER BORDER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function ShimmerBorder({ children, className = "", accent }: { children: React.ReactNode; className?: string; accent: string }) {
   return (
     <div className={`relative rounded-2xl p-[1px] overflow-hidden ${className}`}>
@@ -244,7 +244,7 @@ function ShimmerBorder({ children, className = "", accent }: { children: React.R
   );
 }
 
-/* ───────────────────────── ACCORDION ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ACCORDION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AccordionItem({ question, answer, isOpen, onToggle }: { question: string; answer: string; isOpen: boolean; onToggle: () => void }) {
   return (
     <GlassCard className="overflow-hidden">
@@ -263,7 +263,7 @@ function AccordionItem({ question, answer, isOpen, onToggle }: { question: strin
   );
 }
 
-/* ───────────────────────── SECTION HEADER ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SECTION HEADER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function SectionHeader({ badge, title, subtitle, accent }: { badge: string; title: string; subtitle?: string; accent: string }) {
   return (
     <div className="text-center mb-16">
@@ -276,10 +276,10 @@ function SectionHeader({ badge, title, subtitle, accent }: { badge: string; titl
 }
 
 
-/* ═══════════════════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    MAIN PREVIEW COMPONENT
-   ═══════════════════════════════════════════════════════════════════ */
-/* ───────────────────────── ANIMATED SECTION ───────────────────────── */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ANIMATED SECTION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <motion.div
@@ -325,7 +325,7 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
 
   const processSteps = [
     { step: "01", title: "Drop Off or Schedule", desc: `Call, book online, or just drive in. ${data.businessName} makes it easy to get started.`, icon: CalendarCheck },
-    { step: "02", title: "Free Inspection", desc: "Our certified technicians run a thorough inspection at no cost — you only pay for approved work.", icon: Eye },
+    { step: "02", title: "Free Inspection", desc: "Our certified technicians run a thorough inspection at no cost â€” you only pay for approved work.", icon: Eye },
     { step: "03", title: "Honest Estimate (No Surprises)", desc: "We show you exactly what needs fixing and give you a transparent quote before touching a wrench.", icon: CurrencyDollar },
     { step: "04", title: "Quality Repair & Warranty", desc: "We fix it right, test it thoroughly, and back it with our parts and labor warranty.", icon: ShieldCheck },
   ];
@@ -334,7 +334,7 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
     { q: `What services does ${data.businessName} offer?`, a: `We provide full-service auto repair including ${data.services.slice(0, 3).map(s => s.name).join(", ")}, and more. We work on all makes and models.` },
     { q: "Do I need an appointment?", a: `While appointments are recommended, ${data.businessName} accepts walk-ins for many services. Call ahead for faster service.` },
     { q: "Do you offer a warranty on repairs?", a: `Absolutely. ${data.businessName} backs all repairs with a parts and labor warranty. Ask about our specific warranty terms for your service.` },
-    { q: "What brands and models do you work on?", a: "We service all makes and models — domestic, import, and European. Our technicians have experience with every major manufacturer." },
+    { q: "What brands and models do you work on?", a: "We service all makes and models â€” domestic, import, and European. Our technicians have experience with every major manufacturer." },
   ];
 
   /* Fallback testimonials */
@@ -349,7 +349,7 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ fontFamily: "Barlow, system-ui, sans-serif", background: DARK, color: "#f1f5f9" }}>
       <FloatingParticles accent={ACCENT} />
 
-      {/* ══════════════════ 1. NAV ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 1. NAV â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <nav className="fixed top-0 left-0 right-0 z-50">
         <div className="mx-auto max-w-7xl px-4 md:px-6 py-4">
           <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
@@ -384,7 +384,7 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
         </div>
       </nav>
 
-      {/* ══════════════════ 2. HERO ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 2. HERO â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
 
         <div className="absolute inset-0">
@@ -430,7 +430,7 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ SERVICE TYPE BADGES ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SERVICE TYPE BADGES â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #0a0a0a 0%, ${DARK} 100%)` }} />
         <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
@@ -445,7 +445,7 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 3. STATS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 3. STATS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden border-y" style={{ borderColor: `${ACCENT}1a` }}>
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0e0e0e 0%, #111111 100%)" }} />
         <GearPattern opacity={0.02} accent={ACCENT} />
@@ -466,7 +466,7 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 4. SERVICES ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 4. SERVICES â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #0e0e0e 50%, ${DARK} 100%)` }} />
         <GearPattern accent={ACCENT} />
@@ -503,13 +503,13 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ TRANSPARENT PRICING ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• TRANSPARENT PRICING â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, ${DARK_CARD} 50%, ${DARK} 100%)` }} />
         <RacingStripes opacity={0.02} accent={ACCENT} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] left-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${ACCENT}06` }} /></div>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Transparent Pricing" title="Honest Prices — No Surprises" subtitle="We believe you deserve to know what you're paying before we start. No hidden fees, no unnecessary upsells." accent={ACCENT} />
+          <SectionHeader badge="Transparent Pricing" title="Honest Prices â€” No Surprises" subtitle="We believe you deserve to know what you're paying before we start. No hidden fees, no unnecessary upsells." accent={ACCENT} />
           <div className="grid md:grid-cols-3 gap-6">
             {PRICING_CARDS.map((card) => (
               <GlassCard key={card.service} className="p-7 text-center group hover:border-opacity-30 transition-all duration-500">
@@ -526,13 +526,13 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ WHAT WE SERVICE ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• WHAT WE SERVICE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #0e0e0e 50%, ${DARK} 100%)` }} />
         <GearPattern opacity={0.025} accent={ACCENT} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] right-[10%] w-[500px] h-[500px] rounded-full blur-[160px]" style={{ background: `${SILVER}06` }} /></div>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Capability" title="What We Service" subtitle="From everyday sedans to heavy-duty trucks — our certified technicians handle it all." accent={ACCENT} />
+          <SectionHeader badge="Capability" title="What We Service" subtitle="From everyday sedans to heavy-duty trucks â€” our certified technicians handle it all." accent={ACCENT} />
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {VEHICLE_TYPES.map((v, i) => {
               const tile = pickPaletteColor(i + 2);
@@ -549,7 +549,7 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 5. ABOUT ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 5. ABOUT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, ${DARK_CARD} 50%, ${DARK} 100%)` }} />
         <RacingStripes opacity={0.02} accent={ACCENT} />
@@ -589,7 +589,7 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ HONESTY GUARANTEE ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• HONESTY GUARANTEE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #0e0e0e 50%, ${DARK} 100%)` }} />
         <GearPattern opacity={0.025} accent={ACCENT} />
@@ -620,7 +620,7 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ COMPETITOR COMPARISON ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• COMPETITOR COMPARISON â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, ${DARK_CARD} 50%, ${DARK} 100%)` }} />
         <RacingStripes opacity={0.02} accent={ACCENT} />
@@ -654,7 +654,7 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ VIDEO PLACEHOLDER ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• VIDEO PLACEHOLDER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #0e0e0e 50%, ${DARK} 100%)` }} />
         <GearPattern opacity={0.02} accent={ACCENT} />
@@ -675,14 +675,14 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 6. PROCESS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 6. PROCESS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #0e0e0e 50%, ${DARK} 100%)` }} />
         <GearPattern opacity={0.025} accent={ACCENT} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${SILVER}06` }} /></div>
 
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Our Process" title="How We Work — No Surprises" subtitle="A straightforward process built on transparency. You always know what's happening with your vehicle." accent={ACCENT} />
+          <SectionHeader badge="Our Process" title="How We Work â€” No Surprises" subtitle="A straightforward process built on transparency. You always know what's happening with your vehicle." accent={ACCENT} />
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {processSteps.map((step, i) => (
               <div key={step.step} className="relative">
@@ -701,7 +701,7 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 7. GALLERY ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 7. GALLERY â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="projects" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, ${DARK_CARD} 50%, ${DARK} 100%)` }} />
         <RacingStripes opacity={0.02} accent={ACCENT} />
@@ -725,7 +725,7 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ CAR NEEDS QUIZ ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• CAR NEEDS QUIZ â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, ${DARK_CARD} 50%, ${DARK} 100%)` }} />
         <GearPattern opacity={0.025} accent={ACCENT} />
@@ -761,7 +761,7 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 8. TESTIMONIALS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 8. TESTIMONIALS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #0e0e0e 50%, ${DARK} 100%)` }} />
         <GearPattern opacity={0.02} accent={ACCENT} />
@@ -801,7 +801,7 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 9. CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 9. CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT}cc, ${ACCENT})` }} />
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='40' height='40' fill='none'/%3E%3Cpath d='M0 0L40 40M40 0L0 40' stroke='%23000' stroke-width='0.5'/%3E%3C/svg%3E\")" }} />
@@ -816,7 +816,7 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 10. SERVICE AREAS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 10. SERVICE AREAS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, ${DARK_CARD} 50%, ${DARK} 100%)` }} />
         <GearPattern opacity={0.02} accent={ACCENT} />
@@ -832,7 +832,7 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 11. HOURS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 11. HOURS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       {data.hours && (
         <section className="relative z-10 py-24 md:py-32 overflow-hidden">
           <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #0e0e0e 50%, ${DARK} 100%)` }} />
@@ -854,7 +854,7 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
       )}
 
       
-      {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• MID-PAGE CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15, ${ACCENT}08)` }} />
         <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
@@ -865,7 +865,7 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
             Ready to Get Started?
           </h2>
           <p className="text-slate-400 mb-6 text-sm sm:text-base">
-            Limited time — claim your free professional website today before it&apos;s offered to a competitor.
+            Limited time â€” claim your free professional website today before it&apos;s offered to a competitor.
           </p>
           <a
             href={`/claim/${data.id}`}
@@ -880,7 +880,7 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 12. FAQ ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 12. FAQ â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #0e0e0e 50%, ${DARK} 100%)` }} />
         <GearPattern opacity={0.02} accent={ACCENT} />
@@ -893,7 +893,7 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 13. CONTACT ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 13. CONTACT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="contact" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, ${DARK_CARD} 50%, ${DARK} 100%)` }} />
         <GearPattern opacity={0.02} accent={ACCENT} />
@@ -935,7 +935,7 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
               <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div><label className="block text-sm text-slate-400 mb-1.5">Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="John Doe" /></div>
-                  <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
+                  <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(206) 287-2304" /></div>
                 </div>
                 <div><label className="block text-sm text-slate-400 mb-1.5">Vehicle (Year, Make, Model)</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="2022 Toyota Camry" /></div>
                 <div>
@@ -955,7 +955,7 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 14. WARRANTY & TRUST CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 14. WARRANTY & TRUST CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #0e0e0e 100%)` }} />
         <GearPattern opacity={0.015} accent={ACCENT} />
@@ -982,7 +982,7 @@ export default function V2AutoRepairPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 15. FOOTER ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 15. FOOTER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${DARK} 0%, #0a0a0a 100%)` }} />
         <GearPattern opacity={0.015} accent={ACCENT} />

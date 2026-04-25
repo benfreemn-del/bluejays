@@ -41,11 +41,11 @@ import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
 import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
 
-/* ───────────────────────── SPRING CONFIGS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SPRING CONFIGS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
 
-/* ───────────────────────── COLORS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ COLORS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const CHARCOAL = "#1a1a1a";
 const DEFAULT_INSURANCE_BLUE = "#1d4ed8";
 const BLUE_LIGHT = "#60a5fa";
@@ -59,7 +59,7 @@ function getAccent(accentColor?: string) {
 const PALETTE = ["#1d4ed8", "#059669", "#d4a017", "#64748b", "#f59e0b", "#7c3aed"];
 const pickPaletteColor = (i: number) => PALETTE[i % PALETTE.length];
 
-/* ───────────────────────── SERVICE ICON MAP ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SERVICE ICON MAP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SERVICE_ICON_MAP: Record<string, any> = {
   auto: Car,
@@ -84,7 +84,7 @@ function getServiceIcon(serviceName: string) {
   return Shield;
 }
 
-/* ───────────────────────── STOCK FALLBACK IMAGES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ STOCK FALLBACK IMAGES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=1400&q=80"];
 const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1573497620053-ea5300f94f21?w=600&q=80"];
 const STOCK_PROJECTS = [
@@ -94,7 +94,7 @@ const STOCK_PROJECTS = [
   "https://images.unsplash.com/photo-1564564321837-a57b7070ac4f?w=800&q=80",
 ];
 
-/* ───────────────────────── FLOATING SPARKLE PARTICLES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ FLOATING SPARKLE PARTICLES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function FloatingSparkles({ accent }: { accent: string }) {
   const particles = Array.from({ length: 22 }, (_, i) => ({
     id: i,
@@ -123,7 +123,7 @@ function FloatingSparkles({ accent }: { accent: string }) {
   );
 }
 
-/* ───────────────────────── SPARKLE / BUBBLE SVG PATTERN ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SPARKLE / BUBBLE SVG PATTERN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function SparklePattern({ opacity = 0.03, accent }: { opacity?: number; accent: string }) {
   const patternId = `sparklePatternV2-${accent.replace("#", "")}`;
   return (
@@ -145,7 +145,7 @@ function SparklePattern({ opacity = 0.03, accent }: { opacity?: number; accent: 
   );
 }
 
-/* ───────────────────────── WATER DROP SVG ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ WATER DROP SVG â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function WaterDropBackground({ opacity = 0.03, accent }: { opacity?: number; accent: string }) {
   return (
     <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity }} viewBox="0 0 1000 600" preserveAspectRatio="none">
@@ -158,7 +158,7 @@ function WaterDropBackground({ opacity = 0.03, accent }: { opacity?: number; acc
   );
 }
 
-/* ───────────────────────── GLASS CARD ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ GLASS CARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
@@ -167,7 +167,7 @@ function GlassCard({ children, className = "" }: { children: React.ReactNode; cl
   );
 }
 
-/* ───────────────────────── MAGNETIC BUTTON ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ MAGNETIC BUTTON â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function MagneticButton({ children, className = "", onClick, style, href }: {
   children: React.ReactNode; className?: string; onClick?: () => void; style?: React.CSSProperties; href?: string;
 }) {
@@ -200,7 +200,7 @@ function MagneticButton({ children, className = "", onClick, style, href }: {
   );
 }
 
-/* ───────────────────────── SHIMMER BORDER ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SHIMMER BORDER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function ShimmerBorder({ children, className = "", accent }: { children: React.ReactNode; className?: string; accent: string }) {
   return (
     <div className={`relative rounded-2xl p-[1px] overflow-hidden ${className}`}>
@@ -211,7 +211,7 @@ function ShimmerBorder({ children, className = "", accent }: { children: React.R
   );
 }
 
-/* ───────────────────────── ACCORDION ITEM ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ACCORDION ITEM â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AccordionItem({ question, answer, isOpen, onToggle }: { question: string; answer: string; isOpen: boolean; onToggle: () => void }) {
   return (
     <GlassCard className="overflow-hidden">
@@ -230,7 +230,7 @@ function AccordionItem({ question, answer, isOpen, onToggle }: { question: strin
   );
 }
 
-/* ───────────────────────── SECTION HEADER ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SECTION HEADER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function SectionHeader({ badge, title, subtitle, accent }: { badge: string; title: string; subtitle?: string; accent: string }) {
   return (
     <div className="text-center mb-16">
@@ -244,10 +244,10 @@ function SectionHeader({ badge, title, subtitle, accent }: { badge: string; titl
 }
 
 
-/* ═══════════════════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    MAIN COMPONENT
-   ═══════════════════════════════════════════════════════════════════ */
-/* ───────────────────────── ANIMATED SECTION ───────────────────────── */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ANIMATED SECTION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <motion.div
@@ -290,13 +290,13 @@ export default function V2InsurancePreview({ data }: { data: GeneratedSiteData }
         ].slice(0, 4);
 
   const processSteps = [
-    { step: "01", title: "Free Quote", desc: "Tell us about your coverage needs — takes just 5 minutes online or over the phone." },
+    { step: "01", title: "Free Quote", desc: "Tell us about your coverage needs â€” takes just 5 minutes online or over the phone." },
     { step: "02", title: "Coverage Review", desc: "We analyze your current policies and identify gaps, overlaps, and savings opportunities." },
     { step: "03", title: "Policy Customization", desc: "We shop multiple carriers and tailor a plan that fits your exact needs and budget." },
     { step: "04", title: "You're Protected", desc: "Enjoy peace of mind knowing you have the right coverage at the right price." },
   ];
 
-  /* ─── COVERAGE TYPE BADGES ─── */
+  /* â”€â”€â”€ COVERAGE TYPE BADGES â”€â”€â”€ */
   const coverageTypes = [
     { label: "Auto Insurance", icon: Car },
     { label: "Home Insurance", icon: HouseSimple },
@@ -306,14 +306,14 @@ export default function V2InsurancePreview({ data }: { data: GeneratedSiteData }
     { label: "Umbrella Coverage", icon: Umbrella },
   ];
 
-  /* ─── INSURANCE SAVINGS ─── */
+  /* â”€â”€â”€ INSURANCE SAVINGS â”€â”€â”€ */
   const savingsCards = [
     { title: "Auto Insurance", savings: "Save up to $500/yr", desc: "Compare rates from 10+ carriers for the best auto coverage at the lowest price.", icon: Car },
     { title: "Home Insurance", savings: "Save up to $800/yr", desc: "Protect your biggest investment without overpaying. We find the gaps others miss.", icon: HouseSimple },
     { title: "Bundle & Save", savings: "Up to 25% off", desc: "Combine auto, home, and more with one agency for maximum savings and convenience.", icon: CurrencyDollar },
   ];
 
-  /* ─── WHY INDEPENDENT AGENTS ─── */
+  /* â”€â”€â”€ WHY INDEPENDENT AGENTS â”€â”€â”€ */
   const agentPillars = [
     { title: "We Shop Multiple Carriers", desc: "Access to dozens of top-rated insurance companies means more options and better rates for you.", icon: ShieldCheck },
     { title: "Personalized Service", desc: "You're not a policy number. We learn your life, your risks, and build coverage around you.", icon: Handshake },
@@ -321,12 +321,12 @@ export default function V2InsurancePreview({ data }: { data: GeneratedSiteData }
     { title: "Local & Accessible", desc: "Walk into our office, call us directly, or text us. Real people, real answers, real fast.", icon: MapPin },
   ];
 
-  /* ─── CARRIER PARTNERS ─── */
+  /* â”€â”€â”€ CARRIER PARTNERS â”€â”€â”€ */
   const carrierPartners = [
     "Progressive", "Safeco", "Travelers", "Hartford", "Nationwide", "Liberty Mutual",
   ];
 
-  /* ─── COMPARISON TABLE ─── */
+  /* â”€â”€â”€ COMPARISON TABLE â”€â”€â”€ */
   const comparisonRows = [
     { feature: "Personal Agent", us: true, them: "No" },
     { feature: "Multiple Carrier Options", us: true, them: "Limited" },
@@ -337,9 +337,9 @@ export default function V2InsurancePreview({ data }: { data: GeneratedSiteData }
     { feature: "After-Hours Support", us: true, them: "Limited" },
   ];
 
-  /* ─── INSURANCE QUIZ OPTIONS ─── */
+  /* â”€â”€â”€ INSURANCE QUIZ OPTIONS â”€â”€â”€ */
   const quizOptions = [
-    { title: "Auto & Vehicle", desc: "Most common — protect your car, truck, or motorcycle.", icon: Car },
+    { title: "Auto & Vehicle", desc: "Most common â€” protect your car, truck, or motorcycle.", icon: Car },
     { title: "Home & Renters", desc: "Protect your biggest investment or rental.", icon: HouseSimple },
     { title: "Business", desc: "Commercial coverage for your livelihood.", icon: Briefcase },
     { title: "Life & Health", desc: "Plan ahead and protect your family's future.", icon: Heart },
@@ -364,7 +364,7 @@ export default function V2InsurancePreview({ data }: { data: GeneratedSiteData }
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ fontFamily: "Open Sans, system-ui, sans-serif", background: CHARCOAL, color: "#f1f5f9" }}>
       <FloatingSparkles accent={ACCENT} />
 
-      {/* ══════════════════ 1. NAV ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 1. NAV â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <nav className="fixed top-0 left-0 right-0 z-50">
         <div className="mx-auto max-w-7xl px-4 md:px-6 py-4">
           <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
@@ -401,7 +401,7 @@ export default function V2InsurancePreview({ data }: { data: GeneratedSiteData }
         </div>
       </nav>
 
-      {/* ══════════════════ 2. HERO ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 2. HERO â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
 
         <div className="absolute inset-0">
@@ -449,7 +449,7 @@ export default function V2InsurancePreview({ data }: { data: GeneratedSiteData }
         </div>
       </section>
 
-      {/* ══════════════════ 3. STATS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 3. STATS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden border-y" style={{ borderColor: `${ACCENT}1a` }}>
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
@@ -473,7 +473,7 @@ export default function V2InsurancePreview({ data }: { data: GeneratedSiteData }
         </div>
       </section>
 
-      {/* ══════════════════ COVERAGE TYPE BADGES ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• COVERAGE TYPE BADGES â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-12 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f172a 50%, #1a1a1a 100%)" }} />
         <div className="max-w-5xl mx-auto px-4 sm:px-6 relative z-10">
@@ -489,7 +489,7 @@ export default function V2InsurancePreview({ data }: { data: GeneratedSiteData }
         </div>
       </section>
 
-      {/* ══════════════════ INSURANCE SAVINGS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• INSURANCE SAVINGS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1628 50%, #1a1a1a 100%)" }} />
         <WaterDropBackground opacity={0.02} accent={ACCENT} />
@@ -516,7 +516,7 @@ export default function V2InsurancePreview({ data }: { data: GeneratedSiteData }
         </div>
       </section>
 
-      {/* ══════════════════ 4. SERVICES ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 4. SERVICES â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f172a 50%, #1a1a1a 100%)" }} />
         <SparklePattern accent={ACCENT} />
@@ -553,7 +553,7 @@ export default function V2InsurancePreview({ data }: { data: GeneratedSiteData }
         </div>
       </section>
 
-      {/* ══════════════════ 5. WHY CHOOSE US / ABOUT ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 5. WHY CHOOSE US / ABOUT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1628 50%, #1a1a1a 100%)" }} />
         <WaterDropBackground opacity={0.02} accent={ACCENT} />
@@ -589,7 +589,7 @@ export default function V2InsurancePreview({ data }: { data: GeneratedSiteData }
         </div>
       </section>
 
-      {/* ══════════════════ WHY INDEPENDENT AGENTS WIN ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• WHY INDEPENDENT AGENTS WIN â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f172a 50%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.025} accent={ACCENT} />
@@ -597,7 +597,7 @@ export default function V2InsurancePreview({ data }: { data: GeneratedSiteData }
           <div className="absolute bottom-[20%] left-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${EMERALD}06` }} />
         </div>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
-          <SectionHeader badge="The Difference" title="Why Independent Agents Win" subtitle="Unlike online-only insurance companies, an independent agent works for YOU — not the carrier." accent={ACCENT} />
+          <SectionHeader badge="The Difference" title="Why Independent Agents Win" subtitle="Unlike online-only insurance companies, an independent agent works for YOU â€” not the carrier." accent={ACCENT} />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {agentPillars.map((pillar, i) => {
               const tile = pickPaletteColor(i + 2);
@@ -620,7 +620,7 @@ export default function V2InsurancePreview({ data }: { data: GeneratedSiteData }
         </div>
       </section>
 
-      {/* ══════════════════ CARRIER PARTNERS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• CARRIER PARTNERS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden border-y" style={{ borderColor: `${ACCENT}1a` }}>
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #1a1a1a 100%)" }} />
         <div className="max-w-5xl mx-auto px-4 sm:px-6 relative z-10">
@@ -636,7 +636,7 @@ export default function V2InsurancePreview({ data }: { data: GeneratedSiteData }
         </div>
       </section>
 
-      {/* ══════════════════ 6. PROCESS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 6. PROCESS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f172a 50%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.025} accent={ACCENT} />
@@ -660,7 +660,7 @@ export default function V2InsurancePreview({ data }: { data: GeneratedSiteData }
         </div>
       </section>
 
-      {/* ══════════════════ 7. GALLERY ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 7. GALLERY â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="gallery" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1628 50%, #1a1a1a 100%)" }} />
         <WaterDropBackground opacity={0.02} accent={ACCENT} />
@@ -686,7 +686,7 @@ export default function V2InsurancePreview({ data }: { data: GeneratedSiteData }
         </div>
       </section>
 
-      {/* ══════════════════ COVERAGE COMPARISON TABLE ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• COVERAGE COMPARISON TABLE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f172a 50%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
@@ -722,7 +722,7 @@ export default function V2InsurancePreview({ data }: { data: GeneratedSiteData }
         </div>
       </section>
 
-      {/* ══════════════════ VIDEO PLACEHOLDER ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• VIDEO PLACEHOLDER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1628 50%, #1a1a1a 100%)" }} />
         <WaterDropBackground opacity={0.02} accent={ACCENT} />
@@ -742,7 +742,7 @@ export default function V2InsurancePreview({ data }: { data: GeneratedSiteData }
         </div>
       </section>
 
-      {/* ══════════════════ INSURANCE QUIZ ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• INSURANCE QUIZ â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f172a 50%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.025} accent={ACCENT} />
@@ -777,7 +777,7 @@ export default function V2InsurancePreview({ data }: { data: GeneratedSiteData }
         </div>
       </section>
 
-      {/* ══════════════════ 8. TESTIMONIALS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 8. TESTIMONIALS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f172a 50%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
@@ -808,7 +808,7 @@ export default function V2InsurancePreview({ data }: { data: GeneratedSiteData }
         </div>
       </section>
 
-      {/* ══════════════════ FREE QUOTE CTA (PREMIUM) ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FREE QUOTE CTA (PREMIUM) â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1628 50%, #1a1a1a 100%)" }} />
         <WaterDropBackground opacity={0.03} accent={ACCENT} />
@@ -844,7 +844,7 @@ export default function V2InsurancePreview({ data }: { data: GeneratedSiteData }
         </div>
       </section>
 
-      {/* ══════════════════ 10. CHECKLIST / WHAT WE CLEAN ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 10. CHECKLIST / WHAT WE CLEAN â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1628 50%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
@@ -862,7 +862,7 @@ export default function V2InsurancePreview({ data }: { data: GeneratedSiteData }
         </div>
       </section>
 
-      {/* ══════════════════ 11. SERVICE AREAS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 11. SERVICE AREAS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f172a 50%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
@@ -878,7 +878,7 @@ export default function V2InsurancePreview({ data }: { data: GeneratedSiteData }
         </div>
       </section>
 
-      {/* ══════════════════ 12. HOURS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 12. HOURS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       {data.hours && (
         <section className="relative z-10 py-24 md:py-32 overflow-hidden">
           <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1628 50%, #1a1a1a 100%)" }} />
@@ -899,7 +899,7 @@ export default function V2InsurancePreview({ data }: { data: GeneratedSiteData }
       )}
 
       
-      {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• MID-PAGE CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15, ${ACCENT}08)` }} />
         <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
@@ -910,7 +910,7 @@ export default function V2InsurancePreview({ data }: { data: GeneratedSiteData }
             Ready to Get Started?
           </h2>
           <p className="text-slate-400 mb-6 text-sm sm:text-base">
-            Limited time — claim your free professional website today before it&apos;s offered to a competitor.
+            Limited time â€” claim your free professional website today before it&apos;s offered to a competitor.
           </p>
           <a
             href={`/claim/${data.id}`}
@@ -925,7 +925,7 @@ export default function V2InsurancePreview({ data }: { data: GeneratedSiteData }
         </div>
       </section>
 
-      {/* ══════════════════ 13. FAQ ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 13. FAQ â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f172a 50%, #1a1a1a 100%)" }} />
         <WaterDropBackground opacity={0.02} accent={ACCENT} />
@@ -940,7 +940,7 @@ export default function V2InsurancePreview({ data }: { data: GeneratedSiteData }
         </div>
       </section>
 
-      {/* ══════════════════ 14. CONTACT ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 14. CONTACT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="contact" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1628 50%, #1a1a1a 100%)" }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
@@ -979,7 +979,7 @@ export default function V2InsurancePreview({ data }: { data: GeneratedSiteData }
                   <div><label className="block text-sm text-slate-400 mb-1.5">First Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="John" /></div>
                   <div><label className="block text-sm text-slate-400 mb-1.5">Last Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="Doe" /></div>
                 </div>
-                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="(555) 123-4567" /></div>
+                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm" placeholder="(206) 287-2304" /></div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-1.5">Coverage Type</label>
                   <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none transition-colors text-sm">
@@ -997,7 +997,7 @@ export default function V2InsurancePreview({ data }: { data: GeneratedSiteData }
         </div>
       </section>
 
-      {/* ══════════════════ 15. FOOTER ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 15. FOOTER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111 100%)" }} />
         <SparklePattern opacity={0.015} accent={ACCENT} />

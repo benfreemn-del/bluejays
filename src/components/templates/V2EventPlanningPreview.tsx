@@ -93,7 +93,7 @@ function getServiceIcon(n: string) {
   return Champagne;
 }
 
-/* ───────────────────────── STOCK FALLBACK IMAGES (UNIQUE TO EVENT PLANNING) ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ STOCK FALLBACK IMAGES (UNIQUE TO EVENT PLANNING) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const STOCK_HERO_POOL = [
   "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=1400&q=80",   // wedding reception venue
   "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=1400&q=80",   // elegant wedding setup
@@ -120,7 +120,7 @@ const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1520854221256-17451cc331bf?w=600&q=80",
 ];
 
-/* ── decorative backgrounds ── */
+/* â”€â”€ decorative backgrounds â”€â”€ */
 
 function FloatingParticles({ accent }: { accent: string }) {
   const particles = Array.from({ length: 18 }, (_, i) => ({
@@ -265,7 +265,7 @@ function SparkleTrail({
   );
 }
 
-/* ── shared UI components ── */
+/* â”€â”€ shared UI components â”€â”€ */
 
 function GlassCard({
   children,
@@ -459,7 +459,7 @@ function SectionHeader({
   );
 }
 
-/* ── constants ── */
+/* â”€â”€ constants â”€â”€ */
 
 const EVENT_TYPES = [
   {
@@ -543,7 +543,7 @@ const TIMELINE_STEPS = [
 const COMPARISON_ROWS = [
   { feature: "Dedicated Day-of Coordinator", us: true, them: "Extra Cost" },
   { feature: "100+ Vetted Vendor Network", us: true, them: "No" },
-  { feature: "Custom Design & Décor", us: true, them: "Basic" },
+  { feature: "Custom Design & DÃ©cor", us: true, them: "Basic" },
   { feature: "Emergency Backup Plans", us: true, them: "No" },
   { feature: "Unlimited Consultations", us: true, them: "Limited" },
   { feature: "Transparent Flat-Rate Pricing", us: true, them: "Hourly" },
@@ -590,7 +590,7 @@ const PRICING_TIERS = [
   },
 ];
 
-/* ── main component ── */
+/* â”€â”€ main component â”€â”€ */
 
 export default function V2EventPlanningPreview({
   data,
@@ -662,15 +662,15 @@ export default function V2EventPlanningPreview({
       a: `Our coordinators always have a Plan B (and C). ${data.businessName} carries emergency kits, backup vendor contacts, and years of experience handling the unexpected seamlessly.`,
     },
     {
-      q: "Do you provide rental items and décor?",
-      a: "We work with an extensive network of rental partners for everything from linens and centerpieces to lighting and furniture. Design and décor sourcing is included in our partial and full-service packages.",
+      q: "Do you provide rental items and dÃ©cor?",
+      a: "We work with an extensive network of rental partners for everything from linens and centerpieces to lighting and furniture. Design and dÃ©cor sourcing is included in our partial and full-service packages.",
     },
   ];
 
   const fallbackTestimonials = [
     {
       name: "Olivia W.",
-      text: "Our wedding was a fairy tale come true. Every single detail was handled flawlessly — we didn't worry about a thing all night.",
+      text: "Our wedding was a fairy tale come true. Every single detail was handled flawlessly â€” we didn't worry about a thing all night.",
       rating: 5,
     },
     {
@@ -691,19 +691,19 @@ export default function V2EventPlanningPreview({
   const quizOptions = [
     {
       label: "Wedding or Engagement",
-      emoji: "💍",
+      emoji: "ðŸ’",
       result:
         "Our full-service wedding planning is perfect for you. Let's create your dream day!",
     },
     {
       label: "Corporate or Conference",
-      emoji: "🏢",
+      emoji: "ðŸ¢",
       result:
         "Our corporate event team specializes in professional, polished experiences.",
     },
     {
       label: "Birthday or Social Event",
-      emoji: "🎉",
+      emoji: "ðŸŽ‰",
       result:
         "From intimate dinners to blow-out parties, we make every celebration unforgettable.",
     },
@@ -716,7 +716,7 @@ export default function V2EventPlanningPreview({
     >
       <FloatingParticles accent={ACCENT} />
 
-      {/* ── NAV ── */}
+      {/* â”€â”€ NAV â”€â”€ */}
       <nav className="fixed top-0 left-0 right-0 z-50">
         <div className="mx-auto max-w-7xl px-4 md:px-6 py-4">
           <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
@@ -794,7 +794,7 @@ export default function V2EventPlanningPreview({
         </div>
       </nav>
 
-      {/* ── 1. HERO ── */}
+      {/* â”€â”€ 1. HERO â”€â”€ */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
         <div className="absolute inset-0">
           <img
@@ -909,7 +909,7 @@ export default function V2EventPlanningPreview({
         </div>
       </section>
 
-      {/* ── 2. STATS BAR ── */}
+      {/* â”€â”€ 2. STATS BAR â”€â”€ */}
       <section
         className="relative z-10 py-16 overflow-hidden border-y"
         style={{ borderColor: `${ACCENT}1a` }}
@@ -948,7 +948,7 @@ export default function V2EventPlanningPreview({
         </div>
       </section>
 
-      {/* ── 3. EVENT TYPES GRID ── */}
+      {/* â”€â”€ 3. EVENT TYPES GRID â”€â”€ */}
       <section
         id="events"
         className="relative z-10 py-24 md:py-32 overflow-hidden"
@@ -1003,7 +1003,7 @@ export default function V2EventPlanningPreview({
         </div>
       </section>
 
-      {/* ── 4. SERVICES ── */}
+      {/* â”€â”€ 4. SERVICES â”€â”€ */}
       <section
         id="services"
         className="relative z-10 py-24 md:py-32 overflow-hidden"
@@ -1093,7 +1093,7 @@ export default function V2EventPlanningPreview({
         </div>
       </section>
 
-      {/* ── 5. VENUE PARTNERSHIPS ── */}
+      {/* â”€â”€ 5. VENUE PARTNERSHIPS â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div
           className="absolute inset-0"
@@ -1132,7 +1132,7 @@ export default function V2EventPlanningPreview({
         </div>
       </section>
 
-      {/* ── 6. VENDOR NETWORK ── */}
+      {/* â”€â”€ 6. VENDOR NETWORK â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div
           className="absolute inset-0"
@@ -1185,7 +1185,7 @@ export default function V2EventPlanningPreview({
         </div>
       </section>
 
-      {/* ── 7. ABOUT ── */}
+      {/* â”€â”€ 7. ABOUT â”€â”€ */}
       <section
         id="about"
         className="relative z-10 py-24 md:py-32 overflow-hidden"
@@ -1279,7 +1279,7 @@ export default function V2EventPlanningPreview({
         </div>
       </section>
 
-      {/* ── 8. DAY-OF TIMELINE ── */}
+      {/* â”€â”€ 8. DAY-OF TIMELINE â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div
           className="absolute inset-0"
@@ -1338,7 +1338,7 @@ export default function V2EventPlanningPreview({
         </div>
       </section>
 
-      {/* ── 9. PLANNING PROCESS ── */}
+      {/* â”€â”€ 9. PLANNING PROCESS â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div
           className="absolute inset-0"
@@ -1389,7 +1389,7 @@ export default function V2EventPlanningPreview({
         </div>
       </section>
 
-      {/* ── 10. PRICING / PACKAGES ── */}
+      {/* â”€â”€ 10. PRICING / PACKAGES â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div
           className="absolute inset-0"
@@ -1477,7 +1477,7 @@ export default function V2EventPlanningPreview({
         </div>
       </section>
 
-      {/* ── 11. LIMITED AVAILABILITY ── */}
+      {/* â”€â”€ 11. LIMITED AVAILABILITY â”€â”€ */}
       <section
         className="relative z-10 py-16 overflow-hidden border-y"
         style={{ borderColor: `${ACCENT}1a` }}
@@ -1521,7 +1521,7 @@ export default function V2EventPlanningPreview({
         </div>
       </section>
 
-      {/* ── 12. GALLERY ── */}
+      {/* â”€â”€ 12. GALLERY â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div
           className="absolute inset-0"
@@ -1568,7 +1568,7 @@ export default function V2EventPlanningPreview({
         </div>
       </section>
 
-      {/* ── 13. VIDEO TESTIMONIAL PLACEHOLDER ── */}
+      {/* â”€â”€ 13. VIDEO TESTIMONIAL PLACEHOLDER â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div
           className="absolute inset-0"
@@ -1613,7 +1613,7 @@ export default function V2EventPlanningPreview({
         </div>
       </section>
 
-      {/* ── 14. GOOGLE REVIEWS HEADER + TESTIMONIALS ── */}
+      {/* â”€â”€ 14. GOOGLE REVIEWS HEADER + TESTIMONIALS â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div
           className="absolute inset-0"
@@ -1679,7 +1679,7 @@ export default function V2EventPlanningPreview({
         </div>
       </section>
 
-      {/* ── 15. COMPETITOR COMPARISON ── */}
+      {/* â”€â”€ 15. COMPETITOR COMPARISON â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div
           className="absolute inset-0"
@@ -1741,7 +1741,7 @@ export default function V2EventPlanningPreview({
         </div>
       </section>
 
-      {/* ── 16. EVENT QUIZ ── */}
+      {/* â”€â”€ 16. EVENT QUIZ â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div
           className="absolute inset-0"
@@ -1805,7 +1805,7 @@ export default function V2EventPlanningPreview({
         </div>
       </section>
 
-      {/* ── 17. CERTIFICATIONS / TRUST BADGES ROW ── */}
+      {/* â”€â”€ 17. CERTIFICATIONS / TRUST BADGES ROW â”€â”€ */}
       <section
         className="relative z-10 py-16 overflow-hidden border-y"
         style={{ borderColor: `${ACCENT}1a` }}
@@ -1842,7 +1842,7 @@ export default function V2EventPlanningPreview({
         </div>
       </section>
 
-      {/* ── 18. MID-PAGE CTA ── */}
+      {/* â”€â”€ 18. MID-PAGE CTA â”€â”€ */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div
           className="absolute inset-0"
@@ -1879,7 +1879,7 @@ export default function V2EventPlanningPreview({
         </div>
       </section>
 
-      {/* ── 19. ENHANCED SERVICE AREA ── */}
+      {/* â”€â”€ 19. ENHANCED SERVICE AREA â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div
           className="absolute inset-0"
@@ -1929,7 +1929,7 @@ export default function V2EventPlanningPreview({
         </div>
       </section>
 
-      {/* ── 20. HOURS ── */}
+      {/* â”€â”€ 20. HOURS â”€â”€ */}
       {data.hours && (
         <section className="relative z-10 py-24 md:py-32 overflow-hidden">
           <div
@@ -1965,7 +1965,7 @@ export default function V2EventPlanningPreview({
         </section>
       )}
 
-      {/* ── 21. FAQ ── */}
+      {/* â”€â”€ 21. FAQ â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div
           className="absolute inset-0"
@@ -1995,7 +1995,7 @@ export default function V2EventPlanningPreview({
         </div>
       </section>
 
-      {/* ── 22. CONTACT ── */}
+      {/* â”€â”€ 22. CONTACT â”€â”€ */}
       <section
         id="contact"
         className="relative z-10 py-24 md:py-32 overflow-hidden"
@@ -2126,7 +2126,7 @@ export default function V2EventPlanningPreview({
                   <input
                     type="tel"
                     className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm"
-                    placeholder="(555) 123-4567"
+                    placeholder="(206) 287-2304"
                   />
                 </div>
                 <div>
@@ -2172,7 +2172,7 @@ export default function V2EventPlanningPreview({
         </div>
       </section>
 
-      {/* ── 23. GUARANTEE ── */}
+      {/* â”€â”€ 23. GUARANTEE â”€â”€ */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div
           className="absolute inset-0"
@@ -2224,7 +2224,7 @@ export default function V2EventPlanningPreview({
         </div>
       </section>
 
-      {/* ── FOOTER ── */}
+      {/* â”€â”€ FOOTER â”€â”€ */}
       <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div
           className="absolute inset-0"

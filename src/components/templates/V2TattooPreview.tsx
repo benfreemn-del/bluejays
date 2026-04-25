@@ -125,7 +125,7 @@ function SectionHeader({ badge, title, subtitle, accent }: { badge: string; titl
 }
 
 
-/* ───────────────────────── ANIMATED SECTION ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ANIMATED SECTION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <motion.div
@@ -420,9 +420,9 @@ export default function V2TattooPreview({ data }: { data: GeneratedSiteData }) {
           <SectionHeader badge="Investment" title="Tattoo Pricing" subtitle="Pricing depends on size, detail, and placement. All tattoos start with a free consultation." accent={ACCENT} />
           <div className="grid md:grid-cols-3 gap-6">
             {[
-              { name: "Small", price: "$100+", desc: "Wrist, ankle, finger — simple designs under 2 inches", features: ["Single Session", "Simple Design", "Quick Heal", "Includes Touch-Up"] },
-              { name: "Medium", price: "$250+", desc: "Forearm, shoulder, calf — detailed work 3-6 inches", features: ["1-2 Sessions", "Custom Design", "Full Color Available", "Includes Touch-Up"], popular: true },
-              { name: "Large", price: "$500+", desc: "Sleeve, back, chest — complex large-scale pieces", features: ["Multiple Sessions", "Full Custom Art", "Complex Detail", "Priority Booking"] },
+              { name: "Small", price: "$100+", desc: "Wrist, ankle, finger â€” simple designs under 2 inches", features: ["Single Session", "Simple Design", "Quick Heal", "Includes Touch-Up"] },
+              { name: "Medium", price: "$250+", desc: "Forearm, shoulder, calf â€” detailed work 3-6 inches", features: ["1-2 Sessions", "Custom Design", "Full Color Available", "Includes Touch-Up"], popular: true },
+              { name: "Large", price: "$500+", desc: "Sleeve, back, chest â€” complex large-scale pieces", features: ["Multiple Sessions", "Full Custom Art", "Complex Detail", "Priority Booking"] },
             ].map((tier) => (
               <GlassCard key={tier.name} className={`p-8 ${tier.popular ? "ring-1" : ""}`} style={tier.popular ? { borderColor: ACCENT } : undefined}>
                 {tier.popular && <div className="text-center mb-4"><span className="px-4 py-1 rounded-full text-xs font-bold text-white" style={{ background: ACCENT }}>Most Popular</span></div>}
@@ -704,7 +704,7 @@ export default function V2TattooPreview({ data }: { data: GeneratedSiteData }) {
               { style: "Traditional / Old School", desc: "Bold outlines, vibrant colors, and iconic imagery like anchors, roses, and eagles. Timeless designs that age well.", icon: Flame },
               { style: "Neo-Traditional", desc: "Modern take on traditional with more intricate detail, wider color palettes, and artistic flair. Eye-catching and expressive.", icon: Palette },
               { style: "Black & Grey Realism", desc: "Photorealistic portraits and scenes using only black ink in varying shades. Perfect for memorial pieces and fine detail.", icon: Heart },
-              { style: "Fine Line / Minimalist", desc: "Delicate single-needle work with thin lines and minimal shading. Elegant and subtle — ideal for first tattoos.", icon: PenNib },
+              { style: "Fine Line / Minimalist", desc: "Delicate single-needle work with thin lines and minimal shading. Elegant and subtle â€” ideal for first tattoos.", icon: PenNib },
               { style: "Japanese / Irezumi", desc: "Large-scale work featuring koi, dragons, waves, and cherry blossoms. Rich in symbolism and flows with body contours.", icon: Skull },
               { style: "Geometric & Dotwork", desc: "Precise patterns built from shapes and dots. Mandalas, sacred geometry, and abstract compositions with stunning symmetry.", icon: Drop },
             ].map((item) => (
@@ -731,7 +731,7 @@ export default function V2TattooPreview({ data }: { data: GeneratedSiteData }) {
           <div className="space-y-4">
             {[
               { step: "Day 1-3", title: "Initial Healing", desc: "Keep the bandage on for 2-4 hours. Gently wash with lukewarm water and fragrance-free soap. Pat dry and apply a thin layer of recommended ointment." },
-              { step: "Day 4-14", title: "Peeling & Itching", desc: "Your tattoo will start to peel and flake — this is normal. Do not pick or scratch. Continue moisturizing 2-3 times daily with unscented lotion." },
+              { step: "Day 4-14", title: "Peeling & Itching", desc: "Your tattoo will start to peel and flake â€” this is normal. Do not pick or scratch. Continue moisturizing 2-3 times daily with unscented lotion." },
               { step: "Week 3-4", title: "Final Healing", desc: "The outer layers are healed but deeper skin is still recovering. Avoid direct sunlight and swimming. Keep moisturizing and stay patient." },
               { step: "Month 2+", title: "Long-Term Care", desc: "Your tattoo is fully healed. Apply SPF 30+ sunscreen to protect colors from fading. Moisturize regularly to keep the ink looking crisp." },
               { step: "Touch-Up", title: "Free Touch-Up Session", desc: "All tattoos from our studio include a complimentary touch-up within 6 months. If any lines or colors need refreshing, we have got you covered." },
@@ -748,7 +748,7 @@ export default function V2TattooPreview({ data }: { data: GeneratedSiteData }) {
             ))}
           </div>
           <div className="text-center mt-8">
-            <p className="text-sm text-slate-500">Questions about healing? Call us anytime — we are here to help throughout your entire healing journey.</p>
+            <p className="text-sm text-slate-500">Questions about healing? Call us anytime â€” we are here to help throughout your entire healing journey.</p>
           </div>
         </div>
       </section>
@@ -859,7 +859,7 @@ export default function V2TattooPreview({ data }: { data: GeneratedSiteData }) {
                   <div><label className="block text-sm text-slate-400 mb-1.5">First Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="John" /></div>
                   <div><label className="block text-sm text-slate-400 mb-1.5">Last Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="Doe" /></div>
                 </div>
-                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
+                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(206) 287-2304" /></div>
                 <div><label className="block text-sm text-slate-400 mb-1.5">Tattoo Style</label><select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none text-sm"><option value="" className="bg-neutral-900">Select style</option>{data.services.map((s) => <option key={s.name} value={s.name.toLowerCase().replace(/\s+/g, "-")} className="bg-neutral-900">{s.name}</option>)}</select></div>
                 <div><label className="block text-sm text-slate-400 mb-1.5">Describe Your Idea</label><textarea rows={4} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm resize-none" placeholder="Tell us about your tattoo idea, placement, size..." /></div>
                 <MagneticButton className="w-full py-4 rounded-xl text-base font-semibold text-white flex items-center justify-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>Book Consultation <ArrowRight size={18} weight="bold" /></MagneticButton>

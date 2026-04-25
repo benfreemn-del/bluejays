@@ -44,11 +44,11 @@ import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
 import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
 
-/* ───────────────────────── SPRING CONFIGS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SPRING CONFIGS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
 
-/* ───────────────────────── COLORS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ COLORS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const NAVY = "#0c1222";
 const DEFAULT_BLUE = "#0ea5e9";
 const BLUE_LIGHT = "#38bdf8";
@@ -65,7 +65,7 @@ function getAccent(accentColor?: string) {
 const PALETTE = ["#0ea5e9", "#f97316", "#10b981", "#64748b", "#f59e0b", "#ef4444"];
 const pickPaletteColor = (i: number) => PALETTE[i % PALETTE.length];
 
-/* ───────────────────────── SERVICE ICON MAP ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SERVICE ICON MAP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SERVICE_ICON_MAP: Record<string, any> = {
   ac: Snowflake, air: Snowflake, cool: Snowflake, heat: Thermometer,
@@ -82,7 +82,7 @@ function getServiceIcon(serviceName: string) {
   return Fan;
 }
 
-/* ───────────────────────── STOCK FALLBACK IMAGES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ STOCK FALLBACK IMAGES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=1400&q=80","https://images.unsplash.com/photo-1555963966-b7ae5404b6ed?w=1400&q=80"];
 const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800&q=80","https://images.unsplash.com/photo-1504384764586-bb4cdc1707b0?w=800&q=80"];
 const STOCK_PROJECTS = [
@@ -92,7 +92,7 @@ const STOCK_PROJECTS = [
   "https://images.unsplash.com/photo-1471967183320-ee018f6e114a?w=800&q=80",
 ];
 
-/* ───────────────────────── PREMIUM FEATURE DATA ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ PREMIUM FEATURE DATA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const SERVICE_TYPE_BADGES = [
   { label: "Heating", icon: Fire },
   { label: "Air Conditioning", icon: Snowflake },
@@ -143,7 +143,7 @@ const QUIZ_OPTIONS = [
   { label: "Air Quality", desc: "Concerned about indoor air quality or allergies", color: "#3b82f6", icon: Leaf },
 ];
 
-/* ───────────────────────── FLOATING PARTICLES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ FLOATING PARTICLES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function FloatingParticles() {
   const particles = Array.from({ length: 28 }, (_, i) => ({
     id: i, x: Math.random() * 100, delay: Math.random() * 8,
@@ -167,7 +167,7 @@ function FloatingParticles() {
   );
 }
 
-/* ───────────────────────── AIRFLOW WAVE SVG ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ AIRFLOW WAVE SVG â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AirflowWaves({ opacity = 0.04, accent }: { opacity?: number; accent: string }) {
   return (
     <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity }} viewBox="0 0 1000 600" preserveAspectRatio="none">
@@ -178,7 +178,7 @@ function AirflowWaves({ opacity = 0.04, accent }: { opacity?: number; accent: st
   );
 }
 
-/* ───────────────────────── VENT GRID PATTERN ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ VENT GRID PATTERN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function VentPattern({ opacity = 0.03, accent }: { opacity?: number; accent: string }) {
   const patternId = `ventGridV2Prev-${accent.replace("#", "")}`;
   return (
@@ -195,14 +195,14 @@ function VentPattern({ opacity = 0.03, accent }: { opacity?: number; accent: str
   );
 }
 
-/* ───────────────────────── GLASS CARD ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ GLASS CARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>
   );
 }
 
-/* ───────────────────────── MAGNETIC BUTTON ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ MAGNETIC BUTTON â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function MagneticButton({ children, className = "", onClick, style, href }: {
   children: React.ReactNode; className?: string; onClick?: () => void; style?: React.CSSProperties; href?: string;
 }) {
@@ -224,7 +224,7 @@ function MagneticButton({ children, className = "", onClick, style, href }: {
   return <motion.button ref={ref} style={{ x: springX, y: springY, willChange: "transform", ...style }} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave} onClick={onClick} className={className} whileTap={{ scale: 0.97 }}>{children}</motion.button>;
 }
 
-/* ───────────────────────── SHIMMER BORDER ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SHIMMER BORDER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function ShimmerBorder({ children, className = "", accent }: { children: React.ReactNode; className?: string; accent: string }) {
   return (
     <div className={`relative rounded-2xl p-[1px] overflow-hidden ${className}`}>
@@ -234,7 +234,7 @@ function ShimmerBorder({ children, className = "", accent }: { children: React.R
   );
 }
 
-/* ───────────────────────── ACCORDION ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ACCORDION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AccordionItem({ question, answer, isOpen, onToggle }: { question: string; answer: string; isOpen: boolean; onToggle: () => void }) {
   return (
     <GlassCard className="overflow-hidden">
@@ -253,7 +253,7 @@ function AccordionItem({ question, answer, isOpen, onToggle }: { question: strin
   );
 }
 
-/* ───────────────────────── SECTION HEADER ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SECTION HEADER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function SectionHeader({ badge, title, subtitle, accent }: { badge: string; title: string; subtitle?: string; accent: string }) {
   return (
     <div className="text-center mb-16">
@@ -266,10 +266,10 @@ function SectionHeader({ badge, title, subtitle, accent }: { badge: string; titl
 }
 
 
-/* ═══════════════════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    MAIN PREVIEW COMPONENT
-   ═══════════════════════════════════════════════════════════════════ */
-/* ───────────────────────── ANIMATED SECTION ───────────────────────── */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ANIMATED SECTION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <motion.div
@@ -316,13 +316,13 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
   const processSteps = [
     { step: "01", title: "Free Consultation", desc: `Call ${data.businessName} or book online. We discuss your comfort needs, system age, and budget.` },
     { step: "02", title: "Professional Assessment", desc: "Our certified technician inspects your system, performs diagnostics, and provides a transparent quote." },
-    { step: "03", title: "Expert Service", desc: "We complete the job with precision — from repairs to full system installations — with minimal disruption." },
+    { step: "03", title: "Expert Service", desc: "We complete the job with precision â€” from repairs to full system installations â€” with minimal disruption." },
     { step: "04", title: "Comfort Guaranteed", desc: "We test everything, walk you through operation, and back our work with industry-leading warranties." },
   ];
 
   const faqs = [
     { q: `What HVAC services does ${data.businessName} offer?`, a: `We offer heating, cooling, and ventilation services including ${data.services.slice(0, 3).map(s => s.name).join(", ")}, and more. Call for a free estimate.` },
-    { q: "How often should I service my HVAC system?", a: "We recommend professional maintenance twice a year — once in spring for cooling and once in fall for heating. Regular maintenance extends equipment life and improves efficiency." },
+    { q: "How often should I service my HVAC system?", a: "We recommend professional maintenance twice a year â€” once in spring for cooling and once in fall for heating. Regular maintenance extends equipment life and improves efficiency." },
     { q: "Do you offer emergency HVAC service?", a: `Yes! ${data.businessName} provides 24/7 emergency service. No heat in winter or no AC in summer? We respond fast.` },
     { q: "How long does a new HVAC system last?", a: "A well-maintained system typically lasts 15-20 years. We can assess your current system and recommend whether repair or replacement makes more financial sense." },
   ];
@@ -339,7 +339,7 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ fontFamily: "Inter, system-ui, sans-serif", background: NAVY, color: "#f1f5f9" }}>
       <FloatingParticles />
 
-      {/* ══════════════════ 1. NAV ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 1. NAV â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <nav className="fixed top-0 left-0 right-0 z-50">
         <div className="mx-auto max-w-7xl px-4 md:px-6 py-4">
           <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
@@ -374,7 +374,7 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </nav>
 
-      {/* ══════════════════ 2. HERO ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 2. HERO â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
 
         <div className="absolute inset-0">
@@ -420,7 +420,7 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 3. STATS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 3. STATS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden border-y" style={{ borderColor: `${BLUE}1a` }}>
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a1020 0%, #0c1222 100%)" }} />
         <VentPattern opacity={0.02} accent={BLUE} />
@@ -441,7 +441,7 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ FEATURE 1: SERVICE TYPE BADGES ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FEATURE 1: SERVICE TYPE BADGES â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-12 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #0a1020 0%, ${NAVY} 100%)` }} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -456,7 +456,7 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 4. SERVICES ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 4. SERVICES â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #0a1020 50%, ${NAVY} 100%)` }} />
         <VentPattern accent={BLUE} />
@@ -494,7 +494,7 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ FEATURE 2: SEASONAL SAVINGS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FEATURE 2: SEASONAL SAVINGS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #0a1020 50%, ${NAVY} 100%)` }} />
         <AirflowWaves opacity={0.02} accent={BLUE} />
@@ -521,7 +521,7 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ FEATURE 3: WHAT WE SERVICE ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FEATURE 3: WHAT WE SERVICE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #0a1628 50%, ${NAVY} 100%)` }} />
         <VentPattern opacity={0.025} accent={BLUE} />
@@ -544,7 +544,7 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 5. PROCESS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 5. PROCESS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #0a1020 50%, ${NAVY} 100%)` }} />
         <VentPattern opacity={0.025} accent={BLUE} />
@@ -567,7 +567,7 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ FEATURE 5: ENERGY SAVINGS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FEATURE 5: ENERGY SAVINGS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #0a1628 50%, ${NAVY} 100%)` }} />
         <AirflowWaves opacity={0.02} accent={BLUE} />
@@ -596,7 +596,7 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 6. ABOUT ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 6. ABOUT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #0a1628 50%, ${NAVY} 100%)` }} />
         <AirflowWaves opacity={0.02} accent={BLUE} />
@@ -636,7 +636,7 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ FEATURE 6: COMPETITOR COMPARISON ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FEATURE 6: COMPETITOR COMPARISON â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #0a1020 50%, ${NAVY} 100%)` }} />
         <VentPattern opacity={0.02} accent={BLUE} />
@@ -660,7 +660,7 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 7. PROJECTS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 7. PROJECTS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="projects" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #0a1628 50%, ${NAVY} 100%)` }} />
         <AirflowWaves opacity={0.02} accent={BLUE} />
@@ -684,7 +684,7 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ FEATURE 7: VIDEO PLACEHOLDER ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FEATURE 7: VIDEO PLACEHOLDER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #0a1020 50%, ${NAVY} 100%)` }} />
         <VentPattern opacity={0.02} accent={BLUE} />
@@ -705,8 +705,8 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ FEATURE 9: GOOGLE REVIEWS HEADER ══════════════════ */}
-      {/* ══════════════════ 8. TESTIMONIALS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FEATURE 9: GOOGLE REVIEWS HEADER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 8. TESTIMONIALS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #0a1020 50%, ${NAVY} 100%)` }} />
         <VentPattern opacity={0.02} accent={BLUE} />
@@ -740,7 +740,7 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 9. CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 9. CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${BLUE}, ${BLUE}cc, ${BLUE})` }} />
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='40' height='40' fill='none'/%3E%3Cpath d='M0 0L40 40M40 0L0 40' stroke='%23000' stroke-width='0.5'/%3E%3C/svg%3E\")" }} />
@@ -748,7 +748,7 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
         <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
           <Thermometer size={48} weight="fill" className="mx-auto mb-6 text-black/70" />
           <h2 className="text-3xl md:text-5xl font-black tracking-tight text-black mb-4">No Heat or AC? We&apos;re Here 24/7</h2>
-          <p className="text-lg text-black/70 mb-8 max-w-xl mx-auto">Broken furnace in winter or AC failure in summer — do not suffer. Our emergency HVAC technicians respond fast.</p>
+          <p className="text-lg text-black/70 mb-8 max-w-xl mx-auto">Broken furnace in winter or AC failure in summer â€” do not suffer. Our emergency HVAC technicians respond fast.</p>
           <PhoneLink phone={data.phone} className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-black text-white font-bold text-lg hover:bg-black/80 transition-colors">
             <span className="relative flex h-3 w-3"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75" /><span className="relative inline-flex rounded-full h-3 w-3 bg-red-600" /></span>
             {data.phone}
@@ -756,7 +756,7 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 10. SERVICE AREAS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 10. SERVICE AREAS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #0a1628 50%, ${NAVY} 100%)` }} />
         <VentPattern opacity={0.02} accent={BLUE} />
@@ -772,7 +772,7 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 11. HOURS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 11. HOURS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       {data.hours && (
         <section className="relative z-10 py-24 md:py-32 overflow-hidden">
           <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #0a1020 50%, ${NAVY} 100%)` }} />
@@ -794,7 +794,7 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
       )}
 
       
-      {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• MID-PAGE CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${BLUE}15, ${BLUE}08)` }} />
         <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
@@ -805,7 +805,7 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
             Ready to Get Started?
           </h2>
           <p className="text-slate-400 mb-6 text-sm sm:text-base">
-            Limited time — claim your free professional website today before it&apos;s offered to a competitor.
+            Limited time â€” claim your free professional website today before it&apos;s offered to a competitor.
           </p>
           <a
             href={`/claim/${data.id}`}
@@ -820,7 +820,7 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ FEATURE 8: HVAC NEED QUIZ ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FEATURE 8: HVAC NEED QUIZ â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #0a1020 50%, ${NAVY} 100%)` }} />
         <VentPattern opacity={0.025} accent={BLUE} />
@@ -853,7 +853,7 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 12. FAQ ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 12. FAQ â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #0a1020 50%, ${NAVY} 100%)` }} />
         <VentPattern opacity={0.02} accent={BLUE} />
@@ -866,7 +866,7 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 13. CONTACT ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 13. CONTACT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="contact" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #0a1628 50%, ${NAVY} 100%)` }} />
         <VentPattern opacity={0.02} accent={BLUE} />
@@ -910,7 +910,7 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
                   <div><label className="block text-sm text-slate-400 mb-1.5">First Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="John" /></div>
                   <div><label className="block text-sm text-slate-400 mb-1.5">Last Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="Doe" /></div>
                 </div>
-                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
+                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(206) 287-2304" /></div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-1.5">Service Needed</label>
                   <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none text-sm">
@@ -928,7 +928,7 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 14. GUARANTEE ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 14. GUARANTEE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #0a1020 100%)` }} />
         <VentPattern opacity={0.015} accent={BLUE} />
@@ -951,7 +951,7 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ ENERGY EFFICIENCY TIPS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• ENERGY EFFICIENCY TIPS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #080e1a 50%, ${NAVY} 100%)` }} />
         <VentPattern opacity={0.01} accent={BLUE} />
@@ -967,7 +967,7 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
               { tip: "Seal Ductwork", desc: "Leaky ducts can waste 20-30% of heated or cooled air. Professional duct sealing pays for itself within one season." },
               { tip: "Programmable Thermostat", desc: "Set it and save. Dropping temperature 7-10 degrees for 8 hours daily can cut heating bills by 10% annually." },
               { tip: "Annual Tune-Ups", desc: "Professional maintenance keeps your system at peak efficiency and catches small problems before they become expensive repairs." },
-              { tip: "Upgrade Insulation", desc: "Proper attic and wall insulation keeps conditioned air where it belongs — inside your home." },
+              { tip: "Upgrade Insulation", desc: "Proper attic and wall insulation keeps conditioned air where it belongs â€” inside your home." },
               { tip: "Heat Pump Upgrade", desc: "Modern heat pumps are 300% efficient compared to traditional furnaces. Federal tax credits up to $2,000 available." },
             ].map((t) => (
               <div key={t.tip} className="flex items-start gap-4 rounded-2xl border border-white/15 p-5" style={{ background: "rgba(255,255,255,0.06)" }}>
@@ -982,7 +982,7 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ SEASONAL CHECKLIST ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SEASONAL CHECKLIST â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${BLUE}15 0%, ${NAVY} 50%, ${BLUE}08 100%)` }} />
         <VentPattern opacity={0.02} accent={BLUE} />
@@ -990,7 +990,7 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
           <Thermometer size={44} weight="fill" style={{ color: BLUE }} className="mx-auto mb-4" />
           <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">Seasonal HVAC Checklist</h2>
           <p className="text-slate-400 max-w-2xl mx-auto mb-6 text-lg">
-            Don&apos;t wait for a breakdown. {data.businessName} recommends scheduling maintenance twice a year — once in spring for cooling and once in fall for heating.
+            Don&apos;t wait for a breakdown. {data.businessName} recommends scheduling maintenance twice a year â€” once in spring for cooling and once in fall for heating.
           </p>
           <div className="flex flex-wrap justify-center gap-4 mb-8">
             {["Spring AC Tune-Up", "Fall Furnace Inspection", "Filter Replacement", "Duct Cleaning", "Thermostat Calibration"].map((item) => (
@@ -1005,7 +1005,7 @@ export default function V2HvacPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ══════════════════ 15. FOOTER ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 15. FOOTER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${NAVY} 0%, #080e1a 100%)` }} />
         <VentPattern opacity={0.015} accent={BLUE} />

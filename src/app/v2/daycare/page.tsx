@@ -388,7 +388,7 @@ export default function V2DaycarePage() {
                 Schedule a Tour <ArrowRight size={18} weight="bold" />
               </MagneticButton>
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-[#1c1917] border border-gray-200 flex items-center gap-2 cursor-pointer">
-                <Phone size={18} weight="duotone" /> (555) 321-7890
+                <Phone size={18} weight="duotone" /> (206) 321-7890
               </MagneticButton>
             </motion.div>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ ...spring, delay: 0.95 }} className="flex flex-wrap gap-3">
@@ -398,7 +398,7 @@ export default function V2DaycarePage() {
               <span className="px-4 py-2 rounded-full text-xs font-semibold text-[#1c1917] flex items-center gap-2" style={{ background: "white", border: `1px solid ${YELLOW}40` }}><Heart size={14} weight="duotone" style={{ color: YELLOW }} />CPR Certified Staff</span>
             </motion.div>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ ...spring, delay: 1 }} className="flex flex-wrap gap-6 text-sm text-[#6b7280]">
-              <span className="flex items-center gap-2"><MapPin size={16} weight="duotone" style={{ color: PURPLE }} />456 Sunshine Lane</span>
+              <span className="flex items-center gap-2"><MapPin size={16} weight="duotone" style={{ color: PURPLE }} />3517 Fremont Ave N, Seattle</span>
               <span className="flex items-center gap-2"><Clock size={16} weight="duotone" style={{ color: PURPLE }} />Mon-Fri 6:30am-6:30pm</span>
             </motion.div>
           </div>
@@ -770,7 +770,7 @@ export default function V2DaycarePage() {
                 <MapPin size={26} weight="duotone" style={{ color: PURPLE }} />
               </div>
               <p className="text-xs uppercase tracking-widest mb-2" style={{ color: PURPLE }}>Location</p>
-              <p className="text-xl font-black text-[#1c1917]">Sunshine Lane</p>
+              <p className="text-xl font-black text-[#1c1917]">Fremont</p>
               <p className="text-sm text-[#6b7280] mt-2">Brand-new facility with secure entry, outdoor playground, and drop-off parking. Easy commute access.</p>
             </div>
             <div className="p-6 text-center rounded-2xl bg-white border border-gray-200 shadow-sm">
@@ -965,7 +965,7 @@ export default function V2DaycarePage() {
                 <CalendarCheck size={20} weight="duotone" /> Book Tour
               </MagneticButton>
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-[#1c1917] border border-gray-200 inline-flex items-center gap-2 cursor-pointer">
-                <Phone size={18} weight="duotone" /> (555) 321-7890
+                <Phone size={18} weight="duotone" /> (206) 321-7890
               </MagneticButton>
             </div>
             <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto">

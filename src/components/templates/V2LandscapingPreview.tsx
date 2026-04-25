@@ -47,11 +47,11 @@ import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
 import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
 
-/* ───────────────────────── SPRING CONFIGS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SPRING CONFIGS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
 
-/* ───────────────────────── COLORS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ COLORS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const CHARCOAL = "#1a1a1a";
 const DEFAULT_GREEN = "#15803d";
 const EARTH_BROWN = "#92400e";
@@ -65,7 +65,7 @@ function getAccent(accentColor?: string) {
   };
 }
 
-/* ───────────────────────── SERVICE ICON MAP ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SERVICE ICON MAP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SERVICE_ICON_MAP: Record<string, any> = {
   lawn: Park,
@@ -100,12 +100,12 @@ function getServiceIcon(serviceName: string) {
   return Tree;
 }
 
-/* ───────────────────────── STOCK FALLBACK IMAGES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ STOCK FALLBACK IMAGES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 // Every entry must be an actual landscape/yard/garden photo. Previously
 // contained a ping-pong room, a potted cactus on a pink studio backdrop,
-// a computer monitor, and a sky — which made stock fallbacks look broken.
+// a computer monitor, and a sky â€” which made stock fallbacks look broken.
 // Each URL below was visually inspected 2026-04-22. If you add a new one,
-// download it and look at it first — Unsplash photo IDs don't describe
+// download it and look at it first â€” Unsplash photo IDs don't describe
 // their content.
 const STOCK_HERO_POOL = [
   "https://images.unsplash.com/photo-1558904541-efa843a96f01?w=1400&q=80",  // lush green lawn closeup
@@ -127,7 +127,7 @@ const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1713936025889-e7920f0fb952?w=800&q=80", // audited: landscaping building w/ grass
 ];
 
-/* ───────────────────────── FLOATING LEAF PARTICLES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ FLOATING LEAF PARTICLES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function FloatingLeaves({ accent }: { accent: string }) {
   const particles = Array.from({ length: 18 }, (_, i) => ({
     id: i,
@@ -157,7 +157,7 @@ function FloatingLeaves({ accent }: { accent: string }) {
   );
 }
 
-/* ───────────────────────── LEAF NATURE SVG PATTERN ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ LEAF NATURE SVG PATTERN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function NaturePattern({ opacity = 0.03, accent }: { opacity?: number; accent: string }) {
   const patternId = `naturePatternV2Prev-${accent.replace("#", "")}`;
   return (
@@ -178,7 +178,7 @@ function NaturePattern({ opacity = 0.03, accent }: { opacity?: number; accent: s
   );
 }
 
-/* ───────────────────────── ORGANIC WAVE SVG ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ORGANIC WAVE SVG â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function OrganicWave({ opacity = 0.03, accent }: { opacity?: number; accent: string }) {
   return (
     <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity }} viewBox="0 0 1000 600" preserveAspectRatio="none">
@@ -188,7 +188,7 @@ function OrganicWave({ opacity = 0.03, accent }: { opacity?: number; accent: str
   );
 }
 
-/* ───────────────────────── HERO NATURE SVG ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ HERO NATURE SVG â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function HeroNatureSVG({ accent }: { accent: string }) {
   return (
     <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 1200 800" preserveAspectRatio="none" style={{ opacity: 0.04 }}>
@@ -200,7 +200,7 @@ function HeroNatureSVG({ accent }: { accent: string }) {
   );
 }
 
-/* ───────────────────────── GLASS CARD ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ GLASS CARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
@@ -209,7 +209,7 @@ function GlassCard({ children, className = "" }: { children: React.ReactNode; cl
   );
 }
 
-/* ───────────────────────── MAGNETIC BUTTON ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ MAGNETIC BUTTON â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function MagneticButton({ children, className = "", onClick, style, href }: {
   children: React.ReactNode; className?: string; onClick?: () => void; style?: React.CSSProperties; href?: string;
 }) {
@@ -233,7 +233,7 @@ function MagneticButton({ children, className = "", onClick, style, href }: {
   return (<motion.button ref={ref} style={{ x: springX, y: springY, willChange: "transform", ...style }} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave} onClick={onClick} className={className} whileTap={{ scale: 0.97 }}>{children}</motion.button>);
 }
 
-/* ───────────────────────── SHIMMER BORDER ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SHIMMER BORDER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function ShimmerBorder({ children, className = "", accent }: { children: React.ReactNode; className?: string; accent: string }) {
   return (
     <div className={`relative rounded-2xl p-[1px] overflow-hidden ${className}`}>
@@ -243,7 +243,7 @@ function ShimmerBorder({ children, className = "", accent }: { children: React.R
   );
 }
 
-/* ───────────────────────── ACCORDION ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ACCORDION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AccordionItem({ question, answer, isOpen, onToggle }: { question: string; answer: string; isOpen: boolean; onToggle: () => void }) {
   return (
     <GlassCard className="overflow-hidden">
@@ -258,7 +258,7 @@ function AccordionItem({ question, answer, isOpen, onToggle }: { question: strin
   );
 }
 
-/* ───────────────────────── TILT CARD ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ TILT CARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function TiltCard({ children, className = "", style }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) {
   const ref = useRef<HTMLDivElement>(null);
   const rotX = useMotionValue(0);
@@ -281,7 +281,7 @@ function TiltCard({ children, className = "", style }: { children: React.ReactNo
   );
 }
 
-/* ───────────────────────── SECTION HEADER ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SECTION HEADER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function SectionHeader({ badge, title, subtitle, accent }: { badge: string; title: string; subtitle?: string; accent: string }) {
   return (
     <div className="text-center mb-10 md:mb-12">
@@ -294,10 +294,10 @@ function SectionHeader({ badge, title, subtitle, accent }: { badge: string; titl
 }
 
 
-/* ═══════════════════════════════════════════════════════════════════
-   MAIN PREVIEW COMPONENT — GALLERY-HEAVY LANDSCAPING WITH BEFORE/AFTER
-   ═══════════════════════════════════════════════════════════════════ */
-/* ───────────────────────── ANIMATED SECTION ───────────────────────── */
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   MAIN PREVIEW COMPONENT â€” GALLERY-HEAVY LANDSCAPING WITH BEFORE/AFTER
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ANIMATED SECTION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <motion.div
@@ -410,7 +410,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
 
   /* Only render testimonials when real scraped data exists. Fake named
      reviews violate the "NEVER invent credibility signals" rule in
-     CLAUDE.md — a missing section reads as more professional than
+     CLAUDE.md â€” a missing section reads as more professional than
      obviously-fake Barbara/Tim/Nicole placeholder quotes. */
   const testimonials = data.testimonials?.length ? data.testimonials : [];
   const hasRealReviews = Boolean(data.googleRating && data.reviewCount);
@@ -419,7 +419,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ fontFamily: "Lato, system-ui, sans-serif", background: CHARCOAL, color: "#f1f5f9" }}>
       <FloatingLeaves accent={PRIMARY} />
 
-      {/* ══════════════════ 1. NAV ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 1. NAV â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       {/* When a real logo is provided we switch to a solid white nav so
           the logo reads cleanly. Dark-theme glass nav only kicks in for
           the text-fallback case. */}
@@ -486,9 +486,9 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
         </div>
       </nav>
 
-      {/* ══════════════════ 2. HERO — FLOATING CARDS OVER GRADIENT ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 2. HERO â€” FLOATING CARDS OVER GRADIENT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 pb-12 z-10 overflow-hidden">
-        {/* Rich gradient background — matching portfolio style */}
+        {/* Rich gradient background â€” matching portfolio style */}
         <div className="absolute inset-0">
           <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, #0f1a0f 0%, #0a2a12 30%, #0f1a0f 50%, #1a1a1a 100%)` }} />
           <div className="absolute top-1/3 left-1/4 w-[500px] h-[500px] rounded-full" style={{ background: `radial-gradient(circle, ${PRIMARY} 0%, transparent 60%)`, opacity: 0.12, filter: "blur(100px)" }} />
@@ -498,7 +498,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
 
         <div className="mx-auto max-w-7xl px-4 md:px-6 w-full relative">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center min-h-[70vh]">
-            {/* Text — left */}
+            {/* Text â€” left */}
             <div className="lg:col-span-5 space-y-6 z-10">
               <motion.p initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ ...spring, delay: 0.1 }} className="text-sm uppercase tracking-[0.2em]" style={{ color: PRIMARY }}>
                 Professional Landscaping
@@ -507,7 +507,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
                 {(data as { heroTagline?: string }).heroTagline || data.tagline}
               </motion.h1>
               <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.4 }} className="text-lg text-slate-400 max-w-md leading-relaxed">
-                {(() => { const t = data.about; if (t.length <= 160) return t; const dot = t.indexOf('.', 60); return dot > 0 && dot < 200 ? t.slice(0, dot + 1) : t.slice(0, 160).trim() + '…'; })()}
+                {(() => { const t = data.about; if (t.length <= 160) return t; const dot = t.indexOf('.', 60); return dot > 0 && dot < 200 ? t.slice(0, dot + 1) : t.slice(0, 160).trim() + 'â€¦'; })()}
               </motion.p>
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.6 }} className="flex flex-wrap gap-4">
                 <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer" style={{ background: PRIMARY } as React.CSSProperties}>
@@ -523,7 +523,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
               </motion.div>
             </div>
 
-            {/* Floating photo cards — right, desktop only */}
+            {/* Floating photo cards â€” right, desktop only */}
             <div className="lg:col-span-7 relative hidden md:block" style={{ perspective: 1200 }}>
               <div className="relative h-[520px]">
                 {galleryImages.slice(0, 3).map((src, i) => {
@@ -568,7 +568,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 3. STATS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 3. STATS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden border-y" style={{ borderColor: `${PRIMARY}1a` }}>
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #111510 0%, #1a1a1a 100%)" }} />
         <NaturePattern opacity={0.02} accent={PRIMARY} />
@@ -584,7 +584,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 3b. SERVICE TYPE BADGES ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 3b. SERVICE TYPE BADGES â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111510 50%, #1a1a1a 100%)" }} />
         <div className="max-w-5xl mx-auto px-6 relative z-10">
@@ -599,10 +599,10 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* Before/After removed — per CLAUDE.md, only include when a real matched
+      {/* Before/After removed â€” per CLAUDE.md, only include when a real matched
           transformation pair exists for the specific business */}
 
-      {/* ══════════════════ 5. PORTFOLIO GALLERY ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 5. PORTFOLIO GALLERY â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="portfolio" className="relative z-10 py-16 md:py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #11150e 50%, #1a1a1a 100%)" }} />
         <NaturePattern opacity={0.02} accent={PRIMARY} />
@@ -624,7 +624,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 6. SERVICES ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 6. SERVICES â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="services" className="relative z-10 py-16 md:py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #121510 50%, #1a1a1a 100%)" }} />
         <OrganicWave opacity={0.025} accent={PRIMARY} />
@@ -657,7 +657,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 6b. WHAT WE DO ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 6b. WHAT WE DO â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 md:py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0e140d 50%, #1a1a1a 100%)" }} />
         <NaturePattern opacity={0.02} accent={PRIMARY} />
@@ -681,9 +681,9 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
           Landscaping projects are quote-based; showing three fixed tiers
           ($45/visit, $2,500+, $8,000+) is fabricated pricing that most
           scraped prospects can't actually honor. The final Contact section
-          already pushes "Free Estimate" — that's the real ask. */}
+          already pushes "Free Estimate" â€” that's the real ask. */}
 
-      {/* ══════════════════ 7. ABOUT ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 7. ABOUT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="about" className="relative z-10 py-16 md:py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0d120b 50%, #1a1a1a 100%)" }} />
         <OrganicWave opacity={0.02} accent={PRIMARY} />
@@ -716,7 +716,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 7b. WHY CHOOSE US ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 7b. WHY CHOOSE US â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 md:py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #121510 50%, #1a1a1a 100%)" }} />
         <OrganicWave opacity={0.025} accent={PRIMARY} />
@@ -737,7 +737,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 7c. COMPETITOR COMPARISON ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 7c. COMPETITOR COMPARISON â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 md:py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0e140d 50%, #1a1a1a 100%)" }} />
         <NaturePattern opacity={0.02} accent={PRIMARY} />
@@ -768,7 +768,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 8. PROCESS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 8. PROCESS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 md:py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #121510 50%, #1a1a1a 100%)" }} />
         <NaturePattern opacity={0.025} accent={PRIMARY} />
@@ -791,7 +791,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 8b. VIDEO PLACEHOLDER ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 8b. VIDEO PLACEHOLDER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 md:py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0e140d 50%, #1a1a1a 100%)" }} />
         <NaturePattern opacity={0.02} accent={PRIMARY} />
@@ -812,7 +812,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 8c. YARD NEEDS QUIZ ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 8c. YARD NEEDS QUIZ â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 md:py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #121510 50%, #1a1a1a 100%)" }} />
         <OrganicWave opacity={0.02} accent={PRIMARY} />
@@ -849,7 +849,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 9. TESTIMONIALS (only when real) ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 9. TESTIMONIALS (only when real) â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       {testimonials.length > 0 && (
         <section className="relative z-10 py-16 md:py-20 overflow-hidden">
           <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #121510 50%, #1a1a1a 100%)" }} />
@@ -859,7 +859,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
           <div className="max-w-6xl mx-auto px-6 relative z-10">
             <AnimatedSection><SectionHeader badge="Testimonials" title="What Homeowners Say" accent={PRIMARY} /></AnimatedSection>
 
-            {/* Google Reviews header — only when real rating + count exist */}
+            {/* Google Reviews header â€” only when real rating + count exist */}
             {hasRealReviews && (
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-10">
                 <div className="flex gap-1">
@@ -883,7 +883,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
         </section>
       )}
 
-      {/* ══════════════════ 10. CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 10. CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${PRIMARY}, ${PRIMARY}cc, ${PRIMARY})` }} />
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='40' height='40' fill='none'/%3E%3Cpath d='M0 0L40 40M40 0L0 40' stroke='%23000' stroke-width='0.5'/%3E%3C/svg%3E\")" }} />
@@ -891,7 +891,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
           <Tree size={48} weight="fill" className="mx-auto mb-6 text-white/70" />
           <h2 className="text-3xl md:text-5xl font-black tracking-tight text-white mb-4">Transform Your Outdoor Space</h2>
           <p className="text-xl text-white/90 font-semibold mb-2">Free Design Consultation</p>
-          <p className="text-lg text-white/70 mb-8 max-w-xl mx-auto">Let {data.businessName} create a custom landscape plan for your property. No obligation, no pressure — just expert advice.</p>
+          <p className="text-lg text-white/70 mb-8 max-w-xl mx-auto">Let {data.businessName} create a custom landscape plan for your property. No obligation, no pressure â€” just expert advice.</p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <PhoneLink phone={data.phone} className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-white font-bold text-lg hover:bg-white/90 transition-colors" style={{ color: PRIMARY }}>
               <Phone size={22} weight="fill" />{data.phone}
@@ -903,7 +903,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 11. SERVICE AREAS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 11. SERVICE AREAS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       {/* Renders as a grid of city chips when data.serviceAreas is set
           (should be the prospect's real coverage map of surrounding
           cities, not a single street address). Falls back to the
@@ -948,7 +948,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 12. HOURS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 12. HOURS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       {data.hours && (
         <section className="relative z-10 py-16 md:py-20 overflow-hidden">
           <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #121510 50%, #1a1a1a 100%)" }} />
@@ -963,7 +963,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
       )}
 
       
-      {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• MID-PAGE CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${PRIMARY}15, ${PRIMARY}08)` }} />
         <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
@@ -974,7 +974,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
             Ready to Get Started?
           </h2>
           <p className="text-slate-400 mb-6 text-sm sm:text-base">
-            Limited time — claim your free professional website today before it&apos;s offered to a competitor.
+            Limited time â€” claim your free professional website today before it&apos;s offered to a competitor.
           </p>
           <a
             href={`/claim/${data.id}`}
@@ -989,7 +989,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 13. FAQ ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 13. FAQ â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 md:py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #121510 50%, #1a1a1a 100%)" }} />
         <OrganicWave opacity={0.02} accent={PRIMARY} />
@@ -1001,7 +1001,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 14. CONTACT ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 14. CONTACT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="contact" className="relative z-10 py-16 md:py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0d120b 50%, #1a1a1a 100%)" }} />
         <NaturePattern opacity={0.02} accent={PRIMARY} />
@@ -1025,7 +1025,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
                   <div><label className="block text-sm text-slate-400 mb-1.5">First Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="John" /></div>
                   <div><label className="block text-sm text-slate-400 mb-1.5">Last Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="Doe" /></div>
                 </div>
-                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
+                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(206) 287-2304" /></div>
                 <div><label className="block text-sm text-slate-400 mb-1.5">Service Needed</label>
                   <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none text-sm">
                     <option value="" className="bg-neutral-900">Select a service</option>
@@ -1044,7 +1044,7 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
 
       {/* Seasonal Care Calendar + Popular Plants We Recommend removed
           2026-04-22. Both were identical generic filler that rendered
-          the same content for every landscaper — not business-specific,
+          the same content for every landscaper â€” not business-specific,
           no scraped data backing them, just wall-of-text between the
           contact form and the final CTA. Real businesses have their own
           seasonal programs and plant recommendations that vary by
@@ -1052,12 +1052,12 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
           site is the opposite of "custom-built for you." */}
 
       {/* Mid-page "Transform Your Outdoor Space" CTA removed 2026-04-22
-          — duplicate of the earlier CTA section (line ~819) which already
+          â€” duplicate of the earlier CTA section (line ~819) which already
           has the same headline. The page now has exactly one primary CTA
           band plus the Get Your Free Estimate contact form, which is the
           right conversion shape. */}
 
-      {/* ══════════════════ 15. FOOTER ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 15. FOOTER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111 100%)" }} />
         <NaturePattern opacity={0.015} accent={PRIMARY} />

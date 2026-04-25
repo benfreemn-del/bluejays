@@ -1209,7 +1209,7 @@ export default function V2AutoRepairPage() {
                     <label className="text-xs text-slate-500 uppercase tracking-wider mb-1.5 block">Phone</label>
                     <input
                       type="tel"
-                      placeholder="(206) 555-0000"
+                      placeholder="(206) 287-2304"
                       className="w-full rounded-xl px-4 py-3 bg-white/[0.07] border border-white/15 text-white placeholder:text-slate-600 focus:outline-none focus:border-red-600/50 transition"
                     />
                   </div>

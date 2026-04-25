@@ -48,7 +48,7 @@ const STOCK_PROJECTS = [
   "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&q=80",
 ];
 
-/* ───────────────────────── PREMIUM FEATURE DATA ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ PREMIUM FEATURE DATA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 const SERVICE_TYPE_BADGES = [
   { label: "Tax Preparation", icon: FileText },
@@ -75,7 +75,7 @@ const TAX_PROCESS_STEPS = [
 const CPA_PILLARS = [
   { title: "Licensed & Certified", desc: "State-licensed CPAs with ongoing education requirements", icon: Medal },
   { title: "IRS Representation", desc: "We speak directly to the IRS on your behalf if issues arise", icon: ShieldCheck },
-  { title: "Year-Round Support", desc: "Not just tax season — we are available 365 days a year", icon: CalendarCheck },
+  { title: "Year-Round Support", desc: "Not just tax season â€” we are available 365 days a year", icon: CalendarCheck },
   { title: "Audit Protection", desc: "Full audit defense and representation included with every return", icon: Scales },
 ];
 
@@ -185,7 +185,7 @@ function SectionHeader({ badge, title, subtitle, accent }: { badge: string; titl
 }
 
 
-/* ───────────────────────── ANIMATED SECTION ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ANIMATED SECTION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <motion.div
@@ -983,7 +983,7 @@ export default function V2AccountingPreview({ data }: { data: GeneratedSiteData 
                   <div><label className="block text-sm text-slate-400 mb-1.5">First Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="John" /></div>
                   <div><label className="block text-sm text-slate-400 mb-1.5">Last Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="Doe" /></div>
                 </div>
-                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
+                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(206) 287-2304" /></div>
                 <div><label className="block text-sm text-slate-400 mb-1.5">Service Needed</label><select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none text-sm"><option value="" className="bg-neutral-900">Select a service</option>{data.services.map((s) => <option key={s.name} value={s.name.toLowerCase().replace(/\s+/g, "-")} className="bg-neutral-900">{s.name}</option>)}</select></div>
                 <div><label className="block text-sm text-slate-400 mb-1.5">Message</label><textarea rows={4} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm resize-none" placeholder="Tell us about your financial needs..." /></div>
                 <MagneticButton className="w-full py-4 rounded-xl text-base font-semibold text-black flex items-center justify-center gap-2 cursor-pointer" style={{ background: GOLD } as React.CSSProperties}>Send Request <ArrowRight size={18} weight="bold" /></MagneticButton>

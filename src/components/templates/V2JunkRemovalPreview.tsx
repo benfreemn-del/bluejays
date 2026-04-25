@@ -58,7 +58,7 @@ function getAccent(accentColor?: string) {
   };
 }
 
-// Rotating palette for service/feature card icon tiles — brings the grid
+// Rotating palette for service/feature card icon tiles â€” brings the grid
 // to life while the primary ACCENT stays on section headers, CTAs, nav.
 const PALETTE = ["#22c55e", "#f59e0b", "#64748b", "#3b82f6", "#92400e", "#ef4444"];
 const pickPaletteColor = (i: number) => PALETTE[i % PALETTE.length];
@@ -104,7 +104,7 @@ const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=600&q=80",
 ];
 
-/* ── decorative backgrounds ── */
+/* â”€â”€ decorative backgrounds â”€â”€ */
 
 function FloatingParticles({ accent }: { accent: string }) {
   const particles = Array.from({ length: 18 }, (_, i) => ({
@@ -168,7 +168,7 @@ function LeafTrail({ opacity = 0.03, accent }: { opacity?: number; accent: strin
   );
 }
 
-/* ── shared UI components ── */
+/* â”€â”€ shared UI components â”€â”€ */
 
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>;
@@ -225,7 +225,7 @@ function SectionHeader({ badge, title, subtitle, accent }: { badge: string; titl
   );
 }
 
-/* ── constants ── */
+/* â”€â”€ constants â”€â”€ */
 
 const ITEM_TYPES = [
   { icon: Couch, title: "Furniture", desc: "Sofas, mattresses, tables, dressers, desks" },
@@ -242,7 +242,7 @@ const TRUCK_SIZES = [
   {
     title: "1/4 Truck Load",
     price: "$149",
-    desc: "Perfect for a few items — a couch, mattress, or small pile",
+    desc: "Perfect for a few items â€” a couch, mattress, or small pile",
     items: "2-4 items",
   },
   {
@@ -277,12 +277,12 @@ const COMPARISON_ROWS = [
 ];
 
 const VOLUME_OPTIONS = [
-  { label: "A Few Items", emoji: "📦", result: "Our 1/4 truck load is perfect. Starting at just $149." },
-  { label: "A Room or Garage", emoji: "🏠", result: "A 1/2 truck load will handle this easily. Starting at $249." },
-  { label: "Whole Property", emoji: "🏗️", result: "Full truck load or multiple trips. We'll give you a custom quote!" },
+  { label: "A Few Items", emoji: "ðŸ“¦", result: "Our 1/4 truck load is perfect. Starting at just $149." },
+  { label: "A Room or Garage", emoji: "ðŸ ", result: "A 1/2 truck load will handle this easily. Starting at $249." },
+  { label: "Whole Property", emoji: "ðŸ—ï¸", result: "Full truck load or multiple trips. We'll give you a custom quote!" },
 ];
 
-/* ── main component ── */
+/* â”€â”€ main component â”€â”€ */
 
 export default function V2JunkRemovalPreview({ data }: { data: GeneratedSiteData }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -309,13 +309,13 @@ export default function V2JunkRemovalPreview({ data }: { data: GeneratedSiteData
   const processSteps = [
     { step: "01", title: "Call or Book Online", desc: "Tell us what you need removed and we'll give you an instant estimate." },
     { step: "02", title: "We Show Up", desc: "Our crew arrives on time with the right truck for the job." },
-    { step: "03", title: "We Load Everything", desc: "We do all the heavy lifting — you just point and we haul." },
+    { step: "03", title: "We Load Everything", desc: "We do all the heavy lifting â€” you just point and we haul." },
     { step: "04", title: "Eco-Friendly Disposal", desc: "We donate, recycle, and responsibly dispose of everything." },
   ];
 
   const faqs = [
-    { q: "What items do you accept?", a: `${data.businessName} takes almost everything — furniture, appliances, yard waste, construction debris, electronics, and more. The only things we can't take are hazardous materials like paint, chemicals, and asbestos.` },
-    { q: "How does pricing work?", a: "We price by volume (how much space your items take in our truck), not by item count. You'll get an upfront quote before we start — no surprises." },
+    { q: "What items do you accept?", a: `${data.businessName} takes almost everything â€” furniture, appliances, yard waste, construction debris, electronics, and more. The only things we can't take are hazardous materials like paint, chemicals, and asbestos.` },
+    { q: "How does pricing work?", a: "We price by volume (how much space your items take in our truck), not by item count. You'll get an upfront quote before we start â€” no surprises." },
     { q: "Do you offer same-day service?", a: `Yes! ${data.businessName} offers same-day pickup in most areas. Call before noon and we can usually be there the same afternoon.` },
     { q: "What happens to my items after pickup?", a: "We sort everything. Usable items are donated to local charities, recyclable materials go to recycling facilities, and only what's truly waste goes to the landfill." },
     { q: "Do I need to be home during pickup?", a: "Not always! If items are accessible (driveway, garage, curb), we can handle it without you. We'll confirm details during booking." },
@@ -324,7 +324,7 @@ export default function V2JunkRemovalPreview({ data }: { data: GeneratedSiteData
   const fallbackTestimonials = [
     { name: "Mike T.", text: "Cleared out my entire garage in under an hour. These guys were fast, friendly, and surprisingly affordable. Love that they donate usable items!", rating: 5 },
     { name: "Sarah L.", text: "Handled my mom's estate cleanout with care and respect. They even swept up after. Couldn't have asked for a better experience.", rating: 5 },
-    { name: "James R.", text: "Construction debris from our bathroom remodel — gone in 30 minutes. Fair price, hard workers, and they recycled what they could.", rating: 5 },
+    { name: "James R.", text: "Construction debris from our bathroom remodel â€” gone in 30 minutes. Fair price, hard workers, and they recycled what they could.", rating: 5 },
   ];
 
   const testimonials = data.testimonials?.length > 0 ? data.testimonials : fallbackTestimonials;
@@ -333,7 +333,7 @@ export default function V2JunkRemovalPreview({ data }: { data: GeneratedSiteData
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ fontFamily: "Barlow, system-ui, sans-serif", background: CHARCOAL, color: "#f1f5f9" }}>
       <FloatingParticles accent={ACCENT} />
 
-      {/* ── NAV ── */}
+      {/* â”€â”€ NAV â”€â”€ */}
       <nav className="fixed top-0 left-0 right-0 z-50">
         <div className="mx-auto max-w-7xl px-4 md:px-6 py-4">
           <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
@@ -370,7 +370,7 @@ export default function V2JunkRemovalPreview({ data }: { data: GeneratedSiteData
         </div>
       </nav>
 
-      {/* ── 1. HERO ── */}
+      {/* â”€â”€ 1. HERO â”€â”€ */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
         <div className="absolute inset-0">
           <img src={heroImage} alt={data.businessName} className="w-full h-full object-cover object-center" />
@@ -421,7 +421,7 @@ export default function V2JunkRemovalPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ── 2. STATS BAR ── */}
+      {/* â”€â”€ 2. STATS BAR â”€â”€ */}
       <section className="relative z-10 py-16 overflow-hidden border-y" style={{ borderColor: `${ACCENT}1a` }}>
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a120a 0%, #1a1a1a 100%)" }} />
         <RecyclePattern opacity={0.02} accent={ACCENT} />
@@ -444,7 +444,7 @@ export default function V2JunkRemovalPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ── 3. ITEM TYPES GRID ── */}
+      {/* â”€â”€ 3. ITEM TYPES GRID â”€â”€ */}
       <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a0e18 50%, #1a1a1a 100%)" }} />
         <RecyclePattern accent={ACCENT} />
@@ -467,12 +467,12 @@ export default function V2JunkRemovalPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ── 4. SERVICES ── */}
+      {/* â”€â”€ 4. SERVICES â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a120a 50%, #1a1a1a 100%)" }} />
         <LeafTrail opacity={0.02} accent={ACCENT} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Our Services" title="Junk Removal Services" subtitle={`${data.businessName} handles jobs of every size — from single items to full property cleanouts.`} accent={ACCENT} />
+          <SectionHeader badge="Our Services" title="Junk Removal Services" subtitle={`${data.businessName} handles jobs of every size â€” from single items to full property cleanouts.`} accent={ACCENT} />
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {data.services.map((service, i) => {
               const Icon = getServiceIcon(service.name);
@@ -498,7 +498,7 @@ export default function V2JunkRemovalPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ── 5. TRUCK SIZE PRICING ── */}
+      {/* â”€â”€ 5. TRUCK SIZE PRICING â”€â”€ */}
       <section id="pricing" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a0e18 50%, #1a1a1a 100%)" }} />
         <RecyclePattern opacity={0.02} accent={ACCENT} />
@@ -526,12 +526,12 @@ export default function V2JunkRemovalPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ── 6. ECO COMMITMENT ── */}
+      {/* â”€â”€ 6. ECO COMMITMENT â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a120a 50%, #1a1a1a 100%)" }} />
         <LeafTrail opacity={0.02} accent={ACCENT} />
         <div className="max-w-4xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Eco-Friendly" title="Our Commitment to the Planet" subtitle="We don't just haul junk — we sort, donate, and recycle as much as possible." accent={ACCENT} />
+          <SectionHeader badge="Eco-Friendly" title="Our Commitment to the Planet" subtitle="We don't just haul junk â€” we sort, donate, and recycle as much as possible." accent={ACCENT} />
           <div className="space-y-6">
             {ECO_STATS.map((stat) => (
               <div key={stat.label}>
@@ -559,7 +559,7 @@ export default function V2JunkRemovalPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ── 7. ABOUT ── */}
+      {/* â”€â”€ 7. ABOUT â”€â”€ */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a0e18 50%, #1a1a1a 100%)" }} />
         <RecyclePattern opacity={0.02} accent={ACCENT} />
@@ -599,7 +599,7 @@ export default function V2JunkRemovalPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ── 8. PROCESS ── */}
+      {/* â”€â”€ 8. PROCESS â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a120a 50%, #1a1a1a 100%)" }} />
         <LeafTrail opacity={0.02} accent={ACCENT} />
@@ -620,7 +620,7 @@ export default function V2JunkRemovalPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ── 9. GALLERY ── */}
+      {/* â”€â”€ 9. GALLERY â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a0e18 50%, #1a1a1a 100%)" }} />
         <RecyclePattern opacity={0.02} accent={ACCENT} />
@@ -643,7 +643,7 @@ export default function V2JunkRemovalPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ── 10. VIDEO PLACEHOLDER ── */}
+      {/* â”€â”€ 10. VIDEO PLACEHOLDER â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a120a 50%, #1a1a1a 100%)" }} />
         <div className="max-w-4xl mx-auto px-6 relative z-10">
@@ -663,7 +663,7 @@ export default function V2JunkRemovalPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ── 11. GOOGLE REVIEWS + TESTIMONIALS ── */}
+      {/* â”€â”€ 11. GOOGLE REVIEWS + TESTIMONIALS â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a0e18 50%, #1a1a1a 100%)" }} />
         <RecyclePattern opacity={0.02} accent={ACCENT} />
@@ -693,7 +693,7 @@ export default function V2JunkRemovalPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ── 12. COMPETITOR COMPARISON ── */}
+      {/* â”€â”€ 12. COMPETITOR COMPARISON â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a120a 50%, #1a1a1a 100%)" }} />
         <LeafTrail opacity={0.02} accent={ACCENT} />
@@ -724,7 +724,7 @@ export default function V2JunkRemovalPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ── 13. VOLUME ESTIMATOR QUIZ ── */}
+      {/* â”€â”€ 13. VOLUME ESTIMATOR QUIZ â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a0e18 50%, #1a1a1a 100%)" }} />
         <RecyclePattern opacity={0.02} accent={ACCENT} />
@@ -755,7 +755,7 @@ export default function V2JunkRemovalPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ── 14. CERTIFICATIONS ── */}
+      {/* â”€â”€ 14. CERTIFICATIONS â”€â”€ */}
       <section className="relative z-10 py-16 overflow-hidden border-y" style={{ borderColor: `${ACCENT}1a` }}>
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a120a 0%, #1a1a1a 100%)" }} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -769,7 +769,7 @@ export default function V2JunkRemovalPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ── 15. MID-PAGE CTA ── */}
+      {/* â”€â”€ 15. MID-PAGE CTA â”€â”€ */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT}cc, ${ACCENT})` }} />
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='40' height='40' fill='none'/%3E%3Cpath d='M0 0L40 40M40 0L0 40' stroke='%23000' stroke-width='0.5'/%3E%3C/svg%3E\")" }} />
@@ -783,7 +783,7 @@ export default function V2JunkRemovalPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ── 16. SERVICE AREA ── */}
+      {/* â”€â”€ 16. SERVICE AREA â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a120a 50%, #1a1a1a 100%)" }} />
         <RecyclePattern opacity={0.02} accent={ACCENT} />
@@ -814,7 +814,7 @@ export default function V2JunkRemovalPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ── 17. HOURS ── */}
+      {/* â”€â”€ 17. HOURS â”€â”€ */}
       {data.hours && (
         <section className="relative z-10 py-24 md:py-32 overflow-hidden">
           <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a0e18 50%, #1a1a1a 100%)" }} />
@@ -833,7 +833,7 @@ export default function V2JunkRemovalPreview({ data }: { data: GeneratedSiteData
         </section>
       )}
 
-      {/* ── 18. FAQ ── */}
+      {/* â”€â”€ 18. FAQ â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a120a 50%, #1a1a1a 100%)" }} />
         <RecyclePattern opacity={0.02} accent={ACCENT} />
@@ -845,7 +845,7 @@ export default function V2JunkRemovalPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ── 19. CONTACT ── */}
+      {/* â”€â”€ 19. CONTACT â”€â”€ */}
       <section id="contact" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a0e18 50%, #1a1a1a 100%)" }} />
         <RecyclePattern opacity={0.02} accent={ACCENT} />
@@ -877,7 +877,7 @@ export default function V2JunkRemovalPreview({ data }: { data: GeneratedSiteData
                   <div><label className="block text-sm text-slate-400 mb-1.5">First Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="John" /></div>
                   <div><label className="block text-sm text-slate-400 mb-1.5">Last Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="Doe" /></div>
                 </div>
-                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
+                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(206) 287-2304" /></div>
                 <div><label className="block text-sm text-slate-400 mb-1.5">What Needs to Go?</label><textarea rows={3} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm resize-none" placeholder="Old furniture, appliances, yard waste..." /></div>
                 <MagneticButton className="w-full py-4 rounded-xl text-base font-semibold text-white flex items-center justify-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
                   Get My Free Quote <ArrowRight size={18} weight="bold" />
@@ -888,7 +888,7 @@ export default function V2JunkRemovalPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ── 20. GUARANTEE ── */}
+      {/* â”€â”€ 20. GUARANTEE â”€â”€ */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a120a 100%)" }} />
         <RecyclePattern opacity={0.015} accent={ACCENT} />
@@ -910,7 +910,7 @@ export default function V2JunkRemovalPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ── ITEMS WE TAKE EXPANDED ── */}
+      {/* â”€â”€ ITEMS WE TAKE EXPANDED â”€â”€ */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #111827 0%, #0f172a 50%, #111827 100%)" }} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -935,7 +935,7 @@ export default function V2JunkRemovalPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ── ECO STATS ── */}
+      {/* â”€â”€ ECO STATS â”€â”€ */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #111827 100%)" }} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -948,7 +948,7 @@ export default function V2JunkRemovalPreview({ data }: { data: GeneratedSiteData
             {[
               { pct: "60%", label: "Donated", desc: "Usable items donated to local charities, shelters, and families in need" },
               { pct: "30%", label: "Recycled", desc: "Metals, electronics, wood, and recyclable materials processed responsibly" },
-              { pct: "10%", label: "Landfill", desc: "Only what can't be donated or recycled goes to the landfill — our last resort" },
+              { pct: "10%", label: "Landfill", desc: "Only what can't be donated or recycled goes to the landfill â€” our last resort" },
             ].map((e) => (
               <div key={e.label} className="rounded-2xl border border-white/15 p-6 text-center" style={{ background: "rgba(255,255,255,0.06)" }}>
                 <p className="text-4xl font-extrabold mb-1" style={{ color: ACCENT }}>{e.pct}</p>
@@ -960,7 +960,7 @@ export default function V2JunkRemovalPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ── MID-PAGE CTA ── */}
+      {/* â”€â”€ MID-PAGE CTA â”€â”€ */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15 0%, #111827 50%, ${ACCENT}08 100%)` }} />
         <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
@@ -975,7 +975,7 @@ export default function V2JunkRemovalPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ── FOOTER ── */}
+      {/* â”€â”€ FOOTER â”€â”€ */}
       <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111 100%)" }} />
         <RecyclePattern opacity={0.015} accent={ACCENT} />

@@ -40,11 +40,11 @@ import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
 import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
 
-/* ───────────────────────── SPRING CONFIGS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SPRING CONFIGS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
 
-/* ───────────────────────── COLORS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ COLORS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const CHARCOAL = "#111111";
 const DEFAULT_BLUE = "#f97316";
 const BLUE_LIGHT = "#fb923c";
@@ -58,7 +58,7 @@ function getAccent(accentColor?: string) {
 const PALETTE = ["#3b82f6", "#f59e0b", "#10b981", "#ef4444", "#64748b", "#f97316"];
 const pickPaletteColor = (i: number) => PALETTE[i % PALETTE.length];
 
-/* ───────────────────────── SERVICE ICON MAP ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SERVICE ICON MAP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SERVICE_ICON_MAP: Record<string, any> = {
   refrigerator: Snowflake,
@@ -88,7 +88,7 @@ function getServiceIcon(serviceName: string) {
   return Wrench;
 }
 
-/* ───────────────────────── STOCK FALLBACK IMAGES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ STOCK FALLBACK IMAGES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const STOCK_HERO_POOL = [
   "https://images.unsplash.com/photo-1574269909862-7e1d70bb8078?w=1400&q=80",
   "https://images.unsplash.com/photo-1556909172-54557c7e4fb7?w=1400&q=80",
@@ -108,15 +108,15 @@ const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1574269909862-7e1d70bb8078?w=600&q=80",
 ];
 
-/* ───────────────────────── TRUST BADGES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ TRUST BADGES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const TRUST_BADGES = [
   { icon: ShieldCheck, label: "Licensed & Insured", desc: "Full liability coverage on every repair visit" },
-  { icon: CheckCircle, label: "Same-Day Service", desc: "Fast dispatch — most repairs completed same day" },
+  { icon: CheckCircle, label: "Same-Day Service", desc: "Fast dispatch â€” most repairs completed same day" },
   { icon: Toolbox, label: "All Major Brands", desc: "Factory-trained on every major appliance manufacturer" },
   { icon: Star, label: "Satisfaction Guaranteed", desc: "Not happy? We'll make it right, no questions asked" },
 ];
 
-/* ───────────────────────── PRICING PLANS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ PRICING PLANS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const PRICING_PLANS = [
   {
     name: "Diagnostic Visit",
@@ -144,7 +144,7 @@ const PRICING_PLANS = [
   },
 ];
 
-/* ───────────────────────── APPLIANCE TYPES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ APPLIANCE TYPES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const APPLIANCE_TYPES = [
   { name: "Refrigerators", icon: Snowflake, desc: "Not cooling, ice maker broken, water leaking, compressor issues" },
   { name: "Washers", icon: Drop, desc: "Won't drain, excessive vibration, leaking, not spinning" },
@@ -156,13 +156,13 @@ const APPLIANCE_TYPES = [
   { name: "Garbage Disposals", icon: Wrench, desc: "Jammed, leaking, not turning on, grinding noises" },
 ];
 
-/* ───────────────────────── BRANDS WE SERVICE ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ BRANDS WE SERVICE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const BRAND_NAMES = [
   "Whirlpool", "Samsung", "LG", "GE", "Maytag",
   "Frigidaire", "KitchenAid", "Bosch", "Kenmore", "Sub-Zero",
 ];
 
-/* ───────────────────────── COMPARISON TABLE ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ COMPARISON TABLE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const COMPARISON_ROWS = [
   { feature: "Same-Day Service", us: true, them: "Rarely" },
   { feature: "Upfront Pricing", us: true, them: "Hidden Fees" },
@@ -173,14 +173,14 @@ const COMPARISON_ROWS = [
   { feature: "Diagnostic Fee Waived", us: true, them: "Never" },
 ];
 
-/* ───────────────────────── QUIZ OPTIONS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ QUIZ OPTIONS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const QUIZ_OPTIONS = [
   { label: "Not Working At All", color: "#ef4444", desc: "Appliance is completely dead or unresponsive. Likely needs immediate repair.", tag: "Urgent" },
   { label: "Making Strange Noises", color: "#f59e0b", desc: "Unusual sounds often indicate a part wearing out. Best to catch it early.", tag: "Schedule Soon" },
   { label: "Just Needs a Tune-Up", color: "#22c55e", desc: "Preventive maintenance keeps your appliances running longer and more efficiently.", tag: "Maintenance" },
 ];
 
-/* ───────────────────────── FLOATING PARTICLES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ FLOATING PARTICLES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function FloatingParticles({ accent }: { accent: string }) {
   const particles = Array.from({ length: 18 }, (_, i) => ({
     id: i,
@@ -215,7 +215,7 @@ function FloatingParticles({ accent }: { accent: string }) {
   );
 }
 
-/* ───────────────────────── CIRCUIT PATTERN ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ CIRCUIT PATTERN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function CircuitPattern({ opacity = 0.03, accent }: { opacity?: number; accent: string }) {
   const patternId = `circuitApplianceV2-${accent.replace("#", "")}`;
   return (
@@ -235,7 +235,7 @@ function CircuitPattern({ opacity = 0.03, accent }: { opacity?: number; accent: 
   );
 }
 
-/* ───────────────────────── TECH GRID ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ TECH GRID â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function TechGrid({ opacity = 0.03, accent }: { opacity?: number; accent: string }) {
   return (
     <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity }} viewBox="0 0 1000 600" preserveAspectRatio="none">
@@ -261,7 +261,7 @@ function TechGrid({ opacity = 0.03, accent }: { opacity?: number; accent: string
   );
 }
 
-/* ───────────────────────── GLASS CARD ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ GLASS CARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>
@@ -270,7 +270,7 @@ function GlassCard({ children, className = "" }: { children: React.ReactNode; cl
   );
 }
 
-/* ───────────────────────── MAGNETIC BUTTON ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ MAGNETIC BUTTON â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function MagneticButton({ children, className = "", onClick, style, href }: {
   children: React.ReactNode; className?: string; onClick?: () => void; style?: React.CSSProperties; href?: string;
 }) {
@@ -306,7 +306,7 @@ function MagneticButton({ children, className = "", onClick, style, href }: {
   );
 }
 
-/* ───────────────────────── SHIMMER BORDER ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SHIMMER BORDER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function ShimmerBorder({ children, className = "", accent }: { children: React.ReactNode; className?: string; accent: string }) {
   return (
     <div className={`relative rounded-2xl p-[1px] overflow-hidden ${className}`}>
@@ -318,7 +318,7 @@ function ShimmerBorder({ children, className = "", accent }: { children: React.R
   );
 }
 
-/* ───────────────────────── ACCORDION ITEM ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ACCORDION ITEM â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AccordionItem({ question, answer, isOpen, onToggle }: { question: string; answer: string; isOpen: boolean; onToggle: () => void }) {
   return (
     <GlassCard className="overflow-hidden">
@@ -340,7 +340,7 @@ function AccordionItem({ question, answer, isOpen, onToggle }: { question: strin
   );
 }
 
-/* ───────────────────────── SECTION HEADER ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SECTION HEADER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function SectionHeader({ badge, title, subtitle, accent }: { badge: string; title: string; subtitle?: string; accent: string }) {
   return (
     <div className="text-center mb-16">
@@ -353,7 +353,7 @@ function SectionHeader({ badge, title, subtitle, accent }: { badge: string; titl
   );
 }
 
-/* ───────────────────────── ANIMATED SECTION ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ANIMATED SECTION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <motion.div
@@ -368,9 +368,9 @@ function AnimatedSection({ children, className = "" }: { children: React.ReactNo
   );
 }
 
-/* ═══════════════════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    MAIN COMPONENT
-   ═══════════════════════════════════════════════════════════════════ */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 export default function V2ApplianceRepairPreview({ data }: { data: GeneratedSiteData }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -421,7 +421,7 @@ export default function V2ApplianceRepairPreview({ data }: { data: GeneratedSite
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ fontFamily: "Inter, system-ui, sans-serif", background: CHARCOAL, color: "#f1f5f9" }}>
       <FloatingParticles accent={ACCENT} />
 
-      {/* ══════════════════ 1. NAV ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 1. NAV â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <nav className="fixed top-0 left-0 right-0 z-50">
         <div className="mx-auto max-w-7xl px-4 md:px-6 py-4">
           <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
@@ -464,7 +464,7 @@ export default function V2ApplianceRepairPreview({ data }: { data: GeneratedSite
         </div>
       </nav>
 
-      {/* ══════════════════ 2. HERO ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 2. HERO â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
         <div className="absolute inset-0">
           <img src={heroImage} alt={data.businessName} className="w-full h-full object-cover object-center" />
@@ -527,7 +527,7 @@ export default function V2ApplianceRepairPreview({ data }: { data: GeneratedSite
         </div>
       </section>
 
-      {/* ══════════════════ 3. STATS BAR ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 3. STATS BAR â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden border-y" style={{ borderColor: `${ACCENT}1a` }}>
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #111111 100%)" }} />
         <CircuitPattern opacity={0.02} accent={ACCENT} />
@@ -553,7 +553,7 @@ export default function V2ApplianceRepairPreview({ data }: { data: GeneratedSite
         </div>
       </section>
 
-      {/* ══════════════════ 4. NEW CLIENT SPECIAL / EMERGENCY CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 4. NEW CLIENT SPECIAL / EMERGENCY CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-12 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT}dd)` }} />
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='40' height='40' fill='none'/%3E%3Cpath d='M0 0L40 40M40 0L0 40' stroke='%23000' stroke-width='0.5'/%3E%3C/svg%3E\")" }} />
@@ -564,7 +564,7 @@ export default function V2ApplianceRepairPreview({ data }: { data: GeneratedSite
               <Warning size={28} weight="fill" className="text-white" />
             </div>
             <div>
-              <h3 className="text-xl md:text-2xl font-black text-white">$49 Diagnostic — Waived With Repair</h3>
+              <h3 className="text-xl md:text-2xl font-black text-white">$49 Diagnostic â€” Waived With Repair</h3>
               <p className="text-white/80 text-sm">Same-day appointments available. No hidden fees, no obligation.</p>
             </div>
           </div>
@@ -574,7 +574,7 @@ export default function V2ApplianceRepairPreview({ data }: { data: GeneratedSite
         </div>
       </section>
 
-      {/* ══════════════════ 5. APPLIANCE TYPES GRID ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 5. APPLIANCE TYPES GRID â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #111111 0%, #0a0a0a 50%, #111111 100%)" }} />
         <CircuitPattern accent={ACCENT} />
@@ -603,7 +603,7 @@ export default function V2ApplianceRepairPreview({ data }: { data: GeneratedSite
         </div>
       </section>
 
-      {/* ══════════════════ 6. SERVICES GRID ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 6. SERVICES GRID â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #111111 0%, #0a0a0a 50%, #111111 100%)" }} />
         <TechGrid opacity={0.02} accent={ACCENT} />
@@ -642,7 +642,7 @@ export default function V2ApplianceRepairPreview({ data }: { data: GeneratedSite
         </div>
       </section>
 
-      {/* ══════════════════ 7. ABOUT ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 7. ABOUT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #111111 0%, #0a0a0a 50%, #111111 100%)" }} />
         <TechGrid opacity={0.02} accent={ACCENT} />
@@ -682,7 +682,7 @@ export default function V2ApplianceRepairPreview({ data }: { data: GeneratedSite
         </div>
       </section>
 
-      {/* ══════════════════ 8. PROCESS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 8. PROCESS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #111111 0%, #0a0a0a 50%, #111111 100%)" }} />
         <CircuitPattern opacity={0.025} accent={ACCENT} />
@@ -714,7 +714,7 @@ export default function V2ApplianceRepairPreview({ data }: { data: GeneratedSite
         </div>
       </section>
 
-      {/* ══════════════════ 9. PRICING TIERS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 9. PRICING TIERS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #111111 0%, #0a0a0a 50%, #111111 100%)" }} />
         <TechGrid opacity={0.02} accent={ACCENT} />
@@ -778,7 +778,7 @@ export default function V2ApplianceRepairPreview({ data }: { data: GeneratedSite
         </div>
       </section>
 
-      {/* ══════════════════ 10. BRANDS WE SERVICE ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 10. BRANDS WE SERVICE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-20 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #111111 0%, #0a0a0a 50%, #111111 100%)" }} />
         <CircuitPattern opacity={0.02} accent={ACCENT} />
@@ -796,7 +796,7 @@ export default function V2ApplianceRepairPreview({ data }: { data: GeneratedSite
         </div>
       </section>
 
-      {/* ══════════════════ 11. COMPARISON TABLE ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 11. COMPARISON TABLE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #111111 0%, #0a0a0a 50%, #111111 100%)" }} />
         <TechGrid opacity={0.02} accent={ACCENT} />
@@ -834,7 +834,7 @@ export default function V2ApplianceRepairPreview({ data }: { data: GeneratedSite
         </div>
       </section>
 
-      {/* ══════════════════ 12. GOOGLE REVIEWS + TESTIMONIALS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 12. GOOGLE REVIEWS + TESTIMONIALS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="reviews" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #111111 0%, #0a0a0a 50%, #111111 100%)" }} />
         <CircuitPattern opacity={0.02} accent={ACCENT} />
@@ -880,7 +880,7 @@ export default function V2ApplianceRepairPreview({ data }: { data: GeneratedSite
         </div>
       </section>
 
-      {/* ══════════════════ 13. DIAGNOSTIC QUIZ ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 13. DIAGNOSTIC QUIZ â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #111111 0%, #0a0a0a 50%, #111111 100%)" }} />
         <CircuitPattern opacity={0.02} accent={ACCENT} />
@@ -908,7 +908,7 @@ export default function V2ApplianceRepairPreview({ data }: { data: GeneratedSite
                 <ShimmerBorder accent={ACCENT}>
                   <div className="p-6 text-center">
                     <h4 className="text-lg font-bold text-white mb-2">
-                      {quizAnswer === 0 ? "We Can Help — Call Now!" : quizAnswer === 1 ? "Don't Wait — Schedule Today" : "Smart Move — Book a Tune-Up"}
+                      {quizAnswer === 0 ? "We Can Help â€” Call Now!" : quizAnswer === 1 ? "Don't Wait â€” Schedule Today" : "Smart Move â€” Book a Tune-Up"}
                     </h4>
                     <p className="text-slate-400 text-sm mb-4">
                       {quizAnswer === 0 ? "Our technicians handle urgent repairs same-day. Don't let a broken appliance ruin your day." : quizAnswer === 1 ? "Catching issues early prevents costly breakdowns. We'll diagnose and fix it fast." : "Regular maintenance extends appliance life by 30-50% and prevents unexpected failures."}
@@ -926,7 +926,7 @@ export default function V2ApplianceRepairPreview({ data }: { data: GeneratedSite
         </div>
       </section>
 
-      {/* ══════════════════ 14. VIDEO PLACEHOLDER ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 14. VIDEO PLACEHOLDER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #111111 0%, #0a0a0a 50%, #111111 100%)" }} />
         <TechGrid opacity={0.02} accent={ACCENT} />
@@ -943,13 +943,13 @@ export default function V2ApplianceRepairPreview({ data }: { data: GeneratedSite
             </div>
             <div className="absolute bottom-6 left-6">
               <p className="text-white font-semibold text-lg">See How We Diagnose & Repair</p>
-              <p className="text-white/60 text-sm">Professional appliance repair — start to finish</p>
+              <p className="text-white/60 text-sm">Professional appliance repair â€” start to finish</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ══════════════════ 15. GALLERY ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 15. GALLERY â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="projects" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #111111 0%, #0a0a0a 50%, #111111 100%)" }} />
         <CircuitPattern opacity={0.02} accent={ACCENT} />
@@ -977,7 +977,7 @@ export default function V2ApplianceRepairPreview({ data }: { data: GeneratedSite
         </div>
       </section>
 
-      {/* ══════════════════ 16. FAQ ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 16. FAQ â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #111111 0%, #0a0a0a 50%, #111111 100%)" }} />
         <CircuitPattern opacity={0.02} accent={ACCENT} />
@@ -994,7 +994,7 @@ export default function V2ApplianceRepairPreview({ data }: { data: GeneratedSite
         </div>
       </section>
 
-      {/* ══════════════════ 17. SERVICE AREA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 17. SERVICE AREA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #111111 0%, #0a0a0a 50%, #111111 100%)" }} />
         <CircuitPattern opacity={0.02} accent={ACCENT} />
@@ -1018,7 +1018,7 @@ export default function V2ApplianceRepairPreview({ data }: { data: GeneratedSite
         </div>
       </section>
 
-      {/* ══════════════════ 18. MID-PAGE CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 18. MID-PAGE CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT}cc, ${ACCENT})` }} />
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='40' height='40' fill='none'/%3E%3Cpath d='M0 0L40 40M40 0L0 40' stroke='%23000' stroke-width='0.5'/%3E%3C/svg%3E\")" }} />
@@ -1032,7 +1032,7 @@ export default function V2ApplianceRepairPreview({ data }: { data: GeneratedSite
         </div>
       </section>
 
-      {/* ══════════════════ 19. HOURS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 19. HOURS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       {data.hours && (
         <section className="relative z-10 py-24 md:py-32 overflow-hidden">
           <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #111111 0%, #0a0a0a 50%, #111111 100%)" }} />
@@ -1053,7 +1053,7 @@ export default function V2ApplianceRepairPreview({ data }: { data: GeneratedSite
         </section>
       )}
 
-      {/* ══════════════════ 20. CONTACT FORM ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 20. CONTACT FORM â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="contact" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #111111 0%, #0a0a0a 50%, #111111 100%)" }} />
         <CircuitPattern opacity={0.02} accent={ACCENT} />
@@ -1111,7 +1111,7 @@ export default function V2ApplianceRepairPreview({ data }: { data: GeneratedSite
                 </div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-1.5">Phone</label>
-                  <input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(555) 123-4567" />
+                  <input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(206) 287-2304" />
                 </div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-1.5">Appliance Type</label>
@@ -1136,7 +1136,7 @@ export default function V2ApplianceRepairPreview({ data }: { data: GeneratedSite
         </div>
       </section>
 
-      {/* ══════════════════ 21. PROMISE / GUARANTEE ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 21. PROMISE / GUARANTEE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #111111 0%, #0a0a0a 100%)" }} />
         <CircuitPattern opacity={0.015} accent={ACCENT} />
@@ -1161,7 +1161,7 @@ export default function V2ApplianceRepairPreview({ data }: { data: GeneratedSite
         </div>
       </section>
 
-      {/* ══════════════════ 22. FOOTER ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 22. FOOTER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #111111 0%, #0a0a0a 100%)" }} />
         <CircuitPattern opacity={0.015} accent={ACCENT} />

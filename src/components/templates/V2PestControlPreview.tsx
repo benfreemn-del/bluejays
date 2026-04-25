@@ -71,7 +71,7 @@ function getServiceIcon(serviceName: string) {
   return Shield;
 }
 
-/* ── PREMIUM FEATURE DATA CONSTANTS ── */
+/* â”€â”€ PREMIUM FEATURE DATA CONSTANTS â”€â”€ */
 
 const TRUST_BADGES = [
   { icon: ShieldCheck, label: "Licensed & Insured" },
@@ -105,7 +105,7 @@ const ECO_FEATURES = [
 ];
 
 const PEST_QUIZ_OPTIONS = [
-  { label: "Ants / Spiders", urgency: "Common", color: "#22c55e", desc: "Easy fix — one treatment usually does it." },
+  { label: "Ants / Spiders", urgency: "Common", color: "#22c55e", desc: "Easy fix â€” one treatment usually does it." },
   { label: "Rodents", urgency: "Act Fast", color: "#f59e0b", desc: "They multiply quickly. Don't wait." },
   { label: "Bed Bugs", urgency: "Call Now", color: "#ef4444", desc: "Immediate professional treatment needed." },
   { label: "Not Sure", urgency: "Free Inspection", color: "#3b82f6", desc: "We'll identify it and create a plan." },
@@ -225,7 +225,7 @@ function SectionHeader({ badge, title, subtitle, accent }: { badge: string; titl
 }
 
 
-/* ───────────────────────── ANIMATED SECTION ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ANIMATED SECTION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <motion.div
@@ -271,7 +271,7 @@ export default function V2PestControlPreview({ data }: { data: GeneratedSiteData
     { step: "01", title: "Free Inspection", desc: "Our licensed technicians inspect your property to identify the pest problem and entry points.", icon: ShieldCheck },
     { step: "02", title: "Custom Plan", desc: "We create a targeted treatment plan specific to your infestation type and property layout.", icon: CalendarCheck },
     { step: "03", title: "Treatment Day", desc: "Our team applies safe, effective treatments using the latest pest control technology.", icon: SprayBottle },
-    { step: "04", title: "Follow-Up Guarantee", desc: "We seal entry points and schedule follow-up visits to ensure pests stay gone — guaranteed.", icon: CheckCircle },
+    { step: "04", title: "Follow-Up Guarantee", desc: "We seal entry points and schedule follow-up visits to ensure pests stay gone â€” guaranteed.", icon: CheckCircle },
   ];
 
   const faqs = [
@@ -983,7 +983,7 @@ export default function V2PestControlPreview({ data }: { data: GeneratedSiteData
                   <div><label className="block text-sm text-slate-400 mb-1.5">First Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="John" /></div>
                   <div><label className="block text-sm text-slate-400 mb-1.5">Last Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="Doe" /></div>
                 </div>
-                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
+                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(206) 287-2304" /></div>
                 <div><label className="block text-sm text-slate-400 mb-1.5">Pest Type</label>
                   <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none text-sm"><option value="" className="bg-neutral-900">Select pest type</option>{data.services.map((s) => <option key={s.name} value={s.name.toLowerCase().replace(/\s+/g, "-")} className="bg-neutral-900">{s.name}</option>)}</select>
                 </div>

@@ -26,7 +26,7 @@ const ROSE_LIGHT = "#fb7185";
 function getAccent(accentColor?: string) { const c = accentColor || DEFAULT_ROSE; return { ACCENT: c, ACCENT_GLOW: `${c}26`, SAGE, ROSE_LIGHT }; }
 
 // Rotating color palette for occasion/service icon tiles. The primary
-// brand accent (ACCENT) stays on section headers, CTAs, and nav — the
+// brand accent (ACCENT) stays on section headers, CTAs, and nav â€” the
 // palette only colors iconography and highlight accents so the grid
 // feels alive without fighting the brand.
 const PALETTE = ["#e11d48", "#fb7185", "#6b8f71", "#854d0e", "#a78bfa", "#fb923c"];
@@ -163,7 +163,7 @@ function AnimatedSection({ children, className = "" }: { children: React.ReactNo
   );
 }
 
-/* ═══════════════════════════════════════════════════ */
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 const OCCASION_TYPES = [
   { icon: Heart, name: "Weddings", desc: "Bridal bouquets, centerpieces, ceremony arches, and reception decor" },
@@ -287,7 +287,7 @@ export default function V2FloristPreview({ data }: { data: GeneratedSiteData }) 
           <div className="space-y-8 rounded-2xl bg-black/40 backdrop-blur-md p-6 md:p-8 border border-white/8">
             <div>
               <p className="text-sm uppercase tracking-widest mb-4" style={{ color: SAGE }}>Fresh Flowers &amp; Design</p>
-              <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 20px rgba(0,0,0,0.8)" }}>{data.tagline || `${data.businessName} — Beautiful Blooms`}</h1>
+              <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 20px rgba(0,0,0,0.8)" }}>{data.tagline || `${data.businessName} â€” Beautiful Blooms`}</h1>
             </div>
             <p className="text-lg text-white/70 max-w-md leading-relaxed">{(() => { const t = data.about; if (t.length <= 180) return t; const dot = t.indexOf('.', 80); return dot > 0 && dot < 220 ? t.slice(0, dot + 1) : t.slice(0, 180).trim() + '...'; })()}</p>
             <div className="flex flex-wrap gap-4">
@@ -873,7 +873,7 @@ export default function V2FloristPreview({ data }: { data: GeneratedSiteData }) 
             <GlassCard className="p-8">
               <h3 className="text-xl font-semibold text-[#1c1917] mb-6">Order Flowers</h3>
               <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4"><div><label className="block text-sm text-[#6b7280] mb-1.5">Your Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[#1c1917] placeholder-gray-400 focus:outline-none text-sm" placeholder="Jane Doe" /></div><div><label className="block text-sm text-[#6b7280] mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[#1c1917] placeholder-gray-400 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div></div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4"><div><label className="block text-sm text-[#6b7280] mb-1.5">Your Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[#1c1917] placeholder-gray-400 focus:outline-none text-sm" placeholder="Jane Doe" /></div><div><label className="block text-sm text-[#6b7280] mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[#1c1917] placeholder-gray-400 focus:outline-none text-sm" placeholder="(206) 287-2304" /></div></div>
                 <div><label className="block text-sm text-[#6b7280] mb-1.5">Occasion</label><select className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[#1c1917] focus:outline-none text-sm"><option value="" className="bg-white">Select occasion</option>{occasions.map((o) => <option key={o} value={o.toLowerCase()} className="bg-white">{o}</option>)}</select></div>
                 <div><label className="block text-sm text-[#6b7280] mb-1.5">Delivery Date</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[#1c1917] placeholder-gray-400 focus:outline-none text-sm" placeholder="MM/DD/YYYY" /></div>
                 <div><label className="block text-sm text-[#6b7280] mb-1.5">Message</label><textarea rows={4} className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[#1c1917] placeholder-gray-400 focus:outline-none text-sm resize-none" placeholder="Describe what you're looking for..." /></div>

@@ -45,11 +45,11 @@ import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
 import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
 
-/* ───────────────────────── SPRING CONFIGS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SPRING CONFIGS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
 
-/* ───────────────────────── COLORS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ COLORS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const BLACK = "#09090b";
 const DEFAULT_GOLD = "#b8860b";
 const GOLD_LIGHT = "#d4a017";
@@ -62,7 +62,7 @@ function getAccent(accentColor?: string) {
 const PALETTE = ["#b8860b", "#0f172a", "#10b981", "#d2b48c", "#475569", "#d4a017"];
 const pickPaletteColor = (i: number) => PALETTE[i % PALETTE.length];
 
-/* ───────────────────────── SERVICE ICON MAP ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SERVICE ICON MAP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SERVICE_ICON_MAP: Record<string, any> = {
   buy: House,
@@ -88,7 +88,7 @@ function getServiceIcon(serviceName: string) {
   return House;
 }
 
-/* ───────────────────────── STOCK FALLBACK IMAGES (UNIQUE TO REAL ESTATE) ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ STOCK FALLBACK IMAGES (UNIQUE TO REAL ESTATE) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1400&q=80"];
 const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1560250097-0b93528c311a?w=600&q=80"];
 const STOCK_GALLERY = [
@@ -98,7 +98,7 @@ const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80",
 ];
 
-/* ───────────────────────── GOLD PARTICLES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ GOLD PARTICLES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function GoldParticles({ accent }: { accent: string }) {
   const particles = Array.from({ length: 25 }, (_, i) => ({
     id: i,
@@ -124,7 +124,7 @@ function GoldParticles({ accent }: { accent: string }) {
   );
 }
 
-/* ───────────────────────── LUXURY PATTERN ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ LUXURY PATTERN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function LuxuryPattern({ opacity = 0.03, accent }: { opacity?: number; accent: string }) {
   const pid = `luxPatPrev-${accent.replace("#", "")}`;
   return (
@@ -142,7 +142,7 @@ function LuxuryPattern({ opacity = 0.03, accent }: { opacity?: number; accent: s
   );
 }
 
-/* ───────────────────────── GLASS CARD ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ GLASS CARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <div className={`rounded-2xl border border-white/[0.10] bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)] ${className}`}>
@@ -151,7 +151,7 @@ function GlassCard({ children, className = "" }: { children: React.ReactNode; cl
   );
 }
 
-/* ───────────────────────── MAGNETIC BUTTON ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ MAGNETIC BUTTON â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function MagneticButton({ children, className = "", onClick, style, href }: {
   children: React.ReactNode; className?: string; onClick?: () => void; style?: React.CSSProperties; href?: string;
 }) {
@@ -177,7 +177,7 @@ function MagneticButton({ children, className = "", onClick, style, href }: {
   return <motion.button ref={ref} style={{ x: springX, y: springY, willChange: "transform", ...style }} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave} onClick={onClick} className={className} whileTap={{ scale: 0.97 }}>{children}</motion.button>;
 }
 
-/* ───────────────────────── SHIMMER BORDER ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SHIMMER BORDER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function ShimmerBorder({ children, className = "", accent }: { children: React.ReactNode; className?: string; accent: string }) {
   return (
     <div className={`relative rounded-2xl p-[1px] overflow-hidden ${className}`}>
@@ -187,7 +187,7 @@ function ShimmerBorder({ children, className = "", accent }: { children: React.R
   );
 }
 
-/* ───────────────────────── ACCORDION ITEM ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ACCORDION ITEM â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AccordionItem({ question, answer, isOpen, onToggle }: { question: string; answer: string; isOpen: boolean; onToggle: () => void }) {
   return (
     <GlassCard className="overflow-hidden">
@@ -202,7 +202,7 @@ function AccordionItem({ question, answer, isOpen, onToggle }: { question: strin
   );
 }
 
-/* ───────────────────────── SECTION HEADER ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SECTION HEADER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function SectionHeader({ badge, title, subtitle, accent }: { badge: string; title: string; subtitle?: string; accent: string }) {
   return (
     <div className="text-center mb-16">
@@ -215,10 +215,10 @@ function SectionHeader({ badge, title, subtitle, accent }: { badge: string; titl
 }
 
 
-/* ═══════════════════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    MAIN PREVIEW COMPONENT
-   ═══════════════════════════════════════════════════════════════════ */
-/* ───────────────────────── ANIMATED SECTION ───────────────────────── */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ANIMATED SECTION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <motion.div
@@ -267,7 +267,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
     { step: "02", title: "Search & Listing Strategy", desc: "Whether buying or selling, we craft a targeted plan to position you for success." },
     { step: "03", title: "Tours & Showings", desc: "We schedule and attend every showing, providing expert insight on each property." },
     { step: "04", title: "Negotiate & Close", desc: "We negotiate aggressively on your behalf and manage every detail through closing." },
-    { step: "05", title: "Welcome Home / Sold!", desc: "Keys in hand or sold sign in the yard — we celebrate your success together." },
+    { step: "05", title: "Welcome Home / Sold!", desc: "Keys in hand or sold sign in the yard â€” we celebrate your success together." },
   ];
 
   const serviceTypeBadges = ["Buying", "Selling", "Investing", "First-Time Buyers", "Luxury Homes", "Relocation"];
@@ -281,7 +281,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
   const whyChoosePillars = [
     { title: "Local Market Expert", desc: "Deep knowledge of every neighborhood, school district, and market trend in the area.", icon: MagnifyingGlass },
     { title: "Proven Track Record", desc: "Hundreds of successful transactions and a reputation built on results, not promises.", icon: Trophy },
-    { title: "Full-Service Support", desc: "From your first showing to closing day and beyond — we handle every detail.", icon: Handshake },
+    { title: "Full-Service Support", desc: "From your first showing to closing day and beyond â€” we handle every detail.", icon: Handshake },
     { title: "Negotiation Skills", desc: "We fight for every dollar, ensuring you get the best possible price on your biggest investment.", icon: Scales },
   ];
 
@@ -302,7 +302,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
   const quizOptions = [
     { label: "Ready to Buy", desc: "Let us find your dream home in the perfect neighborhood.", icon: House, color: `${GOLD}` },
     { label: "Ready to Sell", desc: "Maximize your sale price with our proven listing strategy.", icon: CurrencyDollar, color: `${GOLD}` },
-    { label: "Just Exploring", desc: "Get a free market analysis — no pressure, just answers.", icon: MagnifyingGlass, color: `${GOLD}` },
+    { label: "Just Exploring", desc: "Get a free market analysis â€” no pressure, just answers.", icon: MagnifyingGlass, color: `${GOLD}` },
     { label: "Investing", desc: "Discover high-ROI opportunities in today's market.", icon: ChartLineUp, color: `${GOLD}` },
   ];
 
@@ -325,7 +325,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ fontFamily: "DM Sans, system-ui, sans-serif", background: BLACK, color: "#fff" }}>
       <GoldParticles accent={GOLD} />
 
-      {/* ══════════════════ 1. NAV ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 1. NAV â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <nav className="fixed top-0 left-0 right-0 z-50">
         <div className="mx-auto max-w-7xl px-4 md:px-6 py-4">
           <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
@@ -363,7 +363,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
         </div>
       </nav>
 
-      {/* ══════════════════ 2. HERO — CINEMATIC ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 2. HERO â€” CINEMATIC â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
         <div className="absolute inset-0">
           <img src={heroImage} alt="Luxury property" className="w-full h-full object-cover" />
@@ -396,7 +396,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
         <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#09090b] to-transparent z-20" />
       </section>
 
-      {/* ══════════════════ 3. STATS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 3. STATS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden border-y" style={{ borderColor: `${GOLD}1a` }}>
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #070707 0%, #09090b 100%)" }} />
         <LuxuryPattern opacity={0.02} accent={GOLD} />
@@ -420,7 +420,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ FEATURE 1: SERVICE TYPE BADGES ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FEATURE 1: SERVICE TYPE BADGES â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-12 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #09090b 0%, #070707 100%)" }} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -435,7 +435,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ FEATURE 2: MARKET STATS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FEATURE 2: MARKET STATS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-20 md:py-24 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #070707 0%, #09090b 50%, #070707 100%)" }} />
         <LuxuryPattern opacity={0.02} accent={GOLD} />
@@ -458,7 +458,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 4. SERVICES ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 4. SERVICES â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #09090b 0%, #070707 50%, #09090b 100%)" }} />
         <LuxuryPattern accent={GOLD} />
@@ -492,7 +492,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ BEAST MODE: NEIGHBORHOOD SPOTLIGHT ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• BEAST MODE: NEIGHBORHOOD SPOTLIGHT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #09090b 0%, #070707 50%, #09090b 100%)" }} />
         <LuxuryPattern opacity={0.025} accent={GOLD} />
@@ -501,10 +501,10 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
           <SectionHeader badge="Neighborhoods" title={`Explore ${data.city || "Local"} Neighborhoods`} subtitle="Find the perfect community that fits your lifestyle, budget, and vision for the future." accent={GOLD} />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { name: "Downtown", avgPrice: "$550K–$850K", vibe: "Walkable urban living with restaurants, nightlife, and culture at your doorstep.", icon: Buildings },
-              { name: "Suburbs", avgPrice: "$400K–$650K", vibe: "Quiet streets, top-rated schools, and spacious lots perfect for growing families.", icon: House },
-              { name: "Waterfront", avgPrice: "$750K–$1.2M", vibe: "Stunning views, premium finishes, and resort-style living year-round.", icon: Key },
-              { name: "Family-Friendly", avgPrice: "$350K–$550K", vibe: "Parks, playgrounds, and community events — designed for families that thrive together.", icon: Handshake },
+              { name: "Downtown", avgPrice: "$550Kâ€“$850K", vibe: "Walkable urban living with restaurants, nightlife, and culture at your doorstep.", icon: Buildings },
+              { name: "Suburbs", avgPrice: "$400Kâ€“$650K", vibe: "Quiet streets, top-rated schools, and spacious lots perfect for growing families.", icon: House },
+              { name: "Waterfront", avgPrice: "$750Kâ€“$1.2M", vibe: "Stunning views, premium finishes, and resort-style living year-round.", icon: Key },
+              { name: "Family-Friendly", avgPrice: "$350Kâ€“$550K", vibe: "Parks, playgrounds, and community events â€” designed for families that thrive together.", icon: Handshake },
             ].map((hood) => (
               <GlassCard key={hood.name} className="p-7 group hover:border-white/15 transition-all duration-500">
                 <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 border" style={{ background: `${GOLD}15`, borderColor: `${GOLD}33` }}>
@@ -519,7 +519,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 5. ABOUT ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 5. ABOUT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #09090b 0%, #070707 50%, #09090b 100%)" }} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${GOLD}06` }} /></div>
@@ -558,7 +558,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ FEATURE 4: WHY CHOOSE THIS AGENT ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FEATURE 4: WHY CHOOSE THIS AGENT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #09090b 0%, #070707 50%, #09090b 100%)" }} />
         <LuxuryPattern opacity={0.025} accent={GOLD} />
@@ -587,7 +587,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 6. PROCESS (5-step) ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 6. PROCESS (5-step) â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #09090b 0%, #070707 50%, #09090b 100%)" }} />
         <LuxuryPattern opacity={0.025} accent={GOLD} />
@@ -608,7 +608,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 7. GALLERY ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 7. GALLERY â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="gallery" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #09090b 0%, #070707 50%, #09090b 100%)" }} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[30%] left-[20%] w-[500px] h-[500px] rounded-full blur-[200px]" style={{ background: `${GOLD}06` }} /></div>
@@ -630,7 +630,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ FEATURE 5: AREAS WE SERVE ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FEATURE 5: AREAS WE SERVE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #09090b 0%, #070707 50%, #09090b 100%)" }} />
         <LuxuryPattern opacity={0.02} accent={GOLD} />
@@ -648,7 +648,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ FEATURE 6: COMPETITOR COMPARISON ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FEATURE 6: COMPETITOR COMPARISON â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #070707 0%, #09090b 50%, #070707 100%)" }} />
         <div className="max-w-4xl mx-auto px-6 relative z-10">
@@ -680,7 +680,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ FEATURE 7: VIDEO PLACEHOLDER ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FEATURE 7: VIDEO PLACEHOLDER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #09090b 0%, #070707 50%, #09090b 100%)" }} />
         <div className="max-w-5xl mx-auto px-6 relative z-10">
@@ -699,7 +699,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ FEATURE 8: BUYING OR SELLING QUIZ ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FEATURE 8: BUYING OR SELLING QUIZ â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #070707 0%, #09090b 50%, #070707 100%)" }} />
         <LuxuryPattern opacity={0.025} accent={GOLD} />
@@ -731,8 +731,8 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ FEATURE 9: GOOGLE REVIEWS HEADER ══════════════════ */}
-      {/* ══════════════════ 8. TESTIMONIALS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FEATURE 9: GOOGLE REVIEWS HEADER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 8. TESTIMONIALS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #09090b 0%, #070707 50%, #09090b 100%)" }} />
         <LuxuryPattern opacity={0.02} accent={GOLD} />
@@ -766,7 +766,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 9. CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 9. CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${GOLD}, ${GOLD}cc, ${GOLD})` }} />
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='40' height='40' fill='none'/%3E%3Cpath d='M0 0L40 40M40 0L0 40' stroke='%23000' stroke-width='0.5'/%3E%3C/svg%3E\")" }} />
@@ -780,7 +780,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 10. LOCATION ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 10. LOCATION â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #09090b 0%, #070707 50%, #09090b 100%)" }} />
         <LuxuryPattern opacity={0.02} accent={GOLD} />
@@ -790,7 +790,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 11. HOURS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 11. HOURS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       {data.hours && (
         <section className="relative z-10 py-24 md:py-32 overflow-hidden">
           <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #09090b 0%, #070707 50%, #09090b 100%)" }} />
@@ -802,7 +802,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
       )}
 
       
-      {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• MID-PAGE CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${GOLD}15, ${GOLD}08)` }} />
         <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
@@ -813,7 +813,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
             Ready to Get Started?
           </h2>
           <p className="text-slate-400 mb-6 text-sm sm:text-base">
-            Limited time — claim your free professional website today before it&apos;s offered to a competitor.
+            Limited time â€” claim your free professional website today before it&apos;s offered to a competitor.
           </p>
           <a
             href={`/claim/${data.id}`}
@@ -828,7 +828,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 12. FAQ ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 12. FAQ â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #09090b 0%, #070707 50%, #09090b 100%)" }} />
         <div className="max-w-3xl mx-auto px-6 relative z-10">
@@ -837,7 +837,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 13. CONTACT ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 13. CONTACT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="contact" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #09090b 0%, #070707 50%, #09090b 100%)" }} />
         <LuxuryPattern opacity={0.02} accent={GOLD} />
@@ -858,7 +858,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
               <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div><label className="block text-sm text-zinc-400 mb-1.5">Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-zinc-500 focus:outline-none text-sm" placeholder="Your name" /></div>
-                  <div><label className="block text-sm text-zinc-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-zinc-500 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
+                  <div><label className="block text-sm text-zinc-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-zinc-500 focus:outline-none text-sm" placeholder="(206) 287-2304" /></div>
                 </div>
                 <div><label className="block text-sm text-zinc-400 mb-1.5">Interest</label>
                   <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none text-sm">
@@ -876,7 +876,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ FEATURE 10: FREE HOME VALUATION CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FEATURE 10: FREE HOME VALUATION CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #09090b 0%, #070707 50%, #09090b 100%)" }} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] left-[30%] w-[600px] h-[400px] rounded-full blur-[200px]" style={{ background: `${GOLD}08` }} /></div>
@@ -904,7 +904,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 14. TRUST ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 14. TRUST â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #09090b 0%, #070707 100%)" }} />
         <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
@@ -923,7 +923,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ MARKET STATS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• MARKET STATS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #09090b 0%, #0d0d0d 50%, #09090b 100%)" }} />
         <LuxuryPattern opacity={0.015} accent={GOLD} />
@@ -950,7 +950,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ NEIGHBORHOOD GUIDE ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• NEIGHBORHOOD GUIDE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0d0d0d 0%, #09090b 100%)" }} />
         <LuxuryPattern opacity={0.01} accent={GOLD} />
@@ -979,7 +979,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• MID-PAGE CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${GOLD}15 0%, #09090b 50%, ${GOLD}08 100%)` }} />
         <LuxuryPattern opacity={0.02} accent={GOLD} />
@@ -995,7 +995,7 @@ export default function V2RealEstatePreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 15. FOOTER ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 15. FOOTER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #09090b 0%, #060606 100%)" }} />
         <div className="mx-auto max-w-6xl px-6 relative z-10">

@@ -251,7 +251,7 @@ const testimonials = [
 ];
 
 const serviceAreas = [
-  "Downtown", "North Side", "South Side", "East County", "West Hills", "Suburban Heights", "Lakefront", "Industrial District",
+  "Downtown Seattle", "Capitol Hill", "Ballard", "Queen Anne", "Fremont", "West Seattle", "Bellevue", "Kirkland",
 ];
 
 const faqData = [
@@ -336,7 +336,7 @@ export default function V2LocksmithPage() {
                 Emergency Lockout <ArrowRight size={18} weight="bold" />
               </MagneticButton>
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
-                <Phone size={18} weight="duotone" /> (555) 562-KEYS
+                <Phone size={18} weight="duotone" /> (206) 562-5397
               </MagneticButton>
             </motion.div>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ ...spring, delay: 0.95 }} className="flex flex-wrap gap-3">
@@ -478,7 +478,7 @@ export default function V2LocksmithPage() {
                 </p>
                 <div className="flex flex-wrap justify-center gap-4">
                   <MagneticButton className="px-10 py-4 rounded-full text-base font-semibold text-black inline-flex items-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
-                    <Phone size={20} weight="duotone" /> Call (555) 562-KEYS
+                    <Phone size={20} weight="duotone" /> Call (206) 562-5397
                   </MagneticButton>
                 </div>
               </motion.div>
@@ -831,7 +831,7 @@ export default function V2LocksmithPage() {
                 </div>
                 <div className="flex items-start gap-4">
                   <Phone size={20} weight="duotone" style={{ color: ACCENT }} className="mt-0.5 shrink-0" />
-                  <div><p className="text-sm font-semibold text-white">Phone</p><p className="text-sm text-slate-400">(555) 562-KEYS (5397)</p></div>
+                  <div><p className="text-sm font-semibold text-white">Phone</p><p className="text-sm text-slate-400">(206) 562-5397</p></div>
                 </div>
                 <div className="flex items-start gap-4">
                   <Clock size={20} weight="duotone" style={{ color: ACCENT }} className="mt-0.5 shrink-0" />

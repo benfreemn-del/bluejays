@@ -683,8 +683,8 @@ export default function V2ChiropracticPage() {
             </motion.div>
 
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ ...spring, delay: 1 }} className="flex flex-wrap gap-6 text-sm text-slate-400">
-              <a href="https://maps.google.com/?q=456+Wellness+Blvd+Suite+100+Seattle+WA" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-white transition-colors">
-                <MapPin size={16} weight="duotone" style={{ color: TEAL_LIGHT }} />456 Wellness Blvd, Suite 100, Seattle
+              <a href="https://maps.google.com/?q=1428+NW+56th+St+Seattle+WA" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-white transition-colors">
+                <MapPin size={16} weight="duotone" style={{ color: TEAL_LIGHT }} />1428 NW 56th St, Seattle
               </a>
               <span className="flex items-center gap-2"><Clock size={16} weight="duotone" style={{ color: TEAL_LIGHT }} />Mon-Sat 8am-7pm</span>
             </motion.div>
@@ -1155,7 +1155,7 @@ export default function V2ChiropracticPage() {
               </p>
               <div className="space-y-4">
                 {[
-                  { icon: MapPin, label: "Location", value: "456 Wellness Blvd, Suite 100\nSeattle, WA 98101", href: "https://maps.google.com/?q=456+Wellness+Blvd+Suite+100+Seattle+WA+98101" },
+                  { icon: MapPin, label: "Location", value: "1428 NW 56th St\nSeattle, WA 98107", href: "https://maps.google.com/?q=1428+NW+56th+St+Seattle+WA+98107" },
                   { icon: Phone, label: "Phone", value: "(206) 741-2963", href: "tel:+12067412963" },
                   { icon: Clock, label: "Hours", value: "Mon-Fri 8am-7pm\nSaturday 9am-3pm\nSunday Closed" },
                 ].map((item, i) => (
@@ -1236,8 +1236,8 @@ export default function V2ChiropracticPage() {
               <h4 className="text-sm font-semibold text-white mb-3">Contact</h4>
               <div className="space-y-2 text-sm text-slate-400">
                 <a href="tel:+12067412963" className="block hover:text-white transition-colors">(206) 741-2963</a>
-                <a href="https://maps.google.com/?q=456+Wellness+Blvd+Suite+100+Seattle+WA+98101" target="_blank" rel="noopener noreferrer" className="block hover:text-white transition-colors">456 Wellness Blvd, Ste 100</a>
-                <p>Seattle, WA 98101</p>
+                <a href="https://maps.google.com/?q=1428+NW+56th+St+Seattle+WA+98107" target="_blank" rel="noopener noreferrer" className="block hover:text-white transition-colors">1428 NW 56th St</a>
+                <p>Seattle, WA 98107</p>
               </div>
             </div>
           </div>

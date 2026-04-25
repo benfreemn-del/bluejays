@@ -720,7 +720,8 @@ export default function V2PlumberPage() {
                 { icon: Certificate, label: "Master Plumber" },
                 { icon: Clock, label: "20 Years Experience" },
                 { icon: ThumbsUp, label: "3,000+ Jobs" },
-                { icon: SealCheck, label: "WA #EMERACPL847DK" },
+                // fictional license — replace per-prospect on signup
+                { icon: SealCheck, label: "WA #EMERPL847DK" },
                 { icon: Star, label: "4.9 Stars" },
               ].map((item, i) => (
                 <motion.div key={i} variants={fadeUp} className="flex items-center gap-2 text-slate-300">
@@ -899,7 +900,7 @@ export default function V2PlumberPage() {
                   <Certificate size={24} weight="duotone" style={{ color: TEAL }} />
                   <div>
                     <p className="text-xs text-slate-400">WA License</p>
-                    <p className="text-sm font-bold text-white">#EMERACPL847DK</p>
+                    <p className="text-sm font-bold text-white">#EMERPL847DK</p>
                   </div>
                 </GlassCard>
               </div>
@@ -1397,7 +1398,7 @@ export default function V2PlumberPage() {
               </div>
               <p className="text-sm text-slate-400 leading-relaxed">
                 Seattle&apos;s most trusted plumber since 2004. Licensed, bonded, and insured.
-                WA #EMERACPL847DK.
+                WA #EMERPL847DK.
               </p>
             </div>
 
@@ -1427,7 +1428,7 @@ export default function V2PlumberPage() {
 
           <div className="border-t border-white/[0.10] pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-sm text-slate-500">
-              &copy; {new Date().getFullYear()} Emerald City Plumbing. All rights reserved. WA License #EMERACPL847DK.
+              &copy; {new Date().getFullYear()} Emerald City Plumbing. All rights reserved. WA License #EMERPL847DK.
             </p>
             <p className="text-sm text-slate-500 flex items-center gap-1.5">
               <svg width="14" height="14" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-sky-500"><path d="M24.3 4.2c-1.5-.4-3.2.1-4.5 1.1-1-.7-2.3-1-3.5-.8-2.4.4-4.2 2.5-4.2 4.9v.6c-3.2.8-6 2.8-7.8 5.6-.3.5-.1 1.1.4 1.4.5.3 1.1.1 1.4-.4 1.5-2.3 3.7-4 6.3-4.7.5-.1 1-.1 1.5 0 .8.2 1.4.8 1.7 1.5.3.8.2 1.6-.2 2.3l-2.8 4.3c-.6.9-.4 2.1.4 2.8l2.5 2.1c.4.3.8.5 1.3.5h5.2c.5 0 1-.2 1.3-.5l1.2-1c.6-.5.8-1.3.6-2l-1-3.2c-.2-.5 0-1.1.4-1.4l3.8-2.5c1.3-.9 2.1-2.3 2.1-3.9V9.6c0-2.5-1.7-4.7-4.1-5.3v-.1z" fill="currentColor"/></svg>Created by{" "}

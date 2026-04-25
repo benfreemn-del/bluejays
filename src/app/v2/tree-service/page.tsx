@@ -405,7 +405,7 @@ export default function V2TreeServicePage() {
                 Get Free Estimate <ArrowRight size={18} weight="bold" />
               </MagneticButton>
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
-                <Phone size={18} weight="duotone" /> (555) 318-7620
+                <Phone size={18} weight="duotone" /> (206) 318-7620
               </MagneticButton>
             </motion.div>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ ...spring, delay: 0.95 }} className="flex flex-wrap gap-3">
@@ -914,7 +914,7 @@ export default function V2TreeServicePage() {
                 <CalendarCheck size={20} weight="duotone" /> Schedule Estimate
               </MagneticButton>
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 inline-flex items-center gap-2 cursor-pointer">
-                <Phone size={18} weight="duotone" /> (555) 318-7620
+                <Phone size={18} weight="duotone" /> (206) 318-7620
               </MagneticButton>
             </div>
             <p className="mt-6 text-xs text-slate-500">ISA Certified &bull; $2M Liability &bull; OSHA Trained &bull; 25+ Years</p>

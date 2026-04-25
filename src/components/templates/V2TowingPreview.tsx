@@ -34,7 +34,7 @@ import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
 import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
 
-/* ─── CONSTANTS ─── */
+/* â”€â”€â”€ CONSTANTS â”€â”€â”€ */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
 const CHARCOAL = "#1a1a1a";
@@ -83,7 +83,7 @@ const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=600&q=80",
 ];
 
-/* ─── VEHICLE TYPES ─── */
+/* â”€â”€â”€ VEHICLE TYPES â”€â”€â”€ */
 const VEHICLE_TYPES = [
   { name: "Sedans & Coupes", desc: "Standard flatbed or wheel-lift towing" },
   { name: "SUVs & Trucks", desc: "Full-size flatbed for heavier vehicles" },
@@ -93,7 +93,7 @@ const VEHICLE_TYPES = [
   { name: "Fleet Vehicles", desc: "Commercial accounts with priority dispatch" },
 ];
 
-/* ─── ROADSIDE SERVICES ─── */
+/* â”€â”€â”€ ROADSIDE SERVICES â”€â”€â”€ */
 const ROADSIDE_SERVICES = [
   { name: "Jump Starts", icon: Lightning, desc: "Dead battery? We get you running in minutes." },
   { name: "Flat Tire Change", icon: Wrench, desc: "We swap your flat for the spare, roadside." },
@@ -101,7 +101,7 @@ const ROADSIDE_SERVICES = [
   { name: "Lockout Service", icon: Car, desc: "Locked keys in the car? We safely unlock your door." },
 ];
 
-/* ─── COMPARISON TABLE ─── */
+/* â”€â”€â”€ COMPARISON TABLE â”€â”€â”€ */
 const COMPARISON_ROWS = [
   { feature: "24/7 Emergency Dispatch", us: true, them: "Limited Hours" },
   { feature: "Average Response Under 30 Min", us: true, them: "60+ Minutes" },
@@ -112,7 +112,7 @@ const COMPARISON_ROWS = [
   { feature: "GPS-Tracked Fleet", us: true, them: "No" },
 ];
 
-/* ─── PARTICLES ─── */
+/* â”€â”€â”€ PARTICLES â”€â”€â”€ */
 function FloatingParticles({ accent }: { accent: string }) {
   const particles = Array.from({ length: 18 }, (_, i) => ({
     id: i, x: Math.random() * 100, delay: Math.random() * 8,
@@ -163,7 +163,7 @@ function RoadLineBg({ opacity = 0.03, accent }: { opacity?: number; accent: stri
   );
 }
 
-/* ─── SHARED UI ─── */
+/* â”€â”€â”€ SHARED UI â”€â”€â”€ */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>;
 }
@@ -225,9 +225,9 @@ function AnimatedSection({ children, className = "" }: { children: React.ReactNo
   );
 }
 
-/* ═══════════════════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    MAIN COMPONENT
-   ═══════════════════════════════════════════════════════════════════ */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -280,7 +280,7 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
 
   const quizOptions = [
     { label: "Accident or collision", color: "#ef4444", urgency: "Emergency", rec: "Call now for immediate dispatch. We coordinate with police and insurance." },
-    { label: "Breakdown or won't start", color: AMBER, urgency: "Urgent", rec: "We can tow or provide roadside assistance — jump start, fuel, or tire change." },
+    { label: "Breakdown or won't start", color: AMBER, urgency: "Urgent", rec: "We can tow or provide roadside assistance â€” jump start, fuel, or tire change." },
     { label: "Vehicle transport needed", color: "#22c55e", urgency: "Scheduled", rec: "We offer scheduled transport with upfront pricing. Call to arrange." },
   ];
 
@@ -288,7 +288,7 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ fontFamily: "Nunito Sans, system-ui, sans-serif", background: CHARCOAL, color: "#f1f5f9" }}>
       <FloatingParticles accent={ACCENT} />
 
-      {/* ─── EMERGENCY PULSING STRIP ─── */}
+      {/* â”€â”€â”€ EMERGENCY PULSING STRIP â”€â”€â”€ */}
       <div className="fixed top-0 left-0 right-0 z-[60] bg-black/90 border-b border-white/15 py-2">
         <div className="max-w-7xl mx-auto px-4 flex items-center justify-center gap-3">
           <motion.div
@@ -305,7 +305,7 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </div>
 
-      {/* ─── NAV ─── */}
+      {/* â”€â”€â”€ NAV â”€â”€â”€ */}
       <nav className="fixed top-10 left-0 right-0 z-50">
         <div className="mx-auto max-w-7xl px-4 md:px-6 py-4">
           <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
@@ -342,7 +342,7 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </nav>
 
-      {/* ─── HERO ─── */}
+      {/* â”€â”€â”€ HERO â”€â”€â”€ */}
       <section className="relative min-h-[100dvh] flex items-center pt-32 z-10 overflow-hidden">
         <div className="absolute inset-0">
           <img src={heroImage} alt={data.businessName} className="w-full h-full object-cover object-center" />
@@ -401,7 +401,7 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ─── STATS ─── */}
+      {/* â”€â”€â”€ STATS â”€â”€â”€ */}
       <section className="relative z-10 py-16 overflow-hidden border-y" style={{ borderColor: `${ACCENT}1a` }}>
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #140a0a 0%, #1a1a1a 100%)" }} />
         <EmergencyStripes opacity={0.02} accent={ACCENT} />
@@ -424,7 +424,7 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ─── SERVICES ─── */}
+      {/* â”€â”€â”€ SERVICES â”€â”€â”€ */}
       <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1218 50%, #1a1a1a 100%)" }} />
         <EmergencyStripes accent={ACCENT} />
@@ -455,7 +455,7 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ─── VEHICLE TYPES GRID ─── */}
+      {/* â”€â”€â”€ VEHICLE TYPES GRID â”€â”€â”€ */}
       <section id="vehicles" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #120a0a 50%, #1a1a1a 100%)" }} />
         <RoadLineBg opacity={0.02} accent={ACCENT} />
@@ -480,7 +480,7 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ─── ROADSIDE ASSISTANCE ─── */}
+      {/* â”€â”€â”€ ROADSIDE ASSISTANCE â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1218 50%, #1a1a1a 100%)" }} />
         <EmergencyStripes opacity={0.02} accent={ACCENT} />
@@ -502,7 +502,7 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ─── ABOUT ─── */}
+      {/* â”€â”€â”€ ABOUT â”€â”€â”€ */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #120a0a 50%, #1a1a1a 100%)" }} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -541,7 +541,7 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ─── PROCESS ─── */}
+      {/* â”€â”€â”€ PROCESS â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1218 50%, #1a1a1a 100%)" }} />
         <RoadLineBg opacity={0.02} accent={ACCENT} />
@@ -562,7 +562,7 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ─── PRICING ─── */}
+      {/* â”€â”€â”€ PRICING â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #120a0a 50%, #1a1a1a 100%)" }} />
         <EmergencyStripes opacity={0.02} accent={ACCENT} />
@@ -586,7 +586,7 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ─── COMPARISON TABLE ─── */}
+      {/* â”€â”€â”€ COMPARISON TABLE â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1218 50%, #1a1a1a 100%)" }} />
         <div className="max-w-4xl mx-auto px-6 relative z-10">
@@ -618,7 +618,7 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ─── QUIZ ─── */}
+      {/* â”€â”€â”€ QUIZ â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #120a0a 50%, #1a1a1a 100%)" }} />
         <div className="max-w-3xl mx-auto px-6 relative z-10">
@@ -639,14 +639,14 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
           {quizAnswer && (
             <div className="mt-8 text-center">
               <MagneticButton href={`tel:${phoneDigits}`} className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-base font-semibold text-white cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>
-                <Phone size={18} weight="fill" /> Call Now — Help Is on the Way
+                <Phone size={18} weight="fill" /> Call Now â€” Help Is on the Way
               </MagneticButton>
             </div>
           )}
         </div>
       </section>
 
-      {/* ─── VIDEO PLACEHOLDER ─── */}
+      {/* â”€â”€â”€ VIDEO PLACEHOLDER â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1218 50%, #1a1a1a 100%)" }} />
         <div className="max-w-4xl mx-auto px-6 relative z-10">
@@ -662,7 +662,7 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ─── GOOGLE REVIEWS + TESTIMONIALS ─── */}
+      {/* â”€â”€â”€ GOOGLE REVIEWS + TESTIMONIALS â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1218 50%, #1a1a1a 100%)" }} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -691,7 +691,7 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ─── SERVICE AREA ─── */}
+      {/* â”€â”€â”€ SERVICE AREA â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #120a0a 50%, #1a1a1a 100%)" }} />
         <RoadLineBg opacity={0.02} accent={ACCENT} />
@@ -713,7 +713,7 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ─── CTA ─── */}
+      {/* â”€â”€â”€ CTA â”€â”€â”€ */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT}cc)` }} />
         <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
@@ -726,7 +726,7 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ─── FAQ ─── */}
+      {/* â”€â”€â”€ FAQ â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1218 50%, #1a1a1a 100%)" }} />
         <EmergencyStripes opacity={0.02} accent={ACCENT} />
@@ -738,7 +738,7 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ─── CONTACT ─── */}
+      {/* â”€â”€â”€ CONTACT â”€â”€â”€ */}
       <section id="contact" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #120a0a 50%, #1a1a1a 100%)" }} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -769,7 +769,7 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
               <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div><label className="block text-sm text-slate-400 mb-1.5">Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="Your name" /></div>
-                  <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
+                  <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(206) 287-2304" /></div>
                 </div>
                 <div><label className="block text-sm text-slate-400 mb-1.5">Service Needed</label>
                   <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none text-sm">
@@ -789,7 +789,7 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ─── CERTIFICATIONS ─── */}
+      {/* â”€â”€â”€ CERTIFICATIONS â”€â”€â”€ */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #120a0a 50%, #1a1a1a 100%)" }} />
         <div className="max-w-4xl mx-auto px-6 relative z-10">
@@ -803,7 +803,7 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ─── GUARANTEE ─── */}
+      {/* â”€â”€â”€ GUARANTEE â”€â”€â”€ */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1218 100%)" }} />
         <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
@@ -826,7 +826,7 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ─── COVERAGE & FLEET ─── */}
+      {/* â”€â”€â”€ COVERAGE & FLEET â”€â”€â”€ */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111 50%, #1a1a1a 100%)" }} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -867,7 +867,7 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ─── INSURANCE & AAA ─── */}
+      {/* â”€â”€â”€ INSURANCE & AAA â”€â”€â”€ */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #111 0%, #1a1a1a 100%)" }} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -879,7 +879,7 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
             {[
               { title: "AAA Approved", desc: "Official AAA-contracted provider for your area" },
-              { title: "Insurance Direct", desc: "We bill your insurance directly — less hassle for you" },
+              { title: "Insurance Direct", desc: "We bill your insurance directly â€” less hassle for you" },
               { title: "Police Rotations", desc: "Trusted by local law enforcement for accident recovery" },
               { title: "Motor Club Partner", desc: "Accepted by all major motor club programs" },
             ].map((card) => (
@@ -893,7 +893,7 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ─── MID-PAGE CTA ─── */}
+      {/* â”€â”€â”€ MID-PAGE CTA â”€â”€â”€ */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15 0%, #1a1a1a 50%, ${ACCENT}08 100%)` }} />
         <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
@@ -915,7 +915,7 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ─── WHY CHOOSE US ─── */}
+      {/* â”€â”€â”€ WHY CHOOSE US â”€â”€â”€ */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #111 0%, #1a1a1a 100%)" }} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -939,7 +939,7 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ─── ENHANCED CERTS ─── */}
+      {/* â”€â”€â”€ ENHANCED CERTS â”€â”€â”€ */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111 100%)" }} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -972,7 +972,7 @@ export default function V2TowingPreview({ data }: { data: GeneratedSiteData }) {
         </div>
       </section>
 
-      {/* ─── FOOTER ─── */}
+      {/* â”€â”€â”€ FOOTER â”€â”€â”€ */}
       <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111 100%)" }} />
         <div className="mx-auto max-w-6xl px-6 relative z-10">

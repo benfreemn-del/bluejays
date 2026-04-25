@@ -51,7 +51,7 @@ const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=600&q=80",
 ];
 
-/* ─── Decorative helpers ─── */
+/* â”€â”€â”€ Decorative helpers â”€â”€â”€ */
 
 function FloatingParticles({ accent }: { accent: string }) {
   const particles = Array.from({ length: 20 }, (_, i) => ({ id: i, x: Math.random() * 100, delay: Math.random() * 8, duration: 5 + Math.random() * 7, size: 2 + Math.random() * 4, opacity: 0.12 + Math.random() * 0.3, isPink: Math.random() > 0.6 }));
@@ -100,7 +100,7 @@ function PaintDripBackground({ opacity = 0.03, accent }: { opacity?: number; acc
   );
 }
 
-/* ─── Shared UI components ─── */
+/* â”€â”€â”€ Shared UI components â”€â”€â”€ */
 
 function GlassCard({ children, className = "", style }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) {
   return <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>;
@@ -163,7 +163,7 @@ function AnimatedSection({ children, className = "" }: { children: React.ReactNo
   );
 }
 
-/* ─── Category-specific constants ─── */
+/* â”€â”€â”€ Category-specific constants â”€â”€â”€ */
 
 const PAINT_BRAND_BADGES = ["Sherwin-Williams", "Benjamin Moore", "PPG", "Behr", "Farrow & Ball", "Dunn-Edwards"];
 
@@ -202,7 +202,7 @@ const QUIZ_OPTIONS = [
   { label: "Exterior Facelift", icon: Wall, color: "#f59e0b", recommendation: "Our exterior team handles everything from power washing to final coat." },
 ];
 
-/* ─────────────────── MAIN COMPONENT ─────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ MAIN COMPONENT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 export default function V2PaintingPreview({ data }: { data: GeneratedSiteData }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -256,7 +256,7 @@ export default function V2PaintingPreview({ data }: { data: GeneratedSiteData })
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ fontFamily: "Lato, system-ui, sans-serif", background: CHARCOAL, color: "#f1f5f9" }}>
       <FloatingParticles accent={ACCENT} />
 
-      {/* ─── 1. NAV ─── */}
+      {/* â”€â”€â”€ 1. NAV â”€â”€â”€ */}
       <nav className="fixed top-0 left-0 right-0 z-50">
         <div className="mx-auto max-w-7xl px-4 md:px-6 py-4">
           <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
@@ -289,7 +289,7 @@ export default function V2PaintingPreview({ data }: { data: GeneratedSiteData })
         </div>
       </nav>
 
-      {/* ─── 2. HERO ─── */}
+      {/* â”€â”€â”€ 2. HERO â”€â”€â”€ */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
         <div className="absolute inset-0">
           <img src={heroImage} alt={data.businessName} className="w-full h-full object-cover object-center" />
@@ -329,7 +329,7 @@ export default function V2PaintingPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
-      {/* ─── 3. STATS ─── */}
+      {/* â”€â”€â”€ 3. STATS â”€â”€â”€ */}
       <section className="relative z-10 py-16 overflow-hidden border-y" style={{ borderColor: `${ACCENT}1a` }}>
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #140f1a 0%, #1a1a1a 100%)" }} />
         <SplatterPattern opacity={0.02} accent={ACCENT} />
@@ -352,7 +352,7 @@ export default function V2PaintingPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
-      {/* ─── 4. SERVICES (with interior/exterior toggle) ─── */}
+      {/* â”€â”€â”€ 4. SERVICES (with interior/exterior toggle) â”€â”€â”€ */}
       <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #140f1a 50%, #1a1a1a 100%)" }} />
         <SplatterPattern accent={ACCENT} />
@@ -394,7 +394,7 @@ export default function V2PaintingPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
-      {/* ─── 5. COLOR CONSULTATION ─── */}
+      {/* â”€â”€â”€ 5. COLOR CONSULTATION â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #12091a 50%, #1a1a1a 100%)" }} />
         <PaintDripBackground opacity={0.02} accent={ACCENT} />
@@ -417,7 +417,7 @@ export default function V2PaintingPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
-      {/* ─── 6. ABOUT ─── */}
+      {/* â”€â”€â”€ 6. ABOUT â”€â”€â”€ */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #12091a 50%, #1a1a1a 100%)" }} />
         <PaintDripBackground opacity={0.02} accent={ACCENT} />
@@ -446,7 +446,7 @@ export default function V2PaintingPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
-      {/* ─── 7. PREP PROCESS ─── */}
+      {/* â”€â”€â”€ 7. PREP PROCESS â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #140f1a 50%, #1a1a1a 100%)" }} />
         <SplatterPattern opacity={0.025} accent={ACCENT} />
@@ -467,7 +467,7 @@ export default function V2PaintingPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
-      {/* ─── 8. PAINT BRAND BADGES ─── */}
+      {/* â”€â”€â”€ 8. PAINT BRAND BADGES â”€â”€â”€ */}
       <section className="relative z-10 py-16 overflow-hidden border-y" style={{ borderColor: `${ACCENT}1a` }}>
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #140f1a 0%, #1a1a1a 100%)" }} />
         <div className="max-w-5xl mx-auto px-6 relative z-10">
@@ -482,7 +482,7 @@ export default function V2PaintingPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
-      {/* ─── 9. GALLERY ─── */}
+      {/* â”€â”€â”€ 9. GALLERY â”€â”€â”€ */}
       <section id="gallery" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #12091a 50%, #1a1a1a 100%)" }} />
         <PaintDripBackground opacity={0.02} accent={ACCENT} />
@@ -505,7 +505,7 @@ export default function V2PaintingPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
-      {/* ─── 10. PROJECT QUIZ ─── */}
+      {/* â”€â”€â”€ 10. PROJECT QUIZ â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #140f1a 50%, #1a1a1a 100%)" }} />
         <SplatterPattern opacity={0.02} accent={ACCENT} />
@@ -536,7 +536,7 @@ export default function V2PaintingPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
-      {/* ─── 11. PRICING / FINANCING ─── */}
+      {/* â”€â”€â”€ 11. PRICING / FINANCING â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #12091a 50%, #1a1a1a 100%)" }} />
         <PaintDripBackground opacity={0.02} accent={ACCENT} />
@@ -568,7 +568,7 @@ export default function V2PaintingPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
-      {/* ─── 12. COMPARISON TABLE ─── */}
+      {/* â”€â”€â”€ 12. COMPARISON TABLE â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #140f1a 50%, #1a1a1a 100%)" }} />
         <SplatterPattern opacity={0.02} accent={ACCENT} />
@@ -599,7 +599,7 @@ export default function V2PaintingPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
-      {/* ─── 13. WARRANTY INFO ─── */}
+      {/* â”€â”€â”€ 13. WARRANTY INFO â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #12091a 50%, #1a1a1a 100%)" }} />
         <PaintDripBackground opacity={0.02} accent={ACCENT} />
@@ -620,7 +620,7 @@ export default function V2PaintingPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
-      {/* ─── 13b. VIDEO PLACEHOLDER ─── */}
+      {/* â”€â”€â”€ 13b. VIDEO PLACEHOLDER â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #140f1a 50%, #1a1a1a 100%)" }} />
         <div className="max-w-4xl mx-auto px-6 relative z-10">
@@ -637,7 +637,7 @@ export default function V2PaintingPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
-      {/* ─── 13c. CERTIFICATIONS ─── */}
+      {/* â”€â”€â”€ 13c. CERTIFICATIONS â”€â”€â”€ */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #140f1a 100%)" }} />
         <div className="max-w-5xl mx-auto px-6 relative z-10">
@@ -651,7 +651,7 @@ export default function V2PaintingPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
-      {/* ─── 14. GOOGLE REVIEWS + TESTIMONIALS ─── */}
+      {/* â”€â”€â”€ 14. GOOGLE REVIEWS + TESTIMONIALS â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #140f1a 50%, #1a1a1a 100%)" }} />
         <SplatterPattern opacity={0.02} accent={ACCENT} />
@@ -683,7 +683,7 @@ export default function V2PaintingPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
-      {/* ─── 15. CTA ─── */}
+      {/* â”€â”€â”€ 15. CTA â”€â”€â”€ */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT}cc, ${ACCENT})` }} />
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='40' height='40' fill='none'/%3E%3Cpath d='M0 0L40 40M40 0L0 40' stroke='%23000' stroke-width='0.5'/%3E%3C/svg%3E\")" }} />
@@ -697,7 +697,7 @@ export default function V2PaintingPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
-      {/* ─── 16. SERVICE AREA ─── */}
+      {/* â”€â”€â”€ 16. SERVICE AREA â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #12091a 50%, #1a1a1a 100%)" }} />
         <SplatterPattern opacity={0.02} accent={ACCENT} />
@@ -740,7 +740,7 @@ export default function V2PaintingPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
-      {/* ─── 17. HOURS ─── */}
+      {/* â”€â”€â”€ 17. HOURS â”€â”€â”€ */}
       {data.hours && (
         <section className="relative z-10 py-24 md:py-32 overflow-hidden">
           <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #140f1a 50%, #1a1a1a 100%)" }} />
@@ -760,7 +760,7 @@ export default function V2PaintingPreview({ data }: { data: GeneratedSiteData })
         </section>
       )}
 
-      {/* ─── 17a-2. DETAILED PREP PROCESS ─── */}
+      {/* â”€â”€â”€ 17a-2. DETAILED PREP PROCESS â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #1a0f14 50%, #1a1a1a 100%)" }} />
         <PaintDripBackground opacity={0.02} accent={ACCENT} />
@@ -788,7 +788,7 @@ export default function V2PaintingPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
-      {/* ─── 17b. COLOR CONSULTATION GALLERY ─── */}
+      {/* â”€â”€â”€ 17b. COLOR CONSULTATION GALLERY â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #140f1a 50%, #1a1a1a 100%)" }} />
         <SplatterPattern opacity={0.02} accent={ACCENT} />
@@ -817,7 +817,7 @@ export default function V2PaintingPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
-      {/* ─── 17c. PAINT SELECTION GUIDE ─── */}
+      {/* â”€â”€â”€ 17c. PAINT SELECTION GUIDE â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #1a0f14 50%, #1a1a1a 100%)" }} />
         <PaintDripBackground opacity={0.02} accent={ACCENT} />
@@ -849,7 +849,7 @@ export default function V2PaintingPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
-      {/* ─── 17d. WHY CHOOSE US ─── */}
+      {/* â”€â”€â”€ 17d. WHY CHOOSE US â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #140f1a 50%, #1a1a1a 100%)" }} />
         <SplatterPattern opacity={0.02} accent={ACCENT} />
@@ -874,7 +874,7 @@ export default function V2PaintingPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
-      {/* ─── 17e. MID-PAGE CTA ─── */}
+      {/* â”€â”€â”€ 17e. MID-PAGE CTA â”€â”€â”€ */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: ACCENT }} />
         <div className="absolute inset-0 bg-black/30" />
@@ -895,7 +895,7 @@ export default function V2PaintingPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
-      {/* ─── 18. FAQ ─── */}
+      {/* â”€â”€â”€ 18. FAQ â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #140f1a 50%, #1a1a1a 100%)" }} />
         <PaintDripBackground opacity={0.02} accent={ACCENT} />
@@ -909,7 +909,7 @@ export default function V2PaintingPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
-      {/* ─── 19. CONTACT ─── */}
+      {/* â”€â”€â”€ 19. CONTACT â”€â”€â”€ */}
       <section id="contact" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #12091a 50%, #1a1a1a 100%)" }} />
         <SplatterPattern opacity={0.02} accent={ACCENT} />
@@ -933,7 +933,7 @@ export default function V2PaintingPreview({ data }: { data: GeneratedSiteData })
                   <div><label className="block text-sm text-slate-400 mb-1.5">First Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="John" /></div>
                   <div><label className="block text-sm text-slate-400 mb-1.5">Last Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="Doe" /></div>
                 </div>
-                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
+                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(206) 287-2304" /></div>
                 <div><label className="block text-sm text-slate-400 mb-1.5">Service Needed</label><select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none text-sm"><option value="" className="bg-neutral-900">Select a service</option>{data.services.map((s) => <option key={s.name} value={s.name.toLowerCase().replace(/\s+/g, "-")} className="bg-neutral-900">{s.name}</option>)}</select></div>
                 <div><label className="block text-sm text-slate-400 mb-1.5">Project Details</label><textarea rows={3} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm resize-none" placeholder="Describe your painting project..." /></div>
                 <MagneticButton className="w-full py-4 rounded-xl text-base font-semibold text-white flex items-center justify-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>Send Request <ArrowRight size={18} weight="bold" /></MagneticButton>
@@ -943,7 +943,7 @@ export default function V2PaintingPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
-      {/* ─── 20. GUARANTEE ─── */}
+      {/* â”€â”€â”€ 20. GUARANTEE â”€â”€â”€ */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #140f1a 100%)" }} />
         <SplatterPattern opacity={0.015} accent={ACCENT} />
@@ -973,7 +973,7 @@ export default function V2PaintingPreview({ data }: { data: GeneratedSiteData })
         </div>
       </section>
 
-      {/* ─── 21. FOOTER ─── */}
+      {/* â”€â”€â”€ 21. FOOTER â”€â”€â”€ */}
       <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111 100%)" }} />
         <SplatterPattern opacity={0.015} accent={ACCENT} />

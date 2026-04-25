@@ -43,11 +43,11 @@ import BluejayLogo from "../BluejayLogo";
 import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
 
-/* ───────────────────────── SPRING CONFIGS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SPRING CONFIGS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
 
-/* ───────────────────────── COLORS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ COLORS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const CHARCOAL = "#f7faf8";
 const DEFAULT_GREEN = "#16a34a";
 const WARM_ROSE = "#e11d48";
@@ -61,13 +61,13 @@ function getAccent(accentColor?: string) {
   };
 }
 
-// Rotating palette for service tile iconography — the brand PRIMARY stays
+// Rotating palette for service tile iconography â€” the brand PRIMARY stays
 // on section headers, CTAs, and structural accents. Each service card gets
 // a different color so the grid feels alive.
 const PALETTE = ["#16a34a", "#e11d48", "#f59e0b", "#0ea5e9", "#fb923c", "#8b5cf6"];
 const pickPaletteColor = (i: number) => PALETTE[i % PALETTE.length];
 
-/* ───────────────────────── SERVICE ICON MAP ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SERVICE ICON MAP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SERVICE_ICON_MAP: Record<string, any> = {
   vaccine: Syringe,
@@ -96,8 +96,8 @@ function getServiceIcon(serviceName: string) {
   return PawPrint;
 }
 
-/* ───────────────────────── STOCK FALLBACK IMAGES ───────────────────────── */
-/* Pool of unique images — pick based on business name hash to avoid duplicates */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ STOCK FALLBACK IMAGES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* Pool of unique images â€” pick based on business name hash to avoid duplicates */
 const STOCK_HERO_POOL = [
   "/images/vet-hero-dog.png",                                                     // Australian Shepherd (Ben's pick)
   "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=1400&q=80",   // golden retriever portrait
@@ -112,7 +112,7 @@ const STOCK_ABOUT_POOL = [
   "https://images.unsplash.com/photo-1548767797-d8c844163c4c?w=600&q=80",       // cat portrait
   "https://images.unsplash.com/photo-1623387641168-d9803ddd3f35?w=600&q=80",    // vet holding puppy
 ];
-/* 12 unique vet-relevant gallery images — enough to pick 4 without collisions */
+/* 12 unique vet-relevant gallery images â€” enough to pick 4 without collisions */
 const STOCK_GALLERY_POOL = [
   "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600&q=80",   // golden retriever happy
   "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=600&q=80",   // bulldog portrait
@@ -129,7 +129,7 @@ const STOCK_GALLERY_POOL = [
 ];
 
 
-/* ───────────────────────── PREMIUM FEATURE DATA ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ PREMIUM FEATURE DATA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const INSURANCE_BADGES = [
   { label: "Pet Insurance Accepted", icon: ShieldCheck },
   { label: "Payment Plans Available", icon: CurrencyDollar },
@@ -139,12 +139,12 @@ const INSURANCE_BADGES = [
 
 const WELLNESS_PLANS = [
   { name: "Wellness Exam", price: "$65", desc: "Comprehensive physical exam, weight check, and personalized health recommendations." },
-  { name: "Vaccination Package", price: "$149", desc: "Core vaccines, bordetella, and rabies — everything your pet needs to stay protected." },
+  { name: "Vaccination Package", price: "$149", desc: "Core vaccines, bordetella, and rabies â€” everything your pet needs to stay protected." },
   { name: "Dental Cleaning", price: "from $299", desc: "Full dental cleaning under anesthesia with digital X-rays and polishing." },
 ];
 
 const PET_TYPES = [
-  { name: "Dogs", icon: Dog, desc: "From puppies to seniors — wellness, surgery, dental, and emergency care." },
+  { name: "Dogs", icon: Dog, desc: "From puppies to seniors â€” wellness, surgery, dental, and emergency care." },
   { name: "Cats", icon: Cat, desc: "Feline-friendly exams, vaccinations, dental care, and chronic disease management." },
   { name: "Exotic Pets", icon: PawPrint, desc: "Specialized care for rabbits, reptiles, birds, and other small companions." },
   { name: "Senior Pets", icon: Heart, desc: "Gentle geriatric care, pain management, and quality-of-life support." },
@@ -152,7 +152,7 @@ const PET_TYPES = [
 
 const COMFORT_FEATURES = [
   { title: "Fear-Free Certified", desc: "Our team is trained in low-stress handling techniques.", icon: ShieldCheck },
-  { title: "Gentle Handling", desc: "Patient, calm approach for every pet — no rushing.", icon: Heart },
+  { title: "Gentle Handling", desc: "Patient, calm approach for every pet â€” no rushing.", icon: Heart },
   { title: "Calming Environment", desc: "Soft music, pheromone diffusers, and separate waiting areas.", icon: Smiley },
   { title: "Treat Rewards", desc: "Positive reinforcement makes vet visits something to wag about.", icon: Star },
 ];
@@ -169,11 +169,11 @@ const COMPARISON_ROWS = [
 
 const CHECKUP_OPTIONS = [
   { label: "Less than 6 months ago", color: "#16a34a", bg: "#16a34a15", border: "#16a34a33", response: "Great! Keep up the good work. Regular checkups keep your pet healthy." },
-  { label: "6–12 months ago", color: "#d97706", bg: "#d9770615", border: "#d9770633", response: "It's time to schedule! Annual exams catch issues early." },
-  { label: "Over a year ago", color: "#dc2626", bg: "#dc262615", border: "#dc262633", response: "Your pet needs you — book a wellness visit today." },
+  { label: "6â€“12 months ago", color: "#d97706", bg: "#d9770615", border: "#d9770633", response: "It's time to schedule! Annual exams catch issues early." },
+  { label: "Over a year ago", color: "#dc2626", bg: "#dc262615", border: "#dc262633", response: "Your pet needs you â€” book a wellness visit today." },
 ];
 
-/* ───────────────────────── FLOATING PAW PARTICLES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ FLOATING PAW PARTICLES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function FloatingPaws({ accent }: { accent: string }) {
   const particles = Array.from({ length: 18 }, (_, i) => ({
     id: i,
@@ -212,7 +212,7 @@ function FloatingPaws({ accent }: { accent: string }) {
   );
 }
 
-/* ───────────────────────── PAW PRINT SVG PATTERN ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ PAW PRINT SVG PATTERN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function PawPattern({ opacity = 0.03, accent }: { opacity?: number; accent: string }) {
   const patternId = `pawPatternV2Prev-${accent.replace("#", "")}`;
   return (
@@ -234,7 +234,7 @@ function PawPattern({ opacity = 0.03, accent }: { opacity?: number; accent: stri
   );
 }
 
-/* ───────────────────────── HEARTBEAT LINE SVG ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ HEARTBEAT LINE SVG â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function HeartbeatLine({ opacity = 0.03, accent }: { opacity?: number; accent: string }) {
   return (
     <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity }} viewBox="0 0 1000 600" preserveAspectRatio="none">
@@ -244,7 +244,7 @@ function HeartbeatLine({ opacity = 0.03, accent }: { opacity?: number; accent: s
   );
 }
 
-/* ───────────────────────── HERO PET SVG ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ HERO PET SVG â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function HeroPetSVG({ accent }: { accent: string }) {
   return (
     <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 1200 800" preserveAspectRatio="none" style={{ opacity: 0.05 }}>
@@ -256,7 +256,7 @@ function HeroPetSVG({ accent }: { accent: string }) {
   );
 }
 
-/* ───────────────────────── GLASS CARD ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ GLASS CARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <div className={`rounded-2xl border border-gray-200 bg-white/70 backdrop-blur-xl shadow-sm ${className}`}>
@@ -265,7 +265,7 @@ function GlassCard({ children, className = "" }: { children: React.ReactNode; cl
   );
 }
 
-/* ───────────────────────── MAGNETIC BUTTON ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ MAGNETIC BUTTON â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function MagneticButton({ children, className = "", onClick, style, href }: {
   children: React.ReactNode;
   className?: string;
@@ -326,7 +326,7 @@ function MagneticButton({ children, className = "", onClick, style, href }: {
   );
 }
 
-/* ───────────────────────── SHIMMER BORDER ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SHIMMER BORDER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function ShimmerBorder({ children, className = "", accent }: { children: React.ReactNode; className?: string; accent: string }) {
   return (
     <div className={`relative rounded-2xl p-[1px] overflow-hidden ${className}`}>
@@ -344,7 +344,7 @@ function ShimmerBorder({ children, className = "", accent }: { children: React.R
   );
 }
 
-/* ───────────────────────── ACCORDION ITEM ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ACCORDION ITEM â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AccordionItem({ question, answer, isOpen, onToggle }: {
   question: string;
   answer: string;
@@ -370,7 +370,7 @@ function AccordionItem({ question, answer, isOpen, onToggle }: {
   );
 }
 
-/* ───────────────────────── SECTION HEADER ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SECTION HEADER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function SectionHeader({ badge, title, subtitle, accent }: {
   badge: string;
   title: string;
@@ -390,10 +390,10 @@ function SectionHeader({ badge, title, subtitle, accent }: {
 }
 
 
-/* ═══════════════════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    MAIN PREVIEW COMPONENT
-   ═══════════════════════════════════════════════════════════════════ */
-/* ───────────────────────── ANIMATED SECTION ───────────────────────── */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ANIMATED SECTION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <motion.div
@@ -415,7 +415,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
 
   const { PRIMARY, PRIMARY_GLOW } = getAccent(data.accentColor);
 
-  /* Deduplicate scraped photos — ensure hero, card, and about are NEVER the same image */
+  /* Deduplicate scraped photos â€” ensure hero, card, and about are NEVER the same image */
   const uniquePhotos = data.photos ? [...new Set(data.photos)] : [];
   const heroImage = uniquePhotos[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
   const heroCardImage = uniquePhotos[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 1);
@@ -460,7 +460,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ fontFamily: "DM Sans, system-ui, sans-serif", background: CHARCOAL, color: "#1c1917" }}>
       <FloatingPaws accent={PRIMARY} />
 
-      {/* ══════════════════ 1. NAV ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 1. NAV â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <nav className="fixed top-0 left-0 right-0 z-50">
         <div className="mx-auto max-w-7xl px-4 md:px-6 py-4">
           <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
@@ -497,7 +497,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
         </div>
       </nav>
 
-      {/* ══════════════════ 2. HERO ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 2. HERO â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
         {/* Full-bleed hero background image with strong overlay for text readability */}
         <div className="absolute inset-0">
@@ -559,7 +559,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 3. STATS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 3. STATS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden border-y" style={{ borderColor: `${PRIMARY}1a` }}>
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${PRIMARY}08 0%, #f7faf8 100%)` }} />
         <PawPattern opacity={0.02} accent={PRIMARY} />
@@ -585,7 +585,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 4. SERVICES ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 4. SERVICES â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #f7faf8 0%, ${PRIMARY}0a 50%, #f7faf8 100%)` }} />
         <PawPattern accent={PRIMARY} />
@@ -624,7 +624,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 4b. PET INSURANCE & PAYMENT BADGES ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 4b. PET INSURANCE & PAYMENT BADGES â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-12 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #f7faf8 0%, ${PRIMARY}06 50%, #f7faf8 100%)` }} />
         <div className="max-w-5xl mx-auto px-6 relative z-10">
@@ -639,7 +639,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 4c. WELLNESS PRICING PLANS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 4c. WELLNESS PRICING PLANS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #f7faf8 0%, #f0f5f2 50%, #f7faf8 100%)` }} />
         <PawPattern opacity={0.02} accent={PRIMARY} />
@@ -669,7 +669,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 4d. PET TYPE CARDS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 4d. PET TYPE CARDS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #f7faf8 0%, ${PRIMARY}0a 50%, #f7faf8 100%)` }} />
         <HeartbeatLine opacity={0.02} accent={PRIMARY} />
@@ -677,7 +677,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
           <div className="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${WARM_ROSE}06` }} />
         </div>
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="We Treat" title="Patients of All Kinds" subtitle="From wagging tails to whiskers and beyond — we care for every member of your family." accent={PRIMARY} />
+          <SectionHeader badge="We Treat" title="Patients of All Kinds" subtitle="From wagging tails to whiskers and beyond â€” we care for every member of your family." accent={PRIMARY} />
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
             {PET_TYPES.map((pet) => (
               <GlassCard key={pet.name} className="p-6 text-center group hover:shadow-md transition-all duration-300">
@@ -692,7 +692,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 5. ABOUT ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 5. ABOUT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #f7faf8 0%, #f0f5f2 50%, #f7faf8 100%)` }} />
         <HeartbeatLine opacity={0.02} accent={PRIMARY} />
@@ -736,7 +736,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 5b. PET TRANSFORMATION SHOWCASE ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 5b. PET TRANSFORMATION SHOWCASE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #f7faf8 0%, ${PRIMARY}08 50%, #f7faf8 100%)` }} />
         <PawPattern opacity={0.02} accent={PRIMARY} />
@@ -769,7 +769,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 5c. COMFORT & FEAR-FREE ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 5c. COMFORT & FEAR-FREE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #f7faf8 0%, #f0f5f2 50%, #f7faf8 100%)` }} />
         <HeartbeatLine opacity={0.025} accent={PRIMARY} />
@@ -792,7 +792,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 6. PROCESS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 6. PROCESS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #f7faf8 0%, ${PRIMARY}08 50%, #f7faf8 100%)` }} />
         <PawPattern opacity={0.025} accent={PRIMARY} />
@@ -821,7 +821,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 7. GALLERY ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 7. GALLERY â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="gallery" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #f7faf8 0%, #f0f5f2 50%, #f7faf8 100%)` }} />
         <HeartbeatLine opacity={0.02} accent={PRIMARY} />
@@ -850,7 +850,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 7b. COMPETITOR COMPARISON TABLE ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 7b. COMPETITOR COMPARISON TABLE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #f7faf8 0%, ${PRIMARY}08 50%, #f7faf8 100%)` }} />
         <PawPattern opacity={0.02} accent={PRIMARY} />
@@ -886,7 +886,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 7c. VIDEO TOUR PLACEHOLDER ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 7c. VIDEO TOUR PLACEHOLDER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #f7faf8 0%, #f0f5f2 50%, #f7faf8 100%)` }} />
         <HeartbeatLine opacity={0.02} accent={PRIMARY} />
@@ -909,7 +909,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 7d. CHECKUP QUIZ ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 7d. CHECKUP QUIZ â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #f7faf8 0%, ${PRIMARY}0a 50%, #f7faf8 100%)` }} />
         <PawPattern opacity={0.02} accent={PRIMARY} />
@@ -947,14 +947,14 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
             <div className="mt-8 text-center">
               <PhoneLink phone={data.phone} className="inline-flex items-center gap-3 px-8 py-4 rounded-full text-white font-bold text-base hover:shadow-lg transition-all duration-300" style={{ background: PRIMARY }}>
                 <Phone size={20} weight="fill" />
-                Schedule a Checkup — {data.phone}
+                Schedule a Checkup â€” {data.phone}
               </PhoneLink>
             </div>
           )}
         </div>
       </section>
 
-      {/* ══════════════════ 8. TESTIMONIALS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 8. TESTIMONIALS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #f7faf8 0%, ${PRIMARY}08 50%, #f7faf8 100%)` }} />
         <PawPattern opacity={0.02} accent={PRIMARY} />
@@ -973,7 +973,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
             </div>
             <div className="text-center sm:text-left">
               <span className="text-2xl font-extrabold text-[#1c1917]">{data.rating || "5.0"}</span>
-              <span className="text-[#6b7280] text-sm ml-2">out of 5 — based on {data.reviewCount || "100+"} Google Reviews</span>
+              <span className="text-[#6b7280] text-sm ml-2">out of 5 â€” based on {data.reviewCount || "100+"} Google Reviews</span>
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -994,7 +994,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 8b. NEW CLIENT SPECIAL ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 8b. NEW CLIENT SPECIAL â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${PRIMARY}12, ${WARM_ROSE}08)` }} />
         <PawPattern opacity={0.015} accent={PRIMARY} />
@@ -1027,7 +1027,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 9. PET CARE CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 9. PET CARE CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${PRIMARY}, ${PRIMARY}cc, ${PRIMARY})` }} />
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='40' height='40' fill='none'/%3E%3Cpath d='M0 0L40 40M40 0L0 40' stroke='%23000' stroke-width='0.5'/%3E%3C/svg%3E\")" }} />
@@ -1045,7 +1045,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 10. SERVICE AREAS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 10. SERVICE AREAS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #f7faf8 0%, #f0f5f2 50%, #f7faf8 100%)` }} />
         <PawPattern opacity={0.02} accent={PRIMARY} />
@@ -1067,7 +1067,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 11. HOURS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 11. HOURS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       {data.hours && (
         <section className="relative z-10 py-24 md:py-32 overflow-hidden">
           <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #f7faf8 0%, ${PRIMARY}08 50%, #f7faf8 100%)` }} />
@@ -1092,7 +1092,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
       )}
 
       
-      {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• MID-PAGE CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${PRIMARY}15, ${PRIMARY}08)` }} />
         <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
@@ -1103,7 +1103,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
             Ready to Get Started?
           </h2>
           <p className="text-slate-400 mb-6 text-sm sm:text-base">
-            Limited time — claim your free professional website today before it&apos;s offered to a competitor.
+            Limited time â€” claim your free professional website today before it&apos;s offered to a competitor.
           </p>
           <a
             href={`/claim/${data.id}`}
@@ -1118,7 +1118,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 12. FAQ ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 12. FAQ â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #f7faf8 0%, ${PRIMARY}08 50%, #f7faf8 100%)` }} />
         <HeartbeatLine opacity={0.02} accent={PRIMARY} />
@@ -1136,7 +1136,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 13. CONTACT ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 13. CONTACT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="contact" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #f7faf8 0%, #f0f5f2 50%, #f7faf8 100%)` }} />
         <PawPattern opacity={0.02} accent={PRIMARY} />
@@ -1209,7 +1209,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
                 </div>
                 <div>
                   <label className="block text-sm text-[#6b7280] mb-1.5">Phone</label>
-                  <input type="tel" className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[#1c1917] placeholder-gray-400 focus:outline-none transition-colors text-sm" placeholder="(555) 123-4567" />
+                  <input type="tel" className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[#1c1917] placeholder-gray-400 focus:outline-none transition-colors text-sm" placeholder="(206) 287-2304" />
                 </div>
                 <div>
                   <label className="block text-sm text-[#6b7280] mb-1.5">Service Needed</label>
@@ -1234,7 +1234,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 14. GUARANTEE ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 14. GUARANTEE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #f7faf8 0%, ${PRIMARY}06 100%)` }} />
         <PawPattern opacity={0.015} accent={PRIMARY} />
@@ -1263,7 +1263,7 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
         </div>
       </section>
 
-      {/* ══════════════════ 15. FOOTER ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 15. FOOTER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <footer className="relative z-10 border-t border-gray-100 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #f7faf8 0%, #f0f7f2 100%)" }} />
         <PawPattern opacity={0.015} accent={PRIMARY} />

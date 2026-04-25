@@ -103,7 +103,7 @@ const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1582139329536-e7284fece509?w=600&q=80",
 ];
 
-/* ── decorative backgrounds ── */
+/* â”€â”€ decorative backgrounds â”€â”€ */
 
 function FloatingParticles({ accent }: { accent: string }) {
   const particles = Array.from({ length: 18 }, (_, i) => ({
@@ -168,7 +168,7 @@ function SecurityTrail({ opacity = 0.03, accent }: { opacity?: number; accent: s
   );
 }
 
-/* ── shared UI components ── */
+/* â”€â”€ shared UI components â”€â”€ */
 
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>;
@@ -225,7 +225,7 @@ function SectionHeader({ badge, title, subtitle, accent }: { badge: string; titl
   );
 }
 
-/* ── constants ── */
+/* â”€â”€ constants â”€â”€ */
 
 const SERVICE_TYPES = [
   { icon: HouseLine, title: "Residential", desc: "Home lockouts, rekeying, deadbolt installation, lock repair, smart locks", color: "#22c55e" },
@@ -236,7 +236,7 @@ const SERVICE_TYPES = [
 const LOCK_SERVICES = [
   { icon: LockKey, title: "Emergency Lockout", desc: "Locked out? We arrive in 15-30 minutes, 24/7", urgent: true },
   { icon: Key, title: "Key Duplication", desc: "Standard, high-security, and transponder key copies" },
-  { icon: Lock, title: "Lock Rekeying", desc: "Change your locks without replacing them — new keys, same hardware" },
+  { icon: Lock, title: "Lock Rekeying", desc: "Change your locks without replacing them â€” new keys, same hardware" },
   { icon: Shield, title: "Deadbolt Installation", desc: "Grade 1 and Grade 2 deadbolts for maximum security" },
   { icon: Fingerprint, title: "Smart Lock Install", desc: "Keypad, fingerprint, and Bluetooth smart locks" },
   { icon: Vault, title: "Safe Services", desc: "Safe opening, combination changes, and installation" },
@@ -282,7 +282,7 @@ const PRICING_TIERS = [
   },
 ];
 
-/* ── main component ── */
+/* â”€â”€ main component â”€â”€ */
 
 export default function V2LocksmithPreview({ data }: { data: GeneratedSiteData }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -307,7 +307,7 @@ export default function V2LocksmithPreview({ data }: { data: GeneratedSiteData }
   const phoneDigits = data.phone.replace(/\D/g, "");
 
   const processSteps = [
-    { step: "01", title: "Call Us 24/7", desc: "Describe your lock situation — we'll dispatch a technician immediately." },
+    { step: "01", title: "Call Us 24/7", desc: "Describe your lock situation â€” we'll dispatch a technician immediately." },
     { step: "02", title: "Fast Arrival", desc: "Our licensed locksmith arrives in 15-30 minutes with a fully stocked van." },
     { step: "03", title: "Upfront Quote", desc: "We assess the situation and give you a flat-rate price before any work begins." },
     { step: "04", title: "Problem Solved", desc: "Expert service with zero damage. We test everything and clean up before leaving." },
@@ -330,16 +330,16 @@ export default function V2LocksmithPreview({ data }: { data: GeneratedSiteData }
   const testimonials = data.testimonials?.length > 0 ? data.testimonials : fallbackTestimonials;
 
   const quizOptions = [
-    { label: "Locked Out Right Now", emoji: "🚨", color: "#ef4444", result: "Call us immediately! We'll have a technician at your door in 15-30 minutes." },
-    { label: "Need New Locks / Rekey", emoji: "🔑", color: "#f59e0b", result: "Schedule a visit and we'll handle the rekeying or installation same-day." },
-    { label: "Security Upgrade", emoji: "🛡️", color: "#22c55e", result: "Book a free security assessment. We'll evaluate your property and recommend the right upgrades." },
+    { label: "Locked Out Right Now", emoji: "ðŸš¨", color: "#ef4444", result: "Call us immediately! We'll have a technician at your door in 15-30 minutes." },
+    { label: "Need New Locks / Rekey", emoji: "ðŸ”‘", color: "#f59e0b", result: "Schedule a visit and we'll handle the rekeying or installation same-day." },
+    { label: "Security Upgrade", emoji: "ðŸ›¡ï¸", color: "#22c55e", result: "Book a free security assessment. We'll evaluate your property and recommend the right upgrades." },
   ];
 
   return (
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ fontFamily: "Inter, system-ui, sans-serif", background: CHARCOAL, color: "#f1f5f9" }}>
       <FloatingParticles accent={ACCENT} />
 
-      {/* ── NAV ── */}
+      {/* â”€â”€ NAV â”€â”€ */}
       <nav className="fixed top-0 left-0 right-0 z-50">
         <div className="mx-auto max-w-7xl px-4 md:px-6 py-4">
           <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
@@ -376,7 +376,7 @@ export default function V2LocksmithPreview({ data }: { data: GeneratedSiteData }
         </div>
       </nav>
 
-      {/* ── 1. HERO ── */}
+      {/* â”€â”€ 1. HERO â”€â”€ */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
         <div className="absolute inset-0">
           <img src={heroImage} alt={data.businessName} className="w-full h-full object-cover object-center" />
@@ -388,7 +388,7 @@ export default function V2LocksmithPreview({ data }: { data: GeneratedSiteData }
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
           <div className="space-y-8">
             <div>
-              <p className="text-sm uppercase tracking-widest mb-4" style={{ color: ACCENT }}>Licensed Locksmith — 24/7</p>
+              <p className="text-sm uppercase tracking-widest mb-4" style={{ color: ACCENT }}>Licensed Locksmith â€” 24/7</p>
               <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 20px rgba(0,0,0,0.8), 0 4px 40px rgba(0,0,0,0.5)" }}>
                 {data.tagline}
               </h1>
@@ -427,7 +427,7 @@ export default function V2LocksmithPreview({ data }: { data: GeneratedSiteData }
         </div>
       </section>
 
-      {/* ── 2. EMERGENCY LOCKOUT INDICATOR ── */}
+      {/* â”€â”€ 2. EMERGENCY LOCKOUT INDICATOR â”€â”€ */}
       <section className="relative z-10 py-6 overflow-hidden border-y" style={{ borderColor: `${ACCENT}1a` }}>
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a0e08 0%, #1a1a1a 100%)" }} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -439,7 +439,7 @@ export default function V2LocksmithPreview({ data }: { data: GeneratedSiteData }
               </div>
               <div>
                 <h3 className="text-lg font-bold text-white">Locked Out? We&apos;re On Our Way.</h3>
-                <p className="text-sm text-slate-400">Average response time: <strong className="text-white">15-30 minutes</strong> — 24 hours a day, 7 days a week</p>
+                <p className="text-sm text-slate-400">Average response time: <strong className="text-white">15-30 minutes</strong> â€” 24 hours a day, 7 days a week</p>
               </div>
             </div>
             <MagneticButton href={`tel:${phoneDigits}`} className="px-6 py-3 rounded-full text-sm font-semibold text-white cursor-pointer whitespace-nowrap flex items-center gap-2" style={{ background: "#ef4444" } as React.CSSProperties}>
@@ -449,7 +449,7 @@ export default function V2LocksmithPreview({ data }: { data: GeneratedSiteData }
         </div>
       </section>
 
-      {/* ── 3. RESPONSE TIME BADGE + STATS ── */}
+      {/* â”€â”€ 3. RESPONSE TIME BADGE + STATS â”€â”€ */}
       <section className="relative z-10 py-16 overflow-hidden border-b" style={{ borderColor: `${ACCENT}1a` }}>
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #120e08 100%)" }} />
         <KeyLockPattern opacity={0.02} accent={ACCENT} />
@@ -472,12 +472,12 @@ export default function V2LocksmithPreview({ data }: { data: GeneratedSiteData }
         </div>
       </section>
 
-      {/* ── 4. SERVICE TYPES (Residential / Commercial / Auto) ── */}
+      {/* â”€â”€ 4. SERVICE TYPES (Residential / Commercial / Auto) â”€â”€ */}
       <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a0e18 50%, #1a1a1a 100%)" }} />
         <KeyLockPattern accent={ACCENT} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Service Types" title="Residential, Commercial & Auto" subtitle="One call handles it all — no matter what kind of lock, key, or security system you need." accent={ACCENT} />
+          <SectionHeader badge="Service Types" title="Residential, Commercial & Auto" subtitle="One call handles it all â€” no matter what kind of lock, key, or security system you need." accent={ACCENT} />
           <div className="grid md:grid-cols-3 gap-6">
             {SERVICE_TYPES.map((type) => {
               const Icon = type.icon;
@@ -495,7 +495,7 @@ export default function V2LocksmithPreview({ data }: { data: GeneratedSiteData }
         </div>
       </section>
 
-      {/* ── 5. LOCK SERVICES ── */}
+      {/* â”€â”€ 5. LOCK SERVICES â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #120e18 50%, #1a1a1a 100%)" }} />
         <SecurityTrail opacity={0.02} accent={ACCENT} />
@@ -544,7 +544,7 @@ export default function V2LocksmithPreview({ data }: { data: GeneratedSiteData }
         </div>
       </section>
 
-      {/* ── 6. LICENSE DISPLAY ── */}
+      {/* â”€â”€ 6. LICENSE DISPLAY â”€â”€ */}
       <section className="relative z-10 py-16 overflow-hidden border-y" style={{ borderColor: `${ACCENT}1a` }}>
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #120e08 0%, #1a1a1a 100%)" }} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -558,7 +558,7 @@ export default function V2LocksmithPreview({ data }: { data: GeneratedSiteData }
         </div>
       </section>
 
-      {/* ── 7. ABOUT ── */}
+      {/* â”€â”€ 7. ABOUT â”€â”€ */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a0e18 50%, #1a1a1a 100%)" }} />
         <KeyLockPattern opacity={0.02} accent={ACCENT} />
@@ -598,7 +598,7 @@ export default function V2LocksmithPreview({ data }: { data: GeneratedSiteData }
         </div>
       </section>
 
-      {/* ── 8. PRICING ── */}
+      {/* â”€â”€ 8. PRICING â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #120e18 50%, #1a1a1a 100%)" }} />
         <SecurityTrail opacity={0.02} accent={ACCENT} />
@@ -630,7 +630,7 @@ export default function V2LocksmithPreview({ data }: { data: GeneratedSiteData }
         </div>
       </section>
 
-      {/* ── 9. SECURITY ASSESSMENT ── */}
+      {/* â”€â”€ 9. SECURITY ASSESSMENT â”€â”€ */}
       <section id="security" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a0e18 50%, #1a1a1a 100%)" }} />
         <KeyLockPattern opacity={0.02} accent={ACCENT} />
@@ -666,7 +666,7 @@ export default function V2LocksmithPreview({ data }: { data: GeneratedSiteData }
         </div>
       </section>
 
-      {/* ── 10. PROCESS ── */}
+      {/* â”€â”€ 10. PROCESS â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #120e18 50%, #1a1a1a 100%)" }} />
         <SecurityTrail opacity={0.02} accent={ACCENT} />
@@ -687,7 +687,7 @@ export default function V2LocksmithPreview({ data }: { data: GeneratedSiteData }
         </div>
       </section>
 
-      {/* ── 11. GALLERY ── */}
+      {/* â”€â”€ 11. GALLERY â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a0e18 50%, #1a1a1a 100%)" }} />
         <KeyLockPattern opacity={0.02} accent={ACCENT} />
@@ -708,7 +708,7 @@ export default function V2LocksmithPreview({ data }: { data: GeneratedSiteData }
         </div>
       </section>
 
-      {/* ── 12. VIDEO PLACEHOLDER ── */}
+      {/* â”€â”€ 12. VIDEO PLACEHOLDER â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #120e18 50%, #1a1a1a 100%)" }} />
         <div className="max-w-4xl mx-auto px-6 relative z-10">
@@ -728,7 +728,7 @@ export default function V2LocksmithPreview({ data }: { data: GeneratedSiteData }
         </div>
       </section>
 
-      {/* ── 13. GOOGLE REVIEWS + TESTIMONIALS ── */}
+      {/* â”€â”€ 13. GOOGLE REVIEWS + TESTIMONIALS â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a0e18 50%, #1a1a1a 100%)" }} />
         <KeyLockPattern opacity={0.02} accent={ACCENT} />
@@ -758,7 +758,7 @@ export default function V2LocksmithPreview({ data }: { data: GeneratedSiteData }
         </div>
       </section>
 
-      {/* ── 14. COMPETITOR COMPARISON ── */}
+      {/* â”€â”€ 14. COMPETITOR COMPARISON â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #120e18 50%, #1a1a1a 100%)" }} />
         <SecurityTrail opacity={0.02} accent={ACCENT} />
@@ -789,7 +789,7 @@ export default function V2LocksmithPreview({ data }: { data: GeneratedSiteData }
         </div>
       </section>
 
-      {/* ── 15. LOCKSMITH QUIZ ── */}
+      {/* â”€â”€ 15. LOCKSMITH QUIZ â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a0e18 50%, #1a1a1a 100%)" }} />
         <KeyLockPattern opacity={0.02} accent={ACCENT} />
@@ -820,21 +820,21 @@ export default function V2LocksmithPreview({ data }: { data: GeneratedSiteData }
         </div>
       </section>
 
-      {/* ── 16. MID-PAGE CTA ── */}
+      {/* â”€â”€ 16. MID-PAGE CTA â”€â”€ */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT}cc, ${ACCENT})` }} />
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='40' height='40' fill='none'/%3E%3Cpath d='M0 0L40 40M40 0L0 40' stroke='%23000' stroke-width='0.5'/%3E%3C/svg%3E\")" }} />
         <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
           <LockKey size={48} weight="fill" className="mx-auto mb-6 text-white/70" />
           <h2 className="text-3xl md:text-5xl font-black tracking-tight text-white mb-4">Need a Locksmith?</h2>
-          <p className="text-lg text-white/80 mb-8 max-w-xl mx-auto">Locked out, need new locks, or want a security upgrade — we&apos;re here 24/7.</p>
+          <p className="text-lg text-white/80 mb-8 max-w-xl mx-auto">Locked out, need new locks, or want a security upgrade â€” we&apos;re here 24/7.</p>
           <PhoneLink phone={data.phone} className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-white text-black font-bold text-lg hover:bg-white/90 transition-colors">
             <Phone size={22} weight="fill" /> Call {data.phone}
           </PhoneLink>
         </div>
       </section>
 
-      {/* ── 17. SERVICE AREA ── */}
+      {/* â”€â”€ 17. SERVICE AREA â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #120e18 50%, #1a1a1a 100%)" }} />
         <KeyLockPattern opacity={0.02} accent={ACCENT} />
@@ -865,7 +865,7 @@ export default function V2LocksmithPreview({ data }: { data: GeneratedSiteData }
         </div>
       </section>
 
-      {/* ── 18. HOURS ── */}
+      {/* â”€â”€ 18. HOURS â”€â”€ */}
       {data.hours && (
         <section className="relative z-10 py-24 md:py-32 overflow-hidden">
           <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a0e18 50%, #1a1a1a 100%)" }} />
@@ -885,7 +885,7 @@ export default function V2LocksmithPreview({ data }: { data: GeneratedSiteData }
         </section>
       )}
 
-      {/* ── 19. FAQ ── */}
+      {/* â”€â”€ 19. FAQ â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #120e18 50%, #1a1a1a 100%)" }} />
         <KeyLockPattern opacity={0.02} accent={ACCENT} />
@@ -897,7 +897,7 @@ export default function V2LocksmithPreview({ data }: { data: GeneratedSiteData }
         </div>
       </section>
 
-      {/* ── 20. CONTACT ── */}
+      {/* â”€â”€ 20. CONTACT â”€â”€ */}
       <section id="contact" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a0e18 50%, #1a1a1a 100%)" }} />
         <KeyLockPattern opacity={0.02} accent={ACCENT} />
@@ -906,7 +906,7 @@ export default function V2LocksmithPreview({ data }: { data: GeneratedSiteData }
             <div>
               <span className="inline-block text-xs font-bold uppercase tracking-[0.25em] mb-4 px-4 py-1.5 rounded-full border" style={{ color: ACCENT, borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}>Contact Us</span>
               <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-6 text-white">Get Help Now</h2>
-              <p className="text-slate-400 leading-relaxed mb-8">Locked out or need lock service? Contact {data.businessName} — we&apos;re available 24/7.</p>
+              <p className="text-slate-400 leading-relaxed mb-8">Locked out or need lock service? Contact {data.businessName} â€” we&apos;re available 24/7.</p>
               <div className="space-y-5">
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: ACCENT_GLOW }}><MapPin size={20} weight="duotone" style={{ color: ACCENT }} /></div>
@@ -929,7 +929,7 @@ export default function V2LocksmithPreview({ data }: { data: GeneratedSiteData }
                   <div><label className="block text-sm text-slate-400 mb-1.5">First Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="John" /></div>
                   <div><label className="block text-sm text-slate-400 mb-1.5">Last Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="Doe" /></div>
                 </div>
-                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
+                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(206) 287-2304" /></div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-1.5">Service Needed</label>
                   <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none text-sm">
@@ -952,7 +952,7 @@ export default function V2LocksmithPreview({ data }: { data: GeneratedSiteData }
         </div>
       </section>
 
-      {/* ── 21. GUARANTEE ── */}
+      {/* â”€â”€ 21. GUARANTEE â”€â”€ */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a0e08 100%)" }} />
         <KeyLockPattern opacity={0.015} accent={ACCENT} />
@@ -974,7 +974,7 @@ export default function V2LocksmithPreview({ data }: { data: GeneratedSiteData }
         </div>
       </section>
 
-      {/* ── FOOTER ── */}
+      {/* â”€â”€ FOOTER â”€â”€ */}
       <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111 100%)" }} />
         <KeyLockPattern opacity={0.015} accent={ACCENT} />

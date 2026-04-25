@@ -541,7 +541,7 @@ export default function V2RestaurantPage() {
                 Reserve a Table <ArrowRight size={18} weight="bold" />
               </MagneticButton>
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
-                <Phone size={18} weight="duotone" /> (555) 867-5309
+                <Phone size={18} weight="duotone" /> (206) 867-5309
               </MagneticButton>
             </motion.div>
           </div>
@@ -824,7 +824,7 @@ export default function V2RestaurantPage() {
                   <Phone size={20} weight="duotone" style={{ color: GOLD }} className="mt-0.5 shrink-0" />
                   <div>
                     <p className="text-sm font-semibold text-white">Reservations</p>
-                    <p className="text-sm text-slate-400">(555) 867-5309</p>
+                    <p className="text-sm text-slate-400">(206) 867-5309</p>
                   </div>
                 </div>
               </GlassCard>

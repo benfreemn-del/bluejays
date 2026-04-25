@@ -2173,7 +2173,7 @@ export default function V2PetServicesShowcase() {
                     type="tel"
                     className="w-full px-4 py-3 rounded-xl bg-stone-50 border text-sm focus:outline-none"
                     style={{ borderColor: `${TEAL}20`, color: DARK }}
-                    placeholder="(555) 123-4567"
+                    placeholder="(206) 287-2304"
                   />
                 </div>
                 <div>

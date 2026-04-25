@@ -37,7 +37,7 @@ import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
 import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
 
-/* ─── CONSTANTS ─── */
+/* â”€â”€â”€ CONSTANTS â”€â”€â”€ */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
 const CHARCOAL = "#1a1a1a";
@@ -82,7 +82,7 @@ const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1476231682828-37e571bc172f?w=600&q=80",
 ];
 
-/* ─── SERVICE TYPES ─── */
+/* â”€â”€â”€ SERVICE TYPES â”€â”€â”€ */
 const TREE_SERVICE_TYPES = [
   { name: "Tree Trimming", icon: Axe, desc: "Shaping and health cuts to promote strong growth." },
   { name: "Tree Removal", icon: Tree, desc: "Safe removal of hazardous or unwanted trees." },
@@ -92,7 +92,7 @@ const TREE_SERVICE_TYPES = [
   { name: "Land Clearing", icon: Buildings, desc: "Lot clearing for construction or landscaping projects." },
 ];
 
-/* ─── COMPARISON TABLE ─── */
+/* â”€â”€â”€ COMPARISON TABLE â”€â”€â”€ */
 const COMPARISON_ROWS = [
   { feature: "Certified Arborist on Staff", us: true, them: "Rarely" },
   { feature: "Fully Licensed & Insured", us: true, them: "Varies" },
@@ -103,7 +103,7 @@ const COMPARISON_ROWS = [
   { feature: "Property Protection Guarantee", us: true, them: "No" },
 ];
 
-/* ─── PARTICLES ─── */
+/* â”€â”€â”€ PARTICLES â”€â”€â”€ */
 function FloatingParticles({ accent }: { accent: string }) {
   const particles = Array.from({ length: 18 }, (_, i) => ({
     id: i, x: Math.random() * 100, delay: Math.random() * 8,
@@ -154,7 +154,7 @@ function TreeBranchBackground({ opacity = 0.03, accent }: { opacity?: number; ac
   );
 }
 
-/* ─── SHARED UI ─── */
+/* â”€â”€â”€ SHARED UI â”€â”€â”€ */
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>;
 }
@@ -203,9 +203,9 @@ function AnimatedSection({ children, className = "" }: { children: React.ReactNo
   return <motion.div initial={{ opacity: 1, scale: 0.92 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true, margin: "-80px" }} transition={{ duration: 0.5, ease: "easeOut" as const }} className={className}>{children}</motion.div>;
 }
 
-/* ═══════════════════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    MAIN COMPONENT
-   ═══════════════════════════════════════════════════════════════════ */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -232,7 +232,7 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
     { step: "01", title: "Free Estimate", desc: "We inspect your trees on-site and provide a clear, written quote." },
     { step: "02", title: "Plan the Work", desc: "Our arborist plans the safest approach for your property." },
     { step: "03", title: "Expert Execution", desc: "Certified crew handles the job with professional equipment." },
-    { step: "04", title: "Clean Finish", desc: "Full debris cleanup and haul-away — your property left pristine." },
+    { step: "04", title: "Clean Finish", desc: "Full debris cleanup and haul-away â€” your property left pristine." },
   ];
 
   const faqs = [
@@ -275,7 +275,7 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ fontFamily: "Barlow, system-ui, sans-serif", background: CHARCOAL, color: "#f1f5f9" }}>
       <FloatingParticles accent={ACCENT} />
 
-      {/* ─── NAV ─── */}
+      {/* â”€â”€â”€ NAV â”€â”€â”€ */}
       <nav className="fixed top-0 left-0 right-0 z-50">
         <div className="mx-auto max-w-7xl px-4 md:px-6 py-4">
           <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
@@ -295,7 +295,7 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
         </div>
       </nav>
 
-      {/* ─── HERO ─── */}
+      {/* â”€â”€â”€ HERO â”€â”€â”€ */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
         <div className="absolute inset-0"><img src={heroImage} alt={data.businessName} className="w-full h-full object-cover object-center" /><div className="absolute inset-0 bg-black/70" /></div>
         <LeafPattern opacity={0.04} accent={ACCENT} />
@@ -331,7 +331,7 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ─── STATS ─── */}
+      {/* â”€â”€â”€ STATS â”€â”€â”€ */}
       <section className="relative z-10 py-16 overflow-hidden border-y" style={{ borderColor: `${ACCENT}1a` }}>
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a1a0a 0%, #1a1a1a 100%)" }} />
         <LeafPattern opacity={0.02} accent={ACCENT} />
@@ -340,7 +340,7 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
         </div></div>
       </section>
 
-      {/* ─── SERVICES ─── */}
+      {/* â”€â”€â”€ SERVICES â”€â”€â”€ */}
       <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1a0a 50%, #1a1a1a 100%)" }} />
         <LeafPattern accent={ACCENT} />
@@ -362,7 +362,7 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ─── SERVICE TYPES ─── */}
+      {/* â”€â”€â”€ SERVICE TYPES â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0d1a0d 50%, #1a1a1a 100%)" }} />
         <TreeBranchBackground opacity={0.02} accent={ACCENT} />
@@ -380,7 +380,7 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ─── ABOUT ─── */}
+      {/* â”€â”€â”€ ABOUT â”€â”€â”€ */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1a0a 50%, #1a1a1a 100%)" }} />
         <div className="max-w-6xl mx-auto px-6 relative z-10"><div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
@@ -398,7 +398,7 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
         </div></div>
       </section>
 
-      {/* ─── TREE HEALTH ASSESSMENT ─── */}
+      {/* â”€â”€â”€ TREE HEALTH ASSESSMENT â”€â”€â”€ */}
       <section id="health" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0d1a0d 50%, #1a1a1a 100%)" }} />
         <LeafPattern opacity={0.02} accent={ACCENT} />
@@ -415,7 +415,7 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ─── PROCESS ─── */}
+      {/* â”€â”€â”€ PROCESS â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1a0a 50%, #1a1a1a 100%)" }} />
         <TreeBranchBackground opacity={0.02} accent={ACCENT} />
@@ -432,7 +432,7 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ─── PRICING ─── */}
+      {/* â”€â”€â”€ PRICING â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0d1a0d 50%, #1a1a1a 100%)" }} />
         <div className="max-w-5xl mx-auto px-6 relative z-10">
@@ -451,7 +451,7 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ─── GALLERY ─── */}
+      {/* â”€â”€â”€ GALLERY â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1a0a 50%, #1a1a1a 100%)" }} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -464,7 +464,7 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ─── COMPARISON TABLE ─── */}
+      {/* â”€â”€â”€ COMPARISON TABLE â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0d1a0d 50%, #1a1a1a 100%)" }} />
         <div className="max-w-4xl mx-auto px-6 relative z-10">
@@ -475,7 +475,7 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ─── VIDEO PLACEHOLDER ─── */}
+      {/* â”€â”€â”€ VIDEO PLACEHOLDER â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1a0a 50%, #1a1a1a 100%)" }} />
         <div className="max-w-4xl mx-auto px-6 relative z-10">
@@ -484,7 +484,7 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ─── QUIZ ─── */}
+      {/* â”€â”€â”€ QUIZ â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0d1a0d 50%, #1a1a1a 100%)" }} />
         <div className="max-w-3xl mx-auto px-6 relative z-10">
@@ -501,7 +501,7 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ─── GOOGLE REVIEWS + TESTIMONIALS ─── */}
+      {/* â”€â”€â”€ GOOGLE REVIEWS + TESTIMONIALS â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1a0a 50%, #1a1a1a 100%)" }} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -520,7 +520,7 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ─── SERVICE AREA ─── */}
+      {/* â”€â”€â”€ SERVICE AREA â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0d1a0d 50%, #1a1a1a 100%)" }} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -529,10 +529,10 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ─── CTA ─── */}
+      {/* â”€â”€â”€ CTA â”€â”€â”€ */}
       <section className="relative z-10 py-20 overflow-hidden"><div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT}cc)` }} /><div className="max-w-4xl mx-auto px-6 relative z-10 text-center"><Tree size={48} weight="fill" className="mx-auto mb-6 text-white/70" /><h2 className="text-3xl md:text-5xl font-black tracking-tight text-white mb-4">Protect Your Property</h2><p className="text-lg text-white/80 mb-8 max-w-xl mx-auto">Get a free, no-obligation tree assessment from our certified arborist.</p><PhoneLink phone={data.phone} className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-white text-black font-bold text-lg hover:bg-white/90 transition-colors"><Phone size={22} weight="fill" /> Call {data.phone}</PhoneLink></div></section>
 
-      {/* ─── FAQ ─── */}
+      {/* â”€â”€â”€ FAQ â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1a0a 50%, #1a1a1a 100%)" }} />
         <LeafPattern opacity={0.02} accent={ACCENT} />
@@ -542,7 +542,7 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ─── CONTACT ─── */}
+      {/* â”€â”€â”€ CONTACT â”€â”€â”€ */}
       <section id="contact" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div
           className="absolute inset-0"
@@ -630,7 +630,7 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
                   <input
                     type="tel"
                     className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm"
-                    placeholder="(555) 123-4567"
+                    placeholder="(206) 287-2304"
                   />
                 </div>
                 <div>
@@ -668,7 +668,7 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ─── SEASONAL TREE CARE ─── */}
+      {/* â”€â”€â”€ SEASONAL TREE CARE â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div
           className="absolute inset-0"
@@ -724,7 +724,7 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ─── EMERGENCY STORM DETAIL ─── */}
+      {/* â”€â”€â”€ EMERGENCY STORM DETAIL â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div
           className="absolute inset-0"
@@ -798,7 +798,7 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ─── WHY HIRE AN ARBORIST ─── */}
+      {/* â”€â”€â”€ WHY HIRE AN ARBORIST â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div
           className="absolute inset-0"
@@ -850,7 +850,7 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ─── CERTIFICATIONS ─── */}
+      {/* â”€â”€â”€ CERTIFICATIONS â”€â”€â”€ */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0d1a0d 50%, #1a1a1a 100%)" }} />
         <div className="max-w-4xl mx-auto px-6 relative z-10">
@@ -862,10 +862,10 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ─── GUARANTEE ─── */}
+      {/* â”€â”€â”€ GUARANTEE â”€â”€â”€ */}
       <section className="relative z-10 py-16 overflow-hidden"><div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1a0a 100%)" }} /><div className="max-w-4xl mx-auto px-6 relative z-10 text-center"><ShimmerBorder accent={ACCENT}><div className="p-8 md:p-12"><ShieldCheck size={48} weight="fill" style={{ color: ACCENT }} className="mx-auto mb-4" /><h2 className="text-2xl md:text-4xl font-extrabold text-white mb-4">Our Property Protection Guarantee</h2><p className="text-slate-400 leading-relaxed max-w-2xl mx-auto text-lg">{data.businessName} guarantees your property is left clean and undamaged. Full liability insurance and workers comp on every job.</p><div className="flex flex-wrap justify-center gap-4 mt-8">{["Certified Arborist", "Fully Insured", "Free Estimates", "Property Protection"].map((item) => <span key={item} className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border" style={{ color: ACCENT, borderColor: `${ACCENT}33`, background: `${ACCENT}0d` }}><CheckCircle size={16} weight="fill" /> {item}</span>)}</div></div></ShimmerBorder></div></section>
 
-      {/* ─── TREE SPECIES GUIDE ─── */}
+      {/* â”€â”€â”€ TREE SPECIES GUIDE â”€â”€â”€ */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a1a0a 0%, #1a1a1a 50%, #0a1a0a 100%)" }} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -895,7 +895,7 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ─── SEASONAL CARE ─── */}
+      {/* â”€â”€â”€ SEASONAL CARE â”€â”€â”€ */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1a0a 100%)" }} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -920,7 +920,7 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ─── STORM DAMAGE CTA ─── */}
+      {/* â”€â”€â”€ STORM DAMAGE CTA â”€â”€â”€ */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15 0%, #1a1a1a 50%, ${ACCENT}08 100%)` }} />
         <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
@@ -942,7 +942,7 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ─── WHY CHOOSE US ─── */}
+      {/* â”€â”€â”€ WHY CHOOSE US â”€â”€â”€ */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #0a1a0a 0%, #1a1a1a 100%)" }} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -961,7 +961,7 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
               },
               {
                 title: "Clean Removal",
-                desc: "We leave your property cleaner than we found it — all debris hauled and stumps ground",
+                desc: "We leave your property cleaner than we found it â€” all debris hauled and stumps ground",
               },
               {
                 title: "Free Estimates",
@@ -978,7 +978,7 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ─── CERTIFICATIONS ROW ─── */}
+      {/* â”€â”€â”€ CERTIFICATIONS ROW â”€â”€â”€ */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a1a0a 100%)" }} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -1011,7 +1011,7 @@ export default function V2TreeServicePreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ─── FOOTER ─── */}
+      {/* â”€â”€â”€ FOOTER â”€â”€â”€ */}
       <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden"><div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111 100%)" }} /><div className="mx-auto max-w-6xl px-6 relative z-10"><div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8"><div><div className="flex items-center gap-2 mb-3"><Tree size={22} weight="fill" style={{ color: ACCENT }} /><span className="text-lg font-bold text-white">{data.businessName}</span></div><p className="text-sm text-slate-500 leading-relaxed">{data.about.length > 120 ? data.about.slice(0, 120).trim() + "..." : data.about}</p></div><div><h4 className="text-sm font-semibold text-white mb-3">Quick Links</h4><div className="space-y-2">{["Services", "About", "Tree Health", "Contact"].map((l) => <a key={l} href={`#${l.toLowerCase().replace(" ", "-")}`} className="block text-sm text-slate-500 hover:text-white transition-colors">{l}</a>)}</div></div><div><h4 className="text-sm font-semibold text-white mb-3">Contact</h4><div className="space-y-2 text-sm text-slate-500"><p><PhoneLink phone={data.phone} /></p><p><MapLink address={data.address} /></p>{data.socialLinks && Object.entries(data.socialLinks).map(([p, url]) => <a key={p} href={url} target="_blank" rel="noopener noreferrer" className="block hover:text-white transition-colors capitalize">{p}</a>)}</div></div></div><div className="border-t border-white/8 pt-6 flex flex-col md:flex-row items-center justify-between gap-4"><div className="flex items-center gap-2 text-sm text-slate-500"><Tree size={14} weight="fill" style={{ color: ACCENT }} /><span>{data.businessName} &copy; {new Date().getFullYear()}</span></div><div className="flex items-center gap-2 text-xs text-slate-600"><BluejayLogo className="w-4 h-4" /><span>Created by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "underline" }}>bluejayportfolio.com</a></span></div></div></div></footer>
 
       <ClaimBanner businessName={data.businessName} accentColor={ACCENT} prospectId={data.id} />

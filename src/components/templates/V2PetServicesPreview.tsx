@@ -43,7 +43,7 @@ const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1558788353-f76d92427f16?w=600&q=80",
 ];
 
-/* ─── Decorative helpers ─── */
+/* â”€â”€â”€ Decorative helpers â”€â”€â”€ */
 
 function FloatingSparks({ accent }: { accent: string }) {
   const ps = Array.from({ length: 18 }, (_, i) => ({ id: i, x: Math.random() * 100, delay: Math.random() * 8, dur: 5 + Math.random() * 7, size: 2 + Math.random() * 3, op: 0.12 + Math.random() * 0.3, isSky: Math.random() > 0.5 }));
@@ -74,7 +74,7 @@ function PawPattern({ opacity = 0.03, accent }: { opacity?: number; accent: stri
   );
 }
 
-/* ─── Shared UI components ─── */
+/* â”€â”€â”€ Shared UI components â”€â”€â”€ */
 
 function GlassCard({ children, className = "", style }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) {
   return <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}>{children}</div>;
@@ -137,7 +137,7 @@ function AnimatedSection({ children, className = "" }: { children: React.ReactNo
   );
 }
 
-/* ─── Category-specific constants ─── */
+/* â”€â”€â”€ Category-specific constants â”€â”€â”€ */
 
 const PET_TYPES = [
   { key: "dogs", label: "Dogs", icon: Dog, desc: "Boarding, daycare, grooming, training, and walking services tailored for dogs of all sizes and breeds." },
@@ -183,7 +183,7 @@ const QUIZ_OPTIONS = [
   { label: "Grooming & Spa", icon: Scissors, color: "#ec4899", recommendation: "Full grooming packages from bath to blow-dry with premium products." },
 ];
 
-/* ─────────────────── MAIN COMPONENT ─────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ MAIN COMPONENT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 export default function V2PetServicesPreview({ data }: { data: GeneratedSiteData }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -232,7 +232,7 @@ export default function V2PetServicesPreview({ data }: { data: GeneratedSiteData
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ fontFamily: "Nunito Sans, system-ui, sans-serif", background: BG, color: "#f1f5f9" }}>
       <FloatingSparks accent={ACCENT} />
 
-      {/* ─── 1. NAV ─── */}
+      {/* â”€â”€â”€ 1. NAV â”€â”€â”€ */}
       <nav className="fixed top-0 left-0 right-0 z-50">
         <div className="mx-auto max-w-7xl px-4 md:px-6 py-4">
           <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
@@ -265,7 +265,7 @@ export default function V2PetServicesPreview({ data }: { data: GeneratedSiteData
         </div>
       </nav>
 
-      {/* ─── 2. HERO ─── */}
+      {/* â”€â”€â”€ 2. HERO â”€â”€â”€ */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
         <div className="absolute inset-0">
           <img src={heroImage} alt={data.businessName} className="w-full h-full object-cover object-center" />
@@ -305,7 +305,7 @@ export default function V2PetServicesPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ─── 3. STATS ─── */}
+      {/* â”€â”€â”€ 3. STATS â”€â”€â”€ */}
       <section className="relative z-10 py-16 overflow-hidden border-y" style={{ borderColor: `${ACCENT}1a` }}>
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, #0c1218 0%, ${BG} 100%)` }} />
         <PawPattern opacity={0.02} accent={ACCENT} />
@@ -328,7 +328,7 @@ export default function V2PetServicesPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ─── 4. PET TYPE TABS ─── */}
+      {/* â”€â”€â”€ 4. PET TYPE TABS â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0c1218 50%, ${BG} 100%)` }} />
         <PawPattern accent={ACCENT} />
@@ -366,7 +366,7 @@ export default function V2PetServicesPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ─── 5. SERVICES ─── */}
+      {/* â”€â”€â”€ 5. SERVICES â”€â”€â”€ */}
       <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0c1218 50%, ${BG} 100%)` }} />
         <PawPattern accent={ACCENT} />
@@ -397,7 +397,7 @@ export default function V2PetServicesPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ─── 6. DAILY REPORT CARD ─── */}
+      {/* â”€â”€â”€ 6. DAILY REPORT CARD â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0d1218 50%, ${BG} 100%)` }} />
         <div className="absolute inset-0 pointer-events-none"><div className="absolute top-[20%] right-[10%] w-[500px] h-[500px] rounded-full blur-[180px]" style={{ background: `${ACCENT}06` }} /></div>
@@ -423,7 +423,7 @@ export default function V2PetServicesPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ─── 7. SAFETY BADGES ─── */}
+      {/* â”€â”€â”€ 7. SAFETY BADGES â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0c1218 50%, ${BG} 100%)` }} />
         <PawPattern opacity={0.02} accent={ACCENT} />
@@ -445,7 +445,7 @@ export default function V2PetServicesPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ─── 8. ABOUT ─── */}
+      {/* â”€â”€â”€ 8. ABOUT â”€â”€â”€ */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0d1218 50%, ${BG} 100%)` }} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -473,7 +473,7 @@ export default function V2PetServicesPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ─── 9. PRICING PER VISIT TYPE ─── */}
+      {/* â”€â”€â”€ 9. PRICING PER VISIT TYPE â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0c1218 50%, ${BG} 100%)` }} />
         <PawPattern opacity={0.02} accent={ACCENT} />
@@ -508,7 +508,7 @@ export default function V2PetServicesPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ─── 10. GALLERY ─── */}
+      {/* â”€â”€â”€ 10. GALLERY â”€â”€â”€ */}
       <section id="gallery" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0c1218 50%, ${BG} 100%)` }} />
         <PawPattern opacity={0.02} accent={ACCENT} />
@@ -531,7 +531,7 @@ export default function V2PetServicesPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ─── 11. SERVICE QUIZ ─── */}
+      {/* â”€â”€â”€ 11. SERVICE QUIZ â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0d1218 50%, ${BG} 100%)` }} />
         <div className="max-w-4xl mx-auto px-6 relative z-10">
@@ -561,7 +561,7 @@ export default function V2PetServicesPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ─── 12. COMPARISON TABLE ─── */}
+      {/* â”€â”€â”€ 12. COMPARISON TABLE â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0c1218 50%, ${BG} 100%)` }} />
         <PawPattern opacity={0.02} accent={ACCENT} />
@@ -592,7 +592,7 @@ export default function V2PetServicesPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ─── 13. GOOGLE REVIEWS + TESTIMONIALS ─── */}
+      {/* â”€â”€â”€ 13. GOOGLE REVIEWS + TESTIMONIALS â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0d1218 50%, ${BG} 100%)` }} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -625,7 +625,7 @@ export default function V2PetServicesPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ─── 14. VIDEO PLACEHOLDER ─── */}
+      {/* â”€â”€â”€ 14. VIDEO PLACEHOLDER â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0c1218 50%, ${BG} 100%)` }} />
         <div className="max-w-4xl mx-auto px-6 relative z-10">
@@ -645,7 +645,7 @@ export default function V2PetServicesPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ─── 15. CTA ─── */}
+      {/* â”€â”€â”€ 15. CTA â”€â”€â”€ */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT}cc)` }} />
         <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
@@ -658,7 +658,7 @@ export default function V2PetServicesPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ─── 16. SERVICE AREA (Enhanced) ─── */}
+      {/* â”€â”€â”€ 16. SERVICE AREA (Enhanced) â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0d1218 50%, ${BG} 100%)` }} />
         <PawPattern opacity={0.02} accent={ACCENT} />
@@ -692,7 +692,7 @@ export default function V2PetServicesPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ─── 16a-2. HOURS & AVAILABILITY ─── */}
+      {/* â”€â”€â”€ 16a-2. HOURS & AVAILABILITY â”€â”€â”€ */}
       {data.hours && (
         <section className="relative z-10 py-20 overflow-hidden">
           <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0c1218 50%, ${BG} 100%)` }} />
@@ -714,7 +714,7 @@ export default function V2PetServicesPreview({ data }: { data: GeneratedSiteData
         </section>
       )}
 
-      {/* ─── 16b. MID-PAGE CTA ─── */}
+      {/* â”€â”€â”€ 16b. MID-PAGE CTA â”€â”€â”€ */}
       <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15, ${ACCENT}08)` }} />
         <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
@@ -728,7 +728,7 @@ export default function V2PetServicesPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ─── 16c. FACILITY AMENITIES ─── */}
+      {/* â”€â”€â”€ 16c. FACILITY AMENITIES â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0d1218 50%, ${BG} 100%)` }} />
         <PawPattern opacity={0.02} accent={ACCENT} />
@@ -758,7 +758,7 @@ export default function V2PetServicesPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ─── 16d. PET TRAINING TIPS ─── */}
+      {/* â”€â”€â”€ 16d. PET TRAINING TIPS â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0c1218 50%, ${BG} 100%)` }} />
         <PawPattern opacity={0.02} accent={ACCENT} />
@@ -787,7 +787,7 @@ export default function V2PetServicesPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ─── 16d. SEASONAL PET CARE CALENDAR ─── */}
+      {/* â”€â”€â”€ 16d. SEASONAL PET CARE CALENDAR â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0d1218 50%, ${BG} 100%)` }} />
         <PawPattern opacity={0.02} accent={ACCENT} />
@@ -819,7 +819,7 @@ export default function V2PetServicesPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ─── 16e. WHY CHOOSE US ─── */}
+      {/* â”€â”€â”€ 16e. WHY CHOOSE US â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0c1218 50%, ${BG} 100%)` }} />
         <PawPattern opacity={0.02} accent={ACCENT} />
@@ -844,7 +844,7 @@ export default function V2PetServicesPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ─── 16f. BOARDING PACKAGES ─── */}
+      {/* â”€â”€â”€ 16f. BOARDING PACKAGES â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0c1218 50%, ${BG} 100%)` }} />
         <PawPattern opacity={0.02} accent={ACCENT} />
@@ -878,7 +878,7 @@ export default function V2PetServicesPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ─── 16g. MID-PAGE CTA ─── */}
+      {/* â”€â”€â”€ 16g. MID-PAGE CTA â”€â”€â”€ */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: ACCENT }} />
         <div className="absolute inset-0 bg-black/20" />
@@ -896,7 +896,7 @@ export default function V2PetServicesPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ─── 17. FAQ ─── */}
+      {/* â”€â”€â”€ 17. FAQ â”€â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0c1218 50%, ${BG} 100%)` }} />
         <PawPattern opacity={0.02} accent={ACCENT} />
@@ -910,7 +910,7 @@ export default function V2PetServicesPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ─── 18. CONTACT ─── */}
+      {/* â”€â”€â”€ 18. CONTACT â”€â”€â”€ */}
       <section id="contact" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0d1218 50%, ${BG} 100%)` }} />
         <PawPattern opacity={0.02} accent={ACCENT} />
@@ -933,7 +933,7 @@ export default function V2PetServicesPreview({ data }: { data: GeneratedSiteData
                   <div><label className="block text-sm text-slate-400 mb-1.5">Your Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="Your name" /></div>
                   <div><label className="block text-sm text-slate-400 mb-1.5">Pet&apos;s Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="Pet's name" /></div>
                 </div>
-                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
+                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(206) 287-2304" /></div>
                 <div><label className="block text-sm text-slate-400 mb-1.5">Pet Type</label>
                   <select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none text-sm">
                     <option value="" className="bg-neutral-900">Select pet type</option>
@@ -955,7 +955,7 @@ export default function V2PetServicesPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ─── 19. GUARANTEE ─── */}
+      {/* â”€â”€â”€ 19. GUARANTEE â”€â”€â”€ */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #0c1218 100%)` }} />
         <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
@@ -980,7 +980,7 @@ export default function V2PetServicesPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ─── 20. FOOTER ─── */}
+      {/* â”€â”€â”€ 20. FOOTER â”€â”€â”€ */}
       <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${BG} 0%, #060a0f 100%)` }} />
         <div className="mx-auto max-w-6xl px-6 relative z-10">

@@ -41,11 +41,11 @@ import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
 import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
 
-/* ───────────────────────── SPRING CONFIGS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SPRING CONFIGS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
 
-/* ───────────────────────── COLORS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ COLORS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const CHARCOAL = "#1a1a1a";
 const DEFAULT_AMBER = "#f59e0b";
 const AMBER_LIGHT = "#fbbf24";
@@ -64,7 +64,7 @@ function getAccent(accentColor?: string) {
 const PALETTE = ["#f59e0b", "#3b82f6", "#10b981", "#ef4444", "#facc15", "#f97316"];
 const pickPaletteColor = (i: number) => PALETTE[i % PALETTE.length];
 
-/* ───────────────────────── SERVICE ICON MAP ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SERVICE ICON MAP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SERVICE_ICON_MAP: Record<string, any> = {
   "residential": HouseLine,
@@ -88,7 +88,7 @@ function getServiceIcon(serviceName: string) {
   return Lightning;
 }
 
-/* ───────────────────────── STOCK FALLBACK IMAGES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ STOCK FALLBACK IMAGES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=1400&q=80"];
 const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=600&q=80"];
 const STOCK_PROJECTS = [
@@ -98,7 +98,7 @@ const STOCK_PROJECTS = [
   "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?w=800&q=80",
 ];
 
-/* ───────────────────────── SERVICE TYPE BADGES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SERVICE TYPE BADGES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const SERVICE_TYPE_BADGES = [
   { label: "Residential", icon: HouseLine },
   { label: "Commercial", icon: Buildings },
@@ -108,14 +108,14 @@ const SERVICE_TYPE_BADGES = [
   { label: "24/7 Emergency", icon: Warning },
 ];
 
-/* ───────────────────────── UPFRONT PRICING ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ UPFRONT PRICING â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const PRICING_CARDS = [
-  { title: "Outlet / Switch Repair", price: "From $99", desc: "Quick fixes done right — no hidden fees, no guesswork.", icon: Plug },
+  { title: "Outlet / Switch Repair", price: "From $99", desc: "Quick fixes done right â€” no hidden fees, no guesswork.", icon: Plug },
   { title: "Panel Upgrade", price: "From $1,800", desc: "Upgrade your home's capacity safely with a code-compliant panel.", icon: Lightning },
   { title: "EV Charger Install", price: "From $799", desc: "Level 2 charger installation by a certified electrician.", icon: BatteryCharging },
 ];
 
-/* ───────────────────────── WHAT WE HANDLE ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ WHAT WE HANDLE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const CAPABILITIES = [
   { name: "Panel Upgrades", icon: Plug },
   { name: "Wiring & Rewiring", icon: HouseLine },
@@ -127,23 +127,23 @@ const CAPABILITIES = [
   { name: "Code Corrections", icon: ShieldCheck },
 ];
 
-/* ───────────────────────── ELECTRICAL PROCESS STEPS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ELECTRICAL PROCESS STEPS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const ELECTRICAL_PROCESS = [
-  { step: "01", title: "Call or Book Online", desc: "Schedule at your convenience — online booking or a quick phone call.", icon: CalendarCheck },
+  { step: "01", title: "Call or Book Online", desc: "Schedule at your convenience â€” online booking or a quick phone call.", icon: CalendarCheck },
   { step: "02", title: "Free Safety Inspection", desc: "Our licensed electrician inspects your property and identifies all issues.", icon: ShieldCheck },
   { step: "03", title: "Upfront Quote (No Surprises)", desc: "You approve a transparent, fixed-price quote before any work begins.", icon: CurrencyDollar },
   { step: "04", title: "Expert Installation", desc: "Our master electricians complete the job with precision and full code compliance.", icon: Lightning },
 ];
 
-/* ───────────────────────── SAFETY PILLARS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SAFETY PILLARS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const SAFETY_PILLARS = [
   { title: "Licensed Master Electrician", desc: "Every technician holds a valid Master or Journeyman license.", icon: ShieldCheck },
   { title: "Code-Compliant Work", desc: "We pull permits and pass inspections on every single job.", icon: CheckCircle },
   { title: "Background-Checked Crew", desc: "Every team member is vetted and background-checked for your peace of mind.", icon: Star },
-  { title: "Warranty on All Work", desc: "Our work is backed by a written warranty — your protection guaranteed.", icon: Timer },
+  { title: "Warranty on All Work", desc: "Our work is backed by a written warranty â€” your protection guaranteed.", icon: Timer },
 ];
 
-/* ───────────────────────── COMPETITOR COMPARISON ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ COMPETITOR COMPARISON â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const COMPARISON_ROWS = [
   { feature: "Licensed & Bonded", us: true, them: "Risk" },
   { feature: "Permit Pulling", us: true, them: "No" },
@@ -154,15 +154,15 @@ const COMPARISON_ROWS = [
   { feature: "Master Electrician On-Site", us: true, them: "No" },
 ];
 
-/* ───────────────────────── QUIZ OPTIONS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ QUIZ OPTIONS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const QUIZ_OPTIONS = [
-  { label: "Outlet or Switch Problem", desc: "Quick fix — we can often repair same-day.", color: "#22c55e", icon: Plug },
+  { label: "Outlet or Switch Problem", desc: "Quick fix â€” we can often repair same-day.", color: "#22c55e", icon: Plug },
   { label: "Panel Upgrade", desc: "Increase capacity for modern electrical demands.", color: "#3b82f6", icon: Lightning },
   { label: "New Installation", desc: "EV chargers, generators, lighting, smart home.", color: "#f59e0b", icon: BatteryCharging },
-  { label: "Emergency", desc: "Sparks, outage, burning smell — call NOW.", color: "#ef4444", icon: Warning },
+  { label: "Emergency", desc: "Sparks, outage, burning smell â€” call NOW.", color: "#ef4444", icon: Warning },
 ];
 
-/* ───────────────────────── FLOATING SPARK PARTICLES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ FLOATING SPARK PARTICLES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function FloatingSparks({ accent }: { accent: string }) {
   const particles = Array.from({ length: 22 }, (_, i) => ({
     id: i,
@@ -206,7 +206,7 @@ function FloatingSparks({ accent }: { accent: string }) {
   );
 }
 
-/* ───────────────────────── CIRCUIT BOARD SVG PATTERN ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ CIRCUIT BOARD SVG PATTERN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function CircuitPattern({ opacity = 0.03, accent }: { opacity?: number; accent: string }) {
   const patternId = `circuitGridV2Prev-${accent.replace("#", "")}`;
   return (
@@ -228,7 +228,7 @@ function CircuitPattern({ opacity = 0.03, accent }: { opacity?: number; accent: 
   );
 }
 
-/* ───────────────────────── LIGHTNING BACKGROUND SVG ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ LIGHTNING BACKGROUND SVG â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function LightningBackground({ opacity = 0.03, accent }: { opacity?: number; accent: string }) {
   return (
     <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity }} viewBox="0 0 1000 600" preserveAspectRatio="none">
@@ -239,7 +239,7 @@ function LightningBackground({ opacity = 0.03, accent }: { opacity?: number; acc
   );
 }
 
-/* ───────────────────────── HERO LIGHTNING SVG ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ HERO LIGHTNING SVG â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function HeroLightning({ accent }: { accent: string }) {
   return (
     <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 1200 800" preserveAspectRatio="none" style={{ opacity: 0.06 }}>
@@ -252,7 +252,7 @@ function HeroLightning({ accent }: { accent: string }) {
   );
 }
 
-/* ───────────────────────── GLASS CARD ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ GLASS CARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function GlassCard({ children, className = "", style }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) {
   return (
     <div className={`rounded-2xl border border-white/15 bg-white/[0.08] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] ${className}`} style={style}>
@@ -261,7 +261,7 @@ function GlassCard({ children, className = "", style }: { children: React.ReactN
   );
 }
 
-/* ───────────────────────── MAGNETIC BUTTON ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ MAGNETIC BUTTON â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function MagneticButton({ children, className = "", onClick, style, href }: {
   children: React.ReactNode;
   className?: string;
@@ -325,7 +325,7 @@ function MagneticButton({ children, className = "", onClick, style, href }: {
   );
 }
 
-/* ───────────────────────── SHIMMER BORDER ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SHIMMER BORDER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function ShimmerBorder({ children, className = "", accent }: { children: React.ReactNode; className?: string; accent: string }) {
   return (
     <div className={`relative rounded-2xl p-[1px] overflow-hidden ${className}`}>
@@ -343,7 +343,7 @@ function ShimmerBorder({ children, className = "", accent }: { children: React.R
   );
 }
 
-/* ───────────────────────── ACCORDION ITEM ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ACCORDION ITEM â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AccordionItem({ question, answer, isOpen, onToggle }: {
   question: string;
   answer: string;
@@ -375,7 +375,7 @@ function AccordionItem({ question, answer, isOpen, onToggle }: {
   );
 }
 
-/* ───────────────────────── SECTION HEADER ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SECTION HEADER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function SectionHeader({ badge, title, subtitle, accent }: {
   badge: string;
   title: string;
@@ -400,10 +400,10 @@ function SectionHeader({ badge, title, subtitle, accent }: {
 }
 
 
-/* ═══════════════════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    MAIN PREVIEW COMPONENT
-   ═══════════════════════════════════════════════════════════════════ */
-/* ───────────────────────── ANIMATED SECTION ───────────────────────── */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ANIMATED SECTION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <motion.div
@@ -474,7 +474,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
     >
       <FloatingSparks accent={AMBER} />
 
-      {/* ══════════════════ 1. NAV ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 1. NAV â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <nav className="fixed top-0 left-0 right-0 z-50">
         <div className="mx-auto max-w-7xl px-4 md:px-6 py-4">
           <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
@@ -539,7 +539,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
         </div>
       </nav>
 
-      {/* ══════════════════ BEAST MODE: EMERGENCY RESPONSE STRIP ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• BEAST MODE: EMERGENCY RESPONSE STRIP â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <div className="fixed top-0 left-0 right-0 z-[60] py-2 text-center" style={{ background: "linear-gradient(90deg, #dc2626 0%, #f59e0b 50%, #dc2626 100%)" }}>
         <div className="flex items-center justify-center gap-3 text-sm font-bold text-white">
           <span className="relative flex h-3 w-3">
@@ -547,7 +547,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
             <span className="relative inline-flex rounded-full h-3 w-3 bg-white" />
           </span>
           <span>Electrical Emergency? 60-Min Response</span>
-          <span className="hidden sm:inline">—</span>
+          <span className="hidden sm:inline">â€”</span>
           <a href={`tel:${phoneDigits}`} className="underline underline-offset-2 hover:no-underline hidden sm:inline">
             Call {data.phone}
           </a>
@@ -555,7 +555,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
         </div>
       </div>
 
-      {/* ══════════════════ 2. HERO ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 2. HERO â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative min-h-[100dvh] flex items-center pt-32 z-10 overflow-hidden">
 
         <div className="absolute inset-0">
@@ -637,7 +637,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 3. STATS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 3. STATS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden border-y" style={{ borderColor: `${AMBER}1a` }}>
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #141210 0%, #1a1a1a 100%)" }} />
         <CircuitPattern opacity={0.02} accent={AMBER} />
@@ -663,7 +663,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ FEATURE 1: SERVICE TYPE BADGES ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FEATURE 1: SERVICE TYPE BADGES â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #141210 100%)" }} />
         <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
@@ -682,7 +682,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 4. SERVICES ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 4. SERVICES â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #141210 50%, #1a1a1a 100%)" }} />
         <CircuitPattern accent={AMBER} />
@@ -737,7 +737,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ FEATURE 2: UPFRONT PRICING ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FEATURE 2: UPFRONT PRICING â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f0e0c 50%, #1a1a1a 100%)" }} />
         <LightningBackground opacity={0.02} accent={AMBER} />
@@ -770,7 +770,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ FEATURE 3: WHAT WE HANDLE ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FEATURE 3: WHAT WE HANDLE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #141210 50%, #1a1a1a 100%)" }} />
         <CircuitPattern opacity={0.025} accent={AMBER} />
@@ -803,7 +803,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 5. WHY CHOOSE US / ABOUT ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 5. WHY CHOOSE US / ABOUT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f0e0c 50%, #1a1a1a 100%)" }} />
         <LightningBackground opacity={0.02} accent={AMBER} />
@@ -862,14 +862,14 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
               {/* Beast Mode: License Number */}
               <div className="mt-4 px-4 py-3 rounded-xl border border-dashed flex items-center gap-3" style={{ borderColor: `${AMBER}33`, background: `${AMBER}08` }}>
                 <Certificate size={20} weight="fill" style={{ color: AMBER }} />
-                <span className="text-sm text-slate-300">WA Licensed &amp; Bonded — <span className="font-mono font-semibold" style={{ color: AMBER }}>License #ELEC-{data.businessName.replace(/\s/g, "").slice(0, 4).toUpperCase()}-{new Date().getFullYear()}</span></span>
+                <span className="text-sm text-slate-300">WA Licensed &amp; Bonded â€” <span className="font-mono font-semibold" style={{ color: AMBER }}>License #ELEC-{data.businessName.replace(/\s/g, "").slice(0, 4).toUpperCase()}-{new Date().getFullYear()}</span></span>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ══════════════════ FEATURE 4: ELECTRICAL PROCESS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FEATURE 4: ELECTRICAL PROCESS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #141210 50%, #1a1a1a 100%)" }} />
         <CircuitPattern opacity={0.025} accent={AMBER} />
@@ -879,7 +879,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
 
         <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
           <AnimatedSection>
-            <SectionHeader badge="Our Process" title="Safe, Simple, Transparent" subtitle="From your first call to final inspection — no surprises, just expert work." accent={AMBER} />
+            <SectionHeader badge="Our Process" title="Safe, Simple, Transparent" subtitle="From your first call to final inspection â€” no surprises, just expert work." accent={AMBER} />
           </AnimatedSection>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -905,7 +905,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 7. PROJECTS GALLERY ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 7. PROJECTS GALLERY â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="projects" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f0e0c 50%, #1a1a1a 100%)" }} />
         <LightningBackground opacity={0.02} accent={AMBER} />
@@ -952,7 +952,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ FEATURE 5: SAFETY FIRST ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FEATURE 5: SAFETY FIRST â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f0e0c 50%, #1a1a1a 100%)" }} />
         <CircuitPattern opacity={0.02} accent={AMBER} />
@@ -983,7 +983,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ FEATURE 6: COMPETITOR COMPARISON ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FEATURE 6: COMPETITOR COMPARISON â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #141210 50%, #1a1a1a 100%)" }} />
         <LightningBackground opacity={0.02} accent={AMBER} />
@@ -1024,7 +1024,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ FEATURE 7: VIDEO PLACEHOLDER ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FEATURE 7: VIDEO PLACEHOLDER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f0e0c 50%, #1a1a1a 100%)" }} />
         <CircuitPattern opacity={0.02} accent={AMBER} />
@@ -1055,7 +1055,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ FEATURE 8: WHAT ELECTRICAL WORK QUIZ ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FEATURE 8: WHAT ELECTRICAL WORK QUIZ â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #141210 50%, #1a1a1a 100%)" }} />
         <LightningBackground opacity={0.02} accent={AMBER} />
@@ -1103,17 +1103,17 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
                 style={{ background: AMBER } as React.CSSProperties}
               >
                 <Phone size={20} weight="bold" />
-                Call Now — {data.phone}
+                Call Now â€” {data.phone}
               </MagneticButton>
               <p className="text-xs text-slate-500 mt-3">
-                {quizSelection === 3 ? "Do NOT wait — electrical emergencies are dangerous. Call immediately." : "We'll schedule your free inspection at a time that works for you."}
+                {quizSelection === 3 ? "Do NOT wait â€” electrical emergencies are dangerous. Call immediately." : "We'll schedule your free inspection at a time that works for you."}
               </p>
             </div>
           )}
         </div>
       </section>
 
-      {/* ══════════════════ 8. TESTIMONIALS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 8. TESTIMONIALS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #141210 50%, #1a1a1a 100%)" }} />
         <CircuitPattern opacity={0.02} accent={AMBER} />
@@ -1161,7 +1161,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 9. EMERGENCY CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 9. EMERGENCY CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${AMBER}, ${AMBER}cc, ${AMBER})` }} />
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='40' height='40' fill='none'/%3E%3Cpath d='M0 0L40 40M40 0L0 40' stroke='%23000' stroke-width='0.5'/%3E%3C/svg%3E\")" }} />
@@ -1173,7 +1173,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
             Electrical Emergency? We&apos;re Here 24/7
           </h2>
           <p className="text-lg text-black/70 mb-8 max-w-xl mx-auto">
-            Power outages, sparking outlets, burning smells — do not wait. Our emergency electricians respond fast to keep your home and family safe.
+            Power outages, sparking outlets, burning smells â€” do not wait. Our emergency electricians respond fast to keep your home and family safe.
           </p>
           <PhoneLink
             phone={data.phone}
@@ -1188,7 +1188,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 10. SERVICE AREAS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 10. SERVICE AREAS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f0e0c 50%, #1a1a1a 100%)" }} />
         <CircuitPattern opacity={0.02} accent={AMBER} />
@@ -1211,7 +1211,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 11. HOURS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 11. HOURS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       {data.hours && (
         <section className="relative z-10 py-24 md:py-32 overflow-hidden">
           <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #141210 50%, #1a1a1a 100%)" }} />
@@ -1236,7 +1236,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
       )}
 
       
-      {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• MID-PAGE CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${AMBER}15, ${AMBER}08)` }} />
         <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
@@ -1247,7 +1247,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
             Ready to Get Started?
           </h2>
           <p className="text-slate-400 mb-6 text-sm sm:text-base">
-            Limited time — claim your free professional website today before it&apos;s offered to a competitor.
+            Limited time â€” claim your free professional website today before it&apos;s offered to a competitor.
           </p>
           <a
             href={`/claim/${data.id}`}
@@ -1262,7 +1262,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 12. FAQ ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 12. FAQ â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #141210 50%, #1a1a1a 100%)" }} />
         <LightningBackground opacity={0.02} accent={AMBER} />
@@ -1287,7 +1287,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 13. CONTACT ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 13. CONTACT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="contact" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0f0e0c 50%, #1a1a1a 100%)" }} />
         <CircuitPattern opacity={0.02} accent={AMBER} />
@@ -1382,7 +1382,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
                   <input
                     type="tel"
                     className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none transition-colors text-sm"
-                    placeholder="(555) 123-4567"
+                    placeholder="(206) 287-2304"
                   />
                 </div>
                 <div>
@@ -1417,7 +1417,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ FEATURE 10: SAFETY GUARANTEE CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• FEATURE 10: SAFETY GUARANTEE CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #141210 100%)" }} />
         <CircuitPattern opacity={0.015} accent={AMBER} />
@@ -1433,7 +1433,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
                 Every Job Done Right, Up to Code, Guaranteed
               </h2>
               <p className="text-slate-400 leading-relaxed max-w-2xl mx-auto text-lg mb-2">
-                {data.businessName} backs every installation and repair with a written warranty. Your safety is not negotiable — we pull permits, pass inspections, and guarantee code compliance on every single job.
+                {data.businessName} backs every installation and repair with a written warranty. Your safety is not negotiable â€” we pull permits, pass inspections, and guarantee code compliance on every single job.
               </p>
               <p className="text-xs text-slate-500 mb-8">License #ELEC-{data.businessName.replace(/\s/g, "").slice(0, 4).toUpperCase()}-{new Date().getFullYear()}</p>
               <MagneticButton
@@ -1461,7 +1461,7 @@ export default function V2ElectricianPreview({ data }: { data: GeneratedSiteData
         </div>
       </section>
 
-      {/* ══════════════════ 15. FOOTER ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 15. FOOTER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111 100%)" }} />
         <CircuitPattern opacity={0.015} accent={AMBER} />

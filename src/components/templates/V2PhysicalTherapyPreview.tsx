@@ -20,7 +20,7 @@ const BG = "#0a0f1a";
 
 function getAccent(c?: string) { const a = c || DEFAULT_BLUE; return { ACCENT: a, ACCENT_GLOW: `${a}26` }; }
 
-// Rotating palette for service tile iconography — the brand ACCENT stays on
+// Rotating palette for service tile iconography â€” the brand ACCENT stays on
 // section headers, CTAs, and structural accents. Each service card gets a
 // different color so the grid feels alive.
 const PALETTE = ["#1e40af", "#f97316", "#10b981", "#f59e0b", "#64748b", "#0ea5e9"];
@@ -76,7 +76,7 @@ export default function V2PhysicalTherapyPreview({ data }: { data: GeneratedSite
 
   const faqs = [
     { q: `What services does ${data.businessName} offer?`, a: `We offer ${data.services.slice(0, 3).map(s => s.name).join(", ")}, and more. Contact us to schedule your evaluation.` },
-    { q: "Do I need a referral?", a: "In most states, you can see a physical therapist through Direct Access without a referral. Some insurance plans may require one — we can help you check." },
+    { q: "Do I need a referral?", a: "In most states, you can see a physical therapist through Direct Access without a referral. Some insurance plans may require one â€” we can help you check." },
     { q: "How long are sessions?", a: "Initial evaluations are 60 minutes. Follow-up sessions are 45-60 minutes of one-on-one care." },
     { q: "What insurance do you accept?", a: `${data.businessName} is in-network with most major insurance providers. Contact us to verify your coverage.` },
     { q: "How many sessions will I need?", a: "Treatment plans vary based on your condition, but most patients see significant improvement within 6-12 sessions. We set clear goals and track progress at every visit." },
@@ -719,12 +719,12 @@ export default function V2PhysicalTherapyPreview({ data }: { data: GeneratedSite
                 <h3 className="text-xl font-bold text-white mb-4">Recovery Tips</h3>
                 <ul className="space-y-3">
                   {[
-                    "Consistency beats intensity — do your exercises daily",
+                    "Consistency beats intensity â€” do your exercises daily",
                     "Use ice for 15-20 minutes after exercises if needed",
                     "Stay hydrated and get adequate sleep for healing",
                     "Track your pain levels to share with your therapist",
-                    "Avoid pushing through sharp pain — listen to your body",
-                    "Celebrate small wins — every improvement counts",
+                    "Avoid pushing through sharp pain â€” listen to your body",
+                    "Celebrate small wins â€” every improvement counts",
                   ].map((item) => (
                     <li key={item} className="flex items-start gap-2 text-sm text-slate-400">
                       <Star size={16} weight="duotone" className="mt-0.5 shrink-0" style={{ color: GREEN }} />
@@ -941,7 +941,7 @@ export default function V2PhysicalTherapyPreview({ data }: { data: GeneratedSite
                   <input
                     type="tel"
                     className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm"
-                    placeholder="(555) 123-4567"
+                    placeholder="(206) 287-2304"
                   />
                 </div>
                 <div>

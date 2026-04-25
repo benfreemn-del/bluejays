@@ -35,11 +35,11 @@ import { MapLink, PhoneLink } from "@/components/templates/MapLink";
 import ClaimBanner from "@/components/ClaimBanner";
 import { pickFromPool, pickGallery } from "@/lib/stock-image-picker";
 
-/* ───────────────────────── SPRING CONFIGS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SPRING CONFIGS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const spring = { type: "spring" as const, stiffness: 100, damping: 20 };
 const springFast = { type: "spring" as const, stiffness: 200, damping: 25 };
 
-/* ───────────────────────── COLORS ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ COLORS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const CHARCOAL = "#faf9ff";
 const DEFAULT_PURPLE = "#7c3aed";
 const PURPLE_LIGHT = "#a78bfa";
@@ -50,7 +50,7 @@ function getAccent(accentColor?: string) {
   return { ACCENT: c, ACCENT_GLOW: `${c}26`, ACCENT_LIGHT: PURPLE_LIGHT, YELLOW };
 }
 
-/* ───────────────────────── SERVICE ICON MAP ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SERVICE ICON MAP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SERVICE_ICON_MAP: Record<string, any> = {
   infant: Baby,
@@ -75,7 +75,7 @@ function getServiceIcon(serviceName: string) {
   return Heart;
 }
 
-/* ───────────────────────── STOCK FALLBACK IMAGES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ STOCK FALLBACK IMAGES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const STOCK_HERO_POOL = ["https://images.unsplash.com/photo-1587616211892-f743fcca64f9?w=1400&q=80"];
 const STOCK_ABOUT_POOL = ["https://images.unsplash.com/photo-1544776193-352d25ca82cd?w=600&q=80"];
 const STOCK_PROJECTS = [
@@ -85,7 +85,7 @@ const STOCK_PROJECTS = [
   "https://images.unsplash.com/photo-1596464716127-f2a82984de30?w=800&q=80",
 ];
 
-/* ───────────────────────── FLOATING SPARKLE PARTICLES ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ FLOATING SPARKLE PARTICLES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function FloatingSparkles({ accent }: { accent: string }) {
   const particles = Array.from({ length: 22 }, (_, i) => ({
     id: i,
@@ -114,7 +114,7 @@ function FloatingSparkles({ accent }: { accent: string }) {
   );
 }
 
-/* ───────────────────────── SPARKLE / BUBBLE SVG PATTERN ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SPARKLE / BUBBLE SVG PATTERN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function SparklePattern({ opacity = 0.03, accent }: { opacity?: number; accent: string }) {
   const patternId = `sparklePatternV2-${accent.replace("#", "")}`;
   return (
@@ -136,7 +136,7 @@ function SparklePattern({ opacity = 0.03, accent }: { opacity?: number; accent: 
   );
 }
 
-/* ───────────────────────── WATER DROP SVG ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ WATER DROP SVG â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function WaterDropBackground({ opacity = 0.03, accent }: { opacity?: number; accent: string }) {
   return (
     <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity }} viewBox="0 0 1000 600" preserveAspectRatio="none">
@@ -149,7 +149,7 @@ function WaterDropBackground({ opacity = 0.03, accent }: { opacity?: number; acc
   );
 }
 
-/* ───────────────────────── GLASS CARD ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ GLASS CARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function GlassCard({ children, className = "", style }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) {
   return (
     <div className={`rounded-2xl border border-gray-200 bg-white/70 backdrop-blur-xl shadow-sm ${className}`} style={style}>
@@ -158,7 +158,7 @@ function GlassCard({ children, className = "", style }: { children: React.ReactN
   );
 }
 
-/* ───────────────────────── MAGNETIC BUTTON ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ MAGNETIC BUTTON â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function MagneticButton({ children, className = "", onClick, style, href }: {
   children: React.ReactNode; className?: string; onClick?: () => void; style?: React.CSSProperties; href?: string;
 }) {
@@ -191,7 +191,7 @@ function MagneticButton({ children, className = "", onClick, style, href }: {
   );
 }
 
-/* ───────────────────────── SHIMMER BORDER ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SHIMMER BORDER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function ShimmerBorder({ children, className = "", accent }: { children: React.ReactNode; className?: string; accent: string }) {
   return (
     <div className={`relative rounded-2xl p-[1px] overflow-hidden ${className}`}>
@@ -202,7 +202,7 @@ function ShimmerBorder({ children, className = "", accent }: { children: React.R
   );
 }
 
-/* ───────────────────────── ACCORDION ITEM ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ACCORDION ITEM â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AccordionItem({ question, answer, isOpen, onToggle }: { question: string; answer: string; isOpen: boolean; onToggle: () => void }) {
   return (
     <GlassCard className="overflow-hidden">
@@ -221,7 +221,7 @@ function AccordionItem({ question, answer, isOpen, onToggle }: { question: strin
   );
 }
 
-/* ───────────────────────── SECTION HEADER ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SECTION HEADER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function SectionHeader({ badge, title, subtitle, accent }: { badge: string; title: string; subtitle?: string; accent: string }) {
   return (
     <div className="text-center mb-16">
@@ -235,10 +235,10 @@ function SectionHeader({ badge, title, subtitle, accent }: { badge: string; titl
 }
 
 
-/* ═══════════════════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    MAIN COMPONENT
-   ═══════════════════════════════════════════════════════════════════ */
-/* ───────────────────────── ANIMATED SECTION ───────────────────────── */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ANIMATED SECTION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <motion.div
@@ -332,7 +332,7 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
     <main className="relative min-h-[100dvh] overflow-x-hidden" style={{ fontFamily: "Lato, system-ui, sans-serif", background: CHARCOAL, color: "#1c1917" }}>
       <FloatingSparkles accent={ACCENT} />
 
-      {/* ══════════════════ 1. NAV ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 1. NAV â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <nav className="fixed top-0 left-0 right-0 z-50">
         <div className="mx-auto max-w-7xl px-4 md:px-6 py-4">
           <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
@@ -369,7 +369,7 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </nav>
 
-      {/* ══════════════════ 2. HERO ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 2. HERO â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
 
         <div className="absolute inset-0">
@@ -417,7 +417,7 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 3. STATS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 3. STATS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden border-y" style={{ borderColor: `${ACCENT}1a` }}>
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #f5f0ff 0%, #faf9ff 100%)" }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
@@ -441,7 +441,7 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 4. WHY CHOOSE US / ABOUT ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 4. WHY CHOOSE US / ABOUT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9ff 0%, #f0ecff 50%, #faf9ff 100%)" }} />
         <WaterDropBackground opacity={0.02} accent={ACCENT} />
@@ -477,7 +477,7 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 5. SERVICES ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 5. SERVICES â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9ff 0%, #f5f0ff 50%, #faf9ff 100%)" }} />
         <SparklePattern accent={ACCENT} />
@@ -514,7 +514,7 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 6. PROCESS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 6. PROCESS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9ff 0%, #f5f0ff 50%, #faf9ff 100%)" }} />
         <SparklePattern opacity={0.025} accent={ACCENT} />
@@ -538,7 +538,7 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 7. GALLERY ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 7. GALLERY â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="gallery" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9ff 0%, #f0ecff 50%, #faf9ff 100%)" }} />
         <WaterDropBackground opacity={0.02} accent={ACCENT} />
@@ -564,7 +564,7 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 8. COMPARISON TABLE ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 8. COMPARISON TABLE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9ff 0%, #f5f0ff 50%, #faf9ff 100%)" }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
@@ -589,7 +589,7 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 8b. PRICING TIERS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 8b. PRICING TIERS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #fefefe 0%, #faf9ff 50%, #fefefe 100%)" }} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -609,7 +609,7 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 8c. AGE GROUP QUIZ ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 8c. AGE GROUP QUIZ â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9ff 0%, #f5f0ff 50%, #faf9ff 100%)" }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
@@ -633,7 +633,7 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 8d. VIDEO PLACEHOLDER ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 8d. VIDEO PLACEHOLDER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #fefefe 0%, #faf9ff 50%, #fefefe 100%)" }} />
         <div className="max-w-4xl mx-auto px-6 relative z-10">
@@ -648,7 +648,7 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 8e. SAFETY CERTIFICATIONS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 8e. SAFETY CERTIFICATIONS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9ff 0%, #f5f0ff 100%)" }} />
         <div className="max-w-5xl mx-auto px-6 relative z-10">
@@ -661,7 +661,7 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 9. TESTIMONIALS (with Google Reviews) ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 9. TESTIMONIALS (with Google Reviews) â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9ff 0%, #f5f0ff 50%, #faf9ff 100%)" }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
@@ -688,7 +688,7 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 10. FRESH HOME CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 10. FRESH HOME CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT}cc, ${ACCENT})` }} />
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='40' height='40' fill='none'/%3E%3Cpath d='M0 0L40 40M40 0L0 40' stroke='%23000' stroke-width='0.5'/%3E%3C/svg%3E\")" }} />
@@ -703,7 +703,7 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 10. CHECKLIST / WHAT WE CLEAN ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 10. CHECKLIST / WHAT WE CLEAN â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9ff 0%, #f0ecff 50%, #faf9ff 100%)" }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
@@ -721,7 +721,7 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 11. SERVICE AREAS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 11. SERVICE AREAS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9ff 0%, #f5f0ff 50%, #faf9ff 100%)" }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
@@ -737,7 +737,7 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 12. HOURS ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 12. HOURS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       {data.hours && (
         <section className="relative z-10 py-24 md:py-32 overflow-hidden">
           <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9ff 0%, #f0ecff 50%, #faf9ff 100%)" }} />
@@ -758,7 +758,7 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
       )}
 
       
-      {/* ══════════════════ MID-PAGE CTA ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• MID-PAGE CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-12 sm:py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15, ${ACCENT}08)` }} />
         <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
@@ -769,7 +769,7 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
             Ready to Get Started?
           </h2>
           <p className="text-slate-400 mb-6 text-sm sm:text-base">
-            Limited time — claim your free professional website today before it&apos;s offered to a competitor.
+            Limited time â€” claim your free professional website today before it&apos;s offered to a competitor.
           </p>
           <a
             href={`/claim/${data.id}`}
@@ -784,7 +784,7 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 13. FAQ ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 13. FAQ â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9ff 0%, #f5f0ff 50%, #faf9ff 100%)" }} />
         <WaterDropBackground opacity={0.02} accent={ACCENT} />
@@ -799,7 +799,7 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 14. CONTACT ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 14. CONTACT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="contact" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9ff 0%, #f0ecff 50%, #faf9ff 100%)" }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
@@ -838,7 +838,7 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
                   <div><label className="block text-sm text-[#6b7280] mb-1.5">First Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[#1c1917] placeholder-gray-400 focus:outline-none transition-colors text-sm" placeholder="John" /></div>
                   <div><label className="block text-sm text-[#6b7280] mb-1.5">Last Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[#1c1917] placeholder-gray-400 focus:outline-none transition-colors text-sm" placeholder="Doe" /></div>
                 </div>
-                <div><label className="block text-sm text-[#6b7280] mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[#1c1917] placeholder-gray-400 focus:outline-none transition-colors text-sm" placeholder="(555) 123-4567" /></div>
+                <div><label className="block text-sm text-[#6b7280] mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[#1c1917] placeholder-gray-400 focus:outline-none transition-colors text-sm" placeholder="(206) 287-2304" /></div>
                 <div>
                   <label className="block text-sm text-[#6b7280] mb-1.5">Program Interest</label>
                   <select className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-[#1c1917] focus:outline-none transition-colors text-sm">
@@ -856,7 +856,7 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ DAILY SCHEDULE ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• DAILY SCHEDULE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9ff 0%, #f5f0ff 50%, #faf9ff 100%)" }} />
         <SparklePattern opacity={0.012} accent={ACCENT} />
@@ -868,14 +868,14 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {[
-              { time: "7:00 – 8:30 AM", activity: "Arrival & Free Play", desc: "Warm welcome, breakfast snack, and free exploration in learning centers" },
-              { time: "8:30 – 10:00 AM", activity: "Circle Time & Lessons", desc: "Group activities, songs, calendar, weather, letter and number of the day" },
-              { time: "10:00 – 11:00 AM", activity: "Outdoor Play", desc: "Supervised playground time, gross motor activities, nature walks" },
-              { time: "11:00 – 12:00 PM", activity: "Lunch & Story Time", desc: "Nutritious lunch followed by read-aloud and quiet activities" },
-              { time: "12:00 – 2:00 PM", activity: "Nap / Quiet Time", desc: "Restful nap for younger children, quiet reading and puzzles for older" },
-              { time: "2:00 – 4:00 PM", activity: "Enrichment & Art", desc: "STEM projects, art, music, Spanish, and hands-on learning" },
-              { time: "4:00 – 5:30 PM", activity: "Snack & Free Play", desc: "Afternoon snack, outdoor play, and parent pickup" },
-              { time: "5:30 – 6:00 PM", activity: "Extended Care", desc: "Calm activities, cleanup, and late pickup available" },
+              { time: "7:00 â€“ 8:30 AM", activity: "Arrival & Free Play", desc: "Warm welcome, breakfast snack, and free exploration in learning centers" },
+              { time: "8:30 â€“ 10:00 AM", activity: "Circle Time & Lessons", desc: "Group activities, songs, calendar, weather, letter and number of the day" },
+              { time: "10:00 â€“ 11:00 AM", activity: "Outdoor Play", desc: "Supervised playground time, gross motor activities, nature walks" },
+              { time: "11:00 â€“ 12:00 PM", activity: "Lunch & Story Time", desc: "Nutritious lunch followed by read-aloud and quiet activities" },
+              { time: "12:00 â€“ 2:00 PM", activity: "Nap / Quiet Time", desc: "Restful nap for younger children, quiet reading and puzzles for older" },
+              { time: "2:00 â€“ 4:00 PM", activity: "Enrichment & Art", desc: "STEM projects, art, music, Spanish, and hands-on learning" },
+              { time: "4:00 â€“ 5:30 PM", activity: "Snack & Free Play", desc: "Afternoon snack, outdoor play, and parent pickup" },
+              { time: "5:30 â€“ 6:00 PM", activity: "Extended Care", desc: "Calm activities, cleanup, and late pickup available" },
             ].map((s) => (
               <div key={s.time} className="flex items-start gap-4 rounded-2xl border border-purple-100 p-4" style={{ background: "rgba(255,255,255,0.7)" }}>
                 <span className="text-xs font-mono font-semibold shrink-0 w-28 pt-0.5" style={{ color: ACCENT }}>{s.time}</span>
@@ -889,7 +889,7 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ CURRICULUM DETAIL ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• CURRICULUM DETAIL â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #f5f0ff 0%, #faf9ff 100%)" }} />
         <SparklePattern opacity={0.01} accent={ACCENT} />
@@ -921,7 +921,7 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ PARENT COMMUNICATION ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• PARENT COMMUNICATION â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}15 0%, #faf9ff 50%, ${ACCENT}08 100%)` }} />
         <SparklePattern opacity={0.02} accent={ACCENT} />
@@ -944,7 +944,7 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ WHY CHOOSE US ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• WHY CHOOSE US â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #f5f0ff 0%, #faf9ff 100%)" }} />
         <SparklePattern opacity={0.01} accent={ACCENT} />
@@ -969,7 +969,7 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ CERTIFICATIONS ROW ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• CERTIFICATIONS ROW â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="relative z-10 py-12 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9ff 0%, #f5f0ff 100%)" }} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -994,7 +994,7 @@ export default function V2DaycarePreview({ data }: { data: GeneratedSiteData }) 
         </div>
       </section>
 
-      {/* ══════════════════ 15. FOOTER ══════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• 15. FOOTER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <footer className="relative z-10 border-t border-gray-100 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #faf9ff 0%, #f5f0ff 100%)" }} />
         <SparklePattern opacity={0.015} accent={ACCENT} />

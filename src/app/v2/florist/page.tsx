@@ -359,7 +359,7 @@ export default function V2FloristPage() {
                 Shop Arrangements <ArrowRight size={18} weight="bold" />
               </MagneticButton>
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-[#1c1917] border border-gray-200 flex items-center gap-2 cursor-pointer">
-                <Phone size={18} weight="duotone" /> (555) 876-5432
+                <Phone size={18} weight="duotone" /> (206) 876-5432
               </MagneticButton>
             </motion.div>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ ...spring, delay: 0.95 }} className="flex flex-wrap gap-3">
@@ -863,7 +863,7 @@ export default function V2FloristPage() {
               <h3 className="text-xl font-semibold text-[#1c1917] mb-6">Visit Our Studio</h3>
               <div className="space-y-4">
                 <div className="flex items-start gap-4"><MapPin size={20} weight="duotone" style={{ color: ROSE }} className="mt-0.5 shrink-0" /><div><p className="text-sm font-semibold text-[#1c1917]">Studio</p><p className="text-sm text-[#6b7280]">128 Bloom Lane<br />Savannah, GA 31401</p></div></div>
-                <div className="flex items-start gap-4"><Phone size={20} weight="duotone" style={{ color: ROSE }} className="mt-0.5 shrink-0" /><div><p className="text-sm font-semibold text-[#1c1917]">Phone</p><p className="text-sm text-[#6b7280]">(555) 876-5432</p></div></div>
+                <div className="flex items-start gap-4"><Phone size={20} weight="duotone" style={{ color: ROSE }} className="mt-0.5 shrink-0" /><div><p className="text-sm font-semibold text-[#1c1917]">Phone</p><p className="text-sm text-[#6b7280]">(206) 876-5432</p></div></div>
                 <div className="flex items-start gap-4"><Clock size={20} weight="duotone" style={{ color: ROSE }} className="mt-0.5 shrink-0" /><div><p className="text-sm font-semibold text-[#1c1917]">Hours</p><p className="text-sm text-[#6b7280]">Monday - Saturday: 8:00 AM - 6:00 PM<br />Sunday: 10:00 AM - 4:00 PM<br />Holiday hours may vary</p></div></div>
                 <div className="flex items-start gap-4"><Heart size={20} weight="duotone" style={{ color: ROSE }} className="mt-0.5 shrink-0" /><div><p className="text-sm font-semibold text-[#1c1917]">Wedding Consultations</p><p className="text-sm text-[#6b7280]">By appointment, evenings available<br />Complimentary for events over $2,000</p></div></div>
               </div>
@@ -965,7 +965,7 @@ export default function V2FloristPage() {
                 <CalendarCheck size={20} weight="duotone" /> Order Now
               </MagneticButton>
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-[#1c1917] border border-gray-200 inline-flex items-center gap-2 cursor-pointer">
-                <Phone size={18} weight="duotone" /> (555) 876-5432
+                <Phone size={18} weight="duotone" /> (206) 876-5432
               </MagneticButton>
             </div>
             <div className="mt-8 grid grid-cols-3 gap-6 max-w-xl mx-auto">

@@ -1092,7 +1092,7 @@ export default function V2TutoringShowcase() {
                 </div>
                 <div>
                   <label className="block text-sm text-slate-500 mb-1.5 font-medium">Phone</label>
-                  <input type="tel" className="w-full px-4 py-3 rounded-xl border text-sm focus:outline-none focus:ring-2" style={{ borderColor: `${PURPLE}20`, ["--tw-ring-color" as string]: PURPLE } as React.CSSProperties} placeholder="(555) 123-4567" />
+                  <input type="tel" className="w-full px-4 py-3 rounded-xl border text-sm focus:outline-none focus:ring-2" style={{ borderColor: `${PURPLE}20`, ["--tw-ring-color" as string]: PURPLE } as React.CSSProperties} placeholder="(206) 287-2304" />
                 </div>
                 <div>
                   <label className="block text-sm text-slate-500 mb-1.5 font-medium">Subject Needed</label>

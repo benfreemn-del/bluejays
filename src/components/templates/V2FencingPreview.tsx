@@ -23,7 +23,7 @@ function getAccent(accentColor?: string) { const c = accentColor || DEFAULT_STON
 
 // Rotating palette for service/material card tiles so the grid feels
 // alive instead of monochrome. Primary brand accent (ACCENT) still
-// drives section headers, CTAs, borders — palette only applies to
+// drives section headers, CTAs, borders â€” palette only applies to
 // iconography and secondary highlights.
 const PALETTE = ["#78716c", "#92400e", "#15803d", "#6b7f5e", "#d2b48c", "#57534e"];
 const pickPaletteColor = (i: number) => PALETTE[i % PALETTE.length];
@@ -135,7 +135,7 @@ function AnimatedSection({ children, className = "" }: { children: React.ReactNo
   );
 }
 
-/* ═══════════════════════════════════════════════════ */
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 const FENCE_MATERIALS = [
   { name: "Wood / Cedar", icon: TreeStructure, desc: "Classic warmth and natural beauty. Cedar resists rot and insects naturally.", warranty: "5-Year", price: "$$" },
@@ -196,7 +196,7 @@ export default function V2FencingPreview({ data }: { data: GeneratedSiteData }) 
     { q: "Do I need a permit for a new fence?", a: "Permit requirements vary by municipality. We handle all permit research and applications as part of our service, so you do not have to worry about compliance." },
     { q: "How long does fence installation take?", a: "Most residential fencing projects take 1-3 days depending on the property size and fence type. We provide an estimated timeline with every quote." },
     { q: "Do you offer fence repair services?", a: `Yes! ${data.businessName} handles all types of fence repairs including post replacement, panel repair, gate adjustments, and storm damage restoration.` },
-    { q: "What warranty do you offer?", a: "We provide a workmanship warranty on every installation, plus manufacturer warranties on materials. Specific coverage varies by material type — ask us for details." },
+    { q: "What warranty do you offer?", a: "We provide a workmanship warranty on every installation, plus manufacturer warranties on materials. Specific coverage varies by material type â€” ask us for details." },
     { q: "Can you remove my old fence?", a: "Absolutely. Old fence removal and disposal is included in most installation quotes. We handle everything from start to finish." },
     { q: "How do I maintain my fence?", a: "Wood fences benefit from staining or sealing every 2-3 years. Vinyl fences just need occasional washing. We provide a detailed maintenance guide with every installation." },
     { q: "Do you install gates and hardware?", a: `Yes, ${data.businessName} installs single gates, double gates, sliding gates, and automatic gate openers. We match your gate style to your fence perfectly.` },
@@ -251,7 +251,7 @@ export default function V2FencingPreview({ data }: { data: GeneratedSiteData }) 
           <div className="space-y-8 rounded-2xl bg-black/50 backdrop-blur-md p-6 md:p-8 border border-white/8">
             <div>
               <p className="text-sm uppercase tracking-widest mb-4" style={{ color: ACCENT }}>Professional Fencing Contractors</p>
-              <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 20px rgba(0,0,0,0.8)" }}>{data.tagline || `${data.businessName} — Quality Fencing`}</h1>
+              <h1 className="text-3xl md:text-6xl tracking-tighter leading-none font-bold text-white" style={{ textShadow: "0 2px 20px rgba(0,0,0,0.8)" }}>{data.tagline || `${data.businessName} â€” Quality Fencing`}</h1>
             </div>
             <p className="text-lg text-slate-400 max-w-md leading-relaxed">{(() => { const t = data.about; if (t.length <= 180) return t; const dot = t.indexOf('.', 80); return dot > 0 && dot < 220 ? t.slice(0, dot + 1) : t.slice(0, 180).trim() + '...'; })()}</p>
             <div className="flex flex-wrap gap-4">
@@ -455,7 +455,7 @@ export default function V2FencingPreview({ data }: { data: GeneratedSiteData }) 
         <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
           <ShieldCheck size={56} weight="fill" className="mx-auto mb-6 text-white/90" />
           <h2 className="text-3xl md:text-5xl font-black tracking-tight text-white mb-4">Warranty-Backed Quality</h2>
-          <p className="text-lg text-white/80 mb-8 max-w-xl mx-auto">Every fence we install comes with our workmanship warranty plus manufacturer material guarantees — from 5 years to lifetime coverage.</p>
+          <p className="text-lg text-white/80 mb-8 max-w-xl mx-auto">Every fence we install comes with our workmanship warranty plus manufacturer material guarantees â€” from 5 years to lifetime coverage.</p>
           <div className="flex flex-wrap justify-center gap-4 mb-8">
             {["Workmanship Guarantee", "Material Warranty", "Post Depth Standard", "Storm Damage Support"].map((item) => (
               <span key={item} className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-white/15 text-white border border-white/20">
@@ -822,7 +822,7 @@ export default function V2FencingPreview({ data }: { data: GeneratedSiteData }) 
                   <div><label className="block text-sm text-slate-400 mb-1.5">First Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="John" /></div>
                   <div><label className="block text-sm text-slate-400 mb-1.5">Last Name</label><input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="Doe" /></div>
                 </div>
-                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(555) 123-4567" /></div>
+                <div><label className="block text-sm text-slate-400 mb-1.5">Phone</label><input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(206) 287-2304" /></div>
                 <div><label className="block text-sm text-slate-400 mb-1.5">Fence Type</label><select className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none text-sm"><option value="" className="bg-neutral-900">Select a type</option>{data.services.map((s) => <option key={s.name} value={s.name.toLowerCase().replace(/\s+/g, "-")} className="bg-neutral-900">{s.name}</option>)}</select></div>
                 <div><label className="block text-sm text-slate-400 mb-1.5">Project Details</label><textarea rows={3} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm resize-none" placeholder="Describe your fencing project..." /></div>
                 <MagneticButton className="w-full py-4 rounded-xl text-base font-semibold text-white flex items-center justify-center gap-2 cursor-pointer" style={{ background: ACCENT } as React.CSSProperties}>Send Request <ArrowRight size={18} weight="bold" /></MagneticButton>

@@ -105,7 +105,7 @@ const STOCK_GALLERY = [
   "https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?w=600&q=80",
 ];
 
-/* ── decorative backgrounds ── */
+/* â”€â”€ decorative backgrounds â”€â”€ */
 
 function FloatingParticles({ accent }: { accent: string }) {
   const particles = Array.from({ length: 18 }, (_, i) => ({
@@ -236,7 +236,7 @@ function GearTrail({
   );
 }
 
-/* ── shared UI components ── */
+/* â”€â”€ shared UI components â”€â”€ */
 
 function GlassCard({
   children,
@@ -430,7 +430,7 @@ function SectionHeader({
   );
 }
 
-/* ── constants ── */
+/* â”€â”€ constants â”€â”€ */
 
 const DOOR_STYLES = [
   {
@@ -593,7 +593,7 @@ const PRICING_TIERS = [
   },
 ];
 
-/* ── main component ── */
+/* â”€â”€ main component â”€â”€ */
 
 export default function V2GarageDoorPreview({
   data,
@@ -694,21 +694,21 @@ export default function V2GarageDoorPreview({
   const quizOptions = [
     {
       label: "Door Won't Open/Close",
-      emoji: "🚨",
+      emoji: "ðŸš¨",
       color: "#ef4444",
       result:
         "This could be a spring, cable, or track issue. Call us for same-day emergency repair!",
     },
     {
       label: "Noisy or Slow Door",
-      emoji: "🔧",
+      emoji: "ðŸ”§",
       color: "#f59e0b",
       result:
         "Likely needs lubrication, roller replacement, or opener adjustment. Schedule a tune-up!",
     },
     {
       label: "Want a New Door",
-      emoji: "🏠",
+      emoji: "ðŸ ",
       color: "#22c55e",
       result:
         "Great choice! A new door boosts curb appeal and home value. Book a free design consultation!",
@@ -722,7 +722,7 @@ export default function V2GarageDoorPreview({
     >
       <FloatingParticles accent={ACCENT} />
 
-      {/* ── NAV ── */}
+      {/* â”€â”€ NAV â”€â”€ */}
       <nav className="fixed top-0 left-0 right-0 z-50">
         <div className="mx-auto max-w-7xl px-4 md:px-6 py-4">
           <GlassCard className="flex items-center justify-between px-4 md:px-6 py-3">
@@ -785,7 +785,7 @@ export default function V2GarageDoorPreview({
         </div>
       </nav>
 
-      {/* ── 1. HERO ── */}
+      {/* â”€â”€ 1. HERO â”€â”€ */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10 overflow-hidden">
         <div className="absolute inset-0">
           <img src={heroImage} alt={data.businessName} className="w-full h-full object-cover object-center" />
@@ -861,7 +861,7 @@ export default function V2GarageDoorPreview({
         </div>
       </section>
 
-      {/* ── 2. EMERGENCY SERVICE INDICATOR ── */}
+      {/* â”€â”€ 2. EMERGENCY SERVICE INDICATOR â”€â”€ */}
       <section className="relative z-10 py-6 overflow-hidden border-y" style={{ borderColor: `${ACCENT}1a` }}>
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #120e08 0%, #1a1a1a 100%)" }} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -887,7 +887,7 @@ export default function V2GarageDoorPreview({
         </div>
       </section>
 
-      {/* ── 3. STATS BAR ── */}
+      {/* â”€â”€ 3. STATS BAR â”€â”€ */}
       <section className="relative z-10 py-16 overflow-hidden border-b" style={{ borderColor: `${ACCENT}1a` }}>
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #120e08 100%)" }} />
         <IndustrialGrid opacity={0.02} accent={ACCENT} />
@@ -910,7 +910,7 @@ export default function V2GarageDoorPreview({
         </div>
       </section>
 
-      {/* ── 4. SERVICES (Repair Types) ── */}
+      {/* â”€â”€ 4. SERVICES (Repair Types) â”€â”€ */}
       <section id="services" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a0e18 50%, #1a1a1a 100%)" }} />
         <IndustrialGrid accent={ACCENT} />
@@ -941,12 +941,12 @@ export default function V2GarageDoorPreview({
         </div>
       </section>
 
-      {/* ── 5. SPRING & OPENER REPAIR FOCUS ── */}
+      {/* â”€â”€ 5. SPRING & OPENER REPAIR FOCUS â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #120e18 50%, #1a1a1a 100%)" }} />
         <GearTrail opacity={0.02} accent={ACCENT} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <SectionHeader badge="Repair Specialists" title="Spring & Opener Experts" subtitle="The two most common garage door failures — and we fix both same-day." accent={ACCENT} />
+          <SectionHeader badge="Repair Specialists" title="Spring & Opener Experts" subtitle="The two most common garage door failures â€” and we fix both same-day." accent={ACCENT} />
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {REPAIR_TYPES.map((repair, i) => {
               const Icon = repair.icon;
@@ -970,7 +970,7 @@ export default function V2GarageDoorPreview({
         </div>
       </section>
 
-      {/* ── 6. DOOR STYLES GALLERY ── */}
+      {/* â”€â”€ 6. DOOR STYLES GALLERY â”€â”€ */}
       <section id="doors" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a0e18 50%, #1a1a1a 100%)" }} />
         <IndustrialGrid opacity={0.02} accent={ACCENT} />
@@ -992,7 +992,7 @@ export default function V2GarageDoorPreview({
         </div>
       </section>
 
-      {/* ── 7. MATERIAL COMPARISON ── */}
+      {/* â”€â”€ 7. MATERIAL COMPARISON â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #120e18 50%, #1a1a1a 100%)" }} />
         <GearTrail opacity={0.02} accent={ACCENT} />
@@ -1027,7 +1027,7 @@ export default function V2GarageDoorPreview({
         </div>
       </section>
 
-      {/* ── 8. ABOUT ── */}
+      {/* â”€â”€ 8. ABOUT â”€â”€ */}
       <section id="about" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a0e18 50%, #1a1a1a 100%)" }} />
         <IndustrialGrid opacity={0.02} accent={ACCENT} />
@@ -1067,7 +1067,7 @@ export default function V2GarageDoorPreview({
         </div>
       </section>
 
-      {/* ── 9. WARRANTY DISPLAY ── */}
+      {/* â”€â”€ 9. WARRANTY DISPLAY â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #120e18 50%, #1a1a1a 100%)" }} />
         <GearTrail opacity={0.02} accent={ACCENT} />
@@ -1088,7 +1088,7 @@ export default function V2GarageDoorPreview({
         </div>
       </section>
 
-      {/* ── 10. PRICING ── */}
+      {/* â”€â”€ 10. PRICING â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a0e18 50%, #1a1a1a 100%)" }} />
         <IndustrialGrid opacity={0.02} accent={ACCENT} />
@@ -1124,7 +1124,7 @@ export default function V2GarageDoorPreview({
         </div>
       </section>
 
-      {/* ── 11. PROCESS ── */}
+      {/* â”€â”€ 11. PROCESS â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #120e18 50%, #1a1a1a 100%)" }} />
         <GearTrail opacity={0.02} accent={ACCENT} />
@@ -1149,7 +1149,7 @@ export default function V2GarageDoorPreview({
         </div>
       </section>
 
-      {/* ── 12. GALLERY ── */}
+      {/* â”€â”€ 12. GALLERY â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a0e18 50%, #1a1a1a 100%)" }} />
         <IndustrialGrid opacity={0.02} accent={ACCENT} />
@@ -1172,7 +1172,7 @@ export default function V2GarageDoorPreview({
         </div>
       </section>
 
-      {/* ── 13. VIDEO PLACEHOLDER ── */}
+      {/* â”€â”€ 13. VIDEO PLACEHOLDER â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #120e18 50%, #1a1a1a 100%)" }} />
         <div className="max-w-4xl mx-auto px-6 relative z-10">
@@ -1192,7 +1192,7 @@ export default function V2GarageDoorPreview({
         </div>
       </section>
 
-      {/* ── 14. GOOGLE REVIEWS + TESTIMONIALS ── */}
+      {/* â”€â”€ 14. GOOGLE REVIEWS + TESTIMONIALS â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a0e18 50%, #1a1a1a 100%)" }} />
         <IndustrialGrid opacity={0.02} accent={ACCENT} />
@@ -1230,7 +1230,7 @@ export default function V2GarageDoorPreview({
         </div>
       </section>
 
-      {/* ── 15. COMPETITOR COMPARISON ── */}
+      {/* â”€â”€ 15. COMPETITOR COMPARISON â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #120e18 50%, #1a1a1a 100%)" }} />
         <GearTrail opacity={0.02} accent={ACCENT} />
@@ -1261,7 +1261,7 @@ export default function V2GarageDoorPreview({
         </div>
       </section>
 
-      {/* ── 16. GARAGE DOOR QUIZ ── */}
+      {/* â”€â”€ 16. GARAGE DOOR QUIZ â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a0e18 50%, #1a1a1a 100%)" }} />
         <IndustrialGrid opacity={0.02} accent={ACCENT} />
@@ -1301,7 +1301,7 @@ export default function V2GarageDoorPreview({
         </div>
       </section>
 
-      {/* ── 17. CERTIFICATIONS ── */}
+      {/* â”€â”€ 17. CERTIFICATIONS â”€â”€ */}
       <section className="relative z-10 py-16 overflow-hidden border-y" style={{ borderColor: `${ACCENT}1a` }}>
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #120e08 0%, #1a1a1a 100%)" }} />
         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -1315,7 +1315,7 @@ export default function V2GarageDoorPreview({
         </div>
       </section>
 
-      {/* ── 18. MID-PAGE CTA ── */}
+      {/* â”€â”€ 18. MID-PAGE CTA â”€â”€ */}
       <section className="relative z-10 py-20 overflow-hidden">
         <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT}cc, ${ACCENT})` }} />
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='40' height='40' fill='none'/%3E%3Cpath d='M0 0L40 40M40 0L0 40' stroke='%23000' stroke-width='0.5'/%3E%3C/svg%3E\")" }} />
@@ -1329,7 +1329,7 @@ export default function V2GarageDoorPreview({
         </div>
       </section>
 
-      {/* ── 19. SERVICE AREA ── */}
+      {/* â”€â”€ 19. SERVICE AREA â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #120e18 50%, #1a1a1a 100%)" }} />
         <IndustrialGrid opacity={0.02} accent={ACCENT} />
@@ -1360,7 +1360,7 @@ export default function V2GarageDoorPreview({
         </div>
       </section>
 
-      {/* ── 20. HOURS ── */}
+      {/* â”€â”€ 20. HOURS â”€â”€ */}
       {data.hours && (
         <section className="relative z-10 py-24 md:py-32 overflow-hidden">
           <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a0e18 50%, #1a1a1a 100%)" }} />
@@ -1379,7 +1379,7 @@ export default function V2GarageDoorPreview({
         </section>
       )}
 
-      {/* ── 21. FAQ ── */}
+      {/* â”€â”€ 21. FAQ â”€â”€ */}
       <section className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #120e18 50%, #1a1a1a 100%)" }} />
         <IndustrialGrid opacity={0.02} accent={ACCENT} />
@@ -1393,7 +1393,7 @@ export default function V2GarageDoorPreview({
         </div>
       </section>
 
-      {/* ── 22. CONTACT ── */}
+      {/* â”€â”€ 22. CONTACT â”€â”€ */}
       <section id="contact" className="relative z-10 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #120e18 50%, #1a1a1a 100%)" }} />
         <IndustrialGrid opacity={0.02} accent={ACCENT} />
@@ -1450,7 +1450,7 @@ export default function V2GarageDoorPreview({
                 </div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-1.5">Phone</label>
-                  <input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(555) 123-4567" />
+                  <input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white placeholder-slate-500 focus:outline-none text-sm" placeholder="(206) 287-2304" />
                 </div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-1.5">Service Needed</label>
@@ -1474,7 +1474,7 @@ export default function V2GarageDoorPreview({
         </div>
       </section>
 
-      {/* ── 23. GUARANTEE ── */}
+      {/* â”€â”€ 23. GUARANTEE â”€â”€ */}
       <section className="relative z-10 py-16 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0a0e08 100%)" }} />
         <IndustrialGrid opacity={0.015} accent={ACCENT} />
@@ -1498,7 +1498,7 @@ export default function V2GarageDoorPreview({
         </div>
       </section>
 
-      {/* ── FOOTER ── */}
+      {/* â”€â”€ FOOTER â”€â”€ */}
       <footer className="relative z-10 border-t border-white/8 py-10 overflow-hidden">
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #111 100%)" }} />
         <IndustrialGrid opacity={0.015} accent={ACCENT} />

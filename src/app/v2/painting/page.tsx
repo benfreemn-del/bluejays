@@ -433,11 +433,12 @@ export default function V2PaintingPage() {
                 Get Free Estimate <ArrowRight size={18} weight="bold" />
               </MagneticButton>
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 flex items-center gap-2 cursor-pointer">
-                <Phone size={18} weight="duotone" /> (555) 743-2190
+                <Phone size={18} weight="duotone" /> (206) 743-2190
               </MagneticButton>
             </motion.div>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ ...spring, delay: 1 }} className="flex flex-wrap gap-3">
-              <span className="px-4 py-2 rounded-full text-xs font-semibold text-white flex items-center gap-2" style={{ background: "rgba(255,255,255,0.05)", border: `1px solid ${PURPLE}50` }}><ShieldCheck size={14} weight="duotone" style={{ color: PURPLE_LIGHT }} />Licensed &amp; Insured</span>
+              {/* fictional license — replace per-prospect on signup */}
+              <span className="px-4 py-2 rounded-full text-xs font-semibold text-white flex items-center gap-2" style={{ background: "rgba(255,255,255,0.05)", border: `1px solid ${PURPLE}50` }}><ShieldCheck size={14} weight="duotone" style={{ color: PURPLE_LIGHT }} />WA L&amp;I #PAINTPC783LM</span>
               <span className="px-4 py-2 rounded-full text-xs font-semibold text-white flex items-center gap-2" style={{ background: "rgba(255,255,255,0.05)", border: `1px solid ${SPLASH_PINK}50` }}><Star size={14} weight="fill" style={{ color: SPLASH_PINK }} />4.9-Star Rated</span>
               <span className="px-4 py-2 rounded-full text-xs font-semibold text-white flex items-center gap-2" style={{ background: "rgba(255,255,255,0.05)", border: `1px solid ${SPLASH_BLUE}50` }}><CheckCircle size={14} weight="duotone" style={{ color: SPLASH_BLUE }} />Free Color Consultation</span>
               <span className="px-4 py-2 rounded-full text-xs font-semibold text-white flex items-center gap-2" style={{ background: "rgba(255,255,255,0.05)", border: `1px solid ${PURPLE}50` }}><ShieldCheck size={14} weight="duotone" style={{ color: PURPLE_LIGHT }} />5-Year Warranty</span>
@@ -964,10 +965,10 @@ export default function V2PaintingPage() {
                 <CalendarCheck size={20} weight="duotone" /> Book Estimate
               </MagneticButton>
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white border border-white/15 inline-flex items-center gap-2 cursor-pointer">
-                <Phone size={18} weight="duotone" /> (555) 743-2190
+                <Phone size={18} weight="duotone" /> (206) 743-2190
               </MagneticButton>
             </div>
-            <p className="mt-6 text-xs text-slate-500">Licensed &bull; Insured &bull; EPA Lead-Safe &bull; PDCA Member &bull; 5-Year Warranty</p>
+            <p className="mt-6 text-xs text-slate-500">WA L&amp;I #PAINTPC783LM &bull; Insured &bull; EPA Lead-Safe &bull; PDCA Member &bull; 5-Year Warranty</p>
             <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto">
               {[
                 { label: "Homes Painted", value: "2,400+" },
