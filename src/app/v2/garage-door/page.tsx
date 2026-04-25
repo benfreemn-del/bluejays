@@ -234,7 +234,7 @@ export default function V2GarageDoorPage() {
       {/* ─── 1. HERO ─── */}
       <section className="relative min-h-[100dvh] flex items-center pt-24 z-10">
         <div className="absolute inset-0 z-0">
-          <img src="https://images.unsplash.com/photo-1486325212027-8081e485255e?w=1600&q=80" alt="" className="w-full h-full object-cover object-center" />
+          <img src="https://images.unsplash.com/photo-1605276373954-0c4a0dac5b12?w=1600&q=80" alt="" className="w-full h-full object-cover object-center" />
           <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${BG}ee 0%, ${BG}dd 50%, ${BG}aa 100%)` }} />
         </div>
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -357,11 +357,11 @@ export default function V2GarageDoorPage() {
           <motion.div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
             {[
               "https://images.unsplash.com/photo-1675747158954-4a32e28812c0?w=600&q=80",
-              "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=600&q=80",
-              "https://images.unsplash.com/photo-1600577916048-804c9191e36c?w=600&q=80",
-              "https://images.unsplash.com/photo-1599809275671-b5942cabc7a2?w=600&q=80",
-              "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=600&q=80",
-              "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=600&q=80",
+              "https://images.unsplash.com/photo-1601835991665-66595682d6c5?w=600&q=80",
+              "https://images.unsplash.com/photo-1750366886806-f3eb0a257dc3?w=600&q=80",
+              "https://images.unsplash.com/photo-1682207068315-c28cf5108964?w=600&q=80",
+              "https://images.unsplash.com/photo-1597025356469-4d0aee590d69?w=600&q=80",
+              "https://plus.unsplash.com/premium_photo-1682126025756-f93ee60f5275?w=600&q=80",
             ].map((img, i) => (
               <motion.div key={i} variants={fadeUp} className="aspect-[4/3] rounded-xl overflow-hidden">
                 <motion.img src={img} alt={`Garage door project ${i + 1}`} className="w-full h-full object-cover" whileHover={{ scale: 1.05 }} transition={{ duration: 0.4 }} />
@@ -466,10 +466,10 @@ export default function V2GarageDoorPage() {
           </div>
           <motion.div className="grid grid-cols-2 md:grid-cols-4 gap-4" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true }}>
             {[
-              { src: "https://images.unsplash.com/photo-1558036117-15d82a90b9b1?w=600&q=80", label: "Carriage House" },
-              { src: "https://images.unsplash.com/photo-1572120360610-d971b9d7767c?w=600&q=80", label: "Modern Full-View" },
+              { src: "https://images.unsplash.com/photo-1745953130057-7166711b141f?w=600&q=80", label: "Carriage House" },
+              { src: "https://plus.unsplash.com/premium_photo-1682126037910-101ee39d05f8?w=600&q=80", label: "Insulated Steel" },
               { src: "https://images.unsplash.com/photo-1605146769289-440113cc3d00?w=600&q=80", label: "Raised Panel" },
-              { src: "https://images.unsplash.com/photo-1600566753151-384129cf4e3e?w=600&q=80", label: "Custom Woodgrain" },
+              { src: "https://images.unsplash.com/photo-1648941416478-319d8c2d06d4?w=600&q=80", label: "Custom Woodgrain" },
             ].map((door, i) => (
               <motion.div key={i} variants={fadeUp} whileHover={{ scale: 1.03 }} className="rounded-2xl overflow-hidden aspect-square relative group cursor-pointer">
                 <img src={door.src} alt={door.label} className="w-full h-full object-cover" />
@@ -639,7 +639,7 @@ export default function V2GarageDoorPage() {
             <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white"><WordReveal text="Watch Our Technicians Work" /></h2>
           </div>
           <div className="relative rounded-2xl overflow-hidden aspect-video group cursor-pointer">
-            <img src="https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?w=1600&q=80" alt="Technician workshop tour" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <img src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1600&q=80" alt="Technician workshop tool rack" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-black/20" />
             <div className="absolute inset-0 flex items-center justify-center">
               <motion.div className="w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center shadow-2xl" style={{ background: ACCENT }} animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}>
@@ -943,7 +943,7 @@ export default function V2GarageDoorPage() {
               <p className="mt-6 text-xs text-slate-500">Annual tune-ups: <span className="font-bold" style={{ color: ACCENT_LIGHT }}>$99 flat rate</span>. Includes written condition report.</p>
             </div>
             <div className="relative rounded-2xl overflow-hidden aspect-[4/5]">
-              <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=900&q=80" alt="Annual garage door tune-up service" className="w-full h-full object-cover" />
+              <img src="https://plus.unsplash.com/premium_photo-1682126160668-19565ef54e42?w=900&q=80" alt="Technician servicing a garage door during annual tune-up" className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
               <div className="absolute bottom-6 left-6 right-6">
                 <p className="text-xs uppercase tracking-widest" style={{ color: ACCENT_LIGHT }}>Preventive Maintenance</p>
