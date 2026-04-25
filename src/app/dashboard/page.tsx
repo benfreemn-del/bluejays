@@ -8,6 +8,7 @@ import { CATEGORY_CONFIG } from "@/lib/types";
 import DashboardStats from "@/components/dashboard/DashboardStats";
 import StatusTransitionsToday from "@/components/dashboard/StatusTransitionsToday";
 import PendingRepliesPanel from "@/components/dashboard/PendingRepliesPanel";
+import LossReasonsPanel from "@/components/dashboard/LossReasonsPanel";
 import ProspectTable from "@/components/dashboard/ProspectTable";
 import ScoutModal from "@/components/dashboard/ScoutModal";
 import ProspectDetail from "@/components/dashboard/ProspectDetail";
@@ -337,6 +338,11 @@ export default function DashboardPage() {
             />
 
             <StatusTransitionsToday />
+
+            {/* Loss Reasons — why prospects pass. Wave 5c win/loss feedback
+                loop. See Rule 45 in CLAUDE.md. Renders an empty state until
+                the AI starts capturing probe responses. */}
+            <LossReasonsPanel />
 
             <div className="flex gap-2">
               <button

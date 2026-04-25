@@ -181,6 +181,74 @@ async function getAiResponse(prompt: string, prospectId?: string): Promise<strin
 }
 
 // ═══════════════════════════════════════════════════════════════
+// WIN/LOSS FEEDBACK LOOP — see Rule 45 in CLAUDE.md
+//
+// Every "not_interested" farewell MUST include a soft probe sentence
+// asking WHY (price/timing/design). Three randomized phrasings rotate
+// deterministically by prospect.id so the same prospect always gets
+// the same wording across multiple touches (consistency) but the AI
+// pattern is hard to detect across the prospect base.
+// ═══════════════════════════════════════════════════════════════
+
+const LOSS_PROBE_PHRASINGS = [
+  "Genuinely curious — was it the price, the timing, or did the design just not click? Helps me get better.",
+  "Out of curiosity — what tipped you against it? Price, timing, or something about the design? No pressure to reply.",
+  "Quick ask if you're up for it — was it price, timing, or did the preview just not feel right? Saves me from making the same mistake twice.",
+];
+
+/** Hash a string into a non-negative integer for deterministic indexing. */
+function hashString(str: string): number {
+  let h = 0;
+  for (let i = 0; i < str.length; i++) {
+    h = (h << 5) - h + str.charCodeAt(i);
+    h |= 0;
+  }
+  return Math.abs(h);
+}
+
+/**
+ * Pick the loss-probe sentence for a prospect deterministically.
+ * Same prospect always sees the same phrasing across multiple touches.
+ */
+export function getLossProbeSentence(prospectId: string): string {
+  const idx = hashString(prospectId) % LOSS_PROBE_PHRASINGS.length;
+  return LOSS_PROBE_PHRASINGS[idx];
+}
+
+/**
+ * True if the body already contains one of the probe phrasings (or
+ * obvious paraphrasing) — used to avoid double-appending if the AI
+ * happens to write a similar question itself.
+ */
+function farewellAlreadyHasProbe(body: string): boolean {
+  const lower = body.toLowerCase();
+  // Match any of the probe phrasings verbatim
+  for (const phrase of LOSS_PROBE_PHRASINGS) {
+    if (lower.includes(phrase.toLowerCase().substring(0, 40))) return true;
+  }
+  // Heuristic: if AI organically asked about price/timing/design + "what"
+  if (
+    /(what|why).{0,40}(price|cost|timing|design)/i.test(body) ||
+    /(was it|tipped you|what stood)/i.test(body)
+  ) {
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Append the loss-probe sentence to a not_interested farewell unless it
+ * already contains one. Idempotent.
+ */
+function appendLossProbe(reply: string, prospectId: string): string {
+  if (!reply) return reply;
+  if (farewellAlreadyHasProbe(reply)) return reply;
+  const probe = getLossProbeSentence(prospectId);
+  // Two newlines so it lands as its own paragraph in email + SMS
+  return `${reply.trim()}\n\n${probe} (No pressure to reply.)`;
+}
+
+// ═══════════════════════════════════════════════════════════════
 // CONVERSATIONAL WARMTH HELPERS
 // Make responses feel human, not robotic
 // ═══════════════════════════════════════════════════════════════
@@ -1044,17 +1112,42 @@ export async function processIncomingMessage(
     };
   }
 
+  // ═══ FAST-PATH: Check for probe response (prospect replying to our
+  // earlier loss-probe farewell). Must run BEFORE the "not interested"
+  // fast-path so a one-word "price." reply doesn't get re-classified as
+  // a fresh not_interested — it's a probe answer, not a new dismissal.
+  // ═══
+  const probeResult = await tryHandleLossProbeResponse(prospect, message.body);
+  if (probeResult) {
+    console.log(
+      `  Loss probe response detected for ${prospect.businessName}: ${probeResult.category} (${probeResult.confidence})`
+    );
+    return {
+      shouldReply: true,
+      reply: probeResult.acknowledgment,
+      escalate: false,
+      sentiment: "neutral",
+      intent: "not_interested",
+      newStatus: "dismissed",
+      pauseFunnel: true,
+      closeAction: "none",
+    };
+  }
+
   // ═══ FAST-PATH: Check for clear "not interested" ═══
   const notInterestedKeywords = ["not interested", "no thanks", "no thank you", "pass on this", "not for me"];
   if (notInterestedKeywords.some((kw) => lowerBody.includes(kw))) {
     console.log(`  Not interested detected for ${prospect.businessName} — stopping outreach`);
+    const baseFarewell = `Totally respect that, ${name}. No hard feelings at all — I appreciate you being upfront with me. The site I built is yours to look at anytime if you ever get curious. Wishing you and ${prospect.businessName} nothing but good things!`;
+    const replyWithProbe = appendLossProbe(baseFarewell, prospect.id);
     await updateProspect(prospect.id, {
       status: "dismissed",
       funnelPaused: true,
+      lossProbeSentAt: new Date().toISOString(),
     });
     return {
       shouldReply: true,
-      reply: `Totally respect that, ${name}. No hard feelings at all — I appreciate you being upfront with me. The site I built is yours to look at anytime if you ever get curious. Wishing you and ${prospect.businessName} nothing but good things!`,
+      reply: replyWithProbe,
       escalate: false,
       sentiment: "neutral",
       intent: "not_interested",
@@ -1165,6 +1258,13 @@ export async function processIncomingMessage(
       parsed.reply = ensureInterestedReplyLinks(parsed.reply, prospect);
     }
 
+    // Append loss-probe sentence on every "not_interested" farewell unless
+    // the AI already wrote a similar question itself. See Rule 45 in CLAUDE.md.
+    const isNotInterested = parsed.intent === "not_interested";
+    if (isNotInterested && parsed.reply) {
+      parsed.reply = appendLossProbe(parsed.reply, prospect.id);
+    }
+
     // Apply CRM status transition from intent mapping
     const mappedStatus = INTENT_STATUS_MAP[parsed.intent];
     if (mappedStatus && !parsed.newStatus) {
@@ -1176,6 +1276,7 @@ export async function processIncomingMessage(
       await updateProspect(prospect.id, {
         status: parsed.newStatus,
         funnelPaused: true,
+        ...(isNotInterested ? { lossProbeSentAt: new Date().toISOString() } : {}),
       });
     } else {
       // Default: at least mark as responded
@@ -1206,6 +1307,162 @@ export async function processIncomingMessage(
   }
 }
 
+// ═══════════════════════════════════════════════════════════════
+// LOSS PROBE RESPONSE CLASSIFIER
+//
+// When a prospect replies AFTER we sent the not_interested farewell
+// with a loss-probe attached, route their reply through gpt-4.1-mini,
+// classify into one of {price | timing | design | have_one | other},
+// persist a `loss_reasons` row, send a tiny acknowledgment, and DO
+// NOT re-engage the funnel. See Rule 45 in CLAUDE.md.
+// ═══════════════════════════════════════════════════════════════
+
+const PROBE_WINDOW_DAYS = 30;
+const PROBE_CATEGORIES = ["price", "timing", "design", "have_one", "other"] as const;
+type ProbeCategory = (typeof PROBE_CATEGORIES)[number];
+
+interface ProbeClassification {
+  category: ProbeCategory;
+  confidence: number;
+  acknowledgment: string;
+}
+
+/** Quick keyword classifier — used when no AI key is configured (mock mode). */
+function mockClassifyProbeResponse(body: string): { category: ProbeCategory; confidence: number } {
+  const lower = body.toLowerCase();
+  if (/\b(price|cost|expensive|too much|budget|afford|cheap|money|\$|99\d|997)\b/.test(lower)) {
+    return { category: "price", confidence: 0.85 };
+  }
+  if (/\b(time|timing|busy|later|not (now|right now)|next year|next month|wait|right time|moment)\b/.test(lower)) {
+    return { category: "timing", confidence: 0.8 };
+  }
+  if (/\b(design|look|colors?|font|style|layout|ugly|don'?t (like|love)|preview|aesthetic)\b/.test(lower)) {
+    return { category: "design", confidence: 0.8 };
+  }
+  if (/\b(already (have|got)|have a (site|website)|got a (site|website)|developer|web guy|webmaster)\b/.test(lower)) {
+    return { category: "have_one", confidence: 0.85 };
+  }
+  return { category: "other", confidence: 0.3 };
+}
+
+/**
+ * Use gpt-4.1-mini to classify the prospect's probe response into a
+ * loss-reason category. Falls back to keyword heuristic in mock mode.
+ * Logs a cost row on every API call.
+ */
+async function classifyProbeResponse(
+  prospect: Prospect,
+  body: string
+): Promise<{ category: ProbeCategory; confidence: number }> {
+  if (!process.env.OPENAI_API_KEY) {
+    return mockClassifyProbeResponse(body);
+  }
+
+  try {
+    const { OpenAI } = await import("openai");
+    const client = new OpenAI();
+    const completion = await client.chat.completions.create({
+      model: "gpt-4.1-mini",
+      max_tokens: 120,
+      temperature: 0,
+      messages: [
+        {
+          role: "system",
+          content:
+            "You classify a one-line response from a small-business owner who already said \"not interested\" to a website pitch. They were asked: \"was it the price, the timing, or did the design just not click?\" Classify their reason into EXACTLY one of: price, timing, design, have_one, other. \"have_one\" = they already have a website / developer. Respond with ONLY a JSON object: {\"category\":\"<one>\",\"confidence\":<0-1 number>}. No prose, no markdown.",
+        },
+        {
+          role: "user",
+          content: `Business: ${prospect.businessName} (${prospect.category})\nTheir reply: "${body.trim().substring(0, 500)}"`,
+        },
+      ],
+    });
+
+    // Cost log — gpt-4.1-mini intent classification (~256 tokens out)
+    await logCost({
+      prospectId: prospect.id,
+      service: "openai",
+      action: "loss_probe_classification",
+      costUsd: 0.0008,
+      metadata: { model: "gpt-4.1-mini", channel: "loss_probe" },
+    });
+
+    const text = (completion.choices[0]?.message?.content || "").replace(/```json?/g, "").replace(/```/g, "").trim();
+    const parsed = JSON.parse(text) as { category: string; confidence: number };
+    const cat = (PROBE_CATEGORIES as readonly string[]).includes(parsed.category)
+      ? (parsed.category as ProbeCategory)
+      : "other";
+    const conf = Math.max(0, Math.min(1, Number(parsed.confidence) || 0.5));
+    return { category: cat, confidence: conf };
+  } catch (err) {
+    console.warn(`[Loss Probe] classification failed, falling back to keywords: ${(err as Error).message}`);
+    return mockClassifyProbeResponse(body);
+  }
+}
+
+/**
+ * If this inbound message is a response to a probe we sent within the
+ * last 30 days, classify it, persist a `loss_reasons` row, and return
+ * a {category, confidence, acknowledgment}. Otherwise return null —
+ * the caller should continue normal classification.
+ *
+ * Gate:
+ *   - prospect.status === "dismissed"
+ *   - prospect.lossProbeSentAt is set AND within PROBE_WINDOW_DAYS
+ *
+ * Side effects:
+ *   - inserts into loss_reasons
+ *   - logs cost row for the classification
+ *   - keeps funnelPaused — never re-engages (TCPA + respect)
+ */
+async function tryHandleLossProbeResponse(
+  prospect: Prospect,
+  body: string
+): Promise<ProbeClassification | null> {
+  if (prospect.status !== "dismissed") return null;
+  if (!prospect.lossProbeSentAt) return null;
+
+  const sentAt = new Date(prospect.lossProbeSentAt).getTime();
+  if (!Number.isFinite(sentAt)) return null;
+  const ageMs = Date.now() - sentAt;
+  if (ageMs < 0 || ageMs > PROBE_WINDOW_DAYS * 24 * 60 * 60 * 1000) return null;
+
+  // Skip the obvious unsubscribe/angry cases — those are handled upstream.
+  const lower = body.toLowerCase();
+  if (/\b(stop|unsubscribe|remove me|spam|lawsuit|harassment)\b/.test(lower)) {
+    return null;
+  }
+
+  const { category, confidence } = await classifyProbeResponse(prospect, body);
+
+  // Persist — best effort. A DB outage cannot block the acknowledgment.
+  if (isSupabaseConfigured()) {
+    try {
+      await supabase.from("loss_reasons").insert({
+        prospect_id: prospect.id,
+        category,
+        raw_response: body.trim().substring(0, 2000),
+        ai_classification: category,
+        confidence,
+        metadata: {
+          channel: "ai_responder",
+          model: process.env.OPENAI_API_KEY ? "gpt-4.1-mini" : "mock_keywords",
+          loss_probe_sent_at: prospect.lossProbeSentAt,
+        },
+      });
+    } catch (err) {
+      console.warn(`[Loss Probe] persist failed: ${(err as Error).message}`);
+    }
+  }
+
+  // Tiny acknowledgment — one line, no link, no further pitch.
+  return {
+    category,
+    confidence,
+    acknowledgment: "Thanks — that helps.",
+  };
+}
+
 /**
  * Legacy compatibility wrapper — maps old processIncomingEmail to new processIncomingMessage.
  */
@@ -1227,3 +1484,5 @@ export function isAiResponderConfigured(): boolean {
 
 // Export helpers for use in other modules (e.g., retargeting, winback)
 export { getWarmOpener, getWarmSignoff, getPersonalHook, getReEngagementHook };
+// `getLossProbeSentence` is exported above at its declaration so it can be
+// reused by other surfaces that need to build a not_interested farewell.
