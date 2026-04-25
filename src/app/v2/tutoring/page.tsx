@@ -127,9 +127,9 @@ const subjects = [
 ];
 
 const tutors = [
-  { name: "Dr. Rachel Torres", role: "Founder & Lead Educator", specialty: "Math & SAT Prep", bio: "PhD in Education, 11 years of AP teaching experience. Former curriculum developer for Seattle Public Schools.", img: "https://images.unsplash.com/photo-1544717305-2782549b5136?w=400&q=80" },
-  { name: "Marcus Chen", role: "Science & AP Instructor", specialty: "Physics & Chemistry", bio: "MS in Physics from UW. Makes complex concepts click with real-world experiments and visual learning.", img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80" },
-  { name: "Priya Patel", role: "Reading & Writing Specialist", specialty: "English & College Essays", bio: "MFA in Creative Writing. Published author who transforms reluctant writers into confident communicators.", img: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80" },
+  { name: "Dr. Rachel Bennett", role: "Founder & Lead Educator", specialty: "Math & SAT Prep", bio: "PhD in Education, 11 years of AP teaching experience. Former curriculum developer for Seattle Public Schools.", img: "https://images.unsplash.com/photo-1544717305-2782549b5136?w=400&q=80" },
+  { name: "Marcus Chen", role: "Science & AP Instructor", specialty: "Physics & Chemistry", bio: "MS in Physics from UW. Makes complex concepts click with real-world experiments and visual learning.", img: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=400&q=80" },
+  { name: "Priya Patel", role: "Reading & Writing Specialist", specialty: "English & College Essays", bio: "MFA in Creative Writing. Published author who transforms reluctant writers into confident communicators.", img: "https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?w=400&q=80" },
   { name: "James Okafor", role: "Test Prep Strategist", specialty: "SAT/ACT & Study Skills", bio: "Perfect SAT scorer. Developed a test-taking methodology that has helped 500+ students improve by 200+ points.", img: "https://images.unsplash.com/photo-1507537297725-24a1c029d3ca?w=400&q=80" },
 ];
 
@@ -141,7 +141,7 @@ const gradeLevels = [
 ];
 
 const successStories = [
-  { name: "Emma W.", before: "SAT: 1180", after: "SAT: 1420", improvement: "+240 points", subject: "SAT Prep", quote: "Dr. Torres made test prep actually enjoyable. I never thought I could break 1400." },
+  { name: "Emma W.", before: "SAT: 1180", after: "SAT: 1420", improvement: "+240 points", subject: "SAT Prep", quote: "Dr. Bennett made test prep actually enjoyable. I never thought I could break 1400." },
   { name: "Jayden M.", before: "Algebra: D+", after: "Algebra: A-", improvement: "3 grade levels", subject: "Math", quote: "Marcus explained things in a way that finally clicked. Math isn't scary anymore." },
   { name: "Sofia R.", before: "Reading: Below grade", after: "Reading: Above grade", improvement: "2 grade levels", subject: "Reading", quote: "Priya turned my daughter into a bookworm. She reads for fun now." },
   { name: "Aiden K.", before: "ACT: 24", after: "ACT: 32", improvement: "+8 points", subject: "ACT Prep", quote: "James taught me strategies I never learned in school. My score opened doors to scholarships." },
@@ -151,7 +151,7 @@ const testimonials = [
   { name: "Jennifer Park", role: "Parent of 10th Grader", text: "My daughter went from a C- to an A in algebra in just two months. The tutors genuinely care about each student.", rating: 5 },
   { name: "David & Kim Liu", role: "Parents of SAT Student", text: "SAT prep was a game-changer. Our son scored 280 points higher and got into his top-choice university. Worth every penny.", rating: 5 },
   { name: "Maria Gonzalez", role: "Parent of 6th Grader", text: "Finding the right support for my child with ADHD was crucial. They understand learning differences and my son actually looks forward to sessions.", rating: 5 },
-  { name: "Robert Chen", role: "Parent of AP Student", text: "Three AP 5s this year. Dr. Torres and her team know exactly how to prepare students for the highest levels of academic achievement.", rating: 5 },
+  { name: "Robert Chen", role: "Parent of AP Student", text: "Three AP 5s this year. Dr. Bennett and her team know exactly how to prepare students for the highest levels of academic achievement.", rating: 5 },
   { name: "Amara Johnson", role: "College Freshman", text: "The college prep program helped me write an essay that got me into three Ivy League schools. I could not have done it alone.", rating: 5 },
 ];
 
@@ -390,7 +390,7 @@ export default function V2TutoringShowcase() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="relative">
               <div className="rounded-2xl overflow-hidden border shadow-lg" style={{ borderColor: `${PURPLE}20` }}>
-                <img src="https://images.unsplash.com/photo-1573497019418-b400bb3ab074?w=600&q=80" alt="Dr. Rachel Torres teaching students" className="w-full h-[420px] object-cover object-top" />
+                <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=600&q=80" alt="Dr. Rachel Bennett teaching students" className="w-full h-[420px] object-cover object-top" />
               </div>
               <div className="absolute -bottom-4 -right-4 md:bottom-6 md:-right-6">
                 <div className="px-5 py-3 rounded-xl border text-white font-bold text-sm shadow-lg" style={{ background: PURPLE, borderColor: `${PURPLE}80` }}>
@@ -405,9 +405,9 @@ export default function V2TutoringShowcase() {
             </div>
             <div>
               <SectionBadge text="About Us" />
-              <SectionHeading>Led by Dr. Rachel Torres</SectionHeading>
+              <SectionHeading>Led by Dr. Rachel Bennett</SectionHeading>
               <p className="text-slate-500 leading-relaxed mt-6 mb-4">
-                Bright Minds Tutoring was founded by Dr. Rachel Torres, a former AP teacher with a PhD in Education and 11 years of classroom experience in Seattle. After watching too many bright students fall through the cracks of one-size-fits-all education, she built something better.
+                Bright Minds Tutoring was founded by Dr. Rachel Bennett, a former AP teacher with a PhD in Education and 11 years of classroom experience in Seattle. After watching too many bright students fall through the cracks of one-size-fits-all education, she built something better.
               </p>
               <p className="text-slate-500 leading-relaxed mb-8">
                 Our University District center brings together certified educators who share one belief: every student can succeed when they get the right support at the right time. We do not just help with homework. We build learners.
@@ -509,7 +509,7 @@ export default function V2TutoringShowcase() {
               {
                 icon: Certificate,
                 title: "PhD-Led Instruction",
-                desc: "Every learning plan is designed or reviewed by Dr. Torres. Our tutors hold advanced degrees and complete 40+ hours of proprietary training before their first session.",
+                desc: "Every learning plan is designed or reviewed by Dr. Bennett. Our tutors hold advanced degrees and complete 40+ hours of proprietary training before their first session.",
               },
               {
                 icon: Target,
@@ -568,7 +568,7 @@ export default function V2TutoringShowcase() {
               { src: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=500&q=80", alt: "Group study session", span: "" },
               { src: "https://images.unsplash.com/photo-1503676382389-4809596d5290?w=500&q=80", alt: "Student with study materials", span: "" },
               { src: "https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=500&q=80", alt: "Students collaborating", span: "col-span-2 md:col-span-1" },
-              { src: "https://images.unsplash.com/photo-1577896851231-70ef18881754?w=500&q=80", alt: "One-on-one tutoring session", span: "col-span-2 md:col-span-2" },
+              { src: "https://images.unsplash.com/photo-1577896851231-70ef18881754?w=500&q=80", alt: "Group classroom session", span: "col-span-2 md:col-span-2" },
             ].map((img, i) => (
               <div key={i} className={`rounded-2xl overflow-hidden border shadow-sm hover:shadow-lg transition-shadow group ${img.span}`} style={{ borderColor: `${PURPLE}15` }}>
                 <img src={img.src} alt={img.alt} className="w-full h-full min-h-[180px] object-cover group-hover:scale-105 transition-transform duration-500" />
