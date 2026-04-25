@@ -1,6 +1,37 @@
 import type { Prospect } from "./types";
 import { CATEGORY_CONFIG } from "./types";
-import { getShortPreviewUrl, getShortUnsubUrl } from "./short-urls";
+import { getShortPreviewUrl, getShortUnsubUrl, deriveShortCode } from "./short-urls";
+import { addUtm } from "./utm";
+
+/**
+ * Self-hosted open-tracking pixel for HTML pitch emails.
+ *
+ * Returns an `<img>` tag string that loads our /api/o/[code] pixel —
+ * a 43-byte transparent GIF served from our own domain. When the
+ * recipient opens the HTML email, their mail client fetches the pixel,
+ * we log an `email_events` open row, and if it's the FIRST open we
+ * fire the hot-lead-on-first-open SMS alert to Ben.
+ *
+ * Why first-party: SendGrid's built-in open tracking rewrites email
+ * HTML to insert SendGrid-domain pixels — a well-known commercial-
+ * sender fingerprint that Gmail's Promotions classifier triggers on.
+ * SendGrid open tracking is OFF in email-sender.ts on purpose. This
+ * pixel restores the open signal without the deliverability cost
+ * because Gmail doesn't pattern-match a first-party pixel from the
+ * sender's brand domain.
+ *
+ * Only included in HTML bodies (plain text can't track opens). Plain-
+ * text-only sends accept that limitation in exchange for guaranteed
+ * Primary-tab placement during the 14-day domain warmup.
+ */
+export function getTrackingPixel(prospectId: string): string {
+  const code = deriveShortCode(prospectId);
+  // `display:none` hides it from rendering layouts but every modern
+  // mail client still loads it. Width/height + alt="" so screen readers
+  // skip past it cleanly. The src URL is intentionally on bluejayportfolio.com
+  // (matches sender domain) for first-party reputation alignment.
+  return `<img src="https://bluejayportfolio.com/api/o/${code}" width="1" height="1" alt="" style="display:none;border:0;width:1px;height:1px;" />`;
+}
 
 export interface EmailTemplate {
   subject: string;
@@ -203,6 +234,12 @@ export function getPitchEmail(
   const category = CATEGORY_CONFIG[prospect.category].label.toLowerCase();
   const city = prospect.city || prospect.address?.split(",")[0] || "";
 
+  // Tag the preview URL with UTM source/medium/campaign so the Stripe
+  // `paid` event can attribute back to the Day-0 pitch send.
+  // utm_content=v1 reserved for an A/B variant tag if we ever want to
+  // split-test pitch copy from the same campaign label.
+  previewUrl = addUtm(previewUrl, "email", "outreach", "pitch_day0", "v1");
+
   const subject = hasName
     ? `${greeting}, made something for ${prospect.businessName}`
     : `Made something for ${prospect.businessName}`;
@@ -288,6 +325,7 @@ ${EMAIL_FOOTER.replace("{{unsubUrl}}", getShortUnsubUrl(prospect))}`;
     <p style="margin:0;color:#9ca3af;font-size:11px;line-height:1.4;">
       Quilcene, WA · <a href="${esc(getShortUnsubUrl(prospect))}" style="color:#9ca3af;">Opt out</a>
     </p>
+    ${getTrackingPixel(prospect.id)}
   `)
     : undefined;
 
@@ -305,6 +343,10 @@ export function getFollowUp1(
   _videoUrl?: string,
 ): EmailTemplate {
   const { greeting } = getGreetingName(prospect);
+
+  // UTM-tag preview URL so the Day 5 "re:" follow-up gets attribution
+  // distinct from the Day 0 pitch in conversion reporting.
+  previewUrl = addUtm(previewUrl, "email", "outreach", "followup_day5_re");
 
   const subject = `Re: ${prospect.businessName}`;
 
@@ -433,6 +475,9 @@ export function getFollowUp2(
 ): EmailTemplate {
   const { greeting } = getGreetingName(prospect);
 
+  // Day 12 "value reframe" — distinct campaign tag for attribution.
+  previewUrl = addUtm(previewUrl, "email", "outreach", "followup_day12_value_reframe");
+
   const subject = `Last check on ${prospect.businessName}`;
 
   return {
@@ -450,6 +495,152 @@ Either way — thanks for being one of the ones I spent time on.
 — Ben
 ${EMAIL_FOOTER.replace("{{unsubUrl}}", getShortUnsubUrl(prospect))}`,
     sequence: 3,
+  };
+}
+
+/**
+ * Day 21 "social proof" follow-up. Mid-funnel touch that reinforces the
+ * effort hook ("hand-built for you") since by Day 21 the prospect has
+ * gone silent through 4 touches and likely needs reassurance that this
+ * is real, not a mass blast.
+ *
+ * ≤80 words, exactly 1 link, no pricing, soft reply prompt — same locked
+ * outreach rules as the pitch + earlier follow-ups.
+ */
+export function getFollowUp3(
+  prospect: Prospect,
+  previewUrl: string = getShortPreviewUrl(prospect),
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _videoUrl?: string,
+): EmailTemplate {
+  const { greeting } = getGreetingName(prospect);
+
+  previewUrl = addUtm(previewUrl, "email", "outreach", "followup_day21_social_proof");
+
+  const subject = `Re: ${prospect.businessName}`;
+
+  return {
+    subject,
+    body: `Hi ${greeting},
+
+Quick thought — a few other businesses I built sites for this month have already moved on theirs. Made me realize I never followed up properly on yours.
+
+The version I put together for ${prospect.businessName} is still here if you want another look:
+
+${previewUrl}
+
+Not trying to push — genuinely curious what your honest take is.
+
+— Ben
+${EMAIL_FOOTER.replace("{{unsubUrl}}", getShortUnsubUrl(prospect))}`,
+    sequence: 4,
+  };
+}
+
+/**
+ * Day 30 final check-in. Uses the "should I close this out?" framing
+ * (lower-stakes language than "last email") which historically gets
+ * higher reply rates than urgency-led closes. Subject deliberately
+ * matches the "Re: [Business]" pattern of earlier touches so it threads
+ * inside Gmail/Apple Mail.
+ */
+export function getFollowUp4(
+  prospect: Prospect,
+  previewUrl: string = getShortPreviewUrl(prospect),
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _videoUrl?: string,
+): EmailTemplate {
+  const { greeting } = getGreetingName(prospect);
+
+  previewUrl = addUtm(previewUrl, "email", "outreach", "followup_day30_final");
+
+  const subject = `Re: ${prospect.businessName}`;
+
+  return {
+    subject,
+    body: `Hi ${greeting},
+
+Wanted to check in one more time on the site I built for ${prospect.businessName}:
+
+${previewUrl}
+
+If timing's just off, totally get it — happy to leave it up a while longer. Otherwise I'll archive it on my end.
+
+Either way, no hard feelings.
+
+— Ben
+${EMAIL_FOOTER.replace("{{unsubUrl}}", getShortUnsubUrl(prospect))}`,
+    sequence: 5,
+  };
+}
+
+/**
+ * Day 45 "graceful goodbye" — the highest-reply-rate email pattern in
+ * any cold sequence. Industry data: 50%+ of B2B replies come on touches
+ * 5–8, and the "should I close this out?" framing consistently outperforms
+ * urgency-led closes by 2-3x in published reply-rate studies.
+ *
+ * Locked outreach rules: ≤80 words, exactly 1 link, no pricing, soft
+ * reply prompt.
+ */
+export function getFollowUp5(
+  prospect: Prospect,
+  previewUrl: string = getShortPreviewUrl(prospect),
+): EmailTemplate {
+  const { greeting } = getGreetingName(prospect);
+
+  previewUrl = addUtm(previewUrl, "email", "outreach", "followup_day45_graceful_goodbye");
+
+  const subject = `should I close this out?`;
+
+  return {
+    subject,
+    body: `Hey ${greeting},
+
+Didn't hear back so figured I'd close out the file. The preview I built for ${prospect.businessName} is still live for now:
+
+${previewUrl}
+
+If timing's just off, no worries — happy to leave it up another month or two. Otherwise I'll archive it.
+
+— Ben
+${EMAIL_FOOTER.replace("{{unsubUrl}}", getShortUnsubUrl(prospect))}`,
+    sequence: 205,
+  };
+}
+
+/**
+ * Day 60 final touch + seasonal hook. Last note in the sequence —
+ * deliberately brief, references the category's seasonal pattern as
+ * a soft "right now is when this matters" angle without using banned
+ * urgency phrases like "limited time" or "expires soon".
+ *
+ * Locked outreach rules: ≤80 words, exactly 1 link, no pricing.
+ */
+export function getFollowUp6(
+  prospect: Prospect,
+  previewUrl: string = getShortPreviewUrl(prospect),
+): EmailTemplate {
+  const { greeting } = getGreetingName(prospect);
+  const category = CATEGORY_CONFIG[prospect.category].label.toLowerCase();
+
+  previewUrl = addUtm(previewUrl, "email", "outreach", "followup_day60_final_seasonal");
+
+  const subject = `${prospect.businessName} — last note from me`;
+
+  return {
+    subject,
+    body: `Hey ${greeting},
+
+Going to take this off my list this week. Reaching out one more time because ${category} businesses tend to ramp up around now and a stronger website pays for itself fast.
+
+The preview's still here if you want to take another look:
+
+${previewUrl}
+
+— Ben
+${EMAIL_FOOTER.replace("{{unsubUrl}}", getShortUnsubUrl(prospect))}`,
+    sequence: 206,
   };
 }
 

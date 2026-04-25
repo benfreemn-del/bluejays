@@ -151,10 +151,28 @@ export default function ClaimPage() {
     try {
       const urlPlan = new URLSearchParams(window.location.search).get("plan");
       const plan = planOverride || urlPlan || "full";
+
+      // Capture UTM params from the URL the prospect arrived on (set by
+      // every outreach email/SMS/postcard via addUtm in src/lib/utm.ts)
+      // and forward to the checkout API. The API persists them on the
+      // prospect (`last_utm_*` columns) AND attaches them to the Stripe
+      // Checkout Session metadata so the `paid` webhook event can tie
+      // the conversion back to the touch that drove it.
+      const sp = new URLSearchParams(window.location.search);
+      const utm: Record<string, string> = {};
+      const utmSource = sp.get("utm_source");
+      const utmMedium = sp.get("utm_medium");
+      const utmCampaign = sp.get("utm_campaign");
+      const utmContent = sp.get("utm_content");
+      if (utmSource) utm.utm_source = utmSource;
+      if (utmMedium) utm.utm_medium = utmMedium;
+      if (utmCampaign) utm.utm_campaign = utmCampaign;
+      if (utmContent) utm.utm_content = utmContent;
+
       const res = await fetch("/api/checkout/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prospectId, plan }),
+        body: JSON.stringify({ prospectId, plan, utm: Object.keys(utm).length ? utm : undefined }),
       });
       const data = await res.json();
 

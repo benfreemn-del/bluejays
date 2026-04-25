@@ -175,9 +175,22 @@ export default function PreviewClientPage({
       </div>
 
       {/* Floating "Claim this site" CTA so prospects can move from the
-          preview to payment in one tap. Anchored bottom-right, non-intrusive. */}
+          preview to payment in one tap. Anchored bottom-right, non-intrusive.
+          Preserve any UTM params from the inbound URL onto the claim link
+          so the source/medium/campaign that drove this visit threads through
+          to the Stripe checkout metadata (and the `paid` webhook event). */}
       <a
-        href={`/claim/${id}`}
+        href={(() => {
+          if (typeof window === "undefined") return `/claim/${id}`;
+          const sp = new URLSearchParams(window.location.search);
+          const out = new URLSearchParams();
+          for (const k of ["utm_source", "utm_medium", "utm_campaign", "utm_content"]) {
+            const v = sp.get(k);
+            if (v) out.set(k, v);
+          }
+          const qs = out.toString();
+          return qs ? `/claim/${id}?${qs}` : `/claim/${id}`;
+        })()}
         className="fixed bottom-6 right-6 z-[9998] inline-flex items-center gap-2 rounded-full bg-sky-500 hover:bg-sky-400 px-5 py-3 text-sm font-semibold text-white shadow-2xl transition-colors"
       >
         Claim this site →

@@ -61,7 +61,8 @@ export async function createCheckoutSession(
   businessName: string,
   email: string,
   pricingTier: "standard" | "free" | "custom" = "standard",
-  paymentPlan: "full" | "installment" = "full"
+  paymentPlan: "full" | "installment" = "full",
+  utm?: { utm_source?: string; utm_medium?: string; utm_campaign?: string; utm_content?: string },
 ): Promise<CheckoutSession> {
   if (!STRIPE_SECRET_KEY) {
     // Mock mode — return fake checkout URL for development
@@ -113,9 +114,21 @@ export async function createCheckoutSession(
       line_items: [customLineItem],
       success_url: `${baseUrl}/onboarding/${prospectId}?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${baseUrl}/claim/${prospectId}?payment=cancelled`,
-      metadata: { prospectId, businessName, pricingTier: "custom", paymentPlan: "custom-annual" },
+      metadata: {
+        prospectId,
+        businessName,
+        pricingTier: "custom",
+        paymentPlan: "custom-annual",
+        ...(utm || {}),
+      },
       subscription_data: {
-        metadata: { prospectId, businessName, pricingTier: "custom", type: "custom_annual" },
+        metadata: {
+          prospectId,
+          businessName,
+          pricingTier: "custom",
+          type: "custom_annual",
+          ...(utm || {}),
+        },
       },
     };
 
@@ -205,7 +218,17 @@ export async function createCheckoutSession(
     line_items: lineItems,
     success_url: `${baseUrl}/onboarding/${prospectId}?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${baseUrl}/claim/${prospectId}?payment=cancelled`,
-    metadata: { prospectId, businessName, pricingTier, paymentPlan },
+    metadata: {
+      prospectId,
+      businessName,
+      pricingTier,
+      paymentPlan,
+      // UTM attribution from /preview/[id] or /claim/[id] mount, threaded
+      // through redirectToCheckout(). Lands on the Stripe `paid` event so
+      // the conversion ties back to the touch (email/sms/postcard) that
+      // drove the click. Lowercased + URL-safe per src/lib/utm.ts.
+      ...(utm || {}),
+    },
   };
 
   // Installment metadata flows to the Stripe Subscription object so the
@@ -219,6 +242,7 @@ export async function createCheckoutSession(
         prospectId,
         paymentPlan: "installment-3x349",
         expectedPayments: "3",
+        ...(utm || {}),
       },
     };
   }

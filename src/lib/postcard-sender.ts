@@ -27,6 +27,7 @@
 
 import type { Prospect } from "./types";
 import { getShortPreviewUrl } from "./short-urls";
+import { addUtm } from "./utm";
 import { logCost } from "./cost-logger";
 import { supabase, isSupabaseConfigured } from "./supabase";
 
@@ -331,9 +332,15 @@ function esc(s: string): string {
  * or it renders as mojibake in Lob's PDF output.
  */
 function buildBackHtml(prospect: Prospect): string {
-  const previewUrl = getShortPreviewUrl(prospect);
-  // Strip protocol + trailing slash for display — shorter, cleaner on card
-  const displayUrl = previewUrl.replace(/^https?:\/\//, "").replace(/\/$/, "");
+  // UTM-tag the postcard URL so QR scans + manual URL entry attribute
+  // back to the postcard touch in the conversion funnel. Day 7 mid-
+  // funnel direct-mail send between email 1 and email 2.
+  const previewUrl = addUtm(getShortPreviewUrl(prospect), "postcard", "postcard", "postcard_day7");
+  // Strip protocol + trailing slash for display — shorter, cleaner on card.
+  // Display URL is the un-UTM'd one; the QR code + landing-page redirects
+  // carry the UTM params. (Manually-typed URLs from the postcard skip
+  // the UTM and land bare, which is fine — most prospects scan the QR.)
+  const displayUrl = getShortPreviewUrl(prospect).replace(/^https?:\/\//, "").replace(/\/$/, "");
   // Warmer greeting — "there" alone reads as clipped/impersonal. Use
   // "Hi there," when no name, or "Hi {firstname}," when we have one.
   const firstName = prospect.ownerName?.split(" ")[0];

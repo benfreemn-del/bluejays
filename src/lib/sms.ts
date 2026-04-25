@@ -6,6 +6,7 @@ import { supabase, isSupabaseConfigured } from "./supabase";
 import { logCost, COST_RATES } from "./cost-logger";
 import { getVonagePhoneNumber, isVonageConfigured, sendViaVonage } from "./vonage-sms";
 import { getShortPreviewUrl } from "./short-urls";
+import { addUtm } from "./utm";
 
 const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID;
 const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN;
@@ -342,7 +343,7 @@ export function getInitialSms(
   _videoUrl?: string,
 ): string {
   const name = prospect.ownerName?.split(" ")[0] || "there";
-  const url = getShortPreviewUrl(prospect);
+  const url = addUtm(getShortPreviewUrl(prospect), "sms", "sms", "sms_day0");
   return `Hey ${name}, Ben from BlueJays — spent some time this week building a website for ${prospect.businessName}: ${url} Take a look when you have a sec. Reply STOP to opt out`;
 }
 
@@ -354,7 +355,7 @@ export function getFollowUpSms1(
   _videoUrl?: string,
 ): string {
   const firstName = prospect.ownerName?.split(" ")[0]?.trim();
-  const url = getShortPreviewUrl(prospect);
+  const url = addUtm(getShortPreviewUrl(prospect), "sms", "sms", "sms_day5_re");
   // With a real name: "Mike — circling back..."  (friendly personal).
   // Without one: "Quick nudge — circling back..." (no lowercase "there —"
   // sentence start which reads broken).
@@ -370,7 +371,7 @@ export function getFollowUpSms2(
   _videoUrl?: string,
 ): string {
   const firstName = prospect.ownerName?.split(" ")[0]?.trim();
-  const url = getShortPreviewUrl(prospect);
+  const url = addUtm(getShortPreviewUrl(prospect), "sms", "sms", "sms_day12_reframe");
   const opener = firstName ? `${firstName} — last check on that ` : "Last check on that ";
   return `${opener}${prospect.businessName} site: ${url} If timing's off, just say so and I'll stop reaching out. Reply STOP to opt out`;
 }
@@ -383,6 +384,6 @@ export function getPostVoicemailSms(
   _videoUrl?: string,
 ): string {
   const name = prospect.ownerName?.split(" ")[0] || "there";
-  const url = getShortPreviewUrl(prospect);
+  const url = addUtm(getShortPreviewUrl(prospect), "sms", "sms", "sms_post_voicemail");
   return `Hey ${name}, just left you a voicemail about the site I built for ${prospect.businessName}: ${url} Reply STOP to opt out`;
 }

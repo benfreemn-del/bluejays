@@ -3,13 +3,22 @@ import path from "path";
 import type { Prospect } from "./types";
 import { getProspect, updateProspect } from "./store";
 import { getInitialSms, getFollowUpSms1, getFollowUpSms2, getPostVoicemailSms, getSmsHistory } from "./sms";
-import { getPitchEmail, getFollowUp1, getFollowUp2 } from "./email-templates";
+import {
+  getPitchEmail,
+  getFollowUp1,
+  getFollowUp2,
+  getFollowUp3,
+  getFollowUp4,
+  getFollowUp5,
+  getFollowUp6,
+} from "./email-templates";
 import { generateSmartFollowUp } from "./smart-followup";
 import { alertOwner } from "./alerts";
 import { dropVoicemail } from "./voicemail";
 import { supabase, isSupabaseConfigured } from "./supabase";
 import { generatePersonalizedProposal } from "./proposal-generator";
 import { getShortPreviewUrl } from "./short-urls";
+import { addUtm } from "./utm";
 import {
   attemptFunnelDelivery,
   cancelFunnelRetry,
@@ -44,8 +53,17 @@ export interface FunnelStep {
 }
 
 /**
- * 7-step funnel matching CLAUDE.md and agent-personality.ts:
- * Days 0, 2, 5, 12, 18, 21, 30 — with voicemail drops on Days 2 and 18.
+ * 9-step funnel — original 7 (Days 0–30) plus Wave-3 long-tail touches
+ * at Day 45 (graceful goodbye) and Day 60 (final seasonal hook).
+ *
+ * Voicemail drops on Days 2 and 18; everything else is email + (inbound-
+ * only) SMS. The Day 45 and Day 60 steps are email-only — by that point
+ * SMS would feel intrusive even on opted-in prospects, and the data
+ * shows the highest-reply rate at touches 5–8 comes from "graceful out"
+ * style emails, not aggressive multi-channel.
+ *
+ * Industry data behind the extension: 50%+ of B2B replies come on
+ * touches 5–8. Capping at Day 30 leaves real conversion on the table.
  */
 export const FUNNEL_STEPS: FunnelStep[] = [
   { day: 0, channels: ["email", "sms"], label: "Initial Pitch" },
@@ -55,6 +73,13 @@ export const FUNNEL_STEPS: FunnelStep[] = [
   { day: 18, channels: ["voicemail"], label: "Follow-Up VM" },
   { day: 21, channels: ["email", "sms"], label: "Social Proof" },
   { day: 30, channels: ["email"], label: "Final Check-In" },
+  // Wave-3 long-tail touches (added 2026-04-24). Email-only by design —
+  // SMS frequency at this distance from a Day-0 cold scrape would feel
+  // pushy even on opted-in prospects, and "graceful goodbye" framing
+  // historically out-performs urgency-led closes by 2-3x in published
+  // reply-rate studies.
+  { day: 45, channels: ["email"], label: "graceful_goodbye" },
+  { day: 60, channels: ["email"], label: "final_seasonal_hook" },
 ];
 
 /**
@@ -167,15 +192,38 @@ async function getEmailTemplate(prospect: Prospect, stepIndex: number, previewUr
     videoUrl = undefined;
   }
 
+  // Step indices map to FUNNEL_STEPS:
+  //   0 = Day 0  Initial Pitch              → getPitchEmail
+  //   1 = Day 2  Voicemail (no email)
+  //   2 = Day 5  Gentle Follow-Up           → getFollowUp1 (campaign=followup_day5_re)
+  //   3 = Day 12 Value Reframe              → getFollowUp2 (campaign=followup_day12_value_reframe)
+  //   4 = Day 18 Follow-Up VM (no email)
+  //   5 = Day 21 Social Proof               → getFollowUp3 (campaign=followup_day21_social_proof)
+  //   6 = Day 30 Final Check-In             → getFollowUp4 (campaign=followup_day30_final)
+  //   7 = Day 45 Graceful Goodbye           → getFollowUp5 (campaign=followup_day45_graceful_goodbye)
+  //   8 = Day 60 Final Seasonal Hook        → getFollowUp6 (campaign=followup_day60_final_seasonal)
   if (stepIndex === 0) {
-    const proposalUrl = `${BASE_URL}/proposal/${prospect.id}`;
-    return getPitchEmail(prospect, previewUrl, videoUrl, proposalUrl);
+    // Note: getPitchEmail only takes (prospect, previewUrl, videoUrl) —
+    // the proposal URL is referenced from the dashboard, not the email.
+    return getPitchEmail(prospect, previewUrl, videoUrl);
   }
   if (stepIndex === 2) {
     return getFollowUp1(prospect, previewUrl, videoUrl);
   }
   if (stepIndex === 3) {
     return getFollowUp2(prospect, previewUrl, videoUrl);
+  }
+  if (stepIndex === 5) {
+    return getFollowUp3(prospect, previewUrl, videoUrl);
+  }
+  if (stepIndex === 6) {
+    return getFollowUp4(prospect, previewUrl, videoUrl);
+  }
+  if (stepIndex === 7) {
+    return getFollowUp5(prospect, previewUrl);
+  }
+  if (stepIndex === 8) {
+    return getFollowUp6(prospect, previewUrl);
   }
 
   const smart = generateSmartFollowUp(prospect);
@@ -209,8 +257,13 @@ function getVoicemailFallbackEmail(prospect: Prospect, previewUrl: string, stepI
     ? `Quick follow-up about your ${prospect.businessName} website preview`
     : `Quick follow-up after our voicemail about ${prospect.businessName}`;
 
+  // Tag the post-voicemail fallback email distinctly so we can measure
+  // whether the voicemail-then-email pattern outperforms email-only
+  // touches in the conversion funnel.
+  const taggedUrl = addUtm(previewUrl, "voicemail_followup_email", "voicemail_followup_email", `voicemail_followup_step${stepIndex}`);
+
   const firstName = prospect.ownerName?.split(" ")[0] || "there";
-  const body = `Hi ${firstName},\n\nI just tried to reach you about the free website preview we built for ${prospect.businessName}. You can review it here: ${previewUrl}\n\nIf you’d like any edits or want to claim it, just reply to this email and we’ll take care of it.\n\nBest,\nBlueJays`;
+  const body = `Hi ${firstName},\n\nI just tried to reach you about the free website preview we built for ${prospect.businessName}. You can review it here: ${taggedUrl}\n\nIf you'd like any edits or want to claim it, just reply to this email and we'll take care of it.\n\nBest,\nBlueJays`;
 
   return {
     to: prospect.email,
