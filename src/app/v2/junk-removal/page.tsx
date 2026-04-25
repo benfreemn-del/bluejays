@@ -316,21 +316,16 @@ export default function V2JunkRemovalPage() {
           transition={{ duration: 1.6, delay: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
           <img
-            src="https://images.unsplash.com/photo-1616627547584-bf28cee262db?w=1600&q=80"
-            alt="Reclaimed living space"
+            src="https://images.unsplash.com/photo-1592595896551-12b371d546d5?w=1600&q=80"
+            alt="Tidy front yard after junk removal"
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${BG}dd 0%, ${BG}bb 50%, ${BG}88 100%)` }} />
         </motion.div>
 
-        {/* Wipe line indicator */}
-        <motion.div
-          className="absolute top-0 bottom-0 z-[2] w-1 hidden md:block"
-          style={{ background: `linear-gradient(180deg, transparent, ${ACCENT}, ${AMBER}, transparent)`, boxShadow: `0 0 20px ${ACCENT}, 0 0 40px ${AMBER}` }}
-          initial={{ left: "0%" }}
-          animate={{ left: wipeComplete ? "100%" : "0%" }}
-          transition={{ duration: 1.6, delay: 0.8, ease: [0.22, 1, 0.36, 1] }}
-        />
+        {/* The clip-path on the AFTER image already produces the swoosh
+            reveal — a separate vertical wipe-line indicator on top of it
+            doubled the green flash and read as two animations. Removed. */}
 
         {/* Before/After labels */}
         <motion.div
