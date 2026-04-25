@@ -3242,3 +3242,232 @@ the audit trail captures call volume even if not dollars.
 
 ---
 
+## Locked-In Rules — Session 2026-04-24 evening (Wave 1 sales-funnel hardening)
+
+These rules were derived from the deep sales-funnel review (6 parallel
+agent reports) and the bug-class fixes that immediately followed. Each
+prevents a real bug we shipped or a class of regression we want
+permanently dead.
+
+### 26. Action-Button Hrefs Use Live Route Params, Never Derived State
+
+The `/book/${info?.id || ""}` bug shipped to production with every
+prospect tapping the "Book a 15-min walkthrough" CTA on the claim
+page → `info.id` was never populated → `href="/book/"` → 404. Same
+bug class as the short-URL `id.slice(0,8)` regression in rule 1.
+
+**Rule:** When building action hrefs in client components, use the
+URL param from `useParams()` directly — do NOT use derived state
+(`info`, `prospect`, `data`) unless you've verified that field is
+populated by every code path that renders the button. If a button
+takes a prospect ID, get it from `useParams()`, not from a fetched
+data object.
+
+When in doubt: `const { id: prospectId } = useParams() as { id: string };`
+then `href={\`/book/${prospectId}\`}`. Period.
+
+### 27. List-Unsubscribe Header URL Must Match the In-Body Link
+
+Gmail's RFC 8058 one-click unsubscribe verifies that the URL in the
+`List-Unsubscribe` header is reachable AND aligned with the visible
+in-body opt-out link. We shipped with the header pointing at
+`/api/unsubscribe/${prospectId}` while the body footer used
+`getShortUnsubUrl(prospect)` which renders `/u/[code]`. Header URL
+404'd silently — Gmail's classifier downgraded the sender.
+
+**Rule:** Both URLs MUST be the same canonical route. Today that is
+`getShortUnsubUrl(prospect)` (resolves to `/u/[code]`). The route
+MUST accept `POST` with empty body and return `200` on success
+AND on unknown codes (per RFC 8058 — non-2xx responses cause Gmail
+to downgrade the sender).
+
+When adding any new opt-out surface, change all three: header, body
+link, AND the route handler. They are a unit, not three separate
+files.
+
+### 28. Plain-Text Email Bodies Are UTF-8; Never ASCII-Strip
+
+The `body.replace(/[^\x00-\x7F]/g, "")` line in `email-sender.ts`
+silently removed every ★, em-dash, and curly quote from every
+plain-text outreach email for months. "Your 4.8★ across 23 reviews
+stood out" arrived as "Your 4.8 across 23 reviews stood out" —
+killing the validation hook in CLAUDE.md's Psychology Stack.
+
+**Rule:** Email bodies are UTF-8 by default. SendGrid handles UTF-8
+plain-text natively via the `text/plain; charset=utf-8` content type
+its API sets. Do NOT add ASCII-only filters, "sanitization", or
+"safe character" strips to email bodies. If a future encoding bug
+appears, fix the encoding header — don't drop characters.
+
+The same rule applies to SMS (Twilio handles GSM-7 + UCS-2 charset
+detection automatically) and voicemail TwiML.
+
+### 29. Payment-Plan Buttons Call `redirectToCheckout(plan)` Directly
+
+Already in CLAUDE.md "Claim Page Simplification Rules" but was being
+violated: the "3 × $349 (Most Popular)" button mutated `?plan=...`
+in the URL and triggered a full page reload, while the secondary
+"$997 once" button called `redirectToCheckout("full")` directly.
+The recommended path FELT broken vs the secondary one.
+
+**Rule:** Every payment-plan-selector button on `/claim/[id]` MUST
+call `redirectToCheckout(plan)` directly. Never use the
+`window.location.href = ?plan=...` reload pattern. Never. If you
+need to persist plan choice for analytics, use a hidden form input
+or pass `?plan=` as a Stripe metadata param — but the user-facing
+click goes straight to checkout.
+
+### 30. Outbound Marketing Crons Hit US Business Hours
+
+Vercel cron `0 8 * * *` (08:00 UTC) = 12am Pacific / 3am Eastern.
+Every prospect for the entire 14-day warming ramp got cold emails
+between midnight and 3am their local time. Gmail's classifier
+clusters that pattern as commercial bulk sending and downgrades
+inbox placement. The funnel cron is now `0 16 * * *` (16:00 UTC =
+8am PT / 11am ET — peak cold-email open window for US East-and-West
+combined).
+
+**Rule:** Any outbound commercial cron (cold email, postcard send,
+SMS to inbound prospects, voicemail drop) MUST fire between **15:00
+and 19:00 UTC** to land in the US morning-window. Internal crons
+(QC, dashboards, data sync, scout) are timezone-agnostic and can run
+whenever. When adding a new outbound cron, document the local-time
+target in the cron name comment.
+
+### 31. Social Proof Must Use Real Data Or Be Removed (Reinforcement)
+
+Already an existing rule, but `SmartSocialProof.tsx` shipped with
+hardcoded "X hours ago" timestamps that never updated — a textbook
+violation. The strings looked like data ("A roofing business in
+Bellevue viewed their preview · 2 hours ago") which is the most
+trust-destroying form of fakeness.
+
+**Rule reinforcement:** It is a NON-NEGOTIABLE FAIL to ship any
+component that renders fake-looking dynamic data. Specifically:
+- Hardcoded relative timestamps ("3 hours ago", "yesterday")
+- Hardcoded counts ("47 sites built this week")
+- Hardcoded named-business strings ("A {category} in {city}…")
+
+If real data isn't available, REMOVE the component. Don't ship a
+placeholder. The empty state is always more trustworthy than a fake
+one. If a future dev needs to add a fake-data placeholder for
+component preview, it MUST be gated by `process.env.NODE_ENV !==
+"production"` AND visually obvious as a placeholder ("[mock]
+preview...").
+
+### 32. Domain Registration System (NON-NEGOTIABLE)
+
+The 5,000-site target is real. Domain registration + Vercel hosting +
+$100/yr renewal is the spine of the business — every rule below is
+designed to prevent failures that compound at scale.
+
+**Architecture:**
+- Registrar abstraction lives in `src/lib/domain-registrar.ts` —
+  `RegistrarClient` interface with `namecheap`, `mock`, future
+  `porkbun` / `cloudflare` impls. Routes NEVER call the registrar
+  REST API directly; always go through `getRegistrar()`.
+- Vercel hosting integration lives in `src/lib/vercel-api.ts` —
+  same mock-when-env-absent pattern.
+- All domain rows live in the `domains` table (migration
+  `20260424_domains.sql`); FK to `prospects.id` (UUID).
+- Cost-logging service names: `domain_registration` (initial buy),
+  `domain_renewal` (yearly auto-renew), `vercel_domain` ($0, audit only).
+
+**Eligibility:**
+- Domains can ONLY be registered for prospects with `status === "paid"`.
+  Pre-paid speculation is forbidden — we don't own a domain we
+  haven't been paid for. Enforced in `/api/domains/register/route.ts`.
+- Every register call MUST log cost via `logCost(prospectId, ...)`
+  so per-customer CAC/LTV math works.
+
+**Mock-mode policy:**
+- When `NAMECHEAP_API_KEY` (or required env vars) absent, the lib
+  silently uses `mockClient` which returns deterministic responses
+  + still logs $0 cost rows (so end-to-end UI testing works).
+- Same for Vercel: `isVercelConfigured()` gates the live branch;
+  mock returns deterministic verification info.
+- It is FORBIDDEN to remove the mock fallback. Local dev, CI, and
+  any dashboard demo MUST continue to work without external API keys.
+
+**Failure handling:**
+- If the registrar call succeeds but Vercel auto-add fails, do NOT
+  roll back the registration. Persist `status='registered'` +
+  `last_error` and let the operator retry the Vercel add via
+  `POST /api/domains/[id]/vercel-add`. Never make a half-purchased
+  domain disappear.
+- If the registrar call itself fails, persist `status='failed'` +
+  `last_error` and DO NOT charge the customer (cost only logs on
+  success path).
+
+**Nameserver flow (DON'T CHANGE):**
+- Namecheap = registrar of record (renewal billing, transfer rights).
+- Vercel = delegated DNS (`ns1.vercel-dns.com`, `ns2.vercel-dns.com`).
+- After register, ALWAYS call `registrar.setNameservers(domain, …)`
+  to switch DNS authority to Vercel. Vercel then auto-verifies via
+  the delegation — no TXT-record dance for the customer.
+
+**Renewal alignment with Stripe (CRITICAL — at scale this is the
+biggest bug surface):**
+- Customer paid Day 0. Stripe deferred mgmt sub fires Day 365 ($100).
+- Domain registered Day 0 (or Day 1-2 after onboarding). Namecheap
+  renewal due Day 365 + buffer.
+- The `next_renewal_at` column MUST be set to `expires_at - 30
+  days` (the auto-renew window). Renewal cron MUST charge the
+  customer's Stripe sub BEFORE auto-renewing the domain at Namecheap.
+  If the Stripe charge fails (card expired etc), pause the domain
+  renewal and trigger dunning — do NOT pay $11 for a domain whose
+  customer hasn't paid us $100 yet.
+
+**5,000-site scaling notes:**
+- Vercel Pro caps domains per project at 50. At 5K sites, shard
+  across ~100 projects OR migrate to Enterprise (unlimited). The
+  `vercel_project_id` column on `domains` is the sharding seam —
+  it's already populated per-row so future migration can rebalance.
+- Namecheap API has rate limits (~50 req/min). Batch operations
+  (renewal cron) MUST throttle; never hammer the API in a tight loop.
+- DNS propagation is the slowest step (5–60 min). Renewal cron MUST
+  fire 30+ days before expiry to absorb propagation delays.
+
+### 33. Built-But-Unwired Detection (Meta-Rule)
+
+The single most-recurring pattern in the 2026-04-24 sales-funnel
+review: feature exists in code, sits inert because UI/cron/wiring
+was never added. Examples we found: `getSubjectVariant()` (returns
+A/B but never called), `engagement-tracker.ts` (data populated, AI
+prompt never reads it), Apollo integration (`src/lib/apollo.ts`
+fully built, never called from auto-scout), `ReviewRequestPanel`
+(component built, mounted nowhere), `Compare page` (`/compare/[id]`
+404s in incognito because it calls a protected API), open-tracking
+pixel (env config exists, no `<img>` ever emitted), `ENABLE_HTML_PITCH_EMAIL`
+(coded with no auto-flip-trigger).
+
+**Rule:** When you build any feature, you MUST in the same commit:
+1. Wire it into a customer-facing surface OR a cron OR an operator
+   dashboard
+2. Document the env vars / dashboards / triggers required
+3. Verify the happy path renders / fires once
+
+A PR that adds a function with no caller is a bug, not a feature.
+If you can't wire it in the same commit (legitimate reason — depends
+on a separate system not yet built), open a TODO entry in the BLOCK
+3 section of CLAUDE.md so it doesn't drift.
+
+### 34. CTA Copy Includes the Offer (Reinforcement)
+
+Existing claim-page CTAs say "Claim this site →" with no price, no
+guarantee. Prospects mid-scroll don't know what tapping commits them
+to → reduces tap-through rate.
+
+**Rule:** Every primary conversion CTA on customer-facing surfaces
+MUST include either the price OR the guarantee in its label.
+Examples (use these patterns):
+- "Claim — $997 · 100% money-back"
+- "Claim — from $349/3mo"
+- "Get started — 30-day guarantee"
+- "Book free walkthrough — no card required"
+
+Naked "Claim →" or "Get Started →" buttons are banned from the
+preview/claim/book surfaces. Internal admin tools can use them.
+
+---
+
