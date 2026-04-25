@@ -3671,3 +3671,69 @@ manual review (no rejections in 7 days) AND after the AI responder
 prompt has been re-tuned with rejection-reason signal. Until then
 treat the panel as the daily must-clear inbox.
 
+## Recurring vs Variable Cost Tracking (NON-NEGOTIABLE — added 2026-04-24)
+
+The cost-tracking system has two complementary halves. Both must stay
+populated for the spending dashboard's monthly-burn and per-site-margin
+math to be honest at scale.
+
+### The two tables
+- **`system_costs`** (per-action variable spend) — see `src/lib/cost-logger.ts`.
+  Every billable API call (Google Places, Twilio SMS/voice, SendGrid send,
+  Manus site gen, Claude/OpenAI/Perplexity calls, Lob postcards, domain
+  registrations) writes a row via `logCost()`. These costs scale with
+  pipeline volume — more leads = more spend.
+- **`recurring_costs`** (fixed monthly subscriptions) — see
+  `src/lib/recurring-costs.ts` and migration
+  `supabase/migrations/20260424_recurring_costs.sql`. One row per active
+  subscription (Supabase Pro, Vercel Pro, SendGrid plan, Twilio plan,
+  Browserless, Apollo, Lob credit, etc.). These costs burn whether or not
+  we generate a single site this month.
+
+The spending dashboard at `/spending` shows both side-by-side:
+total monthly burn = recurring + variable. Per-site cost = burn / paid
+customers. Margin at the $100/yr renewal sub = $8.33/mo per site - per-site
+cost. The 5K-site projection calculator uses
+`getProjectedMonthlyBurn(siteCount)` to extrapolate at any target volume.
+
+### Rules (both halves)
+- **Every new external service Ben subscribes to MUST be added to
+  `recurring_costs` within 24 hours of activation.** Use POST
+  `/api/recurring-costs` or the "+ Add" button on `/spending`. A
+  forgotten subscription quietly compounds the gap between what we
+  think we're spending and what we are.
+- **At scale milestones (100, 500, 1000, 5000 paid sites), revisit
+  every active recurring cost and check if a higher tier is needed.**
+  Concrete examples to audit at each milestone:
+  - **Vercel Pro at ~5K domains** — Pro caps at 50 domains/project. By
+    the time we have 2,500+ live sites we've sharded across ~50
+    projects on Pro or migrated to Enterprise (custom pricing,
+    typically $20K+/yr). Quote both before crossing 1,000 sites.
+  - **Supabase Pro** — Pro tier covers 8GB DB + 500MB egress/day. At
+    1,000+ sites with active engagement tracking, plan to upgrade
+    to Team ($599/mo) which includes 50GB DB + IPv4 add-on +
+    point-in-time recovery (critical — Pro tier loses PITR).
+  - **SendGrid Essentials 50K** — covers up to 50K sends/mo. At 100
+    leads/day in warmup × 14 days × 2 domains × follow-ups, we
+    breach 50K within the first month of full-volume cold outreach.
+    Upgrade to Pro 100K ($89.95/mo) before the cap.
+  - **Twilio** — current plan is per-use; at scale revisit dedicated
+    short codes / 10DLC volume tier pricing.
+  - **Lob postcards** — currently per-mailpiece; review bulk discount
+    contracts at 500+ pieces/month.
+- **Per-site margin must stay positive at the projected milestone.**
+  Use the projection calculator after any recurring-cost change. If
+  margin/site/mo < $0 at the next milestone, the answer is one of:
+  (a) raise the renewal sub price, (b) drop a non-essential
+  recurring cost, or (c) negotiate the next tier of an existing
+  one before crossing the milestone — not after.
+- **Mark subscriptions ended via DELETE
+  `/api/recurring-costs/[service]` (or the "End" button), never
+  hard-delete the row.** History is the only thing that lets future
+  Ben answer "when did this start eating $25/mo?".
+- **Both `system_costs` AND `recurring_costs` reads are part of
+  `getCostData()` in `cost-logger.ts`** — `recurringMonthly`,
+  `recurringByCategory`, and `totalMonthlyCombined` are appended to
+  the returned object. Don't add a third cost table; extend these
+  two if a new cost class shows up.
+

@@ -1,6 +1,31 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+
+interface RecurringCost {
+  id: string;
+  service: string;
+  displayName: string;
+  category: string;
+  monthlyCostUsd: number;
+  active: boolean;
+  startedOn: string;
+  endedOn: string | null;
+  notes: string | null;
+  metadata: Record<string, unknown>;
+}
+
+interface BurnProjection {
+  siteCount: number;
+  recurring: number;
+  variablePerSite: number;
+  variableTotal: number;
+  total: number;
+  perSiteCost: number;
+  marginAtFullPrice: number;
+  paidCustomersToday: number;
+  notes: string[];
+}
 
 interface SystemCosts {
   totalEmailsSent: number;
@@ -105,7 +130,24 @@ export default function SpendingPage() {
   const [pipeline, setPipeline] = useState<PipelineVelocity | null>(null);
   const [emailStats, setEmailStats] = useState<EmailStats | null>(null);
   const [deliverability, setDeliverability] = useState<DeliverabilityHealth | null>(null);
+  const [recurring, setRecurring] = useState<RecurringCost[]>([]);
+  const [recurringLoading, setRecurringLoading] = useState(false);
+  const [showAddRecurring, setShowAddRecurring] = useState(false);
+  const [siteTarget, setSiteTarget] = useState(5000);
+  const [projection, setProjection] = useState<BurnProjection | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const refreshRecurring = useCallback(async () => {
+    setRecurringLoading(true);
+    try {
+      const r = await fetch("/api/recurring-costs").then((res) => res.json());
+      setRecurring(r.recurringCosts || []);
+    } catch {
+      // ignore
+    } finally {
+      setRecurringLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     Promise.all([
@@ -114,11 +156,42 @@ export default function SpendingPage() {
       fetch("/api/pipeline-velocity").then((r) => r.json()),
       fetch("/api/email-stats").then((r) => r.json()).catch(() => null),
       fetch("/api/email-deliverability").then((r) => r.json()).catch(() => null),
+      fetch("/api/recurring-costs").then((r) => r.json()).catch(() => ({ recurringCosts: [] })),
     ])
-      .then(([c, a, p, e, d]) => { setCosts(c); setAnalytics(a); setPipeline(p); setEmailStats(e); setDeliverability(d); })
+      .then(([c, a, p, e, d, rc]) => {
+        setCosts(c);
+        setAnalytics(a);
+        setPipeline(p);
+        setEmailStats(e);
+        setDeliverability(d);
+        setRecurring(rc?.recurringCosts || []);
+      })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch(`/api/spending/projection?siteCount=${siteTarget}`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (!cancelled && !data?.error) setProjection(data);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [siteTarget]);
+
+  const recurringTotal = recurring
+    .filter((r) => r.active)
+    .reduce((sum, r) => sum + r.monthlyCostUsd, 0);
+  const recurringByCategory = recurring
+    .filter((r) => r.active)
+    .reduce<Record<string, number>>((acc, r) => {
+      acc[r.category] = (acc[r.category] || 0) + r.monthlyCostUsd;
+      return acc;
+    }, {});
 
   if (loading) {
     return <div className="min-h-screen bg-background flex items-center justify-center text-muted">Loading analytics...</div>;
@@ -178,6 +251,24 @@ export default function SpendingPage() {
             </div>
           </div>
         )}
+
+        {/* Recurring Infrastructure Costs */}
+        <RecurringCostsSection
+          rows={recurring}
+          total={recurringTotal}
+          byCategory={recurringByCategory}
+          loading={recurringLoading}
+          showAdd={showAddRecurring}
+          onToggleAdd={() => setShowAddRecurring((v) => !v)}
+          onChange={refreshRecurring}
+        />
+
+        {/* 5K-Site Projection Calculator */}
+        <ProjectionCalculator
+          siteTarget={siteTarget}
+          onChange={setSiteTarget}
+          projection={projection}
+        />
 
         {/* Daily Cost Chart */}
         {analytics && analytics.dailyCosts.length > 0 && (
@@ -479,23 +570,6 @@ export default function SpendingPage() {
           </div>
         )}
 
-        {/* Monthly Subscriptions */}
-        <div className="p-6 rounded-2xl border border-white/[0.06] bg-white/[0.02]">
-          <h2 className="text-lg font-bold mb-4">Monthly Subscriptions</h2>
-          <div className="space-y-3">
-            <SubRow name="Vercel Pro" cost={20} status="active" description="Hosting, serverless functions, cron jobs, video generation compute" />
-            <SubRow name="SendGrid Essentials" cost={20} status="active" description="Email sending, domain auth, anti-bounce warmup, analytics" />
-            <SubRow name="Twilio" cost={1.15} status="active" description="Phone number + per-use SMS/calls" />
-            <SubRow name="Supabase" cost={0} status="free" description="PostgreSQL database, auth, storage (video files, proposals)" />
-            <SubRow name="Domain (bluejayportfolio.com)" cost={0.94} status="active" description="$11.25/year via Vercel" />
-            <SubRow name="Claude Max" cost={200} status="active" description="Anthropic Max subscription ($200/mo) for development, QC reviews, and manual tasks" />
-            <div className="border-t border-white/[0.06] pt-3 flex justify-between items-center">
-              <span className="font-bold">Total Monthly Fixed Cost</span>
-              <span className="font-bold text-lg text-orange-400">${FIXED_MONTHLY.toFixed(2)}/mo</span>
-            </div>
-          </div>
-        </div>
-
         {/* Cost Per Lead at Scale */}
         <div className="p-6 rounded-2xl border border-white/[0.06] bg-white/[0.02]">
           <h2 className="text-lg font-bold mb-2">Cost Per Lead at Scale</h2>
@@ -526,7 +600,7 @@ export default function SpendingPage() {
                 ].map((s) => {
                   // variable: emails + sms + google places + AI (proposals $0.004 only; video paused)
                   const variable = (s.emails * 0.001) + (s.sms * 0.0079) + (s.leads * 0.017) + (s.leads * 0.004);
-                  const fixed = FIXED_MONTHLY;
+                  const fixed = recurringTotal > 0 ? recurringTotal : FIXED_MONTHLY;
                   const total = variable + fixed;
                   const perLead = total / s.leads;
                   const sales = Math.round(s.leads * 0.03);
@@ -550,7 +624,7 @@ export default function SpendingPage() {
               </tbody>
             </table>
           </div>
-          <p className="text-white/30 text-xs mt-4">* Assumes 3% close rate, 3 emails/lead, 1 SMS/lead. Variable costs: Google Places ($0.017/search), SendGrid ($0.001/email), Twilio ($0.0079/SMS), proposals ($0.004/lead). Video generation paused. Fixed ${FIXED_MONTHLY}/mo includes Claude Pro.</p>
+          <p className="text-white/30 text-xs mt-4">* Assumes 3% close rate, 3 emails/lead, 1 SMS/lead. Variable costs: Google Places ($0.017/search), SendGrid ($0.001/email), Twilio ($0.0079/SMS), proposals ($0.004/lead). Video generation paused. Fixed ${(recurringTotal > 0 ? recurringTotal : FIXED_MONTHLY).toFixed(2)}/mo from live recurring_costs table.</p>
         </div>
 
         {/* Per-Use Cost Reference */}
@@ -847,20 +921,401 @@ function CostBreakdownRow({ label, cost, total, color }: { label: string; cost: 
   );
 }
 
-function SubRow({ name, cost, status, description }: { name: string; cost: number; status: "active" | "free"; description: string }) {
+// ---------------------------------------------------------------------------
+// Recurring infrastructure costs section
+// ---------------------------------------------------------------------------
+
+const CATEGORY_COLORS: Record<string, string> = {
+  database: "bg-emerald-500",
+  hosting: "bg-sky-500",
+  email: "bg-amber-500",
+  sms: "bg-purple-500",
+  tools: "bg-indigo-500",
+  other: "bg-white/30",
+};
+
+function RecurringCostsSection({
+  rows,
+  total,
+  byCategory,
+  loading,
+  showAdd,
+  onToggleAdd,
+  onChange,
+}: {
+  rows: RecurringCost[];
+  total: number;
+  byCategory: Record<string, number>;
+  loading: boolean;
+  showAdd: boolean;
+  onToggleAdd: () => void;
+  onChange: () => void | Promise<void>;
+}) {
+  const categories = Object.entries(byCategory).sort(([, a], [, b]) => b - a);
+
   return (
-    <div className="flex items-center gap-4">
-      <div className={`w-2 h-2 rounded-full ${status === "active" ? "bg-green-500" : "bg-white/20"}`} />
-      <div className="flex-1">
-        <div className="flex items-center gap-2">
-          <p className="text-sm font-medium">{name}</p>
-          <span className={`text-[10px] px-1.5 py-0.5 rounded ${status === "active" ? "bg-green-500/20 text-green-400" : "bg-white/10 text-white/40"}`}>
-            {status === "free" ? "FREE" : "ACTIVE"}
-          </span>
+    <div className="p-6 rounded-2xl border border-orange-500/20 bg-orange-500/[0.03]">
+      <div className="flex items-center justify-between mb-4">
+        <div>
+          <h2 className="text-lg font-bold">Recurring Infrastructure Costs</h2>
+          <p className="text-white/40 text-sm mt-1">Fixed monthly subscriptions — burns whether we generate sites or not.</p>
         </div>
-        <p className="text-xs text-white/40">{description}</p>
+        <div className="flex items-center gap-2">
+          <span className="text-2xl font-extrabold text-orange-400">${total.toFixed(2)}<span className="text-sm font-medium text-white/40">/mo</span></span>
+          <button
+            onClick={onToggleAdd}
+            className="px-3 py-1.5 rounded-lg bg-orange-500/20 text-orange-400 text-xs font-bold hover:bg-orange-500/30 transition-colors"
+          >
+            {showAdd ? "Cancel" : "+ Add"}
+          </button>
+        </div>
       </div>
-      <p className="font-semibold">{cost > 0 ? `$${cost.toFixed(2)}` : "Free"}</p>
+
+      {/* Category breakdown stacked bar */}
+      {categories.length > 0 && (
+        <div className="mb-4">
+          <div className="h-2 flex rounded-full overflow-hidden bg-white/[0.04]">
+            {categories.map(([cat, amount]) => (
+              <div
+                key={cat}
+                className={CATEGORY_COLORS[cat] || "bg-white/30"}
+                style={{ width: `${(amount / total) * 100}%` }}
+                title={`${cat}: $${amount.toFixed(2)}/mo`}
+              />
+            ))}
+          </div>
+          <div className="flex flex-wrap gap-3 mt-2 text-xs">
+            {categories.map(([cat, amount]) => (
+              <div key={cat} className="flex items-center gap-1.5">
+                <div className={`w-2 h-2 rounded-full ${CATEGORY_COLORS[cat] || "bg-white/30"}`} />
+                <span className="text-white/60 capitalize">{cat}</span>
+                <span className="text-white/40">${amount.toFixed(2)}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {showAdd && <AddRecurringForm onSaved={async () => { await onChange(); onToggleAdd(); }} />}
+
+      {/* Rows */}
+      <div className="space-y-2 mt-4">
+        {loading && rows.length === 0 ? (
+          <p className="text-white/40 text-sm">Loading...</p>
+        ) : rows.length === 0 ? (
+          <p className="text-white/40 text-sm">No recurring costs tracked yet. Click + Add to seed Supabase Pro, Vercel, etc.</p>
+        ) : (
+          rows.map((row) => <RecurringCostRow key={row.id} row={row} onChange={onChange} />)
+        )}
+      </div>
+    </div>
+  );
+}
+
+function RecurringCostRow({ row, onChange }: { row: RecurringCost; onChange: () => void | Promise<void> }) {
+  const [editing, setEditing] = useState(false);
+  const [draftCost, setDraftCost] = useState(row.monthlyCostUsd.toString());
+  const [busy, setBusy] = useState(false);
+
+  const saveCost = async () => {
+    const n = Number(draftCost);
+    if (!Number.isFinite(n) || n < 0) return;
+    setBusy(true);
+    try {
+      await fetch(`/api/recurring-costs/${encodeURIComponent(row.service)}`, {
+        method: "PATCH",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ monthlyCostUsd: n }),
+      });
+      await onChange();
+      setEditing(false);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const endSubscription = async () => {
+    if (!confirm(`End subscription "${row.displayName}"? It will be marked inactive (history preserved).`)) return;
+    setBusy(true);
+    try {
+      await fetch(`/api/recurring-costs/${encodeURIComponent(row.service)}`, { method: "DELETE" });
+      await onChange();
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className={`flex items-center gap-3 p-3 rounded-lg ${row.active ? "bg-white/[0.03]" : "bg-white/[0.01] opacity-60"}`}>
+      <div className={`w-2 h-2 rounded-full flex-shrink-0 ${CATEGORY_COLORS[row.category] || "bg-white/30"}`} />
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 flex-wrap">
+          <p className="text-sm font-medium truncate">{row.displayName}</p>
+          <span className="text-[10px] px-1.5 py-0.5 rounded bg-white/[0.05] text-white/40 capitalize">{row.category}</span>
+          {!row.active && (
+            <span className="text-[10px] px-1.5 py-0.5 rounded bg-red-500/20 text-red-400">ENDED</span>
+          )}
+        </div>
+        {row.notes && <p className="text-xs text-white/40 truncate">{row.notes}</p>}
+      </div>
+      {editing ? (
+        <div className="flex items-center gap-1">
+          <span className="text-white/40 text-sm">$</span>
+          <input
+            type="number"
+            step="0.01"
+            value={draftCost}
+            onChange={(e) => setDraftCost(e.target.value)}
+            className="w-20 px-2 py-1 text-sm rounded bg-white/[0.05] border border-white/10 text-white"
+            autoFocus
+          />
+          <button
+            onClick={saveCost}
+            disabled={busy}
+            className="px-2 py-1 text-xs rounded bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 disabled:opacity-50"
+          >
+            Save
+          </button>
+          <button
+            onClick={() => { setEditing(false); setDraftCost(row.monthlyCostUsd.toString()); }}
+            className="px-2 py-1 text-xs rounded bg-white/[0.05] text-white/60 hover:bg-white/[0.08]"
+          >
+            Cancel
+          </button>
+        </div>
+      ) : (
+        <button
+          onClick={() => row.active && setEditing(true)}
+          disabled={!row.active}
+          className={`font-semibold text-sm ${row.active ? "hover:text-orange-400 cursor-pointer" : "cursor-not-allowed"}`}
+          title={row.active ? "Click to edit" : "Subscription ended"}
+        >
+          ${row.monthlyCostUsd.toFixed(2)}<span className="text-white/40 text-xs">/mo</span>
+        </button>
+      )}
+      {row.active && !editing && (
+        <button
+          onClick={endSubscription}
+          disabled={busy}
+          className="text-[10px] px-2 py-1 rounded bg-red-500/10 text-red-400 hover:bg-red-500/20 disabled:opacity-50"
+          title="End subscription"
+        >
+          End
+        </button>
+      )}
+    </div>
+  );
+}
+
+function AddRecurringForm({ onSaved }: { onSaved: () => void | Promise<void> }) {
+  const [service, setService] = useState("");
+  const [displayName, setDisplayName] = useState("");
+  const [category, setCategory] = useState("tools");
+  const [monthlyCostUsd, setMonthlyCostUsd] = useState("");
+  const [notes, setNotes] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    const n = Number(monthlyCostUsd);
+    if (!service.trim() || !displayName.trim() || !Number.isFinite(n) || n < 0) {
+      setError("service, display name, and a non-negative cost are required");
+      return;
+    }
+    setBusy(true);
+    try {
+      const res = await fetch("/api/recurring-costs", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          service: service.trim(),
+          displayName: displayName.trim(),
+          category,
+          monthlyCostUsd: n,
+          notes: notes.trim() || undefined,
+        }),
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        setError(json?.error || `HTTP ${res.status}`);
+        return;
+      }
+      setService("");
+      setDisplayName("");
+      setMonthlyCostUsd("");
+      setNotes("");
+      await onSaved();
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <form onSubmit={submit} className="p-3 rounded-lg bg-white/[0.02] border border-white/[0.06] space-y-2">
+      <div className="grid grid-cols-2 gap-2">
+        <input
+          placeholder="service slug (e.g. cloudflare)"
+          value={service}
+          onChange={(e) => setService(e.target.value)}
+          className="px-2 py-1.5 text-sm rounded bg-white/[0.04] border border-white/10"
+        />
+        <input
+          placeholder="Display name"
+          value={displayName}
+          onChange={(e) => setDisplayName(e.target.value)}
+          className="px-2 py-1.5 text-sm rounded bg-white/[0.04] border border-white/10"
+        />
+        <select
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          className="px-2 py-1.5 text-sm rounded bg-white/[0.04] border border-white/10"
+        >
+          <option value="database">database</option>
+          <option value="hosting">hosting</option>
+          <option value="email">email</option>
+          <option value="sms">sms</option>
+          <option value="tools">tools</option>
+          <option value="other">other</option>
+        </select>
+        <input
+          type="number"
+          step="0.01"
+          placeholder="Monthly $"
+          value={monthlyCostUsd}
+          onChange={(e) => setMonthlyCostUsd(e.target.value)}
+          className="px-2 py-1.5 text-sm rounded bg-white/[0.04] border border-white/10"
+        />
+      </div>
+      <input
+        placeholder="Notes (optional)"
+        value={notes}
+        onChange={(e) => setNotes(e.target.value)}
+        className="w-full px-2 py-1.5 text-sm rounded bg-white/[0.04] border border-white/10"
+      />
+      {error && <p className="text-xs text-red-400">{error}</p>}
+      <button
+        type="submit"
+        disabled={busy}
+        className="px-3 py-1.5 rounded-lg bg-orange-500/20 text-orange-400 text-sm font-bold hover:bg-orange-500/30 disabled:opacity-50"
+      >
+        {busy ? "Adding..." : "Add subscription"}
+      </button>
+    </form>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// 5K-site projection calculator
+// ---------------------------------------------------------------------------
+
+function ProjectionCalculator({
+  siteTarget,
+  onChange,
+  projection,
+}: {
+  siteTarget: number;
+  onChange: (n: number) => void;
+  projection: BurnProjection | null;
+}) {
+  const presets = [100, 500, 1000, 2500, 5000];
+  return (
+    <div className="p-6 rounded-2xl border border-amber-500/20 bg-amber-500/[0.03]">
+      <div className="flex items-center justify-between mb-4">
+        <div>
+          <h2 className="text-lg font-bold">5K-Site Projection Calculator</h2>
+          <p className="text-white/40 text-sm mt-1">Project monthly burn at scale. Variable cost averaged from system_costs over the last 30 days.</p>
+        </div>
+        <span className="text-3xl font-black text-amber-400">{siteTarget.toLocaleString()}</span>
+      </div>
+
+      <div className="mb-4">
+        <input
+          type="range"
+          min={0}
+          max={5000}
+          step={100}
+          value={siteTarget}
+          onChange={(e) => onChange(Number(e.target.value))}
+          className="w-full accent-amber-400"
+        />
+        <div className="flex justify-between text-[10px] text-white/30 mt-1">
+          <span>0</span>
+          <span>1K</span>
+          <span>2.5K</span>
+          <span>5K</span>
+        </div>
+      </div>
+
+      <div className="flex gap-2 mb-6 flex-wrap">
+        {presets.map((p) => (
+          <button
+            key={p}
+            onClick={() => onChange(p)}
+            className={`px-3 py-1 rounded-full text-xs font-bold transition-colors ${
+              siteTarget === p
+                ? "bg-amber-500/30 text-amber-300"
+                : "bg-white/[0.04] text-white/50 hover:bg-white/[0.08]"
+            }`}
+          >
+            {p.toLocaleString()}
+          </button>
+        ))}
+      </div>
+
+      {projection ? (
+        <>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+            <div className="p-4 rounded-xl bg-white/[0.03] text-center">
+              <p className="text-xl font-extrabold text-orange-400">${projection.recurring.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+              <p className="text-white/40 text-[10px] mt-1 uppercase tracking-wider">Recurring/mo</p>
+            </div>
+            <div className="p-4 rounded-xl bg-white/[0.03] text-center">
+              <p className="text-xl font-extrabold text-sky-400">${projection.variableTotal.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+              <p className="text-white/40 text-[10px] mt-1 uppercase tracking-wider">Variable/mo</p>
+            </div>
+            <div className="p-4 rounded-xl bg-white/[0.03] text-center">
+              <p className="text-2xl font-black text-amber-300">${projection.total.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+              <p className="text-white/40 text-[10px] mt-1 uppercase tracking-wider">Total Burn/mo</p>
+            </div>
+            <div className="p-4 rounded-xl bg-white/[0.03] text-center">
+              <p className="text-xl font-extrabold text-emerald-400">${projection.perSiteCost.toFixed(4)}</p>
+              <p className="text-white/40 text-[10px] mt-1 uppercase tracking-wider">Per Site / Month</p>
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-3 p-4 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+            <div className="text-center">
+              <p className="text-sm text-white/50 mb-1">Margin/site/mo at $100/yr renewal</p>
+              <p className={`text-2xl font-black ${projection.marginAtFullPrice >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                ${projection.marginAtFullPrice.toFixed(4)}
+              </p>
+              <p className="text-white/30 text-[10px] mt-1">($100/yr = $8.33/mo per site)</p>
+            </div>
+            <div className="text-center">
+              <p className="text-sm text-white/50 mb-1">Annual gross margin at {siteTarget.toLocaleString()} sites</p>
+              <p className={`text-2xl font-black ${projection.marginAtFullPrice >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                ${(projection.marginAtFullPrice * 12 * siteTarget).toLocaleString(undefined, { maximumFractionDigits: 0 })}
+              </p>
+              <p className="text-white/30 text-[10px] mt-1">renewal sub revenue minus all infra</p>
+            </div>
+          </div>
+
+          {projection.notes.length > 0 && (
+            <div className="mt-3 space-y-1">
+              {projection.notes.map((n, i) => (
+                <p key={i} className="text-[11px] text-amber-300/70">⓵ {n}</p>
+              ))}
+            </div>
+          )}
+          <p className="text-white/30 text-xs mt-3 text-center">
+            Today: {projection.paidCustomersToday} paid customer{projection.paidCustomersToday === 1 ? "" : "s"} · variable/site = ${projection.variablePerSite.toFixed(4)}/mo
+          </p>
+        </>
+      ) : (
+        <p className="text-white/40 text-sm">Loading projection...</p>
+      )}
     </div>
   );
 }

@@ -96,6 +96,11 @@ export async function logCost(params: LogCostParams): Promise<void> {
 /**
  * Query cost data from system_costs for the spending dashboard.
  * Returns aggregated cost data by time period and service.
+ *
+ * As of 2026-04-24: also includes `recurringMonthly` (sum of active
+ * recurring_costs rows) and `totalMonthlyCombined` (per-action variable
+ * + recurring) so the dashboard can show true monthly burn. The
+ * existing fields stay backwards-compatible.
  */
 export async function getCostData(): Promise<{
   today: { total: number; byService: Record<string, number> };
@@ -104,6 +109,9 @@ export async function getCostData(): Promise<{
   perLeadAverage: number;
   topCostLeads: Array<{ prospectId: string; businessName: string; totalCost: number }>;
   projectedMonthly: number;
+  recurringMonthly: number;
+  recurringByCategory: Record<string, number>;
+  totalMonthlyCombined: number;
 }> {
   const defaultResult = {
     today: { total: 0, byService: {} },
@@ -112,10 +120,33 @@ export async function getCostData(): Promise<{
     perLeadAverage: 0,
     topCostLeads: [],
     projectedMonthly: 0,
+    recurringMonthly: 0,
+    recurringByCategory: {},
+    totalMonthlyCombined: 0,
   };
 
+  // Fetch recurring totals up-front so we can include them even when
+  // Supabase has no system_costs rows yet (early warmup phase).
+  // Lazy-imported to avoid a circular reference between
+  // recurring-costs.ts (which imports getCostData) and cost-logger.ts.
+  let recurringMonthly = 0;
+  let recurringByCategory: Record<string, number> = {};
+  try {
+    const { getMonthlyRecurringTotal } = await import("./recurring-costs");
+    const r = await getMonthlyRecurringTotal();
+    recurringMonthly = r.total;
+    recurringByCategory = r.byCategory;
+  } catch {
+    // Mock mode / module load failure — leave at 0.
+  }
+
   if (!isSupabaseConfigured()) {
-    return defaultResult;
+    return {
+      ...defaultResult,
+      recurringMonthly,
+      recurringByCategory,
+      totalMonthlyCombined: recurringMonthly,
+    };
   }
 
   try {
@@ -131,7 +162,14 @@ export async function getCostData(): Promise<{
       .gte("created_at", monthStart)
       .eq("status", "success");
 
-    if (monthlyError || !monthlyCosts) return defaultResult;
+    if (monthlyError || !monthlyCosts) {
+      return {
+        ...defaultResult,
+        recurringMonthly,
+        recurringByCategory,
+        totalMonthlyCombined: recurringMonthly,
+      };
+    }
 
     // Aggregate by time period
     const today = { total: 0, byService: {} as Record<string, number> };
@@ -195,16 +233,27 @@ export async function getCostData(): Promise<{
     const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
     const projectedMonthly = Math.round(dailyAverage * daysInMonth * 100) / 100;
 
+    const monthRoundedTotal = Math.round(thisMonth.total * 100) / 100;
+    const totalMonthlyCombined = Math.round((monthRoundedTotal + recurringMonthly) * 100) / 100;
+
     return {
       today: { total: Math.round(today.total * 100) / 100, byService: today.byService },
       thisWeek: { total: Math.round(thisWeek.total * 100) / 100, byService: thisWeek.byService },
-      thisMonth: { total: Math.round(thisMonth.total * 100) / 100, byService: thisMonth.byService },
+      thisMonth: { total: monthRoundedTotal, byService: thisMonth.byService },
       perLeadAverage: Math.round(perLeadAverage * 1000) / 1000,
       topCostLeads,
       projectedMonthly,
+      recurringMonthly,
+      recurringByCategory,
+      totalMonthlyCombined,
     };
   } catch (err) {
     console.error(`  [Cost] Error fetching cost data: ${(err as Error).message}`);
-    return defaultResult;
+    return {
+      ...defaultResult,
+      recurringMonthly,
+      recurringByCategory,
+      totalMonthlyCombined: recurringMonthly,
+    };
   }
 }
