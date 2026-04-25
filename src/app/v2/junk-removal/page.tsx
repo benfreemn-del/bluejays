@@ -317,7 +317,7 @@ export default function V2JunkRemovalPage() {
         >
           <img
             src="https://images.unsplash.com/photo-1616627547584-bf28cee262db?w=1600&q=80"
-            alt="Clean empty garage after cleanup"
+            alt="Reclaimed living space"
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${BG}dd 0%, ${BG}bb 50%, ${BG}88 100%)` }} />
@@ -535,7 +535,7 @@ export default function V2JunkRemovalPage() {
               <div className="aspect-square rounded-2xl overflow-hidden">
                 <img
                   src="https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=800&q=80"
-                  alt="Recycling and eco-friendly disposal"
+                  alt="Sorted recycling bins for responsible disposal"
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 rounded-2xl" style={{ background: `linear-gradient(to top, ${BG}ee 0%, transparent 50%)` }} />
@@ -838,9 +838,9 @@ export default function V2JunkRemovalPage() {
           </div>
           <motion.div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
             {[
-              { src: "https://images.unsplash.com/photo-1635510952461-1fc1b7c96314?w=600&q=80", label: "Garage Cleanout — Ballard" },
+              { src: "https://images.unsplash.com/photo-1635510952461-1fc1b7c96314?w=600&q=80", label: "Beach Cleanup — Ballard" },
               { src: "https://images.unsplash.com/photo-1667318243261-af1026f4195b?w=600&q=80", label: "Estate Cleanout — Capitol Hill" },
-              { src: "https://images.unsplash.com/photo-1712252036653-fe3a6c503692?w=600&q=80", label: "Office Furniture Removal — SoDo" },
+              { src: "https://images.unsplash.com/photo-1712252036653-fe3a6c503692?w=600&q=80", label: "Industrial Salvage — SoDo" },
               { src: "https://images.unsplash.com/photo-1588829297835-5f3492a4cf9d?w=600&q=80", label: "Renovation Debris — Fremont" },
               { src: "https://images.unsplash.com/photo-1706773184955-c45fac9e0528?w=600&q=80", label: "Appliance Haul — Green Lake" },
               { src: "https://plus.unsplash.com/premium_photo-1683141120496-f5921a97f5c4?w=600&q=80", label: "Full Property Clear — Beacon Hill" },
