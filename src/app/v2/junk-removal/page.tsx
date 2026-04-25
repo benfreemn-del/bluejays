@@ -209,7 +209,7 @@ const testimonials = [
 ];
 
 const comparisonRows = [
-  { feature: "You Do The Heavy Lifting", us: false, them: true, usText: "We handle everything", themText: "You load it yourself" },
+  { feature: "Heavy Lifting Handled", us: true, them: false, usText: "We handle everything", themText: "You load it yourself" },
   { feature: "Same-Day Pickup", us: true, them: false, usText: "Call before noon", themText: "3-7 day delivery" },
   { feature: "Eco-Friendly Disposal", us: true, them: false, usText: "60% donated, 30% recycled", themText: "All goes to landfill" },
   { feature: "Upfront Flat Pricing", us: true, them: false, usText: "Quote before we start", themText: "Hidden overage fees" },

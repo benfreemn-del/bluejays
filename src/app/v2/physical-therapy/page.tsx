@@ -415,7 +415,7 @@ export default function V2PhysicalTherapyShowcase() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="relative">
               <div className="rounded-2xl overflow-hidden border border-slate-200 shadow-lg">
-                <img src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=700&q=80" alt="Dr. Sofia Reyes, DPT" className="w-full h-[480px] object-cover object-top" />
+                <img src="https://images.unsplash.com/photo-1651008376811-b90baee60c1f?w=700&q=80" alt="Dr. Sofia Reyes, DPT" className="w-full h-[480px] object-cover object-top" />
               </div>
               <div className="absolute -bottom-4 -right-4 md:bottom-6 md:-right-6">
                 <div className="px-5 py-3 rounded-xl shadow-lg border border-white text-white font-bold text-sm" style={{ background: BLUE }}>

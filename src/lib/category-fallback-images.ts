@@ -1,3 +1,72 @@
+// ─────────────────────────────────────────────────────────────────────────────
+//  CONTAMINATION WARNING (per CLAUDE.md rule 19, 2026-04-23 audit)
+//
+//  This library was populated from Unsplash search results. The Unsplash search
+//  API returns surprisingly off-topic content for many categories — entries
+//  here are NOT guaranteed to match their category.
+//
+//  Examples of contamination found in past audits:
+//    • construction → Playmobil pirate, daycare classroom, paint trays
+//    • tattoo → Hawaiian shirts, Saint Basil's Cathedral, mountain lakes
+//    • landscaping → Mercedes hood ornament, wine glass
+//    • hvac → 14 South Asian men in a car-detailing shop
+//
+//  Before using ANY URL from this file in a customer-facing surface, you MUST
+//  download and visually inspect the image (see CLAUDE.md rule 18). Treat the
+//  `alt` field as a hint, not as truth.
+//
+//  Additionally, BLOCKED_FALLBACK_IDS below lists Unsplash IDs and photo
+//  segments we know cause name-tag-mismatch / wrong-industry / wrong-person
+//  failures across the portfolio. Use `isFallbackBlocked()` to filter them
+//  out at runtime even if they slip back into the pool.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Photos confirmed bad in showcase audits — never serve these.
+ * IDs are Unsplash short IDs (the trailing segment in `unsplash.com/photos/{id}`).
+ * Photo segments are the `photo-XXXXXXX` token from the raw URL.
+ */
+export const BLOCKED_FALLBACK_IDS: ReadonlySet<string> = new Set([
+  // visible foreign name tag on scrubs
+  "photo-1594824476967",
+  // 14 South Asian men in a car-detailing shop (was on hvac team)
+  "photo-1733911542569",
+  "yHXiWRO06Sk",
+  // cross-portfolio reused doctor headshot (was on dental + med-spa)
+  "photo-1559839734",
+  "FVh_yqLR9eA",
+  // cross-portfolio reused Latina-looking woman with laptop (Elena/Priya/Vasquez)
+  "photo-1573496359142",
+  // cross-portfolio reused photography↔florist photos
+  "photo-1469371670807",
+  "photo-1519741497674",
+  // cancer-grief chalkboard (was on tutoring "Dr. Rachel Torres teaching")
+  "photo-1573497019418",
+  // Italian Dolomites passed off as Kirkland WA on real-estate
+  "photo-1470770903676",
+  // beach pollution / rust-belt warehouse mis-labeled as junk-removal
+  "photo-1712252036653",
+  "BAE0RKowxEM",
+  "photo-1635510952461",
+  "-d6-YgWgMpc",
+]);
+
+/** Returns true if a fallback asset's id or raw URL matches a blocked entry. */
+export function isFallbackBlocked(asset: { id?: string; raw?: string }): boolean {
+  if (asset.id && BLOCKED_FALLBACK_IDS.has(asset.id)) return true;
+  if (asset.raw) {
+    for (const blocked of BLOCKED_FALLBACK_IDS) {
+      if (blocked.startsWith("photo-") && asset.raw.includes(blocked)) return true;
+    }
+  }
+  return false;
+}
+
+/** Filter a pool down to only safe assets. Use this on every read of the library. */
+export function safeFallbackPool<T extends { id?: string; raw?: string }>(pool: T[]): T[] {
+  return pool.filter((a) => !isFallbackBlocked(a));
+}
+
 export interface FallbackImageAsset {
   "id": string;
   "page": string;
@@ -3118,12 +3187,6 @@ export const CATEGORY_FALLBACK_COLLECTIONS: Record<string, CategoryFallbackColle
         "alt": "a group of people in safety vests posing for a picture"
       },
       {
-        "id": "yHXiWRO06Sk",
-        "page": "https://unsplash.com/photos/yHXiWRO06Sk",
-        "raw": "https://images.unsplash.com/photo-1733911542569-dfa4f1b37f93?ixid=M3wxMjA3fDB8MXxzZWFyY2h8Mnx8aHZhYyUyMHRlYW18ZW58MHx8fHwxNzc1ODgxMjE1fDA&ixlib=rb-4.1.0",
-        "alt": "A group of men standing next to each other"
-      },
-      {
         "id": "dEJ3-qfBEl4",
         "page": "https://unsplash.com/photos/dEJ3-qfBEl4",
         "raw": "https://images.unsplash.com/photo-1773270196888-0cdacb07edae?ixid=M3wxMjA3fDB8MXxzZWFyY2h8M3x8aHZhYyUyMHRlYW18ZW58MHx8fHwxNzc1ODgxMjE1fDA&ixlib=rb-4.1.0",
@@ -3238,12 +3301,6 @@ export const CATEGORY_FALLBACK_COLLECTIONS: Record<string, CategoryFallbackColle
         "page": "https://unsplash.com/photos/wXroT0EeUb8",
         "raw": "https://images.unsplash.com/photo-1764745222363-54abf5c0fee5?ixid=M3wxMjA3fDB8MXxzZWFyY2h8Nnx8YnVzaW5lc3MlMjBpbnN1cmFuY2UlMjBvZmZpY2V8ZW58MHx8fHwxNzc1ODgxMzY0fDA&ixlib=rb-4.1.0",
         "alt": "Historic building with modern skyscrapers in background"
-      },
-      {
-        "id": "FVh_yqLR9eA",
-        "page": "https://unsplash.com/photos/FVh_yqLR9eA",
-        "raw": "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?ixid=M3wxMjA3fDB8MXxzZWFyY2h8N3x8YnVzaW5lc3MlMjBpbnN1cmFuY2UlMjBvZmZpY2V8ZW58MHx8fHwxNzc1ODgxMzY0fDA&ixlib=rb-4.1.0",
-        "alt": "woman standing under tree"
       },
       {
         "id": "A2WvAWo0hek",
@@ -3584,12 +3641,6 @@ export const CATEGORY_FALLBACK_COLLECTIONS: Record<string, CategoryFallbackColle
         "alt": "wrecked white vehicle on garage at daytime"
       },
       {
-        "id": "BAE0RKowxEM",
-        "page": "https://unsplash.com/photos/BAE0RKowxEM",
-        "raw": "https://images.unsplash.com/photo-1712252036653-fe3a6c503692?ixid=M3wxMjA3fDB8MXxzZWFyY2h8N3x8Y2xlYW5vdXQlMjB0cnVjayUyMHJlbW92YWx8ZW58MHx8fHwxNzc1ODgxMzY5fDA&ixlib=rb-4.1.0",
-        "alt": "a red truck parked in front of a building"
-      },
-      {
         "id": "tmTobFE7-XA",
         "page": "https://unsplash.com/photos/tmTobFE7-XA",
         "raw": "https://images.unsplash.com/photo-1713789369387-7ce71fb86898?ixid=M3wxMjA3fDB8MXxzZWFyY2h8OHx8Y2xlYW5vdXQlMjB0cnVjayUyMHJlbW92YWx8ZW58MHx8fHwxNzc1ODgxMzY5fDA&ixlib=rb-4.1.0",
@@ -3620,12 +3671,6 @@ export const CATEGORY_FALLBACK_COLLECTIONS: Record<string, CategoryFallbackColle
         "page": "https://unsplash.com/photos/HrnAxAUwle8",
         "raw": "https://images.unsplash.com/photo-1614359835514-92f8ba196357?ixid=M3wxMjA3fDB8MXxzZWFyY2h8MTB8fGp1bmslMjByZW1vdmFsJTIwdGVhbXxlbnwwfHx8fDE3NzU4ODEzNzB8MA&ixlib=rb-4.1.0",
         "alt": "2 boys in red shirt sitting on yellow metal bar"
-      },
-      {
-        "id": "-d6-YgWgMpc",
-        "page": "https://unsplash.com/photos/-d6-YgWgMpc",
-        "raw": "https://images.unsplash.com/photo-1635510952461-1fc1b7c96314?ixid=M3wxMjA3fDB8MXxzZWFyY2h8MTF8fGp1bmslMjByZW1vdmFsJTIwdGVhbXxlbnwwfHx8fDE3NzU4ODEzNzB8MA&ixlib=rb-4.1.0",
-        "alt": "a man standing next to a pile of junk"
       },
       {
         "id": "5EwVJPJli-M",

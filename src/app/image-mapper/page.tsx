@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useMemo, useState, useEffect } from "react";
 import Link from "next/link";
 
 interface Prospect {
@@ -9,6 +9,8 @@ interface Prospect {
   category: string;
   currentWebsite: string;
   status: string;
+  createdAt?: string;
+  updatedAt?: string;
   scrapedData?: { photos?: string[] };
   imageMapping?: {
     images: { status: string }[];
@@ -17,17 +19,19 @@ interface Prospect {
   };
 }
 
+const PAGE_SIZE = 100;
+
 export default function ImageMapperLeadsPage() {
   const [prospects, setProspects] = useState<Prospect[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("");
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
-    fetch("/api/prospects?limit=200", { credentials: "include" })
+    fetch("/api/prospects", { credentials: "include" })
       .then((r) => r.json())
       .then((data) => {
         const list = data.prospects || data.data || data || [];
-        // Only show prospects that aren't dismissed
         const active = list.filter((p: Prospect) => p.status !== "dismissed");
         setProspects(active);
         setLoading(false);
@@ -35,13 +39,48 @@ export default function ImageMapperLeadsPage() {
       .catch(() => setLoading(false));
   }, []);
 
-  const filtered = filter
-    ? prospects.filter(
-        (p) =>
-          p.businessName.toLowerCase().includes(filter.toLowerCase()) ||
-          p.category.toLowerCase().includes(filter.toLowerCase())
-      )
-    : prospects;
+  // Sort: unfinished (not-started + in-progress) oldest-first at top,
+  // completed pushed to the bottom (most-recently-completed first so Ben
+  // can still spot recent wins).
+  const sorted = useMemo(() => {
+    const getMapping = (p: Prospect) =>
+      p.imageMapping ||
+      ((p.scrapedData as unknown as { imageMapping?: Prospect["imageMapping"] })?.imageMapping);
+
+    const isCompleted = (p: Prospect) =>
+      getMapping(p)?.selectionStatus === "completed";
+
+    const ts = (p: Prospect) =>
+      new Date(p.createdAt || p.updatedAt || 0).getTime();
+
+    return [...prospects].sort((a, b) => {
+      const aDone = isCompleted(a);
+      const bDone = isCompleted(b);
+      if (aDone !== bDone) return aDone ? 1 : -1;
+      // Within each group: unfinished → oldest first; completed → newest first
+      return aDone ? ts(b) - ts(a) : ts(a) - ts(b);
+    });
+  }, [prospects]);
+
+  const filtered = useMemo(() => {
+    if (!filter) return sorted;
+    const q = filter.toLowerCase();
+    return sorted.filter(
+      (p) =>
+        p.businessName.toLowerCase().includes(q) ||
+        p.category.toLowerCase().includes(q)
+    );
+  }, [sorted, filter]);
+
+  // Reset to page 1 whenever the filter changes
+  useEffect(() => {
+    setPage(1);
+  }, [filter]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const visible = filtered.slice(start, start + PAGE_SIZE);
 
   return (
     <div className="min-h-screen bg-[#0a0f1a] text-white">
@@ -89,7 +128,7 @@ export default function ImageMapperLeadsPage() {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((p) => {
+                {visible.map((p) => {
                   const imgMap = (p as unknown as Record<string, unknown>).imageMapping || (p.scrapedData as unknown as Record<string, unknown>)?.imageMapping;
                   const im = imgMap as { images?: { status: string }[]; selectionStatus?: string } | undefined;
                   const imageCount =
@@ -166,9 +205,33 @@ export default function ImageMapperLeadsPage() {
             )}
           </div>
         )}
-        <p className="text-xs text-white/20 mt-4 text-center">
-          {filtered.length} leads • Click a lead name to map images
-        </p>
+
+        {!loading && filtered.length > 0 && (
+          <div className="mt-4 flex items-center justify-between">
+            <p className="text-xs text-white/30">
+              {filtered.length} leads • showing {start + 1}–{Math.min(start + PAGE_SIZE, filtered.length)} • unfinished (oldest first) at top, completed at bottom
+            </p>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage <= 1}
+                className="px-3 py-1.5 rounded-lg border border-white/10 bg-white/[0.03] text-xs text-white/70 hover:bg-white/[0.08] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              >
+                ← Prev
+              </button>
+              <span className="text-xs text-white/40">
+                Page {currentPage} / {totalPages}
+              </span>
+              <button
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                disabled={currentPage >= totalPages}
+                className="px-3 py-1.5 rounded-lg border border-white/10 bg-white/[0.03] text-xs text-white/70 hover:bg-white/[0.08] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              >
+                Next →
+              </button>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );

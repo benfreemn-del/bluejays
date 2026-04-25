@@ -1,0 +1,78 @@
+import { NextResponse } from "next/server";
+
+/**
+ * GET /api/admin/env-check
+ *
+ * Returns presence/absence (booleans only — never the values) of the
+ * env vars that gate the marketing pipeline. Use this to confirm a
+ * Vercel deploy actually has the secrets it needs without exposing
+ * any secret material.
+ *
+ * Auth: middleware.ts already gates /api/admin/* behind the dashboard
+ * session cookie, so this is admin-only by virtue of its path.
+ */
+export const dynamic = "force-dynamic";
+
+const ENV_KEYS = [
+  // Stripe
+  "STRIPE_SECRET_KEY",
+  "STRIPE_WEBHOOK_SECRET",
+  "STRIPE_PRICE_SETUP_ID",
+  "STRIPE_PRICE_MGMT_ID",
+  "STRIPE_PRICE_CUSTOM_ID",
+  // SendGrid + email
+  "SENDGRID_API_KEY",
+  "FROM_EMAIL",
+  // Twilio
+  "TWILIO_ACCOUNT_SID",
+  "TWILIO_AUTH_TOKEN",
+  "TWILIO_PHONE_NUMBER",
+  // Lob (postcards)
+  "LOB_API_KEY",
+  "LOB_FROM_NAME",
+  "LOB_FROM_LINE1",
+  "LOB_FROM_CITY",
+  "LOB_FROM_STATE",
+  "LOB_FROM_ZIP",
+  // Browserless (video)
+  "BROWSERLESS_API_KEY",
+  // Misc
+  "BEN_PHONE",
+  "ENABLE_HTML_PITCH_EMAIL",
+  "GOOGLE_PLACES_API_KEY",
+  "OPENAI_API_KEY",
+  "ANTHROPIC_API_KEY",
+  // Supabase
+  "NEXT_PUBLIC_SUPABASE_URL",
+  "SUPABASE_SERVICE_ROLE_KEY",
+];
+
+export async function GET() {
+  const present: Record<string, boolean> = {};
+  for (const key of ENV_KEYS) {
+    present[key] = Boolean((process.env[key] || "").trim());
+  }
+
+  // Lob-specific summary so it's easy to spot the gap at a glance.
+  const lobReady =
+    present.LOB_API_KEY &&
+    present.LOB_FROM_NAME &&
+    present.LOB_FROM_LINE1 &&
+    present.LOB_FROM_CITY &&
+    present.LOB_FROM_STATE &&
+    present.LOB_FROM_ZIP;
+
+  // Vercel build identifier so you can verify which deploy answered.
+  const deploy = {
+    vercelEnv: process.env.VERCEL_ENV || null,
+    vercelUrl: process.env.VERCEL_URL || null,
+    commitSha: process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) || null,
+    commitBranch: process.env.VERCEL_GIT_COMMIT_REF || null,
+  };
+
+  return NextResponse.json({
+    deploy,
+    lobReady,
+    present,
+  });
+}

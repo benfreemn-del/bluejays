@@ -471,9 +471,17 @@ export default function V2DentalPreview({ data }: { data: GeneratedSiteData }) {
   const aboutImage = uniquePhotos[2]
     || (uniquePhotos[1] && uniquePhotos[1] !== uniquePhotos[0] ? undefined : undefined)
     || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 3);
-  const galleryImages = uniquePhotos.length > 2
-    ? uniquePhotos.slice(2, 6)
-    : pickGallery(STOCK_GALLERY, data.businessName);
+  const usedUrls = new Set([heroImage, heroCardImage, aboutImage].filter(Boolean));
+  const galleryFromReal = uniquePhotos.slice(3).filter((u) => !usedUrls.has(u));
+  const galleryImages =
+    galleryFromReal.length >= 4
+      ? galleryFromReal.slice(0, 4)
+      : [
+          ...galleryFromReal,
+          ...pickGallery(STOCK_GALLERY, data.businessName).filter(
+            (u) => !usedUrls.has(u) && !galleryFromReal.includes(u)
+          ),
+        ].slice(0, 4);
 
   const phoneDigits = data.phone.replace(/\D/g, "");
 

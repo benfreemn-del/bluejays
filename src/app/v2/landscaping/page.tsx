@@ -243,11 +243,11 @@ const processSteps = [
 // Per CLAUDE.md's visually-inspect-every-photo rule, download any
 // replacement and look at it before committing.
 const projects = [
-  { title: "Japanese Zen Garden", location: "Capitol Hill", scope: "Stone paths, koi pond, bamboo fencing, moss beds", image: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=600&q=80" },
-  { title: "Modern Patio", location: "Bellevue", scope: "600 sq ft paver patio, fire pit, built-in seating", image: "https://images.unsplash.com/photo-1600573472592-401b489a3cdc?w=600&q=80" },
+  { title: "Cottage Garden Retreat", location: "Capitol Hill", scope: "Birdhouse, native flowers, bamboo trellis, bordered beds", image: "https://plus.unsplash.com/premium_photo-1749660402180-3658f3b4ec83?w=600&q=80" },
+  { title: "Modern Patio", location: "Bellevue", scope: "600 sq ft paver patio, fire pit, built-in seating", image: "https://plus.unsplash.com/premium_photo-1733514692185-6cc0d44247fe?w=600&q=80" },
   { title: "Native Plant Restoration", location: "Magnolia", scope: "Full yard native conversion, pollinator garden, rain garden", image: "https://images.unsplash.com/photo-1598902108854-10e335adac99?w=600&q=80" },
   { title: "Outdoor Kitchen", location: "Mercer Island", scope: "Built-in grill, bar counter, pergola, landscape lighting", image: "/images/landscaping-outdoor-grill.png" },
-  { title: "Rain Garden", location: "Fremont", scope: "Bioswale, native plantings, permeable pavers, downspout capture", image: "https://images.unsplash.com/photo-1588880331179-bc9b93a8cb5e?w=600&q=80" },
+  { title: "Curbside Garden Restoration", location: "Fremont", scope: "Drought-tolerant plantings, mulched beds, picket border, downspout redirect", image: "https://images.unsplash.com/photo-1766189790526-b699899d1013?w=600&q=80" },
   { title: "Fire Pit Lounge", location: "Kirkland", scope: "Natural stone fire pit, curved seating wall, accent lighting", image: "/images/landscaping-fire-pit.png" },
 ];
 
@@ -300,7 +300,7 @@ const faqs = [
 const heroCards = [
   { src: "https://images.unsplash.com/photo-1584738766473-61c083514bf4?w=600&q=80", alt: "Lush garden pathway" },
   { src: "https://images.unsplash.com/photo-1764070140879-1120c0a9e9eb?w=600&q=80", alt: "Designed backyard with lush plantings" },
-  { src: "https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?w=600&q=80", alt: "Premium outdoor living space" },
+  { src: "https://images.unsplash.com/photo-1694885186013-5aa7d91ae5d5?w=600&q=80", alt: "Premium outdoor living space" },
 ];
 
 /* ═══════════════════════════════════════════════════════════════

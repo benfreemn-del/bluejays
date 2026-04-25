@@ -422,7 +422,17 @@ export default function V2VeterinaryPreview({ data }: { data: GeneratedSiteData 
   const aboutImage = uniquePhotos[1] && uniquePhotos[1] !== uniquePhotos[0]
     ? uniquePhotos[1]
     : uniquePhotos[2] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 2);
-  const galleryImages = data.photos?.length > 2 ? data.photos.slice(2, 6) : pickGallery(STOCK_GALLERY_POOL, data.businessName);
+  const usedUrls = new Set([heroImage, heroCardImage, aboutImage].filter(Boolean));
+  const galleryFromReal = uniquePhotos.slice(3).filter((u) => !usedUrls.has(u));
+  const galleryImages =
+    galleryFromReal.length >= 4
+      ? galleryFromReal.slice(0, 4)
+      : [
+          ...galleryFromReal,
+          ...pickGallery(STOCK_GALLERY_POOL, data.businessName).filter(
+            (u) => !usedUrls.has(u) && !galleryFromReal.includes(u)
+          ),
+        ].slice(0, 4);
 
   const processSteps = [
     { step: "01", title: "Schedule a Visit", desc: `Book an appointment online or by phone. We accommodate same-day urgent care needs.` },

@@ -829,8 +829,8 @@ export default function V2ApplianceRepairPage() {
           <SectionHeader label="See Our Work" title="Watch ProFix" accent="In Action" />
           <div className="relative rounded-2xl overflow-hidden aspect-video cursor-pointer group" style={{ background: `linear-gradient(135deg, #1a1a1a, #222)` }}>
             <img
-              src="https://images.unsplash.com/photo-1556909172-54557c7e4fb7?w=900&q=80"
-              alt="Appliance repair technician at work"
+              src="https://images.unsplash.com/photo-1604335399105-a0c585fd81a1?w=900&q=80"
+              alt="Commercial laundromat with row of washing machines — appliance repair service"
               className="w-full h-full object-cover opacity-60 group-hover:opacity-70 transition-opacity duration-300"
             />
             <div className="absolute inset-0 flex items-center justify-center">

@@ -213,7 +213,7 @@ const services = [
   { title: "Emergency Care", description: "Urgent and emergency veterinary services when your pet needs immediate attention. Trauma, poisoning, acute illness handled with speed and skill.", icon: Warning },
   { title: "Grooming", description: "Full-service grooming including baths, breed-specific haircuts, nail trims, ear cleaning, and de-shedding treatments. Your pet leaves happy.", icon: Scissors },
   { title: "Senior Pet Care", description: "Specialized geriatric wellness programs with semi-annual bloodwork, arthritis management, and cognitive health monitoring for pets 7 years and older.", icon: Heartbeat },
-  { title: "Exotic Animals", description: "Experienced care for rabbits, guinea pigs, reptiles, birds, and other exotic species. Dr. Nakamura has special training in avian and exotic medicine.", icon: Bird },
+  { title: "Exotic Animals", description: "Experienced care for rabbits, guinea pigs, reptiles, birds, and other exotic species. Dr. Hartmann has special training in avian and exotic medicine.", icon: Bird },
 ];
 
 const petTypes = [
@@ -255,9 +255,9 @@ const wellnessPlans = [
 ];
 
 const testimonials = [
-  { name: "The Park Family", pet: "Bailey", text: "Dr. Nakamura saved our golden retriever Bailey's life. Emergency surgery at 11pm. She stayed all night monitoring him. We owe her everything.", rating: 5 },
+  { name: "The Park Family", pet: "Bailey", text: "Dr. Hartmann saved our golden retriever Bailey's life. Emergency surgery at 11pm. She stayed all night monitoring him. We owe her everything.", rating: 5 },
   { name: "Kevin T.", pet: "Mochi", text: "Mochi (our cat) used to SCREAM at the vet. At Northshore, she actually purrs. Fear-free is real. I never believed it until I saw it myself.", rating: 5 },
-  { name: "Zoe M.", pet: "Spike", text: "Our bearded dragon Spike needed surgery. Most vets wouldn't touch him. Dr. Nakamura didn't hesitate. She treated him like he was a golden retriever.", rating: 5 },
+  { name: "Zoe M.", pet: "Spike", text: "Our bearded dragon Spike needed surgery. Most vets wouldn't touch him. Dr. Hartmann didn't hesitate. She treated him like he was a golden retriever.", rating: 5 },
   { name: "Sandra & Jeff W.", pet: "Max", text: "They caught a heart condition in our senior lab Max during a routine checkup. Early detection saved his life. We're forever grateful to this team.", rating: 5 },
   { name: "Priya K.", pet: "Luna", text: "Best grooming in Kirkland. Luna comes home smelling amazing and actually happy. No more post-grooming anxiety. The groomers here are true animal lovers.", rating: 5 },
 ];
@@ -307,7 +307,7 @@ export default function V2VeterinaryPage() {
             <div className="hidden md:flex items-center gap-8 text-sm text-[#6b7280]">
               <a href="#services" className="hover:text-[#1c1917] transition-colors">Services</a>
               <a href="#fear-free" className="hover:text-[#1c1917] transition-colors">Fear-Free</a>
-              <a href="#about" className="hover:text-[#1c1917] transition-colors">Dr. Nakamura</a>
+              <a href="#about" className="hover:text-[#1c1917] transition-colors">Dr. Hartmann</a>
               <a href="#testimonials" className="hover:text-[#1c1917] transition-colors">Reviews</a>
               <a href="#contact" className="hover:text-[#1c1917] transition-colors">Contact</a>
             </div>
@@ -324,7 +324,7 @@ export default function V2VeterinaryPage() {
             {mobileMenuOpen && (
               <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.3, ease: "easeInOut" }} className="md:hidden mt-2 overflow-hidden">
                 <GlassCard className="flex flex-col gap-1 px-4 py-4">
-                  {[{ label: "Services", href: "#services" }, { label: "Fear-Free", href: "#fear-free" }, { label: "Dr. Nakamura", href: "#about" }, { label: "Reviews", href: "#testimonials" }, { label: "Contact", href: "#contact" }].map((link) => (
+                  {[{ label: "Services", href: "#services" }, { label: "Fear-Free", href: "#fear-free" }, { label: "Dr. Hartmann", href: "#about" }, { label: "Reviews", href: "#testimonials" }, { label: "Contact", href: "#contact" }].map((link) => (
                     <a key={link.label} href={link.href} onClick={() => setMobileMenuOpen(false)} className="block px-4 py-3 rounded-lg text-sm text-[#4b5563] hover:text-[#1c1917] hover:bg-gray-50 transition-colors">{link.label}</a>
                   ))}
                 </GlassCard>
@@ -358,7 +358,7 @@ export default function V2VeterinaryPage() {
               </h1>
             </div>
             <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.6 }} className="text-lg text-[#6b7280] max-w-md leading-relaxed">
-              Dr. Lisa Nakamura and her Fear Free Certified team have been treating dogs, cats, and exotic pets in Kirkland for over 15 years. Your pet is family &mdash; we treat them that way.
+              Dr. Lisa Hartmann and her Fear Free Certified team have been treating dogs, cats, and exotic pets in Kirkland for over 15 years. Your pet is family &mdash; we treat them that way.
             </motion.p>
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.8 }} className="flex flex-wrap gap-4">
               <MagneticButton className="px-8 py-4 rounded-full text-base font-semibold text-white flex items-center gap-2 cursor-pointer shadow-lg shadow-green-500/20" style={{ background: GREEN } as React.CSSProperties}>
@@ -548,7 +548,7 @@ export default function V2VeterinaryPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="relative">
               <div className="rounded-2xl overflow-hidden aspect-[3/4] max-w-md mx-auto lg:mx-0 shadow-xl">
-                <img src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=600&q=80" alt="Dr. Lisa Nakamura, DVM" className="w-full h-full object-cover object-top" />
+                <img src="https://plus.unsplash.com/premium_photo-1702599248518-dc32349b900a?w=600&q=80" alt="Dr. Lisa Hartmann, DVM with a happy patient" className="w-full h-full object-cover object-top" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                 <div className="absolute bottom-6 left-6 right-6">
                   <GlassCard className="px-4 py-3 inline-flex items-center gap-3">
@@ -561,10 +561,10 @@ export default function V2VeterinaryPage() {
             <div>
               <p className="text-sm uppercase tracking-widest mb-3" style={{ color: GREEN_LIGHT }}>Meet Your Vet</p>
               <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-[#1c1917] mb-6">
-                <WordReveal text="Dr. Lisa Nakamura, DVM" />
+                <WordReveal text="Dr. Lisa Hartmann, DVM" />
               </h2>
               <div className="space-y-4 text-[#6b7280] leading-relaxed">
-                <p>Dr. Nakamura grew up on a farm in Yakima, Washington. She knew by age 8 she would be a veterinarian &mdash; after bottle-feeding an orphaned lamb through the night and watching it thrive.</p>
+                <p>Dr. Hartmann grew up on a farm in Yakima, Washington. She knew by age 8 she would be a veterinarian &mdash; after bottle-feeding an orphaned lamb through the night and watching it thrive.</p>
                 <p>She graduated from Washington State University&apos;s College of Veterinary Medicine and completed advanced training in small animal surgery and exotic animal medicine. She founded Northshore Vet Clinic in Kirkland 15 years ago with one goal: treat every patient like family.</p>
               </div>
               <div className="mt-8 grid grid-cols-2 gap-4">
@@ -772,7 +772,7 @@ export default function V2VeterinaryPage() {
       <SectionReveal className="relative z-10 py-16 md:py-24">
         <div className="mx-auto max-w-5xl px-4 md:px-6">
           <div className="relative rounded-2xl overflow-hidden aspect-video shadow-xl cursor-pointer group">
-            <img src="https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=1200&q=80" alt="Tour Northshore Vet Clinic" className="w-full h-full object-cover" />
+            <img src="https://plus.unsplash.com/premium_photo-1661942274165-00cc8d55a93f?w=1200&q=80" alt="Inside Northshore Vet Clinic — exam room with care team" className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors flex items-center justify-center">
               <motion.div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-xl" whileHover={{ scale: 1.1 }} transition={springFast}>
                 <Play size={36} weight="fill" style={{ color: GREEN }} className="ml-1" />
@@ -895,7 +895,7 @@ export default function V2VeterinaryPage() {
                 <PawPrint size={24} weight="duotone" style={{ color: GREEN_LIGHT }} />
                 <span className="text-lg font-bold tracking-tight text-[#1c1917]">Northshore Vet Clinic</span>
               </div>
-              <p className="text-sm text-[#6b7280] max-w-sm mb-4">Compassionate veterinary care for dogs, cats, and exotic pets in Kirkland, WA. Fear Free Certified practice led by Dr. Lisa Nakamura, DVM.</p>
+              <p className="text-sm text-[#6b7280] max-w-sm mb-4">Compassionate veterinary care for dogs, cats, and exotic pets in Kirkland, WA. Fear Free Certified practice led by Dr. Lisa Hartmann, DVM.</p>
               <div className="flex items-center gap-3 flex-wrap">
                 <span className="px-3 py-1 rounded-full text-xs font-medium border border-green-200 bg-green-50 text-green-700">AAHA Accredited</span>
                 <span className="px-3 py-1 rounded-full text-xs font-medium border border-green-200 bg-green-50 text-green-700">WSVA Member</span>
@@ -906,7 +906,7 @@ export default function V2VeterinaryPage() {
             <div>
               <h4 className="text-sm font-semibold text-[#1c1917] mb-4">Quick Links</h4>
               <div className="space-y-2">
-                {["Services", "Fear-Free", "Dr. Nakamura", "Reviews", "Contact"].map((link) => (
+                {["Services", "Fear-Free", "Dr. Hartmann", "Reviews", "Contact"].map((link) => (
                   <a key={link} href={`#${link.toLowerCase().replace(/\s+/g, "-").replace("dr.-", "")}`} className="block text-sm text-[#6b7280] hover:text-[#1c1917] transition-colors">{link}</a>
                 ))}
               </div>

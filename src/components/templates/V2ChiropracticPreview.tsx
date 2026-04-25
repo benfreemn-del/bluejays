@@ -425,7 +425,17 @@ export default function V2ChiropracticPreview({ data }: { data: GeneratedSiteDat
 
 
   const aboutImage = uniquePhotos[2] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 2);
-  const galleryImages = data.photos?.length > 2 ? data.photos.slice(2, 6) : pickGallery(STOCK_GALLERY, data.businessName);
+  const usedUrls = new Set([heroImage, heroCardImage, aboutImage].filter(Boolean));
+  const galleryFromReal = uniquePhotos.slice(3).filter((u) => !usedUrls.has(u));
+  const galleryImages =
+    galleryFromReal.length >= 4
+      ? galleryFromReal.slice(0, 4)
+      : [
+          ...galleryFromReal,
+          ...pickGallery(STOCK_GALLERY, data.businessName).filter(
+            (u) => !usedUrls.has(u) && !galleryFromReal.includes(u)
+          ),
+        ].slice(0, 4);
 
   const faqs = [
     { q: `What conditions does ${data.businessName} treat?`, a: `We treat a wide range of conditions including ${data.services.slice(0, 3).map(s => s.name).join(", ")}, and more. Our holistic approach addresses the root cause, not just symptoms.` },

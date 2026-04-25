@@ -296,7 +296,17 @@ export default function V2PoolSpaPreview({ data }: { data: GeneratedSiteData }) 
 
 
   const aboutImage = uniquePhotos[2] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 2);
-  const projectImages = data.photos?.length > 2 ? data.photos.slice(2, 6) : pickGallery(STOCK_PROJECTS, data.businessName);
+  const usedUrls = new Set([heroImage, heroCardImage, aboutImage].filter(Boolean));
+  const projectFromReal = uniquePhotos.slice(3).filter((u) => !usedUrls.has(u));
+  const projectImages =
+    projectFromReal.length >= 4
+      ? projectFromReal.slice(0, 4)
+      : [
+          ...projectFromReal,
+          ...pickGallery(STOCK_PROJECTS, data.businessName).filter(
+            (u) => !usedUrls.has(u) && !projectFromReal.includes(u)
+          ),
+        ].slice(0, 4);
 
   const processSteps = [
     { step: "01", title: "Free Assessment", desc: "We inspect your pool or spa and provide a detailed report and estimate." },

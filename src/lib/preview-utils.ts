@@ -10,16 +10,18 @@ import { sanitizeImageUrl, sanitizeImageUrls, validateImageUrl } from "./image-v
  * Get a clean, short hero heading from the data.
  * Falls back to business name if tagline is too long or contains URLs.
  */
-function toCategoryLabel(category: string | undefined): string {
-  if (!category) return "Professional Services";
-  return category
-    .replace(/-/g, " ")
-    .replace(/\b\w/g, (char) => char.toUpperCase());
-}
-
 function getFallbackHeroHeading(data: GeneratedSiteData): string {
-  const categoryLabel = toCategoryLabel(data.category);
-  return `${categoryLabel} You Can Trust`;
+  // The business name is always unique per prospect — using it as the hero
+  // heading guarantees zero "Restaurant You Can Trust" / "Plumber You Can Trust"
+  // generic-template strings ever ship. Each preview is therefore visually
+  // and textually distinct from every other prospect in the same category.
+  const name = (data.businessName || "").trim();
+  if (name && name.toLowerCase() !== "website") return name;
+  // Last resort only — if even the business name is missing, fall back to a
+  // city-anchored phrase rather than a category-only line.
+  const city = (data.city || "").trim();
+  if (city) return `Local Service in ${city}`;
+  return "Welcome";
 }
 
 export function getHeroHeading(data: GeneratedSiteData): string {

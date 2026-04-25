@@ -1,6 +1,7 @@
 import type { Category } from "@/lib/types";
 import {
   CATEGORY_FALLBACK_COLLECTIONS,
+  isFallbackBlocked,
   type CategoryFallbackCollection,
 } from "@/lib/category-fallback-images";
 
@@ -78,6 +79,7 @@ function getSectionPool(category: string, section: PreviewImageSection): string[
 
   for (const key of SECTION_POOL_ORDER[section]) {
     for (const asset of collection[key]) {
+      if (isFallbackBlocked(asset)) continue;
       const imageUrl = buildUnsplashImageUrl(asset.raw, section);
       if (!seen.has(imageUrl)) {
         seen.add(imageUrl);

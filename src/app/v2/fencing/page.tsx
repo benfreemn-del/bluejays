@@ -255,12 +255,12 @@ const stats = [
 ];
 
 const galleryPhotos = [
-  { src: "https://images.unsplash.com/photo-1773430272567-a7c49118505e?w=600&q=80", alt: "Cedar privacy fence installation" },
+  { src: "https://plus.unsplash.com/premium_photo-1725408143029-d2e589ae5037?w=600&q=80", alt: "Cedar privacy fence installation" },
   { src: "https://images.unsplash.com/photo-1720116981234-59b667e5eb26?w=600&q=80", alt: "White vinyl fence with gate" },
-  { src: "https://images.unsplash.com/photo-1668682489574-747d6e472324?w=600&q=80", alt: "Ornamental iron fencing" },
+  { src: "https://plus.unsplash.com/premium_photo-1661953313996-beaab35d4bcf?w=600&q=80", alt: "Modern metal panel fence installation" },
   { src: "https://images.unsplash.com/photo-1722881445875-bdd5f4d9e6fa?w=600&q=80", alt: "Wood fence in backyard" },
-  { src: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600&q=80", alt: "Beautiful home with fence" },
-  { src: "https://images.unsplash.com/photo-1558882224-dda166733046?w=600&q=80", alt: "Property with iron gate" },
+  { src: "https://images.unsplash.com/photo-1681853108586-f29b4ef5c0fb?w=600&q=80", alt: "Beautiful home with fence" },
+  { src: "https://images.unsplash.com/photo-1684867430916-ede9dc95eca5?w=600&q=80", alt: "Backyard with wood fence enclosure" },
 ];
 
 const processSteps = [
@@ -478,7 +478,7 @@ export default function V2FencingPage() {
               </div>
             </div>
             <div className="rounded-2xl overflow-hidden aspect-[4/5]">
-              <img src="https://images.unsplash.com/photo-1621274147744-cfb5694bb233?w=700&q=80" alt="Fence installation crew" className="w-full h-full object-cover object-top" />
+              <img src="https://plus.unsplash.com/premium_photo-1661910669075-ea50b5713485?w=700&q=80" alt="Fence installation crew" className="w-full h-full object-cover object-top" />
             </div>
           </div>
         </div>

@@ -339,7 +339,17 @@ export default function V2CleaningPreview({ data }: { data: GeneratedSiteData })
   const heroImage = uniquePhotos[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
   const heroCardImage = uniquePhotos[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 1);
   const aboutImage = uniquePhotos[2] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 2);
-  const projectImages = uniquePhotos.length > 2 ? uniquePhotos.slice(2, 6) : pickGallery(STOCK_PROJECTS, data.businessName);
+  const usedUrls = new Set([heroImage, heroCardImage, aboutImage].filter(Boolean));
+  const projectFromReal = uniquePhotos.slice(3).filter((u) => !usedUrls.has(u));
+  const projectImages =
+    projectFromReal.length >= 4
+      ? projectFromReal.slice(0, 4)
+      : [
+          ...projectFromReal,
+          ...pickGallery(STOCK_PROJECTS, data.businessName).filter(
+            (u) => !usedUrls.has(u) && !projectFromReal.includes(u)
+          ),
+        ].slice(0, 4);
 
   const processSteps = [
     { step: "01", title: "Book Online or Call", desc: "Schedule your cleaning in minutes. We work around your availability." },

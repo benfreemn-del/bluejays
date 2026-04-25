@@ -605,10 +605,20 @@ export default function V2EventPlanningPreview({
   const heroImage = uniquePhotos[0] || pickFromPool(STOCK_HERO_POOL, data.businessName);
   const heroCardImage = uniquePhotos[1] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 1);
   const aboutImage = uniquePhotos[2] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 3);
+
+  // Gallery / "recent work" must not reuse hero/heroCard/about. Start after
+  // those slots and pad with unique stock picks when the scraped pool is short.
+  const usedUrls = new Set([heroImage, heroCardImage, aboutImage]);
+  const galleryFromReal = uniquePhotos.slice(3).filter((u) => !usedUrls.has(u));
   const galleryImages =
-    data.photos && data.photos.length > 2
-      ? data.photos.slice(2, 6)
-      : pickGallery(STOCK_GALLERY, data.businessName);
+    galleryFromReal.length >= 4
+      ? galleryFromReal.slice(0, 4)
+      : [
+          ...galleryFromReal,
+          ...pickGallery(STOCK_GALLERY, data.businessName).filter(
+            (u) => !usedUrls.has(u) && !galleryFromReal.includes(u)
+          ),
+        ].slice(0, 4);
   const phoneDigits = data.phone.replace(/\D/g, "");
 
   const processSteps = [

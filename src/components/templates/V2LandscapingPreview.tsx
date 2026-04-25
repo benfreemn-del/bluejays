@@ -328,8 +328,21 @@ export default function V2LandscapingPreview({ data }: { data: GeneratedSiteData
 
 
   const aboutImage = uniquePhotos[2] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 2);
-  // Skip photos[0] (may be a close-up detail/patio shot) — start from photos[1] for gallery and hero cards
-  const galleryImages = data.photos?.length > 1 ? data.photos.slice(1, 10) : pickGallery(STOCK_GALLERY, data.businessName);
+
+  // Gallery starts AFTER the hero/heroCard/about slots so the same photo
+  // never appears twice on the page. Pad with unique stock picks if the
+  // scraped pool is short.
+  const usedUrls = new Set([heroImage, heroCardImage, aboutImage]);
+  const galleryFromReal = uniquePhotos.slice(3).filter((u) => !usedUrls.has(u));
+  const galleryImages =
+    galleryFromReal.length >= 6
+      ? galleryFromReal.slice(0, 9)
+      : [
+          ...galleryFromReal,
+          ...pickGallery(STOCK_GALLERY, data.businessName).filter(
+            (u) => !usedUrls.has(u) && !galleryFromReal.includes(u)
+          ),
+        ].slice(0, 9);
 
   const processSteps = [
     { step: "01", title: "Free Consultation", desc: `We visit your property, discuss your vision, and provide a detailed, no-obligation quote.`, icon: Phone },

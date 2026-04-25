@@ -46,47 +46,69 @@ export async function POST(
     mapping.lastUpdated = new Date().toISOString();
   }
 
-  // Build a URL→URL replacement map from slots the operator marked as
-  // replaced. This is the single source of truth for "what changed".
+  // Apply the slot states to TWO separate photo arrays, INDEPENDENTLY:
+  //
+  //   A. generated_sites.photos — the template's source of truth. The
+  //      rendered preview reads hero from photos[0], about from [1],
+  //      gallery from [2..9], etc. Slot positions here MUST stay stable.
+  //      The scan endpoint built `mapping.images[i]` 1:1 from THIS array
+  //      with `position = i + 1`, so we apply slot state by POSITION
+  //      not by URL. Position-based applies correctly even after the
+  //      slot has been edited multiple times — each save re-projects
+  //      every slot's "intended state" onto the photos array.
+  //
+  //   B. scraped_data.photos — the "pool" that the image-mapper's drag
+  //      library reads from. This array may have been enriched outside
+  //      the mapper (fix scripts, Google photo scrapes) and can
+  //      diverge in size + order from generated_sites.photos. URL→URL
+  //      substitution is applied here so the library stays consistent,
+  //      but its ordering is irrelevant for the rendered template.
+  //
+  // Previously the gsPhotos pass also used URL→URL substitution. That
+  // worked for the FIRST edit on each slot but silently broke for
+  // subsequent edits: after edit 1, gsPhotos[i] held the replacement
+  // URL while mapping.images[i].originalUrl still held the originally
+  // scanned URL. The URL match found nothing, so edit 2's replacement
+  // got appended to the tail of gsPhotos instead of overwriting the
+  // hero — making the iframe "not refresh" for the user. Fix:
+  // position-based for gsPhotos, URL-based only for the sd.photos pool.
+
+  // ── Pass A: gsPhotos by POSITION ──
+  // For each slot, project its intended state onto gsPhotos[position - 1]:
+  //   • status === "replaced" + replacementUrl → use replacementUrl
+  //   • anything else (keep-original, needs-replacement) → use originalUrl
+  const slots = mapping.images;
+  function applyByPosition(pool: string[]): string[] {
+    const updated = [...pool];
+    for (const slot of slots) {
+      const idx = slot.position - 1;
+      if (idx < 0) continue;
+      const desired =
+        slot.status === "replaced" && slot.replacementUrl
+          ? slot.replacementUrl
+          : slot.originalUrl;
+      if (idx < updated.length) {
+        updated[idx] = desired;
+      } else {
+        // The pool has shrunk since scan (external mutation). Pad with
+        // the slot's desired URL so position semantics are preserved.
+        while (updated.length < idx) updated.push(slot.originalUrl);
+        updated.push(desired);
+      }
+    }
+    return updated;
+  }
+
+  // ── Pass B: sdPhotos by URL substitution (pool ordering is opaque) ──
   const replacementsByUrl = new Map<string, string>();
   for (const img of mapping.images) {
     if (img.status === "replaced" && img.replacementUrl) {
       replacementsByUrl.set(img.originalUrl, img.replacementUrl);
     }
   }
-
-  // Apply the replacements to TWO separate photo arrays, INDEPENDENTLY:
-  //
-  //   A. generated_sites.photos — the template's source of truth. The
-  //      rendered preview reads hero from photos[0], about from [1],
-  //      gallery from [2..9], etc. Slot positions here MUST stay stable.
-  //      The scan endpoint built `mapping.images[i].originalUrl` from
-  //      THIS array, so URL matching is guaranteed to land at the
-  //      correct position.
-  //
-  //   B. scraped_data.photos — the "pool" that the image-mapper's drag
-  //      library reads from. This array may have been enriched outside
-  //      the mapper (fix scripts, Google photo scrapes) and can
-  //      diverge in size + order from generated_sites.photos. The same
-  //      URL→URL substitution is applied here so the library stays
-  //      consistent, but its ordering is irrelevant for the rendered
-  //      template.
-  //
-  // Previously these were collapsed into one `updatedPhotos` array
-  // derived from scraped_data.photos — that caused a critical bug
-  // where, after external enrichment grew scraped_data.photos to 18
-  // entries while generated_sites.photos still had 6, saving would
-  // overwrite generated_sites.photos with scraped_data's order and
-  // silently reshuffle the rendered preview (Ben's change for slot 0
-  // would appear at position 17 and hero would show a random
-  // enrichment photo). Fix: keep the two pools separate.
-
-  function applyReplacements(pool: string[]): string[] {
+  function applyByUrl(pool: string[]): string[] {
     if (pool.length === 0) return pool;
     const updated = pool.map((url) => replacementsByUrl.get(url) ?? url);
-    // If a replacement URL's originalUrl isn't in this pool, append
-    // the replacement at the tail so the operator's work is preserved
-    // somewhere. Otherwise it would be silently lost.
     const poolSet = new Set(pool);
     for (const [origUrl, replUrl] of replacementsByUrl) {
       if (!poolSet.has(origUrl) && !updated.includes(replUrl)) {
@@ -104,7 +126,7 @@ export async function POST(
     console.error("[image-mapper/save] Failed to load generated_sites:", err);
   }
   const gsPhotos = (generatedSite?.photos as string[] | undefined) || [];
-  const updatedGsPhotos = applyReplacements(gsPhotos);
+  const updatedGsPhotos = applyByPosition(gsPhotos);
   if (generatedSite && updatedGsPhotos.length > 0) {
     try {
       await saveScrapedData(id, {
@@ -119,7 +141,7 @@ export async function POST(
   // Update scraped_data.photos (the pool) — kept in sync with the
   // replacements so the mapper library doesn't show stale originals
   const sdPhotos = (sd.photos as string[] | undefined) || [];
-  const updatedSdPhotos = applyReplacements(sdPhotos);
+  const updatedSdPhotos = applyByUrl(sdPhotos);
   await updateProspect(id, {
     scrapedData: {
       ...sd,

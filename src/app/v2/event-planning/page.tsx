@@ -275,7 +275,7 @@ const venues = [
   { name: "The Waterfront", type: "Hotel Ballroom", capacity: "250 guests", image: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=500&q=80" },
   { name: "Lakeside Pavilion", type: "Outdoor Reception", capacity: "150 guests", image: "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=500&q=80" },
   { name: "Sodo Park", type: "Industrial Loft", capacity: "400 guests", image: "https://images.unsplash.com/photo-1591115765373-5207764f72e7?w=500&q=80" },
-  { name: "The Ruins", type: "Garden Estate", capacity: "200 guests", image: "https://images.unsplash.com/photo-1469371670807-013ccf25f16a?w=500&q=80" },
+  { name: "The Ruins", type: "Garden Estate", capacity: "200 guests", image: "https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=500&q=80" },
 ];
 
 const packages = [

@@ -377,7 +377,17 @@ export default function V2InteriorDesignPreview({ data }: { data: GeneratedSiteD
 
 
   const aboutImage = uniquePhotos[2] || pickFromPool(STOCK_ABOUT_POOL, data.businessName, 2);
-  const galleryImages = data.photos?.length > 2 ? data.photos.slice(2, 10) : pickGallery(STOCK_GALLERY, data.businessName);
+  const usedUrls = new Set([heroImage, heroCardImage, aboutImage].filter(Boolean));
+  const galleryFromReal = uniquePhotos.slice(3).filter((u) => !usedUrls.has(u));
+  const galleryImages =
+    galleryFromReal.length >= 8
+      ? galleryFromReal.slice(0, 8)
+      : [
+          ...galleryFromReal,
+          ...pickGallery(STOCK_GALLERY, data.businessName).filter(
+            (u) => !usedUrls.has(u) && !galleryFromReal.includes(u)
+          ),
+        ].slice(0, 8);
 
   const faqs = [
     { q: `What design services does ${data.businessName} offer?`, a: `We offer a full spectrum of interior design services including ${data.services.slice(0, 3).map(s => s.name).join(", ")}, and more. Each project is tailored to your personal style and needs.` },

@@ -420,8 +420,8 @@ export default function DentalShowcasePage() {
             >
               <div className="relative rounded-3xl overflow-hidden shadow-2xl shadow-teal-500/10">
                 <img
-                  src="https://images.unsplash.com/photo-1588776813941-dcf9c55e84d2?w=700&q=80"
-                  alt="Beautiful confident smile from Emerald City Dental patient"
+                  src="https://plus.unsplash.com/premium_photo-1702598954558-1f9ed9a794d9?w=700&q=80"
+                  alt="Beautiful confident smile from Emerald City Dental patient — cosmetic dentistry shade match"
                   className="w-full aspect-[4/5] object-cover object-top"
                 />
                 {/* Floating stat card */}
@@ -594,8 +594,8 @@ export default function DentalShowcasePage() {
             <div className="lg:col-span-2">
               <div className="relative rounded-3xl overflow-hidden shadow-xl">
                 <img
-                  src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=600&q=80"
-                  alt="Dr. Megan Park, DDS — Lead Dentist at Emerald City Dental"
+                  src="https://plus.unsplash.com/premium_photo-1667512845116-8be6afb1f9c7?w=600&q=80"
+                  alt="Dr. Megan Park, DDS — Lead Dentist at Emerald City Dental, treating a patient"
                   className="w-full aspect-[3/4] object-cover object-top"
                 />
                 <div className="absolute bottom-0 inset-x-0 p-6 bg-gradient-to-t from-black/70 to-transparent">

@@ -1206,7 +1206,7 @@ export default function RoofingShowcase() {
             <div className="flex justify-center">
               <GlassCard className="p-8 text-center max-w-sm w-full">
                 <img
-                  src="https://images.unsplash.com/photo-1635424825057-7fb6dcd651ef?w=400&h=400&fit=crop&crop=faces&q=80"
+                  src="https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?w=400&h=400&fit=crop&crop=faces&q=80"
                   alt="Jake Morrison — roofing team leader"
                   className="w-24 h-24 rounded-full mx-auto mb-4 object-cover object-top"
                 />
