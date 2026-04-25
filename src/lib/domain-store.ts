@@ -16,6 +16,7 @@ import { supabase, isSupabaseConfigured } from "./supabase";
 export type DomainStatus =
   | "pending"
   | "registered"
+  | "renewal_paused"
   | "failed"
   | "expired"
   | "cancelled";

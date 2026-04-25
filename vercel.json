@@ -35,6 +35,10 @@
     {
       "path": "/api/billing/retry-failed-sends",
       "schedule": "0 17 * * *"
+    },
+    {
+      "path": "/api/billing/check-domain-renewals",
+      "schedule": "0 18 * * *"
     }
   ],
   "functions": {

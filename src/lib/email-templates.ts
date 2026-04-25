@@ -665,6 +665,84 @@ Reply if it's not the card and I'll dig in personally.
   return { subject, body, sequence: 203 };
 }
 
+/**
+ * Confirmation email — fires from the domain renewal cron AFTER the customer's
+ * Stripe sub charged successfully AND the registrar auto-renewed the domain.
+ * Friendly receipt-style note. Locked outreach rules: ≤80 words body, exactly
+ * 1 link (Stripe portal — for billing history / card mgmt), zero pricing
+ * objection language.
+ */
+export function getDomainRenewalChargedEmail(
+  prospect: Prospect,
+  domain: string,
+  newExpiresAtIso: string,
+): EmailTemplate {
+  const name = prospect.ownerName?.split(" ")[0] || "there";
+  const portalUrl = getBillingPortalUrl();
+  const dateStr = new Date(newExpiresAtIso).toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+
+  const subject = `${domain} — renewed for another year`;
+
+  const body = `Hi ${name},
+
+Quick heads up — ${domain} is renewed for another year. Next renewal: ${dateStr}.
+
+You can view billing history or update your card anytime:
+
+${portalUrl}
+
+Anything you'd like added to the site this year? Just reply.
+
+— Ben @ BlueJays`;
+
+  return { subject, body, sequence: 210 };
+}
+
+/**
+ * Renewal-paused email — fires from the domain renewal cron when the
+ * customer's Stripe mgmt sub is `past_due` (card on file failed) so we
+ * skipped the registrar auto-renewal. Customer has ~30 days from this
+ * email to update their card before the domain actually expires.
+ *
+ * Locked outreach rules: ≤80 words body, exactly 1 link (Stripe portal),
+ * zero pricing language.
+ */
+export function getDomainRenewalPausedEmail(
+  prospect: Prospect,
+  domain: string,
+  expiresAtIso: string,
+): EmailTemplate {
+  const name = prospect.ownerName?.split(" ")[0] || "there";
+  const portalUrl = getBillingPortalUrl();
+
+  // Days between now and expiry. Floor so we never overstate the runway.
+  const msUntilExpiry = new Date(expiresAtIso).getTime() - Date.now();
+  const rawDays = Math.floor(msUntilExpiry / (1000 * 60 * 60 * 24));
+  const daysRemaining = Math.max(0, Math.min(30, rawDays));
+  const windowStr =
+    daysRemaining > 0
+      ? `within ${daysRemaining} day${daysRemaining === 1 ? "" : "s"}`
+      : "right away";
+
+  const subject = `${domain} — couldn't renew, your card on file failed`;
+
+  const body = `Hi ${name},
+
+Heads up — couldn't renew ${domain} because your card on file failed. Update it ${windowStr} or the domain will expire:
+
+${portalUrl}
+
+Reply if anything's tricky and I'll handle it personally.
+
+— Ben @ BlueJays`;
+
+  return { subject, body, sequence: 211 };
+}
+
 export function getMonthlyReportEmail(
   prospect: Prospect,
   liveUrl: string,
