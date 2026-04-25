@@ -377,11 +377,11 @@ const services = [
 
 /* ───────────────────────── TESTIMONIALS DATA ───────────────────────── */
 const testimonials = [
-  { name: "Derek P.", text: "Tony saved me $2,400. The dealership quoted me for a full transmission rebuild. Tony found a $180 solenoid that fixed it completely. Honest mechanic. Period.", rating: 5 },
-  { name: "Karen L.", text: "My daughter's first car. Tony did the pre-purchase inspection and found issues the seller didn't disclose. Saved us from a bad deal. We went back for her real first car.", rating: 5 },
+  { name: "Derek P.", text: "Toby saved me $2,400. The dealership quoted me for a full transmission rebuild. Toby found a $180 solenoid that fixed it completely. Honest mechanic. Period.", rating: 5 },
+  { name: "Karen L.", text: "My daughter's first car. Toby did the pre-purchase inspection and found issues the seller didn't disclose. Saved us from a bad deal. We went back for her real first car.", rating: 5 },
   { name: "Chen Express Logistics", text: "They've been maintaining our fleet of 12 delivery vans for 6 years. Zero breakdowns on the road. Zero. That's unheard of in this business.", rating: 5 },
   { name: "Ashley W.", text: "Check engine light came on driving to work. They got me in that morning and back on the road by lunch. No appointment needed. Reasonable price.", rating: 5 },
-  { name: "Marcus J.", text: "Honest. That's it. That's the review. Honest mechanics exist and Tony is proof.", rating: 5 },
+  { name: "Marcus J.", text: "Honest. That's it. That's the review. Honest mechanics exist and Toby is proof.", rating: 5 },
 ];
 
 /* ───────────────────────── VEHICLE TYPES DATA ───────────────────────── */
@@ -448,7 +448,7 @@ export default function V2AutoRepairPage() {
   const navLinks = [
     { label: "Services", href: "#services" },
     { label: "Pricing", href: "#pricing" },
-    { label: "About Tony", href: "#about" },
+    { label: "About Toby", href: "#about" },
     { label: "Reviews", href: "#reviews" },
     { label: "Contact", href: "#contact" },
   ];
@@ -803,7 +803,7 @@ export default function V2AutoRepairPage() {
               <div className="relative rounded-2xl overflow-hidden border border-white/15">
                 <img
                   src="https://images.unsplash.com/photo-1711386689622-1cda23e10217?w=800&q=80"
-                  alt="Tony Reeves — ASE Master Technician"
+                  alt="Toby Reeves — ASE Master Technician"
                   className="w-full h-[480px] object-cover object-top"
                 />
                 <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(17,17,17,0.8) 0%, transparent 50%)" }} />
@@ -831,17 +831,17 @@ export default function V2AutoRepairPage() {
                 Your Mechanic
               </p>
               <h2 className="text-4xl md:text-5xl font-black text-white mb-6">
-                Meet <span style={{ color: RED }}>Tony Reeves</span>
+                Meet <span style={{ color: RED }}>Toby Reeves</span>
               </h2>
               <div className="space-y-4 text-slate-400 leading-relaxed">
                 <p>
-                  Started turning wrenches at 15. ASE Master Technician by 25. Tony graduated from Universal Technical Institute and spent a decade at dealerships before opening Pacific Auto Works in 2006.
+                  Started turning wrenches at 15. ASE Master Technician by 25. Toby graduated from Universal Technical Institute and spent a decade at dealerships before opening Pacific Auto Works in 2006.
                 </p>
                 <p>
                   Twenty years and over five thousand cars later, the philosophy hasn't changed: tell the customer the truth, charge a fair price, and stand behind every repair. That's it.
                 </p>
                 <p>
-                  Tony is on-site every single day. When you bring your car in, you talk to the person who's going to work on it. No service advisors. No middlemen. No runaround.
+                  Toby is on-site every single day. When you bring your car in, you talk to the person who's going to work on it. No service advisors. No middlemen. No runaround.
                 </p>
               </div>
               <div className="flex flex-wrap gap-3 mt-8">

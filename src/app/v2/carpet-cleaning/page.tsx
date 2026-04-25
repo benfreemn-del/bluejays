@@ -221,10 +221,10 @@ const cleaningChecklist = [
 const galleryImages = [
   "https://images.unsplash.com/photo-1558317374-067fb5f30001?w=600&q=80",
   "https://plus.unsplash.com/premium_photo-1678118776730-69c211336de1?w=600&q=80",
-  "https://images.unsplash.com/photo-1580256081112-e49377338b7f?w=600&q=80",
+  "https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?w=600&q=80",
   "https://images.unsplash.com/photo-1720772569819-b18d48a77ca9?w=600&q=80",
-  "https://images.unsplash.com/photo-1616450088319-ff2ea6e7cc68?w=600&q=80",
-  "https://images.unsplash.com/photo-1701651547523-4c96acc8265f?w=600&q=80",
+  "https://images.unsplash.com/photo-1615873968403-89e068629265?w=600&q=80",
+  "https://images.unsplash.com/photo-1585412727339-54e4bae3bbf9?w=600&q=80",
 ];
 
 const howOftenOptions = [

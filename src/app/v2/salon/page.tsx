@@ -158,7 +158,7 @@ const stylists = [
   { name: "Ava Laurent", role: "Owner & Color Specialist", years: "14 years", specialty: "Vidal Sassoon trained. Celebrity colorist known for dimensional brunettes and lived-in blondes.", photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=500&q=80" },
   { name: "Marcus Chen", role: "Precision Cut Specialist", years: "9 years", specialty: "Master of clean fades, textured bobs, and architectural cuts. Trained in Tokyo.", photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&q=80" },
   { name: "Sofia Rivera", role: "Bridal & Events Lead", years: "11 years", specialty: "Over 300 weddings styled. Expert in updos, braids, and vintage Hollywood waves.", photo: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=500&q=80" },
-  { name: "Jess Kim", role: "Extensions & Texture Specialist", years: "7 years", specialty: "Certified Great Lengths and Bellami pro. Specializes in curly, coily, and natural hair.", photo: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=500&q=80" },
+  { name: "Imani Brooks", role: "Extensions & Texture Specialist", years: "7 years", specialty: "Certified Great Lengths and Bellami pro. Specializes in curly, coily, and natural hair.", photo: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=500&q=80" },
 ];
 
 /* ─── velvet experience steps ─── */
@@ -175,7 +175,7 @@ const quizOptions = [
   { vibe: "Classic & Polished", desc: "Timeless blowouts, sleek bobs, and rich brunette tones.", service: "Cut & Style + Full Color", stylist: "Marcus Chen", color: "#c9a87c" },
   { vibe: "Bohemian & Effortless", desc: "Loose waves, lived-in balayage, and textured layers.", service: "Balayage + Styling", stylist: "Ava Laurent", color: "#d4a0a7" },
   { vibe: "Bold & Edgy", desc: "Asymmetric cuts, vivid colors, and statement transformations.", service: "Full Color + Cut & Style", stylist: "Marcus Chen", color: "#8b6f7e" },
-  { vibe: "Natural & Healthy", desc: "Curl definition, deep conditioning, and protective styles.", service: "Keratin Treatment + Extensions", stylist: "Jess Kim", color: "#7a9e7e" },
+  { vibe: "Natural & Healthy", desc: "Curl definition, deep conditioning, and protective styles.", service: "Keratin Treatment + Extensions", stylist: "Imani Brooks", color: "#7a9e7e" },
 ];
 
 /* ─── gallery data ─── */
@@ -184,7 +184,7 @@ const galleryItems = [
   { title: "Textured Lob", stylist: "Marcus Chen", service: "Cut & Style", image: "https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=600&q=80", tall: false },
   { title: "Bridal Updo", stylist: "Sofia Rivera", service: "Bridal", image: "https://images.unsplash.com/photo-1519699047748-de8e457a634e?w=600&q=80", tall: true },
   { title: "Copper Highlights", stylist: "Ava Laurent", service: "Full Color", image: "https://plus.unsplash.com/premium_photo-1664048713258-a1844e3d337f?w=600&q=80", tall: false },
-  { title: "Natural Curls Defined", stylist: "Jess Kim", service: "Keratin Treatment", image: "https://images.unsplash.com/photo-1580618672591-eb180b1a973f?w=600&q=80", tall: false },
+  { title: "Natural Curls Defined", stylist: "Imani Brooks", service: "Keratin Treatment", image: "https://images.unsplash.com/photo-1580618672591-eb180b1a973f?w=600&q=80", tall: false },
   { title: "Platinum Transformation", stylist: "Ava Laurent", service: "Full Color", image: "https://images.unsplash.com/photo-1492106087820-71f1a00d2b11?w=600&q=80", tall: true },
 ];
 

@@ -111,12 +111,12 @@ const PROJECTS = [
     title: "Commercial Rewire",
     location: "Fremont Brewery",
     desc: "Full 3-phase 400A service upgrade for new brewing equipment. Zero downtime — phased installation over 3 weekends.",
-    img: "https://images.unsplash.com/photo-1660330589693-99889d60181e?w=800&q=80",
+    img: "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=800&q=80",
   },
   {
-    title: "Smart Home System",
+    title: "Smart Home Integration",
     location: "Mercer Island Estate",
-    desc: "Lutron Caseta throughout, 47 zones, centralized panel, landscape lighting, and whole-home Cat6 network.",
+    desc: "Lutron Caseta throughout, 47 zones, centralized panel, smart locks, landscape lighting, and whole-home Cat6 network.",
     img: "https://images.unsplash.com/photo-1558002038-1055907df827?w=800&q=80",
   },
 ];
@@ -952,7 +952,7 @@ export default function ElectricianV2Showcase() {
             transition={spring}
           >
             <img
-              src="https://images.unsplash.com/photo-1621905251918-48416bd8575a?w=1200&q=80"
+              src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=1200&q=80"
               alt="See our work in action"
               className="w-full aspect-video object-cover group-hover:scale-105 transition-transform duration-700"
             />
