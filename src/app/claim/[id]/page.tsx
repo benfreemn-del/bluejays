@@ -31,8 +31,77 @@ interface ProspectInfo {
   scrapedData?: {
     services?: { name: string; description?: string }[];
     testimonials?: { name: string; text: string }[];
+    accentColor?: string;
+    brandColor?: string;
   };
 }
+
+// Per-category ROI defaults — average job/transaction value used as the
+// initial value of the "what's your average job/sale worth?" slider on
+// the ROI calculator. A roofer answering $500 is laughable. A salon
+// answering $1500 is intimidating. Calibrate to the realistic per-customer
+// revenue in each category so the calculator's narrative matches reality.
+const CATEGORY_DEFAULTS: Record<string, number> = {
+  // Trades — usually big-ticket per job
+  roofing: 1500,
+  hvac: 1200,
+  electrician: 800,
+  plumber: 800,
+  "auto-repair": 600,
+  "general-contractor": 5000,
+  construction: 5000,
+  painting: 2500,
+  fencing: 3500,
+  "tree-service": 800,
+  "pressure-washing": 400,
+  "garage-door": 600,
+  locksmith: 200,
+  towing: 200,
+  "appliance-repair": 250,
+  "junk-removal": 350,
+  "carpet-cleaning": 250,
+  cleaning: 200,
+  "pest-control": 200,
+  landscaping: 600,
+  moving: 1200,
+  "pool-spa": 800,
+  // Healthcare-adjacent — varies widely
+  dental: 800,
+  veterinary: 400,
+  chiropractic: 200,
+  "physical-therapy": 250,
+  "med-spa": 400,
+  medical: 600,
+  // Professional services — high LTV per client
+  "law-firm": 2500,
+  accounting: 1500,
+  insurance: 600,
+  "real-estate": 8000,
+  // Education / community
+  tutoring: 100,
+  daycare: 0, // doesn't apply — see special handling below
+  church: 0, // doesn't apply
+  "non-profit": 0, // doesn't apply
+  // Lifestyle / beauty / creative
+  salon: 100,
+  tattoo: 250,
+  florist: 150,
+  photography: 800,
+  "interior-design": 5000,
+  "event-planning": 8000,
+  catering: 2000,
+  "pet-services": 80,
+  fitness: 100,
+  "martial-arts": 150,
+  // Hospitality
+  restaurant: 60,
+};
+
+// Categories where a per-customer ROI calculator is meaningless because
+// the org doesn't sell to "customers" (church, daycare, non-profit). The
+// claim page hides the ROI section for these and shows a value-anchor
+// instead.
+const ROI_HIDDEN_CATEGORIES = new Set(["church", "daycare", "non-profit"]);
 
 interface EngagementTriggers {
   showSocialProof: boolean;
@@ -57,6 +126,7 @@ export default function ClaimPage() {
   const [showChat, setShowChat] = useState(false);
   const [triggers, setTriggers] = useState<EngagementTriggers | undefined>(undefined);
   const [roiJobValue, setRoiJobValue] = useState(500);
+  const [roiTouched, setRoiTouched] = useState(false);
   const [notFound, setNotFound] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -74,11 +144,19 @@ export default function ClaimPage() {
       .then((data) => {
         if (!data) return;
         if (data.error) { setNotFound(true); return; }
+        // Use the prospect's actual brand color (scraped from their site
+        // during extraction) so the claim page CTAs/accents match THEIR
+        // branding instead of generic sky-blue. Falls back to sky-500
+        // only when no brand color was found. CLAUDE.md philosophy:
+        // "match their brand colors so it feels custom-built."
+        const scrapedAccent =
+          (data.scrapedData?.accentColor as string | undefined) ||
+          (data.scrapedData?.brandColor as string | undefined);
         setInfo({
           businessName: data.businessName,
           category: data.category,
           previewUrl: data.generatedSiteUrl || `/preview/${prospectId}`,
-          accentColor: "#0ea5e9",
+          accentColor: scrapedAccent || "#0ea5e9",
           city: data.city,
           googleRating: data.googleRating,
           reviewCount: data.reviewCount,
@@ -86,6 +164,15 @@ export default function ClaimPage() {
           pricingTier: data.pricingTier || "standard",
           scrapedData: data.scrapedData,
         });
+
+        // Calibrate the ROI slider's default value to the realistic
+        // average per-customer revenue for this category (only if the
+        // user hasn't already typed something). See CATEGORY_DEFAULTS
+        // at the top of this file for the full rate card.
+        if (!roiTouched && data.category && CATEGORY_DEFAULTS[data.category] !== undefined) {
+          const def = CATEGORY_DEFAULTS[data.category];
+          if (def > 0) setRoiJobValue(def);
+        }
 
         if (paymentCancelled) {
           setMessages([
@@ -290,7 +377,11 @@ export default function ClaimPage() {
             disabled={isRedirecting}
             className="h-9 px-5 rounded-full bg-green-500 text-white text-sm font-bold hover:bg-green-400 transition-colors disabled:opacity-50"
           >
-            {isRedirecting ? "Redirecting..." : `Claim — ${displayPrice}`}
+            {isRedirecting
+              ? "Redirecting..."
+              : isFreeTier || isCustomTier
+                ? `Claim — ${displayPrice}`
+                : "Claim — from $349"}
           </button>
         </div>
       </header>
@@ -316,7 +407,10 @@ export default function ClaimPage() {
       {/* Hero */}
       <section className="py-16 px-6">
         <div className="max-w-4xl mx-auto text-center">
-          <p className="text-sky-400 text-xs font-bold uppercase tracking-[0.25em] mb-4">
+          <p
+            className="text-xs font-bold uppercase tracking-[0.25em] mb-4"
+            style={{ color: info?.accentColor || "#38bdf8" }}
+          >
             {isCustomTier
               ? "Your Custom-Built Website"
               : isFreeTier
@@ -343,28 +437,35 @@ export default function ClaimPage() {
             <div className="flex flex-col sm:flex-row items-stretch justify-center gap-3 mb-4 max-w-xl mx-auto">
               {/* Installment — MOST POPULAR */}
               <div className="flex-1 relative">
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-sky-500 text-white text-[10px] font-bold tracking-wider uppercase px-3 py-0.5 rounded-full whitespace-nowrap">
+                <div
+                  className="absolute -top-3 left-1/2 -translate-x-1/2 text-white text-[10px] font-bold tracking-wider uppercase px-3 py-0.5 rounded-full whitespace-nowrap"
+                  style={{ background: info?.accentColor || "#0ea5e9" }}
+                >
                   Most Popular
                 </div>
                 <button
                   onClick={() => redirectToCheckout("installment")}
                   disabled={isRedirecting}
-                  className="w-full h-full min-h-[80px] px-6 py-4 rounded-2xl border-2 border-sky-500 bg-sky-500/10 text-white font-bold hover:bg-sky-500/20 transition-all flex flex-col items-center justify-center gap-0.5 disabled:opacity-50"
+                  className="w-full h-full min-h-[80px] px-6 py-4 rounded-2xl border-2 text-white font-bold transition-all flex flex-col items-center justify-center gap-0.5 disabled:opacity-50"
+                  style={{
+                    borderColor: info?.accentColor || "#0ea5e9",
+                    background: `${info?.accentColor || "#0ea5e9"}1a`, // ~10% alpha
+                  }}
                 >
-                  <span className="text-xl">3 × $349</span>
-                  <span className="text-xs text-white/60 font-normal">$116/mo · paid over 3 months</span>
+                  <span className="text-xl">Claim — 3 × $349</span>
+                  <span className="text-xs text-white/70 font-normal">100% money-back · $116/mo over 3 months</span>
                 </button>
               </div>
 
               {/* One-time */}
               <div className="flex-1">
                 <button
-                  onClick={redirectToCheckout}
+                  onClick={() => redirectToCheckout("full")}
                   disabled={isRedirecting}
                   className="w-full h-full min-h-[80px] px-6 py-4 rounded-2xl border border-white/20 text-white font-bold hover:border-white/40 hover:bg-white/5 transition-all flex flex-col items-center justify-center gap-0.5 disabled:opacity-50"
                 >
-                  <span className="text-xl">{isRedirecting ? "..." : "$997 once"}</span>
-                  <span className="text-xs text-white/50 font-normal">then $8/mo after year one</span>
+                  <span className="text-xl">{isRedirecting ? "..." : "Claim — $997"}</span>
+                  <span className="text-xs text-white/60 font-normal">100% money-back · $100/yr after year one</span>
                 </button>
               </div>
             </div>
@@ -375,7 +476,11 @@ export default function ClaimPage() {
                 disabled={isRedirecting}
                 className="h-14 px-10 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 text-white text-lg font-bold hover:shadow-[0_0_40px_rgba(34,197,94,0.4)] transition-all duration-300 disabled:opacity-50"
               >
-                {isRedirecting ? "Redirecting..." : `Claim Your Website — ${displayPrice}`}
+                {isRedirecting
+                  ? "Redirecting..."
+                  : isCustomTier
+                    ? `Claim — ${displayPrice} · cancel anytime`
+                    : `Claim — ${displayPrice} · 100% money-back`}
               </button>
             </div>
           )}
@@ -403,7 +508,7 @@ export default function ClaimPage() {
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
-              Book a free 15-min walkthrough with Ben
+              Book free walkthrough — no card required
             </a>
           </div>
           {isCustomTier && (
@@ -428,7 +533,7 @@ export default function ClaimPage() {
           A subtle link back to the preview stays for reference. */}
       {info?.previewUrl && (
         <section className="py-6 px-6">
-          <div className="max-w-5xl mx-auto text-center">
+          <div className="max-w-5xl mx-auto text-center flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
             <a
               href={info.previewUrl}
               target="_blank"
@@ -437,6 +542,14 @@ export default function ClaimPage() {
             >
               Re-open your preview site ↗
             </a>
+            {info.currentWebsite && (
+              <a
+                href={`/compare/${prospectId}`}
+                className="inline-flex items-center gap-1.5 text-white/50 hover:text-white text-sm font-medium transition-colors"
+              >
+                Compare side-by-side →
+              </a>
+            )}
           </div>
         </section>
       )}
@@ -520,7 +633,11 @@ export default function ClaimPage() {
               disabled={isRedirecting}
               className="h-14 px-10 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 text-white text-lg font-bold hover:shadow-[0_0_40px_rgba(34,197,94,0.4)] transition-all duration-300 disabled:opacity-50"
             >
-              {isRedirecting ? "Redirecting..." : `Claim Your Website \u2014 ${displayPrice}`}
+              {isRedirecting
+                ? "Redirecting..."
+                : isCustomTier
+                  ? `Claim \u2014 ${displayPrice} \u00b7 cancel anytime`
+                  : `Claim \u2014 ${displayPrice} \u00b7 100% money-back`}
             </button>
             {!isFreeTier && !isCustomTier && (
               <p className="text-center text-sm text-white/50 mt-2">
@@ -529,7 +646,7 @@ export default function ClaimPage() {
                   onClick={() => redirectToCheckout("installment")}
                   className="underline hover:text-white/70 transition-colors"
                 >
-                  or 3 × $349 (payment plan)
+                  3 × $349 (payment plan, 100% money-back)
                 </button>
               </p>
             )}
@@ -538,9 +655,12 @@ export default function ClaimPage() {
       </section>
 
       {/* ═══════════════════════════════════════════════════════════ */}
-      {/* ROI CALCULATOR */}
+      {/* ROI CALCULATOR — hidden for org-style categories (church,    */}
+      {/* daycare, non-profit) where per-customer ROI math is          */}
+      {/* meaningless. Those categories see a value-anchor block       */}
+      {/* further below instead.                                       */}
       {/* ═══════════════════════════════════════════════════════════ */}
-      {!isFreeTier && !isCustomTier && (
+      {!isFreeTier && !isCustomTier && info?.category && !ROI_HIDDEN_CATEGORIES.has(info.category) && (
         <section className="py-12 px-6">
           <div className="max-w-3xl mx-auto">
             <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
@@ -561,7 +681,10 @@ export default function ClaimPage() {
                     <input
                       type="number"
                       value={roiJobValue}
-                      onChange={(e) => setRoiJobValue(Math.max(1, Number(e.target.value) || 1))}
+                      onChange={(e) => {
+                        setRoiTouched(true);
+                        setRoiJobValue(Math.max(1, Number(e.target.value) || 1));
+                      }}
                       className="w-full h-12 pl-8 pr-4 rounded-xl bg-white/5 border border-white/10 text-white text-lg placeholder:text-white/25 focus:border-green-500/50 focus:outline-none transition-colors"
                       min={1}
                     />
@@ -582,6 +705,42 @@ export default function ClaimPage() {
                 <svg className="w-3.5 h-3.5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
                 Most of our clients see their first website lead within 2 weeks
               </p>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Value-anchor block for org-style categories (church, daycare,
+          non-profit) — replaces the per-customer ROI calculator since
+          those orgs don't sell to customers. Same dollar denominator
+          ($997), but framed as community/family value instead of leads. */}
+      {!isFreeTier && !isCustomTier && info?.category && ROI_HIDDEN_CATEGORIES.has(info.category) && (
+        <section className="py-12 px-6">
+          <div className="max-w-3xl mx-auto">
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
+              <h3 className="text-xl font-bold text-center mb-2">
+                What You Get for <span className="text-green-400">$997</span>
+              </h3>
+              <p className="text-white/40 text-sm text-center mb-6">
+                A modern website that helps {info?.businessName || "your organization"} reach more people
+              </p>
+              <div className="grid sm:grid-cols-2 gap-3">
+                {[
+                  "Custom design tailored to your community",
+                  "Mobile-optimized for the devices people actually use",
+                  "Online giving / signup forms built in",
+                  "Easy to update — no tech team required",
+                  "Google-friendly so newcomers find you first",
+                  "1 year of management & updates included",
+                ].map((item, i) => (
+                  <div key={i} className="flex items-start gap-2.5">
+                    <svg className="w-4 h-4 text-green-400 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span className="text-sm text-white/70">{item}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </section>
@@ -964,7 +1123,11 @@ export default function ClaimPage() {
             disabled={isRedirecting}
             className="h-16 px-12 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 text-white text-xl font-bold hover:shadow-[0_0_60px_rgba(34,197,94,0.4)] transition-all duration-300 disabled:opacity-50"
           >
-            {isRedirecting ? "Redirecting..." : `Claim Your Website \u2014 ${displayPrice}`}
+            {isRedirecting
+                ? "Redirecting..."
+                : isCustomTier
+                  ? `Claim \u2014 ${displayPrice} \u00b7 cancel anytime`
+                  : `Claim \u2014 ${displayPrice} \u00b7 100% money-back`}
           </button>
           {!isFreeTier && !isCustomTier && (
             <p className="text-center text-sm text-white/50 mt-2">
@@ -973,7 +1136,7 @@ export default function ClaimPage() {
                 onClick={() => redirectToCheckout("installment")}
                 className="underline hover:text-white/70 transition-colors"
               >
-                3 easy payments of $349
+                3 × $349 (payment plan, money-back guaranteed)
               </button>
             </p>
           )}

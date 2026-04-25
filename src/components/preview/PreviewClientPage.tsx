@@ -193,10 +193,23 @@ export default function PreviewClientPage({
         })()}
         className="fixed bottom-6 right-6 z-[9998] inline-flex items-center gap-2 rounded-full bg-sky-500 hover:bg-sky-400 px-5 py-3 text-sm font-semibold text-white shadow-2xl transition-colors"
       >
-        Claim this site →
+        Claim — $997 · money-back guarantee →
       </a>
 
       <PreviewVideoButton prospectId={id} />
+
+      {/* "See how your current site stacks up" → /compare/[id]. Renders
+          beneath the floating Claim CTA on the bottom-right but with a
+          subdued style so it doesn't compete visually. Mobile users see
+          it stacked under the floating CTA via fixed-position offset. */}
+      {prospect?.currentWebsite && (
+        <a
+          href={`/compare/${id}`}
+          className="fixed bottom-20 right-6 z-[9997] inline-flex items-center gap-2 rounded-full bg-white/10 backdrop-blur hover:bg-white/20 px-4 py-2 text-xs font-semibold text-white border border-white/20 shadow-xl transition-colors"
+        >
+          See how your current site stacks up →
+        </a>
+      )}
 
       {/* Text-me-back widget — TCPA-compliant SMS opt-in for preview
           visitors. Anchored bottom-LEFT so it doesn't compete with the
