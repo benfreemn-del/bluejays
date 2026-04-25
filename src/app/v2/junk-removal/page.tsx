@@ -301,8 +301,8 @@ export default function V2JunkRemovalPage() {
         {/* BEFORE side — cluttered garage */}
         <div className="absolute inset-0 z-0">
           <img
-            src="https://images.unsplash.com/photo-1530587191325-3db32d826c18?w=1600&q=80"
-            alt="Cluttered garage before cleanup"
+            src="https://images.unsplash.com/photo-1719003361901-bf35eb12c47f?w=1600&q=80"
+            alt="Curbside furniture pile in front of a residential home"
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${BG}ee 0%, ${BG}cc 50%, ${BG}99 100%)` }} />
