@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getAllProspects, updateProspect } from "@/lib/store";
 import { sendEmail } from "@/lib/email-sender";
 import { getReferralEmail } from "@/lib/email-templates";
+import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 
 /**
  * GET /api/referral/send
@@ -9,10 +10,23 @@ import { getReferralEmail } from "@/lib/email-templates";
  * Cron job (daily at 10am Pacific) — finds paid clients who:
  *   1. Paid 30+ days ago
  *   2. Haven't received a referral invite yet
+ *   3. Are NPS PROMOTERS (latest `nps_responses.category === 'promoter'`)
  *
- * Generates a unique referral code per client and sends the day-30
- * referral flywheel email. Referrers get $50 off their next annual
- * renewal for each successful referral.
+ * Wave-5b retention: this cron used to fire to every paid customer
+ * regardless of how happy they were. Detractors and lukewarm passives
+ * were getting a tone-deaf "send your friends!" pitch — actively
+ * harmful for at-risk customers. Per Rule 44, the Day-30 referral
+ * email is now NPS-gated:
+ *   - promoter (9-10) → fire the email (this cron's job)
+ *   - passive  (7-8)  → SKIP entirely
+ *   - detractor (0-6) → SKIP entirely
+ *   - no NPS response → SKIP (we don't know yet — wait for them)
+ *
+ * Promoters who clicked /r/[code]/9-or-10 already got the
+ * `getPromoterReferralEmail()` auto-fired on click. This cron picks
+ * up promoters whose response came in via some other channel (manual
+ * dashboard entry, future inbound surveys) OR whose auto-fire
+ * failed and need a retry on the regular Day-30 schedule.
  *
  * Referral codes are embedded in the claim URL as ?ref=CODE so we can
  * track which referrer brought in each new prospect.
@@ -32,6 +46,34 @@ function generateReferralCode(prospectId: string): string {
   return hash.toString(36).toUpperCase().padStart(8, "0").slice(0, 8);
 }
 
+/**
+ * Look up the latest NPS category for a prospect. Returns null if
+ * the prospect has no NPS responses yet — caller treats null as
+ * "skip, not eligible" (we don't know if they're a promoter, so
+ * don't take the risk of asking a detractor for referrals).
+ */
+async function getLatestNpsCategory(
+  prospectId: string,
+): Promise<"promoter" | "passive" | "detractor" | null> {
+  if (!isSupabaseConfigured()) return null;
+  try {
+    const { data } = await supabase
+      .from("nps_responses")
+      .select("category")
+      .eq("prospect_id", prospectId)
+      .order("responded_at", { ascending: false })
+      .limit(1);
+    if (!data || data.length === 0) return null;
+    const cat = (data[0]?.category as string) || "";
+    if (cat === "promoter" || cat === "passive" || cat === "detractor") {
+      return cat;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const dryRun = searchParams.get("dry") === "true";
@@ -39,7 +81,7 @@ export async function GET(request: Request) {
   const prospects = await getAllProspects();
   const now = Date.now();
 
-  const eligible = prospects.filter((p) => {
+  const candidates = prospects.filter((p) => {
     if (!["paid", "claimed"].includes(p.status)) return false;
     if (!p.paidAt) return false;
     if (p.referralSentAt) return false; // already sent
@@ -48,6 +90,24 @@ export async function GET(request: Request) {
     const daysSincePaid = now - new Date(p.paidAt).getTime();
     return daysSincePaid >= THIRTY_DAYS_MS;
   });
+
+  // NPS promoter gate (Rule 44). Done as a separate pass since each
+  // candidate needs a Supabase round-trip; the prefilter above
+  // narrows the set first to keep the lookup volume sane.
+  const eligible: typeof candidates = [];
+  const skipped: { id: string; business: string; reason: string }[] = [];
+  for (const p of candidates) {
+    const cat = await getLatestNpsCategory(p.id);
+    if (cat === "promoter") {
+      eligible.push(p);
+    } else {
+      skipped.push({
+        id: p.id,
+        business: p.businessName,
+        reason: cat ? `nps_category=${cat}` : "no_nps_response",
+      });
+    }
+  }
 
   const results: { id: string; business: string; code: string; sent: boolean }[] = [];
 
@@ -84,8 +144,10 @@ export async function GET(request: Request) {
   }
 
   return NextResponse.json({
+    candidates: candidates.length,
     eligible: eligible.length,
     processed: results.length,
+    skipped,
     dryRun,
     results,
     referralBaseUrl: `${BASE_URL}?ref=`,

@@ -182,6 +182,17 @@ export interface Prospect {
   handoffSentAt?: string;
   /** ISO timestamp when last monthly report email was sent to client */
   lastReportSentAt?: string;
+  /** ISO timestamp when the Day-14 NPS survey email was sent. Used by the
+   *  daily NPS cron to dedupe (only send once per customer) and by the
+   *  gated `getReferralEmail()` flow which only fires for promoters. See
+   *  Rule 44 in CLAUDE.md and migration 20260424_nps_responses.sql. */
+  npsSentAt?: string;
+  /** ISO timestamp of when the loss-probe farewell ("was it price, timing,
+   *  or the design?") was sent. Used by the inbound classifier in
+   *  ai-responder.ts to detect probe responses within 30 days, classify
+   *  the reason, and persist into `loss_reasons`. See Rule 45 in CLAUDE.md
+   *  and migration 20260424_loss_reasons.sql. */
+  lossProbeSentAt?: string;
   /** Hosted-domain fields — populated when Ben registers a domain
    *  on behalf of the client and flips their preview to go live at
    *  that domain. The domain lives on Ben's servers; Ben manages

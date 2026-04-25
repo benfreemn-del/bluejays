@@ -4182,3 +4182,198 @@ them. Migration 20260424_missed_call_logs.sql + the callback
 update (this rule's catalyst) closed the gap. The next gap of
 this shape is forbidden.
 
+
+
+## Rule 44: NPS-Gated Referral (NON-NEGOTIABLE — added 2026-04-24)
+
+The Day-30 referral email and the auto-fired promoter referral
+email are NPS-gated: we only ask happy customers to send their
+friends. Pre-Wave-5b every paid customer got the same generic
+"send your friends!" pitch regardless of how the build experience
+actually went. Detractors and lukewarm passives got asked for
+referrals at the worst possible moment — actively hurting the
+relationship.
+
+**The flow:**
+
+1. **Day 14 cron** (`/api/nps/send`, schedule `0 16 * * *`) finds
+   paid prospects with `paid_at <= now() - 14 days` and
+   `nps_sent_at IS NULL` and `status = 'paid'`. Sends
+   `getNpsSurveyEmail()`. Stamps `nps_sent_at = now()`.
+2. **Email body** — 11 score links pointing at `/r/[code]/[score]`.
+   When `ENABLE_HTML_PITCH_EMAIL=true`, renders as a colored button
+   row (red 0-6, yellow 7-8, green 9-10).
+3. **Customer clicks a score link.** `/r/[code]/[score]` records
+   the row in `nps_responses` with derived category, then 302s to
+   the appropriate variant of `/nps/thanks/[code]`.
+4. **Promoter (9-10):** auto-fire `getPromoterReferralEmail()` +
+   show the referral amplification page (personalized link, email-
+   a-friend mailto, LinkedIn/Facebook share buttons). Mark
+   `referral_email_sent=true` on the row so the regular
+   `/api/referral/send` cron skips this prospect.
+5. **Passive (7-8):** show "what would have made it a 9 or 10?"
+   textarea. Soft signal; emails the BlueJays inbox; no SMS.
+6. **Detractor (0-6):** show "what went wrong? I want to fix it."
+   textarea. Submit fires `sendOwnerAlert()` to Ben's phone WITHIN
+   SECONDS — this is the at-risk-customer save. The page promised
+   24-hour personal outreach, so Ben needs to act within that
+   window.
+7. **Day 30 cron** (`/api/referral/send`) only fires
+   `getReferralEmail()` for prospects whose latest
+   `nps_responses.category === 'promoter'`. Passives + detractors
+   are SKIPPED entirely — never get the referral ask.
+
+**Why Day 14 (not 7, not 30):**
+- Day 7 measures honeymoon excitement, not stable opinion.
+- Day 30 misses the "honest first impression" window — the
+  experience is no longer fresh.
+- Day 14 is the sweet spot: the build dopamine has worn off but
+  the experience is still vivid enough to remember concrete
+  details.
+
+**Public routes added to middleware allowlist:**
+- `/r/` — NPS click handler (must work without auth cookie)
+- `/nps/` — thanks page (URL-as-secret pattern, like `/client/[id]`)
+- `/api/nps/` — feedback POST (called from the thanks page)
+
+**Idempotency contract:**
+- `/api/nps/send` cron: `nps_sent_at` flag prevents resends. Set
+  AFTER successful send so a partial failure doesn't lock the
+  prospect out forever (next cron retries).
+- `/r/[code]/[score]` clicks: each click inserts a new row but the
+  promoter referral email is gated on
+  `nps_responses.referral_email_sent=true` for any prior row —
+  re-clicks don't double-send.
+- `/api/nps/feedback/[code]` POST: updates the latest row's
+  feedback column rather than spawning a new row. Detractor SMS
+  fires once per row (gated on `feedback_sent_to_ben=false`).
+
+**RULES — never violate:**
+- Don't fire any referral ask (email, SMS, dashboard reminder) to a
+  prospect whose latest NPS category is `passive` or `detractor`.
+- Don't fire a referral ask to a prospect with no NPS response
+  yet — wait for them to score. The cron treats "no response"
+  identically to "skip".
+- Don't soft-prompt a detractor to "give us another chance" within
+  the 14-30 day window via a different channel. They told us
+  they're unhappy; the next contact is Ben personally, not
+  another automated email.
+- Don't lower the day-14 threshold. The whole psychology of the
+  survey depends on customers having lived with the site long
+  enough to form a stable opinion. A Day-3 or Day-7 NPS measures
+  excitement, not satisfaction.
+
+
+
+## Rule 45: Win/Loss Feedback Loop (NON-NEGOTIABLE — added 2026-04-24)
+
+Every "not_interested" farewell that the AI responder sends MUST include
+a soft probe sentence asking why. Without this, every dismissal is
+silently wasted training data — we never learn whether prospects pass
+because of price, timing, the design, or because they already have a
+website. Three weeks of probe responses build the objection database
+that informs every future template + pitch change.
+
+**Where it's enforced:**
+- `getLossProbeSentence(prospectId)` in `src/lib/ai-responder.ts` —
+  returns one of three randomized phrasings, picked deterministically
+  by `prospect.id` hash so the same prospect always sees the same
+  wording across multiple touches (consistency) but the AI pattern is
+  hard to detect across the prospect base.
+- `appendLossProbe(reply, prospectId)` — appends the probe to a
+  not_interested farewell unless `farewellAlreadyHasProbe(reply)`
+  detects the AI organically wrote a similar question itself
+  (idempotent — safe to call repeatedly).
+- Both the fast-path `not_interested` branch AND the AI-classified
+  `intent === "not_interested"` branch in `processIncomingMessage()`
+  call `appendLossProbe()` and persist `lossProbeSentAt` on the
+  prospect record so the inbound classifier can detect probe responses
+  later.
+
+**The 5 categories** (matches the `loss_reasons.category` column):
+- `price` — too expensive, can't afford, budget too tight
+- `timing` — not the right time, busy, maybe later, next year
+- `design` — preview didn't feel right, wrong colors, wrong vibe
+- `have_one` — already have a website / developer / agency
+- `other` — anything else (catch-all)
+
+A 6th allowed value `no_response` exists in the schema for future
+use (e.g., a cron that auto-classifies prospects who never replied
+to the probe within 14 days) but is not produced by the current
+classifier.
+
+**Inbound probe-response handling** (`tryHandleLossProbeResponse`):
+- Gate: `prospect.status === "dismissed"` AND `lossProbeSentAt` is
+  within the last 30 days. Outside that window the reply is treated as
+  a brand-new inbound and runs through normal classification.
+- Routes the body through `gpt-4.1-mini` to classify into one of the
+  5 categories with a 0-1 confidence. Falls back to a keyword
+  heuristic in mock mode (no `OPENAI_API_KEY`) so dev still works.
+- Persists a `loss_reasons` row with the raw response, classification,
+  confidence, and metadata (which model classified it, when the probe
+  was sent).
+- Sends a tiny acknowledgment back: "Thanks — that helps." (one line,
+  no link, no further pitch).
+- DOES NOT re-engage the funnel. They said no — respect it. TCPA +
+  basic decency.
+- Logs a cost row via `logCost(..., service: "openai", action:
+  "loss_probe_classification", costUsd: 0.0008)` for every classification.
+
+**The dashboard surface** (`LossReasonsPanel`):
+- Mounted on the main dashboard view directly under
+  `StatusTransitionsToday`.
+- Top 5 categories by count (last 30 days) with colored badges.
+- 10 most recent verbatim responses with prospect business name,
+  category badge, AI confidence %, and a "Mark reviewed" button per
+  row that POSTs to `/api/loss-reasons/[id]/review` to set
+  `acted_on_at`.
+- Polls `/api/loss-reasons/stats` every 60s.
+- Empty state: "No loss data yet — probes will start landing as the AI
+  fires more not_interested farewells."
+
+**Operator goal:** review loss reasons WEEKLY. The whole point of
+collecting this data is to use it. If 60% of dismissals say "price"
+that month → the pitch needs more ROI framing on first touch. If 40%
+say "design" → the V2 templates for that category need a refresh.
+If "have_one" dominates → push the comparison page harder in the
+initial email. The data tells you which lever to pull.
+
+**RULES — never violate any of these:**
+- Don't strip the probe from any not_interested farewell — fast-path or
+  AI-classified, both must include it. Idempotency means safe to call
+  twice; the rule is never to skip it.
+- Don't re-engage the funnel after a probe response. Don't send a "well
+  if it's price, here's our payment plan…" reply. They said no.
+- Don't send the probe twice — `farewellAlreadyHasProbe()` exists
+  precisely so the AI can't accidentally wrap "was it the price?" with
+  another "was it the price?" if it organically wrote one.
+- Don't use the probe wording as a sales hook. The phrasing is
+  intentionally neutral and "help me improve" — never "let me try one
+  more time to convince you." The whole reason it works is that it
+  doesn't feel like sales.
+- Don't add new probe phrasings without testing them — the current
+  three are calibrated for a soft, low-pressure tone. New phrasings get
+  added to `LOSS_PROBE_PHRASINGS` only after a manual review.
+- Don't surface phone/email/internal notes through the loss-reasons
+  stats endpoint. The endpoint is operator-only (gated by the dashboard
+  auth middleware) but the principle stays.
+
+**Migration:** `supabase/migrations/20260424_loss_reasons.sql` adds the
+`loss_reasons` table and `prospects.loss_probe_sent_at` column. Schema:
+
+```
+loss_reasons (
+  id UUID PK,
+  prospect_id UUID FK → prospects(id) ON DELETE CASCADE,
+  category TEXT,
+  raw_response TEXT,
+  ai_classification TEXT,
+  confidence DECIMAL(3,2),
+  surfaced_at TIMESTAMPTZ DEFAULT NOW(),
+  acted_on_at TIMESTAMPTZ,
+  metadata JSONB DEFAULT '{}'
+)
+```
+
+Indexes: by `prospect_id`, by `category`, by `surfaced_at DESC` (so
+the dashboard's "newest first" query is cheap).

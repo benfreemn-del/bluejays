@@ -128,6 +128,9 @@ const PUBLIC_API_PATHS = [
   "/api/postcards/html/",              // Lob's renderer fetches these; public (just pre-rendered preview HTML)
   "/api/inquire/",                     // Public form submission from /inquire/[code]
   "/api/o/",                           // Self-hosted email open-tracking pixel (1×1 GIF) — public so recipients can load it
+  "/api/nps/",                         // NPS feedback POSTs from the public /nps/thanks page (Wave-5b retention)
+  "/r/",                               // Public NPS click handler — /r/[code]/[score] (Wave-5b retention)
+  "/nps/",                             // Public NPS thanks page — /nps/thanks/[code] (Wave-5b retention)
 ];
 
 export async function middleware(request: NextRequest) {

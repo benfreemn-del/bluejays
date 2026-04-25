@@ -711,6 +711,23 @@ const BASE = "https://bluejayportfolio.com";
 const CONTACT_EMAIL = process.env.FROM_EMAIL || "ben@bluejayportfolio.com";
 const BEN_PHONE = process.env.BEN_PHONE || "(253) 886-3753";
 
+/**
+ * Day-30 referral ask — gated to NPS PROMOTERS only (Rule 44).
+ *
+ * Pre-Wave-5b this email fired indiscriminately to every paid customer
+ * 30 days after purchase, which meant detractors and lukewarm passives
+ * got a tone-deaf "send your friends" pitch right when they were
+ * already cooling on the experience. Now the cron in
+ * `/api/referral/send` only includes prospects whose latest
+ * `nps_responses.category === 'promoter'` — passives and detractors
+ * skip this email entirely (the right move; a "tell your friends!"
+ * ask from someone you'd rate a 5/10 is actively harmful).
+ *
+ * Promoter copy is upgraded too: bigger reward ($100 off OR a free
+ * year of management) since they self-identified as enthusiastic
+ * advocates AND the referee gets $100 off, so it's a true two-sided
+ * incentive.
+ */
 export function getReferralEmail(
   prospect: Prospect,
   referralCode: string,
@@ -719,22 +736,133 @@ export function getReferralEmail(
   const referralUrl = `${BASE}?ref=${referralCode}`;
 
   return {
-    subject: `${name} — a quick thank-you and something for your network`,
+    subject: `${name} — thank you (and a little something for your network)`,
     body: `Hi ${name},
 
-It's been about a month since ${prospect.businessName} went live — hope customers are already finding you online.
+You rated ${prospect.businessName}'s experience a 9 or 10 — that means a lot.
 
-If you know any other local business owners who could use a premium website, share your personal link:
+If you know other local business owners who could use the same upgrade, share your personal link:
 
 ${referralUrl}
 
-Every business that claims a site through your link earns you $50 off your next annual renewal.
+For every business that claims a site through your link, they get $100 off AND you get $100 off your renewal — OR a free year of management, your call.
 
-Thanks for trusting us with ${prospect.businessName}'s online presence.
+Thanks again for trusting us with ${prospect.businessName}.
 
 — Ben
 ${CONTACT_EMAIL}`,
     sequence: 0,
+  };
+}
+
+/**
+ * Day-14 NPS survey email (Wave-5b retention).
+ *
+ * The 14-day mark is the goldilocks window: long enough that the
+ * honeymoon glow has worn off and the customer is operating with the
+ * site in their day-to-day, short enough that the build experience is
+ * still fresh. Two weeks earlier and we'd be measuring excitement;
+ * two weeks later and indifferent customers have already drifted.
+ *
+ * Body is intentionally tiny (≤80 words, single semantic question).
+ * The eleven 0-10 scores are rendered as plain-text URLs in the
+ * fallback body so any mail client can click them. When
+ * `ENABLE_HTML_PITCH_EMAIL` is set we render the same 11 endpoints as
+ * a colored button row (red 0-6, yellow 7-8, green 9-10) which gets
+ * higher response rates without changing the underlying mechanic.
+ *
+ * Each link goes to `/r/{shortCode}/{score}` — a public route that
+ * (a) records the score, (b) branches to a category-specific thanks
+ * page, and (c) auto-fires the referral email for promoters. See
+ * `src/app/r/[code]/[score]/route.ts`.
+ */
+export function getNpsSurveyEmail(prospect: Prospect): EmailTemplate {
+  const { greeting } = getGreetingName(prospect);
+  const code = prospect.short_code || deriveShortCode(prospect.id);
+  const linkFor = (score: number) => `${BASE}/r/${code}/${score}`;
+
+  // Plain-text fallback body. Each line is its own clickable URL so
+  // even text-only mail clients render the full 0-10 scale.
+  const scoreLines = Array.from({ length: 11 }, (_, score) => {
+    return `${score}: ${linkFor(score)}`;
+  }).join("\n");
+
+  const body = `Hi ${greeting},
+
+Quick one — on a scale of 0-10, how likely are you to recommend BlueJays to another business owner?
+
+${scoreLines}
+
+Just one click — takes 5 seconds. I read every response.
+
+— Ben
+${EMAIL_FOOTER.replace("{{unsubUrl}}", getShortUnsubUrl(prospect))}`;
+
+  // HTML version — colored button row. Only rendered when the
+  // ENABLE_HTML_PITCH_EMAIL gate is on (post-warmup). The plain-text
+  // body above is always populated and is what 99% of clients render
+  // anyway during the warmup phase.
+  const htmlBody = process.env.ENABLE_HTML_PITCH_EMAIL === "true"
+    ? wrapEmailHtml(`
+        <p>Hi ${esc(greeting)},</p>
+        <p>Quick one — on a scale of 0-10, how likely are you to recommend BlueJays to another business owner?</p>
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:16px 0;border-collapse:collapse;">
+          <tr>
+            ${Array.from({ length: 11 }, (_, score) => {
+              const color =
+                score >= 9 ? "#16a34a" : score >= 7 ? "#ca8a04" : "#dc2626";
+              return `<td style="padding:0 4px;">
+                <a href="${esc(linkFor(score))}" style="display:inline-block;min-width:36px;text-align:center;padding:10px 0;background:${color};color:#ffffff;font-weight:700;text-decoration:none;border-radius:6px;font-size:15px;">${score}</a>
+              </td>`;
+            }).join("")}
+          </tr>
+        </table>
+        <p>Just one click — takes 5 seconds. I read every response.</p>
+        <p>— Ben</p>
+        <p style="color:#888;font-size:12px;margin-top:24px;">Quilcene, WA · <a href="${esc(getShortUnsubUrl(prospect))}" style="color:#888;">Opt out</a></p>
+      `)
+    : undefined;
+
+  return {
+    subject: `Quick question about your site — 30 seconds?`,
+    body,
+    htmlBody,
+    sequence: 220,
+  };
+}
+
+/**
+ * Promoter-specific referral email fired immediately after a 9 or 10
+ * NPS click. Differs from `getReferralEmail()` in two ways:
+ *   1. References the just-given high rating ("you rated us a 10!")
+ *   2. Body is shorter — they already saw the offer on the thanks
+ *      page; this is just an inbox-archived copy of the ask.
+ */
+export function getPromoterReferralEmail(
+  prospect: Prospect,
+  referralCode: string,
+  score: number,
+): EmailTemplate {
+  const name = prospect.ownerName?.split(" ")[0] || prospect.businessName;
+  const referralUrl = `${BASE}?ref=${referralCode}`;
+
+  return {
+    subject: `Thanks for the ${score}/10, ${name} — your referral link`,
+    body: `Hi ${name},
+
+Just got your ${score}/10 — really appreciate that.
+
+Here's your personal referral link to share with any business owner who could use the same upgrade:
+
+${referralUrl}
+
+Every business that claims through your link gets $100 off — and you get $100 off your renewal OR a free year of management, your call.
+
+Thanks again.
+
+— Ben
+${EMAIL_FOOTER.replace("{{unsubUrl}}", getShortUnsubUrl(prospect))}`,
+    sequence: 221,
   };
 }
 
