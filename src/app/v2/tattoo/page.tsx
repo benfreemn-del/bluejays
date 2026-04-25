@@ -766,35 +766,35 @@ export default function V2TattooPage() {
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 items-start">
             <div className="lg:col-span-2">
-              <p className="text-sm uppercase tracking-widest mb-3" style={{ color: CRIMSON }}>New This Month</p>
-              <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white mb-6"><WordReveal text="Flash Sheet Drops" /></h2>
-              <p className="text-slate-400 leading-relaxed mb-6">Fresh flash designs released monthly. First-come, first-tattooed — each design goes home on one body. Walk in with a printout or grab a spot online before they get claimed.</p>
+              <p className="text-sm uppercase tracking-widest mb-3" style={{ color: CRIMSON }}>Studio Portfolio</p>
+              <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white mb-6"><WordReveal text="Recent Work" /></h2>
+              <p className="text-slate-400 leading-relaxed mb-6">A look inside the studio — pieces we&apos;ve put on real clients in the last few months. Black-and-gray realism, traditional color, tribal, mandala, fine linework. Whatever you&apos;re bringing in, we&apos;ve probably tattooed something close.</p>
               <div className="flex flex-wrap gap-3">
-                <span className="px-3 py-1.5 rounded-full text-xs font-semibold" style={{ background: CRIMSON_GLOW, color: CRIMSON_LIGHT }}>Single-use designs</span>
-                <span className="px-3 py-1.5 rounded-full text-xs font-semibold" style={{ background: "rgba(255,255,255,0.05)", color: "#cbd5e1", border: "1px solid rgba(255,255,255,0.1)" }}>Walk-in ready</span>
-                <span className="px-3 py-1.5 rounded-full text-xs font-semibold" style={{ background: CRIMSON_GLOW, color: CRIMSON_LIGHT }}>$150 – $400 range</span>
+                <span className="px-3 py-1.5 rounded-full text-xs font-semibold" style={{ background: CRIMSON_GLOW, color: CRIMSON_LIGHT }}>Custom designs</span>
+                <span className="px-3 py-1.5 rounded-full text-xs font-semibold" style={{ background: "rgba(255,255,255,0.05)", color: "#cbd5e1", border: "1px solid rgba(255,255,255,0.1)" }}>Walk-ins welcome</span>
+                <span className="px-3 py-1.5 rounded-full text-xs font-semibold" style={{ background: CRIMSON_GLOW, color: CRIMSON_LIGHT }}>$150 – $400 typical</span>
               </div>
               <MagneticButton className="mt-8 px-8 py-4 rounded-full text-base font-semibold text-white inline-flex items-center gap-2 cursor-pointer" style={{ background: CRIMSON }}>
-                <CalendarCheck size={18} weight="duotone" /> Claim A Design
+                <CalendarCheck size={18} weight="duotone" /> Book A Session
               </MagneticButton>
             </div>
             <motion.div className="lg:col-span-3 grid grid-cols-2 sm:grid-cols-3 gap-3" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true }}>
               {[
-                { name: "Serpent & Rose", price: "$280", src: "https://images.unsplash.com/photo-1665085326709-8ae5245e535a?w=400&q=80" },
-                { name: "Moth & Moon", price: "$220", src: "https://plus.unsplash.com/premium_photo-1707398404766-18c038bea96a?w=400&q=80" },
-                { name: "Dagger Script", price: "$180", src: "https://images.unsplash.com/photo-1758404255679-9afd847ede1c?w=400&q=80" },
-                { name: "Ocean Wave", price: "$240", src: "https://images.unsplash.com/photo-1775134061575-80f4bbd1a189?w=400&q=80" },
-                { name: "Raven & Keys", price: "$320", src: "https://plus.unsplash.com/premium_photo-1707398501439-e329b6908ba5?w=400&q=80" },
-                { name: "Traditional Heart", price: "$160", src: "https://images.unsplash.com/photo-1665612077377-0efb41c418cd?w=400&q=80" },
-              ].map((flash, i) => (
+                { name: "Forearm Sleeve", price: "Black & gray", src: "https://images.unsplash.com/photo-1665085326709-8ae5245e535a?w=400&q=80" },
+                { name: "Tribal Sleeve", price: "Polynesian style", src: "https://plus.unsplash.com/premium_photo-1707398404766-18c038bea96a?w=400&q=80" },
+                { name: "Linework Leg", price: "Fine line", src: "https://images.unsplash.com/photo-1758404255679-9afd847ede1c?w=400&q=80" },
+                { name: "Detail Work", price: "Color & shading", src: "https://images.unsplash.com/photo-1775134061575-80f4bbd1a189?w=400&q=80" },
+                { name: "Mandala Neck", price: "Geometric", src: "https://plus.unsplash.com/premium_photo-1707398501439-e329b6908ba5?w=400&q=80" },
+                { name: "Back Session", price: "In progress", src: "https://images.unsplash.com/photo-1665612077377-0efb41c418cd?w=400&q=80" },
+              ].map((piece, i) => (
                 <motion.div key={i} variants={fadeUp} whileHover={{ scale: 1.03 }} className="relative aspect-square rounded-2xl overflow-hidden group cursor-pointer">
-                  <img src={flash.src} alt={flash.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                  <img src={piece.src} alt={piece.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
                   <div className="absolute bottom-3 left-3 right-3">
-                    <p className="text-sm font-bold text-white">{flash.name}</p>
-                    <p className="text-xs" style={{ color: CRIMSON_LIGHT }}>{flash.price}</p>
+                    <p className="text-sm font-bold text-white">{piece.name}</p>
+                    <p className="text-xs" style={{ color: CRIMSON_LIGHT }}>{piece.price}</p>
                   </div>
-                  <span className="absolute top-3 right-3 px-2 py-0.5 rounded-full text-[10px] font-bold text-white" style={{ background: CRIMSON }}>Available</span>
+                  <span className="absolute top-3 right-3 px-2 py-0.5 rounded-full text-[10px] font-bold text-white" style={{ background: CRIMSON }}>Studio</span>
                 </motion.div>
               ))}
             </motion.div>
