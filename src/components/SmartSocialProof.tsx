@@ -188,36 +188,12 @@ export default function SmartSocialProof({
         </div>
       )}
 
-      {/* Urgency — Recent Activity Feed (only for warm+ prospects) */}
-      {triggers?.showUrgency && (
-        <div className="bg-surface border border-border rounded-xl px-4 py-3">
-          <p className="text-xs text-white/40 uppercase tracking-wider mb-2 font-medium">Recent Activity</p>
-          <div className="space-y-2">
-            <ActivityItem
-              text={`A ${formatCategory} in ${city || "your area"} viewed their preview`}
-              time="2 hours ago"
-            />
-            <ActivityItem
-              text={`A local business just claimed their website`}
-              time="5 hours ago"
-            />
-            <ActivityItem
-              text={`${totalGenerated > 3 ? totalGenerated - 3 : 1} new sites built this week`}
-              time="Today"
-            />
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function ActivityItem({ text, time }: { text: string; time: string }) {
-  return (
-    <div className="flex items-center gap-2 text-xs">
-      <span className="w-1.5 h-1.5 rounded-full bg-green-400 shrink-0" />
-      <span className="text-white/60 flex-1">{text}</span>
-      <span className="text-white/30 shrink-0">{time}</span>
+      {/* Recent Activity feed REMOVED — was rendering fabricated entries
+          like "A {category} in {city} viewed their preview · 2h ago" with
+          static timestamps. Violates the CLAUDE.md non-negotiable:
+          "Social proof overlays MUST use real data or be removed.
+          NEVER show fake or inflated numbers." A real activity feed
+          backed by prospect/payment events is a separate build. */}
     </div>
   );
 }

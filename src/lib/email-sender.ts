@@ -5,6 +5,7 @@ import { supabase, isSupabaseConfigured } from "./supabase";
 import { logCost, COST_RATES } from "./cost-logger";
 import { isEmailBounced } from "./email-deliverability";
 import { pickSendingDomain, recordEmailSent } from "./domain-warming";
+import { deriveShortCode } from "./short-urls";
 
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 
@@ -100,16 +101,16 @@ async function sendViaSendGrid(
   //   • Gmail treats the sender as responsible/compliant → better placement
   //   • Users can unsubscribe without marking spam → sender reputation stays clean
   //
-  // The mailto target is a shared inbox; the https target POSTs to our
-  // /api/unsubscribe/[id] endpoint (which we verified supports both GET
-  // and POST for RFC 8058 one-click). Only adds when prospectId is known
-  // so the https target can be personalized to the prospect.
+  // The header URL must match the in-body footer link so Gmail's classifier
+  // sees consistency: both point at the canonical short /u/[code] route.
+  // The /u/[code] handler accepts POST with empty body and returns 200 for
+  // Gmail's RFC 8058 one-click flow. No mailto leg — we don't have a
+  // dedicated unsubscribe inbox wired up.
   if (prospectId) {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com";
-    const unsubUrl = `${baseUrl}/api/unsubscribe/${prospectId}`;
-    const unsubMailto = `unsubscribe+${prospectId}@bluejayportfolio.com`;
+    const code = deriveShortCode(prospectId);
+    const unsubUrl = `https://bluejayportfolio.com/u/${code}`;
     payload.headers = {
-      "List-Unsubscribe": `<mailto:${unsubMailto}?subject=Unsubscribe>, <${unsubUrl}>`,
+      "List-Unsubscribe": `<${unsubUrl}>`,
       // RFC 8058: Gmail/Apple see this and enable one-click unsubscribe UI.
       // The header value must be exactly `List-Unsubscribe=One-Click`.
       "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
@@ -218,14 +219,12 @@ export async function sendEmail(
     console.log(`  Sending email via SendGrid to ${to}...`);
     // Strip emojis from subject to avoid encoding issues
     const cleanSubject = subject.replace(/[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu, "").trim();
-    // Strip non-ASCII from body to avoid encoding issues
-    const cleanBody = body.replace(/[^\x00-\x7F]/g, "").trim();
-    // HTML body is left as-is — HTML is UTF-safe and the non-ASCII strip
-    // above was only for plain-text SendGrid compatibility on older
-    // campaigns. Modern multipart handles Unicode in text/html natively.
+    // SendGrid handles UTF-8 plain text natively — don't strip non-ASCII.
+    // The previous `.replace(/[^\x00-\x7F]/g, "")` silently removed every
+    // ★, em-dash, and curly quote from pitch templates before sending.
     // Pass prospectId through so sendViaSendGrid can set List-Unsubscribe
     // headers scoped to this specific prospect (RFC 8058 one-click).
-    const success = await sendViaSendGrid(to, cleanSubject || subject, cleanBody || body, fromSender, htmlBody, prospectId);
+    const success = await sendViaSendGrid(to, cleanSubject || subject, body, fromSender, htmlBody, prospectId);
     if (!success) {
       throw new Error(`SendGrid API failed`);
     }

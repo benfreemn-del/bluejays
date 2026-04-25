@@ -329,12 +329,9 @@ export default function ClaimPage() {
                   Most Popular
                 </div>
                 <button
-                  onClick={() => {
-                    const url = new URL(window.location.href);
-                    url.searchParams.set("plan", "installment");
-                    window.location.href = url.toString();
-                  }}
-                  className="w-full h-full min-h-[80px] px-6 py-4 rounded-2xl border-2 border-sky-500 bg-sky-500/10 text-white font-bold hover:bg-sky-500/20 transition-all flex flex-col items-center justify-center gap-0.5"
+                  onClick={() => redirectToCheckout("installment")}
+                  disabled={isRedirecting}
+                  className="w-full h-full min-h-[80px] px-6 py-4 rounded-2xl border-2 border-sky-500 bg-sky-500/10 text-white font-bold hover:bg-sky-500/20 transition-all flex flex-col items-center justify-center gap-0.5 disabled:opacity-50"
                 >
                   <span className="text-xl">3 × $349</span>
                   <span className="text-xs text-white/60 font-normal">$116/mo · paid over 3 months</span>
@@ -382,7 +379,7 @@ export default function ClaimPage() {
               </a>
             )}
             <a
-              href={`/book/${info?.id || ""}`}
+              href={`/book/${prospectId}`}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-blue-500/30 text-blue-400 hover:bg-blue-500/10 transition-colors text-sm"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
