@@ -212,25 +212,25 @@ const services = [
 const galleryImages = [
   { src: "https://images.unsplash.com/photo-1519741497674-611481863552?w=800&q=80", alt: "Romantic wedding couple at sunset", category: "Weddings" },
   { src: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=600&q=80", alt: "Wedding ceremony exchange of vows", category: "Weddings" },
-  { src: "https://images.unsplash.com/photo-1503443207922-dff7d543fd0e?w=600&q=80", alt: "Professional woman portrait", category: "Portraits" },
+  { src: "https://images.unsplash.com/photo-1503443207922-dff7d543fd0e?w=600&q=80", alt: "Professional portrait", category: "Portraits" },
   { src: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=600&q=80", alt: "Natural light studio portrait", category: "Portraits" },
   { src: "https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=600&q=80", alt: "Live corporate event", category: "Events" },
-  { src: "https://images.unsplash.com/photo-1469371670807-013ccf25f16a?w=600&q=80", alt: "Outdoor celebration event", category: "Events" },
+  { src: "https://images.unsplash.com/photo-1469371670807-013ccf25f16a?w=600&q=80", alt: "Wedding ceremony aisle florals", category: "Events" },
   { src: "https://images.unsplash.com/photo-1526045431048-f857369baa09?w=600&q=80", alt: "Minimalist product on white", category: "Products" },
-  { src: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800&q=80", alt: "Lifestyle product flat lay", category: "Products" },
+  { src: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800&q=80", alt: "Brand collaboration session", category: "Products" },
   { src: "https://images.unsplash.com/photo-1498503182468-3b51cbb6cb24?w=600&q=80", alt: "Coastal landscape cityscape", category: "Landscapes" },
   { src: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80", alt: "Mountain landscape at golden hour", category: "Landscapes" },
   { src: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=600&q=80", alt: "Corporate professional headshot", category: "Headshots" },
-  { src: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=600&q=80", alt: "Executive business headshot", category: "Headshots" },
+  { src: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=600&q=80", alt: "Casual lifestyle portrait", category: "Headshots" },
 ];
 
 const galleryCategories = ["All", "Weddings", "Portraits", "Events", "Products", "Landscapes", "Headshots"];
 
 const testimonials = [
-  { name: "Sarah & James K.", sessionType: "Wedding", photosDelivered: 847, turnaround: "6 weeks", rating: 5, text: "Mia captured our Snoqualmie Falls ceremony with such artistry. Every candid moment, every detail. We cried looking through the gallery for the first time." },
-  { name: "David Nguyen", sessionType: "Headshots", photosDelivered: 45, turnaround: "5 days", rating: 5, text: "Needed updated headshots for my LinkedIn and company bio. Mia made the session feel effortless and the results are incredibly polished. Multiple colleagues asked who my photographer was." },
-  { name: "The Ramirez Family", sessionType: "Family Portrait", photosDelivered: 120, turnaround: "2 weeks", rating: 5, text: "Our annual family session at Discovery Park was magical. Mia has a gift for getting genuine smiles from our three kids. These photos are treasures we will cherish forever." },
-  { name: "Priya Sharma, CEO", sessionType: "Corporate Event", photosDelivered: 340, turnaround: "10 days", rating: 5, text: "Hired Cascade Lens for our annual tech summit. Mia and her second photographer covered every keynote, breakout, and candid networking moment. The board was thrilled with the results." },
+  { name: "Sarah & James K.", sessionType: "Wedding", photosDelivered: 847, turnaround: "6 weeks", rating: 5, text: "Mike captured our Snoqualmie Falls ceremony with such artistry. Every candid moment, every detail. We cried looking through the gallery for the first time." },
+  { name: "David Nguyen", sessionType: "Headshots", photosDelivered: 45, turnaround: "5 days", rating: 5, text: "Needed updated headshots for my LinkedIn and company bio. Mike made the session feel effortless and the results are incredibly polished. Multiple colleagues asked who my photographer was." },
+  { name: "The Ramirez Family", sessionType: "Family Portrait", photosDelivered: 120, turnaround: "2 weeks", rating: 5, text: "Our annual family session at Discovery Park was magical. Mike has a gift for getting genuine smiles from our three kids. These photos are treasures we will cherish forever." },
+  { name: "Priya Sharma, CEO", sessionType: "Corporate Event", photosDelivered: 340, turnaround: "10 days", rating: 5, text: "Hired Cascade Lens for our annual tech summit. Mike and his second photographer covered every keynote, breakout, and candid networking moment. The board was thrilled with the results." },
 ];
 
 const processSteps = [
@@ -317,7 +317,7 @@ const serviceAreas = [
 
 /* ═══════════════════════════════════════════════════════════════
    MAIN PAGE — Cascade Lens Photography — Beast Mode Showcase
-   Owner: Mia Chen | Seattle, WA | (206) 482-9137
+   Owner: Mike Chen | Seattle, WA | (206) 482-9137
    ═══════════════════════════════════════════════════════════════ */
 export default function V2PhotographyPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -426,7 +426,7 @@ export default function V2PhotographyPage() {
               <WordReveal text="Your Story Deserves Art" />
             </h1>
             <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 2.2 }} className="text-lg max-w-xl mx-auto leading-relaxed" style={{ color: COOL_SLATE }}>
-              Award-winning photography by Mia Chen. Weddings, portraits, headshots, and events across the Pacific Northwest.
+              Award-winning photography by Mike Chen. Weddings, portraits, headshots, and events across the Pacific Northwest.
             </motion.p>
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 2.4 }} className="flex flex-wrap justify-center gap-4">
               <a href="#contact">
@@ -502,7 +502,7 @@ export default function V2PhotographyPage() {
         <div className="mx-auto max-w-7xl px-4 md:px-6 relative">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="relative rounded-2xl overflow-hidden aspect-[3/4]">
-              <img src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=800&q=80" alt="Mia Chen photographing on location" className="w-full h-full object-cover object-top" />
+              <img src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=800&q=80" alt="Mike Chen photographing on location" className="w-full h-full object-cover object-top" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
               <div className="absolute bottom-6 left-6 right-6">
                 <GlassCard className="px-4 py-3 inline-flex items-center gap-3 bg-white/80">
@@ -512,7 +512,7 @@ export default function V2PhotographyPage() {
               </div>
             </div>
             <div>
-              <p className="text-sm uppercase tracking-[0.2em] mb-3" style={{ color: GOLD }}>Meet Mia Chen</p>
+              <p className="text-sm uppercase tracking-[0.2em] mb-3" style={{ color: GOLD }}>Meet Mike Chen</p>
               <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold mb-6" style={{ color: CHARCOAL }}>
                 <WordReveal text="The Heart Behind the Lens" />
               </h2>

@@ -85,11 +85,11 @@ const PROCESS_STEPS = [
 
 const PORTFOLIO_ITEMS = [
   { title: "Capitol Hill Loft", type: "Modern Minimalist", img: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=800&h=600&fit=crop", desc: "1,200 sq ft open concept loft transformed with clean lines and warm neutrals" },
-  { title: "Queen Anne Victorian", type: "Traditional Revival", img: "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=800&h=600&fit=crop", desc: "Full home restoration honoring original architectural details with modern comfort" },
+  { title: "Queen Anne Boho", type: "Modern Boho Living Room", img: "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=800&h=600&fit=crop", desc: "Layered textures and natural elements creating a warm modern bohemian retreat" },
   { title: "Bellevue Kitchen", type: "Contemporary Kitchen", img: "https://images.unsplash.com/photo-1565538810643-b5bdb714032a?w=800&h=600&fit=crop", desc: "Chef-grade kitchen with waterfall island and custom walnut cabinetry" },
   { title: "Mercer Island Estate", type: "Luxury Residential", img: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=600&fit=crop", desc: "5,000 sq ft lakefront estate with bespoke furnishings throughout" },
-  { title: "Ballard Studio", type: "Creative Workspace", img: "https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=800&h=600&fit=crop", desc: "Design studio conversion balancing productivity with Nordic calm" },
-  { title: "Fremont Bungalow", type: "Bohemian Eclectic", img: "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=800&h=600&fit=crop", desc: "Craftsman bungalow layered with global textiles and vintage finds" },
+  { title: "Ballard Dining", type: "Modern Dining Room", img: "https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=800&h=600&fit=crop", desc: "Curated dining space balancing entertaining flow with Nordic calm" },
+  { title: "Fremont Bungalow", type: "Minimalist Living Room", img: "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=800&h=600&fit=crop", desc: "Pared-back living space where every piece earns its place — quiet, intentional, light" },
 ];
 
 const TESTIMONIALS = [
@@ -297,7 +297,7 @@ const MAGAZINE_FEATURES = [
 // ─── MOOD BOARD SWATCH DATA ────────────────────────────────────────────────
 const MOOD_SWATCHES = [
   { type: "circle", size: 140, color: "#d4a853", label: "Brushed Gold", x: 8, y: 15, rotation: -5, img: "https://images.unsplash.com/photo-1567016432779-094069958ea5?w=300&h=300&fit=crop" },
-  { type: "rect", width: 180, height: 120, color: "#6b7f5e", label: "Sage Linen", x: 55, y: 5, rotation: 3, img: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&h=300&fit=crop" },
+  { type: "rect", width: 180, height: 120, color: "#6b7f5e", label: "Sage Living Room", x: 55, y: 5, rotation: 3, img: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&h=300&fit=crop" },
   { type: "square", size: 120, color: "#f5f0e8", label: "Warm Ivory", x: 30, y: 55, rotation: -8, img: "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=300&h=300&fit=crop" },
   { type: "rect", width: 160, height: 100, color: "#1a1a1a", label: "Charcoal Velvet", x: 65, y: 50, rotation: 5, img: "https://images.unsplash.com/photo-1615873968403-89e068629265?w=400&h=300&fit=crop" },
   { type: "circle", size: 100, color: "#b8860b", label: "Amber Marble", x: 10, y: 70, rotation: 12, img: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=300&h=300&fit=crop" },
@@ -478,7 +478,7 @@ export default function InteriorDesignShowcase() {
               </span>
             </h1>
             <p className="text-lg mt-6 leading-relaxed max-w-lg" style={{ color: "#5a5a5a" }}>
-              Elena Vasquez and her team create thoughtful, livable interiors for discerning
+              Elena Whitman and her team create thoughtful, livable interiors for discerning
               Pacific Northwest homeowners. Fifteen years of transforming Seattle homes into
               personal masterpieces.
             </p>
@@ -648,8 +648,8 @@ export default function InteriorDesignShowcase() {
           >
             <div className="relative">
               <img
-                src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=600&h=750&fit=crop&crop=top"
-                alt="Elena Vasquez, Principal Designer"
+                src="https://images.unsplash.com/photo-1593104547489-5cfb3839a3b5?w=600&h=750&fit=crop&crop=top"
+                alt="Elena Whitman, Principal Designer"
                 className="rounded-2xl shadow-xl w-full object-cover object-top"
                 style={{ maxHeight: 500 }}
               />
@@ -658,7 +658,7 @@ export default function InteriorDesignShowcase() {
                 style={{ background: "white" }}
               >
                 <div className="text-sm font-medium" style={{ color: GOLD }}>Principal Designer</div>
-                <div className="text-lg font-light" style={{ color: CHARCOAL, fontFamily: "'Georgia', serif" }}>Elena Vasquez</div>
+                <div className="text-lg font-light" style={{ color: CHARCOAL, fontFamily: "'Georgia', serif" }}>Elena Whitman</div>
                 <div className="text-xs mt-1" style={{ color: "#999" }}>NCIDQ #24-7891</div>
               </div>
             </div>
@@ -675,7 +675,7 @@ export default function InteriorDesignShowcase() {
             </h2>
             <div className="space-y-4 text-base leading-relaxed" style={{ color: "#5a5a5a" }}>
               <p>
-                Elena Vasquez founded Cascadia Interiors in 2011 after a decade of designing luxury hospitality
+                Elena Whitman founded Cascadia Interiors in 2011 after a decade of designing luxury hospitality
                 spaces across the Pacific Northwest. Her background in architecture gives her a structural eye
                 that most decorators lack — she sees how light, proportion, and material intersect to create feeling.
               </p>
@@ -1531,7 +1531,7 @@ export default function InteriorDesignShowcase() {
                 <span style={{ color: GOLD }}>Cascadia</span> Interiors
               </div>
               <p className="text-sm leading-relaxed" style={{ color: "#7a7a7a" }}>
-                Thoughtful interior design for Pacific Northwest homes. Led by Elena Vasquez, NCIDQ certified.
+                Thoughtful interior design for Pacific Northwest homes. Led by Elena Whitman, NCIDQ certified.
               </p>
             </div>
 
