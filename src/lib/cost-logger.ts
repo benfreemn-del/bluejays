@@ -43,6 +43,9 @@ export const COST_RATES = {
   // Perplexity Sonar (~$5/1M tokens)
   perplexity_research: 0.005,        // ~1K tokens per query
   perplexity_pitch: 0.005,
+  // Domain registrar (per .com/yr — Namecheap retail; varies by TLD)
+  domain_registration: 11.00,
+  domain_renewal: 11.00,
 } as const;
 
 export type CostService = keyof typeof COST_RATES;

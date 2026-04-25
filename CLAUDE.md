@@ -3149,3 +3149,39 @@ first place.
 
 ---
 
+## Domain Registration System (added 2026-04-24)
+
+Backend foundation for buying domains on behalf of paid prospects. Schema
+in `supabase/migrations/20260424_domains.sql`. One row per domain.
+Source of truth for registrar order id, expiry, renewal date, hosting
+linkage, and per-domain cost. Designed to scale to ~5,000 sites and
+feeds the existing $100/yr deferred Stripe sub without modifying it.
+
+**Files:**
+- `src/lib/domain-registrar.ts` — provider-agnostic `RegistrarClient`
+  interface, `namecheapClient` (REST API, sandbox-aware), `mockClient`
+  (deterministic dev fallback), `getRegistrar()` factory.
+- `src/lib/domain-store.ts` — Supabase CRUD: `createDomain`,
+  `updateDomain`, `getDomain`, `getDomainByName`, `getDomainsByProspect`,
+  `getDomainsExpiringWithin`, `listDomains`.
+- `src/app/api/domains/check` POST — availability + price.
+- `src/app/api/domains/register` POST — pending row + registrar call +
+  patch on success/fail. Requires `prospect.status === "paid"`.
+- `src/app/api/domains/[id]` GET / PATCH — single-row CRUD.
+- `src/app/api/domains/list` GET — `?prospectId=`, `?status=`,
+  `?expiringWithinDays=`.
+
+**Env vars (flip mock → live):** `NAMECHEAP_API_USER`,
+`NAMECHEAP_API_KEY`, `NAMECHEAP_USERNAME`, `NAMECHEAP_CLIENT_IP`,
+`NAMECHEAP_SANDBOX=true` while testing. With these unset, `getRegistrar()`
+returns the mock client and no real registrations occur.
+
+**Cost assumption:** $11/yr per `.com` (Namecheap retail). Logged via
+`logCost()` service `domain_registrar`. Other TLDs use the registrar's
+quoted price when returned.
+
+**Not in this commit:** Vercel project auto-add, renewal cron, dashboard
+domain card. Those are separate tasks.
+
+---
+

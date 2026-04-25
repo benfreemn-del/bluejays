@@ -84,6 +84,7 @@ const PROTECTED_PATHS = [
   "/api/auto-scout",
   "/api/warming",
   "/api/postcards",
+  "/api/domains",
   "/funnel-tracker",
 ];
 
