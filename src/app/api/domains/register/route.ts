@@ -9,12 +9,20 @@
  *   4. Call registrar.register()
  *   5. On success: update row → status='registered', set timestamps,
  *      cost, registrar_order_id, next_renewal_at = expires_at - 30 days
- *   6. On failure: update row → status='failed', last_error
- *   7. Return the domain row
+ *   6. On registrar failure: update row → status='failed', last_error
+ *   7. On registrar success ALSO:
+ *      a. Set Namecheap nameservers to ns1/ns2.vercel-dns.com so DNS
+ *         is delegated to Vercel
+ *      b. Add the domain to the Vercel project so traffic resolves to
+ *         the customer's preview/production site
+ *      c. Persist vercel_project_id + vercel_domain_added_at on success;
+ *         persist last_error (but keep status='registered') on failure
+ *         so Ben can retry the Vercel step manually
+ *   8. Return the domain row
  *
- * Auth-gated via middleware. In dev / when NAMECHEAP env vars are not set
- * the mock registrar is used so this endpoint can be exercised end-to-end
- * without burning real registrations.
+ * Auth-gated via middleware. In dev / when NAMECHEAP / VERCEL env vars
+ * are not set, the mock registrar / mock Vercel client are used so this
+ * endpoint can be exercised end-to-end without burning real config.
  */
 
 import { NextRequest, NextResponse } from "next/server";
@@ -30,6 +38,12 @@ import {
   updateDomain,
   getDomainByName,
 } from "@/lib/domain-store";
+import {
+  addDomainToProject,
+  VercelError,
+  VERCEL_NAMESERVERS,
+  isVercelConfigured,
+} from "@/lib/vercel-api";
 
 interface Body {
   prospectId?: string;
@@ -115,11 +129,14 @@ export async function POST(request: NextRequest) {
   }
 
   // 4. Call registrar
+  let registerCostUsd = 0;
   try {
     const result = await registrar.register(domain, { years });
-    // 5. Update row on success
+    registerCostUsd = result.costUsd;
+
+    // 5. Update row on success (Namecheap leg done)
     const nextRenewalAt = computeNextRenewal(result.expiresAt, 30);
-    const updated = await updateDomain(pendingId, {
+    await updateDomain(pendingId, {
       status: "registered",
       registrarOrderId: result.orderId,
       registeredAt: result.registeredAt,
@@ -132,7 +149,6 @@ export async function POST(request: NextRequest) {
         registrarRaw: result.raw ?? null,
       },
     });
-    return NextResponse.json({ domain: updated });
   } catch (err) {
     // 6. Mark failed
     const message =
@@ -152,4 +168,105 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
+
+  // 7. Vercel integration (separate try/catch — Namecheap leg already
+  // succeeded so DO NOT roll back the registration on Vercel failure).
+  // Two sub-steps, each best-effort but with errors persisted to
+  // domain.last_error so Ben can retry via /api/domains/[id]/vercel-add.
+
+  const metadataPatch: Record<string, unknown> = {
+    years,
+    registrar: registrar.name,
+  };
+  let lastErrorAccum: string | null = null;
+  let nameserversOk = false;
+  let vercelOk = false;
+
+  // 7a. Set nameservers to Vercel's
+  try {
+    await registrar.setNameservers(domain, VERCEL_NAMESERVERS);
+    nameserversOk = true;
+    metadataPatch.nameservers = {
+      values: VERCEL_NAMESERVERS,
+      setAt: new Date().toISOString(),
+      registrar: registrar.name,
+    };
+  } catch (err) {
+    const message =
+      err instanceof RegistrarError
+        ? `${err.code}: ${err.message}`
+        : (err as Error).message || "Unknown nameserver error";
+    lastErrorAccum = `nameservers: ${message}`;
+    metadataPatch.nameservers = {
+      values: VERCEL_NAMESERVERS,
+      error: message,
+      registrar: registrar.name,
+    };
+  }
+
+  // 7b. Add the domain to the Vercel project
+  let vercelDomainAddedAt: Date | null = null;
+  let vercelProjectId: string | null = null;
+  try {
+    const vercelResult = await addDomainToProject(domain);
+    vercelOk = true;
+    vercelDomainAddedAt = new Date();
+    // Always store the project id we used so the row is traceable to
+    // the project that serves traffic, even in mock mode.
+    vercelProjectId = process.env.VERCEL_PROJECT_ID || "mock_project";
+    metadataPatch.vercelVerification = {
+      verified: vercelResult.verified,
+      records: vercelResult.verification,
+      capturedAt: new Date().toISOString(),
+      live: isVercelConfigured(),
+    };
+  } catch (err) {
+    const message =
+      err instanceof VercelError
+        ? `${err.code}: ${err.message}`
+        : (err as Error).message || "Unknown Vercel error";
+    const composed = `vercel_add: ${message}`;
+    lastErrorAccum = lastErrorAccum
+      ? `${lastErrorAccum} | ${composed}`
+      : composed;
+    metadataPatch.vercelVerification = {
+      error: message,
+      capturedAt: new Date().toISOString(),
+      live: isVercelConfigured(),
+    };
+  }
+
+  // Persist the Vercel-step results. Status stays 'registered' regardless
+  // because the registrar leg succeeded — Ben can retry the Vercel step
+  // manually via /api/domains/[id]/vercel-add without re-registering.
+  try {
+    await updateDomain(pendingId, {
+      vercelProjectId,
+      vercelDomainAddedAt: vercelOk ? vercelDomainAddedAt : null,
+      lastError: lastErrorAccum,
+      metadata: metadataPatch,
+    });
+  } catch {
+    // best effort — don't mask the original Namecheap success
+  }
+
+  // Echo the latest row.
+  const updated = await (async () => {
+    try {
+      const { getDomain } = await import("@/lib/domain-store");
+      return await getDomain(pendingId);
+    } catch {
+      return null;
+    }
+  })();
+
+  return NextResponse.json({
+    domain: updated,
+    registerCostUsd,
+    vercel: {
+      nameservers: { ok: nameserversOk },
+      addedToProject: { ok: vercelOk },
+      lastError: lastErrorAccum,
+    },
+  });
 }

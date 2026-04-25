@@ -3183,5 +3183,62 @@ quoted price when returned.
 **Not in this commit:** Vercel project auto-add, renewal cron, dashboard
 domain card. Those are separate tasks.
 
+### Vercel Project Integration (added 2026-04-24)
+
+After Namecheap registration succeeds, the register route ALSO:
+1. Sets the registrar's nameservers to ns1/ns2.vercel-dns.com so DNS is
+   delegated to Vercel.
+2. Adds the domain to the Vercel project that hosts customer previews
+   so traffic to e.g. `bluejaybob.com` resolves to the rendered site.
+
+**Files:**
+- `src/lib/vercel-api.ts` — `addDomainToProject()`, `getDomainStatus()`,
+  `removeDomainFromProject()`, `VercelError` typed error class,
+  `VERCEL_NAMESERVERS` constant. Mock branch when env vars missing.
+- `src/app/api/domains/register/route.ts` — extended to call Vercel +
+  setNameservers after registrar success. Vercel failures DO NOT roll
+  back the registrar leg — `last_error` records the issue and Ben can
+  retry via `/api/domains/[id]/vercel-add`.
+- `src/app/api/domains/[id]/vercel-add` POST — retry the add step for a
+  row whose `vercel_domain_added_at` is null. 409 if status != registered
+  or the row is already added.
+- `src/app/api/domains/[id]/vercel-status` GET — Vercel's view (verified,
+  production URL, DNS records still needed). Used by the dashboard for
+  inline "verified ✓ / needs DNS" badges.
+
+**Env vars (flip mock → live):** `VERCEL_API_TOKEN` (from
+https://vercel.com/account/tokens), `VERCEL_PROJECT_ID` (the project that
+serves prospect previews — probably the BlueJays main project), and
+optionally `VERCEL_TEAM_ID` if Ben is on a team plan. With `VERCEL_API_TOKEN`
+unset, all three Vercel functions return deterministic mock results so
+the pipeline runs end-to-end in dev without modifying any real project.
+
+**Project structure:** ONE shared Vercel project hosts every customer
+domain today. Each registered domain is added as a project domain on
+that single project; the project's Next.js routing decides what to
+render per host. **Scaling note:** Vercel's per-project domain caps are
+50 on Pro and unlimited on Enterprise. At ~5,000 domains we'll need to
+shard across multiple Vercel projects (one project per ~50 domains on
+Pro, or migrate to Enterprise). The `vercel_project_id` column on the
+`domains` table is the seam — populate it with the actual project we
+chose for that domain so we can route traffic + bill correctly across a
+shard fleet later. Today every row gets the same project id from
+`VERCEL_PROJECT_ID`.
+
+**Nameserver flow:** Namecheap is the registrar of record (controls the
+domain itself + renewal). Vercel is delegated DNS (controls A/CNAME/TXT
+records via its own DNS UI/API). After register, we call
+`registrar.setNameservers(domain, ns1.vercel-dns.com, ns2.vercel-dns.com)`
+which switches authoritative DNS to Vercel. Vercel then auto-verifies
+the domain via the nameserver delegation (no TXT-record dance needed
+for the customer). DNS propagation typically completes in 5–60 minutes;
+during that window `getDomainStatus()` will return `verified: false`
+and the dashboard renders "needs DNS". Once propagated it flips to
+`verified: true` and the production URL becomes live.
+
+**Cost:** Vercel domain-add is free (we already pay Vercel for hosting).
+Every call still logs via `logCost()` service `vercel_domain` at $0 so
+the audit trail captures call volume even if not dollars.
+
 ---
 
