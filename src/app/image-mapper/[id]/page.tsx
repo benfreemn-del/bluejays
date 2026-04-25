@@ -627,31 +627,33 @@ export default function ImageMapDetailPage() {
       .catch(() => {});
   }, [loadData]);
 
-  // Walk the list AFTER currentIndex looking for the next non-completed
-  // lead. If everything past the current is done, fall back to the next
-  // item in the array so the operator can still navigate freely.
+  // The "Next Lead" button always points at the next UNCOMPLETED lead
+  // in the sorted list, never a completed one. If currentIndex is in
+  // the completed section (operator is reviewing a finished lead), or
+  // every lead after currentIndex is completed, we wrap around and
+  // jump to the FIRST unfinished lead in the whole sorted list — the
+  // top of the list table the operator was looking at. If there are
+  // no unfinished leads anywhere, the button is hidden (returns null).
   const currentIndex = allProspects.findIndex(p => p.id === id);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const isProspectCompleted = (p: any) => {
     const m = p?.imageMapping || p?.scrapedData?.imageMapping;
     return m?.selectionStatus === "completed";
   };
-  const nextProspect = (() => {
-    if (currentIndex < 0 || currentIndex >= allProspects.length - 1) return null;
-    for (let i = currentIndex + 1; i < allProspects.length; i++) {
+  const findNextUnfinished = (startIdx: number, dir: 1 | -1): typeof allProspects[number] | null => {
+    if (allProspects.length === 0) return null;
+    // Walk in `dir` from startIdx, skipping the current lead and any
+    // completed lead. Wrap around to handle "I'm on a completed lead
+    // at the bottom — jump back to the top".
+    for (let step = 1; step <= allProspects.length; step++) {
+      const i = (startIdx + step * dir + allProspects.length) % allProspects.length;
+      if (i === currentIndex) continue;
       if (!isProspectCompleted(allProspects[i])) return allProspects[i];
     }
-    // Everything after current is completed — fall through to the very
-    // next item so the button isn't dead.
-    return allProspects[currentIndex + 1] ?? null;
-  })();
-  const prevProspect = (() => {
-    if (currentIndex <= 0) return null;
-    for (let i = currentIndex - 1; i >= 0; i--) {
-      if (!isProspectCompleted(allProspects[i])) return allProspects[i];
-    }
-    return allProspects[currentIndex - 1] ?? null;
-  })();
+    return null;
+  };
+  const nextProspect = currentIndex < 0 ? null : findNextUnfinished(currentIndex, 1);
+  const prevProspect = currentIndex < 0 ? null : findNextUnfinished(currentIndex, -1);
 
   /* ─── Initialize category fallback slots ─── */
   const category = mapping?.category || prospect?.category || "general";
