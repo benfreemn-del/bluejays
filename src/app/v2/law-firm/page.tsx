@@ -146,16 +146,16 @@ const ATTORNEYS = [
     years: "14 Years Experience",
     bio: "Elena has guided over 500 families through the immigration system. Fluent in Spanish, she brings cultural sensitivity and legal precision to every case. Recognized by the AILA for outstanding advocacy.",
     credentials: ["500+ Visa Cases", "Fluent Spanish", "AILA Member", "Family Law Specialist"],
-    img: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=600&q=80",
+    img: "https://images.unsplash.com/photo-1551836022-deb4988cc6c0?w=600&q=80",
   },
   {
-    name: "David Okafor, Esq.",
+    name: "David Whitlock, Esq.",
     role: "Partner",
     specialty: "Criminal Defense",
     years: "16 Years Experience",
     bio: "A former public defender with over 150 jury trials, David is a courtroom veteran who thrives under pressure. He has secured not-guilty verdicts in high-profile felony cases across Washington State.",
-    credentials: ["150+ Jury Trials", "Former Public Defender", "National Trial Lawyers Top 100", "Fluent Yoruba"],
-    img: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=600&q=80",
+    credentials: ["150+ Jury Trials", "Former Public Defender", "National Trial Lawyers Top 100", "Trial Advocacy Award"],
+    img: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=600&q=80",
   },
 ];
 

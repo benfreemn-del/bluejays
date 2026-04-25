@@ -541,7 +541,7 @@ export default function V2AccountingPage() {
         <div className="absolute inset-0 pointer-events-none" style={{ background: `radial-gradient(ellipse 50% 50% at 80% 50%, ${NAVY_GLOW} 0%, transparent 70%)` }} />
         <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="relative rounded-2xl overflow-hidden aspect-[4/3]">
-            <img src="https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=800&q=80" alt="Robert Chen CPA in professional office setting" className="w-full h-full object-cover object-top" />
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80" alt="Robert Chen CPA portrait" className="w-full h-full object-cover object-top" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
             <div className="absolute bottom-4 left-4 right-4">
               <GlassCard className="p-4 flex items-center gap-3">
@@ -1019,7 +1019,7 @@ export default function V2AccountingPage() {
               </div>
             </div>
             <div className="relative rounded-2xl overflow-hidden aspect-[4/3]">
-              <img src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=800&q=80" alt="Financial strategy planning session" className="w-full h-full object-cover" />
+              <img src="https://images.unsplash.com/photo-1554224154-26032ffc0d07?w=800&q=80" alt="Financial strategy planning session" className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
             </div>
           </div>
