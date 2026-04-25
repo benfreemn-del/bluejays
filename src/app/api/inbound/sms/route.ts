@@ -4,7 +4,8 @@ import { processIncomingMessage } from "@/lib/ai-responder";
 import { sendSms } from "@/lib/sms";
 import { alertProspectResponded, alertAngryResponse, alertCustomRequest, alertObjectionResponse, alertEscalation } from "@/lib/alerts";
 import { markProspectReplied } from "@/lib/followup-scheduler";
-import { queueDelayedReply } from "@/lib/delayed-replies";
+import { queueDelayedReply, queuePendingReview, isAutoReplyEnabled } from "@/lib/delayed-replies";
+import { alertOwner } from "@/lib/alerts";
 
 /**
  * POST /api/inbound/sms
@@ -81,17 +82,39 @@ export async function POST(request: NextRequest) {
       channel: "sms",
     });
 
-    // Queue AI-generated reply with a human-like delay (1-10 minutes)
-    // This avoids appearing automated by not replying instantly.
+    // Queue AI-generated reply.
+    // - When AI_AUTO_REPLY_ENABLED=false → park in pending_review and SMS Ben.
+    // - Otherwise → queueDelayedReply with speed-bypass for high-intent intents.
     if (aiResponse.shouldReply && aiResponse.reply) {
       try {
-        await queueDelayedReply(
-          prospect.id,
-          "sms",
-          fromPhone,
-          aiResponse.reply
-        );
-        console.log(`[Inbound SMS] AI reply queued for ${fromPhone}`);
+        if (!isAutoReplyEnabled()) {
+          await queuePendingReview(
+            prospect.id,
+            "sms",
+            fromPhone,
+            aiResponse.reply,
+            undefined,
+            { intent: aiResponse.intent }
+          );
+          console.log(`[Inbound SMS] AI auto-reply DISABLED — parked for review (${prospect.businessName})`);
+          const dashboardUrl = `${process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com"}/dashboard`;
+          await alertOwner({
+            type: "prospect-responded",
+            message: `Inbound from ${prospect.businessName} — AI drafted reply, needs review: ${dashboardUrl}`,
+            prospect,
+            timestamp: new Date().toISOString(),
+          });
+        } else {
+          await queueDelayedReply(
+            prospect.id,
+            "sms",
+            fromPhone,
+            aiResponse.reply,
+            undefined,
+            { intent: aiResponse.intent }
+          );
+          console.log(`[Inbound SMS] AI reply queued for ${fromPhone} (intent=${aiResponse.intent})`);
+        }
       } catch (err) {
         console.error(`[Inbound SMS] Failed to queue reply: ${(err as Error).message}`);
       }

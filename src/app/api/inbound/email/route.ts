@@ -4,7 +4,8 @@ import { processIncomingMessage } from "@/lib/ai-responder";
 import { sendEmail } from "@/lib/email-sender";
 import { alertProspectResponded, alertAngryResponse, alertCustomRequest, alertObjectionResponse, alertEscalation } from "@/lib/alerts";
 import { markProspectReplied } from "@/lib/followup-scheduler";
-import { queueDelayedReply } from "@/lib/delayed-replies";
+import { queueDelayedReply, queuePendingReview, isAutoReplyEnabled } from "@/lib/delayed-replies";
+import { alertOwner } from "@/lib/alerts";
 
 /**
  * POST /api/inbound/email
@@ -93,19 +94,41 @@ export async function POST(request: NextRequest) {
       channel: "email",
     });
 
-    // Queue AI-generated reply with a human-like delay (1-10 minutes)
-    // This avoids appearing automated by not replying instantly.
+    // Queue AI-generated reply.
+    // - When AI_AUTO_REPLY_ENABLED=false → park in pending_review and SMS Ben.
+    // - Otherwise → queueDelayedReply with speed-bypass for high-intent intents.
     if (aiResponse.shouldReply && aiResponse.reply) {
       const replySubject = subject.startsWith("Re:") ? subject : `Re: ${subject}`;
       try {
-        await queueDelayedReply(
-          prospect.id,
-          "email",
-          fromEmail,
-          aiResponse.reply,
-          replySubject
-        );
-        console.log(`[Inbound Email] AI reply queued for ${fromEmail}`);
+        if (!isAutoReplyEnabled()) {
+          await queuePendingReview(
+            prospect.id,
+            "email",
+            fromEmail,
+            aiResponse.reply,
+            replySubject,
+            { intent: aiResponse.intent }
+          );
+          console.log(`[Inbound Email] AI auto-reply DISABLED — parked for review (${prospect.businessName})`);
+          // Notify Ben so he can review the draft.
+          const dashboardUrl = `${process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com"}/dashboard`;
+          await alertOwner({
+            type: "prospect-responded",
+            message: `Inbound from ${prospect.businessName} — AI drafted reply, needs review: ${dashboardUrl}`,
+            prospect,
+            timestamp: new Date().toISOString(),
+          });
+        } else {
+          await queueDelayedReply(
+            prospect.id,
+            "email",
+            fromEmail,
+            aiResponse.reply,
+            replySubject,
+            { intent: aiResponse.intent }
+          );
+          console.log(`[Inbound Email] AI reply queued for ${fromEmail} (intent=${aiResponse.intent})`);
+        }
       } catch (err) {
         console.error(`[Inbound Email] Failed to queue reply: ${(err as Error).message}`);
       }

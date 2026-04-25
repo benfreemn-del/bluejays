@@ -32,6 +32,9 @@ import {
 } from "./agent-personality";
 import { logCost, COST_RATES } from "./cost-logger";
 import { getShortPreviewUrl } from "./short-urls";
+import { getEmailHistory } from "./email-sender";
+import { getSmsHistory } from "./sms";
+import { supabase, isSupabaseConfigured } from "./supabase";
 
 const CLAUDE_API_KEY = process.env.CLAUDE_API_KEY;
 const CALENDAR_LINK = process.env.CALENDAR_LINK || "https://calendly.com/bluejaycontactme/website-walkthrough";
@@ -713,6 +716,94 @@ function getMockResponse(prompt: string): string {
   });
 }
 
+// ═══════════════════════════════════════════════════════════════
+// CONVERSATION HISTORY
+// Pulls the prior outbound emails, prior outbound SMS, and prior
+// queued/sent AI replies for this prospect — the AI was previously
+// responding to every inbound message as if it were the first one.
+// ═══════════════════════════════════════════════════════════════
+interface HistoryEntry {
+  sentAt: string;
+  direction: "outbound" | "inbound";
+  channel: "email" | "sms";
+  body: string;
+}
+
+/**
+ * Fetch the last 6 messages (mixed email+sms+prior AI replies) for a prospect,
+ * sorted descending by sent_at. Safe when no history exists — returns [].
+ */
+async function getConversationHistory(prospectId: string, limit = 6): Promise<HistoryEntry[]> {
+  const entries: HistoryEntry[] = [];
+
+  try {
+    const [emails, sms] = await Promise.all([
+      getEmailHistory(prospectId).catch(() => []),
+      getSmsHistory(prospectId).catch(() => []),
+    ]);
+
+    for (const e of emails) {
+      entries.push({
+        sentAt: e.sentAt,
+        direction: "outbound",
+        channel: "email",
+        body: e.subject ? `[${e.subject}] ${e.body}` : e.body,
+      });
+    }
+    for (const s of sms) {
+      entries.push({
+        sentAt: s.sentAt,
+        direction: "outbound",
+        channel: "sms",
+        body: s.body,
+      });
+    }
+
+    // Prior queued AI replies (sent or about-to-be-sent) for this prospect.
+    // These came FROM us via the AI responder so they're outbound.
+    if (isSupabaseConfigured()) {
+      const { data: queued } = await supabase
+        .from("queued_replies")
+        .select("channel, reply_body, reply_subject, sent_at, created_at, status")
+        .eq("prospect_id", prospectId)
+        .in("status", ["sent", "queued", "pending"])
+        .order("created_at", { ascending: false })
+        .limit(limit);
+      if (queued) {
+        for (const q of queued as Array<Record<string, unknown>>) {
+          const ts = (q.sent_at as string | null) || (q.created_at as string | null) || new Date().toISOString();
+          const subject = q.reply_subject as string | undefined;
+          const channel = (q.channel as "email" | "sms") || "email";
+          entries.push({
+            sentAt: ts,
+            direction: "outbound",
+            channel,
+            body: subject ? `[${subject}] ${q.reply_body}` : (q.reply_body as string),
+          });
+        }
+      }
+    }
+  } catch (err) {
+    // Defensive: never let history fetching break the responder.
+    console.warn(`[AI Responder] history fetch failed: ${(err as Error).message}`);
+    return [];
+  }
+
+  // Sort desc by sent_at, take the last `limit` messages.
+  entries.sort((a, b) => (a.sentAt < b.sentAt ? 1 : -1));
+  return entries.slice(0, limit);
+}
+
+function formatHistoryBlock(history: HistoryEntry[]): string {
+  if (history.length === 0) return "";
+  const lines = history.map((h) => {
+    const date = h.sentAt.substring(0, 10);
+    const excerpt = h.body.replace(/\s+/g, " ").trim().substring(0, 220);
+    return `[${date}] ${h.direction} ${h.channel}: ${excerpt}`;
+  });
+  return `\nCONVERSATION HISTORY (most recent first):\n${lines.join("\n")}\n`;
+}
+
 /**
  * Build the AI prompt with full context from agent personality, objection playbook,
  * decision framework, and escalation rules.
@@ -724,7 +815,7 @@ function getMockResponse(prompt: string): string {
  * - Personal hooks from prospect data
  * - Re-engagement strategies for cold prospects
  */
-function buildPrompt(prospect: Prospect, message: IncomingMessage): string {
+function buildPrompt(prospect: Prospect, message: IncomingMessage, history: HistoryEntry[] = []): string {
   const categoryLabel = CATEGORY_CONFIG[prospect.category]?.label || prospect.category;
   const links = getSalesLinks(prospect);
   const previewUrl = links.previewUrl;
@@ -845,7 +936,7 @@ PROSPECT CONTEXT:
 - Revenue tier: ${prospect.estimatedRevenueTier}
 - Google rating: ${prospect.googleRating || "N/A"} (${prospect.reviewCount || 0} reviews)
 - Has current website: ${prospect.currentWebsite ? "Yes" : "No"}
-
+${formatHistoryBlock(history)}
 THEIR MESSAGE:
 ${message.subject ? `Subject: ${message.subject}\n` : ""}Body: ${message.body}
 
@@ -1038,7 +1129,10 @@ export async function processIncomingMessage(
   }
 
   // ═══ AI CLASSIFICATION: For messages that need deeper analysis ═══
-  const prompt = buildPrompt(prospect, message);
+  // Pull last 6 messages (mixed email + sms + prior AI replies) so the
+  // model has prior conversation context. Safe when no history exists.
+  const history = await getConversationHistory(prospect.id, 6);
+  const prompt = buildPrompt(prospect, message, history);
   const responseText = await getAiResponse(prompt, prospect.id);
 
   try {

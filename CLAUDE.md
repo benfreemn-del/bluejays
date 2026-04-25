@@ -3452,6 +3452,65 @@ If you can't wire it in the same commit (legitimate reason — depends
 on a separate system not yet built), open a TODO entry in the BLOCK
 3 section of CLAUDE.md so it doesn't drift.
 
+### 35. AI Responder Kill-Switch (`AI_AUTO_REPLY_ENABLED`)
+
+A single env var gates whether the AI responder auto-sends replies to
+prospects.
+
+- **Default:** unset OR `true` → current behavior. Replies get drafted,
+  classified, and queued via `queueDelayedReply()` then auto-sent on the
+  next 1-minute cron tick (with high-intent speed-bypass).
+- **`AI_AUTO_REPLY_ENABLED=false`** → replies still get classified and
+  drafted, but `queuePendingReview()` parks them in the
+  `queued_replies` table with `status='pending_review'`. The
+  `processQueuedReplies` cron explicitly ignores that status, so the
+  draft sits until Ben approves it via the dashboard. An owner SMS
+  fires immediately ("Inbound from {biz} — AI drafted reply, needs
+  review: {dashboardUrl}") so Ben isn't surprised.
+
+**Recommendation:** set `AI_AUTO_REPLY_ENABLED=false` for the first
+30 days post-launch when reply volume is low — it costs ~5 minutes
+of manual approval per inbound but eliminates the "one bad AI reply
+burns a $997 sale" risk while we tune the prompt.
+
+When the kill-switch is enabled the speed-bypass logic still computes
+intent normally — high-intent items just sit at the top of the
+review queue (sorted by created_at desc on the dashboard tile).
+
+### 36. AI Responder Speed-Bypass (5-min cliff)
+
+In `src/lib/delayed-replies.ts`:
+
+- High-intent replies (`interested`, `custom_request`) bypass the
+  random delay entirely — `scheduledFor = now()` so the 1-minute cron
+  picks them up immediately. Replies under 5 minutes are 9× more likely
+  to convert (Lead Response Management Study, MIT/InsideSales).
+- All other intents get a randomized **30-90 SECOND** delay (was 1-10
+  minutes pre-Wave-2). Even objection / question replies should land
+  inside the 5-minute conversion window.
+
+When new high-intent intents are added to `IntentType` (e.g. an
+explicit `ready_to_buy` / `schedule_call` once the responder
+classifies them), add them to the `HIGH_INTENT_BYPASS` Set in the
+same file.
+
+### 37. AI Responder Conversation History
+
+`buildPrompt()` in `src/lib/ai-responder.ts` now injects a
+`CONVERSATION HISTORY:` block above the current incoming message
+listing the last 6 outbound messages (mixed email + sms + prior
+queued AI replies for this prospect). Format:
+
+```
+[2026-04-22] outbound email: [Made something for Acme] Hi Sam, ...
+[2026-04-21] outbound sms: Hey Sam, Ben from BlueJays — ...
+```
+
+When no prior history exists the section is omitted entirely (not
+left empty). The history fetch is wrapped in a try/catch so a
+flaky DB read can never break the responder — worst case the AI
+sees no history and responds as it did before Wave 2.
+
 ### 34. CTA Copy Includes the Offer (Reinforcement)
 
 Existing claim-page CTAs say "Claim this site →" with no price, no
