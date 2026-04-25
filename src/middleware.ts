@@ -93,6 +93,12 @@ const PROTECTED_PATHS = [
 ];
 
 // Public API routes that must bypass auth (webhooks, inbound handlers)
+//
+// NOTE on the `/client/[id]` page route: it is PUBLIC by virtue of NOT being
+// listed in PROTECTED_PATHS. Auth model is "URL-as-secret" — the prospect's
+// UUID in the URL IS the credential, same pattern as a magic link. The page
+// itself sets robots:noindex+nocache headers and only fetches whitelist-safe
+// data. See CLAUDE.md "Customer Portal — /client/[id]" for the full rationale.
 const PUBLIC_API_PATHS = [
   "/api/webhooks/stripe",
   "/api/email-tracking",      // SendGrid event webhook (open/click/bounce)

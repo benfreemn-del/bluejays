@@ -2,6 +2,10 @@ import { NextResponse } from "next/server";
 import { getAllProspects, updateProspect } from "@/lib/store";
 import { sendEmail } from "@/lib/email-sender";
 import { getMonthlyReportEmail } from "@/lib/email-templates";
+import {
+  getCustomerMonthMetrics,
+  getPreviousMonthWindow,
+} from "@/lib/customer-metrics";
 
 /**
  * GET /api/reports/monthly
@@ -9,9 +13,12 @@ import { getMonthlyReportEmail } from "@/lib/email-templates";
  * Cron job (1st of each month at 9am Pacific) — sends monthly site
  * performance update emails to all paid/claimed clients.
  *
- * For now the email focuses on actionable tips (add site to GBP, social
- * links, ask for reviews) since we don't yet have per-site GA integration.
- * Once GA4 is wired, replace tips with real metrics.
+ * As of 2026-04-24 the email body uses REAL per-customer metrics from
+ * `getCustomerMonthMetrics()` — leads from contact_form_submissions,
+ * 5-star reviews from client_reviews, appointments from schedule_bookings,
+ * and missed-calls auto-recovered (when the missed_call_logs table lands).
+ * If a customer has zero activity that month, the email template
+ * automatically renders the "encouragement" version instead.
  *
  * Also serves as a renewal reminder 30 days before the $100/yr charge.
  */
@@ -32,7 +39,11 @@ export async function GET(request: Request) {
   const forceId = searchParams.get("id"); // send to a specific prospect for testing
 
   const now = new Date();
-  const monthName = getMonthName(now);
+  // Cron fires on the 1st of the month, but the activity window is the
+  // *previous* full month (e.g. May 1 cron → April 1-30 metrics).
+  const { start: monthStart, end: monthEnd, label: previousMonthLabel } =
+    getPreviousMonthWindow(now);
+  const monthName = previousMonthLabel || getMonthName(now);
 
   const prospects = await getAllProspects();
 
@@ -58,12 +69,39 @@ export async function GET(request: Request) {
     email: string;
     daysLive: number;
     sent: boolean;
+    metrics?: {
+      leads: number;
+      missedCallsRecovered: number;
+      fiveStarReviews: number;
+      appointments: number;
+    };
   }[] = [];
 
   for (const prospect of eligible) {
     const daysLive = daysSince(prospect.paidAt!);
     const liveUrl = prospect.generatedSiteUrl || `${BASE_URL}/preview/${prospect.id}`;
-    const template = getMonthlyReportEmail(prospect, liveUrl, monthName, daysLive);
+
+    // Fetch REAL per-customer metrics for the previous month. Wrapped in
+    // try/catch so a single bad query never blocks the whole batch run.
+    let metrics = {
+      leads: 0,
+      missedCallsRecovered: 0,
+      fiveStarReviews: 0,
+      appointments: 0,
+    };
+    try {
+      const m = await getCustomerMonthMetrics(prospect.id, monthStart, monthEnd);
+      metrics = {
+        leads: m.leads,
+        missedCallsRecovered: m.missedCallsRecovered,
+        fiveStarReviews: m.fiveStarReviews,
+        appointments: m.appointments,
+      };
+    } catch (err) {
+      console.error(`[Monthly Report] Metrics fetch failed for ${prospect.id}:`, err);
+    }
+
+    const template = getMonthlyReportEmail(prospect, liveUrl, monthName, daysLive, metrics);
 
     let sent = false;
     if (!dryRun && prospect.email) {
@@ -91,6 +129,7 @@ export async function GET(request: Request) {
       email: prospect.email!,
       daysLive,
       sent: dryRun ? false : sent,
+      metrics,
     });
   }
 

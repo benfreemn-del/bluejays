@@ -3737,3 +3737,95 @@ cost. The 5K-site projection calculator uses
   the returned object. Don't add a third cost table; extend these
   two if a new cost class shows up.
 
+---
+
+## Customer Portal — `/client/[id]` (NON-NEGOTIABLE — added 2026-04-24)
+
+The single year-2 retention lever identified in the deep retention review.
+Without a place a customer can SEE the leads, reviews, and renewal info
+Ben drove for them, the $100/yr renewal feels like a "vague maintenance
+fee" instead of "concrete value Ben delivered this month." This is the
+fix.
+
+### URL-as-secret auth pattern
+
+The route `/client/[id]` is PUBLIC. The prospect's UUID in the path IS
+the credential — same pattern as a magic link. UUIDs are 128-bit and
+not enumerable; we get practical access control by keeping the URL
+out of public discovery (sitemap, robots, search index), and the page
+sets `robots: noindex` + `nocache` headers so search engines can't
+surface it even if a customer accidentally shares the link publicly.
+
+The route is NOT listed in `PROTECTED_PATHS` in `src/middleware.ts`,
+so the matcher passes it through. No per-request auth check needed.
+
+If we ever need stronger access control (e.g. Ben starts surfacing
+customer financials beyond Stripe-portal-link level), upgrade to an
+HMAC-signed URL pattern (path = `/client/[id]?sig=hmac(id+secret)`)
+without changing the route shape. Until then, UUID-as-secret is
+plenty for read-only customer dashboards.
+
+**RULE:** Don't add any new field to the page that we wouldn't want
+exposed to anyone with the URL — phone, email, adminNotes, internal
+QC scores, funnel state are all OFF the page. Same whitelist
+philosophy as `/api/claim/[id]`.
+
+### What the page renders
+
+Three tabs (`src/app/client/[id]/ClientPortal.tsx`):
+1. **Leads** — `contact_form_submissions` + `missed_call_logs` +
+   `schedule_bookings` for the prospect. Tap-to-call, tap-to-email
+   reply CTAs.
+2. **Reviews** — `client_reviews` (5-star with "Sent to Google" badge,
+   <5 with "Private feedback" badge). Empty-state CTA links a mailto
+   that auto-fills "send review requests" with Ben.
+3. **Renewal** — `mgmtSubscriptionId` → Stripe `subscriptions.retrieve`
+   for next charge date + last 3 invoices. "Update card" button uses
+   `getBillingPortalUrl()` (Stripe portal env var or mailto fallback).
+   Pricing wording: "$100/yr covers domain renewal, hosting, ongoing
+   maintenance, and support" — verbatim per Pricing Wording
+   Consistency Rule.
+
+### Failure modes (all must keep the page rendering)
+- Supabase missing → metric helpers return [], empty-states render.
+- Stripe call fails → `renewal.error="stripe_unavailable"` + amber
+  inline notice. Update-card button still works (mailto fallback).
+- Prospect not found → 404 (Next.js `notFound()`).
+- mgmtSubscriptionId absent → renewal card shows "Not scheduled yet".
+
+## Rule 39: Monthly Report MUST Use Real Data (NON-NEGOTIABLE — added 2026-04-24)
+
+The previous `getMonthlyReportEmail()` shipped GENERIC TIPS ("add
+your site to Google Business Profile, put the URL in your Instagram
+bio, ask happy customers for reviews…") with NO real data about the
+specific customer's month. This violated the existing CLAUDE.md
+non-negotiable about social-proof: never show generic content where
+real data is available.
+
+The fix lives in `src/lib/customer-metrics.ts` (`getCustomerMonthMetrics`)
++ `src/app/api/reports/monthly/route.ts` (cron now fetches metrics
+per prospect before sending).
+
+**Rules:**
+- Monthly report email body MUST contain real per-customer counts
+  for the previous month: leads, missed-calls auto-recovered,
+  5-star reviews, appointments. No more generic-tip content.
+- If the customer had ZERO activity that month, switch to the
+  encouragement template ("Your site was up 100% of April —
+  reply with one thing you'd like to try"), NEVER ship "0 leads,
+  0 calls, 0 reviews" in the body.
+- The email body MUST link to `/client/[id]` so the customer can
+  see the full names/numbers/details. Don't truncate the data
+  inside the email — emails are nudges, the portal is the data.
+- Adding a new metric (e.g. SMS auto-replies sent) requires
+  extending `getCustomerMonthMetrics` AND updating the email
+  body template in lockstep. Never let one drift ahead of the
+  other.
+- Mock-mode safe: every count helper wraps the Supabase query
+  in try/catch and returns 0 if the table doesn't exist yet —
+  so a missing `missed_call_logs` table doesn't break the cron.
+- Generic tips/advice paragraphs in monthly emails are BANNED.
+  If we want to share a tip, send a separate broadcast — don't
+  pad the per-customer report with content that's identical to
+  every other customer's email.
+

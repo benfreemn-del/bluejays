@@ -380,6 +380,7 @@ export function getWelcomeEmail(prospect: Prospect): EmailTemplate {
   const name = prospect.ownerName?.split(" ")[0] || "there";
   const baseUrl = "https://bluejayportfolio.com";
   const onboardingUrl = `${baseUrl}/onboarding/${prospect.id}`;
+  const upsellsUrl = `${baseUrl}/upsells/${prospect.id}`;
 
   const subject = `Welcome to BlueJays — here's what happens next, ${name}`;
 
@@ -413,6 +414,8 @@ If you have any questions along the way, just reply to this email — it comes s
 ben@bluejayportfolio.com
 
 —
+Need more? See add-ons → ${upsellsUrl}
+
 BlueJays Business Solutions | Washington, USA
 You're receiving this because you purchased a website from BlueJays.`;
 
@@ -461,6 +464,66 @@ BlueJays Business Solutions | Washington, USA
 You're receiving this because you purchased a website from BlueJays.`;
 
   return { subject, body, sequence: 101 };
+}
+
+/**
+ * Day 2 onboarding nudge — fires from the multi-stage reminder cron
+ * (`/api/onboarding-reminders/process`) when a paid prospect's onboarding
+ * is still null OR `step1_complete` two days after payment.
+ *
+ * Follows the locked outreach rules: ≤80 words, exactly 1 link, no pricing.
+ * Subject escalates from the 30-minute reminder — "Quick — need 5 min from
+ * you to start your site" — without nagging.
+ *
+ * Idempotent via `prospects.onboarding_reminder_sent_at`. The cron uses the
+ * timestamp value (not just null/non-null) so subsequent stages can fire
+ * after this one.
+ */
+export function getOnboardingReminderDay2(prospect: Prospect): EmailTemplate {
+  const name = prospect.ownerName?.split(" ")[0] || "there";
+  const onboardingUrl = `https://bluejayportfolio.com/onboarding/${prospect.id}`;
+
+  const subject = `Quick — need 5 min from you to start ${prospect.businessName}'s site`;
+
+  const body = `Hi ${name},
+
+Just need 5 minutes from you to plug your real content into ${prospect.businessName}'s site. Step 1 is the unblocking part — name, phone, logo, colors. After that I can start building right away.
+
+${onboardingUrl}
+
+If anything's confusing, reply to this email and I'll handle it for you.
+
+— Ben`;
+
+  return { subject, body, sequence: 102 };
+}
+
+/**
+ * Day 5 onboarding nudge — fires when payment + onboarding incomplete
+ * after 5 days. More urgent subject + offers a manual workaround:
+ * Ben will gather the info via email/phone if the form is the blocker.
+ *
+ * Same outreach-rule constraints as Day 2.
+ */
+export function getOnboardingReminderDay5(prospect: Prospect): EmailTemplate {
+  const name = prospect.ownerName?.split(" ")[0] || "there";
+  const onboardingUrl = `https://bluejayportfolio.com/onboarding/${prospect.id}`;
+
+  const subject = `Stuck? Reply and I'll handle the form for you`;
+
+  const body = `Hi ${name},
+
+${prospect.businessName}'s site has been ready to customize for almost a week. Want me to just grab the details over a quick call or by email instead?
+
+If the form's the blocker, reply with your logo + brand colors + services and I'll plug it in for you. Otherwise the 3-step form takes about 10 min:
+
+${onboardingUrl}
+
+Either way works — just let me know.
+
+— Ben`;
+
+  return { subject, body, sequence: 103 };
 }
 
 /**
@@ -712,7 +775,10 @@ Reply here, email ${CONTACT_EMAIL}, or call/text ${BEN_PHONE}
 
 Congratulations, ${name}. Your work deserves to be found — and now it will be.
 
-— Ben @ BlueJays`,
+— Ben @ BlueJays
+
+—
+Need more? See add-ons → ${BASE}/upsells/${prospect.id}`,
     sequence: 0,
   };
 }
@@ -934,41 +1000,204 @@ Reply if anything's tricky and I'll handle it personally.
   return { subject, body, sequence: 211 };
 }
 
+/**
+ * Monthly report email — REAL per-customer metrics replace the old generic
+ * tips body. CLAUDE.md Rule 39: monthly report MUST use real data per the
+ * non-negotiable about social-proof. Generic tips are out.
+ *
+ * Backwards-compatible signature: callers that used the old positional form
+ * `(prospect, liveUrl, monthName, daysLive)` still work; metrics are
+ * optional and default to all-zeros (which renders the encouragement
+ * template, since the customer effectively had no recorded activity).
+ *
+ * The portal link in the email body points at `/client/[id]` — the
+ * read-only customer portal where the prospect can see leads, reviews,
+ * and renewal info. UUID-as-secret URL pattern; no auth needed.
+ */
 export function getMonthlyReportEmail(
   prospect: Prospect,
   liveUrl: string,
   monthName: string,
   daysLive: number,
+  metrics?: {
+    leads: number;
+    missedCallsRecovered: number;
+    fiveStarReviews: number;
+    appointments: number;
+  },
 ): EmailTemplate {
   const name = prospect.ownerName?.split(" ")[0] || prospect.businessName;
+  const portalUrl = `${BASE}/client/${prospect.id}`;
   const renewalReminder =
     daysLive >= 335
-      ? `\nHeads up — your annual plan renews soon. We'll send a reminder before anything is charged.\n`
+      ? `\nHeads up — your annual plan renews soon. I'll send a separate reminder before anything is charged.\n`
       : "";
 
+  const m = metrics || { leads: 0, missedCallsRecovered: 0, fiveStarReviews: 0, appointments: 0 };
+  const totalActivity = m.leads + m.missedCallsRecovered + m.fiveStarReviews + m.appointments;
+
+  // Wave-2 LTV protection: pick a contextual upsell based on what the
+  // customer's site is (or isn't) producing this month. See CLAUDE.md
+  // "Upsell SKUs" + Rule 40 — every paid customer should see upsell
+  // paths in their lifecycle emails, gated to be 1-click-buyable.
+  const upsellsUrl = `${BASE}/upsells/${prospect.id}`;
+  let upsellLine = `Want more from your site? Browse add-ons → ${upsellsUrl}`;
+  if (m.fiveStarReviews === 0) {
+    upsellLine = `Zero new reviews this month? Review Request Blast sends 50 SMS to your past customers in 24 hrs (avg 10-15 new 5-star reviews) → ${upsellsUrl}`;
+  } else if (m.leads === 0) {
+    upsellLine = `Quiet inbox? Most local customers find businesses through Google. I can claim and optimize your Google Business Profile so you show up in local searches → ${upsellsUrl}`;
+  }
+
+  // Encouragement template — zero activity that month. Don't ship "0 leads,
+  // 0 calls, 0 reviews" in the body; that reads worse than no email at all.
+  if (totalActivity === 0) {
+    return {
+      subject: `${prospect.businessName} — ${monthName} update`,
+      body: `Hi ${name},
+
+Your site was up 100% of ${monthName} — nothing to report on the activity side this month.
+
+Want me to help you get more out of it? Reply with one thing you'd like to try — a new photo, a seasonal banner, an updated menu, an Instagram/Facebook embed, anything. I'll have it live within 48 hours, no charge.
+${renewalReminder}
+${upsellLine}
+
+See your full dashboard:
+${portalUrl}
+
+— Ben @ BlueJays
+${CONTACT_EMAIL} | ${BEN_PHONE}`,
+      sequence: 0,
+    };
+  }
+
+  // Real-metrics template — at least one signal of activity to celebrate.
+  const lines: string[] = [];
+  if (m.leads > 0) {
+    lines.push(`📞 ${m.leads} new lead${m.leads === 1 ? "" : "s"} from your contact form`);
+  }
+  if (m.missedCallsRecovered > 0) {
+    lines.push(
+      `🔄 ${m.missedCallsRecovered} missed call${m.missedCallsRecovered === 1 ? "" : "s"} auto-recovered with a follow-up text`,
+    );
+  }
+  if (m.fiveStarReviews > 0) {
+    lines.push(
+      `⭐ ${m.fiveStarReviews} new 5-star Google review${m.fiveStarReviews === 1 ? "" : "s"} via your review funnel`,
+    );
+  }
+  if (m.appointments > 0) {
+    lines.push(`📅 ${m.appointments} appointment${m.appointments === 1 ? "" : "s"} booked online`);
+  }
+
   return {
-    subject: `${prospect.businessName} — ${monthName} update`,
+    subject: `${prospect.businessName}, here's your ${monthName} website report`,
     body: `Hi ${name},
 
-Monthly check-in on ${prospect.businessName}'s website (${daysLive} days live).
+Here's what your site did in ${monthName}:
 
+${lines.join("\n")}
+
+See the full report (with names, numbers, and details):
+${portalUrl}
+
+Your live site:
 ${liveUrl}
 ${renewalReminder}
-A few quick wins to get more from your site this month:
+If you'd like to add anything to your site this month — new photos, an updated menu, a seasonal banner — just reply to this email and I'll have it live within 48 hours.
 
-- Add your website to your Google Business Profile — it's the #1 traffic driver
-- Put the URL in your Instagram bio and Facebook About section
-- Ask happy customers to mention your website when they leave a Google review
-- Add it to your business cards, invoices, and email signature
-- Send us any new photos — fresh content helps with Google rankings
-
-
-Need something updated?
----
-New hours, services, a team photo — just reply to this email. Included in your plan, usually done within 48 hours.
+${upsellLine}
 
 — Ben @ BlueJays
 ${CONTACT_EMAIL} | ${BEN_PHONE}`,
     sequence: 0,
   };
+}
+
+// ═══════════════════════════════════════════════════════════════
+// UPSELL SKU WELCOME EMAILS (post-purchase per add-on)
+//
+// Fired from the Stripe webhook on `checkout.session.completed` events
+// where `metadata.sku` is one of the 4 productized upsells. Each is a
+// receipt-style note that tells the customer exactly what we need from
+// them to deliver the SKU. Locked outreach rules: ≤80 words, exactly
+// 1 link, no banned phrases. See CLAUDE.md "Upsell SKUs".
+// ═══════════════════════════════════════════════════════════════
+
+/** Review Request Blast — $99 — needs a CSV of past customers. */
+export function getReviewBlastWelcomeEmail(prospect: Prospect): EmailTemplate {
+  const name = prospect.ownerName?.split(" ")[0] || "there";
+
+  const subject = `${prospect.businessName} — got your $99 for the Review Blast`;
+
+  const body = `Hi ${name},
+
+Got your $99 for the Review Request Blast — thanks!
+
+Please reply to this email with a CSV (or just a list) of your past customers' names + phone numbers. I'll fire the SMS blast within 24 hrs of receiving it. Average return is 10-15 new 5-star Google reviews.
+
+Reply here when you're ready: ${CONTACT_EMAIL}
+
+— Ben @ BlueJays`;
+
+  return { subject, body, sequence: 220 };
+}
+
+/** Add 5 Extra Pages — $400 — needs the 5 page topics. */
+export function getExtraPagesWelcomeEmail(prospect: Prospect): EmailTemplate {
+  const name = prospect.ownerName?.split(" ")[0] || "there";
+
+  const subject = `${prospect.businessName} — got your $400 for 5 extra pages`;
+
+  const body = `Hi ${name},
+
+Got your $400 for 5 extra pages on ${prospect.businessName}'s site — thanks!
+
+Reply with what you'd like (services, FAQ, gallery, blog, case studies — your choice) and I'll have them live within 48 hrs. Send any photos or copy you want included.
+
+Reply here: ${CONTACT_EMAIL}
+
+— Ben @ BlueJays`;
+
+  return { subject, body, sequence: 221 };
+}
+
+/** Google Business Profile Setup — $150 — needs admin access. */
+export function getGbpSetupWelcomeEmail(prospect: Prospect): EmailTemplate {
+  const name = prospect.ownerName?.split(" ")[0] || "there";
+
+  const subject = `${prospect.businessName} — got your $150 for GBP setup`;
+
+  const body = `Hi ${name},
+
+Got your $150 for the Google Business Profile setup — thanks!
+
+Please send admin access to your existing GBP listing (or confirm you don't have one yet) and I'll handle the claim, optimize the listing, and pre-schedule 5 weekly posts so you start showing up in local searches.
+
+Reply here with access: ${CONTACT_EMAIL}
+
+— Ben @ BlueJays`;
+
+  return { subject, body, sequence: 222 };
+}
+
+/** Monthly Content Updates — $50/month — sets expectations + portal link. */
+export function getMonthlyUpdatesWelcomeEmail(prospect: Prospect): EmailTemplate {
+  const name = prospect.ownerName?.split(" ")[0] || "there";
+  const portalUrl = getBillingPortalUrl();
+
+  const subject = `${prospect.businessName} — welcome to monthly updates`;
+
+  const body = `Hi ${name},
+
+Welcome to monthly updates for ${prospect.businessName}!
+
+I'll reach out at the start of each month asking what you'd like changed — new photos, copy tweaks, seasonal banners, special offers, anything. You can cancel anytime via your billing portal:
+
+${portalUrl}
+
+Reply here whenever you have something new for the site.
+
+— Ben @ BlueJays`;
+
+  return { subject, body, sequence: 223 };
 }
