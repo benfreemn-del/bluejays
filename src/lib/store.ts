@@ -171,6 +171,8 @@ function dbToProspect(row: Record<string, unknown>): Prospect {
     lastSubmittedTheme: (row.last_submitted_theme as "light" | "dark" | null) || undefined,
     welcomeEmailSentAt: row.welcome_email_sent_at as string | undefined,
     onboardingReminderSentAt: row.onboarding_reminder_sent_at as string | undefined,
+    paymentFailureCount: (row.payment_failure_count as number | null) ?? undefined,
+    lastPaymentFailureAt: (row.last_payment_failure_at as string | null) || undefined,
     short_code: (row.short_code as string | null) || undefined,
     assignedDomain: (row.assigned_domain as string | null) || undefined,
     domainCostUsd:
@@ -412,6 +414,8 @@ export async function updateProspect(
     if (sanitizedUpdates.lastSubmittedTheme !== undefined) dbUpdates.last_submitted_theme = sanitizedUpdates.lastSubmittedTheme || null;
     if (sanitizedUpdates.welcomeEmailSentAt !== undefined) dbUpdates.welcome_email_sent_at = sanitizedUpdates.welcomeEmailSentAt || null;
     if (sanitizedUpdates.onboardingReminderSentAt !== undefined) dbUpdates.onboarding_reminder_sent_at = sanitizedUpdates.onboardingReminderSentAt || null;
+    if (sanitizedUpdates.paymentFailureCount !== undefined) dbUpdates.payment_failure_count = sanitizedUpdates.paymentFailureCount ?? 0;
+    if (sanitizedUpdates.lastPaymentFailureAt !== undefined) dbUpdates.last_payment_failure_at = sanitizedUpdates.lastPaymentFailureAt || null;
     if (sanitizedUpdates.assignedDomain !== undefined) dbUpdates.assigned_domain = sanitizedUpdates.assignedDomain || null;
     if (sanitizedUpdates.domainCostUsd !== undefined) dbUpdates.domain_cost_usd = sanitizedUpdates.domainCostUsd ?? null;
     if (sanitizedUpdates.domainRegistrar !== undefined) dbUpdates.domain_registrar = sanitizedUpdates.domainRegistrar || null;

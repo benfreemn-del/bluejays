@@ -526,6 +526,145 @@ Congratulations, ${name}. Your work deserves to be found — and now it will be.
   };
 }
 
+/**
+ * Stripe Customer Portal URL — set this env var to a configured portal
+ * (https://dashboard.stripe.com/settings/billing/portal). When unset, all
+ * customer-facing billing CTAs fall back to a mailto so we never ship a
+ * dead link in production.
+ *
+ * NOTE: Document `STRIPE_CUSTOMER_PORTAL_URL` in CLAUDE.md before pointing
+ * the dunning emails at production.
+ */
+export function getBillingPortalUrl(): string {
+  const url = process.env.STRIPE_CUSTOMER_PORTAL_URL;
+  if (url && /^https?:\/\//.test(url)) return url;
+  return "mailto:bluejaycontactme@gmail.com?subject=Update+my+card";
+}
+
+/**
+ * 30-day pre-renewal email. Friendly heads-up before the $100/yr mgmt
+ * subscription auto-charges. Locked CLAUDE.md outreach rules: ≤80 words
+ * body, exactly 1 link (Stripe portal OR fallback mailto), zero pricing
+ * objection language in the body.
+ */
+export function getRenewal30DayEmail(
+  prospect: Prospect,
+  chargeDateIso?: string,
+): EmailTemplate {
+  const name = prospect.ownerName?.split(" ")[0] || "there";
+  const portalUrl = getBillingPortalUrl();
+  const dateStr = chargeDateIso
+    ? new Date(chargeDateIso).toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+      })
+    : "in about a month";
+
+  const subject = `${prospect.businessName} — quick heads up about your renewal`;
+
+  // Body: <80 words, one link, zero pricing arguments / objections.
+  const body = `Hi ${name},
+
+Quick heads up — ${prospect.businessName}'s annual renewal is coming up on ${dateStr}. It covers domain renewal, hosting, and ongoing maintenance.
+
+If your card on file has changed in the last year, you can update it here:
+
+${portalUrl}
+
+Want me to add anything to the site while we're at it? Just reply.
+
+— Ben @ BlueJays`;
+
+  return { subject, body, sequence: 200 };
+}
+
+/**
+ * 7-day pre-renewal email. More urgent header, same single CTA. Locked
+ * outreach rules: ≤80 words body, exactly 1 link.
+ */
+export function getRenewal7DayEmail(
+  prospect: Prospect,
+  chargeDateIso?: string,
+): EmailTemplate {
+  const name = prospect.ownerName?.split(" ")[0] || "there";
+  const portalUrl = getBillingPortalUrl();
+  const dateStr = chargeDateIso
+    ? new Date(chargeDateIso).toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+      })
+    : "next week";
+
+  const subject = `${prospect.businessName} — your renewal hits ${dateStr}`;
+
+  const body = `Hi ${name},
+
+Final reminder — ${prospect.businessName}'s renewal charges on ${dateStr}. Make sure your card on file is current so the site stays online without a hiccup:
+
+${portalUrl}
+
+If anything's wrong or you want to update before the charge, reply and I'll handle it.
+
+— Ben @ BlueJays`;
+
+  return { subject, body, sequence: 201 };
+}
+
+/**
+ * Payment-failed dunning email. Fires from the Stripe webhook on the
+ * 1st or 2nd `invoice.payment_failed` event for a customer's mgmt sub.
+ * Friendly tone — most failures are an expired card on file at the
+ * year-2 anniversary, not a customer trying to leave.
+ *
+ * Locked rules: ≤80 words body, exactly 1 link (Stripe portal OR
+ * fallback mailto), no pricing language in body.
+ */
+export function getPaymentFailedEmail(prospect: Prospect): EmailTemplate {
+  const name = prospect.ownerName?.split(" ")[0] || "there";
+  const portalUrl = getBillingPortalUrl();
+
+  const subject = `${prospect.businessName} — heads up, your card on file failed`;
+
+  const body = `Hi ${name},
+
+The renewal charge for ${prospect.businessName}'s site just failed — most likely an expired card on file. No action needed if you'd like Stripe to keep retrying, but updating your card now is the quickest fix:
+
+${portalUrl}
+
+Reply and I'll help if anything's tricky.
+
+— Ben @ BlueJays`;
+
+  return { subject, body, sequence: 202 };
+}
+
+/**
+ * Urgent payment-failure email — fires after 3 consecutive failures.
+ * The site goes into `at_risk` and Ben gets an SMS too. This message
+ * is the customer's last clean shot to update their card before
+ * service is suspended.
+ */
+export function getPaymentFailedUrgentEmail(prospect: Prospect): EmailTemplate {
+  const name = prospect.ownerName?.split(" ")[0] || "there";
+  const portalUrl = getBillingPortalUrl();
+
+  const subject = `${prospect.businessName} — service interruption coming if we can't get your card sorted`;
+
+  const body = `Hi ${name},
+
+Three renewal attempts on ${prospect.businessName}'s site have failed. Stripe stops retrying soon and the site will be paused until billing is current.
+
+Update your card here and we're back on track:
+
+${portalUrl}
+
+Reply if it's not the card and I'll dig in personally.
+
+— Ben @ BlueJays`;
+
+  return { subject, body, sequence: 203 };
+}
+
 export function getMonthlyReportEmail(
   prospect: Prospect,
   liveUrl: string,

@@ -27,6 +27,14 @@
     {
       "path": "/api/auto-scout",
       "schedule": "0 14 * * *"
+    },
+    {
+      "path": "/api/billing/check-upcoming-renewals",
+      "schedule": "0 16 * * *"
+    },
+    {
+      "path": "/api/billing/retry-failed-sends",
+      "schedule": "0 17 * * *"
     }
   ],
   "functions": {

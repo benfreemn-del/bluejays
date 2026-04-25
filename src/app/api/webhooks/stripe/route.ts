@@ -4,7 +4,13 @@ import { getProspect, updateProspect } from "@/lib/store";
 import { alertProspectPaid, sendOwnerAlert } from "@/lib/alerts";
 import { logCost, COST_RATES } from "@/lib/cost-logger";
 import { sendEmail } from "@/lib/email-sender";
-import { getWelcomeEmail } from "@/lib/email-templates";
+import {
+  getWelcomeEmail,
+  getPaymentFailedEmail,
+  getPaymentFailedUrgentEmail,
+} from "@/lib/email-templates";
+import { queueEmailRetry } from "@/lib/email-retry-queue";
+import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import type { Prospect } from "@/lib/types";
 
 /**
@@ -278,6 +284,84 @@ export async function POST(request: NextRequest) {
         break;
       }
 
+      case "invoice.payment_failed": {
+        // Wave-2 LTV protection: card on file failed at renewal (typical
+        // year-2 scenario — card expired). Stripe will keep retrying for
+        // ~3-4 weeks per the customer's account-level retry settings, but
+        // we surface the failure to the customer immediately so they can
+        // update their card before the suspension window closes.
+        const invoice = event.data.object as {
+          id: string;
+          subscription?: string | null;
+          customer?: string | null;
+          attempt_count?: number;
+        };
+
+        // We only act on subscription invoices; one-off invoices aren't in
+        // scope (the $997 setup fee is `mode: payment` and never triggers
+        // this event).
+        if (!invoice.subscription) {
+          console.log(`[Stripe Webhook] invoice.payment_failed without subscription — skipping`);
+          break;
+        }
+
+        try {
+          const stripe = getStripe();
+          const sub = await stripe.subscriptions.retrieve(invoice.subscription as string);
+          const prospectId = (sub.metadata as Record<string, string> | null | undefined)?.prospectId;
+          if (!prospectId) {
+            console.warn(
+              `[Stripe Webhook] payment_failed sub ${invoice.subscription} has no prospectId metadata`
+            );
+            break;
+          }
+
+          const prospect = await getProspect(prospectId);
+          if (!prospect) {
+            console.warn(`[Stripe Webhook] payment_failed: prospect ${prospectId} not found`);
+            break;
+          }
+
+          await handlePaymentFailed(prospect, invoice.id);
+        } catch (err) {
+          console.error("[Stripe Webhook] invoice.payment_failed handler errored:", err);
+        }
+        break;
+      }
+
+      case "invoice.payment_succeeded": {
+        // A renewal that previously failed has now succeeded — reset the
+        // failure counter so future failures restart at attempt 1 and the
+        // customer doesn't sit at "at_risk" forever after one bad month.
+        const invoice = event.data.object as {
+          id: string;
+          subscription?: string | null;
+        };
+        if (!invoice.subscription) break;
+
+        try {
+          const stripe = getStripe();
+          const sub = await stripe.subscriptions.retrieve(invoice.subscription as string);
+          const prospectId = (sub.metadata as Record<string, string> | null | undefined)?.prospectId;
+          if (!prospectId) break;
+
+          const prospect = await getProspect(prospectId);
+          if (!prospect) break;
+          if ((prospect.paymentFailureCount || 0) > 0) {
+            await updateProspect(prospectId, {
+              paymentFailureCount: 0,
+              subscriptionStatus: "active",
+            });
+            console.log(
+              `[Stripe Webhook] Renewal succeeded for ${prospect.businessName} — failure count reset.`
+            );
+          }
+        } catch (err) {
+          console.error("[Stripe Webhook] invoice.payment_succeeded handler errored:", err);
+        }
+        break;
+      }
+
       case "checkout.session.expired": {
         // Prospect started checkout but didn't complete payment
         const session = event.data.object as {
@@ -408,15 +492,17 @@ async function createDeferredManagementSubscription(
  * onboarding form so we can collect their real logo, brand colors, services,
  * photos, etc. Flips `welcomeEmailSentAt` on the prospect for idempotency.
  *
- * Errors are logged but don't fail the webhook — the payment already went
- * through, and Ben can resend manually from the dashboard if needed.
+ * Wave-2 LTV protection: on send failure (SendGrid 429 / transient outage),
+ * we now enqueue the email into `email_retry_queue` so the daily
+ * `/api/billing/retry-failed-sends` cron picks it up. Previously the catch
+ * block logged + swallowed and `welcomeEmailSentAt` stayed null forever.
  */
 async function sendWelcomeEmailToCustomer(
   prospect: Prospect,
   customerEmail: string
 ): Promise<void> {
+  const template = getWelcomeEmail(prospect);
   try {
-    const template = getWelcomeEmail(prospect);
     // sequence=100 is reserved for post-purchase welcome — kept distinct from
     // outreach sequences (1-3) so email_events reporting stays clean.
     await sendEmail(prospect.id, customerEmail, template.subject, template.body, template.sequence);
@@ -425,11 +511,135 @@ async function sendWelcomeEmailToCustomer(
     });
     console.log(`[Stripe Webhook] Welcome email sent to ${customerEmail} for ${prospect.businessName}`);
   } catch (err) {
+    const errMsg = err instanceof Error ? err.message : String(err);
     console.error(
       `[Stripe Webhook] Failed to send welcome email to ${customerEmail} for ${prospect.id}:`,
       err
     );
+    // Queue retry — the cron will replay the cached payload up to 3 times
+    // with exponential backoff. After the 3rd failure, Ben gets an SMS.
+    await queueEmailRetry({
+      prospectId: prospect.id,
+      emailType: "welcome",
+      payload: {
+        to: customerEmail,
+        subject: template.subject,
+        body: template.body,
+        sequence: template.sequence,
+      },
+      initialError: errMsg,
+    }).catch((queueErr) => {
+      console.error("[Stripe Webhook] Failed to queue welcome-email retry:", queueErr);
+    });
   }
+}
+
+/**
+ * Handle a Stripe `invoice.payment_failed` event. Bumps the failure
+ * counter on the prospect, sends the appropriate dunning email
+ * (friendly first / second failure → urgent on the 3rd), and SMSes
+ * Ben so he can intervene if needed.
+ *
+ * Note: `customer.subscription.updated` already flips the prospect's
+ * subscriptionStatus to "past_due" on a failed invoice — we don't
+ * re-fire that here. After 3 failures we escalate to "at_risk" which
+ * is a wave-2-only state.
+ */
+async function handlePaymentFailed(
+  prospect: Prospect,
+  invoiceId: string,
+): Promise<void> {
+  const prevCount = prospect.paymentFailureCount || 0;
+  const newCount = prevCount + 1;
+  const isEscalation = newCount >= 3;
+
+  // Persist counter + most-recent timestamp. Subscription-status escalation
+  // happens only on the 3rd+ failure — first two stay at "past_due" (set by
+  // customer.subscription.updated).
+  await updateProspect(prospect.id, {
+    paymentFailureCount: newCount,
+    lastPaymentFailureAt: new Date().toISOString(),
+    ...(isEscalation ? { subscriptionStatus: "at_risk" as const } : {}),
+  });
+
+  // Log a row in prospect_status_changes so the dashboard's daily-drain
+  // view shows the LTV-impacting moment. We log via a synthetic status
+  // (the real status field doesn't change) so future analytics can sum
+  // payment_failed events across the customer base. The supabase insert
+  // is best-effort — never crash the webhook.
+  if (isSupabaseConfigured()) {
+    try {
+      await supabase.from("prospect_status_changes").insert({
+        prospect_id: prospect.id,
+        business_name: prospect.businessName,
+        from_status: prospect.status,
+        to_status: prospect.status,
+        source: isEscalation ? "payment_failed_escalation" : "payment_failed",
+      });
+    } catch (logErr) {
+      console.error("[Stripe Webhook] Failed to log payment_failed status change:", logErr);
+    }
+  }
+
+  // Send the appropriate dunning email to the customer. Use the same
+  // retry-queue infrastructure as the welcome email so a SendGrid blip
+  // doesn't drop the only notice the customer ever gets.
+  const customerEmail = prospect.email;
+  if (customerEmail) {
+    const template = isEscalation
+      ? getPaymentFailedUrgentEmail(prospect)
+      : getPaymentFailedEmail(prospect);
+    try {
+      await sendEmail(
+        prospect.id,
+        customerEmail,
+        template.subject,
+        template.body,
+        template.sequence,
+      );
+      console.log(
+        `[Stripe Webhook] Sent ${isEscalation ? "URGENT " : ""}payment-failed email to ${customerEmail} ` +
+          `for ${prospect.businessName} (attempt ${newCount}, invoice ${invoiceId})`,
+      );
+    } catch (err) {
+      const errMsg = err instanceof Error ? err.message : String(err);
+      console.error(
+        `[Stripe Webhook] Failed to send payment-failed email to ${customerEmail}:`,
+        err,
+      );
+      await queueEmailRetry({
+        prospectId: prospect.id,
+        emailType: isEscalation ? "payment_failed_urgent" : "payment_failed",
+        payload: {
+          to: customerEmail,
+          subject: template.subject,
+          body: template.body,
+          sequence: template.sequence,
+        },
+        initialError: errMsg,
+      }).catch(() => {});
+    }
+  } else {
+    console.warn(
+      `[Stripe Webhook] No email on file for ${prospect.businessName} (${prospect.id}) — ` +
+        `skipping dunning email.`,
+    );
+  }
+
+  // Always SMS Ben on every payment_failed event. Invoice failures are rare
+  // enough that he needs to know each one — text spam isn't a concern at
+  // this volume. Escalation gets louder formatting.
+  const benMessage = isEscalation
+    ? `URGENT: ${prospect.businessName} ${newCount} card-failures in a row.\n` +
+      `Status flipped to AT_RISK. Customer emailed urgent. Reach out.\n` +
+      `Invoice: ${invoiceId}`
+    : `Card failed for ${prospect.businessName} (attempt ${newCount}/3).\n` +
+      `Friendly email sent. Stripe will keep retrying.\n` +
+      `Invoice: ${invoiceId}`;
+
+  await sendOwnerAlert(benMessage).catch((err) => {
+    console.error("[Stripe Webhook] Failed to SMS Ben on payment failure:", err);
+  });
 }
 
 /**

@@ -2083,6 +2083,22 @@ V2-template-generated previews.
 - **baseUrl for Stripe success/cancel URLs is hardcoded to `https://bluejayportfolio.com`** in stripe.ts. DO NOT use `process.env.NEXT_PUBLIC_BASE_URL` — that env var on Vercel was set to a stale preview URL and Stripe rejected the session with "Not a valid URL". Same hardcoding pattern as FROM_EMAIL.
 - **Webhook MUST be registered in the SAME Stripe account/sandbox as the `STRIPE_SECRET_KEY` on Vercel.** Events only flow within a single account; if the key is from Account A and the webhook lives in Account B, events never reach the endpoint. Verify by matching the account prefix in `sk_test_51{prefix}...` to the account ID in the Stripe dashboard.
 - **Required env vars on Vercel for Stripe to work end-to-end:** `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` (matches the endpoint's signing secret), and optionally `STRIPE_PRICE_SETUP_ID` + `STRIPE_PRICE_MGMT_ID`. Before LIVE launch, re-register a separate webhook in Live mode with its own `whsec_*` and swap the keys from `sk_test_*` to `sk_live_*`.
+- **`STRIPE_CUSTOMER_PORTAL_URL` (REQUIRED before going live with year-2 dunning):** the configured Stripe Customer Portal link the dunning + renewal-reminder emails point at so customers can self-service their card on file. Configure once at https://dashboard.stripe.com/settings/billing/portal then set the env var to that URL on Vercel. Until set, every payment-failed / renewal-reminder email falls back to `mailto:bluejaycontactme@gmail.com?subject=Update+my+card` so the link is never broken — but the customer self-service path is gone. Document the live URL here once configured. See `getBillingPortalUrl()` in `src/lib/email-templates.ts`.
+
+### Webhook Events Handled (post wave-2 LTV protection — 2026-04-24)
+Wired in `src/app/api/webhooks/stripe/route.ts`:
+- `checkout.session.completed` — marks paid, creates deferred mgmt sub, sends welcome email (now with retry-queue fallback)
+- `customer.subscription.updated` — flips subscriptionStatus to active/past_due/cancelled
+- `customer.subscription.deleted` — cancellation + installment graduation to deferred mgmt sub
+- `checkout.session.expired` — abandoned checkout recovery email + Ben SMS
+- **`invoice.payment_failed`** *(wave 2)* — sends friendly card-failed email, bumps `payment_failure_count`, SMSes Ben. After 3 consecutive failures escalates `subscriptionStatus` → `at_risk` and sends an urgent dunning email. All status transitions logged to `prospect_status_changes` so the daily-drain dashboard surfaces churn risk in real time.
+- **`invoice.payment_succeeded`** *(wave 2)* — resets `payment_failure_count` to 0 and flips `subscriptionStatus` back to `active`. Prevents customers from sitting in `at_risk` forever after one bad month.
+
+### Wave-2 LTV Crons (2026-04-24)
+- **`/api/billing/check-upcoming-renewals`** — daily at 16:00 UTC. Pages all active subscriptions, finds those with `current_period_end` ~30 days or ~7 days out, sends the friendly pre-renewal nudge via `getRenewal30DayEmail()` / `getRenewal7DayEmail()`. Dedupes via `renewal_reminders` table keyed on (prospect, sub, kind, scheduled_charge_at).
+- **`/api/billing/retry-failed-sends`** — daily at 17:00 UTC. Drains `email_retry_queue` (welcome / handoff / renewal_30 / renewal_7 / payment_failed). Up to 3 attempts with exponential backoff (1h → 4h → 24h). After exhaustion, alerts Ben via SMS for manual handling.
+
+Migration: `supabase/migrations/20260424_email_retry_queue.sql` adds `email_retry_queue` + `renewal_reminders` tables and `prospects.payment_failure_count` / `prospects.last_payment_failure_at` columns.
 
 ## Parallel Domain Warming (added 2026-04-17)
 

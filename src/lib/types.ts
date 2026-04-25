@@ -97,7 +97,16 @@ export interface Prospect {
   selectedTheme?: "light" | "dark";
   selectedVersion?: "v1" | "v2";
   aiThemeRecommendation?: "light" | "dark";
-  subscriptionStatus?: "none" | "active" | "past_due" | "cancelled";
+  /** Subscription health.
+   *   - "none"      = no active sub
+   *   - "active"    = current (or trialing — counts as active)
+   *   - "past_due"  = first/second `invoice.payment_failed` — Stripe still retrying
+   *   - "at_risk"   = 3+ consecutive failures, escalation tier — manual intervention
+   *                   imminent (suspension if not resolved). See payment_failed
+   *                   webhook handler in `/api/webhooks/stripe/route.ts`.
+   *   - "cancelled" = sub deleted / fully unrecoverable
+   */
+  subscriptionStatus?: "none" | "active" | "past_due" | "at_risk" | "cancelled";
   /** Stripe subscription ID for the $100/year management fee (deferred 1 year) */
   mgmtSubscriptionId?: string;
   instagramHandle?: string;
@@ -142,6 +151,13 @@ export interface Prospect {
    *  the onboarding form yet" reminder. Used for dedupe so the reminder
    *  cron only fires once per prospect. */
   onboardingReminderSentAt?: string;
+  /** Number of consecutive `invoice.payment_failed` events Stripe has
+   *  fired for this prospect's mgmt subscription. Reset to 0 on next
+   *  successful invoice. After 3 we escalate (status=at_risk + urgent
+   *  email + SMS to Ben). See `/api/webhooks/stripe`. */
+  paymentFailureCount?: number;
+  /** ISO timestamp of the most recent `invoice.payment_failed` event. */
+  lastPaymentFailureAt?: string;
   /** ISO timestamp of when first outreach was sent — used for 30-day preview expiry */
   contactedAt?: string;
   /** Unique referral code generated at payment — shared with client in day-30 email */
