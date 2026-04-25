@@ -369,8 +369,8 @@ function AccordionItem({
 /* ───────────────────────── DATA ───────────────────────── */
 const menuHighlights = [
   {
-    title: "Pan-Seared Sea Bass",
-    description: "Wild-caught Chilean sea bass with saffron risotto, broccolini, and lemon beurre blanc.",
+    title: "Sushi Selection",
+    description: "Chef's daily nigiri and maki selection featuring sustainably sourced fish, served with house-pickled ginger.",
     price: "$42",
     photo: "https://images.unsplash.com/photo-1534604973900-c43ab4c2e0ab?w=600&q=80",
   },
@@ -381,8 +381,8 @@ const menuHighlights = [
     photo: "https://images.unsplash.com/photo-1558030006-450675393462?w=600&q=80",
   },
   {
-    title: "Lobster Ravioli",
-    description: "House-made pasta filled with Maine lobster, mascarpone cream, and micro-basil.",
+    title: "Pasta Bolognese",
+    description: "House-made pappardelle with slow-braised beef ragù, San Marzano tomatoes, and shaved Parmigiano-Reggiano.",
     price: "$38",
     photo: "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=600&q=80",
   },
@@ -390,10 +390,10 @@ const menuHighlights = [
 
 const galleryPhotos = [
   { src: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&q=80", alt: "Restaurant interior dining room" },
-  { src: "https://images.unsplash.com/photo-1551218808-94e220e084d2?w=600&q=80", alt: "Plated fine dining dish" },
+  { src: "https://images.unsplash.com/photo-1551218808-94e220e084d2?w=600&q=80", alt: "Behind the scenes — fresh ingredients" },
   { src: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=600&q=80", alt: "Bar area and cocktails" },
-  { src: "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=600&q=80", alt: "Chef plating a dish" },
-  { src: "https://images.unsplash.com/photo-1424847651672-bf20a4b0982b?w=600&q=80", alt: "Dessert presentation" },
+  { src: "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=600&q=80", alt: "Outdoor dining terrace" },
+  { src: "https://images.unsplash.com/photo-1424847651672-bf20a4b0982b?w=600&q=80", alt: "Brunch service" },
   { src: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80", alt: "Curated wine and private dining atmosphere" }
 ];
 
@@ -607,13 +607,13 @@ export default function V2RestaurantPage() {
             <div className="relative rounded-2xl overflow-hidden aspect-[4/5]">
               <img
                 src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=700&q=80"
-                alt="Head Chef in kitchen"
-                className="w-full h-full object-cover object-top"
+                alt="Ember & Oak dining room interior"
+                className="w-full h-full object-cover object-center"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
               <div className="absolute bottom-6 left-6">
-                <p className="text-white font-semibold text-lg">Chef Marcus Laurent</p>
-                <p className="text-slate-300 text-sm">Executive Chef, 20+ Years</p>
+                <p className="text-white font-semibold text-lg">Our Restaurant</p>
+                <p className="text-slate-300 text-sm">Inside Ember & Oak</p>
               </div>
             </div>
             <div>
@@ -833,7 +833,7 @@ export default function V2RestaurantPage() {
             <div className="rounded-2xl overflow-hidden aspect-[4/3]">
               <img
                 src="https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=800&q=80"
-                alt="Restaurant exterior at night"
+                alt="Casual dining"
                 className="w-full h-full object-cover object-center"
               />
             </div>

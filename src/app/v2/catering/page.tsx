@@ -155,10 +155,10 @@ function CopperDivider() {
 /* ───────────────── DATA ───────────────── */
 const eventTypes = [
   { name: "Weddings", desc: "Bespoke menus for your most unforgettable day, from cocktail hour through the last dance.", icon: Heart, img: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=600&q=80" },
-  { name: "Corporate Events", desc: "Professional catering for conferences, product launches, and annual galas that impress.", icon: Users, img: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&q=80" },
+  { name: "Conference Catering", desc: "Professional catering for conferences, product launches, and annual galas that impress.", icon: Users, img: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&q=80" },
   { name: "Private Dining", desc: "Intimate chef-driven dinners in your home with white-glove service and curated wine pairings.", icon: ForkKnife, img: "https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?w=600&q=80" },
-  { name: "Holiday Parties", desc: "Festive seasonal celebrations with themed menus, signature cocktails, and stunning presentation.", icon: Champagne, img: "https://images.unsplash.com/photo-1482275548304-a58859dc31b7?w=600&q=80" },
-  { name: "Non-Profit Galas", desc: "Elegant fundraiser dining that elevates your mission with world-class cuisine and service.", icon: HandHeart, img: "https://images.unsplash.com/photo-1529543544282-ea669407fca3?w=600&q=80" },
+  { name: "Wine Pairing Service", desc: "Sommelier-curated wine pairings to elevate your event with hand-selected bottles for every course.", icon: Champagne, img: "https://images.unsplash.com/photo-1482275548304-a58859dc31b7?w=600&q=80" },
+  { name: "Fine Dining Service", desc: "Elegant plated dining that elevates your mission or milestone with world-class cuisine and service.", icon: HandHeart, img: "https://images.unsplash.com/photo-1529543544282-ea669407fca3?w=600&q=80" },
 ];
 
 const menuItems = {
@@ -743,7 +743,7 @@ export default function V2CateringShowcase() {
             <SectionHeading>Watch Our Team in Action</SectionHeading>
           </div>
           <div className="relative rounded-2xl overflow-hidden border border-white/[0.13] group cursor-pointer">
-            <img src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=900&q=80" alt="Chef team preparing an event" className="w-full h-[400px] object-cover object-top transition-transform duration-700 group-hover:scale-105" />
+            <img src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=900&q=80" alt="Behind the scenes — home-style prep" className="w-full h-[400px] object-cover object-top transition-transform duration-700 group-hover:scale-105" />
             <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
               <motion.div className="w-20 h-20 rounded-full flex items-center justify-center" style={{ background: `${COPPER}dd` }} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
                 <Play size={32} weight="fill" className="text-white ml-1" />
