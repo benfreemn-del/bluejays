@@ -3256,6 +3256,59 @@ and the dashboard renders "needs DNS". Once propagated it flips to
 Every call still logs via `logCost()` service `vercel_domain` at $0 so
 the audit trail captures call volume even if not dollars.
 
+### Renewal Cron (added 2026-04-24)
+
+Daily cron at `/api/billing/check-domain-renewals` runs at **18:00 UTC**
+(10am PT) — strictly AFTER the 16:00 UTC pre-renewal-email cron and
+17:00 UTC retry-failed-sends cron, so any card updates customers made
+after the 30-day / 7-day reminder are already reflected in Stripe by
+the time we look up sub status.
+
+**Order of operations (NON-NEGOTIABLE — Stripe FIRST, registrar SECOND):**
+1. Find domains where `next_renewal_at <= now()` AND `status='registered'`
+2. For each: look up `prospect.mgmtSubscriptionId` → `stripe.subscriptions.retrieve()`
+3. Branch on Stripe state:
+   - **active** → `registrar.renew(domain, 1)` → log $11 cost → bump
+     `expires_at` and `next_renewal_at` by 1 year → send "renewed" email
+   - **past_due** → set `status='renewal_paused'` → email customer with
+     billing-portal link → SMS Ben (DO NOT pay $11 for an unpaid customer)
+   - **cancelled** → set `status='cancelled'` → email 30-day grace
+     notice → SMS Ben
+   - **registrar API error** → keep `status='registered'`, set
+     `last_error`, SMS Ben (manual intervention — no blind retry)
+
+**Throttle:** Hand-rolled 30/min throttle (2-second sleep between domains)
+sits comfortably under Namecheap's ~50/min API limit. `PAGE_SIZE=100`
+per cron run is plenty since renewals are spread evenly across 365 days
+and we'll see at most ~14 due-for-renewal in a single run at 5,000 sites.
+
+**New domain status:** `renewal_paused` — added in
+`supabase/migrations/20260424_domain_renewal_paused_status.sql`. Domain
+in this state recovers to `registered` via the failure-recovery endpoint
+`POST /api/domains/[id]/retry-renewal` once the operator has confirmed
+the customer updated their card. The retry endpoint runs the exact same
+Stripe-first → registrar-second flow on a single domain.
+
+**Email templates:**
+- `getDomainRenewalChargedEmail(prospect, domain, expiresAt)` — sequence
+  210, friendly receipt-style note after a successful renewal.
+- `getDomainRenewalPausedEmail(prospect, domain, expiresAt)` — sequence
+  211, card-failed notice with Stripe portal link and N-day grace
+  countdown until expiry.
+
+Both follow CLAUDE.md outreach rules (≤80 words, exactly 1 link, zero
+pricing-language in body).
+
+**Mock mode:** if `STRIPE_SECRET_KEY` OR `NAMECHEAP_API_KEY` is absent,
+the cron uses the deterministic mock branch (always treats subs as
+"active" so the registrar-renew code path is exercised end-to-end in dev/CI).
+No real charges, no real registrar calls.
+
+**Cost logging:** Every successful renewal logs via
+`logCost(prospectId, "domain_renewal", $11)` (rate from
+`COST_RATES.domain_renewal`). Failed renewals log nothing (cost only on
+success path).
+
 ---
 
 ## Locked-In Rules — Session 2026-04-24 evening (Wave 1 sales-funnel hardening)
@@ -3545,4 +3598,76 @@ Naked "Claim →" or "Get Started →" buttons are banned from the
 preview/claim/book surfaces. Internal admin tools can use them.
 
 ---
+
+### 38. Needs Review Workflow (`PendingRepliesPanel`)
+
+When `AI_AUTO_REPLY_ENABLED=false` (Rule 35 kill-switch), every AI-drafted
+reply parks in `queued_replies` with `status='pending_review'` and waits
+for Ben to clear it via the dashboard's `Needs Review` tile (top of
+`/dashboard`, `#pending-review` anchor). Without this loop the queue
+silently grows and prospects never get answered.
+
+**Operator obligations (NON-NEGOTIABLE):**
+
+- **Clear the Needs Review queue at least once per day** while the
+  kill-switch is on. A draft sitting overnight blows past the 5-minute
+  conversion cliff (Rule 36) and effectively wastes the inbound. Treat
+  it like email — empty inbox daily.
+- **High-intent intents (`interested`, `custom_request`) approve FIRST.**
+  The list is sorted newest-first by created_at, but high-intent badges
+  (green for `interested`, amber for `objection`, blue for `question`)
+  exist precisely so they're scannable in the queue. Don't approve a
+  90-minute-old `unclear` before clearing today's `interested`.
+- **Every approve goes through the 30-second buffer by default.** The
+  "Approve & Send" button schedules `send_after = now() + 30s` to keep
+  the cadence feeling human (no instant-reply tell). Use "Send now"
+  only when the prospect is actively waiting on a reply (e.g. a phone
+  call follow-up they expect within seconds).
+
+**Editing rules (preserve the psychology stack — Rule from outreach
+templates):**
+
+- The AI draft already encodes the Ben-approved hooks: validation,
+  reciprocity, humility ("no idea if it's what you had in mind, but…"),
+  soft reply-prompt. Edits should TIGHTEN those hooks — never strip
+  them. If you find yourself deleting the entire draft and writing
+  fresh, reject + reply manually instead. The audit trail (rejected vs
+  edited-and-approved) feeds back into prompt-tuning.
+- **Keep edits short.** A 2-sentence draft that's 90% correct beats a
+  6-sentence "improvement" — short replies convert.
+- **Don't add pricing into the body.** Same rule as outreach emails
+  (CLAUDE.md "Outreach Email Template Rules"): pricing lives on the
+  claim page, not in the reply.
+- **Don't add a Calendly / booking link** unless the prospect explicitly
+  asked to schedule. The whole point of the soft reply prompt is to
+  keep the conversation open.
+
+**Reject vs Edit decision matrix:**
+
+| Situation                                     | Action |
+|---|---|
+| AI got the intent right, copy is 90% there    | Edit + Approve |
+| AI got the intent right, copy is wrong tone   | Edit (preserve psychology hooks) + Approve |
+| AI misclassified the intent (e.g. flagged objection but it's interest) | Reject + reply manually from prospect detail |
+| Prospect already replied to a different channel about same thing | Reject (reason: "already handled in [channel]") |
+| Prospect is angry / unsubscribing             | Reject + handle manually |
+
+**Rejection reasons matter.** Always supply one — even a 3-word note
+("wrong intent", "tone off", "already replied"). They become the
+training signal for AI responder prompt updates.
+
+**API contract (for future tooling):**
+
+- `GET /api/replies/pending-review` → `{ replies: PendingReply[], total: N }`
+- `POST /api/replies/[id]/approve` body `{ editedBody?, sendImmediately? }`
+- `POST /api/replies/[id]/reject` body `{ reason? }`
+
+The cron (`/api/replies/process`) picks up `status IN ('pending', 'queued')`
+and ignores `'pending_review' | 'rejected' | 'sent' | 'failed'`. Approving
+flips the row to `'queued'`; the cron sweeps it up on the next minute.
+
+**When to flip the kill-switch back to true:** after 30 days of clean
+manual review (no rejections in 7 days) AND after the AI responder
+prompt has been re-tuned with rejection-reason signal. Until then
+treat the panel as the daily must-clear inbox.
 

@@ -73,6 +73,10 @@ const PROTECTED_PATHS = [
   "/api/retarget",
   "/api/followup-scheduler",
   "/api/scout-optimizer",
+  // /api/replies covers the dashboard's pending-review GET + approve/reject
+  //  POSTs. /api/replies/process stays in PUBLIC_API_PATHS (checked first)
+  //  so the per-minute cron still reaches it.
+  "/api/replies",
   // /api/replies/process moved to PUBLIC_API_PATHS — gated by CRON_SECRET
   //  inside the handler. Must be reachable by Vercel cron every minute.
   "/api/email-deliverability",
@@ -116,6 +120,7 @@ const PUBLIC_API_PATHS = [
   "/api/replies/process",              // Vercel cron (per minute) — gated by CRON_SECRET
   "/api/postcards/html/",              // Lob's renderer fetches these; public (just pre-rendered preview HTML)
   "/api/inquire/",                     // Public form submission from /inquire/[code]
+  "/api/o/",                           // Self-hosted email open-tracking pixel (1×1 GIF) — public so recipients can load it
 ];
 
 export async function middleware(request: NextRequest) {

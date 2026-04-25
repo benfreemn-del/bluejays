@@ -48,7 +48,22 @@ ALTER TABLE queued_replies
 ALTER TABLE queued_replies
   ADD COLUMN IF NOT EXISTS reviewed_at TIMESTAMPTZ;
 
+-- 3b. Add a rejection_reason column so Ben can record why a draft was
+--     rejected. Optional — UI may submit empty string. Used later for
+--     prompt tuning + responder-quality analytics.
+ALTER TABLE queued_replies
+  ADD COLUMN IF NOT EXISTS rejection_reason TEXT;
+
 -- 4. Helpful index for the dashboard's "needs review" tile.
 CREATE INDEX IF NOT EXISTS queued_replies_pending_review_idx
   ON queued_replies (status, created_at DESC)
   WHERE status = 'pending_review';
+
+-- 5. Allow 'rejected' status for the manual rejection flow. Combined check
+--    constraint replaces the one written above.
+ALTER TABLE queued_replies
+  DROP CONSTRAINT IF EXISTS queued_replies_status_check;
+
+ALTER TABLE queued_replies
+  ADD CONSTRAINT queued_replies_status_check
+  CHECK (status IN ('pending', 'pending_review', 'queued', 'sent', 'failed', 'rejected'));

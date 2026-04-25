@@ -97,7 +97,9 @@ export async function POST(request: NextRequest) {
             { intent: aiResponse.intent }
           );
           console.log(`[Inbound SMS] AI auto-reply DISABLED — parked for review (${prospect.businessName})`);
-          const dashboardUrl = `${process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com"}/dashboard`;
+          // Deep link to the Needs Review tile. PendingRepliesPanel mounts at
+          // the top of /dashboard so the anchor is informational.
+          const dashboardUrl = `${process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com"}/dashboard#pending-review`;
           await alertOwner({
             type: "prospect-responded",
             message: `Inbound from ${prospect.businessName} — AI drafted reply, needs review: ${dashboardUrl}`,

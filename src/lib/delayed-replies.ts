@@ -139,18 +139,23 @@ export async function queuePendingReview(
  * Process all pending replies that are due to be sent.
  * This should be called by a cron job or a background worker.
  *
- * Only picks up rows with status='pending' — pending_review rows are
- * intentionally invisible to this loop and can only leave that state
- * via Ben's dashboard approval flow.
+ * Picks up rows with status IN ('pending', 'queued'):
+ *  - 'pending' = the original auto-reply path (queueDelayedReply)
+ *  - 'queued'  = a draft Ben approved via the dashboard (kill-switch flow)
+ *
+ * Explicitly EXCLUDES:
+ *  - 'pending_review' — drafts waiting for Ben's approval
+ *  - 'rejected'       — drafts Ben killed; never to be sent
+ *  - 'sent' / 'failed' — terminal states
  */
 export async function processQueuedReplies() {
   const now = new Date().toISOString();
 
-  // Get all pending replies where send_after <= NOW()
+  // Get all replies where status is sendable AND send_after <= NOW()
   const { data: pending, error } = await supabase
     .from("queued_replies")
     .select("*")
-    .eq("status", "pending")
+    .in("status", ["pending", "queued"])
     .lte("send_after", now);
 
   if (error) {

@@ -7,6 +7,7 @@ import type { Prospect, Category } from "@/lib/types";
 import { CATEGORY_CONFIG } from "@/lib/types";
 import DashboardStats from "@/components/dashboard/DashboardStats";
 import StatusTransitionsToday from "@/components/dashboard/StatusTransitionsToday";
+import PendingRepliesPanel from "@/components/dashboard/PendingRepliesPanel";
 import ProspectTable from "@/components/dashboard/ProspectTable";
 import ScoutModal from "@/components/dashboard/ScoutModal";
 import ProspectDetail from "@/components/dashboard/ProspectDetail";
@@ -324,6 +325,11 @@ export default function DashboardPage() {
           </div>
         ) : (
           <>
+            {/* Needs Review — AI-drafted replies awaiting Ben's approval.
+                Mounts at the very top so Ben sees them before anything else;
+                renders an empty pill when the queue is clear. */}
+            <PendingRepliesPanel />
+
             <DashboardStats
               prospects={prospects}
               onFilterStatus={setStatusFilter}
