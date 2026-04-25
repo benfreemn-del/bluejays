@@ -18,7 +18,8 @@ import { getReferralEmail } from "@/lib/email-templates";
  * track which referrer brought in each new prospect.
  */
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com";
+// Hardcoded per CLAUDE.md Rule 16 — Vercel had stale NEXT_PUBLIC_BASE_URL.
+const BASE_URL = "https://bluejayportfolio.com";
 const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
 
 /** Generates a deterministic but opaque referral code from the prospect ID. */

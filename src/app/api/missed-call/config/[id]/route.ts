@@ -14,7 +14,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getProspect } from "@/lib/store";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com";
+// Hardcoded per CLAUDE.md Rule 16 — Vercel had stale NEXT_PUBLIC_BASE_URL.
+const BASE_URL = "https://bluejayportfolio.com";
 
 export async function GET(
   _request: NextRequest,

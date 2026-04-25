@@ -477,9 +477,9 @@ export async function runAutoScout(): Promise<AutoScoutRunResult> {
           pageToken = result.nextPageToken;
         }
 
-        // Generate preview sites for each scouted prospect across all pages
-        const baseUrl =
-          process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+        // Generate preview sites for each scouted prospect across all pages.
+        // Hardcoded per CLAUDE.md Rule 16 — Vercel had stale NEXT_PUBLIC_BASE_URL.
+        const baseUrl = "https://bluejayportfolio.com";
         for (const p of allPageProspects) {
           try {
             await fetch(`${baseUrl}/api/generate/${p.id}`, {

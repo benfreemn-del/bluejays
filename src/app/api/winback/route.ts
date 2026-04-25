@@ -3,7 +3,8 @@ import { getAllProspects } from "@/lib/store";
 import { generatePreview } from "@/lib/generator";
 import type { Prospect } from "@/lib/types";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+// Hardcoded per CLAUDE.md Rule 16 — Vercel had stale NEXT_PUBLIC_BASE_URL.
+const BASE_URL = "https://bluejayportfolio.com";
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 const FROM_EMAIL = process.env.FROM_EMAIL || "bluejaycontactme@gmail.com";
 

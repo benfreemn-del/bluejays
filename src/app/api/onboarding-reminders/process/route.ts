@@ -207,7 +207,8 @@ export async function GET(request: NextRequest) {
       ) {
         const ownerLine = row.owner_name ? ` (${row.owner_name})` : "";
         const phoneLine = email ? `📧 ${email}` : "";
-        const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com";
+        // Hardcoded per CLAUDE.md Rule 16 — Vercel had stale NEXT_PUBLIC_BASE_URL.
+        const BASE_URL = "https://bluejayportfolio.com";
         const msg = [
           `🚨 ${businessName}${ownerLine} — 10 DAYS no onboarding!`,
           phoneLine,

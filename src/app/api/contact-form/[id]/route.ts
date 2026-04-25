@@ -54,7 +54,8 @@ import { v4 as uuidv4 } from "uuid";
 
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 const FROM_EMAIL = process.env.FROM_EMAIL || "ben@bluejayportfolio.com";
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com";
+// Hardcoded per CLAUDE.md Rule 16 — Vercel had stale NEXT_PUBLIC_BASE_URL.
+const BASE_URL = "https://bluejayportfolio.com";
 
 async function sendOwnerEmail(ownerEmail: string, subject: string, body: string): Promise<void> {
   if (!SENDGRID_API_KEY) return;

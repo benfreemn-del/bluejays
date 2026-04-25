@@ -86,7 +86,8 @@ export async function sendOwnerAlert(message: string): Promise<void> {
 }
 
 export async function alertHighValueLead(prospect: Prospect) {
-  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com";
+  // Hardcoded per CLAUDE.md Rule 16 — Vercel had stale NEXT_PUBLIC_BASE_URL.
+  const BASE_URL = "https://bluejayportfolio.com";
   const previewUrl = `${BASE_URL}${prospect.generatedSiteUrl || `/preview/${prospect.id}`}`;
   const phone = prospect.phone || "N/A";
   const callLine = prospect.phone ? `📞 Call: ${phone}` : `📞 Phone: N/A`;
@@ -105,7 +106,8 @@ export async function alertHighValueLead(prospect: Prospect) {
 }
 
 export async function alertProspectResponded(prospect: Prospect, response: string) {
-  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com";
+  // Hardcoded per CLAUDE.md Rule 16 — Vercel had stale NEXT_PUBLIC_BASE_URL.
+  const BASE_URL = "https://bluejayportfolio.com";
   const previewUrl = `${BASE_URL}${prospect.generatedSiteUrl || `/preview/${prospect.id}`}`;
   await alertOwner({
     type: "prospect-responded",

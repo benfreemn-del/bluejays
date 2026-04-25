@@ -20,7 +20,10 @@
 import { NextRequest } from "next/server";
 import { getProspect } from "@/lib/store";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com";
+// Hardcoded per CLAUDE.md Rule 16 — Vercel had stale NEXT_PUBLIC_BASE_URL.
+// This is the voicemail TwiML callback host — broken value here breaks
+// every voicemail drop's audio playback and missed-call SMS auto-reply.
+const BASE_URL = "https://bluejayportfolio.com";
 
 export async function GET(
   _request: NextRequest,

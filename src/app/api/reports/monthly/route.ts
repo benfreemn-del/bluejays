@@ -23,7 +23,8 @@ import {
  * Also serves as a renewal reminder 30 days before the $100/yr charge.
  */
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com";
+// Hardcoded per CLAUDE.md Rule 16 — Vercel had stale NEXT_PUBLIC_BASE_URL.
+const BASE_URL = "https://bluejayportfolio.com";
 
 function getMonthName(date: Date): string {
   return date.toLocaleDateString("en-US", { month: "long", year: "numeric" });

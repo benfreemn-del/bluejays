@@ -19,7 +19,9 @@ export default function ReviewRequestPanel({ prospectId, businessName }: Props) 
   const [error, setError] = useState("");
   const [open, setOpen] = useState(false);
 
-  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com";
+  // Hardcoded per CLAUDE.md Rule 16 — Vercel had stale NEXT_PUBLIC_BASE_URL
+  // baked into the client bundle.
+  const BASE_URL = "https://bluejayportfolio.com";
   const reviewUrl = `${BASE_URL}/review/${prospectId}`;
 
   function addRow() {

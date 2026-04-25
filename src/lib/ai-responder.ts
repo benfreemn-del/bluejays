@@ -38,7 +38,9 @@ import { supabase, isSupabaseConfigured } from "./supabase";
 
 const CLAUDE_API_KEY = process.env.CLAUDE_API_KEY;
 const CALENDAR_LINK = process.env.CALENDAR_LINK || "https://calendly.com/bluejaycontactme/website-walkthrough";
-const CHECKOUT_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+// Hardcoded per CLAUDE.md Rule 16 — Vercel had stale NEXT_PUBLIC_BASE_URL
+// which broke claim/checkout links in AI auto-replies.
+const CHECKOUT_BASE_URL = "https://bluejayportfolio.com";
 
 export type IntentType =
   | "interested"
@@ -58,7 +60,8 @@ interface IncomingMessage {
 }
 
 function getBaseUrl(): string {
-  return process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+  // Hardcoded per CLAUDE.md Rule 16 — Vercel had stale NEXT_PUBLIC_BASE_URL.
+  return "https://bluejayportfolio.com";
 }
 
 function getSalesLinks(prospect: Prospect) {

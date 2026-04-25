@@ -12,7 +12,8 @@ import { sendOwnerAlert } from "@/lib/alerts";
  * Can also be hit manually from the dashboard for an on-demand snapshot.
  */
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com";
+// Hardcoded per CLAUDE.md Rule 16 — Vercel had stale NEXT_PUBLIC_BASE_URL.
+const BASE_URL = "https://bluejayportfolio.com";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);

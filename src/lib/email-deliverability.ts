@@ -11,7 +11,8 @@
 import fs from "fs";
 import path from "path";
 import { supabase, isSupabaseConfigured } from "./supabase";
-import { updateProspect } from "./store";
+import { updateProspect, getProspect } from "./store";
+import { logCost } from "./cost-logger";
 
 const DATA_DIR = process.env.VERCEL ? "/tmp" : path.join(process.cwd(), "data");
 const DELIVERABILITY_FILE = path.join(DATA_DIR, "email-deliverability.json");
@@ -396,12 +397,135 @@ export function recordEmailSent(domain: string): void {
   saveWarmupData(schedules);
 }
 
+// ==================== SENDGRID SUPPRESSION GROUP ====================
+
+/**
+ * SendGrid Advanced Suppression group ID for hard bounces. We create
+ * the group lazily once on first hard-bounce of a process lifetime
+ * (idempotent — POST returns the existing group if one is already
+ * named "Hard Bounces") and cache the id in-memory so subsequent
+ * suppressions don't need to re-resolve it.
+ *
+ * Adding an address to this group ensures any retry via the SendGrid
+ * v3 send API (e.g. funnel re-enroll, manual resend, or bug-induced
+ * re-send) is silently dropped at the API layer instead of bouncing
+ * a second time and dragging our reputation further down. See
+ * Rule 42 in CLAUDE.md.
+ */
+let HARD_BOUNCE_GROUP_ID: number | null = null;
+let HARD_BOUNCE_GROUP_RESOLVE_FAILED_AT: number | null = null;
+const GROUP_RESOLVE_RETRY_MS = 60 * 60 * 1000; // 1 hour
+
+async function resolveHardBounceGroupId(): Promise<number | null> {
+  const apiKey = process.env.SENDGRID_API_KEY;
+  if (!apiKey) return null;
+  if (HARD_BOUNCE_GROUP_ID !== null) return HARD_BOUNCE_GROUP_ID;
+  if (
+    HARD_BOUNCE_GROUP_RESOLVE_FAILED_AT &&
+    Date.now() - HARD_BOUNCE_GROUP_RESOLVE_FAILED_AT < GROUP_RESOLVE_RETRY_MS
+  ) {
+    return null;
+  }
+
+  try {
+    // 1. List existing groups — name lookup avoids duplicate creation
+    const listRes = await fetch("https://api.sendgrid.com/v3/asm/groups", {
+      headers: { Authorization: `Bearer ${apiKey}` },
+    });
+    if (listRes.ok) {
+      const groups = (await listRes.json()) as Array<{ id: number; name: string }>;
+      const existing = groups.find((g) => g.name === "Hard Bounces");
+      if (existing) {
+        HARD_BOUNCE_GROUP_ID = existing.id;
+        return existing.id;
+      }
+    }
+
+    // 2. Create the group if it doesn't exist
+    const createRes = await fetch("https://api.sendgrid.com/v3/asm/groups", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: "Hard Bounces",
+        description:
+          "Auto-populated by email-deliverability.ts on hard bounce or 3-soft-in-7-days escalation. Do not delete — suppression is what protects sender reputation.",
+        is_default: false,
+      }),
+    });
+    if (createRes.ok) {
+      const group = (await createRes.json()) as { id: number };
+      HARD_BOUNCE_GROUP_ID = group.id;
+      return group.id;
+    }
+
+    HARD_BOUNCE_GROUP_RESOLVE_FAILED_AT = Date.now();
+    console.warn(
+      `[Deliverability] Could not create/resolve SendGrid suppression group (status: ${createRes.status})`
+    );
+    return null;
+  } catch (err) {
+    HARD_BOUNCE_GROUP_RESOLVE_FAILED_AT = Date.now();
+    console.warn(`[Deliverability] SendGrid suppression group resolve failed:`, err);
+    return null;
+  }
+}
+
+/**
+ * Add an email address to the SendGrid hard-bounce suppression group.
+ * Mock-mode safe: returns silently if SENDGRID_API_KEY is absent.
+ * Wrapped in try/catch — never blocks the bounce flow on suppression
+ * failure.
+ */
+async function addToSendGridSuppressionGroup(email: string): Promise<void> {
+  try {
+    const apiKey = process.env.SENDGRID_API_KEY;
+    if (!apiKey) {
+      console.log(`[Deliverability] (mock) would suppress ${email} at SendGrid`);
+      return;
+    }
+    const groupId = await resolveHardBounceGroupId();
+    if (!groupId) return;
+
+    const res = await fetch(
+      `https://api.sendgrid.com/v3/asm/groups/${groupId}/suppressions`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ recipient_emails: [email] }),
+      }
+    );
+    if (!res.ok) {
+      console.warn(
+        `[Deliverability] SendGrid suppression POST returned ${res.status} for ${email}`
+      );
+    } else {
+      console.log(`[Deliverability] Suppressed ${email} at SendGrid (group ${groupId})`);
+    }
+  } catch (err) {
+    // Never block the bounce flow on suppression failure
+    console.warn(`[Deliverability] SendGrid suppression failed for ${email}:`, err);
+  }
+}
+
 // ==================== BOUNCE HANDLING ====================
+
+const SOFT_BOUNCE_WINDOW_DAYS = 7;
+const SOFT_BOUNCE_ESCALATION_THRESHOLD = 3;
 
 /**
  * Process a bounce event from SendGrid webhook.
- * Hard bounces: immediately remove the email from the prospect.
- * Soft bounces: retry up to 3 times, then treat as hard bounce.
+ * Hard bounces: flip prospect to "bounced" status, pause funnel,
+ *   add to SendGrid suppression group.
+ * Soft bounces: increment soft_bounce_count. If it hits 3 within a
+ *   rolling 7-day window, escalate to hard-bounce treatment.
+ *
+ * See Rule 42 in CLAUDE.md for the full policy.
  */
 export async function processBounce(
   email: string,
@@ -411,17 +535,18 @@ export async function processBounce(
 ): Promise<BounceRecord> {
   const bounces = loadBounceData();
   const existing = bounces.find((b) => b.email === email && !b.resolved);
+  const now = new Date().toISOString();
 
   if (existing) {
     existing.retryCount += 1;
-    existing.timestamp = new Date().toISOString();
+    existing.timestamp = now;
     existing.reason = reason;
 
-    // Soft bounce exceeded max retries → treat as hard bounce
+    // Soft bounce exceeded retries → treat as hard
     if (existing.type === "soft" && existing.retryCount >= SOFT_BOUNCE_MAX_RETRIES) {
       existing.type = "hard";
       existing.resolved = true;
-      await handleHardBounce(email, prospectId);
+      await handleHardBounce(email, prospectId, reason);
     }
 
     saveBounceData(bounces);
@@ -434,14 +559,16 @@ export async function processBounce(
     prospectId,
     type: bounceType,
     reason,
-    timestamp: new Date().toISOString(),
+    timestamp: now,
     retryCount: bounceType === "hard" ? 0 : 1,
     maxRetries: SOFT_BOUNCE_MAX_RETRIES,
     resolved: bounceType === "hard",
   };
 
   if (bounceType === "hard") {
-    await handleHardBounce(email, prospectId);
+    await handleHardBounce(email, prospectId, reason);
+  } else {
+    await handleSoftBounce(email, prospectId, reason);
   }
 
   bounces.push(record);
@@ -468,17 +595,94 @@ export async function processBounce(
 }
 
 /**
- * Handle a hard bounce: remove the email from the prospect to prevent future sends.
+ * Handle a hard bounce: flip the prospect to "bounced" status, pause
+ * funnel, log the status transition, and add the address to the
+ * SendGrid suppression group so any retry via the API is silently
+ * dropped at the SMTP gateway.
  */
-async function handleHardBounce(email: string, prospectId: string): Promise<void> {
-  console.log(`[Deliverability] Hard bounce for ${email} — removing from prospect ${prospectId}`);
+async function handleHardBounce(
+  email: string,
+  prospectId: string,
+  reason: string
+): Promise<void> {
+  console.log(
+    `[Deliverability] Hard bounce for ${email} — flipping prospect ${prospectId} to "bounced"`
+  );
   try {
-    await updateProspect(prospectId, {
-      email: undefined,
-      status: "dismissed",
-    } as Partial<import("./types").Prospect>);
+    // Flip status to "bounced", pause funnel. logStatusChange() inside
+    // updateProspect() writes the row to prospect_status_changes with
+    // the from/to status; the bounce reason rides through as the source.
+    await updateProspect(
+      prospectId,
+      {
+        status: "bounced",
+        funnelPaused: true,
+      },
+      { source: `hard_bounce:${reason || "unknown"}` }
+    );
   } catch (err) {
     console.error(`[Deliverability] Failed to update prospect after hard bounce:`, err);
+  }
+
+  // Best-effort: add to SendGrid suppression group. Wrapped in try/catch
+  // inside addToSendGridSuppressionGroup() — never blocks.
+  await addToSendGridSuppressionGroup(email);
+
+  // Log cost trail (audit-only at $0)
+  await logCost({
+    prospectId,
+    service: "sendgrid_suppression",
+    action: "hard_bounce_suppress",
+    costUsd: 0,
+    metadata: { email, reason },
+  }).catch(() => {});
+}
+
+/**
+ * Handle a soft bounce: increment the rolling 7-day counter and
+ * escalate to hard-bounce treatment if the threshold is crossed.
+ */
+async function handleSoftBounce(
+  email: string,
+  prospectId: string,
+  reason: string
+): Promise<void> {
+  try {
+    const prospect = await getProspect(prospectId);
+    if (!prospect) return;
+
+    const now = new Date();
+    const last = prospect.lastSoftBounceAt
+      ? new Date(prospect.lastSoftBounceAt)
+      : null;
+
+    // Reset the counter if the previous soft bounce is older than the
+    // rolling window — only consecutive-in-window bounces escalate.
+    const windowMs = SOFT_BOUNCE_WINDOW_DAYS * 24 * 60 * 60 * 1000;
+    const inWindow = last && now.getTime() - last.getTime() <= windowMs;
+    const newCount = inWindow ? (prospect.softBounceCount || 0) + 1 : 1;
+
+    await updateProspect(
+      prospectId,
+      {
+        softBounceCount: newCount,
+        lastSoftBounceAt: now.toISOString(),
+      },
+      { source: `soft_bounce:${reason || "unknown"}` }
+    );
+
+    if (newCount >= SOFT_BOUNCE_ESCALATION_THRESHOLD) {
+      console.log(
+        `[Deliverability] ${email} hit ${newCount} soft bounces in ${SOFT_BOUNCE_WINDOW_DAYS}d — escalating to hard bounce`
+      );
+      await handleHardBounce(
+        email,
+        prospectId,
+        `escalated_from_${newCount}_soft_bounces_in_${SOFT_BOUNCE_WINDOW_DAYS}d`
+      );
+    }
+  } catch (err) {
+    console.error(`[Deliverability] Soft-bounce escalation check failed:`, err);
   }
 }
 

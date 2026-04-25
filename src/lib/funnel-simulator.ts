@@ -14,7 +14,8 @@ import { getInitialSms, getFollowUpSms1, getFollowUpSms2 } from "./sms";
 import { generateSmartFollowUp } from "./smart-followup";
 import { VOICEMAIL_SCRIPTS } from "./voicemail";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+// Hardcoded per CLAUDE.md Rule 16 — Vercel had stale NEXT_PUBLIC_BASE_URL.
+const BASE_URL = "https://bluejayportfolio.com";
 
 // ─── Types ───────────────────────────────────────────────────────────
 

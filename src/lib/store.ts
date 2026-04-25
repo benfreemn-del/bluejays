@@ -173,6 +173,8 @@ function dbToProspect(row: Record<string, unknown>): Prospect {
     onboardingReminderSentAt: row.onboarding_reminder_sent_at as string | undefined,
     paymentFailureCount: (row.payment_failure_count as number | null) ?? undefined,
     lastPaymentFailureAt: (row.last_payment_failure_at as string | null) || undefined,
+    softBounceCount: (row.soft_bounce_count as number | null) ?? undefined,
+    lastSoftBounceAt: (row.last_soft_bounce_at as string | null) || undefined,
     short_code: (row.short_code as string | null) || undefined,
     assignedDomain: (row.assigned_domain as string | null) || undefined,
     domainCostUsd:
@@ -416,6 +418,8 @@ export async function updateProspect(
     if (sanitizedUpdates.onboardingReminderSentAt !== undefined) dbUpdates.onboarding_reminder_sent_at = sanitizedUpdates.onboardingReminderSentAt || null;
     if (sanitizedUpdates.paymentFailureCount !== undefined) dbUpdates.payment_failure_count = sanitizedUpdates.paymentFailureCount ?? 0;
     if (sanitizedUpdates.lastPaymentFailureAt !== undefined) dbUpdates.last_payment_failure_at = sanitizedUpdates.lastPaymentFailureAt || null;
+    if (sanitizedUpdates.softBounceCount !== undefined) dbUpdates.soft_bounce_count = sanitizedUpdates.softBounceCount ?? 0;
+    if (sanitizedUpdates.lastSoftBounceAt !== undefined) dbUpdates.last_soft_bounce_at = sanitizedUpdates.lastSoftBounceAt || null;
     if (sanitizedUpdates.assignedDomain !== undefined) dbUpdates.assigned_domain = sanitizedUpdates.assignedDomain || null;
     if (sanitizedUpdates.domainCostUsd !== undefined) dbUpdates.domain_cost_usd = sanitizedUpdates.domainCostUsd ?? null;
     if (sanitizedUpdates.domainRegistrar !== undefined) dbUpdates.domain_registrar = sanitizedUpdates.domainRegistrar || null;

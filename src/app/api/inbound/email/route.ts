@@ -113,7 +113,8 @@ export async function POST(request: NextRequest) {
           // Notify Ben so he can review the draft. Deep link to the dashboard's
           // Needs Review tile (PendingRepliesPanel mounts at the top, so the
           // anchor isn't strictly required — kept for clarity / future routing).
-          const dashboardUrl = `${process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com"}/dashboard#pending-review`;
+          // Hardcoded per CLAUDE.md Rule 16 — stale NEXT_PUBLIC_BASE_URL on Vercel.
+          const dashboardUrl = `https://bluejayportfolio.com/dashboard#pending-review`;
           await alertOwner({
             type: "prospect-responded",
             message: `Inbound from ${prospect.businessName} — AI drafted reply, needs review: ${dashboardUrl}`,

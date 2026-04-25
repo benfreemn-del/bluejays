@@ -3894,6 +3894,85 @@ isn't configured so the form can fall back to "we'll email you" UX.
   save partial; Step 3 submits final. Mixing them confuses the
   reminder cron's status detection.
 
+### Rule 42 — Hard-Bounce Suppression Policy (NON-NEGOTIABLE — added 2026-04-24)
+
+Bounces compound. A single hard bounce that re-sends 3 times because
+the address never got flipped to a "stop sending" state burns sender
+reputation 4× faster than one bounce alone. The fix is a deterministic
+3-layer suppression contract enforced inside `processBounce()` in
+`src/lib/email-deliverability.ts`.
+
+**The 3 layers (all must fire for every hard bounce — no exceptions):**
+
+1. **Prospect status flip** — `updateProspect(prospectId, { status:
+   "bounced", funnelPaused: true }, { source: "hard_bounce:<reason>" })`.
+   The new `"bounced"` status (added to `ProspectStatus` in types.ts +
+   `StatusBadge.tsx`) is a terminal state — funnel sweeps, retargeting,
+   bulk-send scripts, and dashboard "needs attention" tiles MUST
+   exclude it the same way they exclude `"unsubscribed"` and
+   `"dismissed"`. The status transition gets logged to
+   `prospect_status_changes` automatically via the existing
+   `logStatusChange()` hook.
+2. **Funnel pause** — set `funnelPaused: true` (in the same updateProspect
+   call so it's atomic). The funnel cron (`/api/funnel/run`) already
+   skips paused enrollments. This stops the next email/SMS/voicemail
+   step from firing.
+3. **SendGrid suppression group** — POST the address to the
+   "Hard Bounces" suppression group via the SendGrid v3 API. The group
+   is created lazily on first hard-bounce of a process lifetime
+   (idempotent — POST returns the existing group if one already
+   exists with that name) and the group ID is cached in-memory.
+   Wrapped in try/catch — suppression-group failures NEVER block the
+   bounce flow. SendGrid silently drops any future send to a
+   suppressed address at the API layer, which protects us against bug-
+   induced re-sends (manual outreach, funnel re-enroll, batch-send
+   scripts that forgot the bounce filter).
+
+**Soft-bounce escalation (3-in-7-days rule):**
+
+Soft bounces (4xx SMTP responses) are normally retryable — a temporary
+block, full mailbox, transient DNS hiccup. But persistent soft bounces
+indicate a genuinely undeliverable address. The escalation rule:
+
+- Each soft bounce increments `prospects.soft_bounce_count` (int) and
+  sets `prospects.last_soft_bounce_at` to now.
+- If a soft bounce arrives MORE than 7 days after the previous one,
+  reset the counter to 1 (only consecutive-in-window bounces escalate).
+- Once the rolling 7-day count hits **3**, treat as a hard bounce and
+  fire all 3 layers above. Source string in the status log:
+  `"escalated_from_3_soft_bounces_in_7d"`.
+
+The window + threshold are tunable via `SOFT_BOUNCE_WINDOW_DAYS` and
+`SOFT_BOUNCE_ESCALATION_THRESHOLD` constants in
+`email-deliverability.ts`. Don't change them without a deliverability
+review — they were chosen to match SendGrid's own internal rule of
+thumb for "convert soft to hard" treatment.
+
+**Migration:** `supabase/migrations/20260424_bounce_tracking.sql` adds
+the two tracking columns. The `status` column itself is free-form TEXT
+so no DDL is needed to accept `"bounced"` as a value.
+
+**Mock-mode policy:**
+- If `SENDGRID_API_KEY` is unset, `addToSendGridSuppressionGroup()`
+  logs a `[Deliverability] (mock) would suppress…` line and returns.
+  Local dev / CI never hits the live API.
+- The status-flip + funnel-pause legs run regardless of SendGrid being
+  configured — those are local DB ops.
+
+**RULES — NEVER do any of these:**
+- Don't reset `soft_bounce_count` or `last_soft_bounce_at` outside
+  the rolling-window logic. The escalation depends on them.
+- Don't manually flip a `"bounced"` prospect back to an active status
+  without first re-validating their email (Apollo / waterfall enrich).
+  A hard bounce is permanent — only a verified replacement address
+  unbounces them.
+- Don't add new SendGrid suppression groups beyond "Hard Bounces"
+  through this code path. The single-group pattern keeps the API
+  call surface small and the audit trail single-source-of-truth.
+- Don't bypass `processBounce()` from any new bounce-handling
+  surface (e.g. a future Postmark integration). Route every bounce
+  through the same function so the 3-layer contract holds.
+
 ## Recurring vs Variable Cost Tracking (NON-NEGOTIABLE — added 2026-04-24)
 
 The cost-tracking system has two complementary halves. Both must stay

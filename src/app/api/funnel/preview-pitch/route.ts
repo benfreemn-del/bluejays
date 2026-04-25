@@ -117,7 +117,8 @@ export async function POST(request: NextRequest) {
   // is the #1 Primary-tab placement signal for commercial senders. Match
   // the header layout used by email-sender.ts so QA sends behave identically
   // to real funnel sends for deliverability-testing purposes.
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com";
+  // Hardcoded per CLAUDE.md Rule 16 — Vercel had stale NEXT_PUBLIC_BASE_URL.
+  const baseUrl = "https://bluejayportfolio.com";
   const unsubUrl = `${baseUrl}/api/unsubscribe/${prospect.id}`;
   const unsubMailto = `unsubscribe+${prospect.id}@bluejayportfolio.com`;
 

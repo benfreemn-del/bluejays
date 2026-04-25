@@ -410,7 +410,8 @@ export async function POST(request: NextRequest) {
         console.log(`[Stripe Webhook] Abandoned checkout for ${businessName} (${prospectId})`);
 
         // Alert Ben — warm lead who was close to buying
-        const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com";
+        // Hardcoded per CLAUDE.md Rule 16 — Vercel had stale NEXT_PUBLIC_BASE_URL.
+const BASE_URL = "https://bluejayportfolio.com";
         const claimUrl = `${BASE_URL}/claim/${prospectId}`;
         await sendOwnerAlert(
           `🛒 Abandoned checkout: ${businessName}\n` +
@@ -740,7 +741,8 @@ async function sendClientWelcomeEmail(
 ) {
   if (!SENDGRID_API_KEY) return;
 
-  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com";
+  // Hardcoded per CLAUDE.md Rule 16 — Vercel had stale NEXT_PUBLIC_BASE_URL.
+const BASE_URL = "https://bluejayportfolio.com";
   const previewUrl = `${BASE_URL}/preview/${prospectId}`;
   const onboardingUrl = `${BASE_URL}/onboarding/${prospectId}`;
 
@@ -832,7 +834,8 @@ async function sendAbandonedCheckoutEmail(
   businessName: string,
   prospectId: string
 ) {
-  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com";
+  // Hardcoded per CLAUDE.md Rule 16 — Vercel had stale NEXT_PUBLIC_BASE_URL.
+const BASE_URL = "https://bluejayportfolio.com";
   const claimUrl = `${BASE_URL}/claim/${prospectId}`;
 
   await fetch("https://api.sendgrid.com/v3/mail/send", {

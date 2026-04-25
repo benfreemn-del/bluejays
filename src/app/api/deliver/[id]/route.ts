@@ -23,7 +23,8 @@ import { sendOwnerAlert } from "@/lib/alerts";
  * Only sends once — subsequent calls return 409 if already delivered.
  */
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com";
+// Hardcoded per CLAUDE.md Rule 16 — Vercel had stale NEXT_PUBLIC_BASE_URL.
+const BASE_URL = "https://bluejayportfolio.com";
 
 export async function POST(
   request: NextRequest,

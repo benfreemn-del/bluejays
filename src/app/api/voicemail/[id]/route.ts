@@ -23,7 +23,8 @@ export async function POST(
     return NextResponse.json({ error: "No phone number" }, { status: 400 });
   }
 
-  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+  // Hardcoded per CLAUDE.md Rule 16 — Vercel had stale NEXT_PUBLIC_BASE_URL.
+  const BASE_URL = "https://bluejayportfolio.com";
   const previewUrl = `${BASE_URL}${prospect.generatedSiteUrl}`;
   const name = prospect.ownerName?.split(" ")[0] || "there";
 

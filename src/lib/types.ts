@@ -73,6 +73,7 @@ export type ProspectStatus =
   | "paid"
   | "dismissed"
   | "unsubscribed"
+  | "bounced"          // hard-bounce or 3-soft-in-7-days escalation — see Rule 42
   | "pro-bono";
 
 export interface Prospect {
@@ -158,6 +159,15 @@ export interface Prospect {
   paymentFailureCount?: number;
   /** ISO timestamp of the most recent `invoice.payment_failed` event. */
   lastPaymentFailureAt?: string;
+  /** Number of soft bounces seen in the rolling 7-day window for this
+   *  prospect's email. Reset to 1 when a soft bounce arrives more than
+   *  7 days after `lastSoftBounceAt`. Hits 3 → treat as hard bounce
+   *  (status flips to `"bounced"`, funnel paused, SendGrid suppression
+   *  group entry). See `processBounce()` in email-deliverability.ts and
+   *  Rule 42 in CLAUDE.md. */
+  softBounceCount?: number;
+  /** ISO timestamp of the most recent soft bounce. */
+  lastSoftBounceAt?: string;
   /** ISO timestamp of when first outreach was sent — used for 30-day preview expiry */
   contactedAt?: string;
   /** Unique referral code generated at payment — shared with client in day-30 email */

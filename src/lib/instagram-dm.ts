@@ -7,7 +7,8 @@ export interface DmMessage {
   previewUrl: string;
 }
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+// Hardcoded per CLAUDE.md Rule 16 — Vercel had stale NEXT_PUBLIC_BASE_URL.
+const BASE_URL = "https://bluejayportfolio.com";
 
 function getCategoryHook(category: Category): string {
   const hooks: Partial<Record<Category, string>> = {

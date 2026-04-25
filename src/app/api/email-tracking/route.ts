@@ -9,7 +9,9 @@ const BOUNCE_RATE_PAUSE = 2.0;  // % — pause funnel above this
 const SPAM_RATE_PAUSE   = 0.1;  // % — pause funnel above this
 const MIN_SAMPLE_SIZE   = 20;   // don't trigger on first few sends
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com";
+// Hardcoded per CLAUDE.md Rule 16 + Rule 42 — Vercel had NEXT_PUBLIC_BASE_URL
+// set to a stale preview URL which broke Stripe / voicemail / List-Unsubscribe.
+const BASE_URL = "https://bluejayportfolio.com";
 
 /**
  * SendGrid Event Webhook — receives open, click, delivered, bounce events.

@@ -34,7 +34,8 @@ import {
 } from "./funnel-delivery";
 
 const FUNNEL_FILE = path.join(process.cwd(), "data", "funnel-enrollments.json");
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+// Hardcoded per CLAUDE.md Rule 16 — Vercel had stale NEXT_PUBLIC_BASE_URL.
+const BASE_URL = "https://bluejayportfolio.com";
 
 export interface FunnelEnrollment {
   prospectId: string;

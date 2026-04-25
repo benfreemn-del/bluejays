@@ -4,7 +4,8 @@ import { sendPitchEmail } from "@/lib/outreach";
 import { sendSms, getSmsHistory, getInitialSms, getFollowUpSms1, getFollowUpSms2 } from "@/lib/sms";
 import { getProspectVideoUrl } from "@/lib/video-generator";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+// Hardcoded per CLAUDE.md Rule 16 — Vercel had stale NEXT_PUBLIC_BASE_URL.
+const BASE_URL = "https://bluejayportfolio.com";
 
 export async function POST(request: NextRequest) {
   const body = await request.json();

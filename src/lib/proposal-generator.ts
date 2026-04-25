@@ -82,7 +82,8 @@ function ensureDir(dir: string) {
 }
 
 function getBaseUrl() {
-  return process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+  // Hardcoded per CLAUDE.md Rule 16 — Vercel had stale NEXT_PUBLIC_BASE_URL.
+  return "https://bluejayportfolio.com";
 }
 
 function absoluteUrl(pathname: string) {

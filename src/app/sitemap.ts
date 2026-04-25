@@ -1,7 +1,8 @@
 import { MetadataRoute } from "next";
 import { getAllProspects } from "@/lib/store";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com";
+// Hardcoded per CLAUDE.md Rule 16 — Vercel had stale NEXT_PUBLIC_BASE_URL.
+const BASE_URL = "https://bluejayportfolio.com";
 
 const V2_CATEGORIES = [
   "accounting", "appliance-repair", "auto-repair", "carpet-cleaning",

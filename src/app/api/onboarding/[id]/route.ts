@@ -150,7 +150,8 @@ export async function POST(
     const accentLine = mergedFormData.accentColor
       ? `🎨 Accent: ${mergedFormData.accentColor}`
       : "";
-    const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com";
+    // Hardcoded per CLAUDE.md Rule 16 — Vercel had stale NEXT_PUBLIC_BASE_URL.
+    const BASE_URL = "https://bluejayportfolio.com";
     const msg = [
       `🚀 ${prospect.businessName} finished onboarding step 1 — you can start!`,
       logoLine,
@@ -224,7 +225,8 @@ export async function POST(
     }
 
     // Alert Ben via SMS
-    const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com";
+    // Hardcoded per CLAUDE.md Rule 16 — Vercel had stale NEXT_PUBLIC_BASE_URL.
+    const BASE_URL = "https://bluejayportfolio.com";
     const alertMsg = [
       `📋 ${prospect.businessName} submitted their onboarding form!`,
       logoUrl ? `🎨 Logo provided` : "❌ No logo",

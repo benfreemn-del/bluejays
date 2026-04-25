@@ -93,6 +93,11 @@ const statusConfig: Record<
     bg: "bg-red-900/50",
     text: "text-red-400",
   },
+  bounced: {
+    label: "Bounced",
+    bg: "bg-rose-900/60",
+    text: "text-rose-200",
+  },
   "pro-bono": { label: "Pro Bono", bg: "bg-amber-900/50", text: "text-amber-300" },
 };
 

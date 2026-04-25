@@ -7,7 +7,8 @@ import { isSupabaseConfigured, supabase } from "@/lib/supabase";
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 const FROM_EMAIL = process.env.FROM_EMAIL || "bluejaycontactme@gmail.com";
 const OWNER_EMAIL = process.env.ADMIN_EMAIL || "ben@bluejayportfolio.com";
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://bluejayportfolio.com";
+// Hardcoded per CLAUDE.md Rule 16 — Vercel had stale NEXT_PUBLIC_BASE_URL.
+const BASE_URL = "https://bluejayportfolio.com";
 const FALLBACK_PATH = path.join(process.cwd(), "data", "change-requests.json");
 
 type ChangeRequestPayload = {
