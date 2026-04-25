@@ -2,6 +2,7 @@ import type { Prospect } from "@/lib/types";
 import { CATEGORY_CONFIG } from "@/lib/types";
 import StatusBadge from "./StatusBadge";
 import DomainCard from "./DomainCard";
+import UpsellsSection from "./UpsellsSection";
 import { useState, useEffect } from "react";
 
 interface EmailRecord {
@@ -495,6 +496,10 @@ export default function ProspectDetail({
               </button>
             )}
           </section>
+
+          {/* Upsells — productized add-ons (review_blast, extra_pages, gbp_setup, monthly_updates).
+              Only renders for paid prospects since pre-paid prospects can't have purchases yet. */}
+          {prospect.status === "paid" && <UpsellsSection prospectId={prospect.id} />}
 
           {/* Actions */}
           <section>

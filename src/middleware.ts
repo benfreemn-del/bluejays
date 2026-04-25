@@ -106,6 +106,7 @@ const PUBLIC_API_PATHS = [
   "/api/inbound/sms",
   "/api/inbound/vonage-sms",
   "/api/checkout/create", // Prospects need to create checkout sessions
+  "/api/checkout/upsell", // Paid customers buy upsell SKUs from /upsells/[id]
   "/api/claim/",          // Public claim-page data (sanitized — see /api/claim/[id])
   "/api/engagement/",     // Engagement score/triggers for claim + preview pages
   "/api/generated-sites/",// Preview-page site data (public — same data prospects see rendered)

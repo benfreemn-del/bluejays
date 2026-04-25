@@ -32,7 +32,15 @@ export type EmailRetryType =
   | "payment_failed"
   | "payment_failed_urgent"
   | "monthly_report"
-  | "referral";
+  | "referral"
+  // Upsell SKU welcome emails — fire from the Stripe webhook on
+  // `checkout.session.completed` events with `metadata.sku`. See
+  // `handleUpsellSession()` in `/api/webhooks/stripe/route.ts` and
+  // CLAUDE.md "Upsell SKUs".
+  | "upsell_review_blast"
+  | "upsell_extra_pages"
+  | "upsell_gbp_setup"
+  | "upsell_monthly_updates";
 
 export type EmailRetryStatus = "pending" | "succeeded" | "failed";
 

@@ -8,10 +8,20 @@ import {
   getWelcomeEmail,
   getPaymentFailedEmail,
   getPaymentFailedUrgentEmail,
+  getReviewBlastWelcomeEmail,
+  getExtraPagesWelcomeEmail,
+  getGbpSetupWelcomeEmail,
+  getMonthlyUpdatesWelcomeEmail,
 } from "@/lib/email-templates";
 import { queueEmailRetry } from "@/lib/email-retry-queue";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import type { Prospect } from "@/lib/types";
+import {
+  getUpsellDefinition,
+  isUpsellSku,
+  type UpsellSku,
+} from "@/lib/upsells";
+import type { EmailTemplate } from "@/lib/email-templates";
 
 /**
  * POST /api/webhooks/stripe
@@ -64,13 +74,32 @@ export async function POST(request: NextRequest) {
       case "checkout.session.completed": {
         const session = event.data.object as {
           id: string;
-          metadata?: { prospectId?: string; businessName?: string; pricingTier?: string; paymentPlan?: string };
+          metadata?: {
+            prospectId?: string;
+            businessName?: string;
+            pricingTier?: string;
+            paymentPlan?: string;
+            sku?: string;
+            upsell?: string;
+          };
           customer?: string;
           customer_email?: string;
           amount_total?: number;
           subscription?: string;
           mode?: string;
         };
+
+        // ─── Upsell SKU sessions ───
+        // Productized add-ons (review_blast / extra_pages / gbp_setup /
+        // monthly_updates). Detected via `metadata.upsell === "true"` +
+        // `metadata.sku` set. Idempotent log into the `upsells` table,
+        // SKU-specific welcome email, SMS Ben. Crucially: short-circuit
+        // out of the rest of the handler so we DON'T trigger the $997
+        // welcome flow / deferred-mgmt-sub creation for an upsell.
+        if (session.metadata?.upsell === "true" && session.metadata?.sku) {
+          await handleUpsellSession(session);
+          break;
+        }
 
         // Installment-plan checkouts: cap the subscription at 3 payments by
         // patching `cancel_at` ~92 days out. checkout.sessions.create doesn't
@@ -846,4 +875,138 @@ bluejaycontactme@gmail.com`,
     costUsd: COST_RATES.sendgrid_email,
     metadata: { businessName, clientEmail, type: "abandoned_checkout" },
   });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// UPSELL SKU HANDLING
+//
+// Fires on `checkout.session.completed` events whose metadata carries
+// `upsell=true` + `sku=<one-of-four>`. Logs a row in the `upsells` table
+// (idempotent via UNIQUE(stripe_session_id)), sends the SKU-specific
+// welcome email, and SMSes Ben. Doesn't touch the existing $997/mgmt-sub
+// flows — those branches are short-circuited up in the main handler.
+// ═══════════════════════════════════════════════════════════════
+
+interface UpsellSessionShape {
+  id: string;
+  metadata?: {
+    prospectId?: string;
+    businessName?: string;
+    sku?: string;
+    upsell?: string;
+  };
+  customer?: string;
+  customer_email?: string;
+  amount_total?: number;
+  subscription?: string;
+  mode?: string;
+}
+
+async function handleUpsellSession(session: UpsellSessionShape): Promise<void> {
+  const prospectId = session.metadata?.prospectId;
+  const skuRaw = session.metadata?.sku;
+  const businessName = session.metadata?.businessName || "Unknown";
+
+  if (!prospectId || !skuRaw || !isUpsellSku(skuRaw)) {
+    console.error(
+      `[Stripe Webhook] Upsell session ${session.id} missing prospectId/sku — metadata:`,
+      session.metadata,
+    );
+    return;
+  }
+  const sku: UpsellSku = skuRaw;
+
+  const prospect = await getProspect(prospectId);
+  if (!prospect) {
+    console.error(`[Stripe Webhook] Upsell session ${session.id}: prospect ${prospectId} not found`);
+    return;
+  }
+
+  const definition = getUpsellDefinition(sku);
+  const amountCents = session.amount_total ?? definition.priceCents;
+
+  // Idempotent insert into upsells table. UNIQUE(stripe_session_id) makes
+  // Stripe webhook retries safe — duplicate inserts just no-op.
+  if (isSupabaseConfigured()) {
+    try {
+      const { error } = await supabase.from("upsells").insert({
+        prospect_id: prospectId,
+        sku,
+        amount_cents: amountCents,
+        currency: "usd",
+        stripe_session_id: session.id,
+        stripe_subscription_id: session.subscription || null,
+        status: "paid",
+        metadata: {
+          businessName,
+          stripeCustomerId: session.customer || null,
+          mode: session.mode || definition.mode,
+        },
+      });
+      if (error && !/duplicate key|unique constraint/i.test(error.message)) {
+        console.error(`[Stripe Webhook] Failed to insert upsells row for ${prospectId}:`, error);
+      } else if (!error) {
+        console.log(
+          `[Stripe Webhook] Logged upsell row: ${businessName} sku=${sku} amount=${amountCents}c session=${session.id}`,
+        );
+      }
+    } catch (insertErr) {
+      console.error(`[Stripe Webhook] upsells insert errored for ${prospectId}:`, insertErr);
+    }
+  }
+
+  // SKU-specific welcome email — payload mirrors the post-purchase welcome
+  // email idempotency pattern (queue retry on send failure). Idempotency
+  // here piggybacks on UNIQUE(stripe_session_id) for the row + the natural
+  // dedup of "Ben sent this email manually first" → re-send is harmless.
+  const customerEmail = session.customer_email || prospect.email;
+  if (customerEmail) {
+    const template = pickUpsellWelcomeTemplate(sku, prospect);
+    try {
+      await sendEmail(prospect.id, customerEmail, template.subject, template.body, template.sequence);
+      console.log(
+        `[Stripe Webhook] Upsell welcome email sent to ${customerEmail} (${businessName}, sku=${sku})`,
+      );
+    } catch (err) {
+      const errMsg = err instanceof Error ? err.message : String(err);
+      console.error(`[Stripe Webhook] Failed to send upsell welcome to ${customerEmail}:`, err);
+      await queueEmailRetry({
+        prospectId: prospect.id,
+        emailType: `upsell_${sku}`,
+        payload: {
+          to: customerEmail,
+          subject: template.subject,
+          body: template.body,
+          sequence: template.sequence,
+        },
+        initialError: errMsg,
+      }).catch(() => {});
+    }
+  } else {
+    console.warn(
+      `[Stripe Webhook] No email on file for upsell ${sku} on ${businessName} (${prospect.id})`,
+    );
+  }
+
+  // SMS Ben — short and cash-positive. Uses the existing alert helper so
+  // the message lands in the same channel as the $997 paid alerts.
+  const amountUsd = (amountCents / 100).toFixed(amountCents % 100 === 0 ? 0 : 2);
+  await sendOwnerAlert(
+    `${businessName} just bought ${definition.displayName} — $${amountUsd}`,
+  ).catch((err) => {
+    console.error("[Stripe Webhook] Failed to SMS Ben on upsell purchase:", err);
+  });
+}
+
+function pickUpsellWelcomeTemplate(sku: UpsellSku, prospect: Prospect): EmailTemplate {
+  switch (sku) {
+    case "review_blast":
+      return getReviewBlastWelcomeEmail(prospect);
+    case "extra_pages":
+      return getExtraPagesWelcomeEmail(prospect);
+    case "gbp_setup":
+      return getGbpSetupWelcomeEmail(prospect);
+    case "monthly_updates":
+      return getMonthlyUpdatesWelcomeEmail(prospect);
+  }
 }

@@ -3671,6 +3671,229 @@ manual review (no rejections in 7 days) AND after the AI responder
 prompt has been re-tuned with rejection-reason signal. Until then
 treat the panel as the daily must-clear inbox.
 
+## Upsell SKUs (NON-NEGOTIABLE — added 2026-04-24)
+
+Wave-2 LTV protection. Four productized add-ons that turn each $997
+customer into a $1,000–$1,400/yr customer with no new sales motion. At
+15% take-rate × 100 customers ≈ $6K/yr added revenue per SKU. Deep
+retention review #4 + #13 identified this as the difference between a
+$100K lifestyle business and a $300K machine.
+
+### The 4 SKUs
+
+| SKU (internal)     | Display                       | Price            | What it includes |
+|---|---|---|---|
+| `review_blast`     | Review Request Blast          | $99 one-time     | Send 50 review-request SMS to past customers in 24 hrs (avg 10–15 new 5-star reviews). |
+| `extra_pages`      | Add 5 Extra Pages             | $400 one-time    | 5 additional pages (services, FAQ, gallery, blog, case studies — customer's choice). Live in 48 hrs. |
+| `gbp_setup`        | Google Business Profile Setup | $150 one-time    | Claim, optimize, post-schedule the prospect's GBP. Includes 5 weekly posts pre-scheduled. |
+| `monthly_updates`  | Monthly Content Updates       | $50/mo subscription | Once-a-month site refresh — photos, copy tweaks, seasonal banners, special offers. Cancel anytime. |
+
+Single source of truth: `src/lib/upsells.ts` (`UPSELL_CATALOG`). Every
+SKU's price + display name + Stripe mode + welcome email is wired
+through this map. Adding/changing a SKU means editing this one file +
+the matching welcome email helper in `email-templates.ts`.
+
+### Stripe Products + Price IDs
+
+Ben must (one-time, in production):
+1. Create 4 Stripe Products at https://dashboard.stripe.com/products with
+   prices matching the table above. Three are one-time `payment` mode,
+   `monthly_updates` is a `recurring/month` subscription mode.
+2. Set the Price IDs as Vercel env vars:
+   ```
+   STRIPE_PRICE_REVIEW_BLAST=price_xxx
+   STRIPE_PRICE_EXTRA_PAGES=price_xxx
+   STRIPE_PRICE_GBP_SETUP=price_xxx
+   STRIPE_PRICE_MONTHLY_UPDATES=price_xxx
+   ```
+3. **Until env vars are set, the upsell flow uses inline `price_data`** —
+   Stripe accepts ad-hoc prices and the system works in mock-mode
+   immediately on first deploy. Same fallback pattern as
+   `STRIPE_PRICE_CUSTOM_ID`. The env vars are a polish step (cleaner
+   Stripe reporting, single Product per SKU), not a blocker.
+
+### Endpoints
+
+- **`POST /api/checkout/upsell`** — public. Body
+  `{ prospectId, sku, successUrl?, cancelUrl? }`. Verifies the prospect
+  exists AND `prospect.status === "paid"`, resolves SKU → Stripe Price
+  ID (env var first, inline fallback), creates a Checkout Session, and
+  returns `{ url }`. Mock-mode safe (returns mock URL when
+  `STRIPE_SECRET_KEY` missing).
+- **`GET /api/upsells/[prospectId]`** — operator-only. Lists every
+  upsell row for the prospect, sorted newest-first. Used by the
+  ProspectDetail dashboard panel.
+- **`POST /api/upsells/[upsellId]/fulfill`** — operator-only.
+  Sets `status='fulfilled'` + `fulfilled_at=now()`. Idempotent.
+- **`POST /api/webhooks/stripe`** *(extended)* — `checkout.session.completed`
+  events with `metadata.upsell === "true"` short-circuit out of the
+  $997/mgmt-sub flow and route into `handleUpsellSession()`: insert into
+  `upsells` table (idempotent via UNIQUE(stripe_session_id)), send the
+  SKU-specific welcome email (with retry-queue fallback), SMS Ben.
+
+### Database
+
+Migration `supabase/migrations/20260424_upsells.sql` adds the `upsells`
+table with `prospect_id`, `sku`, `amount_cents`, `currency`,
+`stripe_session_id` (UNIQUE), `stripe_subscription_id`, `status`
+('paid' | 'fulfilled' | 'cancelled' | 'refunded'), `fulfilled_at`,
+`metadata` (JSONB), `created_at`, `updated_at`. Indexed by prospect,
+status, and sku.
+
+### Customer-facing surfaces
+
+- **`/upsells/[id]`** — public page. 4 SKU cards each with display name,
+  price, 1-paragraph description, "Buy Now" button. POSTs to
+  `/api/checkout/upsell` and redirects to Stripe Checkout. Shows the
+  prospect's current site URL in the header. Light theme, matches
+  `/claim/[id]`. Auth via UUID-as-secret.
+- **Welcome email** (`getWelcomeEmail`) — adds a small "Need more? See
+  add-ons → /upsells/[id]" footer.
+- **Handoff email** (`getHandoffEmail`) — same footer.
+- **Monthly report** (`getMonthlyReportEmail`) — adds 1-line contextual
+  upsell suggestion based on metrics: 0 reviews this month → suggests
+  Review Blast; 0 leads → suggests GBP Setup; otherwise → neutral
+  "browse add-ons" line.
+- **SKU-specific welcome emails** (`getReviewBlastWelcomeEmail`,
+  `getExtraPagesWelcomeEmail`, `getGbpSetupWelcomeEmail`,
+  `getMonthlyUpdatesWelcomeEmail`) — fire from the Stripe webhook on
+  successful upsell purchase. Each is ≤80 words, single link, follows
+  CLAUDE.md outreach email rules.
+
+### Operator dashboard
+
+`ProspectDetail` renders `<UpsellsSection prospectId={...} />` (only for
+`status === "paid"` prospects). Lists purchased SKUs with status badge,
+amount, purchased date, fulfilled date, and a "Mark fulfilled" button
+per row. Sortable by purchased date.
+
+### Fulfillment workflow
+
+1. Customer buys an upsell at `/upsells/[id]`.
+2. Webhook logs the row + sends the SKU-specific welcome email
+   (which spells out exactly what Ben needs from the customer to
+   deliver the SKU).
+3. Customer replies with the required artifact (CSV for review_blast,
+   page list for extra_pages, GBP admin for gbp_setup, monthly request
+   for monthly_updates).
+4. Ben does the work.
+5. Ben opens the prospect in the dashboard, hits "Mark fulfilled" on
+   the upsell row.
+
+### Rule 40 — Upsell-Inclusive Lifecycle Emails (NON-NEGOTIABLE)
+
+Every paid customer should see upsell paths in their lifecycle emails.
+Don't gate add-ons behind direct sales calls — they should be
+1-click-buyable. Specifically:
+
+- The welcome email and handoff email MUST link to `/upsells/[id]`.
+- The monthly report email MUST surface a contextual upsell suggestion
+  based on real metrics (0 reviews → review blast, 0 leads → GBP setup,
+  otherwise → neutral browse line).
+- New lifecycle emails added for paid customers (e.g. quarterly
+  check-ins, annual review) MUST follow the same pattern.
+- Never describe an upsell SKU using language that implies it's only
+  available via a sales call. Every SKU in `UPSELL_CATALOG` is
+  always-on and self-serve.
+
+### Rule 41 — 3-Step Onboarding Contract (NON-NEGOTIABLE — added 2026-04-24)
+
+The post-purchase onboarding form at `/onboarding/[id]` MUST be 3 steps,
+not a wall. The deep retention review identified the old single-page
+22-field form as the biggest gate between "paid" and "delivered" —
+sub-30% completion rate. The new contract:
+
+**Step 1 — Essentials (~3 min, 5 fields):**
+- Business name, phone, email, logo upload, brand colors (primary +
+  accent).
+- After "Save & Continue", `_onboardingStatus = "step1_complete"` lands
+  in `onboarding.form_data` and Ben SHOULD ALREADY be able to start
+  building. Step 1 is unblocking; everything else is improvement.
+- **The cron's Day-2 reminder fires when status is null OR
+  `step1_complete`** because step 1 alone is enough to start. Don't
+  upgrade Step 1's threshold — the whole point is the unblocking floor.
+
+**Step 2 — Content (~5-7 min, 8 fields):**
+- Services list (multi-line, prefilled from `scrapedData.services`),
+  about paragraph, tagline, hours, real photos (multi-file upload, up
+  to 10), 3 testimonials.
+- "Skip — I'll email you later" link MUST exist. Skipping advances the
+  UI to Step 3 without flipping server status to `step2_complete` —
+  the prospect is still on `step1_complete` from the server's POV so
+  Day-2/5/10 reminders continue if they don't return.
+
+**Step 3 — Preferences (~2 min, 5 fields):**
+- Theme, languages, special requests, domain preference, "anything
+  else?". Submit flips `_onboardingStatus = "completed"` and redirects
+  to `/welcome/[id]`.
+- "Skip — I'll email you later" on Step 3 means submit-with-blanks (it
+  still flips status to `completed` — better to land them on the
+  finish line with sparse preferences than have them bounce).
+
+**UX requirements:**
+- Progress bar at top showing "Step N of 3" with green checkmarks on
+  completed steps. Users can JUMP backward to any completed step (good
+  for editing Step 1 after they uploaded a wrong logo).
+- Each "Save & Continue" persists to Supabase BEFORE advancing the UI
+  step — so a tab close mid-step doesn't lose the data.
+- `localStorage` auto-save on every blur as a backup. Clears on final
+  submit so completed prospects don't see stale draft data on revisit.
+- All 3 steps are pre-filled from `getPrefillData(prospect)` (in
+  `src/lib/onboarding-prefill.ts`) so users edit existing values
+  rather than typing from scratch. Reduces field-blank fatigue.
+
+**Reminder cron (`/api/onboarding-reminders/process`) escalates:**
+- **30 min** post-purchase: first nudge (`getOnboardingReminderEmail`,
+  sequence 101). Existing behavior — preserved.
+- **Day 2** if status null OR `step1_complete`: escalating subject
+  ("Quick — need 5 min from you to start your site"),
+  `getOnboardingReminderDay2`, sequence 102.
+- **Day 5** if still incomplete: urgent + manual offer ("Stuck? Reply
+  and I'll handle the form for you"), `getOnboardingReminderDay5`,
+  sequence 103.
+- **Day 10** if still incomplete: SMS Ben directly via
+  `sendOwnerAlert()` so he can manually outreach. No email.
+
+The cron uses `prospects.onboarding_reminder_sent_at` as a "last
+reminder fired" marker. Stages 2/3 only fire if the previous reminder
+was at least 1-2 days ago — this stops the cron from rapid-firing
+multiple stages on a record that just barely crossed Day 5 / Day 10.
+
+**File uploads (logo + photos)** go through
+`/api/onboarding/upload/[id]` to the Supabase Storage bucket
+`client-uploads`. Path layout:
+`client-uploads/{prospectId}/{type}/{timestamp}-{filename}` where
+`type` is "logo" or "photos". Bucket is public-read, 10MB/file (5MB
+enforced for logos at the API layer), allowed MIMEs:
+jpeg/png/webp/svg+xml/gif. Auto-created idempotently on first upload
+via `ensureClientUploadsBucket()` — same pattern as
+`mapper-uploads`. Mock-mode safe: returns 503 if Supabase Storage
+isn't configured so the form can fall back to "we'll email you" UX.
+
+**Backwards compatibility:**
+- The `onboarding` table's `form_data` JSONB is a superset — old
+  single-page submissions with 22 fields stay queryable. The new form
+  writes the same column with fewer top-level keys + the new
+  `_onboardingStatus` marker. Old keys (`businessNameLegal`,
+  `domainRegistrar`, `currentHosting`, etc.) are no longer collected
+  but historical data remains intact.
+- The legacy POST shape (no `step` field) still works — it's treated
+  as a final submit, identical to Step 3.
+
+**Banned patterns:**
+- Don't add a wall-of-fields back. If you need a new piece of info,
+  fit it into one of the existing 3 steps OR wire it into a separate
+  upsell SKU / email-driven follow-up.
+- Don't gate the form behind login — paid prospects arrive via the
+  Stripe success URL with `?session_id=` and the form must work
+  unauthenticated.
+- Don't make Step 1 fields optional. Phone + email + business name
+  are the minimum viable info to start building; if any is blank, the
+  build can't begin.
+- Don't merge "Save & Continue" with "Submit" semantics. Steps 1-2
+  save partial; Step 3 submits final. Mixing them confuses the
+  reminder cron's status detection.
+
 ## Recurring vs Variable Cost Tracking (NON-NEGOTIABLE — added 2026-04-24)
 
 The cost-tracking system has two complementary halves. Both must stay
