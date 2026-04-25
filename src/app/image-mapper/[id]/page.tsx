@@ -596,16 +596,62 @@ export default function ImageMapDetailPage() {
 
   useEffect(() => {
     loadData();
-    // Load all prospects for next/prev navigation
+    // Load all prospects for next/prev navigation. Sort the list so the
+    // editor walks unfinished leads (oldest first) before any completed
+    // ones — same ordering as the /image-mapper list page. Without this
+    // the editor would step through prospects in the API's raw order,
+    // dropping the operator into completed leads they've already done.
     fetch("/api/prospects?limit=500", { credentials: "include" })
       .then(r => r.json())
-      .then(data => { if (data.prospects) setAllProspects(data.prospects.filter((p: { status: string }) => p.status !== "dismissed")); })
+      .then(data => {
+        if (!data.prospects) return;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const active = (data.prospects as any[]).filter((p) => p.status !== "dismissed");
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const getMapping = (p: any) =>
+          p.imageMapping || p.scrapedData?.imageMapping;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const isCompleted = (p: any) =>
+          getMapping(p)?.selectionStatus === "completed";
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const ts = (p: any) =>
+          new Date(p.createdAt || p.updatedAt || 0).getTime();
+        active.sort((a, b) => {
+          const aDone = isCompleted(a);
+          const bDone = isCompleted(b);
+          if (aDone !== bDone) return aDone ? 1 : -1;
+          return aDone ? ts(b) - ts(a) : ts(a) - ts(b);
+        });
+        setAllProspects(active);
+      })
       .catch(() => {});
   }, [loadData]);
 
+  // Walk the list AFTER currentIndex looking for the next non-completed
+  // lead. If everything past the current is done, fall back to the next
+  // item in the array so the operator can still navigate freely.
   const currentIndex = allProspects.findIndex(p => p.id === id);
-  const nextProspect = currentIndex >= 0 && currentIndex < allProspects.length - 1 ? allProspects[currentIndex + 1] : null;
-  const prevProspect = currentIndex > 0 ? allProspects[currentIndex - 1] : null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const isProspectCompleted = (p: any) => {
+    const m = p?.imageMapping || p?.scrapedData?.imageMapping;
+    return m?.selectionStatus === "completed";
+  };
+  const nextProspect = (() => {
+    if (currentIndex < 0 || currentIndex >= allProspects.length - 1) return null;
+    for (let i = currentIndex + 1; i < allProspects.length; i++) {
+      if (!isProspectCompleted(allProspects[i])) return allProspects[i];
+    }
+    // Everything after current is completed — fall through to the very
+    // next item so the button isn't dead.
+    return allProspects[currentIndex + 1] ?? null;
+  })();
+  const prevProspect = (() => {
+    if (currentIndex <= 0) return null;
+    for (let i = currentIndex - 1; i >= 0; i--) {
+      if (!isProspectCompleted(allProspects[i])) return allProspects[i];
+    }
+    return allProspects[currentIndex - 1] ?? null;
+  })();
 
   /* ─── Initialize category fallback slots ─── */
   const category = mapping?.category || prospect?.category || "general";
