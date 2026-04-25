@@ -1,6 +1,7 @@
 import type { Prospect } from "@/lib/types";
 import { CATEGORY_CONFIG } from "@/lib/types";
 import StatusBadge from "./StatusBadge";
+import DomainCard from "./DomainCard";
 import { useState, useEffect } from "react";
 
 interface EmailRecord {
@@ -227,6 +228,9 @@ export default function ProspectDetail({
               )}
             </div>
           </section>
+
+          {/* Domain & Hosting — buy/track real domain via Namecheap */}
+          <DomainCard prospectId={prospect.id} prospect={prospect} />
 
           {/* Scraped Services */}
           {prospect.scrapedData?.services &&

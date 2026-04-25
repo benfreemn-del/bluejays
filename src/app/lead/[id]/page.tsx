@@ -588,7 +588,7 @@ export default function LeadPage() {
           </div>
 
           {/* Domain & Hosting */}
-          <DomainCard prospect={prospect} onChange={loadData} />
+          <DomainCard prospectId={prospect.id} prospect={prospect} />
 
           {/* Quick Status */}
           <div className="p-4 rounded-xl bg-surface border border-border">
