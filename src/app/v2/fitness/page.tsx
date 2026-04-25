@@ -94,10 +94,10 @@ const MEMBERSHIP_TIERS = [
 
 const SCHEDULE: Record<string, { morning: string; afternoon: string; evening: string }> = {
   Monday: { morning: "HIIT — 6:00am — Coach Marcus", afternoon: "Yoga — 12:00pm — Lena", evening: "Strength — 6:30pm — Dre" },
-  Tuesday: { morning: "Spin — 6:00am — Priya", afternoon: "Boxing — 12:30pm — Dre", evening: "CrossFit — 6:30pm — Marcus" },
+  Tuesday: { morning: "Spin — 6:00am — Lily", afternoon: "Boxing — 12:30pm — Dre", evening: "CrossFit — 6:30pm — Marcus" },
   Wednesday: { morning: "Strength — 6:00am — Dre", afternoon: "Yoga — 12:00pm — Lena", evening: "HIIT — 6:30pm — Marcus" },
-  Thursday: { morning: "Boxing — 6:00am — Dre", afternoon: "Spin — 12:30pm — Priya", evening: "Yoga — 7:00pm — Lena" },
-  Friday: { morning: "CrossFit — 6:00am — Marcus", afternoon: "HIIT — 12:00pm — Priya", evening: "Strength — 6:00pm — Dre" },
+  Thursday: { morning: "Boxing — 6:00am — Dre", afternoon: "Spin — 12:30pm — Lily", evening: "Yoga — 7:00pm — Lena" },
+  Friday: { morning: "CrossFit — 6:00am — Marcus", afternoon: "HIIT — 12:00pm — Lily", evening: "Strength — 6:00pm — Dre" },
   Saturday: { morning: "Community WOD — 8:00am — All Coaches", afternoon: "Open Gym — 12:00pm", evening: "—" },
 };
 
@@ -117,8 +117,8 @@ const TRANSFORMATIONS = [
 ];
 
 const TRAINERS = [
-  { name: "Coach Dre Washington", specialty: "Strength & Powerlifting", cert: "CSCS, USA Weightlifting L2", years: 12, image: "https://images.unsplash.com/photo-1567013127542-490d757e51fc?w=400&h=500&fit=crop" },
-  { name: "Coach Priya Shah", specialty: "HIIT & Conditioning", cert: "NASM-CPT, CrossFit L2", years: 8, image: "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400&h=500&fit=crop" },
+  { name: "Coach Dre Tanaka", specialty: "Strength & Powerlifting", cert: "CSCS, USA Weightlifting L2", years: 12, image: "https://images.unsplash.com/photo-1567013127542-490d757e51fc?w=400&h=500&fit=crop" },
+  { name: "Coach Lily Bennett", specialty: "HIIT & Conditioning", cert: "NASM-CPT, CrossFit L2", years: 8, image: "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400&h=500&fit=crop" },
   { name: "Lena Kowalski", specialty: "Yoga & Mobility", cert: "RYT-500, FMS", years: 10, image: "https://images.unsplash.com/photo-1575052814086-f385e2e2ad1b?w=400&h=500&fit=crop" },
   { name: "Coach Dre Mitchell", specialty: "Boxing & Martial Arts", cert: "USA Boxing Coach, ACE-CPT", years: 14, image: "https://images.unsplash.com/photo-1517438322307-e67111335449?w=400&h=500&fit=crop" },
 ];
@@ -814,7 +814,7 @@ export default function IronAndOakFitness() {
               {
                 title: "Sauna & Recovery",
                 desc: "Infrared sauna, cold plunge, and foam rolling station. Recovery is half the battle.",
-                image: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=500&h=350&fit=crop",
+                image: "https://images.unsplash.com/photo-1583416750470-965b2707b355?w=500&h=350&fit=crop",
               },
             ].map((item) => (
               <GlassCard key={item.title}>
@@ -1078,8 +1078,8 @@ export default function IronAndOakFitness() {
             <GlassCard>
               <div className="rounded-xl overflow-hidden h-72 bg-white/[0.07]">
                 <img
-                  src="https://images.unsplash.com/photo-1460353581641-37baddab0fa2?w=800&h=500&fit=crop"
-                  alt="Iron & Oak Fitness location in Seattle Eastlake"
+                  src="https://images.unsplash.com/photo-1593079831268-3381b0db4a77?w=800&h=500&fit=crop"
+                  alt="Iron & Oak Fitness gym floor in Seattle Eastlake"
                   className="w-full h-full object-cover opacity-60"
                 />
               </div>

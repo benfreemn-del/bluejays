@@ -255,10 +255,10 @@ const skinQuizOptions = [
 ];
 
 const testimonials = [
-  { name: "Priya M.", text: "Dr. Kaur is a true artist. After my Juvederm treatment, I look like myself but 10 years younger. The results are so natural that my friends just think I look well-rested.", rating: 5, treatment: "Juvederm" },
+  { name: "Priya M.", text: "Dr. Reyes is a true artist. After my Juvederm treatment, I look like myself but 10 years younger. The results are so natural that my friends just think I look well-rested.", rating: 5, treatment: "Juvederm" },
   { name: "Chelsea W.", text: "I was terrified of Botox but the team at Radiance made me so comfortable. Zero pain, zero frozen look. I cannot stop smiling at my reflection. Absolute confidence boost.", rating: 5, treatment: "Botox" },
   { name: "Diana K.", text: "The CoolSculpting results blew my mind. I lost two inches off my waist without surgery or downtime. Worth every penny. I feel like a completely new woman.", rating: 5, treatment: "CoolSculpting" },
-  { name: "Anika T.", text: "After years of struggling with acne scarring, the microneedling sessions with Dr. Kaur have completely transformed my skin. My confidence is through the roof.", rating: 5, treatment: "Microneedling" },
+  { name: "Anika T.", text: "After years of struggling with acne scarring, the microneedling sessions with Dr. Reyes have completely transformed my skin. My confidence is through the roof.", rating: 5, treatment: "Microneedling" },
   { name: "Megan S.", text: "The HydraFacial at Radiance is unmatched. My skin literally glows for weeks after each session. I have tried every spa in Seattle and nothing compares.", rating: 5, treatment: "HydraFacial" },
 ];
 
@@ -299,12 +299,12 @@ const certifications = [
 ];
 
 const faqData = [
-  { q: "Is Botox safe? What are the side effects?", a: "Botox is FDA-approved and has an excellent safety profile when administered by qualified providers. Minor bruising or swelling may occur but resolves within days. Dr. Kaur has performed thousands of injections with a stellar safety record." },
-  { q: "How do I know which treatment is right for me?", a: "Every new client receives a complimentary skin analysis and consultation with Dr. Kaur. We assess your skin health, discuss your goals, and create a personalized treatment plan tailored to your unique needs and timeline." },
+  { q: "Is Botox safe? What are the side effects?", a: "Botox is FDA-approved and has an excellent safety profile when administered by qualified providers. Minor bruising or swelling may occur but resolves within days. Dr. Reyes has performed thousands of injections with a stellar safety record." },
+  { q: "How do I know which treatment is right for me?", a: "Every new client receives a complimentary skin analysis and consultation with Dr. Reyes. We assess your skin health, discuss your goals, and create a personalized treatment plan tailored to your unique needs and timeline." },
   { q: "How long do results from fillers last?", a: "Results vary by product and treatment area. Juvederm Voluma can last up to 2 years in cheeks, while lip fillers typically last 6-12 months. We schedule follow-up appointments to maintain your optimal results." },
   { q: "Is there downtime after laser treatments?", a: "Downtime depends on treatment intensity. IPL photofacials have minimal downtime, while ablative laser resurfacing may require 5-7 days of healing. We provide detailed aftercare instructions for every procedure." },
   { q: "Do you offer financing or payment plans?", a: "Yes. We partner with Cherry and CareCredit to offer affordable monthly payment plans. We also offer treatment packages at discounted rates for multi-session protocols. Ask about our Radiance Rewards membership." },
-  { q: "What makes Radiance Med Spa different?", a: "Dr. Kaur is a board-certified dermatologist with 16 years of experience and a Yale Medical School education. We combine clinical expertise with a luxury spa environment, using only premium medical-grade products and the latest technology." },
+  { q: "What makes Radiance Med Spa different?", a: "Dr. Reyes is a board-certified dermatologist with 16 years of experience and a Yale Medical School education. We combine clinical expertise with a luxury spa environment, using only premium medical-grade products and the latest technology." },
 ];
 
 const pricingTiers = [
@@ -318,8 +318,8 @@ const galleryImages = [
   "https://images.unsplash.com/photo-1552693673-1bf958298935?w=600&q=80",
   "https://plus.unsplash.com/premium_photo-1681873744238-768e84e2dbfa?w=600&q=80",
   "https://plus.unsplash.com/premium_photo-1681873744075-cb398a509f51?w=600&q=80",
-  "https://images.unsplash.com/photo-1631310665125-b07e024f408d?w=600&q=80",
-  "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=600&q=80",
+  "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=600&q=80",
+  "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=600&q=80",
 ];
 
 /* ═══════════════════════════════════════════════════════════════
@@ -422,7 +422,7 @@ export default function V2MedSpaPage() {
             <WordReveal text="Your Best Skin Starts Here" />
           </h1>
           <p className="text-lg md:text-xl text-slate-400 max-w-2xl mb-8">
-            <WordReveal text="Board-certified dermatologist Dr. Priya Kaur combines 16 years of medical expertise with luxury aesthetics for results you can see and feel." className="gap-x-2" />
+            <WordReveal text="Board-certified dermatologist Dr. Sofia Reyes combines 16 years of medical expertise with luxury aesthetics for results you can see and feel." className="gap-x-2" />
           </p>
           <motion.div className="flex flex-wrap justify-center gap-4 mb-8" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 1.2 }}>
             <MagneticButton className="px-10 py-4 rounded-full text-base font-semibold text-white inline-flex items-center gap-2 cursor-pointer" style={{ background: BLUSH } as React.CSSProperties}>
@@ -549,7 +549,7 @@ export default function V2MedSpaPage() {
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <motion.div className="aspect-[3/4] rounded-2xl overflow-hidden relative" initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={spring}>
-              <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=800&q=80" alt="Dr. Priya Kaur, MD" className="w-full h-full object-cover object-top" />
+              <img src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=800&q=80" alt="Dr. Sofia Reyes, MD" className="w-full h-full object-cover object-top" />
               <div className="absolute bottom-0 left-0 right-0 p-6" style={{ background: `linear-gradient(to top, ${BG}, transparent)` }}>
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold" style={{ background: GOLD_GLOW, color: GOLD, border: `1px solid ${GOLD}30` }}>
                   <Stethoscope size={12} weight="fill" /> Board-Certified Dermatologist
@@ -559,11 +559,11 @@ export default function V2MedSpaPage() {
             <div>
               <p className="text-sm uppercase tracking-widest mb-3" style={{ color: BLUSH }}>Meet Your Provider</p>
               <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white mb-2" style={{ fontFamily: "'Georgia', serif" }}>
-                <WordReveal text="Dr. Priya Kaur, MD" />
+                <WordReveal text="Dr. Sofia Reyes, MD" />
               </h2>
               <p className="text-sm mb-6" style={{ color: GOLD }}>Board-Certified Dermatologist | Yale Medical School | 16 Years Experience</p>
               <p className="text-slate-400 leading-relaxed mb-4">
-                Dr. Priya Kaur founded Radiance Med Spa in Seattle with a singular vision: to merge the precision of medical science with the artistry of aesthetic beauty. A graduate of Yale Medical School with 16 years of clinical dermatology experience, Dr. Kaur brings a level of expertise that sets Radiance apart from every other med spa in the Pacific Northwest.
+                Dr. Sofia Reyes founded Radiance Med Spa in Seattle with a singular vision: to merge the precision of medical science with the artistry of aesthetic beauty. A graduate of Yale Medical School with 16 years of clinical dermatology experience, Dr. Reyes brings a level of expertise that sets Radiance apart from every other med spa in the Pacific Northwest.
               </p>
               <p className="text-slate-400 leading-relaxed mb-8">
                 Her philosophy is simple: enhance your natural beauty, never mask it. Every treatment plan is crafted individually, drawing on advanced techniques and premium products to deliver results that are elegant, subtle, and unmistakably you. Under her leadership, Radiance has earned over 500 five-star reviews and a reputation as the most trusted name in Seattle aesthetics.
@@ -576,7 +576,7 @@ export default function V2MedSpaPage() {
                 ))}
               </div>
               <MagneticButton className="px-8 py-3 rounded-full text-base font-semibold text-white inline-flex items-center gap-2 cursor-pointer" style={{ background: BLUSH } as React.CSSProperties}>
-                Book with Dr. Kaur <ArrowRight size={18} />
+                Book with Dr. Reyes <ArrowRight size={18} />
               </MagneticButton>
             </div>
           </div>
@@ -772,7 +772,7 @@ export default function V2MedSpaPage() {
       <SectionReveal className="relative z-10 py-16 md:py-24" style={{ background: `linear-gradient(180deg, transparent 0%, ${BG_CARD} 15%, ${BG_CARD} 85%, transparent 100%)` } as React.CSSProperties}>
         <div className="mx-auto max-w-5xl px-4 md:px-6">
           <div className="relative rounded-2xl overflow-hidden aspect-video group cursor-pointer">
-            <img src="https://images.unsplash.com/photo-1600334129128-685c5582fd35?w=1200&q=80" alt="Radiance Med Spa treatment room" className="w-full h-full object-cover" />
+            <img src="https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=1200&q=80" alt="Radiance Med Spa aesthetic treatment in progress" className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors flex items-center justify-center">
               <motion.div
                 className="w-20 h-20 rounded-full flex items-center justify-center"
@@ -826,7 +826,7 @@ export default function V2MedSpaPage() {
           </div>
           <motion.div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-50px" }}>
             {[
-              { title: "Consultation", desc: "Complimentary skin analysis with Dr. Kaur to understand your goals and craft a personalized plan.", icon: Handshake },
+              { title: "Consultation", desc: "Complimentary skin analysis with Dr. Reyes to understand your goals and craft a personalized plan.", icon: Handshake },
               { title: "Treatment", desc: "Relax in our luxury suite as our expert team performs your chosen treatment with precision and care.", icon: Sparkle },
               { title: "Aftercare", desc: "Detailed post-treatment instructions and a medical-grade skincare kit to optimize your results.", icon: Heart },
               { title: "Follow-Up", desc: "Scheduled check-in to assess results, refine your plan, and ensure your complete satisfaction.", icon: CalendarCheck },
@@ -917,7 +917,7 @@ export default function V2MedSpaPage() {
                 {[
                   { icon: Heart, title: "Gentle Techniques", desc: "Advanced numbing and comfort protocols so you feel relaxed through every procedure." },
                   { icon: FlowerLotus, title: "Spa-Like Environment", desc: "Soft lighting, calming music, and aromatherapy in every treatment suite." },
-                  { icon: ShieldCheck, title: "Medical Supervision", desc: "Every treatment overseen by Dr. Kaur, a board-certified dermatologist." },
+                  { icon: ShieldCheck, title: "Medical Supervision", desc: "Every treatment overseen by Dr. Reyes, a board-certified dermatologist." },
                   { icon: Sparkle, title: "Premium Products Only", desc: "We never compromise. Only FDA-approved, medical-grade products are used." },
                 ].map((item, i) => (
                   <motion.div key={i} variants={fadeUp} className="flex items-start gap-3">
@@ -1086,7 +1086,7 @@ export default function V2MedSpaPage() {
               <motion.div initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={spring}>
                 <FlowerLotus size={48} weight="duotone" className="mx-auto mb-4" style={{ color: BLUSH }} />
                 <h2 className="text-4xl md:text-5xl tracking-tighter leading-none font-bold text-white mb-4" style={{ fontFamily: "'Georgia', serif" }}>Ready for Your Best Skin?</h2>
-                <p className="text-slate-400 text-lg mb-8 max-w-lg mx-auto">Schedule your complimentary consultation with Dr. Kaur and discover a personalized plan designed just for you.</p>
+                <p className="text-slate-400 text-lg mb-8 max-w-lg mx-auto">Schedule your complimentary consultation with Dr. Reyes and discover a personalized plan designed just for you.</p>
                 <div className="flex flex-wrap justify-center gap-4">
                   <MagneticButton className="px-10 py-4 rounded-full text-base font-semibold text-white inline-flex items-center gap-2 cursor-pointer" style={{ background: BLUSH } as React.CSSProperties}>
                     <CalendarCheck size={20} weight="duotone" /> Book Free Consultation

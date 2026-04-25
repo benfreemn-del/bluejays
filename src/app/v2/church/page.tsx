@@ -84,8 +84,8 @@ const events = [
 ];
 
 const sermons = [
-  { title: "Finding Peace in the Storm", speaker: "Pastor David Kim", date: "Apr 6, 2026", series: "Anchored", img: "https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=600&q=80" },
-  { title: "Love Your Neighbor", speaker: "Rachel Kim", date: "Mar 30, 2026", series: "Better Together", img: "https://images.unsplash.com/photo-1445445290350-18a3b86e0b5a?w=600&q=80" },
+  { title: "Finding Peace in the Storm", speaker: "Pastor Rachel Bennett", date: "Apr 6, 2026", series: "Anchored", img: "https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=600&q=80" },
+  { title: "Love Your Neighbor", speaker: "Pastor Rachel Bennett", date: "Mar 30, 2026", series: "Better Together", img: "https://images.unsplash.com/photo-1445445290350-18a3b86e0b5a?w=600&q=80" },
   { title: "Faith Over Fear", speaker: "Guest Speaker", date: "Mar 23, 2026", series: "Anchored", img: "https://images.unsplash.com/photo-1507692049790-de58290a4334?w=600&q=80" },
 ];
 
@@ -354,7 +354,7 @@ export default function ChurchShowcase() {
                   We believe that church should feel less like an obligation and more like coming home.
                 </p>
                 <p>
-                  Founded in 2014 by Pastor David and Rachel Kim, Grace started as a living-room gathering of 12 people
+                  Founded in 2014 by Pastor Rachel Bennett, Grace started as a living-room gathering of 12 people
                   with a simple dream: create a space where anyone, regardless of background, could experience authentic
                   community and encounter the love of God.
                 </p>
@@ -534,22 +534,22 @@ export default function ChurchShowcase() {
               <div className="relative aspect-[4/3] lg:aspect-auto">
                 <img
                   src="https://images.unsplash.com/photo-1543269664-56d93c1b41a6?w=800&q=80"
-                  alt="Pastor David and Rachel Kim"
+                  alt="Pastor Rachel Bennett"
                   className="w-full h-full object-cover object-top"
                 />
               </div>
               <div className="p-8 md:p-12 flex flex-col justify-center">
-                <h3 className="text-2xl md:text-3xl font-bold mb-2" style={{ color: DARK }}>Pastor David & Rachel Kim</h3>
-                <p className="text-sm font-medium mb-6" style={{ color: AMBER }}>Lead Pastors</p>
+                <h3 className="text-2xl md:text-3xl font-bold mb-2" style={{ color: DARK }}>Pastor Rachel Bennett</h3>
+                <p className="text-sm font-medium mb-6" style={{ color: AMBER }}>Lead Pastor</p>
                 <div className="space-y-4 text-base leading-relaxed" style={{ color: BODY }}>
                   <p>
-                    David and Rachel met at Dallas Theological Seminary, married 22 years ago, and
-                    have three kids who keep life interesting. In 2014, they packed up their Texas
-                    lives and moved to Seattle with a wild idea: plant a church that felt like family.
+                    Rachel graduated from Dallas Theological Seminary and spent a decade in Texas
+                    ministry before moving to Seattle in 2014 with a wild idea: plant a church that
+                    felt like family.
                   </p>
                   <p>
-                    David preaches with warmth and humor. Rachel leads worship and the women&apos;s ministry.
-                    Together, they set the tone for everything Grace is: honest, joyful, and unapologetically
+                    She preaches with warmth and humor, leads worship on Sunday mornings, and sets
+                    the tone for everything Grace is: honest, joyful, and unapologetically
                     welcoming.
                   </p>
                 </div>
