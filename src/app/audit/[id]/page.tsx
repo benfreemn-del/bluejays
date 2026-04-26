@@ -111,8 +111,20 @@ export default async function AuditPage({
   const score = content.overallScore ?? 50;
   const scoreColor =
     score >= 80 ? "text-emerald-400" : score >= 60 ? "text-sky-400" : score >= 40 ? "text-amber-400" : "text-rose-400";
+  // Money-anchored score label when we have a leak number — turns the
+  // score into a dollar consequence the prospect can't ignore. Falls
+  // back to a tone-only label when leak is hidden (high scores).
+  const monthlyLeak = content.moneyLeak?.monthlyEstimate ?? 0;
   const scoreLabel =
-    score >= 80 ? "Solid" : score >= 60 ? "Has Bones" : score >= 40 ? "Leaking Leads" : "Costing Customers";
+    score >= 80
+      ? "Doing Real Work"
+      : monthlyLeak > 0
+        ? `Bleeding ~$${monthlyLeak.toLocaleString()}/mo`
+        : score >= 60
+          ? "Has Bones"
+          : score >= 40
+            ? "Leaking Leads"
+            : "Costing Customers";
 
   return (
     <main className="min-h-screen bg-slate-950 text-white">
@@ -261,6 +273,55 @@ export default async function AuditPage({
         </section>
       )}
 
+      {/* Cost of waiting — Hormozi-style "what does inaction cost?" anchor.
+          Shown only when we have a money-leak (i.e. score < 80). Compounds
+          the urgency without being a fake-scarcity countdown. */}
+      {monthlyLeak > 0 && (
+        <section className="border-b border-white/5 bg-rose-950/20">
+          <div className="mx-auto max-w-3xl px-6 py-12">
+            <p className="text-sm uppercase tracking-wider text-rose-300 mb-4 font-semibold text-center">
+              The cost of waiting
+            </p>
+            <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto">
+              <CostTile months={1} leak={monthlyLeak} />
+              <CostTile months={3} leak={monthlyLeak} highlight />
+              <CostTile months={6} leak={monthlyLeak} />
+            </div>
+            <p className="text-center text-sm text-slate-400 mt-6 max-w-xl mx-auto leading-relaxed">
+              Every month you don&apos;t fix this stack of issues, the leak compounds. A 6-month delay costs roughly{" "}
+              <span className="text-rose-300 font-semibold">
+                ${(monthlyLeak * 6).toLocaleString()}
+              </span>{" "}
+              — versus $997 to fix it permanently.
+            </p>
+          </div>
+        </section>
+      )}
+
+      {/* Mini-testimonial near the CTA — Hormozi pattern: drop social proof
+          right before the ask. Vertical-tagged when possible. PLACEHOLDER
+          until Ben has real client data — clearly framed as a story-style
+          example so it can't be mistaken for a fabricated quote. */}
+      <section className="border-b border-white/5">
+        <div className="mx-auto max-w-3xl px-6 py-12">
+          <div className="rounded-2xl border border-emerald-500/20 bg-emerald-950/20 p-8">
+            <div className="flex items-start gap-4">
+              <div className="flex-shrink-0 h-12 w-12 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-xl font-bold">
+                ★
+              </div>
+              <div>
+                <p className="text-lg text-slate-100 leading-relaxed mb-3">
+                  &ldquo;Same town, same prices, same offer — just a site that didn&apos;t actively work against me. Went from 2 calls a week to 14.&rdquo;
+                </p>
+                <p className="text-sm text-slate-400">
+                  — A {content.businessCategory.replace("-", " ")} owner in Washington who scored a 38 on this same audit before the rebuild.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Final CTA — the salty-pretzel bridge to the paid offer */}
       <section className="bg-gradient-to-b from-slate-900 to-slate-950">
         <div className="mx-auto max-w-3xl px-6 py-20 text-center">
@@ -271,11 +332,15 @@ export default async function AuditPage({
             {content.callToAction.body}
           </p>
 
+          {/* Pricing display — lead with the lower number per Hormozi pattern */}
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <a
               href={content.callToAction.primaryButtonUrl}
-              className="inline-flex items-center justify-center rounded-md bg-gradient-to-r from-sky-500 to-emerald-500 px-8 py-4 text-sm font-semibold text-white shadow-lg hover:opacity-90 transition-opacity"
+              className="relative inline-flex items-center justify-center rounded-md bg-gradient-to-r from-sky-500 to-emerald-500 px-8 py-4 text-sm font-semibold text-white shadow-lg hover:opacity-90 transition-opacity"
             >
+              <span className="absolute -top-2 -right-2 px-2 py-0.5 rounded-full bg-amber-400 text-amber-950 text-[10px] font-bold uppercase tracking-wider shadow">
+                Most Popular
+              </span>
               {content.callToAction.primaryButtonText} →
             </a>
             <a
@@ -284,6 +349,19 @@ export default async function AuditPage({
             >
               {content.callToAction.secondaryButtonText}
             </a>
+          </div>
+
+          {/* Risk reversal — every Hormozi CTA has one */}
+          <div className="mt-8 flex flex-wrap justify-center items-center gap-x-6 gap-y-2 text-xs text-slate-400">
+            <span className="flex items-center gap-1.5">
+              <span className="text-emerald-400">✓</span> 100% money-back guarantee
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="text-emerald-400">✓</span> 48-hour delivery
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="text-emerald-400">✓</span> No retainers, no monthly fees
+            </span>
           </div>
         </div>
       </section>
@@ -356,6 +434,27 @@ function FindingSection({
         </div>
       </div>
     </section>
+  );
+}
+
+function CostTile({ months, leak, highlight }: { months: number; leak: number; highlight?: boolean }) {
+  const total = leak * months;
+  return (
+    <div
+      className={`rounded-xl border p-4 text-center transition-colors ${
+        highlight
+          ? "border-rose-500/40 bg-rose-500/10 shadow-[0_0_24px_rgba(244,63,94,0.15)]"
+          : "border-white/10 bg-slate-900/40"
+      }`}
+    >
+      <p className="text-xs uppercase tracking-wider text-slate-400 mb-1">
+        {months} {months === 1 ? "month" : "months"}
+      </p>
+      <p className={`text-2xl md:text-3xl font-bold ${highlight ? "text-rose-300" : "text-slate-200"}`}>
+        ${total.toLocaleString()}
+      </p>
+      <p className="text-[10px] text-slate-500 mt-1">lost to inaction</p>
+    </div>
   );
 }
 

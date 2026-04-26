@@ -608,6 +608,7 @@ Return STRICT JSON ONLY:
 Generate 4-6 findings total. STRICT GUIDELINES:
 - 1-2 must be severity="critical" or "high" if the site is below 70 score
 - 1-2 should be severity="low" — these are STRENGTHS the site is doing right (NOT problems). Frame the title celebratively ("Your meta description nails it").
+- ABSOLUTE RULE: if your title or observation reads CELEBRATORY ("Great job", "Good", "Solid", "All X have Y", "Your X is dialed in", "Working well", anything positive) → severity MUST be "low". No exceptions. A celebratory finding tagged 'medium' or 'high' is a bug.
 - Skip generic SEO advice that any tool could give. Focus on what's losing them CUSTOMERS.
 - Never say "improve", "optimize", "enhance" — say what to do instead.
 - If category-specific patterns apply (dental: online booking, electrician: license number, salon: book online, etc.), call them out by name.
@@ -646,6 +647,11 @@ Return JSON:
 }
 
 Generate 2-3 findings per category (6-9 total max). Reference actual numbers ("18 chars" not "short title"). NO Lighthouse-speak. Frame each fix in plain English with a one-line "what good looks like" anchor.
+
+ABSOLUTE RULE: if your title or observation reads CELEBRATORY ("Great job", "Good", "Solid", "All X have Y", "Working well", anything positive) → severity MUST be "low". No exceptions. A celebratory finding tagged 'medium' or 'high' is a bug. Examples:
+- "All Images Have Alt Text" → severity:"low" (this is a strength)
+- "Viewport Meta Tag Is Present" → severity:"low" (strength)
+- "You Have a Favicon Set" → severity:"low" (strength)
 
 JSON only.`;
 }
@@ -720,21 +726,24 @@ function synthesizeAudit(args: {
     strengths.push(`${businessName} has a working website — that puts you ahead of plenty of competitors who don't.`);
   }
 
-  // One-line summary tuned to score
+  // One-line summary — Hormozi-tone, money-anchored when we have a leak number.
+  const leakStr = moneyLeak.monthlyEstimate > 0
+    ? `~${"$"}${moneyLeak.monthlyEstimate.toLocaleString()}/month in lost customers`
+    : "real money on the table";
   const oneLineSummary =
     overallScore >= 80
-      ? `${businessName}'s site is solid — but a few high-impact tweaks could materially lift conversions.`
+      ? `${businessName}'s site is doing real work. A few high-impact tweaks below could squeeze even more out of it.`
       : overallScore >= 60
-        ? `${businessName}'s site has the bones right but is leaving real money on the table.`
+        ? `${businessName}'s site has the bones right but is leaving ${leakStr}. Every issue below is fixable.`
         : overallScore >= 40
-          ? `${businessName}'s current site is hurting your conversions more than helping. The good news: every issue we found is fixable.`
-          : `${businessName}'s current site is actively costing you customers. We'd recommend a full rebuild before another marketing dollar gets spent.`;
+          ? `${businessName}'s current site is actively costing you customers — likely ${leakStr}. Every. Single. Day. Good news: we can fix this.`
+          : `${businessName}'s current site is bleeding customers — likely ${leakStr}. We'd recommend a full rebuild before another marketing dollar gets spent.`;
 
   return {
     url,
     businessCategory,
     generatedAt: new Date().toISOString(),
-    promptVersion: 2, // v2 = Hormozi-tone refactor (2026-04-26): plain-English, cost-anchored prompts, money-leak estimate, fixed strength leak into roadmap, less aggressive Rebuild labeling
+    promptVersion: 3, // v3 = Hormozi adversarial pass (2026-04-26): money-anchored score label, sharper one-liner with leak figure, dual-pricing CTA (3×$349 + $997), cost-of-waiting tiles, mini-testimonial, risk-reversal badges, celebratory→severity-low rule enforced in both prompts
     overallScore,
     oneLineSummary,
     heroAnalysis: {
@@ -769,11 +778,11 @@ function synthesizeAudit(args: {
     strengths,
     callToAction: {
       headline: "Good ideas alone don't fix funnels. Execution does.",
-      body: `You now have ${prioritizedRoadmap.length} prioritized fixes for ${businessName}. The catch: most small businesses don't ship them — they get stuck on which to do first, how to test, and how to actually execute. We'll rebuild your site to fix all of these in 48 hours for $997. No retainers, no monthly fees.`,
-      primaryButtonText: "Rebuild My Site — $997",
-      primaryButtonUrl: "https://bluejayportfolio.com/contact?source=audit",
-      secondaryButtonText: "Book a 15-min walkthrough",
-      secondaryButtonUrl: "https://bluejayportfolio.com/book?source=audit",
+      body: `You now have ${prioritizedRoadmap.length} prioritized fixes for ${businessName}. Most small businesses see this list and do nothing for 6 months — losing tens of thousands in the meantime. We'll rebuild your site to fix all of these in 48 hours. Most agencies charge $5,000-$15,000 for this. We do it for $997 (or 3 monthly payments of $349). No retainers. No monthly fees. 100% money-back if you don't love it.`,
+      primaryButtonText: "Start with 3 × $349",
+      primaryButtonUrl: "https://bluejayportfolio.com/contact?source=audit&plan=installment",
+      secondaryButtonText: "Or $997 once",
+      secondaryButtonUrl: "https://bluejayportfolio.com/contact?source=audit&plan=full",
     },
     cost: {
       totalUsd: 0, // populated by caller
