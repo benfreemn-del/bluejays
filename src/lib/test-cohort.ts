@@ -21,6 +21,104 @@ import { supabase, isSupabaseConfigured } from "./supabase";
 
 export const WAVE1_COHORT_ID = "wave1-2026-04-25";
 
+/**
+ * Per CLAUDE.md Rule 14, bulk-send selection MUST filter out garbage
+ * email addresses BEFORE picking — image filenames, placeholder
+ * domains, and generic "user@domain.com" entries hard-bounce and burn
+ * sender reputation.
+ *
+ * Mirrors the helper in scripts/recover-broken-link-sends.ts.
+ */
+function isRealEmail(email: string | null): boolean {
+  if (!email) return false;
+  const e = email.toLowerCase().trim();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)) return false;
+  // Image filenames disguised as emails (the scraper sometimes pulls
+  // mailto-like strings from page HTML that aren't real addresses).
+  if (/\.(webp|png|jpg|jpeg|svg|gif)$/.test(e)) return false;
+  const host = e.split("@")[1];
+  // Known placeholder domains.
+  if (
+    [
+      "domain.com",
+      "example.com",
+      "mysite.com",
+      "mail.com",
+      "yoursite.com",
+      "yourdomain.com",
+    ].includes(host)
+  ) {
+    return false;
+  }
+  const local = e.split("@")[0];
+  // Generic placeholder local-parts paired with placeholder hosts.
+  if (
+    /^(user|email|example|info|contact|admin|test|demo|sample)$/.test(local) &&
+    /^(domain|example|mysite|sample)\./.test(host)
+  ) {
+    return false;
+  }
+  // Third-party service emails the scraper sometimes lifts (booking
+  // platforms, marketing agencies). These belong to vendors, not the
+  // business — sending here just spams the vendor.
+  const VENDOR_HOSTS = new Set([
+    "vagaro.com",
+    "weomedia.com",
+    "weoadc.com",
+    "podium.com",
+    "birdeye.com",
+    "yext.com",
+    "constantcontact.com",
+    "godaddy.com",
+    "wix.com",
+    "squarespace.com",
+  ]);
+  if (VENDOR_HOSTS.has(host)) return false;
+  return true;
+}
+
+/**
+ * Per CLAUDE.md Rule 50, cold outreach MUST skip franchise prospects.
+ * Heuristics:
+ *  - URL contains a `/locations/` or `/store/` path segment (national
+ *    chain location pattern)
+ *  - URL host is a known chain domain
+ *  - Business name contains "Partner" / "Affiliate" branded chain phrasing
+ */
+function looksLikeFranchise(p: {
+  business_name: string;
+  current_website: string | null;
+}): boolean {
+  const name = (p.business_name || "").toLowerCase();
+  const url = (p.current_website || "").toLowerCase();
+
+  // National chain location URL patterns.
+  if (/\/locations?\//.test(url)) return true;
+  if (/\/store\//.test(url)) return true;
+
+  // Known chain domains (incomplete but covers what we've seen so far).
+  const CHAIN_HOSTS = [
+    "thrivepetcare.com",
+    "vcahospitals.com",
+    "banfield.com",
+    "midaschain.com",
+    "jiffylube.com",
+    "valvolineinstantoilchange.com",
+    "supercuts.com",
+    "greatclips.com",
+  ];
+  for (const host of CHAIN_HOSTS) {
+    if (url.includes(host)) return true;
+  }
+
+  // Branded chain phrasing in the business name.
+  if (/\bpartner\b/.test(name)) return true;
+  if (/\baffiliate\b/.test(name)) return true;
+  if (/\b(part|division|location)\s+of\s+[A-Z]/.test(p.business_name)) return true;
+
+  return false;
+}
+
 /** The 6 categories selected by Ben for Wave 1 (mixed-broad). */
 export const WAVE1_CATEGORIES = [
   "dental",
@@ -120,9 +218,20 @@ export async function findCohortCandidates(): Promise<{
       continue;
     }
 
-    totalAvailable += data.length;
+    // Apply Rule 14 (real-email) + Rule 50 (franchise skip) filters.
+    // SQL can't easily express these — they're row-level heuristics —
+    // so we filter in JS after the query returns.
+    const filtered = data.filter(
+      (r) =>
+        isRealEmail(r.email as string | null) &&
+        !looksLikeFranchise({
+          business_name: r.business_name as string,
+          current_website: r.current_website as string | null,
+        }),
+    );
+    totalAvailable += filtered.length;
 
-    const scored: CohortCandidate[] = data
+    const scored: CohortCandidate[] = filtered
       .map((row) => ({
         id: row.id as string,
         business_name: row.business_name as string,
@@ -167,7 +276,15 @@ export async function findCohortCandidates(): Promise<{
 
     if (extras) {
       const extraScored = extras
-        .filter((r) => !usedIds.has(r.id as string))
+        .filter(
+          (r) =>
+            !usedIds.has(r.id as string) &&
+            isRealEmail(r.email as string | null) &&
+            !looksLikeFranchise({
+              business_name: r.business_name as string,
+              current_website: r.current_website as string | null,
+            }),
+        )
         .map((row) => ({
           id: row.id as string,
           business_name: row.business_name as string,
