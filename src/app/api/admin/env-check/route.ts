@@ -91,9 +91,39 @@ export async function GET() {
     commitBranch: process.env.VERCEL_GIT_COMMIT_REF || null,
   };
 
+  // Stripe price-ID prefix audit (added 2026-04-25 to debug a "No such
+  // price: prod_xxx" error from a wrong-prefix copy/paste during the LIVE
+  // flip). Returns only the prefix character group — NEVER the full ID
+  // value. `price` = correct (Stripe price object). `prod` = WRONG (this
+  // is a Product ID, not a Price ID — checkout will 400 with
+  // "No such price: prod_xxx"). `null` = unset.
+  const STRIPE_PRICE_KEYS = [
+    "STRIPE_PRICE_SETUP_ID",
+    "STRIPE_PRICE_MGMT_ID",
+    "STRIPE_PRICE_CUSTOM_ID",
+    "STRIPE_PRICE_REVIEW_BLAST",
+    "STRIPE_PRICE_EXTRA_PAGES",
+    "STRIPE_PRICE_GBP_SETUP",
+    "STRIPE_PRICE_MONTHLY_UPDATES",
+  ];
+  const stripePricePrefixes: Record<string, "price" | "prod" | "other" | null> = {};
+  for (const key of STRIPE_PRICE_KEYS) {
+    const v = (process.env[key] || "").trim();
+    if (!v) {
+      stripePricePrefixes[key] = null;
+    } else if (v.startsWith("price_")) {
+      stripePricePrefixes[key] = "price";
+    } else if (v.startsWith("prod_")) {
+      stripePricePrefixes[key] = "prod";
+    } else {
+      stripePricePrefixes[key] = "other";
+    }
+  }
+
   return NextResponse.json({
     deploy,
     lobReady,
     present,
+    stripePricePrefixes,
   });
 }
