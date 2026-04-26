@@ -1887,3 +1887,412 @@ p.created-by a:hover {
         font-size: 13px;
     }
 }
+
+/* ============================================
+   NEW SECTIONS — added 2026-04-26 by BlueJays
+   Trust strip · Testimonials · Service area
+   Estimator · Trusted-by · Sticky emergency CTA
+   ============================================ */
+
+/* --- Trust badges strip (right after hero) --- */
+.trust-strip {
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 28px 0;
+}
+.trust-strip-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+}
+.trust-badge {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 8px 4px;
+}
+.trust-badge svg {
+    flex: 0 0 auto;
+    width: 28px;
+    height: 28px;
+    color: var(--gold);
+}
+.trust-badge strong {
+    display: block;
+    font-family: var(--font-condensed);
+    font-weight: 600;
+    font-size: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-primary);
+    line-height: 1.2;
+}
+.trust-badge span {
+    display: block;
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+}
+@media (max-width: 1024px) {
+    .trust-strip-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+}
+@media (max-width: 480px) {
+    .trust-strip-grid { grid-template-columns: 1fr; }
+}
+
+/* --- Testimonials section --- */
+.testimonials {
+    background: var(--bg-primary);
+}
+.testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+    margin-top: 56px;
+}
+.testimonial-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 32px 28px;
+    transition: transform var(--transition-base), border-color var(--transition-base);
+}
+.testimonial-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--border-gold);
+}
+.testimonial-stars {
+    color: var(--gold);
+    font-size: 18px;
+    letter-spacing: 2px;
+    margin-bottom: 14px;
+}
+.testimonial-quote {
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--text-primary);
+    margin: 0 0 24px 0;
+    font-style: italic;
+    quotes: """ """;
+}
+.testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+}
+.testimonial-avatar {
+    flex: 0 0 44px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--bg-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gold);
+}
+.testimonial-avatar svg {
+    width: 22px;
+    height: 22px;
+}
+.testimonial-author strong {
+    display: block;
+    font-family: var(--font-condensed);
+    font-weight: 600;
+    font-size: 15px;
+    text-transform: uppercase;
+    color: var(--text-primary);
+}
+.testimonial-author span {
+    display: block;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+.testimonials-disclosure {
+    margin-top: 36px;
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-muted);
+    font-style: italic;
+}
+@media (max-width: 1024px) {
+    .testimonials-grid { grid-template-columns: 1fr; gap: 20px; }
+}
+
+/* --- Service Area (WA map + counties list) --- */
+.service-area {
+    background: var(--bg-secondary);
+}
+.section-subhead {
+    text-align: center;
+    margin-top: 14px;
+    font-size: 15px;
+    color: var(--text-secondary);
+    max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.service-area-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 56px;
+    margin-top: 56px;
+    align-items: center;
+}
+.service-area-map {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+}
+.service-area-map svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 320px;
+}
+.service-area-list h3 {
+    font-family: var(--font-display);
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+}
+.service-area-intro {
+    font-size: 15px;
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+}
+.service-area-counties {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 24px 0;
+    columns: 2;
+    column-gap: 24px;
+}
+.service-area-counties li {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-primary);
+    font-family: var(--font-condensed);
+    font-weight: 500;
+    text-transform: uppercase;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    break-inside: avoid;
+}
+.service-area-counties li span {
+    display: block;
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 12px;
+    color: var(--text-muted);
+    text-transform: none;
+    letter-spacing: 0;
+    margin-top: 2px;
+}
+.btn-small {
+    padding: 12px 20px;
+    font-size: 13px;
+}
+@media (max-width: 1024px) {
+    .service-area-grid { grid-template-columns: 1fr; gap: 32px; }
+    .service-area-counties { columns: 1; }
+}
+
+/* --- Get-a-Quote Estimator --- */
+.estimator {
+    background: var(--bg-primary);
+}
+.estimator-card {
+    max-width: 920px;
+    margin: 56px auto 0;
+    background: var(--bg-card);
+    border: 1px solid var(--border-gold);
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: 0 8px 40px rgba(201, 162, 39, 0.08);
+}
+.estimator-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 32px;
+}
+.estimator-field label {
+    display: block;
+    font-family: var(--font-condensed);
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+.estimator-select {
+    width: 100%;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    padding: 14px 16px;
+    border-radius: 8px;
+    font-family: var(--font-body);
+    font-size: 15px;
+    cursor: pointer;
+    transition: border-color var(--transition-base);
+}
+.estimator-select:hover,
+.estimator-select:focus {
+    border-color: var(--gold);
+    outline: none;
+}
+.estimator-result {
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    padding: 28px;
+    text-align: center;
+    border: 1px dashed var(--border-gold);
+}
+.estimator-range {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 14px;
+}
+.estimator-label {
+    font-family: var(--font-condensed);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+}
+.estimator-amount {
+    font-family: var(--font-display);
+    font-size: 38px;
+    font-weight: 700;
+    color: var(--gold);
+    transition: color var(--transition-base);
+}
+.estimator-disclaimer {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin: 0 auto 18px;
+    max-width: 560px;
+    line-height: 1.5;
+}
+@media (max-width: 768px) {
+    .estimator-card { padding: 28px 20px; }
+    .estimator-grid { grid-template-columns: 1fr; gap: 16px; }
+    .estimator-amount { font-size: 30px; }
+}
+
+/* --- Trusted-by industry bar --- */
+.trusted-by {
+    background: var(--bg-secondary);
+    padding: 40px 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+}
+.trusted-by-label {
+    text-align: center;
+    font-family: var(--font-condensed);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+}
+.trusted-by-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px 32px;
+}
+.trusted-by-item {
+    font-family: var(--font-condensed);
+    font-weight: 500;
+    font-size: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-secondary);
+    padding: 6px 0;
+    transition: color var(--transition-base);
+}
+.trusted-by-item:hover {
+    color: var(--gold);
+}
+
+/* --- Sticky 24/7 Emergency Dispatch CTA --- */
+.sticky-emergency {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 9000;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+    color: #0e1118;
+    padding: 14px 20px;
+    border-radius: 999px;
+    text-decoration: none;
+    box-shadow: 0 8px 32px rgba(201, 162, 39, 0.4), 0 0 0 4px rgba(201, 162, 39, 0.15);
+    font-family: var(--font-condensed);
+    font-weight: 600;
+    transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+.sticky-emergency:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(201, 162, 39, 0.55), 0 0 0 4px rgba(201, 162, 39, 0.25);
+}
+.sticky-emergency svg {
+    width: 22px;
+    height: 22px;
+    flex: 0 0 auto;
+    position: relative;
+    z-index: 1;
+}
+.sticky-emergency-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.15;
+    position: relative;
+    z-index: 1;
+}
+.sticky-emergency-text strong {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+.sticky-emergency-text span {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+.sticky-emergency-pulse {
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    box-shadow: 0 0 0 0 rgba(201, 162, 39, 0.7);
+    animation: stickyPulse 2.4s infinite;
+}
+@keyframes stickyPulse {
+    0% { box-shadow: 0 0 0 0 rgba(201, 162, 39, 0.5); }
+    70% { box-shadow: 0 0 0 18px rgba(201, 162, 39, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(201, 162, 39, 0); }
+}
+@media (max-width: 480px) {
+    .sticky-emergency {
+        right: 12px;
+        bottom: 12px;
+        padding: 12px 16px;
+    }
+    .sticky-emergency svg { width: 20px; height: 20px; }
+    .sticky-emergency-text strong { font-size: 11px; }
+    .sticky-emergency-text span { font-size: 14px; }
+}

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /sites/ops/
+
+Sitemap: https://bluejayportfolio.com/sites/ops/sitemap.xml
