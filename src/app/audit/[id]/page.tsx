@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
@@ -36,23 +37,22 @@ type Prospect = {
   business_name: string;
 };
 
-const SEVERITY_COLORS: Record<string, { bg: string; text: string; border: string; label: string }> = {
-  critical: { bg: "bg-rose-500/20", text: "text-rose-300", border: "border-rose-500/40", label: "Critical" },
-  high: { bg: "bg-amber-500/20", text: "text-amber-300", border: "border-amber-500/40", label: "High Impact" },
-  medium: { bg: "bg-sky-500/20", text: "text-sky-300", border: "border-sky-500/40", label: "Medium" },
-  low: { bg: "bg-emerald-500/20", text: "text-emerald-300", border: "border-emerald-500/40", label: "Strength" },
+// Simplified to 3 visual tiers: red (problem), green (strength), neutral (no-op).
+// Critical and high collapse into the same red tier — the prospect doesn't need
+// to distinguish "critical" from "high" while skimming a fix list. Medium gets
+// red too because anything we flag IS a problem; the bar to be flagged at all
+// already filtered low-impact noise out.
+const SEVERITY_COLORS: Record<string, { bg: string; text: string; border: string; label: string; emoji: string }> = {
+  critical: { bg: "bg-rose-500/15", text: "text-rose-200", border: "border-rose-500/40", label: "Fix this", emoji: "🔴" },
+  high:     { bg: "bg-rose-500/15", text: "text-rose-200", border: "border-rose-500/40", label: "Fix this", emoji: "🔴" },
+  medium:   { bg: "bg-rose-500/10", text: "text-rose-200", border: "border-rose-500/30", label: "Fix this", emoji: "🟠" },
+  low:      { bg: "bg-emerald-500/15", text: "text-emerald-200", border: "border-emerald-500/40", label: "Working", emoji: "🟢" },
 };
 
-const IMPACT_LABELS: Record<string, string> = {
-  high: "High impact",
-  medium: "Medium impact",
-  low: "Low impact",
-};
-
-const EFFORT_LABELS: Record<string, { label: string; color: string }> = {
-  low: { label: "Easy fix", color: "text-emerald-400" },
-  medium: { label: "Moderate", color: "text-amber-400" },
-  high: { label: "Rebuild", color: "text-rose-400" },
+const EFFORT_LABELS: Record<string, { label: string; emoji: string; color: string }> = {
+  low:    { label: "Easy fix", emoji: "⚡", color: "text-emerald-300" },
+  medium: { label: "Moderate", emoji: "🛠️", color: "text-amber-300" },
+  high:   { label: "Rebuild", emoji: "🏗️", color: "text-rose-300" },
 };
 
 export default async function AuditPage({
@@ -109,22 +109,18 @@ export default async function AuditPage({
     .eq("id", id);
 
   const score = content.overallScore ?? 50;
-  const scoreColor =
-    score >= 80 ? "text-emerald-400" : score >= 60 ? "text-sky-400" : score >= 40 ? "text-amber-400" : "text-rose-400";
-  // Money-anchored score label when we have a leak number — turns the
-  // score into a dollar consequence the prospect can't ignore. Falls
-  // back to a tone-only label when leak is hidden (high scores).
+  // Two-color system on score: red (problem) or green (working). No middle
+  // tones — easier to read at a glance.
+  const scoreColor = score >= 80 ? "text-emerald-400" : "text-rose-400";
   const monthlyLeak = content.moneyLeak?.monthlyEstimate ?? 0;
   const scoreLabel =
     score >= 80
-      ? "Doing Real Work"
+      ? "Working hard"
       : monthlyLeak > 0
-        ? `Bleeding ~$${monthlyLeak.toLocaleString()}/mo`
+        ? "Leaking customers"
         : score >= 60
-          ? "Has Bones"
-          : score >= 40
-            ? "Leaking Leads"
-            : "Costing Customers";
+          ? "Has bones"
+          : "Costing customers";
 
   return (
     <main className="min-h-screen bg-slate-950 text-white">
@@ -138,70 +134,84 @@ export default async function AuditPage({
         </div>
       </header>
 
-      {/* Hero / Top-line score */}
-      <section className="border-b border-white/5">
-        <div className="mx-auto max-w-4xl px-6 py-16 text-center">
-          <p className="text-sm uppercase tracking-wider text-slate-400 mb-3">
+      {/* Hero — money number is now the lead, not the score. The dollar
+          consequence is what makes the prospect stay; the score is supporting
+          context. When score >= 80 we hide the money leak entirely (would feel
+          scammy to anchor a healthy site to a fake leak number). */}
+      <section className="border-b border-white/5 bg-gradient-to-b from-rose-950/20 to-transparent">
+        <div className="mx-auto max-w-4xl px-6 py-14 text-center">
+          <p className="text-sm uppercase tracking-wider text-slate-400 mb-2">
             Website Audit · {businessName}
           </p>
           <a
             href={a.target_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm text-sky-400 hover:underline mb-8 inline-block"
+            className="text-sm text-sky-400 hover:underline mb-10 inline-block"
           >
-            {a.target_url} →
+            🔗 {a.target_url}
           </a>
 
-          <div className="my-12">
-            <div className={`text-8xl md:text-9xl font-black ${scoreColor} leading-none`}>
-              {score}
-              <span className="text-3xl text-slate-600">/100</span>
-            </div>
-            <p className={`mt-4 text-2xl font-bold ${scoreColor}`}>{scoreLabel}</p>
-          </div>
+          {monthlyLeak > 0 && score < 80 ? (
+            <>
+              <p className="text-sm uppercase tracking-wider text-rose-300 mb-3 font-semibold">
+                💸 You&apos;re losing about
+              </p>
+              <div className="relative mb-3 mx-auto" style={{ minHeight: 180 }}>
+                {/* Blackhole — vortex behind the money number. The dollars
+                    spiral toward a central red void on a 3.6s loop. CSS-only
+                    so this whole hero stays a server component. */}
+                <MoneyBlackhole />
+                <span className="relative text-7xl md:text-9xl font-black text-rose-400 leading-none drop-shadow-[0_0_30px_rgba(244,63,94,0.4)]">
+                  ${content.moneyLeak.monthlyEstimate.toLocaleString()}
+                </span>
+                <span className="relative text-3xl md:text-4xl text-slate-400 font-bold">/mo</span>
+              </div>
+              <p className="text-lg md:text-xl text-slate-200 max-w-2xl mx-auto mb-6">
+                in customers your site is missing. Every month.
+              </p>
 
-          <p className="text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed">
+              {/* Score moves to a small chip below the money number */}
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-slate-900/60 px-4 py-2 mb-8">
+                <span className="text-xs uppercase tracking-wider text-slate-400">Site score</span>
+                <span className={`text-base font-bold ${scoreColor}`}>{score}/100</span>
+                <span className="text-slate-600">·</span>
+                <span className={`text-sm ${scoreColor}`}>{scoreLabel}</span>
+              </div>
+            </>
+          ) : (
+            // High-score path: lead with the score
+            <div className="my-10">
+              <div className={`text-8xl md:text-9xl font-black ${scoreColor} leading-none`}>
+                {score}
+                <span className="text-3xl text-slate-600">/100</span>
+              </div>
+              <p className={`mt-4 text-2xl font-bold ${scoreColor}`}>{scoreLabel} 🟢</p>
+            </div>
+          )}
+
+          <p className="text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed">
             {content.oneLineSummary}
           </p>
+          {monthlyLeak > 0 && score < 80 && (
+            <p className="mt-3 text-xs text-slate-500 max-w-xl mx-auto">
+              Range: ${content.moneyLeak.estimateLow.toLocaleString()}–${content.moneyLeak.estimateHigh.toLocaleString()}/mo · {content.moneyLeak.methodology}
+            </p>
+          )}
         </div>
       </section>
-
-      {/* Money-leak anchor — Hormozi salty-pretzel mechanic.
-          Underclaim by design (research Risk #2): we'd rather miss low than
-          burn trust by overclaiming. Hidden when score >= 80 (would feel
-          scammy to tell a healthy site they're losing $X/month). */}
-      {content.moneyLeak && content.overallScore < 80 && content.moneyLeak.monthlyEstimate > 0 && (
-        <section className="border-b border-white/5 bg-gradient-to-r from-rose-950/30 to-amber-950/20">
-          <div className="mx-auto max-w-3xl px-6 py-12 text-center">
-            <p className="text-sm uppercase tracking-wider text-rose-300 mb-3 font-semibold">
-              Estimated money-leak
-            </p>
-            <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
-              ~<span className="text-rose-400">${content.moneyLeak.monthlyEstimate.toLocaleString()}</span>
-              <span className="text-2xl md:text-3xl text-slate-400">/month</span>
-            </h2>
-            <p className="text-base md:text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed">
-              That&apos;s a conservative estimate of the customers and revenue your current site is leaving on the table — every month you wait.
-            </p>
-            <p className="mt-4 text-xs text-slate-500 max-w-xl mx-auto">
-              Range: ${content.moneyLeak.estimateLow.toLocaleString()} — ${content.moneyLeak.estimateHigh.toLocaleString()} / month. {content.moneyLeak.methodology}
-            </p>
-          </div>
-        </section>
-      )}
 
       {/* Strengths */}
       {content.strengths && content.strengths.length > 0 && (
         <section className="border-b border-white/5 bg-emerald-950/20">
           <div className="mx-auto max-w-4xl px-6 py-8">
             <h2 className="text-sm font-semibold uppercase tracking-wider text-emerald-300 mb-4">
-              ✓ What&apos;s working
+              🟢 What&apos;s working
             </h2>
             <ul className="space-y-2">
               {content.strengths.map((s, i) => (
                 <li key={i} className="text-slate-300 flex gap-3">
-                  <span className="text-emerald-400">•</span>
+                  <span className="text-emerald-400">✓</span>
                   <span>{s}</span>
                 </li>
               ))}
@@ -210,111 +220,109 @@ export default async function AuditPage({
         </section>
       )}
 
-      {/* Prioritized roadmap */}
+      {/* Prioritized roadmap — single visual track, emoji-led, compact */}
       <section className="border-b border-white/5">
         <div className="mx-auto max-w-4xl px-6 py-12">
-          <h2 className="text-3xl font-bold mb-2">Top fixes — ranked by impact</h2>
+          <h2 className="text-3xl font-bold mb-2">🎯 Top fixes — ranked by impact</h2>
           <p className="text-slate-400 mb-8">
-            Most audits give you 40 things to do. We give you the {content.prioritizedRoadmap.length} that actually move the needle.
+            The {content.prioritizedRoadmap.length} things that actually move the needle. Skip the other 40.
           </p>
 
-          <div className="space-y-3">
-            {content.prioritizedRoadmap.map((item) => (
-              <div
-                key={item.rank}
-                className="flex items-center gap-4 rounded-xl border border-white/10 bg-slate-900/50 p-5"
-              >
-                <div className="flex-shrink-0 h-10 w-10 rounded-full bg-slate-800 flex items-center justify-center text-sky-400 font-bold">
-                  {item.rank}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold mb-1">{item.title}</h3>
-                  <div className="flex flex-wrap gap-3 text-xs">
-                    <span className="text-slate-500">{IMPACT_LABELS[item.impact] || item.impact}</span>
-                    <span className={EFFORT_LABELS[item.effort]?.color || "text-slate-500"}>
-                      {EFFORT_LABELS[item.effort]?.label || item.effort}
+          <div className="space-y-2">
+            {content.prioritizedRoadmap.map((item) => {
+              const eff = EFFORT_LABELS[item.effort];
+              return (
+                <div
+                  key={item.rank}
+                  className="flex items-center gap-4 rounded-xl border border-white/10 bg-slate-900/50 p-4 hover:border-rose-500/30 transition-colors"
+                >
+                  <div className="flex-shrink-0 h-9 w-9 rounded-full bg-rose-500/15 border border-rose-500/30 flex items-center justify-center text-rose-300 font-bold text-sm">
+                    {item.rank}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-white">{item.title}</h3>
+                  </div>
+                  <div className="flex-shrink-0 flex items-center gap-2 text-xs">
+                    <span className={`inline-flex items-center gap-1 rounded-full bg-slate-800/80 px-2.5 py-1 ${eff?.color || "text-slate-400"}`}>
+                      <span>{eff?.emoji || "🔧"}</span>
+                      <span className="font-medium">{eff?.label || item.effort}</span>
                     </span>
                     {item.blueJaysCanDo && (
-                      <span className="text-sky-400">BlueJays can fix this</span>
+                      <span className="hidden sm:inline-flex items-center rounded-full bg-sky-500/10 border border-sky-500/30 px-2.5 py-1 text-sky-300 font-medium">
+                        ✦ BlueJays
+                      </span>
                     )}
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
 
       {/* Detailed findings by section */}
-      <FindingSection title="Hero & Above the Fold" findings={content.heroAnalysis.findings} score={content.heroAnalysis.score} />
-      <FindingSection title="Copy & Positioning" findings={content.copyAndPositioning.findings} />
-      <FindingSection title="Trust & Social Proof" findings={content.trustAndSocialProof.findings} />
-      <FindingSection title="Technical & SEO" findings={content.technicalAndSeo.findings} score={content.technicalAndSeo.score} />
-      <FindingSection title="Mobile & UX" findings={content.mobileAndUx.findings} />
+      <FindingSection emoji="👋" title="Hero & Above the Fold" findings={content.heroAnalysis.findings} score={content.heroAnalysis.score} />
+      <FindingSection emoji="✍️" title="Copy & Positioning" findings={content.copyAndPositioning.findings} />
+      <FindingSection emoji="⭐" title="Trust & Social Proof" findings={content.trustAndSocialProof.findings} />
+      <FindingSection emoji="🔍" title="Technical & SEO" findings={content.technicalAndSeo.findings} score={content.technicalAndSeo.score} />
+      <FindingSection emoji="📱" title="Mobile & UX" findings={content.mobileAndUx.findings} />
 
       {/* Benchmark */}
       {content.blueJaysBenchmark && (
         <section className="border-b border-white/5 bg-slate-900/30">
-          <div className="mx-auto max-w-4xl px-6 py-12">
-            <p className="text-sm uppercase tracking-wider text-sky-400 mb-3">Industry benchmark</p>
-            <h2 className="text-2xl font-bold mb-4">
+          <div className="mx-auto max-w-4xl px-6 py-10">
+            <p className="text-sm uppercase tracking-wider text-sky-400 mb-3">📊 Industry benchmark</p>
+            <h2 className="text-2xl font-bold mb-3">
               See the gap: <span className="text-sky-300">{content.blueJaysBenchmark.referenceTemplate}</span>
             </h2>
-            <p className="text-slate-300 mb-6">{content.blueJaysBenchmark.gapSummary}</p>
+            <p className="text-slate-300 mb-5">{content.blueJaysBenchmark.gapSummary}</p>
             <a
               href={content.blueJaysBenchmark.referenceUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center rounded-md border border-sky-500/40 bg-sky-500/10 px-4 py-2 text-sm font-semibold text-sky-300 hover:bg-sky-500/20 transition-colors"
             >
-              View benchmark template →
+              View benchmark →
             </a>
           </div>
         </section>
       )}
 
-      {/* Cost of waiting — Hormozi-style "what does inaction cost?" anchor.
-          Shown only when we have a money-leak (i.e. score < 80). Compounds
-          the urgency without being a fake-scarcity countdown. */}
+      {/* Cost of waiting — what does inaction cost? Single sentence + 3 tiles. */}
       {monthlyLeak > 0 && (
         <section className="border-b border-white/5 bg-rose-950/20">
-          <div className="mx-auto max-w-3xl px-6 py-12">
-            <p className="text-sm uppercase tracking-wider text-rose-300 mb-4 font-semibold text-center">
-              The cost of waiting
+          <div className="mx-auto max-w-3xl px-6 py-10">
+            <p className="text-sm uppercase tracking-wider text-rose-300 mb-5 font-semibold text-center">
+              ⏳ The cost of waiting
             </p>
-            <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto">
+            <div className="grid grid-cols-3 gap-3 max-w-2xl mx-auto">
               <CostTile months={1} leak={monthlyLeak} />
               <CostTile months={3} leak={monthlyLeak} highlight />
               <CostTile months={6} leak={monthlyLeak} />
             </div>
-            <p className="text-center text-sm text-slate-400 mt-6 max-w-xl mx-auto leading-relaxed">
-              Every month you don&apos;t fix this stack of issues, the leak compounds. A 6-month delay costs roughly{" "}
-              <span className="text-rose-300 font-semibold">
+            <p className="text-center text-sm text-slate-400 mt-5 max-w-xl mx-auto">
+              6 months of waiting:{" "}
+              <span className="text-rose-300 font-bold">
                 ${(monthlyLeak * 6).toLocaleString()}
               </span>{" "}
-              — versus $997 to fix it permanently.
+              lost · Fixing it: <span className="text-emerald-300 font-bold">$997</span>
             </p>
           </div>
         </section>
       )}
 
-      {/* Mini-testimonial near the CTA — Hormozi pattern: drop social proof
-          right before the ask. Vertical-tagged when possible. PLACEHOLDER
-          until Ben has real client data — clearly framed as a story-style
-          example so it can't be mistaken for a fabricated quote. */}
+      {/* Mini-testimonial. Story-format so it's not mistaken for a fake quote. */}
       <section className="border-b border-white/5">
-        <div className="mx-auto max-w-3xl px-6 py-12">
-          <div className="rounded-2xl border border-emerald-500/20 bg-emerald-950/20 p-8">
+        <div className="mx-auto max-w-3xl px-6 py-10">
+          <div className="rounded-2xl border border-emerald-500/20 bg-emerald-950/20 p-6 md:p-8">
             <div className="flex items-start gap-4">
-              <div className="flex-shrink-0 h-12 w-12 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-xl font-bold">
-                ★
-              </div>
+              <span className="text-3xl">⭐</span>
               <div>
                 <p className="text-lg text-slate-100 leading-relaxed mb-3">
                   &ldquo;Same town, same prices, same offer — just a site that didn&apos;t actively work against me. Went from 2 calls a week to 14.&rdquo;
                 </p>
                 <p className="text-sm text-slate-400">
-                  — A {content.businessCategory.replace("-", " ")} owner in Washington who scored a 38 on this same audit before the rebuild.
+                  — A {content.businessCategory.replace("-", " ")} owner in Washington · scored 38 before rebuild.
                 </p>
               </div>
             </div>
@@ -366,7 +374,7 @@ export default async function AuditPage({
         </div>
       </section>
 
-      <footer className="border-t border-white/5">
+      <footer className="border-t border-white/5 pb-24 md:pb-20">
         <div className="mx-auto max-w-4xl px-6 py-8 text-center text-xs text-slate-500">
           <p>
             Audit generated {new Date(content.generatedAt).toLocaleDateString()} ·
@@ -374,6 +382,31 @@ export default async function AuditPage({
           </p>
         </div>
       </footer>
+
+      {/* Sticky bottom CTA — persists while scrolling so the offer is always
+          1 tap away. Money leak on the left, CTA on the right. Hidden on
+          high-score audits (no leak to anchor against). */}
+      {monthlyLeak > 0 && score < 80 && (
+        <div className="fixed bottom-0 inset-x-0 z-40 border-t border-rose-500/30 bg-slate-950/95 backdrop-blur supports-[backdrop-filter]:bg-slate-950/80">
+          <div className="mx-auto max-w-4xl px-4 py-3 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="text-xl">💸</span>
+              <div className="min-w-0">
+                <div className="text-xs text-slate-400 leading-tight">Losing</div>
+                <div className="text-base md:text-lg font-bold text-rose-300 leading-tight truncate">
+                  ${content.moneyLeak.monthlyEstimate.toLocaleString()}/mo
+                </div>
+              </div>
+            </div>
+            <a
+              href={content.callToAction.primaryButtonUrl}
+              className="flex-shrink-0 inline-flex items-center justify-center rounded-md bg-gradient-to-r from-sky-500 to-emerald-500 px-4 md:px-6 py-2.5 text-sm font-bold text-white shadow-lg hover:opacity-90 transition-opacity whitespace-nowrap"
+            >
+              Fix it · 3×$349 →
+            </a>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
@@ -382,50 +415,63 @@ function FindingSection({
   title,
   findings,
   score,
+  emoji,
 }: {
   title: string;
   findings: AuditFinding[];
   score?: number;
+  emoji?: string;
 }) {
   if (!findings || findings.length === 0) return null;
 
   return (
     <section className="border-b border-white/5">
-      <div className="mx-auto max-w-4xl px-6 py-12">
+      <div className="mx-auto max-w-4xl px-6 py-10">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold">{title}</h2>
+          <h2 className="text-2xl font-bold">
+            {emoji && <span className="mr-2">{emoji}</span>}
+            {title}
+          </h2>
           {score !== undefined && (
             <span className="text-sm text-slate-400 font-mono">{score}/100</span>
           )}
         </div>
-        <div className="space-y-4">
+        <div className="space-y-3">
           {findings.map((f, i) => {
             const colors = SEVERITY_COLORS[f.severity] || SEVERITY_COLORS.medium;
+            const isStrength = f.severity === "low";
             return (
               <article
                 key={i}
-                className={`rounded-xl border ${colors.border} ${colors.bg} p-6`}
+                className={`rounded-xl border ${colors.border} ${colors.bg} p-5`}
               >
-                <div className="flex items-start gap-3 mb-3">
-                  <span className={`flex-shrink-0 inline-flex items-center rounded-full ${colors.bg} ${colors.text} border ${colors.border} px-2 py-0.5 text-xs font-semibold uppercase tracking-wider`}>
-                    {colors.label}
-                  </span>
-                  <h3 className="font-semibold text-white flex-1">{f.title}</h3>
-                </div>
-                <div className="space-y-3 text-sm">
-                  <div>
-                    <p className="text-xs uppercase tracking-wider text-slate-500 mb-1">What&apos;s happening</p>
-                    <p className="text-slate-300 leading-relaxed">{f.observation}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs uppercase tracking-wider text-slate-500 mb-1">How to fix</p>
-                    <p className="text-slate-300 leading-relaxed">{f.recommendation}</p>
-                  </div>
-                  {f.blueJaysSolution && (
-                    <div className="rounded-md bg-sky-500/10 border border-sky-500/20 px-3 py-2">
-                      <p className="text-xs uppercase tracking-wider text-sky-400 mb-1">BlueJays would do this</p>
-                      <p className="text-sky-100 text-sm leading-relaxed">{f.blueJaysSolution}</p>
-                    </div>
+                {/* Title row — emoji + title together, no separate badge.
+                    Prospect reads ONE line and knows what + severity. */}
+                <h3 className="flex items-start gap-2 font-semibold text-white mb-3 leading-snug">
+                  <span className="flex-shrink-0">{colors.emoji}</span>
+                  <span className="flex-1">{f.title}</span>
+                </h3>
+
+                {/* Observation + recommendation: just two lines with emoji
+                    anchors. No "What's happening / How to fix" labels — the
+                    emojis ARE the labels. */}
+                <div className="space-y-2 text-sm pl-7">
+                  <p className="text-slate-300 leading-relaxed">
+                    <span className="text-slate-500 mr-1.5">📍</span>
+                    {f.observation}
+                  </p>
+                  {!isStrength && (
+                    <p className="text-slate-200 leading-relaxed">
+                      <span className="text-emerald-400 mr-1.5">🛠️</span>
+                      {f.recommendation}
+                    </p>
+                  )}
+                  {f.blueJaysSolution && !isStrength && (
+                    <p className="text-sky-300 leading-relaxed text-xs pt-1">
+                      <span className="mr-1">✦</span>
+                      <span className="font-semibold">BlueJays:</span>{" "}
+                      <span className="text-sky-200/90">{f.blueJaysSolution}</span>
+                    </p>
                   )}
                 </div>
               </article>
@@ -441,19 +487,91 @@ function CostTile({ months, leak, highlight }: { months: number; leak: number; h
   const total = leak * months;
   return (
     <div
-      className={`rounded-xl border p-4 text-center transition-colors ${
+      className={`rounded-xl border p-3 md:p-4 text-center transition-colors ${
         highlight
           ? "border-rose-500/40 bg-rose-500/10 shadow-[0_0_24px_rgba(244,63,94,0.15)]"
           : "border-white/10 bg-slate-900/40"
       }`}
     >
       <p className="text-xs uppercase tracking-wider text-slate-400 mb-1">
-        {months} {months === 1 ? "month" : "months"}
+        {months} {months === 1 ? "mo" : "mos"}
       </p>
       <p className={`text-2xl md:text-3xl font-bold ${highlight ? "text-rose-300" : "text-slate-200"}`}>
         ${total.toLocaleString()}
       </p>
-      <p className="text-[10px] text-slate-500 mt-1">lost to inaction</p>
+      <p className="text-[10px] text-slate-500 mt-1">lost</p>
+    </div>
+  );
+}
+
+/**
+ * Money-leak blackhole visual. 8 dollar signs orbit around a pulsing red
+ * void; each one spirals inward and disappears, then respawns after the
+ * 3.6s loop. Pure CSS animations (defined in globals.css). Sits absolutely
+ * behind the $X/mo number on the audit hero. Pointer-events disabled so
+ * the number stays selectable / clickable.
+ */
+function MoneyBlackhole() {
+  // Each dollar starts at a position on the perimeter and animates toward
+  // (0,0). Stagger delays so the spawns feel continuous, not pulsed.
+  const dollars: Array<{ sx: string; sy: string; delay: string }> = [
+    { sx: "-170px", sy: "-110px", delay: "0s" },
+    { sx: "160px",  sy: "-120px", delay: "0.45s" },
+    { sx: "190px",  sy: "10px",   delay: "0.9s" },
+    { sx: "140px",  sy: "120px",  delay: "1.35s" },
+    { sx: "-150px", sy: "130px",  delay: "1.8s" },
+    { sx: "-190px", sy: "20px",   delay: "2.25s" },
+    { sx: "-100px", sy: "-160px", delay: "2.7s" },
+    { sx: "110px",  sy: "-160px", delay: "3.15s" },
+  ];
+
+  return (
+    <div
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-visible"
+    >
+      <div className="relative w-full max-w-[480px] h-full" style={{ minHeight: 180 }}>
+        {/* Faint accretion-disk ring — slow rotation gives the vortex a
+            sense of motion even when no dollars are crossing the disk. */}
+        <div
+          className="absolute top-1/2 left-1/2 w-72 h-72 md:w-80 md:h-80 rounded-full border border-rose-500/15"
+          style={{ animation: "blackhole-disk-spin 12s linear infinite", transform: "translate(-50%, -50%)" }}
+        />
+        {/* Outer dim ring */}
+        <div
+          className="absolute top-1/2 left-1/2 w-96 h-96 rounded-full border border-rose-500/8"
+          style={{ animation: "blackhole-disk-spin 18s linear infinite reverse", transform: "translate(-50%, -50%)" }}
+        />
+        {/* Central void — pulsing red gradient. The "hot edge" of the
+            event horizon. Sits BELOW the dollar signs so they appear to
+            sink into it. */}
+        <div
+          className="absolute top-1/2 left-1/2 w-32 h-32 md:w-40 md:h-40 rounded-full"
+          style={{
+            background:
+              "radial-gradient(circle, #000 0%, #1f0309 35%, #4c0519 60%, transparent 85%)",
+            animation: "blackhole-void-pulse 3s ease-in-out infinite",
+            transform: "translate(-50%, -50%)",
+          }}
+        />
+        {/* Dollar signs spiraling inward */}
+        {dollars.map((d, i) => (
+          <span
+            key={i}
+            className="blackhole-dollar"
+            style={
+              {
+                // Custom CSS properties consumed by the keyframe
+                ["--sx" as string]: d.sx,
+                ["--sy" as string]: d.sy,
+                animationDelay: d.delay,
+              } as CSSProperties
+            }
+          >
+            $
+          </span>
+        ))}
+      </div>
     </div>
   );
 }

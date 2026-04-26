@@ -67,3 +67,68 @@ body {
   background: var(--color-blue-electric);
   color: white;
 }
+
+/* ============================================================
+   Money-Leak Blackhole — used on /audit/[id] hero. Visual hook
+   that anchors the "you're losing $X/mo" number with a vortex
+   sucking dollar signs toward a central red void. CSS-only so
+   the audit page stays a server component.
+   ============================================================ */
+
+@keyframes blackhole-void-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 60px rgba(244, 63, 94, 0.35),
+      inset 0 0 60px rgba(244, 63, 94, 0.55);
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    box-shadow:
+      0 0 100px rgba(244, 63, 94, 0.55),
+      inset 0 0 100px rgba(244, 63, 94, 0.8);
+    transform: translate(-50%, -50%) scale(1.04);
+  }
+}
+
+@keyframes blackhole-disk-spin {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to   { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+@keyframes blackhole-dollar-suck {
+  0% {
+    transform: translate(var(--sx, 0), var(--sy, 0)) rotate(0deg) scale(1);
+    opacity: 0;
+  }
+  10% { opacity: 1; }
+  85% { opacity: 0.55; }
+  100% {
+    transform: translate(0, 0) rotate(720deg) scale(0);
+    opacity: 0;
+  }
+}
+
+.blackhole-dollar {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: -14px 0 0 -14px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 22px;
+  color: #fbbf24;
+  text-shadow:
+    0 0 10px rgba(251, 191, 36, 0.75),
+    0 0 22px rgba(251, 191, 36, 0.35);
+  animation: blackhole-dollar-suck 3.6s linear infinite;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blackhole-dollar { animation: none; opacity: 0.4; }
+}

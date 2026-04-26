@@ -564,15 +564,14 @@ function buildHeroPrompt(
     ? `Reference benchmark: BlueJays' V2 ${benchmark.template} at ${benchmark.url}`
     : "No specific BlueJays V2 template available for this category yet.";
 
-  return `You are auditing a small-business website on behalf of BlueJays — an agency that sells $997 site rebuilds + 48-hour delivery to local businesses.
+  return `You are auditing a small-business website for BlueJays ($997 site rebuilds, 48-hr delivery).
 
-CRITICAL — your tone:
-- Plain English, 7th-grade reading level. Short sentences. No jargon.
-- Address the owner DIRECTLY ("you", "your customers"). Never "the user" or "the website".
-- Lead with the COST of the problem (lost customers, missed bookings, wasted ad spend) — never lead with the technical issue.
-- Specific > generic. Quote their actual copy. Reference real numbers.
-- Match Hormozi's tone: blunt, friendly, direct. "Your title is barely a tweet. Google shows 60 chars; you're using 18. That's free real estate you're throwing away."
-- If something is GOOD, say so plainly: "Your X is dialed in" — celebrate it. Don't say "no action needed".
+TONE — non-negotiable:
+- Address the owner as "you". Never "the user" or "the website".
+- Plain English, 7th-grade reading level. NO jargon.
+- One punchy sentence beats three good ones. SHORT.
+- Lead with cost (lost customers, missed bookings) — never the technical issue.
+- Quote their actual copy. Reference real numbers.
 
 Business: ${businessName}
 Category: ${category}
@@ -580,60 +579,59 @@ URL: ${ctx.url}
 ${benchmarkLine}
 
 Site signals:
-- Page title: "${ctx.title}" (${ctx.title.length} chars)
-- Meta description: "${ctx.metaDescription}" (${ctx.metaDescription.length} chars)
+- Title: "${ctx.title}" (${ctx.title.length} chars)
+- Meta: "${ctx.metaDescription}" (${ctx.metaDescription.length} chars)
 - H1: "${ctx.h1Text}"
-- All H1-H3 headings: ${JSON.stringify(ctx.headings.slice(0, 15))}
-- Body excerpt (first 2K chars): """${ctx.bodyExcerpt}"""
+- Headings: ${JSON.stringify(ctx.headings.slice(0, 15))}
+- Body (first 2K): """${ctx.bodyExcerpt}"""
 ${ctx.fetchError ? `- Fetch error: ${ctx.fetchError}` : ""}
 
 Return STRICT JSON ONLY:
 
 {
-  "headline": "<the actual H1 they're using, or your read of their primary headline>",
-  "cta": "<their primary CTA copy as found, or 'No clear CTA found'>",
-  "score": <0-100 — how strong is hero/positioning/copy/social-proof overall>,
+  "headline": "<their actual H1>",
+  "cta": "<their primary CTA copy, or 'No clear CTA found'>",
+  "score": <0-100 — hero/positioning/copy/social-proof overall>,
   "findings": [
     {
       "category": "hero" | "copy" | "cta" | "social_proof" | "structure" | "trust" | "brand_fit",
       "severity": "critical" | "high" | "medium" | "low",
-      "title": "<5-8 words, plain English. NOT 'Sub-optimal hero copy structure'. YES 'Your hero doesn't say what you do'>",
-      "observation": "<2-3 sentences. PUNCHY. Lead with the cost. Quote their copy. Example: 'Your hero just says \\"Welcome\\" - a customer landing here in 3 seconds has no idea if you can fix their problem. Most leave by then.'>",
-      "recommendation": "<2-3 sentences. Specific fix in plain English. NO jargon. Example: 'Lead with what you DO and who you HELP. Try: \\"Same-day plumbing for Tacoma homeowners — ${"$"}99 service call, no surprise fees.\\"'>",
-      "blueJaysSolution": "<one sentence on how BlueJays' V2 ${category} template solves this>"
+      "title": "<5-8 words. 'Your hero doesn't say what you do' NOT 'Sub-optimal hero structure'>",
+      "observation": "<ONE sentence, max 25 words. The problem + cost. Example: 'Your hero just says Welcome — a visitor has 3 seconds to know what you do, and most bail.'>",
+      "recommendation": "<ONE sentence, max 25 words. The fix, concrete. Example: 'Lead with what you do + who you help: Same-day plumbing for Tacoma homeowners, ${"$"}99 service call.'>",
+      "blueJaysSolution": "<ONE short sentence on how V2 ${category} fixes it>"
     }
   ]
 }
 
-Generate 4-6 findings total. STRICT GUIDELINES:
-- 1-2 must be severity="critical" or "high" if the site is below 70 score
-- 1-2 should be severity="low" — these are STRENGTHS the site is doing right (NOT problems). Frame the title celebratively ("Your meta description nails it").
-- ABSOLUTE RULE: if your title or observation reads CELEBRATORY ("Great job", "Good", "Solid", "All X have Y", "Your X is dialed in", "Working well", anything positive) → severity MUST be "low". No exceptions. A celebratory finding tagged 'medium' or 'high' is a bug.
-- Skip generic SEO advice that any tool could give. Focus on what's losing them CUSTOMERS.
-- Never say "improve", "optimize", "enhance" — say what to do instead.
-- If category-specific patterns apply (dental: online booking, electrician: license number, salon: book online, etc.), call them out by name.
+Generate 4-6 findings total. RULES:
+- 1-2 severity="critical" or "high" if score below 70
+- 1-2 severity="low" = STRENGTHS (celebratory title, e.g. "Your meta description nails it")
+- ABSOLUTE RULE: celebratory tone ("Great", "Good", "Solid", "Working well", "All X have Y") → severity MUST be "low". No exceptions.
+- Observations and recommendations: ONE sentence each, max 25 words. NEVER more than 25 words. If you can't say it in 25 words, the finding isn't sharp enough.
+- Skip generic SEO advice. Focus on what's losing them CUSTOMERS.
+- Never say "improve", "optimize", "enhance".
 
-JSON only. No prose before/after.`;
+JSON only.`;
 }
 
 function buildTechnicalPrompt(ctx: SiteContext): string {
   return `Audit this site's technical SEO + mobile readiness. Return STRICT JSON.
 
-CRITICAL — tone rules (this is a customer-facing audit, not a Lighthouse report):
-- Plain English. 7th-grade reading level. Short sentences.
-- Address them as "you". Lead with COST (customers lost, money wasted), not the technical metric.
-- "Your site loads 14 external scripts. On a phone over LTE that's 4-6 seconds of staring at a blank screen. Most leave by then." NOT "External script count is high, may impact mobile performance."
-- If something is GOOD, celebrate it. "All 22 of your images have alt text — Google AND screen readers love this." NOT "Maintain descriptive alt text."
-- 1-2 of your findings should be severity="low" = STRENGTHS the site does right. The rest are real problems.
+TONE — non-negotiable:
+- Plain English, 7th-grade level. SHORT — one sentence each.
+- Address them as "you". Lead with cost (customers lost), not the metric.
+- "Your site loads 14 external scripts — on phone LTE that's 5+ seconds staring at a blank screen." NOT "External script count is high."
+- Celebrate good things plainly: "All 22 of your images have alt text — Google loves this."
 
 URL: ${ctx.url}
 Title: "${ctx.title}" (${ctx.title.length} chars)
-Meta description: "${ctx.metaDescription}" (${ctx.metaDescription.length} chars)
+Meta: "${ctx.metaDescription}" (${ctx.metaDescription.length} chars)
 H1: "${ctx.h1Text}"
-Total H1-H3: ${ctx.headings.length}
-Images: ${ctx.imageCount} total, ${ctx.imagesWithAlt} with alt text
+Headings: ${ctx.headings.length}
+Images: ${ctx.imageCount} total, ${ctx.imagesWithAlt} with alt
 External scripts: ${ctx.externalScripts}
-Viewport meta: ${ctx.hasViewport}
+Viewport: ${ctx.hasViewport}
 Favicon: ${ctx.hasFavicon}
 Body length: ${ctx.bodyExcerpt.length} chars
 ${ctx.fetchError ? `Fetch error: ${ctx.fetchError}` : ""}
@@ -646,12 +644,13 @@ Return JSON:
   "mobileFindings": [{ "category": "mobile", "severity": "...", "title": "...", "observation": "...", "recommendation": "..." }]
 }
 
-Generate 2-3 findings per category (6-9 total max). Reference actual numbers ("18 chars" not "short title"). NO Lighthouse-speak. Frame each fix in plain English with a one-line "what good looks like" anchor.
+Generate 1-2 findings per category (3-6 total max). RULES:
+- Reference real numbers ("18 chars" not "short title")
+- ONE sentence per observation, ONE sentence per recommendation. Max 25 words EACH. Never more.
+- Title: 5-8 words, plain English
+- 1-2 must be severity="low" = STRENGTHS
 
-ABSOLUTE RULE: if your title or observation reads CELEBRATORY ("Great job", "Good", "Solid", "All X have Y", "Working well", anything positive) → severity MUST be "low". No exceptions. A celebratory finding tagged 'medium' or 'high' is a bug. Examples:
-- "All Images Have Alt Text" → severity:"low" (this is a strength)
-- "Viewport Meta Tag Is Present" → severity:"low" (strength)
-- "You Have a Favicon Set" → severity:"low" (strength)
+ABSOLUTE RULE: celebratory tone ("Great", "Good", "Solid", "All X have Y", "Working well") → severity MUST be "low". No exceptions.
 
 JSON only.`;
 }
@@ -680,7 +679,7 @@ function synthesizeAudit(args: {
   );
 
   // Combine all findings
-  const allFindings = [
+  const allFindingsRaw = [
     ...heroResult.findings,
     ...technicalResult.seoFindings,
     ...technicalResult.technicalFindings,
@@ -693,6 +692,13 @@ function synthesizeAudit(args: {
     medium: 40,
     low: 20,
   };
+
+  // Topic-based dedup: Claude (hero/positioning) and GPT (technical/seo)
+  // both look at the same site signals and frequently flag the same
+  // underlying issue. e.g. "H1 is a phone number" gets caught 3 times
+  // (hero + technical + mobile) and "meta description is good" gets
+  // celebrated twice. Group by topic, keep highest-severity, drop dups.
+  const allFindings = dedupeByTopic(allFindingsRaw, severityRank);
 
   // Prioritized roadmap: ONLY findings with severity > low. Low-severity
   // findings are STRENGTHS — they belong in the strengths section, not
@@ -743,7 +749,7 @@ function synthesizeAudit(args: {
     url,
     businessCategory,
     generatedAt: new Date().toISOString(),
-    promptVersion: 3, // v3 = Hormozi adversarial pass (2026-04-26): money-anchored score label, sharper one-liner with leak figure, dual-pricing CTA (3×$349 + $997), cost-of-waiting tiles, mini-testimonial, risk-reversal badges, celebratory→severity-low rule enforced in both prompts
+    promptVersion: 4, // v4 = scannability pass (2026-04-26): one-sentence observations + recommendations (max 25 words each), capped finding counts, topic-based dedup, tighter prompt rules. Page-level: simpler color tiers + emoji anchors, sticky CTA bar, compressed V2 tag, money number above score.
     overallScore,
     oneLineSummary,
     heroAnalysis: {
@@ -795,6 +801,96 @@ function severityToImpact(s: string): "high" | "medium" | "low" {
   if (s === "critical" || s === "high") return "high";
   if (s === "medium") return "medium";
   return "low";
+}
+
+/**
+ * Topic-based dedup. Claude + GPT often flag the same issue from different
+ * angles (e.g., "H1 is a phone number" caught by hero/technical/mobile;
+ * "meta description is good" celebrated by both). Group findings by a
+ * derived topic key, keep the highest-severity finding per topic, drop
+ * the rest.
+ *
+ * Topic detection uses keyword fingerprinting against the title +
+ * observation. Add to TOPIC_PATTERNS as new common dups appear.
+ */
+function dedupeByTopic(
+  findings: AuditFinding[],
+  severityRank: Record<string, number>,
+): AuditFinding[] {
+  const TOPIC_PATTERNS: Array<{ key: string; rx: RegExp }> = [
+    // H1 = phone number (caught by hero/technical/mobile)
+    { key: "h1_phone_number", rx: /(h1|headline|main heading|main headline).*(phone|\(\d{3}\)|number)/i },
+    { key: "h1_phone_number", rx: /phone.*\b(h1|headline|heading)\b/i },
+    // H1 not descriptive (separate from phone-specific)
+    { key: "h1_not_descriptive", rx: /h1.*not descriptive|h1.*lacks|h1.*generic/i },
+    // Title length
+    { key: "title_length", rx: /\btitle\b.*(short|length|character|under|truncat)/i },
+    // Meta description (both as strength and as fix)
+    { key: "meta_description_good", rx: /meta description.*(does the job|works|solid|good|optimal|fits|nails|dialed|excellent)/i },
+    { key: "meta_description_actionable", rx: /meta description.*(actionable|cta|call.to.action|invite)/i },
+    { key: "meta_description_missing", rx: /meta description.*(missing|absent|empty|no\b)/i },
+    // Alt text coverage
+    { key: "alt_text", rx: /alt (text|attribute|tag).*(image|all|images|coverage)/i },
+    { key: "alt_text", rx: /image.*alt/i },
+    // External scripts / performance
+    { key: "external_scripts", rx: /(external script|script.*load|too many script|script count|\d+ external)/i },
+    // Viewport meta tag
+    { key: "viewport", rx: /viewport (meta )?tag/i },
+    // Favicon
+    { key: "favicon", rx: /favicon/i },
+    // Page length / thin content
+    { key: "page_length", rx: /(page length|content length|thin content|low.*content|word count)/i },
+    // CTA copy
+    { key: "cta_copy", rx: /\bcta\b|\bcall.to.action\b|primary button|contact us/i },
+    // Social proof / reviews
+    { key: "social_proof", rx: /\breviews?\b|testimonial|social proof|star rating/i },
+    // Hero copy quality
+    { key: "hero_copy", rx: /hero copy|hero (text|reads|says)/i },
+    // Heading structure / persuasion
+    { key: "heading_structure", rx: /(h2|h3|heading).*(persua|direct|instruct|generic)/i },
+    // Mobile rendering
+    { key: "mobile_loading", rx: /mobile.*(load|slow|speed)|(slow|load).*mobile/i },
+    // Email professionalism (gmail vs branded)
+    { key: "email_branded", rx: /(gmail|personal email|branded email|email.*business)/i },
+  ];
+
+  function topicOf(f: AuditFinding): string {
+    const txt = `${f.title} ${f.observation}`.toLowerCase();
+    for (const p of TOPIC_PATTERNS) {
+      if (p.rx.test(txt)) return p.key;
+    }
+    // Fallback: word-fingerprint of title (first 4 significant words)
+    const sig = f.title
+      .toLowerCase()
+      .replace(/[^a-z0-9 ]/g, "")
+      .split(/\s+/)
+      .filter((w) => w.length > 3 && !["your", "site", "page", "with", "from", "this", "that"].includes(w))
+      .slice(0, 3)
+      .sort()
+      .join("_");
+    return sig || `unique_${Math.random().toString(36).slice(2, 8)}`;
+  }
+
+  const byTopic = new Map<string, AuditFinding>();
+  for (const f of findings) {
+    const topic = topicOf(f);
+    const existing = byTopic.get(topic);
+    if (!existing) {
+      byTopic.set(topic, f);
+      continue;
+    }
+    // Keep the higher-severity. If equal, prefer the longer recommendation
+    // (more specific guidance wins).
+    const existingRank = severityRank[existing.severity] || 0;
+    const newRank = severityRank[f.severity] || 0;
+    if (newRank > existingRank) {
+      byTopic.set(topic, f);
+    } else if (newRank === existingRank && (f.recommendation?.length || 0) > (existing.recommendation?.length || 0)) {
+      byTopic.set(topic, f);
+    }
+  }
+
+  return Array.from(byTopic.values());
 }
 
 /**
