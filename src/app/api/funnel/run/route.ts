@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { runDailyFunnel } from "@/lib/funnel-manager";
+import { runDailyFunnel, enrollInFunnel } from "@/lib/funnel-manager";
 import { runAutoResumeCheck } from "@/lib/followup-scheduler";
 import { sendDailyDigest } from "@/lib/alerts";
 import { getWarmingStatus } from "@/lib/domain-warming";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
+import { updateProspect } from "@/lib/store";
 
 // POST: Run the funnel processor — handles due retries first, then next due steps
 // Also runs the follow-up scheduler auto-resume check
@@ -26,6 +27,92 @@ export async function POST(request?: NextRequest) {
     }
   }
   console.log("\n[Funnel] Running funnel processor...\n");
+
+  // Step 0: Auto-enroll approved prospects to fill today's warming capacity.
+  // Per CLAUDE.md Rule 47, the cron MUST top up the funnel from the approved
+  // pool BEFORE running the processor — otherwise sender-reputation runway
+  // gets wasted while approved prospects sit idle. Enroll up to (combined
+  // warming limit across both domains) MINUS (already-enrolled-not-yet-paused)
+  // approved prospects so the day's pitch volume tracks capacity.
+  let autoEnrollResult: {
+    requested: number;
+    enrolled: number;
+    skipped: number;
+    capacity: number;
+    activeBefore: number;
+  } = { requested: 0, enrolled: 0, skipped: 0, capacity: 0, activeBefore: 0 };
+
+  try {
+    if (isSupabaseConfigured()) {
+      // Combined warming capacity across both sender domains
+      const warmingForCap = await getWarmingStatus();
+      const totalCapacity = (warmingForCap.domains || []).reduce(
+        (sum, d) => sum + (d.enabled ? (d.limitToday || 0) : 0),
+        warmingForCap.domains && warmingForCap.domains.length > 0
+          ? 0
+          : warmingForCap.enabled
+            ? (warmingForCap.limitToday || 0)
+            : 0
+      );
+
+      // Existing active (not-paused, not-completed) enrollments — these will
+      // consume capacity today via the regular funnel processor.
+      const { data: enrollRows } = await supabase
+        .from("funnel_enrollments")
+        .select("prospect_id,paused,completed_at")
+        .limit(10000);
+      const enrolledIds = new Set((enrollRows || []).map((r) => r.prospect_id as string));
+      const activeEnrollments = (enrollRows || []).filter(
+        (r) => !r.paused && !r.completed_at
+      ).length;
+
+      // Headroom = capacity - active enrollments. If active >= capacity, do nothing.
+      const headroom = Math.max(0, totalCapacity - activeEnrollments);
+      autoEnrollResult.capacity = totalCapacity;
+      autoEnrollResult.activeBefore = activeEnrollments;
+      autoEnrollResult.requested = headroom;
+
+      if (headroom > 0) {
+        // Pull the oldest approved-with-email prospects that aren't already enrolled
+        const { data: candidates } = await supabase
+          .from("prospects")
+          .select("id, business_name, email, updated_at")
+          .eq("status", "approved")
+          .not("email", "is", null)
+          .order("updated_at", { ascending: true })
+          .limit(500);
+
+        const pick = (candidates || [])
+          .filter((p) => !enrolledIds.has(p.id as string))
+          .slice(0, headroom);
+
+        for (const p of pick) {
+          const id = p.id as string;
+          try {
+            // Tag email-only — A2P 10DLC still pending, never SMS scouted prospects
+            await updateProspect(id, {
+              outreachChannel: "email-only",
+              needsSmsFollowup: true,
+            });
+            const enroll = await enrollInFunnel(id);
+            if (enroll.success) autoEnrollResult.enrolled++;
+            else autoEnrollResult.skipped++;
+          } catch (err) {
+            console.error(`[Funnel] Auto-enroll failed for ${id}:`, err);
+            autoEnrollResult.skipped++;
+          }
+        }
+
+        if (autoEnrollResult.enrolled > 0) {
+          console.log(
+            `[Funnel] Auto-enrolled ${autoEnrollResult.enrolled}/${headroom} approved prospects (capacity ${totalCapacity}, active ${activeEnrollments})`
+          );
+        }
+      }
+    }
+  } catch (err) {
+    console.error("[Funnel] Auto-enroll step failed (continuing to processor):", err);
+  }
 
   // Step 1: Run auto-resume check first (resumes funnels for silent prospects)
   let autoResumeResult = {

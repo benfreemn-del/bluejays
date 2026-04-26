@@ -4377,3 +4377,164 @@ loss_reasons (
 
 Indexes: by `prospect_id`, by `category`, by `surfaced_at DESC` (so
 the dashboard's "newest first" query is cheap).
+
+---
+
+## North Star: 5,000 Paying Sites — The Failure-Is-Not-An-Option Plan
+
+This is the long-term operating thesis for BlueJays. Every system, every
+hire, every channel decision, every CLAUDE.md rule must measurably move
+the business toward this number. If a project doesn't, it's a
+distraction.
+
+### The math at 5,000 sites
+- **5,000 customers × $997 setup = $4.985M one-time revenue** (acquired
+  over 24 months ≈ $208K/mo run-rate at year 1)
+- **5,000 × $100/yr renewal = $500K/yr recurring annuity** at full
+  scale (assuming 80% year-2 retention)
+- **Hitting 90%+ retention adds ~$160K/yr at the 5K mark** — that's
+  why the customer portal + real-data monthly report + NPS funnel +
+  Stripe dunning are non-negotiable infrastructure.
+
+### Cost ceiling per acquired customer (CAC)
+At $997 setup + ~$80/yr 5-year LTV, total LTV ≈ $1,400 over 5 years.
+Sustainable CAC = ~$200–$300 per closed customer. Above $400 the
+unit economics break.
+
+### Margin per site at scale
+- $997 setup minus ~$11 domain, ~$5 generation, ~$3 hosting, ~$50
+  blended CAC = **~$925 margin per first-year customer**
+- Renewal year: $100 - $11 - $3 = **$86/yr recurring margin per
+  retained customer**
+
+### Five milestones — each unlocks the next phase
+
+**Milestone 1: 100 sites (~$100K revenue, $10K/yr annuity)**
+- Operator: Ben alone. Manual review on every reply.
+- Marketing: cold email + inbound SMS + LinkedIn manual + postcards.
+- Failure mode: Ben burns out. Mitigation: PendingRepliesPanel + 3-step
+  onboarding + customer portal + loss-reasons feedback loop.
+
+**Milestone 2: 500 sites (~$500K revenue, $50K/yr annuity)**
+- First hire: VA at $5–$8/hr × 20 hrs/wk for intake + support triage.
+- Marketing: add Apollo ($30/mo), retargeting pixels ($100/mo), Day-7
+  postcard ($200/mo at 100 prospects).
+- Tech: enable HTML pitch email after Day 14 warmup; add 3rd warming
+  domain for 300 sends/day combined.
+
+**Milestone 3: 1,000 sites (~$1M revenue, $100K/yr annuity)**
+- Second hire: junior designer at $15–$25/hr × 30 hrs/wk for
+  customizations.
+- Marketing: outbound voice (Ben dials 10/day from
+  opened-but-didn't-claim list), GBP claim, Chamber memberships.
+- Tech: Vercel Pro 50-domain-per-project cap is hit. Shard across
+  20+ projects via `vercel_project_id` column OR upgrade to Enterprise.
+
+**Milestone 4: 2,500 sites (~$2.5M revenue, $250K/yr annuity)**
+- Third hire: closer/sales rep at $50K base + 10% commission.
+- Marketing: Apollo Sales Nav team license, paid LinkedIn ads,
+  partner referrals from 2–3 designers who don't serve SMB.
+- Tech: registrar spend = ~$70/day at this volume. Renewal cron
+  MUST be airtight.
+
+**Milestone 5: 5,000 sites (~$5M revenue, $500K/yr annuity)**
+- Team: Ben + closer + 3 designers + VA + customer success hire.
+- Marketing: brand spend kicks in. Local radio, event sponsorships,
+  podcast sponsorship.
+- Tech: Vercel Enterprise OR sharded Pro, Supabase Team ($599/mo for
+  PITR), SendGrid Pro ($89/mo), Twilio short-code (~$1K/mo).
+- Failure mode: regulatory exposure. Mitigated by airtight TCPA gate,
+  working unsubscribe, state subscription disclosure on every surface.
+
+### The 5 systems that must be airtight before scaling past 100
+
+1. **Domain renewal cron** — Stripe-first, registrar-second policy is
+   the load-bearing wall. One bug = systemic revenue leak.
+2. **Card-failure dunning** — invoice.payment_failed + 30/7-day
+   pre-renewal emails + customer portal must convert ≥60% of failed
+   cards before suspending service.
+3. **AI responder + Ben-review queue** — kill switch + drafts panel.
+4. **Customer portal + monthly real-data report** — the "$100/yr"
+   must feel like ongoing value, not a hidden subscription.
+5. **Onboarding 3-step form + multi-stage reminder cron** — every
+   paid customer who can't fill the form is a customer who never
+   goes live.
+
+### Channel mix at full scale (the 80/20)
+
+The unsexy truth: **at 5K sites, 80% of acquisition will come from
+outbound + referrals, not inbound.** SEO/content/PR are
+brand-building, not pipeline-driving, until much higher scale.
+
+Concrete revenue split target at 5K:
+- Cold email + inbound SMS + voicemail: **45%**
+- Referrals + customer-success NPS-promoter loop: **20%**
+- LinkedIn outbound (manual + Sales Nav): **15%**
+- Outbound voice (Ben + closer dialing warm leads): **10%**
+- Paid retargeting + brand reinforcement: **5%**
+- SEO + content + organic referrals: **5%**
+
+The first $1M of revenue comes almost entirely from cold email +
+inbound SMS + manual outbound. Don't get distracted building TikTok
+funnels.
+
+### Risk register — what kills this business
+
+1. **SendGrid sender reputation collapse** — one bad batch tanks the
+   domain. Mitigated: parallel domain warming, bounce auto-suppression,
+   gradual ramp.
+2. **Stripe account suspension** — chargeback rate >1% suspends the
+   account. Mitigated: 100% money-back guarantee, Customer Portal,
+   generous first-30-days refund.
+3. **Vercel/AWS cost explosion** — viral growth = Lambda spikes.
+   Mitigated: cost-per-call logging, spending dashboard,
+   recurring-cost projection.
+4. **Single-state regulatory action** — WA AG investigates "$100/yr
+   in perpetuity." Mitigated: every paid customer sees the renewal
+   cadence in welcome email, monthly report, and customer portal.
+5. **Ben hit-by-bus** — single-founder risk. Mitigated: by Milestone
+   3 the codebase + CLAUDE.md should be operable by a $20/hr VA
+   + Claude in 90% of cases.
+
+### How to know if we're on track — the 5 weekly numbers
+
+Each Friday, Ben reviews these:
+1. **Net new paid customers this week** (target: 5/wk at M1 → 50/wk at M5)
+2. **Email open rate** (target: ≥30% — below = sender reputation slipping)
+3. **Reply rate** (target: ≥3% on Day 0 pitch — below = copy/list quality)
+4. **Onboarding form completion within 48 hrs of payment** (target: ≥70%)
+5. **Year-2 retention** (target: ≥80%)
+
+Numbers below target for 2 consecutive weeks = pause new acquisition
+spend, fix the leaking surface first, then resume.
+
+### Locked-In Rule 46 — Failure-Is-Not-An-Option Decision Framework
+
+Every meaningful decision (new feature, new channel, new hire, new
+expense, new tool) must answer: **"Does this measurably move us
+toward 5,000 paid sites in 24 months?"** Default answer should be no.
+Saying yes requires showing which milestone it unlocks AND which of
+the 5 weekly numbers it improves. If neither applies, the answer is
+no — even if the idea is "cool."
+
+This rule is the antidote to the BlueJays codebase's recurring
+problem: building 8 channels and only deploying 2.5. **Build less,
+deploy more, measure everything.**
+
+### Locked-In Rule 47 — Approved Prospects Must Auto-Enroll Daily
+
+The 2026-04-25 audit found that the warming domains were under-utilized
+(36 sends out of 100 capacity) NOT because of missing prospects, but
+because the daily funnel cron only sends to ALREADY-ENROLLED prospects.
+Approved-but-not-enrolled prospects sat in the pool while the warming
+capacity went unused. Manual `enroll-batch` was the only path.
+
+**Rule:** the daily funnel cron MUST auto-enroll up to (today's warming
+limit − today's already-sent-day-0) approved-and-not-enrolled prospects
+BEFORE running the funnel processor. Implementation lives in
+`/api/funnel/run/route.ts`. Never let warming capacity sit idle while
+approved prospects sit in the backlog — that wastes the most expensive
+asset BlueJays owns: sender reputation runway.
+
+---
+
