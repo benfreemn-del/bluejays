@@ -4706,5 +4706,59 @@ step.** Ben must consciously reject killer-site and franchise prospects
 when they hit `pending-review` — never approve them and let auto-enroll
 do its thing.
 
+### Locked-In Rule 51 — Runnable Code Must Be One-Click Copyable (NON-NEGOTIABLE)
+
+Established 2026-04-25 by Ben. When giving Ben code, SQL, env vars, or
+shell commands to run, the snippet MUST be presented in a single clean
+fenced code block so most terminals/IDEs let him click-to-copy without
+selecting text by hand.
+
+**The format:**
+- ONE fenced code block per runnable thing — no splitting it across
+  paragraphs with explanation interleaved.
+- NO leading prompt characters (`$`, `>`, `PS>`) inside the block.
+- NO inline commentary inside the block — comments belong in the
+  language's native comment syntax (`-- ...` for SQL, `# ...` for
+  bash, etc.) so the whole thing pastes and runs as-is.
+- NO truncation, no `...`, no "etc." inside the block — the snippet
+  must be complete and ready to execute.
+- Specify the language on the fence (`````sql, `````bash, `````ts) so
+  syntax highlighting works.
+- Put the explanation BEFORE the block ("Run this in Supabase SQL
+  editor:") and verification steps AFTER the block — never inside it.
+
+**Bad example (don't do this):**
+```
+First, run:
+$ psql -c "ALTER TABLE prospects..."
+Then run:
+$ psql -c "SELECT * FROM..."
+```
+
+**Good example (always do this):**
+
+Run this in Supabase SQL editor:
+
+```sql
+ALTER TABLE prospects ADD COLUMN manually_managed BOOLEAN DEFAULT false;
+
+UPDATE prospects SET manually_managed = true
+WHERE business_name ILIKE '%lewis county autism%';
+```
+
+Verify with:
+
+```sql
+SELECT business_name, manually_managed FROM prospects WHERE manually_managed = true;
+```
+
+**This applies to:** SQL migrations, env var blocks, bash one-liners,
+PowerShell commands, npm/npx scripts, curl commands, JSON config
+snippets — anything Ben needs to copy and execute.
+
+**Exception:** when explaining a code pattern (not running it), inline
+fragments and prose-interleaved snippets are fine. The rule applies to
+RUNNABLE artifacts only.
+
 ---
 
