@@ -4597,5 +4597,114 @@ If unsure whether a job qualifies as "big," default to asking the
 questions. The cost of asking is 30 seconds; the cost of building
 the wrong thing is hours.
 
+### Locked-In Rule 49 — Manually-Added Prospects Must Be Tagged (NON-NEGOTIABLE)
+
+Established 2026-04-25 by Ben. Caught the same day: the freshly-shipped
+Rule 47 auto-enroll cron would have swept Lewis County Autism
+Coalition, Meyer Electric, Hector Landscaping, and OPS Security into
+the cold-outreach warming pool because all 4 sat in `status='approved'`.
+These are warm relationships — gifted sites, custom builds, or
+hand-picked closes — that Ben handles personally with custom outreach,
+NOT the templated funnel.
+
+**The rule:** any prospect that Ben adds manually to the system
+(directly via dashboard, via SQL import, via custom-tier purchase, via
+gift, via friend/family/referral introduction) MUST be tagged with
+`prospects.manually_managed = true` BEFORE any automation can touch it.
+
+**The mechanism:**
+- Schema: `prospects.manually_managed BOOLEAN NOT NULL DEFAULT false`
+  (migration `20260425_manually_managed.sql`).
+- Type: `Prospect.manuallyManaged?: boolean` in `src/lib/types.ts`.
+- Auto-enroll filter: `/api/funnel/run/route.ts` Step 0 already
+  enforces `.eq("manually_managed", false)` on the candidates query —
+  do NOT remove this clause.
+- Default false so every existing scouted prospect retains current
+  behavior. Only the manual ones get flipped to true.
+
+**When ANY future code adds a manual prospect, it MUST set
+`manuallyManaged: true` in the same `createProspect` / `updateProspect`
+call.** Examples:
+- Custom-tier purchases (`pricingTier === "custom"`) → always manual.
+- Direct dashboard "Add prospect" form → manual by default unless
+  operator explicitly opts in to auto-outreach.
+- SQL imports / bulk uploads of warm leads → manual until proven
+  otherwise.
+
+**When in doubt, default to manual.** False positives are cheap (Ben
+handles them himself), false negatives are expensive (warm relationship
+gets the cold-pitch template, trust burned).
+
+**Future surfaces that MUST respect this flag:**
+- Auto-enroll (already done)
+- Bulk-send scripts (`scripts/recover-broken-link-sends.ts` and any
+  future bulk-outreach script)
+- Daily SMS funnel sweeps
+- Voicemail drop crons
+- Postcard cron (when wired)
+- Retargeting pixel triggers (when wired)
+- Test group selection (Rule 50 below)
+
+If a new automated-touch surface gets built and skips this filter, that's
+a regression. The filter is part of the Rule 47 contract — auto-touch
+without `manually_managed = false` is forbidden.
+
+### Locked-In Rule 50 — Cold Outreach Skips Killer-Site & Franchise Prospects (NON-NEGOTIABLE)
+
+Established 2026-04-25 by Ben. Two prospect classes that should never
+get cold pitches because the $997 offer doesn't fit their reality:
+
+**1. Already-killer existing websites.** If a prospect's current website
+is genuinely good — modern design, clear CTAs, mobile-responsive,
+recent content, real photography — pitching them a $997 redesign feels
+desperate and ill-informed. They'll dismiss us, and rightly so. The
+prospects worth pursuing are the ones with visibly outdated, broken,
+template-generic, or missing sites where the upgrade is obvious.
+
+**2. Franchise locations.** Franchise businesses (chain pizza, chain
+auto-repair, chain real-estate offices, chain gyms, etc.) have
+corporate-mandated websites — the local owner can't change them. The
+$997 pitch is dead on arrival. Even if the franchisee LOVES the
+preview, they can't act on it.
+
+**The rule:** every cold-outreach selection mechanism (auto-scout,
+auto-enroll, test-group picker, bulk-send scripts, retargeting list
+builder) MUST filter out:
+- Prospects flagged as `franchise = true` (when the column exists).
+- Prospects whose `qualityNotes` or scraped data indicates a
+  high-quality existing website (use `qualityScore` heuristics: skip
+  prospects whose CURRENT site scores ≥ 80 on the QC review).
+
+**Implementation guidance:**
+- For auto-scout: tag franchise listings during scrape (Google Places
+  often has "Franchise" in the business type or the website URL is a
+  subdomain of a national chain like `www.midaschain.com/store/123`).
+- For auto-enroll: add `.lt("current_site_quality_score", 80)` once
+  the scoring column exists. Until then, lean on manual review during
+  approval — Ben should reject obvious franchises and killer-site
+  prospects at the approval gate.
+- For test-group selection: Rule 50 is load-bearing. The whole point of
+  a test group is to spend extra ($/prospect) on the highest-converting
+  segment. Wasting Browserless videos + Lob postcards on a franchise
+  Sears Auto Center destroys the per-prospect economics.
+
+**Heuristics for "killer existing website" detection** (use any 2+):
+- Site loads cleanly on mobile (no horizontal scroll, no broken layout)
+- Has booking/scheduling system embedded
+- Recent blog content (within last 12 months)
+- Custom photography (not generic stock)
+- Modern framework (Next.js, Webflow, Squarespace 7.1, modern Wix)
+- Site speed score > 80 on PageSpeed Insights
+- HTTPS + valid SSL + sitemap.xml present
+
+If a prospect hits 2+ of those, treat them as killer-site and exclude
+from cold outreach. Ben can still pitch them manually if there's a
+relationship angle, but the templated funnel stays away.
+
+**Until automated detection ships, the gate is the dashboard approval
+step.** Ben must consciously reject killer-site and franchise prospects
+when they hit `pending-review` — never approve them and let auto-enroll
+do its thing.
+
 ---
 

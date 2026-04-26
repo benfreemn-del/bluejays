@@ -186,6 +186,7 @@ function dbToProspect(row: Record<string, unknown>): Prospect {
     domainRegistrar: (row.domain_registrar as string | null) || undefined,
     domainRegisteredAt: (row.domain_registered_at as string | null) || undefined,
     siteLiveAt: (row.site_live_at as string | null) || undefined,
+    manuallyManaged: (row.manually_managed as boolean | null) ?? false,
     createdAt: row.created_at as string,
     updatedAt: row.updated_at as string,
   });
@@ -236,6 +237,7 @@ function prospectToDb(p: Prospect) {
     domain_registrar: sanitized.domainRegistrar || null,
     domain_registered_at: sanitized.domainRegisteredAt || null,
     site_live_at: sanitized.siteLiveAt || null,
+    manually_managed: sanitized.manuallyManaged ?? false,
   };
 }
 
@@ -429,6 +431,7 @@ export async function updateProspect(
     if (sanitizedUpdates.domainRegistrar !== undefined) dbUpdates.domain_registrar = sanitizedUpdates.domainRegistrar || null;
     if (sanitizedUpdates.domainRegisteredAt !== undefined) dbUpdates.domain_registered_at = sanitizedUpdates.domainRegisteredAt || null;
     if (sanitizedUpdates.siteLiveAt !== undefined) dbUpdates.site_live_at = sanitizedUpdates.siteLiveAt || null;
+    if (sanitizedUpdates.manuallyManaged !== undefined) dbUpdates.manually_managed = sanitizedUpdates.manuallyManaged ?? false;
 
     let previousStatus: string | null = null;
     if (sanitizedUpdates.status) {

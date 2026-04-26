@@ -73,11 +73,16 @@ export async function POST(request?: NextRequest) {
       autoEnrollResult.requested = headroom;
 
       if (headroom > 0) {
-        // Pull the oldest approved-with-email prospects that aren't already enrolled
+        // Pull the oldest approved-with-email prospects that aren't already enrolled.
+        // Per CLAUDE.md Rule 49, manually-managed prospects (gifted sites,
+        // custom builds, friends/family, hand-picked closes) MUST be excluded
+        // from cold-outreach auto-enroll — they get the warm pitch from Ben
+        // directly, not the templated funnel.
         const { data: candidates } = await supabase
           .from("prospects")
           .select("id, business_name, email, updated_at")
           .eq("status", "approved")
+          .eq("manually_managed", false)
           .not("email", "is", null)
           .order("updated_at", { ascending: true })
           .limit(500);

@@ -140,6 +140,11 @@ export interface Prospect {
   outreachChannel?: "email-only" | "full";
   /** Needs SMS follow-up when phone number is verified */
   needsSmsFollowup?: boolean;
+  /** Rule 49: when true, this prospect is manually managed by Ben (gifted
+   *  site, custom build, friend/family, hand-picked close) and the daily
+   *  auto-enroll cron MUST skip them. Default false for scouted prospects.
+   *  See `/api/funnel/run/route.ts` Step 0 + CLAUDE.md Rule 49. */
+  manuallyManaged?: boolean;
   /** 8-char deterministic short code used for customer-facing preview URLs
    *  (see /p/[code] route + src/lib/short-urls.ts). Derived from md5(id).
    *  Populated by migration 20260419_prospect_short_codes.sql. */
