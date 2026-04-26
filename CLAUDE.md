@@ -5222,3 +5222,131 @@ RUNNABLE artifacts only.
 
 ---
 
+## Mobile / Phone Session Rules — Building Static Sites (NON-NEGOTIABLE)
+
+Ben sometimes builds sites from his **phone** (Claude mobile app). In
+this context, stream idle timeouts occur constantly when generating
+large files in a single response. Every session that involves building
+or modifying a client static site MUST follow these rules.
+
+### How to detect a phone session
+
+Ben will say one of:
+- "I'm on the phone"
+- "I'm on my phone"
+- "building from phone"
+- "phone session"
+- Or the conversation is happening in the Claude mobile app (visible
+  from context — short messages, screenshot images, voice-style prose)
+
+**When any of these signals are present, immediately switch to the
+chunked-write strategy below for ALL file generation.**
+
+### The stream idle timeout problem
+
+Stream idle timeout = the AI's THINKING phase takes too long before
+outputting the first token. This happens whenever Claude tries to plan
+and then write a 200+ line file in one shot. The error is:
+
+> API Error: Stream idle timeout — partial response received
+
+This is NOT a network problem. It's a generation-length problem.
+Spawning background agents does NOT fix it — agents hit the same limit.
+Writing smaller files DOES fix it.
+
+### The fix: chunked Python append writes (NON-NEGOTIABLE on phone)
+
+Never use the `Write` tool to generate a large file in one call on a
+phone session. Instead, use **`Bash` with Python append mode** to write
+the file in sections of ~60–100 lines each:
+
+```python
+# FIRST chunk — open with 'w' (creates/overwrites)
+python3 << 'PYEOF'
+f = open('/home/user/bluejays/public/sites/[slug]/index.html', 'w')
+f.write("""
+... first 60-100 lines of content ...
+""")
+f.close()
+print("chunk 1 done")
+PYEOF
+
+# SUBSEQUENT chunks — open with 'a' (append)
+python3 << 'PYEOF'
+f = open('/home/user/bluejays/public/sites/[slug]/index.html', 'a')
+f.write("""
+... next 60-100 lines ...
+""")
+f.close()
+print("chunk 2 done")
+PYEOF
+```
+
+**Rules for each chunk:**
+- First chunk uses `open(..., 'w')` — creates the file
+- All subsequent chunks use `open(..., 'a')` — appends
+- Each chunk ends with `print("chunk N done")` so Claude can confirm
+- Never put more than ~80 lines of HTML/CSS/JS in a single chunk
+- Run chunks sequentially, waiting for "chunk N done" before the next
+- After all chunks: verify with `wc -l filename` to confirm line count
+
+### Static site file structure (for client sites)
+
+All client static sites live at `/public/sites/[slug]/` and follow
+this pattern (same as OPS site):
+
+```
+/public/sites/[slug]/
+  index.html      — full HTML, all sections
+  css/styles.css  — all CSS, custom properties, responsive
+  js/main.js      — all JS wrapped in DOMContentLoaded
+```
+
+HTML asset paths use **absolute `/sites/[slug]/css/styles.css`** format
+(not relative). This is how the OPS site does it and it works with
+Next.js static file serving.
+
+### Build order for a new static site
+
+Always in this order — CSS and JS can be written in parallel but HTML
+comes last (or references them at end of body):
+
+1. Create directories:
+   ```bash
+   mkdir -p /home/user/bluejays/public/sites/[slug]/css
+   mkdir -p /home/user/bluejays/public/sites/[slug]/js
+   ```
+2. Write `js/main.js` in chunks (smallest file, write first)
+3. Write `css/styles.css` in chunks (medium file)
+4. Write `index.html` in chunks (largest file, references the above)
+5. Verify: `wc -l` all three files
+6. Run: `npm run build` — must pass clean before committing
+7. Commit + push
+
+### Chunk size guide by file type
+
+| File | Target lines/chunk | Typical chunk count |
+|---|---|---|
+| `js/main.js` | 80–120 lines | 2–3 chunks |
+| `css/styles.css` | 80–100 lines | 6–8 chunks |
+| `index.html` | 60–80 lines | 8–12 chunks |
+
+### What NOT to do on a phone session
+
+- ❌ Use the `Write` tool to generate 200+ lines of HTML/CSS in one call
+- ❌ Spawn background agents to write large files (same timeout applies)
+- ❌ Use 3 parallel agents for 3 large files (all three will timeout)
+- ❌ Try to generate the file in one "smarter" prompt — the problem is
+  generation length, not prompt quality
+- ❌ Give up and tell Ben it can't be done — chunked writes always work
+
+### Reference: The Pine & Particle site
+
+The Pine & Particle Co. site (`/public/sites/pine-and-particle/`) was
+built entirely with the chunked-write approach in April 2026 after
+repeated stream timeouts killed every other approach. It's the proof
+that this works. When in doubt, look at how those 9 HTML chunks and
+6 CSS chunks were structured.
+
+---
+
