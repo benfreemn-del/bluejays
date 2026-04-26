@@ -157,6 +157,15 @@ export default async function AuditPage({
               <p className="text-sm uppercase tracking-wider text-rose-300 mb-3 font-semibold">
                 💸 You&apos;re losing about
               </p>
+              {content.moneyLeak?.avgCustomerValue ? (
+                <p className="text-xs text-slate-400 mb-3">
+                  Each new {content.businessCategory.replace("-", " ")} customer is worth about{" "}
+                  <span className="text-amber-300 font-semibold">
+                    ${content.moneyLeak.avgCustomerValue.toLocaleString()}
+                  </span>{" "}
+                  to a business like yours.
+                </p>
+              ) : null}
               <div className="relative mb-3 mx-auto" style={{ minHeight: 180 }}>
                 {/* Blackhole — vortex behind the money number. The dollars
                     spiral toward a central red void on a 3.6s loop. CSS-only
@@ -231,28 +240,44 @@ export default async function AuditPage({
           <div className="space-y-2">
             {content.prioritizedRoadmap.map((item) => {
               const eff = EFFORT_LABELS[item.effort];
+              const recovery = item.recoveryMonthly ?? 0;
+              const customers = item.recoveryCustomers ?? 0;
               return (
                 <div
                   key={item.rank}
-                  className="flex items-center gap-4 rounded-xl border border-white/10 bg-slate-900/50 p-4 hover:border-rose-500/30 transition-colors"
+                  className="flex items-center gap-4 rounded-xl border border-white/10 bg-slate-900/50 p-4 hover:border-emerald-500/30 transition-colors"
                 >
                   <div className="flex-shrink-0 h-9 w-9 rounded-full bg-rose-500/15 border border-rose-500/30 flex items-center justify-center text-rose-300 font-bold text-sm">
                     {item.rank}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-white">{item.title}</h3>
-                  </div>
-                  <div className="flex-shrink-0 flex items-center gap-2 text-xs">
-                    <span className={`inline-flex items-center gap-1 rounded-full bg-slate-800/80 px-2.5 py-1 ${eff?.color || "text-slate-400"}`}>
-                      <span>{eff?.emoji || "🔧"}</span>
-                      <span className="font-medium">{eff?.label || item.effort}</span>
-                    </span>
-                    {item.blueJaysCanDo && (
-                      <span className="hidden sm:inline-flex items-center rounded-full bg-sky-500/10 border border-sky-500/30 px-2.5 py-1 text-sky-300 font-medium">
-                        ✦ BlueJays
+                    <h3 className="font-semibold text-white truncate">{item.title}</h3>
+                    <div className="mt-1 flex flex-wrap items-center gap-2 text-xs">
+                      <span className={`inline-flex items-center gap-1 rounded-full bg-slate-800/80 px-2 py-0.5 ${eff?.color || "text-slate-400"}`}>
+                        <span>{eff?.emoji || "🔧"}</span>
+                        <span className="font-medium">{eff?.label || item.effort}</span>
                       </span>
-                    )}
+                      {item.blueJaysCanDo && (
+                        <span className="hidden sm:inline-flex items-center rounded-full bg-sky-500/10 border border-sky-500/30 px-2 py-0.5 text-sky-300 font-medium">
+                          ✦ BlueJays
+                        </span>
+                      )}
+                    </div>
                   </div>
+                  {/* Right-side big recovery number (Q3A) — money first, then
+                      customers stacked below (Q2C). Hidden on score >= 80. */}
+                  {recovery > 0 && (
+                    <div className="flex-shrink-0 text-right pl-2 border-l border-emerald-500/20">
+                      <div className="text-emerald-300 font-bold text-base md:text-xl leading-none whitespace-nowrap">
+                        +${recovery.toLocaleString()}/mo
+                      </div>
+                      {customers > 0 && (
+                        <div className="text-[10px] md:text-xs text-emerald-400/70 mt-1 whitespace-nowrap">
+                          +{customers} {customers === 1 ? "customer" : "customers"}/mo
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               );
             })}
@@ -311,6 +336,54 @@ export default async function AuditPage({
         </section>
       )}
 
+      {/* "Stop the leak" — bridge from the audit to the offer. Sums the
+          per-fix recovery numbers and offers the rebuild as the way to
+          claim them. Hidden when score >= 80 (no leak to recover). */}
+      {content.recoveryProjection && content.recoveryProjection.totalMonthly > 0 && (
+        <section className="border-b border-white/5 bg-gradient-to-b from-emerald-950/30 to-slate-950">
+          <div className="mx-auto max-w-3xl px-6 py-14">
+            <div className="rounded-2xl border border-emerald-500/40 bg-emerald-500/5 p-6 md:p-10 text-center shadow-[0_0_60px_rgba(16,185,129,0.15)]">
+              <p className="text-sm uppercase tracking-wider text-emerald-300 mb-3 font-semibold">
+                💰 Stop the leak
+              </p>
+              <h2 className="text-2xl md:text-4xl font-bold text-white mb-4 leading-tight">
+                +<span className="text-emerald-300">${content.recoveryProjection.totalMonthly.toLocaleString()}</span>
+                <span className="text-slate-400 text-2xl md:text-3xl">/mo</span>{" "}
+                back in your pocket
+              </h2>
+              {content.recoveryProjection.totalCustomers > 0 && (
+                <p className="text-base md:text-lg text-slate-200 mb-6">
+                  That&apos;s about{" "}
+                  <span className="text-emerald-300 font-bold">
+                    +{content.recoveryProjection.totalCustomers}{" "}
+                    {content.recoveryProjection.totalCustomers === 1 ? "customer" : "customers"}/month
+                  </span>{" "}
+                  you&apos;re missing today.
+                </p>
+              )}
+
+              {/* Primary CTA inside the box (Q10A) */}
+              <div className="mt-6 flex flex-col items-center gap-2">
+                <a
+                  href={content.callToAction.primaryButtonUrl}
+                  className="inline-flex items-center justify-center rounded-md bg-gradient-to-r from-emerald-500 to-sky-500 px-6 md:px-8 py-3 md:py-4 text-base font-bold text-white shadow-lg hover:opacity-90 transition-opacity whitespace-nowrap"
+                >
+                  Recover ~${content.recoveryProjection.totalMonthly.toLocaleString()}/mo for $997 →
+                </a>
+                <p className="text-xs text-slate-500">
+                  Or 3 small payments of $349 · 100% money-back if you don&apos;t love it
+                </p>
+              </div>
+
+              {/* Methodology footnote (Q7A) */}
+              <p className="mt-6 text-[11px] text-slate-500 max-w-xl mx-auto leading-relaxed">
+                {content.recoveryProjection.methodology}
+              </p>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Mini-testimonial. Story-format so it's not mistaken for a fake quote. */}
       <section className="border-b border-white/5">
         <div className="mx-auto max-w-3xl px-6 py-10">
@@ -319,7 +392,7 @@ export default async function AuditPage({
               <span className="text-3xl">⭐</span>
               <div>
                 <p className="text-lg text-slate-100 leading-relaxed mb-3">
-                  &ldquo;Same town, same prices, same offer — just a site that didn&apos;t actively work against me. Went from 2 calls a week to 14.&rdquo;
+                  &ldquo;Same town, same prices, same offer — just a site that didn&apos;t fight me. Went from 2 calls a week to 14.&rdquo;
                 </p>
                 <p className="text-sm text-slate-400">
                   — A {content.businessCategory.replace("-", " ")} owner in Washington · scored 38 before rebuild.

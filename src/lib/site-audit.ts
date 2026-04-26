@@ -93,6 +93,14 @@ export interface AuditContent {
     impact: "high" | "medium" | "low";
     effort: "high" | "medium" | "low";
     blueJaysCanDo: boolean;
+    /** Estimated $/month recovered when this fix lands. Deterministic
+     *  formula based on severity weight × share of total recovery. The
+     *  sum of all 5 fixes caps at ~60% of currentLeak (Q6A: conservative).
+     *  0 when score >= 80 (no leak to recover). */
+    recoveryMonthly: number;
+    /** Customers/month — recoveryMonthly / vertical avg customer value,
+     *  rounded. Stacks under the dollar number on each card. */
+    recoveryCustomers: number;
   }>;
   strengths: string[];
   /** Hormozi-style money-leak anchor: rough monthly $ this site is
@@ -106,6 +114,17 @@ export interface AuditContent {
     estimateLow: number;
     estimateHigh: number;
     methodology: string; // one-line plain-English explanation
+    avgCustomerValue: number; // displayed as the "avg lead chip" near hero
+  };
+  /** "Stop the leak" total — sum of per-fix recovery numbers, framed as
+   *  the bridge from the audit to the $997 offer. Conservative: ~60% of
+   *  the current leak. All zeros when score >= 80 (healthy site). */
+  recoveryProjection: {
+    totalMonthly: number;
+    totalCustomers: number;
+    avgCustomerValue: number;
+    capPercent: number; // e.g. 0.60 = "60% of leak recovered"
+    methodology: string;
   };
   callToAction: {
     headline: string;
@@ -138,35 +157,65 @@ export interface AuditContent {
  * to a healthy site reads as scammy.
  */
 const VERTICAL_LEAK_RATES: Record<string, { avgValue: number; monthlyVisitors: number }> = {
-  dental:           { avgValue: 600,  monthlyVisitors: 800 },
-  veterinary:       { avgValue: 250,  monthlyVisitors: 600 },
-  salon:            { avgValue: 120,  monthlyVisitors: 800 },
-  electrician:      { avgValue: 800,  monthlyVisitors: 400 },
-  plumber:          { avgValue: 600,  monthlyVisitors: 500 },
-  hvac:             { avgValue: 1200, monthlyVisitors: 400 },
-  roofing:          { avgValue: 8000, monthlyVisitors: 350 },
-  "auto-repair":    { avgValue: 350,  monthlyVisitors: 700 },
-  "law-firm":       { avgValue: 3500, monthlyVisitors: 600 },
-  fitness:          { avgValue: 100,  monthlyVisitors: 1200 },
-  "real-estate":    { avgValue: 8000, monthlyVisitors: 1500 },
-  landscaping:      { avgValue: 1200, monthlyVisitors: 400 },
-  cleaning:         { avgValue: 220,  monthlyVisitors: 600 },
-  chiropractic:     { avgValue: 200,  monthlyVisitors: 500 },
-  accounting:       { avgValue: 800,  monthlyVisitors: 500 },
-  insurance:        { avgValue: 600,  monthlyVisitors: 400 },
-  "interior-design":{ avgValue: 4000, monthlyVisitors: 500 },
-  moving:           { avgValue: 800,  monthlyVisitors: 800 },
-  "pest-control":   { avgValue: 200,  monthlyVisitors: 500 },
-  "med-spa":        { avgValue: 400,  monthlyVisitors: 700 },
-  catering:         { avgValue: 1500, monthlyVisitors: 400 },
-  "general-contractor": { avgValue: 15000, monthlyVisitors: 400 },
-  general:          { avgValue: 300,  monthlyVisitors: 500 },
+  // Healthcare-adjacent
+  dental:                { avgValue: 600,   monthlyVisitors: 800 },
+  veterinary:            { avgValue: 250,   monthlyVisitors: 600 },
+  chiropractic:          { avgValue: 200,   monthlyVisitors: 500 },
+  "physical-therapy":    { avgValue: 250,   monthlyVisitors: 500 },
+  "med-spa":             { avgValue: 400,   monthlyVisitors: 700 },
+  medical:               { avgValue: 350,   monthlyVisitors: 600 },
+  // Trades / home services
+  electrician:           { avgValue: 800,   monthlyVisitors: 400 },
+  plumber:               { avgValue: 600,   monthlyVisitors: 500 },
+  hvac:                  { avgValue: 1200,  monthlyVisitors: 400 },
+  roofing:               { avgValue: 8000,  monthlyVisitors: 350 },
+  "auto-repair":         { avgValue: 350,   monthlyVisitors: 700 },
+  landscaping:           { avgValue: 1200,  monthlyVisitors: 400 },
+  cleaning:              { avgValue: 220,   monthlyVisitors: 600 },
+  "carpet-cleaning":     { avgValue: 250,   monthlyVisitors: 500 },
+  moving:                { avgValue: 800,   monthlyVisitors: 800 },
+  "pest-control":        { avgValue: 200,   monthlyVisitors: 500 },
+  "general-contractor":  { avgValue: 15000, monthlyVisitors: 400 },
+  construction:          { avgValue: 12000, monthlyVisitors: 350 },
+  painting:              { avgValue: 3500,  monthlyVisitors: 400 },
+  "pressure-washing":    { avgValue: 350,   monthlyVisitors: 500 },
+  "tree-service":        { avgValue: 1200,  monthlyVisitors: 350 },
+  fencing:               { avgValue: 4500,  monthlyVisitors: 350 },
+  "garage-door":         { avgValue: 600,   monthlyVisitors: 400 },
+  locksmith:             { avgValue: 180,   monthlyVisitors: 600 },
+  towing:                { avgValue: 150,   monthlyVisitors: 700 },
+  "junk-removal":        { avgValue: 350,   monthlyVisitors: 500 },
+  "appliance-repair":    { avgValue: 220,   monthlyVisitors: 500 },
+  "pool-spa":            { avgValue: 350,   monthlyVisitors: 400 },
+  // Professional services
+  "law-firm":            { avgValue: 3500,  monthlyVisitors: 600 },
+  accounting:            { avgValue: 800,   monthlyVisitors: 500 },
+  insurance:             { avgValue: 600,   monthlyVisitors: 400 },
+  "real-estate":         { avgValue: 8000,  monthlyVisitors: 1500 },
+  // Lifestyle / beauty / creative
+  salon:                 { avgValue: 120,   monthlyVisitors: 800 },
+  "interior-design":     { avgValue: 4000,  monthlyVisitors: 500 },
+  photography:           { avgValue: 800,   monthlyVisitors: 600 },
+  florist:               { avgValue: 100,   monthlyVisitors: 600 },
+  tattoo:                { avgValue: 350,   monthlyVisitors: 500 },
+  "event-planning":      { avgValue: 6000,  monthlyVisitors: 400 },
+  catering:              { avgValue: 1500,  monthlyVisitors: 400 },
+  restaurant:            { avgValue: 60,    monthlyVisitors: 2500 },
+  // Fitness / community
+  fitness:               { avgValue: 100,   monthlyVisitors: 1200 },
+  "martial-arts":        { avgValue: 150,   monthlyVisitors: 600 },
+  church:                { avgValue: 80,    monthlyVisitors: 500 },
+  daycare:               { avgValue: 1400,  monthlyVisitors: 600 },
+  tutoring:              { avgValue: 600,   monthlyVisitors: 500 },
+  "pet-services":        { avgValue: 80,    monthlyVisitors: 700 },
+  // Fallback
+  general:               { avgValue: 300,   monthlyVisitors: 500 },
 };
 
 function estimateMoneyLeak(args: {
   category: string;
   overallScore: number;
-}): { monthlyEstimate: number; estimateLow: number; estimateHigh: number; methodology: string } {
+}): { monthlyEstimate: number; estimateLow: number; estimateHigh: number; methodology: string; avgCustomerValue: number } {
   const rates = VERTICAL_LEAK_RATES[args.category] || VERTICAL_LEAK_RATES["general"];
   // Lift % depends on how bad the site is. Cap aggressively — never claim
   // that fixing a single site delivers more than 5% absolute conversion lift.
@@ -188,10 +237,11 @@ function estimateMoneyLeak(args: {
     monthlyEstimate: mid,
     estimateLow: low,
     estimateHigh: high,
+    avgCustomerValue: rates.avgValue,
     methodology:
-      `Based on industry-typical traffic for ${args.category.replace("-", " ")} businesses, ` +
-      `a small conversion lift from fixing the issues below. Conservative — ` +
-      `actual lift could be higher.`,
+      `Based on how much traffic ${args.category.replace("-", " ")} sites usually get, ` +
+      `plus a small bump from fixing the things below. We're being safe — ` +
+      `the real number could be bigger.`,
   };
 }
 
@@ -568,9 +618,13 @@ function buildHeroPrompt(
 
 TONE — non-negotiable:
 - Address the owner as "you". Never "the user" or "the website".
-- Plain English, 7th-grade reading level. NO jargon.
+- 3rd-grade reading level. Write like you're talking to a friend over a beer, NOT writing a report.
+  - SHORT words (most under 6 letters). SHORT sentences (under 12 words).
+  - BANNED words: optimize, leverage, enhance, align, synergy, sub-optimal, holistic, robust, streamline, maximize, utilize, facilitate, prioritize, conversion, engagement, methodology.
+  - YES words: fix, change, drop, swap, push, win, get, lose, beat, kill, miss, grab, lift, sink.
+  - If a 9-year-old can't read it out loud and get it, rewrite it.
 - One punchy sentence beats three good ones. SHORT.
-- Lead with cost (lost customers, missed bookings) — never the technical issue.
+- Lead with cost (lost customers, missed jobs, wasted money) — never the technical issue.
 - Quote their actual copy. Reference real numbers.
 
 Business: ${businessName}
@@ -596,10 +650,10 @@ Return STRICT JSON ONLY:
     {
       "category": "hero" | "copy" | "cta" | "social_proof" | "structure" | "trust" | "brand_fit",
       "severity": "critical" | "high" | "medium" | "low",
-      "title": "<5-8 words. 'Your hero doesn't say what you do' NOT 'Sub-optimal hero structure'>",
-      "observation": "<ONE sentence, max 25 words. The problem + cost. Example: 'Your hero just says Welcome — a visitor has 3 seconds to know what you do, and most bail.'>",
-      "recommendation": "<ONE sentence, max 25 words. The fix, concrete. Example: 'Lead with what you do + who you help: Same-day plumbing for Tacoma homeowners, ${"$"}99 service call.'>",
-      "blueJaysSolution": "<ONE short sentence on how V2 ${category} fixes it>"
+      "title": "<5-8 words. 3rd-grade. 'Your hero doesn't say what you do' NOT 'Sub-optimal hero structure'>",
+      "observation": "<ONE sentence, max 20 words. 3rd-grade. The problem + cost. Example: 'Your hero just says Welcome. A new visitor has 3 seconds to get it, and most bail.'>",
+      "recommendation": "<ONE sentence, max 20 words. 3rd-grade. The fix, plain. Example: 'Tell them what you do and who you help: Same-day plumbing for Tacoma homes, ${"$"}99 to come out.'>",
+      "blueJaysSolution": "<ONE short sentence (under 18 words). 3rd-grade. How V2 ${category} fixes it.>"
     }
   ]
 }
@@ -619,10 +673,14 @@ function buildTechnicalPrompt(ctx: SiteContext): string {
   return `Audit this site's technical SEO + mobile readiness. Return STRICT JSON.
 
 TONE — non-negotiable:
-- Plain English, 7th-grade level. SHORT — one sentence each.
-- Address them as "you". Lead with cost (customers lost), not the metric.
-- "Your site loads 14 external scripts — on phone LTE that's 5+ seconds staring at a blank screen." NOT "External script count is high."
-- Celebrate good things plainly: "All 22 of your images have alt text — Google loves this."
+- 3rd-grade reading level. Write like you're texting a friend.
+  - SHORT words. SHORT sentences (under 12 words).
+  - BANNED words: optimize, leverage, enhance, streamline, maximize, utilize, facilitate, sub-optimal, prioritize, conversion, methodology.
+  - YES words: fix, swap, drop, slow, fast, big, small, lose, win, miss, beat.
+  - If a 9-year-old can't read it, rewrite it.
+- Address them as "you". Lead with cost (customers lost, money wasted).
+- "Your site loads 14 scripts. On a phone that's 5+ seconds of blank screen. Most people leave." NOT "External script count is high."
+- Celebrate good things plainly: "All 22 of your images have alt text. Google loves that."
 
 URL: ${ctx.url}
 Title: "${ctx.title}" (${ctx.title.length} chars)
@@ -646,8 +704,8 @@ Return JSON:
 
 Generate 1-2 findings per category (3-6 total max). RULES:
 - Reference real numbers ("18 chars" not "short title")
-- ONE sentence per observation, ONE sentence per recommendation. Max 25 words EACH. Never more.
-- Title: 5-8 words, plain English
+- ONE sentence per observation, ONE sentence per recommendation. Max 20 words EACH. 3rd-grade. Never more.
+- Title: 5-8 words, 3rd-grade plain English.
 - 1-2 must be severity="low" = STRENGTHS
 
 ABSOLUTE RULE: celebratory tone ("Great", "Good", "Solid", "All X have Y", "Working well") → severity MUST be "low". No exceptions.
@@ -710,16 +768,45 @@ function synthesizeAudit(args: {
     .slice()
     .sort((a, b) => (severityRank[b.severity] || 0) - (severityRank[a.severity] || 0));
 
-  const prioritizedRoadmap = sortedFixes.slice(0, 5).map((f, i) => ({
-    rank: i + 1,
-    title: f.title,
-    impact: severityToImpact(f.severity),
-    effort: estimateEffort(f.category, f.severity),
-    blueJaysCanDo: !!f.blueJaysSolution,
-  }));
-
+  const top5Fixes = sortedFixes.slice(0, 5);
   const overallScore = Math.round((heroResult.score + technicalResult.score) / 2);
   const moneyLeak = estimateMoneyLeak({ category: businessCategory, overallScore });
+
+  // Per-fix recovery — deterministic, no AI (Q1B). Each fix gets a share
+  // of the total recovery pool proportional to its severity weight. The
+  // pool itself is RECOVERY_CAP_PERCENT × currentLeak (Q6A: conservative).
+  const totalRecoveryPool = Math.round(moneyLeak.monthlyEstimate * RECOVERY_CAP_PERCENT);
+  const weights = top5Fixes.map((f) => severityWeight(f.severity));
+  const sumWeights = weights.reduce((a, b) => a + b, 0) || 1;
+  const avgCustomerValue = (VERTICAL_LEAK_RATES[businessCategory] || VERTICAL_LEAK_RATES["general"]).avgValue;
+
+  const prioritizedRoadmap = top5Fixes.map((f, i) => {
+    const share = weights[i] / sumWeights;
+    // Round per-fix recovery to nearest $50 so the numbers feel deliberate
+    // not algorithmic. Hidden when score >= 80 (no leak).
+    const recoveryMonthly =
+      overallScore >= 80 ? 0 : Math.max(50, Math.round((totalRecoveryPool * share) / 50) * 50);
+    const recoveryCustomers =
+      avgCustomerValue > 0 ? Math.max(1, Math.round(recoveryMonthly / avgCustomerValue)) : 0;
+    return {
+      rank: i + 1,
+      title: f.title,
+      impact: severityToImpact(f.severity),
+      effort: estimateEffort(f.category, f.severity),
+      blueJaysCanDo: !!f.blueJaysSolution,
+      recoveryMonthly,
+      recoveryCustomers,
+    };
+  });
+
+  // Total "Stop the leak" projection — what we put on the bridge-to-CTA box.
+  const recoveryProjection = {
+    totalMonthly: prioritizedRoadmap.reduce((sum, r) => sum + r.recoveryMonthly, 0),
+    totalCustomers: prioritizedRoadmap.reduce((sum, r) => sum + r.recoveryCustomers, 0),
+    avgCustomerValue,
+    capPercent: RECOVERY_CAP_PERCENT,
+    methodology: `Conservative math: avg ${businessCategory.replace("-", " ")} customer is worth ~${"$"}${avgCustomerValue.toLocaleString()}, fixing the ${prioritizedRoadmap.length} issues above plugs about ${Math.round(RECOVERY_CAP_PERCENT * 100)}% of the leak. Real lift could be higher.`,
+  };
 
   // Strengths — celebratory copy from low-severity findings ONLY.
   // Use the title (Hormozi-tone praise) instead of recommendation
@@ -732,24 +819,24 @@ function synthesizeAudit(args: {
     strengths.push(`${businessName} has a working website — that puts you ahead of plenty of competitors who don't.`);
   }
 
-  // One-line summary — Hormozi-tone, money-anchored when we have a leak number.
+  // One-line summary — 3rd-grade Hormozi-tone, money-anchored when leak > 0.
   const leakStr = moneyLeak.monthlyEstimate > 0
-    ? `~${"$"}${moneyLeak.monthlyEstimate.toLocaleString()}/month in lost customers`
-    : "real money on the table";
+    ? `about ${"$"}${moneyLeak.monthlyEstimate.toLocaleString()}/month in lost customers`
+    : "real money";
   const oneLineSummary =
     overallScore >= 80
-      ? `${businessName}'s site is doing real work. A few high-impact tweaks below could squeeze even more out of it.`
+      ? `${businessName}'s site works. A few small tweaks below can make it work even better.`
       : overallScore >= 60
-        ? `${businessName}'s site has the bones right but is leaving ${leakStr}. Every issue below is fixable.`
+        ? `${businessName}'s site has good bones. But it's losing ${leakStr}. Every problem below has a fix.`
         : overallScore >= 40
-          ? `${businessName}'s current site is actively costing you customers — likely ${leakStr}. Every. Single. Day. Good news: we can fix this.`
-          : `${businessName}'s current site is bleeding customers — likely ${leakStr}. We'd recommend a full rebuild before another marketing dollar gets spent.`;
+          ? `${businessName}'s site is costing you customers right now — ${leakStr}. Every. Single. Day. Good news: we can fix it.`
+          : `${businessName}'s site is losing customers fast — ${leakStr}. Don't spend more on ads. Fix the site first.`;
 
   return {
     url,
     businessCategory,
     generatedAt: new Date().toISOString(),
-    promptVersion: 4, // v4 = scannability pass (2026-04-26): one-sentence observations + recommendations (max 25 words each), capped finding counts, topic-based dedup, tighter prompt rules. Page-level: simpler color tiers + emoji anchors, sticky CTA bar, compressed V2 tag, money number above score.
+    promptVersion: 5, // v5 = 3rd-grade tone + lead-recovery (2026-04-26): both prompts demand 3rd-grade reading level (banned/yes word lists, 20-word cap), VERTICAL_LEAK_RATES filled to all 41 active categories, deterministic per-fix recovery formula (severity-weighted, capped at 60% of leak per Q6A), each roadmap item carries recoveryMonthly + recoveryCustomers, new recoveryProjection block powers the "Stop the leak" bridge-to-CTA section. moneyLeak now also exports avgCustomerValue for the avg-lead chip.
     overallScore,
     oneLineSummary,
     heroAnalysis: {
@@ -777,14 +864,15 @@ function synthesizeAudit(args: {
     blueJaysBenchmark: {
       referenceTemplate: benchmark.template,
       referenceUrl: benchmark.url,
-      gapSummary: `Compare to our ${benchmark.template} — that's the quality bar we'd ship for ${businessName}.`,
+      gapSummary: `See our ${benchmark.template}. That's what your site should look like.`,
     },
     moneyLeak,
+    recoveryProjection,
     prioritizedRoadmap,
     strengths,
     callToAction: {
-      headline: "Good ideas alone don't fix funnels. Execution does.",
-      body: `You now have ${prioritizedRoadmap.length} prioritized fixes for ${businessName}. Most small businesses see this list and do nothing for 6 months — losing tens of thousands in the meantime. We'll rebuild your site to fix all of these in 48 hours. Most agencies charge $5,000-$15,000 for this. We do it for $997 (or 3 monthly payments of $349). No retainers. No monthly fees. 100% money-back if you don't love it.`,
+      headline: "Knowing the fix isn't the same as fixing it.",
+      body: `You now have ${prioritizedRoadmap.length} fixes for ${businessName}. Most owners see this list and do nothing for 6 months. They lose tens of thousands. We'll rebuild your site in 48 hours to fix all of them. Most shops charge $5,000–$15,000. We charge $997 (or 3 small payments of $349). No monthly fees. 100% money-back if you don't love it.`,
       primaryButtonText: "Start with 3 × $349",
       primaryButtonUrl: "https://bluejayportfolio.com/contact?source=audit&plan=installment",
       secondaryButtonText: "Or $997 once",
@@ -802,6 +890,26 @@ function severityToImpact(s: string): "high" | "medium" | "low" {
   if (s === "medium") return "medium";
   return "low";
 }
+
+/**
+ * Severity → relative recovery weight. Critical fixes recover more
+ * than mediums proportionally. Used to apportion the total recovery
+ * pool across the top 5 fixes.
+ */
+function severityWeight(s: string): number {
+  if (s === "critical") return 4;
+  if (s === "high")     return 3;
+  if (s === "medium")   return 2;
+  return 1; // 'low' — almost never in the roadmap (we filter strengths out)
+}
+
+/**
+ * Recovery cap: how much of the current monthly leak can the fixes
+ * realistically claw back? Conservative 60% per Ben's design (Q6A) —
+ * we'd rather underclaim and overdeliver than the reverse. Healthy
+ * sites (score >= 80) have no leak so this is moot.
+ */
+const RECOVERY_CAP_PERCENT = 0.60;
 
 /**
  * Topic-based dedup. Claude + GPT often flag the same issue from different
