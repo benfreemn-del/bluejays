@@ -53,6 +53,9 @@ const ENV_KEYS = [
   // AI safety + funnel
   "AI_AUTO_REPLY_ENABLED",
   "ENABLE_HTML_PITCH_EMAIL",
+  // Stripe LIVE kill-switch + tier gate (Rules 52, 53)
+  "STRIPE_LIVE_ENABLED",
+  "STRIPE_ALLOW_NON_STANDARD_TIERS",
   // Misc
   "BEN_PHONE",
   "GOOGLE_PLACES_API_KEY",
