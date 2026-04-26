@@ -199,9 +199,15 @@ export async function POST(request: NextRequest) {
 
   // Fire-and-forget kick to the generate endpoint. We don't await — it
   // takes 3-5 min. Client polls /api/audit/[id]/status meanwhile.
-  const baseUrl = process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
-    : "https://bluejayportfolio.com";
+  //
+  // CRITICAL: hardcode the production URL per CLAUDE.md Rule 16. Using
+  // process.env.VERCEL_URL points at the per-deployment preview URL
+  // (bluejays-xyz.vercel.app) which is gated by Vercel Deployment
+  // Protection — server-to-self fetches get a 401 redirect to a Vercel
+  // SSO login. The audit silently never kicks off and the customer
+  // sees the wait-page forever. Same fix pattern as FROM_EMAIL and
+  // stripe.ts baseUrl.
+  const baseUrl = "https://bluejayportfolio.com";
   void fetch(`${baseUrl}/api/audit/generate/${finalAuditId}`, {
     method: "POST",
     headers: {
