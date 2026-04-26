@@ -2331,6 +2331,12 @@ After a paying client submits their onboarding form (`/api/onboarding/[id]`), se
 
 - [ ] **Approve prospects in dashboard** — review the pending prospects, approve the ones ready, funnel fires automatically.
 
+- [ ] **Flip live keys when ready** (Ben said 2026-04-25 — ready, but want to do later):
+  - Stripe: swap `sk_test_*` → `sk_live_*` on Vercel + register a NEW webhook in Live mode + swap `STRIPE_WEBHOOK_SECRET`
+  - Namecheap: remove `NAMECHEAP_SANDBOX=true` env var (or set to false) so domain registration goes against the production API
+  - Lob: swap `test_pub_*` / `test_*` keys for `live_pub_*` / `live_*` keys
+  - Verify each by running a dry-run flow: a test checkout for Stripe, a `.com` availability check for Namecheap, a postcard preview for Lob. NEVER flip all three at once — flip one, verify, flip the next.
+
 ---
 
 ### BLOCK 2 — CREDIBILITY (DO BEFORE SCALING TO 100+ EMAILS)
