@@ -378,14 +378,16 @@ a { text-decoration: none; color: inherit; }
     padding: 20px 24px;
 }
 .float-card {
-    flex: 0 0 auto; width: 270px; border-radius: 14px; overflow: hidden;
+    flex: 0 0 auto; width: 220px; border-radius: 14px; overflow: hidden;
     box-shadow: 0 24px 60px rgba(0,0,0,0.55), 0 0 0 1px rgba(74,222,128,0.18);
     transform: rotate(var(--rot, 0deg));
     animation: floatBob 5s ease-in-out infinite;
     transition: box-shadow 0.3s ease;
 }
-.float-card:nth-child(2) { animation-delay: 1.6s; }
-.float-card:nth-child(3) { animation-delay: 3.2s; }
+.float-card:nth-child(2) { animation-delay: 1.0s; }
+.float-card:nth-child(3) { animation-delay: 2.0s; }
+.float-card:nth-child(4) { animation-delay: 3.0s; }
+.float-card:nth-child(5) { animation-delay: 4.0s; }
 .float-card:hover {
     box-shadow: 0 32px 80px rgba(0,0,0,0.65), 0 0 0 1px rgba(74,222,128,0.4);
     animation-play-state: paused;
@@ -594,13 +596,18 @@ textarea { resize: vertical; min-height: 120px; }
     .form-row { grid-template-columns: 1fr; }
     .warning-signs, .services, .process, .pricing, .comparison, .faq, .about, .service-area, .contact { padding: 64px 0; }
     .technology { padding: 56px 0; }
+    .section-sub { margin-bottom: 2.25rem; }
+    .process-step { padding: 1.5rem 1.25rem; }
+    .contact-info h2 { font-size: 1.85rem; }
     .compare-table { font-size: 0.74rem; }
     .compare-table th,
     .compare-table td { padding: 0.6rem 0.55rem; }
     .table-wrap { overflow-x: unset; }
-    .float-card { width: 200px; }
-    .float-card img { height: 160px; }
-    .gallery-float { gap: 1rem; }
+    .photo-gallery { padding-bottom: 44px; }
+    .gallery-float { gap: 1rem; overflow-x: auto; justify-content: flex-start; padding: 20px 20px 24px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+    .gallery-float::-webkit-scrollbar { display: none; }
+    .float-card { width: 185px; flex-shrink: 0; }
+    .float-card img { height: 150px; }
 }
 @media (max-width: 600px) {
     .warning-grid { grid-template-columns: 1fr; }
@@ -608,9 +615,10 @@ textarea { resize: vertical; min-height: 120px; }
     .hero-grid { padding: 48px 20px 60px; }
 }
 @media (max-width: 480px) {
-    .gallery-float { overflow-x: auto; justify-content: flex-start; padding: 20px 20px 24px; gap: 0.85rem; }
-    .float-card { width: 160px; flex-shrink: 0; }
-    .float-card img { height: 130px; }
+    .gallery-float { padding: 16px 20px 20px; gap: 0.75rem; }
+    .photo-gallery { padding-bottom: 36px; }
+    .float-card { width: 155px; }
+    .float-card img { height: 125px; }
     .hero-content h1 { font-size: 2.4rem; letter-spacing: -0.02em; }
     .hero-sub { font-size: 1rem; }
     .hero-ctas { flex-direction: column; }
@@ -622,4 +630,9 @@ textarea { resize: vertical; min-height: 120px; }
     .footer-center { flex-direction: column; gap: 0.5rem; align-items: center; }
     .warning-card, .service-card { padding: 1.25rem; }
     .price-card { padding: 1.75rem; }
+    .section-sub { margin-bottom: 1.75rem; font-size: 0.95rem; }
+    .contact-info h2 { font-size: 1.65rem; }
+    .process-step { padding: 1.25rem 1rem; }
+    .city-chip { font-size: 0.82rem; padding: 0.45rem 1rem; }
+    .step-number { font-size: 1.5rem; }
 }
