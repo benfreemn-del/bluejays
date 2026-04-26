@@ -38,43 +38,28 @@
 <header>
     <span class="eyebrow">Option A — 3D Ring</span>
     <h1>Seven Points. One Ring.</h1>
-    <p>3D perspective orbital ring — back arc recedes, front arc advances, specular catch-light on the near edge. Seven nodes.</p>
+    <p>Top row: horizontal orbit. Bottom row: diagonal orbit — ring rotated 35° so it cuts across the tree like a satellite path.</p>
 </header>
 <div class="grid">
 
-<!-- ============================================================
-  V1: Seven Points — top dominant, ry=10, specular catch-light
-  Ring: ellipse rx=29 ry=10 (3D tilt). 7 particles at 360/7° steps from top.
-  Particle positions (rx=29 ry=10, center 40,40, start θ=−90°):
-  k0:(40,30)  k1:(62.7,33.8)  k2:(68.3,42.2)  k3:(52.6,49)
-  k4:(27.4,49)  k5:(11.7,42.2)  k6:(17.3,33.8)
-  Back arc (top half, farther from viewer): dim, thin
-  Front arc (bottom half, closer to viewer): bright, thick
-  Specular: small bright arc at upper-right catch-light
-============================================================ -->
+<!-- V1: Seven Points — horizontal ring, top dominant -->
 <div class="card">
-    <div class="option-label">Variant 1</div>
+    <div class="option-label">Variant 1 — Horizontal</div>
     <div class="mark">
         <svg width="120" height="120" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <!-- BACK ARC — upper half of ellipse, receding into depth -->
             <path d="M 11 40 A 29 10 0 0 0 69 40" stroke="#4ade80" stroke-width="1.1" fill="none" opacity="0.28" stroke-linecap="round"/>
-            <!-- PINE TREE — sits inside the ring -->
             <rect x="37.5" y="56" width="5" height="9" fill="#4ade80" rx="1" opacity="0.82"/>
             <polygon points="22,57 40,40 58,57" fill="#4ade80" opacity="0.82"/>
             <polygon points="26,45 40,29 54,45" fill="#4ade80" opacity="0.82"/>
             <polygon points="30,33 40,18 50,33" fill="#4ade80" opacity="0.82"/>
-            <!-- FRONT ARC — lower half of ellipse, advancing toward viewer -->
             <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#4ade80" stroke-width="1.6" fill="none" opacity="0.68" stroke-linecap="round"/>
-            <!-- SPECULAR CATCH-LIGHT — small bright arc at upper-right where ring catches light -->
             <path d="M 62.7 33.8 A 29 10 0 0 1 69 40" stroke="#a7f3c0" stroke-width="2.2" fill="none" opacity="0.55" stroke-linecap="round"/>
-            <!-- BACK PARTICLES (k=1, k=6) — dimmer, set back in depth -->
             <circle cx="62.7" cy="33.8" r="5"   fill="#4ade80" opacity="0.05"/>
             <circle cx="62.7" cy="33.8" r="3"   fill="#4ade80" opacity="0.10"/>
             <circle cx="62.7" cy="33.8" r="1.5" fill="#86efac" opacity="0.55"/>
             <circle cx="17.3" cy="33.8" r="5"   fill="#4ade80" opacity="0.05"/>
             <circle cx="17.3" cy="33.8" r="3"   fill="#4ade80" opacity="0.10"/>
             <circle cx="17.3" cy="33.8" r="1.5" fill="#86efac" opacity="0.55"/>
-            <!-- FRONT PARTICLES (k=2,3,4,5) — brighter, forward in depth -->
             <circle cx="68.3" cy="42.2" r="5.5" fill="#4ade80" opacity="0.07"/>
             <circle cx="68.3" cy="42.2" r="3.2" fill="#4ade80" opacity="0.15"/>
             <circle cx="68.3" cy="42.2" r="1.8" fill="#86efac" opacity="0.85"/>
@@ -87,12 +72,10 @@
             <circle cx="11.7" cy="42.2" r="5.5" fill="#4ade80" opacity="0.07"/>
             <circle cx="11.7" cy="42.2" r="3.2" fill="#4ade80" opacity="0.15"/>
             <circle cx="11.7" cy="42.2" r="1.8" fill="#86efac" opacity="0.85"/>
-            <!-- TOP DOMINANT NODE (k=0) — drawn last, always on top -->
             <circle cx="40" cy="30" r="10"  fill="#4ade80" opacity="0.05"/>
             <circle cx="40" cy="30" r="6.5" fill="#4ade80" opacity="0.11"/>
             <circle cx="40" cy="30" r="3.8" fill="#4ade80" opacity="0.27"/>
             <circle cx="40" cy="30" r="2.1" fill="#86efac"/>
-            <!-- Specular dot on top node -->
             <circle cx="39.2" cy="29.3" r="0.7" fill="#ffffff" opacity="0.6"/>
         </svg>
     </div>
@@ -138,17 +121,12 @@
         <span class="nav-mock-text">Pine &amp; Particle Co.</span>
     </div>
     <div class="concept-name">Seven Points</div>
-    <div class="concept-desc">3D orbital ring with specular catch-light at upper-right. Back arc recedes at 0.28 opacity, front arc advances at 0.68. Top node dominant — six orbital particles graduate front to back.</div>
+    <div class="concept-desc">Horizontal 3D orbital ring with specular catch-light at upper-right. Back arc recedes at 0.28 opacity, front arc advances at 0.68. Top node dominant.</div>
 </div>
 
-<!-- ============================================================
-  V2: Equal Orbit — all 7 particles same size, cleaner uniform feel
-  Same ry=10 ring but particles don't vary in size — just slight
-  opacity difference front vs back for depth without hierarchy.
-  No dominant node. Ring is the star.
-============================================================ -->
+<!-- V2: Equal Orbit — horizontal ring, all 7 equal -->
 <div class="card">
-    <div class="option-label">Variant 2</div>
+    <div class="option-label">Variant 2 — Horizontal</div>
     <div class="mark">
         <svg width="120" height="120" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M 11 40 A 29 10 0 0 0 69 40" stroke="#4ade80" stroke-width="1.0" fill="none" opacity="0.22"/>
@@ -158,7 +136,6 @@
             <polygon points="30,33 40,18 50,33" fill="#4ade80" opacity="0.8"/>
             <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#4ade80" stroke-width="1.4" fill="none" opacity="0.6"/>
             <path d="M 62.7 33.8 A 29 10 0 0 1 69 40" stroke="#a7f3c0" stroke-width="1.8" fill="none" opacity="0.4"/>
-            <!-- All 7 — back nodes slightly dimmer -->
             <circle cx="40"   cy="30"   r="4.5" fill="#4ade80" opacity="0.07"/>
             <circle cx="40"   cy="30"   r="2.8" fill="#4ade80" opacity="0.14"/>
             <circle cx="40"   cy="30"   r="1.6" fill="#86efac" opacity="0.65"/>
@@ -168,7 +145,6 @@
             <circle cx="17.3" cy="33.8" r="4.5" fill="#4ade80" opacity="0.07"/>
             <circle cx="17.3" cy="33.8" r="2.8" fill="#4ade80" opacity="0.14"/>
             <circle cx="17.3" cy="33.8" r="1.6" fill="#86efac" opacity="0.65"/>
-            <!-- Front nodes brighter -->
             <circle cx="68.3" cy="42.2" r="4.5" fill="#4ade80" opacity="0.08"/>
             <circle cx="68.3" cy="42.2" r="2.8" fill="#4ade80" opacity="0.17"/>
             <circle cx="68.3" cy="42.2" r="1.6" fill="#86efac" opacity="0.9"/>
@@ -226,74 +202,81 @@
         <span class="nav-mock-text">Pine &amp; Particle Co.</span>
     </div>
     <div class="concept-name">Equal Orbit</div>
-    <div class="concept-desc">Same 3D ring, no dominant node — all seven points equal. Depth still reads through front/back opacity difference. Cleaner, more symmetric.</div>
+    <div class="concept-desc">Horizontal ring, no dominant node — all seven points equal. Depth reads through front/back opacity difference. Cleaner, more symmetric.</div>
 </div>
 
-<!-- ============================================================
-  V3: Deep Tilt — ry=13, more extreme 3D perspective.
-  More angled, like a ring seen at 25° from horizontal.
-  Particle positions (rx=29 ry=13, center 40,40):
-  k0:(40,27)  k1:(62.7,31.9)  k2:(68.3,42.9)  k3:(52.6,51.7)
-  k4:(27.4,51.7)  k5:(11.7,42.9)  k6:(17.3,31.9)
-  Back arc: M 11 40 A 29 13 0 0 0 69 40
-  Front arc: M 11 40 A 29 13 0 0 1 69 40
-============================================================ -->
+<!-- V3: Diagonal Orbit — ring rotated 35deg, top dominant. Tree stays upright.
+     Two <g transform="rotate(35,40,40)"> groups sandwich the unrotated tree:
+     Group 1: back arc + back particles
+     Tree: unrotated
+     Group 2: front arc + specular + front particles + top node
+-->
 <div class="card">
-    <div class="option-label">Variant 3</div>
+    <div class="option-label">Variant 3 — Diagonal</div>
     <div class="mark">
         <svg width="120" height="120" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M 11 40 A 29 13 0 0 0 69 40" stroke="#4ade80" stroke-width="1.1" fill="none" opacity="0.25"/>
+            <!-- BACK ARC + back particles (rotated) -->
+            <g transform="rotate(35, 40, 40)">
+                <path d="M 11 40 A 29 10 0 0 0 69 40" stroke="#4ade80" stroke-width="1.1" fill="none" opacity="0.28" stroke-linecap="round"/>
+                <circle cx="62.7" cy="33.8" r="5"   fill="#4ade80" opacity="0.05"/>
+                <circle cx="62.7" cy="33.8" r="3"   fill="#4ade80" opacity="0.10"/>
+                <circle cx="62.7" cy="33.8" r="1.5" fill="#86efac" opacity="0.55"/>
+                <circle cx="17.3" cy="33.8" r="5"   fill="#4ade80" opacity="0.05"/>
+                <circle cx="17.3" cy="33.8" r="3"   fill="#4ade80" opacity="0.10"/>
+                <circle cx="17.3" cy="33.8" r="1.5" fill="#86efac" opacity="0.55"/>
+            </g>
+            <!-- PINE TREE — upright, unrotated -->
             <rect x="37.5" y="56" width="5" height="9" fill="#4ade80" rx="1" opacity="0.82"/>
             <polygon points="22,57 40,40 58,57" fill="#4ade80" opacity="0.82"/>
             <polygon points="26,45 40,29 54,45" fill="#4ade80" opacity="0.82"/>
             <polygon points="30,33 40,18 50,33" fill="#4ade80" opacity="0.82"/>
-            <path d="M 11 40 A 29 13 0 0 1 69 40" stroke="#4ade80" stroke-width="1.7" fill="none" opacity="0.7"/>
-            <!-- Specular on ry=13 ring: from k1 (62.7,31.9) to right (69,40) -->
-            <path d="M 62.7 31.9 A 29 13 0 0 1 69 40" stroke="#a7f3c0" stroke-width="2.4" fill="none" opacity="0.5"/>
-            <!-- Back particles (k=0,1,6) -->
-            <circle cx="40"   cy="27"   r="10"  fill="#4ade80" opacity="0.05"/>
-            <circle cx="40"   cy="27"   r="6.5" fill="#4ade80" opacity="0.10"/>
-            <circle cx="40"   cy="27"   r="3.8" fill="#4ade80" opacity="0.26"/>
-            <circle cx="40"   cy="27"   r="2.1" fill="#86efac"/>
-            <circle cx="39.2" cy="26.2" r="0.7" fill="#ffffff" opacity="0.55"/>
-            <circle cx="62.7" cy="31.9" r="5"   fill="#4ade80" opacity="0.05"/>
-            <circle cx="62.7" cy="31.9" r="3"   fill="#4ade80" opacity="0.10"/>
-            <circle cx="62.7" cy="31.9" r="1.5" fill="#86efac" opacity="0.55"/>
-            <circle cx="17.3" cy="31.9" r="5"   fill="#4ade80" opacity="0.05"/>
-            <circle cx="17.3" cy="31.9" r="3"   fill="#4ade80" opacity="0.10"/>
-            <circle cx="17.3" cy="31.9" r="1.5" fill="#86efac" opacity="0.55"/>
-            <!-- Front particles (k=2,3,4,5) -->
-            <circle cx="68.3" cy="42.9" r="5.5" fill="#4ade80" opacity="0.07"/>
-            <circle cx="68.3" cy="42.9" r="3.2" fill="#4ade80" opacity="0.15"/>
-            <circle cx="68.3" cy="42.9" r="1.8" fill="#86efac" opacity="0.85"/>
-            <circle cx="52.6" cy="51.7" r="5.5" fill="#4ade80" opacity="0.07"/>
-            <circle cx="52.6" cy="51.7" r="3.2" fill="#4ade80" opacity="0.15"/>
-            <circle cx="52.6" cy="51.7" r="1.8" fill="#86efac" opacity="0.85"/>
-            <circle cx="27.4" cy="51.7" r="5.5" fill="#4ade80" opacity="0.07"/>
-            <circle cx="27.4" cy="51.7" r="3.2" fill="#4ade80" opacity="0.15"/>
-            <circle cx="27.4" cy="51.7" r="1.8" fill="#86efac" opacity="0.85"/>
-            <circle cx="11.7" cy="42.9" r="5.5" fill="#4ade80" opacity="0.07"/>
-            <circle cx="11.7" cy="42.9" r="3.2" fill="#4ade80" opacity="0.15"/>
-            <circle cx="11.7" cy="42.9" r="1.8" fill="#86efac" opacity="0.85"/>
+            <!-- FRONT ARC + specular + front particles + top node (rotated) -->
+            <g transform="rotate(35, 40, 40)">
+                <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#4ade80" stroke-width="1.6" fill="none" opacity="0.68" stroke-linecap="round"/>
+                <path d="M 62.7 33.8 A 29 10 0 0 1 69 40" stroke="#a7f3c0" stroke-width="2.2" fill="none" opacity="0.55" stroke-linecap="round"/>
+                <circle cx="68.3" cy="42.2" r="5.5" fill="#4ade80" opacity="0.07"/>
+                <circle cx="68.3" cy="42.2" r="3.2" fill="#4ade80" opacity="0.15"/>
+                <circle cx="68.3" cy="42.2" r="1.8" fill="#86efac" opacity="0.85"/>
+                <circle cx="52.6" cy="49"   r="5.5" fill="#4ade80" opacity="0.07"/>
+                <circle cx="52.6" cy="49"   r="3.2" fill="#4ade80" opacity="0.15"/>
+                <circle cx="52.6" cy="49"   r="1.8" fill="#86efac" opacity="0.85"/>
+                <circle cx="27.4" cy="49"   r="5.5" fill="#4ade80" opacity="0.07"/>
+                <circle cx="27.4" cy="49"   r="3.2" fill="#4ade80" opacity="0.15"/>
+                <circle cx="27.4" cy="49"   r="1.8" fill="#86efac" opacity="0.85"/>
+                <circle cx="11.7" cy="42.2" r="5.5" fill="#4ade80" opacity="0.07"/>
+                <circle cx="11.7" cy="42.2" r="3.2" fill="#4ade80" opacity="0.15"/>
+                <circle cx="11.7" cy="42.2" r="1.8" fill="#86efac" opacity="0.85"/>
+                <!-- TOP DOMINANT NODE -->
+                <circle cx="40" cy="30" r="10"  fill="#4ade80" opacity="0.05"/>
+                <circle cx="40" cy="30" r="6.5" fill="#4ade80" opacity="0.11"/>
+                <circle cx="40" cy="30" r="3.8" fill="#4ade80" opacity="0.27"/>
+                <circle cx="40" cy="30" r="2.1" fill="#86efac"/>
+                <circle cx="39.2" cy="29.3" r="0.7" fill="#ffffff" opacity="0.6"/>
+            </g>
         </svg>
     </div>
     <div class="divider"></div>
     <div class="lockup">
         <svg width="40" height="40" viewBox="0 0 80 80" fill="none">
-            <path d="M 11 40 A 29 13 0 0 0 69 40" stroke="#4ade80" stroke-width="1.2" fill="none" opacity="0.25"/>
+            <g transform="rotate(35, 40, 40)">
+                <path d="M 11 40 A 29 10 0 0 0 69 40" stroke="#4ade80" stroke-width="1.2" fill="none" opacity="0.28"/>
+                <circle cx="62.7" cy="33.8" r="1.4" fill="#86efac" opacity="0.5"/>
+                <circle cx="17.3" cy="33.8" r="1.4" fill="#86efac" opacity="0.5"/>
+            </g>
             <rect x="37.5" y="56" width="5" height="9" fill="#4ade80" rx="1" opacity="0.82"/>
             <polygon points="22,57 40,40 58,57" fill="#4ade80" opacity="0.82"/>
             <polygon points="26,45 40,29 54,45" fill="#4ade80" opacity="0.82"/>
             <polygon points="30,33 40,18 50,33" fill="#4ade80" opacity="0.82"/>
-            <path d="M 11 40 A 29 13 0 0 1 69 40" stroke="#4ade80" stroke-width="1.6" fill="none" opacity="0.68"/>
-            <path d="M 62.7 31.9 A 29 13 0 0 1 69 40" stroke="#a7f3c0" stroke-width="2" fill="none" opacity="0.4"/>
-            <circle cx="40"   cy="27"   r="2"   fill="#86efac"/>
-            <circle cx="62.7" cy="31.9" r="1.4" fill="#86efac" opacity="0.55"/>
-            <circle cx="17.3" cy="31.9" r="1.4" fill="#86efac" opacity="0.55"/>
-            <circle cx="68.3" cy="42.9" r="1.7" fill="#86efac" opacity="0.85"/>
-            <circle cx="52.6" cy="51.7" r="1.7" fill="#86efac" opacity="0.85"/>
-            <circle cx="27.4" cy="51.7" r="1.7" fill="#86efac" opacity="0.85"/>
-            <circle cx="11.7" cy="42.9" r="1.7" fill="#86efac" opacity="0.85"/>
+            <g transform="rotate(35, 40, 40)">
+                <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#4ade80" stroke-width="1.6" fill="none" opacity="0.65"/>
+                <path d="M 62.7 33.8 A 29 10 0 0 1 69 40" stroke="#a7f3c0" stroke-width="2" fill="none" opacity="0.45"/>
+                <circle cx="68.3" cy="42.2" r="1.7" fill="#86efac" opacity="0.85"/>
+                <circle cx="52.6" cy="49"   r="1.7" fill="#86efac" opacity="0.85"/>
+                <circle cx="27.4" cy="49"   r="1.7" fill="#86efac" opacity="0.85"/>
+                <circle cx="11.7" cy="42.2" r="1.7" fill="#86efac" opacity="0.85"/>
+                <circle cx="40" cy="30" r="3.5" fill="#4ade80" opacity="0.25"/>
+                <circle cx="40" cy="30" r="2"   fill="#86efac"/>
+            </g>
         </svg>
         <div class="lockup-text">
             <span class="lockup-name">Pine &amp; Particle Co.</span>
@@ -302,80 +285,91 @@
     </div>
     <div class="nav-mock">
         <svg width="22" height="22" viewBox="0 0 80 80" fill="none">
-            <path d="M 11 40 A 29 13 0 0 0 69 40" stroke="#4ade80" stroke-width="1.5" fill="none" opacity="0.25"/>
+            <g transform="rotate(35, 40, 40)">
+                <path d="M 11 40 A 29 10 0 0 0 69 40" stroke="#4ade80" stroke-width="1.5" fill="none" opacity="0.28"/>
+                <circle cx="62.7" cy="33.8" r="1.4" fill="#86efac" opacity="0.5"/>
+                <circle cx="17.3" cy="33.8" r="1.4" fill="#86efac" opacity="0.5"/>
+            </g>
             <rect x="37.5" y="56" width="5" height="9" fill="#4ade80" rx="1"/>
             <polygon points="22,57 40,40 58,57" fill="#4ade80"/>
             <polygon points="26,45 40,29 54,45" fill="#4ade80"/>
             <polygon points="30,33 40,18 50,33" fill="#4ade80"/>
-            <path d="M 11 40 A 29 13 0 0 1 69 40" stroke="#4ade80" stroke-width="1.9" fill="none" opacity="0.68"/>
-            <path d="M 62.7 31.9 A 29 13 0 0 1 69 40" stroke="#a7f3c0" stroke-width="2.2" fill="none" opacity="0.4"/>
-            <circle cx="40"   cy="27"   r="2.2" fill="#86efac"/>
-            <circle cx="68.3" cy="42.9" r="1.6" fill="#86efac" opacity="0.85"/>
-            <circle cx="52.6" cy="51.7" r="1.6" fill="#86efac" opacity="0.85"/>
-            <circle cx="27.4" cy="51.7" r="1.6" fill="#86efac" opacity="0.85"/>
-            <circle cx="11.7" cy="42.9" r="1.6" fill="#86efac" opacity="0.85"/>
+            <g transform="rotate(35, 40, 40)">
+                <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#4ade80" stroke-width="1.8" fill="none" opacity="0.65"/>
+                <path d="M 62.7 33.8 A 29 10 0 0 1 69 40" stroke="#a7f3c0" stroke-width="2.2" fill="none" opacity="0.45"/>
+                <circle cx="40" cy="30" r="2.2" fill="#86efac"/>
+                <circle cx="68.3" cy="42.2" r="1.6" fill="#86efac" opacity="0.8"/>
+                <circle cx="52.6" cy="49"   r="1.6" fill="#86efac" opacity="0.8"/>
+                <circle cx="27.4" cy="49"   r="1.6" fill="#86efac" opacity="0.8"/>
+                <circle cx="11.7" cy="42.2" r="1.6" fill="#86efac" opacity="0.8"/>
+            </g>
         </svg>
         <span class="nav-mock-text">Pine &amp; Particle Co.</span>
     </div>
-    <div class="concept-name">Deep Tilt</div>
-    <div class="concept-desc">More aggressive perspective — ry=13 instead of ry=10. Ring sits at a steeper angle, like looking at Saturn's rings from a lower viewpoint. Top node still anchors.</div>
+    <div class="concept-name">Diagonal Orbit</div>
+    <div class="concept-desc">Ring rotated 35° — cuts diagonally across the tree like a satellite path. Back arc recedes, front arc advances. Tree stays upright inside the tilted orbit.</div>
 </div>
 
-<!-- ============================================================
-  V4: North Star — top node has a massive multi-layer starburst.
-  Other 6 nodes are minimal — just bright pinpoints.
-  The ring is thin on the back, medium on the front.
-  Creates a dramatic focal point at the top orbital position.
-============================================================ -->
+<!-- V4: Diagonal Star — diagonal ring + north star starburst at top orbital position -->
 <div class="card">
-    <div class="option-label">Variant 4</div>
+    <div class="option-label">Variant 4 — Diagonal</div>
     <div class="mark">
         <svg width="120" height="120" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M 11 40 A 29 10 0 0 0 69 40" stroke="#4ade80" stroke-width="1.0" fill="none" opacity="0.22"/>
+            <!-- BACK ARC + back particles (rotated) -->
+            <g transform="rotate(35, 40, 40)">
+                <path d="M 11 40 A 29 10 0 0 0 69 40" stroke="#4ade80" stroke-width="1.0" fill="none" opacity="0.22"/>
+                <circle cx="62.7" cy="33.8" r="1.3" fill="#86efac" opacity="0.5"/>
+                <circle cx="17.3" cy="33.8" r="1.3" fill="#86efac" opacity="0.5"/>
+            </g>
+            <!-- PINE TREE — upright, unrotated -->
             <rect x="37.5" y="56" width="5" height="9" fill="#4ade80" rx="1" opacity="0.82"/>
             <polygon points="22,57 40,40 58,57" fill="#4ade80" opacity="0.82"/>
             <polygon points="26,45 40,29 54,45" fill="#4ade80" opacity="0.82"/>
             <polygon points="30,33 40,18 50,33" fill="#4ade80" opacity="0.82"/>
-            <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#4ade80" stroke-width="1.5" fill="none" opacity="0.62"/>
-            <path d="M 62.7 33.8 A 29 10 0 0 1 69 40" stroke="#a7f3c0" stroke-width="2" fill="none" opacity="0.42"/>
-            <!-- Other 6 nodes — minimal pinpoints -->
-            <circle cx="62.7" cy="33.8" r="1.3" fill="#86efac" opacity="0.5"/>
-            <circle cx="17.3" cy="33.8" r="1.3" fill="#86efac" opacity="0.5"/>
-            <circle cx="68.3" cy="42.2" r="1.4" fill="#86efac" opacity="0.78"/>
-            <circle cx="52.6" cy="49"   r="1.4" fill="#86efac" opacity="0.78"/>
-            <circle cx="27.4" cy="49"   r="1.4" fill="#86efac" opacity="0.78"/>
-            <circle cx="11.7" cy="42.2" r="1.4" fill="#86efac" opacity="0.78"/>
-            <!-- TOP — NORTH STAR — massive starburst, 6 glow layers -->
-            <circle cx="40" cy="30" r="14"  fill="#4ade80" opacity="0.03"/>
-            <circle cx="40" cy="30" r="10"  fill="#4ade80" opacity="0.05"/>
-            <circle cx="40" cy="30" r="7"   fill="#4ade80" opacity="0.09"/>
-            <circle cx="40" cy="30" r="4.5" fill="#4ade80" opacity="0.18"/>
-            <circle cx="40" cy="30" r="2.8" fill="#4ade80" opacity="0.38"/>
-            <circle cx="40" cy="30" r="1.8" fill="#86efac"/>
-            <!-- Bright core + specular dot -->
-            <circle cx="40" cy="30" r="1"   fill="#ffffff" opacity="0.65"/>
-            <circle cx="39.2" cy="29.3" r="0.5" fill="#ffffff" opacity="0.8"/>
+            <!-- FRONT ARC + specular + front nodes + NORTH STAR at top (rotated) -->
+            <g transform="rotate(35, 40, 40)">
+                <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#4ade80" stroke-width="1.5" fill="none" opacity="0.62"/>
+                <path d="M 62.7 33.8 A 29 10 0 0 1 69 40" stroke="#a7f3c0" stroke-width="2" fill="none" opacity="0.42"/>
+                <!-- 6 minimal orbital nodes -->
+                <circle cx="68.3" cy="42.2" r="1.4" fill="#86efac" opacity="0.78"/>
+                <circle cx="52.6" cy="49"   r="1.4" fill="#86efac" opacity="0.78"/>
+                <circle cx="27.4" cy="49"   r="1.4" fill="#86efac" opacity="0.78"/>
+                <circle cx="11.7" cy="42.2" r="1.4" fill="#86efac" opacity="0.78"/>
+                <!-- NORTH STAR — 6-layer starburst at top orbital position -->
+                <circle cx="40" cy="30" r="14"  fill="#4ade80" opacity="0.03"/>
+                <circle cx="40" cy="30" r="10"  fill="#4ade80" opacity="0.05"/>
+                <circle cx="40" cy="30" r="7"   fill="#4ade80" opacity="0.09"/>
+                <circle cx="40" cy="30" r="4.5" fill="#4ade80" opacity="0.18"/>
+                <circle cx="40" cy="30" r="2.8" fill="#4ade80" opacity="0.38"/>
+                <circle cx="40" cy="30" r="1.8" fill="#86efac"/>
+                <circle cx="40" cy="30" r="1"   fill="#ffffff" opacity="0.65"/>
+                <circle cx="39.2" cy="29.3" r="0.5" fill="#ffffff" opacity="0.8"/>
+            </g>
         </svg>
     </div>
     <div class="divider"></div>
     <div class="lockup">
         <svg width="40" height="40" viewBox="0 0 80 80" fill="none">
-            <path d="M 11 40 A 29 10 0 0 0 69 40" stroke="#4ade80" stroke-width="1.2" fill="none" opacity="0.22"/>
+            <g transform="rotate(35, 40, 40)">
+                <path d="M 11 40 A 29 10 0 0 0 69 40" stroke="#4ade80" stroke-width="1.2" fill="none" opacity="0.22"/>
+                <circle cx="62.7" cy="33.8" r="1.2" fill="#86efac" opacity="0.48"/>
+                <circle cx="17.3" cy="33.8" r="1.2" fill="#86efac" opacity="0.48"/>
+            </g>
             <rect x="37.5" y="56" width="5" height="9" fill="#4ade80" rx="1" opacity="0.82"/>
             <polygon points="22,57 40,40 58,57" fill="#4ade80" opacity="0.82"/>
             <polygon points="26,45 40,29 54,45" fill="#4ade80" opacity="0.82"/>
             <polygon points="30,33 40,18 50,33" fill="#4ade80" opacity="0.82"/>
-            <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#4ade80" stroke-width="1.5" fill="none" opacity="0.6"/>
-            <path d="M 62.7 33.8 A 29 10 0 0 1 69 40" stroke="#a7f3c0" stroke-width="1.8" fill="none" opacity="0.38"/>
-            <circle cx="62.7" cy="33.8" r="1.2" fill="#86efac" opacity="0.48"/>
-            <circle cx="17.3" cy="33.8" r="1.2" fill="#86efac" opacity="0.48"/>
-            <circle cx="68.3" cy="42.2" r="1.3" fill="#86efac" opacity="0.75"/>
-            <circle cx="52.6" cy="49"   r="1.3" fill="#86efac" opacity="0.75"/>
-            <circle cx="27.4" cy="49"   r="1.3" fill="#86efac" opacity="0.75"/>
-            <circle cx="11.7" cy="42.2" r="1.3" fill="#86efac" opacity="0.75"/>
-            <circle cx="40" cy="30" r="4"   fill="#4ade80" opacity="0.16"/>
-            <circle cx="40" cy="30" r="2.5" fill="#4ade80" opacity="0.32"/>
-            <circle cx="40" cy="30" r="1.7" fill="#86efac"/>
+            <g transform="rotate(35, 40, 40)">
+                <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#4ade80" stroke-width="1.5" fill="none" opacity="0.6"/>
+                <path d="M 62.7 33.8 A 29 10 0 0 1 69 40" stroke="#a7f3c0" stroke-width="1.8" fill="none" opacity="0.38"/>
+                <circle cx="68.3" cy="42.2" r="1.3" fill="#86efac" opacity="0.75"/>
+                <circle cx="52.6" cy="49"   r="1.3" fill="#86efac" opacity="0.75"/>
+                <circle cx="27.4" cy="49"   r="1.3" fill="#86efac" opacity="0.75"/>
+                <circle cx="11.7" cy="42.2" r="1.3" fill="#86efac" opacity="0.75"/>
+                <circle cx="40" cy="30" r="4"   fill="#4ade80" opacity="0.16"/>
+                <circle cx="40" cy="30" r="2.5" fill="#4ade80" opacity="0.32"/>
+                <circle cx="40" cy="30" r="1.7" fill="#86efac"/>
+            </g>
         </svg>
         <div class="lockup-text">
             <span class="lockup-name">Pine &amp; Particle Co.</span>
@@ -384,24 +378,30 @@
     </div>
     <div class="nav-mock">
         <svg width="22" height="22" viewBox="0 0 80 80" fill="none">
-            <path d="M 11 40 A 29 10 0 0 0 69 40" stroke="#4ade80" stroke-width="1.5" fill="none" opacity="0.22"/>
+            <g transform="rotate(35, 40, 40)">
+                <path d="M 11 40 A 29 10 0 0 0 69 40" stroke="#4ade80" stroke-width="1.5" fill="none" opacity="0.22"/>
+                <circle cx="62.7" cy="33.8" r="1.2" fill="#86efac" opacity="0.48"/>
+                <circle cx="17.3" cy="33.8" r="1.2" fill="#86efac" opacity="0.48"/>
+            </g>
             <rect x="37.5" y="56" width="5" height="9" fill="#4ade80" rx="1"/>
             <polygon points="22,57 40,40 58,57" fill="#4ade80"/>
             <polygon points="26,45 40,29 54,45" fill="#4ade80"/>
             <polygon points="30,33 40,18 50,33" fill="#4ade80"/>
-            <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#4ade80" stroke-width="1.8" fill="none" opacity="0.6"/>
-            <path d="M 62.7 33.8 A 29 10 0 0 1 69 40" stroke="#a7f3c0" stroke-width="2" fill="none" opacity="0.38"/>
-            <circle cx="40" cy="30" r="2.8" fill="#4ade80" opacity="0.3"/>
-            <circle cx="40" cy="30" r="1.8" fill="#86efac"/>
-            <circle cx="68.3" cy="42.2" r="1.3" fill="#86efac" opacity="0.75"/>
-            <circle cx="52.6" cy="49"   r="1.3" fill="#86efac" opacity="0.75"/>
-            <circle cx="27.4" cy="49"   r="1.3" fill="#86efac" opacity="0.75"/>
-            <circle cx="11.7" cy="42.2" r="1.3" fill="#86efac" opacity="0.75"/>
+            <g transform="rotate(35, 40, 40)">
+                <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#4ade80" stroke-width="1.8" fill="none" opacity="0.6"/>
+                <path d="M 62.7 33.8 A 29 10 0 0 1 69 40" stroke="#a7f3c0" stroke-width="2" fill="none" opacity="0.38"/>
+                <circle cx="40" cy="30" r="2.8" fill="#4ade80" opacity="0.3"/>
+                <circle cx="40" cy="30" r="1.8" fill="#86efac"/>
+                <circle cx="68.3" cy="42.2" r="1.3" fill="#86efac" opacity="0.75"/>
+                <circle cx="52.6" cy="49"   r="1.3" fill="#86efac" opacity="0.75"/>
+                <circle cx="27.4" cy="49"   r="1.3" fill="#86efac" opacity="0.75"/>
+                <circle cx="11.7" cy="42.2" r="1.3" fill="#86efac" opacity="0.75"/>
+            </g>
         </svg>
         <span class="nav-mock-text">Pine &amp; Particle Co.</span>
     </div>
-    <div class="concept-name">North Star</div>
-    <div class="concept-desc">Top orbital node becomes the focal point — six-layer starburst glow with specular core. Six orbiting pinpoints stay minimal. The tree and ring fade back; the star leads.</div>
+    <div class="concept-name">Diagonal Star</div>
+    <div class="concept-desc">Diagonal ring + north star treatment at the top orbital position. Six orbital pinpoints stay minimal. The starburst rotates with the ring, appearing in the upper-right quadrant.</div>
 </div>
 
 </div><!-- end .grid -->
