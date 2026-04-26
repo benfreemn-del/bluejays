@@ -39,7 +39,7 @@ export default function AuditLandingPage() {
   return (
     <main className="min-h-screen bg-slate-950 text-white">
       {/* Hero */}
-      <section className="border-b border-white/5">
+      <section id="audit-top" className="border-b border-white/5 scroll-mt-20">
         <div className="mx-auto max-w-4xl px-6 pt-20 pb-12 text-center">
           <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-sky-400/30 bg-sky-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-sky-300">
             <span className="h-1.5 w-1.5 rounded-full bg-sky-400 animate-pulse" />
@@ -123,17 +123,13 @@ export default function AuditLandingPage() {
         </div>
       </section>
 
-      {/* Final CTA */}
+      {/* Final CTA — anchor scrolls to top via #audit-top id (CSS scroll-behavior:smooth on html handles smoothness) */}
       <section>
         <div className="mx-auto max-w-2xl px-6 py-16 text-center">
           <h2 className="text-3xl font-bold mb-4">Ready to see your score?</h2>
           <p className="text-slate-400 mb-8">It&apos;s free. It&apos;s 60 seconds. The audit lands in your inbox in 5 minutes.</p>
           <a
-            href="#top"
-            onClick={(e) => {
-              e.preventDefault();
-              window.scrollTo({ top: 0, behavior: "smooth" });
-            }}
+            href="#audit-top"
             className="inline-flex items-center justify-center rounded-md bg-gradient-to-r from-sky-500 to-emerald-500 px-8 py-4 text-sm font-semibold text-white shadow-lg hover:opacity-90 transition-opacity"
           >
             Run my audit →
