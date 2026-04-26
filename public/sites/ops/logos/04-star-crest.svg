@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="Olympic Protective Services star crest badge">
+  <title>OPS Star Crest</title>
+  <!-- Badge-style: hexagonal frame, single 5-pt star, OPS underneath. Strong, military-adjacent without being police-coded. -->
+  <defs>
+    <linearGradient id="g4bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1c2233"/>
+      <stop offset="100%" stop-color="#0e1118"/>
+    </linearGradient>
+    <linearGradient id="g4gold" x1="0%" y1="20%" x2="100%" y2="80%">
+      <stop offset="0%" stop-color="#e3c358"/>
+      <stop offset="50%" stop-color="#C9A227"/>
+      <stop offset="100%" stop-color="#a88720"/>
+    </linearGradient>
+  </defs>
+  <!-- Hexagonal frame -->
+  <path d="M200 50 L325 117 V263 L200 330 L75 263 V117 Z"
+        fill="url(#g4bg)" stroke="url(#g4gold)" stroke-width="6" stroke-linejoin="miter"/>
+  <!-- Inner thin frame -->
+  <path d="M200 70 L308 127 V253 L200 310 L92 253 V127 Z"
+        fill="none" stroke="url(#g4gold)" stroke-width="1.2" opacity="0.55"/>
+  <!-- 5-point star -->
+  <g transform="translate(200 175)">
+    <path d="M0 -55 L13 -17 L53 -17 L21 7 L33 45 L0 22 L-33 45 L-21 7 L-53 -17 L-13 -17 Z"
+          fill="url(#g4gold)" stroke="#0e1118" stroke-width="1.5" stroke-linejoin="round"/>
+  </g>
+  <!-- Decorative laurels left/right -->
+  <g fill="url(#g4gold)" opacity="0.65">
+    <!-- Left laurel -->
+    <path d="M125 195 Q115 205 110 220 Q108 222 110 224 Q115 215 125 207 Z"/>
+    <path d="M122 215 Q112 225 108 240 Q106 242 108 244 Q113 235 122 227 Z"/>
+    <path d="M120 235 Q110 245 106 260 Q104 262 106 264 Q111 255 120 247 Z"/>
+    <!-- Right laurel -->
+    <path d="M275 195 Q285 205 290 220 Q292 222 290 224 Q285 215 275 207 Z"/>
+    <path d="M278 215 Q288 225 292 240 Q294 242 292 244 Q287 235 278 227 Z"/>
+    <path d="M280 235 Q290 245 294 260 Q296 262 294 264 Q289 255 280 247 Z"/>
+  </g>
+  <!-- OPS letters -->
+  <text x="200" y="265" text-anchor="middle"
+        font-family="Oswald, Arial Black, sans-serif" font-size="44" font-weight="800"
+        fill="url(#g4gold)" letter-spacing="6">OPS</text>
+  <!-- Sub-line -->
+  <text x="200" y="295" text-anchor="middle"
+        font-family="Barlow Condensed, sans-serif" font-size="11" font-weight="600"
+        fill="#a8aabe" letter-spacing="3">PROTECTIVE SERVICES</text>
+  <!-- Bottom decorative dot -->
+  <circle cx="200" cy="318" r="2" fill="url(#g4gold)"/>
+</svg>

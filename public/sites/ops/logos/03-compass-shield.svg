@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="Olympic Protective Services compass shield">
+  <title>OPS Compass Shield</title>
+  <!-- Compass rose inside shield — symbolizes coverage, patrol, statewide reach -->
+  <defs>
+    <linearGradient id="g3bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1c2233"/>
+      <stop offset="100%" stop-color="#0e1118"/>
+    </linearGradient>
+    <linearGradient id="g3gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#d4b445"/>
+      <stop offset="100%" stop-color="#C9A227"/>
+    </linearGradient>
+  </defs>
+  <!-- Shield body -->
+  <path d="M200 50 L80 100 V200 C80 290 130 350 200 380 C270 350 320 290 320 200 V100 L200 50 Z"
+        fill="url(#g3bg)" stroke="url(#g3gold)" stroke-width="6" stroke-linejoin="round"/>
+  <!-- Compass rose -->
+  <g transform="translate(200 215)">
+    <!-- Outer ring -->
+    <circle r="78" fill="none" stroke="url(#g3gold)" stroke-width="2" opacity="0.6"/>
+    <!-- Major points (N/E/S/W) -->
+    <path d="M0 -78 L10 0 L0 78 L-10 0 Z" fill="url(#g3gold)"/>
+    <path d="M-78 0 L0 -10 L78 0 L0 10 Z" fill="url(#g3gold)" opacity="0.85"/>
+    <!-- Minor diagonal points (NE/SE/SW/NW) -->
+    <g opacity="0.5">
+      <path d="M0 0 L40 -40 L48 -32 L8 8 Z" fill="url(#g3gold)"/>
+      <path d="M0 0 L40 40 L32 48 L-8 8 Z" fill="url(#g3gold)"/>
+      <path d="M0 0 L-40 40 L-48 32 L-8 -8 Z" fill="url(#g3gold)"/>
+      <path d="M0 0 L-40 -40 L-32 -48 L8 -8 Z" fill="url(#g3gold)"/>
+    </g>
+    <!-- Center dot -->
+    <circle r="6" fill="#0e1118" stroke="url(#g3gold)" stroke-width="2"/>
+    <!-- N marker -->
+    <text x="0" y="-90" text-anchor="middle" font-family="Oswald, sans-serif" font-size="14" font-weight="700" fill="url(#g3gold)">N</text>
+  </g>
+  <!-- OPS at top -->
+  <text x="200" y="115" text-anchor="middle"
+        font-family="Oswald, Arial Black, sans-serif" font-size="38" font-weight="800"
+        fill="url(#g3gold)" letter-spacing="5">OPS</text>
+  <!-- Sub-line -->
+  <text x="200" y="345" text-anchor="middle"
+        font-family="Barlow Condensed, sans-serif" font-size="14" font-weight="600"
+        fill="#a8aabe" letter-spacing="3">STATEWIDE COVERAGE · WASHINGTON</text>
+</svg>

@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="Olympic Protective Services shield mark">
+  <title>OPS Shield Mark</title>
+  <!-- Refined shield: thicker stroke, fuller proportions, bold OPS -->
+  <defs>
+    <linearGradient id="g1" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#161b27"/>
+      <stop offset="100%" stop-color="#0e1118"/>
+    </linearGradient>
+    <linearGradient id="g1g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#d4b445"/>
+      <stop offset="100%" stop-color="#C9A227"/>
+    </linearGradient>
+  </defs>
+  <!-- Shield body -->
+  <path d="M200 50 L80 100 V200 C80 290 130 350 200 380 C270 350 320 290 320 200 V100 L200 50 Z"
+        fill="url(#g1)" stroke="url(#g1g)" stroke-width="6" stroke-linejoin="round"/>
+  <!-- Inner shield outline -->
+  <path d="M200 80 L105 120 V200 C105 275 145 325 200 350 C255 325 295 275 295 200 V120 L200 80 Z"
+        fill="none" stroke="url(#g1g)" stroke-width="1.5" opacity="0.6"/>
+  <!-- OPS text -->
+  <text x="200" y="225" text-anchor="middle"
+        font-family="Oswald, Arial Black, sans-serif" font-size="80" font-weight="800"
+        fill="url(#g1g)" letter-spacing="4">OPS</text>
+  <!-- Tagline arc / sub-line -->
+  <line x1="130" y1="245" x2="270" y2="245" stroke="url(#g1g)" stroke-width="2"/>
+  <text x="200" y="275" text-anchor="middle"
+        font-family="Barlow Condensed, sans-serif" font-size="18" font-weight="600"
+        fill="#a8aabe" letter-spacing="3">EST. WASHINGTON</text>
+</svg>

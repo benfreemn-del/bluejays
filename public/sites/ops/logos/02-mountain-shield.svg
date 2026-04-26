@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="Olympic Protective Services mountain shield">
+  <title>OPS Mountain Shield</title>
+  <!-- Plays on "Olympic" — silhouette of Mt. Olympus / Olympic Peninsula peaks inside the shield -->
+  <defs>
+    <linearGradient id="g2bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1c2233"/>
+      <stop offset="100%" stop-color="#0e1118"/>
+    </linearGradient>
+    <linearGradient id="g2gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#d4b445"/>
+      <stop offset="100%" stop-color="#C9A227"/>
+    </linearGradient>
+    <clipPath id="g2clip">
+      <path d="M200 60 L90 105 V200 C90 285 140 340 200 365 C260 340 310 285 310 200 V105 L200 60 Z"/>
+    </clipPath>
+  </defs>
+  <!-- Shield body -->
+  <path d="M200 60 L90 105 V200 C90 285 140 340 200 365 C260 340 310 285 310 200 V105 L200 60 Z"
+        fill="url(#g2bg)" stroke="url(#g2gold)" stroke-width="6" stroke-linejoin="round"/>
+  <!-- Mountain silhouette inside, clipped to shield -->
+  <g clip-path="url(#g2clip)">
+    <!-- Distant range -->
+    <path d="M90 250 L130 215 L155 235 L185 200 L215 230 L240 195 L270 220 L310 240 V370 H90 Z"
+          fill="#161b27" opacity="0.85"/>
+    <!-- Foreground peaks -->
+    <path d="M90 290 L120 245 L145 275 L170 235 L195 270 L230 230 L265 270 L300 250 L310 265 V370 H90 Z"
+          fill="url(#g2gold)" opacity="0.95"/>
+    <!-- Snow caps -->
+    <path d="M165 245 L175 235 L185 248 L180 252 Z" fill="#eef0f5"/>
+    <path d="M225 240 L235 230 L245 246 L238 252 Z" fill="#eef0f5"/>
+  </g>
+  <!-- OPS arched at top -->
+  <text x="200" y="155" text-anchor="middle"
+        font-family="Oswald, Arial Black, sans-serif" font-size="60" font-weight="800"
+        fill="url(#g2gold)" letter-spacing="6">OPS</text>
+  <!-- Sub-line -->
+  <text x="200" y="395" text-anchor="middle"
+        font-family="Barlow Condensed, sans-serif" font-size="14" font-weight="600"
+        fill="url(#g2gold)" letter-spacing="4">OLYMPIC PROTECTIVE SERVICES</text>
+</svg>

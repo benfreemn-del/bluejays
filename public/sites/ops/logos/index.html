@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OPS Logo Concepts — Pick One</title>
+    <meta name="robots" content="noindex,nofollow">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700;800&family=Inter:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0e1118;
+            --bg-card: #1c2233;
+            --bg-card-hover: #232a3e;
+            --gold: #C9A227;
+            --gold-light: #d4b445;
+            --text: #eef0f5;
+            --text-muted: #a8aabe;
+            --border: rgba(255, 255, 255, 0.1);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: var(--bg-primary);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        header {
+            text-align: center;
+            padding: 64px 20px 48px;
+            border-bottom: 1px solid var(--border);
+            background: linear-gradient(180deg, #161b27 0%, var(--bg-primary) 100%);
+        }
+        header .eyebrow {
+            display: inline-block;
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: var(--gold);
+            margin-bottom: 14px;
+        }
+        header h1 {
+            font-family: 'Oswald', sans-serif;
+            font-size: clamp(28px, 5vw, 44px);
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        header h1 .gold { color: var(--gold); }
+        header p {
+            margin-top: 14px;
+            color: var(--text-muted);
+            max-width: 640px;
+            margin-left: auto;
+            margin-right: auto;
+            font-size: 15px;
+        }
+        main {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 64px 20px;
+        }
+        .logo-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 32px;
+        }
+        .logo-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 40px;
+            transition: border-color 0.3s ease, transform 0.3s ease;
+        }
+        .logo-card:hover {
+            border-color: rgba(201, 162, 39, 0.4);
+            transform: translateY(-4px);
+        }
+        .logo-card-number {
+            display: inline-block;
+            font-family: 'Oswald', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--gold);
+            background: rgba(201, 162, 39, 0.1);
+            border: 1px solid rgba(201, 162, 39, 0.3);
+            padding: 4px 12px;
+            border-radius: 999px;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+        .logo-card h2 {
+            font-family: 'Oswald', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        .logo-card .desc {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 24px;
+            min-height: 42px;
+        }
+        .logo-display {
+            background: linear-gradient(135deg, #1c2233 0%, #0e1118 100%);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 280px;
+            margin-bottom: 16px;
+        }
+        .logo-display img {
+            max-width: 100%;
+            max-height: 240px;
+            display: block;
+        }
+        .logo-display.horizontal { min-height: 180px; }
+        .logo-display.horizontal img { max-height: 140px; }
+        .logo-card .light-bg {
+            background: linear-gradient(135deg, #f5f5f0 0%, #ffffff 100%);
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 180px;
+        }
+        .logo-card .light-bg img {
+            max-height: 140px;
+            max-width: 100%;
+        }
+        .bg-label {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            display: block;
+        }
+        .logo-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        .logo-actions a {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--gold);
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid rgba(201, 162, 39, 0.4);
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+        .logo-actions a:hover {
+            background: var(--gold);
+            color: var(--bg-primary);
+            border-color: var(--gold);
+        }
+        footer {
+            text-align: center;
+            padding: 48px 20px;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+        footer a { color: var(--gold); text-decoration: none; }
+        @media (max-width: 768px) {
+            .logo-grid { grid-template-columns: 1fr; gap: 20px; }
+            .logo-card { padding: 24px; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <span class="eyebrow">Concepts for Olympic Protective Services</span>
+        <h1>Pick a <span class="gold">Logo Direction</span></h1>
+        <p>Five concepts to choose from. Each is a vector SVG — scales sharp at any size, from a phone favicon to a vinyl truck wrap. Tell us which one feels right and we'll refine it (or mix elements between them).</p>
+    </header>
+
+    <main>
+        <div class="logo-grid">
+
+            <!-- Logo 1 -->
+            <div class="logo-card">
+                <span class="logo-card-number">CONCEPT 01</span>
+                <h2>Refined Shield Mark</h2>
+                <p class="desc">Cleanest evolution of the existing shield. Bold "OPS" inside, "EST. WASHINGTON" sub-line. Versatile — works on dark or light backgrounds.</p>
+                <div class="logo-display">
+                    <img src="/sites/ops/logos/01-shield-mark.svg" alt="OPS Refined Shield Mark logo on dark background">
+                </div>
+                <span class="bg-label">On light background</span>
+                <div class="light-bg">
+                    <img src="/sites/ops/logos/01-shield-mark.svg" alt="OPS Refined Shield Mark logo on light background">
+                </div>
+                <div class="logo-actions">
+                    <a href="/sites/ops/logos/01-shield-mark.svg" download>Download SVG</a>
+                    <a href="/sites/ops/logos/01-shield-mark.svg" target="_blank">Open full size</a>
+                </div>
+            </div>
+
+            <!-- Logo 2 -->
+            <div class="logo-card">
+                <span class="logo-card-number">CONCEPT 02</span>
+                <h2>Mountain Shield</h2>
+                <p class="desc">Plays on the "Olympic" name with Mt. Olympus / Olympic Peninsula peaks inside the shield. Strong WA-state vibe — instantly local.</p>
+                <div class="logo-display">
+                    <img src="/sites/ops/logos/02-mountain-shield.svg" alt="OPS Mountain Shield logo on dark background">
+                </div>
+                <span class="bg-label">On light background</span>
+                <div class="light-bg">
+                    <img src="/sites/ops/logos/02-mountain-shield.svg" alt="OPS Mountain Shield logo on light background">
+                </div>
+                <div class="logo-actions">
+                    <a href="/sites/ops/logos/02-mountain-shield.svg" download>Download SVG</a>
+                    <a href="/sites/ops/logos/02-mountain-shield.svg" target="_blank">Open full size</a>
+                </div>
+            </div>
+
+            <!-- Logo 3 -->
+            <div class="logo-card">
+                <span class="logo-card-number">CONCEPT 03</span>
+                <h2>Compass Shield</h2>
+                <p class="desc">Compass rose inside the shield — symbolizes coverage, direction, statewide patrol. Modern and geometric.</p>
+                <div class="logo-display">
+                    <img src="/sites/ops/logos/03-compass-shield.svg" alt="OPS Compass Shield logo on dark background">
+                </div>
+                <span class="bg-label">On light background</span>
+                <div class="light-bg">
+                    <img src="/sites/ops/logos/03-compass-shield.svg" alt="OPS Compass Shield logo on light background">
+                </div>
+                <div class="logo-actions">
+                    <a href="/sites/ops/logos/03-compass-shield.svg" download>Download SVG</a>
+                    <a href="/sites/ops/logos/03-compass-shield.svg" target="_blank">Open full size</a>
+                </div>
+            </div>
+
+            <!-- Logo 4 -->
+            <div class="logo-card">
+                <span class="logo-card-number">CONCEPT 04</span>
+                <h2>Star Crest Badge</h2>
+                <p class="desc">Hexagonal frame with center star + laurels. Classic protective-services crest, military-adjacent without being police-coded.</p>
+                <div class="logo-display">
+                    <img src="/sites/ops/logos/04-star-crest.svg" alt="OPS Star Crest Badge logo on dark background">
+                </div>
+                <span class="bg-label">On light background</span>
+                <div class="light-bg">
+                    <img src="/sites/ops/logos/04-star-crest.svg" alt="OPS Star Crest Badge logo on light background">
+                </div>
+                <div class="logo-actions">
+                    <a href="/sites/ops/logos/04-star-crest.svg" download>Download SVG</a>
+                    <a href="/sites/ops/logos/04-star-crest.svg" target="_blank">Open full size</a>
+                </div>
+            </div>
+
+            <!-- Logo 5 — wide, spans both columns -->
+            <div class="logo-card" style="grid-column: 1 / -1;">
+                <span class="logo-card-number">CONCEPT 05</span>
+                <h2>Horizontal Lockup</h2>
+                <p class="desc">Shield + full company name side-by-side. Optimized for nav headers, email signatures, business cards, and side-of-vehicle decals. Pairs with any of concepts 01–04 — pick a shield style and we lock it into this format.</p>
+                <div class="logo-display horizontal">
+                    <img src="/sites/ops/logos/05-horizontal-lockup.svg" alt="OPS Horizontal Lockup logo">
+                </div>
+                <div class="logo-actions">
+                    <a href="/sites/ops/logos/05-horizontal-lockup.svg" download>Download SVG</a>
+                    <a href="/sites/ops/logos/05-horizontal-lockup.svg" target="_blank">Open full size</a>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer>
+        <p>
+            Designed by <a href="https://bluejayportfolio.com" target="_blank" rel="noopener">bluejayportfolio.com</a> for Olympic Protective Services.
+            Reply to whoever sent you this link with the concept number you like best (or a remix — "concept 2 mountain peaks but with the compass from concept 3" is a valid answer).
+        </p>
+    </footer>
+</body>
+</html>
