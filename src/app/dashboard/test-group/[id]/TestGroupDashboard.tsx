@@ -258,21 +258,18 @@ export default function TestGroupDashboard({
           {loomQueue.length > 0 && (
             <Card title={`🎬 Loom Queue (top ${loomQueue.length} to record)`}>
               <p className="text-xs text-slate-400 mb-3">
-                Record a 60-90 sec Loom walkthrough of each preview. Paste the URL into the prospect's <code>loom_video_url</code> field.
+                Record a 60-90 sec Loom walkthrough of each preview. Paste the URL below — saves on blur or Enter. Next outbound pitch email picks it up automatically.
               </p>
-              <ul className="space-y-1">
+              <ul className="space-y-2">
                 {loomQueue.map((p) => (
-                  <li key={p.id} className="flex items-center justify-between text-sm py-1 border-b border-slate-800/50">
-                    <Link
-                      href={`/lead/${p.id}`}
-                      className="text-sky-400 hover:underline"
-                    >
-                      {p.businessName}
-                    </Link>
-                    <span className="text-xs text-slate-500">
-                      {p.category} · score {p.qualityScore.toFixed(1)}
-                    </span>
-                  </li>
+                  <LoomQueueRow
+                    key={p.id}
+                    prospectId={p.id}
+                    businessName={p.businessName}
+                    category={p.category}
+                    qualityScore={p.qualityScore}
+                    onSaved={refresh}
+                  />
                 ))}
               </ul>
             </Card>
@@ -432,5 +429,104 @@ function Stat({ label, value, sub }: { label: string; value: number | string; su
         {sub && <p className="text-xs text-slate-500">{sub}</p>}
       </div>
     </div>
+  );
+}
+
+type SaveState = "idle" | "saving" | "saved" | "error";
+
+function LoomQueueRow({
+  prospectId,
+  businessName,
+  category,
+  qualityScore,
+  onSaved,
+}: {
+  prospectId: string;
+  businessName: string;
+  category: string;
+  qualityScore: number;
+  onSaved: () => void;
+}) {
+  const [url, setUrl] = useState("");
+  const [save, setSave] = useState<SaveState>("idle");
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  const handleSave = useCallback(async () => {
+    const trimmed = url.trim();
+    if (!trimmed) return; // empty input — nothing to save
+    setSave("saving");
+    setErrorMsg(null);
+    try {
+      const res = await fetch(`/api/prospects/${prospectId}/loom`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ loomVideoUrl: trimmed }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setSave("error");
+        setErrorMsg(data.error || `HTTP ${res.status}`);
+        return;
+      }
+      setSave("saved");
+      // Refresh cohort stats so this row drops out of the queue.
+      // Brief delay so the user sees the "saved" flash first.
+      setTimeout(() => onSaved(), 600);
+    } catch (err) {
+      setSave("error");
+      setErrorMsg(err instanceof Error ? err.message : String(err));
+    }
+  }, [url, prospectId, onSaved]);
+
+  return (
+    <li className="py-2 border-b border-slate-800/50">
+      <div className="flex items-center justify-between text-sm mb-1">
+        <Link
+          href={`/lead/${prospectId}`}
+          className="text-sky-400 hover:underline"
+        >
+          {businessName}
+        </Link>
+        <span className="text-xs text-slate-500">
+          {category} · score {qualityScore.toFixed(1)}
+        </span>
+      </div>
+      <div className="flex items-center gap-2">
+        <input
+          type="url"
+          placeholder="https://www.loom.com/share/..."
+          value={url}
+          onChange={(e) => {
+            setUrl(e.target.value);
+            if (save !== "idle") setSave("idle");
+          }}
+          onBlur={handleSave}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              handleSave();
+            }
+          }}
+          disabled={save === "saving"}
+          className="flex-1 rounded bg-slate-950/60 border border-slate-700 px-2 py-1 text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-sky-600 disabled:opacity-50"
+        />
+        <span
+          className={`text-xs w-14 text-right ${
+            save === "saving"
+              ? "text-slate-400"
+              : save === "saved"
+                ? "text-emerald-400"
+                : save === "error"
+                  ? "text-rose-400"
+                  : "text-slate-600"
+          }`}
+        >
+          {save === "saving" ? "saving…" : save === "saved" ? "✓ saved" : save === "error" ? "error" : ""}
+        </span>
+      </div>
+      {save === "error" && errorMsg && (
+        <p className="text-xs text-rose-400 mt-1">{errorMsg}</p>
+      )}
+    </li>
   );
 }
