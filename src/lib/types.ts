@@ -145,6 +145,15 @@ export interface Prospect {
    *  auto-enroll cron MUST skip them. Default false for scouted prospects.
    *  See `/api/funnel/run/route.ts` Step 0 + CLAUDE.md Rule 49. */
   manuallyManaged?: boolean;
+  /** Wave-1 test-cohort tag. When set (e.g. 'wave1-2026-04-25'), this
+   *  prospect is part of a controlled full-stack outreach test. Drives the
+   *  /dashboard/test-group/[id] page + the Day-7 postcard cron. */
+  testCohortId?: string;
+  /** ISO timestamp of when the Day-7 cohort postcard fired. Dedupe key. */
+  cohortPostcardSentAt?: string;
+  /** Manually-recorded Loom URL Ben captures for top-10 cohort prospects.
+   *  Email templates inject this as a {loomUrl} token when present. */
+  loomVideoUrl?: string;
   /** 8-char deterministic short code used for customer-facing preview URLs
    *  (see /p/[code] route + src/lib/short-urls.ts). Derived from md5(id).
    *  Populated by migration 20260419_prospect_short_codes.sql. */

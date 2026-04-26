@@ -4706,6 +4706,135 @@ step.** Ben must consciously reject killer-site and franchise prospects
 when they hit `pending-review` — never approve them and let auto-enroll
 do its thing.
 
+## Test Group Wave 1 — Full-Stack Outreach Test (Locked 2026-04-25)
+
+The first controlled outreach test. Built so we can measure if the
+full-stack channel mix is worth the per-prospect spend before scaling
+it across the whole pipeline.
+
+**Spec (locked by Ben 2026-04-25):**
+- Cohort ID: `wave1-2026-04-25` (constant in `src/lib/test-cohort.ts`)
+- 50 prospects, Pacific NW only (WA / OR / ID)
+- 6 categories: dental, electrician, salon, landscaping, veterinary, roofing
+  — auto-picked by `googleRating × log(reviewCount + 1)` quality score
+- Manual prospects (Rule 49) excluded automatically
+- Killer-site + franchise prospects (Rule 50) — gated by Ben's manual
+  review of the dry-run output BEFORE commit
+- **Channels:** email (current funnel + UTM `pitch_day0`) + ringless
+  voicemail (Day 2 + 18 — already in funnel) + Lob postcard (Day 7 — new
+  cron) + manual Loom for top 10 (Ben records)
+- **NOT in Wave 1:** SMS (waiting on A2P 10DLC; Wave 2 add), Browserless
+  video (parked due to OOM)
+- **Launch gate:** flip after A2P 10DLC approval AND Lob live keys flipped
+- **30-day window** → at Day 30, stop entirely (no auto-roll-forward)
+- **Budget cap:** $300-500 total
+- **Success bar:** ≥1 closed-paid (1% conversion of 50)
+- **If < 1% by Day 30:** kill worst-performing channel, double best,
+  run Wave 2 with revised mix
+
+**Data model (migration `20260425_test_cohort.sql`):**
+- `prospects.test_cohort_id TEXT` (nullable, indexed-where-set)
+- `prospects.cohort_postcard_sent_at TIMESTAMPTZ` (dedupe key for postcard cron)
+- `prospects.loom_video_url TEXT` (manual capture, drives email token)
+
+**Endpoints:**
+- `GET/POST /api/test-cohort/select` — dry-run by default. POST with
+  `{ "confirm": true }` to commit. Override auto-pick with
+  `{ "confirm": true, "prospectIds": [...] }`.
+- `GET /api/test-cohort/[cohortId]` — full firehose stats JSON
+- `GET/POST /api/test-cohort/postcard-cron` — daily cron (17:00 UTC) that
+  fires Lob postcards for cohort prospects past Day 7. Mock-safe when
+  `LOB_API_KEY` absent. forceTier:true bypasses the standard
+  rating/review tier-gate (cohort selection already filtered for quality).
+
+**Dashboard:** `/dashboard/test-group/[cohortId]` (e.g.
+`/dashboard/test-group/wave1-2026-04-25`). Firehose: hero metrics
+(paid / spent / projected ROI / CPA), email funnel breakdown,
+postcards / Looms / VMs sent, status / category / state breakdowns,
+action queues (Loom recording queue + postcard queue), per-prospect
+table with day-since-enrollment + postcard / Loom status.
+
+**Email integration:**
+- `getPitchEmail()` reads `prospect.loomVideoUrl` and injects a
+  "Quick 60-sec walkthrough I recorded for you: {loomUrl}" line above
+  the preview URL. Cohort-only — never injected for prospects without
+  the URL set, so non-cohort emails are unchanged.
+
+**Launch checklist (run in this order, all gates must be GREEN):**
+
+1. Apply the migration in Supabase SQL editor:
+
+```sql
+ALTER TABLE public.prospects
+  ADD COLUMN IF NOT EXISTS test_cohort_id TEXT,
+  ADD COLUMN IF NOT EXISTS cohort_postcard_sent_at TIMESTAMPTZ,
+  ADD COLUMN IF NOT EXISTS loom_video_url TEXT;
+
+CREATE INDEX IF NOT EXISTS prospects_test_cohort_id_idx
+  ON public.prospects (test_cohort_id)
+  WHERE test_cohort_id IS NOT NULL;
+```
+
+2. Dry-run the cohort selection (browser, while logged into dashboard):
+   `https://bluejayportfolio.com/api/test-cohort/select`
+   Inspect the JSON output — should show ~50 prospects across the 6
+   categories. Reject any franchises or killer-site prospects.
+
+3. Commit the cohort (curl from terminal with admin session cookie):
+
+```bash
+curl -X POST https://bluejayportfolio.com/api/test-cohort/select \
+  -H "Content-Type: application/json" \
+  -H "Cookie: admin_session=YOUR_COOKIE" \
+  -d '{"confirm": true}'
+```
+
+   Or to override the auto-pick with a hand-curated list:
+
+```bash
+curl -X POST https://bluejayportfolio.com/api/test-cohort/select \
+  -H "Content-Type: application/json" \
+  -H "Cookie: admin_session=YOUR_COOKIE" \
+  -d '{"confirm": true, "prospectIds": ["uuid1","uuid2","..."]}'
+```
+
+4. Verify cohort tag landed:
+
+```sql
+SELECT business_name, category, state, status
+FROM public.prospects
+WHERE test_cohort_id = 'wave1-2026-04-25'
+ORDER BY category, business_name;
+```
+
+5. Verify A2P 10DLC approval is in (TCR campaign status = APPROVED) AND
+   `LOB_API_KEY` env var is set to a `live_pub_*` value on Vercel.
+
+6. Open the dashboard:
+   `https://bluejayportfolio.com/dashboard/test-group/wave1-2026-04-25`
+
+7. The cohort prospects will be auto-enrolled in the funnel by the
+   16:00 UTC cron (Rule 47). At 17:00 UTC the postcard cron will
+   queue postcards for any cohort prospects past Day 7. As Ben
+   records Looms for the top 10, paste the Loom URL via:
+
+```sql
+UPDATE public.prospects
+SET loom_video_url = 'https://www.loom.com/share/XXXXXXXX'
+WHERE id = 'PROSPECT_UUID';
+```
+
+   The next outbound email pitch from the funnel will inject the Loom
+   URL automatically.
+
+**Wave 2 plan (post-A2P approval):**
+- Add SMS to the channel mix
+- Same 50-prospect-cohort structure, fresh cohort ID `wave2-YYYY-MM-DD`
+- Reuse the same dashboard infrastructure
+- Compare reply / paid rates against Wave 1 to isolate SMS contribution
+
+---
+
 ### Locked-In Rule 51 — Runnable Code Must Be One-Click Copyable (NON-NEGOTIABLE)
 
 Established 2026-04-25 by Ben. When giving Ben code, SQL, env vars, or

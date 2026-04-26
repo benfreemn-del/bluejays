@@ -187,6 +187,9 @@ function dbToProspect(row: Record<string, unknown>): Prospect {
     domainRegisteredAt: (row.domain_registered_at as string | null) || undefined,
     siteLiveAt: (row.site_live_at as string | null) || undefined,
     manuallyManaged: (row.manually_managed as boolean | null) ?? false,
+    testCohortId: (row.test_cohort_id as string | null) || undefined,
+    cohortPostcardSentAt: (row.cohort_postcard_sent_at as string | null) || undefined,
+    loomVideoUrl: (row.loom_video_url as string | null) || undefined,
     createdAt: row.created_at as string,
     updatedAt: row.updated_at as string,
   });
@@ -238,6 +241,9 @@ function prospectToDb(p: Prospect) {
     domain_registered_at: sanitized.domainRegisteredAt || null,
     site_live_at: sanitized.siteLiveAt || null,
     manually_managed: sanitized.manuallyManaged ?? false,
+    test_cohort_id: sanitized.testCohortId || null,
+    cohort_postcard_sent_at: sanitized.cohortPostcardSentAt || null,
+    loom_video_url: sanitized.loomVideoUrl || null,
   };
 }
 
@@ -432,6 +438,9 @@ export async function updateProspect(
     if (sanitizedUpdates.domainRegisteredAt !== undefined) dbUpdates.domain_registered_at = sanitizedUpdates.domainRegisteredAt || null;
     if (sanitizedUpdates.siteLiveAt !== undefined) dbUpdates.site_live_at = sanitizedUpdates.siteLiveAt || null;
     if (sanitizedUpdates.manuallyManaged !== undefined) dbUpdates.manually_managed = sanitizedUpdates.manuallyManaged ?? false;
+    if (sanitizedUpdates.testCohortId !== undefined) dbUpdates.test_cohort_id = sanitizedUpdates.testCohortId || null;
+    if (sanitizedUpdates.cohortPostcardSentAt !== undefined) dbUpdates.cohort_postcard_sent_at = sanitizedUpdates.cohortPostcardSentAt || null;
+    if (sanitizedUpdates.loomVideoUrl !== undefined) dbUpdates.loom_video_url = sanitizedUpdates.loomVideoUrl || null;
 
     let previousStatus: string | null = null;
     if (sanitizedUpdates.status) {

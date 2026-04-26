@@ -230,6 +230,13 @@ export function getPitchEmail(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _videoUrl?: string,
 ): EmailTemplate {
+  // Wave-1 test cohort: when Ben records a manual Loom for a top-10
+  // prospect, the URL lands here as a separate paragraph above the
+  // preview link. Cohort-only path — never injected for non-cohort
+  // prospects (loomVideoUrl stays undefined for them).
+  const loomLine = prospect.loomVideoUrl
+    ? `\n\nQuick 60-sec walkthrough I recorded for you: ${prospect.loomVideoUrl}\n`
+    : "";
   const { greeting, hasName } = getGreetingName(prospect);
   const category = CATEGORY_CONFIG[prospect.category].label.toLowerCase();
   const city = prospect.city || prospect.address?.split(",")[0] || "";
@@ -281,7 +288,7 @@ ${discoveryLine}${ratingLine}
 
 ${effortPhrase} — uses your actual services, photos, and contact info:
 
-${previewUrl}
+${previewUrl}${loomLine}
 
 No idea if it's what you had in mind, but figured you'd want to see it. Curious what you'd change.
 
