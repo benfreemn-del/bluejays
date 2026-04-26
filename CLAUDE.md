@@ -4918,6 +4918,79 @@ redeploy, and diagnose with the test webhook before re-flipping.
 
 ---
 
+## Review Blast Wave 1 — Customer-Facing Fulfillment (Locked 2026-04-25)
+
+The $99 Review Blast SKU now has end-to-end self-serve fulfillment.
+Per Ben's 10-question gate (Rule 48) answers locked 2026-04-25:
+
+**Spec:**
+- **Submission UX:** magic link in the welcome email → public page
+  `/review-blast/[upsellId]` → paste up to 50 phone numbers (one per
+  line, any format) → pick category template → submit. Optional +
+  fillable whenever — no urgency banner.
+- **Phone format:** customer pastes any format (parens, dashes,
+  spaces, leading +, etc.) — server normalizes to E.164 via
+  `normalizePhone()` in `src/lib/review-blast.ts`. Invalid lines are
+  surfaced back, not silently dropped.
+- **Per-customer data:** phone numbers only. No customer names — keeps
+  the submission frictionless.
+- **SMS template:** category-tuned pre-built templates (dental, vet,
+  salon, electrician, plumber, hvac, roofing, auto-repair, landscaping,
+  cleaning, fitness, real-estate, law-firm, default fallback). Customer
+  picks from a dropdown; preview updates live in the form.
+- **Tokens:** `{businessName}` + `{reviewLink}` only. The reviewLink
+  resolves to `/review/[prospectId]` — the existing 5-star-filter
+  funnel page (5★ → Google review CTA, <5★ → private feedback to
+  business owner email).
+- **Dispatch timing:** all 50 SMS land within ~3 seconds of the cron
+  picking up the submission (50ms delay between sends to stay under
+  Twilio's unthrottled rate limit). Spec target was "within 1 hour" —
+  we beat that.
+- **Pre-A2P fallback:** submissions queue in `pending_a2p` status.
+  Once `SMS_FUNNEL_DISABLED` flips off (A2P approved), the next cron
+  tick auto-dispatches the backlog. No customer action required.
+- **Reply routing:** customer-of-customer replies route to the
+  BUSINESS's `prospect.email` (NOT Ben's). Each business handles its
+  own customer relationship. Implementation: `tryHandleReviewBlastReply()`
+  in `src/lib/review-blast.ts` runs BEFORE the normal prospect-by-phone
+  match in `/api/inbound/sms` — short-circuits when the inbound is
+  from a phone we recently SMS'd via Review Blast.
+- **Operator dashboard:** minimal — just the existing upsell row in
+  `/dashboard/customers`. No separate Review Blast firehose page.
+- **Cost:** Twilio ~$0.008/SMS × 50 SMS = $0.40 raw. We charge $99 →
+  ~$98.60 margin. Logged via `logCost()` service `twilio_sms` so the
+  spending dashboard captures the cost.
+
+**Files:**
+- `supabase/migrations/20260425_review_blast.sql` — schema
+- `src/lib/review-blast.ts` — submission + dispatch + reply-handle module
+- `src/lib/review-blast-templates.ts` — category-tuned SMS templates
+- `src/app/review-blast/[id]/page.tsx` + `ReviewBlastForm.tsx` — public submission UI
+- `src/app/api/review-blast/submit/[id]/route.ts` — POST endpoint
+- `src/app/api/review-blast/dispatch/route.ts` — daily cron (17:30 UTC)
+- Updated `getReviewBlastWelcomeEmail()` to inject the magic link
+- Updated `/api/webhooks/stripe` to capture upsell row ID + pass to welcome
+- Updated `/api/inbound/sms` to detect + forward Review Blast replies
+
+**Path additions to PUBLIC_API_PATHS in `src/middleware.ts`:**
+- `/api/review-blast/submit/` (customer-facing POST, URL-as-secret)
+- `/api/review-blast/dispatch` (Vercel cron, gated by CRON_SECRET)
+- `/review-blast/` (customer-facing page, URL-as-secret)
+
+**Vercel cron schedule:** `30 17 * * *` (17:30 UTC = 9:30am PT).
+Sits AFTER funnel-run (16:00) + postcard-cron (17:00) so all the
+regular SMS volume from those flows finishes first per Rule 30
+(outbound commercial crons hit US business hours).
+
+**Wave 2 candidates (post-A2P + initial customer feedback):**
+- Operator dashboard with per-SMS delivery + reply tracking
+- CSV upload alternative to paste-textarea
+- Customer-name personalization (`{customerName}` token)
+- Send-window picker (customer chooses business-hours window)
+- Direct Google review link option (vs the 5-star filter we use today)
+
+---
+
 ## Test Group Wave 1 — Full-Stack Outreach Test (Locked 2026-04-25)
 
 The first controlled outreach test. Built so we can measure if the

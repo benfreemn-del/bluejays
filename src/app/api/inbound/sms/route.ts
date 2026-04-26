@@ -6,6 +6,7 @@ import { alertProspectResponded, alertAngryResponse, alertCustomRequest, alertOb
 import { markProspectReplied } from "@/lib/followup-scheduler";
 import { queueDelayedReply, queuePendingReview, isAutoReplyEnabled } from "@/lib/delayed-replies";
 import { alertOwner } from "@/lib/alerts";
+import { tryHandleReviewBlastReply } from "@/lib/review-blast";
 
 /**
  * POST /api/inbound/sms
@@ -46,6 +47,20 @@ export async function POST(request: NextRequest) {
     }
 
     console.log(`[Inbound SMS] Received from ${fromPhone}: "${body.substring(0, 80)}"`);
+
+    // Review-blast reply detection — runs BEFORE prospect lookup
+    // because the sender phone is a customer-of-our-customer, not a
+    // prospect themselves. If we recently sent a Review Blast SMS to
+    // this number, forward the reply to the business's owner email
+    // and short-circuit (don't run through the AI responder, which
+    // would try to handle this as a sales-funnel reply).
+    const reviewBlastReply = await tryHandleReviewBlastReply(fromPhone, body);
+    if (reviewBlastReply.handled) {
+      console.log(
+        `[Inbound SMS] Routed to Review Blast business owner${reviewBlastReply.forwardedTo ? ` (${reviewBlastReply.forwardedTo})` : ""}`,
+      );
+      return twimlResponse("");
+    }
 
     // Match sender to a prospect by phone number
     let prospect = await getProspectByPhone(fromPhone);

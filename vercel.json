@@ -47,6 +47,10 @@
     {
       "path": "/api/test-cohort/postcard-cron",
       "schedule": "0 17 * * *"
+    },
+    {
+      "path": "/api/review-blast/dispatch",
+      "schedule": "30 17 * * *"
     }
   ],
   "functions": {

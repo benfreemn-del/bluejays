@@ -930,6 +930,7 @@ async function handleUpsellSession(session: UpsellSessionShape): Promise<void> {
 
   // Idempotent insert into upsells table. UNIQUE(stripe_session_id) makes
   // Stripe webhook retries safe — duplicate inserts just no-op.
+  let upsellRowId: string | undefined;
   if (isSupabaseConfigured()) {
     try {
       const { error } = await supabase.from("upsells").insert({
@@ -953,6 +954,16 @@ async function handleUpsellSession(session: UpsellSessionShape): Promise<void> {
           `[Stripe Webhook] Logged upsell row: ${businessName} sku=${sku} amount=${amountCents}c session=${session.id}`,
         );
       }
+      // Look up the row's ID — works whether we just inserted it OR it
+      // already existed from a prior webhook retry. The ID is needed
+      // for the Review Blast magic-link welcome email (#1A in the
+      // Wave-1 spec).
+      const { data: row } = await supabase
+        .from("upsells")
+        .select("id")
+        .eq("stripe_session_id", session.id)
+        .maybeSingle();
+      upsellRowId = (row?.id as string | undefined) || undefined;
     } catch (insertErr) {
       console.error(`[Stripe Webhook] upsells insert errored for ${prospectId}:`, insertErr);
     }
@@ -964,7 +975,7 @@ async function handleUpsellSession(session: UpsellSessionShape): Promise<void> {
   // dedup of "Ben sent this email manually first" → re-send is harmless.
   const customerEmail = session.customer_email || prospect.email;
   if (customerEmail) {
-    const template = pickUpsellWelcomeTemplate(sku, prospect);
+    const template = pickUpsellWelcomeTemplate(sku, prospect, upsellRowId);
     try {
       await sendEmail(prospect.id, customerEmail, template.subject, template.body, template.sequence);
       console.log(
@@ -1001,10 +1012,14 @@ async function handleUpsellSession(session: UpsellSessionShape): Promise<void> {
   });
 }
 
-function pickUpsellWelcomeTemplate(sku: UpsellSku, prospect: Prospect): EmailTemplate {
+function pickUpsellWelcomeTemplate(
+  sku: UpsellSku,
+  prospect: Prospect,
+  upsellId?: string,
+): EmailTemplate {
   switch (sku) {
     case "review_blast":
-      return getReviewBlastWelcomeEmail(prospect);
+      return getReviewBlastWelcomeEmail(prospect, upsellId);
     case "extra_pages":
       return getExtraPagesWelcomeEmail(prospect);
     case "gbp_setup":

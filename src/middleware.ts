@@ -131,6 +131,9 @@ const PUBLIC_API_PATHS = [
   "/api/nps/",                         // NPS feedback POSTs from the public /nps/thanks page (Wave-5b retention)
   "/r/",                               // Public NPS click handler — /r/[code]/[score] (Wave-5b retention)
   "/nps/",                             // Public NPS thanks page — /nps/thanks/[code] (Wave-5b retention)
+  "/api/review-blast/submit/",         // Public submission from /review-blast/[id] magic link (URL-as-secret)
+  "/api/review-blast/dispatch",        // Vercel cron (daily 17:30 UTC) — gated by CRON_SECRET
+  "/review-blast/",                    // Public submission page — /review-blast/[upsellId] (URL-as-secret)
 ];
 
 export async function middleware(request: NextRequest) {

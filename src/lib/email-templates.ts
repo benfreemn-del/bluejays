@@ -1259,12 +1259,35 @@ ${CONTACT_EMAIL} | ${BEN_PHONE}`,
 // ═══════════════════════════════════════════════════════════════
 
 /** Review Request Blast — $99 — needs a CSV of past customers. */
-export function getReviewBlastWelcomeEmail(prospect: Prospect): EmailTemplate {
+export function getReviewBlastWelcomeEmail(
+  prospect: Prospect,
+  upsellId?: string,
+): EmailTemplate {
   const name = prospect.ownerName?.split(" ")[0] || "there";
 
   const subject = `${prospect.businessName} — got your $99 for the Review Blast`;
 
-  const body = `Hi ${name},
+  // Per Review Blast Wave 1 spec (#1A): when we have the upsell row ID,
+  // give the customer a magic-link self-serve form. Falls back to
+  // email-reply path when ID isn't available (idempotent webhook
+  // retry with no row lookup yet).
+  const magicLink = upsellId
+    ? `https://bluejayportfolio.com/review-blast/${upsellId}`
+    : "";
+
+  const body = magicLink
+    ? `Hi ${name},
+
+Got your $99 for the Review Request Blast — thanks!
+
+Drop your past customers' phone numbers here whenever you're ready (no rush):
+
+${magicLink}
+
+Pick a template, paste up to 50 numbers (any format), and we'll text each one a friendly review request. Replies route straight to your email so you handle the relationship. Average return: 10-15 new 5-star Google reviews.
+
+— Ben @ BlueJays`
+    : `Hi ${name},
 
 Got your $99 for the Review Request Blast — thanks!
 
