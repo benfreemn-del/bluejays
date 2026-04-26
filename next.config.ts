@@ -1,6 +1,25 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  async rewrites() {
+    return {
+      // Client sites on custom domains — route root to their static index.html.
+      // Asset paths (/sites/*/css/ and /sites/*/js/) are in public/ and get
+      // served directly without hitting these rules.
+      beforeFiles: [
+        {
+          has: [{ type: 'host', value: 'pineparticle.com' }],
+          source: '/',
+          destination: '/sites/pine-and-particle/index.html',
+        },
+        {
+          has: [{ type: 'host', value: 'www.pineparticle.com' }],
+          source: '/',
+          destination: '/sites/pine-and-particle/index.html',
+        },
+      ],
+    };
+  },
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: 'images.unsplash.com' },
