@@ -70,7 +70,12 @@
             <polygon points="22,57 40,40 58,57" fill="#0d1f16" stroke="#0d1f16" stroke-width="3" stroke-linejoin="round"/>
             <polygon points="26,45 40,29 54,45" fill="#0d1f16" stroke="#0d1f16" stroke-width="3" stroke-linejoin="round"/>
             <polygon points="30,33 40,18 50,33" fill="#0d1f16" stroke="#0d1f16" stroke-width="3" stroke-linejoin="round"/>
-            <!-- FRONT ARC: advancing, bright plasma layers + dominant node -->
+            <!-- SOLID TREE: drawn before front arc so ring passes in front -->
+            <rect x="37.5" y="56" width="5" height="9" fill="#4ade80" rx="1"/>
+            <polygon points="22,57 40,40 58,57" fill="#4ade80"/>
+            <polygon points="26,45 40,29 54,45" fill="#4ade80"/>
+            <polygon points="30,33 40,18 50,33" fill="#4ade80"/>
+            <!-- FRONT ARC: drawn last — renders on top of tree -->
             <g transform="rotate(35, 40, 40)">
                 <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#4ade80" stroke-width="9"   fill="none" opacity="0.04" stroke-linecap="round"/>
                 <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#4ade80" stroke-width="5.5" fill="none" opacity="0.11" stroke-linecap="round"/>
@@ -99,11 +104,6 @@
                 <circle cx="40" cy="30" r="2.1" fill="#86efac"/>
                 <circle cx="39.2" cy="29.3" r="0.7" fill="#ffffff" opacity="0.60"/>
             </g>
-            <!-- SOLID TREE: drawn last, fully opaque, cuts through front arc -->
-            <rect x="37.5" y="56" width="5" height="9" fill="#4ade80" rx="1"/>
-            <polygon points="22,57 40,40 58,57" fill="#4ade80"/>
-            <polygon points="26,45 40,29 54,45" fill="#4ade80"/>
-            <polygon points="30,33 40,18 50,33" fill="#4ade80"/>
         </svg>
     </div>
     <div class="divider"></div>
@@ -120,6 +120,10 @@
             <polygon points="22,57 40,40 58,57" fill="#0d1f16" stroke="#0d1f16" stroke-width="2" stroke-linejoin="round"/>
             <polygon points="26,45 40,29 54,45" fill="#0d1f16" stroke="#0d1f16" stroke-width="2" stroke-linejoin="round"/>
             <polygon points="30,33 40,18 50,33" fill="#0d1f16" stroke="#0d1f16" stroke-width="2" stroke-linejoin="round"/>
+            <rect x="37.5" y="56" width="5" height="9" fill="#4ade80" rx="1"/>
+            <polygon points="22,57 40,40 58,57" fill="#4ade80"/>
+            <polygon points="26,45 40,29 54,45" fill="#4ade80"/>
+            <polygon points="30,33 40,18 50,33" fill="#4ade80"/>
             <g transform="rotate(35, 40, 40)">
                 <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#4ade80" stroke-width="5.5" fill="none" opacity="0.10"/>
                 <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#86efac" stroke-width="1.5" fill="none" opacity="0.55"/>
@@ -132,10 +136,6 @@
                 <circle cx="40" cy="30" r="3.5" fill="#4ade80" opacity="0.25"/>
                 <circle cx="40" cy="30" r="2.0" fill="#86efac"/>
             </g>
-            <rect x="37.5" y="56" width="5" height="9" fill="#4ade80" rx="1"/>
-            <polygon points="22,57 40,40 58,57" fill="#4ade80"/>
-            <polygon points="26,45 40,29 54,45" fill="#4ade80"/>
-            <polygon points="30,33 40,18 50,33" fill="#4ade80"/>
         </svg>
         <div class="lockup-text">
             <span class="lockup-name">Pine &amp; Particle Co.</span>
@@ -152,6 +152,10 @@
             <polygon points="22,57 40,40 58,57" fill="#0d1f16" stroke="#0d1f16" stroke-width="2" stroke-linejoin="round"/>
             <polygon points="26,45 40,29 54,45" fill="#0d1f16" stroke="#0d1f16" stroke-width="2" stroke-linejoin="round"/>
             <polygon points="30,33 40,18 50,33" fill="#0d1f16" stroke="#0d1f16" stroke-width="2" stroke-linejoin="round"/>
+            <rect x="37.5" y="56" width="5" height="9" fill="#4ade80" rx="1"/>
+            <polygon points="22,57 40,40 58,57" fill="#4ade80"/>
+            <polygon points="26,45 40,29 54,45" fill="#4ade80"/>
+            <polygon points="30,33 40,18 50,33" fill="#4ade80"/>
             <g transform="rotate(35, 40, 40)">
                 <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#4ade80" stroke-width="5.5" fill="none" opacity="0.10"/>
                 <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#d1fae5" stroke-width="0.7" fill="none" opacity="0.85"/>
@@ -161,10 +165,6 @@
                 <circle cx="27.4" cy="49"   r="1.6" fill="#86efac" opacity="0.8"/>
                 <circle cx="11.7" cy="42.2" r="1.6" fill="#86efac" opacity="0.8"/>
             </g>
-            <rect x="37.5" y="56" width="5" height="9" fill="#4ade80" rx="1"/>
-            <polygon points="22,57 40,40 58,57" fill="#4ade80"/>
-            <polygon points="26,45 40,29 54,45" fill="#4ade80"/>
-            <polygon points="30,33 40,18 50,33" fill="#4ade80"/>
         </svg>
         <span class="nav-mock-text">Pine &amp; Particle Co.</span>
     </div>
