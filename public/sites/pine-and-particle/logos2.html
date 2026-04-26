@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pine &amp; Particle Co. — Logo Refined</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: #07120c; color: #e8f5ec; font-family: 'Inter', sans-serif; min-height: 100vh; padding: 56px 24px 96px; }
+        .page { max-width: 980px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 64px; }
+        header .eyebrow { font-family: 'Space Grotesk', sans-serif; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: #4ade80; margin-bottom: 14px; display: block; }
+        header h1 { font-family: 'Space Grotesk', sans-serif; font-size: 2.1rem; font-weight: 700; color: #f0faf4; margin-bottom: 10px; }
+        header p { font-size: 0.95rem; color: #5a8a6a; max-width: 480px; margin: 0 auto; line-height: 1.6; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+        @media (max-width: 700px) { .grid { grid-template-columns: 1fr; } }
+        .card { background: #0d1f16; border: 1px solid rgba(74,222,128,0.13); border-radius: 20px; padding: 36px 30px 30px; display: flex; flex-direction: column; transition: border-color 0.25s, box-shadow 0.25s; }
+        .card:hover { border-color: rgba(74,222,128,0.38); box-shadow: 0 0 40px rgba(74,222,128,0.07); }
+        .option-label { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: #4ade80; margin-bottom: 28px; opacity: 0.8; }
+        .mark { display: flex; justify-content: center; align-items: center; margin-bottom: 32px; min-height: 130px; }
+        .mark svg { filter: drop-shadow(0 0 28px rgba(74,222,128,0.28)); }
+        .divider { height: 1px; background: rgba(74,222,128,0.09); margin-bottom: 26px; }
+        .lockup { display: flex; align-items: center; gap: 13px; margin-bottom: 18px; }
+        .lockup-text { display: flex; flex-direction: column; gap: 3px; }
+        .lockup-name { font-family: 'Space Grotesk', sans-serif; font-size: 1.05rem; font-weight: 600; color: #e8f5ec; }
+        .lockup-tag { font-size: 0.64rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: #4ade80; opacity: 0.75; }
+        .nav-mock { background: rgba(0,0,0,0.4); border: 1px solid rgba(74,222,128,0.09); border-radius: 9px; padding: 9px 15px; display: flex; align-items: center; gap: 9px; margin-bottom: 26px; }
+        .nav-mock-text { font-family: 'Space Grotesk', sans-serif; font-size: 0.82rem; font-weight: 600; color: #d4eddc; }
+        .concept-name { font-family: 'Space Grotesk', sans-serif; font-size: 0.95rem; font-weight: 600; color: #b8ddc6; margin-bottom: 7px; }
+        .concept-desc { font-size: 0.81rem; color: #547862; line-height: 1.6; }
+    </style>
+</head>
+<body>
+<div class="page">
+<header>
+    <span class="eyebrow">Option A — Refined</span>
+    <h1>Big Bang Theory Style</h1>
+    <p>Four takes on the atomic orbital concept — pine tree as the nucleus, orbital rings like electron shells.</p>
+</header>
+<div class="grid">
+
+<!-- V1: THE ATOM (3 rings, BBT gyroscope) -->
+<div class="card">
+    <div class="option-label">Variant 1</div>
+    <div class="mark">
+        <svg width="120" height="120" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="tv1" x1="40" y1="15" x2="40" y2="65" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stop-color="#86efac"/><stop offset="100%" stop-color="#22c55e"/>
+                </linearGradient>
+            </defs>
+            <!-- 3 orbital rings at 0, 60, -60 degrees -->
+            <ellipse cx="40" cy="40" rx="29" ry="12" stroke="#4ade80" stroke-width="1.3" fill="none" opacity="0.7"/>
+            <ellipse cx="40" cy="40" rx="29" ry="12" stroke="#4ade80" stroke-width="1.3" fill="none" opacity="0.7" transform="rotate(60,40,40)"/>
+            <ellipse cx="40" cy="40" rx="29" ry="12" stroke="#4ade80" stroke-width="1.3" fill="none" opacity="0.7" transform="rotate(-60,40,40)"/>
+            <!-- 6 particles in hexagonal arrangement (at ring tips) -->
+            <!-- Ring 1 tips -->
+            <circle cx="69" cy="40" r="5" fill="#4ade80" opacity="0.12"/><circle cx="69" cy="40" r="2.8" fill="#86efac"/>
+            <circle cx="11" cy="40" r="4" fill="#4ade80" opacity="0.12"/><circle cx="11" cy="40" r="2" fill="#4ade80" opacity="0.85"/>
+            <!-- Ring 2 tips (rotate 60deg: right->54.5,65.1  left->25.5,14.9) -->
+            <circle cx="55" cy="65" r="5" fill="#4ade80" opacity="0.12"/><circle cx="55" cy="65" r="2.8" fill="#86efac"/>
+            <circle cx="25" cy="15" r="4" fill="#4ade80" opacity="0.12"/><circle cx="25" cy="15" r="2" fill="#4ade80" opacity="0.85"/>
+            <!-- Ring 3 tips (rotate -60deg: right->54.5,14.9  left->25.5,65.1) -->
+            <circle cx="55" cy="15" r="5" fill="#4ade80" opacity="0.12"/><circle cx="55" cy="15" r="2.8" fill="#86efac"/>
+            <circle cx="25" cy="65" r="4" fill="#4ade80" opacity="0.12"/><circle cx="25" cy="65" r="2" fill="#4ade80" opacity="0.85"/>
+            <!-- Pine tree (nucleus) on top -->
+            <rect x="37.5" y="56" width="5" height="11" fill="url(#tv1)" rx="1"/>
+            <polygon points="21,57 40,39 59,57" fill="url(#tv1)"/>
+            <polygon points="25,45 40,28 55,45" fill="url(#tv1)"/>
+            <polygon points="30,33 40,16 50,33" fill="url(#tv1)"/>
+        </svg>
+    </div>
+    <div class="divider"></div>
+    <div class="lockup">
+        <svg width="40" height="40" viewBox="0 0 80 80" fill="none">
+            <ellipse cx="40" cy="40" rx="29" ry="12" stroke="#4ade80" stroke-width="1.5" fill="none" opacity="0.7"/>
+            <ellipse cx="40" cy="40" rx="29" ry="12" stroke="#4ade80" stroke-width="1.5" fill="none" opacity="0.7" transform="rotate(60,40,40)"/>
+            <ellipse cx="40" cy="40" rx="29" ry="12" stroke="#4ade80" stroke-width="1.5" fill="none" opacity="0.7" transform="rotate(-60,40,40)"/>
+            <circle cx="69" cy="40" r="2.8" fill="#86efac"/><circle cx="11" cy="40" r="2" fill="#4ade80" opacity="0.9"/>
+            <circle cx="55" cy="65" r="2.8" fill="#86efac"/><circle cx="25" cy="15" r="2" fill="#4ade80" opacity="0.9"/>
+            <circle cx="55" cy="15" r="2.8" fill="#86efac"/><circle cx="25" cy="65" r="2" fill="#4ade80" opacity="0.9"/>
+            <rect x="37.5" y="56" width="5" height="11" fill="#4ade80" rx="1"/>
+            <polygon points="21,57 40,39 59,57" fill="#4ade80"/>
+            <polygon points="25,45 40,28 55,45" fill="#4ade80"/>
+            <polygon points="30,33 40,16 50,33" fill="#4ade80"/>
+        </svg>
+        <div class="lockup-text">
+            <span class="lockup-name">Pine &amp; Particle Co.</span>
+            <span class="lockup-tag">Certified Mold Inspection</span>
+        </div>
+    </div>
+    <div class="nav-mock">
+        <svg width="22" height="22" viewBox="0 0 80 80" fill="none">
+            <ellipse cx="40" cy="40" rx="29" ry="12" stroke="#4ade80" stroke-width="2" fill="none" opacity="0.8" transform="rotate(0,40,40)"/>
+            <ellipse cx="40" cy="40" rx="29" ry="12" stroke="#4ade80" stroke-width="2" fill="none" opacity="0.8" transform="rotate(60,40,40)"/>
+            <ellipse cx="40" cy="40" rx="29" ry="12" stroke="#4ade80" stroke-width="2" fill="none" opacity="0.8" transform="rotate(-60,40,40)"/>
+            <circle cx="69" cy="40" r="3.5" fill="#86efac"/><circle cx="55" cy="65" r="3.5" fill="#86efac"/><circle cx="55" cy="15" r="3.5" fill="#86efac"/>
+            <polygon points="21,57 40,39 59,57" fill="#4ade80"/>
+            <polygon points="25,45 40,28 55,45" fill="#4ade80"/>
+            <polygon points="30,33 40,16 50,33" fill="#4ade80"/>
+        </svg>
+        <span class="nav-mock-text">Pine &amp; Particle Co.</span>
+    </div>
+    <div class="concept-name">The Atom</div>
+    <p class="concept-desc">Three elliptical orbital rings at 60° intervals — exactly the Big Bang Theory atom. Six particles at the ring tips form a perfect hexagon. Pine tree is the nucleus.</p>
+</div>
+
+<!-- V2: THE CROSS ORBIT (2 rings, compass particles) -->
+<div class="card">
+    <div class="option-label">Variant 2</div>
+    <div class="mark">
+        <svg width="120" height="120" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="tv2" x1="40" y1="15" x2="40" y2="65" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stop-color="#86efac"/><stop offset="100%" stop-color="#22c55e"/>
+                </linearGradient>
+            </defs>
+            <!-- Ring 1: flat horizontal ellipse -->
+            <ellipse cx="40" cy="40" rx="31" ry="11" stroke="#4ade80" stroke-width="1.6" fill="none" opacity="0.75"/>
+            <!-- Ring 2: tilted 80 degrees (near-vertical) -->
+            <ellipse cx="40" cy="40" rx="31" ry="11" stroke="#4ade80" stroke-width="1.6" fill="none" opacity="0.75" transform="rotate(80,40,40)"/>
+            <!-- 4 large glowing particles at compass points -->
+            <!-- Top -->
+            <circle cx="40" cy="9" r="6.5" fill="#4ade80" opacity="0.1"/>
+            <circle cx="40" cy="9" r="4" fill="#4ade80" opacity="0.2"/>
+            <circle cx="40" cy="9" r="2.5" fill="#86efac"/>
+            <!-- Right -->
+            <circle cx="71" cy="40" r="6.5" fill="#4ade80" opacity="0.1"/>
+            <circle cx="71" cy="40" r="4" fill="#4ade80" opacity="0.2"/>
+            <circle cx="71" cy="40" r="2.5" fill="#86efac"/>
+            <!-- Bottom -->
+            <circle cx="40" cy="71" r="6" fill="#4ade80" opacity="0.1"/>
+            <circle cx="40" cy="71" r="3.5" fill="#4ade80" opacity="0.18"/>
+            <circle cx="40" cy="71" r="2" fill="#4ade80" opacity="0.9"/>
+            <!-- Left -->
+            <circle cx="9" cy="40" r="6" fill="#4ade80" opacity="0.1"/>
+            <circle cx="9" cy="40" r="3.5" fill="#4ade80" opacity="0.18"/>
+            <circle cx="9" cy="40" r="2" fill="#4ade80" opacity="0.9"/>
+            <!-- Pine tree nucleus -->
+            <rect x="37.5" y="56" width="5" height="11" fill="url(#tv2)" rx="1"/>
+            <polygon points="21,57 40,39 59,57" fill="url(#tv2)"/>
+            <polygon points="25,45 40,28 55,45" fill="url(#tv2)"/>
+            <polygon points="30,33 40,16 50,33" fill="url(#tv2)"/>
+        </svg>
+    </div>
+    <div class="divider"></div>
+    <div class="lockup">
+        <svg width="40" height="40" viewBox="0 0 80 80" fill="none">
+            <ellipse cx="40" cy="40" rx="31" ry="11" stroke="#4ade80" stroke-width="1.8" fill="none" opacity="0.8"/>
+            <ellipse cx="40" cy="40" rx="31" ry="11" stroke="#4ade80" stroke-width="1.8" fill="none" opacity="0.8" transform="rotate(80,40,40)"/>
+            <circle cx="40" cy="9" r="2.5" fill="#86efac"/>
+            <circle cx="71" cy="40" r="2.5" fill="#86efac"/>
+            <circle cx="40" cy="71" r="2" fill="#4ade80" opacity="0.9"/>
+            <circle cx="9" cy="40" r="2" fill="#4ade80" opacity="0.9"/>
+            <rect x="37.5" y="56" width="5" height="11" fill="#4ade80" rx="1"/>
+            <polygon points="21,57 40,39 59,57" fill="#4ade80"/>
+            <polygon points="25,45 40,28 55,45" fill="#4ade80"/>
+            <polygon points="30,33 40,16 50,33" fill="#4ade80"/>
+        </svg>
+        <div class="lockup-text">
+            <span class="lockup-name">Pine &amp; Particle Co.</span>
+            <span class="lockup-tag">Certified Mold Inspection</span>
+        </div>
+    </div>
+    <div class="nav-mock">
+        <svg width="22" height="22" viewBox="0 0 80 80" fill="none">
+            <ellipse cx="40" cy="40" rx="31" ry="11" stroke="#4ade80" stroke-width="2.5" fill="none" opacity="0.85"/>
+            <ellipse cx="40" cy="40" rx="31" ry="11" stroke="#4ade80" stroke-width="2.5" fill="none" opacity="0.85" transform="rotate(80,40,40)"/>
+            <circle cx="40" cy="9" r="3.5" fill="#86efac"/>
+            <circle cx="71" cy="40" r="3.5" fill="#86efac"/>
+            <circle cx="40" cy="71" r="3" fill="#4ade80"/>
+            <circle cx="9" cy="40" r="3" fill="#4ade80"/>
+            <polygon points="21,57 40,39 59,57" fill="#4ade80"/>
+            <polygon points="25,45 40,28 55,45" fill="#4ade80"/>
+            <polygon points="30,33 40,16 50,33" fill="#4ade80"/>
+        </svg>
+        <span class="nav-mock-text">Pine &amp; Particle Co.</span>
+    </div>
+    <div class="concept-name">The Cross Orbit</div>
+    <p class="concept-desc">Two orbital rings crossing at 80° with four large glowing particles at the compass points. Cleaner than three rings — reads better at small sizes while still feeling dimensional.</p>
+</div>
+
+<!-- V3: THE COMET (1 ring + comet trail) -->
+<div class="card">
+    <div class="option-label">Variant 3</div>
+    <div class="mark">
+        <svg width="120" height="120" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="tv3" x1="40" y1="15" x2="40" y2="65" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stop-color="#86efac"/><stop offset="100%" stop-color="#22c55e"/>
+                </linearGradient>
+            </defs>
+            <!-- Single orbital ring -->
+            <circle cx="40" cy="40" r="31" stroke="#4ade80" stroke-width="1.5" fill="none" opacity="0.6"/>
+            <!-- Comet: head at top, trail going clockwise -->
+            <!-- Head (top, t=0) -->
+            <circle cx="40" cy="9" r="7" fill="#4ade80" opacity="0.1"/>
+            <circle cx="40" cy="9" r="4.5" fill="#4ade80" opacity="0.2"/>
+            <circle cx="40" cy="9" r="2.8" fill="#86efac"/>
+            <!-- Trail 1 (t=25deg clockwise: x=40+31*sin25, y=40-31*cos25 = 53.1, 11.9) -->
+            <circle cx="53" cy="12" r="5" fill="#4ade80" opacity="0.07"/>
+            <circle cx="53" cy="12" r="2" fill="#4ade80" opacity="0.55"/>
+            <!-- Trail 2 (t=50deg: x=40+31*sin50, y=40-31*cos50 = 63.7, 20.1) -->
+            <circle cx="64" cy="20" r="4" fill="#4ade80" opacity="0.05"/>
+            <circle cx="64" cy="20" r="1.5" fill="#4ade80" opacity="0.38"/>
+            <!-- Trail 3 (t=75deg: x=40+31*sin75, y=40-31*cos75 = 69.9, 32) -->
+            <circle cx="70" cy="32" r="3" fill="#4ade80" opacity="0.03"/>
+            <circle cx="70" cy="32" r="1.2" fill="#4ade80" opacity="0.22"/>
+            <!-- 2 regular companion particles on the other side -->
+            <circle cx="9" cy="40" r="4.5" fill="#4ade80" opacity="0.1"/>
+            <circle cx="9" cy="40" r="2.2" fill="#4ade80" opacity="0.8"/>
+            <circle cx="40" cy="71" r="4" fill="#4ade80" opacity="0.1"/>
+            <circle cx="40" cy="71" r="1.8" fill="#4ade80" opacity="0.7"/>
+            <!-- Pine tree nucleus -->
+            <rect x="37.5" y="56" width="5" height="11" fill="url(#tv3)" rx="1"/>
+            <polygon points="21,57 40,39 59,57" fill="url(#tv3)"/>
+            <polygon points="25,45 40,28 55,45" fill="url(#tv3)"/>
+            <polygon points="30,33 40,16 50,33" fill="url(#tv3)"/>
+        </svg>
+    </div>
+    <div class="divider"></div>
+    <div class="lockup">
+        <svg width="40" height="40" viewBox="0 0 80 80" fill="none">
+            <circle cx="40" cy="40" r="31" stroke="#4ade80" stroke-width="1.8" fill="none" opacity="0.65"/>
+            <circle cx="40" cy="9"  r="2.8" fill="#86efac"/>
+            <circle cx="53" cy="12" r="2"   fill="#4ade80" opacity="0.6"/>
+            <circle cx="64" cy="20" r="1.5" fill="#4ade80" opacity="0.4"/>
+            <circle cx="9"  cy="40" r="2.2" fill="#4ade80" opacity="0.8"/>
+            <circle cx="40" cy="71" r="1.8" fill="#4ade80" opacity="0.7"/>
+            <rect x="37.5" y="56" width="5" height="11" fill="#4ade80" rx="1"/>
+            <polygon points="21,57 40,39 59,57" fill="#4ade80"/>
+            <polygon points="25,45 40,28 55,45" fill="#4ade80"/>
+            <polygon points="30,33 40,16 50,33" fill="#4ade80"/>
+        </svg>
+        <div class="lockup-text">
+            <span class="lockup-name">Pine &amp; Particle Co.</span>
+            <span class="lockup-tag">Certified Mold Inspection</span>
+        </div>
+    </div>
+    <div class="nav-mock">
+        <svg width="22" height="22" viewBox="0 0 80 80" fill="none">
+            <circle cx="40" cy="40" r="31" stroke="#4ade80" stroke-width="2.5" fill="none" opacity="0.7"/>
+            <circle cx="40" cy="9"  r="4" fill="#86efac"/>
+            <circle cx="53" cy="12" r="2.5" fill="#4ade80" opacity="0.65"/>
+            <circle cx="64" cy="20" r="2"   fill="#4ade80" opacity="0.4"/>
+            <circle cx="9"  cy="40" r="3"   fill="#4ade80" opacity="0.8"/>
+            <polygon points="21,57 40,39 59,57" fill="#4ade80"/>
+            <polygon points="25,45 40,28 55,45" fill="#4ade80"/>
+            <polygon points="30,33 40,16 50,33" fill="#4ade80"/>
+        </svg>
+        <span class="nav-mock-text">Pine &amp; Particle Co.</span>
+    </div>
+    <div class="concept-name">The Comet</div>
+    <p class="concept-desc">Single ring with a bright comet particle at the top trailing off clockwise — suggests speed, active detection, something in motion. More dynamic and less symmetrical than the others.</p>
+</div>
+
+<!-- V4: THE SHELL (2 concentric rings, quantum shells) -->
+<div class="card">
+    <div class="option-label">Variant 4</div>
+    <div class="mark">
+        <svg width="120" height="120" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="tv4" x1="40" y1="15" x2="40" y2="65" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stop-color="#86efac"/><stop offset="100%" stop-color="#22c55e"/>
+                </linearGradient>
+            </defs>
+            <!-- Outer ring (dashed — like a probability cloud) -->
+            <circle cx="40" cy="40" r="34" stroke="#4ade80" stroke-width="1" stroke-dasharray="3 4" fill="none" opacity="0.45"/>
+            <!-- Inner ring (solid — first electron shell) -->
+            <circle cx="40" cy="40" r="20" stroke="#4ade80" stroke-width="1.6" fill="none" opacity="0.8"/>
+            <!-- Outer ring particles (4 evenly spaced at cardinal points) -->
+            <circle cx="40" cy="6"  r="5.5" fill="#4ade80" opacity="0.1"/>
+            <circle cx="40" cy="6"  r="3"   fill="#4ade80" opacity="0.2"/>
+            <circle cx="40" cy="6"  r="1.8" fill="#86efac"/>
+            <circle cx="74" cy="40" r="5.5" fill="#4ade80" opacity="0.1"/>
+            <circle cx="74" cy="40" r="3"   fill="#4ade80" opacity="0.2"/>
+            <circle cx="74" cy="40" r="1.8" fill="#86efac"/>
+            <circle cx="40" cy="74" r="4.5" fill="#4ade80" opacity="0.1"/>
+            <circle cx="40" cy="74" r="2.5" fill="#4ade80" opacity="0.18"/>
+            <circle cx="40" cy="74" r="1.5" fill="#4ade80" opacity="0.85"/>
+            <circle cx="6"  cy="40" r="4.5" fill="#4ade80" opacity="0.1"/>
+            <circle cx="6"  cy="40" r="2.5" fill="#4ade80" opacity="0.18"/>
+            <circle cx="6"  cy="40" r="1.5" fill="#4ade80" opacity="0.85"/>
+            <!-- Inner ring particles (at 45, 135, 225, 315 degrees — offset from outer) -->
+            <!-- 45deg: x=40+20*sin45, y=40-20*cos45 = 54.1, 25.9 -->
+            <circle cx="54" cy="26" r="3.5" fill="#4ade80" opacity="0.15"/>
+            <circle cx="54" cy="26" r="2"   fill="#4ade80" opacity="0.9"/>
+            <!-- 135deg: x=40+20*sin135, y=40-20*cos135 = 54.1, 54.1 -->
+            <circle cx="54" cy="54" r="3.5" fill="#4ade80" opacity="0.15"/>
+            <circle cx="54" cy="54" r="2"   fill="#4ade80" opacity="0.9"/>
+            <!-- 225deg: x=40+20*sin225, y=40-20*cos225 = 25.9, 54.1 -->
+            <circle cx="26" cy="54" r="3.5" fill="#4ade80" opacity="0.15"/>
+            <circle cx="26" cy="54" r="2"   fill="#4ade80" opacity="0.9"/>
+            <!-- 315deg: x=40+20*sin315, y=40-20*cos315 = 25.9, 25.9 -->
+            <circle cx="26" cy="26" r="3.5" fill="#4ade80" opacity="0.15"/>
+            <circle cx="26" cy="26" r="2"   fill="#4ade80" opacity="0.9"/>
+            <!-- Pine tree nucleus -->
+            <rect x="37.5" y="56" width="5" height="11" fill="url(#tv4)" rx="1"/>
+            <polygon points="21,57 40,39 59,57" fill="url(#tv4)"/>
+            <polygon points="25,45 40,28 55,45" fill="url(#tv4)"/>
+            <polygon points="30,33 40,16 50,33" fill="url(#tv4)"/>
+        </svg>
+    </div>
+    <div class="divider"></div>
+    <div class="lockup">
+        <svg width="40" height="40" viewBox="0 0 80 80" fill="none">
+            <circle cx="40" cy="40" r="34" stroke="#4ade80" stroke-width="1.2" stroke-dasharray="3 4" fill="none" opacity="0.5"/>
+            <circle cx="40" cy="40" r="20" stroke="#4ade80" stroke-width="2" fill="none" opacity="0.85"/>
+            <circle cx="40" cy="6"  r="1.8" fill="#86efac"/>
+            <circle cx="74" cy="40" r="1.8" fill="#86efac"/>
+            <circle cx="40" cy="74" r="1.5" fill="#4ade80" opacity="0.9"/>
+            <circle cx="6"  cy="40" r="1.5" fill="#4ade80" opacity="0.9"/>
+            <circle cx="54" cy="26" r="2" fill="#4ade80" opacity="0.9"/>
+            <circle cx="54" cy="54" r="2" fill="#4ade80" opacity="0.9"/>
+            <circle cx="26" cy="54" r="2" fill="#4ade80" opacity="0.9"/>
+            <circle cx="26" cy="26" r="2" fill="#4ade80" opacity="0.9"/>
+            <rect x="37.5" y="56" width="5" height="11" fill="#4ade80" rx="1"/>
+            <polygon points="21,57 40,39 59,57" fill="#4ade80"/>
+            <polygon points="25,45 40,28 55,45" fill="#4ade80"/>
+            <polygon points="30,33 40,16 50,33" fill="#4ade80"/>
+        </svg>
+        <div class="lockup-text">
+            <span class="lockup-name">Pine &amp; Particle Co.</span>
+            <span class="lockup-tag">Certified Mold Inspection</span>
+        </div>
+    </div>
+    <div class="nav-mock">
+        <svg width="22" height="22" viewBox="0 0 80 80" fill="none">
+            <circle cx="40" cy="40" r="34" stroke="#4ade80" stroke-width="1.5" stroke-dasharray="3 4" fill="none" opacity="0.55"/>
+            <circle cx="40" cy="40" r="20" stroke="#4ade80" stroke-width="2.5" fill="none" opacity="0.9"/>
+            <circle cx="40" cy="6"  r="2.5" fill="#86efac"/>
+            <circle cx="74" cy="40" r="2.5" fill="#86efac"/>
+            <circle cx="54" cy="26" r="2.5" fill="#4ade80"/>
+            <circle cx="54" cy="54" r="2.5" fill="#4ade80"/>
+            <circle cx="26" cy="54" r="2.5" fill="#4ade80"/>
+            <circle cx="26" cy="26" r="2.5" fill="#4ade80"/>
+            <polygon points="21,57 40,39 59,57" fill="#4ade80"/>
+            <polygon points="25,45 40,28 55,45" fill="#4ade80"/>
+            <polygon points="30,33 40,16 50,33" fill="#4ade80"/>
+        </svg>
+        <span class="nav-mock-text">Pine &amp; Particle Co.</span>
+    </div>
+    <div class="concept-name">The Shell</div>
+    <p class="concept-desc">Two concentric rings — solid inner shell + dashed outer probability cloud — with 8 particles distributed across both. Like quantum electron shells. Most scientific/technical of the four.</p>
+</div>
+
+</div><!-- /grid -->
+</div><!-- /page -->
+</body>
+</html>
