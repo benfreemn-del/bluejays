@@ -118,7 +118,8 @@ a { text-decoration: none; color: inherit; }
     background:
         radial-gradient(ellipse 70% 60% at 65% 50%, rgba(22,163,74,0.14) 0%, transparent 70%),
         radial-gradient(ellipse 40% 40% at 20% 70%, rgba(22,163,74,0.07) 0%, transparent 60%),
-        linear-gradient(160deg, #0d1f16 0%, #112518 50%, #0d1f16 100%);
+        linear-gradient(160deg, rgba(13,31,22,0.96) 0%, rgba(17,37,24,0.91) 45%, rgba(13,31,22,0.89) 100%),
+        url('https://images.unsplash.com/photo-1448375240586-882707db888b?w=1600&q=80&auto=format&fit=crop') center/cover no-repeat;
     display: flex; align-items: center;
     padding-top: var(--nav-height);
     position: relative; overflow: hidden;
@@ -381,6 +382,8 @@ a { text-decoration: none; color: inherit; }
 .tech-list { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
 .tech-list li { font-size: 0.9rem; color: var(--text-secondary); display: flex; align-items: center; gap: 0.6rem; }
 .tech-list li::before { content: "\2713"; color: var(--green-light); font-weight: 700; }
+.tech-image { flex-shrink: 0; width: 260px; }
+.tech-image img { width: 100%; height: 260px; object-fit: cover; border-radius: 12px; border: 1px solid rgba(74,222,128,0.25); box-shadow: 0 8px 32px rgba(0,0,0,0.4); filter: saturate(0.85); }
 
 /* COMPARISON TABLE */
 .comparison { padding: 100px 0; background: var(--bg-secondary); }
@@ -418,7 +421,12 @@ a { text-decoration: none; color: inherit; }
 .faq-answer p { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.7; padding-bottom: 1.25rem; }
 
 /* ABOUT */
-.about { padding: 100px 0; background: var(--bg-secondary); }
+.about {
+    padding: 100px 0;
+    background:
+        linear-gradient(135deg, rgba(19,42,28,0.97) 0%, rgba(15,30,22,0.95) 100%),
+        url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1400&q=80&auto=format&fit=crop') center/cover no-repeat;
+}
 .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
 .about-text h2 { font-family: var(--font-display); font-size: 2.25rem; font-weight: 700; color: var(--text-primary); margin-bottom: 1.25rem; letter-spacing: -0.02em; }
 .about-text p { color: var(--text-secondary); line-height: 1.8; margin-bottom: 1rem; font-size: 0.97rem; }
@@ -557,6 +565,7 @@ textarea { resize: vertical; min-height: 120px; }
     .contact-grid { grid-template-columns: 1fr; gap: 2.5rem; }
     .footer-inner { flex-direction: column; text-align: center; align-items: center; }
     .tech-card { flex-direction: column; padding: 2rem; }
+    .tech-image { display: none; }
     .form-row { grid-template-columns: 1fr; }
     .warning-signs, .services, .process, .pricing, .comparison, .faq, .about, .service-area, .contact { padding: 64px 0; }
     .technology { padding: 56px 0; }
