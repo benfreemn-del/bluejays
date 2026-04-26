@@ -1,8 +1,32 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 type AuditStatus = "pending" | "generating" | "ready" | "failed" | "cancelled" | "unknown";
+
+/**
+ * Convert a share URL into an embed URL. Supports:
+ *   - Loom: https://www.loom.com/share/XXXX  →  https://www.loom.com/embed/XXXX
+ *   - YouTube watch: youtube.com/watch?v=XXXX  →  youtube.com/embed/XXXX
+ *   - YouTube short: youtu.be/XXXX  →  youtube.com/embed/XXXX
+ *   - Already-embed URLs pass through.
+ *
+ * Returns null when the URL doesn't match a supported pattern (so we
+ * hide the video slot rather than show a broken iframe).
+ */
+function toEmbedUrl(raw: string | null): string | null {
+  if (!raw) return null;
+  const url = raw.trim();
+  // Loom share → embed
+  const loomMatch = url.match(/loom\.com\/(?:share|embed)\/([a-z0-9]+)/i);
+  if (loomMatch) return `https://www.loom.com/embed/${loomMatch[1]}`;
+  // YouTube watch
+  const ytWatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]+)/);
+  if (ytWatch) return `https://www.youtube.com/embed/${ytWatch[1]}?rel=0&modestbranding=1`;
+  // Direct mp4/webm — render via <video> instead, signal via prefix
+  if (/\.(mp4|webm|mov)(\?|$)/i.test(url)) return `direct:${url}`;
+  return null;
+}
 
 const STAGE_MESSAGES: Record<string, string> = {
   pending: "Audit is queued — kicking it off in a moment…",
@@ -13,11 +37,67 @@ const STAGE_MESSAGES: Record<string, string> = {
   unknown: "Looking up your audit…",
 };
 
-export default function ProcessingClient({ auditId }: { auditId: string }) {
+// 7-stage Domino's-style tracker. Each stage maps to a percentage of
+// the typical ~4-min audit timeline. Stage 0 is "submitted" (immediate),
+// stage 6 is "ready" (only set when status flips to 'ready').
+//
+// Stages match the actual backend pipeline order: fetch → hero (Claude)
+// → technical (GPT) → benchmark → synthesis → ready. Hormozi value-eq:
+// minimize Time Delay × Effort by anchoring the prospect's expectation
+// to a visible, monotonic progress bar.
+const TRACKER_STAGES = [
+  { key: "submitted", label: "Submitted", icon: "✓", percentTrigger: 0 },
+  { key: "fetch", label: "Fetching site", icon: "↓", percentTrigger: 5 },
+  { key: "hero", label: "Hero analysis", icon: "★", percentTrigger: 25 },
+  { key: "technical", label: "Technical / SEO", icon: "⚙", percentTrigger: 50 },
+  { key: "benchmark", label: "Benchmarking", icon: "⊕", percentTrigger: 70 },
+  { key: "synthesis", label: "Synthesizing", icon: "✎", percentTrigger: 88 },
+  { key: "ready", label: "Ready", icon: "🎉", percentTrigger: 100 },
+];
+
+const ESTIMATED_TOTAL_SECONDS = 240; // ~4 min — matches typical audit duration
+
+export default function ProcessingClient({
+  auditId,
+  videoUrl,
+}: {
+  auditId: string;
+  videoUrl: string | null;
+}) {
   const [status, setStatus] = useState<AuditStatus>("pending");
   const [pollCount, setPollCount] = useState(0);
   const [failedReason, setFailedReason] = useState<string | null>(null);
+  const [elapsedSec, setElapsedSec] = useState(0);
+  const startedAtRef = useRef<number>(Date.now());
   const redirectedRef = useRef(false);
+  const embedUrl = useMemo(() => toEmbedUrl(videoUrl), [videoUrl]);
+
+  // Tick every 1s for smooth progress-bar animation. Cap at 95% until
+  // status flips to 'ready' so we never falsely claim done.
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const elapsed = Math.floor((Date.now() - startedAtRef.current) / 1000);
+      setElapsedSec(elapsed);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Compute percentage. When status='ready' it snaps to 100; otherwise
+  // it moves linearly toward 95 over ESTIMATED_TOTAL_SECONDS (4 min).
+  const pct =
+    status === "ready"
+      ? 100
+      : status === "failed" || status === "cancelled"
+        ? 0
+        : Math.min(95, Math.round((elapsedSec / ESTIMATED_TOTAL_SECONDS) * 95));
+
+  // Map % to current stage (which dot is "active")
+  const currentStageIdx = (() => {
+    for (let i = TRACKER_STAGES.length - 1; i >= 0; i--) {
+      if (pct >= TRACKER_STAGES[i].percentTrigger) return i;
+    }
+    return 0;
+  })();
 
   useEffect(() => {
     let cancelled = false;
@@ -71,8 +151,38 @@ export default function ProcessingClient({ auditId }: { auditId: string }) {
   const stageIdx = Math.min(Math.floor(pollCount / 1.5), stages.length - 1);
 
   return (
-    <main className="min-h-screen bg-slate-950 text-white flex items-center justify-center px-6">
-      <div className="w-full max-w-xl">
+    <main className="min-h-screen bg-slate-950 text-white flex items-center justify-center px-6 py-10 pb-40">
+      <div className="w-full max-w-2xl">
+        {/* Hormozi-mod: pre-frame video on the wait page.
+            Renders only when NEXT_PUBLIC_AUDIT_PROCESSING_VIDEO_URL is set
+            (Loom share / YouTube / direct mp4). Hidden cleanly otherwise. */}
+        {embedUrl && (
+          <div className="mb-6">
+            <p className="text-center text-xs uppercase tracking-wider text-sky-400 mb-3">
+              Watch this while your audit generates
+            </p>
+            <div className="rounded-2xl border border-white/10 bg-slate-900/50 overflow-hidden shadow-2xl">
+              {embedUrl.startsWith("direct:") ? (
+                <video
+                  src={embedUrl.replace(/^direct:/, "")}
+                  controls
+                  preload="metadata"
+                  className="w-full aspect-video bg-black"
+                />
+              ) : (
+                <iframe
+                  src={embedUrl}
+                  title="Audit walkthrough"
+                  className="w-full aspect-video"
+                  frameBorder={0}
+                  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              )}
+            </div>
+          </div>
+        )}
+
         <div className="rounded-2xl border border-white/10 bg-slate-900/50 p-8 text-center">
           {(status === "pending" || status === "generating" || status === "unknown") && (
             <>
@@ -87,6 +197,22 @@ export default function ProcessingClient({ auditId }: { auditId: string }) {
               <div className="rounded-md bg-slate-950/80 border border-slate-800 px-4 py-3 text-sm text-sky-300 font-mono">
                 {stages[stageIdx]}…
               </div>
+
+              {/* Inline mini progress bar — instant visual feedback even if
+                  the user doesn't scroll to see the sticky bottom tracker */}
+              <div className="mt-6">
+                <div className="flex items-center justify-between text-xs text-slate-500 mb-1.5 font-mono">
+                  <span>{TRACKER_STAGES[currentStageIdx].label}</span>
+                  <span>{pct}%</span>
+                </div>
+                <div className="h-2 w-full rounded-full bg-slate-800 overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-sky-500 to-emerald-400 transition-all duration-700 ease-out"
+                    style={{ width: `${pct}%` }}
+                  />
+                </div>
+              </div>
+
               <p className="mt-6 text-xs text-slate-500">
                 Don&apos;t close this tab. We&apos;ll auto-redirect when it&apos;s ready.
               </p>
@@ -131,6 +257,74 @@ export default function ProcessingClient({ auditId }: { auditId: string }) {
           Audit ID: <code className="font-mono">{auditId.slice(0, 8)}</code>
         </p>
       </div>
+
+      {/* Sticky bottom 7-stage Domino's-style tracker. Fixed to viewport
+          bottom, full-width, always visible while audit generates.
+          Hidden on failed/cancelled (page already shows error state). */}
+      {(status === "pending" || status === "generating" || status === "unknown" || status === "ready") && (
+        <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-white/10 bg-slate-950/95 backdrop-blur-md shadow-2xl">
+          <div className="mx-auto max-w-5xl px-4 py-4">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-xs uppercase tracking-wider text-sky-400 font-semibold">
+                Audit progress
+              </span>
+              <span className="text-xs text-slate-400 font-mono">
+                {status === "ready" ? "Done" : `~${Math.max(0, Math.ceil((ESTIMATED_TOTAL_SECONDS - elapsedSec) / 60))} min remaining`}
+              </span>
+            </div>
+
+            {/* The track */}
+            <div className="relative">
+              {/* Connecting line — full width grayed bg */}
+              <div className="absolute top-4 left-3 right-3 h-1 bg-slate-800 rounded-full" />
+              {/* Connecting line — filled portion */}
+              <div
+                className="absolute top-4 left-3 h-1 bg-gradient-to-r from-sky-500 to-emerald-400 rounded-full transition-all duration-700 ease-out"
+                style={{
+                  width: `calc(${(currentStageIdx / (TRACKER_STAGES.length - 1)) * 100}% - 6px)`,
+                  maxWidth: "calc(100% - 24px)",
+                }}
+              />
+              {/* The dots */}
+              <div className="relative flex items-start justify-between">
+                {TRACKER_STAGES.map((stage, i) => {
+                  const isActive = i === currentStageIdx && status !== "ready";
+                  const isComplete = i < currentStageIdx || status === "ready";
+                  return (
+                    <div key={stage.key} className="flex flex-col items-center w-12 sm:w-auto">
+                      <div
+                        className={`relative h-9 w-9 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-500 ${
+                          isComplete
+                            ? "bg-gradient-to-br from-sky-500 to-emerald-400 text-white shadow-lg shadow-sky-500/30"
+                            : isActive
+                              ? "bg-sky-500 text-white shadow-lg shadow-sky-500/40"
+                              : "bg-slate-800 text-slate-500 border border-slate-700"
+                        }`}
+                      >
+                        {isActive && (
+                          <span className="absolute inset-0 rounded-full bg-sky-500 animate-ping opacity-30" />
+                        )}
+                        <span className="relative">{isComplete ? "✓" : stage.icon}</span>
+                      </div>
+                      <span
+                        className={`mt-2 text-[10px] sm:text-xs font-medium text-center leading-tight transition-colors duration-300 ${
+                          isActive
+                            ? "text-sky-300"
+                            : isComplete
+                              ? "text-emerald-300"
+                              : "text-slate-500"
+                        }`}
+                      >
+                        {stage.label}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
