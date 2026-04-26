@@ -155,6 +155,30 @@ export default async function AuditPage({
         </div>
       </section>
 
+      {/* Money-leak anchor — Hormozi salty-pretzel mechanic.
+          Underclaim by design (research Risk #2): we'd rather miss low than
+          burn trust by overclaiming. Hidden when score >= 80 (would feel
+          scammy to tell a healthy site they're losing $X/month). */}
+      {content.moneyLeak && content.overallScore < 80 && content.moneyLeak.monthlyEstimate > 0 && (
+        <section className="border-b border-white/5 bg-gradient-to-r from-rose-950/30 to-amber-950/20">
+          <div className="mx-auto max-w-3xl px-6 py-12 text-center">
+            <p className="text-sm uppercase tracking-wider text-rose-300 mb-3 font-semibold">
+              Estimated money-leak
+            </p>
+            <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
+              ~<span className="text-rose-400">${content.moneyLeak.monthlyEstimate.toLocaleString()}</span>
+              <span className="text-2xl md:text-3xl text-slate-400">/month</span>
+            </h2>
+            <p className="text-base md:text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed">
+              That&apos;s a conservative estimate of the customers and revenue your current site is leaving on the table — every month you wait.
+            </p>
+            <p className="mt-4 text-xs text-slate-500 max-w-xl mx-auto">
+              Range: ${content.moneyLeak.estimateLow.toLocaleString()} — ${content.moneyLeak.estimateHigh.toLocaleString()} / month. {content.moneyLeak.methodology}
+            </p>
+          </div>
+        </section>
+      )}
+
       {/* Strengths */}
       {content.strengths && content.strengths.length > 0 && (
         <section className="border-b border-white/5 bg-emerald-950/20">

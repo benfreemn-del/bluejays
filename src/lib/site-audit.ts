@@ -95,6 +95,18 @@ export interface AuditContent {
     blueJaysCanDo: boolean;
   }>;
   strengths: string[];
+  /** Hormozi-style money-leak anchor: rough monthly $ this site is
+   *  costing the prospect in missed leads/conversions. Conservative
+   *  per-vertical formula — NEVER overclaim. Per research deliverable
+   *  Section G Risk #2: "Saying 'you're losing $50K/month' to a one-chair
+   *  salon makes you look like a scammer. Better to underclaim by 30%
+   *  than overclaim by 10%." */
+  moneyLeak: {
+    monthlyEstimate: number; // USD
+    estimateLow: number;
+    estimateHigh: number;
+    methodology: string; // one-line plain-English explanation
+  };
   callToAction: {
     headline: string;
     body: string;
@@ -106,6 +118,80 @@ export interface AuditContent {
   cost: {
     totalUsd: number;
     modelsUsed: string[];
+  };
+}
+
+/**
+ * Per-vertical money-leak estimator. Conservative formulas — better to
+ * UNDERclaim by 30% than OVERclaim by 10% (research Risk #2).
+ *
+ * Formula: avgCustomerValue × estimatedMonthlySiteVisitors × estLiftFromFix
+ * The numbers below are deliberately conservative midpoints from public
+ * SMB benchmarks — not aspirational marketing math.
+ *
+ * - avgCustomerValue: average ticket / project value
+ * - monthlyVisitors: assumed for a small-business site (mostly local)
+ * - liftPercent: typical conversion lift from fixing a 60-or-below site
+ *
+ * For low-confidence categories or when the audit score is high (80+),
+ * we skip the money-leak entirely or use the lowest tier — overclaiming
+ * to a healthy site reads as scammy.
+ */
+const VERTICAL_LEAK_RATES: Record<string, { avgValue: number; monthlyVisitors: number }> = {
+  dental:           { avgValue: 600,  monthlyVisitors: 800 },
+  veterinary:       { avgValue: 250,  monthlyVisitors: 600 },
+  salon:            { avgValue: 120,  monthlyVisitors: 800 },
+  electrician:      { avgValue: 800,  monthlyVisitors: 400 },
+  plumber:          { avgValue: 600,  monthlyVisitors: 500 },
+  hvac:             { avgValue: 1200, monthlyVisitors: 400 },
+  roofing:          { avgValue: 8000, monthlyVisitors: 350 },
+  "auto-repair":    { avgValue: 350,  monthlyVisitors: 700 },
+  "law-firm":       { avgValue: 3500, monthlyVisitors: 600 },
+  fitness:          { avgValue: 100,  monthlyVisitors: 1200 },
+  "real-estate":    { avgValue: 8000, monthlyVisitors: 1500 },
+  landscaping:      { avgValue: 1200, monthlyVisitors: 400 },
+  cleaning:         { avgValue: 220,  monthlyVisitors: 600 },
+  chiropractic:     { avgValue: 200,  monthlyVisitors: 500 },
+  accounting:       { avgValue: 800,  monthlyVisitors: 500 },
+  insurance:        { avgValue: 600,  monthlyVisitors: 400 },
+  "interior-design":{ avgValue: 4000, monthlyVisitors: 500 },
+  moving:           { avgValue: 800,  monthlyVisitors: 800 },
+  "pest-control":   { avgValue: 200,  monthlyVisitors: 500 },
+  "med-spa":        { avgValue: 400,  monthlyVisitors: 700 },
+  catering:         { avgValue: 1500, monthlyVisitors: 400 },
+  "general-contractor": { avgValue: 15000, monthlyVisitors: 400 },
+  general:          { avgValue: 300,  monthlyVisitors: 500 },
+};
+
+function estimateMoneyLeak(args: {
+  category: string;
+  overallScore: number;
+}): { monthlyEstimate: number; estimateLow: number; estimateHigh: number; methodology: string } {
+  const rates = VERTICAL_LEAK_RATES[args.category] || VERTICAL_LEAK_RATES["general"];
+  // Lift % depends on how bad the site is. Cap aggressively — never claim
+  // that fixing a single site delivers more than 5% absolute conversion lift.
+  const liftPercent =
+    args.overallScore >= 80 ? 0.005
+      : args.overallScore >= 60 ? 0.012
+      : args.overallScore >= 40 ? 0.025
+      : 0.04;
+
+  // Apply 0.7× safety margin so we always underclaim
+  const baseLeakMonthly = rates.avgValue * rates.monthlyVisitors * liftPercent * 0.7;
+
+  // Range: ±35% from the midpoint. Round to nearest $50.
+  const low = Math.round((baseLeakMonthly * 0.65) / 50) * 50;
+  const high = Math.round((baseLeakMonthly * 1.35) / 50) * 50;
+  const mid = Math.round(baseLeakMonthly / 50) * 50;
+
+  return {
+    monthlyEstimate: mid,
+    estimateLow: low,
+    estimateHigh: high,
+    methodology:
+      `Based on industry-typical traffic for ${args.category.replace("-", " ")} businesses, ` +
+      `a small conversion lift from fixing the issues below. Conservative — ` +
+      `actual lift could be higher.`,
   };
 }
 
@@ -475,10 +561,18 @@ function buildHeroPrompt(
 ): string {
   const benchmark = BLUEJAYS_BENCHMARK_BY_CATEGORY[category];
   const benchmarkLine = benchmark
-    ? `Benchmark: BlueJays' V2 ${benchmark.template} at ${benchmark.url}`
+    ? `Reference benchmark: BlueJays' V2 ${benchmark.template} at ${benchmark.url}`
     : "No specific BlueJays V2 template available for this category yet.";
 
-  return `You are auditing a small-business website on behalf of BlueJays — a custom website agency that sells $997 site rebuilds + 48-hour delivery to local businesses. Your job: find the hero/positioning/copy/CTA/social-proof problems that are losing this business sales, and recommend specific fixes. Tone: confident, direct, expert — never generic. Frame findings around what BLUEJAYS would do better.
+  return `You are auditing a small-business website on behalf of BlueJays — an agency that sells $997 site rebuilds + 48-hour delivery to local businesses.
+
+CRITICAL — your tone:
+- Plain English, 7th-grade reading level. Short sentences. No jargon.
+- Address the owner DIRECTLY ("you", "your customers"). Never "the user" or "the website".
+- Lead with the COST of the problem (lost customers, missed bookings, wasted ad spend) — never lead with the technical issue.
+- Specific > generic. Quote their actual copy. Reference real numbers.
+- Match Hormozi's tone: blunt, friendly, direct. "Your title is barely a tweet. Google shows 60 chars; you're using 18. That's free real estate you're throwing away."
+- If something is GOOD, say so plainly: "Your X is dialed in" — celebrate it. Don't say "no action needed".
 
 Business: ${businessName}
 Category: ${category}
@@ -486,52 +580,64 @@ URL: ${ctx.url}
 ${benchmarkLine}
 
 Site signals:
-- Page title: "${ctx.title}"
-- Meta description: "${ctx.metaDescription}"
+- Page title: "${ctx.title}" (${ctx.title.length} chars)
+- Meta description: "${ctx.metaDescription}" (${ctx.metaDescription.length} chars)
 - H1: "${ctx.h1Text}"
 - All H1-H3 headings: ${JSON.stringify(ctx.headings.slice(0, 15))}
 - Body excerpt (first 2K chars): """${ctx.bodyExcerpt}"""
-${ctx.fetchError ? `- Fetch error: ${ctx.fetchError} (you may need to base your audit on the URL + category alone)` : ""}
+${ctx.fetchError ? `- Fetch error: ${ctx.fetchError}` : ""}
 
-Return STRICT JSON ONLY in this shape:
+Return STRICT JSON ONLY:
 
 {
   "headline": "<the actual H1 they're using, or your read of their primary headline>",
   "cta": "<their primary CTA copy as found, or 'No clear CTA found'>",
-  "score": <0-100 — how strong is the hero/positioning/copy stack overall>,
+  "score": <0-100 — how strong is hero/positioning/copy/social-proof overall>,
   "findings": [
     {
       "category": "hero" | "copy" | "cta" | "social_proof" | "structure" | "trust" | "brand_fit",
       "severity": "critical" | "high" | "medium" | "low",
-      "title": "<short 5-8 word problem name>",
-      "observation": "<what is wrong, specifically — quote their copy or describe what's missing>",
-      "recommendation": "<how to fix it, specific>",
-      "blueJaysSolution": "<how BlueJays' V2 ${category} template solves this>"
+      "title": "<5-8 words, plain English. NOT 'Sub-optimal hero copy structure'. YES 'Your hero doesn't say what you do'>",
+      "observation": "<2-3 sentences. PUNCHY. Lead with the cost. Quote their copy. Example: 'Your hero just says \\"Welcome\\" - a customer landing here in 3 seconds has no idea if you can fix their problem. Most leave by then.'>",
+      "recommendation": "<2-3 sentences. Specific fix in plain English. NO jargon. Example: 'Lead with what you DO and who you HELP. Try: \\"Same-day plumbing for Tacoma homeowners — ${"$"}99 service call, no surprise fees.\\"'>",
+      "blueJaysSolution": "<one sentence on how BlueJays' V2 ${category} template solves this>"
     }
   ]
 }
 
-Generate 5-8 findings total across the categories. At least 2 should be 'critical' or 'high'. Be SPECIFIC — generic findings like 'add more social proof' are useless. Quote their actual copy when calling something out. If their hero is good, say so and call it out as a strength in the recommendation field.
+Generate 4-6 findings total. STRICT GUIDELINES:
+- 1-2 must be severity="critical" or "high" if the site is below 70 score
+- 1-2 should be severity="low" — these are STRENGTHS the site is doing right (NOT problems). Frame the title celebratively ("Your meta description nails it").
+- Skip generic SEO advice that any tool could give. Focus on what's losing them CUSTOMERS.
+- Never say "improve", "optimize", "enhance" — say what to do instead.
+- If category-specific patterns apply (dental: online booking, electrician: license number, salon: book online, etc.), call them out by name.
 
 JSON only. No prose before/after.`;
 }
 
 function buildTechnicalPrompt(ctx: SiteContext): string {
-  return `Analyze this website's technical SEO + mobile readiness based on the signals below. Return STRICT JSON.
+  return `Audit this site's technical SEO + mobile readiness. Return STRICT JSON.
+
+CRITICAL — tone rules (this is a customer-facing audit, not a Lighthouse report):
+- Plain English. 7th-grade reading level. Short sentences.
+- Address them as "you". Lead with COST (customers lost, money wasted), not the technical metric.
+- "Your site loads 14 external scripts. On a phone over LTE that's 4-6 seconds of staring at a blank screen. Most leave by then." NOT "External script count is high, may impact mobile performance."
+- If something is GOOD, celebrate it. "All 22 of your images have alt text — Google AND screen readers love this." NOT "Maintain descriptive alt text."
+- 1-2 of your findings should be severity="low" = STRENGTHS the site does right. The rest are real problems.
 
 URL: ${ctx.url}
 Title: "${ctx.title}" (${ctx.title.length} chars)
 Meta description: "${ctx.metaDescription}" (${ctx.metaDescription.length} chars)
-H1 found: "${ctx.h1Text}"
+H1: "${ctx.h1Text}"
 Total H1-H3: ${ctx.headings.length}
 Images: ${ctx.imageCount} total, ${ctx.imagesWithAlt} with alt text
 External scripts: ${ctx.externalScripts}
-Has viewport meta: ${ctx.hasViewport}
-Has favicon: ${ctx.hasFavicon}
-Body length: ${ctx.bodyExcerpt.length} chars (truncated to 2.5K)
+Viewport meta: ${ctx.hasViewport}
+Favicon: ${ctx.hasFavicon}
+Body length: ${ctx.bodyExcerpt.length} chars
 ${ctx.fetchError ? `Fetch error: ${ctx.fetchError}` : ""}
 
-Return JSON in this shape:
+Return JSON:
 {
   "score": <0-100>,
   "seoFindings": [{ "category": "seo", "severity": "...", "title": "...", "observation": "...", "recommendation": "..." }],
@@ -539,7 +645,9 @@ Return JSON in this shape:
   "mobileFindings": [{ "category": "mobile", "severity": "...", "title": "...", "observation": "...", "recommendation": "..." }]
 }
 
-Generate 2-4 findings per category. Be specific. Reference the actual numbers (e.g. "Title is 11 chars — Google truncates at ~60 and yours is 85% under-utilized"). Include fixes in plain language.`;
+Generate 2-3 findings per category (6-9 total max). Reference actual numbers ("18 chars" not "short title"). NO Lighthouse-speak. Frame each fix in plain English with a one-line "what good looks like" anchor.
+
+JSON only.`;
 }
 
 /* -------------------- Synthesis -------------------- */
@@ -565,7 +673,7 @@ function synthesizeAudit(args: {
     ["social_proof", "trust"].includes(f.category),
   );
 
-  // Combine all findings to build the prioritized roadmap
+  // Combine all findings
   const allFindings = [
     ...heroResult.findings,
     ...technicalResult.seoFindings,
@@ -579,27 +687,37 @@ function synthesizeAudit(args: {
     medium: 40,
     low: 20,
   };
-  const sorted = allFindings
+
+  // Prioritized roadmap: ONLY findings with severity > low. Low-severity
+  // findings are STRENGTHS — they belong in the strengths section, not
+  // the fix-list. (Bug fix 2026-04-26: items 6+7 in the original audit
+  // were strengths leaking into the fix list.) Cap at 5 per research
+  // recommendation — "3-5 prioritized issues, 40+ paralyzes."
+  const fixFindings = allFindings.filter((f) => f.severity !== "low");
+  const sortedFixes = fixFindings
     .slice()
     .sort((a, b) => (severityRank[b.severity] || 0) - (severityRank[a.severity] || 0));
 
-  const prioritizedRoadmap = sorted.slice(0, 7).map((f, i) => ({
+  const prioritizedRoadmap = sortedFixes.slice(0, 5).map((f, i) => ({
     rank: i + 1,
     title: f.title,
     impact: severityToImpact(f.severity),
-    effort: estimateEffort(f.category),
+    effort: estimateEffort(f.category, f.severity),
     blueJaysCanDo: !!f.blueJaysSolution,
   }));
 
   const overallScore = Math.round((heroResult.score + technicalResult.score) / 2);
+  const moneyLeak = estimateMoneyLeak({ category: businessCategory, overallScore });
 
-  // Strengths — pull from low-severity findings + a baseline
-  const strengths = sorted
+  // Strengths — celebratory copy from low-severity findings ONLY.
+  // Use the title (Hormozi-tone praise) instead of recommendation
+  // (which used to be "no action needed" boilerplate).
+  const strengths = allFindings
     .filter((f) => f.severity === "low")
     .slice(0, 3)
-    .map((f) => f.recommendation || f.observation);
+    .map((f) => f.title); // The title is now phrased celebratively per the Hormozi prompt
   if (strengths.length === 0) {
-    strengths.push(`${businessName} has a working website — that puts you ahead of 30% of small businesses in your category.`);
+    strengths.push(`${businessName} has a working website — that puts you ahead of plenty of competitors who don't.`);
   }
 
   // One-line summary tuned to score
@@ -616,7 +734,7 @@ function synthesizeAudit(args: {
     url,
     businessCategory,
     generatedAt: new Date().toISOString(),
-    promptVersion: 1,
+    promptVersion: 2, // v2 = Hormozi-tone refactor (2026-04-26): plain-English, cost-anchored prompts, money-leak estimate, fixed strength leak into roadmap, less aggressive Rebuild labeling
     overallScore,
     oneLineSummary,
     heroAnalysis: {
@@ -646,6 +764,7 @@ function synthesizeAudit(args: {
       referenceUrl: benchmark.url,
       gapSummary: `Compare to our ${benchmark.template} — that's the quality bar we'd ship for ${businessName}.`,
     },
+    moneyLeak,
     prioritizedRoadmap,
     strengths,
     callToAction: {
@@ -669,10 +788,33 @@ function severityToImpact(s: string): "high" | "medium" | "low" {
   return "low";
 }
 
-function estimateEffort(category: string): "high" | "medium" | "low" {
-  if (["hero", "copy", "cta"].includes(category)) return "low";
-  if (["structure", "trust", "social_proof", "brand_fit"].includes(category)) return "medium";
-  return "high";
+/**
+ * Effort estimation drives the badge ("Easy fix" / "Moderate" / "Rebuild").
+ * Rule for picking: most fixes should be Easy or Moderate — Rebuild is
+ * reserved for problems where a structural overhaul is the only way out.
+ * Per research deliverable Risk #3: "1 of every 4 findings should land
+ * in 'Rebuild' territory" — that's the salty-pretzel mechanic. Don't
+ * label everything Rebuild (current bug: estimateEffort('seo')='high'
+ * meant every technical/SEO finding showed Rebuild).
+ *
+ * Severity also factors in: a critical-severity hero issue is still a
+ * "Rebuild" because the whole hero block needs replacement, while a
+ * critical-severity SEO issue (missing meta description) is "Easy fix".
+ */
+function estimateEffort(category: string, severity: string): "high" | "medium" | "low" {
+  // Critical hero/structure problems = rebuild territory
+  if (severity === "critical" && ["hero", "structure", "brand_fit"].includes(category)) {
+    return "high";
+  }
+  // Easy fixes — copy tweaks, CTA buttons, meta tags, alt text
+  if (["copy", "cta", "seo"].includes(category)) return "low";
+  // Moderate — needs more thought but not a rebuild
+  if (["hero", "social_proof", "trust", "mobile"].includes(category)) return "medium";
+  // Heavy lifts — structural site changes, technical performance
+  if (["structure", "technical", "brand_fit"].includes(category)) {
+    return severity === "critical" || severity === "high" ? "high" : "medium";
+  }
+  return "medium";
 }
 
 /* -------------------- Mocks (local dev / no API key) -------------------- */
