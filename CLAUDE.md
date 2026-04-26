@@ -5047,6 +5047,52 @@ WHERE id = 'PROSPECT_UUID';
 
 ---
 
+### Locked-In Rule 55 — Stripe Env Vars Use `price_*` IDs, NEVER `prod_*` (NON-NEGOTIABLE)
+
+Established 2026-04-25 during the LIVE flip. All 7 `STRIPE_PRICE_*`
+env vars on Vercel were initially set to Product IDs (`prod_*`) instead
+of Price IDs (`price_*`). Result: the $997 button silently 400'd with
+"No such price: prod_xxx" while the installment $349 button worked
+(it uses inline `price_data` and doesn't depend on these env vars).
+
+**Why it happened:** the Stripe product detail page shows BOTH IDs
+within ~200 pixels of each other — the `prod_*` Product ID at the top
+of the page (header), and the `price_*` Price ID inside the "Pricing"
+section card lower down. Both look like `xxx_XXXXXXXXXXXXXX`. Easy
+copy-paste mistake.
+
+**The rule:** every Stripe env var named `STRIPE_PRICE_*` MUST contain
+a value starting with `price_`. NEVER `prod_`. The two IDs serve
+different purposes:
+- `prod_*` — the Product object (name, description, metadata, tax
+  category). Useful for `stripe.products.retrieve()` calls.
+- `price_*` — a specific Price + recurring-interval combination on
+  that product. Required in checkout `line_items` and subscription
+  creation.
+
+**Verification:** the `/api/admin/env-check` endpoint includes a
+`stripePricePrefixes` field that reports the prefix group of each
+`STRIPE_PRICE_*` env var. After any Stripe env var change, hit the
+endpoint and confirm every entry shows `"price"` (not `"prod"` or
+`"other"` or `null` for vars that should be set).
+
+**When adding a NEW SKU** (e.g., a new upsell or pricing tier):
+1. Create the Product in Stripe — note the `prod_*` ID for reference
+2. Inside that product, create a Price — note the `price_*` ID
+3. Set the `STRIPE_PRICE_NEW_SKU` env var to the **`price_*` value
+   only**
+4. Add the new var name to the `STRIPE_PRICE_KEYS` list in
+   `src/app/api/admin/env-check/route.ts` so the prefix audit covers it
+5. Hit env-check, confirm the new entry shows `"price"`
+6. Smoke-test the new checkout path before relying on it
+
+**This rule extends to scripts:** any script that programmatically
+creates Stripe checkout sessions (e.g., bulk-send promotion scripts,
+email-attached checkout links) MUST validate price IDs with a
+`startsWith("price_")` check before submitting to Stripe. Don't trust
+hardcoded values in scripts — they tend to drift from the real
+configuration.
+
 ### Locked-In Rule 51 — Runnable Code Must Be One-Click Copyable (NON-NEGOTIABLE)
 
 Established 2026-04-25 by Ben. When giving Ben code, SQL, env vars, or
