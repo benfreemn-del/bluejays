@@ -653,8 +653,35 @@ export default function ProspectTable({
                           ✓ LIVE
                         </span>
                       )}
-                      {prospect.pricingTier === "free" && (
-                        <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold tracking-wide border border-emerald-500/30">Free</span>
+                      {/* Pricing-tier indicator: $ green = free ($30 upfront,
+                          friends/family/manual prospects), $$ amber = custom
+                          ($100/yr immediate), $$$ sky = standard ($997 + deferred
+                          $100/yr — the default for cold-outreach prospects).
+                          Ties directly to prospect.pricingTier so the visual
+                          updates automatically when Ben re-tags a prospect.
+                          See CLAUDE.md "Approval & Pricing Rules" + "Custom
+                          Pricing Tier Rules". */}
+                      {prospect.pricingTier === "free" ? (
+                        <span
+                          className="text-xs px-2 py-0.5 rounded-md bg-emerald-500/15 text-emerald-300 font-extrabold tracking-tight border border-emerald-500/40 shadow-[0_0_6px_rgba(16,185,129,0.25)]"
+                          title="Free tier — $30 upfront, $100/yr starting Day 365"
+                        >
+                          $
+                        </span>
+                      ) : prospect.pricingTier === "custom" ? (
+                        <span
+                          className="text-xs px-2 py-0.5 rounded-md bg-amber-500/15 text-amber-300 font-extrabold tracking-tight border border-amber-500/40"
+                          title="Custom tier — $100/yr starting immediately, no setup fee"
+                        >
+                          $$
+                        </span>
+                      ) : (
+                        <span
+                          className="text-xs px-2 py-0.5 rounded-md bg-sky-500/10 text-sky-300/70 font-extrabold tracking-tight border border-sky-500/25"
+                          title="Standard tier — $997 setup + $100/yr starting Day 365"
+                        >
+                          $$$
+                        </span>
                       )}
                       {prospect.source === "inbound" && (
                         <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 font-bold tracking-wide border border-amber-500/30">Inbound</span>
