@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pine &amp; Particle Co. — Plasma Ring</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: #07120c; color: #e8f5ec; font-family: 'Inter', sans-serif; min-height: 100vh; padding: 56px 24px 96px; }
+        .page { max-width: 980px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 64px; }
+        header .eyebrow { font-family: 'Space Grotesk', sans-serif; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: #4ade80; margin-bottom: 14px; display: block; }
+        header h1 { font-family: 'Space Grotesk', sans-serif; font-size: 2.1rem; font-weight: 700; color: #f0faf4; margin-bottom: 10px; }
+        header p { font-size: 0.95rem; color: #5a8a6a; max-width: 520px; margin: 0 auto; line-height: 1.6; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+        @media (max-width: 700px) { .grid { grid-template-columns: 1fr; } }
+        .card { background: #0d1f16; border: 1px solid rgba(74,222,128,0.13); border-radius: 20px; padding: 36px 30px 30px; display: flex; flex-direction: column; transition: border-color 0.25s, box-shadow 0.25s; }
+        .card:hover { border-color: rgba(74,222,128,0.38); box-shadow: 0 0 40px rgba(74,222,128,0.07); }
+        .option-label { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: #4ade80; margin-bottom: 28px; opacity: 0.8; }
+        .mark { display: flex; justify-content: center; align-items: center; margin-bottom: 32px; min-height: 130px; }
+        .mark svg { filter: drop-shadow(0 0 36px rgba(74,222,128,0.38)); }
+        .divider { height: 1px; background: rgba(74,222,128,0.09); margin-bottom: 26px; }
+        .lockup { display: flex; align-items: center; gap: 13px; margin-bottom: 18px; }
+        .lockup-text { display: flex; flex-direction: column; gap: 3px; }
+        .lockup-name { font-family: 'Space Grotesk', sans-serif; font-size: 1.05rem; font-weight: 600; color: #e8f5ec; }
+        .lockup-tag { font-size: 0.64rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: #4ade80; opacity: 0.75; }
+        .nav-mock { background: rgba(0,0,0,0.4); border: 1px solid rgba(74,222,128,0.09); border-radius: 9px; padding: 9px 15px; display: flex; align-items: center; gap: 9px; margin-bottom: 26px; }
+        .nav-mock-text { font-family: 'Space Grotesk', sans-serif; font-size: 0.82rem; font-weight: 600; color: #d4eddc; }
+        .concept-name { font-family: 'Space Grotesk', sans-serif; font-size: 0.95rem; font-weight: 600; color: #b8ddc6; margin-bottom: 7px; }
+        .concept-desc { font-size: 0.81rem; color: #547862; line-height: 1.6; }
+        /* aliases for V2-V4 naming convention */
+        .logo-card { background: #0d1f16; border: 1px solid rgba(74,222,128,0.13); border-radius: 20px; padding: 36px 30px 30px; display: flex; flex-direction: column; transition: border-color 0.25s, box-shadow 0.25s; }
+        .logo-card:hover { border-color: rgba(74,222,128,0.38); box-shadow: 0 0 40px rgba(74,222,128,0.07); }
+        .card-label { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: #4ade80; margin-bottom: 28px; opacity: 0.8; }
+        .logo-mark { display: block; margin: 0 auto 32px; filter: drop-shadow(0 0 36px rgba(74,222,128,0.38)); }
+        .logo-lockup { display: block; margin-bottom: 18px; }
+    </style>
+</head>
+<body>
+<div class="page">
+<header>
+    <span class="eyebrow">Option B — Plasma Ring</span>
+    <h1>Diagonal. Plasma. Solid Tree.</h1>
+    <p>All four based on V3 — 35° diagonal ring, tree fully opaque and inside the orbit. Four plasma styles from balanced to storm.</p>
+</header>
+<div class="grid">
+<!-- V1: Plasma Ring — balanced plasma, dominant top node, solid tree -->
+<div class="card">
+    <div class="option-label">Variant 1 — Plasma Ring</div>
+    <div class="mark">
+        <svg width="120" height="120" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- BACK ARC: receding, dim plasma layers -->
+            <g transform="rotate(35, 40, 40)">
+                <path d="M 11 40 A 29 10 0 0 0 69 40" stroke="#4ade80" stroke-width="6"   fill="none" opacity="0.03" stroke-linecap="round"/>
+                <path d="M 11 40 A 29 10 0 0 0 69 40" stroke="#4ade80" stroke-width="3.5" fill="none" opacity="0.09" stroke-linecap="round"/>
+                <path d="M 11 40 A 29 10 0 0 0 69 40" stroke="#86efac" stroke-width="1.8" fill="none" opacity="0.24" stroke-linecap="round"/>
+                <path d="M 11 40 A 29 10 0 0 0 69 40" stroke="#d1fae5" stroke-width="0.7" fill="none" opacity="0.44" stroke-linecap="round"/>
+                <circle cx="62.7" cy="33.8" r="5"   fill="#4ade80" opacity="0.05"/>
+                <circle cx="62.7" cy="33.8" r="3"   fill="#4ade80" opacity="0.10"/>
+                <circle cx="62.7" cy="33.8" r="1.5" fill="#86efac" opacity="0.50"/>
+                <circle cx="17.3" cy="33.8" r="5"   fill="#4ade80" opacity="0.05"/>
+                <circle cx="17.3" cy="33.8" r="3"   fill="#4ade80" opacity="0.10"/>
+                <circle cx="17.3" cy="33.8" r="1.5" fill="#86efac" opacity="0.50"/>
+            </g>
+            <!-- DARK OCCLUDER: blocks back arc bleed through tree silhouette -->
+            <rect x="37.5" y="56" width="5" height="9" fill="#0d1f16" rx="1" stroke="#0d1f16" stroke-width="3"/>
+            <polygon points="22,57 40,40 58,57" fill="#0d1f16" stroke="#0d1f16" stroke-width="3" stroke-linejoin="round"/>
+            <polygon points="26,45 40,29 54,45" fill="#0d1f16" stroke="#0d1f16" stroke-width="3" stroke-linejoin="round"/>
+            <polygon points="30,33 40,18 50,33" fill="#0d1f16" stroke="#0d1f16" stroke-width="3" stroke-linejoin="round"/>
+            <!-- FRONT ARC: advancing, bright plasma layers + dominant node -->
+            <g transform="rotate(35, 40, 40)">
+                <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#4ade80" stroke-width="9"   fill="none" opacity="0.04" stroke-linecap="round"/>
+                <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#4ade80" stroke-width="5.5" fill="none" opacity="0.11" stroke-linecap="round"/>
+                <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#4ade80" stroke-width="3"   fill="none" opacity="0.24" stroke-linecap="round"/>
+                <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#86efac" stroke-width="1.5" fill="none" opacity="0.58" stroke-linecap="round"/>
+                <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#d1fae5" stroke-width="0.6" fill="none" opacity="0.88" stroke-linecap="round"/>
+                <!-- specular catch-light at upper-right -->
+                <path d="M 62.7 33.8 A 29 10 0 0 1 69 40" stroke="#a7f3c0" stroke-width="3.5" fill="none" opacity="0.38" stroke-linecap="round"/>
+                <path d="M 62.7 33.8 A 29 10 0 0 1 69 40" stroke="#ffffff"   stroke-width="1.0" fill="none" opacity="0.65" stroke-linecap="round"/>
+                <circle cx="68.3" cy="42.2" r="5.5" fill="#4ade80" opacity="0.07"/>
+                <circle cx="68.3" cy="42.2" r="3.2" fill="#4ade80" opacity="0.15"/>
+                <circle cx="68.3" cy="42.2" r="1.8" fill="#86efac" opacity="0.85"/>
+                <circle cx="52.6" cy="49"   r="5.5" fill="#4ade80" opacity="0.07"/>
+                <circle cx="52.6" cy="49"   r="3.2" fill="#4ade80" opacity="0.15"/>
+                <circle cx="52.6" cy="49"   r="1.8" fill="#86efac" opacity="0.85"/>
+                <circle cx="27.4" cy="49"   r="5.5" fill="#4ade80" opacity="0.07"/>
+                <circle cx="27.4" cy="49"   r="3.2" fill="#4ade80" opacity="0.15"/>
+                <circle cx="27.4" cy="49"   r="1.8" fill="#86efac" opacity="0.85"/>
+                <circle cx="11.7" cy="42.2" r="5.5" fill="#4ade80" opacity="0.07"/>
+                <circle cx="11.7" cy="42.2" r="3.2" fill="#4ade80" opacity="0.15"/>
+                <circle cx="11.7" cy="42.2" r="1.8" fill="#86efac" opacity="0.85"/>
+                <!-- dominant top node -->
+                <circle cx="40" cy="30" r="10"  fill="#4ade80" opacity="0.05"/>
+                <circle cx="40" cy="30" r="6.5" fill="#4ade80" opacity="0.11"/>
+                <circle cx="40" cy="30" r="3.8" fill="#4ade80" opacity="0.27"/>
+                <circle cx="40" cy="30" r="2.1" fill="#86efac"/>
+                <circle cx="39.2" cy="29.3" r="0.7" fill="#ffffff" opacity="0.60"/>
+            </g>
+            <!-- SOLID TREE: drawn last, fully opaque, cuts through front arc -->
+            <rect x="37.5" y="56" width="5" height="9" fill="#4ade80" rx="1"/>
+            <polygon points="22,57 40,40 58,57" fill="#4ade80"/>
+            <polygon points="26,45 40,29 54,45" fill="#4ade80"/>
+            <polygon points="30,33 40,18 50,33" fill="#4ade80"/>
+        </svg>
+    </div>
+    <div class="divider"></div>
+    <div class="lockup">
+        <svg width="40" height="40" viewBox="0 0 80 80" fill="none">
+            <g transform="rotate(35, 40, 40)">
+                <path d="M 11 40 A 29 10 0 0 0 69 40" stroke="#4ade80" stroke-width="4"   fill="none" opacity="0.08"/>
+                <path d="M 11 40 A 29 10 0 0 0 69 40" stroke="#86efac" stroke-width="1.6" fill="none" opacity="0.28"/>
+                <path d="M 11 40 A 29 10 0 0 0 69 40" stroke="#d1fae5" stroke-width="0.6" fill="none" opacity="0.44"/>
+                <circle cx="62.7" cy="33.8" r="1.4" fill="#86efac" opacity="0.48"/>
+                <circle cx="17.3" cy="33.8" r="1.4" fill="#86efac" opacity="0.48"/>
+            </g>
+            <rect x="37.5" y="56" width="5" height="9" fill="#0d1f16" rx="1" stroke="#0d1f16" stroke-width="2"/>
+            <polygon points="22,57 40,40 58,57" fill="#0d1f16" stroke="#0d1f16" stroke-width="2" stroke-linejoin="round"/>
+            <polygon points="26,45 40,29 54,45" fill="#0d1f16" stroke="#0d1f16" stroke-width="2" stroke-linejoin="round"/>
+            <polygon points="30,33 40,18 50,33" fill="#0d1f16" stroke="#0d1f16" stroke-width="2" stroke-linejoin="round"/>
+            <g transform="rotate(35, 40, 40)">
+                <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#4ade80" stroke-width="5.5" fill="none" opacity="0.10"/>
+                <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#86efac" stroke-width="1.5" fill="none" opacity="0.55"/>
+                <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#d1fae5" stroke-width="0.6" fill="none" opacity="0.85"/>
+                <path d="M 62.7 33.8 A 29 10 0 0 1 69 40" stroke="#ffffff" stroke-width="1.0" fill="none" opacity="0.55"/>
+                <circle cx="68.3" cy="42.2" r="1.7" fill="#86efac" opacity="0.85"/>
+                <circle cx="52.6" cy="49"   r="1.7" fill="#86efac" opacity="0.85"/>
+                <circle cx="27.4" cy="49"   r="1.7" fill="#86efac" opacity="0.85"/>
+                <circle cx="11.7" cy="42.2" r="1.7" fill="#86efac" opacity="0.85"/>
+                <circle cx="40" cy="30" r="3.5" fill="#4ade80" opacity="0.25"/>
+                <circle cx="40" cy="30" r="2.0" fill="#86efac"/>
+            </g>
+            <rect x="37.5" y="56" width="5" height="9" fill="#4ade80" rx="1"/>
+            <polygon points="22,57 40,40 58,57" fill="#4ade80"/>
+            <polygon points="26,45 40,29 54,45" fill="#4ade80"/>
+            <polygon points="30,33 40,18 50,33" fill="#4ade80"/>
+        </svg>
+        <div class="lockup-text">
+            <span class="lockup-name">Pine &amp; Particle Co.</span>
+            <span class="lockup-tag">Mold Detection</span>
+        </div>
+    </div>
+    <div class="nav-mock">
+        <svg width="22" height="22" viewBox="0 0 80 80" fill="none">
+            <g transform="rotate(35, 40, 40)">
+                <path d="M 11 40 A 29 10 0 0 0 69 40" stroke="#4ade80" stroke-width="3.5" fill="none" opacity="0.09"/>
+                <path d="M 11 40 A 29 10 0 0 0 69 40" stroke="#d1fae5" stroke-width="0.7" fill="none" opacity="0.40"/>
+            </g>
+            <rect x="37.5" y="56" width="5" height="9" fill="#0d1f16" rx="1" stroke="#0d1f16" stroke-width="2"/>
+            <polygon points="22,57 40,40 58,57" fill="#0d1f16" stroke="#0d1f16" stroke-width="2" stroke-linejoin="round"/>
+            <polygon points="26,45 40,29 54,45" fill="#0d1f16" stroke="#0d1f16" stroke-width="2" stroke-linejoin="round"/>
+            <polygon points="30,33 40,18 50,33" fill="#0d1f16" stroke="#0d1f16" stroke-width="2" stroke-linejoin="round"/>
+            <g transform="rotate(35, 40, 40)">
+                <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#4ade80" stroke-width="5.5" fill="none" opacity="0.10"/>
+                <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#d1fae5" stroke-width="0.7" fill="none" opacity="0.85"/>
+                <circle cx="40" cy="30" r="2.2" fill="#86efac"/>
+                <circle cx="68.3" cy="42.2" r="1.6" fill="#86efac" opacity="0.8"/>
+                <circle cx="52.6" cy="49"   r="1.6" fill="#86efac" opacity="0.8"/>
+                <circle cx="27.4" cy="49"   r="1.6" fill="#86efac" opacity="0.8"/>
+                <circle cx="11.7" cy="42.2" r="1.6" fill="#86efac" opacity="0.8"/>
+            </g>
+            <rect x="37.5" y="56" width="5" height="9" fill="#4ade80" rx="1"/>
+            <polygon points="22,57 40,40 58,57" fill="#4ade80"/>
+            <polygon points="26,45 40,29 54,45" fill="#4ade80"/>
+            <polygon points="30,33 40,18 50,33" fill="#4ade80"/>
+        </svg>
+        <span class="nav-mock-text">Pine &amp; Particle Co.</span>
+    </div>
+    <div class="concept-name">Plasma Ring</div>
+    <div class="concept-desc">Balanced 5-layer plasma glow — outer diffuse corona fading to a hot d1fae5 core line. Tree fully opaque and inside the orbit. Front arc wraps over the tree; back arc is masked behind it.</div>
+</div>
+
+
+<!-- V2: THICK TORUS -->
+<div class="logo-card">
+    <div class="card-label">V2</div>
+    <svg class="logo-mark" width="80" height="80" viewBox="0 0 80 80" fill="none">
+        <!-- BACK ARC: fat atmospheric glow, receding side -->
+        <g transform="rotate(35, 40, 40)">
+            <path d="M 11 40 A 29 10 0 0 0 69 40" stroke="#4ade80" stroke-width="8"   fill="none" opacity="0.04" stroke-linecap="round"/>
+            <path d="M 11 40 A 29 10 0 0 0 69 40" stroke="#4ade80" stroke-width="5"   fill="none" opacity="0.10" stroke-linecap="round"/>
+            <path d="M 11 40 A 29 10 0 0 0 69 40" stroke="#86efac" stroke-width="2.5" fill="none" opacity="0.26" stroke-linecap="round"/>
+            <path d="M 11 40 A 29 10 0 0 0 69 40" stroke="#d1fae5" stroke-width="1"   fill="none" opacity="0.45" stroke-linecap="round"/>
+            <!-- back nodes: k1 upper-right, k6 upper-left -->
+            <circle cx="62.7" cy="33.8" r="1.8" fill="#86efac" opacity="0.45"/>
+            <circle cx="17.3" cy="33.8" r="1.8" fill="#86efac" opacity="0.45"/>
+            <!-- top node (k0) — behind tree, drawn in back group -->
+            <circle cx="40" cy="30" r="1.8" fill="#86efac" opacity="0.45"/>
+        </g>
+        <!-- DARK OCCLUDER -->
+        <rect x="37.5" y="56" width="5" height="9" fill="#0d1f16" rx="1" stroke="#0d1f16" stroke-width="3"/>
+        <polygon points="22,57 40,40 58,57" fill="#0d1f16" stroke="#0d1f16" stroke-width="3" stroke-linejoin="round"/>
+        <polygon points="26,45 40,29 54,45" fill="#0d1f16" stroke="#0d1f16" stroke-width="3" stroke-linejoin="round"/>
+        <polygon points="30,33 40,18 50,33" fill="#0d1f16" stroke="#0d1f16" stroke-width="3" stroke-linejoin="round"/>
+        <!-- FRONT ARC: massive torus — brightest near equator -->
+        <g transform="rotate(35, 40, 40)">
+            <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#4ade80" stroke-width="12"  fill="none" opacity="0.05" stroke-linecap="round"/>
+            <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#4ade80" stroke-width="7.5" fill="none" opacity="0.12" stroke-linecap="round"/>
+            <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#4ade80" stroke-width="4.5" fill="none" opacity="0.26" stroke-linecap="round"/>
+            <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#86efac" stroke-width="2.2" fill="none" opacity="0.60" stroke-linecap="round"/>
+            <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#d1fae5" stroke-width="0.8" fill="none" opacity="0.88" stroke-linecap="round"/>
+            <!-- specular highlight near right equator -->
+            <path d="M 62.7 33.8 A 29 10 0 0 1 69 40" stroke="#a7f3c0" stroke-width="5"   fill="none" opacity="0.40"/>
+            <path d="M 62.7 33.8 A 29 10 0 0 1 69 40" stroke="#ffffff"   stroke-width="1.5" fill="none" opacity="0.70"/>
+            <!-- front nodes: equal weight, all 4 front positions -->
+            <circle cx="68.3" cy="42.2" r="2"   fill="#86efac" opacity="0.90"/>
+            <circle cx="52.6" cy="49"   r="2"   fill="#86efac" opacity="0.90"/>
+            <circle cx="27.4" cy="49"   r="2"   fill="#86efac" opacity="0.90"/>
+            <circle cx="11.7" cy="42.2" r="2"   fill="#86efac" opacity="0.90"/>
+        </g>
+        <!-- SOLID TREE -->
+        <rect x="37.5" y="56" width="5" height="9" fill="#4ade80" rx="1"/>
+        <polygon points="22,57 40,40 58,57" fill="#4ade80"/>
+        <polygon points="26,45 40,29 54,45" fill="#4ade80"/>
+        <polygon points="30,33 40,18 50,33" fill="#4ade80"/>
+    </svg>
+    <!-- lockup -->
+    <svg class="logo-lockup" width="260" height="52" viewBox="0 0 260 52" fill="none">
+        <g transform="scale(0.65) translate(0, 4)">
+            <g transform="rotate(35, 40, 40)">
+                <path d="M 11 40 A 29 10 0 0 0 69 40" stroke="#4ade80" stroke-width="8"   fill="none" opacity="0.04" stroke-linecap="round"/>
+                <path d="M 11 40 A 29 10 0 0 0 69 40" stroke="#d1fae5" stroke-width="1"   fill="none" opacity="0.40" stroke-linecap="round"/>
+            </g>
+            <rect x="37.5" y="56" width="5" height="9" fill="#0d1f16" rx="1" stroke="#0d1f16" stroke-width="2"/>
+            <polygon points="22,57 40,40 58,57" fill="#0d1f16" stroke="#0d1f16" stroke-width="2" stroke-linejoin="round"/>
+            <polygon points="26,45 40,29 54,45" fill="#0d1f16" stroke="#0d1f16" stroke-width="2" stroke-linejoin="round"/>
+            <polygon points="30,33 40,18 50,33" fill="#0d1f16" stroke="#0d1f16" stroke-width="2" stroke-linejoin="round"/>
+            <g transform="rotate(35, 40, 40)">
+                <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#4ade80" stroke-width="7.5" fill="none" opacity="0.11" stroke-linecap="round"/>
+                <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#d1fae5" stroke-width="0.8" fill="none" opacity="0.85" stroke-linecap="round"/>
+            </g>
+            <rect x="37.5" y="56" width="5" height="9" fill="#4ade80" rx="1"/>
+            <polygon points="22,57 40,40 58,57" fill="#4ade80"/>
+            <polygon points="26,45 40,29 54,45" fill="#4ade80"/>
+            <polygon points="30,33 40,18 50,33" fill="#4ade80"/>
+        </g>
+        <text x="58" y="24" font-family="Georgia, serif" font-size="17" fill="#e8f5e2" letter-spacing="2.5">PINE &amp; PARTICLE</text>
+        <text x="58" y="42" font-family="Georgia, serif" font-size="10" fill="#4ade80" letter-spacing="4.5">CO.</text>
+    </svg>
+    <!-- nav mock -->
+    <div class="nav-mock">
+        <svg width="22" height="22" viewBox="0 0 80 80" fill="none">
+            <g transform="rotate(35, 40, 40)">
+                <path d="M 11 40 A 29 10 0 0 0 69 40" stroke="#4ade80" stroke-width="8"   fill="none" opacity="0.04"/>
+                <path d="M 11 40 A 29 10 0 0 0 69 40" stroke="#d1fae5" stroke-width="1"   fill="none" opacity="0.40"/>
+            </g>
+            <rect x="37.5" y="56" width="5" height="9" fill="#0d1f16" rx="1" stroke="#0d1f16" stroke-width="2"/>
+            <polygon points="22,57 40,40 58,57" fill="#0d1f16" stroke="#0d1f16" stroke-width="2" stroke-linejoin="round"/>
+            <polygon points="26,45 40,29 54,45" fill="#0d1f16" stroke="#0d1f16" stroke-width="2" stroke-linejoin="round"/>
+            <polygon points="30,33 40,18 50,33" fill="#0d1f16" stroke="#0d1f16" stroke-width="2" stroke-linejoin="round"/>
+            <g transform="rotate(35, 40, 40)">
+                <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#4ade80" stroke-width="7.5" fill="none" opacity="0.11"/>
+                <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#d1fae5" stroke-width="0.8" fill="none" opacity="0.85"/>
+                <circle cx="68.3" cy="42.2" r="1.8" fill="#86efac" opacity="0.85"/>
+                <circle cx="52.6" cy="49"   r="1.8" fill="#86efac" opacity="0.85"/>
+                <circle cx="27.4" cy="49"   r="1.8" fill="#86efac" opacity="0.85"/>
+                <circle cx="11.7" cy="42.2" r="1.8" fill="#86efac" opacity="0.85"/>
+            </g>
+            <rect x="37.5" y="56" width="5" height="9" fill="#4ade80" rx="1"/>
+            <polygon points="22,57 40,40 58,57" fill="#4ade80"/>
+            <polygon points="26,45 40,29 54,45" fill="#4ade80"/>
+            <polygon points="30,33 40,18 50,33" fill="#4ade80"/>
+        </svg>
+        <span class="nav-mock-text">Pine &amp; Particle Co.</span>
+    </div>
+    <div class="concept-name">Thick Torus</div>
+    <div class="concept-desc">Maximum ring volume — 5-layer corona on the front arc builds to near-solid body. Equal-weight nodes on all 4 front positions. Specular hot-spot near right equator.</div>
+</div>
+
+<!-- V3: NEON EDGE -->
+<div class="logo-card">
+    <div class="card-label">V3</div>
+    <svg class="logo-mark" width="80" height="80" viewBox="0 0 80 80" fill="none">
+        <!-- BACK ARC: thin crisp wire, dim -->
+        <g transform="rotate(35, 40, 40)">
+            <path d="M 11 40 A 29 10 0 0 0 69 40" stroke="#4ade80" stroke-width="3"   fill="none" opacity="0.06" stroke-linecap="round"/>
+            <path d="M 11 40 A 29 10 0 0 0 69 40" stroke="#86efac" stroke-width="1.5" fill="none" opacity="0.18" stroke-linecap="round"/>
+            <path d="M 11 40 A 29 10 0 0 0 69 40" stroke="#d1fae5" stroke-width="0.5" fill="none" opacity="0.50" stroke-linecap="round"/>
+            <!-- back nodes dim -->
+            <circle cx="62.7" cy="33.8" r="1.2" fill="#86efac" opacity="0.40"/>
+            <circle cx="17.3" cy="33.8" r="1.2" fill="#86efac" opacity="0.40"/>
+        </g>
+        <!-- DARK OCCLUDER -->
+        <rect x="37.5" y="56" width="5" height="9" fill="#0d1f16" rx="1" stroke="#0d1f16" stroke-width="3"/>
+        <polygon points="22,57 40,40 58,57" fill="#0d1f16" stroke="#0d1f16" stroke-width="3" stroke-linejoin="round"/>
+        <polygon points="26,45 40,29 54,45" fill="#0d1f16" stroke="#0d1f16" stroke-width="3" stroke-linejoin="round"/>
+        <polygon points="30,33 40,18 50,33" fill="#0d1f16" stroke="#0d1f16" stroke-width="3" stroke-linejoin="round"/>
+        <!-- FRONT ARC: crisp neon wire with intense hot core -->
+        <g transform="rotate(35, 40, 40)">
+            <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#4ade80" stroke-width="4"   fill="none" opacity="0.08" stroke-linecap="round"/>
+            <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#86efac" stroke-width="2.2" fill="none" opacity="0.22" stroke-linecap="round"/>
+            <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#d1fae5" stroke-width="0.9" fill="none" opacity="0.75" stroke-linecap="round"/>
+            <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#ffffff"   stroke-width="0.3" fill="none" opacity="0.95" stroke-linecap="round"/>
+            <!-- specular: short arc flash near right node -->
+            <path d="M 62.7 33.8 A 29 10 0 0 1 69 40" stroke="#a7f3c0" stroke-width="2.5" fill="none" opacity="0.50"/>
+            <path d="M 62.7 33.8 A 29 10 0 0 1 69 40" stroke="#ffffff"   stroke-width="0.8" fill="none" opacity="0.80"/>
+            <!-- dominant north node (k0) — top of ring -->
+            <circle cx="40" cy="30" r="2.4" fill="#4ade80" opacity="0.25"/>
+            <circle cx="40" cy="30" r="1.6" fill="#86efac"/>
+            <circle cx="39.4" cy="29.5" r="0.6" fill="#ffffff" opacity="0.80"/>
+            <!-- front nodes smaller -->
+            <circle cx="68.3" cy="42.2" r="1.3" fill="#86efac" opacity="0.85"/>
+            <circle cx="52.6" cy="49"   r="1.3" fill="#86efac" opacity="0.85"/>
+            <circle cx="27.4" cy="49"   r="1.3" fill="#86efac" opacity="0.85"/>
+            <circle cx="11.7" cy="42.2" r="1.3" fill="#86efac" opacity="0.85"/>
+        </g>
+        <!-- SOLID TREE -->
+        <rect x="37.5" y="56" width="5" height="9" fill="#4ade80" rx="1"/>
+        <polygon points="22,57 40,40 58,57" fill="#4ade80"/>
+        <polygon points="26,45 40,29 54,45" fill="#4ade80"/>
+        <polygon points="30,33 40,18 50,33" fill="#4ade80"/>
+    </svg>
+    <!-- lockup -->
+    <svg class="logo-lockup" width="260" height="52" viewBox="0 0 260 52" fill="none">
+        <g transform="scale(0.65) translate(0, 4)">
+            <g transform="rotate(35, 40, 40)">
+                <path d="M 11 40 A 29 10 0 0 0 69 40" stroke="#86efac" stroke-width="1.5" fill="none" opacity="0.18" stroke-linecap="round"/>
+            </g>
+            <rect x="37.5" y="56" width="5" height="9" fill="#0d1f16" rx="1" stroke="#0d1f16" stroke-width="2"/>
+            <polygon points="22,57 40,40 58,57" fill="#0d1f16" stroke="#0d1f16" stroke-width="2" stroke-linejoin="round"/>
+            <polygon points="26,45 40,29 54,45" fill="#0d1f16" stroke="#0d1f16" stroke-width="2" stroke-linejoin="round"/>
+            <polygon points="30,33 40,18 50,33" fill="#0d1f16" stroke="#0d1f16" stroke-width="2" stroke-linejoin="round"/>
+            <g transform="rotate(35, 40, 40)">
+                <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#d1fae5" stroke-width="0.9" fill="none" opacity="0.75" stroke-linecap="round"/>
+                <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#ffffff"   stroke-width="0.3" fill="none" opacity="0.90" stroke-linecap="round"/>
+                <circle cx="40" cy="30" r="1.6" fill="#86efac"/>
+            </g>
+            <rect x="37.5" y="56" width="5" height="9" fill="#4ade80" rx="1"/>
+            <polygon points="22,57 40,40 58,57" fill="#4ade80"/>
+            <polygon points="26,45 40,29 54,45" fill="#4ade80"/>
+            <polygon points="30,33 40,18 50,33" fill="#4ade80"/>
+        </g>
+        <text x="58" y="24" font-family="Georgia, serif" font-size="17" fill="#e8f5e2" letter-spacing="2.5">PINE &amp; PARTICLE</text>
+        <text x="58" y="42" font-family="Georgia, serif" font-size="10" fill="#4ade80" letter-spacing="4.5">CO.</text>
+    </svg>
+    <!-- nav mock -->
+    <div class="nav-mock">
+        <svg width="22" height="22" viewBox="0 0 80 80" fill="none">
+            <g transform="rotate(35, 40, 40)">
+                <path d="M 11 40 A 29 10 0 0 0 69 40" stroke="#86efac" stroke-width="1.5" fill="none" opacity="0.18"/>
+                <path d="M 11 40 A 29 10 0 0 0 69 40" stroke="#d1fae5" stroke-width="0.5" fill="none" opacity="0.45"/>
+            </g>
+            <rect x="37.5" y="56" width="5" height="9" fill="#0d1f16" rx="1" stroke="#0d1f16" stroke-width="2"/>
+            <polygon points="22,57 40,40 58,57" fill="#0d1f16" stroke="#0d1f16" stroke-width="2" stroke-linejoin="round"/>
+            <polygon points="26,45 40,29 54,45" fill="#0d1f16" stroke="#0d1f16" stroke-width="2" stroke-linejoin="round"/>
+            <polygon points="30,33 40,18 50,33" fill="#0d1f16" stroke="#0d1f16" stroke-width="2" stroke-linejoin="round"/>
+            <g transform="rotate(35, 40, 40)">
+                <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#d1fae5" stroke-width="0.9" fill="none" opacity="0.72"/>
+                <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#ffffff"   stroke-width="0.3" fill="none" opacity="0.90"/>
+                <circle cx="40" cy="30" r="1.6" fill="#86efac"/>
+                <circle cx="68.3" cy="42.2" r="1.2" fill="#86efac" opacity="0.80"/>
+                <circle cx="52.6" cy="49"   r="1.2" fill="#86efac" opacity="0.80"/>
+                <circle cx="27.4" cy="49"   r="1.2" fill="#86efac" opacity="0.80"/>
+                <circle cx="11.7" cy="42.2" r="1.2" fill="#86efac" opacity="0.80"/>
+            </g>
+            <rect x="37.5" y="56" width="5" height="9" fill="#4ade80" rx="1"/>
+            <polygon points="22,57 40,40 58,57" fill="#4ade80"/>
+            <polygon points="26,45 40,29 54,45" fill="#4ade80"/>
+            <polygon points="30,33 40,18 50,33" fill="#4ade80"/>
+        </svg>
+        <span class="nav-mock-text">Pine &amp; Particle Co.</span>
+    </div>
+    <div class="concept-name">Neon Edge</div>
+    <div class="concept-desc">Thin crisp neon wire — back arc barely visible, front arc burns to a near-white hot core. Dominant north node sits at the ring apex; smaller equal nodes on all 4 front positions.</div>
+</div>
+
+<!-- V4: STORM RING -->
+<div class="logo-card">
+    <div class="card-label">V4</div>
+    <svg class="logo-mark" width="80" height="80" viewBox="0 0 80 80" fill="none">
+        <!-- BACK ARC: massive atmospheric corona, dim/receding -->
+        <g transform="rotate(35, 40, 40)">
+            <path d="M 11 40 A 29 10 0 0 0 69 40" stroke="#4ade80" stroke-width="10"  fill="none" opacity="0.025" stroke-linecap="round"/>
+            <path d="M 11 40 A 29 10 0 0 0 69 40" stroke="#4ade80" stroke-width="6"   fill="none" opacity="0.07"  stroke-linecap="round"/>
+            <path d="M 11 40 A 29 10 0 0 0 69 40" stroke="#86efac" stroke-width="2.5" fill="none" opacity="0.22"  stroke-linecap="round"/>
+            <path d="M 11 40 A 29 10 0 0 0 69 40" stroke="#d1fae5" stroke-width="0.9" fill="none" opacity="0.42"  stroke-linecap="round"/>
+            <!-- back nodes faint -->
+            <circle cx="62.7" cy="33.8" r="1.5" fill="#86efac" opacity="0.40"/>
+            <circle cx="17.3" cy="33.8" r="1.5" fill="#86efac" opacity="0.40"/>
+        </g>
+        <!-- DARK OCCLUDER -->
+        <rect x="37.5" y="56" width="5" height="9" fill="#0d1f16" rx="1" stroke="#0d1f16" stroke-width="3"/>
+        <polygon points="22,57 40,40 58,57" fill="#0d1f16" stroke="#0d1f16" stroke-width="3" stroke-linejoin="round"/>
+        <polygon points="26,45 40,29 54,45" fill="#0d1f16" stroke="#0d1f16" stroke-width="3" stroke-linejoin="round"/>
+        <polygon points="30,33 40,18 50,33" fill="#0d1f16" stroke="#0d1f16" stroke-width="3" stroke-linejoin="round"/>
+        <!-- FRONT ARC: 7-layer storm corona — massive outer halo to searing core -->
+        <g transform="rotate(35, 40, 40)">
+            <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#4ade80" stroke-width="16"  fill="none" opacity="0.025" stroke-linecap="round"/>
+            <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#4ade80" stroke-width="11"  fill="none" opacity="0.05"  stroke-linecap="round"/>
+            <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#4ade80" stroke-width="7"   fill="none" opacity="0.10"  stroke-linecap="round"/>
+            <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#4ade80" stroke-width="4"   fill="none" opacity="0.22"  stroke-linecap="round"/>
+            <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#86efac" stroke-width="2"   fill="none" opacity="0.55"  stroke-linecap="round"/>
+            <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#d1fae5" stroke-width="0.8" fill="none" opacity="0.88"  stroke-linecap="round"/>
+            <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#ffffff"   stroke-width="0.3" fill="none" opacity="0.95" stroke-linecap="round"/>
+            <!-- specular -->
+            <path d="M 62.7 33.8 A 29 10 0 0 1 69 40" stroke="#a7f3c0" stroke-width="5.5" fill="none" opacity="0.38"/>
+            <path d="M 62.7 33.8 A 29 10 0 0 1 69 40" stroke="#ffffff"   stroke-width="1.2" fill="none" opacity="0.72"/>
+            <!-- NORTH STAR node (k0) — 6-layer starburst -->
+            <circle cx="40" cy="30" r="6"   fill="#4ade80" opacity="0.07"/>
+            <circle cx="40" cy="30" r="4"   fill="#4ade80" opacity="0.12"/>
+            <circle cx="40" cy="30" r="2.8" fill="#4ade80" opacity="0.22"/>
+            <circle cx="40" cy="30" r="1.9" fill="#86efac" opacity="0.75"/>
+            <circle cx="40" cy="30" r="1.1" fill="#d1fae5"/>
+            <circle cx="39.5" cy="29.6" r="0.45" fill="#ffffff"/>
+            <!-- front nodes -->
+            <circle cx="68.3" cy="42.2" r="1.7" fill="#86efac" opacity="0.88"/>
+            <circle cx="52.6" cy="49"   r="1.7" fill="#86efac" opacity="0.88"/>
+            <circle cx="27.4" cy="49"   r="1.7" fill="#86efac" opacity="0.88"/>
+            <circle cx="11.7" cy="42.2" r="1.7" fill="#86efac" opacity="0.88"/>
+        </g>
+        <!-- SOLID TREE -->
+        <rect x="37.5" y="56" width="5" height="9" fill="#4ade80" rx="1"/>
+        <polygon points="22,57 40,40 58,57" fill="#4ade80"/>
+        <polygon points="26,45 40,29 54,45" fill="#4ade80"/>
+        <polygon points="30,33 40,18 50,33" fill="#4ade80"/>
+    </svg>
+    <!-- lockup -->
+    <svg class="logo-lockup" width="260" height="52" viewBox="0 0 260 52" fill="none">
+        <g transform="scale(0.65) translate(0, 4)">
+            <g transform="rotate(35, 40, 40)">
+                <path d="M 11 40 A 29 10 0 0 0 69 40" stroke="#4ade80" stroke-width="6"   fill="none" opacity="0.06" stroke-linecap="round"/>
+                <path d="M 11 40 A 29 10 0 0 0 69 40" stroke="#d1fae5" stroke-width="0.9" fill="none" opacity="0.38" stroke-linecap="round"/>
+            </g>
+            <rect x="37.5" y="56" width="5" height="9" fill="#0d1f16" rx="1" stroke="#0d1f16" stroke-width="2"/>
+            <polygon points="22,57 40,40 58,57" fill="#0d1f16" stroke="#0d1f16" stroke-width="2" stroke-linejoin="round"/>
+            <polygon points="26,45 40,29 54,45" fill="#0d1f16" stroke="#0d1f16" stroke-width="2" stroke-linejoin="round"/>
+            <polygon points="30,33 40,18 50,33" fill="#0d1f16" stroke="#0d1f16" stroke-width="2" stroke-linejoin="round"/>
+            <g transform="rotate(35, 40, 40)">
+                <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#4ade80" stroke-width="7"   fill="none" opacity="0.09" stroke-linecap="round"/>
+                <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#d1fae5" stroke-width="0.8" fill="none" opacity="0.85" stroke-linecap="round"/>
+                <circle cx="40" cy="30" r="1.9" fill="#d1fae5"/>
+            </g>
+            <rect x="37.5" y="56" width="5" height="9" fill="#4ade80" rx="1"/>
+            <polygon points="22,57 40,40 58,57" fill="#4ade80"/>
+            <polygon points="26,45 40,29 54,45" fill="#4ade80"/>
+            <polygon points="30,33 40,18 50,33" fill="#4ade80"/>
+        </g>
+        <text x="58" y="24" font-family="Georgia, serif" font-size="17" fill="#e8f5e2" letter-spacing="2.5">PINE &amp; PARTICLE</text>
+        <text x="58" y="42" font-family="Georgia, serif" font-size="10" fill="#4ade80" letter-spacing="4.5">CO.</text>
+    </svg>
+    <!-- nav mock -->
+    <div class="nav-mock">
+        <svg width="22" height="22" viewBox="0 0 80 80" fill="none">
+            <g transform="rotate(35, 40, 40)">
+                <path d="M 11 40 A 29 10 0 0 0 69 40" stroke="#4ade80" stroke-width="6"   fill="none" opacity="0.05"/>
+                <path d="M 11 40 A 29 10 0 0 0 69 40" stroke="#d1fae5" stroke-width="0.9" fill="none" opacity="0.38"/>
+            </g>
+            <rect x="37.5" y="56" width="5" height="9" fill="#0d1f16" rx="1" stroke="#0d1f16" stroke-width="2"/>
+            <polygon points="22,57 40,40 58,57" fill="#0d1f16" stroke="#0d1f16" stroke-width="2" stroke-linejoin="round"/>
+            <polygon points="26,45 40,29 54,45" fill="#0d1f16" stroke="#0d1f16" stroke-width="2" stroke-linejoin="round"/>
+            <polygon points="30,33 40,18 50,33" fill="#0d1f16" stroke="#0d1f16" stroke-width="2" stroke-linejoin="round"/>
+            <g transform="rotate(35, 40, 40)">
+                <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#4ade80" stroke-width="7"   fill="none" opacity="0.09"/>
+                <path d="M 11 40 A 29 10 0 0 1 69 40" stroke="#d1fae5" stroke-width="0.8" fill="none" opacity="0.85"/>
+                <circle cx="40" cy="30" r="1.9" fill="#d1fae5"/>
+                <circle cx="68.3" cy="42.2" r="1.6" fill="#86efac" opacity="0.85"/>
+                <circle cx="52.6" cy="49"   r="1.6" fill="#86efac" opacity="0.85"/>
+                <circle cx="27.4" cy="49"   r="1.6" fill="#86efac" opacity="0.85"/>
+                <circle cx="11.7" cy="42.2" r="1.6" fill="#86efac" opacity="0.85"/>
+            </g>
+            <rect x="37.5" y="56" width="5" height="9" fill="#4ade80" rx="1"/>
+            <polygon points="22,57 40,40 58,57" fill="#4ade80"/>
+            <polygon points="26,45 40,29 54,45" fill="#4ade80"/>
+            <polygon points="30,33 40,18 50,33" fill="#4ade80"/>
+        </svg>
+        <span class="nav-mock-text">Pine &amp; Particle Co.</span>
+    </div>
+    <div class="concept-name">Storm Ring</div>
+    <div class="concept-desc">Maximum plasma event — 7-layer front corona builds from a vast outer halo to a searing white core. North star node at ring apex with 6-layer starburst glow. Absolute maximum energy.</div>
+</div>
+
+</div><!-- end grid -->
+</body>
+</html>
