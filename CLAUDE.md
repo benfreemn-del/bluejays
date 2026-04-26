@@ -4562,9 +4562,24 @@ criteria, edge cases, who/what is affected, what to leave alone,
 deadline, dependencies, what done looks like, and what would make
 this fail.
 
-**Format:** numbered list, one question per line, plain English,
-no preamble. Wait for Ben's answers before writing a single line of
-code or running a single command.
+**Format (NON-NEGOTIABLE):** numbered list. Under each question, give
+2-5 lettered multiple-choice options (A, B, C, D...) representing the
+most likely answers. ALWAYS include a final option labeled "Other —
+type your own" so Ben can override. No preamble. Wait for Ben's
+answers before writing a single line of code or running a single
+command.
+
+Why multiple-choice: it's faster for Ben to pick a letter than to
+type out a paragraph. The options also surface considerations Ben
+might not have thought of yet — he sees what the realistic answer
+space looks like before committing. The "Other" escape hatch keeps
+him from feeling boxed in.
+
+Good multiple-choice options are concrete and load-bearing:
+- BAD: A) Yes  B) No  C) Other
+- GOOD: A) Charge upfront like review_blast  B) Defer to year-2 sub
+  like custom tier  C) Make it a separate $X/mo subscription
+  D) Other — type your own
 
 **Exceptions (no 10-question gate required):**
 - Bug fixes with a clear repro
