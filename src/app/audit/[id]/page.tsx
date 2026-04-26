@@ -55,6 +55,26 @@ const EFFORT_LABELS: Record<string, { label: string; emoji: string; color: strin
   high:   { label: "Rebuild", emoji: "🏗️", color: "text-rose-300" },
 };
 
+/**
+ * Defensive jargon-stripper for content that was generated under older
+ * prompt versions and is now sitting in audit_content. New audits won't
+ * have these strings (the prompt's banned-word list catches them) but
+ * existing rows in Supabase do — strip at render time so an audit
+ * generated yesterday doesn't say "(V2)" or "above the fold" today.
+ *
+ * Conservative: only strips clearly-jargon phrases. Doesn't touch
+ * AI-generated reasoning text where context matters.
+ */
+function stripJargon(s: string | null | undefined): string {
+  if (!s) return "";
+  return s
+    .replace(/\s*\(V2\)/gi, "")
+    .replace(/\bV2\s+/g, "")
+    .replace(/\babove[ -]the[ -]fold\b/gi, "top of the page")
+    .replace(/\bsocial proof\b/gi, "trust signals")
+    .replace(/\btitle tag\b/gi, "page title");
+}
+
 export default async function AuditPage({
   params,
 }: {
@@ -221,7 +241,7 @@ export default async function AuditPage({
               {content.strengths.map((s, i) => (
                 <li key={i} className="text-slate-300 flex gap-3">
                   <span className="text-emerald-400">✓</span>
-                  <span>{s}</span>
+                  <span>{stripJargon(s)}</span>
                 </li>
               ))}
             </ul>
@@ -241,7 +261,15 @@ export default async function AuditPage({
             {content.prioritizedRoadmap.map((item) => {
               const eff = EFFORT_LABELS[item.effort];
               const recovery = item.recoveryMonthly ?? 0;
-              const customers = item.recoveryCustomers ?? 0;
+              // Per-fix unit is LEADS (Q2C). v5 audits don't carry leads
+              // directly — derive from customers ÷ default close rate as
+              // a backwards-compat fallback so old audits still vary.
+              const FALLBACK_CLOSE_RATE = 0.4;
+              const leads =
+                item.recoveryLeads ??
+                (item.recoveryCustomers
+                  ? Math.max(1, Math.round((item.recoveryCustomers as number) / FALLBACK_CLOSE_RATE))
+                  : 0);
               return (
                 <div
                   key={item.rank}
@@ -251,7 +279,7 @@ export default async function AuditPage({
                     {item.rank}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-white truncate">{item.title}</h3>
+                    <h3 className="font-semibold text-white truncate">{stripJargon(item.title)}</h3>
                     <div className="mt-1 flex flex-wrap items-center gap-2 text-xs">
                       <span className={`inline-flex items-center gap-1 rounded-full bg-slate-800/80 px-2 py-0.5 ${eff?.color || "text-slate-400"}`}>
                         <span>{eff?.emoji || "🔧"}</span>
@@ -264,16 +292,15 @@ export default async function AuditPage({
                       )}
                     </div>
                   </div>
-                  {/* Right-side big recovery number (Q3A) — money first, then
-                      customers stacked below (Q2C). Hidden on score >= 80. */}
+                  {/* Right-side recovery: $/mo bold, +N leads/mo subline. */}
                   {recovery > 0 && (
                     <div className="flex-shrink-0 text-right pl-2 border-l border-emerald-500/20">
                       <div className="text-emerald-300 font-bold text-base md:text-xl leading-none whitespace-nowrap">
                         +${recovery.toLocaleString()}/mo
                       </div>
-                      {customers > 0 && (
+                      {leads > 0 && (
                         <div className="text-[10px] md:text-xs text-emerald-400/70 mt-1 whitespace-nowrap">
-                          +{customers} {customers === 1 ? "customer" : "customers"}/mo
+                          +{leads} {leads === 1 ? "lead" : "leads"}/mo
                         </div>
                       )}
                     </div>
@@ -285,29 +312,31 @@ export default async function AuditPage({
         </div>
       </section>
 
-      {/* Detailed findings by section */}
-      <FindingSection emoji="👋" title="Hero & Above the Fold" findings={content.heroAnalysis.findings} score={content.heroAnalysis.score} />
-      <FindingSection emoji="✍️" title="Copy & Positioning" findings={content.copyAndPositioning.findings} />
-      <FindingSection emoji="⭐" title="Trust & Social Proof" findings={content.trustAndSocialProof.findings} />
-      <FindingSection emoji="🔍" title="Technical & SEO" findings={content.technicalAndSeo.findings} score={content.technicalAndSeo.score} />
-      <FindingSection emoji="📱" title="Mobile & UX" findings={content.mobileAndUx.findings} />
+      {/* Detailed findings by section. Plain-English headers — no
+          "above the fold", "social proof", "UX", "positioning". A 50yo
+          plumber should read these and know exactly what's in each. */}
+      <FindingSection emoji="👋" title="Top of Your Page" findings={content.heroAnalysis.findings} score={content.heroAnalysis.score} />
+      <FindingSection emoji="✍️" title="Your Words" findings={content.copyAndPositioning.findings} />
+      <FindingSection emoji="⭐" title="Why People Trust You" findings={content.trustAndSocialProof.findings} />
+      <FindingSection emoji="🔍" title="Google & Tech" findings={content.technicalAndSeo.findings} score={content.technicalAndSeo.score} />
+      <FindingSection emoji="📱" title="On Phones" findings={content.mobileAndUx.findings} />
 
-      {/* Benchmark */}
+      {/* Benchmark — plain English, no "industry benchmark" jargon. */}
       {content.blueJaysBenchmark && (
         <section className="border-b border-white/5 bg-slate-900/30">
           <div className="mx-auto max-w-4xl px-6 py-10">
-            <p className="text-sm uppercase tracking-wider text-sky-400 mb-3">📊 Industry benchmark</p>
+            <p className="text-sm uppercase tracking-wider text-sky-400 mb-3">📊 What yours could look like</p>
             <h2 className="text-2xl font-bold mb-3">
-              See the gap: <span className="text-sky-300">{content.blueJaysBenchmark.referenceTemplate}</span>
+              See the difference: <span className="text-sky-300">{stripJargon(content.blueJaysBenchmark.referenceTemplate)}</span>
             </h2>
-            <p className="text-slate-300 mb-5">{content.blueJaysBenchmark.gapSummary}</p>
+            <p className="text-slate-300 mb-5">{stripJargon(content.blueJaysBenchmark.gapSummary)}</p>
             <a
               href={content.blueJaysBenchmark.referenceUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center rounded-md border border-sky-500/40 bg-sky-500/10 px-4 py-2 text-sm font-semibold text-sky-300 hover:bg-sky-500/20 transition-colors"
             >
-              View benchmark →
+              See the example site →
             </a>
           </div>
         </section>
@@ -355,10 +384,18 @@ export default async function AuditPage({
                 <p className="text-base md:text-lg text-slate-200 mb-6">
                   That&apos;s about{" "}
                   <span className="text-emerald-300 font-bold">
+                    +{content.recoveryProjection.totalLeads ??
+                      content.recoveryProjection.totalCustomers}{" "}
+                    {(content.recoveryProjection.totalLeads ?? content.recoveryProjection.totalCustomers) === 1
+                      ? "lead"
+                      : "leads"}/month
+                  </span>
+                  {" "}— roughly{" "}
+                  <span className="text-emerald-300 font-bold">
                     +{content.recoveryProjection.totalCustomers}{" "}
-                    {content.recoveryProjection.totalCustomers === 1 ? "customer" : "customers"}/month
-                  </span>{" "}
-                  you&apos;re missing today.
+                    {content.recoveryProjection.totalCustomers === 1 ? "new customer" : "new customers"}/month
+                  </span>
+                  .
                 </p>
               )}
 
@@ -522,7 +559,7 @@ function FindingSection({
                     Prospect reads ONE line and knows what + severity. */}
                 <h3 className="flex items-start gap-2 font-semibold text-white mb-3 leading-snug">
                   <span className="flex-shrink-0">{colors.emoji}</span>
-                  <span className="flex-1">{f.title}</span>
+                  <span className="flex-1">{stripJargon(f.title)}</span>
                 </h3>
 
                 {/* Observation + recommendation: just two lines with emoji
@@ -531,19 +568,19 @@ function FindingSection({
                 <div className="space-y-2 text-sm pl-7">
                   <p className="text-slate-300 leading-relaxed">
                     <span className="text-slate-500 mr-1.5">📍</span>
-                    {f.observation}
+                    {stripJargon(f.observation)}
                   </p>
                   {!isStrength && (
                     <p className="text-slate-200 leading-relaxed">
                       <span className="text-emerald-400 mr-1.5">🛠️</span>
-                      {f.recommendation}
+                      {stripJargon(f.recommendation)}
                     </p>
                   )}
                   {f.blueJaysSolution && !isStrength && (
                     <p className="text-sky-300 leading-relaxed text-xs pt-1">
                       <span className="mr-1">✦</span>
                       <span className="font-semibold">BlueJays:</span>{" "}
-                      <span className="text-sky-200/90">{f.blueJaysSolution}</span>
+                      <span className="text-sky-200/90">{stripJargon(f.blueJaysSolution)}</span>
                     </p>
                   )}
                 </div>

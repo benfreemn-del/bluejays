@@ -98,8 +98,13 @@ export interface AuditContent {
      *  sum of all 5 fixes caps at ~60% of currentLeak (Q6A: conservative).
      *  0 when score >= 80 (no leak to recover). */
     recoveryMonthly: number;
-    /** Customers/month — recoveryMonthly / vertical avg customer value,
-     *  rounded. Stacks under the dollar number on each card. */
+    /** Leads/month — recoveryMonthly / avgLeadValue, where avgLeadValue
+     *  = avgCustomerValue × DEFAULT_CLOSE_RATE. Spec is per Q2C.
+     *  Stacks under the dollar number on each fix card. */
+    recoveryLeads: number;
+    /** Customers/month — kept for backward-compat with v5 audits and
+     *  used by the "Stop the leak" total because customer counts
+     *  read more concrete than lead counts at the punchline. */
     recoveryCustomers: number;
   }>;
   strengths: string[];
@@ -121,6 +126,7 @@ export interface AuditContent {
    *  the current leak. All zeros when score >= 80 (healthy site). */
   recoveryProjection: {
     totalMonthly: number;
+    totalLeads: number;
     totalCustomers: number;
     avgCustomerValue: number;
     capPercent: number; // e.g. 0.60 = "60% of leak recovered"
@@ -246,26 +252,26 @@ function estimateMoneyLeak(args: {
 }
 
 const BLUEJAYS_BENCHMARK_BY_CATEGORY: Record<string, { template: string; url: string }> = {
-  dental: { template: "Emerald City Dental (V2)", url: "https://bluejayportfolio.com/v2/dental" },
-  electrician: { template: "Cascade Electric Co. (V2)", url: "https://bluejayportfolio.com/v2/electrician" },
-  plumber: { template: "Emerald City Plumbing (V2)", url: "https://bluejayportfolio.com/v2/plumber" },
-  hvac: { template: "Summit Heating & Air (V2)", url: "https://bluejayportfolio.com/v2/hvac" },
-  roofing: { template: "Summit Roofing NW (V2)", url: "https://bluejayportfolio.com/v2/roofing" },
-  "auto-repair": { template: "Pacific Auto Works (V2)", url: "https://bluejayportfolio.com/v2/auto-repair" },
-  "law-firm": { template: "Pacific Law Group (V2)", url: "https://bluejayportfolio.com/v2/law-firm" },
-  salon: { template: "Velvet Hair Studio (V2)", url: "https://bluejayportfolio.com/v2/salon" },
-  fitness: { template: "Iron & Oak Fitness (V2)", url: "https://bluejayportfolio.com/v2/fitness" },
-  "real-estate": { template: "Puget Sound Realty (V2)", url: "https://bluejayportfolio.com/v2/real-estate" },
-  veterinary: { template: "Northshore Vet Clinic (V2)", url: "https://bluejayportfolio.com/v2/veterinary" },
-  photography: { template: "Cascade Lens Photography (V2)", url: "https://bluejayportfolio.com/v2/photography" },
-  landscaping: { template: "Cascade Landscapes (V2)", url: "https://bluejayportfolio.com/v2/landscaping" },
-  cleaning: { template: "Crystal Clean Co. (V2)", url: "https://bluejayportfolio.com/v2/cleaning" },
-  chiropractic: { template: "Align Chiropractic (V2)", url: "https://bluejayportfolio.com/v2/chiropractic" },
-  accounting: { template: "Evergreen Tax & Advisory (V2)", url: "https://bluejayportfolio.com/v2/accounting" },
-  insurance: { template: "Puget Sound Insurance Group (V2)", url: "https://bluejayportfolio.com/v2/insurance" },
-  "interior-design": { template: "Cascadia Interiors (V2)", url: "https://bluejayportfolio.com/v2/interior-design" },
-  moving: { template: "Cascade Movers (V2)", url: "https://bluejayportfolio.com/v2/moving" },
-  "pest-control": { template: "Evergreen Pest Solutions (V2)", url: "https://bluejayportfolio.com/v2/pest-control" },
+  dental:           { template: "Emerald City Dental", url: "https://bluejayportfolio.com/v2/dental" },
+  electrician:      { template: "Cascade Electric Co.", url: "https://bluejayportfolio.com/v2/electrician" },
+  plumber:          { template: "Emerald City Plumbing", url: "https://bluejayportfolio.com/v2/plumber" },
+  hvac:             { template: "Summit Heating & Air", url: "https://bluejayportfolio.com/v2/hvac" },
+  roofing:          { template: "Summit Roofing NW", url: "https://bluejayportfolio.com/v2/roofing" },
+  "auto-repair":    { template: "Pacific Auto Works", url: "https://bluejayportfolio.com/v2/auto-repair" },
+  "law-firm":       { template: "Pacific Law Group", url: "https://bluejayportfolio.com/v2/law-firm" },
+  salon:            { template: "Velvet Hair Studio", url: "https://bluejayportfolio.com/v2/salon" },
+  fitness:          { template: "Iron & Oak Fitness", url: "https://bluejayportfolio.com/v2/fitness" },
+  "real-estate":    { template: "Puget Sound Realty", url: "https://bluejayportfolio.com/v2/real-estate" },
+  veterinary:       { template: "Northshore Vet Clinic", url: "https://bluejayportfolio.com/v2/veterinary" },
+  photography:      { template: "Cascade Lens Photography", url: "https://bluejayportfolio.com/v2/photography" },
+  landscaping:      { template: "Cascade Landscapes", url: "https://bluejayportfolio.com/v2/landscaping" },
+  cleaning:         { template: "Crystal Clean Co.", url: "https://bluejayportfolio.com/v2/cleaning" },
+  chiropractic:     { template: "Align Chiropractic", url: "https://bluejayportfolio.com/v2/chiropractic" },
+  accounting:       { template: "Evergreen Tax & Advisory", url: "https://bluejayportfolio.com/v2/accounting" },
+  insurance:        { template: "Puget Sound Insurance Group", url: "https://bluejayportfolio.com/v2/insurance" },
+  "interior-design":{ template: "Cascadia Interiors", url: "https://bluejayportfolio.com/v2/interior-design" },
+  moving:           { template: "Cascade Movers", url: "https://bluejayportfolio.com/v2/moving" },
+  "pest-control":   { template: "Evergreen Pest Solutions", url: "https://bluejayportfolio.com/v2/pest-control" },
 };
 
 /**
@@ -611,8 +617,8 @@ function buildHeroPrompt(
 ): string {
   const benchmark = BLUEJAYS_BENCHMARK_BY_CATEGORY[category];
   const benchmarkLine = benchmark
-    ? `Reference benchmark: BlueJays' V2 ${benchmark.template} at ${benchmark.url}`
-    : "No specific BlueJays V2 template available for this category yet.";
+    ? `Quality bar to compare against: BlueJays' ${benchmark.template} site at ${benchmark.url}`
+    : "No specific BlueJays example site for this category yet.";
 
   return `You are auditing a small-business website for BlueJays ($997 site rebuilds, 48-hr delivery).
 
@@ -620,7 +626,7 @@ TONE — non-negotiable:
 - Address the owner as "you". Never "the user" or "the website".
 - 3rd-grade reading level. Write like you're talking to a friend over a beer, NOT writing a report.
   - SHORT words (most under 6 letters). SHORT sentences (under 12 words).
-  - BANNED words: optimize, leverage, enhance, align, synergy, sub-optimal, holistic, robust, streamline, maximize, utilize, facilitate, prioritize, conversion, engagement, methodology.
+  - BANNED words: optimize, leverage, enhance, align, synergy, sub-optimal, holistic, robust, streamline, maximize, utilize, facilitate, prioritize, conversion, engagement, methodology, UX, above-the-fold, social proof, positioning, V2, template, tag (use "page title" not "title tag").
   - YES words: fix, change, drop, swap, push, win, get, lose, beat, kill, miss, grab, lift, sink.
   - If a 9-year-old can't read it out loud and get it, rewrite it.
 - One punchy sentence beats three good ones. SHORT.
@@ -653,7 +659,7 @@ Return STRICT JSON ONLY:
       "title": "<5-8 words. 3rd-grade. 'Your hero doesn't say what you do' NOT 'Sub-optimal hero structure'>",
       "observation": "<ONE sentence, max 20 words. 3rd-grade. The problem + cost. Example: 'Your hero just says Welcome. A new visitor has 3 seconds to get it, and most bail.'>",
       "recommendation": "<ONE sentence, max 20 words. 3rd-grade. The fix, plain. Example: 'Tell them what you do and who you help: Same-day plumbing for Tacoma homes, ${"$"}99 to come out.'>",
-      "blueJaysSolution": "<ONE short sentence (under 18 words). 3rd-grade. How V2 ${category} fixes it.>"
+      "blueJaysSolution": "<ONE short sentence (under 18 words). 3rd-grade. How a BlueJays ${category} site fixes it. NEVER say 'V2', 'template', or 'tag' — owners don't know those words. Say 'BlueJays' site' or 'a BlueJays build'.>"
     }
   ]
 }
@@ -675,7 +681,7 @@ function buildTechnicalPrompt(ctx: SiteContext): string {
 TONE — non-negotiable:
 - 3rd-grade reading level. Write like you're texting a friend.
   - SHORT words. SHORT sentences (under 12 words).
-  - BANNED words: optimize, leverage, enhance, streamline, maximize, utilize, facilitate, sub-optimal, prioritize, conversion, methodology.
+  - BANNED words: optimize, leverage, enhance, streamline, maximize, utilize, facilitate, sub-optimal, prioritize, conversion, methodology, UX, above-the-fold, social proof, positioning, V2, template, tag (say "page title" not "title tag").
   - YES words: fix, swap, drop, slow, fast, big, small, lose, win, miss, beat.
   - If a 9-year-old can't read it, rewrite it.
 - Address them as "you". Lead with cost (customers lost, money wasted).
@@ -725,7 +731,7 @@ function synthesizeAudit(args: {
 }): AuditContent {
   const { url, businessCategory, businessName, ctx, heroResult, technicalResult } = args;
   const benchmark = BLUEJAYS_BENCHMARK_BY_CATEGORY[businessCategory] || {
-    template: "BlueJays V2 portfolio",
+    template: "BlueJays examples",
     url: "https://bluejayportfolio.com/templates",
   };
 
@@ -780,12 +786,19 @@ function synthesizeAudit(args: {
   const sumWeights = weights.reduce((a, b) => a + b, 0) || 1;
   const avgCustomerValue = (VERTICAL_LEAK_RATES[businessCategory] || VERTICAL_LEAK_RATES["general"]).avgValue;
 
+  // Avg lead value — what each lead is worth before the close-rate
+  // discount. Used to translate $/mo into leads/mo (Q2C: leads/mo
+  // gives natural variation per fix; e.g. $1,200/mo / $480 = 3 leads).
+  const avgLeadValue = Math.max(1, Math.round(avgCustomerValue * DEFAULT_CLOSE_RATE));
+
   const prioritizedRoadmap = top5Fixes.map((f, i) => {
     const share = weights[i] / sumWeights;
     // Round per-fix recovery to nearest $50 so the numbers feel deliberate
     // not algorithmic. Hidden when score >= 80 (no leak).
     const recoveryMonthly =
       overallScore >= 80 ? 0 : Math.max(50, Math.round((totalRecoveryPool * share) / 50) * 50);
+    const recoveryLeads =
+      avgLeadValue > 0 ? Math.max(1, Math.round(recoveryMonthly / avgLeadValue)) : 0;
     const recoveryCustomers =
       avgCustomerValue > 0 ? Math.max(1, Math.round(recoveryMonthly / avgCustomerValue)) : 0;
     return {
@@ -795,6 +808,7 @@ function synthesizeAudit(args: {
       effort: estimateEffort(f.category, f.severity),
       blueJaysCanDo: !!f.blueJaysSolution,
       recoveryMonthly,
+      recoveryLeads,
       recoveryCustomers,
     };
   });
@@ -802,10 +816,11 @@ function synthesizeAudit(args: {
   // Total "Stop the leak" projection — what we put on the bridge-to-CTA box.
   const recoveryProjection = {
     totalMonthly: prioritizedRoadmap.reduce((sum, r) => sum + r.recoveryMonthly, 0),
+    totalLeads: prioritizedRoadmap.reduce((sum, r) => sum + r.recoveryLeads, 0),
     totalCustomers: prioritizedRoadmap.reduce((sum, r) => sum + r.recoveryCustomers, 0),
     avgCustomerValue,
     capPercent: RECOVERY_CAP_PERCENT,
-    methodology: `Conservative math: avg ${businessCategory.replace("-", " ")} customer is worth ~${"$"}${avgCustomerValue.toLocaleString()}, fixing the ${prioritizedRoadmap.length} issues above plugs about ${Math.round(RECOVERY_CAP_PERCENT * 100)}% of the leak. Real lift could be higher.`,
+    methodology: `Safe math: avg ${businessCategory.replace("-", " ")} customer is worth ~${"$"}${avgCustomerValue.toLocaleString()} (each new lead is worth about ${"$"}${avgLeadValue.toLocaleString()} — leads close at ~${Math.round(DEFAULT_CLOSE_RATE * 100)}%). Fixing the ${prioritizedRoadmap.length} issues above plugs about ${Math.round(RECOVERY_CAP_PERCENT * 100)}% of the leak. Real lift could be higher.`,
   };
 
   // Strengths — celebratory copy from low-severity findings ONLY.
@@ -836,7 +851,7 @@ function synthesizeAudit(args: {
     url,
     businessCategory,
     generatedAt: new Date().toISOString(),
-    promptVersion: 5, // v5 = 3rd-grade tone + lead-recovery (2026-04-26): both prompts demand 3rd-grade reading level (banned/yes word lists, 20-word cap), VERTICAL_LEAK_RATES filled to all 41 active categories, deterministic per-fix recovery formula (severity-weighted, capped at 60% of leak per Q6A), each roadmap item carries recoveryMonthly + recoveryCustomers, new recoveryProjection block powers the "Stop the leak" bridge-to-CTA section. moneyLeak now also exports avgCustomerValue for the avg-lead chip.
+    promptVersion: 6, // v6 = jargon kill + leads switch (2026-04-26): banned UX/above-the-fold/social proof/positioning/V2/template/tag from prompts, renamed BLUEJAYS_BENCHMARK templates to drop "(V2)" suffix, switched per-fix unit from customers→leads (with 0.4 default close rate, gives natural variation 2/3/3/2/2 instead of all-1s), added recoveryLeads to type + recoveryProjection.totalLeads. CTA headline → "You know the problems. Now fix them." Page section titles plain English (Top of Your Page / Your Words / Why People Trust You / Google & Tech / On Phones / What yours could look like).
     overallScore,
     oneLineSummary,
     heroAnalysis: {
@@ -871,7 +886,7 @@ function synthesizeAudit(args: {
     prioritizedRoadmap,
     strengths,
     callToAction: {
-      headline: "Knowing the fix isn't the same as fixing it.",
+      headline: "You know the problems. Now fix them.",
       body: `You now have ${prioritizedRoadmap.length} fixes for ${businessName}. Most owners see this list and do nothing for 6 months. They lose tens of thousands. We'll rebuild your site in 48 hours to fix all of them. Most shops charge $5,000–$15,000. We charge $997 (or 3 small payments of $349). No monthly fees. 100% money-back if you don't love it.`,
       primaryButtonText: "Start with 3 × $349",
       primaryButtonUrl: "https://bluejayportfolio.com/contact?source=audit&plan=installment",
@@ -910,6 +925,16 @@ function severityWeight(s: string): number {
  * sites (score >= 80) have no leak so this is moot.
  */
 const RECOVERY_CAP_PERCENT = 0.60;
+
+/**
+ * Default close rate for converting LEADS → paying CUSTOMERS at SMB
+ * scale. 40% is conservative for service businesses (most quote-based
+ * trades close 30–50%). Used to translate avgCustomerValue (the closed
+ * deal value in VERTICAL_LEAK_RATES) into avgLeadValue, so per-fix
+ * recovery shows leads/month not customers/month (Q2C: leads stacked
+ * under the dollar number).
+ */
+const DEFAULT_CLOSE_RATE = 0.4;
 
 /**
  * Topic-based dedup. Claude + GPT often flag the same issue from different
@@ -1041,7 +1066,7 @@ function mockHeroAnalysis(ctx: SiteContext, category: string): HeroAnalysisResul
         title: "Hero headline lacks specificity",
         observation: `Current H1: "${ctx.h1Text || "(none found)"}". Generic — could apply to any ${category} business.`,
         recommendation: "Lead with a specific outcome the customer wants. Replace category labels with results.",
-        blueJaysSolution: `Our V2 ${category} template hero leads with the customer's outcome, not your service category.`,
+        blueJaysSolution: `A BlueJays ${category} site leads with the customer's outcome, not your service category.`,
       },
       {
         category: "cta",
@@ -1057,7 +1082,7 @@ function mockHeroAnalysis(ctx: SiteContext, category: string): HeroAnalysisResul
         title: "No reviews or testimonials surfaced",
         observation: "We couldn't find a review count, star rating, or testimonial section on the homepage.",
         recommendation: "Pull your Google reviews onto the homepage. Show 3-5 specific ones with names + locations.",
-        blueJaysSolution: "Our V2 templates pull Google review data directly into a prominent above-the-fold strip.",
+        blueJaysSolution: "A BlueJays site pulls real Google reviews onto the homepage, right where new visitors see them.",
       },
     ],
     headline: ctx.h1Text || "(no H1 found)",
