@@ -18,6 +18,20 @@ import { createCheckoutSession } from "@/lib/stripe";
  * back to the touch (email/sms/postcard) that drove the click.
  */
 export async function POST(request: NextRequest) {
+  // Rule 52 kill-switch: when STRIPE_LIVE_ENABLED=false the entire checkout
+  // surface returns 503 so customers see a clean "temporarily unavailable"
+  // instead of a half-completed transaction. Default true (so this is a no-op
+  // when the env var is absent — Stripe behavior unchanged from pre-Rule-52).
+  if (process.env.STRIPE_LIVE_ENABLED === "false") {
+    return NextResponse.json(
+      {
+        error:
+          "Checkout is temporarily unavailable. Please email bluejaycontactme@gmail.com and we'll process your order manually.",
+      },
+      { status: 503 },
+    );
+  }
+
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
   const { allowed } = rateLimit(`checkout:${ip}`, 10, 60 * 60 * 1000);
   if (!allowed) {
@@ -71,6 +85,25 @@ export async function POST(request: NextRequest) {
 
     const email = prospect.email || "";
     const pricingTier = (prospect.pricingTier as "standard" | "free" | "custom") || "standard";
+
+    // Rule 53: at LIVE launch only `standard` tier is self-serve. `free` and
+    // `custom` route through Ben directly — friends/family + bespoke
+    // relationships get manual handling, not the templated checkout. Override
+    // by setting STRIPE_ALLOW_NON_STANDARD_TIERS=true on Vercel if Ben needs
+    // to re-open self-serve on those tiers (e.g. for a specific batch).
+    if (
+      pricingTier !== "standard" &&
+      process.env.STRIPE_ALLOW_NON_STANDARD_TIERS !== "true"
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            "This site is on a non-standard plan. Please email bluejaycontactme@gmail.com and we'll get your order set up directly.",
+        },
+        { status: 403 },
+      );
+    }
+
     const session = await createCheckoutSession(
       prospectId,
       prospect.businessName,

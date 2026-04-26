@@ -2331,11 +2331,9 @@ After a paying client submits their onboarding form (`/api/onboarding/[id]`), se
 
 - [ ] **Approve prospects in dashboard** — review the pending prospects, approve the ones ready, funnel fires automatically.
 
-- [ ] **Flip live keys when ready** (Ben said 2026-04-25 — ready, but want to do later):
-  - Stripe: swap `sk_test_*` → `sk_live_*` on Vercel + register a NEW webhook in Live mode + swap `STRIPE_WEBHOOK_SECRET`
-  - Namecheap: remove `NAMECHEAP_SANDBOX=true` env var (or set to false) so domain registration goes against the production API
-  - Lob: swap `test_pub_*` / `test_*` keys for `live_pub_*` / `live_*` keys
-  - Verify each by running a dry-run flow: a test checkout for Stripe, a `.com` availability check for Namecheap, a postcard preview for Lob. NEVER flip all three at once — flip one, verify, flip the next.
+- [x] **Stripe LIVE flip — DONE 2026-04-25**: see "Stripe LIVE Launch Procedure" section below for the full checklist run + post-launch monitoring.
+- [ ] **Flip Namecheap to live** (still pending): remove `NAMECHEAP_SANDBOX=true` env var so domain registration goes against the production API. Verify with a `.com` availability check.
+- [ ] **Flip Lob to live** (still pending): swap `test_pub_*` / `test_*` keys for `live_pub_*` / `live_*`. Verify with a postcard preview render. Unblocks the 21 queued postcards waiting on `/api/test-cohort/postcard-cron`.
 
 ---
 
@@ -4705,6 +4703,220 @@ relationship angle, but the templated funnel stays away.
 step.** Ben must consciously reject killer-site and franchise prospects
 when they hit `pending-review` — never approve them and let auto-enroll
 do its thing.
+
+### Locked-In Rule 52 — Stripe Live Kill-Switch (NON-NEGOTIABLE)
+
+Established 2026-04-25 by Ben as part of the LIVE flip. Every public
+checkout entry-point MUST honor a single env-var kill-switch so any
+incident can stop new transactions in <2 minutes without code changes.
+
+**The contract:**
+- When `STRIPE_LIVE_ENABLED=false`, every public checkout endpoint
+  returns HTTP 503 with a friendly "temporarily unavailable, email Ben"
+  message BEFORE any other logic runs (rate limit, prospect lookup,
+  Stripe call). No partial transactions possible.
+- Default unset OR `STRIPE_LIVE_ENABLED=true` (or any value !== "false")
+  = normal operation. The check is fail-OPEN by design — a missing env
+  var doesn't accidentally disable checkout.
+- Webhook handler does NOT honor the kill-switch. In-flight transactions
+  (already at Stripe) MUST still process when they fire so customers
+  who paid get their welcome email + mgmt sub created. Stopping new
+  starts is the goal; stopping in-flight finishes is a worse outcome.
+
+**Endpoints that MUST honor the kill-switch (verify when adding any new
+checkout surface):**
+- `POST /api/checkout/create` — main $997 / installment checkout
+- `POST /api/checkout/upsell` — 4-SKU upsell checkouts
+- Any future checkout route MUST check `STRIPE_LIVE_ENABLED !== "false"`
+  at the top of the handler. If a new route forgets, that's a regression.
+
+**When to flip:**
+- Stripe account suspension warning (rare, but immediate trigger)
+- Webhook signing-secret mismatch detected in logs (transactions
+  succeed but our webhook 401s → customers pay but get nothing)
+- Any chargeback rate spike that risks Stripe account health
+- Maintenance windows where an incompatible code change is deploying
+- Suspected fraud / unusual transaction volume
+
+**Recovery:**
+1. Set `STRIPE_LIVE_ENABLED=true` (or remove the env var) on Vercel
+2. Redeploy (~60-90 sec)
+3. New checkouts work again
+4. Webhook handling for in-flight events was unaffected throughout
+
+**Forbidden:**
+- Don't add a UI surface that bypasses this gate
+- Don't add a different env var for the same purpose — this is the
+  single canonical kill-switch
+- Don't make the kill-switch fail-CLOSED (default off when env var
+  missing) — that bricks new Vercel projects on first deploy
+
+### Locked-In Rule 53 — LIVE Launch: Standard Tier Self-Serve Only
+
+Established 2026-04-25 by Ben at LIVE launch. At launch, ONLY the
+`standard` ($997) tier is self-serve through the `/claim/[id]` →
+Stripe Checkout flow. The `free` ($30) and `custom` ($100/yr) tiers
+are gated behind a "request" path — prospects on those tiers must
+email Ben directly so the relationship can be handled personally.
+
+**Why:**
+- `free` tier is for friends/family — never auto-served, always tagged
+  manually by Ben (existing rule)
+- `custom` tier is for bespoke builds with hand-off relationships
+  (Lewis County Autism, Hector Landscaping, etc.) — these prospects
+  shouldn't see the templated checkout flow because their experience
+  is supposed to feel personal
+- The auto-enroll cron (Rule 47) + cohort selection (Rule 49) already
+  exclude manually-managed prospects from automated outreach. This
+  rule extends the same logic to the conversion surface — even if a
+  custom prospect somehow lands on `/claim/[id]`, they get routed to
+  Ben rather than self-serving.
+
+**Implementation:** `/api/checkout/create` returns HTTP 403 with a
+"please email bluejaycontactme@gmail.com" message when the prospect's
+`pricingTier !== 'standard'`. Override available via env var
+`STRIPE_ALLOW_NON_STANDARD_TIERS=true` if Ben needs to re-open
+self-serve on those tiers for a specific batch (e.g. friends-and-
+family promotion).
+
+**The override env var is for specific campaigns, not the new normal.**
+After re-enabling for a batch, flip back to default (unset) so the
+gate stays in place by default. If you find yourself wanting it on
+permanently, that signals the policy is wrong — talk to Ben before
+making it the default.
+
+**Existing custom-tier customers:** prospects already in `paid` status
+on a custom tier are unaffected — they've already paid and the route
+gate only fires on NEW checkout attempts. Their renewal flow runs
+through Stripe subscriptions independently of the checkout surface.
+
+### Locked-In Rule 54 — Pre-Flip Code Changes Ship Before Env Vars Flip
+
+Established 2026-04-25 by Ben. When migrating any third-party service
+from test/sandbox to LIVE (Stripe, Namecheap, Lob, Twilio, SendGrid),
+the order is:
+
+1. Code changes that gate the new behavior (kill-switches, tier gates,
+   feature flags, mock-mode fallbacks) ship + deploy to Vercel FIRST
+2. Verify the deploy succeeded (gh api commit status check)
+3. THEN flip the env vars in the third-party dashboard + Vercel
+4. THEN run a dry-run verification (test charge / webhook trigger /
+   address availability check)
+5. THEN remove the kill-switch / feature flag if appropriate (not
+   immediately — leave it in place for a few days as a safety rail)
+
+**Why:** flipping env vars before the gating code exists creates a
+window where the system is half-migrated and any incident has no
+fast recovery path. Code-first means there's always a one-liner
+revert: flip the env-var kill-switch back on.
+
+**This rule generalizes:** applies to Namecheap going live (a NAMECHEAP_LIVE_ENABLED kill-switch should be added before flipping NAMECHEAP_SANDBOX off), to Lob going live (LOB_LIVE_ENABLED), to Twilio if/when SMS launches at scale, etc. Don't trust env vars alone as the gate — always pair with a code-level kill-switch.
+
+---
+
+## Stripe LIVE Launch Procedure (locked 2026-04-25)
+
+The exact sequence Ben follows when flipping Stripe from TEST to LIVE.
+Every step here is gating — skip one and the launch is a partial
+migration that risks customer-impacting bugs.
+
+### Pre-flip code (must be on master before touching env vars)
+
+- [x] `STRIPE_LIVE_ENABLED` kill-switch in `/api/checkout/create`
+      and `/api/checkout/upsell` (Rule 52)
+- [x] `STRIPE_ALLOW_NON_STANDARD_TIERS` gate in `/api/checkout/create`
+      (Rule 53 — standard-only self-serve at launch)
+- [x] CLAUDE.md updated with Rules 52/53/54 + this procedure
+
+### Stripe Dashboard work (Ben does in browser — ~30 min)
+
+1. **Create 8 LIVE Products** at https://dashboard.stripe.com/products
+   (LIVE mode, NOT test mode). Note the `price_xxx` IDs:
+   - $997 one-time setup → `STRIPE_PRICE_SETUP_ID`
+   - $100/yr maintenance subscription → `STRIPE_PRICE_MGMT_ID`
+   - $100/yr custom-tier subscription → `STRIPE_PRICE_CUSTOM_ID`
+   - $99 one-time review_blast → `STRIPE_PRICE_REVIEW_BLAST`
+   - $400 one-time extra_pages → `STRIPE_PRICE_EXTRA_PAGES`
+   - $150 one-time gbp_setup → `STRIPE_PRICE_GBP_SETUP`
+   - $50/mo monthly_updates subscription → `STRIPE_PRICE_MONTHLY_UPDATES`
+   - $349 installment payment → no env var needed (inline price_data)
+
+2. **Configure Customer Portal** at https://dashboard.stripe.com/settings/billing/portal
+   - Enable: update payment method, view invoices, cancel subscription
+   - Save the LIVE login URL (looks like `https://billing.stripe.com/p/login/...`)
+   - This becomes `STRIPE_CUSTOMER_PORTAL_URL` on Vercel
+
+3. **Enable Stripe Tax** at https://dashboard.stripe.com/settings/tax
+   - Add EIN / business tax registration
+   - Enable auto-collect for the relevant US states
+   - This auto-applies to all LIVE checkout sessions going forward
+
+4. **Create the LIVE Webhook Endpoint** at https://dashboard.stripe.com/webhooks
+   - Endpoint URL: `https://bluejayportfolio.com/api/webhooks/stripe`
+   - Events to send (matches the code's handler list):
+     - `checkout.session.completed`
+     - `customer.subscription.updated`
+     - `customer.subscription.deleted`
+     - `checkout.session.expired`
+     - `invoice.payment_failed`
+     - `invoice.payment_succeeded`
+   - After creating, click "Reveal" on the Signing Secret — copy it.
+     This becomes `STRIPE_WEBHOOK_SECRET` on Vercel.
+
+5. **Get the LIVE secret key** at https://dashboard.stripe.com/apikeys
+   - Copy the `sk_live_*` value. This replaces `STRIPE_SECRET_KEY`.
+
+### Vercel env vars (single deploy after all set)
+
+Update on Vercel → Project Settings → Environment Variables → Production:
+
+```
+STRIPE_SECRET_KEY=sk_live_*                  (REPLACE existing test key)
+STRIPE_WEBHOOK_SECRET=whsec_*                (REPLACE existing test secret)
+STRIPE_PRICE_SETUP_ID=price_*                (NEW — was unset)
+STRIPE_PRICE_MGMT_ID=price_*                 (REPLACE existing test ID)
+STRIPE_PRICE_CUSTOM_ID=price_*               (REPLACE existing test ID)
+STRIPE_PRICE_REVIEW_BLAST=price_*            (NEW — was unset)
+STRIPE_PRICE_EXTRA_PAGES=price_*             (NEW — was unset)
+STRIPE_PRICE_GBP_SETUP=price_*               (NEW — was unset)
+STRIPE_PRICE_MONTHLY_UPDATES=price_*         (NEW — was unset)
+STRIPE_CUSTOMER_PORTAL_URL=https://billing.stripe.com/p/login/*
+STRIPE_LIVE_ENABLED=true                     (NEW — Rule 52 kill-switch)
+```
+
+After all 11 are set, redeploy (any push triggers it, OR
+"Redeploy latest" in the Vercel dashboard).
+
+### Post-flip verification (do not skip)
+
+1. Hit the env-check endpoint in browser — confirm all 11 vars show present:
+   `https://bluejayportfolio.com/api/admin/env-check`
+2. Open a test prospect's claim page → click "Get Started" → confirm
+   you reach Stripe Checkout (NOT the 503 error from the kill-switch).
+3. Smoke-test the kill-switch: temporarily set
+   `STRIPE_LIVE_ENABLED=false` → redeploy → confirm checkout returns
+   503 → set back to `true` → redeploy. (Verifies the kill-switch
+   actually works before you need it in an emergency.)
+4. Watch the Stripe webhook log at https://dashboard.stripe.com/webhooks
+   for the next inbound event — confirm signature validation succeeds
+   (HTTP 200 in the webhook log, not 401).
+
+### Rollback (if something breaks)
+
+```
+Vercel → Settings → Environment Variables → Production:
+  STRIPE_LIVE_ENABLED=false   (kill new transactions immediately)
+```
+
+Redeploy. New checkouts return 503. In-flight Stripe events still
+process via webhook (so customers who paid in the last few minutes
+still get their welcome email).
+
+If the issue is broader (signing secret mismatch, key swap mistake),
+revert STRIPE_SECRET_KEY + STRIPE_WEBHOOK_SECRET to the test values,
+redeploy, and diagnose with the test webhook before re-flipping.
+
+---
 
 ## Test Group Wave 1 — Full-Stack Outreach Test (Locked 2026-04-25)
 

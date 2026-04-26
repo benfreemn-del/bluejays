@@ -35,6 +35,19 @@ import { getUpsellDefinition, isUpsellSku, type UpsellSku } from "@/lib/upsells"
  * $997 / $349 setup flows.
  */
 export async function POST(request: NextRequest) {
+  // Rule 52 kill-switch — same as /api/checkout/create. When flipped off,
+  // upsell checkouts also stop so customers don't get half-completed
+  // transactions on add-on purchases either.
+  if (process.env.STRIPE_LIVE_ENABLED === "false") {
+    return NextResponse.json(
+      {
+        error:
+          "Upsells are temporarily unavailable. Please email bluejaycontactme@gmail.com.",
+      },
+      { status: 503 },
+    );
+  }
+
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
   const { allowed } = rateLimit(`upsell:${ip}`, 10, 60 * 60 * 1000);
   if (!allowed) {
