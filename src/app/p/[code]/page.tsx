@@ -149,11 +149,18 @@ export default async function ShortPreviewPage({
   const resolved = await resolveShortCode(code);
   if (!resolved) notFound();
 
-  // Custom-tier prospects (bespoke-built sites living at their own URL
-  // like lcautism.org) redirect to that URL instead of rendering a
-  // template preview. The short URL becomes a brand-friendly shortlink
-  // pointing at their real site. See CLAUDE.md "Custom Pricing Tier Rules".
-  if (resolved.pricingTier === "custom" && resolved.customSiteUrl) {
+  // Bespoke-built sites (custom-tier OR free-tier with a hand-built
+  // site at /sites/[slug]/) redirect to their actual site URL instead
+  // of rendering a template preview. The short URL becomes a
+  // brand-friendly shortlink pointing at their real site.
+  //
+  // Trigger: any prospect with a non-empty custom_site_url, regardless
+  // of pricing_tier. The custom_site_url field is the source of truth —
+  // if it's set, the prospect has a real site and the preview template
+  // would just be wrong for them. See CLAUDE.md "Custom Pricing Tier
+  // Rules" + the OPS launch precedent (Olympic Protective Services on
+  // free tier with site at bluejayportfolio.com/sites/ops/).
+  if (resolved.customSiteUrl) {
     // Normalise: ensure absolute http(s) URL so redirect doesn't loop
     const target = resolved.customSiteUrl.startsWith("http")
       ? resolved.customSiteUrl

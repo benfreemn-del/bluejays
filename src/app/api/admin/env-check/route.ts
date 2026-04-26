@@ -24,6 +24,7 @@ const ENV_KEYS = [
   "STRIPE_PRICE_EXTRA_PAGES",
   "STRIPE_PRICE_GBP_SETUP",
   "STRIPE_PRICE_MONTHLY_UPDATES",
+  "STRIPE_PRICE_FREE_TIER_SETUP",
   "STRIPE_CUSTOMER_PORTAL_URL",
   // SendGrid + email
   "SENDGRID_API_KEY",
@@ -105,6 +106,7 @@ export async function GET() {
     "STRIPE_PRICE_EXTRA_PAGES",
     "STRIPE_PRICE_GBP_SETUP",
     "STRIPE_PRICE_MONTHLY_UPDATES",
+    "STRIPE_PRICE_FREE_TIER_SETUP",
   ];
   const stripePricePrefixes: Record<string, "price" | "prod" | "other" | null> = {};
   for (const key of STRIPE_PRICE_KEYS) {

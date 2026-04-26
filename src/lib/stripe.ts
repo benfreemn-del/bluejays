@@ -176,8 +176,16 @@ export async function createCheckoutSession(
       ? "Website setup — domain and server costs"
       : "Premium custom website design, hosting setup, and deployment";
 
-    if (setupPriceId && !isFreeTier) {
-      lineItems.push({ price: setupPriceId, quantity: 1 });
+    // Pre-created Stripe Price IDs (cleaner reporting in Stripe dashboard
+    // vs ad-hoc inline price_data). When unset, falls back to inline so
+    // mock-mode + first-deploy keep working.
+    const freeTierPriceId = isFreeTier
+      ? process.env.STRIPE_PRICE_FREE_TIER_SETUP
+      : undefined;
+    const priceIdToUse = isFreeTier ? freeTierPriceId : setupPriceId;
+
+    if (priceIdToUse) {
+      lineItems.push({ price: priceIdToUse, quantity: 1 });
     } else {
       lineItems.push({
         price_data: {

@@ -134,6 +134,7 @@ const PUBLIC_API_PATHS = [
   "/api/review-blast/submit/",         // Public submission from /review-blast/[id] magic link (URL-as-secret)
   "/api/review-blast/dispatch",        // Vercel cron (daily 17:30 UTC) — gated by CRON_SECRET
   "/review-blast/",                    // Public submission page — /review-blast/[upsellId] (URL-as-secret)
+  "/api/checkout/free-tier/",          // Free-tier checkout entry point — Ben sends this URL to vetted free-tier prospects (URL-as-secret)
 ];
 
 export async function middleware(request: NextRequest) {
