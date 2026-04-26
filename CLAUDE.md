@@ -4536,5 +4536,45 @@ BEFORE running the funnel processor. Implementation lives in
 approved prospects sit in the backlog — that wastes the most expensive
 asset BlueJays owns: sender reputation runway.
 
+### Locked-In Rule 48 — Ask 10+ Questions Before Any Big Job (NON-NEGOTIABLE)
+
+Established 2026-04-25 by Ben. Big jobs that get started without enough
+upfront context end up in rework — wrong assumptions baked in, scope
+creep, mid-build pivots that waste hours. The fix:
+
+**Before starting ANY big job, ask Ben at least 10 specific questions.**
+
+A "big job" = anything that meets ANY of these:
+- Multi-file refactor or new feature spanning 3+ files
+- New customer-facing surface (page, email template, channel)
+- New automation/cron or change to an existing cron's behavior
+- New external integration (API, service, vendor)
+- Anything Ben describes as "the next big move," "the big build,"
+  "let's tackle X," or scopes broader than a single fix
+- Any change touching pricing, billing, the funnel, or onboarding
+- Any plan that would take more than ~30 minutes of execution
+
+**Questions must be specific and load-bearing — not generic.** Bad:
+"What's your goal?" Good: "Should the new SKU charge upfront or
+defer to the year-2 sub like the rest?" The 10 questions should
+collectively eliminate ambiguity around: scope, priority, success
+criteria, edge cases, who/what is affected, what to leave alone,
+deadline, dependencies, what done looks like, and what would make
+this fail.
+
+**Format:** numbered list, one question per line, plain English,
+no preamble. Wait for Ben's answers before writing a single line of
+code or running a single command.
+
+**Exceptions (no 10-question gate required):**
+- Bug fixes with a clear repro
+- Single-file edits that Ben explicitly scoped
+- Continuing a job already in flight where context is established
+- Read-only investigation / answering a question Ben asked
+
+If unsure whether a job qualifies as "big," default to asking the
+questions. The cost of asking is 30 seconds; the cost of building
+the wrong thing is hours.
+
 ---
 
