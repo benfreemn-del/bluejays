@@ -480,6 +480,16 @@ export async function runAudit(args: {
     return { ok: false, auditId, error: "Supabase not configured" };
   }
 
+  // Snapshot existing metadata so we can merge it back later instead of
+  // overwriting — preserves targetBusinessName (and UTM params) that were
+  // written by /api/audit/submit and are critical for retry flows.
+  const { data: auditSnap } = await supabase
+    .from("site_audits")
+    .select("metadata")
+    .eq("id", auditId)
+    .maybeSingle();
+  const existingMeta = (auditSnap?.metadata as Record<string, unknown> | null) ?? {};
+
   // Mark as generating
   await supabase
     .from("site_audits")
@@ -551,7 +561,10 @@ export async function runAudit(args: {
         models_used: [heroResult.model, technicalResult.model],
         cost_usd: totalCost,
         generated_at: new Date().toISOString(),
+        // Merge: preserve submit-time fields (targetBusinessName, UTMs, etc.)
+        // and add/overwrite the audit-run keys. Never discard existing meta.
         metadata: {
+          ...existingMeta,
           audit_prompt_variant_id: heroResult.promptVariantId ?? null,
           prompt_source: heroResult.promptVariantId ? "hyperloop" : "hardcoded",
         },
