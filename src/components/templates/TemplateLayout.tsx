@@ -241,15 +241,16 @@ export default function TemplateLayout({
           <div className="max-w-5xl mx-auto px-6 flex items-center justify-center gap-2">
             <BluejayLogo size={16} className="text-blue-electric/60" />
             <p className="text-muted/40 text-xs">
-              Created by{" "}
+              Built by{" "}
               <a
-                href="https://bluejayportfolio.com"
+                href="https://bluejayportfolio.com/audit"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-blue-electric/80 transition-colors underline underline-offset-2"
               >
-                bluejayportfolio.com
-              </a>
+                BlueJays
+              </a>{" "}
+              — get your free site audit
             </p>
           </div>
         </div>

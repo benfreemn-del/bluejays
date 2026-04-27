@@ -987,15 +987,16 @@ export default function V2TutoringPreview({ data }: { data: GeneratedSiteData })
             <div className="flex items-center gap-2 text-xs text-slate-600">
               <BluejayLogo className="w-4 h-4" />
               <span>
-                Created by{" "}
+                Built by{" "}
                 <a
-                  href="https://bluejayportfolio.com"
+                  href="https://bluejayportfolio.com/audit"
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{ textDecoration: "underline" }}
                 >
-                  bluejayportfolio.com
-                </a>
+                  BlueJays
+                </a>{" "}
+                — get your free site audit
               </span>
             </div>
           </div>
