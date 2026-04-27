@@ -405,7 +405,7 @@ export default async function AuditPage({
               <div className="relative rounded-lg overflow-hidden border border-rose-500/20">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={`https://image.thum.io/get/width/600/crop/800/${encodeURIComponent(a.target_url)}`}
+                  src={`https://image.thum.io/get/width/600/crop/800/${a.target_url}`}
                   alt="Your current site"
                   className="w-full h-48 object-cover object-top"
                 />
@@ -417,13 +417,13 @@ export default async function AuditPage({
               <div className="relative rounded-lg overflow-hidden border border-emerald-500/20">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={`https://image.thum.io/get/width/600/crop/800/${encodeURIComponent(`https://bluejayportfolio.com/v2/${content.businessCategory}`)}`}
+                  src={`https://image.thum.io/get/width/600/crop/800/https://bluejayportfolio.com/v2/${content.businessCategory}`}
                   alt="BlueJays premium site preview"
                   className="w-full h-48 object-cover object-top blur-sm scale-105"
                 />
-                <div className="absolute inset-0 bg-emerald-950/60 flex flex-col items-center justify-center gap-2">
-                  <span className="text-emerald-200 text-sm font-bold drop-shadow">What yours could look like</span>
-                  <span className="text-emerald-300/80 text-xs">BlueJays builds score 85–95/100</span>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent flex flex-col items-end justify-end pb-3 px-3 gap-0.5">
+                  <span className="text-white text-xs font-bold drop-shadow-lg">What yours could look like</span>
+                  <span className="text-emerald-300 text-[10px] drop-shadow">BlueJays builds score 85–95/100</span>
                 </div>
               </div>
             </div>
