@@ -174,8 +174,9 @@ export function getAuditEmail3(args: {
   businessName: string;
   category: string;
   auditUrl: string;
+  bookUrl: string;
 }): EmailTemplate {
-  const { businessName, category, auditUrl } = args;
+  const { businessName, category, auditUrl, bookUrl } = args;
 
   const subject = `How a ${category === "general" ? "local business" : category.replace("-", " ")} owner doubled her bookings`;
 
@@ -188,13 +189,11 @@ We rebuilt her site in 7 days for $997. No retainers, no monthly fees.
 
 Three weeks after launch, she went from 2 calls a week to 14. Same town, same prices, same offer. Just a site that didn't actively work against her.
 
-That could be ${businessName}'s story too. The fixes are in your audit — same link as before:
-
-${auditUrl}
+That could be ${businessName}'s story too. The fixes are in your audit (${auditUrl}).
 
 If you want me to walk you through what we'd specifically change for ${businessName}, book a 15-min call. I'll tell you in the first 5 minutes whether it's worth your time. No pitch deck, no agenda.
 
-https://bluejayportfolio.com/book?source=audit${FOOTER}`;
+${bookUrl}${FOOTER}`;
 
   return { subject, body, sequence: 402 };
 }
@@ -206,27 +205,26 @@ https://bluejayportfolio.com/book?source=audit${FOOTER}`;
 export function getAuditEmail4(args: {
   businessName: string;
   auditUrl: string;
+  bookUrl: string;
 }): EmailTemplate {
-  const { businessName, auditUrl } = args;
+  const { businessName, auditUrl, bookUrl } = args;
 
   const subject = `"But I already have a website…"`;
 
   const body = `Three things I hear from people who've taken our audit and haven't replied yet.
 
 1. "I already have a website."
-Sure — and it scored what it scored on your audit. The question isn't 'do you have a site,' it's 'is your site doing its job?' Your audit answered that.
+Sure — and it scored what it scored on your audit (${auditUrl}). The question isn't 'do you have a site,' it's 'is your site doing its job?' Your audit answered that.
 
 2. "$997 sounds too cheap to be good."
-Fair. Here's how we do it: we've built 30+ category templates over the last year. We slot ${businessName}'s real content (services, photos, copy) into our V2 framework for your category. Same quality bar as a $5K agency build, way faster delivery — 48 hours, not 8 weeks.
+Fair. Here's how we do it: we've built 30+ industry-specific templates over the last year. We take ${businessName}'s real content — services, photos, copy — and build a site around it. Same quality bar as a $5K agency build, way faster delivery: 48 hours, not 8 weeks.
 
 3. "How long does this take? I'm busy."
 Onboarding form takes 15 minutes. After that, you're done. We deliver a live preview in 48 hours. You review, we tweak, we ship.
 
-If even one of those sound right, book a 15-min call. I'll tell you in the first 5 minutes whether we can help. If we can't, I'll point you somewhere that can.
+If even one of those sounds right, book a 15-min call. I'll tell you in the first 5 minutes whether we can help. If we can't, I'll point you somewhere that can.
 
-https://bluejayportfolio.com/book?source=audit
-
-(If you want to re-read your audit first: ${auditUrl})${FOOTER}`;
+${bookUrl}${FOOTER}`;
 
   return { subject, body, sequence: 403 };
 }
@@ -238,8 +236,9 @@ https://bluejayportfolio.com/book?source=audit
 export function getAuditEmail5(args: {
   businessName: string;
   auditUrl: string;
+  bookUrl: string;
 }): EmailTemplate {
-  const { businessName, auditUrl } = args;
+  const { businessName, auditUrl, bookUrl } = args;
 
   const subject = `Last email (closing your audit)`;
 
@@ -249,11 +248,11 @@ I'm closing the file at the end of this week. If you're not interested, no worri
 
 If you ARE: I'm taking 4 new builds this month at $997. After that batch closes, the next batch is at $1,297.
 
-Your audit is still here:
-${auditUrl}
+Your audit is still here if you need it (${auditUrl}).
 
-Book a 15-min call if you want to talk:
-https://bluejayportfolio.com/book?source=audit
+Book a 15-min call and let's talk:
+
+${bookUrl}
 
 Or just hit reply with "in" and I'll send the onboarding link.${FOOTER}`;
 

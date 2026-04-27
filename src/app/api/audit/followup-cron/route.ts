@@ -122,6 +122,7 @@ export async function POST(request?: NextRequest) {
     }
 
     const auditUrl = `https://bluejayportfolio.com/audit/${audit.id}`;
+    const bookUrl = `https://bluejayportfolio.com/book/${prospect.id}`;
     const businessName = prospect.business_name as string;
     let template;
 
@@ -130,13 +131,13 @@ export async function POST(request?: NextRequest) {
         template = getAuditEmail2({ businessName, category: audit.business_category, auditUrl });
         break;
       case 3:
-        template = getAuditEmail3({ businessName, category: audit.business_category, auditUrl });
+        template = getAuditEmail3({ businessName, category: audit.business_category, auditUrl, bookUrl });
         break;
       case 4:
-        template = getAuditEmail4({ businessName, auditUrl });
+        template = getAuditEmail4({ businessName, auditUrl, bookUrl });
         break;
       case 5:
-        template = getAuditEmail5({ businessName, auditUrl });
+        template = getAuditEmail5({ businessName, auditUrl, bookUrl });
         break;
       default:
         continue;

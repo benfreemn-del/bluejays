@@ -731,101 +731,6 @@ async function notifyOwnerPayment(
 }
 
 /**
- * Send a welcome email to the client after successful payment.
- * Sets expectations: 48-hour timeline, what Ben needs, and next steps.
- */
-async function sendClientWelcomeEmail(
-  clientEmail: string,
-  businessName: string,
-  prospectId: string
-) {
-  if (!SENDGRID_API_KEY) return;
-
-  // Hardcoded per CLAUDE.md Rule 16 — Vercel had stale NEXT_PUBLIC_BASE_URL.
-const BASE_URL = "https://bluejayportfolio.com";
-  const previewUrl = `${BASE_URL}/preview/${prospectId}`;
-  const onboardingUrl = `${BASE_URL}/onboarding/${prospectId}`;
-
-  try {
-    await fetch("https://api.sendgrid.com/v3/mail/send", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${SENDGRID_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        personalizations: [{ to: [{ email: clientEmail }] }],
-        from: { email: FROM_EMAIL, name: "Ben @ BlueJays" },
-        subject: `Your ${businessName} site is being built — here's what happens next`,
-        content: [
-          {
-            type: "text/plain",
-            value: `Payment confirmed — thank you for trusting BlueJays with ${businessName}!
-
-Here's what happens now:
-
-━━━━━━━━━━━━━━━━━━━━
-TIMELINE
-━━━━━━━━━━━━━━━━━━━━
-• Today: I review your purchase and begin customizing your site
-• Within 24 hours: I'll reach out via email with any questions about your branding, photos, or content preferences
-• Within 48 hours: Your site goes live at your new domain
-
-━━━━━━━━━━━━━━━━━━━━
-FILL OUT YOUR ONBOARDING FORM
-━━━━━━━━━━━━━━━━━━━━
-Takes 3 minutes. Tells me everything I need to make your site perfect:
-
-${onboardingUrl}
-
-You can share your logo, brand colors, photos, taglines, and any specific requests.
-If you skip it, no worries — I'll use what I already have from your existing web presence.
-
-━━━━━━━━━━━━━━━━━━━━
-YOUR CURRENT PREVIEW
-━━━━━━━━━━━━━━━━━━━━
-${previewUrl}
-
-This is the starting point. The final version will be customized with your real photos, your exact branding, and your specific services.
-
-━━━━━━━━━━━━━━━━━━━━
-WHAT'S INCLUDED
-━━━━━━━━━━━━━━━━━━━━
-✓ Custom website design and build
-✓ Domain registration (your business name .com)
-✓ Hosting setup — no monthly fees, ever
-✓ Mobile-optimized and fast
-✓ One round of revisions included
-
-After the first year, we bill $100/year for domain renewal, hosting, ongoing maintenance, and support. You'll get an email reminder before any charge.
-
-━━━━━━━━━━━━━━━━━━━━
-QUESTIONS?
-━━━━━━━━━━━━━━━━━━━━
-Just reply to this email. I personally handle every site — you're not dealing with a support ticket or a bot.
-
-Talk soon,
-Ben @ BlueJays
-bluejaycontactme@gmail.com
-`,
-          },
-        ],
-      }),
-    });
-    console.log(`[Stripe Webhook] Welcome email sent to ${clientEmail}`);
-
-    await logCost({
-      service: "sendgrid_email",
-      action: "client_welcome_email",
-      costUsd: COST_RATES.sendgrid_email,
-      metadata: { businessName, clientEmail, type: "client_welcome" },
-    });
-  } catch (err) {
-    console.error("[Stripe Webhook] Failed to send client welcome email:", err);
-  }
-}
-
-/**
  * Send a recovery email when a prospect starts checkout but doesn't complete.
  * Warm lead — they were close. Keep it short and remove friction.
  */
@@ -835,7 +740,7 @@ async function sendAbandonedCheckoutEmail(
   prospectId: string
 ) {
   // Hardcoded per CLAUDE.md Rule 16 — Vercel had stale NEXT_PUBLIC_BASE_URL.
-const BASE_URL = "https://bluejayportfolio.com";
+  const BASE_URL = "https://bluejayportfolio.com";
   const claimUrl = `${BASE_URL}/claim/${prospectId}`;
 
   await fetch("https://api.sendgrid.com/v3/mail/send", {
