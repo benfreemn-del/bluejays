@@ -204,7 +204,7 @@ export default async function AuditPage({
             href={a.target_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm text-sky-400 hover:underline mb-10 inline-block"
+            className="text-sm text-sky-400 hover:underline mb-10 inline-block max-w-[90vw] truncate"
           >
             🔗 {a.target_url}
           </a>
@@ -364,19 +364,21 @@ export default async function AuditPage({
       {content.blueJaysBenchmark && (
         <section className="border-b border-white/5 bg-slate-900/30">
           <div className="mx-auto max-w-4xl px-6 py-10">
-            <p className="text-sm uppercase tracking-wider text-sky-400 mb-3">📊 What BlueJays could build for you</p>
-            <h2 className="text-2xl font-bold mb-3">
-              Example BlueJays build: <span className="text-sky-300">{stripJargon(content.blueJaysBenchmark.referenceTemplate)}</span>
+            <p className="text-sm uppercase tracking-wider text-sky-400 mb-3 font-semibold">
+              🏗️ What BlueJays would build for you
+            </p>
+            <h2 className="text-xl md:text-2xl font-bold mb-3">
+              See what a premium {content.businessCategory.replace(/-/g, " ")} site looks like
             </h2>
-            <p className="text-slate-300 mb-5">
-              BlueJays builds sites like this for businesses just like yours.{" "}
-              {stripJargon(content.blueJaysBenchmark.gapSummary)}
+            <p className="text-slate-300 mb-5 text-sm md:text-base leading-relaxed">
+              {stripJargon(content.blueJaysBenchmark.gapSummary) ||
+                `This is the quality bar we'd ship for your business — a fully custom ${content.businessCategory.replace(/-/g, " ")} site with real photos, your branding, and conversion sections built in.`}
             </p>
             <a
               href={content.blueJaysBenchmark.referenceUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center rounded-md border border-sky-500/40 bg-sky-500/10 px-4 py-2 text-sm font-semibold text-sky-300 hover:bg-sky-500/20 transition-colors"
+              className="inline-flex items-center justify-center w-full sm:w-auto rounded-lg bg-sky-500 px-6 py-3 text-sm font-bold text-white hover:bg-sky-400 transition-colors"
             >
               See the example site →
             </a>
@@ -393,8 +395,9 @@ export default async function AuditPage({
             <p className="text-sm uppercase tracking-wider text-rose-300 mb-5 font-semibold text-center">
               ⏳ The cost of waiting
             </p>
-            <div className="grid grid-cols-4 gap-3 max-w-2xl mx-auto items-stretch">
-              {/* 1 MO + 3 MOS share 2 of 4 cols (smaller) — 6 MOS takes 2 cols (the heavy hit) */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-2xl mx-auto items-stretch">
+              {/* Mobile: 2-col grid — 1mo + 3mo on top row, 6mo full-width below */}
+              {/* Desktop: 4-col — 1mo + 3mo each take 1 col, 6mo spans 2 */}
               <div className="col-span-1">
                 <CostTile months={1} leak={monthlyLeak} />
               </div>

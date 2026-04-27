@@ -82,36 +82,36 @@ export default function AuditLandingPage() {
             Most audits give you 40 things to do. We give you the 3 that actually move the needle.
           </p>
 
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
             <Card
               icon="0–100"
               title="A real score"
-              body="One number. Honest. Color-coded red/yellow/green so you know where you stand at a glance."
+              body="One number. Color-coded red/yellow/green so you know where you stand."
             />
             <Card
               icon="$"
               title="Money-leak estimate"
-              body="A conservative estimate of what your current site is costing you in missed leads every month."
+              body="What your current site is costing you in missed leads every month."
             />
             <Card
               icon="3-5"
               title="Prioritized fixes"
-              body="Specific, plain-English issues with the dollar impact + how hard each one is to fix."
+              body="Plain-English issues with the dollar impact + how hard each is to fix."
             />
             <Card
               icon="✓"
               title="Industry benchmark"
-              body="We compare your site to the gold-standard template for your category. See the gap."
+              body="We compare your site to the gold-standard for your category."
             />
             <Card
               icon="↻"
               title="Honest verdict"
-              body="Which fixes you can DIY, and which ones need a rebuild. We tell you which is which — no upselling."
+              body="Which fixes you can DIY vs. need a rebuild — no upselling."
             />
             <Card
               icon="→"
               title="What's next"
-              body="A clear next-action. If we can help, we'll say so. If a freelancer would do better, we'll point you there."
+              body="A clear next-action. If a freelancer would do better, we'll say so."
             />
           </div>
         </div>
@@ -156,12 +156,12 @@ export default function AuditLandingPage() {
 
 function Card({ icon, title, body }: { icon: string; title: string; body: string }) {
   return (
-    <div className="rounded-xl border border-white/10 bg-slate-900/50 p-6">
-      <div className="mb-3 inline-flex items-center justify-center h-10 w-10 rounded-lg bg-gradient-to-br from-sky-500/20 to-emerald-500/20 text-sky-300 font-bold text-sm">
+    <div className="rounded-xl border border-white/10 bg-slate-900/50 p-4 md:p-6">
+      <div className="mb-3 inline-flex items-center justify-center h-11 w-11 rounded-xl bg-gradient-to-br from-sky-500/20 to-emerald-500/20 text-sky-300 font-bold text-sm">
         {icon}
       </div>
-      <h3 className="font-semibold mb-1">{title}</h3>
-      <p className="text-sm text-slate-400 leading-relaxed">{body}</p>
+      <h3 className="font-semibold mb-1 text-sm md:text-base">{title}</h3>
+      <p className="text-xs md:text-sm text-slate-400 leading-relaxed">{body}</p>
     </div>
   );
 }
