@@ -17,6 +17,10 @@
 
 import { supabase, isSupabaseConfigured } from "./supabase";
 import { logCost } from "./cost-logger";
+import {
+  formatHeroPainPointsBlock,
+  formatTechPainPointsBlock,
+} from "./audit-category-pain-points";
 
 const CLAUDE_MODEL = "claude-sonnet-4-6";
 const OPENAI_MODEL = "gpt-4.1-mini";
@@ -93,6 +97,19 @@ export interface AuditContent {
     impact: "high" | "medium" | "low";
     effort: "high" | "medium" | "low";
     blueJaysCanDo: boolean;
+    /** Estimated $/month recovered when this fix lands. Deterministic
+     *  formula based on severity weight × share of total recovery. The
+     *  sum of all 5 fixes caps at ~60% of currentLeak (Q6A: conservative).
+     *  0 when score >= 80 (no leak to recover). */
+    recoveryMonthly: number;
+    /** Leads/month — recoveryMonthly / avgLeadValue, where avgLeadValue
+     *  = avgCustomerValue × DEFAULT_CLOSE_RATE. Spec is per Q2C.
+     *  Stacks under the dollar number on each fix card. */
+    recoveryLeads: number;
+    /** Customers/month — kept for backward-compat with v5 audits and
+     *  used by the "Stop the leak" total because customer counts
+     *  read more concrete than lead counts at the punchline. */
+    recoveryCustomers: number;
   }>;
   strengths: string[];
   /** Hormozi-style money-leak anchor: rough monthly $ this site is
@@ -106,6 +123,18 @@ export interface AuditContent {
     estimateLow: number;
     estimateHigh: number;
     methodology: string; // one-line plain-English explanation
+    avgCustomerValue: number; // displayed as the "avg lead chip" near hero
+  };
+  /** "Stop the leak" total — sum of per-fix recovery numbers, framed as
+   *  the bridge from the audit to the $997 offer. Conservative: ~60% of
+   *  the current leak. All zeros when score >= 80 (healthy site). */
+  recoveryProjection: {
+    totalMonthly: number;
+    totalLeads: number;
+    totalCustomers: number;
+    avgCustomerValue: number;
+    capPercent: number; // e.g. 0.60 = "60% of leak recovered"
+    methodology: string;
   };
   callToAction: {
     headline: string;
@@ -138,35 +167,65 @@ export interface AuditContent {
  * to a healthy site reads as scammy.
  */
 const VERTICAL_LEAK_RATES: Record<string, { avgValue: number; monthlyVisitors: number }> = {
-  dental:           { avgValue: 600,  monthlyVisitors: 800 },
-  veterinary:       { avgValue: 250,  monthlyVisitors: 600 },
-  salon:            { avgValue: 120,  monthlyVisitors: 800 },
-  electrician:      { avgValue: 800,  monthlyVisitors: 400 },
-  plumber:          { avgValue: 600,  monthlyVisitors: 500 },
-  hvac:             { avgValue: 1200, monthlyVisitors: 400 },
-  roofing:          { avgValue: 8000, monthlyVisitors: 350 },
-  "auto-repair":    { avgValue: 350,  monthlyVisitors: 700 },
-  "law-firm":       { avgValue: 3500, monthlyVisitors: 600 },
-  fitness:          { avgValue: 100,  monthlyVisitors: 1200 },
-  "real-estate":    { avgValue: 8000, monthlyVisitors: 1500 },
-  landscaping:      { avgValue: 1200, monthlyVisitors: 400 },
-  cleaning:         { avgValue: 220,  monthlyVisitors: 600 },
-  chiropractic:     { avgValue: 200,  monthlyVisitors: 500 },
-  accounting:       { avgValue: 800,  monthlyVisitors: 500 },
-  insurance:        { avgValue: 600,  monthlyVisitors: 400 },
-  "interior-design":{ avgValue: 4000, monthlyVisitors: 500 },
-  moving:           { avgValue: 800,  monthlyVisitors: 800 },
-  "pest-control":   { avgValue: 200,  monthlyVisitors: 500 },
-  "med-spa":        { avgValue: 400,  monthlyVisitors: 700 },
-  catering:         { avgValue: 1500, monthlyVisitors: 400 },
-  "general-contractor": { avgValue: 15000, monthlyVisitors: 400 },
-  general:          { avgValue: 300,  monthlyVisitors: 500 },
+  // Healthcare-adjacent
+  dental:                { avgValue: 600,   monthlyVisitors: 800 },
+  veterinary:            { avgValue: 250,   monthlyVisitors: 600 },
+  chiropractic:          { avgValue: 200,   monthlyVisitors: 500 },
+  "physical-therapy":    { avgValue: 250,   monthlyVisitors: 500 },
+  "med-spa":             { avgValue: 400,   monthlyVisitors: 700 },
+  medical:               { avgValue: 350,   monthlyVisitors: 600 },
+  // Trades / home services
+  electrician:           { avgValue: 800,   monthlyVisitors: 400 },
+  plumber:               { avgValue: 600,   monthlyVisitors: 500 },
+  hvac:                  { avgValue: 1200,  monthlyVisitors: 400 },
+  roofing:               { avgValue: 8000,  monthlyVisitors: 350 },
+  "auto-repair":         { avgValue: 350,   monthlyVisitors: 700 },
+  landscaping:           { avgValue: 1200,  monthlyVisitors: 400 },
+  cleaning:              { avgValue: 220,   monthlyVisitors: 600 },
+  "carpet-cleaning":     { avgValue: 250,   monthlyVisitors: 500 },
+  moving:                { avgValue: 800,   monthlyVisitors: 800 },
+  "pest-control":        { avgValue: 200,   monthlyVisitors: 500 },
+  "general-contractor":  { avgValue: 15000, monthlyVisitors: 400 },
+  construction:          { avgValue: 12000, monthlyVisitors: 350 },
+  painting:              { avgValue: 3500,  monthlyVisitors: 400 },
+  "pressure-washing":    { avgValue: 350,   monthlyVisitors: 500 },
+  "tree-service":        { avgValue: 1200,  monthlyVisitors: 350 },
+  fencing:               { avgValue: 4500,  monthlyVisitors: 350 },
+  "garage-door":         { avgValue: 600,   monthlyVisitors: 400 },
+  locksmith:             { avgValue: 180,   monthlyVisitors: 600 },
+  towing:                { avgValue: 150,   monthlyVisitors: 700 },
+  "junk-removal":        { avgValue: 350,   monthlyVisitors: 500 },
+  "appliance-repair":    { avgValue: 220,   monthlyVisitors: 500 },
+  "pool-spa":            { avgValue: 350,   monthlyVisitors: 400 },
+  // Professional services
+  "law-firm":            { avgValue: 3500,  monthlyVisitors: 600 },
+  accounting:            { avgValue: 800,   monthlyVisitors: 500 },
+  insurance:             { avgValue: 600,   monthlyVisitors: 400 },
+  "real-estate":         { avgValue: 8000,  monthlyVisitors: 1500 },
+  // Lifestyle / beauty / creative
+  salon:                 { avgValue: 120,   monthlyVisitors: 800 },
+  "interior-design":     { avgValue: 4000,  monthlyVisitors: 500 },
+  photography:           { avgValue: 800,   monthlyVisitors: 600 },
+  florist:               { avgValue: 100,   monthlyVisitors: 600 },
+  tattoo:                { avgValue: 350,   monthlyVisitors: 500 },
+  "event-planning":      { avgValue: 6000,  monthlyVisitors: 400 },
+  catering:              { avgValue: 1500,  monthlyVisitors: 400 },
+  restaurant:            { avgValue: 60,    monthlyVisitors: 2500 },
+  // Fitness / community
+  fitness:               { avgValue: 100,   monthlyVisitors: 1200 },
+  "martial-arts":        { avgValue: 150,   monthlyVisitors: 600 },
+  church:                { avgValue: 80,    monthlyVisitors: 500 },
+  daycare:               { avgValue: 1400,  monthlyVisitors: 600 },
+  tutoring:              { avgValue: 600,   monthlyVisitors: 500 },
+  "pet-services":        { avgValue: 80,    monthlyVisitors: 700 },
+  // Fallback
+  general:               { avgValue: 300,   monthlyVisitors: 500 },
 };
 
 function estimateMoneyLeak(args: {
   category: string;
   overallScore: number;
-}): { monthlyEstimate: number; estimateLow: number; estimateHigh: number; methodology: string } {
+}): { monthlyEstimate: number; estimateLow: number; estimateHigh: number; methodology: string; avgCustomerValue: number } {
   const rates = VERTICAL_LEAK_RATES[args.category] || VERTICAL_LEAK_RATES["general"];
   // Lift % depends on how bad the site is. Cap aggressively — never claim
   // that fixing a single site delivers more than 5% absolute conversion lift.
@@ -188,34 +247,35 @@ function estimateMoneyLeak(args: {
     monthlyEstimate: mid,
     estimateLow: low,
     estimateHigh: high,
+    avgCustomerValue: rates.avgValue,
     methodology:
-      `Based on industry-typical traffic for ${args.category.replace("-", " ")} businesses, ` +
-      `a small conversion lift from fixing the issues below. Conservative — ` +
-      `actual lift could be higher.`,
+      `Based on how much traffic ${args.category.replace("-", " ")} sites usually get, ` +
+      `plus a small bump from fixing the things below. We're being safe — ` +
+      `the real number could be bigger.`,
   };
 }
 
 const BLUEJAYS_BENCHMARK_BY_CATEGORY: Record<string, { template: string; url: string }> = {
-  dental: { template: "Emerald City Dental (V2)", url: "https://bluejayportfolio.com/v2/dental" },
-  electrician: { template: "Cascade Electric Co. (V2)", url: "https://bluejayportfolio.com/v2/electrician" },
-  plumber: { template: "Emerald City Plumbing (V2)", url: "https://bluejayportfolio.com/v2/plumber" },
-  hvac: { template: "Summit Heating & Air (V2)", url: "https://bluejayportfolio.com/v2/hvac" },
-  roofing: { template: "Summit Roofing NW (V2)", url: "https://bluejayportfolio.com/v2/roofing" },
-  "auto-repair": { template: "Pacific Auto Works (V2)", url: "https://bluejayportfolio.com/v2/auto-repair" },
-  "law-firm": { template: "Pacific Law Group (V2)", url: "https://bluejayportfolio.com/v2/law-firm" },
-  salon: { template: "Velvet Hair Studio (V2)", url: "https://bluejayportfolio.com/v2/salon" },
-  fitness: { template: "Iron & Oak Fitness (V2)", url: "https://bluejayportfolio.com/v2/fitness" },
-  "real-estate": { template: "Puget Sound Realty (V2)", url: "https://bluejayportfolio.com/v2/real-estate" },
-  veterinary: { template: "Northshore Vet Clinic (V2)", url: "https://bluejayportfolio.com/v2/veterinary" },
-  photography: { template: "Cascade Lens Photography (V2)", url: "https://bluejayportfolio.com/v2/photography" },
-  landscaping: { template: "Cascade Landscapes (V2)", url: "https://bluejayportfolio.com/v2/landscaping" },
-  cleaning: { template: "Crystal Clean Co. (V2)", url: "https://bluejayportfolio.com/v2/cleaning" },
-  chiropractic: { template: "Align Chiropractic (V2)", url: "https://bluejayportfolio.com/v2/chiropractic" },
-  accounting: { template: "Evergreen Tax & Advisory (V2)", url: "https://bluejayportfolio.com/v2/accounting" },
-  insurance: { template: "Puget Sound Insurance Group (V2)", url: "https://bluejayportfolio.com/v2/insurance" },
-  "interior-design": { template: "Cascadia Interiors (V2)", url: "https://bluejayportfolio.com/v2/interior-design" },
-  moving: { template: "Cascade Movers (V2)", url: "https://bluejayportfolio.com/v2/moving" },
-  "pest-control": { template: "Evergreen Pest Solutions (V2)", url: "https://bluejayportfolio.com/v2/pest-control" },
+  dental:           { template: "Emerald City Dental", url: "https://bluejayportfolio.com/v2/dental" },
+  electrician:      { template: "Cascade Electric Co.", url: "https://bluejayportfolio.com/v2/electrician" },
+  plumber:          { template: "Emerald City Plumbing", url: "https://bluejayportfolio.com/v2/plumber" },
+  hvac:             { template: "Summit Heating & Air", url: "https://bluejayportfolio.com/v2/hvac" },
+  roofing:          { template: "Summit Roofing NW", url: "https://bluejayportfolio.com/v2/roofing" },
+  "auto-repair":    { template: "Pacific Auto Works", url: "https://bluejayportfolio.com/v2/auto-repair" },
+  "law-firm":       { template: "Pacific Law Group", url: "https://bluejayportfolio.com/v2/law-firm" },
+  salon:            { template: "Velvet Hair Studio", url: "https://bluejayportfolio.com/v2/salon" },
+  fitness:          { template: "Iron & Oak Fitness", url: "https://bluejayportfolio.com/v2/fitness" },
+  "real-estate":    { template: "Puget Sound Realty", url: "https://bluejayportfolio.com/v2/real-estate" },
+  veterinary:       { template: "Northshore Vet Clinic", url: "https://bluejayportfolio.com/v2/veterinary" },
+  photography:      { template: "Cascade Lens Photography", url: "https://bluejayportfolio.com/v2/photography" },
+  landscaping:      { template: "Cascade Landscapes", url: "https://bluejayportfolio.com/v2/landscaping" },
+  cleaning:         { template: "Crystal Clean Co.", url: "https://bluejayportfolio.com/v2/cleaning" },
+  chiropractic:     { template: "Align Chiropractic", url: "https://bluejayportfolio.com/v2/chiropractic" },
+  accounting:       { template: "Evergreen Tax & Advisory", url: "https://bluejayportfolio.com/v2/accounting" },
+  insurance:        { template: "Puget Sound Insurance Group", url: "https://bluejayportfolio.com/v2/insurance" },
+  "interior-design":{ template: "Cascadia Interiors", url: "https://bluejayportfolio.com/v2/interior-design" },
+  moving:           { template: "Cascade Movers", url: "https://bluejayportfolio.com/v2/moving" },
+  "pest-control":   { template: "Evergreen Pest Solutions", url: "https://bluejayportfolio.com/v2/pest-control" },
 };
 
 /**
@@ -324,7 +384,7 @@ export async function runAudit(args: {
     // Run both AI calls in parallel
     const [heroResult, technicalResult] = await Promise.all([
       runHeroAnalysis(ctx, businessCategory, prospect.businessName).catch(
-        (err) => ({
+        (err): HeroAnalysisResult => ({
           findings: [],
           headline: "Analysis unavailable",
           cta: "Analysis unavailable",
@@ -335,7 +395,7 @@ export async function runAudit(args: {
           error: err instanceof Error ? err.message : String(err),
         }),
       ),
-      runTechnicalAnalysis(ctx).catch((err) => ({
+      runTechnicalAnalysis(ctx, businessCategory).catch((err) => ({
         seoFindings: [],
         technicalFindings: [],
         mobileFindings: [],
@@ -370,7 +430,10 @@ export async function runAudit(args: {
       modelsUsed: [heroResult.model, technicalResult.model],
     };
 
-    // Save to DB
+    // Save to DB. Includes audit_prompt variant ID in metadata when
+    // a Hyperloop-evolved prompt was used, so conversion analytics
+    // can join site_audits.metadata.audit_prompt_variant_id back to
+    // hyperloop_variants for Bayesian prompt grading.
     await supabase
       .from("site_audits")
       .update({
@@ -379,6 +442,10 @@ export async function runAudit(args: {
         models_used: [heroResult.model, technicalResult.model],
         cost_usd: totalCost,
         generated_at: new Date().toISOString(),
+        metadata: {
+          audit_prompt_variant_id: heroResult.promptVariantId ?? null,
+          prompt_source: heroResult.promptVariantId ? "hyperloop" : "hardcoded",
+        },
       })
       .eq("id", auditId);
 
@@ -421,7 +488,73 @@ interface HeroAnalysisResult {
   tokensIn: number;
   tokensOut: number;
   model: string;
+  /** ID of the Hyperloop audit_prompt variant used (if any). Lets us
+   *  attribute audit-to-paid conversion back to the prompt that
+   *  produced this audit, so Bayesian can grade prompt variants. */
+  promptVariantId?: string;
   error?: string;
+}
+
+/**
+ * Fetch the currently-active audit_prompt override for this category.
+ *
+ * Lookup order:
+ *   1. category-specific (variant.metadata.category === category)
+ *   2. generic (variant.metadata.category IS NULL or absent)
+ *   3. null (caller falls back to hardcoded buildHeroPrompt)
+ *
+ * This is how Hyperloop evolves prompts over time — when the loop
+ * generates new audit_prompt variants for a category, those variants
+ * land here and start producing audits. Bayesian compares conversion
+ * rates across variants; winners stay active, losers get retired.
+ *
+ * Variants are evaluated in (kind=audit_prompt) namespace so
+ * cross-category comparisons don't fight (per-category prompts have
+ * their own analyzer cohort once category lookup hits N+ variants).
+ */
+async function loadAuditPromptOverride(
+  category: string,
+): Promise<{ id: string; systemPrompt: string } | null> {
+  try {
+    // Try category-specific first
+    const { data: catSpecific } = await supabase
+      .from("hyperloop_variants")
+      .select("id, content, metadata")
+      .eq("kind", "audit_prompt")
+      .eq("status", "active")
+      .filter("metadata->>category", "eq", category)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (catSpecific) {
+      const content = (catSpecific.content ?? {}) as Record<string, unknown>;
+      const sp = typeof content.systemPrompt === "string" ? content.systemPrompt : null;
+      if (sp) return { id: catSpecific.id as string, systemPrompt: sp };
+    }
+
+    // Fallback to generic (no category set)
+    const { data: generic } = await supabase
+      .from("hyperloop_variants")
+      .select("id, content, metadata")
+      .eq("kind", "audit_prompt")
+      .eq("status", "active")
+      .is("metadata->category", null)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (generic) {
+      const content = (generic.content ?? {}) as Record<string, unknown>;
+      const sp = typeof content.systemPrompt === "string" ? content.systemPrompt : null;
+      if (sp) return { id: generic.id as string, systemPrompt: sp };
+    }
+  } catch (err) {
+    // Don't fail the audit if Hyperloop tables are missing or RLS
+    // blocks. Default-prompt fallback always works.
+    console.warn("[site-audit] loadAuditPromptOverride failed (using hardcoded):", err);
+  }
+  return null;
 }
 
 async function runHeroAnalysis(
@@ -433,7 +566,14 @@ async function runHeroAnalysis(
     return mockHeroAnalysis(ctx, category);
   }
 
-  const prompt = buildHeroPrompt(ctx, category, businessName);
+  // Try Hyperloop-evolved override first; fall back to hardcoded.
+  // The override (if found) replaces the whole prompt — operator/AI
+  // generating the variant is responsible for keeping the JSON output
+  // schema intact + interpolating ctx fields if needed.
+  const override = await loadAuditPromptOverride(category);
+  const prompt = override?.systemPrompt
+    ? interpolatePromptTemplate(override.systemPrompt, { ctx, category, businessName })
+    : buildHeroPrompt(ctx, category, businessName);
 
   const res = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
@@ -478,7 +618,45 @@ async function runHeroAnalysis(
     tokensIn,
     tokensOut,
     model: CLAUDE_MODEL,
+    promptVariantId: override?.id, // tracked in audit metadata for attribution
   };
+}
+
+/**
+ * Replace {placeholders} in a Hyperloop-generated prompt template with
+ * the dynamic per-prospect context. Supported placeholders:
+ *
+ *   {businessName}    — prospect business name
+ *   {category}        — vertical (dental / electrician / ...)
+ *   {url}             — target site URL
+ *   {title}           — page <title>
+ *   {metaDescription} — meta description content
+ *   {h1}              — first h1 text
+ *   {headings}        — JSON array of h1-h3 strings (truncated)
+ *   {bodyExcerpt}     — first 2K chars of stripped body
+ *
+ * Templates that don't use placeholders work unchanged. Templates that
+ * reference unknown placeholders leave them in place — the AI sees the
+ * literal string, which is usually OK and easy to debug.
+ */
+function interpolatePromptTemplate(
+  template: string,
+  args: { ctx: SiteContext; category: string; businessName: string },
+): string {
+  const { ctx, category, businessName } = args;
+  const map: Record<string, string> = {
+    businessName,
+    category,
+    url: ctx.url,
+    title: ctx.title || "",
+    metaDescription: ctx.metaDescription || "",
+    h1: ctx.h1Text || "",
+    headings: JSON.stringify(ctx.headings.slice(0, 15)),
+    bodyExcerpt: ctx.bodyExcerpt || "",
+  };
+  return template.replace(/\{(\w+)\}/g, (full, key) => {
+    return key in map ? map[key] : full;
+  });
 }
 
 interface TechnicalAnalysisResult {
@@ -492,12 +670,15 @@ interface TechnicalAnalysisResult {
   error?: string;
 }
 
-async function runTechnicalAnalysis(ctx: SiteContext): Promise<TechnicalAnalysisResult> {
+async function runTechnicalAnalysis(
+  ctx: SiteContext,
+  category: string,
+): Promise<TechnicalAnalysisResult> {
   if (!process.env.OPENAI_API_KEY) {
     return mockTechnicalAnalysis(ctx);
   }
 
-  const prompt = buildTechnicalPrompt(ctx);
+  const prompt = buildTechnicalPrompt(ctx, category);
 
   const res = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
@@ -561,29 +742,49 @@ function buildHeroPrompt(
 ): string {
   const benchmark = BLUEJAYS_BENCHMARK_BY_CATEGORY[category];
   const benchmarkLine = benchmark
-    ? `Reference benchmark: BlueJays' V2 ${benchmark.template} at ${benchmark.url}`
-    : "No specific BlueJays V2 template available for this category yet.";
+    ? `Quality bar to compare against: BlueJays' ${benchmark.template} site at ${benchmark.url}`
+    : "No specific BlueJays example site for this category yet.";
+  const painBlock = formatHeroPainPointsBlock(category);
 
   return `You are auditing a small-business website for BlueJays ($997 site rebuilds, 48-hr delivery).
 
 TONE — non-negotiable:
 - Address the owner as "you". Never "the user" or "the website".
-- Plain English, 7th-grade reading level. NO jargon.
+- 3rd-grade reading level. Write like you're talking to a friend over a beer, NOT writing a report.
+  - SHORT words (most under 6 letters). SHORT sentences (under 12 words).
+  - BANNED words: optimize, leverage, enhance, align, synergy, sub-optimal, holistic, robust, streamline, maximize, utilize, facilitate, prioritize, conversion, engagement, methodology, UX, above-the-fold, social proof, positioning, V2, template.
+  - BANNED tech jargon (CRITICAL — these never appear in your output, not in titles, not anywhere): H1, H2, H3, H4, heading tag, title tag, meta tag, viewport tag, alt text, schema, schema markup, structured data, JSON-LD, LocalBusiness schema, ElectricalContractor schema, favicon, script, scripts, render, lazy-load, lazy-loading, viewport, DOM, CSS, SEO (say 'Google ranking' instead).
+  - When you mean H1/heading: say "the big text at the top of your page" or "your main headline".
+  - When you mean meta description: say "the blurb Google shows under your link".
+  - When you mean schema: say "the address-book info Google reads about your business".
+  - When you mean favicon: say "the little icon next to your tab name".
+  - When you mean viewport tag: say "phone-friendly setup".
+  - When you mean scripts: say "code files your page loads".
+  - YES words: fix, change, drop, swap, push, win, get, lose, beat, kill, miss, grab, lift, sink.
+  - If a 9-year-old can't read it out loud and get it, rewrite it.
 - One punchy sentence beats three good ones. SHORT.
-- Lead with cost (lost customers, missed bookings) — never the technical issue.
+- Lead with cost (lost customers, missed jobs, wasted money) — never the technical issue.
 - Quote their actual copy. Reference real numbers.
+
+UNIVERSAL RULES — apply to every category:
+1. EVERY site should have images. Stock or real, doesn't matter — but a text-only or near-text-only page (under ~3 images) is a 'critical' or 'high' finding. People skim with their eyes, not their brains.
+2. The BEST sites are ONE PAGE. Visitor scrolls. Sees everything. Decides. Calls. Multi-page nav (About / Services / Contact / etc) makes them click, get lost, and bounce. If you see signs of multi-page architecture (heavy top nav, no scroll-to anchors, content split across routes), call it out: "Your site makes visitors click around to find basics. One scrolling page closes faster."
+3. Phone number must be on the hero AND clickable. If you can't tell from the body excerpt whether the phone is tap-to-call, flag the risk.
 
 Business: ${businessName}
 Category: ${category}
 URL: ${ctx.url}
 ${benchmarkLine}
 
-Site signals:
-- Title: "${ctx.title}" (${ctx.title.length} chars)
-- Meta: "${ctx.metaDescription}" (${ctx.metaDescription.length} chars)
-- H1: "${ctx.h1Text}"
-- Headings: ${JSON.stringify(ctx.headings.slice(0, 15))}
-- Body (first 2K): """${ctx.bodyExcerpt}"""
+${painBlock}
+
+Site signals (these are LABELS for your reference — do NOT echo these label names back in your output. Translate to plain English per the BANNED tech jargon rules above):
+- Browser-tab title: "${ctx.title}" (${ctx.title.length} chars)
+- Google-snippet blurb: "${ctx.metaDescription}" (${ctx.metaDescription.length} chars)
+- Big headline at top of page: "${ctx.h1Text}"
+- All section headlines: ${JSON.stringify(ctx.headings.slice(0, 15))}
+- Image count on page: ${ctx.imageCount}
+- Body (first 2K of words on the page): """${ctx.bodyExcerpt}"""
 ${ctx.fetchError ? `- Fetch error: ${ctx.fetchError}` : ""}
 
 Return STRICT JSON ONLY:
@@ -596,10 +797,10 @@ Return STRICT JSON ONLY:
     {
       "category": "hero" | "copy" | "cta" | "social_proof" | "structure" | "trust" | "brand_fit",
       "severity": "critical" | "high" | "medium" | "low",
-      "title": "<5-8 words. 'Your hero doesn't say what you do' NOT 'Sub-optimal hero structure'>",
-      "observation": "<ONE sentence, max 25 words. The problem + cost. Example: 'Your hero just says Welcome — a visitor has 3 seconds to know what you do, and most bail.'>",
-      "recommendation": "<ONE sentence, max 25 words. The fix, concrete. Example: 'Lead with what you do + who you help: Same-day plumbing for Tacoma homeowners, ${"$"}99 service call.'>",
-      "blueJaysSolution": "<ONE short sentence on how V2 ${category} fixes it>"
+      "title": "<5-8 words. 3rd-grade. 'Your hero doesn't say what you do' NOT 'Sub-optimal hero structure'>",
+      "observation": "<ONE sentence, max 20 words. 3rd-grade. The problem + cost. Example: 'Your hero just says Welcome. A new visitor has 3 seconds to get it, and most bail.'>",
+      "recommendation": "<ONE sentence, max 20 words. 3rd-grade. The fix, plain. Example: 'Tell them what you do and who you help: Same-day plumbing for Tacoma homes, ${"$"}99 to come out.'>",
+      "blueJaysSolution": "<ONE short sentence (under 18 words). 3rd-grade. How a BlueJays ${category} site fixes it. NEVER say 'V2', 'template', or 'tag' — owners don't know those words. Say 'BlueJays' site' or 'a BlueJays build'.>"
     }
   ]
 }
@@ -615,26 +816,43 @@ Generate 4-6 findings total. RULES:
 JSON only.`;
 }
 
-function buildTechnicalPrompt(ctx: SiteContext): string {
-  return `Audit this site's technical SEO + mobile readiness. Return STRICT JSON.
+function buildTechnicalPrompt(ctx: SiteContext, category: string): string {
+  const techPainBlock = formatTechPainPointsBlock(category);
+  return `Audit this site's Google-ranking + phone readiness. Return STRICT JSON.
 
 TONE — non-negotiable:
-- Plain English, 7th-grade level. SHORT — one sentence each.
-- Address them as "you". Lead with cost (customers lost), not the metric.
-- "Your site loads 14 external scripts — on phone LTE that's 5+ seconds staring at a blank screen." NOT "External script count is high."
-- Celebrate good things plainly: "All 22 of your images have alt text — Google loves this."
+- 3rd-grade reading level. Write like you're texting a friend.
+  - SHORT words. SHORT sentences (under 12 words).
+  - BANNED words: optimize, leverage, enhance, streamline, maximize, utilize, facilitate, sub-optimal, prioritize, conversion, methodology, UX, above-the-fold, social proof, positioning, V2, template.
+  - BANNED tech jargon (CRITICAL — never in titles, never in your output): H1, H2, H3, H4, heading tag, title tag, meta tag, viewport tag, alt text, schema, schema markup, structured data, JSON-LD, LocalBusiness schema, favicon, script, scripts, lazy-load, lazy-loading, DOM, CSS, SEO (say 'Google ranking').
+  - When you mean H1/heading: say "the big text at the top of your page" or "your main headline".
+  - When you mean schema: say "the address-book info Google reads about your business".
+  - When you mean favicon: say "the little icon next to your tab name".
+  - When you mean viewport tag: say "phone-friendly setup".
+  - When you mean scripts: say "code files your page loads".
+  - When you mean alt text: say "label for your image so Google + screen readers know what's in it".
+  - YES words: fix, swap, drop, slow, fast, big, small, lose, win, miss, beat.
+  - If a 9-year-old can't read it, rewrite it.
+- Address them as "you". Lead with cost (customers lost, money wasted).
+- "Your site loads 14 code files. On a phone that's 5+ seconds of blank screen. Most people leave." NOT "External script count is high."
+- Celebrate good things plainly: "All 22 of your images have labels Google can read. Google loves that."
 
 URL: ${ctx.url}
-Title: "${ctx.title}" (${ctx.title.length} chars)
-Meta: "${ctx.metaDescription}" (${ctx.metaDescription.length} chars)
-H1: "${ctx.h1Text}"
-Headings: ${ctx.headings.length}
-Images: ${ctx.imageCount} total, ${ctx.imagesWithAlt} with alt
-External scripts: ${ctx.externalScripts}
-Viewport: ${ctx.hasViewport}
-Favicon: ${ctx.hasFavicon}
-Body length: ${ctx.bodyExcerpt.length} chars
+Category: ${category}
+
+Site signals (LABELS for your reference — do NOT echo these label names back in your output. Translate to plain English per the BANNED tech jargon rules above):
+- Browser-tab title: "${ctx.title}" (${ctx.title.length} chars)
+- Google-snippet blurb: "${ctx.metaDescription}" (${ctx.metaDescription.length} chars)
+- Big headline at top: "${ctx.h1Text}"
+- Section headline count: ${ctx.headings.length}
+- Images on page: ${ctx.imageCount} total, ${ctx.imagesWithAlt} with image labels
+- Code files loaded: ${ctx.externalScripts}
+- Phone-friendly setup: ${ctx.hasViewport ? "yes" : "no"}
+- Tab icon present: ${ctx.hasFavicon ? "yes" : "no"}
+- Body length: ${ctx.bodyExcerpt.length} chars
 ${ctx.fetchError ? `Fetch error: ${ctx.fetchError}` : ""}
+
+${techPainBlock}
 
 Return JSON:
 {
@@ -646,8 +864,8 @@ Return JSON:
 
 Generate 1-2 findings per category (3-6 total max). RULES:
 - Reference real numbers ("18 chars" not "short title")
-- ONE sentence per observation, ONE sentence per recommendation. Max 25 words EACH. Never more.
-- Title: 5-8 words, plain English
+- ONE sentence per observation, ONE sentence per recommendation. Max 20 words EACH. 3rd-grade. Never more.
+- Title: 5-8 words, 3rd-grade plain English.
 - 1-2 must be severity="low" = STRENGTHS
 
 ABSOLUTE RULE: celebratory tone ("Great", "Good", "Solid", "All X have Y", "Working well") → severity MUST be "low". No exceptions.
@@ -667,7 +885,7 @@ function synthesizeAudit(args: {
 }): AuditContent {
   const { url, businessCategory, businessName, ctx, heroResult, technicalResult } = args;
   const benchmark = BLUEJAYS_BENCHMARK_BY_CATEGORY[businessCategory] || {
-    template: "BlueJays V2 portfolio",
+    template: "BlueJays examples",
     url: "https://bluejayportfolio.com/templates",
   };
 
@@ -710,16 +928,54 @@ function synthesizeAudit(args: {
     .slice()
     .sort((a, b) => (severityRank[b.severity] || 0) - (severityRank[a.severity] || 0));
 
-  const prioritizedRoadmap = sortedFixes.slice(0, 5).map((f, i) => ({
-    rank: i + 1,
-    title: f.title,
-    impact: severityToImpact(f.severity),
-    effort: estimateEffort(f.category, f.severity),
-    blueJaysCanDo: !!f.blueJaysSolution,
-  }));
-
+  const top5Fixes = sortedFixes.slice(0, 5);
   const overallScore = Math.round((heroResult.score + technicalResult.score) / 2);
   const moneyLeak = estimateMoneyLeak({ category: businessCategory, overallScore });
+
+  // Per-fix recovery — deterministic, no AI (Q1B). Each fix gets a share
+  // of the total recovery pool proportional to its severity weight. The
+  // pool itself is RECOVERY_CAP_PERCENT × currentLeak (Q6A: conservative).
+  const totalRecoveryPool = Math.round(moneyLeak.monthlyEstimate * RECOVERY_CAP_PERCENT);
+  const weights = top5Fixes.map((f) => severityWeight(f.severity));
+  const sumWeights = weights.reduce((a, b) => a + b, 0) || 1;
+  const avgCustomerValue = (VERTICAL_LEAK_RATES[businessCategory] || VERTICAL_LEAK_RATES["general"]).avgValue;
+
+  // Avg lead value — what each lead is worth before the close-rate
+  // discount. Used to translate $/mo into leads/mo (Q2C: leads/mo
+  // gives natural variation per fix; e.g. $1,200/mo / $480 = 3 leads).
+  const avgLeadValue = Math.max(1, Math.round(avgCustomerValue * DEFAULT_CLOSE_RATE));
+
+  const prioritizedRoadmap = top5Fixes.map((f, i) => {
+    const share = weights[i] / sumWeights;
+    // Round per-fix recovery to nearest $50 so the numbers feel deliberate
+    // not algorithmic. Hidden when score >= 80 (no leak).
+    const recoveryMonthly =
+      overallScore >= 80 ? 0 : Math.max(50, Math.round((totalRecoveryPool * share) / 50) * 50);
+    const recoveryLeads =
+      avgLeadValue > 0 ? Math.max(1, Math.round(recoveryMonthly / avgLeadValue)) : 0;
+    const recoveryCustomers =
+      avgCustomerValue > 0 ? Math.max(1, Math.round(recoveryMonthly / avgCustomerValue)) : 0;
+    return {
+      rank: i + 1,
+      title: f.title,
+      impact: severityToImpact(f.severity),
+      effort: estimateEffort(f.category, f.severity),
+      blueJaysCanDo: !!f.blueJaysSolution,
+      recoveryMonthly,
+      recoveryLeads,
+      recoveryCustomers,
+    };
+  });
+
+  // Total "Stop the leak" projection — what we put on the bridge-to-CTA box.
+  const recoveryProjection = {
+    totalMonthly: prioritizedRoadmap.reduce((sum, r) => sum + r.recoveryMonthly, 0),
+    totalLeads: prioritizedRoadmap.reduce((sum, r) => sum + r.recoveryLeads, 0),
+    totalCustomers: prioritizedRoadmap.reduce((sum, r) => sum + r.recoveryCustomers, 0),
+    avgCustomerValue,
+    capPercent: RECOVERY_CAP_PERCENT,
+    methodology: `Conservative math: avg ${businessCategory.replace("-", " ")} customer is worth ~${"$"}${avgCustomerValue.toLocaleString()}. We rounded down on close rate AND on lift. The real recovery is probably 2x what we show.`,
+  };
 
   // Strengths — celebratory copy from low-severity findings ONLY.
   // Use the title (Hormozi-tone praise) instead of recommendation
@@ -732,24 +988,24 @@ function synthesizeAudit(args: {
     strengths.push(`${businessName} has a working website — that puts you ahead of plenty of competitors who don't.`);
   }
 
-  // One-line summary — Hormozi-tone, money-anchored when we have a leak number.
+  // One-line summary — 3rd-grade Hormozi-tone, money-anchored when leak > 0.
   const leakStr = moneyLeak.monthlyEstimate > 0
-    ? `~${"$"}${moneyLeak.monthlyEstimate.toLocaleString()}/month in lost customers`
-    : "real money on the table";
+    ? `about ${"$"}${moneyLeak.monthlyEstimate.toLocaleString()}/month in lost customers`
+    : "real money";
   const oneLineSummary =
     overallScore >= 80
-      ? `${businessName}'s site is doing real work. A few high-impact tweaks below could squeeze even more out of it.`
+      ? `${businessName}'s site works. A few small tweaks below can make it work even better.`
       : overallScore >= 60
-        ? `${businessName}'s site has the bones right but is leaving ${leakStr}. Every issue below is fixable.`
+        ? `${businessName}'s site has good bones. But it's losing ${leakStr}. Every problem below has a fix.`
         : overallScore >= 40
-          ? `${businessName}'s current site is actively costing you customers — likely ${leakStr}. Every. Single. Day. Good news: we can fix this.`
-          : `${businessName}'s current site is bleeding customers — likely ${leakStr}. We'd recommend a full rebuild before another marketing dollar gets spent.`;
+          ? `${businessName}'s site is costing you customers right now — ${leakStr}. Every. Single. Day. Good news: we can fix it.`
+          : `${businessName}'s site is losing customers fast — ${leakStr}. Don't spend more on ads. Fix the site first.`;
 
   return {
     url,
     businessCategory,
     generatedAt: new Date().toISOString(),
-    promptVersion: 4, // v4 = scannability pass (2026-04-26): one-sentence observations + recommendations (max 25 words each), capped finding counts, topic-based dedup, tighter prompt rules. Page-level: simpler color tiers + emoji anchors, sticky CTA bar, compressed V2 tag, money number above score.
+    promptVersion: 6, // v6 = jargon kill + leads switch (2026-04-26): banned UX/above-the-fold/social proof/positioning/V2/template/tag from prompts, renamed BLUEJAYS_BENCHMARK templates to drop "(V2)" suffix, switched per-fix unit from customers→leads (with 0.4 default close rate, gives natural variation 2/3/3/2/2 instead of all-1s), added recoveryLeads to type + recoveryProjection.totalLeads. CTA headline → "You know the problems. Now fix them." Page section titles plain English (Top of Your Page / Your Words / Why People Trust You / Google & Tech / On Phones / What yours could look like).
     overallScore,
     oneLineSummary,
     heroAnalysis: {
@@ -777,14 +1033,15 @@ function synthesizeAudit(args: {
     blueJaysBenchmark: {
       referenceTemplate: benchmark.template,
       referenceUrl: benchmark.url,
-      gapSummary: `Compare to our ${benchmark.template} — that's the quality bar we'd ship for ${businessName}.`,
+      gapSummary: `See our ${benchmark.template}. That's what your site should look like.`,
     },
     moneyLeak,
+    recoveryProjection,
     prioritizedRoadmap,
     strengths,
     callToAction: {
-      headline: "Good ideas alone don't fix funnels. Execution does.",
-      body: `You now have ${prioritizedRoadmap.length} prioritized fixes for ${businessName}. Most small businesses see this list and do nothing for 6 months — losing tens of thousands in the meantime. We'll rebuild your site to fix all of these in 48 hours. Most agencies charge $5,000-$15,000 for this. We do it for $997 (or 3 monthly payments of $349). No retainers. No monthly fees. 100% money-back if you don't love it.`,
+      headline: "You know the problems. Now fix them.",
+      body: `You now have ${prioritizedRoadmap.length} fixes for ${businessName}. Most owners see this list and do nothing for 6 months. They lose tens of thousands. We'll rebuild your site in 48 hours to fix all of them. Most shops charge $5,000–$15,000. We charge $997 (or 3 small payments of $349). No monthly fees. 100% money-back if you don't love it.`,
       primaryButtonText: "Start with 3 × $349",
       primaryButtonUrl: "https://bluejayportfolio.com/contact?source=audit&plan=installment",
       secondaryButtonText: "Or $997 once",
@@ -802,6 +1059,36 @@ function severityToImpact(s: string): "high" | "medium" | "low" {
   if (s === "medium") return "medium";
   return "low";
 }
+
+/**
+ * Severity → relative recovery weight. Critical fixes recover more
+ * than mediums proportionally. Used to apportion the total recovery
+ * pool across the top 5 fixes.
+ */
+function severityWeight(s: string): number {
+  if (s === "critical") return 4;
+  if (s === "high")     return 3;
+  if (s === "medium")   return 2;
+  return 1; // 'low' — almost never in the roadmap (we filter strengths out)
+}
+
+/**
+ * Recovery cap: how much of the current monthly leak can the fixes
+ * realistically claw back? Conservative 60% per Ben's design (Q6A) —
+ * we'd rather underclaim and overdeliver than the reverse. Healthy
+ * sites (score >= 80) have no leak so this is moot.
+ */
+const RECOVERY_CAP_PERCENT = 0.60;
+
+/**
+ * Default close rate for converting LEADS → paying CUSTOMERS at SMB
+ * scale. 40% is conservative for service businesses (most quote-based
+ * trades close 30–50%). Used to translate avgCustomerValue (the closed
+ * deal value in VERTICAL_LEAK_RATES) into avgLeadValue, so per-fix
+ * recovery shows leads/month not customers/month (Q2C: leads stacked
+ * under the dollar number).
+ */
+const DEFAULT_CLOSE_RATE = 0.4;
 
 /**
  * Topic-based dedup. Claude + GPT often flag the same issue from different
@@ -823,6 +1110,12 @@ function dedupeByTopic(
     { key: "h1_phone_number", rx: /phone.*\b(h1|headline|heading)\b/i },
     // H1 not descriptive (separate from phone-specific)
     { key: "h1_not_descriptive", rx: /h1.*not descriptive|h1.*lacks|h1.*generic/i },
+    // H1 / main heading missing entirely — caught by both hero ("No H1
+    // means Google ignores your page") and tech ("Missing H1 Heading")
+    // (Bug fix 2026-04-27: was producing 2 of the top 5 fixes for the
+    // same underlying issue.)
+    { key: "h1_missing", rx: /(no h1|missing h1|h1.*missing|zero h1|h1.*absent|main headline.*missing|big text at the top.*(missing|none|no))/i },
+    { key: "h1_missing", rx: /(missing|no).*main (heading|headline)/i },
     // Title length
     { key: "title_length", rx: /\btitle\b.*(short|length|character|under|truncat)/i },
     // Meta description (both as strength and as fix)
@@ -852,6 +1145,12 @@ function dedupeByTopic(
     { key: "mobile_loading", rx: /mobile.*(load|slow|speed)|(slow|load).*mobile/i },
     // Email professionalism (gmail vs branded)
     { key: "email_branded", rx: /(gmail|personal email|branded email|email.*business)/i },
+    // Schema markup — hero + tech both flag it
+    { key: "schema_missing", rx: /(localbusiness|schema|structured data|json.?ld|address.book.info)/i },
+    // Phone not tap-to-call (mobile + hero both flag it)
+    { key: "phone_tap_to_call", rx: /(tap.to.call|click.to.call|tel:|phone.*clickable|phone.*not.*link)/i },
+    // Phone buried / not on hero
+    { key: "phone_buried", rx: /(phone.*buried|phone.*not.*on.*hero|phone.*footer|phone.*hidden|phone.*hard to find)/i },
   ];
 
   function topicOf(f: AuditFinding): string {
@@ -933,7 +1232,7 @@ function mockHeroAnalysis(ctx: SiteContext, category: string): HeroAnalysisResul
         title: "Hero headline lacks specificity",
         observation: `Current H1: "${ctx.h1Text || "(none found)"}". Generic — could apply to any ${category} business.`,
         recommendation: "Lead with a specific outcome the customer wants. Replace category labels with results.",
-        blueJaysSolution: `Our V2 ${category} template hero leads with the customer's outcome, not your service category.`,
+        blueJaysSolution: `A BlueJays ${category} site leads with the customer's outcome, not your service category.`,
       },
       {
         category: "cta",
@@ -949,7 +1248,7 @@ function mockHeroAnalysis(ctx: SiteContext, category: string): HeroAnalysisResul
         title: "No reviews or testimonials surfaced",
         observation: "We couldn't find a review count, star rating, or testimonial section on the homepage.",
         recommendation: "Pull your Google reviews onto the homepage. Show 3-5 specific ones with names + locations.",
-        blueJaysSolution: "Our V2 templates pull Google review data directly into a prominent above-the-fold strip.",
+        blueJaysSolution: "A BlueJays site pulls real Google reviews onto the homepage, right where new visitors see them.",
       },
     ],
     headline: ctx.h1Text || "(no H1 found)",

@@ -30,7 +30,7 @@ function toEmbedUrl(raw: string | null): string | null {
 
 const STAGE_MESSAGES: Record<string, string> = {
   pending: "Audit is queued — kicking it off in a moment…",
-  generating: "Our AI is reading your site, comparing to category benchmarks, and finding the conversion leaks. About 3-5 minutes total.",
+  generating: "Reading your site, scoring every section, and finding the conversion leaks. Usually done in 60–90 seconds.",
   ready: "Audit is ready. Redirecting you to your full report…",
   failed: "Something went wrong generating your audit. Email bluejaycontactme@gmail.com and we'll send a real human's review by tomorrow.",
   cancelled: "This audit was cancelled. Email us if this looks wrong.",
@@ -55,7 +55,7 @@ const TRACKER_STAGES = [
   { key: "ready", label: "Ready", icon: "🎉", percentTrigger: 100 },
 ];
 
-const ESTIMATED_TOTAL_SECONDS = 240; // ~4 min — matches typical audit duration
+const ESTIMATED_TOTAL_SECONDS = 90; // ~60-90s — actual observed audit duration
 
 export default function ProcessingClient({
   auditId,
@@ -137,16 +137,18 @@ export default function ProcessingClient({
     };
   }, [auditId]);
 
-  // Cycle the "what's happening now" copy every 8 seconds
+  // Cycle the "what's happening now" copy every 8 seconds.
+  // Tone: 3rd-grade, no model names — visitors shouldn't see "Claude" or
+  // "GPT" in the loading copy (per Ben — keep the eval engine invisible).
   const stages = [
-    "Fetching your site",
-    "Capturing screenshot + extracting key elements",
-    "Running hero + positioning analysis (Claude)",
-    "Running technical + SEO analysis (GPT-4)",
-    "Comparing to your category's gold-standard template",
-    "Calculating your money-leak estimate",
-    "Synthesizing findings + prioritizing the top 5",
-    "Final pass — making sure everything's specific to you",
+    "Pulling up your site",
+    "Taking a screenshot of your homepage",
+    "Reading your headlines + buttons + words",
+    "Checking how your site looks on phones",
+    "Comparing your site to the best in your industry",
+    "Doing the money-leak math",
+    "Picking the top 5 fixes that move the needle",
+    "Last pass — making sure it's all about you",
   ];
   const stageIdx = Math.min(Math.floor(pollCount / 1.5), stages.length - 1);
 
@@ -214,7 +216,7 @@ export default function ProcessingClient({
               </div>
 
               <p className="mt-6 text-xs text-slate-500">
-                Don&apos;t close this tab. We&apos;ll auto-redirect when it&apos;s ready.
+                Your full report opens here the moment it&apos;s done — usually 60–90 seconds. We&apos;ll also email you a copy.
               </p>
             </>
           )}
@@ -269,7 +271,11 @@ export default function ProcessingClient({
                 Audit progress
               </span>
               <span className="text-xs text-slate-400 font-mono">
-                {status === "ready" ? "Done" : `~${Math.max(0, Math.ceil((ESTIMATED_TOTAL_SECONDS - elapsedSec) / 60))} min remaining`}
+                {status === "ready"
+                  ? "Done"
+                  : elapsedSec < ESTIMATED_TOTAL_SECONDS
+                    ? `~${Math.max(5, ESTIMATED_TOTAL_SECONDS - elapsedSec)}s remaining`
+                    : "Almost there…"}
               </span>
             </div>
 
