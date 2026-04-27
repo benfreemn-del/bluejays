@@ -5350,3 +5350,287 @@ that this works. When in doubt, look at how those 9 HTML chunks and
 
 ---
 
+## Locked-In Rules — Session 2026-04-26 evening (audit funnel hardening)
+
+These rules came out of the audit-funnel build session that shipped
+commits `718d248` through `7b6fe47` on 2026-04-26. Each captures a
+pattern that's now the default for similar problems.
+
+### Locked-In Rule 56 — Validate Public Env Vars Before Mounting Scripts (NON-NEGOTIABLE)
+
+Any `NEXT_PUBLIC_*` env var that gets injected into a `<script>` tag
+or used as the source of an external resource URL (Meta Pixel, Google
+Ads tag, Hotjar, Stripe.js, etc.) MUST run through a defensive
+validator BEFORE the script mounts. The validator's job is to reject
+copy-pasted-from-docs placeholder values that look syntactically
+valid but reference non-existent IDs.
+
+**Why:** when Ben configured the retargeting pixels (2026-04-26), he
+pasted the docs-example values `1234567890123456` and `AW-XXXXXXXXXX`
+literally. Without a validator, the next deploy would have injected
+scripts that 404'd at Meta/Google, polluted the browser console with
+invalid-pixel errors, and burned a few hundred ms of useless network
+on every audit-page paint. The validator now silently rejects those
+exact strings + any other obvious placeholder pattern.
+
+**The pattern (used in `src/components/RetargetingPixels.tsx`):**
+
+```ts
+function isValidMetaPixelId(v: string | undefined): v is string {
+  if (!v) return false;
+  const trimmed = v.trim();
+  if (!/^\d{15,16}$/.test(trimmed)) return false;
+  if (trimmed === "1234567890123456" || trimmed === "0000000000000000") return false;
+  return true;
+}
+
+const META_PIXEL_ID = isValidMetaPixelId(RAW_META_PIXEL_ID) ? RAW_META_PIXEL_ID : undefined;
+```
+
+**Required for every new public env var:**
+1. A regex shape check (length, character class, prefix)
+2. An exact-match blacklist of known docs-example strings
+3. A dev-mode `console.warn` so misconfigured values are LOUD, not silent
+4. A graceful fallback (treat as if the env var was unset) so the
+   page still renders cleanly
+
+**Apply to:** any tracking pixel (Meta, Google, Hotjar, LinkedIn,
+Pinterest, TikTok), any third-party widget script (Stripe Elements,
+Calendly embed, chat widgets), any analytics SDK that takes a key in
+the URL.
+
+**Don't apply to:** server-side env vars (`STRIPE_SECRET_KEY` etc.) —
+those validate at use-time via the API call itself. Rule 56 is about
+pre-mount validation for client-side script injection specifically.
+
+### Locked-In Rule 57 — 3-CTA Hub Pattern for Lead-Magnet Conversion Surfaces
+
+When a prospect reaches the conversion surface of any lead-magnet
+funnel (audit, free preview, free strategy session, free template
+download, etc.), the page MUST present THREE forks of intent —
+ascending in commitment but each capturing the lead — instead of a
+single "Buy now" CTA.
+
+**The Hormozi pattern ("stack the slip"):**
+1. **High-intent fork** — the immediate paid conversion ("Fix it now"
+   → Stripe checkout). Most popular badge.
+2. **Medium-intent fork** — a phone/video commitment ("Schedule a
+   call" → /schedule/[id]). Captures warm leads who need more info.
+3. **Low-intent fork** — a slow-yes lead capture ("Get my free
+   preview" → POSTs to backend, alerts Ben). Captures the "not ready
+   to buy or talk" prospects who'd otherwise bounce, and gives Ben a
+   second swing at them.
+
+**Why three:** a single CTA forces a binary yes/no. Three CTAs let
+the prospect pick their own commitment level, and they're 3× more
+likely to pick ONE of three options than to pick a single forced
+choice. Reference implementation: `src/app/audit/[id]/AuditCTAHub.tsx`.
+
+**Visual rules:**
+- All three cards same size, equal weight on the page
+- High-intent fork gets a "Most Popular" or similar amber badge
+- Each card has: icon → title → headline number → 1-line value prop
+  → 1-line trust line → CTA button
+- Trust strip below all 3 cards (money-back, delivery time, no fees)
+- Secondary fallback option (e.g. "Or pay $997 once") as a small text
+  link below the cards — discoverable but doesn't crowd the trio
+
+**Backend contract for the low-intent fork:**
+- Endpoint MUST be idempotent (re-clicking returns ok:true +
+  already:true without re-firing the SMS alert)
+- Marks prospect with `manually_managed=true` (Rule 49) so the
+  auto-funnel skips them — Ben handles them personally
+- Sends owner-alert SMS with biz name + audit URL + dashboard link
+- Persists state BEFORE firing the SMS (Rule 43)
+
+### Locked-In Rule 58 — Auto-Suggest Defaults at Page Load (NOT on Field Submit)
+
+Any onboarding / form flow where we can pre-fill a field via API
+call MUST fire the API call at page-mount time, not at field-blur or
+form-submit time. The picks should already be on screen by the time
+the user scrolls down to that field.
+
+**Why:** every additional click is a drop-off. If the user has to
+type a business name and then click "Get suggestions", we lose a
+percentage of users at the click step. Firing on mount means the
+moment they see the field, the picks are already there.
+
+**Reference implementation:** auto-domain suggestions in onboarding
+Step 1 (`src/app/onboarding/[id]/page.tsx`). On mount the page fires
+`/api/domain-suggestions/[id]`, displays a spinner while loading,
+swaps to 3 radio-style domain picks the moment the API resolves.
+
+**Pattern:**
+1. Fire the API call from a `useEffect` keyed only on `prospectId`
+   (NOT on any user input — page-load means page-load)
+2. Show a loading state (spinner + "Checking…" message) while the
+   call is in flight
+3. Render the picks as easy one-click buttons + ALWAYS-on text input
+   as escape hatch for "I want a different one"
+4. The endpoint loads its data server-side (don't depend on a
+   protected `/api/prospects/[id]` route returning 200 to unauth
+   customers)
+
+**Apply to:** anywhere we can show a smart default — domain picks,
+brand colors (sample from the existing site), business hours
+(default to category norms), service lists (prefill from scrape),
+testimonials (prefill from Google reviews scrape).
+
+### Locked-In Rule 59 — Deterministic Math for Trust-Sensitive Numbers (NOT AI)
+
+Any number we show to a customer that anchors a buying decision
+(money-leak estimate, recovery projection, lead-value chip,
+testimonial-implied results) MUST be computed by a deterministic
+formula, NOT an AI prompt. The formula's inputs (vertical avg
+customer value, conversion lift %, close rate) live as named
+constants the operator can tune.
+
+**Why:** AI numbers vary across runs. The same prospect re-running
+the audit could see "+$5,100/mo" once and "+$8,200/mo" the next time
+— that variance kills trust instantly. Deterministic = same input →
+same number, every time. Customers can re-run the audit, screenshot
+both, and the numbers match.
+
+**Reference implementations** (`src/lib/site-audit.ts`):
+- `estimateMoneyLeak()` — vertical avg × monthly visitors × lift %
+  × 0.7 safety margin
+- `recoveryProjection.totalMonthly` — leak × `RECOVERY_CAP_PERCENT`
+  (0.60 — conservative)
+- Per-fix recovery — severity-weighted share of total recovery pool
+- Leads vs customers translation — `DEFAULT_CLOSE_RATE` = 0.4
+
+**The rules:**
+1. Constants at the top of the file with comments explaining the
+   source / why this number (industry benchmark, conservative bias,
+   Hormozi research deliverable, etc.)
+2. Round to nearest $50 / nearest 5% / similar so the numbers feel
+   deliberate not algorithmic
+3. Apply a safety margin (0.6×–0.7×) so we ALWAYS underclaim
+4. Document the methodology to the customer (footnote text under
+   the big number) — transparent math earns trust
+5. NEVER let the AI prompt suggest numbers. The AI generates copy
+   ABOUT the deterministic numbers.
+
+**Apply to:** money-leak math, recovery math, "you'll get X new
+customers" claims, ROI calculators, before/after metrics, anything
+the customer might screenshot and forward to their accountant.
+
+### Locked-In Rule 60 — Auto-Improvement Loops Need Dormancy Gates
+
+Any cron that uses AI to analyze data and suggest improvements
+(prompt tuning, ad copy generation, email subject A/B tests,
+retargeting audience optimization) MUST have a minimum-data
+dormancy gate that prevents it from running until the dataset is
+big enough for the AI's analysis to be meaningful.
+
+**Why:** AI analyzing 3 audits + 0 paid customers is just noise
+generation. The model will confabulate trends from random variance
+and suggest "improvements" that are statistically meaningless. Worse,
+those suggestions get rolled out as A/B tests, polluting the dataset
+further. Dormancy guards against this.
+
+**Reference implementation:** Hyperloop cron (`src/app/api/hyperloop/run/route.ts`).
+Two thresholds at top of file as named constants:
+
+```ts
+const MIN_READY_AUDITS_TO_WAKE = 100;
+const MIN_PAID_CUSTOMERS_TO_WAKE = 5;
+```
+
+Below either threshold → log a `dormant` heartbeat row in
+`hyperloop_runs` + return gate-reason without firing the AI call.
+
+**The rules:**
+1. Dormancy thresholds as named constants the operator can tune
+2. Heartbeat insert on every tick (active OR dormant) so we have
+   continuous evidence the cron is firing on schedule
+3. `gate_reason` field on the runs table explains WHY this tick was
+   dormant
+4. Active path stays minimal at first (Day-1 = log + obvious-loser
+   retirement only). Claude-suggested-new-variants step lands as a
+   follow-up commit AFTER signal exists
+5. The gate constants stay editable — bumping `MIN_PAID_CUSTOMERS_TO_WAKE`
+   from 5 to 50 once we have data is just a one-line change
+
+**Apply to:** any future AI-driven optimization cron — ad-copy
+generator, email-subject A/B test cron, prompt-tuning loop,
+audience-segment generator, scheduling-optimizer.
+
+### Locked-In Rule 61 — 3rd-Grade Reading Level for Customer-Facing AI Output
+
+All AI prompts that generate text for the customer-facing audit, or
+any future customer-facing AI surface, MUST enforce 3rd-grade reading
+level via TWO hard constraints in the prompt:
+
+1. **Banned words** list — the explicit jargon that fails (`optimize`,
+   `leverage`, `enhance`, `streamline`, `maximize`, `utilize`,
+   `facilitate`, `sub-optimal`, `prioritize`, `conversion`,
+   `methodology`, `UX`, `above-the-fold`, `social proof`,
+   `positioning`, `V2`, `template`, `tag`)
+2. **Yes words** list — concrete verbs the model is encouraged to
+   use instead (`fix`, `swap`, `drop`, `slow`, `fast`, `big`, `small`,
+   `lose`, `win`, `miss`, `beat`, `grab`, `lift`, `sink`)
+
+PLUS a sentence-length cap (~12-20 words per sentence) and a
+"if a 9-year-old can't read it out loud and get it, rewrite it"
+acceptance criterion.
+
+**Why:** Hormozi-research-validated. SMB owners read at ~7th-grade
+level on average; 3rd-grade hits universally. Any jargon costs
+comprehension AND trust simultaneously.
+
+**Reference:** `buildHeroPrompt()` + `buildTechnicalPrompt()` in
+`src/lib/site-audit.ts`. Same banned/yes lists in both prompts so
+output style stays consistent across Claude + GPT.
+
+**Static UI copy follows the same rules:**
+- Section headers: "Top of Your Page" not "Hero & Above the Fold"
+- Buttons: "Fix it now" not "Initiate purchase"
+- Tooltips, error messages, form labels — all 3rd-grade
+
+**Defensive render-time stripper:** for legacy data already
+generated under older prompts, ship a render-time `stripJargon()`
+helper (see `src/app/audit/[id]/page.tsx`) that catches the most
+common offenders. New audits won't generate jargon (prompt
+enforcement); old audits in Supabase get cleaned at render.
+
+### Locked-In Rule 62 — Lob Postcards Target High-Intent Self-Identifiers
+
+Lob postcards cost ~$1.20 each. Per-prospect economics only work
+when the recipient has already self-identified as warm — not on a
+cold list, not on a list of "scraped potential prospects".
+
+**The rule:** Lob postcard crons MUST gate by EXPLICIT high-intent
+signal:
+1. The prospect performed an opt-in action (submitted an audit form,
+   clicked through a preview link, replied to email)
+2. AND has a quality bar (4.5★+ rating, established business)
+3. AND hasn't already taken the next-step action (paid, booked,
+   requested preview)
+4. AND is past the silent-rejection window (5+ days from the
+   self-identifying action)
+5. AND `manually_managed = false` (Rule 49 — never auto-touch)
+6. AND `<column>_postcard_sent_at IS NULL` (idempotent — never
+   re-send to the same person)
+
+Reference implementation: `/api/audit/postcard-cron/route.ts`
+(2026-04-26). Targets prospects who submitted an audit AND have
+4.5★+ AND haven't acted in 5 days. Migration adds a per-trigger
+`audit_postcard_sent_at` column distinct from
+`cohort_postcard_sent_at` so the two crons don't fight.
+
+**NEVER fire postcards at:**
+- Cold-scraped prospect lists (no opt-in signal)
+- Anyone with manually_managed=true (Ben handles personally)
+- Prospects below the rating bar (cost vs. expected close rate)
+- Anyone already in the funnel's later stages (paid, booked, dismissed)
+
+**Schema pattern for new postcard crons:**
+- New `<trigger>_postcard_sent_at TIMESTAMPTZ` column on prospects
+- Partial index `WHERE that_column IS NULL` (cron's hot path)
+- Stamp on success AND on permanent-skip (no_address, below_tier,
+  already_sent) so the cron doesn't keep retrying tomorrow
+- Don't stamp on transient-error skips (so retries work next tick)
+
+---
+
