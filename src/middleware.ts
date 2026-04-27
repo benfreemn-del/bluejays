@@ -137,6 +137,7 @@ const PUBLIC_API_PATHS = [
   "/api/checkout/free-tier/",          // Free-tier checkout entry point — Ben sends this URL to vetted free-tier prospects (URL-as-secret)
   "/api/audit/submit",                 // Public audit-form submission (Hormozi salty-pretzel lead-magnet)
   "/api/audit/",                       // Audit status polling endpoints (URL-as-secret)
+  "/api/domain-suggestions/",          // Public auto-domain-suggest for the onboarding Step 1 (URL-as-secret pattern — prospect UUID in path)
   "/audit",                            // Audit landing page (public)
   "/audit/",                           // Audit display + processing pages (URL-as-secret)
 ];

@@ -38,6 +38,13 @@ interface ProspectInfo {
   status: string;
 }
 
+/** Auto-domain suggestion from /api/domain-suggestions/[id] (Q7C). */
+interface DomainSuggestion {
+  domain: string;
+  available: boolean;
+  price?: number;
+}
+
 type OnboardingStatus = "step1_complete" | "step2_complete" | "completed";
 
 interface FormData extends OnboardingPrefillData {
@@ -94,6 +101,11 @@ export default function OnboardingPage() {
   const [photoUploading, setPhotoUploading] = useState(false);
   const [photos, setPhotos] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
+  // Auto-domain suggestions — fetched once on mount as soon as prospect loads.
+  // Q6A: zero clicks; Step 1 has the picks ready when the customer arrives.
+  const [domainSuggestions, setDomainSuggestions] = useState<DomainSuggestion[]>([]);
+  const [domainsLoading, setDomainsLoading] = useState(false);
+  const [domainsLoaded, setDomainsLoaded] = useState(false);
 
   const localStorageKey = useMemo(() => `bluejays_onboarding_${prospectId}`, [prospectId]);
 
@@ -166,6 +178,36 @@ export default function OnboardingPage() {
       cancelled = true;
     };
   }, [prospectId, localStorageKey, router]);
+
+  // Auto-domain suggestions — fires once on mount as soon as prospectId
+  // is known. Q6A: zero clicks; Step 1 already has the 3 picks selected by
+  // the time the customer scrolls down. The endpoint loads businessName
+  // server-side via getProspect(), so we don't depend on the frontend's
+  // /api/prospects fetch (which is admin-protected).
+  useEffect(() => {
+    if (!prospectId || domainsLoaded) return;
+    let cancelled = false;
+    setDomainsLoading(true);
+    (async () => {
+      try {
+        const res = await fetch(`/api/domain-suggestions/${prospectId}`);
+        if (!res.ok || cancelled) return;
+        const json: { suggestions?: DomainSuggestion[] } = await res.json();
+        if (cancelled) return;
+        setDomainSuggestions(json.suggestions ?? []);
+      } catch (err) {
+        console.error("[onboarding] domain suggestions failed:", err);
+      } finally {
+        if (!cancelled) {
+          setDomainsLoading(false);
+          setDomainsLoaded(true);
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [prospectId, domainsLoaded]);
 
   // Allow ?step=1|2|3 override for resume / direct linking
   useEffect(() => {
@@ -432,6 +474,8 @@ export default function OnboardingPage() {
             logoUploading={logoUploading}
             saving={saving}
             onContinue={() => submitStep(1)}
+            domainSuggestions={domainSuggestions}
+            domainsLoading={domainsLoading}
           />
         )}
 
@@ -618,6 +662,8 @@ function Step1({
   logoUploading,
   saving,
   onContinue,
+  domainSuggestions,
+  domainsLoading,
 }: {
   data: FormData;
   updateField: <K extends keyof FormData>(key: K, value: FormData[K]) => void;
@@ -626,6 +672,8 @@ function Step1({
   logoUploading: boolean;
   saving: boolean;
   onContinue: () => void;
+  domainSuggestions: DomainSuggestion[];
+  domainsLoading: boolean;
 }) {
   const canContinue = !!data.businessName && !!data.phone && !!data.email;
   return (
@@ -734,6 +782,18 @@ function Step1({
           Not sure? Leave blank — I&apos;ll pick what fits your industry.
         </p>
       </div>
+
+      {/* Auto-domain pick — Tier-2 build per Q6A. Fires Namecheap availability
+          check on page load, surfaces the first 3 available variants (Q7C).
+          Customer picks one with one click, OR types a custom domain.
+          Saves to data.domainPreference (existing FormData field). */}
+      <DomainPickCard
+        suggestions={domainSuggestions}
+        loading={domainsLoading}
+        value={data.domainPreference}
+        onChange={(v) => updateField("domainPreference", v)}
+        onBlur={handleBlur}
+      />
 
       <button
         type="button"
@@ -1205,6 +1265,122 @@ function ColorPicker({
           onBlur={onBlur}
           placeholder="#0066ff"
           className="w-full h-8 px-2 rounded bg-background border border-border text-foreground text-sm"
+        />
+      </div>
+    </div>
+  );
+}
+
+// ──────────────────────────────────────────────────────────────────────
+// Domain pick card — auto-suggests 3 available .com variants based on
+// the prospect's business name. Fires once on page load via the parent
+// component's useEffect (Q6A: zero clicks; preselected when they arrive).
+// Customer picks one of the 3 OR types their own. Saves to
+// data.domainPreference for downstream registrar-buy step.
+// ──────────────────────────────────────────────────────────────────────
+
+function DomainPickCard({
+  suggestions,
+  loading,
+  value,
+  onChange,
+  onBlur,
+}: {
+  suggestions: DomainSuggestion[];
+  loading: boolean;
+  value: string;
+  onChange: (v: string) => void;
+  onBlur: () => void;
+}) {
+  const isCustomChoice = !!value && !suggestions.some((s) => s.domain === value);
+
+  return (
+    <div className="rounded-xl bg-surface border border-border p-5 space-y-4">
+      <div>
+        <label className="block text-sm font-medium mb-1">
+          Pick your domain{" "}
+          <span className="text-muted font-normal">(included free)</span>
+        </label>
+        <p className="text-xs text-muted">
+          We&apos;ll register and host this for you. Pick one we found, or
+          type a different one.
+        </p>
+      </div>
+
+      {loading && (
+        <div className="flex items-center gap-2 text-sm text-muted">
+          <svg
+            className="animate-spin h-4 w-4 text-blue-electric"
+            fill="none"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" className="opacity-25" />
+            <path d="M4 12a8 8 0 018-8" stroke="currentColor" strokeWidth="3" className="opacity-75" />
+          </svg>
+          Checking which domains are still available…
+        </div>
+      )}
+
+      {!loading && suggestions.length > 0 && (
+        <div className="grid gap-2">
+          {suggestions.map((s) => {
+            const checked = value === s.domain;
+            return (
+              <button
+                key={s.domain}
+                type="button"
+                onClick={() => {
+                  onChange(s.domain);
+                  onBlur();
+                }}
+                className={`flex items-center justify-between gap-3 rounded-lg px-4 py-3 text-left transition-colors ${
+                  checked
+                    ? "border-2 border-blue-electric bg-blue-electric/10"
+                    : "border border-border bg-background hover:border-blue-electric/40"
+                }`}
+              >
+                <span className="flex items-center gap-3 min-w-0">
+                  <span
+                    aria-hidden="true"
+                    className={`flex-shrink-0 w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                      checked ? "border-blue-electric bg-blue-electric" : "border-muted/40"
+                    }`}
+                  >
+                    {checked && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
+                  </span>
+                  <span className="font-mono text-sm font-medium truncate">{s.domain}</span>
+                </span>
+                <span className="flex-shrink-0 text-xs text-emerald-400 font-semibold uppercase tracking-wider">
+                  Available
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      )}
+
+      {!loading && suggestions.length === 0 && (
+        <p className="text-xs text-muted">
+          Couldn&apos;t auto-find domains for your business name — type one
+          below and I&apos;ll register it (or pick anything else).
+        </p>
+      )}
+
+      {/* Custom-domain input — always available as an escape hatch */}
+      <div>
+        <label className="block text-xs text-muted mb-1">
+          {isCustomChoice
+            ? "Your custom domain:"
+            : "Or type a different one:"}
+        </label>
+        <input
+          type="text"
+          value={isCustomChoice ? value : ""}
+          onChange={(e) => onChange(e.target.value.trim().toLowerCase())}
+          onBlur={onBlur}
+          placeholder="yourbusiness.com"
+          className="w-full h-10 px-3 rounded-lg bg-background border border-border text-foreground text-sm font-mono focus:border-blue-electric focus:outline-none"
         />
       </div>
     </div>
