@@ -74,7 +74,8 @@ export type ProspectStatus =
   | "dismissed"
   | "unsubscribed"
   | "bounced"          // hard-bounce or 3-soft-in-7-days escalation — see Rule 42
-  | "audit_lead"       // submitted via /audit lead-magnet; receiving Hormozi 5-email sequence
+  | "audit_lead"              // submitted via /audit lead-magnet; receiving Hormozi 5-email sequence
+  | "audit_preview_requested" // clicked "Build me a preview" on the audit page; Ben handles manually
   | "pro-bono";
 
 export interface Prospect {

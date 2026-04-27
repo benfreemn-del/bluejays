@@ -145,8 +145,10 @@ export async function POST(request?: NextRequest) {
       continue;
     }
 
-    // Don't email if the prospect has already paid / unsubscribed / bounced
-    const stopStatuses = ["paid", "unsubscribed", "bounced", "dismissed"];
+    // Don't email if the prospect has already paid / unsubscribed / bounced,
+    // OR if they clicked "Build me a preview" — Ben is building theirs personally
+    // and automated audit emails would cross the wires.
+    const stopStatuses = ["paid", "unsubscribed", "bounced", "dismissed", "audit_preview_requested"];
     if (stopStatuses.includes(prospect.status as string)) {
       log.push({ auditId: audit.id, step: nextStep, result: `skipped_status_${prospect.status}` });
       continue;

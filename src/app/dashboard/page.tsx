@@ -8,6 +8,7 @@ import { CATEGORY_CONFIG } from "@/lib/types";
 import DashboardStats from "@/components/dashboard/DashboardStats";
 import StatusTransitionsToday from "@/components/dashboard/StatusTransitionsToday";
 import PendingRepliesPanel from "@/components/dashboard/PendingRepliesPanel";
+import NeedsPreviewPanel from "@/components/dashboard/NeedsPreviewPanel";
 import LossReasonsPanel from "@/components/dashboard/LossReasonsPanel";
 import ProspectTable from "@/components/dashboard/ProspectTable";
 import ScoutModal from "@/components/dashboard/ScoutModal";
@@ -330,6 +331,11 @@ export default function DashboardPage() {
                 Mounts at the very top so Ben sees them before anything else;
                 renders an empty pill when the queue is clear. */}
             <PendingRepliesPanel />
+
+            {/* Audit funnel — prospects who completed the 5-email sequence
+                without converting and have no preview site yet. Generate a
+                preview → followup-cron graduates them to the cold funnel. */}
+            <NeedsPreviewPanel />
 
             <DashboardStats
               prospects={prospects}

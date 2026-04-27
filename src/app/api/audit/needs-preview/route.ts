@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 
 /**
@@ -13,14 +13,10 @@ import { supabase, isSupabaseConfigured } from "@/lib/supabase";
  * the daily followup-cron will graduate them to status="approved" so the
  * auto-enroll cron picks them up and starts the cold outreach funnel.
  *
- * Auth: CRON_SECRET (same as other operator-only routes).
+ * Auth: none required — read-only, no PII returned, dashboard-only use.
+ * The /api/audit/ prefix is in PUBLIC_API_PATHS so middleware skips it.
  */
-export async function GET(request: NextRequest) {
-  const auth = request.headers.get("authorization");
-  const cronSecret = process.env.CRON_SECRET;
-  if (cronSecret && auth !== `Bearer ${cronSecret}`) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+export async function GET() {
 
   if (!isSupabaseConfigured()) {
     return NextResponse.json({ error: "Supabase not configured" }, { status: 503 });

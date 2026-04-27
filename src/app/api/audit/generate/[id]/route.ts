@@ -114,7 +114,7 @@ export async function POST(
         .maybeSingle();
       const overallScore = (full?.audit_content as { overallScore?: number } | null)?.overallScore ?? 0;
       const template = getAuditEmail1({
-        businessName: prospect.business_name as string,
+        businessName: targetBusinessName,
         auditUrl: `https://bluejayportfolio.com/audit/${id}`,
         overallScore,
       });

@@ -98,6 +98,16 @@ const statusConfig: Record<
     bg: "bg-rose-900/60",
     text: "text-rose-200",
   },
+  audit_lead: {
+    label: "Audit Lead",
+    bg: "bg-violet-900/60",
+    text: "text-violet-300",
+  },
+  audit_preview_requested: {
+    label: "Preview Requested",
+    bg: "bg-fuchsia-900/60",
+    text: "text-fuchsia-300",
+  },
   "pro-bono": { label: "Pro Bono", bg: "bg-amber-900/50", text: "text-amber-300" },
 };
 
