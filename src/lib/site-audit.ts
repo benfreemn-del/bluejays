@@ -758,7 +758,7 @@ TONE — non-negotiable:
   - When you mean meta description: say "the blurb Google shows under your link".
   - When you mean schema: say "the address-book info Google reads about your business".
   - When you mean favicon: say "the little icon next to your tab name".
-  - When you mean viewport tag: say "phone-friendly setup".
+  - When you mean viewport tag: say "mobile scaling tag" (this is a tiny technical detail — NOT the same as the site actually looking good on phones).
   - When you mean scripts: say "code files your page loads".
   - YES words: fix, change, drop, swap, push, win, get, lose, beat, kill, miss, grab, lift, sink.
   - If a 9-year-old can't read it out loud and get it, rewrite it.
@@ -770,6 +770,7 @@ UNIVERSAL RULES — apply to every category:
 1. EVERY site should have images. Stock or real, doesn't matter — but a text-only or near-text-only page (under ~3 images) is a 'critical' or 'high' finding. People skim with their eyes, not their brains.
 2. The BEST sites are ONE PAGE. Visitor scrolls. Sees everything. Decides. Calls. Multi-page nav (About / Services / Contact / etc) makes them click, get lost, and bounce. If you see signs of multi-page architecture (heavy top nav, no scroll-to anchors, content split across routes), call it out: "Your site makes visitors click around to find basics. One scrolling page closes faster."
 3. Phone number must be on the hero AND clickable. If you can't tell from the body excerpt whether the phone is tap-to-call, flag the risk.
+4. MOBILE RULE (CRITICAL): A mobile scaling tag being present does NOT mean the site looks good on phones. Most old sites have the tag and still look completely broken on mobile — text too small, buttons too close together, images overflowing, layout falling apart. If the site shows ANY signs of poor mobile quality (old platform like Flash/old Wix, lots of fixed-width content, no responsive images, heavy script load), flag mobile layout as a SEPARATE finding regardless of the tag. Never give a pass on mobile just because the tag exists.
 
 Business: ${businessName}
 Category: ${category}
@@ -828,7 +829,7 @@ TONE — non-negotiable:
   - When you mean H1/heading: say "the big text at the top of your page" or "your main headline".
   - When you mean schema: say "the address-book info Google reads about your business".
   - When you mean favicon: say "the little icon next to your tab name".
-  - When you mean viewport tag: say "phone-friendly setup".
+  - When you mean viewport tag / mobile scaling declaration: say "mobile scaling tag" — it's a tiny technical detail. NEVER say this is "phone-friendly" or a sign the site works on phones.
   - When you mean scripts: say "code files your page loads".
   - When you mean alt text: say "label for your image so Google + screen readers know what's in it".
   - YES words: fix, swap, drop, slow, fast, big, small, lose, win, miss, beat.
@@ -847,12 +848,14 @@ Site signals (LABELS for your reference — do NOT echo these label names back i
 - Section headline count: ${ctx.headings.length}
 - Images on page: ${ctx.imageCount} total, ${ctx.imagesWithAlt} with image labels
 - Code files loaded: ${ctx.externalScripts}
-- Phone-friendly setup: ${ctx.hasViewport ? "yes" : "no"}
+- Mobile scaling tag present: ${ctx.hasViewport ? "yes" : "no"} — NOTE: this tag means almost nothing on its own. Having it does NOT mean the site looks good on phones. Most broken mobile sites have it. You MUST evaluate actual mobile quality separately based on the number of code files, body content, and platform signals.
 - Tab icon present: ${ctx.hasFavicon ? "yes" : "no"}
 - Body length: ${ctx.bodyExcerpt.length} chars
 ${ctx.fetchError ? `Fetch error: ${ctx.fetchError}` : ""}
 
 ${techPainBlock}
+
+MOBILE EVALUATION RULE: The mobile scaling tag being present is NOT a passing grade for mobile. Evaluate actual phone experience separately. If you see heavy script loads, an old-platform site, or anything suggesting fixed-width or unresponsive layout, flag it as a "high" or "critical" mobile finding. Only mark mobile as a strength ("low" severity) if there are clear signs the site genuinely renders well on phones — not just because the scaling tag exists.
 
 Return JSON:
 {
@@ -866,7 +869,7 @@ Generate 1-2 findings per category (3-6 total max). RULES:
 - Reference real numbers ("18 chars" not "short title")
 - ONE sentence per observation, ONE sentence per recommendation. Max 20 words EACH. 3rd-grade. Never more.
 - Title: 5-8 words, 3rd-grade plain English.
-- 1-2 must be severity="low" = STRENGTHS
+- 1-2 must be severity="low" = STRENGTHS — but NEVER mark mobile as a strength unless you have real evidence the site renders well on phones.
 
 ABSOLUTE RULE: celebratory tone ("Great", "Good", "Solid", "All X have Y", "Working well") → severity MUST be "low". No exceptions.
 
