@@ -399,18 +399,23 @@ export default async function AuditPage({
                 `This is the quality bar we'd ship for your business — a fully custom ${content.businessCategory.replace(/-/g, " ")} site with real photos, your branding, and conversion sections built in.`}
             </p>
 
-            {/* Side-by-side: their current site vs a BlueJays V2 build */}
-            <div className="grid sm:grid-cols-2 gap-4 mb-6 rounded-xl overflow-hidden">
+            {/* Side-by-side: their current site vs a BlueJays V2 build
+                scale(0.28): 1400×0.28=392px fills ~342px mobile col (right edge clips)
+                and ~416px desktop col (24px gap). h-56=224px; 800×0.28=224px ✓ */}
+            <div className="grid sm:grid-cols-2 gap-4 mb-6">
               {/* Their current site — live iframe mini-preview */}
               <div className="relative rounded-lg overflow-hidden border border-rose-500/20 bg-white">
-                <div className="h-48 overflow-hidden">
+                <div className="relative h-56 overflow-hidden">
                   <iframe
                     src={a.target_url}
                     title="Your current site"
                     style={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
                       width: "1400px",
-                      height: "900px",
-                      transform: "scale(0.213)",
+                      height: "800px",
+                      transform: "scale(0.28)",
                       transformOrigin: "top left",
                       pointerEvents: "none",
                       border: "none",
@@ -424,14 +429,17 @@ export default async function AuditPage({
               </div>
               {/* BlueJays V2 preview — blurred iframe to tease the upgrade */}
               <div className="relative rounded-lg overflow-hidden border border-emerald-500/20 bg-slate-950">
-                <div className="h-48 overflow-hidden">
+                <div className="relative h-56 overflow-hidden">
                   <iframe
                     src={`/v2/${content.businessCategory}`}
                     title="BlueJays premium site preview"
                     style={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
                       width: "1400px",
-                      height: "900px",
-                      transform: "scale(0.213)",
+                      height: "800px",
+                      transform: "scale(0.28)",
                       transformOrigin: "top left",
                       pointerEvents: "none",
                       border: "none",
