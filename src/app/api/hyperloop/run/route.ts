@@ -7,6 +7,7 @@ import {
   type VariantKind,
 } from "@/lib/hyperloop-variant-gen";
 import { syncAllVariants } from "@/lib/hyperloop-sync";
+import { rolloutBatch, type RolloutResult } from "@/lib/hyperloop-rollout";
 
 /**
  * Weekly Hyperloop cron — Karpathy auto-research loop. Stage 1 active
@@ -271,7 +272,10 @@ async function runHyperloop(req?: NextRequest) {
 
   let totalGenCost = 0;
   let totalNewVariants = 0;
+  let totalRolledOut = 0;
+  let totalRolloutFailed = 0;
   const generationResults: Array<{ kind: string; created: number; cost: number; error?: string }> = [];
+  const rolloutResults: RolloutResult[] = [];
 
   for (const kind of KINDS) {
     // Stop generating mid-loop if we cross the cost cap
@@ -349,15 +353,50 @@ async function runHyperloop(req?: NextRequest) {
       },
     }));
 
-    const { error: insertErr } = await supabase
+    const { data: insertedVariants, error: insertErr } = await supabase
       .from("hyperloop_variants")
-      .insert(inserts);
+      .insert(inserts)
+      .select("id, kind, variant_name, content");
 
     if (insertErr) {
       generationResults.push({ kind, created: 0, cost: result.costUsd, error: insertErr.message });
-    } else {
-      totalNewVariants += inserts.length;
-      generationResults.push({ kind, created: inserts.length, cost: result.costUsd });
+      continue;
+    }
+
+    totalNewVariants += inserts.length;
+    generationResults.push({ kind, created: inserts.length, cost: result.costUsd });
+
+    // ─── Auto-rollout (Stage 2 Commit C, per Q3A) ──────────────
+    // For ad_copy_meta + ad_copy_google variants, push them as live
+    // ads on the platform and stamp platform_ad_id back so the next
+    // sync picks up performance data. Internal kinds (audit_prompt,
+    // email_*, sms_*) skip silently — they don't have a platform ad.
+    if (insertedVariants && insertedVariants.length > 0) {
+      const batch = insertedVariants.map((v) => ({
+        variantId: v.id as string,
+        kind: v.kind as string,
+        variantName: v.variant_name as string,
+        content: (v.content ?? {}) as Record<string, unknown>,
+      }));
+
+      const rollouts = await rolloutBatch(batch);
+      rolloutResults.push(...rollouts);
+
+      // Stamp platform_ad_id on the variants that successfully landed
+      for (const r of rollouts) {
+        if (r.success && r.platformAdId) {
+          await supabase
+            .from("hyperloop_variants")
+            .update({
+              platform_ad_id: r.platformAdId,
+              updated_at: new Date().toISOString(),
+            })
+            .eq("id", r.variantId);
+          totalRolledOut++;
+        } else if (r.error) {
+          totalRolloutFailed++;
+        }
+      }
     }
   }
 
@@ -372,12 +411,17 @@ async function runHyperloop(req?: NextRequest) {
     week_to_date_cost_usd: weekToDateCost + totalGenCost,
     cost_cap_hit: false,
     status: "completed",
-    notes: `Stage 2 active path. Synced ${syncResult.synced}/${syncResult.attempted} variants from platforms (${syncResult.failed} failed, ${syncResult.skipped} skipped). Analyzed ${variants.length}, paused ${losersFound}, promoted ${winnersFound}, generated ${totalNewVariants} new variants for $${totalGenCost.toFixed(4)}.`,
+    notes: `Stage 2 active path. Synced ${syncResult.synced}/${syncResult.attempted} variants from platforms (${syncResult.failed} failed, ${syncResult.skipped} skipped). Analyzed ${variants.length}, paused ${losersFound}, promoted ${winnersFound}, generated ${totalNewVariants} new variants for $${totalGenCost.toFixed(4)}, rolled out ${totalRolledOut} to platforms (${totalRolloutFailed} failed).`,
     metadata: {
       auditsReady,
       customersPaid,
       perKind: generationResults,
       sync: syncResult,
+      rollouts: rolloutResults,
+      rolloutSummary: {
+        rolledOut: totalRolledOut,
+        failed: totalRolloutFailed,
+      },
     },
   });
 
@@ -388,9 +432,12 @@ async function runHyperloop(req?: NextRequest) {
     losersFound,
     winnersFound,
     newVariantsCreated: totalNewVariants,
+    rolledOut: totalRolledOut,
+    rolloutFailed: totalRolloutFailed,
     aiCostUsd: totalGenCost,
     weekToDateCostUsd: weekToDateCost + totalGenCost,
     perKind: generationResults,
+    rollouts: rolloutResults,
   });
 }
 
